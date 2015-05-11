@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="antecedente" class="es.capgemini.pfs.antecedente.model.Antecedente" />
+    <var name="antecedenteExterno" class="es.capgemini.pfs.antecedenteexterno.model.AntecedenteExterno" />
+    <var name="dtoAntecedente" class="es.capgemini.pfs.antecedente.dto.DtoAntecedente" />
+    
+    <input name="idPersona" type="java.lang.Long" />
+       
+    <view-state id="formulario" view="${view}" model="dtoAntecedente">
+        <binder>
+            <binding property="antecedente.fechaVerificacion" />
+            <binding property="antecedente.observaciones" />
+        </binder>
+        <on-entry>
+            <evaluate expression="executor.execute('personaManager.crearAntecedenteBase', idPersona)" result="flowScope.dummy" />
+            <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', idPersona)" result="flowScope.antecedente" />        
+            <set name="dtoAntecedente.antecedente" value="antecedente" />
+            <set name="flowScope.view" value="'clientes/antecedentes.js'" />
+        </on-entry>
+        <on-render>
+            <!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+            cambiaremos el nombre de la vista a 'default' -->
+            <set name="flowScope.view" value="'default'" />
+        </on-render>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <action-state id="update">
+        <evaluate expression="executor.execute('antecedenteManager.saveOrUpdateDto', dtoAntecedente)" />
+        <transition to="close" />
+    </action-state>
+    
+    <end-state id="close" view="default" />
+</flow>

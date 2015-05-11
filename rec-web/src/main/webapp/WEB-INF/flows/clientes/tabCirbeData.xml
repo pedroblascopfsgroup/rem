@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="idPersona" type="java.lang.Long" />
+    <input name="fecha1" type="java.lang.String" />
+    <input name="fecha2" type="java.lang.String" />
+    <input name="fecha3" type="java.lang.String" />
+
+    <end-state id="listadoFechas" view="clientes/tabCirbeJSON">
+	    <on-entry>
+	    	<evaluate expression="executor.execute('cirbeManager.getCirbeData',idPersona,fecha1,fecha2,fecha3)" result="flowScope.result" />
+	    </on-entry>
+    </end-state> 	
+
+</flow>

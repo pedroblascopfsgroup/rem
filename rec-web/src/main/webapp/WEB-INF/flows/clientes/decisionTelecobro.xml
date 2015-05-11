@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+    <var name="dtoTelecobro" class="es.capgemini.pfs.telecobro.dto.DtoTelecobro" />
+    
+    <input name="idEntidad" type="java.lang.Long" />
+        
+    <view-state id="formulario" view="clientes/decisionTelecobro">
+        <on-entry>
+            <evaluate expression="requestParameters.enEspera" result="flowScope.enEspera"/>
+            <evaluate expression="executor.execute('clienteManager.get', idEntidad)" result="flowScope.cliente" />
+            <evaluate expression="executor.execute('telecobroManager.getTareaTelecobroDecision', idEntidad)" result="flowScope.tarea" />
+            <evaluate expression="tarea.getSolicitudExclusionTelecobro()" result="flowScope.solicitud" />
+        </on-entry>
+        <transition on="aceptar" to="aceptar" />
+        <transition on="rechazar" to="rechazar" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <end-state id="aceptar" view="default">   
+        <on-entry>
+            <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoTelecobro)" />
+            <evaluate expression="executor.execute('telecobroManager.aceptarSolicitudExclusionTelecobro', dtoTelecobro)" result="flowScope.dummy" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="rechazar" view="default">   
+        <on-entry>
+            <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoTelecobro)" />
+            <evaluate expression="executor.execute('telecobroManager.rechazarSolicitudExclusionTelecobro', dtoTelecobro)" result="flowScope.dummy" />
+        </on-entry>
+    </end-state>
+    
+    <end-state id="close" view="default" />
+        
+</flow>

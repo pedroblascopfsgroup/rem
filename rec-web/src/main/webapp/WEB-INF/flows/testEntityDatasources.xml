@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="key" value="flowScope.key" required="true"/>
+    
+    <on-start>
+        <evaluate expression="configManager.createConfigListDTO(key)" result="flowScope.configListDTO" />
+    </on-start>
+    
+    <!-- 
+    <action-state id="start">
+        <on-entry>
+            <evaluate expression="executor.execute('getConfigByDTO', configListDTO)" result="flowScope.config"/>
+        </on-entry>
+        <transition on="*" to="testEntityDatasourcesEnd" />
+    </action-state>
+     -->    
+    
+    <view-state id="start" view="testEntityDatasources" model="configListDTO">
+        <on-render>
+            <evaluate expression="executor.execute('getConfigByDTO', configListDTO)" result="flowScope.config"/>
+        </on-render>
+        <transition on="*" to="testEntityDatasourcesEnd" />
+    </view-state>    
+    
+    <end-state id="testEntityDatasourcesEnd" view="testEntityDatasources"/>
+
+</flow>

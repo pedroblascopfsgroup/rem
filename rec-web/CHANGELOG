@@ -1,0 +1,8 @@
+##VERSION 2.4.0 ##
+- Implementaciones fase2
+
+## VERSION 2.0.0 ##
+- A�adido nuevos campos a la pesta�a general del contrato
+- Nueva pesta�a de Efectos/Disposiciones/Efectos del contrato. Necesario tener la funci�n "TAB_CONTRATO_RECIBOS" para visualizarla.
+- Sobreescrita la pesta�a cabecera del expediente en caso de que sea de recobro
+- A�adido el permiso MENU_BUSQUEDAS_GENERAL para poder visualizar el men� padre de las b�squedas

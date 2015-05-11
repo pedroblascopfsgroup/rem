@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="idExpediente" type="java.lang.Long" />
+	<input name="busquedaOrInclusion" type="java.lang.String" />
+
+    <view-state id="busquedaContrato" view="${view}">
+    	<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+            <evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoContrato')" result="flowScope.estados"/>
+            <evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoFinanciero')" result="flowScope.estadosFinancieros"/>
+	    	<evaluate expression="executor.execute('tipoProductoManager.getTiposProducto')" result="flowScope.tiposProducto" />
+    		<set name="flowScope.view" value="'expedientes/busquedaContratoIncluir.js'" />
+    	</on-entry>
+
+		<transition to="close" />
+    </view-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

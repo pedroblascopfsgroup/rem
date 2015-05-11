@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+		
+    <view-state id="formulario" view="fase2/expedientes/decisionSolicitudCancelacion">
+		
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false"/>
+		<transition on="ok" to="close" bind="false"/>
+    </view-state> 	
+    
+    <action-state id="update">
+    	
+		<transition to="close"></transition>
+	</action-state>
+	
+	<end-state id="close" view="default" />
+        
+</flow>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dto" class="es.capgemini.pfs.users.dto.DtoBuscarUsuarios" />
+    
+    <var name="zp" class="es.capgemini.pfs.zona.model.DDZona" />
+    
+    <input name="id" type="java.lang.Long" />
+    <input name="codigo" type="java.lang.String" />
+   	<input name="nombreTab" type="java.lang.String"/>
+	    
+    <decision-state id="codigoOrId">
+    	<if test="codigo!=null" then="buscaPorCodigo" else="buscaCliente"/>
+    </decision-state>
+    
+    <action-state id="buscaPorCodigo">
+            <evaluate expression="executor.execute('personaManager.getIdByCodigo', codigo)" result="flowScope.id" />
+            <transition to="buscaCliente"/>
+    </action-state>
+	
+	<!-- renderiza el formulario -->
+    <view-state id="buscaCliente" view="entidad/cliente/clienteJSON" model="dto">
+        <on-render>
+            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPolitica', id)" result="flowScope.analisisPolitica" />
+            <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+            <evaluate expression="executor.execute('personaManager.get', id)" result="flowScope.persona" />
+            <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', id)" result="flowScope.antecedente" />
+            
+            <evaluate expression="executor.execute('expedienteManager.sinExpedientesActivosDeUnaPersona', id)" result="flowScope.noHayExpedientes" />
+            
+            <evaluate expression="executor.execute('tareaNotificacionManager.buscarComunicacionesCliente',id)" result="flowScope.tareaPendiente" />
+            <evaluate expression="executor.execute('personaManager.obtenerExpedientePropuestoPersona', id)" result="flowScope.expedientePropuesto" />
+            <evaluate expression="executor.execute('telecobroManager.getSubtipoTareaTelecobro', id)" result="flowScope.subtipoTareaTelecobro" />
+            <evaluate expression="executor.execute('arquetipoManager.getArquetipoCalculadoWithEstado', flowScope.persona)" result="flowScope.arquetipoPersona" />
+            <evaluate expression="executor.execute('clienteManager.tieneContratosParaGenerarExpediente', id)" result="flowScope.tieneContratos" />
+			<evaluate expression="executor.execute('plugin.clientes.getGestorProveedorSolvencia', id)" result="flowScope.gestorProveedor" />
+            <evaluate expression="executor.execute('personaManager.getZonaPersona', id)" result="flowScope.zonaPersona" />
+			
+			<evaluate expression="zonaPersona != null ? executor.execute('zonaManager.getZonaTerritorial', zonaPersona) : null" result="flowScope.zonaTerritorial" />
+			
+			<!-- Flag para edición del tab de análisis -->
+	        <set name="flowScope.readOnly" value="true" />
+	        <set name="flowScope.hoy" value="0" type="java.lang.Long"/>
+	        <set name="flowScope.unMes" value="30" type="java.lang.Long"/>
+	        <set name="flowScope.dosMeses" value="60" type="java.lang.Long"/>
+	        <evaluate expression="executor.execute('cirbeManager.getFechaCirbe', id, flowScope.hoy)" result="flowScope.fechaCirbeActual" />
+	        <evaluate expression="executor.execute('cirbeManager.getFechaCirbe', id, flowScope.unMes)" result="flowScope.fechaCirbe30Dias" />
+	        <evaluate expression="executor.execute('cirbeManager.getFechaCirbe', id, flowScope.dosMeses)" result="flowScope.fechaCirbe60Dias" />
+	        <evaluate expression="executor.execute('scoringManager.calcularParaFechasInicio',id)" result="flowScope.fechasAlertas" />
+	        <!-- comprobar si el cliente está exceptuado -->
+	        <evaluate expression="executor.execute('es.pfsgroup.recovery.expediente.api.existeExceptuacionByPerIdTipo',id, '1')" result="flowScope.clienteExceptuado" />
+       </on-render>
+    </view-state>
+    
+    
+</flow>

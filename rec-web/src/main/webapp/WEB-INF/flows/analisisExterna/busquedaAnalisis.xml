@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <end-state id="listado" view="analisisExterna/busquedaAnalisis" >
+	    <on-entry>
+    	<!--
+	    	<evaluate expression="executor.execute('mapaGlobalOficinaManager.getCriteriosAnalisis')" result="flowScope.dto" />
+	    -->
+       
+         <evaluate expression="executor.execute('tipoProcedimientoManager.getTipoProcedimientos')" result="flowScope.tipoProcedimientos" />
+         <evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+         <evaluate expression="executor.execute('DDFaseProcesalManager.getFasesProcesales')" result="flowScope.fases" />
+         <evaluate expression="executor.execute('DDPlazoAceptacionManager.getPlazosAceptacion')" result="flowScope.plazos" />
+         <evaluate expression="executor.execute('dictionaryManager.getList', 'DDCriterioAnalisisExterna')" result="flowScope.salidas" />
+	    </on-entry>
+    </end-state>
+
+</flow>

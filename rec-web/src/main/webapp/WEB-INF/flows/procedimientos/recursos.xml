@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dtoRecurso" class="es.capgemini.pfs.recurso.dto.DtoRecurso" />
+	<!-- <var name="recurso" class="es.capgemini.pfs.recurso.model.Recurso" /> -->
+
+	<input name="id" type="java.lang.Long"/>
+	<input name="idProcedimiento" type="java.lang.Long"/>
+	<!-- Si isConsulta==true significa que se va a consultar, no editar -->
+	<input name="isConsulta" type="java.lang.Boolean" />
+
+	<decision-state id="newOrEdit">
+		<if test="id!=null" then="buscar" else="crear"/>
+	</decision-state>
+
+
+	<action-state id="buscar">
+		<evaluate expression="executor.execute('recursoManager.get', id)" result="flowScope.recurso"/>
+		<transition to="formulario" />
+	</action-state>
+
+	<action-state id="crear">
+		<evaluate expression="executor.execute('recursoManager.getInstance',idProcedimiento)" result="flowScope.recurso" />
+		<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}" model="dtoRecurso">
+    	<binder>
+    		<binding property="recurso.actor" converter="GenericDictionary"/>
+    		<binding property="recurso.tipoRecurso" converter="GenericDictionary"/>
+    		<binding property="recurso.causaRecurso" converter="GenericDictionary"/>
+			<binding property="recurso.resultadoResolucion" converter="GenericDictionary"/>
+    		<binding property="recurso.observaciones" />
+    		<binding property="recurso.fechaRecurso" />
+    		<binding property="recurso.fechaVista" />
+    		<binding property="recurso.confirmarVista" />
+    		<binding property="recurso.confirmarImpugnacion" />
+    		<binding property="recurso.fechaImpugnacion" />
+    		<binding property="recurso.fechaResolucion" />
+    	<!--
+			-->
+    	</binder>
+    	<on-entry>
+    		<set name="dtoRecurso.recurso" value="recurso" />
+    		<set name="flowScope.view" value="'procedimientos/recursos'" />
+    		<evaluate expression="executor.execute('dictionaryManager.getList','DDActor')" result="flashScope.DDActor"/>
+    		<evaluate expression="executor.execute('dictionaryManager.getList','DDTipoRecurso')" result="flashScope.DDTipoRecurso"/>
+    		<evaluate expression="executor.execute('dictionaryManager.getList','DDCausaRecurso')" result="flashScope.DDCausaRecurso"/>
+    		<evaluate expression="executor.execute('dictionaryManager.getList','DDResultadoResolucion')" result="flashScope.DDResultadoResolucion"/>
+    	</on-entry>
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.view" value="'default'"/>
+			<!--<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>-->
+		</on-render>
+		<transition on="update" to="update" />
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state>
+
+    <action-state id="update">
+    	<evaluate expression="executor.execute('recursoManager.createOrUpdate',dtoRecurso)" />
+		<transition to="close"></transition>
+	</action-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

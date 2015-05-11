@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="bien" class="es.capgemini.pfs.bien.model.Bien" />
+	<var name="dtoBien" class="es.capgemini.pfs.bien.dto.DtoBien" />
+
+	<input name="id" type="java.lang.Long"/>
+	<input name="idPersona" type="java.lang.Long"/>
+
+	<decision-state id="newOrEdit">
+		<if test="id!=null" then="buscar" else="formulario"/>
+	</decision-state>
+	
+	
+	<action-state id="buscar">
+			<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+			<transition to="formulario" />
+	</action-state>
+
+
+    <view-state id="formulario" view="${view}" model="dtoBien">
+		<!--
+    	<binder>
+    		<binding property="bien.participacion"/>
+    		<binding property="bien.valorActual"/>
+    		<binding property="bien.importeCargas"/>
+    		<binding property="bien.superficie"/>
+    		<binding property="bien.poblacion"/>
+    		<binding property="bien.datosRegistrales"/>
+    		<binding property="bien.referenciaCatastral"/>
+    		<binding property="bien.descripcionBien"/>
+    		<binding property="idTipoBien"/>
+    		<binding property="bien.tipoBien" converter="DDTipoBien"/>
+    		<binding property="fecha"/>
+    	</binder>
+    	-->
+    	<on-entry>
+    		<set name="dtoBien.bien" value="bien" />
+    		<set name="flowScope.view" value="'fase2/bienes/cargasBienes'" />
+    	</on-entry>
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.view" value="'default'"/>
+			<!--
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+			-->
+		</on-render>
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state> 	
+    
+    <action-state id="update">
+    	<evaluate expression="executor.execute('bienManager.createOrUpdate', dtoBien, idPersona)" />
+		<!-- <transition on-exception="java.lang.Exception" to="formulario" /> -->
+		<transition to="close"></transition>
+	</action-state>
+	
+	<end-state id="close" view="default" />
+        
+</flow>

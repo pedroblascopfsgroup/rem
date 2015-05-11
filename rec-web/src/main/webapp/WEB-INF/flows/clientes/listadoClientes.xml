@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="gv" type="java.lang.Boolean"/>
+    <input name="gsis" type="java.lang.Boolean"/>
+    <input name="gsin" type="java.lang.Boolean"/>
+   
+	
+	<!-- renderiza el formulario -->
+    <end-state id="listado" view="clientes/listadoClientes" >
+	    <on-entry>
+	    	<evaluate expression="requestParameters.situacion" result="flowScope.situacion" />
+	    	<evaluate expression="requestParameters.gv" result="flowScope.isGestionVencidos" /> 
+            <evaluate expression="requestParameters.gsin" result="flowScope.isGestionSeguimientoSintomatico" /> 
+            <evaluate expression="requestParameters.gsis" result="flowScope.isGestionSeguimientoSistematico" /> 
+            <evaluate expression="executor.execute('tipoProductoManager.getTiposProducto')" result="flowScope.tiposProducto" />
+	    	<evaluate expression="executor.execute('estadoItinearioManager.getEstadosClientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('segmentoManager.getSegmentos')" result="flowScope.segmentos" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('personaManager.getTiposPersonas')" result="flowScope.tiposPersona" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+            <evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoFinanciero')" result="flowScope.estadosFinancieros"/>
+            <evaluate expression="executor.execute('ddTipoItinerarioManager.getTipoItinerarios')" result="flowScope.gestion" />
+	    </on-entry>
+    </end-state> 	
+    
+</flow>

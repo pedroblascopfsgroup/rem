@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dtoPolitica" class="es.capgemini.pfs.politica.dto.DtoPolitica" />
+    <input name="idPolitica" type="java.lang.Long" />
+    <input name="idPersona" type="java.lang.Long" />
+    <input name="isSuperusuario" type="java.lang.Boolean" />
+
+    <view-state id="formulario" view="politica/datosPolitica" model="dtoPolitica">
+        <binder>
+            <binding property="codigoTipoPolitica" />
+            <binding property="codigoGestorPerfil"/>
+            <binding property="codigoGestorZona"/>
+            <binding property="codigoSupervisorPerfil"/>
+            <binding property="codigoSupervisorZona"/>
+        </binder>
+        <on-render>
+          <evaluate expression="executor.execute('politicaManager.getDtoPolitica', idPolitica, idPersona)" result="flowScope.dtoPolitica" />
+          <evaluate expression="executor.execute('politicaManager.getTipoPoliticaList')" result="flashScope.tiposPolitica" />
+          <evaluate expression="executor.execute('usuarioManager.getPerfiList')" result="flashScope.perfiles" />
+        </on-render>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="close" bind="false"/>
+    </view-state>
+    
+    <action-state id="update">
+        <evaluate expression="executor.execute('politicaManager.guardarPolitica', dtoPolitica)" /> 
+        <transition to="close"></transition>
+    </action-state>
+  
+    <end-state id="close" view="default" />
+
+</flow>

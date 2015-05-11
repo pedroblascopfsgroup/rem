@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="dto" class="es.capgemini.pfs.politica.dto.DtoAnalisisOperacion"/>
+    
+    <input name="idPersona" type="java.lang.Long" />
+    <input name="idContrato" type="java.lang.Long" />
+    <input name="idAppSeleccionado" type="java.lang.Long" required="false"/>
+
+    <view-state id="listado" view="politica/editaAnalisisOperaciones">
+        <on-entry>
+        	<evaluate expression="executor.execute('dictionaryManager.getList', 'DDValoracion')" result="flowScope.valoraciones"/>
+        	<evaluate expression="executor.execute('dictionaryManager.getList', 'DDImpacto')" result="flowScope.impactos"/>
+            <evaluate expression="executor.execute('analisisPoliticaManager.editarAnalisisOperaciones', idContrato, idAppSeleccionado)" result="flowScope.analisisPO" />
+            <evaluate expression="requestParameters.idPersona" result="flowScope.idPersona"/>
+        </on-entry>
+        <transition on="update" to="saveOrUpdate"/>
+    </view-state>
+
+	<end-state id="saveOrUpdate" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)"/>
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarAnalisisOperaciones', dto)"/>
+		</on-entry>
+	</end-state>
+</flow>

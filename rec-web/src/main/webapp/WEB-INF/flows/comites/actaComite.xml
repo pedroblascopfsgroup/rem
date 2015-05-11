@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="dtoExpediente" class="es.capgemini.pfs.expediente.dto.DtoBuscarExpedientes" />
+
+    <var name="dtoSesionComite" class="es.capgemini.pfs.comite.dto.DtoSesionComite" />
+    <input name="idSesion" type="java.lang.Long" />
+  
+    <view-state id="acta" view="comites/actaComite">
+        <on-render>
+            <evaluate expression="executor.execute('comiteManager.getDtoParaSesion', idSesion)" result="flowScope.dtoSesionComite" />
+        </on-render>
+        <transition on="listadoAsistentes" to="listadoAsistentes" />
+
+    </view-state>
+  
+    <view-state id="listadoAsistentes" view="comites/asistentesJSON"/>
+
+</flow>

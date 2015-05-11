@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dtoTarea" class="es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga" />
+	<input name="idEntidadInformacion" type="java.lang.Long"/>
+	<input name="idTipoEntidadInformacion" type="java.lang.String"/>
+	<input name="descripcion" type="java.lang.String"/>
+	<input name="situacion" type="java.lang.String"/>
+	<input name="fechaCreacion" type="java.lang.String"/>
+	<input name="descripcion" type="java.lang.String"/>
+	<input name="fechaVencimiento" type="java.lang.String"/>
+	<input name="idTareaAsociada" type="java.lang.Long"/>
+    <input name="codigoTipoProrroga" type="java.lang.String"/>	
+	
+    <view-state id="formulario" view="${view}" model="dtoTarea">
+    	<binder>
+    		<binding property="descripcionCausa"/>
+    		<binding property="fechaPropuesta" />
+    		<binding property="idEntidadInformacion"/>
+    		<binding property="idTipoEntidadInformacion"/>
+    		<binding property="idTareaAsociada"/>
+    		<binding property="codigoCausa"/>
+		</binder>
+    	<on-entry>
+    		<set name="idTipoEntidadInformacion" value="idTipoEntidadInformacion" />
+    		<set name="idEntidadInformacion" value="idEntidadInformacion" />
+    		<set name="situacion" value="situacion" />
+    		<set name="fechaCreacion" value="fechaCreacion" />
+    		<set name="fechaVencimiento" value="fechaVencimiento"/>
+    		<set name="descripcion" value="descripcion" />
+    		<set name="idTareaAsociada" value="idTareaAsociada" />
+    		<set name="flowScope.view" value="'tareas/solicitarProrroga'" />
+    		<evaluate expression="executor.execute('prorrogaManager.obtenerCausas', codigoTipoProrroga)" result="flowScope.causas" />
+            <evaluate expression="executor.execute('prorrogaManager.obtenerPlazo', idTipoEntidadInformacion, idEntidadInformacion)" result="flowScope.plazo" />
+    	</on-entry>
+		
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default'--> 
+			<set name="flowScope.view" value="'default'"/>
+			<!--
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+			-->
+		</on-render>
+		
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state> 	
+    
+    <action-state id="update">
+    	<evaluate expression="executor.execute('tareaNotificacionManager.crearProrroga',dtoTarea)" /> 
+		<!-- <transition on-exception="java.lang.Exception" to="formulario" /> -->
+		<transition to="close"></transition>
+	</action-state>
+	
+	<end-state id="close" view="default" />
+        
+</flow>

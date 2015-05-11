@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="id" type="java.lang.Long" required="true" />
+    <input name="tipo" type="java.lang.String" />
+    <input name="REPORT_NAME" type="java.lang.String" />
+
+    <end-state id="generar" view="reportPDF/expedienteCongelado">
+    	<on-entry>
+    		 <evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.exp" />
+    		 <evaluate expression="executor.execute('estadoItinearioManager.findByCodigo', exp.estadoItinerario.siguienteEstado)" result="flowScope.estadoIti" />
+    		 <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+    		 <evaluate expression="executor.execute('expedienteManager.findTitulosExpediente', id)" result="flowScope.titulos" />
+    		 <evaluate expression="executor.execute('expedienteManager.getPersonasPoliticasDelExpediente', id)" result="flowScope.perPoliticas" />
+             <evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
+    	</on-entry>
+    </end-state>
+
+</flow>

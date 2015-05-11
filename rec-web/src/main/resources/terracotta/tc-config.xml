@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tc:tc-config xsi:schemaLocation="http://www.terracotta.org/schema/terracotta-5.xsd" xmlns:tc="http://www.terracotta.org/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <servers>
+        <server host="localhost" name="PFS_terracota">
+            <dso-port>9510</dso-port>
+            <jmx-port>9520</jmx-port>
+            <data>%(user.home)/terracotta/server-data</data>
+            <logs>%(user.home)/terracotta/server-logs</logs>
+        </server>   
+        <update-check>
+            <enabled>true</enabled>
+        </update-check>
+    </servers>
+    <clients>
+     <logs>%(user.home)/terracotta/client-logs</logs>
+     <statistics>%(user.home)/terracotta/client-statistics/%D</statistics>
+        <!-- 
+     <modules>
+       <repository>C:\Java\tc\modules</repository>
+       <module group-id="org.terracotta.modules" name="tim-hibernate-cache-3.3" version="1.0.0-SNAPSHOT"/>
+       <module group-id="org.terracotta.modules" name="tim-jetty-6.1" version="2.0.0-SNAPSHOT"/>
+     </modules>
+     <dso>
+       <debugging>
+         <instrumentation-logging>
+           <class>false</class>
+           <hierarchy>false</hierarchy>
+           <locks>false</locks>
+           <transient-root>false</transient-root>
+           <roots>false</roots>
+           <distributed-methods>false</distributed-methods>
+         </instrumentation-logging>
+       </debugging>
+     </dso>
+         -->
+         
+  </clients>       
+  
+ </tc:tc-config>
+ 

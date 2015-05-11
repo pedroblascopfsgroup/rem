@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dtoEntrada" class="es.capgemini.pfs.analisisExterna.dto.DtoAnalisisExternaFormulario" />
+
+    <input name="REPORT_NAME" type="java.lang.String" />
+    <input name="tipo" type="java.lang.String" />
+
+	<decision-state id="PdfOrXls">
+		<if test="tipo=='generaPDF'" then="vistaPDF" else="vistaXLS" />
+	</decision-state>
+
+	<action-state id="vistaPDF">
+			<!-- Elegimos el reporte optimizado para PDF -->
+			<set name="flowScope.view" value="'reportPDF/analisisExternaPDF'" />
+			<transition to="datos" />
+	</action-state>
+
+	<action-state id="vistaXLS">
+			<!-- Elegimos el reporte optimizado para Excel -->
+			<set name="flowScope.view" value="'reportXLS/analisisExternaXLS'" />
+			<transition to="datos" />
+	</action-state>
+
+    <end-state id="datos" view="${view}">
+    	<on-entry>
+	    	<evaluate expression="binder.bindAndValidate(flowRequestContext, dtoEntrada)" />
+    		<evaluate expression="executor.execute('analisisExternaManager.exportAnalisis', dtoEntrada)" result="flowScope.dto" />
+    		<!-- Info de encabezado -->
+		  	<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+		    <evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
+			<evaluate expression="executor.execute('configManager.getConfigByKey', 'entidadDescripcion')" result="flowScope.entidadDescripcion" />
+    	</on-entry>
+    </end-state>
+
+</flow>

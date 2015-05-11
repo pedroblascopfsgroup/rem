@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <!-- 
+    <persistence-context/>
+     -->
+        
+    <end-state id="hibernate" view="test/hibernate">
+    	<on-entry>
+    		<evaluate expression="executor.execute('itinerarioManager.test', '5')" result="flowScope.i"></evaluate>
+    		<evaluate expression="executor.execute('itinerarioManager.test2', flowScope.i)"></evaluate>
+    	</on-entry>
+    </end-state>
+    
+</flow>

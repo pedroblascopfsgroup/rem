@@ -1,0 +1,68 @@
+#### VERSION 2.0.0 ####
+
+- Divido el plugin en common y web para añadir al batch
+
+
+#### VERSION 1.4.5 ####
+- Se añade la carpeta config para indicar la configuración personalida de pestañas por profile,
+para realizar el deploy para bankia añadir el comando -Pbankia.
+
+- Se ha movido todo el modelo de datos al coreextension, por lo que se necesita la versión 3.3.x del coreextension
+ 
+
+#### VERSION 1.4.4 ####
+-Se añade el permiso "VER_EMBARGOS_DEL_BIEN" para visializar los datos de los embargos a nivel de bien
+
+-Añadida la pestaña de subastas del procedimiento a nivel asunto
+
+-Añadido un botón en la pestaña bienes del procedimiento para agregarle bienes 
+
+
+#### VERSION 1.4.4 ####
+Se modifica el fichero de configuración de los tabs añadiendole un 01 para indicar que es el base,
+en caso de querer sobreescribirlo se deberá añadir en el plugin del cliente un 02 (ejemplo recoveru-bankiaWeb-plugin)
+
+#### VERSION 1.4.3 ####
+[diana] Se elimina la sobreescritura del flow consultaCliente porque todas las propiedades están ya mapeadas en el rec-web
+
+#### VERSION 1.4.2 ####
+- Se resuelve el error de reseteo de campos en anotaciones m�ltiples y una asignaci�n a un campo erroneo del dto.
+
+- Se a�aden las dependencias con mockito
+
+#### VERSION 1.4.1 ####
+- Se resuelven los siguientes errores de la 1.4.0
+    * Se a�adie la siguiente l�nea en el fichero de properties
+        plugin.nuevoModeloBienes.procedimiento.gridEmbargosMultiple.fechaAvaluo=F.Aval�o
+        
+    * Se corrige una anotaci�n incorrecta en EditBienManager.
+    
+#### VERSION 1.4.0 ####
+
+Requisitos de instalaci�n
+	* Es necesario ejecutar scripts/1.4.0
+
+Cambios
+	* Nuevo campo en embargosProcedimientos "Fecha Denegacion Embargo"
+	* Anotaci�n m�ltiple de embargos procedimientos
+
+#### VERSION 1.3.0 ####
+- Bloqueo del tipo de bien si esta editando
+- A�adido nuevo tipo de bien "Devoluciones AEAT"
+- La cuenta bancaria deja de ser obligatoria 
+- Ordenaci�n del desplegable de tipos de bien
+- Porcentaje de participaci�n movido a la pesta�a general y quitado de la cabecera del bien
+- Solucionado error al calcular porcentaje participaci�n en pesta�a solvencia del cliente
+- A�adido el bot�n para modificar la participaci�n de la persona en la pesta�a relaciones del bien
+- Se muestran las observaciones del bien en la pesta�a "bienes" del prc seg�n funci�n "OBSERVACIONES_BIENES_PRC"
+
+NOTAS
+ - Es necesario ejecutar el script 1.3.0/MASTER-Funcion_observaciones_bien.sql
+
+#### VERSION 1.2.0_rc1 #### 20/06/2013
+
+- Nueva pesta�a de "Observaciones"
+
+#### VERSION 1.2.0_rc2 #### 10/07/2013
+
+- Funcionalidad y visualizaci�n de los datos de los bienes dependiente del tipo de bien

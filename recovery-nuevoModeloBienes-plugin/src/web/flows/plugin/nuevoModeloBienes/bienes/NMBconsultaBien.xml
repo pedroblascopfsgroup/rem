@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="id" type="java.lang.Long"/>
+    <input name="nombreTab" type="java.lang.String"/>
+	
+	<!-- renderiza el formulario -->
+    <end-state id="buscaBien" view="plugin/nuevoModeloBienes/bienes/NMBconsultaBien">
+    	<on-entry>
+    		<evaluate expression="executor.execute('NMBconfigTabs.getTabsTiposBien')" result="flowScope.tabsTipoBien"/>
+    		<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.NMBbien"/>
+    		<evaluate expression="executor.execute('NMBbienManager.getTabs', id)" result="flowScope.tabsBien"/>
+    		<evaluate expression="executor.execute('NMBbienManager.getButtons', id)" result="flowScope.buttonsBien" />
+    		<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.permiteSolicitarTasacion', id)" result="flowScope.solicitarTasacion" />
+    	</on-entry>
+    </end-state>
+</flow>

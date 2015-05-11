@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="id" type="java.lang.Long"/>
+	<!--
+	<input name="poblacion" type="java.lang.String"/>
+	<input name="codPostal" type="java.lang.String"/>
+	<input name="codigoTipoBien" type="java.lang.String"/>
+	
+	<input name="valorDesde" type="java.lang.Long"/>
+	<input name="valorHasta" type="java.lang.Long"/>
+	<input name="totalCargasDesde" type="java.lang.Long"/>
+	<input name="totalCargasHasta" type="java.lang.Long"/>
+	
+	<input name="fechaVerificacion" type="java.lang.String"/>
+	<input name="numContrato" type="java.lang.String"/>
+	<input name="codCliente" type="java.lang.String"/>
+	<input name="nifPrimerTitular" type="java.lang.String"/>
+	<input name="nifCliente" type="java.lang.String"/>
+	-->
+	
+  	<end-state id="listado" view="plugin/nuevoModeloBienes/subastas/menu/NMBgestionPropuestaInstruccionesSubasta">
+  		<on-entry>
+  		
+  			<!-- PESTANYA SUBASTA -->
+  			<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.nuevoModeloBienes.lotesubastas.busqueda.buttons.left')" result="flowScope.buttonsLeft"/>
+			<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.nuevoModeloBienes.lotesubastas.busqueda.buttons.right')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDSiNo')" result="flashScope.ddSiNo"/>			
+			<evaluate expression="executor.execute('dictionaryManager.getList','DDEstadoLoteSubasta')" result="flowScope.estadoLoteSubasta"/>			
+			<evaluate expression="executor.execute('dictionaryManager.getList','DDEstadoSubasta')" result="flowScope.estadoSubasta"/>			
+			<evaluate expression="executor.execute('dictionaryManager.getList','DDEntidadAdjudicatariaPropietaria')" result="flowScope.entidadAdjudicatariaPropietaria"/>
+			<evaluate expression="executor.execute('plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaBankia')" result="flowScope.tareasSubastaBankia" />
+			<evaluate expression="executor.execute('plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaSareb')" result="flowScope.tareasSubastaSareb" />
+			
+			<!-- PESTANYA CLIENTE -->
+			<evaluate expression="executor.execute('personaManager.getTiposPersonas')" result="flowScope.tiposPersona" />
+			
+			<!-- PESTANYA CONTRATO -->
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoContrato')" result="flowScope.estadosContrato"/>			
+			<evaluate expression="executor.execute('tipoProductoEntidadManager.getTiposProductoEntidad')" result="flowScope.tiposProductoEntidad" />
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+			<!--  PESTANYA ASUNTO -->			
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDGestionAsunto')" result="flowScope.gestiones"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDPropiedadAsunto')" result="flowScope.propiedades"/>
+		</on-entry>
+  	</end-state>
+  
+</flow>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean p:entity="contrato.buttons" p:name="btnInformeAcueroContrato" p:order="1"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/contratos/button/btnInformeAcuerdo.jsp"
+		  p:permission="BOTON_INF_AGREGADO_CONTRATO"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+
+	<bean p:entity="clientes" p:name="solvencia" p:order="399" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/clientes/tabs/tabSolvencia.jsp" 
+		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+
+	<bean p:entity="tabs.procedimiento" p:name="embargosProcedimiento" p:order="299" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/procedimientos/tabs/tabEmbargoProcedimiento.jsp" 
+		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		  
+	<bean p:entity="tabs.contrato" p:name="contratoBienes" p:order="699" 
+		  p:permission="SECCION_BIENES_EN_CONTRATO"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/contratos/tabs/tabContratoBienes.jsp" 
+		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="menu" p:name="busquedas/busquedaBienes"
+		  p:order="180"
+		  p:permission="BUSCAR-BIENES"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/menu/NMBmenu-busquedaBienes.jsp"
+		  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		  
+	<!-- Búsqueda de Subastas -->	
+	  
+	<bean p:entity="menu" p:name="busquedas/busquedaSubastas"
+		  p:order="700"
+		  p:permission="BUSCAR-SUBASTAS"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/menu/NMBmenu-busquedaSubastas.jsp"
+		  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+
+	<bean p:entity="plugin.nuevoModeloBienes.web.subastas.busqueda.buttons.left" p:name="btnBuscar" p:order="10"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnBuscar.jsp"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="plugin.nuevoModeloBienes.web.subastas.busqueda.buttons.left" p:name="btnClean" p:order="20"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnClean.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="plugin.nuevoModeloBienes.web.subastas.busqueda.buttons.left" p:name="btnExcel" p:order="30"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnExportarXls.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+
+	<!-- Fin Búsqueda de Subastas -->		  
+
+	<!-- Búsqueda Instrucciones -->
+	<bean p:entity="menu" p:name="comite" p:order="200" p:priority="1"  
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/comite/menu/comite.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_COMITE"/>
+
+	<bean p:entity="plugin.nuevoModeloBienes.web.lotesubastas.busqueda.buttons.left" p:name="btnBuscarLoteSubasta" p:order="10"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnBuscarLoteSubasta.jsp"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="plugin.nuevoModeloBienes.web.lotesubastas.busqueda.buttons.left" p:name="btnClean" p:order="20"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnClean.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		 
+	<bean p:entity="plugin.nuevoModeloBienes.web.lotesubastas.busqueda.buttons.left" p:name="btnExcel" p:order="30"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnExportarLoteSubastaXls.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+		  
+	<bean p:entity="plugin.nuevoModeloBienes.web.lotesubastas.busqueda.buttons.left" p:name="btnInformeComite" p:order="40"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/buttons/btnInformeComite.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+
+	<!-- Fin Búsqueda Instrucciones -->
+		  
+	<!-- Búsqueda de bienes -->
+	<bean p:entity="plugin.nuevoModeloBienes.web.bienes.busqueda.buttons.left" p:name="btnBuscar" p:order="10"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/buttons/btnBuscar.jsp"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="plugin.nuevoModeloBienes.web.bienes.busqueda.buttons.left" p:name="btnClean" p:order="20"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/buttons/btnClean.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="plugin.nuevoModeloBienes.web.bienes.busqueda.buttons.left" p:name="btnExcel" p:order="30"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/buttons/btnExportarXls.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="plugin.nuevoModeloBienes.web.bienes.busqueda.buttons.left" p:name="buttonBienNuevo" p:order="40"
+		 p:permission="SOLVENCIA_NUEVO"
+		 p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/buttons/btnNuevo.jsp"
+		 p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+				
+	<!-- Ficha bien -->
+		
+	<bean p:entity="bien.tabs" p:name="tabCabeceraBien" p:order="10"
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabCabecera.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+			
+	<bean p:entity="bien.tabs" p:name="tabRelacionesBien" p:order="30"
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabRelaciones.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="bien.tabs" p:name="tabEmbargosBien" p:order="60"
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabEmbargos.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="VER_EMBARGOS_DEL_BIEN"/>
+		
+	<bean p:entity="bien.tabs" p:name="tabDatosEntidad" p:order="20"
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabDatosEntidad.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
+		
+	<bean p:entity="bien.tabs" p:name="tabCargas" p:order="50"
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabCargas.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="bien.tabs" p:name="tabAdjudicacion" p:order="40"
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabAdjudicacion.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="bien.tabs" p:name="tabProcedimientos" p:order="70"
+		p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/tabs/tabProcedimientos.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>			
+	
+	<!-- fast -->
+	
+	<bean p:entity="entidad.contrato.buttons.left.fast" p:name="btnInformeAcueroContrato" p:order="1"
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/contratos/button/btnInformeAcuerdoFast.jsp"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		  p:permission="BOTON_INF_AGREGADO_CONTRATO"/>
+	
+	<bean p:entity="tabs.cliente.fast" p:name="solvencia" p:order="399" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/clientes/tabs/tabSolvenciaFast.jsp" 
+		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+
+	<bean p:entity="tabs.procedimiento.fast" p:name="embargosProcedimiento" p:order="299" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/procedimientos/tabs/tabEmbargoProcedimientoFast.jsp" 
+		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		  
+	<bean p:entity="tabs.contrato.fast" p:name="contratoBienes" p:order="699" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/contratos/tabs/tabContratoBienesFast.jsp" 
+		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		  p:permission="SECCION_BIENES_EN_CONTRATO"/>
+		  
+	<bean p:entity="tabs.asunto.fast" p:name="tabTramiteSubastas" p:order="2100" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/tabs/tabSubastas.jsp" 
+		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  />	
+		  
+	<bean p:entity="tabs.asunto.fast" p:name="tabAdjudicados" p:order="2200" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/adjudicacion/tabs/tabAdjudicados.jsp" 
+		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  
+		  p:permission="TAB_ADJUDICADOS"/>		  			  
+
+	<bean p:entity="tabs.asunto.fast" p:name="tabAnalisisContratos" p:order="920" 
+		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/analisisContratos/tab/tabAnalisisContratos.jsp" 
+		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  
+		  p:permission="TAB_ANALISISCONTRATOS"/>
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssBienes" p:order="1"
+		p:fileName="../js/plugin/nuevoModeloBienes/css/bienes.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+			  				  	  
+</beans>

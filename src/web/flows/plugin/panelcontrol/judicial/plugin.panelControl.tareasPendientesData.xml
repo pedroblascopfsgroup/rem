@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<var name="dto" class="es.pfsgroup.recovery.panelcontrol.judicial.dto.DtoDetallePanelControl"/>
+	
+	<end-state id="listado" view="plugin/panelcontrol/judicial/json/listadoTareasJSON" >
+	     <on-entry>
+	    	<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+	    <evaluate expression="executor.execute('plugin.panelcontrol.getTareasPanelControl', dto)" result="flowScope.pagina"/>
+	    </on-entry>
+    </end-state> 
+	
+	
+</flow>

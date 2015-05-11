@@ -1,0 +1,12 @@
+######################################
+#           RAMA SENCHA              #
+######################################
+#### version 2.0.2_sencha_rc01 #######
+* [Bruno] AS-138 Quitar rastros de Lindorff en el panel de conto
+* [Bruno] AS-137 Aumentar el timeout Ajax a 10 minutos en el panel de control
+
+#### version 2.0.1 ######################
+ 
+* Script para el panel de control de LINDORFF  
+** scripts/2.0.1/nuevas_vistas_panel_control_lindorff
+** scripts/2.0.1/borrar_funciones_para_lindorff

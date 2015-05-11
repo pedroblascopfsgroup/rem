@@ -1,0 +1,5 @@
+Button.icon_table_multiple { background-image: url('../../../../img/plugin/panelcontrol/table_multiple.png');}
+
+.icon_table_multiple{
+  background: transparent url('../../../../img/plugin/panelcontrol/table_multiple.png') no-repeat;
+}

@@ -1,0 +1,17 @@
+Requisitos para instalar el plugin de la agenda multifunción
+
+1. Debe esta funcionando una versión de EXTJS igual o superior a la 3.2. 
+2. Hay que añadir en el main.jsp lo siguiente
+	-- Al principio a continuación de las librerias JS ---
+	<script type="text/javascript" src="../js/plugin/agendaMultifuncion/extensible-all-debug.js"></script>
+    <script type="text/javascript" src="../js/plugin/agendaMultifuncion/ext-lang-es.js"></script>
+    
+    -- Al principio a cuntinuación de las hojas de estilo CSS --
+    <link rel="stylesheet" type="text/css" href="../js/plugin/agendaMultifuncion/resources/css/calendar.css">
+    <link rel="stylesheet" type="text/css" href="../js/plugin/agendaMultifuncion/resources/css/calendar-colors.css">
+    <link rel="stylesheet" type="text/css" href="../js/plugin/agendaMultifuncion/resources/css/extensible-all.css">
+    <link rel="stylesheet" type="text/css" href="../js/plugin/agendaMultifuncion/resources/css/recurrence.css">
+    <link rel="stylesheet" type="text/css" href="../js/plugin/agendaMultifuncion/checkboxes.css">
+    
+    -- Al final después de los jsp:include --
+    <jsp:include page="/js/plugin/agendaMultifuncion/calendario.js"></jsp:include>

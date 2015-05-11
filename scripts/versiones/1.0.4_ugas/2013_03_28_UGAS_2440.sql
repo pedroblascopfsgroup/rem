@@ -1,0 +1,4 @@
+Insert into PLA_PLAZOS_DEFAULT
+   (PLA_ID, DD_STA_ID, PLA_PLAZO, PLA_CODIGO, PLA_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+ Values
+   (S_PLA_PLAZOS_DEFAULT.nextval, 700, 259200000, 'Autotarea', 'Plazo minimo autotarea', 0, 'UGAS-2440', sysdate, 0);

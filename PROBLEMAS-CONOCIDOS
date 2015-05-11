@@ -1,0 +1,10 @@
+* ERROR AL ABRIR LA VENTANA DE ANOTACIÓN (EN INTEGRACIÓN O DESARROLLO)
+
+Causa: No existe la tabla adj_adjuntos
+Solución: Crearla e inicializarla
+
+create table adj_adjuntos as 
+select distinct adj_id, 'afaddafadfad' adj_fichero
+from ada_adjuntos_Asuntos ada;
+
+EN ENTORNOS DE PRODUCCIÓN IMPORTAR LA TABLA DESDE DUMP

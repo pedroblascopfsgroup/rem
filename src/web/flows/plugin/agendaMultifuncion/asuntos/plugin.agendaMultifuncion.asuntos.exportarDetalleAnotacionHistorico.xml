@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="DtoExportarDetalleAnotacionHistorico" class="es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoExportarDetalleAnotacionHistorico"/>
+    <input name="emisor" type="java.lang.String"/> 
+	<input name="destinatario" type="java.lang.String"/>
+	<input name="cc" type="java.lang.String"/>
+	<input name="fechaCreacion" type="java.lang.String"/>
+	<input name="nombreAsunto" type="java.lang.String"/>
+	<input name="numLitigio" type="java.lang.String"/>
+	<input name="situacion" type="java.lang.String"/>
+	<input name="idasunto" type="java.lang.String"/>
+	<input name="tipoentidad" type="java.lang.String"/>
+	<input name="texto" type="java.lang.String"/>
+	<input name="idTraza" type="java.lang.String"/>
+   
+   	<end-state id="btnExportarDetalleAnotacionHistorico" view="reportPDF/plugin/agendaMultifuncion/asuntos/exportarDetalleAnotacionHistorico" >
+      	<on-entry>
+      		<evaluate expression="binder.bindAndValidate(flowRequestContext, DtoExportarDetalleAnotacionHistorico)"/>
+	    	<evaluate expression="executor.execute('plugin.agendaMultifuncion.historicoasuntos.manager.exportar.detalleanotacionhistorio', DtoExportarDetalleAnotacionHistorico)" result="flowScope.dto" />	    	
+	    	</on-entry>
+    </end-state> 	
+    
+</flow>

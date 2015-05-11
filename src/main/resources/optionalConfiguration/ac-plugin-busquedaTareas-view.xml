@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean p:entity="menu" p:name="busquedas/busquedaTareas" p:order="160"
+		p:permission="BUSCAR-TAREAS"
+		p:fileName="/WEB-INF/jsp/plugin/busquedaTareas/menu/menu-busquedaTareas.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	<!-- Búsqueda de Tareas -->
+	<bean p:entity="plugin.busquedaTareas.web.tareas.tabs" p:name="filtrosTareaBasicosDinamico"
+		p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/busquedaTareas/tabs/filtrosBasicosTareaDinamico.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.busquedaTareas.web.tareas.tabs" p:name="filtrosTareaFechasDinamico"
+		p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/busquedaTareas/tabs/filtrosFechasTareaDinamico.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.busquedaTareas.web.tareas.tabs" p:name="filtrosTareaGrupoDinamico"
+		p:order="3"
+		p:fileName="/WEB-INF/jsp/plugin/busquedaTareas/tabs/filtrosGrupoTareaDinamico.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.busquedaTareas.web.tareas.tabs" p:name="filtrosTareaIndividualDinamico"
+		p:order="4"
+		p:fileName="/WEB-INF/jsp/plugin/busquedaTareas/tabs/filtrosIndividualTareaDinamico.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssBusquedaTareas" p:order="1"
+		p:fileName="../js/plugin/busquedaTareas/css/busquedaTareas.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />		
+</beans>

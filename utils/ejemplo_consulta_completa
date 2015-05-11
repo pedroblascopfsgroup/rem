@@ -1,0 +1,119 @@
+ select tar 
+ from TareaNotificacion tar 
+ where (  
+ 	tar in ( 
+ 		select tn 
+ 		from 	TareaNotificacion tn left join 
+ 				tn.cliente.estadoItinerario.estados est 
+ 		where 	1=1  and 
+ 				tn.cliente.estadoItinerario.codigo = tn.estadoItinerario.codigo  and 
+ 				tn.cliente.arquetipo.itinerario = est.itinerario  and 
+ 				tn.tipoEntidad.id = 1 and 
+ 				tn.subtipoTarea.tipoTarea.codigoTarea = :codigoTarea  and 
+ 				(  	tn.cliente.oficina.zona.codigo like '01010003%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01030005%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01030006%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01030012%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01040002%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01040004%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01040008%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01040009%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01040011%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01050001%' OR 
+ 					tn.cliente.oficina.zona.codigo like '01010013%'  
+ 				)  
+ 	)  
+ 	or tar in 
+ 		( 	select tn 
+			from TareaNotificacion tn left join  
+				 tn.expediente.estadoItinerario.estados est 
+			where 	1=1  and 
+					tn.expediente.estadoItinerario.codigo = tn.estadoItinerario.codigo  and 
+					tn.expediente.arquetipo.itinerario = est.itinerario  and 
+					tn.tipoEntidad.codigo = 2  and 
+					tn.subtipoTarea.tipoTarea.codigoTarea = :codigoTarea  and 
+					tn.subtipoTarea.codigoSubtarea != 4  and 
+					(  	tn.expediente.oficina.zona.codigo like '01010003%' OR 
+						tn.expediente.oficina.zona.codigo like '01030005%' OR 
+						tn.expediente.oficina.zona.codigo like '01030006%' OR 
+						tn.expediente.oficina.zona.codigo like '01030012%' OR 
+						tn.expediente.oficina.zona.codigo like '01040002%' OR 
+						tn.expediente.oficina.zona.codigo like '01040004%' OR 
+						tn.expediente.oficina.zona.codigo like '01040008%' OR 
+						tn.expediente.oficina.zona.codigo like '01040009%' OR 
+						tn.expediente.oficina.zona.codigo like '01040011%' OR 
+						tn.expediente.oficina.zona.codigo like '01050001%' OR 
+						tn.expediente.oficina.zona.codigo like '01010013%'  )  
+					) 
+		)  and 
+	tar.subtipoTarea.tipoTarea.codigoTarea = :codigoTarea  AND 
+	tar in 
+		( 	select tn 
+			from TareaNotificacion tn 
+			where 	1=1  and 
+					trunc (tn.fechaInicio) >= trunc (:fechaInicioDesde)  and 
+					trunc (tn.fechaInicio) <= trunc (:fechaInicioHasta)  
+		) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+﻿
+ select tar 
+ from TareaNotificacion tar 
+ where 
+ 			(
+ 				tar in 
+ 				( select tn 
+ 					from 	TareaNotificacion tn left join 
+ 								tn.cliente.estadoItinerario.estados est 
+ 					where tn.auditoria.borrado = 0  and 
+ 								(tn.tareaFinalizada is null or tn.tareaFinalizada= 0) and 
+ 								tn.cliente.estadoItinerario.codigo = tn.estadoItinerario.codigo  and 
+ 								tn.cliente.arquetipo.itinerario = est.itinerario  and 
+ 								tn.tipoEntidad.id = 1 and 
+ 								(tn.cliente.oficina.zona.codigo like '01%')  and  
+ 								(case when tn.subtipoTarea.gestor = true then  est.gestorPerfil.id else est.supervisor.id end ) IN (6)  
+ 				) or  
+ 				tar in 
+ 				( select tn 
+ 					from TareaNotificacion tn left join  
+ 							 tn.expediente.estadoItinerario.estados est 
+ 					where tn.auditoria.borrado = 0  and 
+ 								(tn.tareaFinalizada is null or tn.tareaFinalizada= 0)  and 
+ 								tn.expediente.estadoItinerario.codigo = tn.estadoItinerario.codigo  and 
+ 								tn.expediente.arquetipo.itinerario = est.itinerario  and 
+ 								tn.tipoEntidad.codigo = 2  and 
+ 								tn.subtipoTarea.codigoSubtarea != 4  and 
+ 								(  tn.expediente.oficina.zona.codigo like '01%'  )  and  
+ 								( case when tn.subtipoTarea.gestor = true then  est.gestorPerfil.id else est.supervisor.id end ) IN (6)  
+ 					)  or  
+ 					tar in 
+ 					( select tn 
+ 						from 	TareaNotificacion tn left join  
+ 									tn.asunto asu 
+ 						where tn.auditoria.borrado = 0  and 
+ 									(tn.tareaFinalizada is null or tn.tareaFinalizada= 0)  and 
+ 									(asu.gestor.despachoExterno.zona.codigo like '01%'  )  
+ 					)  or  
+ 					tar in 
+ 					( select tn  
+ 						from TareaNotificacion tn  left join 
+ 								 tn.objetivo.politica pol 
+ 						where tn.auditoria.borrado = 0  and 
+ 									(tn.tareaFinalizada is null or tn.tareaFinalizada= 0)  and 
+ 									tn.tipoEntidad.codigo = 7  and 
+ 									pol.estadoPolitica.codigo = 'VIGE'  and  
+ 									( case when tn.subtipoTarea.gestor = true then  est.gestorPerfil.id else est.supervisor.id end ) IN (6)  
+ 					 )  
+ 				) 

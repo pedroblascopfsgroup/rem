@@ -1,0 +1,63 @@
+#### 2.0.0_TESTING #### 29/10/2013
+
+DEPENDENCIAS
+	* PFS-COMMOSN: 2.6.0
+	* COREEXTENSION: 2.6.0
+	* MEJORAS: 5.5.3
+	
+Esta versión se genera como una fusión de los últimos sprints de LINDORFF y UGAS. 
+
+Se etiqueta como TESTING porque requiere de una batería de pruebas exhaustiva antes de ser 
+	instalada.
+	
+OBSERVACIONES:
+Es importante ejecutar los scripts correspondientes a las versiones 1.1.1 y 1.1.2
+Además es necesario ejecutar periódicamente el update que se encuentra en el script
+	scripts/1.1.2/ENTITY-OPTIMIZACION_01.sql
+puesto que es necesario un mantenimiento regular de la tabla MEJ_IRG_INFO_REGISTRO.
+
+---------------------------------------------------------------------------------------
+#### VERSION 1.1.2 #### 24/07/2013
+
+En esta versión se han añadido scripts que optimizan la búsqueda de tareas. Ejecutarlos respentando el orden
+
+SCRIPTS:   Ejecutar scripts/1.1.2/ENTITY-OPTIMIZACION_01.sql
+					scripts/1.1.2/ENTITY-OPTIMIZACION_02.sql
+					scripts/1.1.2/ENTITY-OPTIMIZACION_03.sql
+					scripts/1.1.2/ENTITY-OPTIMIZACION_04.sql
+					scripts/1.1.2/ENTITY-OPTIMIZACION_05.sql
+					
+---------------------------------------------------------------------------------------
+#### VERSION 1.1.1 #### 17/07/2013
+
+DEPENDENCIAS:   MEJORAS 5.5.0 o superior
+
+* Se ha movido una CSS dinámica a su propia hoja de estilos para evitar problemas con IE 
+
+---------------------------------------------------------------------------------------
+#### VERSION 1.1.0 #### 18/06/2013 
+
+DEPENDENCIAS: 	PFS-COMMONS 2.5.0_rc6
+				COREEXTENSION 2.2.2
+
+SCRIPTS: Ejecutar scripts/1.1.0/1.1.2-ENTITY-CREATE_V42_VIEW.sql
+
+PROPERTIES: Añadir en devon.properties las siguientes propiedades para la exportación de tareas
+
+exportar.excel.limite.busqueda.tareas = 2000
+exportar.excel.limite.busqueda.tareas.simultaneos = 5
+exportar.excel.limite.busqueda.tareas.ruta = /tmp/listaBusquedaTareas
+
+CAMBIOS:
+
+Se han hecho las modificaicones necesarias para que la búsqueda de Tareas sea flexible y
+que se le puedan añadir elementos dinámicos.
+** La JSP principal es BTAlistadoTareasMultigestor.jsp, y desde esta se recoge la información de las pestañas dinámicas.
+** Desde la JSP se acceda al Controller donde se crean los DTOs de búsqueda.
+** Se han simplificado las querys de la búsqueda puesto que muchos de los filtros ya se incluyen en la vista que se ha creado.
+** Los filtros de las pestañas dinámicas dejan de ser independientes y se 'suman' a los filtros del resto de pestañas.
+** Se cambia el modelo de Exportación, para que sea el mismo que en asuntos y tareas pendientes.
+
+#### VERSION 1.0.8_rc1 ####
+
+- Prorroga masiva de tareas (ver readme.txt)

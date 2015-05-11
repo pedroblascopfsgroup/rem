@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<!-- Emilio <var name="dtoAsunto" class="es.capgemini.pfs.asunto.dto.DtoAsunto"/> -->
+	<var name="EXTdtoAsunto" class="es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoAsunto"/>
+	
+	<input name="idAsunto" type="java.lang.Long"/>
+	<input name="cambioSupervisor" type="java.lang.Boolean"/>
+	<input name="temporal" type="java.lang.Boolean"/>
+		 	 
+	<view-state id="formulario" view="plugin/mejoras/asuntos/altaAsuntos">
+    	<on-entry>
+    		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asuntoEditar"></evaluate>
+    		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.getListTiposGestorAsuntoUsuarioLogado',idAsunto)" result="flowScope.listTiposGestorAsuntoUsuarioLogado" />         
+    	</on-entry>
+        <transition on="saveAsunto" to="saveAsunto"/>
+	</view-state> 	
+	
+    <end-state id="saveAsunto" view="default">
+      <on-entry>  
+        <!-- Emilio 
+        <evaluate expression="binder.bindAndValidate(flowRequestContext,dtoAsunto)" />
+        <evaluate expression="executor.execute('asuntosManager.cambiarSupervisor',dtoAsunto,temporal)" result="flowScope.id"/>
+        -->
+        <evaluate expression="binder.bindAndValidate(flowRequestContext,EXTdtoAsunto)" />
+        <evaluate expression="executor.execute('asuntosManager.modificarAsunto',EXTdtoAsunto)" result="flowScope.id"/>
+      </on-entry>
+    </end-state>
+	
+	
+</flow>

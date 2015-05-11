@@ -1,0 +1,2 @@
+-- Cambiamos el refresco de la vista materializada que afecta al refresco de las tareas pendientes para que actualice las tareas pendientes cada hora
+ALTER MATERIALIZED VIEW UGAS001.VTAR_ASU_VS_USU REFRESH FORCE ON DEMAND START WITH sysdate NEXT sysdate+to_dsinterval('0 01:00:00');

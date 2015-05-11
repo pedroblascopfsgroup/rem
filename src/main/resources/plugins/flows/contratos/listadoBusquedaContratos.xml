@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<!-- renderiza el formulario -->
+	<end-state id="contratos" view="plugin/mejoras/contratos/listadoBusquedaContratosSegura" >
+		<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoContrato')" result="flowScope.estados"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoFinanciero')" result="flowScope.estadosFinancieros"/>
+			<evaluate expression="executor.execute('tipoProductoManager.getTiposProducto')" result="flowScope.tiposProducto" />
+			<evaluate expression="executor.execute('tipoProductoEntidadManager.getTiposProductoEntidad')" result="flowScope.tiposProductoEntidad" />
+			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.busqueda.buttons.left')" result="flowScope.buttonsLeft"/>
+			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.busqueda.buttons.right')" result="flowScope.buttonsRight"/>
+		</on-entry>
+	</end-state> 	
+
+</flow>
+

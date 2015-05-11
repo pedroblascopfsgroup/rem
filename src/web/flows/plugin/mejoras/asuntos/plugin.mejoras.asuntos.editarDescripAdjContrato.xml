@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<input name="idContrato" type="java.lang.Long"/>
+
+	<end-state id="listado" view="plugin/mejoras/asuntos/editaAdjuntoContrato">
+		
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.mejoras.devolucionAsunto.getAdjuntoContratoById',idContrato)" result="flowScope.adjunto"/> 
+		</on-entry>  
+	</end-state>
+</flow>
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+Se han modificado los ficheros ext-all.js y ext-all-debug.js .
+Además se ha cambiado la ruta donde están alojados.
+La nueva ruta es 
+./js/fwk/ext3.4.pfs.1/
+
+Incidencia JIRA PREV-24

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	
+	<!-- renderiza el formulario -->
+	<end-state id="listadoMultiGestor" view="plugin/coreextension/asunto/listadoBusquedaAsuntosMultigestorDinamico" >
+		<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoAsunto')" result="flowScope.estados"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTiposAsunto')" result="flowScope.tipoAsunto"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'EXTDDTipoGestor')" result="flowScope.tiposGestor"/>
+			<evaluate expression="executor.execute('procedimientoManager.getEstadosProcedimientos')" result="flowScope.estadosAnalisis" />
+			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('tipoProcedimientoManager.getTipoProcedimientos')" result="flowScope.tipoProcedimientos" />
+			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getTabs')" result="flowScope.tabs"/>
+			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoLeft')" result="flowScope.buttonsLeft"/>
+			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoRight')" result="flowScope.buttonsRight"/>
+		</on-entry>
+	</end-state> 
+    
+</flow>

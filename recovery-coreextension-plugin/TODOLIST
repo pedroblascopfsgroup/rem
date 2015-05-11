@@ -1,0 +1,4 @@
+* Hace falta un escaner que busque todos los decoradores del modelo definidos y compruebe que estén correctos
+    1.- Que exista la clase
+    2.- Que sea del tipo esperado
+    El escaneo se debería realizar al arrancar la aplicación y fallar si hay algún error

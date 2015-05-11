@@ -1,0 +1,2 @@
+Para que funcione la búsqueda optimizada de tareas es necesario copiar el fichero groupTareasOptimizacion.tag en el war de despliegue.
+Ruta donde copiarlo: ./WEB-INF/tags/

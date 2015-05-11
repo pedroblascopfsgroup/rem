@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<!-- Bean exportador del servicio (exporter) -->
+	<!-- bean id="exporterTareasPendientes" class="org.springframework.remoting.rmi.JndiRmiServiceExporter"> 
+		<property name="service" ref="extTareasService" /> <property name="serviceInterface" 
+		value="es.pfsgroup.recovery.ext.services.EXTTareasService" /> <property name="jndiName" 
+		value="tareasPendientes" /> </bean -->
+
+	<!-- Bean cliente (proxy) -->
+	<!-- bean id="extTareasService" class="org.springframework.remoting.rmi.JndiRmiProxyFactoryBean"> 
+		<property name="jndiName" value="tareasPendientes" /> <property name="jndiEnvironment"> 
+		<props> <prop key="java.naming.factory.initial">weblogic.jndi.WLInitialContextFactory</prop> 
+		<prop key="java.naming.factory.url.pkgs">weblogic.jndi.factories</prop> <prop 
+		key="java.naming.provider.url">t3://${remote.services.serverName}:${remote.services.port}</prop> 
+		</props> </property> <property name="serviceInterface" value="es.pfsgroup.recovery.ext.services.EXTTareasService" 
+		/> </bean -->
+
+</beans>

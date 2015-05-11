@@ -1,0 +1,172 @@
+
+
+RECOVERY - COREEXTENSION
+
+----------------------------------------
+----- VERSION 3.3.0 (FASE2) ----------
+----------------------------------------
+* [CARLOS] Movido todo el modelo de datos del nuevo modelo de bienes.
+
+
+----------------------------------------
+----- VERSION 3.1.0 (tyrion) ----------
+----------------------------------------
+
+* [PEDRO] Incorporaci�n del mecanismo de trazas de login y logout seg�n normativa Bankia
+          (mendiante env�o de datagrama UDP a servidor/puerto establecido en devon.properties)
+
+----------------------------------------
+----- VERSION 3.0.0 (tyrion) ----------
+----------------------------------------
+
+* [PEDRO] Integraci�n con sistemas de autenticaci�n basados en Kerberos
+* [PEDRO] Integraci�n con sistemas de autorizaci�n basados en LDAP
+* [PEDRO] Adaptaciones necesarias seg�n Auditor�a de Seguridad
+* [PEDRO] Actualizaciones de comprobaci�n de contra�a (teniendo en cuenta el caso del LDAP de Bankia)
+
+* A�adido en la configuraci�n de despachos, el campo tipo gestor 
+------------------------------------------
+Movimiento de ampliaciones de clases al rec-common
+En concreto se ha movido:
+	* La ampliaci�n de la clase EXTContrato, para ello se han tenido que mover las clases del paquete es.capgemini.pfs.multigestor.model
+	EXTDDSupervisor, EXTGestorEntidad y EXTDDTipoGestor. Para hacer esto ha sido necesario 
+	BORRAR ESTAS CLASES DEL PLUGIN COREEXTENSION
+	* La ampliaci�n de la clase EXTPersona, para ello se han tenido que mover todo el paquete es.pfsgroup.recovery.ext.impl.visibilidad.model
+	EXTVisibilidad y EXTDDTipoVisiblidad. 
+	Para hacer esto se ha tenido que eliminar ese paquete del plugin coreextenxion
+
+
+-----------------------------------------
+-----------------------------------------
+----- VERSION 2.8.0 (tyrion)
+-----------------------------------------
+
+[Carlos] * A�adida clase para menejo de excels (Clonada de recovery-masivo-common)
+
+
+-----------------------------------------
+------------------------------------------
+----- VERSION 2.7.0 (lin-31-oct-2013)
+-----------------------------------------
+
+Requisitos de la instalaci�n
+	* Es neceario ejecutar los scripts ubicados en scripts/versiones/2.7.0, importante respetar el orden.
+
+Cambios
+	A partir de esta versi�n es posible realizar un mantenimiento de los Gestores del Asunto desde la pesta�a Gestores. 
+	Por tanto se pueden deshabilitar los botones de Cambio de gestor/supervisor. Ahora, cuando se cambia un gestor, 
+	se mantiene el hist�rico registrando la fecha de alta y la de baja del mismo. S�lo puede haber un Gestor vigente 
+	y �ste es el que aparece en la cabecera.
+	
+	Adem�s han habido estos otros cambios.
+		* Nueva utilidad que permite la Conversi�n de N�mero a Texto.
+		* Ahora las plazas de los juzgados aparecen ordenadas por nombre al usar las siguientes llamadas del API
+			* PlazaJuzgadoManager.buscaJuzgadosPorIdPlaza(Long id)		
+			* PlazaJuzgadoManager.buscaJuzgadosPorPlaza(String codigo)
+			* PlazaJuzgadoManager.listaPlazas()
+
+-----------------------------------------
+------------------------------------------
+----- VERSION 2.6.0 [merged- bruno - 1/8/2013]
+-----------------------------------------
+
+
+ES NECESARIO EJECUTAR SCRIPT 2.6.0/ENTITY-DIRECCION-JUZGADO.sql 
+���OJO!!! la query hace referencia a tablas del master, habr� que modificarla para cada proyecto para que apunte a su master correspondiente!!
+
+* modificaci�n de la tabla dd_juz_juzgados_plaza para que tenga una propiedad que es direcci�n
+* de momento la direcci�n del juzgado se guarda en una nueva tabla de direccione juzgado pero m�s adelante se guardar� en la tabla de direcciones de toda la vida
+
+* Ahora existen opciones para borrar todos los timers asociados a una tarea
+
+* Refactorizada parte de la interfaz de revisi�n de procedimientos de los plugins de mejoras y masivo.
+* Creada interfaz de cancelaci�n y paralizaci�n de asuntos.  
+
+-----------------------------------------
+-------- VERSION  2.5.0 ### 01/07/2013 - Bruno
+-----------------------------------------
+ES NECESARIO EJEUCTAR EL SCRIPT 2.5.0/ENTITY-LANZAR-BUCLE-BPM.sql
+
+* Ahora hay la posibilidad de configurar el campo TAP_TAREA_PROCEDIMIENTO.TAP_BUCLE_BPM, si queremos que se generen varios
+    BPM hijos. La l�gica de c�mo interpretar este campo y de derivar en bucle est� implementada en recovery-procedimientos-bpm 3.1.0
+
+
+-----------------------------------------
+-------- VERSION  2.4.0 #### 19/06/2013
+-----------------------------------------
+NOTA: Es necesario ejecutar el script 2.4.0/ENTITY_Cambios_TAP_Mejoras_VTAR.sql. 
+    El script solicitar� que se introduzca el nombre del MASTER_SCHEMA
+    CUIDADO. Este script modifica las vistas VTAR_TAREA_VS_TGE y ...., si estas vistas se han adaptado es necesario estudiar el cambio.
+
+* Se han hecho cambios en las vistas VTAR para solucionar problema con la asingaci�n de usuarios a los que deb�an salirles las tareas 
+    en espera y las alertas. 
+* Ahora es posible especifiar quien va a ser el supervisor de una tarea indicando el ID de tipo de gestor en TAP_TAREA_PROCEDIMENTO.DD_TSUP_ID.
+
+-----------------------------------------
+-------- VERSION  2.3.0 #### 17/06/2013
+-----------------------------------------
+- Se a�ade relaci�n de usuarios con grupos de usuarios, es necesario crear una nueva tabla en base de datos. Puede que esta tabla ya exista, 
+	pero puede que no, porque no era obligatoria. Asegurarse de que existe la tabla GRU_GRUPOS_USUARIOS.
+	Si no est� habr� que ejecutar el script:
+	* scripts/versiones/2.1.0/Modelo_Grupos y se llama 01-Modelo_grupos_usuarios-MASTER.sql
+
+CAMBIOS
+* Modificaci�n del m�todo List<String> es.pfsgroup.recovery.ext.impl.utils.EXTJBPMProcessManager.getCurrentNodes(Long idProcess)
+para que devuelva los nodos correctamente cuando se utilizan forks en los BPMs.
+Ahora es un m�todo recursivo por si ocurre que existen varios forks anidados en los BPMs
+
+------------------------------------------------------------------------
+VERSION 2.2.4 (11/06/2013)
+-------------------------------------------------------------------------
+
+CAMBIOS
+* Modificaci�n del m�todo List<String> es.pfsgroup.recovery.ext.impl.utils.EXTJBPMProcessManager.getCurrentNodes(Long idProcess)
+para que devuelva los nodos correctamente cuando se utilizan forks en los BPMs
+
+------------------------------------------------------------------------
+VERSION 2.2.2 (14/05/2013)
+-------------------------------------------------------------------------
+REQUISITOS
+Los requisitos para instalar esta versi�n son:
+    * recovery-mejoras-plugin 5.0.6 o superior
+
+CAMBIOS
+* Si el usuario tiene activa la optimizaci�n de los buzones de tareas, se hace un join con la vista para obtener 
+    el listado de tareas pendientes del usuario en el procedimiento.
+
+* Se a�ade la posibilidad de devolver cualquier clase que herede de ResultadoBusquedaTareasBuzonesDto como modelo
+    para el buz�n de tareas
+    
+* Dos nuevas clases "utils" para poder usar decoradores de las BO y hacer selecciones din�micas en los DAO
+ - es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory
+ - es.pfsgroup.plugin.recovery.coreextension.utils.EXTHQLFieldsSelector
+
+
+------------------------------------------------------------------------
+VERSION 2.2.1
+-------------------------------------------------------------------------
+
+- UGAS-2631 El hist�rico de operaciones del T. de subasta sale desordenado 
+* main/java/es/capgemini/pfs/util/HistoricoProcedimientoTramiteDeSubastaComparator.java
+
+- UGAS-2695 Desde el historico de operaciones del asunto no se visualiza la pregunta de las comunicaciones. Y desde
+		el historico del procedimiento no se visualiza la respuesta. Tambi�n han sido necesarios cambios en el plugin 
+		de mejoras para solucionar esta incidencia.
+* main/java/es/capgemini/pfs/tareaNotificacion/EXTTareaNotificacionManager.java
+* web/jsp/plugin/coreextension/tareas/generarNotificacionHistorico.jsp
+
+---------------	
+VERSION 2.2.0
+---------------
+    * NOTA: No es necesario ejecutar ning�n script en BBDD
+    * Se han a�adido handlers para facilitar la definici�n de cargas de ficheros via batch s�lo configurando archivos XML
+    * Se ha resuelto un error que provocaba que no se mostrara la consulta origen al responder una comunicaci�n.
+    * Se ha eliminado la dependencia con la tabla LSS_LETRADO_SITUACION_SUPER que pertenece al modelo de datos de UGAS.
+
+--------------
+VERSION 2.1.2
+-------------
+* Se soluciona un posible bucle infinito al auttenticar un usuario mediante RSA
+
+
+NO HAY INFORMACI�N DE LAS VERSIONES ANTERIORES

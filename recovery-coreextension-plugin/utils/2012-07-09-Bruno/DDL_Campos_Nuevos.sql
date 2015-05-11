@@ -1,0 +1,1 @@
+alter table EXT_DD_IFC_INFO_CONTRATO add (DD_IFC_PERMITE_BUSQUEDA number(1) default 0 not null);

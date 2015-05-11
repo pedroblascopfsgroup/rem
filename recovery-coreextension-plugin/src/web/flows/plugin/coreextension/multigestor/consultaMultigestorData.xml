@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="ugCodigo" type="java.lang.String"/>
+	<input name="ugId" type="java.lang.Long"/>
+
+    <end-state id="buscaGestores" view="plugin/coreextension/multigestor/multiGestorDataJSON">
+    	<on-entry>
+    		<!-- es.pfsgroup.recovery.ext.api.multigestor.dameGestores -->
+   			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.getUsuariosAsociados',ugId)" result="flowScope.listaGestores" />
+   		</on-entry>
+    </end-state>
+
+</flow>
+

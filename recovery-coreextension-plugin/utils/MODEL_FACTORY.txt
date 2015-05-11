@@ -1,0 +1,6 @@
+
+ * Búsqueda de tareas
+tareaNotificacionManager.buscarTareasPendiente.model=es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.imp.ResultadoBusquedaTareasBuzonesDto
+tareaNotificacionManager.buscarTareasParaExcel.model=es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.imp.ResultadoBusquedaTareasBuzonesDto
+tareaNotificacionManager.buscarTareasParaExcelCount.model=es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.imp.ResultadoBusquedaTareasBuzonesDto
+es.pfsgroup.recovery.ext.api.tareas.buscarTareasPendientesConCarterizacion.model=es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.imp.ResultadoBusquedaTareasBuzonesDto

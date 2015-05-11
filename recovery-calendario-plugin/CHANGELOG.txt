@@ -1,0 +1,23 @@
+RECOVERY - CALENDARIO
+
+-----------------------------------------
+VERSION 2.0.3 [01/08/2014]
+-----------------------------------------
+*Carlos: Añadido todas las js y css adicionales para instalar el plugin con elementos dinámicos
+
+
+---------------------------------
+VERSION 2.0.1 [31/05/2013]
+--------------------------------
+
+Solucionado error debido a un cambio de la interfaz de ResultadoBusquedaTareasBuzonesDto
+Clases modificadas:
+
+* main.java.es.pfsgroup.plugin.recovery.calendario.impl.dao.TareaExternaDaoImpl.java
+* web.jsp.plugin.calendario.json.cargarMultiplesCalendarioEventoJSON.jsp
+
+Modificar el POM para utilizar la versi�n de coreextension 2.2.2_deprecatedUGAS en la que se ha mantenido
+un DAO que se usaba desde este plugin (en versiones superiores dicho DAO desaparece y hay que eliminar 
+la llamada desde este plugin)
+
+---------------------------------

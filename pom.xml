@@ -22,6 +22,7 @@
 	<name>rec-web Maven Webapp</name>
 
 	<dependencies>
+		
 		<!-- Inicio plugins de Recovery -->
 		<dependency>
 			<groupId>pfs</groupId>
@@ -250,16 +251,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-                        <groupId>es.pfsgroup.plugin</groupId>
-                        <artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
-                        <scope>compile</scope>
-                        <exclusions>
-                                <exclusion>
-                                        <groupId>*</groupId>
-                                        <artifactId>*</artifactId>
-                                </exclusion>
-                        </exclusions>
-                </dependency>
+                <groupId>es.pfsgroup.plugin</groupId>
+                <artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+                <scope>compile</scope>
+                <exclusions>
+                        <exclusion>
+                                <groupId>*</groupId>
+                                <artifactId>*</artifactId>
+                        </exclusion>
+                </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-liquidaciones-plugin</artifactId>
@@ -1913,9 +1914,10 @@
 		</profile>
 		<profile>
 			<id>haya</id>
-			<properties>	
-				<plugin.procedimientosHaya.version>1.3.10-SNAPSHOT</plugin.procedimientosHaya.version>
-				<plugin.procedimientosHayaPlugin.version>1.3.10-SNAPSHOT</plugin.procedimientosHayaPlugin.version>
+			<properties>
+				<!-- Versiones de lo plugins propias de Haya -->	
+				<plugin.procedimientosHaya.version>1.3.11</plugin.procedimientosHaya.version>
+				<plugin.procedimientosHayaPlugin.version>1.3.11</plugin.procedimientosHayaPlugin.version>
 			</properties>
 			<dependencies>
 					<dependency>

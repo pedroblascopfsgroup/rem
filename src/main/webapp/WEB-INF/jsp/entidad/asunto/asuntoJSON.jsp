@@ -84,6 +84,7 @@
 		<json:property name="descripcionTarea" value="${tareaPendiente.descripcionTarea}" />
 		<json:property name="puedeVerDecisionComite" value="${puedeVerDecisionComite}" />
 		<json:property name="puedeVerTabSubasta" value="${puedeVerTabSubasta}" />
+		<json:property name="puedeVerTabAdjudicados" value="${puedeVerTabAdjudicados}" />		
 	    <json:property name="provision" value="${provision}" />
 	</json:object>
 	<json:object name="concursal">

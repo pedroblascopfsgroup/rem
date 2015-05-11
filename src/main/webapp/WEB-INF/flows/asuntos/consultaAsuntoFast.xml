@@ -23,7 +23,7 @@
 			<evaluate expression="executor.execute('concursoManager.dameNumDeProcsFaseComun',id)" result="flowScope.procedimientosConcursales" />
 			<evaluate expression="executor.execute('core.asunto.puedeVerTabSubasta',id)" result="flowScope.puedeVerTabSubasta" />
 			<!-- <evaluate expression="executor.execute('core.asunto.contieneProvisiones',id)" result="flowScope.provision"/> -->
-			
+			<evaluate expression="executor.execute('core.asunto.puedeVerTabAdjudicados',id)" result="flowScope.puedeVerTabAdjudicados" />
 	    </on-entry>
     </end-state> 	
     

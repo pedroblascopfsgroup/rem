@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteSubasta" width="1107" height="917">
+  <node name="Inicio" x="21" y="38" width="114" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_SolicitudSubasta" x="239" y="14" width="223" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="49" h1="28" w2="49" h2="28"/>
+      <bendpoint w1="115" h1="22" w2="115" h2="22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-288" h1="82" w2="-445" h2="-399"/>
+      <bendpoint w1="-291" h1="494" w2="-290" h2="-2"/>
+    </edge>
+  </node>
+  <node name="ForkSolucitudSubasta" x="357" y="273" width="90" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_DictarInstrucciones" x="660" y="263" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="111" h1="6" w2="403" h2="-308"/>
+      <bendpoint w1="130" h1="7" w2="421" h2="-307"/>
+      <bendpoint w1="129" h1="313" w2="420" h2="-1"/>
+    </edge>
+  </node>
+  <node name="P11_LeerInstrucciones" x="582" y="429" width="154" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="91" h1="-1" w2="384" h2="-236"/>
+      <bendpoint w1="92" h1="216" w2="385" h2="-19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="1" h1="209" w2="294" h2="-26"/>
+    </edge>
+  </node>
+  <node name="P11_AnuncioSubasta_new1" x="221" y="119" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-281" h1="52" w2="-281" h2="-365"/>
+      <bendpoint w1="-283" h1="405" w2="-283" h2="-12"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-71" h1="-41" w2="-72" h2="38"/>
+    </edge>
+  </node>
+  <node name="P11_CelebracionSubasta" x="40" y="264" width="196" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-116" h1="2" w2="-276" h2="-289"/>
+      <bendpoint w1="-116" h1="261" w2="-235" h2="-57"/>
+    </edge>
+  </node>
+  <node name="CelebracionSubastaDecision" x="128" y="379" width="192" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_SolicitudPago" x="303" y="483" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="95" h1="1" w2="188" h2="-194"/>
+      <bendpoint w1="96" h1="165" w2="189" h2="-30"/>
+    </edge>
+  </node>
+  <node name="P11_Cobro" x="292" y="633" width="141" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-87" h1="48" w2="0" h2="-68"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-78" h1="-81" w2="-85" h2="69"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="113" y="647" width="97" height="42">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_AnuncioSubasta_new1Decision" x="231" y="194" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="959" y="182" width="83" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="51" h1="-3" w2="803" h2="-474"/>
+      <bendpoint w1="57" h1="478" w2="809" h2="7"/>
+    </edge>
+  </node>
+  <node name="Fin" x="81" y="880" width="210" height="36"/>
+</root-container>

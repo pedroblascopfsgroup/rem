@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoVerbal" width="1122" height="631">
+  <node name="Inicio" x="341" y="42" width="132" height="36">
+    <edge>
+      <label x="-17" y="-24"/>
+    </edge>
+  </node>
+  <node name="P04_InterposicionDemanda" x="14" y="42" width="210" height="36">
+    <edge>
+      <label x="-3" y="10"/>
+    </edge>
+    <edge>
+      <label x="-69" y="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P04_ConfirmarAdmisionDemanda" x="16" y="126" width="207" height="36">
+    <edge>
+      <label x="-81" y="7"/>
+    </edge>
+    <edge>
+      <label x="11" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-7" y="-22"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-29"/>
+      <bendpoint w1="-139" h1="-41" w2="-139" h2="43"/>
+    </edge>
+  </node>
+  <node name="P04_ConfirmarAdmisionDemandaDecision" x="17" y="206" width="207" height="36">
+    <edge>
+      <label x="-9" y="-20"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="297" y="206" width="132" height="36">
+    <edge>
+      <label x="-12" y="-24"/>
+      <bendpoint w1="242" h1="1" w2="-170" h2="85"/>
+    </edge>
+  </node>
+  <node name="P04_ConfirmarNotifiDemanda" x="15" y="294" width="210" height="36">
+    <edge>
+      <label x="1" y="4"/>
+    </edge>
+    <edge>
+      <label x="-72" y="-3"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-22"/>
+      <bendpoint w1="453" h1="1" w2="-201" h2="173"/>
+    </edge>
+    <edge>
+      <label x="-6" y="-48"/>
+      <bendpoint w1="-154" h1="-89" w2="-153" h2="79"/>
+    </edge>
+  </node>
+  <node name="P04_ConfirmarNotifiDemandaDecision" x="14" y="370" width="213" height="36">
+    <edge>
+      <label x="-4" y="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P04_BPMtramiteNotificacion" x="303" y="369" width="222" height="36">
+    <edge>
+      <label x="-75" y="-28"/>
+    </edge>
+  </node>
+  <node name="P04_RegistrarJuicio" x="15" y="464" width="210" height="36">
+    <edge>
+      <label x="-62" y="18"/>
+    </edge>
+    <edge>
+      <label x="33" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-20" y="-22"/>
+      <bendpoint w1="536" h1="-48" w2="-118" h2="291"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-45"/>
+      <bendpoint w1="-151" h1="-97" w2="-151" h2="73"/>
+    </edge>
+  </node>
+  <node name="P04_RegistrarResolucion" x="171" y="526" width="176" height="36">
+    <edge>
+      <label x="-87" y="9"/>
+    </edge>
+    <edge>
+      <label x="-36" y="26"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-19"/>
+      <bendpoint w1="450" h1="-89" w2="-66" h2="312"/>
+    </edge>
+    <edge>
+      <label x="8" y="5"/>
+      <bendpoint w1="-242" h1="17" w2="-103" h2="79"/>
+    </edge>
+  </node>
+  <node name="P04_ResolucionFirme" x="402" y="526" width="167" height="36">
+    <edge>
+      <label x="-41" y="8"/>
+    </edge>
+    <edge>
+      <label x="-33" y="25"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-19"/>
+      <bendpoint w1="266" h1="-67" w2="-24" h2="334"/>
+    </edge>
+    <edge>
+      <label x="20" y="-14"/>
+      <bendpoint w1="-117" h1="84" w2="109" h2="84"/>
+    </edge>
+  </node>
+  <node name="decision2" x="611" y="526" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="97" h1="-2" w2="-1" h2="402"/>
+    </edge>
+  </node>
+  <node name="Fin" x="709" y="125" width="132" height="36"/>
+</root-container>

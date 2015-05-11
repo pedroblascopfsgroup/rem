@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramitePropuestaAnticipadaConvenio" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="P30_resgistrarNumProcedimiento" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="P30_registrarPropAnticipadaConvenio">
+      	<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	<transition to="P30_registrarPropAnticipadaConvenio" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P30_resgistrarNumProcedimiento" name="vueltaAtras"></transition>
+		<transition to="P30_admisionTramiteConvenio" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P30_admisionTramiteConvenio">
+      	<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	<transition to="P30_admisionTramiteConvenio" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P30_admisionTramiteConvenioDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="P30_admisionTramiteConvenioDecision" expression="#{P30_admisionTramiteConvenioDecision}">
+		<transition to="Decision1" name="NO"></transition>
+		<transition to="P30_informeAdmonConcursal" name="SI"></transition>
+	</decision>
+
+	<node name="Decision1">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+      	<transition to="Fin"></transition>
+	</node>
+
+	<state name="P30_informeAdmonConcursal">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+		<transition to="P30_admisionTramiteConvenio" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P30_informeAdmonConcursal" name="activarAlerta"></transition>
+		<transition to="P30_informeAdmonConcursalDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P30_RegResolucionConvenio">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+      	<transition to="Decision3" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P30_RegResolucionConvenio" name="activarAlerta"></transition>
+		<transition to="P30_informeAdmonConcursal" name="vueltaAtras"></transition>
+	</state>
+
+	<node name="Decision3">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+      	<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<state name="P30_resgistrarNumProcedimiento">
+		<event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      	</event>
+      	<event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      	</event>
+      	<transition to="P30_registrarPropAnticipadaConvenio" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P30_resgistrarNumProcedimiento" name="activarAlerta"></transition>
+	</state>
+
+	<decision name="P30_informeAdmonConcursalDecision" expression="#{P30_informeAdmonConcursalDecision}">
+		<transition to="Fin" name="noDescartar"></transition>
+		<transition to="P30_RegResolucionConvenio" name="favOContinuar"></transition>
+	</decision>
+
+	<end-state name="Fin">      
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event> 
+    </end-state>
+
+
+</process-definition>

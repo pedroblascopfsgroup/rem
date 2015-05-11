@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteCesionRemateV4" width="1073" height="644">
+  <node name="Inicio" x="216" y="31" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P410_AperturaPlazo" x="181" y="108" width="208" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="169" h1="1" w2="169" h2="1"/>
+      <bendpoint w1="138" h1="24" w2="138" h2="24"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="746" h1="-27" w2="287" h2="-314"/>
+      <bendpoint w1="733" h1="267" w2="274" h2="-20"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P410_AperturaPlazoDecision" x="184" y="187" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="781" y="174" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P410_ResenyarFechaComparecencia" x="171" y="268" width="232" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-81" y="-9"/>
+      <bendpoint w1="-138" h1="-77" w2="-136" h2="83"/>
+    </edge>
+  </node>
+  <node name="P410_RealizacionCesionRemate" x="165" y="366" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-44" h1="43" w2="-43" h2="-41"/>
+      <bendpoint w1="-52" h1="31" w2="-52" h2="31"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-100" h1="-47" w2="-101" h2="51"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P410_BPMTramiteAdjudicacion" x="435" y="555" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P410_RealizacionCesionRemateDecision" x="43" y="508" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="152" h1="111" w2="-544" h2="445"/>
+      <bendpoint w1="586" h1="111" w2="-22" h2="421"/>
+    </edge>
+  </node>
+  <node name="Fin" x="678" y="395" width="132" height="36"/>
+</root-container>

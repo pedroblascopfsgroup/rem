@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteFaseComunAbreviadoV4"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="P412_RegistrarPublicacionBOE" name="iniciarProceso"></transition>
+	</start-state>
+
+	<state name="P412_RegistrarPublicacionBOE">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P412_RegistrarPublicacionBOE" name="activarAlerta"></transition>
+		<transition to="P412_BPMTramiteAceptacionV4" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P412_BPMTramiteAceptacionV4">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="forkTrasAceptacion" name="tramiteAceptacionConcurso"></transition>
+	</state>
+	
+	
+	<state name="P412_RegistrarInsinuacionCreditos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>		
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P412_RegistrarInsinuacionCreditos" name="activarAlerta"></transition>
+		<transition to="P412_RevisarInsinuacionCreditos" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P412_RegistrarInformeAdmonConcursal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>		
+		<transition to="P412_RevisarResultadoInfAdmon" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P412_RegistrarInformeAdmonConcursal" name="activarAlerta"></transition>
+	</state>
+
+	<state name="P412_PresentarEscritoInsinuacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>	
+		<transition to="P412_RegistrarProyectoInventario" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P412_PresentarEscritoInsinuacion" name="activarAlerta"></transition>
+		<transition to="P412_RevisarInsinuacionCreditos" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P412_RevisarResultadoInfAdmon">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>	
+		<transition to="P412_RevisarResultadoInfAdmonDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P412_RevisarResultadoInfAdmon" name="activarAlerta"></transition>
+		<transition to="P412_RegistrarInformeAdmonConcursal" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P412_RevisarResultadoInfAdmonDecision" expression="#{P412_RevisarResultadoInfAdmonDecision}">
+		<transition to="P412_RegistrarResolucionFaseComun" name="NO"></transition>
+		<transition to="P412_ValidarAlegaciones" name="SI"></transition>
+	</decision>
+	
+	<state name="P412_ValidarAlegaciones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P412_ValidarAlegacionesDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P412_ValidarAlegaciones" name="activarAlerta"></transition>
+		<transition to="P412_RevisarResultadoInfAdmon" name="vueltaAtras"></transition>
+	</state>
+	
+	<decision name="P412_ValidarAlegacionesDecision" expression="#{P412_ValidarAlegacionesDecision}">
+		<transition to="P412_BPMTramiteDemandaIncidental" name="OK"></transition>
+		<transition to="P412_RegistrarResolucionFaseComun" name="KO"></transition>
+	</decision>
+
+	<state name="P412_RegistrarResolucionFaseComun">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>	
+		<transition to="P412_RegistrarResolucionFaseComunDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="P412_RegistrarResolucionFaseComunDecision" expression="#{P412_RegistrarResolucionFaseComunDecision}">
+		<transition to="P412_BPMTramiteFaseLiquidacion" name="faseLiquidacion"></transition>
+		<transition to="P412_BPMTramiteFaseConvenioV4" name="faseConvenio"></transition>
+	</decision>
+
+	<state name='P412_BPMTramiteFaseLiquidacion'>
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteFaseLiquidacion"></transition>
+	</state>
+
+	<state name="P412_BPMTramiteFaseConvenioV4">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteFaseConvenioV4"></transition>
+	</state>
+
+	<state name="P412_ActualizarEstadoCreditos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>	
+		<transition to="P412_ActualizarEstadoCreditos" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P412_RegistrarResolucionFaseComun" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P412_RegistrarProyectoInventario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P412_RegistrarProyectoInventario" name="activarAlerta"></transition>
+		<transition to="P412_RegistrarProyectoInventarioDecision" name="avanzaBPM"></transition>
+		<transition to="P412_PresentarEscritoInsinuacion" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P412_RegistrarProyectoInventarioDecision" expression="#{P412_RegistrarProyectoInventarioDecision}">
+		<transition to="P412_PresentarRectificacion" name="desfavorable"></transition>
+		<transition to="P412_RegistrarInformeAdmonConcursal" name="favorable"></transition>
+	</decision>
+
+	<state name="P412_PresentarRectificacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P412_RegistrarInformeAdmonConcursal" name="avanzaBPM"></transition>
+		<transition to="P412_PresentarRectificacion" name="activarAlerta"></transition>
+		<transition to="P412_RegistrarProyectoInventario" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P412_RevisarInsinuacionCreditos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P412_RegistrarInsinuacionCreditos" name="vueltaAtras"></transition>
+		<transition to="P412_PresentarEscritoInsinuacion" name="avanzaBPM"></transition>
+		<transition to="P412_RevisarInsinuacionCreditos" name="activarAlerta"></transition>
+	</state>
+
+	<state name="P412_BPMTramiteDemandaIncidental">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P412_ActualizarEstadoCreditos" name="tramiteDemandaIncidental"></transition>
+	</state>
+
+	<state name="P412_BPMTramiteAnalisisContratos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteAnalisisContratosV4"></transition>
+	</state>
+
+	<fork name="forkTrasAceptacion">
+		<transition to="P412_RegistrarInsinuacionCreditos" name="sigueBPM"></transition>
+		<transition to="P412_BPMTramiteAnalisisContratos" name="analisisContratos"></transition>
+	</fork>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

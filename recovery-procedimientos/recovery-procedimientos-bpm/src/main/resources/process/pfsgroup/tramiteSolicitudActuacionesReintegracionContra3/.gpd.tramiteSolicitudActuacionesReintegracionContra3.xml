@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteSolicitudActuacionesReintegracionContra3" width="841" height="696">
+  <node name="Inicio" x="94" y="160" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="205" h1="0" w2="-2" h2="-65"/>
+    </edge>
+  </node>
+  <node name="P27_presentarSolicitud" x="246" y="226" width="240" height="36">
+    <edge>
+      <label x="-75" y="-13"/>
+    </edge>
+    <edge>
+      <label x="3" y="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="313" h1="1" w2="141" h2="-256"/>
+    </edge>
+  </node>
+  <node name="P27_RegistrarResultadoSolicitud" x="247" y="307" width="240" height="36">
+    <edge>
+      <label x="-71" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="5"/>
+    </edge>
+    <edge>
+      <label x="-87" y="-8"/>
+      <bendpoint w1="-169" h1="-46" w2="-168" h2="35"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="169" h1="-4" w2="-2" h2="-180"/>
+    </edge>
+  </node>
+  <node name="Fin" x="472" y="483" width="132" height="36"/>
+  <node name="Decision" x="300" y="389" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-2" h1="90" w2="-172" h2="0"/>
+    </edge>
+  </node>
+</root-container>

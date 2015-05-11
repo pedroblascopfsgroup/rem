@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteArchivo" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="P33_autoArchivo" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="P33_autoArchivo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P33_dictarInstrucciones" name="avanzaBPM"></transition>
+		<transition to="P33_autoArchivo" name="activarAlerta"></transition>
+		<transition to="noRecurrir" name="Fin"></transition>
+	</state>
+
+	<state name="P33_dictarInstrucciones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P33_dictarInstruccionesDecision" name="avanzaBPM"></transition>
+		<transition to="P33_autoArchivo" name="vueltaAtras"></transition>
+		<transition to="P33_dictarInstrucciones" name="activarAlerta"></transition>
+		<transition to="noRecurrir" name="Fin"></transition>
+	</state>
+
+	<state name="P33_presentarRecurso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P33_registrarAuto" name="avanzaBPM"></transition>
+		<transition to="P33_dictarInstrucciones" name="vueltaAtras"></transition>
+		<transition to="P33_presentarRecurso" name="activarAlerta"></transition>
+		<transition to="noRecurrir" name="Fin"></transition>
+	</state>
+
+	<state name="P33_registrarAuto">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P33_registrarAutoDecision" name="avanzaBPM"></transition>
+		<transition to="P33_presentarRecurso" name="vueltaAtras"></transition>
+		<transition to="P33_registrarAuto" name="activarAlerta"></transition>
+		<transition to="noRecurrir" name="Fin"></transition>
+	</state>
+
+	<state name="P33_recurrirAudiencia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P33_registrarResultado" name="avanzaBPM"></transition>
+		<transition to="P33_registrarAuto" name="vueltaAtras"></transition>
+		<transition to="P33_recurrirAudiencia" name="activarAlerta"></transition>
+		<transition to="noRecurrir" name="Fin"></transition>
+	</state>
+
+	<state name="P33_registrarResultado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P33_registrarResultadoDecision" name="avanzaBPM"></transition>
+		<transition to="P33_recurrirAudiencia" name="vueltaAtras"></transition>
+		<transition to="P33_registrarResultado" name="activarAlerta"></transition>
+		<transition to="noRecurrir" name="Fin"></transition>
+	</state>
+
+	<decision name="P33_dictarInstruccionesDecision" expression="#{P33_dictarInstruccionesDecision}">
+		<transition to="P33_presentarRecurso" name="SI"></transition>
+		<transition to="noRecurrir" name="NO"></transition>
+	</decision>
+
+	<decision name="P33_registrarAutoDecision" expression="#{P33_registrarAutoDecision}">
+		<transition to="P33_recurrirAudiencia" name="DESFAVORABLE"></transition>
+		<transition to="noRecurrir" name="FAVORABLE"></transition>
+	</decision>
+
+	<node name="noRecurrir">
+		<action name="myAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>PROTramiteRecursoDecisionHandler</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<decision name="P33_registrarResultadoDecision" expression="#{P33_registrarResultadoDecision}">
+		<transition to="noRecurrir" name="DESFAVORABLE"></transition>
+		<transition to="noRecurrir" name="FAVORABLE"></transition>
+	</decision>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

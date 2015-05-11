@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteConclusionConcurso" width="1107" height="864">
+  <node name="Inicio" x="335" y="-3" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P62_registrarCausaConclusion" x="288" y="47" width="217" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-380" h1="0" w2="-241" h2="-494"/>
+      <bendpoint w1="-381" h1="503" w2="-242" h2="9"/>
+    </edge>
+  </node>
+  <node name="P62_registrarInformeAdmConcursal" x="269" y="121" width="263" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="194" h1="-34" w2="195" h2="27"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-69" h1="63" w2="-51" h2="-75"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-375" h1="-5" w2="-235" h2="-438"/>
+      <bendpoint w1="-375" h1="433" w2="-235" h2="0"/>
+    </edge>
+  </node>
+  <node name="P62_registrarOposicion" x="298" y="244" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="77" h1="-83" w2="59" h2="55"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-367" h1="-1" w2="-226" h2="-367"/>
+      <bendpoint w1="-368" h1="352" w2="-227" h2="-14"/>
+    </edge>
+  </node>
+  <node name="P62_registrarOposicionDecision" x="290" y="326" width="223" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P62_registrarResolucion" x="517" y="394" width="211" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-22" h1="-111" w2="199" h2="29"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="18" h1="257" w2="380" h2="31"/>
+      <bendpoint w1="-346" h1="258" w2="16" h2="32"/>
+    </edge>
+  </node>
+  <node name="P62_BPMTramiteDemandaIncidental" x="97" y="395" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P62_registrarConclusionConcurso" x="292" y="471" width="231" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="329" h1="-4" w2="335" h2="213"/>
+      <bendpoint w1="323" h1="-206" w2="329" h2="11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-148" h1="5" w2="-1" h2="-144"/>
+    </edge>
+  </node>
+  <node name="P62_registrarConclusionConcursoDecision" x="272" y="542" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision" x="486" y="619" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="308" y="822" width="212" height="37"/>
+</root-container>

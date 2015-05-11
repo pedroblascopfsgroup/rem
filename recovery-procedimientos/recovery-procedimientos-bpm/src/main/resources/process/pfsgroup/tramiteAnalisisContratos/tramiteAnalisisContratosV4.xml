@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteAnalisisContratosV4"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="P402_AnalisisOperacionesConcurso" name="iniciarProceso"></transition>
+	</start-state>
+
+	<state name="P402_AnalisisOperacionesConcurso">
+		<event type="node-enter"> 
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					analisisOperacionesLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_AnalisisOperacionesConcurso" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P402_ABC_fork" name="avanzaBPM"></transition>
+	</state>
+
+	<fork name="P402_ABC_fork">
+		<transition to="P402_AnalisisOperacionesConcursoA" name="A"></transition>
+		<transition to="P402_AnalisisOperacionesConcursoB" name="B"></transition>
+		<transition to="P402_AnalisisOperacionesConcursoC" name="C"></transition>
+	</fork>
+
+	<state name="P402_EstudiarInicioPosEjec">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_EstudiarInicioPosEjec" name="activarAlerta"></transition>
+		<transition to="P402_RevisarPropuestaLetrado" name="avanzaBPM"></transition>
+		<transition to="FinA" name="Fin"></transition>
+	</state>
+
+	<state name="P402_RevisarPropuestaLetrado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_RevisarPropuestaLetrado" name="activarAlerta"></transition>
+		<transition name="avanzaBPM" to="P402_RevisarPropuestaLetradoDecision"></transition>
+		<transition to="P402_EstudiarInicioPosEjec" name="vueltaAtras"></transition>
+		<transition to="FinA" name="Fin"></transition>
+	</state>
+
+	<decision name="P402_RevisarPropuestaLetradoDecision" expression="#{P402_RevisarPropuestaLetradoDecision}">
+		<transition to="P402_IteradorA" name="ok"></transition>
+		<transition to="forkA" name="discrepancias"></transition>
+	</decision>
+
+	<state name="P402_BPMInicioEJ_A">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinA" name="tramiteInicioExpJudicialV4"></transition>
+	</state>
+
+	<state name="P402_ComunicadoDecisionEntidadA">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_ComunicadoDecisionEntidadA" name="activarAlerta"></transition>
+		<transition to="FinA" name="avanzaBPM"></transition>
+		<transition to="FinA" name="Fin"></transition>
+	</state>
+
+	<fork name="forkA">
+		<transition to="P402_IteradorA" name="P402_BPMInicioEJ"></transition>
+		<transition to="P402_ComunicadoDecisionEntidadA" name="comunicadoDecisionEntidad"></transition>
+	</fork>
+
+	<state name="P402_SolSolvenciaPatrimonial">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_SolSolvenciaPatrimonialDecision" name="avanzaBPM"></transition>
+		<transition to="FinB" name="Fin"></transition>
+		<transition to="P402_SolSolvenciaPatrimonial" name="activarAlerta"></transition>
+		
+	</state>
+
+	<decision name="P402_SolSolvenciaPatrimonialDecision" expression="#{P402_SolSolvenciaPatrimonialDecision}">
+		<transition to="FinB" name="No"></transition>
+		<transition to="P402_RegistrarResultadoSolvencias" name="Si"></transition>
+	</decision>
+
+	<state name="P402_RegistrarResultadoSolvencias">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_RegistrarResultadoSolvenciasDecision" name="avanzaBPM"></transition>
+		<transition to="FinB" name="Fin"></transition>
+		<transition to="P402_RegistrarResultadoSolvencias" name="activarAlerta"></transition>
+		<transition to="P402_SolSolvenciaPatrimonial" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P402_RegistrarResultadoSolvenciasDecision" expression="#{P402_RegistrarResultadoSolvenciasDecision}">
+		<transition to="P402_IteradorB" name="posInicEjec"></transition>
+		<transition to="forkB" name="negOposIniEjec"></transition>
+	</decision>
+
+	<fork name="forkB">
+	
+		<transition to="P402_IteradorB" name="ejNoIniciadas"></transition>
+		<transition to="P402_ComunicadoDecisionEntidadB" name="ejecucionIniciada"></transition>
+	</fork>
+
+	<state name="P402_DictarInstrucciones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinB" name="Fin"></transition>
+		<transition to="P402_DictarInstrucciones" name="activarAlerta"></transition>
+		<transition to="P402_BPMInicioEJ_B" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P402_ComunicadoDecisionEntidadB">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinB" name="avanzaBPM"></transition>
+		<transition to="P402_ComunicadoDecisionEntidadB" name="activarAlerta"></transition>
+		<transition to="FinB" name="Fin"></transition>
+	</state>
+
+	<state name="P402_BPMInicioEJ_B">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinB" name="tramiteInicioExpJudicialV4"></transition>
+	</state>
+
+	<state name="P420_SolicitarNoAfeccionBienes">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinC" name="Fin"></transition>
+		<transition to="P420_SolicitarNoAfeccionBienes" name="activarAlerta"></transition>
+		<transition to="P420_SolicitarNoAfeccionBienesDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="P420_SolicitarNoAfeccionBienesDecision" expression="#{P420_SolicitarNoAfeccionBienesDecision}">
+		<transition to="FinC" name="No"></transition>
+		<transition to="P402_RegResolucionesNoAfeccion" name="Si"></transition>
+	</decision>
+
+	<state name="P402_RegResolucionesNoAfeccion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_RegResolucionesNoAfeccion" name="activarAlerta"></transition>
+		<transition to="FinC" name="Fin"></transition>
+		<transition to="P402_RegResolucionesNoAfeccionDecision" name="avanzaBPM"></transition>
+		<transition to="P420_SolicitarNoAfeccionBienes" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P402_DecidirSobreEjecuciones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_RegResolucionesNoAfeccion" name="vueltaAtras" ></transition>
+		<transition to="P402_DecidirSobreEjecuciones" name="activarAlerta"></transition>
+		<transition to="P402_DecidirSobreEjecucionesDecision" name="avanzaBPM"></transition>
+		<transition to="FinC" name="Fin"></transition>
+	</state>
+
+	<decision name="P402_DecidirSobreEjecucionesDecision" expression="#{P402_DecidirSobreEjecucionesDecision}">
+		<transition to="P402_IteradorC1" name="No"></transition>
+		<transition to="forkC" name="Si"></transition>
+	</decision>
+
+	<state name="P402_BPMInicioEJ_C1">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinC" name="tramiteInicioExpJudicialV4"></transition>
+	</state>
+
+	<state name="P402_ComunicadoDecisionEntidadC1">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P402_ComunicadoDecisionEntidadC1" name="activarAlerta"></transition>
+		<transition to="FinC" name="avanzaBPM"></transition>
+		<transition to="FinC" name="Fin"></transition>
+	</state>
+
+	<state name="P402_RevisarSituacionConcurso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinC" name="Fin"></transition>
+		<transition to="P402_RevisarSituacionConcurso" name="activarAlerta"></transition>
+		<transition to="P402_RevisarSituacionConcursoDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P402_RevisarIniContEjec">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinC" name="Fin"></transition>
+		<transition to="P402_RevisarIniContEjec" name="activarAlerta"></transition>
+		<transition to="P402_RevisarIniContEjecDecision" name="avanzaBPM"></transition>
+		<transition to="P402_RevisarSituacionConcurso" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P402_ComunicadoDecisionEntidadC2">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinC" name="Fin"></transition>
+		<transition to="P402_ComunicadoDecisionEntidadC2" name="activarAlerta"></transition>
+		<transition to="FinC" name="avanzaBPM"></transition>
+	</state>
+
+
+	<state name="P402_BPMInicioEJ_C2">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="FinC" name="tramiteInicioExpJudicialV4"></transition>
+	</state>
+
+	<decision name="P402_RegResolucionesNoAfeccionDecision" expression="#{P402_RegResolucionesNoAfeccionDecision}">
+		<transition to="P402_DecidirSobreEjecuciones" name="Si"></transition>
+		<transition to="P402_EsperaFDeclaracionConcurso" name="No"></transition>
+	</decision>
+
+	<fork name="forkC">
+		<transition to="P402_IteradorC1" name="ejNoIniciadas"></transition>
+		<transition to="P402_ComunicadoDecisionEntidadC1" name="ejecucionIniciada"></transition>
+	</fork>
+
+	<decision name="P402_RevisarSituacionConcursoDecision" expression="#{P402_RevisarSituacionConcursoDecision}">
+		<transition to="Decision" name="Si"></transition>
+		<transition to="P402_RevisarIniContEjec" name="No"></transition>
+	</decision>
+
+	<node name="Decision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="FinC" name="Fin"></transition>
+	</node>
+
+	<fork name="forkC2">
+		<transition to="P402_IteradorC2" name="ejNoIniciadas"></transition>
+		<transition to="P402_ComunicadoDecisionEntidadC2" name="ejecucionIniciada"></transition>
+	</fork>
+
+	<decision name="P402_RevisarIniContEjecDecision" expression="#{P402_RevisarIniContEjecDecision}">
+		<transition to="forkC2" name="SIyEjecIniciada"></transition>
+		<transition to="P402_IteradorC2" name="SIyNoEjecIniciada"></transition>
+		<transition to="Decision" name="No"></transition>
+	</decision>
+
+	<state name="P402_EsperaFDeclaracionConcurso">
+		<event type="node-enter">
+			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
+				<name>Timer espera - F. auto declación concurso</name>
+				<duration>1 year</duration>
+				<transicion>avanzaBPM</transicion>
+			</action>
+		</event>
+		<transition to="P402_RevisarSituacionConcurso" name="avanzaBPM"></transition>
+	</state>
+
+	<node name="P402_IteradorA">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>iteradorActionHandlerA
+			</targetBean>
+		</action>
+		<transition to="P402_IteradorADecision" name="avanzaBPM"></transition>
+	</node>
+
+	<fork name="fork_IteradorA">
+		<transition to="P402_IteradorA" name="siguiente"></transition>
+		<transition to="P402_BPMInicioEJ_A" name="nuevo"></transition>
+	</fork>
+
+	<decision name="P402_IteradorADecision" expression="#{P402_IteradorADecision}">
+		<transition to="FinA" name="fin"></transition>
+		<transition to="fork_IteradorA" name="siguiente"></transition>
+	</decision>
+
+	<node name="P402_IteradorB">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>iteradorActionHandlerB
+			</targetBean>
+		</action>
+		<transition to="P402_IteradorBDecision" name="avanzaBPM"></transition>
+	</node>
+
+	<decision name="P402_IteradorBDecision"  expression="#{P402_IteradorBDecision}">
+		<transition to="FinB" name="fin"></transition>
+		<transition to="fork_iteradorB" name="siguiente"></transition>
+	</decision>
+
+	<fork name="fork_iteradorB">
+		<transition to="P402_DictarInstrucciones" name="nuevo"></transition>
+		<transition to="P402_IteradorB" name="siguiente"></transition>
+	</fork>
+
+	<node name="P402_IteradorC1">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>iteradorActionHandlerC1
+			</targetBean>
+		</action>
+		<transition to="P402_IteradorC1Decision" name="avanzaBPM"></transition>
+	</node>
+
+	<decision name="P402_IteradorC1Decision"  expression="#{P402_IteradorC1Decision}">
+		<transition to="FinC" name="fin"></transition>
+		<transition to="fork_iteradorC1" name="siguiente"></transition>
+	</decision>
+
+	<fork name="fork_iteradorC1">
+		<transition to="P402_BPMInicioEJ_C1" name="nuevo"></transition>
+		<transition to="P402_IteradorC1" name="siguiente"></transition>
+	</fork>
+
+	<node name="P402_IteradorC2">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>iteradorActionHandlerC2
+			</targetBean>
+		</action>
+		<transition to="P402_IteradorC2Decision" name="avanzaBPM"></transition>
+	</node>
+
+	<decision name="P402_IteradorC2Decision"  expression="#{P402_IteradorC2Decision}">
+		<transition to="fork_iteradorC2" name="siguiente"></transition>
+		<transition to="FinC" name="fin"></transition>
+	</decision>
+
+	<fork name="fork_iteradorC2">
+		<transition to="P402_BPMInicioEJ_C2" name="nuevo"></transition>
+		<transition to="P402_IteradorC2" name="siguiente"></transition>
+	</fork>
+
+	<decision name="P402_AnalisisOperacionesConcursoA" expression="#{DecisionRama_1}">
+		<transition to="FinA" name="no"></transition>
+		<transition to="P402_EstudiarInicioPosEjec" name="si"></transition>
+	</decision>
+
+	<decision name="P402_AnalisisOperacionesConcursoB" expression="#{DecisionRama_2}">
+		<transition to="FinB" name="no"></transition>
+		<transition to="P402_SolSolvenciaPatrimonial" name="si"></transition>
+	</decision>
+
+	<decision name="P402_AnalisisOperacionesConcursoC" expression="#{DecisionRama_3}">
+		<transition to="FinC" name="no"></transition>
+		<transition to="P420_SolicitarNoAfeccionBienes" name="si"></transition>
+	</decision>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+	<end-state name="FinA">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+	<end-state name="FinB">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+	<end-state name="FinC">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+</process-definition>

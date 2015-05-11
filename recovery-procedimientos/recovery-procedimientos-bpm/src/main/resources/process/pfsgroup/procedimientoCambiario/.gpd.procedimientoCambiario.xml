@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoCambiario" width="1073" height="870">
+  <node name="Inicio" x="14" y="15" width="132" height="36">
+    <edge>
+      <label x="-36" y="-20"/>
+    </edge>
+  </node>
+  <node name="P17_InterposicionDemandaMasBienes" x="229" y="13" width="224" height="36">
+    <edge>
+      <label x="2" y="6"/>
+    </edge>
+    <edge>
+      <label x="-76" y="-6"/>
+    </edge>
+    <edge>
+      <label x="-42" y="-94"/>
+      <bendpoint w1="578" h1="0" w2="33" h2="-418"/>
+      <bendpoint w1="577" h1="367" w2="32" h2="-51"/>
+    </edge>
+  </node>
+  <node name="P17_CnfAdmiDemaDecretoEmbargo_new1" x="190" y="76" width="301" height="36">
+    <edge>
+      <label x="-75" y="8"/>
+    </edge>
+    <edge>
+      <label x="19" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-168"/>
+      <bendpoint w1="560" h1="1" w2="14" h2="-354"/>
+      <bendpoint w1="561" h1="292" w2="15" h2="-63"/>
+    </edge>
+    <edge>
+      <label x="-40" y="14"/>
+      <bendpoint w1="-207" h1="-29" w2="-208" h2="34"/>
+    </edge>
+  </node>
+  <node name="P17_CnfAdmiDemaDecretoEmbargo_new1Decision" x="190" y="141" width="301" height="36">
+    <edge>
+      <label x="13" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-1" y="-72"/>
+    </edge>
+    <edge>
+      <label x="28" y="-8"/>
+      <bendpoint w1="-203" h1="65" w2="-205" h2="-56"/>
+    </edge>
+  </node>
+  <node name="P17_BPMVigilanciaCaducidadAnotacion" x="616" y="208" width="224" height="36">
+    <edge>
+      <label x="5" y="-32"/>
+      <bendpoint w1="1" h1="57" w2="-157" h2="-166"/>
+    </edge>
+  </node>
+  <node name="fork1" x="215" y="214" width="252" height="24">
+    <edge>
+      <label x="-19" y="-25"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="717" y="140" width="132" height="36">
+    <edge>
+      <label x="9" y="-120"/>
+      <bendpoint w1="101" h1="0" w2="-2" h2="-291"/>
+    </edge>
+  </node>
+  <node name="P17_CnfNotifRequerimientoPago" x="230" y="262" width="225" height="36">
+    <edge>
+      <label x="-82" y="8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-7" y="-25"/>
+      <bendpoint w1="333" h1="1" w2="-211" h2="-168"/>
+    </edge>
+  </node>
+  <node name="P17_CnfNotifRequerimientoPagoDecision" x="192" y="343" width="300" height="36">
+    <edge>
+      <label x="21" y="-36"/>
+      <bendpoint w1="-234" h1="-1" w2="1" h2="-56"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P17_BPMTramiteNotificacion" x="8" y="388" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P17_RegistrarDemandaOposicion" x="230" y="431" width="225" height="36">
+    <edge>
+      <label x="-76" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-1" y="14"/>
+    </edge>
+    <edge>
+      <label x="-88" y="-8"/>
+      <bendpoint w1="253" h1="-68" w2="253" h2="101"/>
+    </edge>
+  </node>
+  <node name="P17_RegistrarDemandaOposicionDecision" x="222" y="495" width="241" height="36">
+    <edge>
+      <label x="1" y="-25"/>
+      <bendpoint w1="90" h1="48" w2="-153" h2="1"/>
+    </edge>
+    <edge>
+      <label x="16" y="-7"/>
+    </edge>
+  </node>
+  <node name="P17_RegistrarJuicioComparecencia" x="223" y="602" width="239" height="36">
+    <edge>
+      <label x="-91" y="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-25"/>
+      <bendpoint w1="417" h1="1" w2="-127" h2="172"/>
+    </edge>
+    <edge>
+      <label x="-21" y="-36"/>
+      <bendpoint w1="-210" h1="-96" w2="-210" h2="75"/>
+    </edge>
+  </node>
+  <node name="P17_RegistrarAutoEjecucion" x="481" y="542" width="208" height="36">
+    <edge>
+      <label x="16" y="4"/>
+    </edge>
+    <edge>
+      <label x="15" y="-21"/>
+      <bendpoint w1="-3" h1="151" w2="-124" h2="-112"/>
+    </edge>
+    <edge>
+      <label x="-10" y="-22"/>
+      <bendpoint w1="164" h1="-2" w2="-137" h2="109"/>
+    </edge>
+    <edge>
+      <label x="-77" y="7"/>
+      <bendpoint w1="0" h1="-89" w2="243" h2="22"/>
+    </edge>
+  </node>
+  <node name="P17_RegistrarResolucion" x="248" y="692" width="187" height="36">
+    <edge>
+      <label x="-33" y="13"/>
+    </edge>
+    <edge>
+      <label x="-24" y="29"/>
+    </edge>
+    <edge>
+      <label x="174" y="-25"/>
+      <bendpoint w1="103" h1="61" w2="-263" h2="402"/>
+      <bendpoint w1="507" h1="61" w2="-38" h2="322"/>
+    </edge>
+    <edge>
+      <label x="-25" y="-28"/>
+      <bendpoint w1="-201" h1="-48" w2="-202" h2="42"/>
+    </edge>
+  </node>
+  <node name="P17_ResolucionFirme" x="256" y="804" width="179" height="36">
+    <edge>
+      <label x="-11" y="13"/>
+    </edge>
+    <edge>
+      <label x="1" y="-19"/>
+    </edge>
+    <edge>
+      <label x="180" y="-26"/>
+      <bendpoint w1="131" h1="47" w2="-234" h2="502"/>
+      <bendpoint w1="546" h1="41" w2="5" h2="414"/>
+    </edge>
+    <edge>
+      <label x="-23" y="-33"/>
+      <bendpoint w1="-201" h1="-62" w2="-197" h2="50"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="640" y="805" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="820" y="431" width="132" height="36"/>
+</root-container>

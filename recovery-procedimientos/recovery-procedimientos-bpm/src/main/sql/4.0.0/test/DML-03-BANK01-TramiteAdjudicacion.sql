@@ -1,0 +1,148 @@
+--Creo la relación en DES_DESPACHO_EXTERNO: Creas uno para cada tipo de gestoría mediante script del tipo Gestoría para adjudicación 1, Gestoría para saneamiento 1
+Insert into BANK01.DES_DESPACHO_EXTERNO (
+DES_ID,
+DES_DESPACHO,
+DES_TIPO_VIA,
+DES_DOMICILIO,
+DES_DOMICILIO_PLAZA,
+DES_CODIGO_POSTAL,
+DES_PERSONA_CONTACTO,
+DES_TELEFONO2,
+DES_TELEFONO1,
+VERSION,
+USUARIOCREAR,
+FECHACREAR,
+USUARIOMODIFICAR,
+FECHAMODIFICAR,
+USUARIOBORRAR,
+FECHABORRAR,
+BORRADO,
+ZON_ID,
+DD_TDE_ID) 
+values (
+S_DES_DESPACHO_EXTERNO.nextval,
+'Gestoría para adjudicación 1',
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+'1',
+'BANKMASTER',
+sysdate,
+'BANKMASTER',
+sysdate,
+null,
+null,
+'0',
+'12501',
+(select dd_tde_id from bankmaster.DD_TDE_TIPO_DESPACHO where DD_TDE_CODIGO='GPA'));
+
+
+Insert into BANK01.DES_DESPACHO_EXTERNO (
+DES_ID,
+DES_DESPACHO,
+DES_TIPO_VIA,
+DES_DOMICILIO,
+DES_DOMICILIO_PLAZA,
+DES_CODIGO_POSTAL,
+DES_PERSONA_CONTACTO,
+DES_TELEFONO2,
+DES_TELEFONO1,
+VERSION,
+USUARIOCREAR,
+FECHACREAR,
+USUARIOMODIFICAR,
+FECHAMODIFICAR,
+USUARIOBORRAR,
+FECHABORRAR,
+BORRADO,
+ZON_ID,
+DD_TDE_ID) 
+values (
+S_DES_DESPACHO_EXTERNO.nextval,
+'Gestoría para saneamiento 1',
+null,
+null,
+null,
+null,
+null,
+null,
+null,
+'1',
+'BANKMASTER',
+sysdate,
+'BANKMASTER',
+sysdate,
+null,
+null,
+'0',
+'12501',
+(select dd_tde_id from bankmaster.DD_TDE_TIPO_DESPACHO where DD_TDE_CODIGO='GPS'));
+
+
+--Vinculo el usuario 'GESTOR' a estos despachos
+Insert into BANK01.usd_usuarios_despachos (
+USD_ID,
+USU_ID,
+DES_ID,
+USD_GESTOR_DEFECTO,
+USD_SUPERVISOR,
+VERSION,
+USUARIOCREAR,
+FECHACREAR,
+USUARIOMODIFICAR,
+FECHAMODIFICAR,
+USUARIOBORRAR,
+FECHABORRAR,
+BORRADO) 
+values (
+s_usd_usuarios_despachos.nextval,
+(select u.usu_id from bankmaster.usu_usuarios u where u.usu_username='GESTOR'),
+(select des_id from des_despacho_externo where DES_DESPACHO='Gestoría para saneamiento 1'),
+'1',
+'0',
+'0',
+'BANKMASTER',
+sysdate,
+null,
+null,
+null,
+null,
+'0');
+
+Insert into BANK01.usd_usuarios_despachos (
+USD_ID,
+USU_ID,
+DES_ID,
+USD_GESTOR_DEFECTO,
+USD_SUPERVISOR,
+VERSION,
+USUARIOCREAR,
+FECHACREAR,
+USUARIOMODIFICAR,
+FECHAMODIFICAR,
+USUARIOBORRAR,
+FECHABORRAR,
+BORRADO) 
+values (
+s_usd_usuarios_despachos.nextval,
+(select u.usu_id from bankmaster.usu_usuarios u where u.usu_username='GESTOR'),
+(select des_id from des_despacho_externo where DES_DESPACHO='Gestoría para adjudicación 1'),
+'1',
+'0',
+'0',
+'BANKMASTER',
+sysdate,
+null,
+null,
+null,
+null,
+'0');
+
+
+--Además, en mi caso he probado que mi asunto tenga una Gestoría u otra, según la tarea que debo probar
+--update asu_asuntos set gas_id=5118 where asu_id=378237;
+--update asu_asuntos set gas_id=5117 where asu_id=378237;

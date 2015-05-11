@@ -1,0 +1,33 @@
+--Diccionario Editable de Gestorías
+Insert into dic_diccionarios_editables (
+DIC_ID,
+DIC_NBTABLA,
+DIC_CODIGO,
+DIC_DESCRIPCION,
+DIC_DESCRIPCION_LARGA,
+DIC_EDICION,
+DIC_ADD,
+VERSION,
+USUARIOCREAR,
+FECHACREAR,
+USUARIOMODIFICAR,
+FECHAMODIFICAR,
+USUARIOBORRAR,
+FECHABORRAR,
+BORRADO) 
+values (
+s_dic_diccionarios_editables.nextval,
+'DD_GES_GESTORIA',
+(select max(to_number(dic_codigo))+1 from dic_diccionarios_editables),
+'Diccionario de Gestorías.',
+null,
+'1',
+'1',
+'1',
+'DD',
+sysdate,
+null,
+null,
+null,
+null,
+'0');

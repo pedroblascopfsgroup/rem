@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="DtoEditarConvenioCredito" class="es.pfsgroup.concursal.convenio.dto.DtoEditarConvenioCredito"/>
+    
+    <!--  id del ConvenioCredito a modificar -->
+    <input name="idConvenioCredito" type="java.lang.Long"/>
+    
+    <!--  se reciviran los nuevos valores  -->
+    <input name="banderaEditar" type="java.lang.Long"/>
+    <input name="quita" type="java.lang.Float"/>    
+    <input name="espera" type="java.lang.Float"/>
+    <input name="carencia" type="java.lang.Float"/>
+    <input name="comentario" type="java.lang.String"/>
+    <input name="idAsunto" type="java.lang.Long"/>
+   
+    <decision-state id="decision">
+		<if test="(banderaEditar != '1')" then="formulario" else="guardar"/>
+    </decision-state>    
+   
+    <end-state id="formulario" view="plugin/procedimientos/concursal/editarConvenioCredito" >
+		<on-entry>
+			<evaluate expression="executor.execute('convenioManager.dameConvenioCredito',idConvenioCredito)" result="flowScope.convenioCredito"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="guardar" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,DtoEditarConvenioCredito)" />
+			<evaluate expression="executor.execute('convenioManager.editarConvenioCredito',DtoEditarConvenioCredito)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+		
+</flow>

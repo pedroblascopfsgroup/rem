@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="confeccionExpedienteUnnim"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="fork2" name="iniciarProceso"></transition>
+	</start-state>
+
+	<state name="P91_bloquearCuentas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P91_bloquearCuentas" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="fork1" name="avanzaBPM"></transition>
+	</state>
+	
+	
+	<state name="P91_recepcionDocumentos" >
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P91_recepcionDocumentos" name="activarAlerta"></transition>
+		<transition to="P91_recopilarDocumentacion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="join1" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P91_recopilarDocumentacion" >
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P91_recopilarDocumentacion" name="activarAlerta"></transition>
+		<transition to="P91_recepcionDocumentos" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P91_generarCertificadoDeuda" >
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P91_generarCertificadoDeuda" name="activarAlerta"></transition>
+		<transition to="P91_bloquearCuentas" name="vueltaAtras"></transition>
+		<transition to="P91_certificacionNotarial" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P91_mandarBurofax" >
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P91_mandarBurofax" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P91_bloquearCuentas" name="vueltaAtras"></transition>
+		<transition to="P91_registrarAcuseRecibo" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P91_certificacionNotarial" >
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P91_generarCertificadoDeuda" name="vueltaAtras"></transition>
+		<transition to="join1" name="avanzaBPM"></transition>
+		<transition to="P91_certificacionNotarial" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P91_mandarExpediente" >
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P91_mandarExpediente" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P91_BPMAceptacionYdecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P91_BPMAceptacionYdecision">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<fork name="fork1">
+		<transition to="P91_generarCertificadoDeuda" name="generarCertificadoDeuda"></transition>
+		<transition to="P91_mandarBurofax" name="mandarBurofax"></transition>
+	</fork>
+
+	<fork name="fork2">
+		<transition to="P91_recopilarDocumentacion" name="recopilarDocumentacion"></transition>
+		<transition to="P91_bloquearCuentas" name="marcajeLitigio"></transition>
+	</fork>
+
+	<state name="P91_registrarAcuseRecibo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="join1" name="avanzaBPM"></transition>
+		<transition to="P91_registrarAcuseRecibo" name="activarAlerta"></transition>
+		<transition to="P91_mandarBurofax" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<join name="join1">
+		<transition to="P91_mandarExpediente" name="avanzaBPM"></transition>
+	</join>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

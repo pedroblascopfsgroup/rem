@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteAdjudicacionV4" width="1664" height="1680">
+  <node name="Inicio" x="180" y="51" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_SolicitudDecretoAdjudicacion" x="127" y="123" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="91" h1="53" w2="83" h2="-66"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="402" h1="1" w2="1" h2="-119"/>
+    </edge>
+  </node>
+  <node name="P413_SolicitudTestimonioDecretoAdjudicacion" x="143" y="737" width="299" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="364" h1="0" w2="-39" h2="168"/>
+    </edge>
+    <edge>
+      <label x="-109" y="-5"/>
+      <bendpoint w1="355" h1="-127" w2="384" h2="104"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="10" h1="79" w2="-3" h2="-33"/>
+    </edge>
+  </node>
+  <node name="P413_notificacionDecretoAdjudicacionAEntidad" x="102" y="212" width="307" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-90" h1="-64" w2="-82" h2="55"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_notificacionDecretoAdjudicacionAlContrario" x="93" y="506" width="340" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="319" h1="-172" w2="327" h2="122"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-134" h1="-18" w2="-134" h2="-18"/>
+      <bendpoint w1="-163" h1="-21" w2="-163" h2="-21"/>
+      <bendpoint w1="-114" h1="-38" w2="-114" h2="-38"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_ConfirmarTestimonio" x="212" y="849" width="186" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="459" h1="-2" w2="-55" h2="535"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="142" h1="-36" w2="155" h2="76"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_RegistrarEntregaTitulo" x="108" y="1170" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="616" h1="9" w2="5" h2="867"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_RegistrarPresentacionEnHacienda" x="78" y="1245" width="269" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="627" h1="-14" w2="20" h2="919"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-122" h1="-36" w2="-118" h2="39"/>
+    </edge>
+  </node>
+  <node name="P413_RegistrarPresentacionEnRegistro" x="64" y="1350" width="270" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="663" h1="5" w2="43" h2="1043"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-113" h1="-52" w2="-126" h2="53"/>
+    </edge>
+  </node>
+  <node name="P413_RegistrarInscripcionDelTitulo" x="70" y="1452" width="252" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="691" h1="-2" w2="68" h2="1138"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-91" h1="-41" w2="-94" h2="61"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_notificacionDecretoAdjudicacionAEntidadDecision" x="81" y="357" width="356" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_BPMTramiteSubsanacionEmbargo1" x="-447" y="357" width="360" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_BPMTramiteNotificacion" x="-246" y="680" width="211" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_notificacionDecretoAdjudicacionAlContrarioDecision" x="63" y="633" width="399" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_ConfirmarTestimonioDecision" x="8" y="965" width="363" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="96" y="1048" width="205" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-11"/>
+    </edge>
+  </node>
+  <node name="P413_BPMTramiteDePosesion" x="-293" y="1299" width="222" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-242" h1="-161" w2="-166" h2="578"/>
+    </edge>
+  </node>
+  <node name="P413_RegistrarInscripcionDelTituloDecision" x="37" y="1549" width="324" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="745" h1="7" w2="125" h2="1244"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_BPMTramiteSaneamientoCargas" x="71" y="1643" width="263" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="781" h1="-13" w2="164" h2="1318"/>
+    </edge>
+  </node>
+  <node name="P413_BPMTramiteSubsanacionEmbargo2" x="-350" y="1057" width="279" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="61" h1="-143" w2="-455" h2="65"/>
+    </edge>
+  </node>
+  <node name="P413_BPMTramiteSubsanacionEmbargo3" x="-520" y="1584" width="295" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P413_GenerarPropuestaNUSE" x="448" y="1037" width="235" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="155" h1="-68" w2="-99" h2="661"/>
+    </edge>
+  </node>
+  <node name="P413_ContabilizarCierreDeuda" x="455" y="1115" width="235" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="201" h1="-57" w2="-50" h2="738"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-15"/>
+      <bendpoint w1="226" h1="-2" w2="-25" h2="793"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="706" y="312" width="226" height="36"/>
+  <node name="Fin2" x="-324" y="560" width="132" height="36"/>
+</root-container>

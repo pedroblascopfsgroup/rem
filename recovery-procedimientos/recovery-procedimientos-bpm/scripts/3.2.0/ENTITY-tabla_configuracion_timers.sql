@@ -1,0 +1,27 @@
+-- Ejecutar en la entidad.
+-- Crea la tabla de configuración de timers. Permite crear timers automáticos para unas
+-- tareas específicas.
+
+--DROP SEQUENCE S_TTM_TAP_TIMER;
+CREATE SEQUENCE S_TTM_TAP_TIMER;
+
+--DROP TABLE TTM_TAP_TIMER;
+CREATE TABLE TTM_TAP_TIMER  (
+   TTM_ID		 			NUMBER(16)			NOT NULL,
+   TAP_ID           		NUMBER(16)			NOT NULL,
+   TTM_NOMBRE       		VARCHAR2(50 BYTE)	NOT NULL,
+   TTM_TRANSICION       	VARCHAR2(50 BYTE) ,
+   TTM_PLAZO_SCRIPT     	VARCHAR2(1000 BYTE) NOT NULL,
+   VERSION                  	INTEGER         DEFAULT 0  	NOT NULL,
+   USUARIOCREAR             	VARCHAR2(10 BYTE)   				NOT NULL,
+   FECHACREAR               	TIMESTAMP(6)        				NOT NULL,
+   USUARIOMODIFICAR         	VARCHAR2(10 BYTE),
+   FECHAMODIFICAR           	TIMESTAMP(6),
+   USUARIOBORRAR            	VARCHAR2(10 BYTE),
+   FECHABORRAR              	TIMESTAMP(6),
+   BORRADO                 		 NUMBER(1)       DEFAULT 0		NOT NULL,   
+   CONSTRAINT PK_TTM_TAP_TIMER PRIMARY KEY (TTM_ID),
+   CONSTRAINT FK_TTM_TAP_TIMER_TAP_ID FOREIGN KEY (TAP_ID) REFERENCES TAP_TAREA_PROCEDIMIENTO (TAP_ID)
+ );
+ 
+ 

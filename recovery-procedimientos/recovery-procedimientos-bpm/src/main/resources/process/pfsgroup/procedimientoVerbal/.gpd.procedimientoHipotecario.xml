@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoHipotecario" width="899" height="586">
+  <node name="Inicio" x="92" y="6" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="InterposicionDemanda" x="32" y="92" width="253" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ConfirmarAdmisionDemanda" x="34" y="164" width="253" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ConfirmarAdmisionDemandaDecision" x="34" y="245" width="253" height="36">
+    <edge>
+      <label x="-2" y="-21"/>
+    </edge>
+    <edge>
+      <label x="17" y="-12"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="404" y="244" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="443" y="83" width="132" height="36"/>
+  <node name="ConfirmarNotifiDemanda" x="37" y="318" width="251" height="36">
+    <edge>
+      <label x="18" y="-10"/>
+    </edge>
+  </node>
+  <node name="ConfirmarNotifiDemandaDecision" x="37" y="387" width="251" height="36">
+    <edge>
+      <label x="-4" y="-20"/>
+    </edge>
+    <edge>
+      <label x="19" y="-9"/>
+    </edge>
+  </node>
+  <node name="BPMtramiteNotificacion" x="354" y="386" width="250" height="36">
+    <edge>
+      <label x="-122" y="-20"/>
+      <bendpoint w1="0" h1="69" w2="317" h2="0"/>
+    </edge>
+  </node>
+  <node name="RegistrarJuicio" x="37" y="455" width="247" height="36">
+    <edge>
+      <label x="21" y="-12"/>
+    </edge>
+  </node>
+  <node name="RegistrarResolucion" x="58" y="528" width="201" height="36">
+    <edge>
+      <label x="-18" y="-23"/>
+    </edge>
+  </node>
+  <node name="ResolucionFirme" x="388" y="527" width="188" height="36">
+    <edge>
+      <label x="-84" y="-24"/>
+      <bendpoint w1="252" h1="0" w2="-1" h2="68"/>
+    </edge>
+  </node>
+  <node name="decision2" x="669" y="459" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+</root-container>

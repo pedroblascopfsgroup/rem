@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dtoEditar" class="es.pfsgroup.concursal.convenio.dto.DtoAgregarConvenio"/>
+    
+    <!--  id del convenio a modificar -->
+    <input name="idConvenio" type="java.lang.Long"/>
+    <input name="numeroAuto" type="java.lang.String"/>
+    
+    <!--  se reciviran los nuevos valores -->
+    <input name="banderaEditar" type="java.lang.Long"/>
+    <input name="idConvenio" type="java.lang.Long"/>
+    <input name="estado" type="java.lang.Long"/>
+    <input name="postura" type="java.lang.Long"/>    
+    <input name="inicio" type="java.lang.Long"/>
+    <input name="tipo" type="java.lang.Long"/>
+    <input name="tipoAdhesion" type="java.lang.Long"/>
+    <input name="fecha" type="java.lang.String"/>
+    <input name="numeroProponentes" type="java.lang.Long"/>
+    <input name="totalMasa" type="java.lang.Float"/>
+    <input name="porcentaje" type="java.lang.Float"/>
+    <input name="totalMasaOrd" type="java.lang.Float"/>
+    <input name="porcentajeOrd" type="java.lang.Float"/>
+    <input name="descripcion" type="java.lang.String"/>
+    <input name="descripcionAdhesiones" type="java.lang.String"/>
+    <input name="descripcionAnticipado" type="java.lang.String"/>
+    <input name="descripcionTerceros" type="java.lang.String"/>
+    <input name="alternativa" type="java.lang.Long"/>
+    <input name="descripcionConvenio" type="java.lang.String"/>
+    
+    <decision-state id="decision">
+		<if test="(banderaEditar != '1')" then="formulario" else="guardar"/>
+    </decision-state>    
+   
+    <end-state id="formulario" view="plugin/procedimientos/concursal/editarConvenio" >
+		<on-entry>
+			<evaluate expression="executor.execute('convenioManager.dameConvenio', idConvenio)" result="flowScope.convenio"/>
+			<evaluate expression="executor.execute('convenioManager.estadosConvenio')" result="flowScope.estados"/>
+			<evaluate expression="executor.execute('convenioManager.posturasConvenio')" result="flowScope.posturas"/>
+			<evaluate expression="executor.execute('convenioManager.iniciosConvenio')" result="flowScope.inicios"/>
+			<evaluate expression="executor.execute('convenioManager.tipoAdhesionConvenio')" result="flowScope.tipoAdhesion"/>
+			<evaluate expression="executor.execute('convenioManager.tipoAlternativaConvenio')" result="flowScope.tipoAlternativa"/>
+			<evaluate expression="executor.execute('convenioManager.tiposConvenio')" result="flowScope.tipos"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="guardar" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext, dtoEditar)" />
+			<evaluate expression="executor.execute('convenioManager.editarConvenio', dtoEditar)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+		
+</flow>

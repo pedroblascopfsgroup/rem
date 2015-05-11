@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoActuacionAmistosa" width="871" height="699">
+  <node name="Inicio" x="241" y="251" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="244" y="375" width="132" height="36"/>
+</root-container>

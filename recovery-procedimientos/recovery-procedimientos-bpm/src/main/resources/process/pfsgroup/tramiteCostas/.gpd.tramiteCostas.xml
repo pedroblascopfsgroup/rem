@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteCostas" width="1073" height="752">
+  <node name="Inicio" x="50" y="46" width="132" height="36">
+    <edge>
+      <label x="-29" y="-21"/>
+    </edge>
+  </node>
+  <node name="P07_SolicitudTasacion" x="267" y="49" width="207" height="36">
+    <edge>
+      <label x="-101" y="10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-37" y="-309"/>
+      <bendpoint w1="650" h1="0" w2="297" h2="-666"/>
+      <bendpoint w1="649" h1="662" w2="296" h2="-4"/>
+    </edge>
+  </node>
+  <node name="P07_TasacionCostas" x="305" y="148" width="132" height="36">
+    <edge>
+      <label x="3" y="6"/>
+    </edge>
+    <edge>
+      <label x="-77" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-270"/>
+      <bendpoint w1="637" h1="-2" w2="285" h2="-569"/>
+      <bendpoint w1="638" h1="563" w2="286" h2="-4"/>
+    </edge>
+    <edge>
+      <label x="-69" y="-9"/>
+      <bendpoint w1="-166" h1="-52" w2="-165" h2="47"/>
+    </edge>
+  </node>
+  <node name="P07_ConfirmarNotificacion" x="306" y="243" width="132" height="36">
+    <edge>
+      <label x="5" y="1"/>
+    </edge>
+    <edge>
+      <label x="-77" y="-13"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-223"/>
+      <bendpoint w1="636" h1="-1" w2="285" h2="-473"/>
+      <bendpoint w1="637" h1="471" w2="286" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-66" y="-30"/>
+      <bendpoint w1="-164" h1="-51" w2="-163" h2="44"/>
+    </edge>
+  </node>
+  <node name="P07_ConfirmarNotificacionDecision" x="282" y="328" width="179" height="36">
+    <edge>
+      <label x="6" y="-33"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P07_JBPMTramiteNotificacion" x="582" y="367" width="200" height="36">
+    <edge>
+      <label x="6" y="6"/>
+    </edge>
+  </node>
+  <node name="P07_Impugnacion" x="285" y="426" width="173" height="36">
+    <edge>
+      <label x="-72" y="3"/>
+    </edge>
+    <edge>
+      <label x="38" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-23" y="-137"/>
+      <bendpoint w1="631" h1="0" w2="279" h2="-289"/>
+      <bendpoint w1="630" h1="287" w2="278" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-44"/>
+      <bendpoint w1="-198" h1="-98" w2="-199" h2="85"/>
+    </edge>
+  </node>
+  <node name="P07_ImpugnacionDecision" x="311" y="484" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="22" y="-18"/>
+      <bendpoint w1="-22" h1="68" w2="193" h2="-24"/>
+    </edge>
+  </node>
+  <node name="P07_AutoAprobacionCostas" x="634" y="484" width="239" height="36">
+    <edge>
+      <label x="-73" y="5"/>
+    </edge>
+    <edge>
+      <label x="15" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-59" y="14"/>
+      <bendpoint w1="253" h1="2" w2="283" h2="-229"/>
+    </edge>
+    <edge>
+      <label x="22" y="-17"/>
+    </edge>
+  </node>
+  <node name="P07_RegistrarCelebracionVista" x="127" y="505" width="137" height="36">
+    <edge>
+      <label x="-72" y="9"/>
+    </edge>
+    <edge>
+      <label x="8" y="-8"/>
+    </edge>
+    <edge>
+      <label x="21" y="-18"/>
+    </edge>
+    <edge>
+      <label x="6" y="-20"/>
+      <bendpoint w1="0" h1="-81" w2="-176" h2="-2"/>
+    </edge>
+  </node>
+  <node name="Decision 2" x="657" y="609" width="173" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P07_RegistrarResolucion" x="130" y="576" width="132" height="36">
+    <edge>
+      <label x="-8" y="6"/>
+    </edge>
+    <edge>
+      <label x="-71" y="-12"/>
+    </edge>
+    <edge>
+      <label x="-6" y="-23"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-33"/>
+      <bendpoint w1="-130" h1="-37" w2="-129" h2="34"/>
+    </edge>
+  </node>
+  <node name="P07_ResolucionFirme" x="130" y="656" width="132" height="36">
+    <edge>
+      <label x="4" y="1"/>
+    </edge>
+    <edge>
+      <label x="-78" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-15" y="-22"/>
+    </edge>
+    <edge>
+      <label x="-25" y="-30"/>
+      <bendpoint w1="-124" h1="-44" w2="-124" h2="36"/>
+    </edge>
+  </node>
+  <node name="Decision 1" x="151" y="715" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P07_AutoFirme" x="622" y="545" width="264" height="36">
+    <edge>
+      <label x="-8" y="7"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-9"/>
+    </edge>
+    <edge>
+      <label x="-4" y="9"/>
+      <bendpoint w1="-192" h1="-22" w2="-191" h2="39"/>
+    </edge>
+  </node>
+  <node name="Fin" x="657" y="715" width="132" height="36"/>
+</root-container>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteCertificacionCargasRevision"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+
+
+	<start-state name="Inicio">
+		<transition to="P08_SolicitudCertificacion" name="avanzaBPM"></transition>
+	</start-state>
+
+
+	<state name="P08_ActualizaDatosAnteriores">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P08_ActualizaDatosAnteriores" name="activarAlerta"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P08_SolicitarInformacionCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P08_SolicitarInformacionCargas" name="activarAlerta"></transition>
+		<transition to="P08_SolicitarInformacionCargasDecision"
+			name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P08_SolicitudCertificacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P08_SolicitudCertificacion" name="activarAlerta"></transition>
+		<transition to="P08_RegistrarCertificacion" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P08_RegistrarCertificacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P08_RegistrarCertificacion" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P08_RegistrarCertificacionDecision" name="avanzaBPM"></transition>
+		<transition to="P08_SolicitudCertificacion" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P08_SolicitarInformacionCargasDecision"
+		expression="#{P08_SolicitarInformacionCargasDecision}">
+		<transition to="Decision 1" name="NO"></transition>
+		<transition to="P08_RegistrarInformacionCargas" name="SI"></transition>
+	</decision>
+
+	<node name="Decision 1">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>
+		<transition to="Fin"></transition>
+	</node>
+
+	<state name="P08_RegistrarInformacionCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P08_RegistrarInformacionCargas" name="activarAlerta"></transition>
+		<transition to="P08_RegistrarInformacionCargasDecision"
+			name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<node name="Decision 2">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>
+		<transition to="Fin"></transition>
+	</node>
+
+	<decision name="P08_RegistrarInformacionCargasDecision"
+		expression="#{P08_RegistrarInformacionCargasDecision}">
+		<transition to="P08_ActualizarDatos" name="Completo"></transition>
+		<transition to="P08_RequerirMasInfo" name="Incompleto"></transition>
+	</decision>
+
+	<state name="P08_RequerirMasInfo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P08_RequerirMasInfo" name="activarAlerta"></transition>
+		<transition to="P08_RegistrarInformacionCargas" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P08_RegistrarInformacionCargas" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P08_ActualizarDatos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P08_ActualizarDatos" name="activarAlerta"></transition>
+		<transition to="Decision 2" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<fork name="FrokRegistrarCertificacion">
+		<transition to="P08_ActualizaDatosAnteriores" name="tsup"></transition>
+		<transition to="P08_SolicitarInformacionCargas" name="tges"></transition>
+	</fork>
+
+	<decision name="P08_RegistrarCertificacionDecision"
+		expression="#{P08_RegistrarCertificacionDecision}">
+		<transition to="FrokRegistrarCertificacion" name="SI"></transition>
+		<transition to="P08_RegistrarCertificacion" name="NO"></transition>
+	</decision>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

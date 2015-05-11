@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoHipotecario" width="1025" height="438">
+  <node name="Inicio" x="27" y="22" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P01_DemandaCertificacionCargas" x="189" y="22" width="218" height="36">
+    <edge>
+      <label x="-10" y="2"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-17"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="237" h1="97" w2="-249" h2="-63"/>
+    </edge>
+  </node>
+  <node name="P01_AutoDespachandoEjecucion" x="522" y="18" width="218" height="36">
+    <edge>
+      <label x="2" y="3"/>
+    </edge>
+    <edge>
+      <label x="-79" y="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="368" h1="-2" w2="215" h2="-166"/>
+      <bendpoint w1="369" h1="163" w2="216" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="62" y="-9"/>
+      <bendpoint w1="-171" h1="-35" w2="162" h2="-39"/>
+    </edge>
+  </node>
+  <node name="P01_AutoDespachandoEjecucionDecision" x="522" y="88" width="258" height="36">
+    <edge>
+      <label x="-23" y="-19"/>
+    </edge>
+    <edge>
+      <label x="1" y="-23"/>
+    </edge>
+  </node>
+  <node name="decision1" x="809" y="88" width="132" height="36">
+    <edge>
+      <label x="20" y="-5"/>
+    </edge>
+  </node>
+  <node name="P01_ConfirmarNotificacionReqPago" x="188" y="88" width="217" height="36">
+    <edge>
+      <label x="19" y="8"/>
+    </edge>
+    <edge>
+      <label x="-64" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-32" y="-21"/>
+    </edge>
+  </node>
+  <node name="P01_ConfirmarNotifiReqPagoDecision" x="169" y="165" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="272" h1="-3" w2="-2" h2="-37"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P01_BPMTramiteNotificacion" x="463" y="211" width="217" height="36">
+    <edge>
+      <label x="-141" y="6"/>
+      <bendpoint w1="3" h1="40" w2="274" h2="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P01_ConfirmarSiExisteOposicion" x="188" y="251" width="222" height="36">
+    <edge>
+      <label x="-7" y="6"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-9"/>
+    </edge>
+    <edge>
+      <label x="15" y="-12"/>
+      <bendpoint w1="248" h1="152" w2="-237" h2="221"/>
+    </edge>
+    <edge>
+      <label x="-7" y="-39"/>
+      <bendpoint w1="-278" h1="-73" w2="-275" h2="90"/>
+    </edge>
+  </node>
+  <node name="P01_ConfirmarSiExisteOpoDecision" x="190" y="333" width="217" height="36">
+    <edge>
+      <label x="-45" y="-7"/>
+    </edge>
+    <edge>
+      <label x="29" y="-9"/>
+    </edge>
+  </node>
+  <node name="BPMTramiteSubastaDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P01_BPMTramiteSubastaBankia" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P01_BPMTramiteSubastaSareb" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P01_RegistrarComparecencia" x="103" y="393" width="219" height="36">
+    <edge>
+      <label x="-31" y="-19"/>
+      <bendpoint w1="285" h1="1" w2="-287" h2="212"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-31" y="-19"/>
+      <bendpoint w1="285" h1="1" w2="-287" h2="212"/>
+    </edge>
+  </node>
+  <node name="P01_RegistrarResolucion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P01_ResolucionFirme" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="decision2" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="0" y="0" width="132" height="36"/>
+</root-container>

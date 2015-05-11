@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2"
+	name="tramiteOcupantes">
+
+	<start-state name="inicio">
+		<transition to="P419_TrasladoDocuDeteccionOcupantes"></transition>
+	</start-state>
+
+
+	<state name="P419_TrasladoDocuDeteccionOcupantes">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_TrasladoDocuDeteccionOcupantesDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_TrasladoDocuDeteccionOcupantes" name="activarAlerta"></transition>
+	</state>
+	
+	<decision name="P419_TrasladoDocuDeteccionOcupantesDecision" expression="#{P419_TrasladoDocuDeteccionOcupantesDecision}">
+		<transition to="P419_SolicitudRequerimientoDocOcupantes" name="sinDocumentacion"></transition>
+		<transition to="P419_RegistrarInformeSituacion" name="conDocumentacion"></transition>
+	</decision>
+	
+	<state name="P419_SolicitudRequerimientoDocOcupantes">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_RegistrarRecepcionDoc" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_SolicitudRequerimientoDocOcupantes" name="activarAlerta"></transition>
+		<transition to="P419_TrasladoDocuDeteccionOcupantes" name="vueltaAtras"></transition>
+	</state>
+	
+	<state name="P419_RegistrarRecepcionDoc">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_RegistrarInformeSituacion" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_RegistrarRecepcionDoc" name="activarAlerta"></transition>
+		<transition to="P419_SolicitudRequerimientoDocOcupantes" name="vueltaAtras"></transition>
+	</state>
+	
+	<state name="P419_RegistrarInformeSituacion">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_RevisarInformeLetrado" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_RegistrarInformeSituacion" name="activarAlerta"></transition>
+	</state>	
+	
+	<state name="P419_RevisarInformeLetrado">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_RevisarInformeLetradoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_RevisarInformeLetrado" name="activarAlerta"></transition>
+		<transition to="P419_RegistrarInformeSituacion" name="vueltaAtras"></transition>
+	</state>
+	
+	<decision name="P419_RevisarInformeLetradoDecision" expression="#{P419_RevisarInformeLetradoDecision}">
+		<transition to="P419_RegistrarInformeSituacion" name="requiereModificacion"></transition>
+		<transition to="P419_PresentarEscritoAlegaciones" name="siHayAleg"></transition>
+		<transition to="P419_ConfirmarVista" name="noHayAlegNoHayVista"></transition>
+		<transition to="P419_RegistrarCelebracionVista" name="noHayAlegSiHayVista"></transition>
+	</decision>
+	
+	<state name="P419_PresentarEscritoAlegaciones">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_ConfirmarVista" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_PresentarEscritoAlegaciones" name="activarAlerta"></transition>		
+		<transition to="P419_RevisarInformeLetrado" name="vueltaAtras"></transition>
+	</state>
+	
+	<state name="P419_ConfirmarVista">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_ConfirmarVistaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_ConfirmarVista" name="activarAlerta"></transition>		
+	</state>
+	
+	<decision name="P419_ConfirmarVistaDecision" expression="#{P419_ConfirmarVistaDecision}">
+		<transition to="P419_RegistrarCelebracionVista" name="hayVista"></transition>
+		<transition to="P419_RegistrarResolucion" name="noHayVista"></transition>
+	</decision>
+	
+	<state name="P419_RegistrarCelebracionVista">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_RegistrarResolucion" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_RegistrarCelebracionVista" name="activarAlerta"></transition>
+	</state>
+	
+	<state name="P419_RegistrarResolucion">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_ResolucionFirme" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_RegistrarResolucion" name="activarAlerta"></transition>
+	</state>	
+	
+	
+	<state name="P419_ResolucionFirme">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P419_ResolucionFirmeDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P419_ResolucionFirme" name="activarAlerta"></transition>				
+		<transition to="P419_RegistrarResolucion" name="vueltaAtras"></transition>
+	</state>
+	
+	<decision name="P419_ResolucionFirmeDecision" expression="#{P419_ResolucionFirmeDecision}">
+		<transition to="FinPosesion" name="favorable"></transition>
+		<transition to="Decision1" name="desfavorable"></transition>
+		<transition to="FinPosesion" name="desfavorableTP"></transition>
+	</decision>
+	
+	<node name="Decision1">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>	
+		<transition to="Fin"></transition>
+	</node>
+	
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	<end-state name="FinPosesion">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>ocupantesEndActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	
+</process-definition>

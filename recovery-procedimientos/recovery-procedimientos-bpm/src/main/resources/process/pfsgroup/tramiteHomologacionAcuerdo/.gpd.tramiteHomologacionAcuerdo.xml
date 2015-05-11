@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteHomologacionAcuerdo" width="961" height="1620">
+  <node name="Inicio" x="443" y="71" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarPublicacionSolArticulo" x="348" y="205" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="380" h1="0" w2="-2" h2="-429"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-272" h1="-3" w2="-272" h2="-3"/>
+      <bendpoint w1="-254" h1="20" w2="-254" h2="20"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarAperturaNegociaciones" x="351" y="323" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="345" h1="-2" w2="-34" h2="-313"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-129" h1="-58" w2="-126" h2="60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-274" h1="-2" w2="-274" h2="-2"/>
+      <bendpoint w1="-247" h1="20" w2="-247" h2="20"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarPropuestaAcuerdo" x="352" y="422" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="328" h1="0" w2="-50" h2="-212"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-132" h1="-47" w2="-131" h2="52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-266" h1="1" w2="-266" h2="1"/>
+      <bendpoint w1="-239" h1="21" w2="-239" h2="21"/>
+    </edge>
+  </node>
+  <node name="P406_AceptarPropuestaAcuerdo" x="352" y="523" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="325" h1="0" w2="-53" h2="-111"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-124" h1="-49" w2="-124" h2="52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-262" h1="-4" w2="-262" h2="-4"/>
+      <bendpoint w1="-236" h1="15" w2="-236" h2="15"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P406_LecturaAceptacionInstrucciones" x="355" y="776" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-274" h1="2" w2="-274" h2="2"/>
+      <bendpoint w1="-244" h1="23" w2="-244" h2="23"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarResHomologacionJudicial" x="362" y="1195" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="326" h1="0" w2="-45" h2="256"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-265" h1="0" w2="-265" h2="0"/>
+      <bendpoint w1="-236" h1="23" w2="-236" h2="23"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarEntradaEnVigor" x="367" y="1456" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="333" h1="0" w2="-35" h2="517"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-238" h1="21" w2="-238" h2="21"/>
+      <bendpoint w1="-268" h1="-2" w2="-268" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P406_DecisionSupervisor" x="440" y="1583" width="190" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="368" h1="-2" w2="5" h2="478"/>
+    </edge>
+  </node>
+  <node name="P406_AceptarPropuestaAcuerdoDecision" x="356" y="650" width="327" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="116" y="95"/>
+      <bendpoint w1="-371" h1="-1" w2="-370" h2="227"/>
+      <bendpoint w1="-372" h1="-227" w2="-371" h2="1"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarResultadoAcuerdoDecision" x="379" y="1057" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="201" y="-256"/>
+      <bendpoint w1="-514" h1="-1" w2="-523" h2="-527"/>
+      <bendpoint w1="-514" h1="523" w2="-523" h2="-3"/>
+    </edge>
+  </node>
+  <node name="P406_BPMTramiteDemandaIncidental" x="21" y="1334" width="252" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="201" w2="-437" h2="-48"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarResultadoAcuerdo" x="357" y="918" width="331" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-278" h1="-1" w2="-278" h2="-1"/>
+      <bendpoint w1="-248" h1="19" w2="-248" h2="19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-102" h1="-68" w2="-101" h2="74"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-17"/>
+      <bendpoint w1="344" h1="-1" w2="-28" h2="140"/>
+    </edge>
+  </node>
+  <node name="P406_RegistrarResHomologacionJudicialDecision" x="350" y="1334" width="356" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="828" y="777" width="132" height="36"/>
+</root-container>

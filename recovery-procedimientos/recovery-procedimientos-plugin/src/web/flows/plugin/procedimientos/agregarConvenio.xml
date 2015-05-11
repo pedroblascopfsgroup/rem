@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dtoAgregar" class="es.pfsgroup.concursal.convenio.dto.DtoAgregarConvenio"/>
+
+    <input name="idProcedimiento" type="java.lang.Long"/>
+    <input name="numeroAuto" type="java.lang.String"/>
+    <input name="banderaEntrada" type="java.lang.Long"/>
+    
+	<input name="banderaEditar" type="java.lang.Long"/>
+    <input name="idConvenio" type="java.lang.Long"/>
+    <input name="estado" type="java.lang.Long"/>
+    <input name="postura" type="java.lang.Long"/>    
+    <input name="inicio" type="java.lang.Long"/>
+    <input name="tipo" type="java.lang.Long"/>
+    <input name="tipoAdhesion" type="java.lang.Long"/>
+    <input name="fecha" type="java.lang.String"/>
+    <input name="numeroProponentes" type="java.lang.Long"/>
+    <input name="totalMasa" type="java.lang.Float"/>
+    <input name="porcentaje" type="java.lang.Float"/>
+    <input name="totalMasaOrd" type="java.lang.Float"/>
+    <input name="porcentajeOrd" type="java.lang.Float"/>
+    <input name="descripcion" type="java.lang.String"/>
+    <input name="descripcionAdhesiones" type="java.lang.String"/>
+    <input name="descripcionAnticipado" type="java.lang.String"/>
+    <input name="descripcionTerceros" type="java.lang.String"/>
+    <input name="alternativa" type="java.lang.Long"/>
+    <input name="descripcionConvenio" type="java.lang.String"/>    
+    <decision-state id="decision">
+		<if test="(banderaEntrada != '1')" then="formulario" else="guardar"/>
+    </decision-state>
+
+    
+    <!--a partir de este momento sólo enviamos ajax -->
+    <end-state id="formulario" view="plugin/procedimientos/concursal/agregarConvenio" >
+		<on-entry>
+			<evaluate expression="idProcedimiento" result="flowScope.idProcedimiento"/>
+			<evaluate expression="numeroAuto" result="flowScope.numeroAuto"/>
+			<evaluate expression="executor.execute('convenioManager.dameEstadoPorDefecto')" result="flowScope.estado_por_defecto"/>
+			<evaluate expression="executor.execute('convenioManager.dameFechaPorDefecto')" result="flowScope.fecha_por_defecto"/>
+			<evaluate expression="executor.execute('convenioManager.estadosConvenio')" result="flowScope.estados"/>
+			<evaluate expression="executor.execute('convenioManager.posturasConvenio')" result="flowScope.posturas"/>
+			<evaluate expression="executor.execute('convenioManager.iniciosConvenio')" result="flowScope.inicios"/>
+			<evaluate expression="executor.execute('convenioManager.tiposConvenio')" result="flowScope.tipos"/>
+			<evaluate expression="executor.execute('convenioManager.tipoAdhesionConvenio')" result="flowScope.tipoAdhesion"/>
+			<evaluate expression="executor.execute('convenioManager.tipoAlternativaConvenio')" result="flowScope.tipoAlternativa"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="guardar" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoAgregar)" />
+			<evaluate expression="executor.execute('convenioManager.agregarConvenio',dtoAgregar)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+    
+</flow>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="confeccionExpedienteSabadell" width="1073" height="628">
+  <node name="Inicio" x="46" y="21" width="132" height="36">
+    <edge>
+      <label x="-41" y="-25"/>
+    </edge>
+  </node>
+  <node name="P92_marcajeLitigio" x="508" y="103" width="132" height="36">
+    <edge>
+      <label x="-11" y="15"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="328" h1="-2" w2="-2" h2="-103"/>
+    </edge>
+    <edge>
+      <label x="-79" y="-4"/>
+    </edge>
+  </node>
+  <node name="P92_recepcionDocumentos" x="142" y="190" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="30" y="-10"/>
+      <bendpoint w1="-135" h1="-43" w2="-138" h2="43"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="167" w2="-228" h2="-95"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-90" h1="410" w2="-786" h2="396"/>
+      <bendpoint w1="845" h1="408" w2="149" h2="394"/>
+    </edge>
+  </node>
+  <node name="P92_recopilarDocumentacion" x="143" y="103" width="132" height="36">
+    <edge>
+      <label x="3" y="2"/>
+    </edge>
+    <edge>
+      <label x="6" y="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-167" h1="6" w2="-862" h2="-95"/>
+      <bendpoint w1="-166" h1="493" w2="-861" h2="392"/>
+      <bendpoint w1="802" h1="497" w2="107" h2="396"/>
+    </edge>
+  </node>
+  <node name="P92_generarCertificadoDeuda" x="411" y="263" width="132" height="36">
+    <edge>
+      <label x="-170" y="47"/>
+    </edge>
+    <edge>
+      <label x="-43" y="-11"/>
+      <bendpoint w1="-71" h1="-110" w2="-168" h2="50"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-378" h1="9" w2="-805" h2="68"/>
+      <bendpoint w1="-388" h1="340" w2="-815" h2="399"/>
+      <bendpoint w1="395" h1="346" w2="-32" h2="405"/>
+    </edge>
+  </node>
+  <node name="P92_mandarBurofax" x="631" y="262" width="132" height="36">
+    <edge>
+      <label x="3" y="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="169" h1="1" w2="-97" h2="61"/>
+    </edge>
+    <edge>
+      <label x="-26" y="4"/>
+      <bendpoint w1="31" h1="-124" w2="154" h2="35"/>
+    </edge>
+    <edge>
+      <label x="7" y="8"/>
+    </edge>
+  </node>
+  <node name="P92_certificacionNotarial" x="412" y="344" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-122" h1="-45" w2="-121" h2="36"/>
+    </edge>
+    <edge>
+      <label x="-28" y="-20"/>
+      <bendpoint w1="-17" h1="76" w2="-1" h2="-54"/>
+    </edge>
+    <edge>
+      <label x="-52" y="15"/>
+      <bendpoint w1="93" h1="16" w2="93" h2="16"/>
+      <bendpoint w1="85" h1="24" w2="85" h2="24"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="342" h1="71" w2="-84" h2="211"/>
+    </edge>
+  </node>
+  <node name="P92_mandarExpediente" x="370" y="546" width="132" height="36">
+    <edge>
+      <label x="-47" y="11"/>
+    </edge>
+    <edge>
+      <label x="-35" y="-41"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="395" h1="-64" w2="-73" h2="278"/>
+    </edge>
+  </node>
+  <node name="P92_BPMAceptacionYdecision" x="586" y="547" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="251" h1="-1" w2="-1" h2="342"/>
+    </edge>
+  </node>
+  <node name="fork1" x="448" y="192" width="252" height="24">
+    <edge>
+      <label x="-91" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-43" y="-19"/>
+    </edge>
+  </node>
+  <node name="fork2" x="260" y="30" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P92_registrarAcuseRecibo" x="631" y="346" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-58" y="-15"/>
+      <bendpoint w1="-91" h1="0" w2="-91" h2="0"/>
+      <bendpoint w1="-91" h1="-24" w2="-91" h2="-24"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-110" h1="-44" w2="-105" h2="39"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="join1" x="336" y="480" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="838" y="204" width="132" height="36"/>
+</root-container>

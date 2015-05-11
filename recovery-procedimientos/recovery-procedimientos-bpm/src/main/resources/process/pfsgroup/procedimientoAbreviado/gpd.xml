@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoAbreviado" width="1171" height="950">
+  <node name="Inicio" x="13" y="13" width="132" height="36">
+    <edge>
+      <label x="-37" y="18"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="669" y="386" width="132" height="36">
+    <edge>
+      <label x="15" y="-48"/>
+      <bendpoint w1="101" h1="-51" w2="-106" h2="191"/>
+      <bendpoint w1="100" h1="-222" w2="-107" h2="20"/>
+    </edge>
+  </node>
+  <node name="P32_instruccionesProcedimiento" x="210" y="13" width="215" height="36">
+    <edge>
+      <label x="16" y="-2"/>
+    </edge>
+    <edge>
+      <label x="-72" y="4"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-15"/>
+      <bendpoint w1="512" h1="1" w2="0" h2="-124"/>
+    </edge>
+  </node>
+  <node name="P32_interposicionDemandaQuerella" x="213" y="77" width="209" height="36">
+    <edge>
+      <label x="18" y="-7"/>
+      <bendpoint w1="161" h1="-31" w2="160" h2="30"/>
+    </edge>
+    <edge>
+      <label x="-78" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="471" h1="0" w2="-41" h2="-61"/>
+    </edge>
+    <edge>
+      <label x="15" y="-5"/>
+    </edge>
+  </node>
+  <node name="P32_confAdmisionDemanda" x="210" y="141" width="211" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-20" y="12"/>
+      <bendpoint w1="-205" h1="-36" w2="-207" h2="28"/>
+    </edge>
+    <edge>
+      <label x="-69" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P32_declaracionImputados" x="209" y="274" width="211" height="36">
+    <edge>
+      <label x="27" y="-8"/>
+      <bendpoint w1="-221" h1="-72" w2="-222" h2="61"/>
+    </edge>
+    <edge>
+      <label x="14" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-306" h1="0" w2="-934" h2="130"/>
+      <bendpoint w1="-307" h1="-295" w2="-935" h2="-165"/>
+      <bendpoint w1="585" h1="-293" w2="-43" h2="-163"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P32_autoAperturaOral" x="197" y="699" width="233" height="36">
+    <edge>
+      <label x="-67" y="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="403" h1="29" w2="-226" h2="584"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="38" y="-5"/>
+      <bendpoint w1="-194" h1="-41" w2="-194" h2="36"/>
+    </edge>
+  </node>
+  <node name="P32_escritoCalificacionProvisional" x="192" y="602" width="245" height="36">
+    <edge>
+      <label x="-71" y="8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-305" h1="-3" w2="-934" h2="475"/>
+      <bendpoint w1="-305" h1="-638" w2="-934" h2="-160"/>
+      <bendpoint w1="552" h1="-632" w2="-77" h2="-154"/>
+    </edge>
+    <edge>
+      <label x="30" y="-8"/>
+      <bendpoint w1="-269" h1="-122" w2="-270" h2="82"/>
+    </edge>
+    <edge>
+      <label x="26" y="-9"/>
+    </edge>
+  </node>
+  <node name="P32_autoJuzgadoPenal" x="194" y="787" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="420" h1="-25" w2="-209" h2="618"/>
+    </edge>
+    <edge>
+      <label x="52" y="-6"/>
+      <bendpoint w1="-188" h1="-43" w2="-188" h2="45"/>
+    </edge>
+    <edge>
+      <label x="-86" y="4"/>
+    </edge>
+  </node>
+  <node name="P32_registrarJuicio" x="193" y="861" width="238" height="36">
+    <edge>
+      <label x="-17" y="-19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="446" h1="-86" w2="-184" h2="631"/>
+    </edge>
+    <edge>
+      <label x="50" y="-5"/>
+      <bendpoint w1="-185" h1="-37" w2="-186" h2="37"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P32_registrarResolucion" x="519" y="860" width="261" height="36">
+    <edge>
+      <label x="21" y="8"/>
+      <bendpoint w1="158" h1="21" w2="-133" h2="21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="136" h1="-69" w2="-157" h2="647"/>
+    </edge>
+    <edge>
+      <label x="23" y="4"/>
+      <bendpoint w1="-176" h1="23" w2="161" h2="22"/>
+    </edge>
+    <edge>
+      <label x="-34" y="7"/>
+    </edge>
+  </node>
+  <node name="P32_resolucionFirme" x="837" y="860" width="206" height="36">
+    <edge>
+      <label x="8" y="-19"/>
+      <bendpoint w1="-132" h1="-23" w2="159" h2="-23"/>
+    </edge>
+    <edge>
+      <label x="-18" y="8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P32_confAdmisionDemandaDecision" x="194" y="201" width="246" height="36">
+    <edge>
+      <label x="-3" y="-20"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="875" y="506" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P32_BPMtramiteArchivo" x="513" y="200" width="226" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P32_BPMtramiteArchivoDecision" x="499" y="274" width="252" height="36">
+    <edge>
+      <label x="-52" y="-61"/>
+      <bendpoint w1="0" h1="108" w2="-110" h2="-4"/>
+    </edge>
+    <edge>
+      <label x="-28" y="9"/>
+    </edge>
+  </node>
+  <node name="P32_transformacionAbreviado" x="201" y="418" width="226" height="36">
+    <edge>
+      <label x="-4" y="9"/>
+    </edge>
+    <edge>
+      <label x="42" y="-8"/>
+      <bendpoint w1="-174" h1="-83" w2="-174" h2="61"/>
+    </edge>
+    <edge>
+      <label x="-61" y="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-308" h1="-3" w2="-936" h2="271"/>
+      <bendpoint w1="-306" h1="-436" w2="-934" h2="-162"/>
+      <bendpoint w1="516" h1="-436" w2="-112" h2="-162"/>
+    </edge>
+  </node>
+  <node name="P32_transformacionAbreviadoDecision" x="179" y="516" width="268" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-38"/>
+    </edge>
+  </node>
+  <node name="P32_BPMtramiteArchivo_2" x="488" y="517" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P32_BPMtramiteArchivo_2Decision" x="477" y="582" width="241" height="36">
+    <edge>
+      <label x="-74" y="-78"/>
+      <bendpoint w1="0" h1="113" w2="284" h2="-4"/>
+    </edge>
+    <edge>
+      <label x="-54" y="-143"/>
+      <bendpoint w1="139" h1="-1" w2="1" h2="195"/>
+    </edge>
+  </node>
+  <node name="Fin" x="876" y="144" width="132" height="36"/>
+</root-container>

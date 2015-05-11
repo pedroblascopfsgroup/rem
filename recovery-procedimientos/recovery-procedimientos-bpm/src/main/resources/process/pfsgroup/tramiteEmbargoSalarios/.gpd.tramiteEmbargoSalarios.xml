@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteEmbargoSalarios" width="917" height="699">
+  <node name="Inicio" x="6" y="18" width="132" height="36">
+    <edge>
+      <label x="-32" y="-14"/>
+    </edge>
+  </node>
+  <node name="P09_SolicitarNotificacion" x="254" y="19" width="251" height="36">
+    <edge>
+      <label x="18" y="-11"/>
+    </edge>
+    <edge>
+      <label x="25" y="-151"/>
+      <bendpoint w1="-368" h1="82" w2="-371" h2="-510"/>
+      <bendpoint w1="-367" h1="592" w2="-370" h2="0"/>
+    </edge>
+    <edge>
+      <label x="-81" y="5"/>
+    </edge>
+  </node>
+  <node name="P09_ConfirmarRetenciones" x="256" y="221" width="246" height="36">
+    <edge>
+      <label x="-66" y="1"/>
+    </edge>
+    <edge>
+      <label x="1" y="-251"/>
+      <bendpoint w1="-357" h1="1" w2="-360" h2="-389"/>
+      <bendpoint w1="-357" h1="273" w2="-360" h2="-117"/>
+    </edge>
+    <edge>
+      <label x="-12" y="8"/>
+    </edge>
+  </node>
+  <node name="ConfirmarRetencionesDecision" x="214" y="304" width="332" height="36">
+    <edge>
+      <label x="-18" y="4"/>
+      <bendpoint w1="387" h1="-46" w2="-1" h2="104"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-26" y="21"/>
+    </edge>
+  </node>
+  <node name="P09_GestionarProblemas" x="265" y="411" width="232" height="36">
+    <edge>
+      <label x="-19" y="-33"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-7" y="8"/>
+    </edge>
+    <edge>
+      <label x="-10" y="8"/>
+      <bendpoint w1="216" h1="-107" w2="218" h2="83"/>
+    </edge>
+  </node>
+  <node name="GestionarProblemasDecision" x="643" y="324" width="206" height="36">
+    <edge>
+      <label x="-17" y="-26"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P09_ActualizarDatos" x="651" y="425" width="189" height="36">
+    <edge>
+      <label x="15" y="16"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-22"/>
+    </edge>
+    <edge>
+      <label x="-6" y="9"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="679" y="543" width="132" height="36">
+    <edge>
+      <label x="17" y="-23"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="31" y="306" width="132" height="36">
+    <edge>
+      <label x="-68" y="-33"/>
+    </edge>
+  </node>
+  <node name="Espera" x="685" y="154" width="166" height="36">
+    <edge>
+      <label x="-58" y="-21"/>
+      <bendpoint w1="-66" h1="66" w2="323" h2="-1"/>
+    </edge>
+  </node>
+  <node name="P09_ConfirmarRequerimientoResultado" x="252" y="98" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="478" h1="-1" w2="383" h2="-474"/>
+      <bendpoint w1="479" h1="472" w2="384" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-75" y="-9"/>
+    </edge>
+    <edge>
+      <label x="1" y="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="162" h1="-38" w2="162" h2="41"/>
+    </edge>
+  </node>
+  <node name="ConfirmarRequerimientoResultadoDecision" x="253" y="158" width="254" height="36">
+    <edge>
+      <label x="6" y="-21"/>
+      <bendpoint w1="-323" h1="1" w2="-40" h2="-147"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="408" y="571" width="132" height="36"/>
+</root-container>

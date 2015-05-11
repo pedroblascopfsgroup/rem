@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteDemandadoEnIncidente" width="994" height="793">
+  <node name="Inicio" x="39" y="21" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P26_notificacionDemandaIncidental" x="298" y="21" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="534" h1="-1" w2="246" h2="-622"/>
+      <bendpoint w1="534" h1="723" w2="242" h2="-12"/>
+    </edge>
+  </node>
+  <node name="P26_dictarInstrucciones" x="298" y="84" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="230" h1="-37" w2="230" h2="26"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="515" h1="21" w2="227" h2="-537"/>
+      <bendpoint w1="520" h1="650" w2="228" h2="-22"/>
+    </edge>
+  </node>
+  <node name="P26_registrarOposicion" x="61" y="149" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-125" h1="0" w2="-125" h2="0"/>
+      <bendpoint w1="-125" h1="-22" w2="-125" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="-63" w2="-260" h2="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-179" h1="37" w2="-726" h2="-456"/>
+      <bendpoint w1="-180" h1="613" w2="-731" h2="6"/>
+    </edge>
+  </node>
+  <node name="P26_admisionEscritoOposicion" x="49" y="231" width="225" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-137" h1="0" w2="-137" h2="0"/>
+      <bendpoint w1="-137" h1="-21" w2="-137" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="164" h1="-35" w2="164" h2="47"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-168" h1="36" w2="-715" h2="-375"/>
+      <bendpoint w1="-170" h1="517" w2="-721" h2="-8"/>
+    </edge>
+  </node>
+  <node name="P26_admisionEscritoOposicionDecision" x="33" y="318" width="256" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-142" h1="59" w2="-143" h2="-126"/>
+    </edge>
+  </node>
+  <node name="P26_registrarVista" x="84" y="402" width="155" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-102" h1="0" w2="-102" h2="0"/>
+      <bendpoint w1="-102" h1="-23" w2="-102" h2="-23"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="185" h1="-90" w2="185" h2="81"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-153" h1="55" w2="-700" h2="-185"/>
+      <bendpoint w1="-158" h1="332" w2="-709" h2="-22"/>
+    </edge>
+  </node>
+  <node name="P26_registrarResolucionOposicion" x="51" y="503" width="222" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-128" h1="0" w2="-128" h2="0"/>
+      <bendpoint w1="-128" h1="-22" w2="-128" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-135" h1="6" w2="-685" h2="-247"/>
+      <bendpoint w1="-134" h1="215" w2="-684" h2="-38"/>
+    </edge>
+  </node>
+  <node name="P26_registrarAllanamiento" x="588" y="149" width="241" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-145" h1="0" w2="-145" h2="0"/>
+      <bendpoint w1="-145" h1="-21" w2="-145" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="-65" w2="288" h2="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="204" h1="-1" w2="204" h2="-494"/>
+      <bendpoint w1="214" h1="566" w2="210" h2="-41"/>
+    </edge>
+  </node>
+  <node name="P26_admisionEscritoAllanamiento" x="589" y="235" width="239" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-144" h1="0" w2="-144" h2="0"/>
+      <bendpoint w1="-144" h1="-21" w2="-144" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-206" h1="-42" w2="-206" h2="44"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="187" h1="-4" w2="187" h2="-411"/>
+      <bendpoint w1="204" h1="454" w2="200" h2="-67"/>
+    </edge>
+  </node>
+  <node name="P26_registrarResolucionAllanamiento" x="581" y="336" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-152" h1="0" w2="-152" h2="0"/>
+      <bendpoint w1="-152" h1="-21" w2="-152" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-190" h1="-56" w2="-190" h2="45"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="172" h1="-4" w2="172" h2="-310"/>
+      <bendpoint w1="189" h1="336" w2="185" h2="-84"/>
+    </edge>
+  </node>
+  <node name="P26_resolucionFirme" x="436" y="522" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="274" h1="-3" w2="120" h2="-237"/>
+      <bendpoint w1="299" h1="225" w2="145" h2="-9"/>
+    </edge>
+  </node>
+  <node name="P26_dictarInstruccionesDecision" x="302" y="147" width="237" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision" x="493" y="659" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="646" y="756" width="132" height="36"/>
+  <node name="P26_registrarResolucionOposicionDecision" x="59" y="584" width="300" height="36">
+    <edge>
+      <label x="-54" y="-21"/>
+      <bendpoint w1="208" h1="0" w2="-292" h2="82"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="75" w2="-496" h2="-3"/>
+    </edge>
+  </node>
+  <node name="P26_registrarResolucionAllanamientoDecision" x="572" y="422" width="268" height="36">
+    <edge>
+      <label x="-56" y="-18"/>
+    </edge>
+    <edge>
+      <label x="4" y="-202"/>
+      <bendpoint w1="2" h1="235" w2="149" h2="-2"/>
+    </edge>
+  </node>
+</root-container>

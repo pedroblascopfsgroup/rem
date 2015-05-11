@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteAdjudicacion" width="1124" height="574">
+  <node name="Inicio" x="180" y="51" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P05_SolicitudTramiteAdjudicacion" x="127" y="123" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="91" h1="53" w2="83" h2="-66"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="402" h1="1" w2="1" h2="-119"/>
+    </edge>
+  </node>
+  <node name="P05_RegistrarAutoAdjudicacion" x="108" y="440" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="364" h1="0" w2="-39" h2="168"/>
+    </edge>
+    <edge>
+      <label x="-109" y="-5"/>
+      <bendpoint w1="190" h1="-45" w2="184" h2="53"/>
+    </edge>
+  </node>
+  <node name="Decision" x="102" y="524" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="408" h1="1" w2="0" h2="279"/>
+    </edge>
+  </node>
+  <node name="P05_NotifcacionDecreAdjudicacion" x="113" y="245" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-90" h1="-64" w2="-82" h2="55"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P05_NotificacionDecreContratio" x="84" y="356" width="277" height="36">
+    <edge>
+      <label x="-116" y="13"/>
+      <bendpoint w1="29" h1="18" w2="5" h2="-74"/>
+      <bendpoint w1="-97" h1="27" w2="-104" h2="-57"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-80" h1="-59" w2="-100" h2="52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-163" h1="0" w2="-163" h2="0"/>
+      <bendpoint w1="-163" h1="-21" w2="-163" h2="-21"/>
+    </edge>
+  </node>
+  <node name="Fin" x="706" y="312" width="226" height="36"/>
+</root-container>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteIntereses" width="1116" height="632">
+  <node name="Inicio" x="12" y="11" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P10_ElaborarLiquidacion" x="237" y="11" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="83" h1="38" w2="83" h2="-42"/>
+    </edge>
+  </node>
+  <node name="P10_SolicitarLiquidacion" x="237" y="91" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-6"/>
+      <bendpoint w1="-60" h1="-43" w2="-60" h2="37"/>
+    </edge>
+  </node>
+  <node name="P10_RegistrarResolucion" x="239" y="168" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-18" y="-31"/>
+      <bendpoint w1="-127" h1="-42" w2="-125" h2="35"/>
+    </edge>
+  </node>
+  <node name="P10_ConfirmarNotificacion" x="234" y="247" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-18" y="-33"/>
+      <bendpoint w1="-113" h1="-42" w2="-118" h2="37"/>
+    </edge>
+  </node>
+  <node name="ConfirmarNotificacionDecision" x="196" y="312" width="202" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-10" y="-14"/>
+    </edge>
+  </node>
+  <node name="P10_BPMTramiteNotificacion" x="514" y="311" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="1" h1="98" w2="285" h2="-3"/>
+    </edge>
+  </node>
+  <node name="P10_RegistrarImpugnacion" x="230" y="412" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-32"/>
+      <bendpoint w1="-164" h1="-100" w2="-168" h2="65"/>
+    </edge>
+  </node>
+  <node name="RegistrarImpugnacionDecision" x="200" y="481" width="208" height="36">
+    <edge>
+      <label x="-8" y="-15"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-17"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="375" y="565" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P10_RegistrarVista" x="23" y="482" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="6" y="-26"/>
+      <bendpoint w1="0" h1="-68" w2="-207" h2="2"/>
+    </edge>
+  </node>
+  <node name="P10_RegistrarResolucionVista" x="24" y="562" width="132" height="36">
+    <edge>
+      <label x="-22" y="-34"/>
+    </edge>
+    <edge>
+      <label x="-61" y="-7"/>
+      <bendpoint w1="-72" h1="-44" w2="-71" h2="36"/>
+    </edge>
+  </node>
+  <node name="P10_ResolucionFirme" x="206" y="563" width="132" height="36">
+    <edge>
+      <label x="-25" y="31"/>
+    </edge>
+    <edge>
+      <label x="14" y="0"/>
+      <bendpoint w1="-93" h1="34" w2="89" h2="35"/>
+    </edge>
+  </node>
+  <node name="Fin" x="636" y="563" width="132" height="36"/>
+</root-container>

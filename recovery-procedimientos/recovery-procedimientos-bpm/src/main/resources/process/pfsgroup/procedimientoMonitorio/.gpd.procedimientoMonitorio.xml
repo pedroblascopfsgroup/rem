@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoMonitorio" width="1213" height="703">
+  <node name="Inicio" x="-2" y="-44" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P02_ConfirmarAdmisionDemanda" x="233" y="44" width="375" height="36">
+    <edge>
+      <label x="-73" y="17"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="672" h1="0" w2="0" h2="-449"/>
+    </edge>
+    <edge>
+      <label x="83" y="-4"/>
+      <bendpoint w1="-268" h1="-50" w2="-271" h2="44"/>
+    </edge>
+  </node>
+  <node name="P02_ConfirmarAdmisionDemandaDecision" x="272" y="126" width="298" height="36">
+    <edge>
+      <label x="0" y="-23"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision 1" x="888" y="126" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P02_ConfirmarNotificacionReqPago" x="-3" y="118" width="235" height="36">
+    <edge>
+      <label x="-79" y="18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="36" y="2"/>
+      <bendpoint w1="198" h1="40" w2="-780" h2="-335"/>
+      <bendpoint w1="796" h1="42" w2="-182" h2="-333"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="-75" w2="-307" h2="-1"/>
+    </edge>
+  </node>
+  <node name="P02_JBPMTramiteNotificacion" x="310" y="192" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P02_ConfirmarNotificacionReqPagoDecision" x="-1" y="194" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P02_ConfirmarOposicionCuantia" x="-4" y="272" width="347" height="36">
+    <edge>
+      <label x="-80" y="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-281" y="-29"/>
+      <bendpoint w1="751" h1="-2" w2="-172" h2="-223"/>
+    </edge>
+    <edge>
+      <label x="8" y="-52"/>
+      <bendpoint w1="-223" h1="-72" w2="-168" h2="82"/>
+    </edge>
+  </node>
+  <node name="P02_ConfirmarOposicionCuantiaDecision" x="3" y="351" width="351" height="36">
+    <edge>
+      <label x="28" y="-16"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P02_RegAutodespachandoEjecucion" x="305" y="415" width="372" height="36">
+    <edge>
+      <label x="0" y="4"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-9"/>
+    </edge>
+    <edge>
+      <label x="-5" y="-16"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-144" h1="-114" w2="178" h2="29"/>
+    </edge>
+  </node>
+  <node name="Decision 2" x="424" y="491" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision 3" x="118" y="615" width="132" height="36">
+    <edge>
+      <label x="-29" y="-30"/>
+      <bendpoint w1="954" h1="-2" w2="-1" h2="150"/>
+    </edge>
+  </node>
+  <node name="Decision 4" x="525" y="348" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P02_InterposicionDemanda" x="262" y="-50" width="322" height="36">
+    <edge>
+      <label x="1" y="4"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="669" h1="2" w2="0" h2="-541"/>
+    </edge>
+  </node>
+  <node name="P02_JBPMProcedimientoVerbalDesdeMonitorio" x="32" y="477" width="306" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1026" y="493" width="132" height="36"/>
+</root-container>

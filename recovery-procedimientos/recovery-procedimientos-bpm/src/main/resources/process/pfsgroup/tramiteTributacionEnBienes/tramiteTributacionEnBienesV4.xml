@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="tramiteTributacionEnBienesV4">
+
+	<start-state name="Inicio">
+		<transition to="P411_ConsultarTributacionDeBienes" name="avanzaBPM"></transition>
+	</start-state>
+
+
+	<state name="P411_RegistrarResolucionConsulta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P411_RegistrarResolucionConsulta" name="activarAlerta"></transition>
+		<transition to="P411_ConsultarTributacionDeBienes" name="vueltaAtras"></transition>
+		<transition to="P411_Decision1" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P411_ConsultarTributacionDeBienes">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P411_RegistrarResolucionConsulta" name="avanzaBPM"></transition>
+		<transition to="P411_ConsultarTributacionDeBienes" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<node name="P411_Decision1">
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+</process-definition>

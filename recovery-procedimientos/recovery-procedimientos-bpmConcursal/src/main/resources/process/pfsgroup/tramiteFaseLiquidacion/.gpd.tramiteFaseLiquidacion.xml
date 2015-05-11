@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteFaseLiquidacion" width="1130" height="791">
+  <node name="Inicio" x="30" y="23" width="132" height="36">
+    <edge>
+      <label x="-82" y="-35"/>
+    </edge>
+  </node>
+  <node name="P31_aperturaFase" x="230" y="22" width="165" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-18"/>
+      <bendpoint w1="288" h1="-1" w2="2" h2="-203"/>
+    </edge>
+    <edge>
+      <label x="28" y="-23"/>
+      <bendpoint w1="-107" h1="0" w2="-107" h2="0"/>
+      <bendpoint w1="-107" h1="-23" w2="-107" h2="-23"/>
+    </edge>
+  </node>
+  <node name="P31_InformeLiquidacion" x="226" y="91" width="173" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="66" y="-9"/>
+      <bendpoint w1="-158" h1="-33" w2="-158" h2="36"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-18"/>
+      <bendpoint w1="266" h1="0" w2="-20" h2="-133"/>
+    </edge>
+    <edge>
+      <label x="-78" y="-10"/>
+      <bendpoint w1="-111" h1="0" w2="-111" h2="0"/>
+      <bendpoint w1="-111" h1="-23" w2="-111" h2="-23"/>
+    </edge>
+  </node>
+  <node name="P31_decidirPresentarObs" x="190" y="155" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="75" y="-4"/>
+      <bendpoint w1="-213" h1="-42" w2="-213" h2="22"/>
+    </edge>
+    <edge>
+      <label x="-12" y="-17"/>
+      <bendpoint w1="248" h1="-3" w2="-38" h2="-72"/>
+    </edge>
+    <edge>
+      <label x="-76" y="-12"/>
+      <bendpoint w1="-147" h1="0" w2="-147" h2="0"/>
+      <bendpoint w1="-147" h1="-21" w2="-147" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P31_decidirPresentarObsDecision" x="191" y="222" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="12" y="-55"/>
+      <bendpoint w1="-183" h1="1" w2="-184" h2="-150"/>
+      <bendpoint w1="-184" h1="151" w2="-185" h2="0"/>
+    </edge>
+  </node>
+  <node name="P31_presentarObs" x="221" y="300" width="182" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="51" y="1"/>
+      <bendpoint w1="-245" h1="-108" w2="-245" h2="37"/>
+    </edge>
+    <edge>
+      <label x="8" y="-26"/>
+    </edge>
+    <edge>
+      <label x="-48" y="17"/>
+      <bendpoint w1="-116" h1="0" w2="-116" h2="0"/>
+      <bendpoint w1="-116" h1="-22" w2="-116" h2="-22"/>
+    </edge>
+  </node>
+  <node name="P31_regResolucionAprovacion" x="211" y="373" width="206" height="36">
+    <edge>
+      <label x="-72" y="-5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-1" y="5"/>
+    </edge>
+  </node>
+  <node name="P31_regDecisionSeguimiento" x="216" y="445" width="198" height="36">
+    <edge>
+      <label x="-25" y="-31"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-7"/>
+      <bendpoint w1="-150" h1="-37" w2="-149" h2="35"/>
+    </edge>
+    <edge>
+      <label x="21" y="-26"/>
+      <bendpoint w1="128" h1="-51" w2="-155" h2="170"/>
+      <bendpoint w1="161" h1="-134" w2="-122" h2="87"/>
+    </edge>
+    <edge>
+      <label x="-44" y="19"/>
+      <bendpoint w1="-124" h1="0" w2="-124" h2="0"/>
+      <bendpoint w1="-124" h1="-22" w2="-124" h2="-22"/>
+    </edge>
+  </node>
+  <node name="P31_regDecisionSeguimientoDecision" x="466" y="444" width="263" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P31_regInformeTrimestral1" x="501" y="513" width="196" height="36">
+    <edge>
+      <label x="-29" y="10"/>
+    </edge>
+    <edge>
+      <label x="14" y="-11"/>
+      <bendpoint w1="-89" h1="-38" w2="195" h2="30"/>
+    </edge>
+    <edge>
+      <label x="-22" y="124"/>
+      <bendpoint w1="73" h1="87" w2="74" h2="376"/>
+      <bendpoint w1="376" h1="86" w2="377" h2="375"/>
+      <bendpoint w1="377" h1="-223" w2="378" h2="66"/>
+    </edge>
+    <edge>
+      <label x="-55" y="-28"/>
+      <bendpoint w1="-123" h1="0" w2="-123" h2="0"/>
+      <bendpoint w1="-123" h1="-22" w2="-123" h2="-22"/>
+    </edge>
+  </node>
+  <node name="P31_regInformeTrimestral2" x="217" y="512" width="196" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="27" y="-6"/>
+      <bendpoint w1="193" h1="43" w2="-91" h2="42"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-31"/>
+      <bendpoint w1="-123" h1="0" w2="-123" h2="0"/>
+      <bendpoint w1="-123" h1="-22" w2="-123" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-24"/>
+      <bendpoint w1="325" h1="101" w2="42" h2="389"/>
+      <bendpoint w1="695" h1="101" w2="412" h2="389"/>
+      <bendpoint w1="692" h1="-240" w2="409" h2="48"/>
+    </edge>
+  </node>
+  <node name="P31_regInformeTrimestral2Decision" x="198" y="573" width="236" height="36">
+    <edge>
+      <label x="-337" y="106"/>
+      <bendpoint w1="462" h1="0" w2="142" h2="266"/>
+      <bendpoint w1="463" h1="-251" w2="143" h2="15"/>
+    </edge>
+    <edge>
+      <label x="12" y="-8"/>
+      <bendpoint w1="-181" h1="3" w2="-180" h2="64"/>
+      <bendpoint w1="-179" h1="-40" w2="-178" h2="21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="decision1" x="532" y="294" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="190" y="642" width="252" height="24">
+    <edge>
+      <label x="17" y="37"/>
+      <bendpoint w1="-222" h1="2" w2="-221" h2="126"/>
+      <bendpoint w1="-222" h1="-125" w2="-219" h2="0"/>
+    </edge>
+    <edge>
+      <label x="-86" y="-8"/>
+    </edge>
+  </node>
+  <node name="P31_separacionAdministradores" x="196" y="688" width="235" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-25"/>
+      <bendpoint w1="360" h1="-59" w2="75" h2="405"/>
+      <bendpoint w1="745" h1="-59" w2="460" h2="405"/>
+      <bendpoint w1="744" h1="-432" w2="459" h2="32"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-12"/>
+      <bendpoint w1="-142" h1="0" w2="-142" h2="0"/>
+      <bendpoint w1="-142" h1="-21" w2="-142" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P31_presentarSeparacion" x="445" y="687" width="179" height="36">
+    <edge>
+      <label x="-18" y="26"/>
+    </edge>
+    <edge>
+      <label x="-79" y="-18"/>
+      <bendpoint w1="0" h1="-48" w2="225" h2="-49"/>
+    </edge>
+    <edge>
+      <label x="44" y="49"/>
+      <bendpoint w1="106" h1="-44" w2="46" h2="419"/>
+      <bendpoint w1="538" h1="-40" w2="478" h2="423"/>
+      <bendpoint w1="535" h1="-447" w2="475" h2="16"/>
+    </edge>
+    <edge>
+      <label x="17" y="-20"/>
+      <bendpoint w1="-111" h1="0" w2="-111" h2="0"/>
+      <bendpoint w1="-111" h1="-23" w2="-111" h2="-23"/>
+    </edge>
+  </node>
+  <node name="P31_registrarResolucion" x="644" y="687" width="173" height="36">
+    <edge>
+      <label x="-103" y="168"/>
+      <bendpoint w1="78" h1="-41" w2="210" h2="352"/>
+      <bendpoint w1="78" h1="-368" w2="183" h2="12"/>
+    </edge>
+    <edge>
+      <label x="-20" y="214"/>
+      <bendpoint w1="365" h1="2" w2="497" h2="465"/>
+      <bendpoint w1="364" h1="-464" w2="496" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="13" y="-24"/>
+      <bendpoint w1="-111" h1="0" w2="-111" h2="0"/>
+      <bendpoint w1="-111" h1="-23" w2="-111" h2="-23"/>
+    </edge>
+  </node>
+  <node name="P31_separacionAdministradoresDecision" x="303" y="754" width="274" height="36">
+    <edge>
+      <label x="27" y="-14"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="391" h1="-2" w2="187" h2="426"/>
+      <bendpoint w1="391" h1="-446" w2="195" h2="1"/>
+    </edge>
+  </node>
+  <node name="Fin" x="532" y="224" width="132" height="36"/>
+</root-container>

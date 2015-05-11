@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteSubastaUgas" width="1146" height="1041">
+  <node name="Inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_SolicitudSubasta" x="303" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="63" h1="51" w2="59" h2="-43"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="546" h1="0" w2="2" h2="-260"/>
+    </edge>
+  </node>
+  <node name="ForkSolucitudSubasta" x="-25" y="247" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_DictarInstrucciones" x="-45" y="340" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-93" h1="7" w2="-985" h2="87"/>
+      <bendpoint w1="-82" h1="-358" w2="-974" h2="-278"/>
+      <bendpoint w1="791" h1="-364" w2="-101" h2="-284"/>
+    </edge>
+  </node>
+  <node name="P11_LeerInstrucciones" x="-44" y="485" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-80" h1="-2" w2="-978" h2="-256"/>
+      <bendpoint w1="-83" h1="520" w2="-981" h2="266"/>
+      <bendpoint w1="638" h1="511" w2="-260" h2="257"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="445" h1="-32" w2="-446" h2="193"/>
+    </edge>
+  </node>
+  <node name="P11_AnuncioSubasta_new1" x="407" y="105" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="527" h1="-2" w2="-13" h2="-168"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-60" h1="-48" w2="-56" h2="46"/>
+    </edge>
+  </node>
+  <node name="P11_CelebracionSubasta_new1" x="131" y="326" width="224" height="36">
+    <edge>
+      <label x="-51" y="-16"/>
+      <bendpoint w1="41" h1="79" w2="41" h2="79"/>
+      <bendpoint w1="102" h1="60" w2="102" h2="60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CelebracionSubastaDecision" x="126" y="540" width="316" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_SolicitudPago" x="-31" y="841" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="142" h1="44" w2="-76" h2="-79"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="10" h1="168" w2="-859" h2="566"/>
+      <bendpoint w1="764" h1="163" w2="-105" h2="561"/>
+    </edge>
+  </node>
+  <node name="P11_Cobro" x="335" y="925" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-106" h1="-65" w2="165" h2="0"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="540" y="602" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_AnuncioSubasta_new1Decision" x="79" y="159" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="616" y="346" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_CorreoGestionActivos" x="260" y="646" width="228" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_CorreoGestionActivosDecision" x="187" y="733" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P11_BPMCesionRemate" x="258" y="807" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="941" y="678" width="132" height="36"/>
+</root-container>

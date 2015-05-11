@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+	<action-state id="esMultiGestor">
+		<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.modeloMultiGestor')" result="flowScope.multiGestor" />
+		<transition to="decisionMultigestor"/>
+	</action-state>
+    
+	<decision-state id="decisionMultigestor">
+		<if test="multiGestor" then="listadoMultiGestor" else="listadoMonogestor"/>
+	</decision-state>
+	
+	<!-- renderiza el formulario -->
+	<end-state id="listadoMonogestor" view="plugin/busquedaProcedimientos/buscaProcedimientos" >
+		<on-entry>	
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaTiposProcedimiento')" result="flowScope.tiposProcedimiento" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaTiposActuacion')" result="flowScope.ddTiposActuacion" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaEstadosProcedimiento')" result="flowScope.ddEstadosProcedimiento" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaTiposReclamacion')" result="flowScope.ddTiposReclamacion" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaDespachosExternos')" result="flowScope.despachos" />	
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaComites')" result="flowScope.comites" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaDDEstadoAsunto')" result="flowScope.ddEstadoAsunto" />	
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.web.buttons.left')" result="flowScope.buttonsLeft"/>
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.web.buttons.right')" result="flowScope.buttonsRight"/>
+		</on-entry>
+	</end-state> 
+	<end-state id="listadoMultiGestor" view="plugin/busquedaProcedimientos/buscaProcedimientosMultigestor" >
+		<on-entry>	
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaTiposActuacion')" result="flowScope.ddTiposActuacion" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaEstadosProcedimiento')" result="flowScope.ddEstadosProcedimiento" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaTiposReclamacion')" result="flowScope.ddTiposReclamacion" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaDespachosExternos')" result="flowScope.despachos" />	
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaComites')" result="flowScope.comites" />
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.procedimiento.listaDDEstadoAsunto')" result="flowScope.ddEstadoAsunto" />	
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.web.buttons.left')" result="flowScope.buttonsLeft"/>
+			<evaluate expression="executor.execute('plugin.busquedaProcedimientos.web.buttons.right')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'EXTDDTipoGestor')" result="flowScope.tiposGestor"/>
+		</on-entry>
+	</end-state> 
+</flow>
+

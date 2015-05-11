@@ -1,0 +1,13 @@
+RECOVERY - BUSQUEDA PROCEDIMIENTOS PLUGIN
+
+VERSION 2.0.2
+
+* Requiere recovery-mejoras-plugin v 5.4.0 o superior
+* Se ha movido una CSS dinámica a su propia hoja de estilos para evitar problemas con IE
+
+VERSION 2.0.1 
+
+* Se ha limitado la visibilidad de los procuradores demandados a solo la cartera del usuario logado.
+
+
+NO HAY INFORMACIÓN DE LAS VERSIONES ANTERIORES

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="dto" class="es.capgemini.pfs.expediente.model.Expediente"/>
+    <var name="dtoTarea" class="es.capgemini.pfs.tareaNotificacion.dto.DtoTareaNotificaciones"/>
+	<var name="dtoBuscarTareaNotificacion" class="es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion" />
+	<input name="id" type="java.lang.Long"/>
+	<input name="tienePerfilGestor" type="java.lang.Boolean"/>
+	<input name="tienePerfilGestor" type="java.lang.Boolean"/>
+    <input name="nombreTab" type="java.lang.String"/>	
+   
+	<!-- renderiza el la página -->
+    <view-state id="buscaCliente" view="expedientes/consultaExpediente">
+    	<on-render>
+            <evaluate expression="executor.execute('expedienteManager.puedeMostrarSolapaDecisionComite', id)" result="flowScope.puedeMostrarSolapaDecisionComite" />
+            <evaluate expression="executor.execute('expedienteManager.puedeMostrarSolapaMarcadoPoliticas', id)" result="flowScope.puedeMostrarSolapaMarcadoPoliticas" />
+      
+   			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente"/>
+			<evaluate expression="executor.execute('expedienteManager.findExclusionExpedienteClienteByExpedienteId', id)" result="flashScope.exclusion" />
+			<evaluate expression="executor.execute('tareaNotificacionManager.buscarComunicacionesExpediente',id)" result="flowScope.tareaPendiente"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerProrrogaExpediente',id)" result="flowScope.prorrogaPendiente"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerSolicitudCancelacionExpediente',id)" result="flowScope.solicitudCancelacion"/>
+   			<evaluate expression="executor.execute('comiteManager.buscarComiteParaElevar',id)" result="flowScope.comiteElevar"/>   			
+    		<evaluate expression="executor.execute('comiteManager.buscarComitesDelegar', id)" result="flowScope.comitesDelegar" />
+	    	<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+	    	<evaluate expression="executor.execute('consultaExpedienteManager.getTabs',id)" result="flowScope.tabsExpediente" />
+   		</on-render>	
+    </view-state> 	
+        
+</flow>

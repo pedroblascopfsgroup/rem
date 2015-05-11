@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<!-- var es siempre flowScope? -->
+	<var name="usuario" class="es.capgemini.pfs.users.domain.Usuario" />
+
+	<input name="id" />
+
+	<on-start>
+			<set name="flowScope.myView" value="'admin/editUsuario'"></set>
+	</on-start>
+	
+	<decision-state id="start">
+		<if test="id!=null &amp;&amp; id!=''" then="buscaUsuario" else="mostrarFormulario"/>
+	</decision-state>
+	
+	<action-state id="buscaUsuario">
+			<evaluate expression="executor.execute('usuarioManager.get', id)" result="flowScope.usuario"/>
+			<transition to="mostrarFormulario" />
+	</action-state>
+    
+	<view-state id="mostrarFormulario" view="${myView}" model="altaUsuario">
+		<on-entry>
+			<set name="altaUsuario.usuario" value="flowScope.usuario"></set>
+			<!-- al entrar, la vista es el jsp del formulario -->
+		</on-entry>
+		<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.myView" value="'default'"></set>
+		</on-render>
+		<transition on="update" to="updateUsuario"/>
+		<transition on="updateClose" to="updateUsuarioClose"/>
+		<transition on="delete" to="deleteUsuario" bind="false" />
+		<!--
+		<transition on-exception="es.capgemini.pfs.users.UserNotDeleteableException" to="error1" />
+		<exception-handler bean="swfExceptionHandler"></exception-handler>
+		-->
+	</view-state>
+
+    <!-- operación real de actualización -->
+	<action-state id="updateUsuario">
+		<evaluate expression="executor.execute('usuarioManager.saveOrUpdate', altaUsuario.usuario)"  />
+		<transition to="mostrarFormulario"></transition>
+		<transition on-exception="java.lang.Exception" to="mostrarFormulario" />
+	</action-state>
+
+	<end-state id="updateUsuarioClose" view="default">
+		<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.saveOrUpdate', altaUsuario.usuario)"  />
+		</on-entry>
+	</end-state>
+
+	<action-state id="deleteUsuario" >
+		
+		<evaluate expression="executor.execute('usuarioManager.deleteUsuario', usuario)"  />
+		<!--
+		<transition on-exception="es.capgemini.pfs.users.UserNotDeleteableException" to="error1" />
+		<transition on-exception="java.lang.NullPointerException" to="error2" />
+		-->
+		<transition to="mostrarFormulario" />
+		<!--
+		<exception-handler bean="swfExceptionHandler"></exception-handler>
+		-->
+		<transition on-exception="es.capgemini.pfs.users.UserNotDeleteableException" to="noSacarError" />
+		<transition on-exception="java.lang.Exception" to="mostrarFormulario" >
+		
+		</transition>
+	</action-state>
+   
+   <action-state id="noSacarError">
+   	<on-entry>
+   		<evaluate expression="executor.execute('usuarioManager.deleteUsuario', usuario)"  />
+   	</on-entry>
+   	<transition to="mostrarFormulario"></transition>
+   </action-state>
+   
+   
+</flow>

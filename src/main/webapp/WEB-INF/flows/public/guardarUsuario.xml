@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dtoUsuario" class="es.capgemini.pfs.users.dto.DtoUsuario" />
+    
+    <end-state id="vista" view="generico/respuestaJSON">
+        <on-entry>
+            <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoUsuario)" />
+            <evaluate expression="executor.execute('usuarioManager.guardarUsuario', dtoUsuario)" result="flowScope.respuesta" />
+        </on-entry>
+    </end-state>
+</flow>

@@ -1,0 +1,820 @@
+.bordeActivo { border: 1px solid #FF9E3E; margin: 10px }
+.bordeInactivo { border: 1px solid #FFFFFF; margin: 10px }
+
+.upload-icon {
+            background: url('') no-repeat 0 0 !important;
+}
+
+.x-form-field, .x-combo-list-item, .x-form-item, .ux-mselect-item{
+	font-size : 11px;
+}
+.icon_analisis_externa {
+  background: transparent url('chart_bar.png') no-repeat;
+}
+* html .icon_analisis_externa {
+  background: transparent url('chart_bar.gif') no-repeat;
+}
+.icon_solicitud_telecobro{
+  background: transparent url('telephone_delete.png') no-repeat;
+}
+* html .icon_solicitud_telecobro{
+  background: transparent url('telephone_delete.gif') no-repeat;
+}
+.icon_decision_telecobro{
+  background: transparent url('telephone_go.png') no-repeat;
+}
+* html .icon_decision_telecobro{
+  background: transparent url('telephone_go.gif') no-repeat;
+}
+
+.icon_expedientes {
+  background: transparent url('book_open.png') no-repeat;
+}
+* html .icon_expedientes {
+  background: transparent url('book_open.gif') no-repeat;
+}
+.icon_expedientes_S {
+  background: transparent url('book_open_S.png') no-repeat;
+}
+* html .icon_expedientes_S {
+  background: transparent url('book_open_S.gif') no-repeat;
+}
+.icon_expedientes_R {
+  background: transparent url('book_open_R.png') no-repeat;
+}
+* html .icon_expedientes_R {
+  background: transparent url('book_open_R.gif') no-repeat;
+}
+.icon_expedientes_R2 {
+  background: transparent url('book_open_R2.png') no-repeat;
+}
+* html .icon_expedientes_R2 {
+  background: transparent url('book_open_R2.gif') no-repeat;
+}
+.icon_expedientes_X {
+  background: transparent url('book_open_X.png') no-repeat;
+}
+* html .icon_expedientes_X {
+  background: transparent url('book_open_X.gif') no-repeat;
+}
+.icon_datos_clientes {
+  background: transparent url('user_go.png') no-repeat;
+}
+* html .icon_datos_clientes {
+  background: transparent url('user_go.gif') no-repeat;
+}
+.icon_excluir_clientes {
+  background: transparent url('user_delete.png') no-repeat;
+}
+* html .icon_excluir_clientes {
+  background: transparent url('user_delete.gif') no-repeat;
+}
+.icon_excluir_datos_clientes {
+  background: transparent url('user_orange.png') no-repeat;
+}
+* html .icon_excluir_datos_clientes {
+  background: transparent url('user_orange.gif') no-repeat;
+}
+.icon_contratos_vencidos {
+  background: transparent url('script_error.png') no-repeat !important;
+}
+* html .icon_contratos_vencidos {
+  background: transparent url('script_error.gif') no-repeat !important;
+}
+.icon_contratos_pasivo {
+  background: transparent url('script_delete.png') no-repeat !important;
+}
+* html .icon_contratos_pasivo {
+  background: transparent url('script_delete.gif') no-repeat !important;
+}
+.icon_contratos_pase {
+  background: transparent url('script_go.png') no-repeat !important;
+}
+* html .icon_contratos_pase {
+  background: transparent url('script_go.gif') no-repeat !important;
+}
+.icon_contratos_otros {
+  background: transparent url('script_add.png') no-repeat !important;
+}
+* html .icon_contratos_otros {
+  background: transparent url('script_add.gif') no-repeat !important;
+}
+
+.icon_contratos {
+  background: transparent url('script.png') no-repeat;
+}
+* html .icon_contratos {
+  background: transparent url('script.gif') no-repeat;
+}
+.icon_bienes {
+  background: transparent url('house.png') no-repeat;
+}
+* html .icon_bienes {
+  background: transparent url('house.gif') no-repeat;
+}
+.pfs_tabla{
+  background: transparent url('table.png') no-repeat !important;
+}
+* html .pfs_tabla{
+  background: transparent url('table.gif') no-repeat !important;
+}
+
+.icon_verificacion_bienes{
+  background: transparent url('house_go.png') no-repeat !important;
+}
+* html .icon_verificacion_bienes{
+  background: transparent url('house.gif') no-repeat !important;
+}
+
+.icon_ingresos{
+background: transparent url('money.png') no-repeat !important;
+}
+* html .icon_ingresos{
+background: transparent url('money.gif') no-repeat !important;
+}
+
+.icon_antecedentes{
+  background: transparent url('note.png') no-repeat !important;
+}
+* html .icon_antecedentes{
+  background: transparent url('note.gif') no-repeat !important;
+}
+
+.icon_antecedentes_ext{
+  background: transparent url('note_go.png') no-repeat !important;
+}
+* html .icon_antecedentes_ext{
+  background: transparent url('note_go.gif') no-repeat !important;
+}
+
+.icon_cliente {
+  background: transparent url('usuario.png') no-repeat;
+}
+* html .icon_cliente {
+  background: transparent url('usuario.gif') no-repeat;
+}
+.icon_cliente_R {
+  background: transparent url('usuario_R.png') no-repeat;
+}
+* html .icon_cliente_R {
+  background: transparent url('usuario_R.gif') no-repeat;
+}
+.icon_cliente_S {
+  background: transparent url('usuario_S.png') no-repeat;
+}
+* html .icon_cliente_S {
+  background: transparent url('usuario_S.gif') no-repeat;
+}
+
+
+.icon_usuario {
+  background: transparent url('user_gray.png') no-repeat;
+}
+* html .icon_usuario {
+  background: transparent url('user_gray.gif') no-repeat;
+}
+
+.icon_analisis {
+  background: transparent url('chart_curve.png') no-repeat;
+}
+* html .icon_analisis {
+  background: transparent url('chart_curve.png') no-repeat;
+}
+
+.icon_asuntos{
+  background: transparent url('folder_page.png') no-repeat;
+}
+* html .icon_asuntos{
+  background: transparent url('folder_page.gif') no-repeat;
+}
+.icon_editar_propuesta{
+  background: transparent url('page_attach.png') no-repeat !important;
+  margin-top:2px
+}
+* html .icon_editar_propuesta{
+  background: transparent url('page_attach.gif') no-repeat !important;
+  margin-top:2px
+}
+.icon_asunto_rechazar{
+  background: transparent url('page_delete.png') no-repeat;
+}
+* html .icon_asunto_rechazar{
+  background: transparent url('page_delete.gif') no-repeat;
+}
+button.icon_asunto_rechazar{
+  background: transparent url('page_delete.png') no-repeat !important;
+  margin-top:2px
+}
+* html button.icon_asunto_rechazar{
+  background: transparent url('page_delete.gif') no-repeat !important;
+  margin-top:2px
+}
+.icon_busqueda_asuntos{
+  background: transparent url('page_find.png') no-repeat;
+}
+* html .icon_busqueda_asuntos{
+  background: transparent url('page_find.gif') no-repeat;
+}
+
+button.icon_pre_asunto{
+  background: transparent url('table_add.png') no-repeat !important;
+}
+* html button.icon_pre_asunto{
+  background: transparent url('table_add.gif') no-repeat !important;
+}
+.icon_pre_asunto{
+  background: transparent url('table_add.png') no-repeat;
+}
+* html .icon_pre_asunto{
+  background: transparent url('table_add.gif') no-repeat;
+}
+.icon_pdf{
+  background: transparent url('page_white_acrobat.png') no-repeat  !important;
+}
+* html .icon_pdf{
+  background: transparent url('page_white_acrobat.gif') no-repeat  !important;
+}
+.icon_responder_comunicacion{
+  background: transparent url('email_go.png') no-repeat  !important;
+}
+* html .icon_responder_comunicacion{
+  background: transparent url('email_go.gif') no-repeat  !important;
+}
+
+.icon_sol_prorroga{
+  background: transparent url('time_add.png') no-repeat  !important;
+}
+* html .icon_sol_prorroga{
+  background: transparent url('time_add.gif') no-repeat  !important;
+}
+.icon_aceptar_prorroga{
+  background: transparent url('time_go.png') no-repeat  !important;
+}
+* html .icon_aceptar_prorroga{
+  background: transparent url('time_go.gif') no-repeat  !important;
+}
+.icon_rechazar_prorroga{
+  background: transparent url('time_delete.png') no-repeat  !important;
+  margin-left : 0px;
+}
+* html .icon_rechazar_prorroga{
+  background: transparent url('time_delete.gif') no-repeat  !important;
+  margin-left : 0px;
+}
+.icon_consultar_prorroga{
+  background: transparent url('time.png') no-repeat  !important;
+  margin-left : 0px;
+}
+* html .icon_consultar_prorroga{
+  background: transparent url('time.gif') no-repeat  !important;
+  margin-left : 0px;
+}
+
+.icon_alerta{
+  background: transparent url('alerta.png') no-repeat !important;
+  margin-left : 0px;
+}
+* html .icon_alerta{
+  background: transparent url('alerta.gif') no-repeat !important;
+  margin-left : 0px;
+}
+
+.icon_espera{
+  background: transparent url('hourglass.png') no-repeat !important;
+  margin-left : 0px;
+}
+* html .icon_espera{
+  background: transparent url('hourglass.gif') no-repeat !important;
+  margin-left : 0px;
+}
+
+.icon_pendientes{
+  background: transparent url('folder_table.png') no-repeat !important;
+  margin-left : 0px;
+}
+* html .icon_pendientes{
+  background: transparent url('folder_table.gif') no-repeat !important;
+  margin-left : 0px;
+}
+.icon_objetivos_pendientes{
+  background: transparent url('eye.png') no-repeat !important;
+  margin-left : 0px;
+}
+* html .icon_objetivos_pendientes{
+  background: transparent url('eye.gif') no-repeat !important;
+  margin-left : 0px;
+}
+.icon_objetivos_pendientes_tab{
+  background: transparent url('eye.png') no-repeat ;
+  margin-left : 0px;
+}
+* html .icon_objetivos_pendientes_tab{
+  background: transparent url('eye.gif') no-repeat ;
+  margin-left : 0px;
+}
+.icon_busquedas_tree{
+  background: transparent url('zoom.png') no-repeat !important;
+  margin-left : 0px;
+}
+* html .icon_busquedas_tree{
+  background: transparent url('zoom.gif') no-repeat !important;
+  margin-left : 0px;
+}
+.icon_gv_tree{
+  background: transparent url('user_red.png') no-repeat !important;
+  margin-left : 0px;
+}
+* html .icon_gv_tree{
+  background: transparent url('user_red.gif') no-repeat !important;
+  margin-left : 0px;
+}
+.icon_comunicacion{
+  background: transparent url('email.png') no-repeat  !important;
+}
+* html .icon_comunicacion{
+  background: transparent url('email.gif') no-repeat  !important;
+}
+button.icon_comunicacion{
+  background: transparent url('email.png') no-repeat;
+}
+* html button.icon_comunicacion{
+  background: transparent url('email.gif') no-repeat;
+}
+
+.icon_alerta_tab{
+  background: transparent url('alerta.png') no-repeat;
+}
+* html .icon_alerta_tab{
+  background: transparent url('alerta.gif') no-repeat;
+}
+
+.icon_espera_tab{
+  background: transparent url('hourglass.png') no-repeat;
+}
+* html .icon_espera_tab{
+  background: transparent url('hourglass.gif') no-repeat;
+}
+
+.icon_pendientes_tab{
+  background: transparent url('folder_table.png') no-repeat;
+}
+* html .icon_pendientes_tab{
+  background: transparent url('folder_table.gif') no-repeat;
+}
+.icon_comunicacion_tab{
+  background: transparent url('email.png') no-repeat;
+}
+* html .icon_comunicacion_tab{
+  background: transparent url('email.gif') no-repeat;
+}
+
+.no-margin {
+	margin : 0px;
+}
+
+
+button.icon_mas {
+  background: transparent url('add.png') no-repeat;
+}
+* html button.icon_mas {
+  background: transparent url('add.gif') no-repeat;
+}
+
+button.icon_menos {
+  background: transparent url('delete.png') no-repeat ;
+}
+* html button.icon_menos {
+  background: transparent url('delete.gif') no-repeat ;
+}
+
+button.icon_ok {
+  background: transparent url('accept.png') no-repeat ;
+}
+* html button.icon_ok {
+  background: transparent url('accept.gif') no-repeat ;
+}
+
+button.icon_cancel {
+  background: transparent url('cancel.png') no-repeat ;
+}
+* html button.icon_cancel {
+  background: transparent url('cancel.gif') no-repeat ;
+}
+
+button.icon_edit {
+  background: transparent url('page_white_edit.png') no-repeat;
+}
+
+* html button.icon_edit {
+  background: transparent url('page_white_edit.gif') no-repeat;
+}
+.icon_comite_cerrar{
+  background: transparent url('door.png') no-repeat;
+}
+* html .icon_comite_cerrar{
+  background: transparent url('door.gif') no-repeat;
+}
+button.icon_comite_cerrar{
+  background: transparent url('door.png') no-repeat !important;
+}
+* html button.icon_comite_cerrar{
+  background: transparent url('door.gif') no-repeat !important;
+}
+.icon_comite_celebrar{
+  background: transparent url('door_open.png') no-repeat;
+}
+* html .icon_comite_celebrar{
+  background: transparent url('door_open.gif') no-repeat;
+}
+button.icon_comite_celebrar{
+  background: transparent url('door_open.png') no-repeat !important;
+}
+* html button.icon_comite_celebrar{
+  background: transparent url('door_open.gif') no-repeat !important;
+}
+.icon_comite_actas{
+  background: transparent url('report.png') no-repeat;
+}
+* html .icon_comite_actas{
+  background: transparent url('report.gif') no-repeat;
+}
+
+.icon_titulo{background: transparent url('page_white_stack.png') no-repeat;}
+* html .icon_titulo{background: transparent url('page_white_stack.gif') no-repeat;}
+
+.icon_cambiar_datos{background: transparent url('vcard_edit.png') no-repeat;}
+* html .icon_cambiar_datos{background: transparent url('vcard_edit.gif') no-repeat;}
+
+.icon_sin_actuacion{
+  background: transparent url('pencil_delete.png') no-repeat !important;
+}
+* html .icon_sin_actuacion{
+  background: transparent url('pencil_delete.gif') no-repeat !important;
+}
+.icon_ayuda{	
+  background: transparent url('help.png') no-repeat !important;
+}
+
+* html .icon_ayuda{	
+  background: transparent url('help.gif') no-repeat !important;
+}
+button.icon_info{
+  background: transparent url('information.png') no-repeat !important;
+  padding-top:4px;
+  padding-bottom:0px;
+}
+* html button.icon_info{
+  background: transparent url('information.gif') no-repeat !important;
+  padding-top:4px;
+  padding-bottom:0px;
+}
+.icon_elevar_revision{
+  background: transparent url('folder_explore.png') no-repeat;
+}
+* html .icon_elevar_revision{
+  background: transparent url('folder_explore.gif') no-repeat;
+}
+.icon_cancelar_expediente{
+  background: transparent url('book_delete.png') no-repeat !important;
+}
+* html .icon_cancelar_expediente{
+  background: transparent url('book_delete.gif') no-repeat !important;
+}
+.icon_expediente_manual{
+  background: transparent url('book_go.png') no-repeat;
+}
+* html .icon_expediente_manual{
+  background: transparent url('book_go.gif') no-repeat;
+}
+.icon_rechazar_cancelar_expediente{
+  background: transparent url('book_previous.png') no-repeat !important;
+}
+button.icon_delegar_expediente_otro_comite{
+  background: transparent url('book_previous.png') no-repeat;
+}
+button.icon_elevar_expediente_otro_comite{
+  background: transparent url('book_next.png') no-repeat;
+}
+* html .icon_rechazar_cancelar_expediente{
+  background: transparent url('book_previous.gif') no-repeat;
+}
+.icon_revisar_expediente{
+  background: transparent url('page_white_magnify.png') no-repeat;
+}
+* html .icon_revisar_expediente{
+  background: transparent url('page_white_magnify.gif') no-repeat;
+}
+.icon_elevar_comite{
+  background: transparent url('report_magnify.png') no-repeat;
+}
+* html .icon_elevar_comite{
+  background: transparent url('report_magnify.gif') no-repeat;
+}
+.icon_completar_expediente{
+  background: transparent url('pencil_go.png') no-repeat;
+}
+* html .icon_completar_expediente{
+  background: transparent url('pencil_go.gif') no-repeat;
+}
+
+.icon_busquedas{
+  background: transparent url('zoom.png') no-repeat;
+}
+* html .icon_busquedas{
+  background: transparent url('zoom.gif') no-repeat;
+}
+button.icon_limpiar{
+  background: transparent url('magifier_zoom_out.png') no-repeat !important;
+  margin-top : 3px;
+}
+* html button.icon_limpiar{
+  background: transparent url('magifier_zoom_out.gif') no-repeat !important;
+  margin-top : 3px;
+}
+button.icon_busquedas{
+  background: transparent url('page_white_magnify.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_busquedas{
+  background: transparent url('page_white_magnify.gif') no-repeat !important;
+  margin-top : 2px;
+}
+button.icon_exportar_csv{
+  background: transparent url('page_white_excel.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_exportar_csv{
+  background: transparent url('page_white_excel.gif') no-repeat !important;
+  margin-top : 2px;
+}
+button.icon_incorporar_procedimiento{
+  background: transparent url('table_row_insert.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_incorporar_procedimiento{
+  background: transparent url('table_row_insert.gif') no-repeat !important;
+  margin-top : 2px;
+}
+.icon_comite{
+  background: transparent url('report_edit.png') no-repeat;
+}
+* html .icon_comite{
+  background: transparent url('report_edit.gif') no-repeat;
+}
+.icon_embargo_bienes{
+  background: transparent url('house_link.png') no-repeat;
+}
+* html .icon_embargo_bienes{
+  background: transparent url('house_link.gif') no-repeat;
+}
+.icon_procedimiento{
+  background: transparent url('page_red.png') no-repeat;
+}
+* html .icon_procedimiento{
+  background: transparent url('page_red.gif') no-repeat;
+}
+.icon_busqueda_procedimiento{
+  background: transparent url('folder_find.png') no-repeat;
+}
+* html .icon_busqueda_procedimiento{
+  background: transparent url('folder_find.gif') no-repeat;
+}
+.icon_acuerdo{
+  background: transparent url('comments.png') no-repeat;
+}
+* html .icon_acuerdo{
+  background: transparent url('comments.gif') no-repeat;
+}
+.icon_elevar{
+  background: transparent url('arrow_up.png') no-repeat !important;
+}
+* html .icon_elevar{
+  background: transparent url('arrow_up.gif') no-repeat !important;
+}
+.icon_historial{
+  background: transparent url('database_table.png') no-repeat !important;
+}
+* html .icon_historial{
+  background: transparent url('database_table.gif') no-repeat !important;
+}
+button.icon_historial{
+  background: transparent url('database_table.png') no-repeat;
+}
+* html button.icon_historial{
+  background: transparent url('database_table.gif') no-repeat;
+}
+.icon_devolver{
+  background: transparent url('arrow_undo.png') no-repeat !important;
+}
+* html .icon_devolver{
+  background: transparent url('arrow_undo.gif') no-repeat !important;
+}
+.icon_interrupcion_recurso{
+  background: transparent url('key.png') no-repeat;
+}
+* html .icon_interrupcion_recurso{
+  background: transparent url('key.gif') no-repeat;
+}
+.icon_scoring_alertas{
+  background: transparent url('map_go.png') no-repeat;
+}
+* html .icon_scoring_alertas{
+  background: transparent url('map_go.gif') no-repeat;
+}
+button.icon_aplicar{
+  background: transparent url('tick.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_aplicar{
+  background: transparent url('tick.gif') no-repeat !important;
+  margin-top : 2px;
+}
+button.icon_mover_proredimiento{
+  background: transparent url('table_relationship.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_mover_proredimiento{
+  background: transparent url('table_relationship.gif') no-repeat !important;
+  margin-top : 2px;
+}
+button.icon_rechazar_decision{
+  background: transparent url('delete.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_rechazar_decision{
+  background: transparent url('delete.gif') no-repeat !important;
+  margin-top : 2px;
+}
+button.icon_siguiente{
+  background: transparent url('arrow_right.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_siguiente{
+  background: transparent url('arrow_right.gif') no-repeat !important;
+  margin-top : 2px;
+}
+button.icon_atras{
+  background: transparent url('arrow_left.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html button.icon_atras{
+  background: transparent url('arrow_left.gif') no-repeat !important;
+  margin-top : 2px;
+}
+
+.icon_cambio_gestor{
+  background: transparent url('group.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html .icon_cambio_gestor{
+  background: transparent url('group.gif') no-repeat !important;
+  margin-top : 2px;
+}
+.icon_cambio_supervisor{
+  background: transparent url('group_key.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html .icon_cambio_supervisor{
+  background: transparent url('group_key.gif') no-repeat !important;
+  margin-top : 2px;
+}
+.icon_cambio_supervisor_temporal{
+  background: transparent url('group_gear.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html .icon_cambio_supervisor_temporal{
+  background: transparent url('group_gear.gif') no-repeat !important;
+  margin-top : 2px;
+}
+.icon_reasignar_supervisor_asunto{
+  background: transparent url('group_go.png') no-repeat !important;
+  margin-top : 2px;
+}
+* html .icon_reasignar_supervisor_asunto{
+  background: transparent url('group_go.gif') no-repeat !important;
+  margin-top : 2px;
+}
+button.icon_max{
+  background: transparent url('ns-collapse.gif') no-repeat !important;
+}
+* html button.icon_max{
+  background: transparent url('ns-collapse.gif') no-repeat !important;
+}
+button.icon_min{
+  background: transparent url('ns-expand.gif') no-repeat !important;
+}
+* html button.icon_min{
+  background: transparent url('ns-expand.gif') no-repeat !important;
+}
+.icon_arquetipos{
+  background: transparent url('arquetipos.gif') no-repeat;
+}
+
+
+
+.icon_listado_eventos{
+  background: transparent url('monitor.png') no-repeat;
+}
+* html .icon_listado_eventos{
+  background: transparent url('monitor.gif') no-repeat;
+}
+
+.cursor_pointer .x-grid3-row{
+	cursor : pointer;
+}
+
+.search-item {
+    font:normal 11px tahoma, arial, helvetica, sans-serif;
+    padding:3px 10px 3px 10px;
+    border-bottom:1px solid #eeeeee;
+}
+.search-item h3 {
+    display:block;
+    font:inherit;
+    font-weight:bold;
+}
+
+.search-item h3 span {
+    float: right;
+    font-weight:normal;
+    margin:0 0 5px 5px;
+    width:100px;
+    display:block;
+    clear:none;
+}
+
+.marked_row .x-grid3-cell-inner{
+  background : #ffffcc;
+}
+
+.TextStatic{
+	background:transparent none repeat scroll 0 0;
+	border:medium none;
+	color: #333333;
+	/*padding:1px 3px;*/
+	font-size:11px;
+	font-family:tahoma,arial,helvetica,sans-serif;
+	padding-bottom:2px !important;
+	width:150;
+	height:22px;
+	float: left;
+	text-overflow:ellipsis;
+    overflow:hidden;
+    display:block;
+	padding:2 3 2 10;
+
+}
+
+.LabelStatic {
+	float: left;
+	font-weight: bolder;
+	font-size:11px;
+	font-family: tahoma,arial,helvetica,sans-serif;
+	padding: 3px 3px 3px 0;
+	position: relative;
+	width: 100px;
+}
+
+.separaFields .x-form-item {  margin:10px 10px 10px 10px; }
+
+button.icon_cerrar {
+  background: transparent url('tab-close-on.gif') no-repeat !important;
+}
+* html button.icon_cerrar {
+  background: transparent url('tab-close-on.gif') no-repeat !important;
+}
+
+button.icon_refresh {
+  background: transparent url('refresh.gif') no-repeat !important;
+}
+* html button.icon_refresh {
+  background: transparent url('refresh.gif') no-repeat !important;
+}
+* html .x-form-arrow-trigger {
+	top:2px !important;
+}
+* html .x-form-date-trigger {
+	top:2px !important;
+}
+button.icon_checkbox_off, .icon_checkbox_off {
+  background: transparent url('../img/checkboxOff.gif') no-repeat;
+  background-position: center;
+}
+
+button.icon_checkbox_on, .icon_checkbox_on {
+  background: transparent url('../img/checkboxOn.gif') no-repeat;
+  background-position: center;
+}
+
+.icon_calendario_azul{
+  background: transparent url('calendar-blue.png') no-repeat;
+}
+* html .icon_calendario_azul{
+  background: transparent url('calendar-blue.gif') no-repeat;
+}
+
+.downList {
+	background-image: url('downList.png');
+	background-repeat: no-repeat;
+	background-position: right;
+}

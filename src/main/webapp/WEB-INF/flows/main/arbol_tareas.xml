@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	<var name="dto" class="es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion"/>
+	<end-state id="arbol_tareas" view="main/arbol_tareas.js">
+		<on-entry>
+			<!-- necesito una instancia de DDEstadoItinerario para acceder a las constantes -->
+			<evaluate expression="executor.execute('estadoItinearioManager.getEstados')" result="flowScope.estados" />
+			<evaluate expression="estados[0].ESTADO_GESTION_VENCIDOS" result="flowScope.gestionVencidos" />
+	    	<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerCantidadDeTareasPendientes', dto)" result="flowScope.countTareas" />
+			<evaluate expression="executor.execute('objetivoManager.obtenerCantidadObjetivosPendientes')" result="flowScope.countObjetivos" />
+		</on-entry>
+	</end-state>
+</flow>

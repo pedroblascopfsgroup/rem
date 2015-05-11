@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dto" class="es.capgemini.pfs.metrica.dto.DtoMetrica" />
+
+	<input name="codigoTipoPersona" type="java.lang.String" />
+
+	<end-state id="decisionIniciada" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+			<evaluate expression="executor.execute('metricaManager.borrarMetricaActiva', dto)" />
+		</on-entry>
+	</end-state>
+
+</flow>

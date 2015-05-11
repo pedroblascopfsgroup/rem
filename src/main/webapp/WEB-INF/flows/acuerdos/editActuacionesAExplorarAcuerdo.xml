@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+    <input name="idAcuerdo" type="java.lang.Long" />
+    <input name="idActuacion" type="java.lang.Long" />
+    <input name="codSubtipoSolucion" type="java.lang.String" />
+
+	<decision-state id="newOrEdit">
+		<if test="idActuacion!=null" then="buscar" else="formulario" />
+	</decision-state>
+
+	<action-state id="buscar">
+			<evaluate expression="executor.execute('acuerdoManager.getActuacionesAExplorarAcuerdoById', idActuacion)" result="flowScope.actuaciones" />
+			<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}">
+        <on-entry>
+            <set name="flowScope.view" value="'acuerdos/editActuacionesAExplorarAcuerdo.js'" />
+        </on-entry>
+        <on-render>
+            <set name="flowScope.view" value="'default'" />
+            <evaluate expression="executor.execute('dictionaryManager.getByCodeClassName', 'es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo', codSubtipoSolucion)" result="flashScope.subtipoSolucionAmistosa"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDValoracionActuacionAmistosa')" result="flashScope.tiposValoracionActuacionAmistosa"/>
+        </on-render>
+        <transition to="close" bind="false" />
+    </view-state>
+    
+    <end-state id="close" view="default" />
+
+</flow>

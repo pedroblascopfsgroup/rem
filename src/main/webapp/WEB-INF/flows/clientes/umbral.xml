@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="persona" class="es.capgemini.pfs.persona.model.Persona" />
+	<var name="dtoUmbral" class="es.capgemini.pfs.persona.dto.DtoUmbral" />
+
+	<input name="idPersona" type="java.lang.Long" />
+
+
+	<action-state id="buscar">
+		<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona" />
+		<transition to="formulario" />
+	</action-state>
+
+
+    <view-state id="formulario" view="${view}" model="dtoUmbral">
+    	<binder>
+    		<binding property="persona.importeUmbral" />
+    		<binding property="persona.fechaUmbral" />
+    		<binding property="persona.comentarioUmbral" />
+    	</binder>
+
+    	<on-entry>
+    		<set name="dtoUmbral.persona" value="persona" />
+    		<evaluate expression="executor.execute('personaManager.getExpedienteConContratoPaseTitular',idPersona)" result="flowScope.expedienteTitular" />
+    		<set name="flowScope.view" value="'clientes/umbral.js'" />
+    	</on-entry>
+
+		<transition on="update" to="update" />
+		<transition on="cancel" to="close" bind="false" />
+    </view-state> 	
+
+    <action-state id="update">
+    	<evaluate expression="executor.execute('personaManager.updateUmbral', dtoUmbral)" />
+		<!-- <transition on-exception="java.lang.Exception" to="formulario" /> -->
+		<transition to="close" />
+	</action-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

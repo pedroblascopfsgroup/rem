@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="bien" class="es.capgemini.pfs.bien.model.Bien" />
+	<input name="id" type="java.lang.Long"/>
+	
+	<end-state id="buscar" view="clientes/consultaBienes">
+		<on-entry>
+			<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+		</on-entry>
+	</end-state>
+
+
+        
+</flow>

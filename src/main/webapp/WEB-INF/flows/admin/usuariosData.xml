@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="beanBuscarUsuarios" class="es.capgemini.pfs.users.dto.DtoBuscarUsuarios" />
+	<!-- 
+	 -->
+    
+    <end-state id="usuariosData" view="admin/usuariosData" >
+	    <on-entry>
+	     	<!-- 
+	     	pasando el 3º parámetro al método execute se realiza el binding automáticamente desde los parámetros de la request
+	    <set name="beanBuscarUsuarios.unaa" value="oeoeo.see" />
+	    <evaluate expression="binder.bindAndValidate(beanBuscarUsuarios, flowRequestContext)"/>
+	     	
+	     	 -->
+			<evaluate expression="executor.execute('usuarioManager.findUsersPage', beanBuscarUsuarios, flowRequestContext)" result="flowScope.pagina">
+			<attribute name="failOnException" value="false" />
+			</evaluate>
+	    </on-entry>
+	</end-state>
+	
+	
+    
+</flow>

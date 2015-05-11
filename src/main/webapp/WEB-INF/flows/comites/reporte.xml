@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+   
+   <input name="params"/>
+   <input name="reporte" />
+   <input name="tipo" />
+   
+   <view-state id="reportes" view="test/reportes">
+      <on-render>
+         <evaluate expression="params" result="flowScope.id" />
+         <evaluate expression="tipo" result="flowScope.tipo" />
+         <evaluate expression="reporte" result="flowScope.reporte" />
+      </on-render>
+   </view-state>
+
+</flow>

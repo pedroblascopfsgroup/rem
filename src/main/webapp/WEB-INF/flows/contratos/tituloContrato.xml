@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+ 
+    <var name="dtoTitulo" class="es.capgemini.pfs.titulo.dto.DtoTitulo" />   
+ 
+    <input name="idContrato" type="java.lang.Long" />
+    <input name="idTitulo" type="java.lang.Long" required="false" />     
+ 
+    <view-state id="formulario" view="expedientes/titulo">
+        <on-entry>
+            <evaluate expression="executor.execute('tituloManager.getDto', idContrato, idTitulo)" result="flowScope.dtoTitulo" />
+            <evaluate expression="executor.execute('ddSituacionManager.getList')" result="flashScope.situaciones" />
+            <evaluate expression="executor.execute('ddTipoTituloManager.getListGeneral')" result="flashScope.tiposDocumentoGeneral" />
+        </on-entry>
+        <transition on="update" to="update" />   
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <end-state id="update" view="default">
+        <on-entry>
+            <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoTitulo)" />
+            <evaluate expression="executor.execute('tituloManager.saveTituloDTO', dtoTitulo)" />
+        </on-entry>
+    </end-state>
+       
+    <end-state id="close" view="default" />
+    
+</flow>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+		
+	<input name="id" required="true"/>
+	
+	<view-state id="estado1" view="default">
+	<on-entry>
+		<set name="flowScope.id" value="requestParameters.id" />
+	</on-entry>
+		<transition on="delete" to="borrar" />
+	</view-state>
+	
+	<end-state id="borrar" view="default">
+		<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.delete', id)"  />
+		</on-entry>
+	</end-state>
+	<!--
+	<exception-handler bean="swfExceptionHandler" />
+	-->   
+</flow>

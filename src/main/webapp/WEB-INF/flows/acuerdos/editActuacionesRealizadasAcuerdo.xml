@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dtoActuacion" class="es.capgemini.pfs.acuerdo.dto.DtoActuacionesRealizadasAcuerdo" />
+	<var name="actuaciones" class="es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo" />
+
+    <input name="idAcuerdo" type="java.lang.Long" />
+    <input name="idActuacion" type="java.lang.Long" />
+
+	<decision-state id="newOrEdit">
+		<if test="idActuacion!=null" then="buscar" else="formulario" />
+	</decision-state>
+
+	<action-state id="buscar">
+			<evaluate expression="executor.execute('acuerdoManager.getActuacionAcuerdo', idActuacion)" result="flowScope.actuacion" />
+			<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}" model="dtoActuacion">
+    	<binder>
+    		<binding property="actuaciones.ddTipoActuacionAcuerdo" converter="DDTipoActuacionAcuerdo" />
+    		<binding property="actuaciones.ddResultadoAcuerdoActuacion" converter="DDResultadoAcuerdoActuacion" />
+    		<binding property="actuaciones.tipoAyudaActuacion" converter="DDTipoAyudaAcuerdo" />
+    		<binding property="actuaciones.fechaActuacion" />
+    		<binding property="actuaciones.observaciones" />
+    		<binding property="actuaciones.id" />
+    		<binding property="idAcuerdo" />
+    	</binder>
+        <on-entry>
+    		<set name="dtoActuacion.actuaciones" value="actuaciones" />
+            <set name="flowScope.view" value="'acuerdos/editActuacionesRealizadasAcuerdo.js'" />
+        </on-entry>
+        <on-render>
+            <set name="flowScope.view" value="'default'" />
+			<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById', idAcuerdo)" result="flowScope.acuerdo" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoActuacionAcuerdo')" result="flashScope.tiposAA"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDResultadoAcuerdoActuacion')" result="flashScope.tiposResultados"/>
+            <evaluate expression="executor.execute('tipoAyudaAcuerdoManager.getList')" result="flashScope.tiposAAA" />
+        </on-render>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <action-state id="update">
+    	<evaluate expression="executor.execute('acuerdoManager.saveActuacionesRealizadasAcuerdo', dtoActuacion)" />
+        <transition to="close" />
+    </action-state>
+    
+    <end-state id="close" view="default" />
+
+</flow>

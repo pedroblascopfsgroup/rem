@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dtoGenericForm" class="es.capgemini.pfs.web.genericForm.DtoGenericForm"/>
+
+	<input name="id" type="java.lang.Long"/>
+	<input name="idTareaExterna" type="java.lang.Long"/>
+    <input name="idProcedimiento" type="java.lang.Long"/>
+    <input name="readOnly" type="java.lang.Boolean"/>
+
+
+	<decision-state id="newOrEdit">
+
+		<if test="id!=null" then="buscar" else="formulario"/>
+	</decision-state>
+
+
+	<action-state id="buscar">
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>-->
+			<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}" model="dtoGenericForm">
+    	<on-entry>
+			<evaluate expression="executor.execute('genericFormManager.get',idTareaExterna)" result="flowScope.form" />
+            <evaluate expression="executor.execute('genericFormManager.getValoresTareas',idProcedimiento)" result="flowScope.valores" />
+    		<set name="dtoGenericForm.form" value="form" />
+    		<set name="flowScope.view" value="form.view" />
+
+    	</on-entry>
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.view" value="'default'"/>
+		</on-render>
+		<transition on="ok" to="ok"/>
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state>
+
+    <action-state id="ok">
+		<evaluate expression="executor.execute('genericFormManager.saveValues',dtoGenericForm)" />
+		<transition to="close"></transition>
+	</action-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

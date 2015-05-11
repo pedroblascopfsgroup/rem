@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="dto" class="es.capgemini.pfs.users.dto.DtoBuscarUsuarios"/>
+
+	<input name="id" type="java.lang.Long"/>
+	
+	<!-- renderiza el formulario -->
+    <view-state id="buscaCliente" view="fase2/clientes/consultaCliente" model="dto">
+    		<on-render>
+    			<evaluate expression="executor.execute('personaManager.get', id)" result="flowScope.persona"/>
+    			<evaluate expression="executor.execute('expedienteManager.obtenerExpedientesDeUnaPersona', id)" result="flowScope.expedientes"/>
+    			<evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnaPersona', id)" result="flowScope.asuntos"/>
+    			<evaluate expression="executor.execute('tareaNotificacionManager.buscarComunicacionesCliente',id)" result="flowScope.tareaPendiente"/>
+    		</on-render>
+    </view-state>
+</flow>

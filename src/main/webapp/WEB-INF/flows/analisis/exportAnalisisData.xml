@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+    <var name="dto" class="es.capgemini.pfs.mapaGlobalOficina.dto.DtoBuscarMapaGlobalOficina" />
+
+    <input name="tipo" type="java.lang.String" />
+
+
+	<decision-state id="CsvOrBirt">
+		<if test="tipo=='generaCSV'" then="listadoCSV" else="PdfOrXls" />
+	</decision-state>
+
+	<decision-state id="PdfOrXls">
+		<if test="tipo=='generaPDF'" then="vistaPDF" else="vistaXLS" />
+	</decision-state>
+
+	<action-state id="vistaPDF">
+			<!-- Elegimos el reporte optimizado para PDF -->
+			<set name="flowScope.view" value="'reportPDF/analisisGlobalPDF'" />
+			<transition to="datosInformeBirt" />
+	</action-state>
+
+	<action-state id="vistaXLS">
+			<!-- Elegimos el reporte optimizado para Excel -->
+			<set name="flowScope.view" value="'reportXLS/analisisGlobalXLS'" />
+			<transition to="datosInformeBirt" />
+	</action-state>
+
+	<end-state id="datosInformeBirt" view="${view}">
+    	<on-entry>
+    		<!-- Parámetros pasados por código -->
+			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+		    <evaluate expression="dto" result="flowScope.dto" />
+		    <!-- Parámetros pasados leídos de los correspondientes diccionarios de la BBDD -->
+		  	<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+		    <evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
+			<evaluate expression="executor.execute('segmentoManager.getSegmentosByCodigos', dto.codigoSegmentos)" result="flowScope.segmentos" />
+			<evaluate expression="executor.execute('tipoProductoManager.getTiposProductoByCodigos', dto.tiposContratos)" result="flowScope.tiposContratos" />
+			<evaluate expression="executor.execute('faseManager.getFaseByCodigoOrEmptyObj', dto.codigoFase)" result="flowScope.fase" />
+			<evaluate expression="executor.execute('faseManager.getSubfasesByCodigos', dto.codigoSubfases)" result="flowScope.subfases" />
+			<evaluate expression="executor.execute('zonaManager.getNivelByIdOrEmptyObj', dto.jerarquia)" result="flowScope.jerarquia" />
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.findDDCriterioAnalisisByCodigo', dto.criterioSalida)" result="flowScope.criterioSalida" />
+			<evaluate expression="executor.execute('zonaManager.getNivelByIdOrEmptyObj', dto.criterioSalidaJerarquico)" result="flowScope.criterioSalidaJ" />
+			<evaluate expression="executor.execute('zonaManager.findZonasBycodigo', dto.codigoZonas)" result="flowScope.zonas" />
+			<!-- Nombre de la entidad -->
+			<evaluate expression="executor.execute('configManager.getConfigByKey', 'entidadDescripcion')" result="flowScope.entidadDescripcion" />
+	
+			<!-- Datos filtrados -->
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.exportarABirt', dto)" result="flowScope.dtoExportRows" />
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.contarRegistrosPorFase', dto, dtoExportRows)" result="flowScope.dtoExportRowsCount" />
+    	</on-entry>
+	</end-state>
+
+ 	<!-- Retorna el archivo CSV -->
+    <end-state id="listadoCSV" view="file">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.exportarACsv', dto)" result="flowScope.fileItem" />
+		</on-entry>
+	</end-state>
+
+</flow>

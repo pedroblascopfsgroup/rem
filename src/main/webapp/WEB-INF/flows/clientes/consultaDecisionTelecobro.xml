@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+   
+    <input name="idEntidad" type="java.lang.Long"/>
+    <input name="idTareaAsociada" type="java.lang.Long"/>
+    <input name="idTarea" type="java.lang.Long"/>
+    
+    <view-state id="formulario" view="clientes/consultaDecisionTelecobro">
+        <on-entry>
+            <evaluate expression="executor.execute('clienteManager.get', idEntidad)" result="flowScope.cliente" />                      
+            <evaluate expression="executor.execute('tareaNotificacionManager.get', idTarea)" result="flowScope.respuesta" />
+            <evaluate expression="respuesta.getSolicitudExclusionTelecobro()" result="flowScope.solicitud" />
+        </on-entry>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <end-state id="update" view="default">   
+        <on-entry>
+            <evaluate expression="executor.execute('tareaNotificacionManager.finalizarNotificacion', idTarea)" /> 
+        </on-entry>
+    </end-state>
+    
+    <end-state id="close" view="default" />
+        
+</flow>

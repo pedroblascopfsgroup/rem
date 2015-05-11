@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <input name="idPolitica" type="java.lang.Long" />
+    <input name="idPersona" type="java.lang.Long" />
+    <input name="verAnalisis" type="java.lang.Boolean" />
+    
+    <end-state id="listado" view="politica/verAnalisisPolitica">
+        <on-entry>
+            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaHistorico', idPolitica)" result="flowScope.analisisPolitica" />
+            <evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona" />
+			<set name="flowScope.readOnly" value="true" />
+        </on-entry>
+    </end-state>
+
+</flow>

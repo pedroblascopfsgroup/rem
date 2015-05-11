@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="dtoSesionComite" class="es.capgemini.pfs.comite.dto.DtoSesionComite" />
+    <input name="id" type="java.lang.Long" />
+    <input name="tipo" />
+
+    <end-state id="generar" view="reportPDF/acta">
+      <on-entry>
+      	 <evaluate expression="executor.execute('comiteManager.getActaPDF',id)" result="flowScope.dtoActa" />
+         <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')"   result="flowScope.usuario" />
+         <evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
+      </on-entry>
+    </end-state>
+
+</flow>

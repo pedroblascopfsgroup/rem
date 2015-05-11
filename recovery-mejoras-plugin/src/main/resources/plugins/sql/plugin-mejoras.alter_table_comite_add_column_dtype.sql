@@ -1,0 +1,1 @@
+alter table COM_COMITES add (DTYPE VARCHAR2 (20 CHAR) DEFAULT 'MEJComite' NOT NULL);

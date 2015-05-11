@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.16" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_v20090521 Build &lt;2.3.2.v20090601-0700></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">"Verdana"</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="topMargin">0.25in</property>
+            <property name="leftMargin">0.25in</property>
+            <property name="bottomMargin">0.25in</property>
+            <property name="rightMargin">0.25in</property>
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="7">
+            <property name="width">100%</property>
+            <column id="8"/>
+            <row id="9">
+                <property name="height">1.2395833333333333in</property>
+                <cell id="10">
+                    <text id="35">
+                        <property name="fontFamily">"Verdana"</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="marginBottom">1cm</property>
+                        <property name="textAlign">center</property>
+                        <property name="textTransform">none</property>
+                        <property name="whiteSpace">normal</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[AL JUZGADO DE 1ª INSTANCIA
+]]></text-property>
+                    </text>
+                    <text-data id="15">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getProcurador().getUsuario().getApellidoNombre();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="16">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[ , Procuradora de los Tribunales (Colegiada núm. 55 del Iltre. Col.legi dels Procuradors del Tribunals  de Lleida) y UNNIM BANC, S.A. UNIPERSONAL, con domicilio social en Barcelona, Pl. Catalunya núm. 9, 6ª-7ª, N.I.F. núm. ]]></text-property>
+                    </text>
+                    <text-data id="22">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getExpediente().getExpedienteContratoPase().getContrato().getPrimerTitular().getDocId();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="23">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[, según acredito con la escritura de poder que acompaño para que sea unida mediante copia certificada con devolución del original que solicito por precisarla para otros usos, ante el Juzgado comparezco y como mejor proceda en derecho, digo:
+	Que mediante el presente escrito y en la representación que ostento, bajo la dirección del Letrado ]]></text-property>
+                    </text>
+                    <text-data id="37">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getGestor().getUsuario().getApellidoNombre();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="21">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[), y al amparo de lo establecido en los arts. 812 y siguientes de la LEC, formulo demanda de juicio monitorio contra Don ]]></text-property>
+                    </text>
+                    <text-data id="36">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getProcurador().getUsuario().getApellidoNombre();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="25">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[, mayor de edad, vecino de Vilanova de la Barca, con domicilio en c/ Escoles, núm. 6, 2º D, N.I.F. núm. X7814983C; en reclamación de la suma de ]]></text-property>
+                    </text>
+                    <text-data id="24">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getSaldoTotal();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="38">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[- €, más los intereses y las costas que se causen, petición que apoyo en los siguientes]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="11">
+                <cell id="12">
+                    <text id="26">
+                        <property name="fontFamily">"Verdana"</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="marginTop">1cm</property>
+                        <property name="marginBottom">1cm</property>
+                        <property name="textAlign">center</property>
+                        <property name="textTransform">none</property>
+                        <property name="whiteSpace">normal</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[HECHOS
+]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="13">
+                <cell id="14">
+                    <text id="27">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[PREVIO.- Con carácter previo tenemos que hacer constar que mi representado UNNIM BANC, S.A. UNIPERSONAL, es sucesor legal de la CAIXA D’ESTALVIS UNIÓ DE CAIXES  DE MANLLEU, SABADELL I TERRASSA, entidad que resultó de la integración de las entidades CAIXA D’ESTALVIS DE MANLLEU, CAIXA D’ESTALVIS DE SABADELL y CAIXA D’ESTALVIS DE TERRASSA, formalizada mediante la escritura de fusión autorizada por el Notario de Barcelona Don Juan José López Burniol, de fecha 29 de junio de 2010, protocolo num. 1050, inscrita en el Registro Mercantil de Barcelona, por lo que la nueva entidad se subroga en todos los derechos y obligaciones de la entidad resultante de las cajas fusionadas.
+
+De conformidad con estos antecedentes, sea cual sea la entidad de las anteriormente referidas que hubiese suscrito en su día la documentación contractual que se acompaña y/o hubiera suscrito cualquier otra documentación, como requerimientos de pago u otros, o que aparezca en los títulos que sirvan de base a la presente demanda, es la entidad UNNIM BANC, S.A. UNIPERSONAL como sucesora universal de CAIXA D’ESTALVIS UNIÓ DE CAIXES  DE MANLLEU, SABADELL I TERRASSA, que a su vez fue sucesora universal de las entidades fusionadas, quien estará legitimada para ejercitar todos los actos, derechos y obligaciones dimanantes de los documentos presentados y quien es, por tanto, la única legitimada para la interposición de las acciones legales que a las entidades integradas en ella correspondería de conformidad con el art. 540 LEC.
+
+Se adjuntan copias de los testimonios parciales de las escrituras de fusión y segregación del negocio financiero, en cuanto acreditan la legitimación activa de mi mandante. 
+]]></text-property>
+                    </text>
+                    <text id="29">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[
+PRIMERO.- En fecha 12 de enero de 2010, Don ]]></text-property>
+                    </text>
+                    <text-data id="20">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getExpediente().getExpedienteContratoPase().getContrato().getPrimerTitular().getApellidoNombre();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="31">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[AGUILA suscribió con CAIXA D’ESTALVIS DE SABADELL (hoy UNNIM BANC, S.A. UNIPERSONAL) un contrato de utilización de tarjeta de crédito, VISA CLASSIC, modalidad CRÉDITO, con caducidad final en el mes de junio de 2010, con unos límites operativos de cuantía diversa en función de la naturaleza de las operaciones, de ]]></text-property>
+                    </text>
+                    <text-data id="30">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getSaldoTotal();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="33">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[- €/mes de máximo de crédito en la cuenta de la tarjeta.
+Como cuenta de cargo de la referida tarjeta se designó la núm. ]]></text-property>
+                    </text>
+                    <text-data id="34">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getExpediente().getExpedienteContratoPase().getContrato().getCodigoContrato();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="39">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[.
+Todo ello se acredita con el referido contrato de utilización de la tarjeta de crédito que acompaño de documento núm. 1.
+	
+	SEGUNDO.- A consecuencia de la utilización de la tarjeta de crédito por Don ]]></text-property>
+                    </text>
+                    <text-data id="40">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getExpediente().getExpedienteContratoPase().getContrato().getPrimerTitular().getApellidoNombre();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="41">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[AGUILA la expresada cuenta corriente presentaba a fecha 14 de octubre de 2011 un saldo deudor a su cargo y a favor de mi representado UNNIM BANC, S.A. UNIPERSONAL por importe ]]></text-property>
+                    </text>
+                    <text-data id="42">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getSaldoTotal();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="43">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[- € de principal, según resulta de la certificación librada por el Apoderado de mi mandante y liquidación de la cuenta que aporto de documento núm. 2.
+
+	TERCERO.- Habiendo resultado infructuosas todas las gestiones realizadas por mi representada en reclamación extrajudicial o de reembolso del saldo de la cuenta, no queda más remedio que formular la presente petición inicial del procedimiento monitorio.
+	Acompaño de documentos núms. 3 y 4 telegrama y aviso de servicio acreditativos de la notificación de la deuda al demandado.
+	
+	A los anteriores hechos son de aplicación los siguientes
+
+FUNDAMENTOS DE DERECHO
+
+	I.- El art. 6 y siguientes de la Ley de Enjuiciamiento Civil, respecto a la capacidad de las partes para entablar el presente procedimiento.
+	II.- El art. 812 de la citada Ley respecto a la procedencia del proceso monitorio por pretenderse el pago de una deuda dineraria, vencida y exigible de cantidad determinada y que no exceda de 250.000,00’- €.
+	III.- El contrato de cuenta corriente, no definido ni regulado en el Código de Comercio, está reconocido por la doctrina científica y jurisprudencial, siendo de aplicación en todo caso los arts. 1088 y siguientes del Código Civil sobre obligaciones y contratos, y sus concordantes del Código Mercantil. 
+IV.- El art. 813 de la LEC que establece la competencia de este Juzgado al que me dirijo por ser el correspondiente al domicilio o residencia de los deudores.
+	V.- Las costas deberán imponerse al deudor  en virtud de lo establecido en el art. 394 de la misma Ley.
+
+	En su virtud, 
+
+	SOLICITO AL JUZGADO: se sirva admitir el presente escrito con los documentos y copias que acompaño, tener por formulada petición inicial de procedimiento monitorio en nombre de UNNIM BANC, S.A. UNIPERSONAL contra Don ]]></text-property>
+                    </text>
+                    <text-data id="44">
+                        <property name="display">inline</property>
+                        <property name="width">0in</property>
+                        <expression name="valueExpr">asunto.getExpediente().getExpedienteContratoPase().getContrato().getPrimerTitular().getApellidoNombre();</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                    <text id="45">
+                        <property name="display">inline</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[y a mi por parte en la representación que del primero acredito, mandando se entiendan conmigo las sucesivas diligencias, y dictar providencia requiriendo al deudor para que en plazo legal pague a mi representado la suma CUATRO MIL TRESCIENTOS ONCE EUROS CON TREINTA Y SEIS CÉNTIMOS (4.311,36 €), más los intereses del descubierto al tipo correspondiente desde la fecha de liquidación de la cuenta, más las costas causadas.
+
+]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

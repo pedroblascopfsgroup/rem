@@ -1,0 +1,308 @@
+
+RECOVERY - MEJORAS
+
+--------------------------------------
+--------------------------------------
+VERSION V.I.P
+--------------------------------------
+Añadido permiso TAB_EXPEDIENTE_ADJUNTOS para visualizar la pestaña adjuntos del expediente
+Al derivar un procedimiento automatico el tipo de actuación se obtiene del tipo de procedimiento a derivar, no del padre.
+Añadida la funcion OCULTA_TIPO_ACUERDO para que no aparezca el combo de selección del tipo de acuerdo en la ventana de alta de acuerdos del asunto
+--------------------------------------
+---------------------------------------
+VERSION 6.1.0
+--------------------------------------
+Cambiado las columnas de los grids de la búsqueda de clientes, para que muestre los mismos datos que la cabecera del cliente.
+Optimizadas las búsquedas
+
+---------------------------------------
+---------------------------------------
+VERSION 6.0.0
+--------------------------------------
+* [Carlos] En la derivación se copian los bienes del procedimiento, en caso de tener el TPO el flag FLAG_UNICO_BIEN activo
+solo se copiaran en caso de tener un único bien el prc padre.
+
+---------------------------------------
+---------------------------------------
+VERSION 6.0.0
+--------------------------------------
+* [PEDRO] Modificaciones necesarias por Auditoria de Seguridad.
+
+*[DIANA] Modificaciones sobre la rama Sencha para bankia
+* Cambiamos la dependencia con el coreextension a la version 3.0.0_tyrion_rc2
+* Cambiamos la dependencia con el plugin recovery-domain para que coja las últimas modificaciones del rec-common
+    la nueva version del recovery-domain será la 4.0.2.0.6.17_rc2
+* Se mueve el jsp de cabecera del cliente fast al rec-web
+* Se añade a la sobreescritura del tab de contratos del expediente que solo se vea esa pestaña si es expediente no es de tipo "RECOBRO"
+* Se añade función para mostrar la pestaña docuentos del contrato
+* Se añade función para cambiar la pestaña inicial por la búsqueda de expedientes
+
+-----------------------------------------
+-----------------------------------
+VERSION 5.5.1 [merged - bruno - 1/8/2013]
+-----------------------------------
+* [manuel] Evitar dependencias de algunos plugins con mejoras. Se refactorizan los m�todos cancelar y paralizar asuntos del plugin de masivo.
+Las api de revisi�n de procedimientos y de finalizar asuntos implementas interfaces del coreextension. 
+
+-----------------------------------
+VERSION 5.5.0 
+-----------------------------------
+* [manuel] Se deshabilita la tacle de Retroceso cuando el foco no est� en un campo de texto para evitar que la aplicaci�n
+	vuelva a la pantalla de login. S�lo ocurre en windows.
+
+-----------------------------------
+VERSION 5.4.0 [16/07/2013]
+-----------------------------------
+* [diana] A�adimos tambi�n a esta versi�n la posibilidad de elegir qu� campos se derivan de unos procedimientos a otros 
+	cuando se deriva en otro procedimiento autom�ticamente.
+	Ser� necesario a�adir el script a base de datos :
+	** scripts/versiones/5.4.0/configuracion_derivacion_procedimientos.sql   
+* [bruno] Ahora se pueden cargar archivos de CSS como elementos din�mcos.	
+
+-----------------------------------
+VERSION 5.3.0 
+-----------------------------------
+* [bruno] Ahora la funci�n que abre el tab de tareas pendientes es un elemento din�mico que se puede sobreescribir para 
+    que se abra otra pesta�a.
+    
+ 
+
+-----------------------------------
+VERSION 5.2.1 [03/07/2013]
+-----------------------------------
+*Se inserta una funci�n para ocultar los botones de la pesta�a de acuerdos de los asuntos
+* No es necesario ejecutar el script, pero si se quieren ocultar esos botones la funci�n que habr�a que a�adir ser�a 
+  'OCULTAR_BOTONES_ACUERDO'
+  
+  
+---------------------------------
+VERSION 5.2.0 [02/07/2013] 
+*** REQUIERE SCRIPTS DE BBDD ****
+--------------------------------
+* Se realizan las modificaciones necesarias para que los botones de las prorrogas para las tareas, se habiliten
+* o no, dependiendo del tipo de procedimiento. Inicialmente todos los tipos de procedimientos permiten las
+* prorrogas (Este cambio nace por la UGAS-2993)
+
+---------------------------------
+VERSION 5.1.1 [01/07/2013] 
+--------------------------------
+* Se hace mas grande el combo del genericForm.
+* Se a�ade la posibilidad de abrir las anotaciones de especializada desde el Historico del asunto: tabHistoricoAsunto.jsp
+
+
+---------------------------------
+VERSION 5.1.0 [04/06/2013 - Bruno] 
+*** REQUIERE SCRIPTS DE BBDD ****
+--------------------------------
+* Ahora existe la posibilidad, mediante funciones de ocultar partes del �rbol del buz�n de tareas.
+
+
+---------------------------------
+VERSION 5.0.7 [21/05/2013 - Bruno]
+--------------------------------
+* Ahora para mostrar el buz�n de tareas se usa el flow plugin/mejoras/tareas/MEJlistadoTareas lo cual permite que se pueda sobreescribir.
+
+---------------------------------
+VERSION 5.0.6 (DEPENDENCIA CON COREEXTENSION 2.2.2) [14/05/2013]
+--------------------------------
+* Se han renombrado las properties del listadoTareasBusquedaJSON para que sean cohererntes con el objeto devuelto con la BO
+    redefinida en la versi�n actual del coreextension
+* Ahora, para mostrar el buz�n de tares se usa el plugin/mejoras/tareas/MEJlistadoTareasBusqueda en vez de  sobreescribir el
+    flow tareas/listadoTareasBusqueda. Esto permite que el flow se pueda sobreescribir para un cliente.
+
+
+---------------------------------
+VERSION 5.0.5 (DEPENDENCIA CON COREEXTENSION 2.2.1)
+--------------------------------
+
+UGAS 08/05/2013
+
+*** CODIGO modificado ***
+
+* main/java/es/pfsgroup/plugin/recovery/mejoras/asunto/controller/HistoricoAsuntoController.java
+	- UGAS-2695 Desde el historico de operaciones del asunto no se visualiza la pregunta de las comunicaciones. Y desde
+		el historico del procedimiento no se visualiza la respuesta. Tambi�n han sido necesarios cambios en el plugin 
+		de coreextension para solucionar esta incidencia.
+	
+UGAS 07/05/2013
+
+*** CODIGO modificado ***
+
+* main/java/es/pfsgroup/plugin/recovery/mejoras/procedimiento/MEJProcedimientoManager.java
+* main/java/es/pfsgroup/plugin/recovery/mejoras/recurso/MEJRecursoManager.java
+	- UGAS-2652 En la BO createOrUpdate de MEJRecursoManager, si el recurso est� finalizado se activan las tareas 
+	del procedimiento. Se a�ade la comprobaci�n de que adem�s el procedimiento no est� paralizado.
+	Por otro lado, en la BO desparalizarProcedimiento de MEJProcedimientoManager para reactivar las tareas hay 
+	que comprobar primero que no haya un recurso pendiente.
+
+---------------------------------
+VERSION 5.0.4
+--------------------------------
+
+UGAS 30/04/2013
+
+*** CODIGO modificado ***
+
+* java/es/pfsgroup/plugin/recovery/mejoras/web/genericForm/MEJGenericFormManager.java
+	- UGAS-2677 A�adido c�digo para que modifique el campo PRC_SALDO_RECUPERACION con el importe introducido a trav�s del T. hipotecario, 
+	tarea inteporsici�n de la demanda, campo Principal de la demanda. No afecta al resto de aplicaciones en caso de no existir ese campo.
+
+*** Script DML ***
+
+* utils/2013_04_30_UGAS_2677/2013_04_30_UGAS_2677.sql
+	- UGAS-2677 A�ade nuevo campo importe Principal de la demanda en el T. hipotecario, tarea interposici�n de la demanda. Este script es 
+	opcional, no afecta al resto de aplicaciones.
+	
+
+---------------------------------
+VERSION 5.0.3
+--------------------------------
+
+UGAS 23/04/2013
+
+*** JSP Modificada ***
+
+* web/jsp/plugin/mejoras/main/arbol_tareas.js.jsp
+	- Adaptaciones para el m�dulo de previsiones versi�n 1.2.3
+				
+*** JSP Modificada ***
+
+* web/jsp/plugin/mejoras/procedimientos/decision.jsp
+	- UGAS-2593 Poner como no editable el combo Tipo Reclamaci�n. No permitir en la Fecha Hasta (de la paralizaci�n)
+				poner una fecha anterior al d�a actual.
+				
+***************************************************************************************
+
+---------------------------------
+VERSION 4.0.1.0.28.1
+--------------------------------
+
+** FLOWS SOBREESCRITOS ***
+
+* SAG 31/03/2010
+* main/resources/plugins/flows/asuntos/altaAsuntos.xml
+* main/resources/plugins/flows/asuntos/cambioGestorAsunto.xml
+	- Sustituye la JSP altaAsuntos.jsp
+* -----	
+
+* SAG 31/03/2010
+* main/resources/plugins/flows/asuntos/devolverAsunto.xml
+	- Cambia la llamada al BO y el DTO
+* -----	
+
+* main/resources/plugins/flows/decisionProcedimiento.xml
+	- Declara un nuevo DTO: MEJDtoProcedimientoDerivado
+	- Sustituye la JSP decision.jsp
+	- Nueva transici�n a estado: actualizarProcedimiento
+	
+
+* main/resources/plugins/flows/procedimientosDerivados.xml
+	- Sustituye el JSON procedimientosDerivadosJSON.jsp
+***************************************************************************************
+
+*** JSP's SOBREESCRITAS ***
+
+* web/jsp/plugin/mejoras/procedimientos/procedimientosDerivadosJSON.jsp
+	- Quita el bucle forEach sobre rec.procedimiento.personasAfectadas.
+
+* web/jsp/plugin/mejoras/procedimientos/decision.jsp
+
+	- A�adida la funcionalidad de edici�n de las actuaciones
+	- Internacionalizaci�n de los mensajes de error de validaci�n
+	- Validaci�n del combo tipo de procedimiento
+	- Ocultada columna dataIndex:personas del grid de actuaciones
+***************************************************************************************
+
+*** DTO's EXTENDIDOS ***
+
+* main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/dto/MEJDtoProcedimientoDerivado.java
+	- extiende es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado
+	- a�adido m�todo Long[] parsePersonas(String)
+***************************************************************************************
+
+*** NUEVOS FLOWS ***
+
+* web/flows/plugin/mejoras/procedimientos/plugin.mejoras.procedimientos.eliminarProcedimientoDecision.xml
+	- Eliminar un procedimiento de una decisi�n
+
+* web/flows/plugin/mejoras/procedimientos/plugin.mejoras.procedimientos.guardarProcedimientoDecision.xml
+	- Cuardar los cambios en un procedimiento de una decisi�n
+
+* web/flows/plugin/mejoras/procedimientos/plugin.mejoras.procedimientos.procedimientoData.xml
+	* Mostrar los datos de un procedimiento individual
+***************************************************************************************
+
+*** NUEVAS JSP's ***
+
+* SAG 31/03/2010
+* web/jsp/plugin/mejoras/asuntos/altaAsuntos.jsp
+* -----
+
+* web/jsp/plugin/mejoras/procedimientos/procedimientoJSON.jsp
+
+***************************************************************************************
+
+*** NUEVAS OPERACIONES DE NEGOCIO ***
+
+* SAG 31/03/2010
+* MEJAsuntosManager.guardarFichaAceptacion
+* MEJAsuntosManager.devolverAsunto
+	-- Nueva implementaci�n del metodo para devolver asuntos, cambia la descripci�n para que aparezca la palabra "Devoluci�n"
+* -----
+
+* decisionProcedimientoManager.actualizarProcedimiento
+	- Implementada en main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/dto/MEJDtoProcedimientoDerivado.java
+	- Cuardar los cambios en un procedimiento de una decisi�n
+
+* decisionProcedimientoManager.borrarProcedimiento
+	- Implementada en main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/dto/MEJDtoProcedimientoDerivado.java
+	- Eliminar un procedimiento de una decisi�n
+
+* plugin.mejoras.tipoReclamacionManager.getByCodigo
+	- Implemenada en  main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/MEJTipoReclamacionManager.java
+	- Busca un tipo de reclacmaci�n por su c�digo
+
+* plugin.mejoras.tipoProcedimientoManager.getByCodigo
+	- Implementado en main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/MEJTipoProcedimientoManager.java
+	- Busca un tipo de procedimiento por su c�digo
+
+* plugin.mejoras.tipoActuacionManager.getByCodigo
+	- Implementado en main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/MEJTipoActuacionManager.java
+	- Busca un tipo de actuaci�n por su c�digo.
+***************************************************************************************
+
+***Nuevos DAO's ***
+
+* main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/dao/MEJTipoActuacionDao.java
+	- Implementado por main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/dao/impl/MEJTipoActuacionDaoImpl.java
+	- Requisito de plugin.mejoras.tipoActuacionManager.getByCodigo
+
+* main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/dao/MEJTipoReclamacionDao.java
+	- Implementado por main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/dao/impl/MEJTipoReclamacionDaoImpl.java
+	- Requisito de plugin.mejoras.tipoReclamacionManager.getByCodigo
+
+* main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/dao/MEJTipoProcedimientoDao.java
+	- Implementado por main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/nuevosmanagers/dao/impl/MEJTipoProcedimientoDaoImpl.java
+	- Requisito de plugin.mejoras.tipoProcedimientoManager.getByCodigo
+
+***************************************************************************************
+
+*** Recursos i18n ***
+* main/java/es/pfsgroup/plugin/recovery/mejoras/decisionProcedimiento/PluginMejorasBOConstants.java
+
+
+* main/resources/plugins/messages/plugin-mejoras-messages.properties
+
+***************************************************************************************
+
+UGAS 11/04/2013
+
+*** JSP Modificada ***
+
+* web/jsp/plugin/mejoras/procedimientos/decision.jsp
+	- UGAS-2550 No permitir que se creen Decisiones vacias: Se a�ade una funci�n de validaci�n de los campos del formulario al bot�n Aceptar
+
+***************************************************************************************
+
+
+

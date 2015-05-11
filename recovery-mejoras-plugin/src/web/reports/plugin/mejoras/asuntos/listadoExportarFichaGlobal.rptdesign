@@ -1,0 +1,1193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.16" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_v20090521 Build &lt;2.3.2.v20090601-0700></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <parameters>
+        <scalar-parameter name="img_src" id="237">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="paramType">simple</property>
+            <text-property name="promptText">img_src</text-property>
+            <property name="isRequired">false</property>
+            <property name="controlType">text-box</property>
+            <property name="defaultValue">default</property>
+            <property name="distinct">true</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <script-data-source name="Data Source" id="17"/>
+    </data-sources>
+    <data-sets>
+        <script-data-set name="actuaciones" id="991386">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">numero</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">nombre</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">tipoActuacion</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">actuacionOrigen</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">principal</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">numProcJuzgado</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">estado</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">numero</property>
+                    <property name="displayName">Número</property>
+                </structure>
+                <structure>
+                    <property name="columnName">nombre</property>
+                    <property name="displayName">Nombre</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tipoActuacion</property>
+                    <property name="displayName">Tipo Actuación</property>
+                </structure>
+                <structure>
+                    <property name="columnName">actuacionOrigen</property>
+                    <property name="displayName">Actuación Origen</property>
+                </structure>
+                <structure>
+                    <property name="columnName">principal</property>
+                    <property name="displayName">Principal</property>
+                </structure>
+                <structure>
+                    <property name="columnName">numProcJuzgado</property>
+                    <property name="displayName">Nro Proc.Juzgado</property>
+                </structure>
+                <structure>
+                    <property name="columnName">estado</property>
+                    <property name="displayName">Estado</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">numero</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">nombre</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">tipoActuacion</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">actuacionOrigen</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">principal</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">numProcJuzgado</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">estado</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <method name="open"><![CDATA[comIt = actuaciones.iterator();]]></method>
+            <method name="fetch"><![CDATA[if (!comIt.hasNext()) return false;
+var actuacion = comIt.next();
+
+row["numero"] = actuacion.getId();
+row["nombre"] = actuacion.getNombreProcedimiento();
+row["tipoActuacion"] = actuacion.getTipoActuacion().getDescripcion();
+row["principal"] = actuacion.getSaldoRecuperacion();
+row["numProcJuzgado"] = actuacion.getCodigoProcedimientoEnJuzgado();
+row["estado"] = actuacion.getEstadoProcedimiento().getDescripcion();
+
+if (actuacion.getProcedimientoPadre() != null) {
+	row["actuacionOrigen"] = actuacion.getProcedimientoPadre().getId();
+}
+
+
+return true;]]></method>
+        </script-data-set>
+        <script-data-set name="Comunicaciones" id="991179">
+            <list-property name="resultSetHints">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">Fecha</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">Emisor</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">Receptor</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">ReqResp</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">Comunicado</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">Respuesta</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">FechaFin</property>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">Fecha</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Emisor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Receptor</property>
+                </structure>
+                <structure>
+                    <property name="columnName">ReqResp</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Comunicado</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Respuesta</property>
+                </structure>
+                <structure>
+                    <property name="columnName">FechaFin</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">Fecha</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">Emisor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">Receptor</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">ReqResp</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">Comunicado</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">Respuesta</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">FechaFin</property>
+                        <property name="dataType">date-time</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <method name="open"><![CDATA[comIt = comunicaciones.iterator();]]></method>
+            <method name="fetch"><![CDATA[if (!comIt.hasNext()) return false;
+var comunicacion = comIt.next();
+
+row["Fecha"] = "";
+row["FechaFin"] = "";
+row["Emisor"] = "";
+row["Receptor"] = "";
+row["ReqResp"] = "";
+row["Comunicado"] = "";
+row["Respuesta"] = "";
+
+
+row["Emisor"] = comunicacion.getDescGestor();
+row["Receptor"] = comunicacion.getDescSupervisor();
+row["ReqResp"] = comunicacion.getTarea();
+if (comunicacion.getTareaId()!=null){
+	row["Fecha"] = comunicacion.getTareaId().getFechaInicio();
+	row["Comunicado"] = comunicacion.getTareaId().getDescripcionTarea();
+	row["Respuesta"] = comunicacion.getDescripcionTarea();
+	row["FechaFin"] = comunicacion.getFechaInicio();	
+}else{
+	row["Comunicado"] = comunicacion.getDescripcionTarea();
+	row["Fecha"] = comunicacion.getFechaInicio();
+	row["FechaFin"] = comunicacion.getFechaFin();	
+	row["Respuesta"] ="";
+}
+
+
+
+return true;]]></method>
+        </script-data-set>
+    </data-sets>
+    <styles>
+        <style name="crosstab-cell" id="4">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="Tabla" id="94">
+            <property name="backgroundPositionX">center</property>
+            <property name="borderBottomColor">#FF0000</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Acta" id="2">
+            <property name="type">a4</property>
+            <property name="orientation">landscape</property>
+            <property name="topMargin">0.1in</property>
+            <property name="leftMargin">0.8in</property>
+            <property name="rightMargin">0.8in</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">medium</property>
+            <property name="fontWeight">normal</property>
+            <property name="fontVariant">normal</property>
+            <property name="canShrink">false</property>
+            <property name="showFooterOnLast">true</property>
+            <property name="headerHeight">0.3in</property>
+            <property name="footerHeight">0.3in</property>
+            <page-footer>
+                <grid id="370">
+                    <property name="fontFamily">"Arial"</property>
+                    <property name="width">100%</property>
+                    <column id="371"/>
+                    <column id="372">
+                        <property name="width">0.20833333333333334in</property>
+                    </column>
+                    <column id="373"/>
+                    <row id="374">
+                        <cell id="375">
+                            <auto-text id="376">
+                                <property name="textAlign">right</property>
+                                <property name="type">page-number</property>
+                            </auto-text>
+                        </cell>
+                        <cell id="377">
+                            <text id="378">
+                                <property name="contentType">plain</property>
+                                <text-property name="content"><![CDATA[de]]></text-property>
+                            </text>
+                        </cell>
+                        <cell id="379">
+                            <auto-text id="380">
+                                <property name="paddingLeft">0pt</property>
+                                <property name="textAlign">left</property>
+                                <property name="type">total-page</property>
+                            </auto-text>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="273">
+            <property name="fontFamily">"Arial"</property>
+            <property name="marginBottom">10pt</property>
+            <property name="width">100%</property>
+            <column id="274">
+                <property name="width">3.3333333333333335in</property>
+            </column>
+            <column id="275">
+                <property name="width">3.21875in</property>
+            </column>
+            <column id="276"/>
+            <row id="277">
+                <cell id="278">
+                    <property name="textAlign">left</property>
+                </cell>
+                <cell id="279">
+                    <property name="colSpan">1</property>
+                    <property name="rowSpan">2</property>
+                    <property name="verticalAlign">middle</property>
+                    <label id="908">
+                        <property name="fontSize">18pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="textAlign">center</property>
+                        <text-property name="text">FICHA GLOBAL</text-property>
+                    </label>
+                    <table id="991393">
+                        <property name="width">100%</property>
+                        <property name="dataSet">Comunicaciones</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">Fecha</property>
+                                <expression name="expression">dataSetRow["Fecha"]</expression>
+                                <property name="dataType">date-time</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Emisor</property>
+                                <expression name="expression">dataSetRow["Emisor"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Receptor</property>
+                                <expression name="expression">dataSetRow["Receptor"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">ReqResp</property>
+                                <expression name="expression">dataSetRow["ReqResp"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Comunicado</property>
+                                <expression name="expression">dataSetRow["Comunicado"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Respuesta</property>
+                                <expression name="expression">dataSetRow["Respuesta"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">FechaFin</property>
+                                <expression name="expression">dataSetRow["FechaFin"]</expression>
+                                <property name="dataType">date-time</property>
+                            </structure>
+                        </list-property>
+                        <column id="991397">
+                            <property name="width">1.125in</property>
+                        </column>
+                        <column id="991398"/>
+                        <header>
+                            <row id="991394">
+                                <cell id="991395">
+                                    <label id="991266">
+                                        <property name="fontSize">medium</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="textAlign">right</property>
+                                        <text-property name="text">ASUNTO</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="991396">
+                                    <text-data id="991400">
+                                        <expression name="valueExpr">asunto.getNombre()</expression>
+                                        <property name="contentType">html</property>
+                                    </text-data>
+                                </cell>
+                            </row>
+                        </header>
+                    </table>
+                </cell>
+                <cell id="280">
+                    <property name="textAlign">right</property>
+                </cell>
+            </row>
+            <row id="284">
+                <cell id="285">
+                    <property name="textAlign">left</property>
+                    <grid id="299">
+                        <property name="width">100%</property>
+                        <column id="300"/>
+                        <row id="301">
+                            <cell id="302">
+                                <text id="991195">
+                                    <property name="fontSize">small</property>
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<STRONG>Usuario:</STRONG><value-of>usuario.getApellidoNombre()</value-of>]]></text-property>
+                                </text>
+                                <text id="985">
+                                    <property name="contentType">html</property>
+                                    <text-property name="content"><![CDATA[<value-of format="dd/MM/yyyy HH:mm">new Date()</value-of>]]></text-property>
+                                </text>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+                <cell id="287">
+                    <property name="paddingRight">0pt</property>
+                    <property name="textAlign">right</property>
+                    <property name="verticalAlign">middle</property>
+                    <grid name="Total de paginas" id="291">
+                        <property name="marginTop">0pt</property>
+                        <property name="width">60px</property>
+                        <column id="292">
+                            <property name="width">0.65625in</property>
+                        </column>
+                        <column id="293"/>
+                        <row id="294">
+                            <cell id="295">
+                                <property name="drop">none</property>
+                                <property name="fontSize">medium</property>
+                                <property name="verticalAlign">middle</property>
+                                <label id="297">
+                                    <property name="fontSize">small</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="canShrink">true</property>
+                                    <text-property name="text">Páginas:</text-property>
+                                </label>
+                            </cell>
+                            <cell id="296">
+                                <property name="verticalAlign">middle</property>
+                                <auto-text id="298">
+                                    <property name="fontSize">small</property>
+                                    <property name="textAlign">left</property>
+                                    <property name="type">total-page</property>
+                                </auto-text>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+        <label name="Acuerdos" id="587">
+            <property name="backgroundColor">#C0C0C0</property>
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="marginTop">10pt</property>
+            <property name="marginLeft">0pt</property>
+            <property name="marginBottom">5pt</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">DATOS  DEL ASUNTO</text-property>
+        </label>
+        <grid id="991267">
+            <property name="width">100%</property>
+            <column id="991268">
+                <property name="width">1.3229166666666667in</property>
+            </column>
+            <column id="991269">
+                <property name="width">3.5625in</property>
+            </column>
+            <column id="991270">
+                <property name="width">1.1041666666666667in</property>
+            </column>
+            <column id="991271"/>
+            <row id="991272">
+                <cell id="991273">
+                    <text id="991302">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Código]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991274">
+                    <text-data id="991303">
+                        <expression name="valueExpr">asunto.getId()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+                <cell id="991275">
+                    <text id="991313">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Gestor]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991276">
+                    <text-data id="991333">
+                        <expression name="valueExpr">asunto.getGestor().getUsuario().getApellidoNombre()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+            </row>
+            <row id="991277">
+                <cell id="991278">
+                    <property name="fontWeight">bold</property>
+                    <text id="991304">
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Fecha conformación]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991279">
+                    <text-data id="991328">
+                        <expression name="valueExpr">asunto.getAuditoria().getFechaCrear()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+                <cell id="991280">
+                    <text id="991314">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Supervisor]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991281">
+                    <text-data id="991334">
+                        <expression name="valueExpr">asunto.getSupervisor().getUsuario().getApellidoNombre()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+            </row>
+            <row id="991282">
+                <cell id="991283">
+                    <text id="991306">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Estado]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991284">
+                    <text-data id="991329">
+                        <expression name="valueExpr">asunto.getEstadoAsunto().getDescripcion()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+                <cell id="991285">
+                    <text id="991315">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Procurador]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991286">
+                    <text-data id="991335">
+                        <expression name="valueExpr">asunto.getProcurador().getUsuario().getApellidoNombre()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+            </row>
+            <row id="991287">
+                <cell id="991288">
+                    <text id="991308">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Expediente]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991289">
+                    <text-data id="991330">
+                        <expression name="valueExpr">asunto.getExpediente().getDescripcionExpediente()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+                <cell id="991290">
+                    <text id="991316">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Despacho CEXP]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991291">
+                    <text-data id="991412">
+                        <expression name="valueExpr">asunto.getGestorCEXP().getDespachoExterno().getDespacho()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+            </row>
+            <row id="991292">
+                <cell id="991293">
+                    <text id="991310">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Comité]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991294">
+                    <text-data id="991331">
+                        <expression name="valueExpr">asunto.getComite().getNombre()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+                <cell id="991295">
+                    <text id="991317">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Gestor CEXP]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991296">
+                    <text-data id="991413">
+                        <expression name="valueExpr">asunto.getGestorCEXP().getUsuario().getApellidoNombre()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+            </row>
+            <row id="991297">
+                <cell id="991298">
+                    <text id="991312">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Despacho]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991299">
+                    <text-data id="991332">
+                        <expression name="valueExpr">asunto.getGestor().getDespachoExterno().getDespacho()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+                <cell id="991300">
+                    <text id="991318">
+                        <property name="fontWeight">bold</property>
+                        <property name="contentType">auto</property>
+                        <text-property name="content"><![CDATA[Supervisor CEXP]]></text-property>
+                    </text>
+                </cell>
+                <cell id="991301">
+                    <text-data id="991414">
+                        <expression name="valueExpr">asunto.getSupervisorCEXP().getUsuario().getApellidoNombre()</expression>
+                        <property name="contentType">html</property>
+                    </text-data>
+                </cell>
+            </row>
+        </grid>
+        <label name="Acuerdos1" id="991326">
+            <property name="backgroundColor">#C0C0C0</property>
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="marginTop">10pt</property>
+            <property name="marginLeft">0pt</property>
+            <property name="marginBottom">5pt</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">ACTUACIONES</text-property>
+        </label>
+        <table name="Titulos" id="356">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">small</property>
+            <property name="marginTop">2pt</property>
+            <property name="width">100%</property>
+            <property name="dataSet">actuaciones</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">numero</property>
+                    <property name="displayName">numero</property>
+                    <expression name="expression">dataSetRow["numero"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">nombre</property>
+                    <property name="displayName">nombre</property>
+                    <expression name="expression">dataSetRow["nombre"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <property name="displayName">numero</property>
+                    <expression name="expression">dataSetRow["numero"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_1</property>
+                    <property name="displayName">nombre</property>
+                    <expression name="expression">dataSetRow["nombre"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_2</property>
+                    <property name="displayName">tipoActuacion</property>
+                    <expression name="expression">dataSetRow["tipoActuacion"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_3</property>
+                    <property name="displayName">actuacionOrigen</property>
+                    <expression name="expression">dataSetRow["actuacionOrigen"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_4</property>
+                    <property name="displayName">principal</property>
+                    <expression name="expression">dataSetRow["principal"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_5</property>
+                    <property name="displayName">numProcJuzgado</property>
+                    <expression name="expression">dataSetRow["numProcJuzgado"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_6</property>
+                    <property name="displayName">estado</property>
+                    <expression name="expression">dataSetRow["estado"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_7</property>
+                    <property name="displayName">tipoActuacion</property>
+                    <expression name="expression">dataSetRow["tipoActuacion"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_8</property>
+                    <property name="displayName">actuacionOrigen</property>
+                    <expression name="expression">dataSetRow["actuacionOrigen"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_9</property>
+                    <property name="displayName">principal</property>
+                    <expression name="expression">dataSetRow["principal"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_10</property>
+                    <property name="displayName">numJuzgado</property>
+                    <expression name="expression">dataSetRow["numProcJuzgado"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_11</property>
+                    <property name="displayName">estado</property>
+                    <expression name="expression">dataSetRow["estado"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_12</property>
+                    <property name="displayName">nombre</property>
+                    <expression name="expression">dataSetRow["nombre"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_13</property>
+                    <property name="displayName">tipoActuacion</property>
+                    <expression name="expression">dataSetRow["tipoActuacion"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_14</property>
+                    <property name="displayName">actuacionOrigen</property>
+                    <expression name="expression">dataSetRow["actuacionOrigen"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_15</property>
+                    <property name="displayName">principal</property>
+                    <expression name="expression">dataSetRow["principal"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_16</property>
+                    <property name="displayName">numJuzgado</property>
+                    <expression name="expression">dataSetRow["numProcJuzgado"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_17</property>
+                    <property name="displayName">estado</property>
+                    <expression name="expression">dataSetRow["estado"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding_18</property>
+                    <property name="displayName">actuacionOrigen</property>
+                    <expression name="expression">dataSetRow["actuacionOrigen"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="395">
+                <property name="width">0.8645833333333334in</property>
+            </column>
+            <column id="396">
+                <property name="width">3.2708333333333335in</property>
+            </column>
+            <column id="397">
+                <property name="width">1.4479166666666667in</property>
+            </column>
+            <column id="919">
+                <property name="repeat">1</property>
+            </column>
+            <column id="398">
+                <property name="width">1.0833333333333333in</property>
+            </column>
+            <column id="399">
+                <property name="width">1.4895833333333333in</property>
+            </column>
+            <column id="401"/>
+            <header>
+                <row id="357">
+                    <property name="fontSize">7pt</property>
+                    <property name="fontWeight">bold</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftColor">#000000</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="textAlign">center</property>
+                    <cell id="358">
+                        <label id="359">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Número</text-property>
+                        </label>
+                    </cell>
+                    <cell id="360">
+                        <label id="361">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Nombre</text-property>
+                        </label>
+                    </cell>
+                    <cell id="362">
+                        <label id="363">
+                            <property name="textAlign">left</property>
+                            <text-property name="text">Tipo Actuación</text-property>
+                        </label>
+                    </cell>
+                    <cell id="920">
+                        <label id="921">
+                            <property name="textAlign">center</property>
+                            <text-property name="text">Actuación Origen</text-property>
+                        </label>
+                    </cell>
+                    <cell id="364">
+                        <label id="365">
+                            <property name="textAlign">center</property>
+                            <text-property name="text">Principal</text-property>
+                        </label>
+                    </cell>
+                    <cell id="366">
+                        <label id="367">
+                            <property name="textAlign">center</property>
+                            <text-property name="text">Nro Proc.Juzgado</text-property>
+                        </label>
+                    </cell>
+                    <cell id="991376">
+                        <label id="991377">
+                            <text-property name="text">Estado</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="991378">
+                    <cell id="991379">
+                        <data id="991380">
+                            <property name="fontSize">x-small</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">Column Binding</property>
+                        </data>
+                    </cell>
+                    <cell id="991381">
+                        <data id="991406">
+                            <property name="resultSetColumn">Column Binding_12</property>
+                        </data>
+                    </cell>
+                    <cell id="991383">
+                        <data id="991407">
+                            <property name="resultSetColumn">Column Binding_13</property>
+                        </data>
+                    </cell>
+                    <cell id="922">
+                        <data id="991415">
+                            <property name="resultSetColumn">Column Binding_18</property>
+                        </data>
+                    </cell>
+                    <cell id="991384">
+                        <data id="991409">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">Column Binding_15</property>
+                        </data>
+                    </cell>
+                    <cell id="381">
+                        <data id="991410">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">Column Binding_16</property>
+                        </data>
+                    </cell>
+                    <cell id="385">
+                        <data id="991411">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">Column Binding_17</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="387">
+                    <cell id="388"/>
+                    <cell id="389"/>
+                    <cell id="390"/>
+                    <cell id="924"/>
+                    <cell id="391"/>
+                    <cell id="392"/>
+                    <cell id="394"/>
+                </row>
+            </footer>
+        </table>
+        <label name="Acuerdos11" id="991336">
+            <property name="backgroundColor">#C0C0C0</property>
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="marginTop">10pt</property>
+            <property name="marginLeft">0pt</property>
+            <property name="marginBottom">5pt</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">COMUNICACIONES</text-property>
+        </label>
+        <table name="Expedientes" id="631">
+            <property name="fontFamily">"Arial"</property>
+            <property name="borderBottomStyle">none</property>
+            <property name="borderLeftStyle">none</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderTopStyle">none</property>
+            <property name="marginTop">0pt</property>
+            <property name="width">100%</property>
+            <property name="dataSet">Comunicaciones</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Fecha</property>
+                    <expression name="expression">dataSetRow["Fecha"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+                <structure>
+                    <property name="name">Emisor</property>
+                    <expression name="expression">dataSetRow["Emisor"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Receptor</property>
+                    <expression name="expression">dataSetRow["Receptor"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ReqResp</property>
+                    <expression name="expression">dataSetRow["ReqResp"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Comunicado</property>
+                    <expression name="expression">dataSetRow["Comunicado"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Respuesta</property>
+                    <expression name="expression">dataSetRow["Respuesta"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">FechaFin</property>
+                    <property name="displayName">FechaFin</property>
+                    <expression name="expression">dataSetRow["FechaFin"]</expression>
+                    <property name="dataType">date-time</property>
+                </structure>
+            </list-property>
+            <column id="638">
+                <property name="marginLeft">0pt</property>
+            </column>
+            <detail>
+                <row id="634">
+                    <property name="pageBreakAfter">auto</property>
+                    <cell id="635">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="paddingTop">0pt</property>
+                        <property name="paddingLeft">0pt</property>
+                        <property name="paddingBottom">0pt</property>
+                        <property name="paddingRight">0pt</property>
+                        <grid id="991196">
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">thin</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <property name="marginTop">auto</property>
+                            <property name="marginBottom">3pt</property>
+                            <property name="width">100%</property>
+                            <column id="991197">
+                                <property name="width">2.4583333333333335in</property>
+                            </column>
+                            <column id="991198">
+                                <property name="width">2.375in</property>
+                            </column>
+                            <column id="991199">
+                                <property name="width">1.5416666666666667in</property>
+                            </column>
+                            <column id="991247">
+                                <property name="width">1.375in</property>
+                            </column>
+                            <column id="991200"/>
+                            <row id="991201">
+                                <property name="fontWeight">bold</property>
+                                <property name="fontStyle">normal</property>
+                                <cell id="991202">
+                                    <text id="991221">
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content"><![CDATA[Gestor]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="991203">
+                                    <text id="991222">
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content"><![CDATA[Supervisor]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="991204">
+                                    <text id="991223">
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content"><![CDATA[Fecha Inicio]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="991243">
+                                    <text id="991248">
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content"><![CDATA[Fecha Fin]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="991205">
+                                    <text id="991224">
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content"><![CDATA[Tipo de comunicacion]]></text-property>
+                                    </text>
+                                </cell>
+                            </row>
+                            <row id="991206">
+                                <cell id="991207">
+                                    <data id="991225">
+                                        <property name="resultSetColumn">Emisor</property>
+                                    </data>
+                                </cell>
+                                <cell id="991208">
+                                    <data id="991226">
+                                        <property name="resultSetColumn">Receptor</property>
+                                    </data>
+                                </cell>
+                                <cell id="991209">
+                                    <data id="991227">
+                                        <property name="resultSetColumn">Fecha</property>
+                                    </data>
+                                </cell>
+                                <cell id="991244">
+                                    <data id="991249">
+                                        <property name="resultSetColumn">FechaFin</property>
+                                    </data>
+                                </cell>
+                                <cell id="991210">
+                                    <data id="991234">
+                                        <property name="resultSetColumn">ReqResp</property>
+                                    </data>
+                                </cell>
+                            </row>
+                            <row id="991211">
+                                <property name="fontWeight">bold</property>
+                                <cell id="991212">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <text id="991230">
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content"><![CDATA[Texto de la comunicación]]></text-property>
+                                    </text>
+                                </cell>
+                                <cell id="991236">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <text id="991241">
+                                        <property name="contentType">auto</property>
+                                        <text-property name="content"><![CDATA[Respuesta a la comunicación]]></text-property>
+                                    </text>
+                                </cell>
+                            </row>
+                            <row id="991216">
+                                <cell id="991217">
+                                    <property name="colSpan">2</property>
+                                    <property name="rowSpan">1</property>
+                                    <data id="991242">
+                                        <property name="resultSetColumn">Comunicado</property>
+                                    </data>
+                                </cell>
+                                <cell id="991239">
+                                    <property name="colSpan">3</property>
+                                    <property name="rowSpan">1</property>
+                                    <data id="991232">
+                                        <property name="resultSetColumn">Respuesta</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </grid>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+    </body>
+</report>

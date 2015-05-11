@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+	<input name="id" type="java.lang.Long"/>
+   
+   	<end-state id="btnExportarFichaGlobal" view="reportPDF/plugin/mejoras/asuntos/listadoExportarFichaGlobalLitigio" >
+      	<on-entry>
+
+	    	<evaluate expression="executor.execute('plugin.asunto.report.getDatosAsunto', id)" result="flowScope.dto" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerActuacionesAsunto',id)" result="flowScope.actuaciones" />
+	    	<!-- evaluate expression="executor.execute('plugin.asunto.report.obtenerRiesgosOrigen', id)" result="flowScope.riesgosOrigen" / -->
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerDemandadosAsunto',id)" result="flowScope.demandados" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerSolvenciaBienesAsuntoLitigio', id)" result="flowScope.bienes" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerTareasPendientesAsunto',id)" result="flowScope.tareas" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.getHistoricoTareasProcedimientoAsunto', id)" result="flowScope.tareasHistorico" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerComunicacionesFichaGlobal', id)" result="flowScope.comFichaGlobal" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerAcuerdos', id)" result="flowScope.acuerdos" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerRecursos', id)" result="flowScope.recursos" />
+	    	<evaluate expression="executor.execute('plugin.mejoras.analisisAsunto.getAnalisis',id)" result="flowScope.analisis"/>
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerProrrogas', id)" result="flowScope.prorrogas" />
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerDecisiones', id)" result="flowScope.decisiones" />
+
+	    	<evaluate expression="executor.execute('plugin.asunto.report.obtenerInstruccionesSubasta', id)" result="flowScope.instruccionesSubasta" />
+	    	
+	    	<!-- evaluate expression="executor.execute('plugin.asunto.report.obtenerCuentasAsunto',id)" result="flowScope.cuentas" />
+	    	<evaluate expression="executor.execute('plugin.ugas.asunto.report.obtenerDatosEconomicosAsuntoLitigio', id)" result="flowScope.datoEconomico" />
+	    	<evaluate expression="executor.execute('plugin.ugas.asunto.report.obtenerDetallesEconomicosEntregasAsuntoLitigio', id)" result="flowScope.desgloseEntrega" />
+	    	<evaluate expression="executor.execute('plugin.ugas.asunto.report.obtenerDetallesEconomicosMinutasAsuntoLitigio', id)" result="flowScope.desgloseMinuta" />
+	    	<evaluate expression="executor.execute('plugin.ugas.asunto.report.obtenerDetallesEconomicosProvisionesAsuntoLitigio', id)" result="flowScope.desgloseProvision" />
+	    	<evaluate expression="executor.execute('plugin.ugas.asunto.report.obtenerDetallesEconomicosProvisionesInsolvenciaAsuntoLitigio', id)" result="flowScope.desgloseProvisionInsolvencia" />
+	    	<evaluate expression="executor.execute('plugin.ugas.asunto.report.obtenerSolvenciaIngresosAsuntoLitigio', id)" result="flowScope.ingresos" / -->
+	    	
+	    	
+	    	
+	    	
+	    	
+		</on-entry>
+    </end-state> 	
+    
+</flow>

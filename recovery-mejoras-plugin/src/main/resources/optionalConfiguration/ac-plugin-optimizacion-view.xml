@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<!-- CONTRATOS FAST -->
+	
+	<bean p:entity="tabs.contrato.fast" p:name="cabeceraContrato"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/cabecera.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+	<bean p:entity="tabs.contrato.fast" p:name="titulosContrato"  p:order="200" 
+		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/titulos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_CONTRATO_DOCUMENTOS"/>
+	
+	<bean p:entity="tabs.contrato.fast" p:name="intervinientesContrato"  p:order="300" 
+		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/intervinientes.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+	<bean p:entity="tabs.contrato.fast" p:name="expedientesAsuntos"  p:order="400" 
+		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/expedientesAsuntos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB-CNT-EXP-ASU"/>		
+		
+	<bean p:entity="tabs.contrato.fast" p:name="adjuntosContratos"  p:order="500" 
+		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/adjuntos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+
+	<!-- CLIENTES FAST -->	
+	
+	<!--
+	<bean p:entity="tabs.cliente.fast" p:name="cabecera"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/cabecera.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	 se ha eliminado el dinamicElement porque este bean se ha movido ya al fichero ac-application-view del rec-web -->
+		
+	<bean p:entity="tabs.cliente.fast" p:name="datosCliente" p:order="200" p:permission="TAB_CLIENTE_DATOS"
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/otrosdatos.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="tabs.cliente.fast" p:name="contratos" p:order="300" p:permission="TAB_CLIENTE_CONTRATOS"
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/contratos.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="tabs.cliente.fast" p:name="solvencia" p:order="400" 
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/solvencia.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="tabs.cliente.fast" p:name="antecedentes" p:order="500" p:permission="TAB_CLIENTE_ANTECEDENTES"
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/antecedentes.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.cliente.fast" p:name="umbral" p:order="600" 
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/umbral.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="VER_UMBRAL"/>
+		
+	<bean p:entity="tabs.cliente.fast" p:name="cirbe" p:order="700" 
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/cirbe.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_CLIENTE_CIRBE"/>
+
+	<bean p:entity="tabs.cliente.fast" p:name="grupoCliente" p:order="800" p:permission="TAB_CLIENTE_GRUPO"
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/grupoCliente.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+  
+	<bean p:entity="tabs.cliente.fast" p:name="scoring" p:order="900" 
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/scoring.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="VER-SCORING-CLIENTE"/>
+
+	<bean p:entity="tabs.cliente.fast" p:name="politicas" p:order="1000" 
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/politica.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="VER-POLITICA"/>
+
+	<bean p:entity="tabs.cliente.fast" p:name="historicoEventos" p:order="1100" p:permission="TAB_CLIENTE_HISTORICOS"
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/eventos.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	  
+	<bean p:entity="tabs.cliente.fast" p:name="adjuntosCliente" p:order="1200" 
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/adjuntos.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<!--
+	<bean p:entity="tabs.cliente.fast" p:name="adjuntosCliente" p:order="1200" 
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/entidad/cliente/tabs/adjuntos.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	-->	
+	<!-- ASUNTOS FAST -->	
+	
+	<bean p:entity="tabs.asunto.fast" p:name="cabeceraAsunto"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/cabecera.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<bean p:entity="tabs.asunto.fast" p:name="aceptacion"  p:order="300" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/aceptacion.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="ACEPTAR-ASUNTO"/>
+	
+	<bean p:entity="tabs.asunto.fast" p:name="titulos"  p:order="400" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/titulos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+
+	<bean p:entity="tabs.asunto.fast" p:name="acuerdos"  p:order="500" 	
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/acuerdos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+	<bean p:entity="tabs.asunto.fast" p:name="cobropago"  p:order="700" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/cobroPago.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_TAB_COBROS_PAGOS"/>
+	
+	<bean p:entity="tabs.asunto.fast" p:name="decisionComite"  p:order="800" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/decisionComite.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_COMITE"/>
+		
+	<bean p:entity="tabs.asunto.fast" p:name="historicoEventosAsuntos"  p:order="1000" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/eventos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+	<bean p:entity="tabs.asunto.fast" p:name="adjuntosAsunto"  p:order="1100" 	
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/adjuntos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+<!-- 
+	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto"  p:order="2000" 
+		p:fileName="/WEB-INF/jsp/entidad/asunto/tabs/historico.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	-->
+	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto"  p:order="2000" 
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/tabs/tabHistoricoAsunto.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.asunto.fast" p:name="tabAnalisis" p:order="1200"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/analisisAsunto/tab/tabAnalisisAsuntoFast.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="VER-OBSERVACIONES-ASUNTO"/>
+			
+	<!-- botones -->
+<!--  SE AGRUPAN	
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnExpComunicaciones" p:order="3"
+		p:fileName="/WEB-INF/jsp/entidad/asunto/buttons/btnExportComunicac.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="EXPORTAR_COMUNICACIONES"/>
+		
+ 	 <bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnExpHistorico" p:order="4"
+		p:fileName="/WEB-INF/jsp/entidad/asunto/buttons/btnExportHistorico.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="EXPORTAR_HISTORICO"/>	 
+		
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="exportar/btnExportarFichaGlobal" p:order="6" 
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/button/btnExportarFichaGlobal.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="EXPORTAR_FICHAGLOBAL"	/>
+-->
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnAdjuntarContratos" p:order="5"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/button/btnAdjuntarContratos.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="BTN_ADJUNTAR_CONTRATOS_ASUNTO" />
+	
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnFinalizarAsunto" p:order="6"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/button/btnFinalizarAsunto.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="BTN_FINALIZAR_ASUNTO" />
+	<!--	
+ 	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="btnPlantillaDemanda" p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/asuntos/button/btnGenerarDocumentoFast.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+ -->		
+	<!-- EXPEDIENTES -->
+	
+	<bean p:entity="tabs.expediente.fast" p:name="cabeceraExpediente"  p:order="100"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/cabecera.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.expediente.fast" p:name="clientesExpediente"  p:order="200"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/clientes.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.expediente.fast" p:name="titulos"  p:order="400"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/titulos.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.expediente.fast" p:name="gestionYanalisis"  p:order="500"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/gestionYanalisis.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.expediente.fast" p:name="decisionComite"  p:order="600"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/decisionComite.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="ROLE_COMITE" />
+
+	<bean p:entity="tabs.expediente.fast" p:name="marcadoPolitica"  p:order="700"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/politica.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ROLE_COMITE"/>
+
+	<bean p:entity="tabs.expediente.fast" p:name="nivelCumplimiento"  p:order="800"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/cumplimiento.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.expediente.fast" p:name="historicoEventos"  p:order="900"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/eventos.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="tabs.expediente.fast" p:name="adjuntosExpedientes" p:order="1000"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/adjuntos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_EXPEDIENTE_ADJUNTOS"/>
+		
+	<!-- PROCEDIMIENTOS -->
+	
+	<bean p:entity="tabs.procedimiento.fast" p:name="cabeceraProcedimiento"  p:order="100"
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/cabecera.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.procedimiento.fast" p:name="contratosProcedimiento"  p:order="200"
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/contratos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.procedimiento.fast" p:name="embargosProcedimiento"  p:order="300" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/embargo.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.procedimiento.fast" p:name="recursosProcedimiento"  p:order="400" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/recursos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.procedimiento.fast" p:name="decisionProcedimiento"  p:order="500" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/decisiones.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		/>
+		
+	<bean p:entity="tabs.procedimiento.fast" p:name="tareasProcedimiento"  p:order="600" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/tareas.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+<!-- <bean p:entity="tabs.procedimiento.fast" p:name="docRequeridaProcedimiento" p:order="700" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/documentacion.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+ -->	
+	<bean p:entity="tabs.procedimiento.fast" p:name="adjuntosProcedimiento" p:order="800" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/adjuntos.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"  p:order="900" 
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/tabs/historico.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+	<!-- botones -->
+	
+	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="btnReactivarProcedimiento" p:order="1"
+		p:fileName="/WEB-INF/jsp/entidad/procedimiento/button/btnReactivarProcedimiento.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	
+				
+</beans>

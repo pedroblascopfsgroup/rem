@@ -1,0 +1,12 @@
+--------------------------------------------------------------
+VERSION 2.6.0 [bruno - 1/8/2013]
+--------------------------------------------------------------
+* Se ha creado el ExtendedProcessManager que permite buscar todos los timers de una determinada instancia cuyo nombre coincida
+        con un patrón.
+
+--------------------------------------------------------------
+VERSION 2.5.0
+--------------------------------------------------------------
+* Se ha añadido una factoría de DTOS dinámicos es.pfsgroup.commons.utils.web.dto.factory.DTOFactory
+* Se ha creado una nueva clase abstracta de base para los DTOS extensibles es.pfsgroup.commons.utils.web.dto.extensible.ExtensibleDto
+* Se ha añadido un método para filtrar directamente la HQL en base a un DTO extensible en HQLBuilder.

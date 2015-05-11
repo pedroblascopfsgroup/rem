@@ -1,0 +1,130 @@
+package es.pfsgroup.plugin.recovery.motorBusqueda.api.dto;
+
+import java.util.Date;
+import java.util.List;
+
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.DDZona;
+
+/**
+ * Interfaz para las busquedas de eventos
+ * @author Guillem
+ *
+ */
+public interface DtoTareas {
+
+	public Long getId();	
+	public void setId(Long id);	
+	public Long getIdEntidadInformacion();	
+	public void setIdEntidadInformacion(Long idEntidadInformacion);	
+	public String getIdTipoEntidadInformacion();	
+	public void setIdTipoEntidadInformacion(String idTipoEntidadInformacion);	
+	public boolean isEnEspera();
+	public void setEnEspera(boolean enEspera);
+	public boolean isEsAlerta();
+	public void setEsAlerta(boolean esAlerta);
+	public Integer getPlazo();
+	public void setPlazo(Integer plazo);
+	public String getDescripcion();
+	public void setDescripcion(String descripcion);
+	public Long getPerfilUsuario();
+	public void setPerfilUsuario(Long perfilUsuario);
+	public String getFechaFinComunicacion();
+	public void setFechaFinComunicacion(String fechaFinComunicacion);
+	public String getSituacion();
+	public void setSituacion(String situacion);
+	public Date getFechaCrear();
+	public void setFechaCrear(Date fechaCrear);
+	public List<Perfil> getPerfiles();
+	public void setPerfiles(List<Perfil> perfiles);
+	public List<DDZona> getZonas();
+	public void setZonas(List<DDZona> zonas);
+	public Usuario getUsuarioLogado();
+	public void setUsuarioLogado(Usuario usuarioLogado);
+	public Boolean getTienePerfilGestor();
+	public void setTienePerfilGestor(Boolean tienePerfilGestor);
+	public Boolean getTienePerfilSupervisor();
+	public void setTienePerfilSupervisor(Boolean tienePerfilSupervisor);
+	public String getUgGestion();
+	public void setUgGestion(String ugGestion);
+	public String getCodigoTipoTarea();
+	public void setCodigoTipoTarea(String codigoTipoTarea);
+	public String getCodigoTipoSubTarea();
+	public void setCodigoTipoSubTarea(String codigoTipoSubTarea);
+	public boolean isBusqueda();
+	public void setBusqueda(boolean busqueda);
+	public String getFechaFinDesde();
+	public void setFechaFinDesde(String fechaFinDesde);
+	public String getFechaFinDesdeOperador();
+	public void setFechaFinDesdeOperador(String fechaFinDesdeOperador);
+	public String getFechaFinHasta();
+	public void setFechaFinHasta(String fechaFinHasta);
+	public String getFechaFinHastaOperador();
+	public void setFechaFinHastaOperador(String fechaFinHastaOperador);
+	public String getFechaVencimientoDesde();
+	public void setFechaVencimientoDesde(String fechaVencimientoDesde);
+	public String getFechaVencDesdeOperador();
+	public void setFechaVencDesdeOperador(String fechaVencDesdeOperador);
+	public String getFechaVencimientoHasta();
+	public void setFechaVencimientoHasta(String fechaVencimientoHasta);
+	public String getFechaVencimientoHastaOperador();
+	public void setFechaVencimientoHastaOperador(String fechaVencimientoHastaOperador);
+	public String getFechaInicioDesde();
+	public void setFechaInicioDesde(String fechaInicioDesde);
+	public String getFechaInicioDesdeOperador();
+	public void setFechaInicioDesdeOperador(String fechaInicioDesdeOperador);
+	public String getFechaInicioHasta();
+	public void setFechaInicioHasta(String fechaInicioHasta);
+	public String getFechaInicioHastaOperador();
+	public void setFechaInicioHastaOperador(String fechaInicioHastaOperador);
+	public String getNombreTarea();
+	public void setNombreTarea(String nombreTarea);
+	public String getDescripcionTarea();
+	public void setDescripcionTarea(String descripcionTarea);
+	public Boolean getTraerGestionVencidos();
+	public void setTraerGestionVencidos(Boolean traerGestionVencidos);
+	public String getGestorSupervisorUsuario();
+	public void setGestorSupervisorUsuario(String gestorSupervisorUsuario);
+	public Long getNivelEnTarea();
+	public void setNivelEnTarea(Long nivelEnTarea);
+	public String getZonasAbuscar();
+	public void setZonasAbuscar(String zonasAbuscar);
+	public String getPerfilesAbuscar();
+	public void setPerfilesAbuscar(String perfilesAbuscar);
+	public String getEstadoTarea();
+	public void setEstadoTarea(String estadoTarea);
+	public String getAmbitoTarea();
+	public void setAmbitoTarea(String ambitoTarea);
+	public String getNombreUsuario();
+	public void setNombreUsuario(String nombreUsuario);
+	public String getApellidoUsuario();
+	public void setApellidoUsuario(String apellidoUsuario);
+	public String getUsernameUsuario();
+	public void setUsernameUsuario(String usernameUsuario);
+	public Long getDespacho();
+	public void setDespacho(Long despacho);
+	public String getGestores();
+	public void setGestores(String gestores);
+	public String getTipoGestor();
+	public void setTipoGestor(String tipoGestor);
+	public String getUsuarioDestinoTarea();
+	public void setUsuarioDestinoTarea(String usuarioDestinoTarea);
+	public String getUsuarioOrigenTarea();
+	public void setUsuarioOrigenTarea(String usuarioOrigenTarea);
+	public String getTipoAnotacion();
+	public void setTipoAnotacion(String tipoAnotacion);
+	public Boolean getFlagEnvioCorreo();
+	public void setFlagEnvioCorreo(Boolean flagEnvioCorreo);
+	public String getTipoGestorTarea();
+	public void setTipoGestorTarea(String tipoGestorTarea);
+	public String getBusquedaUsuario();
+	public void setBusquedaUsuario(String busquedaUsuario);
+	public Long getIdAsunto();
+	public void setIdAsunto(Long idAsunto);
+	public Boolean getTieneResponder();
+	public void setTieneResponder(Boolean tieneResponder);
+	public String getRespuesta();
+	public void setRespuesta(String respuesta);
+    
+}

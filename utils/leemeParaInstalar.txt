@@ -1,0 +1,12 @@
+/********************************************************\
+|************YA NO HAY QUE HACER NADA DE ESTO************|
+|******SE HA AÑADIDO TODO CON ELEMENTOS DINAMICOS********|
+\********************************************************/
+
+Para instalar el plugin, adem�s de utilizar el instalador tnemos que:
+
+1.- A�adir las importaciones de los javascripts y las css que hay en /utils/main.jsp en la /pfs/WEB-INF/jsp/plugin/mejoras/main/main.jsp.
+
+2.- A�adir las entradas de las css que hay en /utils/app.css en la /pfs/css/app.css.
+
+3.- Copiar los iconos /utils/calendar-blue.gif y /utils/calendar-blue.png en la carpeta /pfs/css.

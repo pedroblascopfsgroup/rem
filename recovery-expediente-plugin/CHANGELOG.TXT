@@ -1,0 +1,5 @@
+#### VERSION 1.1.0 #####
+[DIANA]
+* Se mueve la clase GestorEntidad al plugin de producto, hay que tener en cuenta que esta clase ya existía pero en Bankia, 
+en el expediente se va a tirar de la tabla nueva, por lo que de cara al futuro la clase EXTGestorEntidad se tendrá que 
+ir cambiando a la nueva

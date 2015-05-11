@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+<!-- A continuación se insertarán las queries de validación de los test del proceso de ranking -->
+
+<!--
+	<sql>
+		<type>COUNT</type>
+		<msg>Procesos pendientes</msg>
+		<value>SELECT COUNT(*)
+				FROM PRF_PROCESO_FACTURACION PRF
+  					INNER JOIN RCF_DD_EPF_ESTADO_PROC_FAC DD ON PRF.RCF_DD_EPF_ID = DD.RCF_DD_EPF_ID
+				WHERE DD.RCF_DD_EPF_CODIGO = 'PTE'</value>
+		<expected>0</expected>
+	</sql>
+-->
+
+</sqls>

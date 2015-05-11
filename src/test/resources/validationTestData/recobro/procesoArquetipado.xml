@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM BATCH_RCF_ENTRADA</value>
+		<expected>5</expected>
+		<msg>La tabla BATCH_RCF_ENTRADA debería tener 5 registros: </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES</value>
+		<msg>Número de contratos libres insertados en TMP_REC_CNT_LIBRES: </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_PER_ARQ</value>
+		<msg>Número de personas arquetipadas a la salida del bean de arquetipado TMP_REC_CNT_LIBRES_PER_ARQ: </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_DES_ARQ</value>
+		<msg>Número de personas y contratos en TMP_REC_CNT_LIBRES_DES_ARQ: </msg>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_NUEVOS_CLI</value>
+		<expected>4</expected>
+		<msg>Número de futuros nuevos clientes insertados en TMP_REC_NUEVOS_CLI: </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_DES_ARQ_REC</value>
+		<msg>Número de contratos libres arquetipados y ordenados en TMP_REC_CNT_LIBRES_DES_ARQ_REC: </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_DES_ARQ_ORD</value>
+		<msg>Número de contratos libres arquetipados y ordenados en TMP_REC_CNT_LIBRES_DES_ARQ_ORD: </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_ARQ_REC_PRI</value>
+		<msg>Número de contratos libres arquetipados y ordenados en TMP_REC_CNT_LIBRES_ARQ_REC_PRI: </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_ARQ_REC</value>
+		<expected>5</expected>
+		<msg>Número de contratos libres arquetipados y ordenados en TMP_REC_CNT_LIBRES_ARQ_REC: </msg>
+	</sql>
+		
+	<!--  Comprobamos algunos valores concretos -->
+	<sql>
+		<type>COUNT</type>
+		<value>select arq_id from TMP_REC_CNT_LIBRES_ARQ_REC where cnt_id = 1</value>
+		<expected>4</expected>
+		<msg>Comprobar arquetipo para la relación con el CNT_ID = 1 en TMP_REC_CNT_LIBRES_ARQ_REC: </msg>
+	</sql>
+	
+	<sql>
+		<type>COUNT</type>
+		<value>select arq_id from TMP_REC_CNT_LIBRES_ARQ_REC where cnt_id = 2</value>
+		<expected>5</expected>
+		<msg>Comprobar arquetipo para la relación con el CNT_ID = 2 en TMP_REC_CNT_LIBRES_ARQ_REC: </msg>
+	</sql>
+	
+	<sql>
+		<type>COUNT</type>
+		<value>select arq_id from TMP_REC_CNT_LIBRES_ARQ_REC where cnt_id = 3</value>
+		<expected>4</expected>
+		<msg>Comprobar arquetipo para la relación con el CNT_ID = 3 en TMP_REC_CNT_LIBRES_ARQ_REC: </msg>
+	</sql>
+	
+	<sql>
+		<type>COUNT</type>
+		<value>select arq_id from TMP_REC_CNT_LIBRES_ARQ_REC where cnt_id = 4</value>
+		<expected>4</expected>
+		<msg>Comprobar arquetipo para la relación con el CNT_ID = 4 en TMP_REC_CNT_LIBRES_ARQ_REC: </msg>
+	</sql>
+	
+	<sql>
+		<type>COUNT</type>
+		<value>select arq_id from TMP_REC_CNT_LIBRES_ARQ_REC where cnt_id = 5</value>
+		<expected>5</expected>
+		<msg>Comprobar arquetipo para la relación con el CNT_ID = 5 en TMP_REC_CNT_LIBRES_ARQ_REC: </msg>
+	</sql>
+</sqls>

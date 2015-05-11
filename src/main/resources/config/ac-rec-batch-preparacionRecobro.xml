@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:si="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-merge="true" default-autowire="byName">
+
+	<!-- Sobreescribimos el batch.simpleJob para heredar de PFSStoppableSimpleJob en lugar de StoppableSimpleJob -->
+	<bean id="batch.simpleJob" class="es.capgemini.pfs.batch.PFSStoppableSimpleJob" abstract="true">
+		<property name="jobRepository" ref="batch.jobRepository" />
+		<property name="restartable" value="true" />
+	</bean>
+	
+	<!-- Definimos el bean del job de preparación del batch de recobro -->
+	<bean id="procesoPreparacionRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoPreparacionRecobroJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoPreparacionRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoPreparacionRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoPreparacionRecobroChannel" />
+		<property name="beanName" value="procesoPreparacionRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean del job de validación del batch de recobro -->
+	<bean id="procesoValidacionRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoValidacionRecobroJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoValidacionRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoValidacionRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoValidacionRecobroChannel" />
+		<property name="beanName" value="procesoValidacionRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean del job de marcado del batch de recobro -->
+	<bean id="procesoMarcadoExpedientesRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoMarcadoExpedientesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoMarcadoExpedientesRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoMarcadoExpedientesRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoMarcadoExpedientesRecobroChannel" />
+		<property name="beanName" value="procesoMarcadoExpedientesRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean del job de limpieza del batch de recobro -->
+	<bean id="procesoLimpiezaExpedientesRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoLimpiezaExpedientesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoLimpiezaExpedientesRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoLimpiezaExpedientesRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoLimpiezaExpedientesRecobroChannel" />
+		<property name="beanName" value="procesoLimpiezaExpedientesRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean del job de revisión de expedientes activos del batch de recobro -->
+	<bean id="procesoRevisionExpedientesActivosRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoRevisionExpedientesActivosJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoRevisionExpedientesActivosRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoRevisionExpedientesActivosRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoRevisionExpedientesActivosRecobroChannel" />
+		<property name="beanName" value="procesoRevisionExpedientesActivosRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean del job de Rearquetipacion de Expedientes del batch de recobro -->
+	<bean id="procesoRearquetipacionExpedientesRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoRearquetipacionExpedientesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoRearquetipacionExpedientesRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoRearquetipacionExpedientesRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoRearquetipacionExpedientesRecobroChannel" />
+		<property name="beanName" value="procesoRearquetipacionExpedientesRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean del job de Arquetipado del batch de recobro -->
+	<bean id="procesoArquetipadoRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoArquetipadoJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoArquetipadoRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoArquetipadoRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoArquetipadoRecobroChannel" />
+		<property name="beanName" value="procesoArquetipadoRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean del job de Generación de Expedientes del batch de recobro -->
+	<bean id="procesoGeneracionExpedientesRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoGeneracionExpedientesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoGeneracionExpedientesRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoGeneracionExpedientesRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoGeneracionExpedientesRecobroChannel" />
+		<property name="beanName" value="procesoGeneracionExpedientesRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean del job de Reparto de Expedientes del batch de recobro -->
+	<bean id="procesoRepartoRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoRepartoJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoRepartoRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoRepartoRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoRepartoRecobroChannel" />
+		<property name="beanName" value="procesoRepartoRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean del job de Persistencia Previa Envio del batch de recobro -->
+	<bean id="procesoPersistenciaPreviaEnvioRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoPersistenciaPreviaEnvioJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoPersistenciaPreviaEnvioRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoPersistenciaPreviaEnvioRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoPersistenciaPreviaEnvioRecobroChannel" />
+		<property name="beanName" value="procesoPersistenciaPreviaEnvioRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean del job de Historizacion del batch de recobro -->
+	<bean id="procesoHistorizacionRecobroHandler"	class="es.capgemini.pfs.batch.recobro.jobs.ProcesoHistorizacionJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoHistorizacionRecobroChannel" /> 
+	</bean>
+	
+	<bean id="procesoHistorizacionRecobroQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoHistorizacionRecobroChannel" />
+		<property name="beanName" value="procesoHistorizacionRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+ 	<bean id="securityDefaultUserId" class="java.lang.Long">
+        <constructor-arg value="1" />
+	</bean>
+  
+</beans>

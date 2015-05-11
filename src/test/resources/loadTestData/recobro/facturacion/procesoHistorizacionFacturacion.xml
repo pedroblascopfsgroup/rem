@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT -->
+<sqls>
+<!-- A continuación se insertarán las queries de carga de los test del proceso de ranking -->
+
+<!--
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Crear tabla TMP_REC_EXP_SIN_PERSONAS.</msg>
+		<value>
+		declare
+				nCount NUMBER;
+				v_sql LONG;
+				begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_SIN_PERSONAS';
+				IF(nCount = 0) THEN
+		      	v_sql:='
+		        	CREATE TABLE TMP_REC_EXP_SIN_PERSONAS (
+		            	EXP_ID          NUMBER(16) NOT NULL
+		        	)
+		      	';
+		  		execute immediate v_sql;
+				END IF;
+		end;
+		</value>
+	</sql>
+-->
+
+</sqls>

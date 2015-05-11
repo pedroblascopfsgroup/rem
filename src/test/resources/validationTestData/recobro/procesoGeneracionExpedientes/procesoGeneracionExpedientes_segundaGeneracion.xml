@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+<!-- 0 PASO: ANALIZAMOS EL NUMERO DE CONTRATOS INSERTADOS EN LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC_EXT -->
+	<sql>
+		<type>COUNT</type>
+		<msg>Número de registros insertados en la tabla TMP_REC_CNT_LIBRES_ARQ_REC: </msg>
+		<value>
+			SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_ARQ_REC
+		</value>
+		<expected>10</expected>
+	</sql>
+<!-- 1 PASO: ANALIZAMOS EL NUMERO DE CONTRATOS INSERTADOS EN LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC_EXT -->
+	<sql>
+		<type>COUNT</type>
+		<msg>Número de registros insertados en el paso </msg>
+		<value>
+			SELECT COUNT(*) FROM TMP_REC_CNT_LIBRES_ARQ_REC_EXT
+		</value>
+		<expected>10</expected>
+	</sql>
+<!-- 2 PASO: CREAMOS LA TABLA DE VALIDACIÓN -->
+	<sql> <type>CREATE</type> <value>CREATE TABLE TMP_VALIDACION (EXP_ID NUMBER(16), CNT_ID NUMBER(16), PER_ID NUMBER(16), ARQ_ID NUMBER(16), CEX_PASE NUMBER(16))</value> <msg>Tabla TMP_VALIDACION creada correctamente.</msg></sql>
+<!-- 3 PASO: INSERTAMOS EN LA TABLA DE VALIDACIÓN -->	
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(1,2294183,1110248,6,1)</value> <msg>Insertado registro nº 3 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(1,2294183,1110249,6,0)</value> <msg>Insertado registro nº 4 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(1,2294183,1102073,6,0)</value> <msg>Insertado registro nº 5 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(1,2247147,1110248,6,0)</value> <msg>Insertado registro nº 6 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(1,2390248,1110248,6,0)</value> <msg>Insertado registro nº 7 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(1,2257120,1110249,6,0)</value> <msg>Insertado registro nº 8 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(1,2257120,1102073,6,0)</value> <msg>Insertado registro nº 9 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(2,2586324,991701,3,1)</value> <msg>Insertado registro nº 10 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(2,2585142,991701,3,0)</value> <msg>Insertado registro nº 11 en TMP_VALIDACION: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(2,2585142,991698,3,0)</value> <msg>Insertado registro nº 12 en TMP_VALIDACION: </msg></sql>
+<!-- <sql> <type>INSERT</type> <value>INSERT INTO TMP_VALIDACION VALUES(2,2585083,991698,3,0)</value> <msg>Insertado registro nº 13 en TMP_VALIDACION: </msg></sql> -->
+	
+<!-- 4 PASO: COMPARAMOS QUE LOS REGISTROS SEAN LOS ESPERADOS -->
+	<sql>
+		<type>CREATE</type>
+		<value>
+			CREATE TABLE TMP_COMPARE AS
+			SELECT 
+	    		(SELECT COUNT(*) FROM TMP_VALIDACION) EXPECTED
+	    		,(SELECT COUNT(*) FROM BATCH_DATOS_SALIDA ) ACTUAL
+			FROM DUAL
+		</value>
+		<msg>Tabla TMP_COMPARE creada correctamente.</msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>No se han generado el número de contratos esperado</msg>
+		<value>
+			SELECT COUNT(*) FROM (
+			SELECT * FROM TMP_COMPARE WHERE EXPECTED != ACTUAL)
+		</value>
+		<expected>0</expected>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<msg>La tabla BATCH_DATOS_SALIDA está vacía</msg>
+		<value>
+			SELECT COUNT(*) FROM (
+				SELECT COUNT(*) N FROM BATCH_DATOS_SALIDA
+			)WHERE N = 0
+		</value>
+		<expected>0</expected>
+	</sql>
+	<!-- 5 PASO: COMPARAMOS QUE SE HAYAN CREADO LOS EXPEDIENTES ESPERADOS -->
+	<sql>
+		<type>DROP</type>
+		<value>
+			DROP TABLE TMP_COMPARE
+		</value>
+		<msg>Tabla TMP_COMPARE creada correctamente.</msg>
+	</sql>
+	<sql>
+		<type>CREATE</type>
+		<value>
+			CREATE TABLE TMP_COMPARE AS
+			SELECT 
+	    		(SELECT COUNT(DISTINCT EXP_ID) FROM TMP_VALIDACION) EXPECTED
+	    		,(SELECT COUNT(DISTINCT EXP_ID) FROM BATCH_DATOS_SALIDA ) ACTUAL
+			FROM DUAL
+		</value>
+		<msg>Tabla TMP_COMPARE creada correctamente.</msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>No se han generado el número de expedientes esperado</msg>
+		<value>
+			SELECT COUNT(*) FROM (
+			SELECT * FROM TMP_COMPARE WHERE EXPECTED != ACTUAL)
+		</value>
+		<expected>0</expected>
+	</sql>
+	
+	<!-- 6 PASO: COMPARAMOS QUE EL ARQUETIPO PARA EL EXPTE SEA ÚNICO -->
+	<sql>
+		<type>COUNT</type>
+		<msg>Existen expedientes con distintos arquetipos</msg>
+		<value>
+			select count(*) from (
+			select exp_id, count(distinct arq_id) from batch_datos_salida group by exp_id having count(distinct arq_id) > 1
+			) where exp_id is not null
+		</value>
+		<expected>0</expected>
+	</sql>
+</sqls>

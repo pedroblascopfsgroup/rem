@@ -1,0 +1,13 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<!-- MODIFICAR A PARTIR DE ESTE PUNTO 
+  <entry key="facturacion.cuentaControlCobrosDiaQuery">
+    <![CDATA[
+      SELECT COUNT(*) FROM CCR_CONTROL_COBROS_RECOBRO WHERE CCR_FECHA = ?
+    ]]>
+  </entry>
+ -->      
+      
+ </properties>
+ 

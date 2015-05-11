@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+  <!-- Generic Router -->
+  <bean id="genericRouter" parent="events.router">
+        <property name="routeStrategies">
+            <list>
+                <!-- Trade -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^tradeFileInputChannel\[${batch.files.workingcode.pattern}\]$/) {
+                              matcher = (sourceChannel =~ /tradeFileInputChannel/)
+                              return matcher.replaceAll(/tradeSecondInputChannel/)
+                            } 
+                        </value>
+                    </property>
+                </bean>
+                <!-- Ejemplo con regex 
+                <bean parent="events.router.regexStrategy"
+                      p:source="sourceChannel"
+                      p:match="^tradeFileInputChannel\[${batch.files.workingcode.pattern}\]$" 
+                      p:search="tradeFileInputChannel"
+                      p:replace="tradeSecondInputChannel" />
+                -->
+                <!-- PCR -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^pcrFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/pcrFileInputChannel/) 
+                                return matcher.replaceAll(/validacionPCRChannel/) 
+                            }
+                        </value>
+                    </property>
+                </bean>
+
+
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionPCRChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionPCRChannel/) 
+                                return matcher.replaceAll(/pasajeProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>                 
+
+
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^pasajeProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/pasajeProduccionChannel/) 
+                                return matcher.replaceAll(/precalculoPCRProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^precalculoPCRProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/precalculoPCRProduccionChannel/) 
+                                return matcher.replaceAll(/analizePCRProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+                
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^analizePCRProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/analizePCRProduccionChannel/) 
+                                return matcher.replaceAll(/procesoMantenimientoChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+<!--
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^analizePCRProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/analizePCRProduccionChannel/) 
+                                return matcher.replaceAll(/procesadoUNNIMPCRChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>                 
+    -->            
+                <!-- ALERTAS -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^alertasFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/alertasFileInputChannel/) 
+                                return matcher.replaceAll(/validacionAlertasChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionAlertasChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionAlertasChannel/) 
+                                return matcher.replaceAll(/pasajeAlertasProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>                
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^pasajeAlertasProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/pasajeAlertasProduccionChannel/) 
+                                return matcher.replaceAll(/analizeAlertasProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+                <!-- CIRBE  -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^cirbeFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/cirbeFileInputChannel/) 
+                                return matcher.replaceAll(/validacionCirbeChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                 <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionCirbeChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionCirbeChannel/) 
+                                return matcher.replaceAll(/pasajeCirbeProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>   
+             	<!-- GRUPOS DE CLIENTES -->
+             	<bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^GCLFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/GCLFileInputChannel/) 
+                                return matcher.replaceAll(/validacionGCLChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                    
+                </bean>
+                <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionGCLChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionGCLChannel/) 
+                                return matcher.replaceAll(/pasajeGCLProduccionChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                
+                <!-- Fichrero cobros Lindorff -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^linCobrosFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/linCobrosFileInputChannel/) 
+                                return matcher.replaceAll(/linCobrosValidacionChannel/) 
+                            }
+                        </value>
+                    </property>
+                </bean>
+
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^linCobrosValidacionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/linCobrosValidacionChannel/) 
+                                return matcher.replaceAll(/linCobrosPasajeProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+                <!-- Fichrero asuntos Lindorff -->     
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^linAltaAsuntosFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/linAltaAsuntosFileInputChannel/) 
+                                return matcher.replaceAll(/linAltaAsuntosPasajeProduccionChannel/) 
+                            }
+                        </value>
+                    </property>
+                </bean>
+                <!-- Fichrero acuertos Lindorff -->     
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^linAcuerdosFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/linAcuerdosFileInputChannel/) 
+                                return matcher.replaceAll(/linAcuerdosValidacionChannel/) 
+                            }
+                        </value>
+                    </property>
+                </bean>
+
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^linAcuerdosValidacionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/linAcuerdosValidacionChannel/) 
+                                return matcher.replaceAll(/linAcuerdosPasajeProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>

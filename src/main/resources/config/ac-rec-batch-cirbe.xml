@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:si="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-merge="true" default-autowire="byName">
+
+	<!-- Sobreescribimos el batch.simpleJob para heredar de PFSStoppableSimpleJob en lugar de StoppableSimpleJob -->
+	<bean id="batch.simpleJob" class="es.capgemini.pfs.batch.PFSStoppableSimpleJob" abstract="true">
+		<property name="jobRepository" ref="batch.jobRepository" />
+		<property name="restartable" value="true" />
+	</bean>
+
+    <bean id="cirbeFileSourceGenerator" parent="batch.FolderFileSourceGenerator">
+        <property name="inDir" value="${batch.cirbe.in}" />
+        <property name="filePattern" value="${batch.cirbe.semaphore}" />
+        <property name="period" value="${batch.cirbe.period}" />
+        <property name="channel" value="cirbeFileInputChannel" />
+        <property name="fileHandlerBeanName" value="cirbeFileHandler" />
+        <property name="fileHandlerMethodName" value="handle" />
+        <property name="entityConcurrent" value="true" />
+    </bean>
+    
+	<bean id="cirbeFileHandler" class="es.capgemini.pfs.batch.load.cirbe.CirbeFileHandler" scope="prototype">
+		<property name="cronExpression" value="0 0/1 * * * ?" />
+		<property name="window" value="1" />
+		<property name="channel" value="cirbeFileInputChannel" />
+	</bean>
+	
+	<!-- Reinsert files Subscriptor -->
+	<bean id="validacionCirbeQueueSubscriptor"  parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="validacionCirbeChannel" />
+		<property name="beanName" value="validacionCirbeHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<bean id="validacionCirbeHandler" class="es.capgemini.pfs.batch.load.cirbe.ValidacionCirbeHandler" scope="prototype">
+		<property name="channel" value="validacionCirbeChannel" />
+	</bean>
+
+	<!-- Subscribir un bean "pasajeProduccionHandler" por cada entidad al canal "pasajeProduccionChannel" -->
+	<bean id="pasajeCirbeQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="pasajeCirbeProduccionChannel" />
+		<property name="beanName" value="pasajeCirbeProduccionHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+
+	<bean id="pasajeCirbeProduccionHandler"
+		class="es.capgemini.pfs.batch.load.cirbe.PasajeCirbeProduccionHandler"
+		scope="prototype">
+		<property name="channel" value="pasajeCirbeProduccionChannel" />
+	</bean>
+	
+	
+
+</beans>

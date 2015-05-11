@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+<!-- LIMPIEZA DE LAS TABLAS DE LOS INTERFACES DE ENTRADA/SALIDA -->
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_EXCEPTUADOS</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXCEPTUADOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida BATCH_DATOS_SALIDA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_SALIDA
+		</value>
+	</sql>
+<!-- LIMPIEZA DE LAS TABLAS TMP PROPIAS DEL JOB -->
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_AGE_MAR</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_AGE_MAR
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_AGE_MAR_EXC</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_AGE_MAR_EXC
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_AGE_MAR_GES</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_AGE_MAR_GES
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_AGE_CNT</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_AGE_CNT
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_AGE_CNT_EXC</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_AGE_CNT_EXC
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_FICHERO_CONTRATOS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_FICHERO_CONTRATOS
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_CONTRATOS_CONS_BAJA</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CONTRATOS_CONS_BAJA
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_CONTRATOS_BAJA</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CONTRATOS_BAJA
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_CONTRATOS_BAJA_MOT</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CONTRATOS_BAJA_MOT
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_CANCELADOS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_CANCELADOS
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_DESNORMALIZADO</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_DESNORMALIZADO
+		</value>
+	</sql>	
+<!-- LIMPIEZA DE LAS TABLAS DE EXTRACCIÓN DE FICHEROS (REC) PROPIAS DEL JOB -->
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_CONTRATOS</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_CONTRATOS
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_PERSONAS</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_PERSONAS
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_CONTRATOS_PERSONAS</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_CONTRATOS_PERSONAS
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_CONTRATOS_BAJAS</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_CONTRATOS_BAJAS
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_PERSONAS_PALANCAS</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_PERSONAS_PALANCAS
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_DIRECCIONES</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_DIRECCIONES
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_RECIBOS</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_RECIBOS
+		</value>
+	</sql>			
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de extracción de datos REC_FICHERO_TELEFONOS</msg>
+		<value>
+			TRUNCATE TABLE REC_FICHERO_TELEFONOS
+		</value>
+	</sql>			
+<!-- LIMPIEZA DE LAS TABLAS TMP DE OTROS JOBS NECESARIAS PARA LAS PRUEBAS -->	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_REPARTO_AGENCIAS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_REPARTO_AGENCIAS
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_ROTACION</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_ROTACION
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_EXTINCION_RA</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RA
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_EXTINCION_RU</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RU
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_SIN_RIESGOS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_SIN_RIESGOS
+		</value>
+	</sql>					
+</sqls>

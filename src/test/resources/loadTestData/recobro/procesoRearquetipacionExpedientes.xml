@@ -1,0 +1,489 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<!--  INICIO CREAR TABLAS JOB ANTERIORES -->
+	<sql>	
+		<type>EXECUTE</type>
+		<msg>Crear tabla TMP_REC_EXP_DESNORMALIZADO</msg>
+		<value>
+		declare
+				nCount NUMBER;
+				v_sql LONG;
+				begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_DESNORMALIZADO';
+				IF(nCount &lt;= 0) THEN
+		      v_sql:='
+		        CREATE TABLE TMP_REC_EXP_DESNORMALIZADO (
+		          EXP_ID          NUMBER(16) NOT NULL,
+		          PER_ID          NUMBER(16) NOT NULL,
+		          CNT_ID          NUMBER(16) NOT NULL,
+		          ARQ_ID          NUMBER(16) NOT NULL,
+		          RCF_AGE_ID      NUMBER(16) NOT NULL,
+		          RCF_SCA_ID      NUMBER(16) NOT NULL
+		        )';
+		  		execute immediate v_sql;
+				END IF;
+		end;		
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'TMP_REC_EXP_EXTINCION_RA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE TMP_REC_EXP_EXTINCION_RA (
+			    EXP_ID          NUMBER(16) NOT NULL,
+				RCF_AGE_ID       NUMBER(16) NOT NULL,
+				ARQ_ID          NUMBER(16) NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla TMP_REC_EXP_EXTINCION_RA</msg>
+	</sql>	
+	<!--  FIN CREAR TABLAS JOB ANTERIORES -->
+
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la vista TMP_REC_PER_DATA_RULE_ENGINE.</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+			    SELECT COUNT(*) INTO NCOUNT FROM ALL_VIEWS WHERE VIEW_NAME='TMP_REC_PER_DATA_RULE_ENGINE';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+			        CREATE VIEW TMP_REC_PER_DATA_RULE_ENGINE AS
+			        SELECT * FROM DATA_RULE_ENGINE
+			        WHERE PER_ID IN (
+			            SELECT DISTINCT(PER_ID) FROM TMP_REC_EXP_DESNORMALIZADO 
+			        )
+			      ';
+			  		EXECUTE IMMEDIATE V_SQL;
+					END IF;
+			end;			
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_DESNORMALIZADO_ARQ</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_DESNORMALIZADO_ARQ';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+			        CREATE TABLE TMP_REC_EXP_DESNORMALIZADO_ARQ (
+			          EXP_ID          NUMBER(16) NOT NULL,
+			          PER_ID          NUMBER(16) NOT NULL,
+			          RCF_AGE_ID      NUMBER(16) NOT NULL,
+			          RCF_SCA_ID      NUMBER(16) NOT NULL,
+			          ARQ_ID_OLD      NUMBER(16) NOT NULL,
+			          ARQ_ID_NEW      NUMBER(16)
+			        )
+			      ';
+			  		execute immediate v_sql;
+					END IF;
+			end;			
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_REARQUETIPADO</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_REARQUETIPADO';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+			        CREATE TABLE TMP_REC_EXP_REARQUETIPADO (
+			          EXP_ID          NUMBER(16) NOT NULL,
+			          RCF_AGE_ID      NUMBER(16) NOT NULL,
+			          RCF_SCA_ID      NUMBER(16) NOT NULL,
+			          ARQ_ID_OLD      NUMBER(16) NOT NULL,
+			          ARQ_ID_NEW      NUMBER(16) 
+			        )
+			      ';
+			  		execute immediate v_sql;
+					END IF;
+			END;			
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_ASIG_CARTERA</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_ASIG_CARTERA';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+			        CREATE TABLE TMP_REC_EXP_ASIG_CARTERA (
+			          EXP_ID          NUMBER(16) NOT NULL,
+			          ARQ_ID_NEW      NUMBER(16) NOT NULL
+			        )
+			      ';
+			  		execute immediate v_sql;
+					END IF;
+			END;			
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_ROTACION</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_ROTACION';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+			        CREATE TABLE TMP_REC_EXP_ROTACION (
+			          EXP_ID          NUMBER(16) NOT NULL,
+			          RCF_AGE_ID      NUMBER(16) NOT NULL,
+			          RCF_SCA_ID      NUMBER(16) NOT NULL,
+			          ARQ_ID_NEW      NUMBER(16) NOT NULL
+			        )
+			      ';
+			  		execute immediate v_sql;
+					END IF;
+			END;			
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla ARP_ARQ_RECOBRO_PERSONA</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'ARP_ARQ_RECOBRO_PERSONA';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+			        create table ARP_ARQ_RECOBRO_PERSONA (
+  						ARP_ID NUMBER(16)
+  						, PER_ID NUMBER(16)
+  						, ARQ_ID NUMBER(16)
+  						, ARQ_NAME VARCHAR2(100 CHAR)
+  						, ARQ_PRIO NUMBER(16)
+  						, ARQ_DATE TIMESTAMP(6)
+  						, VERSION NUMBER(1) DEFAULT 0
+						, USUARIOCREAR VARCHAR2(10 CHAR) NOT NULL
+						, FECHACREAR TIMESTAMP DEFAULT SYSDATE NOT NULL
+						, USUARIOMODIFICAR VARCHAR2(10 CHAR)
+						, FECHAMODIFICAR TIMESTAMP (6)
+						, USUARIOBORRAR VARCHAR2(10 CHAR)
+						, FECHABORRAR TIMESTAMP (6)
+  						, BORRADO NUMBER(1) DEFAULT 0 NOT NULL
+					)
+			      ';
+			  		execute immediate v_sql;
+			  		v_sql:='
+			  			CREATE SEQUENCE  S_ARP_ARQ_RECOBRO_PERSONA  INCREMENT BY 1 START WITH 1
+			  		';
+			  		execute immediate v_sql;
+					END IF;
+			END;			
+		</value>
+	</sql>
+<!-- A PARTIR DE AQUÍ CREACIÓN DE LOS INTERFACES DE CONFIGURACIÓN, ENTRADA Y SALIDA DEL BATCH -->	
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_RCF_ENTRADA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+		CREATE TABLE BATCH_RCF_ENTRADA (
+			    RCF_ESQ_ID          		NUMBER(16) NOT NULL,
+				RCF_ESQ_PLAZO				INTEGER,
+				RCF_ESQ_FECHA_LIB			TIMESTAMP(6),
+				RCF_ESQ_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_DD_EES_ID				NUMBER(16) NOT NULL,
+				RCF_DD_EES_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_EES_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_DD_MTR_ID				NUMBER(16) NOT NULL,
+				RCF_DD_MTR_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_MTR_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_CAR_ID					NUMBER(16) NOT NULL,
+			    RCF_CAR_NOMBRE				VARCHAR2(50 CHAR) NOT NULL,
+				RCF_CAR_BORRADO        		NUMBER(1) NOT NULL,
+			    RCF_DD_ECA_ID				NUMBER(16) NOT NULL,
+				RCF_DD_ECA_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_ECA_BORRADO     		NUMBER(1) NOT NULL,
+				RD_ID						NUMBER(16) NOT NULL,
+				RD_NAME						VARCHAR2(250 CHAR) NOT NULL,
+				RD_DEFINITION				VARCHAR2(4000 CHAR) NOT NULL,
+				RD_BORRADO					NUMBER(1) NOT NULL,
+			    RCF_AGE_ID					NUMBER(16) NOT NULL,
+			    RCF_AGE_NOMBRE				VARCHAR2(50 CHAR) NOT NULL,
+				RCF_AGE_CODIGO				VARCHAR2(10 CHAR) NOT NULL,
+				RCF_AGE_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_ESC_ID					NUMBER(16) NOT NULL,
+				RCF_ESC_PRIORIDAD			NUMBER(16) NOT NULL,
+				RCF_ESC_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_DD_TCE_ID               NUMBER(16) NOT NULL,        
+			   	RCF_DD_TCE_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_TCE_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_DD_TGC_ID               NUMBER(16),        
+			   	RCF_DD_TGC_CODIGO           VARCHAR2(20 CHAR),
+				RCF_DD_TGC_BORRADO     		NUMBER(1),
+				RCF_DD_AER_ID               NUMBER(16),        
+			   	RCF_DD_AER_CODIGO           VARCHAR2(20 CHAR),
+				RCF_DD_AER_BORRADO     		NUMBER(1),
+				RCF_SCA_ID					NUMBER(16) NOT NULL,
+				RCF_SCA_NOMBRE				VARCHAR2(50 CHAR) NOT NULL,
+				RCF_SCA_PARTICION			INTEGER    NOT NULL,
+				RCF_SCA_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_DD_TPR_ID               NUMBER(16) NOT NULL,        
+			   	RCF_DD_TPR_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_TPR_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_ITV_ID                	NUMBER(16) NOT NULL,        
+			   	RCF_ITV_NOMBRE           	VARCHAR2(50 CHAR) NOT NULL,
+			   	RCF_ITV_FECHA_ALTA        	TIMESTAMP(6) NOT NULL,
+			   	RCF_ITV_PLAZO_MAX	       	NUMBER(8) DEFAULT 0 NOT NULL,
+				RCF_ITV_NO_GEST		 		NUMBER(8) DEFAULT 0 NOT NULL,
+				RCF_ITV_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_MFA_ID               	NUMBER(16) NOT NULL,        
+			   	RCF_MFA_NOMBRE            	VARCHAR2(50 CHAR) NOT NULL,
+				RCF_MFA_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_POA_ID 		           	NUMBER(16) NOT NULL,        
+			   	RCF_POA_CODIGO            	VARCHAR2(20 CHAR) NOT NULL,
+				RCF_POA_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_MOR_ID                	NUMBER(16) NOT NULL,
+				RCF_MOR_NOMBRE              VARCHAR2(100 CHAR) NOT NULL,
+				RCF_MOR_BORRADO             NUMBER(1) NOT NULL,
+				RCF_SUA_ID					NUMBER(16),
+				RCF_SUA_COEFICIENTE			NUMBER(16,2),
+				RCF_SUA_BORRADO				NUMBER(1),
+				RCF_SUR_ID					NUMBER(16),
+				RCF_SUR_POSICION			NUMBER(16),
+				RCF_SUR_PORCENTAJE			NUMBER(16,2),
+				RCF_SUR_BORRADO				NUMBER(1)
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_RCF_ENTRADA</msg>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_EXCEPTUADOS';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_EXCEPTUADOS (
+				PER_ID				NUMBER(16),
+				CNT_ID				NUMBER(16),
+				DD_MOB_ID			NUMBER(16) NOT NULL,
+				DD_MOB_CODIGO		VARCHAR2(50 CHAR) NOT NULL,
+				DD_MOB_BORRADO		NUMBER(1)  NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_EXCEPTUADOS</msg>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_ENTRADA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_ENTRADA (
+				EXP_ID                    NUMBER(16) NOT NULL,
+				ARQ_ID                    NUMBER(16) NOT NULL,
+				EXP_PROCESS_BPM           NUMBER(16) NOT NULL,
+				EXP_MARCADO_BPM           NUMBER(1)  NOT NULL,
+				EXP_BORRADO               NUMBER(1)  NOT NULL,
+				DD_TPE_ID                 NUMBER(16) NOT NULL,
+				DD_TPE_CODIGO             VARCHAR2(50 CHAR) NOT NULL,
+				DD_TPE_BORRADO            NUMBER(1)  NOT NULL,
+				DD_EEX_ID                 NUMBER(16) NOT NULL,
+				DD_EEX_CODIGO             VARCHAR2(50 CHAR) NOT NULL,
+				DD_EEX_BORRADO            NUMBER(1)  NOT NULL,
+				RCF_ESQ_ID                NUMBER(16) NOT NULL,
+				RCF_CAR_ID                NUMBER(16) NOT NULL,
+				RCF_AGE_ID                NUMBER(16) NOT NULL,
+				RCF_SCA_ID                NUMBER(16) NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_ENTRADA</msg>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_SALIDA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_SALIDA (
+				EXP_ID				NUMBER(16) NOT NULL,
+				EXP_DESCRIPCION		VARCHAR2(310 CHAR),
+				EXP_MANUAL			NUMBER(1) NOT NULL,
+				DD_AEX_CODIGO			VARCHAR2(10 CHAR) NOT NULL,
+				DD_EEX_ID			NUMBER(16),
+				DD_EST_ID			NUMBER(16),
+			   	EXP_FECHA_EST_ID	TIMESTAMP(6) NOT NULL,
+				OFI_ID				NUMBER(16) NOT NULL,
+				CNT_ID				NUMBER(16) NOT NULL,
+				PER_ID				NUMBER(16) NOT NULL,
+				ARQ_ID				NUMBER(16) NOT NULL,
+				CEX_PASE			NUMBER(1),
+				PEX_PASE			NUMBER(1) 
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_SALIDA</msg>
+	</sql>			
+<!-- A PARTIR DE AQUÍ PREPARACIÓN Y CARGA DE LOS INTERFACES DE CONFIGURACIÓN, ENTRADA Y SALIDA DEL BATCH -->			
+	<!--
+	<sql>
+		<type>UPDATE</type>
+		<msg>Marca 100 expedientes como activos y de tipo recobro.</msg>
+		<value>
+			UPDATE EXP_EXPEDIENTES
+			SET DD_EEX_ID = 2,
+			DD_TPE_ID = 1
+			WHERE DD_EEX_ID = 4
+			AND ROWNUM &lt;= 100			
+		</value>
+	</sql>
+	 <sql>
+		<type>EXECUTE</type>
+		<value>
+			declare
+			nCount NUMBER;
+			v_sql LONG;
+			begin
+			SELECT count(*) into nCount FROM BATCH_RCF_ENTRADA;
+			IF(nCount &lt;= 0)
+			THEN		
+			v_sql:='insert into BATCH_RCF_ENTRADA (RCF_ESQ_ID,RCF_ESQ_PLAZO,RCF_ESQ_FECHA_LIB,RCF_ESQ_BORRADO, RCF_DD_EES_ID,RCF_DD_EES_CODIGO,RCF_DD_EES_BORRADO,RCF_DD_MTR_ID,RCF_DD_MTR_CODIGO, RCF_DD_MTR_BORRADO,RCF_CAR_ID,RCF_CAR_NOMBRE,RCF_CAR_BORRADO,RCF_DD_ECA_ID,RCF_DD_ECA_CODIGO, RCF_DD_ECA_BORRADO,RD_ID,RD_NAME,RD_DEFINITION,RD_BORRADO,RCF_AGE_ID,RCF_AGE_NOMBRE,RCF_AGE_CODIGO, RCF_AGE_BORRADO,RCF_ESC_ID,RCF_ESC_PRIORIDAD,RCF_ESC_BORRADO,RCF_DD_TCE_ID,RCF_DD_TCE_CODIGO, RCF_DD_TCE_BORRADO,RCF_DD_TGC_ID,RCF_DD_TGC_CODIGO,RCF_DD_TGC_BORRADO,RCF_DD_AER_ID,RCF_DD_AER_CODIGO, RCF_DD_AER_BORRADO,RCF_SCA_ID,RCF_SCA_NOMBRE,RCF_SCA_PARTICION,RCF_SCA_BORRADO,RCF_DD_TPR_ID, RCF_DD_TPR_CODIGO, RCF_DD_TPR_BORRADO,RCF_ITV_ID,RCF_ITV_NOMBRE,RCF_ITV_FECHA_ALTA,RCF_ITV_PLAZO_MAX, RCF_ITV_NO_GEST, RCF_ITV_BORRADO,RCF_MFA_ID,RCF_MFA_NOMBRE,RCF_MFA_BORRADO,RCF_POA_ID,RCF_POA_CODIGO, RCF_POA_BORRADO, RCF_MOR_ID,RCF_MOR_NOMBRE,RCF_MOR_BORRADO,RCF_SUA_ID,RCF_SUA_COEFICIENTE, RCF_SUA_BORRADO,RCF_SUR_ID, RCF_SUR_POSICION,RCF_SUR_PORCENTAJE,RCF_SUR_BORRADO) 
+					values (1,30, TRUNC(sysdate),0,3,''LBR'',0,1,''RU'',0,1,''CARTERA PRUEBA 1'',0,1,''BLO'',0,1,
+				    ''REGLA POR DEFECTO'',''&lt;rule ruleId="1" operator="notEqual" values="[0]"/&gt;'',0,1,''AGENCIA DE PRUEBAS'',''AGE1'',0,1,1,0,1,''GES'',0,1,''GI'',0,
+				    3,''CPGRA'',0,1,''SUBCARTERA DE PRUEBAS 1'',100,0,2,''EST'',0,1,''ITINERARIO DE PRUEBAS 1'', TRUNC(sysdate),
+				    3,10,0,1,''MODELO FACTURACIÓN DE PRUEBAS 1'',0,1,001,0,1,''MODELO DE RANKING PRUEBA 1'',0,1,100,0,null,null,null,null)';
+			execute immediate v_sql;
+			END IF;
+			end;
+		</value>
+		<msg>Inserción de 1 esquema vigente en la tabla de configuración BATCH_RCF_ENTRADA</msg>
+	</sql> -->
+	
+	<!-- Añadimos configuración de esquemas y carteras 
+		Con esta configuración todos los expedientes deberían tener la cartera 2	
+	-->
+	<sql> 
+		<type>INSERT</type> 
+		<value>
+		INSERT INTO BATCH_RCF_ENTRADA (RCF_ESQ_ID, RCF_ESQ_PLAZO, RCF_CAR_ID , RCF_CAR_NOMBRE, RD_ID, RD_NAME, RD_DEFINITION, RCF_DD_EES_ID, RCF_DD_EES_CODIGO, RCF_DD_ECA_ID, RCF_DD_ECA_CODIGO, RCF_DD_AER_ID, RCF_DD_AER_CODIGO, RCF_ESQ_BORRADO, RCF_DD_EES_BORRADO, RCF_DD_MTR_ID, RCF_DD_MTR_CODIGO, RCF_DD_MTR_BORRADO, RCF_CAR_BORRADO, RCF_DD_ECA_BORRADO, RD_BORRADO , RCF_AGE_ID, RCF_AGE_NOMBRE , RCF_AGE_CODIGO, RCF_AGE_BORRADO, RCF_ESC_ID , RCF_ESC_PRIORIDAD, RCF_ESC_BORRADO, RCF_DD_TCE_ID, RCF_DD_TCE_CODIGO, RCF_DD_TCE_BORRADO, RCF_SCA_ID, RCF_SCA_NOMBRE, RCF_SCA_PARTICION, RCF_SCA_BORRADO, RCF_DD_TPR_ID, RCF_DD_TPR_CODIGO, RCF_DD_TPR_BORRADO, RCF_ITV_ID, RCF_ITV_NOMBRE, RCF_ITV_FECHA_ALTA, RCF_ITV_PLAZO_MAX, RCF_ITV_NO_GEST, RCF_ITV_BORRADO, RCF_MFA_ID, RCF_MFA_NOMBRE, RCF_MFA_BORRADO, RCF_POA_ID, RCF_POA_CODIGO, RCF_POA_BORRADO, RCF_MOR_ID, RCF_MOR_NOMBRE, RCF_MOR_BORRADO)
+		VALUES 
+		(1, 60, 2, 'Cartera prueba', 1, 'Regla por defecto', '&lt;rule ruleId="1" operator="notEqual" values="[0]"/&gt;',3, 'LBR', 1, 'BLO', 3, 'CPGRA', 0,0, 1, 'RA', 0, 0, 0, 0, 1, 'AGENCIA MANOLO', 'AGMANO', 0, 1, 1, 0, 1, 'GI', 0, 1, 'POR DEFECTO', 100, 0, 1, 'EST', 0, 1, 'METAS VOLANTES 1', TRUNC(SYSDATE), 60, 10, 0, 1, 'FACTURACIÓN 1', 0, 1, 'POLÍTICA ACUERDOS', 0, 1, 'MODELO RANKING', 0)
+		</value> 
+		<msg>Insertado registro nº 1 en BATCH_RCF_ENTRADA: </msg>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+			declare
+			nCount NUMBER;
+			v_sql varchar2(5000 CHAR);
+			begin
+			SELECT count(*) into nCount FROM BATCH_DATOS_ENTRADA;
+			IF(nCount &lt;= 0)
+			THEN				
+			v_sql:='INSERT INTO BATCH_DATOS_ENTRADA (EXP_ID, ARQ_ID, EXP_PROCESS_BPM, EXP_MARCADO_BPM, EXP_BORRADO, 
+					DD_TPE_ID, DD_TPE_CODIGO, DD_TPE_BORRADO, DD_EEX_ID, DD_EEX_CODIGO, DD_EEX_BORRADO,
+					RCF_ESQ_ID, RCF_CAR_ID, RCF_AGE_ID, RCF_SCA_ID)
+					SELECT EXP_ID, 1, 1, 0, 0, 1, ''RECOBRO'', 0, 2, ''1'', 0, 1, 1, 1, 1
+					FROM EXP_EXPEDIENTES
+					WHERE ROWNUM &lt;= 100';
+			execute immediate v_sql;		
+			END IF;
+			end;			
+		</value>
+		<msg>Inserción de 100 registros diferentes en la tabla BATCH_DATOS_ENTRADA</msg>
+	</sql>						
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borramos la tabla TMP_REC_EXP_DESNORMALIZADO</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_DESNORMALIZADO	
+		</value>
+	</sql>
+	<sql>
+		<type>INSERT</type>
+		<msg>Insertamos un par de estos expedientes de forma desnormalizada en la tabla TMP_REC_EXP_DESNORMALIZADO</msg>
+		<value>
+			INSERT INTO TMP_REC_EXP_DESNORMALIZADO (EXP_ID, PER_ID, CNT_ID, ARQ_ID, RCF_AGE_ID, RCF_SCA_ID)
+			SELECT PEX.EXP_ID, PEX.PER_ID, CEX.CNT_ID, EXP.ARQ_ID+(ROWNUM-1), 1 RCF_AGE_ID, 1 RCF_SCA_ID
+			FROM BATCH_DATOS_ENTRADA EXP
+			  INNER JOIN PEX_PERSONAS_EXPEDIENTE PEX ON EXP.EXP_ID = PEX.EXP_ID
+			  INNER JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON EXP.EXP_ID = CEX.EXP_ID
+			WHERE DD_EEX_ID = 2
+			AND DD_TPE_ID = 1
+			AND ROWNUM &lt;= 2		
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creamos un backup de la tabla ARP_ARQ_RECOBRO_PERSONA</msg>
+		<value>
+			CREATE TABLE B_ARP_ARQ_RECOBRO_PERSONA AS SELECT * FROM ARP_ARQ_RECOBRO_PERSONA	
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla  ARP_ARQ_RECOBRO_PERSONA</msg>
+		<value>
+				TRUNCATE TABLE ARP_ARQ_RECOBRO_PERSONA
+		</value>
+	</sql>
+</sqls>

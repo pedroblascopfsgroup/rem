@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="pasajePCRProduccionJob" parent="batch.simpleJob" scope="prototype">
+    <property name="transactional" value="true"/>
+    <property name="transactionManager" ref="entityTransactionManager"/>
+    <property name="steps">
+      <list>
+        <!-- FIN VALIDACIONES // COMIENZO PASAJE DATOS -->
+        <!-- actualizo los contratos que ya están en producción con la última data -->
+        <bean id="pasaje.produccion" parent="batch.taskletStep" scope="prototype">
+          <property name="tasklet">
+            <bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+              <property name="scripts">
+              	<list>
+              		<!-- inserto los contratos que no estan en produccion  -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- actualizo los contratos que ya están en producción con la última data  -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.update.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- paso los saldos a la tabla de movimientos -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.movimientos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertMovimientos" />
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- Se inserta en la tabla de personas de producción -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- Se actualiza las personas que ya están en producción con la última data  -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.update.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- Borrar relaciones Persona Direccion, como existen FK con DIR_DIRECCIONES debemos eliminar esto antes que las DIR_DIRECCIONES-->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.borrardirecciones.relaciones" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.borrarRelaciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- Se Borran direcciones de producción -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.borrardirecciones.direcciones" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.borrarDirecciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- Se inserta en la tabla de direcciones de producción -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="insertDirecciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- Se actualiza las direcciones que ya están en producción con la última data --> 
+              		<!-- Suprimida da problemas de rendimiento. El ETL envia todos los datos de direcciones cada vez por eso ahora la secuencia es borrar direcciones y luego todo inserts -->
+              		<!-- 
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="updateDirecciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		 -->
+              		<!--   insertar RELACIONES personas - direcciones   -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="insertRelacionDireccionPersona.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.insertRelaciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!-- Borrar relaciones Contrato Persona-->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.borrar.relaciones" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.borrar"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<!--   insertar RELACIONES personas - contratos   -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.relaciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.insertRelaciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.contratos" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.analizeContratos" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.movimientos" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.analizeMovimientos" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.personas" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.analizePersonas" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.direcciones" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.analizeDirecciones" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.direccionPersona" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.analizeDireccionesPersonas" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.relaciones" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.analizeRelaciones" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+             	</list>
+              </property>
+            </bean>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+</beans>

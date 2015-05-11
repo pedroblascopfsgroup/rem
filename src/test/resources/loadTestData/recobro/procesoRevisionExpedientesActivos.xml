@@ -1,0 +1,514 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Crear tabla TMP_REC_EXP_MARCADO_RA</msg>
+		<value>
+		declare
+				nCount NUMBER;
+				v_sql LONG;
+				begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_MARCADO_RA';
+				IF(nCount &lt;= 0) THEN
+		      v_sql:='
+		        CREATE TABLE TMP_REC_EXP_MARCADO_RA (
+		          EXP_ID          NUMBER(16) NOT NULL,
+		          RCF_AGE_ID      NUMBER(16) NOT NULL,
+		          ARQ_ID          NUMBER(16) NOT NULL
+		        )
+		      ';
+		  		execute immediate v_sql;
+				END IF;
+		end;		
+		</value>
+	</sql>
+	<sql>	
+		<type>EXECUTE</type>
+		<msg>Crear tabla TMP_REC_EXP_DESNORMALIZADO</msg>
+		<value>
+		declare
+				nCount NUMBER;
+				v_sql LONG;
+				begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_DESNORMALIZADO';
+				IF(nCount &lt;= 0) THEN
+		      v_sql:='
+		        CREATE TABLE TMP_REC_EXP_DESNORMALIZADO (
+		          EXP_ID          NUMBER(16) NOT NULL,
+		          PER_ID          NUMBER(16) NOT NULL,
+		          CNT_ID          NUMBER(16) NOT NULL,
+		          ARQ_ID          NUMBER(16) NOT NULL,
+		          RCF_AGE_ID      NUMBER(16) NOT NULL,
+		          RCF_SCA_ID      NUMBER(16) NOT NULL
+		        )';
+		  		execute immediate v_sql;
+				END IF;
+		end;		
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'TMP_REC_EXP_EXTINCION_RA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE TMP_REC_EXP_EXTINCION_RA (
+			    EXP_ID          NUMBER(16) NOT NULL,
+				RCF_AGE_ID       NUMBER(16) NOT NULL,
+				ARQ_ID          NUMBER(16) NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla TMP_REC_EXP_EXTINCION_RA</msg>
+	</sql>	
+<!-- A PARTIR DE AQUÍ CREACIÓN DE LOS INTERFACES DE CONFIGURACIÓN, ENTRADA Y SALIDA DEL BATCH -->	
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_RCF_ENTRADA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+		CREATE TABLE BATCH_RCF_ENTRADA (
+			    RCF_ESQ_ID          		NUMBER(16) NOT NULL,
+				RCF_ESQ_PLAZO				INTEGER,
+				RCF_ESQ_FECHA_LIB			TIMESTAMP(6),
+				RCF_ESQ_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_DD_EES_ID				NUMBER(16) NOT NULL,
+				RCF_DD_EES_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_EES_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_DD_MTR_ID				NUMBER(16) NOT NULL,
+				RCF_DD_MTR_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_MTR_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_CAR_ID					NUMBER(16) NOT NULL,
+			    RCF_CAR_NOMBRE				VARCHAR2(50 CHAR) NOT NULL,
+				RCF_CAR_BORRADO        		NUMBER(1) NOT NULL,
+			    RCF_DD_ECA_ID				NUMBER(16) NOT NULL,
+				RCF_DD_ECA_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_ECA_BORRADO     		NUMBER(1) NOT NULL,
+				RD_ID						NUMBER(16) NOT NULL,
+				RD_NAME						VARCHAR2(250 CHAR) NOT NULL,
+				RD_DEFINITION				VARCHAR2(4000 CHAR) NOT NULL,
+				RD_BORRADO					NUMBER(1) NOT NULL,
+			    RCF_AGE_ID					NUMBER(16) NOT NULL,
+			    RCF_AGE_NOMBRE				VARCHAR2(50 CHAR) NOT NULL,
+				RCF_AGE_CODIGO				VARCHAR2(10 CHAR) NOT NULL,
+				RCF_AGE_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_ESC_ID					NUMBER(16) NOT NULL,
+				RCF_ESC_PRIORIDAD			NUMBER(16) NOT NULL,
+				RCF_ESC_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_DD_TCE_ID               NUMBER(16) NOT NULL,        
+			   	RCF_DD_TCE_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_TCE_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_DD_TGC_ID               NUMBER(16),        
+			   	RCF_DD_TGC_CODIGO           VARCHAR2(20 CHAR),
+				RCF_DD_TGC_BORRADO     		NUMBER(1),
+				RCF_DD_AER_ID               NUMBER(16),        
+			   	RCF_DD_AER_CODIGO           VARCHAR2(20 CHAR),
+				RCF_DD_AER_BORRADO     		NUMBER(1),
+				RCF_SCA_ID					NUMBER(16) NOT NULL,
+				RCF_SCA_NOMBRE				VARCHAR2(50 CHAR) NOT NULL,
+				RCF_SCA_PARTICION			INTEGER    NOT NULL,
+				RCF_SCA_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_DD_TPR_ID               NUMBER(16) NOT NULL,        
+			   	RCF_DD_TPR_CODIGO           VARCHAR2(20 CHAR) NOT NULL,
+				RCF_DD_TPR_BORRADO     		NUMBER(1) NOT NULL,
+				RCF_ITV_ID                	NUMBER(16) NOT NULL,        
+			   	RCF_ITV_NOMBRE           	VARCHAR2(50 CHAR) NOT NULL,
+			   	RCF_ITV_FECHA_ALTA        	TIMESTAMP(6) NOT NULL,
+			   	RCF_ITV_PLAZO_MAX	       	NUMBER(8) DEFAULT 0 NOT NULL,
+				RCF_ITV_NO_GEST		 		NUMBER(8) DEFAULT 0 NOT NULL,
+				RCF_ITV_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_MFA_ID               	NUMBER(16) NOT NULL,        
+			   	RCF_MFA_NOMBRE            	VARCHAR2(50 CHAR) NOT NULL,
+				RCF_MFA_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_POA_ID 		           	NUMBER(16) NOT NULL,        
+			   	RCF_POA_CODIGO            	VARCHAR2(20 CHAR) NOT NULL,
+				RCF_POA_BORRADO        		NUMBER(1) NOT NULL,
+				RCF_MOR_ID                	NUMBER(16) NOT NULL,
+				RCF_MOR_NOMBRE              VARCHAR2(100 CHAR) NOT NULL,
+				RCF_MOR_BORRADO             NUMBER(1) NOT NULL,
+				RCF_SUA_ID					NUMBER(16),
+				RCF_SUA_COEFICIENTE			NUMBER(16,2),
+				RCF_SUA_BORRADO				NUMBER(1),
+				RCF_SUR_ID					NUMBER(16),
+				RCF_SUR_POSICION			NUMBER(16),
+				RCF_SUR_PORCENTAJE			NUMBER(16,2),
+				RCF_SUR_BORRADO				NUMBER(1)
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_RCF_ENTRADA</msg>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_EXCEPTUADOS';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_EXCEPTUADOS (
+				PER_ID				NUMBER(16),
+				CNT_ID				NUMBER(16),
+				DD_MOB_ID			NUMBER(16) NOT NULL,
+				DD_MOB_CODIGO		VARCHAR2(50 CHAR) NOT NULL,
+				DD_MOB_BORRADO		NUMBER(1)  NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_EXCEPTUADOS</msg>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_EXP';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_EXP (
+				EXP_ID                    NUMBER(16) NOT NULL,
+				ARQ_ID                    NUMBER(16) NOT NULL,
+				EXP_BORRADO               NUMBER(1)  NOT NULL,
+				DD_TPE_CODIGO             VARCHAR2(50 CHAR) NOT NULL,
+				DD_EEX_CODIGO             VARCHAR2(50 CHAR) NOT NULL,
+				RCF_ESQ_ID                NUMBER(16) NOT NULL,
+				RCF_AGE_ID      		  NUMBER(16) NOT NULL,
+				RCF_SCA_ID      		  NUMBER(16) NOT NULL,
+				EXP_MARCADO_BPM			      NUMBER(1),
+      			EXP_MANUAL    			      NUMBER(1)
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_EXP</msg>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_CNT_EXP';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_CNT_EXP (
+				EXP_ID NUMBER(16) NOT NULL,
+				CNT_ID NUMBER(16) NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_CNT_EXP</msg>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_PER_EXP';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_PER_EXP (
+				EXP_ID NUMBER(16) NOT NULL,
+				PER_ID NUMBER(16) NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_PER_EXP</msg>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_CNT_PER';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_CNT_PER (
+				CNT_ID NUMBER(16) NOT NULL,
+				PER_ID NUMBER(16) NOT NULL,
+				CNT_PER_TIN	VARCHAR(10 CHAR) NOT NULL,
+				CNT_PER_OIN NUMBER(2) NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_CNT_PER</msg>
+	</sql>
+	
+<!-- 	
+	ESTA TABLA YA NO ES NECESARIA
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_ENTRADA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_ENTRADA (
+				EXP_ID                    NUMBER(16) NOT NULL,
+				ARQ_ID                    NUMBER(16) NOT NULL,
+				EXP_PROCESS_BPM           NUMBER(16) NOT NULL,
+				EXP_MARCADO_BPM           NUMBER(1)  NOT NULL,
+				EXP_BORRADO               NUMBER(1)  NOT NULL,
+				DD_TPE_ID                 NUMBER(16) NOT NULL,
+				DD_TPE_CODIGO             VARCHAR2(50 CHAR) NOT NULL,
+				DD_TPE_BORRADO            NUMBER(1)  NOT NULL,
+				DD_EEX_ID                 NUMBER(16) NOT NULL,
+				DD_EEX_CODIGO             VARCHAR2(50 CHAR) NOT NULL,
+				DD_EEX_BORRADO            NUMBER(1)  NOT NULL,
+				RCF_ESQ_ID                NUMBER(16) NOT NULL,
+				RCF_CAR_ID                NUMBER(16) NOT NULL,
+				RCF_AGE_ID                NUMBER(16) NOT NULL,
+				RCF_SCA_ID                NUMBER(16) NOT NULL
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_ENTRADA</msg>
+	</sql>
+ -->
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+		declare
+		nCount NUMBER;
+		v_sql LONG;
+		begin
+		SELECT count(*) into nCount FROM all_tables where table_name = 'BATCH_DATOS_SALIDA';
+		IF(nCount &lt;= 0)
+		THEN
+		v_sql:='			
+			CREATE TABLE BATCH_DATOS_SALIDA (
+				EXP_ID				NUMBER(16) NOT NULL,
+				EXP_DESCRIPCION		VARCHAR2(310 CHAR),
+				EXP_MANUAL			NUMBER(1) NOT NULL,
+				DD_AEX_CODIGO			VARCHAR2(10 CHAR) NOT NULL,
+				DD_EEX_ID			NUMBER(16),
+				DD_EST_ID			NUMBER(16),
+			   	EXP_FECHA_EST_ID	TIMESTAMP(6) NOT NULL,
+				OFI_ID				NUMBER(16) NOT NULL,
+				CNT_ID				NUMBER(16) NOT NULL,
+				PER_ID				NUMBER(16) NOT NULL,
+				ARQ_ID				NUMBER(16) NOT NULL,
+				CEX_PASE			NUMBER(1),
+				PEX_PASE			NUMBER(1) 
+			)
+		';
+		execute immediate v_sql;
+		END IF;
+		end;			
+		</value>
+		<msg>Creación de la tabla BATCH_DATOS_SALIDA</msg>
+	</sql>			
+<!-- A PARTIR DE AQUÍ PREPARACIÓN Y CARGA DE LOS INTERFACES DE CONFIGURACIÓN, ENTRADA Y SALIDA DEL BATCH -->		
+<!--
+	NO DEPENDEMOS YA DEL MODELO DE TABLAS DE RECOVERY 
+ 
+	<sql>
+		<type>UPDATE</type>
+		<msg>Marca 100 expedientes como activos y de tipo recobro.</msg>
+		<value>
+			UPDATE EXP_EXPEDIENTES
+			SET DD_EEX_ID = 2,
+			DD_TPE_ID = 1
+			WHERE DD_EEX_ID = 4
+			AND ROWNUM &lt;= 100			
+		</value>
+	</sql>
+-->	
+
+<!--  Insertamos la configuración -->
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_RCF_ENTRADA (RCF_ESQ_ID, RCF_ESQ_FECHA_LIB,RCF_ESQ_PLAZO, RCF_CAR_ID , RCF_CAR_NOMBRE, RCF_ESC_PRIORIDAD,RCF_DD_MTR_ID,RCF_DD_MTR_CODIGO, RD_ID, RD_NAME, RD_DEFINITION, RCF_DD_EES_ID, RCF_DD_EES_CODIGO, RCF_DD_ECA_ID, RCF_DD_ECA_CODIGO, RCF_DD_AER_ID, RCF_DD_AER_CODIGO, RCF_ESQ_BORRADO, RCF_DD_EES_BORRADO, RCF_DD_MTR_BORRADO, RCF_CAR_BORRADO, RCF_DD_ECA_BORRADO, RD_BORRADO , RCF_AGE_ID, RCF_AGE_NOMBRE , RCF_AGE_CODIGO, RCF_AGE_BORRADO, RCF_ESC_ID , RCF_ESC_BORRADO, RCF_DD_TCE_ID, RCF_DD_TCE_CODIGO, RCF_DD_TCE_BORRADO, RCF_SCA_ID, RCF_SCA_NOMBRE, RCF_SCA_PARTICION, RCF_SCA_BORRADO, RCF_DD_TPR_ID, RCF_DD_TPR_CODIGO, RCF_DD_TPR_BORRADO, RCF_ITV_ID, RCF_ITV_NOMBRE, RCF_ITV_FECHA_ALTA, RCF_ITV_PLAZO_MAX, RCF_ITV_NO_GEST, RCF_ITV_BORRADO, RCF_MFA_ID, RCF_MFA_NOMBRE, RCF_MFA_BORRADO, RCF_POA_ID, RCF_POA_CODIGO, RCF_POA_BORRADO, RCF_MOR_ID, RCF_MOR_NOMBRE, RCF_MOR_BORRADO)VALUES (1, TRUNC(SYSDATE - 90), 29, 1, 'Cartera prueba esquema 1', 1, 1, 'RU', 1, 'Regla por defecto', '&lt;rule type="compare1" ruleId="25" operator="equal" values="[1]" title="regla generica" /&gt; ',4, 'EXG', 1, 'BLO', 1, 'CP', 0,0, 0, 0, 0, 0, 1, 'AGENCIA MANOLO', 'AGMANO', 0, 1, 0, 1, 'GI', 0, 1, 'POR DEFECTO', 100, 0, 1, 'EST', 0, 1, 'METAS VOLANTES 1', TRUNC(SYSDATE), 60, 10, 0, 1, 'FACTURACIÓN 1', 0, 1, 'POLÍTICA ACUERDOS', 0, 1, 'MODELO RANKING', 0)</value> <msg>Insertado registro nº 1 en BATCH_RCF_ENTRADA: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_RCF_ENTRADA (RCF_ESQ_ID, RCF_ESQ_FECHA_LIB,RCF_ESQ_PLAZO, RCF_CAR_ID , RCF_CAR_NOMBRE, RCF_ESC_PRIORIDAD,RCF_DD_MTR_ID,RCF_DD_MTR_CODIGO, RD_ID, RD_NAME, RD_DEFINITION, RCF_DD_EES_ID, RCF_DD_EES_CODIGO, RCF_DD_ECA_ID, RCF_DD_ECA_CODIGO, RCF_DD_AER_ID, RCF_DD_AER_CODIGO, RCF_ESQ_BORRADO, RCF_DD_EES_BORRADO, RCF_DD_MTR_BORRADO, RCF_CAR_BORRADO, RCF_DD_ECA_BORRADO, RD_BORRADO , RCF_AGE_ID, RCF_AGE_NOMBRE , RCF_AGE_CODIGO, RCF_AGE_BORRADO, RCF_ESC_ID , RCF_ESC_BORRADO, RCF_DD_TCE_ID, RCF_DD_TCE_CODIGO, RCF_DD_TCE_BORRADO, RCF_SCA_ID, RCF_SCA_NOMBRE, RCF_SCA_PARTICION, RCF_SCA_BORRADO, RCF_DD_TPR_ID, RCF_DD_TPR_CODIGO, RCF_DD_TPR_BORRADO, RCF_ITV_ID, RCF_ITV_NOMBRE, RCF_ITV_FECHA_ALTA, RCF_ITV_PLAZO_MAX, RCF_ITV_NO_GEST, RCF_ITV_BORRADO, RCF_MFA_ID, RCF_MFA_NOMBRE, RCF_MFA_BORRADO, RCF_POA_ID, RCF_POA_CODIGO, RCF_POA_BORRADO, RCF_MOR_ID, RCF_MOR_NOMBRE, RCF_MOR_BORRADO)VALUES (2, TRUNC(SYSDATE - 60), 100, 2, 'Cartera prueba esquema 2', 1, 1, 'RU', 1, 'Regla por defecto', '&lt;rule type="compare1" ruleId="25" operator="equal" values="[1]" title="regla generica" /&gt; ',4, 'EXG', 1, 'BLO', 1, 'CP', 0,0, 0, 0, 0, 0, 1, 'AGENCIA MANOLO', 'AGMANO', 0, 1, 0, 1, 'GI', 0, 1, 'POR DEFECTO', 100, 0, 1, 'EST', 0, 1, 'METAS VOLANTES 1', TRUNC(SYSDATE), 60, 10, 0, 1, 'FACTURACIÓN 1', 0, 1, 'POLÍTICA ACUERDOS', 0, 1, 'MODELO RANKING', 0)</value> <msg>Insertado registro nº 2 en BATCH_RCF_ENTRADA: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_RCF_ENTRADA (RCF_ESQ_ID, RCF_ESQ_FECHA_LIB,RCF_ESQ_PLAZO, RCF_CAR_ID , RCF_CAR_NOMBRE, RCF_ESC_PRIORIDAD,RCF_DD_MTR_ID,RCF_DD_MTR_CODIGO, RD_ID, RD_NAME, RD_DEFINITION, RCF_DD_EES_ID, RCF_DD_EES_CODIGO, RCF_DD_ECA_ID, RCF_DD_ECA_CODIGO, RCF_DD_AER_ID, RCF_DD_AER_CODIGO, RCF_ESQ_BORRADO, RCF_DD_EES_BORRADO, RCF_DD_MTR_BORRADO, RCF_CAR_BORRADO, RCF_DD_ECA_BORRADO, RD_BORRADO , RCF_AGE_ID, RCF_AGE_NOMBRE , RCF_AGE_CODIGO, RCF_AGE_BORRADO, RCF_ESC_ID , RCF_ESC_BORRADO, RCF_DD_TCE_ID, RCF_DD_TCE_CODIGO, RCF_DD_TCE_BORRADO, RCF_SCA_ID, RCF_SCA_NOMBRE, RCF_SCA_PARTICION, RCF_SCA_BORRADO, RCF_DD_TPR_ID, RCF_DD_TPR_CODIGO, RCF_DD_TPR_BORRADO, RCF_ITV_ID, RCF_ITV_NOMBRE, RCF_ITV_FECHA_ALTA, RCF_ITV_PLAZO_MAX, RCF_ITV_NO_GEST, RCF_ITV_BORRADO, RCF_MFA_ID, RCF_MFA_NOMBRE, RCF_MFA_BORRADO, RCF_POA_ID, RCF_POA_CODIGO, RCF_POA_BORRADO, RCF_MOR_ID, RCF_MOR_NOMBRE, RCF_MOR_BORRADO)VALUES (3, TRUNC(SYSDATE - 30), 29, 3, 'Cartera prueba esquema 3', 1, 2, 'RA', 1, 'Regla por defecto', '&lt;rule type="compare1" ruleId="25" operator="equal" values="[1]" title="regla generica" /&gt; ',4, 'EXG', 1, 'BLO', 1, 'CP', 0,0, 0, 0, 0, 0, 1, 'AGENCIA MANOLO', 'AGMANO', 0, 1, 0, 1, 'GI', 0, 1, 'POR DEFECTO', 100, 0, 1, 'EST', 0, 1, 'METAS VOLANTES 1', TRUNC(SYSDATE), 60, 10, 0, 1, 'FACTURACIÓN 1', 0, 1, 'POLÍTICA ACUERDOS', 0, 1, 'MODELO RANKING', 0)</value> <msg>Insertado registro nº 3 en BATCH_RCF_ENTRADA: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_RCF_ENTRADA (RCF_ESQ_ID, RCF_ESQ_FECHA_LIB,RCF_ESQ_PLAZO, RCF_CAR_ID , RCF_CAR_NOMBRE, RCF_ESC_PRIORIDAD,RCF_DD_MTR_ID,RCF_DD_MTR_CODIGO, RD_ID, RD_NAME, RD_DEFINITION, RCF_DD_EES_ID, RCF_DD_EES_CODIGO, RCF_DD_ECA_ID, RCF_DD_ECA_CODIGO, RCF_DD_AER_ID, RCF_DD_AER_CODIGO, RCF_ESQ_BORRADO, RCF_DD_EES_BORRADO, RCF_DD_MTR_BORRADO, RCF_CAR_BORRADO, RCF_DD_ECA_BORRADO, RD_BORRADO , RCF_AGE_ID, RCF_AGE_NOMBRE , RCF_AGE_CODIGO, RCF_AGE_BORRADO, RCF_ESC_ID , RCF_ESC_BORRADO, RCF_DD_TCE_ID, RCF_DD_TCE_CODIGO, RCF_DD_TCE_BORRADO, RCF_SCA_ID, RCF_SCA_NOMBRE, RCF_SCA_PARTICION, RCF_SCA_BORRADO, RCF_DD_TPR_ID, RCF_DD_TPR_CODIGO, RCF_DD_TPR_BORRADO, RCF_ITV_ID, RCF_ITV_NOMBRE, RCF_ITV_FECHA_ALTA, RCF_ITV_PLAZO_MAX, RCF_ITV_NO_GEST, RCF_ITV_BORRADO, RCF_MFA_ID, RCF_MFA_NOMBRE, RCF_MFA_BORRADO, RCF_POA_ID, RCF_POA_CODIGO, RCF_POA_BORRADO, RCF_MOR_ID, RCF_MOR_NOMBRE, RCF_MOR_BORRADO)VALUES (4, null, null, 4, 'Primera cartera esquema 4', 1, 0, 'DESC', 1, 'Regla por defecto', '&lt;rule type="compare1" ruleId="25" operator="equal" values="[1]" title="regla generica" /&gt; ',3, 'LBR', 1, 'BLO', 1, 'CP', 0,0, 0, 0, 0, 0, 1, 'AGENCIA MANOLO', 'AGMANO', 0, 1, 0, 1, 'GI', 0, 1, 'POR DEFECTO', 100, 0, 1, 'EST', 0, 1, 'METAS VOLANTES 1', TRUNC(SYSDATE), 60, 10, 0, 1, 'FACTURACIÓN 1', 0, 1, 'POLÍTICA ACUERDOS', 0, 1, 'MODELO RANKING', 0)</value> <msg>Insertado registro nº 4 en BATCH_RCF_ENTRADA: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_RCF_ENTRADA (RCF_ESQ_ID, RCF_ESQ_FECHA_LIB,RCF_ESQ_PLAZO, RCF_CAR_ID , RCF_CAR_NOMBRE, RCF_ESC_PRIORIDAD,RCF_DD_MTR_ID,RCF_DD_MTR_CODIGO, RD_ID, RD_NAME, RD_DEFINITION, RCF_DD_EES_ID, RCF_DD_EES_CODIGO, RCF_DD_ECA_ID, RCF_DD_ECA_CODIGO, RCF_DD_AER_ID, RCF_DD_AER_CODIGO, RCF_ESQ_BORRADO, RCF_DD_EES_BORRADO, RCF_DD_MTR_BORRADO, RCF_CAR_BORRADO, RCF_DD_ECA_BORRADO, RD_BORRADO , RCF_AGE_ID, RCF_AGE_NOMBRE , RCF_AGE_CODIGO, RCF_AGE_BORRADO, RCF_ESC_ID , RCF_ESC_BORRADO, RCF_DD_TCE_ID, RCF_DD_TCE_CODIGO, RCF_DD_TCE_BORRADO, RCF_SCA_ID, RCF_SCA_NOMBRE, RCF_SCA_PARTICION, RCF_SCA_BORRADO, RCF_DD_TPR_ID, RCF_DD_TPR_CODIGO, RCF_DD_TPR_BORRADO, RCF_ITV_ID, RCF_ITV_NOMBRE, RCF_ITV_FECHA_ALTA, RCF_ITV_PLAZO_MAX, RCF_ITV_NO_GEST, RCF_ITV_BORRADO, RCF_MFA_ID, RCF_MFA_NOMBRE, RCF_MFA_BORRADO, RCF_POA_ID, RCF_POA_CODIGO, RCF_POA_BORRADO, RCF_MOR_ID, RCF_MOR_NOMBRE, RCF_MOR_BORRADO)VALUES (4, null, null, 5, 'Segunda cartera esquema 4', 2, 0, 'DESC', 2, 'Regla por defecto', '&lt;rule type="compare1" ruleId="25" operator="equal" values="[2]" title="regla generica" /&gt; ',3, 'LBR', 1, 'BLO', 1, 'CP', 0,0, 0, 0, 0, 0, 1, 'AGENCIA MANOLO', 'AGMANO', 0, 1, 0, 1, 'GI', 0, 1, 'POR DEFECTO', 100, 0, 1, 'EST', 0, 1, 'METAS VOLANTES 1', TRUNC(SYSDATE), 60, 10, 0, 1, 'FACTURACIÓN 1', 0, 1, 'POLÍTICA ACUERDOS', 0, 1, 'MODELO RANKING', 0)</value> <msg>Insertado registro nº 5 en BATCH_RCF_ENTRADA: </msg></sql>
+		
+<!-- Insertamos datos de prueba -->
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (1,1,0,'RECOBRO',1,1,1, 1, null, 0)</value> <msg>Insertado registro nº 1 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (2,1,0,'RECOBRO',1,1,1, 1, null, 0)</value> <msg>Insertado registro nº 2 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (3,1,0,'RECOBRO',1,1,1, 1, null, 0)</value> <msg>Insertado registro nº 3 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (4,1,0,'RECOBRO',1,1,1, 1, null, 0)</value> <msg>Insertado registro nº 4 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (5,1,0,'RECOBRO',1,1,1, 1, null, 0)</value> <msg>Insertado registro nº 5 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (6,1,0,'RECOBRO',1,1,1, 1, 1, 0)</value> <msg>Insertado registro nº 6 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (7,1,0,'RECOBRO',1,2,1, 1, null, 0)</value> <msg>Insertado registro nº 7 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (8,1,0,'RECOBRO',1,2,1, 1, null, 0)</value> <msg>Insertado registro nº 8 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (9,1,0,'RECOBRO',1,2,1, 1, null, 0)</value> <msg>Insertado registro nº 9 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (10,1,0,'RECOBRO',1,2,1, 1, null, 0)</value> <msg>Insertado registro nº 10 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (11,1,0,'RECOBRO',1,2,1, 1, null, 0)</value> <msg>Insertado registro nº 11 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (12,1,0,'RECOBRO',1,2,1, 1, null, 0)</value> <msg>Insertado registro nº 12 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (13,1,0,'RECOBRO',1,2,1, 1, 1, 0)</value> <msg>Insertado registro nº 13 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (14,1,0,'RECOBRO',1,3,1, 1, null, 0)</value> <msg>Insertado registro nº 14 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (15,1,0,'RECOBRO',1,3,1, 1, null, 0)</value> <msg>Insertado registro nº 15 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (16,1,0,'RECOBRO',1,3,1, 1, null, 0)</value> <msg>Insertado registro nº 16 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (17,1,0,'RECOBRO',1,3,1, 1, null, 0)</value> <msg>Insertado registro nº 17 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (18,1,0,'RECOBRO',1,3,1, 1, null, 0)</value> <msg>Insertado registro nº 18 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (19,1,0,'RECOBRO',1,3,1, 1, null, 0)</value> <msg>Insertado registro nº 19 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (20,1,0,'RECOBRO',1,3,1, 1, 1, 0)</value> <msg>Insertado registro nº 20 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (21,1,0,'RECOBRO',1,4,1, 1, null, 0)</value> <msg>Insertado registro nº 21 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (22,1,0,'RECOBRO',1,4,1, 1, null, 0)</value> <msg>Insertado registro nº 22 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (23,1,0,'RECOBRO',1,4,1, 1, null, 0)</value> <msg>Insertado registro nº 23 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (24,1,0,'RECOBRO',1,4,1, 1, null, 0)</value> <msg>Insertado registro nº 24 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (25,1,0,'RECOBRO',1,4,1, 1, null, 0)</value> <msg>Insertado registro nº 25 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (26,1,0,'RECOBRO',1,4,1, 1, null, 0)</value> <msg>Insertado registro nº 26 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (27,1,0,'RECOBRO',1,4,1, 1, 1, 0)</value> <msg>Insertado registro nº 27 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (28,1,0,'RECOBRO',1,1,1, 1, null, 0)</value> <msg>Insertado registro nº 28 en BATCH_DATOS_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_EXP (EXP_ID, ARQ_ID, EXP_BORRADO, DD_TPE_CODIGO, DD_EEX_CODIGO, RCF_ESQ_ID, RCF_AGE_ID, RCF_SCA_ID, EXP_MARCADO_BPM, EXP_MANUAL) VALUES (29,1,0,'RECOBRO',1,1,1, 1, null, 0)</value> <msg>Insertado registro nº 29 en BATCH_DATOS_EXP: </msg></sql>
+
+
+
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (1,1)</value> <msg>Insertado registro nº 1 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (2,2)</value> <msg>Insertado registro nº 2 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (3,3)</value> <msg>Insertado registro nº 3 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (4,4)</value> <msg>Insertado registro nº 4 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (5,5)</value> <msg>Insertado registro nº 5 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (6,6)</value> <msg>Insertado registro nº 6 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (6,7)</value> <msg>Insertado registro nº 7 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (7,8)</value> <msg>Insertado registro nº 8 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (8,9)</value> <msg>Insertado registro nº 9 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (9,10)</value> <msg>Insertado registro nº 10 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (10,11)</value> <msg>Insertado registro nº 11 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (11,12)</value> <msg>Insertado registro nº 12 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (12,13)</value> <msg>Insertado registro nº 13 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (13,14)</value> <msg>Insertado registro nº 14 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (14,15)</value> <msg>Insertado registro nº 15 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (15,16)</value> <msg>Insertado registro nº 16 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (16,17)</value> <msg>Insertado registro nº 17 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (17,18)</value> <msg>Insertado registro nº 18 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (18,19)</value> <msg>Insertado registro nº 19 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (19,20)</value> <msg>Insertado registro nº 20 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (20,21)</value> <msg>Insertado registro nº 21 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (21,22)</value> <msg>Insertado registro nº 22 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (22,23)</value> <msg>Insertado registro nº 23 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (23,24)</value> <msg>Insertado registro nº 24 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (24,25)</value> <msg>Insertado registro nº 25 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (25,26)</value> <msg>Insertado registro nº 26 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (26,27)</value> <msg>Insertado registro nº 27 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (27,28)</value> <msg>Insertado registro nº 28 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (28,29)</value> <msg>Insertado registro nº 29 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (29,30)</value> <msg>Insertado registro nº 30 en BATCH_DATOS_CNT_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_EXP VALUES (29,31)</value> <msg>Insertado registro nº 31 en BATCH_DATOS_CNT_EXP: </msg></sql>
+
+
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (1,1)</value> <msg>Insertado registro nº 1 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (2,2)</value> <msg>Insertado registro nº 2 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (3,3)</value> <msg>Insertado registro nº 3 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (4,4)</value> <msg>Insertado registro nº 4 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (5,5)</value> <msg>Insertado registro nº 5 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (6,6)</value> <msg>Insertado registro nº 6 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (6,7)</value> <msg>Insertado registro nº 7 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (7,8)</value> <msg>Insertado registro nº 8 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (8,9)</value> <msg>Insertado registro nº 9 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (9,10)</value> <msg>Insertado registro nº 10 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (10,11)</value> <msg>Insertado registro nº 11 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (11,12)</value> <msg>Insertado registro nº 12 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (12,13)</value> <msg>Insertado registro nº 13 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (13,14)</value> <msg>Insertado registro nº 14 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (14,15)</value> <msg>Insertado registro nº 15 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (15,16)</value> <msg>Insertado registro nº 16 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (16,17)</value> <msg>Insertado registro nº 17 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (17,18)</value> <msg>Insertado registro nº 18 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (18,19)</value> <msg>Insertado registro nº 19 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (19,20)</value> <msg>Insertado registro nº 20 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (20,21)</value> <msg>Insertado registro nº 21 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (21,22)</value> <msg>Insertado registro nº 22 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (22,23)</value> <msg>Insertado registro nº 23 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (23,24)</value> <msg>Insertado registro nº 24 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (24,25)</value> <msg>Insertado registro nº 25 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (25,26)</value> <msg>Insertado registro nº 26 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (26,27)</value> <msg>Insertado registro nº 27 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (27,28)</value> <msg>Insertado registro nº 28 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (28,29)</value> <msg>Insertado registro nº 29 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (29,30)</value> <msg>Insertado registro nº 30 en BATCH_DATOS_PER_EXP: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_PER_EXP VALUES (29,31)</value> <msg>Insertado registro nº 31 en BATCH_DATOS_PER_EXP: </msg></sql>
+
+
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (1, 1, 'T', 1)</value> <msg>Insertado registro nº 1 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (2, 2, 'T', 1)</value> <msg>Insertado registro nº 2 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (3, 3, 'T', 1)</value> <msg>Insertado registro nº 3 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (4, 4, 'T', 1)</value> <msg>Insertado registro nº 4 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (5, 5, 'T', 1)</value> <msg>Insertado registro nº 5 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (6, 6, 'T', 1)</value> <msg>Insertado registro nº 6 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (7, 7, 'T', 1)</value> <msg>Insertado registro nº 7 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (8, 8, 'T', 1)</value> <msg>Insertado registro nº 8 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (9, 9, 'T', 1)</value> <msg>Insertado registro nº 9 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (10, 10, 'T', 1)</value> <msg>Insertado registro nº 10 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (11, 11, 'T', 1)</value> <msg>Insertado registro nº 11 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (12, 12, 'T', 1)</value> <msg>Insertado registro nº 12 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (13, 13, 'T', 1)</value> <msg>Insertado registro nº 13 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (14, 14, 'T', 1)</value> <msg>Insertado registro nº 14 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (15, 15, 'T', 1)</value> <msg>Insertado registro nº 15 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (16, 16, 'T', 1)</value> <msg>Insertado registro nº 16 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (17, 17, 'T', 1)</value> <msg>Insertado registro nº 17 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (18, 18, 'T', 1)</value> <msg>Insertado registro nº 18 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (19, 19, 'T', 1)</value> <msg>Insertado registro nº 19 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (20, 20, 'T', 1)</value> <msg>Insertado registro nº 20 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (21, 21, 'T', 1)</value> <msg>Insertado registro nº 21 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (22, 22, 'T', 1)</value> <msg>Insertado registro nº 22 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (23, 23, 'T', 1)</value> <msg>Insertado registro nº 23 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (24, 24, 'T', 1)</value> <msg>Insertado registro nº 24 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (25, 25, 'T', 1)</value> <msg>Insertado registro nº 25 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (26, 26, 'T', 1)</value> <msg>Insertado registro nº 26 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (27, 27, 'T', 1)</value> <msg>Insertado registro nº 27 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (28, 28, 'T', 1)</value> <msg>Insertado registro nº 28 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (29, 29, 'T', 1)</value> <msg>Insertado registro nº 29 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (30, 30, 'T', 1)</value> <msg>Insertado registro nº 30 en BATCH_DATOS_CNT_PER: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO BATCH_DATOS_CNT_PER (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN) VALUES (31, 31, 'T', 1)</value> <msg>Insertado registro nº 31 en BATCH_DATOS_CNT_PER: </msg></sql>
+
+
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_REC_EXP_EXTINCION_RA (EXP_ID, RCF_AGE_ID, ARQ_ID) VALUES (28, 1, 1)</value> <msg>Insertado registro nº 1 en TMP_REC_EXP_EXTINCION_RA: </msg></sql>
+<sql> <type>INSERT</type> <value>INSERT INTO TMP_REC_EXP_EXTINCION_RA (EXP_ID, RCF_AGE_ID, ARQ_ID) VALUES (29, 1, 1)</value> <msg>Insertado registro nº 2 en TMP_REC_EXP_EXTINCION_RA: </msg></sql>
+
+
+</sqls>

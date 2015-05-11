@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+	<!--  Truncamos la tablas de temporales -->
+	<sql>
+		<type>EXECUTE</type>
+		<value>TRUNCATE TABLE TMP_REC_CNT_LIBRES_ARQ_REC</value>
+		<msg>Tabla TMP_REC_CNT_LIBRES_ARQ_REC vaciada correctamente.</msg>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<value>TRUNCATE TABLE TMP_REC_CNT_LIBRES_ARQ_REC_EXT</value>
+		<msg>Tabla TMP_REC_CNT_LIBRES_ARQ_REC_EXT vaciada correctamente.</msg>
+	</sql>	
+	<!--  Truncamos la tablas de los interfaces -->
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_EXCEPTUADOS</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXCEPTUADOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_PER</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_PER
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_CNT</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_CNT_PER</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT_PER
+		</value>
+	</sql>
+	
+	
+	 <sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida BATCH_DATOS_SALIDA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_SALIDA
+		</value>
+	</sql> 		
+	<!--  Limpieza de tablas usadas durante la validación --> 
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+			declare
+			nCount NUMBER;
+			v_sql LONG;
+			begin
+			SELECT count(*) into nCount FROM all_tables where table_name = 'TMP_VALIDACION';
+			IF(nCount = 1)
+			THEN
+			v_sql:='DROP TABLE TMP_VALIDACION';
+			execute immediate v_sql;
+			END IF;
+			end;					
+		</value>
+		<msg>Tabla TMP_VALIDACION borrada correctamente.</msg>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<value>
+			declare
+			nCount NUMBER;
+			v_sql LONG;
+			begin
+			SELECT count(*) into nCount FROM all_tables where table_name = 'TMP_COMPARE';
+			IF(nCount = 1)
+			THEN
+			v_sql:='DROP TABLE TMP_COMPARE';
+			execute immediate v_sql;
+			END IF;
+			end;		
+		</value>
+		<msg>Tabla TMP_COMPARE borrada correctamente.</msg>
+	</sql>
+</sqls>

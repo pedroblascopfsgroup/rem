@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" default-autowire="byName"
+   default-merge="true">
+   <bean id="loadCirbeStarterJob" parent="batch.simpleJob" scope="prototype">
+      <property name="steps">
+         <list>
+				<!-- Descomprimir el fichero .TXT -->
+            <bean id="pcr.unzip" parent="batch.taskletStep" scope="prototype">
+               <property name="tasklet">
+                  <bean parent="batch.task.UnZip" p:bindings="zipFileName=zipFile,zipFilesToExtract=zipFilesToExtract,pathToExtract=pathToExtract" scope="prototype">
+                    <property name="severidad" value="error"/>
+                    <property name="message" value="unzip.errorUnziping"/>
+                  </bean>                            
+               </property>
+            </bean>
+<!--                                     CIRBE                                         -->
+				<!-- Convertir el fichero .TXT en .CSV  -->
+            <bean id="cargaCirbe.convert" parent="batch.simpleStep" scope="prototype">
+               <property name="itemReader" ref="cargaCirbe.itemReader" />
+               <property name="itemWriter" ref="cargaCirbe.itemWriter" />
+               <property name="commitInterval" value="5000" />
+            </bean>
+				<!-- Carga de datos -->
+            <bean id="cargaCirbe.load" parent="batch.taskletStep" scope="prototype">
+               <property name="tasklet">
+                  <bean parent="batch.task.DataLoader" scope="prototype"> 
+							<!-- Parámetros Fijos del DataLoader -->
+                     <property name="dataSource" ref="entityDataSource" />
+                     <property name="afterScript">
+                        <value>
+                                UPDATE tmp_cir_cirbe SET tmp_cir_fichero_carga = '${inFile}';
+                                ANALYZE TABLE tmp_cir_cirbe ${sql.analyze};
+                        </value>
+                     </property>                      
+				     <!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->
+                     <property name="bindings" value="fileSystemResource=csvFileCirbe${batch.loaderParams}" />
+					 <!-- Parámetros Opcionales del DataLoader -->
+                     <property name="params">
+                        <map> 
+		    			   <!-- de Oracle -->
+                           <entry key="pathToSqlLoader" value="${batch.pathToSqlLoader}" />
+                           <entry key="controlFile" value="es/capgemini/pfs/batch/load/cirbe/cirbeDataLoad.ctl" />
+                           <entry key="connectionInfo" value="${batch.connectionInfo}" />
+                           <entry key="parameters" value="${batch.sqlLoaderParameters}" />
+                        </map>
+                     </property>
+                     <property name="message" value="cargaCirbe.dataLoad" />
+                     <property name="severidad" value="error" />
+                  </bean>
+               </property>
+            </bean> 
+		</list>
+	</property>
+	</bean>
+<!--                                              FIN CIRBE                                                    -->
+
+   
+	<!-- No delimited reader -->
+   <bean id="cargaCirbe.itemReader" parent="batch.task.FlatFileItemReader" scope="prototype">
+      <property name="bindings" value="fileSystemResource=txtFileCirbe" />
+      <property name="recordSeparatorPolicy">
+         <bean class="org.springframework.batch.item.file.separator.SimpleRecordSeparatorPolicy"/>
+      </property>      
+      <property name="lineTokenizer">
+         <bean parent="batch.transform.FixedLengthTokenizer"
+            p:columns="1-8,9-12,13-13,14-14,15-15,16-16,17-17,18-18,19-26,27-46,47-60,61-74,75-76,77-79"/>
+         <!--
+            p:columns="1-8,9-12,13-16,17-22,23-32,33-36,37-46,47-56,57-64,65-74,75-82,83-92,93-107,108-362,363-372,373-382,383-392,393-402,403-404,405-412,413-420"
+            /
+         -->
+         <!--
+            p:columns="1-8, 9-12, 13-16, 17-36, 37-39, 40-51, 52-63, 64-71, 72-83, 84-91, 92-103, 104-118, 119-130, 131-142, 143-154, 155-166,
+            167-186, 187-187, 188-199, 200-200, 201-208, 206-216, 217-246, 247-258, 259-266" />
+         -->
+      </property>
+      <property name="fieldSetMapper">
+         <bean parent="batch.mapper.PassThroughFieldSetMapper" />
+      </property>
+      <property name="message" value="cargaContratos.itemReader.tokenizerError" />
+      <property name="severidad" value="error" />
+   </bean>
+
+	<!-- Custom delimited writer -->
+   <bean id="cargaCirbe.itemWriter" parent="batch.task.FlatFileItemWriter" scope="prototype">
+      <property name="bindings" value="fileSystemResource=csvFileCirbe" />
+      <property name="fieldSetCreator">
+         <bean parent="batch.mapper.PassThroughFieldSetMapper" />
+      </property>
+      <property name="lineAggregator">
+         <bean parent="batch.transform.DelimitedLineAggregator" p:stringFields="1,15" />
+      </property>
+      <property name="message" value="cargaCirbe.itemWriter" />
+      <property name="severidad" value="error" />
+      <property name="trim" value="true" />
+   </bean>
+
+</beans>

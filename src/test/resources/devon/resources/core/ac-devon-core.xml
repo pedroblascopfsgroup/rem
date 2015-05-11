@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:si="http://www.springframework.org/schema/integration"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd"
+    default-autowire="byName">
+
+    <bean id="eventAppender" class="es.capgemini.devon.log.EventAppender" lazy-init="false"/>
+
+    <!--
+        Activates various annotations to be detected in bean classes: Spring's
+        @Required and @Autowired, as well as JSR 250's @PostConstruct,
+        @PreDestroy and @Resource (if available) and JPA's @PersistenceContext
+        and @PersistenceUnit (if available).
+    -->
+    <context:annotation-config />
+
+    <!--
+        The controllers are autodetected POJOs labeled with the @Controller annotation.
+        DefaultAnnotationHandlerMapping is driven by these annotations and is
+        enabled by default with Java 5+:
+    -->
+    <context:component-scan base-package="es.capgemini.devon" scoped-proxy="targetClass">
+        <context:exclude-filter type="regex" expression=".*\.samples\..*"/>
+        <context:exclude-filter type="regex" expression="^es\.capgemini\.devon\.stubs\..*"/>
+    </context:component-scan>
+
+    <!--
+        Configurer that replaces ${...} placeholders with values from a properties file
+        & properties accesor to be injected in the services
+    -->
+    <bean id="main.appProperties" abstract="true" class="es.capgemini.devon.utils.RecursivePropertiesFactoryBean"
+          p:ignoreUnresolvablePlaceholders="true" p:order="10" lazy-init="false"
+          p:systemPropertiesModeName="SYSTEM_PROPERTIES_MODE_OVERRIDE">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:devon/resources/core/default.properties</value>
+                <value>classpath*:devon/resources/*/properties/*.properties</value>
+                <value>classpath:properties/*.properties</value>
+                <value>classpath:app.properties</value>
+                <value>classpath:jdbc.properties</value>
+                <value>file:/${DEVON_HOME}/devon.properties</value>
+            </list>
+        </property>
+        <property name="localOverride" value="true" />
+    </bean>
+
+    <bean id="appProperties" parent="main.appProperties"/>
+
+    <!-- SQL Scripts -->
+    <bean id="main.sqlScipts" abstract="true" class="org.springframework.beans.factory.config.PropertiesFactoryBean" lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:devon/resources/core/sql/sql*.xml</value>
+                <value>classpath:sql/sql*.xml</value>
+            </list>
+        </property>
+        <property name="localOverride" value="true" />
+        <property name="ignoreResourceNotFound" value="true"/>
+    </bean>
+
+    <bean id="sqlScripts" parent="main.sqlScipts"/>
+
+    <bean id="sql" abstract="true" class="es.capgemini.devon.utils.SQLScriptFactoryBean"/>
+
+    <!-- Startup Class -->
+    <bean name="startUp" class="es.capgemini.devon.startup.Startup" lazy-init="false" />
+
+    <!-- Imports the configurations of the different infrastructure systems of the application -->
+    <import resource="classpath:devon/resources/core/ac-devon-integration.xml" />
+    <import resource="classpath:devon/resources/core/ac-devon-data-access.xml" />
+    <import resource="classpath:devon/resources/core/ac-devon-scheduling.xml" />
+
+	<!-- El ejecutor de beans -->
+    <bean id="executor" class="es.capgemini.devon.bo.DefaultExecutor" />
+
+    <!-- Velocity render engine -->
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+            <value>
+                resource.loader=class
+                class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+            </value>
+        </property>
+    </bean>
+
+    <bean id="mail.mailManager" abstract="true" class="es.capgemini.devon.mail.MailManagerImpl">
+        <property name="velocityEngine" ref="velocityEngine"/>
+    </bean>
+
+</beans>

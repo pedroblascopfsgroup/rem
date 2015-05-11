@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<msg>Cuenta de cobros procesados</msg>
+		<value>SELECT COUNT(*) FROM CPR_COBROS_PAGOS_RECOBRO</value>
+		<expected>10</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>Cuenta de dias procesados</msg>
+		<value>SELECT COUNT(*) FROM CCR_CONTROL_COBROS_RECOBRO WHERE CCR_FECHA > '03/03/2014 00:00:00'</value>
+		<expected>10</expected>
+	</sql>	
+</sqls>

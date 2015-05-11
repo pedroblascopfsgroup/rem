@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT -->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla CPR_COBROS_PAGOS_RECOBRO</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'CPR_COBROS_PAGOS_RECOBRO';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+					CREATE TABLE CPR_COBROS_PAGOS_RECOBRO (
+					    CPR_ID          	NUMBER(16) NOT NULL,
+						CPA_ID          	NUMBER(16) NOT NULL,
+						CPA_FECHA       	DATE NOT NULL,
+						CNT_ID          	NUMBER(16) NOT NULL,
+						EXP_ID          	NUMBER(16) NOT NULL,
+						RCF_AGE_ID      	NUMBER(16) NOT NULL,
+						RCF_SCA_ID			NUMBER(16) NOT NULL 
+					)
+			      ';
+			  		execute immediate v_sql;
+			  		v_sql:='
+			  			CREATE SEQUENCE S_CPR_COBROS_PAGOS_RECOBRO INCREMENT BY 1 START WITH 1
+			  		';
+			  		execute immediate v_sql;
+					END IF;
+			END;			
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla CCR_CONTROL_COBROS_RECOBRO</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'CCR_CONTROL_COBROS_RECOBRO';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+					CREATE TABLE CCR_CONTROL_COBROS_RECOBRO (
+					    CCR_ID		NUMBER(16) NOT NULL,
+						CCR_FECHA	TIMESTAMP(6) NOT NULL
+					)
+			      ';
+			  		execute immediate v_sql;
+			  		v_sql:='
+			  			CREATE SEQUENCE S_CCR_CONTROL_COBROS_RECOBRO INCREMENT BY 1 START WITH 1
+			  		';
+			  		execute immediate v_sql;
+					END IF;
+			END;			
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla H_TMP_REC_EXP_AGE_CNT_EXC</msg>
+		<value>
+			declare
+					nCount NUMBER;
+					v_sql LONG;
+					begin
+					SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'H_TMP_REC_EXP_AGE_CNT_EXC';
+					IF(nCount &lt;= 0) THEN
+			      v_sql:='
+					CREATE TABLE H_TMP_REC_EXP_AGE_CNT_EXC (
+						FECHA_HIST		TIMESTAMP(6) NOT NULL,
+						RCF_AGE_ID   	NUMBER(16) NOT NULL, 
+						RCF_SCA_ID   	NUMBER(16) NOT NULL, 
+						EXP_ID      	NUMBER(16) NOT NULL,
+						PER_ID      	NUMBER(16) NOT NULL,
+						CNT_ID      	NUMBER(16) NOT NULL,
+						GES_ID      	INTEGER NOT NULL
+					)
+			      ';
+			  		execute immediate v_sql;
+					END IF;
+			END;			
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de la tabla CCR_CONTROL_COBROS_RECOBRO</msg>
+		<value>
+			TRUNCATE TABLE CCR_CONTROL_COBROS_RECOBRO
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de la tabla CPR_COBROS_PAGOS_RECOBRO</msg>
+		<value>
+			TRUNCATE TABLE CPR_COBROS_PAGOS_RECOBRO
+		</value>
+	</sql>
+	<!-- Introducimos 10 días de pruebas -->
+	<sql><msg>Insertado ultimo día de control el: 03/03/2014: </msg><type>INSERT</type> <value>INSERT INTO CCR_CONTROL_COBROS_RECOBRO (CCR_ID, CCR_FECHA) VALUES (S_CCR_CONTROL_COBROS_RECOBRO.NEXTVAL, '03/03/2014 00:00:00')</value></sql>
+	<!-- Introducimos cobros pagos para esos dias -->
+	<sql><msg>Insertamos pago para el día: 04/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '04/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 05/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '05/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 06/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '06/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 07/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '07/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 08/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '08/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 09/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '09/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 10/03/2014: </msg><type>INSERT</type> <value>INSERT INTO CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) VALUES (S_CPA_COBROS_PAGOS.NEXTVAL, '10/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 11/03/2014: </msg><type>INSERT</type> <value>INSERT INTO CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) VALUES (S_CPA_COBROS_PAGOS.NEXTVAL, '11/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 12/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '12/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	<sql><msg>Insertamos pago para el día: 13/03/2014: </msg><type>INSERT</type> <value>insert into CPA_COBROS_PAGOS (CPA_ID, CPA_FECHA, CPA_IMPORTE, DD_TCP_ID, DD_SCP_ID, DD_ECP_ID, ASU_ID, PRC_ID, version, USUARIOCREAR, FECHACREAR, BORRADO, CNT_ID,  CPA_CODIGO_COBRO) values (S_CPA_COBROS_PAGOS.NEXTVAL, '13/03/2014',20,1,3,NULL,339102,364307,0,'BATCH', sysdate, 0,2255414,752576)</value></sql>
+	
+	<!-- Introducimos sus correspondientes registros en H_TMP_REC_EXP_AGE_CNT_EXC -->
+	<sql><msg>Insertamos temp para el pago del día: 04/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) values ('04/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 05/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) values ('05/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 06/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) values ('06/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 07/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) VALUES ('07/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 08/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) values ('08/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 09/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) VALUES ('09/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 10/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) values ('10/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 11/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) values ('11/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 12/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) VALUES ('12/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+	<sql><msg>Insertamos temp para el pago del día: 13/03/2014: </msg><type>INSERT</type> <value>insert into H_TMP_REC_EXP_AGE_CNT_EXC (FECHA_HIST, RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID) VALUES ('13/03/2014 00:00:00', 1, 1, 1, 1, 2255414, 1)</value></sql>
+</sqls>

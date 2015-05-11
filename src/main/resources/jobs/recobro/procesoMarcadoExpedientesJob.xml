@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="procesoMarcadoExpedientesJob" parent="batch.simpleJob" scope="prototype">
+    <!-- 
+    <property name="transactional" value="true"/>
+    <property name="transactionManager" ref="entityTransactionManager"/>
+     -->  
+    <property name="steps">
+      <list>
+		<bean parent="batch.taskletStep" scope="prototype">
+			<property name="tasklet">
+				<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+					<property name="scripts">
+						<!-- Lista de scripts SQL ha ejecutar -->
+						<list>
+							<!-- Paso 1 -->
+							<!-- Truncado de la tabla TMP_REC_EXP_ACTIVOS -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_activos.${entity.dialect}" /></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_activos" />
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla TMP_REC_EXP_EXTINCION -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_extincion" />
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla TMP_REC_EXP_EXTINCION_RU -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion_ru.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_extincion_ru" />
+								<entry key="severidad" value="error" />
+							</map>
+							<!-- Truncado de la tabla TMP_REC_EXP_EXTINCION_RA -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion_ra.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_extincion_ra" />
+								<entry key="severidad" value="error" />
+							</map>
+							<!-- Paso 2 -->
+							<!-- Obtencion expedientes activos -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_activos.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_exp_activos"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Paso 3 -->
+							<!-- Obtencion expedientes activos con un esquema inactivo y que el fin de vigencia de este es hoy -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_exp_extincion"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Paso 4 -->
+							<!-- OBTENEMOS LOS EXPEDIENTES CUYA CONFIGURACIÓN MARCA DEBEN SER ROTOS -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion_ru.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_exp_extincion_ru"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- OBTENEMOS LOS EXPEDIENTES CUYA CONFIGURACIÓN MARCA DEBEN SER REARQUETIPADOS -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion_ra.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_exp_extincion_ra"/>
+								<entry key="severidad" value="error"/>
+							</map>
+						</list>
+					</property>
+				</bean>
+			</property>
+		</bean>
+      </list>
+    </property>
+  </bean>
+</beans>

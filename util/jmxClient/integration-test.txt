@@ -1,0 +1,11 @@
+PASO 1: ./ejecutarMarcadoExpedientes.sh
+
+PASO 2: ./ejecutarLimpiezaExpedientes.sh
+
+PASO 3: ./ejecutarRevisionExpedientesActivos.sh
+
+PASO 4: ./ejecutarRearquetipacionExpedientes.sh
+
+PASO 5: ./ejecutarArquetipado.sh
+
+PASO 6: ./ejecutarGeneracionExpedientes.sh

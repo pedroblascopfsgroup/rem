@@ -1,0 +1,57 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- Preprocesado de los cobros para la facturación a agencias  -->
+	<entry key="recobro.preprocesado_cobros.Oracle9iDialect">
+		<![CDATA[
+			-- SET SERVEROUTPUT ON;
+			DECLARE
+			  V_LAST_BATCH_EXECUTION DATE;
+			  V_LAST_DATE_PREPROCESS DATE;
+			begin
+			  select trunc(max(END_TIME)) into V_LAST_BATCH_EXECUTION
+			  from BANKMASTER.BATCH_JOB_EXECUTION EXE
+			    inner join BANKMASTER.BATCH_JOB_INSTANCE INS on EXE.JOB_INSTANCE_ID = INS.JOB_INSTANCE_ID
+			      and INS.JOB_NAME = 'procesoPersistenciaPreviaEnvioJob'
+			  where STATUS = 'COMPLETED';
+			  
+			  --SELECT SYSDATE INTO V_LAST_BATCH_EXECUTION FROM DUAL;
+			  DBMS_OUTPUT.PUT_LINE('Ultima fecha ejecución Batch: '||V_LAST_BATCH_EXECUTION);
+			  
+			  select trunc(max(CCR_FECHA)) into V_LAST_DATE_PREPROCESS from CCR_CONTROL_COBROS_RECOBRO;
+			  if (V_LAST_DATE_PREPROCESS IS null) then
+			    SELECT SYSDATE-1 INTO V_LAST_DATE_PREPROCESS FROM DUAL;
+			  END IF;
+			  DBMS_OUTPUT.PUT_LINE('Ultima fecha preprocesado Cobros: '||V_LAST_DATE_PREPROCESS);
+			
+			  V_LAST_DATE_PREPROCESS := V_LAST_DATE_PREPROCESS + 1;
+			  WHILE (V_LAST_DATE_PREPROCESS <= V_LAST_BATCH_EXECUTION)
+			  LOOP
+			    DBMS_OUTPUT.PUT_LINE('Procesando cobros del dia: '|| V_LAST_DATE_PREPROCESS);
+			    
+			    INSERT INTO CPR_COBROS_PAGOS_RECOBRO
+			      (CPR_ID, CPA_ID, CPA_FECHA, CNT_ID, EXP_ID, RCF_AGE_ID, RCF_SCA_ID)
+			    SELECT 
+			      S_CPR_COBROS_PAGOS_RECOBRO.NEXTVAL,
+			      CPA.CPA_ID, CPA.CPA_FECHA, CPA.CNT_ID, TMP.EXP_ID, TMP.RCF_AGE_ID, TMP.RCF_SCA_ID
+			    from CPA_COBROS_PAGOS CPA
+			      inner join H_TMP_REC_EXP_AGE_CNT_EXC TMP on CPA.CNT_ID = TMP.CNT_ID and TRUNC(CPA.CPA_FECHA) = TRUNC(TMP.FECHA_HIST)
+			    WHERE TRUNC(CPA.CPA_FECHA_EXTRACCION) = V_LAST_DATE_PREPROCESS;    
+			
+			    INSERT INTO CCR_CONTROL_COBROS_RECOBRO (CCR_ID, CCR_FECHA)
+			    VALUES (S_CCR_CONTROL_COBROS_RECOBRO.NEXTVAL, V_LAST_DATE_PREPROCESS);
+			
+			    V_LAST_DATE_PREPROCESS:=V_LAST_DATE_PREPROCESS + 1;    
+			    
+			    COMMIT;
+			  END LOOP;
+			EXCEPTION
+			  WHEN OTHERS THEN
+			    DBMS_OUTPUT.PUT_LINE('ERROR: '||TO_CHAR(SQLCODE));
+			    DBMS_OUTPUT.PUT_LINE(SQLERRM);
+			    
+			    ROLLBACK;
+			    RAISE;  
+			END;
+		]]>
+	</entry>
+</properties>

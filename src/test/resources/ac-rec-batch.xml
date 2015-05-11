@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:si="http://www.springframework.org/schema/integration" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx" 
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+  default-merge="true" default-autowire="byName">
+
+  <!-- INICIO Configuración -->
+
+  <!-- Cargar Spring Jobs -->
+  <import resource="classpath:jobs/**/*.xml" />
+ 
+ <!-- Sobreescribimos el batch.simpleJob para heredar de PFSStoppableSimpleJob en vez de StoppableSimpleJob -->
+ <!-- Simple Job Template -->
+	<bean id="batch.simpleJob" class="es.capgemini.pfs.batch.PFSStoppableSimpleJob" abstract="true">
+		<property name="jobRepository" ref="batch.jobRepository" />
+		<property name="restartable" value="true" />
+	</bean>
+	
+  <!-- Sobreescribir el Entity Datasource para no utilizar jndi -->
+  <bean name="entityDataSourceManager" class="es.capgemini.pfs.dsm.DataSourceManager" lazy-init="false" init-method="initialize">
+    <property name="flagTable" value="${entity.flagtable}" />
+    <property name="initScripts" value="${entity.initScripts}" />
+    <property name="destroyScripts" value="${entity.destroyScripts}" />
+    <property name="allwaysInitialize" value="${entity.allwaysInitialize}" />
+    <property name="preferJNDI" value="false" />
+  </bean>
+
+
+
+  <!-- Sobreescribir el Master Datasource para no utilizar jndi -->
+  <bean id="master.internalDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+    p:driverClassName="${master.jdbc.driverClassName}" p:url="${master.jdbc.url}" p:username="${master.jdbc.username}"
+    p:password="${master.jdbc.password}" />
+
+
+  <!-- FIN Configuración -->
+  
+  <bean id="batch.FolderFileSourceGenerator" abstract="true" class="es.capgemini.pfs.batch.common.FolderFileSourceGeneratorPFS">
+        <property name="baseDirectoryToGenerate" value="${batch.files.home}" />
+        <property name="patternToGenerate" value="${batch.files.workingcode.pattern}" />
+        <property name="workingCodePlaceholder" value="${batch.files.workingcode.placeholder}" />
+        <property name="backupSubDir" value="${batch.files.backupSubDir}" />
+        <property name="type" value="file" />
+        <property name="order" value="300" />
+    </bean>
+
+<!-- <import resource="classpath:ac-rec-batch-trade.xml" /> -->
+<!--
+  <import resource="classpath:config/ac-rec-batch-pcr.xml" />
+  <import resource="classpath:config/ac-rec-batch-revision.xml" />
+  <import resource="classpath:config/ac-rec-batch-alertas.xml" />
+  <import resource="classpath:config/ac-rec-batch-cirbe.xml" />
+  <import resource="classpath:config/ac-rec-batch-gcl.xml" />
+  <import resource="classpath:config/ac-rec-batch-mantenimiento.xml" />
+  <import resource="classpath:config/ac-rec-batch-objetivos.xml" />
+  <import resource="classpath:config/ac-rec-batch-marcadoExpedientesRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-limpiezaExpedientesRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-revisionExpedientesActivosRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-rearquetipacionExpedientesRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-arquetipadoRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-rotacionRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-generacionExpedientesRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-repartoRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-persistenciaPreviaEnvioRecobro.xml" />
+  <import resource="classpath:config/ac-rec-batch-generacionFicherosRecobro.xml" />
+  -->
+  
+    <!-- Comentado por Guillem para que no pete 
+  <import resource="classpath:optionalConfiguration/config/*.xml" />
+  -->
+
+  <bean id="common.validator" class="es.capgemini.pfs.batch.common.MultipleValidator" />
+  
+  <bean id="batch.task.MultipleSqlScript" abstract="true" class="es.capgemini.pfs.batch.common.MultipleSqlScriptTasklet" />
+  <bean id="errorChannelBatchHandler" class="es.capgemini.pfs.batch.events.ErrorChannelBatchHandler"> 
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="query">
+      <bean parent="sql" p:key="incidencias.insert.${entity.dialect}" />
+    </property>
+  </bean>
+
+  <bean id="batch.task.actualizarFicheroCargado" abstract="true" class="es.capgemini.pfs.batch.common.ActualizarFicheroCargadoTasklet">
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="bindings" value="fechaExtraccion=extractTime" />
+    <property name="desmarcarScript">
+      <bean parent="sql" p:key="ficheroCargado.desmarcar.${entity.dialect}" />
+    </property>
+    <property name="insertarScript">
+      <bean parent="sql" p:key="ficheroCargado.insert.${entity.dialect}" />
+    </property>
+    <property name="ultimoIdScript">
+      <bean parent="sql" p:key="ficheroCargado.ultimoId.${entity.dialect}" />		
+    </property>
+  </bean>
+
+  <!-- Generic Router -->
+  <bean id="genericRouter" parent="events.router">
+        <property name="routeStrategies">
+            <list>
+                <!-- Trade -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^tradeFileInputChannel\[${batch.files.workingcode.pattern}\]$/) {
+                              matcher = (sourceChannel =~ /tradeFileInputChannel/)
+                              return matcher.replaceAll(/tradeSecondInputChannel/)
+                            } 
+                        </value>
+                    </property>
+                </bean>
+                <!-- Ejemplo con regex 
+                <bean parent="events.router.regexStrategy"
+                      p:source="sourceChannel"
+                      p:match="^tradeFileInputChannel\[${batch.files.workingcode.pattern}\]$" 
+                      p:search="tradeFileInputChannel"
+                      p:replace="tradeSecondInputChannel" />
+                -->
+                <!-- PCR -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^pcrFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/pcrFileInputChannel/) 
+                                return matcher.replaceAll(/validacionPCRChannel/) 
+                            }
+                        </value>
+                    </property>
+                </bean>
+
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionPCRChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionPCRChannel/) 
+                                return matcher.replaceAll(/pasajeProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>                 
+
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^pasajeProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/pasajeProduccionChannel/) 
+                                return matcher.replaceAll(/precalculoPCRProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+
+
+                <!-- 
+                  Se debe llamar al precalculo despues de pasar los datos a producción 
+                 -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^precalculoPCRProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/precalculoPCRProduccionChannel/) 
+                                return matcher.replaceAll(/analizePCRProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+                
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^analizePCRProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/analizePCRProduccionChannel/) 
+                                return matcher.replaceAll(/procesoMantenimientoChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+                
+                <!-- ALERTAS -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^alertasFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/alertasFileInputChannel/) 
+                                return matcher.replaceAll(/validacionAlertasChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionAlertasChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionAlertasChannel/) 
+                                return matcher.replaceAll(/pasajeAlertasProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>                
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^pasajeAlertasProduccionChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/pasajeAlertasProduccionChannel/) 
+                                return matcher.replaceAll(/analizeAlertasProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>
+                <!-- CIRBE  -->
+                <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^cirbeFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/cirbeFileInputChannel/) 
+                                return matcher.replaceAll(/validacionCirbeChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                 <bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionCirbeChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionCirbeChannel/) 
+                                return matcher.replaceAll(/pasajeCirbeProduccionChannel/) 
+                            }    
+                        </value>
+                    </property>
+                </bean>   
+             	<!-- GRUPOS DE CLIENTES -->
+             	<bean parent="events.router.groovyStrategy">
+                    <property name="script">
+                        <value>
+                            if (sourceChannel =~ /^GCLFileInputChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/GCLFileInputChannel/) 
+                                return matcher.replaceAll(/validacionGCLChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                    
+                </bean>
+                <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^validacionGCLChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/validacionGCLChannel/) 
+                                return matcher.replaceAll(/pasajeGCLProduccionChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+                <!-- BATCH RECOBRO -->
+                 <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^procesoPreparacionRecobroChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/procesoPreparacionRecobroChannel/) 
+                                return matcher.replaceAll(/procesoMarcadoExpedientesRecobroChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="tareasPendientesDao" class="es.capgemini.pfs.batch.mail.TareasPendientesDaoImpl">
+		<property name="dataSource" ref="entityDataSource" />
+		<property name="queryTareasPendientes">
+			<bean parent="sql" p:key="queryTareasPendientes"/>
+		</property>
+	</bean>
+	
+  <!-- Sobreescribir el Master Datasource para no utilizar jndi -->
+  <bean id="testEntityDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+    p:driverClassName="${master.jdbc.driverClassName}" p:url="${test.entity.jdbc.url}" p:username="${test.entity.jdbc.username}"
+    p:password="${test.entity.jdbc.password}" />
+	
+	<!-- 
+		Definición del bean del DAO generico de test 		
+ 	 --> 
+    <bean id="genericTestDAO" class="es.capgemini.pfs.batch.recobro.jdbc.impl.test.GenericTestDAOImpl">
+		<property name="dataSource" ref="testEntityDataSource" />
+	</bean>
+	
+	<!-- Agregado de transacciónes a nivel de manager. De lo contrario cada llamada al manager en batch abre una sesion y toma una
+	     conexion que nunca se devuelve
+	 -->
+	<aop:config>
+		<aop:advisor pointcut="execution(* es.capgemini.pfs..*Manager+.*(..))" advice-ref="batch.txAdvicePFS" />
+	</aop:config>
+
+  <tx:advice id="batch.txAdvicePFS" transaction-manager="masterTransactionManager">
+      <tx:attributes>
+         <tx:method name="create*" propagation="REQUIRES_NEW" isolation="READ_COMMITTED" no-rollback-for="NonRollbackException"/>
+         <tx:method name="*" no-rollback-for="NonRollbackException"/>
+      </tx:attributes>
+   </tx:advice>
+ <!-- 
+         <tx:method name="buscarParametroPorNombre*" propagation="REQUIRED" isolation="READ_COMMITTED" no-rollback-for="ParametrizationException"/>
+  -->
+  
+</beans>

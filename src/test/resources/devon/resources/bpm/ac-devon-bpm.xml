@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+    default-autowire="byName">
+    
+    <util:list id="jbpm.mappings">
+        <!--  Original (all) configuration 
+        <value>classpath*:/org/jbpm/**/*.hbm.xml</value>
+        -->
+
+        <!-- following mapping file has a dependendy on   -->
+        <!-- 'bsh-{version}.jar'.                         -->
+        <!-- uncomment this if you don't have bsh on your -->
+        <!-- classpath.  you won't be able to use the     -->
+        <!-- script element in process definition files   -->
+        <value>classpath*:org/jbpm/graph/action/Script.hbm.xml</value>
+
+        <!-- following mapping files have a dependendy on  -->
+        <!-- 'jbpm-identity.jar', mapping files            -->
+        <!-- of the pluggable jbpm identity component.     -->
+        <!-- Uncomment the following 3 lines if you        -->
+        <!-- want to use the jBPM identity mgmgt           -->
+        <!-- component.                                    -->
+        <!-- identity mappings (begin)
+            <value>classpath*:org/jbpm/identity/User.hbm.xml"/>
+            <value>classpath*:org/jbpm/identity/Group.hbm.xml"/>
+            <value>classpath*:org/jbpm/identity/Membership.hbm.xml"/>
+            identity mappings (end) -->
+
+        <!-- following mapping files have a dependendy on  -->
+        <!-- the JCR API                                   -->
+        <!-- jcr mappings (begin) ===
+            <value>classpath*:org/jbpm/context/exe/variableinstance/JcrNodeInstance.hbm.xml"/>
+            ==== jcr mappings (end) -->
+
+
+        <!-- ###################### -->
+        <!-- # jbpm mapping files # -->
+        <!-- ###################### -->
+
+        <!-- hql queries and type defs -->
+        <value>classpath*:org/jbpm/db/hibernate.queries.hbm.xml</value>
+
+        <!-- graph.action mapping files -->
+        <value>classpath*:org/jbpm/graph/action/MailAction.hbm.xml</value>
+
+        <!-- graph.def mapping files -->
+        <value>classpath*:org/jbpm/graph/def/ProcessDefinition.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/def/Node.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/def/Transition.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/def/Event.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/def/Action.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/def/SuperState.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/def/ExceptionHandler.hbm.xml</value>
+        <value>classpath*:org/jbpm/instantiation/Delegation.hbm.xml</value>
+
+        <!-- graph.node mapping files -->
+        <value>classpath*:org/jbpm/graph/node/StartState.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/EndState.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/ProcessState.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/Decision.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/Fork.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/Join.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/MailNode.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/State.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/node/TaskNode.hbm.xml</value>
+
+        <!-- context.def mapping files -->
+        <value>classpath*:org/jbpm/context/def/ContextDefinition.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/def/VariableAccess.hbm.xml</value>
+
+        <!-- taskmgmt.def mapping files -->
+        <value>classpath*:org/jbpm/taskmgmt/def/TaskMgmtDefinition.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/def/Swimlane.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/def/Task.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/def/TaskController.hbm.xml</value>
+
+        <!-- module.def mapping files -->
+        <value>classpath*:org/jbpm/module/def/ModuleDefinition.hbm.xml</value>
+
+        <!-- bytes mapping files -->
+        <value>classpath*:org/jbpm/bytes/ByteArray.hbm.xml</value>
+
+        <!-- file.def mapping files -->
+        <value>classpath*:org/jbpm/file/def/FileDefinition.hbm.xml</value>
+
+        <!-- scheduler.def mapping files -->
+        <value>classpath*:org/jbpm/scheduler/def/CreateTimerAction.hbm.xml</value>
+        <value>classpath*:org/jbpm/scheduler/def/CancelTimerAction.hbm.xml</value>
+
+        <!-- graph.exe mapping files -->
+        <value>classpath*:org/jbpm/graph/exe/Comment.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/exe/ProcessInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/exe/Token.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/exe/RuntimeAction.hbm.xml</value>
+
+        <!-- module.exe mapping files -->
+        <value>classpath*:org/jbpm/module/exe/ModuleInstance.hbm.xml</value>
+
+        <!-- context.exe mapping files -->
+        <value>classpath*:org/jbpm/context/exe/ContextInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/TokenVariableMap.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/VariableInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/ByteArrayInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/DateInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/DoubleInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/HibernateLongInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/HibernateStringInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/LongInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/NullInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/exe/variableinstance/StringInstance.hbm.xml</value>
+
+        <!-- job mapping files -->
+        <value>classpath*:org/jbpm/job/Job.hbm.xml</value>
+        <value>classpath*:org/jbpm/job/Timer.hbm.xml</value>
+        <value>classpath*:org/jbpm/job/ExecuteNodeJob.hbm.xml</value>
+        <value>classpath*:org/jbpm/job/ExecuteActionJob.hbm.xml</value>
+
+        <!-- taskmgmt.exe mapping files -->
+        <value>classpath*:org/jbpm/taskmgmt/exe/TaskMgmtInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/exe/TaskInstance.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/exe/PooledActor.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/exe/SwimlaneInstance.hbm.xml</value>
+
+        <!-- logging mapping files -->
+        <value>classpath*:org/jbpm/logging/log/ProcessLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/logging/log/MessageLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/logging/log/CompositeLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/ActionLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/NodeLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/ProcessInstanceCreateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/ProcessInstanceEndLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/ProcessStateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/SignalLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/TokenCreateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/TokenEndLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/graph/log/TransitionLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/VariableLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/VariableCreateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/VariableDeleteLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/VariableUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/variableinstance/ByteArrayUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/variableinstance/DateUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/variableinstance/DoubleUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/variableinstance/HibernateLongUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/variableinstance/HibernateStringUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/variableinstance/LongUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/context/log/variableinstance/StringUpdateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/log/TaskLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/log/TaskCreateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/log/TaskAssignLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/log/TaskEndLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/log/SwimlaneLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/log/SwimlaneCreateLog.hbm.xml</value>
+        <value>classpath*:org/jbpm/taskmgmt/log/SwimlaneAssignLog.hbm.xml</value>
+    </util:list>
+    
+    <!-- Process Manager -->
+    <bean id="processManager" class="es.capgemini.devon.bpm.ProcessManagerImpl" />
+    
+    <!-- jBPM Configuration -->
+    <bean id="bpm.configuration" abstract="true" class="es.capgemini.devon.bpm.LocalJbpmConfigurationFactoryBean" lazy-init="false">
+        <!-- pass in existing sessionFactory -->
+        <property name="configuration" value="classpath:jbpm.cfg.xml" />
+        <property name="createSchema" value="false" />
+        <property name="startJobExecutor" value="${jbpm.startJobExecutor}" />
+    </bean>
+    
+    <!-- jBPM Process Definition Factory -->
+    <bean id="bpm.processFactory" abstract="true" class="es.capgemini.devon.bpm.ProcessDefinitionFactoryBean" depends-on="bpm.configuration"/>
+
+    <!-- Las aplicaciones configuran el resto:
+    <alias name="jbpm.mappings" alias="master.additionalMappings"/> 
+    
+    <bean id="jbpmConfiguration" parent="bpm.configuration">
+        <property name="sessionFactory" ref="masterSessionFactory" />
+        <property name="processDefinitions">
+            <list>
+                <bean parent="bpm.processFactory" p:definitionLocation="process/process01.xml" p:version="5"/>
+            </list>
+        </property>
+    </bean>
+    -->
+    
+</beans>

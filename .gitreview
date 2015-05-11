@@ -1,0 +1,6 @@
+[gerrit]
+host=interecovery.pfsgroup.es
+port=8453
+defaultbranch=tyrion
+defaultremote = origin
+

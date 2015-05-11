@@ -1,0 +1,49 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+  <entry key="facturacion.cuentaControlCobrosDiaQuery">
+    <![CDATA[
+      SELECT COUNT(*) FROM CCR_CONTROL_COBROS_RECOBRO WHERE CCR_FECHA = ?
+    ]]>
+  </entry>
+  <entry key="facturacion.cuentaControlCobrosEntreDiasQuery">
+  	<![CDATA[
+  		SELECT COUNT(*) FROM CCR_CONTROL_COBROS_RECOBRO WHERE CCR_FECHA BETWEEN ? AND ?
+  	]]>
+  </entry>
+  <entry key="facturacion.recobroDetalleFacturaTemporal.deleteAllQuery">
+  	<![CDATA[
+  		DELETE FROM TMP_RECOBRO_DETALLE_FACTURA
+  	]]>
+  </entry>
+  <entry key="facturacion.recobroDetalleFacturaTemporal.obtenerSubcarterasDetallesFactura">
+  	<![CDATA[
+  		SELECT DISTINCT * FROM RCF_SCA_SUBCARTERA SCA WHERE SCA.RCF_SCA_ID IN (SELECT DISTINCT TMP.RCF_SCA_ID FROM TMP_RECOBRO_DETALLE_FACTURA TMP)
+  	]]>
+  </entry> 
+  <entry key="facturacion.recobroDetalleFacturaTemporal.obteneDetallesFacturaPorSubcartera">
+  	<![CDATA[
+  		SELECT DISTINCT * FROM TMP_RECOBRO_DETALLE_FACTURA WHERE RCF_SCA_ID = ?
+  	]]>
+  </entry> 
+  <entry key="facturacion.recobroDetalleFacturaTemporal.insertarDetalleTemporalCorregido">
+  	<![CDATA[
+  		INSERT INTO TMP_RECOBRO_DETALLE_FACTURA_CO (PFS_ID, CPA_ID, CNT_ID, EXP_ID, RCF_SCA_ID, RCF_AGE_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, RDF_IMPORTE_A_PAGAR)
+  		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  	]]>
+  </entry>
+  <entry key="facturaction.recobroDetalleFacturaTemporal.insertarDetalleTemporal">
+  	<![CDATA[
+		INSERT INTO TMP_RECOBRO_DETALLE_FACTURA (PFS_ID, CPA_ID, CNT_ID, EXP_ID, RCF_SCA_ID, RCF_AGE_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, RDF_IMPORTE_A_PAGAR)
+  		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  	]]>
+  </entry>     
+  <entry key="facturacion.recobroDetalleFacturaTemporal.transferirDetallesTemporalesCorregidos">
+  	<![CDATA[
+  		INSERT INTO RDF_RECOBRO_DETALLE_FACTURA(RDF_ID,PFS_ID, CNT_ID, EXP_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, 
+  			RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, USUARIOCREAR, FECHACREAR, BORRADO, VERSION) 
+  		SELECT S_RDF_RECOBRO_DETALLE_FACTURA.nextVal, PFS_ID, CNT_ID, EXP_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, 
+  			RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, 'BATCH-FAC', sysdate, 0, 0 FROM TMP_RECOBRO_DETALLE_FACTURA_CO
+  	]]>
+  </entry>      
+</properties>

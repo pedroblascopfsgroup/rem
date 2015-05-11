@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+<!-- LIMPIEZA DE LAS TABLAS DE LOS INTERFACES DE ENTRADA/SALIDA -->
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_DATOS_CNT</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_DATOS_CNT_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT_EXP
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_DATOS_CLI</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CLI
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_DATOS_CNT_PER</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT_PER
+		</value>		
+	</sql>
+	
+	<sql>
+	<type>EXECUTE</type>
+	<value>
+		DROP TABLE FAKE_DATA_RULE_ENGINE
+	</value>
+	<msg>Drop de la tabla FAKE_DATA_RULE_ENGINE</msg>
+</sql>	
+
+<sql>
+	<type>EXECUTE</type>
+	<value>
+		CREATE OR REPLACE VIEW TMP_REC_DATA_RULE_ENGINE AS
+  SELECT *
+  FROM DATA_RULE_ENGINE
+  WHERE PER_ID IN (
+    SELECT DISTINCT(PER_ID) FROM TMP_REC_CNT_LIBRES
+)
+	</value>
+	<msg>Creación de la vista TMP_REC_DATA_RULE_ENGINE </msg>
+</sql>
+	
+	
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_EXCEPTUADOS</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXCEPTUADOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida BATCH_DATOS_SALIDA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_SALIDA
+		</value>
+	</sql>
+
+
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_CNT_LIBRES</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CNT_LIBRES
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_CNT_LIBRES_PER_ARQ</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CNT_LIBRES_PER_ARQ
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_CNT_LIBRES_DES_ARQ</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CNT_LIBRES_DES_ARQ
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_NUEVOS_CLI</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_NUEVOS_CLI
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_CNT_LIBRES_DES_ARQ_REC</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CNT_LIBRES_DES_ARQ_REC
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_CNT_LIBRES_ARQ_REC</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CNT_LIBRES_ARQ_REC
+		</value>
+	</sql>
+		<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_CNT_LIBRES_DES_ARQ_ORD</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CNT_LIBRES_DES_ARQ_ORD
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida TMP_REC_CNT_LIBRES_ARQ_REC_PRI</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_CNT_LIBRES_ARQ_REC_PRI
+		</value>
+	</sql>
+</sqls>

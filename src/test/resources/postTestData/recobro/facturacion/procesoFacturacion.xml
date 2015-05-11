@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT -->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado tabla RDF_RECOBRO_DETALLE_FACTURA</msg>
+		<value>
+			truncate table RDF_RECOBRO_DETALLE_FACTURA
+		</value>
+	</sql>
+</sqls>

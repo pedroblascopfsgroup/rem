@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:si="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-merge="true" default-autowire="byName">
+
+	<bean id="procesoMantenimientoHandler"	class="es.capgemini.pfs.batch.mantenimiento.ProcesoMantenimientoJobLauncher" scope="prototype"/>
+	
+	<!-- Reinsert files Subscriptor -->
+	<bean id="mantenimientoQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoMantenimientoChannel" />
+		<property name="beanName" value="procesoMantenimientoHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+  <bean id="securityDefaultUserId" class="java.lang.Long">
+        <constructor-arg value="1" />
+  </bean>
+  
+</beans>

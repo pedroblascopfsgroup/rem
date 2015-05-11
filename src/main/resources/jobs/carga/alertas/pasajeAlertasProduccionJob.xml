@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="pasajeAlertasProduccionJob" parent="batch.simpleJob" scope="prototype">
+    <property name="transactional" value="true"/>
+    <property name="transactionManager" ref="entityTransactionManager"/>
+    <property name="steps">
+      <list>
+        <bean id="pasaje.alertas.produccion" parent="batch.taskletStep" scope="prototype">
+          <property name="tasklet">
+            <bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+              <property name="scripts">
+              	<list>
+                    <!-- Desactivar alertas en el sistema para los tipos de alertas relacionados con el grupo de carga -->
+                    <map>
+                        <entry key="sql">
+                            <bean parent="sql" p:key="alertas.desactivar" />
+                        </entry>
+                        <entry key="message" value="ale-20.insertar"/>
+                        <entry key="severidad" value="error"/>
+                    </map>                   
+                    <!-- Cargar alertas a produccion -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="alertas.insert.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="ale-20.insertar"/>
+              			<entry key="severidad" value="error"/>
+              		</map>                                         
+             	</list>
+              </property>
+            </bean>
+          </property>
+        </bean>       
+      </list>
+    </property>
+  </bean>
+
+</beans>

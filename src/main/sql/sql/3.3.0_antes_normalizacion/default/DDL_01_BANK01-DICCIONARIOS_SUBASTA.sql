@@ -1,0 +1,365 @@
+CREATE SEQUENCE BANK01.S_DD_ESU_ESTADO_SUBASTA;
+
+CREATE TABLE BANK01.DD_ESU_ESTADO_SUBASTA
+(
+  DD_ESU_ID                 NUMBER(16)          NOT NULL,
+  DD_ESU_CODIGO             VARCHAR2(10 CHAR)   NOT NULL,
+  DD_ESU_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
+  DD_ESU_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
+  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,
+  USUARIOCREAR              VARCHAR2(10 CHAR)   NOT NULL,
+  FECHACREAR                TIMESTAMP(6)        NOT NULL,
+  USUARIOMODIFICAR          VARCHAR2(10 CHAR),
+  FECHAMODIFICAR            TIMESTAMP(6),
+  USUARIOBORRAR             VARCHAR2(10 CHAR),
+  FECHABORRAR               TIMESTAMP(6),
+  BORRADO                   NUMBER(1)           DEFAULT 0                     NOT NULL
+)
+TABLESPACE BANK01
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX BANK01.PK_DD_ESU_ESTADO_SUBASTA ON BANK01.DD_ESU_ESTADO_SUBASTA
+(DD_ESU_ID)
+LOGGING
+TABLESPACE BANK01
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE BANK01.DD_ESU_ESTADO_SUBASTA ADD (
+  CONSTRAINT PK_DD_ESU_ESTADO_SUBASTA
+ PRIMARY KEY
+ (DD_ESU_ID)
+    USING INDEX 
+    TABLESPACE BANK01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+               
+               
+--MOT_CANCEL_SUBASTA
+CREATE SEQUENCE BANK01.S_DD_MCS_MOT_CANCEL_SUBASTA;
+
+CREATE TABLE BANK01.DD_MCS_MOT_CANCEL_SUBASTA
+(
+  DD_MCS_ID                 NUMBER(16)          NOT NULL,
+  DD_MCS_CODIGO             VARCHAR2(10 CHAR)   NOT NULL,
+  DD_MCS_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
+  DD_MCS_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
+  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,
+  USUARIOCREAR              VARCHAR2(10 CHAR)   NOT NULL,
+  FECHACREAR                TIMESTAMP(6)        NOT NULL,
+  USUARIOMODIFICAR          VARCHAR2(10 CHAR),
+  FECHAMODIFICAR            TIMESTAMP(6),
+  USUARIOBORRAR             VARCHAR2(10 CHAR),
+  FECHABORRAR               TIMESTAMP(6),
+  BORRADO                   NUMBER(1)           DEFAULT 0                     NOT NULL
+)
+TABLESPACE BANK01
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX BANK01.PK_DD_MCS_MOT_CANCEL_SUBASTA ON BANK01.DD_MCS_MOT_CANCEL_SUBASTA
+(DD_MCS_ID)
+LOGGING
+TABLESPACE BANK01
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE BANK01.DD_MCS_MOT_CANCEL_SUBASTA ADD (
+  CONSTRAINT PK_DD_MCS_MOT_CANCEL_SUBASTA
+ PRIMARY KEY
+ (DD_MCS_ID)
+    USING INDEX 
+    TABLESPACE BANK01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+               
+--MSS_MOT_SUS_SUBASTA
+CREATE SEQUENCE BANK01.S_DD_MSS_MOT_SUSP_SUBASTA;
+
+CREATE TABLE BANK01.DD_MSS_MOT_SUSP_SUBASTA
+(
+  DD_MSS_ID                 NUMBER(16)          NOT NULL,
+  DD_MSS_CODIGO             VARCHAR2(10 CHAR)   NOT NULL,
+  DD_MSS_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
+  DD_MSS_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
+  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,
+  USUARIOCREAR              VARCHAR2(10 CHAR)   NOT NULL,
+  FECHACREAR                TIMESTAMP(6)        NOT NULL,
+  USUARIOMODIFICAR          VARCHAR2(10 CHAR),
+  FECHAMODIFICAR            TIMESTAMP(6),
+  USUARIOBORRAR             VARCHAR2(10 CHAR),
+  FECHABORRAR               TIMESTAMP(6),
+  BORRADO                   NUMBER(1)           DEFAULT 0                     NOT NULL
+)
+TABLESPACE BANK01
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX BANK01.PK_DD_MSS_MOT_SUSP_SUBASTA ON BANK01.DD_MSS_MOT_SUSP_SUBASTA
+(DD_MSS_ID)
+LOGGING
+TABLESPACE BANK01
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE BANK01.DD_MSS_MOT_SUSP_SUBASTA ADD (
+  CONSTRAINT PK_DD_MSS_MOT_SUSP_SUBASTA
+ PRIMARY KEY
+ (DD_MSS_ID)
+    USING INDEX 
+    TABLESPACE BANK01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+               
+-- RESULTADO COMITE
+CREATE SEQUENCE BANK01.S_DD_REC_RESULTADO_COMITE;
+
+CREATE TABLE BANK01.DD_REC_RESULTADO_COMITE
+(
+  DD_REC_ID                 NUMBER(16)          NOT NULL,
+  DD_REC_CODIGO             VARCHAR2(10 CHAR)   NOT NULL,
+  DD_REC_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
+  DD_REC_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
+  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,
+  USUARIOCREAR              VARCHAR2(10 CHAR)   NOT NULL,
+  FECHACREAR                TIMESTAMP(6)        NOT NULL,
+  USUARIOMODIFICAR          VARCHAR2(10 CHAR),
+  FECHAMODIFICAR            TIMESTAMP(6),
+  USUARIOBORRAR             VARCHAR2(10 CHAR),
+  FECHABORRAR               TIMESTAMP(6),
+  BORRADO                   NUMBER(1)           DEFAULT 0                     NOT NULL
+)
+TABLESPACE BANK01
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX BANK01.PK_DD_REC_RESULTADO_COMITE ON BANK01.DD_REC_RESULTADO_COMITE
+(DD_REC_ID)
+LOGGING
+TABLESPACE BANK01
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE BANK01.DD_REC_RESULTADO_COMITE ADD (
+  CONSTRAINT PK_DD_REC_RESULTADO_COMITE
+ PRIMARY KEY
+ (DD_REC_ID)
+    USING INDEX 
+    TABLESPACE BANK01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+                              
+               
+-- TIPO SUBASTA
+CREATE SEQUENCE BANK01.S_DD_TSU_TIPO_SUBASTA;
+
+CREATE TABLE BANK01.DD_TSU_TIPO_SUBASTA
+(
+  DD_TSU_ID                 NUMBER(16)          NOT NULL,
+  DD_TSU_CODIGO             VARCHAR2(10 CHAR)   NOT NULL,
+  DD_TSU_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
+  DD_TSU_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
+  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,
+  USUARIOCREAR              VARCHAR2(10 CHAR)   NOT NULL,
+  FECHACREAR                TIMESTAMP(6)        NOT NULL,
+  USUARIOMODIFICAR          VARCHAR2(10 CHAR),
+  FECHAMODIFICAR            TIMESTAMP(6),
+  USUARIOBORRAR             VARCHAR2(10 CHAR),
+  FECHABORRAR               TIMESTAMP(6),
+  BORRADO                   NUMBER(1)           DEFAULT 0                     NOT NULL
+)
+TABLESPACE BANK01
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX BANK01.PK_DD_TSU_TIPO_SUBASTA ON BANK01.DD_TSU_TIPO_SUBASTA
+(DD_TSU_ID)
+LOGGING
+TABLESPACE BANK01
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE BANK01.DD_TSU_TIPO_SUBASTA ADD (
+  CONSTRAINT PK_DD_TSU_TIPO_SUBASTA
+ PRIMARY KEY
+ (DD_TSU_ID)
+    USING INDEX 
+    TABLESPACE BANK01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));               

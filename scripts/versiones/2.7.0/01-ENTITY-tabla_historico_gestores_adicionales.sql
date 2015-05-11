@@ -1,0 +1,21 @@
+-- Tabla que almacena el histórico de cambios en los gestores del asunto.
+
+CREATE TABLE GAH_GESTOR_ADICIONAL_HISTORICO
+(
+  GAH_ID             NUMBER(16),
+  GAH_GESTOR_ID      NUMBER(16),
+  GAH_ASU_ID         NUMBER(16),
+  GAH_TIPO_GESTOR_ID NUMBER(16),
+  GAH_FECHA_DESDE    DATE,
+  GAH_FECHA_HASTA    DATE,
+  VERSION            INTEGER                    DEFAULT 0                     NOT NULL,
+  USUARIOCREAR       VARCHAR2(10 CHAR)          NOT NULL,
+  FECHACREAR         TIMESTAMP(6)               NOT NULL,
+  USUARIOMODIFICAR   VARCHAR2(10 CHAR),
+  FECHAMODIFICAR     TIMESTAMP(6),
+  USUARIOBORRAR      VARCHAR2(10 CHAR),
+  FECHABORRAR        TIMESTAMP(6),
+  BORRADO            NUMBER(1)                  DEFAULT 0                     NOT NULL
+);
+
+CREATE SEQUENCE S_GAH_GESTOR_ADIC_HISTORICO;

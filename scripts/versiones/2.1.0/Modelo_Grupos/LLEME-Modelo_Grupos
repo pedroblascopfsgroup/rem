@@ -1,0 +1,25 @@
+El modelo de grupos permite que un usuario (USU_USUARIOS) represente a un grupo en vez de un usuario de la plataforma.
+
+Para crear un grupo debemos
+
+  1. Poner un 1 en el flag USU_GRUPO de USU_USUARIOS
+  2. Dar de alta los miembros del grupo en GRU_GRUPOS_USUARIOS (MASTER) dónde
+  		* USU_ID_GRUPO es el USU_ID del usuario que da nombre al grupo
+  		* USU_ID_USUARIO es cada uno de los usuarios miembros del grupo, de modo que 1 USU_ID_GRUPO n USU_ID_USUARIO
+  		
+ Estos cambios afectan sólo a los buzones de tareas, requiriendo que se use la optimización de los mismos para que esta
+ 	funcionalidad esté disponible. No es obligatorio incorporarlo en cada entidad pero de querer hacerlo los pasos son:
+ 	
+
+ 	1. Ejecutar el script Modelo_Grupos/01-Modelo_grupos_usuarios-MASTER.sql
+ 	2. Adaptar las vistas del buzón de tareas para que hagan uso de la nueva propiedad. Esta adaptación hay que hacerla 
+ 		para cada entidad. Las adaptaciones son:
+ 		
+ 		2.1 Dar permisos para acceder a la nueva tabla GRU_GRUPOS_USUARIOS al user de la entidad
+ 		2.2 Modificar las vistas de los buzones
+ 			* Modificar la vista VTAR_ASU_VS_USU para que si el usuario es un grupo, cruce con GRU_GRUPOS_USUARIOS y
+ 				saque un registro por miembro del grupo. En esta misma vista será necesario un campo nuevo USU_ID_ORIGINAL
+ 				con el valor del campo sin cruzar
+ 			* Modificar las vistas VTAR_ASUNTO_GESTOR y VTAR_ASUNTO_SUPERVISOR para que cruzen por el campo 
+ 				USU_ID_ORIGINAL en vez de por USU_ID
+ 	

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<!--  <bean p:entity="tabs.contrato.fast" p:name="contratoMultigestor"
+		p:order="699"
+		p:fileName="/WEB-INF/jsp/plugin/coreextension/contrato/tabMultigestor.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER_TAB_GESTORES"/>
+		
+		<bean p:entity="tabs.cliente.fast" p:name="clienteMultigestor"
+		p:order="699" p:fileName="/WEB-INF/jsp/plugin/coreextension/cliente/tabMultigestor.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER_TAB_GESTORES"/>
+
+	<bean p:entity="tabs.expediente.fast" p:name="expedienteMultigestor"
+		p:order="699" p:fileName="/WEB-INF/jsp/plugin/coreextension/expediente/tabMultigestor.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER_TAB_GESTORES"/>
+		
+-->
+	<bean p:entity="tabs.asunto.fast" p:name="asuntoMultigestor"
+		p:order="699" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabMultigestor.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER_TAB_GESTORES"/>
+
+
+	<bean p:entity="plugin.mejoras.web.asuntos.tabs" p:name="filtrosAsuntoDatosGenerales"
+		p:order="1" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabs/datosGenerales.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	<bean p:entity="plugin.mejoras.web.asuntos.tabs" p:name="filtrosAsuntoDatosGestor"
+		p:order="1" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabs/filtrosGestor.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+	<!--   <bean p:entity="menu" p:name="busquedas/asuntosDinamico" p:order="1"  
+		  p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/busqueda/btnBusquedaDinamico.jsp"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>-->	
+
+	<bean p:entity="menu" p:name="configuracion/direccion" 
+		p:order="3000" p:fileName="/WEB-INF/jsp/direcciones/menu/altaDireccion-menu.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="MENU-DIRECCION"/>
+			  
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="direccionAsunto"
+		p:order="15"
+		p:fileName="/WEB-INF/jsp/direcciones/menu/altaDireccion-menuAsunto.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="MENU-DIRECCION-ASUNTO" />
+		
+	
+</beans>

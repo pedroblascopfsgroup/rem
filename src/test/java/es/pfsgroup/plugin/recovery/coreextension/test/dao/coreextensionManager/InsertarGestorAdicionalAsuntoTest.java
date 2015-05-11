@@ -1,0 +1,137 @@
+package es.pfsgroup.plugin.recovery.coreextension.test.dao.coreextensionManager;
+
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+
+import org.apache.commons.lang.math.RandomUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+
+/**
+ * Tests del método {@link es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager#insertarGestorAdicionalAsunto(Long, Long, Long, Long)}
+ * @author manuel
+ *
+ */
+@RunWith(MockitoJUnitRunner.class)
+public class InsertarGestorAdicionalAsuntoTest extends AbstractCoreextensionManagerTest {
+
+	@Mock
+	private EXTAsunto mockAsunto;
+	
+	@Mock 
+	AsuntoApi mockAsuntoApi;
+
+	@Mock
+	EXTGestorAdicionalAsuntoDao mockGestorAdicionalAsuntoDao;
+	
+	@Mock
+	EXTGestorAdicionalAsuntoHistoricoDao mockGestorAdicionalAsuntoHistoricoDao;
+
+	@Override
+	public void childBefore() {
+		
+		when(mockProxyFactory.proxy(AsuntoApi.class)).thenReturn(mockAsuntoApi);
+
+	}
+
+	@Override
+	public void childAfter() {
+		reset(mockAsuntoApi);
+		reset(mockGestorAdicionalAsuntoDao);
+		reset(mockGestorAdicionalAsuntoHistoricoDao);
+		
+	}
+	
+	/**
+	 * Test nuevo gestor.
+	 */
+	@Test
+	public void testInsertarGestorAdicionalAsunto(){
+		
+		Long idAsunto = RandomUtils.nextLong();
+		Long idTipoGestor = RandomUtils.nextLong();
+		Long idUsuario = RandomUtils.nextLong();
+		Long idTipoDespacho = RandomUtils.nextLong();
+		
+		when(mockProxyFactory.proxy(AsuntoApi.class).get(idAsunto)).thenReturn(mockAsunto);
+
+		coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		
+		verify(mockGestorAdicionalAsuntoDao, times(1)).save(any(EXTGestorAdicionalAsunto.class));
+		verify(mockGestorAdicionalAsuntoHistoricoDao, times(1)).save(any(EXTGestorAdicionalAsuntoHistorico.class));
+		
+	}
+	
+	/**
+	 * Test actualizar gestor.
+	 */
+	@Test
+	public void testActualizarGestorAdicionalAsunto(){
+		
+		Long idAsunto = RandomUtils.nextLong();
+		Long idTipoGestor = RandomUtils.nextLong();
+		Long idUsuario = RandomUtils.nextLong();
+		Long idTipoDespacho = RandomUtils.nextLong();
+		
+		EXTGestorAdicionalAsunto gaa = mock(EXTGestorAdicionalAsunto.class);
+		GestorDespacho gestor = mock(GestorDespacho.class);
+		Usuario usuario = mock(Usuario.class);
+		
+		when(mockProxyFactory.proxy(AsuntoApi.class).get(idAsunto)).thenReturn(mockAsunto);
+		when(mockGenericDao.get(eq(EXTGestorAdicionalAsunto.class), any(Filter.class), any(Filter.class))).thenReturn(gaa);
+		
+		when(gaa.getGestor()).thenReturn(gestor);
+		when(gestor.getUsuario()).thenReturn(usuario);
+		when(usuario.getId()).thenReturn(RandomUtils.nextLong());
+		
+		coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		
+		verify(mockGestorAdicionalAsuntoDao, times(1)).saveOrUpdate(any(EXTGestorAdicionalAsunto.class));
+		verify(mockGestorAdicionalAsuntoHistoricoDao, times(1)).actualizaFechaHasta(idAsunto, idTipoGestor);
+		verify(mockGestorAdicionalAsuntoHistoricoDao, times(1)).save(any(EXTGestorAdicionalAsuntoHistorico.class));
+		
+	}
+	
+	/**
+	 * Test. Se acctualiza el gestor con el mismo gestor que ya era gestor, es decir, el idUsuario es igual a gestor.usuario.id.
+	 */
+	@Test
+	public void testActualizarGestorConUnGestorYaExistente(){
+		
+		Long idAsunto = RandomUtils.nextLong();
+		Long idTipoGestor = RandomUtils.nextLong();
+		Long idUsuario = RandomUtils.nextLong();
+		Long idTipoDespacho = RandomUtils.nextLong();
+		
+		EXTGestorAdicionalAsunto gaa = mock(EXTGestorAdicionalAsunto.class);
+		GestorDespacho gestor = mock(GestorDespacho.class);
+		Usuario usuario = mock(Usuario.class);
+		
+		when(mockProxyFactory.proxy(AsuntoApi.class).get(idAsunto)).thenReturn(mockAsunto);
+		when(mockGenericDao.get(eq(EXTGestorAdicionalAsunto.class), any(Filter.class), any(Filter.class))).thenReturn(gaa);
+		
+		when(gaa.getGestor()).thenReturn(gestor);
+		when(gestor.getUsuario()).thenReturn(usuario);
+		when(usuario.getId()).thenReturn(idUsuario);
+		
+		coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		
+		verify(mockGestorAdicionalAsuntoDao, times(1)).saveOrUpdate(any(EXTGestorAdicionalAsunto.class));
+		verify(mockGestorAdicionalAsuntoHistoricoDao, never()).actualizaFechaHasta(idAsunto, idTipoGestor);
+		verify(mockGestorAdicionalAsuntoHistoricoDao, never()).save(any(EXTGestorAdicionalAsuntoHistorico.class));
+		
+	}
+
+}

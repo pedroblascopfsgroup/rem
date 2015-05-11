@@ -1,0 +1,40 @@
+package es.pfsgroup.recovery.ext.impl.asunto.model;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
+
+/**
+ * Clase que representa a un fichero.
+ * @author Nicol�s Cornaglia
+ */
+@Entity
+public class EXTAdjuntoAsunto extends AdjuntoAsunto {
+		
+    private static final long serialVersionUID = 1L;
+    
+    public EXTAdjuntoAsunto() {
+		super();
+	}
+    
+    public EXTAdjuntoAsunto(FileItem fileItem) {
+		super(fileItem);
+	}
+
+    @ManyToOne
+	@JoinColumn(name = "DD_TFA_ID", nullable = true)
+	private DDTipoFicheroAdjunto tipoFichero;
+
+	public DDTipoFicheroAdjunto getTipoFichero() {
+		return tipoFichero;
+	}
+
+	public void setTipoFichero(DDTipoFicheroAdjunto tipoFichero) {
+		this.tipoFichero = tipoFichero;
+	}
+    
+ }

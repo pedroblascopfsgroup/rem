@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="tramiteReaperturaConcurso">
+
+	<start-state name="Inicio">
+		<transition to="P94_SolicitudConcursal"></transition>
+	</start-state>
+
+	<state name="P94_SolicitudConcursal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P94_ConfirmarAdmision" name="avanzaBPM"></transition>
+		<transition to="P94_SolicitudConcursal" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P94_ConfirmarAdmision">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P94_ConfirmarNotificacionDemandado" name="avanzaBPM"></transition>
+		<transition to="P94_SolicitudConcursal" name="vueltaAtras"></transition>
+		<transition to="P94_ConfirmarAdmision" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P94_ConfirmarNotificacionDemandado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P94_registrarOposicion" name="avanzaBPM"></transition>
+		<transition to="P94_ConfirmarAdmision" name="vueltaAtras"></transition>
+		<transition to="P94_ConfirmarNotificacionDemandado" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P94_registrarOposicion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>		
+		<transition to="P94_RegistrarOposicionDecision" name="avanzaBPM"></transition>
+		<transition to="P94_ConfirmarNotificacionDemandado" name="vueltaAtras"></transition>
+		<transition to="P94_registrarOposicion" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P94_RegistrarVista">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>		
+		<transition to="P94_RegistrarResolucion" name="avanzaBPM"></transition>
+		<transition to="P94_RegistrarVista" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P94_registrarOposicion" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P94_RegistrarOposicionDecision" expression="#{P94_registrarOposicionDecision}">
+		<transition to="P94_RegistrarVista" name="SI"></transition>
+		<transition to="P94_AutoDeclarandoConcurso" name="NO"></transition>
+		<transition to="P94_AutoDeclarandoConcurso" name="ALLANAMIENTO"></transition>
+	</decision>
+
+	<state name="P94_RegistrarResolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P94_ResolucionFirme" name="avanzaBPM"></transition>
+		<transition to="P94_RegistrarVista" name="vueltaAtras"></transition>
+		<transition to="P94_RegistrarResolucion" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P94_ResolucionFirme">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>		
+		<transition to="P94_ResolucionFirmeDecision" name="avanzaBPM"></transition>
+		<transition to="P94_RegistrarResolucion" name="vueltaAtras"></transition>
+		<transition to="P94_ResolucionFirme" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P94_AutoDeclarandoConcurso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P94_AutoDeclarandoConcurso" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P94_AutoDeclarandoConcursoDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="P94_ResolucionFirmeDecision" expression="#{P94_ResolucionFirmeDecision}">
+		<transition to="P94_AutoDeclarandoConcurso" name="Favorable"></transition>
+		<transition to="Decision" name="Desfavorable"></transition>
+	</decision>
+
+	<node name="Decision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<decision name="P94_AutoDeclarandoConcursoDecision" expression="#{P94_AutoDeclarandoConcursoDecision}">
+		<transition to="P94_BPMtramiteFaseComunAbreviado" name="SI"></transition>
+		<transition to="P94_BPMtramiteFaseComunOrdinario" name="NO"></transition>
+	</decision>
+
+	<state name="P94_BPMtramiteFaseComunAbreviado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteFaseComunAbreviado"></transition>
+	</state>
+
+	<state name="P94_BPMtramiteFaseComunOrdinario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteFaseComunOrdinario"></transition>
+	</state>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

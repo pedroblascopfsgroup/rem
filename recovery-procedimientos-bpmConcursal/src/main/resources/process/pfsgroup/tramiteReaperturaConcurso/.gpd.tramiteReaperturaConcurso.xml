@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteReaperturaConcurso" width="1198" height="560">
+  <node name="Inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P94_SolicitudConcursal" x="203" y="14" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="174" h1="20" w2="-173" h2="21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P94_ConfirmarAdmision" x="550" y="13" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-170" h1="-19" w2="177" h2="-20"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="439" h1="7" w2="-80" h2="-196"/>
+    </edge>
+  </node>
+  <node name="P94_ConfirmarNotificacionDemandado" x="154" y="112" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="57" h1="39" w2="54" h2="-42"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="221" h1="-1" w2="-94" h2="98"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P94_registrarOposicion" x="166" y="180" width="277" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-85" h1="-41" w2="-82" h2="40"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="747" h1="-105" w2="11" h2="-133"/>
+    </edge>
+  </node>
+  <node name="P94_RegistrarVista" x="10" y="331" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="49" h1="63" w2="55" h2="-69"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-60" h1="-131" w2="-50" h2="200"/>
+    </edge>
+  </node>
+  <node name="P94_RegistrarOposicionDecision" x="160" y="249" width="293" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-96" y="-4"/>
+    </edge>
+  </node>
+  <node name="P94_RegistrarResolucion" x="4" y="463" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="93" h1="-48" w2="-78" h2="-58"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-41" h1="-85" w2="-47" h2="47"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-12" h1="72" w2="-982" h2="327"/>
+      <bendpoint w1="962" h1="53" w2="-8" h2="308"/>
+    </edge>
+  </node>
+  <node name="P94_ResolucionFirme" x="175" y="473" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-136" h1="60" w2="35" h2="70"/>
+      <bendpoint w1="-157" h1="-6" w2="-1" h2="101"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="2" h1="51" w2="-797" h2="316"/>
+      <bendpoint w1="751" h1="46" w2="-48" h2="311"/>
+    </edge>
+  </node>
+  <node name="P94_AutoDeclarandoConcurso" x="444" y="345" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="91" h1="-180" w2="-439" h2="-43"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="83" h1="-52" w2="-191" h2="4"/>
+    </edge>
+  </node>
+  <node name="P94_ResolucionFirmeDecision" x="435" y="474" width="132" height="36">
+    <edge>
+      <label x="11" y="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision" x="712" y="470" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="286" h1="-1" w2="24" h2="261"/>
+    </edge>
+  </node>
+  <node name="P94_AutoDeclarandoConcursoDecision" x="671" y="289" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P94_BPMtramiteFaseComunAbreviado" x="681" y="227" width="189" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="231" h1="61" w2="-34" h2="80"/>
+    </edge>
+  </node>
+  <node name="P94_BPMtramiteFaseComunOrdinario" x="669" y="342" width="236" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="254" h1="-1" w2="1" h2="133"/>
+    </edge>
+  </node>
+  <node name="Fin" x="974" y="208" width="132" height="36"/>
+</root-container>

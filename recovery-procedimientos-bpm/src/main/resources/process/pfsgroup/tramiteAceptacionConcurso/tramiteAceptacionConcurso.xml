@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns="urn:jbpm.org:jpdl-3.2"  name="tramiteAceptacionConcurso">
+
+
+	<start-state name="Inicio">
+		<transition to="P404_NodoEsperaController" name="iniciarProceso"></transition>
+	</start-state>
+
+	<state name="P404_NodoEsperaController">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>nodoEsperaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P404_NodoEsperaControllerDecision" name="avanzaBPM"></transition>
+		<transition to="P404_NodoEsperaController" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>		
+	</state>
+
+	<decision name="P404_NodoEsperaControllerDecision" expression="#{P404_NodoEsperaControllerDecision}">
+		<transition to="P404_ValidarAsignacionLetrado"  name = "SI"></transition>
+		<transition to="P404_RegistrarAceptacionAsunto" name = "NO"></transition>
+	</decision>
+
+	<state name="P404_ValidarAsignacionLetrado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>		
+		<transition to="P404_RegistrarAceptacionAsunto" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P404_ValidarAsignacionLetrado" name="activarAlerta"></transition>
+	</state>
+
+	<state name="P404_RegistrarAceptacionAsunto">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>		
+		<transition to="P404_RegistrarAceptacionAsuntoDecision" name="avanzaBPM"></transition>
+		<transition to="P404_RegistrarAceptacionAsunto" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="P404_RegistrarAceptacionAsuntoDecision" expression="#{P404_RegistrarAceptacionAsuntoDecision}">
+		<transition to="Fin" name="SI"></transition>
+		<transition to="P404_ValidarAsignacionLetrado" name="NO"></transition>		
+	</decision>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+
+</process-definition>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="confeccionExpedienteUnnim" width="1062" height="825">
+  <node name="Inicio" x="33" y="39" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P91_bloquearCuentas" x="500" y="124" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="354" h1="3" w2="-4" h2="-93"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-41" h1="32" w2="-41" h2="-30"/>
+    </edge>
+  </node>
+  <node name="P91_recepcionDocumentos" x="31" y="247" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-56" h1="-53" w2="-57" h2="46"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="2" h1="546" w2="-825" h2="573"/>
+      <bendpoint w1="903" h1="514" w2="76" h2="541"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="167" h1="4" w2="-7" h2="-201"/>
+      <bendpoint w1="169" h1="217" w2="-225" h2="0"/>
+    </edge>
+  </node>
+  <node name="P91_recopilarDocumentacion" x="45" y="140" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="40" h1="49" w2="41" h2="-50"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-83" h1="-6" w2="-909" h2="-78"/>
+      <bendpoint w1="-73" h1="662" w2="-899" h2="590"/>
+      <bendpoint w1="932" h1="644" w2="106" h2="572"/>
+    </edge>
+  </node>
+  <node name="P91_generarCertificadoDeuda" x="423" y="250" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-71" h1="-43" w2="-148" h2="83"/>
+      <bendpoint w1="-71" h1="-121" w2="-148" h2="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="36" h1="56" w2="35" h2="-55"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="294" h1="-48" w2="-141" h2="-18"/>
+    </edge>
+  </node>
+  <node name="P91_mandarBurofax" x="610" y="248" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="124" h1="-25" w2="-124" h2="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="76" h1="-95" w2="186" h2="29"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="40" h1="53" w2="41" h2="-57"/>
+    </edge>
+  </node>
+  <node name="P91_certificacionNotarial" x="424" y="361" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-44" h1="-54" w2="-43" h2="57"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="347" h1="66" w2="-87" h2="207"/>
+    </edge>
+  </node>
+  <node name="P91_mandarExpediente" x="328" y="576" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-161" h1="4" w2="-691" h2="360"/>
+      <bendpoint w1="17" h1="192" w2="-513" h2="548"/>
+      <bendpoint w1="667" h1="191" w2="137" h2="547"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P91_BPMAceptacionYdecision" x="555" y="577" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="440" y="192" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork2" x="322" y="44" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P91_registrarAcuseRecibo" x="609" y="358" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-36" h1="-57" w2="-37" h2="53"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="166" h1="-1" w2="-83" h2="137"/>
+    </edge>
+  </node>
+  <node name="join1" x="145" y="458" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="858" y="220" width="132" height="36"/>
+</root-container>

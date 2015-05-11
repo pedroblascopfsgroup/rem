@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="aceptacionYdecisionV4"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="P420_registrarAceptacion" name="iniciarProceso"></transition>
+	</start-state>
+
+	<state name="P420_registrarAceptacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P420_registrarAceptacion" name="activarAlerta"></transition>
+		<transition to="P420_registrarAceptacionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<decision name="P420_registrarAceptacionDecision" expression="#{P420_registrarAceptacionDecision}">
+		<transition to="P420_validarNoAceptacion" name="noAceptacion"></transition>
+		<transition to="P420_registrarProcedimiento" name="aceptacion"></transition>
+	</decision>
+	
+	<state name="P420_registrarProcedimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P420_registrarProcedimiento" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P420_registrarProcedimientoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P420_BPMHipotecario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P420_BPMMonitorio">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P420_BPMETNJ">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P420_BPMVerbal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P420_BPMETJ">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P420_BPMOrdinario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P420_BPMCambiario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P420_BPMAbreviado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P420_validarNoAceptacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P420_registrarAceptacion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P420_validarNoAceptacion" name="activarAlerta"></transition>
+		<transition to="P420_registrarAceptacion" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P420_BPMFaseComunOrdinario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P420_BPMFaseComunAbreviado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P420_validarCambioProcedimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P420_validarCambioProcedimientoDecision" name="avanzaBPM"></transition>
+		<transition to="P420_validarCambioProcedimiento" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P420_registrarProcedimiento" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P420_validarCambioProcedimientoDecision" expression="#{P420_validarCambioProcedimientoDecision}">
+		<transition to="P420_registrarProcedimiento" name="No"></transition>
+		<transition to="P420_BPMFaseComunAbreviado" name="P412"></transition>
+		<transition to="P420_BPMMonitorio" name="monitorio"></transition>
+		<transition to="P420_BPMOrdinario" name="ordinario"></transition>
+		<transition to="P420_BPMCambiario" name="cambiario"></transition>
+		<transition to="P420_BPMAbreviado" name="abreviado"></transition>
+		<transition to="P420_BPMFaseComunOrdinario" name="P24"></transition>
+		<transition to="P420_BPMETJ" name="etj"></transition>
+		<transition to="P420_BPMVerbal" name="verbal"></transition>
+		<transition to="P420_BPMETNJ" name="etnj"></transition>
+		<transition to="P420_BPMHipotecario" name="hipotecario"></transition>
+		<transition to="P420_BPMSolicitudConcurso" name="P55"></transition>
+	</decision>
+
+	<decision name="P420_registrarProcedimientoDecision" expression="#{P420_registrarProcedimientoDecision}">
+		<transition to="P420_validarCambioProcedimiento" name="cambioDocumento"></transition>
+		<transition to="P420_BPMFaseComunAbreviado" name="P412"></transition>
+		<transition to="P420_BPMMonitorio" name="monitorio"></transition>
+		<transition to="P420_BPMOrdinario" name="ordinario"></transition>
+		<transition to="P420_BPMCambiario" name="cambiario"></transition>
+		<transition to="P420_BPMFaseComunOrdinario" name="P24"></transition>
+		<transition to="P420_BPMETJ" name="etj"></transition>
+		<transition to="P420_BPMVerbal" name="verbal"></transition>
+		<transition to="P420_BPMETNJ" name="etnj"></transition>
+		<transition to="P420_BPMHipotecario" name="hipotecario"></transition>
+		<transition to="P420_BPMAbreviado" name="abreviado"></transition>
+		<transition to="P420_BPMSolicitudConcurso" name="P55"></transition>
+		<transition to="P420_SubsanarErrDocumentacion" name="requiereSubsanacion"></transition>
+	</decision>
+
+	<state name="P420_BPMSolicitudConcurso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P420_SubsanarErrDocumentacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P420_SubsanarErrDocumentacion" name="activarAlerta"></transition>
+		<transition to="P420_registrarProcedimiento" name="avanzaBPM"></transition>
+		<transition to="P420_registrarProcedimiento" name="vueltaAtras"></transition>
+	</state>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

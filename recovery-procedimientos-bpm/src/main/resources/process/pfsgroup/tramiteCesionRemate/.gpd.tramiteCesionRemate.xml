@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteCesionRemate" width="1073" height="770">
+  <node name="Inicio" x="425" y="-27" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P65_AperturaPlazo" x="416" y="69" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-287" h1="0" w2="-266" h2="-552"/>
+      <bendpoint w1="-265" h1="507" w2="-244" h2="-45"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P65_AperturaPlazoDecision" x="403" y="195" width="216" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="766" y="237" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="78" h1="433" w2="487" h2="10"/>
+    </edge>
+  </node>
+  <node name="P65_ReseñarFechaComparecencia" x="402" y="302" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-228" h1="23" w2="-221" h2="-296"/>
+      <bendpoint w1="-223" h1="260" w2="-216" h2="-59"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-193" h1="-138" w2="-166" h2="93"/>
+    </edge>
+  </node>
+  <node name="P65_RealizacionCesionRemate" x="338" y="427" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-170" h1="9" w2="-143" h2="-269"/>
+      <bendpoint w1="-169" h1="150" w2="-142" h2="-128"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-44" h1="43" w2="-43" h2="-41"/>
+      <bendpoint w1="-75" h1="36" w2="-75" h2="36"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-83" h1="-67" w2="-108" h2="52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="359" y="561" width="219" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="366" y="705" width="132" height="36"/>
+</root-container>

@@ -1,0 +1,2 @@
+UPDATE TAP_TAREA_PROCEDIMIENTO SET TAP_DESCRIPCION = 'Confirmar notificación de la demanda' WHERE TAP_CODIGO = 'P04_ConfirmarNotifiDemanda';
+UPDATE TAP_TAREA_PROCEDIMIENTO SET TAP_DESCRIPCION = 'Confirmar admisión de la demanda' WHERE TAP_CODIGO = 'P04_ConfirmarAdmisionDemanda';

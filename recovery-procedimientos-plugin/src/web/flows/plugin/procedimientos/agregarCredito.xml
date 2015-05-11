@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dtoAgregar" class="es.pfsgroup.concursal.credito.dto.DtoAgregarCredito"/>
+
+    <input name="idProcedimiento" type="java.lang.Long"/>
+    <input name="idContratoExpediente" type="java.lang.Long"/>
+    <input name="banderaEntrada" type="java.lang.Long"/>
+    
+    <input name="externoTipoCredito" type="java.lang.Long"/>
+    <input name="externoPrincipal" type="java.lang.Float"/>
+    <input name="definitivoTipoCredito" type="java.lang.Long"/>
+    <input name="definitivoPrincipal" type="java.lang.Float"/>
+    <input name="estadoCredito" type="java.lang.Long"/>
+    
+    <decision-state id="decision">
+		<if test="(banderaEntrada != '1')" then="formulario" else="guardar"/>
+    </decision-state>
+
+    
+    <!--a partir de este momento sólo enviamos ajax -->
+    <end-state id="formulario" view="plugin/procedimientos/concursal/agregarCredito" >
+		<on-entry>
+			<evaluate expression="idProcedimiento" result="flowScope.idProcedimiento"/>
+			<evaluate expression="idContratoExpediente" result="flowScope.idContratoExpediente"/>
+			<evaluate expression="executor.execute('concursoManager.dameEstadoCreditoPorDefecto')" result="flowScope.estado_credito_porDefecto"/>
+			<evaluate expression="executor.execute('concursoManager.tiposDeCredito')" result="flowScope.tipos"/>
+			<evaluate expression="executor.execute('concursoManager.estadosCredito')" result="flowScope.estados"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="guardar" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoAgregar)" />
+			<evaluate expression="executor.execute('concursoManager.agregarCredito',dtoAgregar)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+    
+</flow>

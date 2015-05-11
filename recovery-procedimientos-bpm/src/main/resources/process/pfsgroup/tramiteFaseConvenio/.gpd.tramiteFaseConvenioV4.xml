@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteFaseConvenioV4" width="1736" height="1261">
+  <node name="Inicio" x="470" y="-208" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_autoApertura" x="457" y="-145" width="159" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-222" h1="2" w2="-222" h2="2"/>
+      <bendpoint w1="-202" h1="26" w2="-202" h2="26"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="410" y="-77" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_decidirSobreFaseComun" x="471" y="-3" width="210" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_decidirSobreFaseComunDecision" x="764" y="79" width="262" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="155" h1="-1" w2="-52" h2="-133"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-219" h1="65" w2="3" h2="-73"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_actPropuestaConvenio" x="1003" y="217" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-218" h1="59" w2="-218" h2="59"/>
+      <bendpoint w1="-252" h1="30" w2="-252" h2="30"/>
+      <bendpoint w1="-226" h1="2" w2="-226" h2="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-3" h1="-263" w2="203" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_aceptarFinSeguimiento" x="961" y="384" width="202" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-320" h1="-29" w2="49" h2="-151"/>
+    </edge>
+  </node>
+  <node name="P408_actPropuestaConvenioDecision" x="941" y="306" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="249" h1="-1" w2="-10" h2="47"/>
+    </edge>
+  </node>
+  <node name="P408_lecturaAceptacionInstrucciones" x="-129" y="366" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="3" h1="50" w2="-1" h2="-31"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="200" h1="-113" w2="239" h2="57"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_registrarResultado" x="-106" y="553" width="193" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="226" h1="0" w2="-1" h2="157"/>
+    </edge>
+    <edge>
+      <label x="-31" y="-42"/>
+      <bendpoint w1="-228" h1="-64" w2="-231" h2="123"/>
+    </edge>
+  </node>
+  <node name="P408_registrarResultadoDecision" x="-131" y="653" width="235" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_BPMTramiteFaseLiquidacion" x="148" y="652" width="251" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="73" h1="-56" w2="-1" h2="87"/>
+    </edge>
+  </node>
+  <node name="P408_RegistrarOposicionAdmon" x="-54" y="729" width="230" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-256" h1="-48" w2="-250" h2="98"/>
+      <bendpoint w1="-255" h1="-111" w2="-249" h2="35"/>
+      <bendpoint w1="-101" h1="-124" w2="-100" h2="22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-129" h1="0" w2="-126" h2="-304"/>
+      <bendpoint w1="-316" h1="135" w2="-768" h2="-132"/>
+      <bendpoint w1="-127" h1="304" w2="-124" h2="0"/>
+    </edge>
+  </node>
+  <node name="P408_RegistrarOposicionAdmonDecision" x="-69" y="808" width="264" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="127" h1="43" w2="128" h2="-112"/>
+      <bendpoint w1="127" h1="125" w2="128" h2="-30"/>
+    </edge>
+  </node>
+  <node name="P408_registrarResolucionOposicion" x="-68" y="876" width="243" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-118" h1="-25" w2="-121" h2="122"/>
+      <bendpoint w1="-231" h1="-53" w2="-233" h2="94"/>
+      <bendpoint w1="-117" h1="-113" w2="-120" h2="34"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-116" h1="45" w2="-116" h2="-112"/>
+      <bendpoint w1="-116" h1="136" w2="-116" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P408_registrarResultadoSubsana" x="248" y="804" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-103" h1="-76" w2="146" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="350" h1="-134" w2="-14" h2="255"/>
+    </edge>
+  </node>
+  <node name="P408_registrarResultadoSubsanaDecision" x="248" y="877" width="280" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="1" h1="81" w2="349" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="183" h1="2" w2="297" h2="227"/>
+      <bendpoint w1="66" h1="-227" w2="163" h2="-2"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="-44" y="959" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork4" x="765" y="159" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_aceptarFinSeguimientoDecision" x="940" y="463" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-285" h1="-1" w2="152" h2="137"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="138" h1="3" w2="138" h2="249"/>
+      <bendpoint w1="226" h1="-112" w2="194" h2="134"/>
+      <bendpoint w1="113" h1="-220" w2="81" h2="26"/>
+    </edge>
+  </node>
+  <node name="P408_BPMtramitePresentacionPropConvenio" x="503" y="309" width="329" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P408_lecturaAceptacionInstruccionesDecision" x="-85" y="458" width="326" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-10" h1="56" w2="155" h2="-178"/>
+    </edge>
+    <edge>
+      <label x="6" y="-47"/>
+      <bendpoint w1="-411" h1="-99" w2="-287" h2="163"/>
+      <bendpoint w1="-370" h1="-204" w2="-246" h2="58"/>
+    </edge>
+  </node>
+  <node name="P408_realizarValoracionConcurso" x="6" y="-22" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="265" h1="116" w2="99" h2="-297"/>
+    </edge>
+  </node>
+  <node name="P408_elevarAcomitePropuesta" x="-156" y="53" width="316" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="5" h1="64" w2="-5" h2="-52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-69" h1="-37" w2="-187" h2="38"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="333" h1="55" w2="-61" h2="-265"/>
+    </edge>
+  </node>
+  <node name="P408_registrarResultadoComite" x="-96" y="169" width="217" height="36">
+    <edge>
+      <label x="-71" y="-33"/>
+      <bendpoint w1="-135" h1="-45" w2="-125" h2="71"/>
+    </edge>
+    <edge>
+      <label x="25" y="-16"/>
+      <bendpoint w1="-311" h1="10" w2="-311" h2="10"/>
+      <bendpoint w1="-259" h1="28" w2="-259" h2="28"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="295" h1="55" w2="-89" h2="-149"/>
+    </edge>
+  </node>
+  <node name="P408_registrarResultadoComiteDecision" x="-178" y="260" width="295" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-255" h1="53" w2="-290" h2="-46"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-150" h1="51" w2="-185" h2="-48"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="266" h1="-113" w2="233" h2="94"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-285" h1="149" w2="-273" h2="-520"/>
+      <bendpoint w1="-284" h1="410" w2="-272" h2="-259"/>
+      <bendpoint w1="-232" h1="669" w2="-220" h2="0"/>
+    </edge>
+  </node>
+  <node name="Espera" x="1270" y="264" width="132" height="36">
+    <edge>
+      <label x="-3" y="-21"/>
+    </edge>
+  </node>
+  <node name="Fin1" x="669" y="508" width="132" height="36"/>
+  <node name="Fin2" x="447" y="996" width="132" height="36"/>
+  <node name="Fin3" x="330" y="373" width="132" height="36"/>
+  <node name="Fin4" x="742" y="-141" width="132" height="36"/>
+</root-container>

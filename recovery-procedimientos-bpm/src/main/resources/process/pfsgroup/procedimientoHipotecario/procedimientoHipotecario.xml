@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="procedimientoHipotecario">
+
+	<start-state name="Inicio">
+		<transition to="P01_DemandaCertificacionCargas"></transition>
+	</start-state>
+
+	<state name="P01_DemandaCertificacionCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_DemandaCertificacionCargas" name="activarAlerta"></transition>
+		<transition to="P01_AutoDespachandoEjecucion" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P01_AutoDespachandoEjecucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_AutoDespachandoEjecucion" name="activarAlerta"></transition>
+		<transition to="P01_AutoDespachandoEjecucionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P01_DemandaCertificacionCargas" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P01_AutoDespachandoEjecucionDecision" expression="#{P01_AutoDespachandoEjecucionDecision}">
+		<transition to="decision1" name="NO"></transition>
+		<transition to="P01_ConfirmarNotificacionReqPago" name="SI"></transition>
+	</decision>
+
+	<!--
+		<decision name="AutoDespachandoEjecDecision"> <transition
+		to="decision1" name="NO"></transition> <transition
+		to="ConfirmarNotificacionReqPago" name="SI"></transition> <handler
+		class="es.pfsgroup.bpm.generic.GroovyDecisionHandler"
+		config-type="bean"> <script>
+		valores['AutoDespachandoEjecucion']['comboResultado'] ==
+		diccionarios['DDSiNo'].SI ? 'SI' : 'NO' </script> </handler>
+		</decision>
+	-->
+
+	<node name="decision1">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<state name="P01_ConfirmarNotificacionReqPago">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_ConfirmarNotificacionReqPago" name="activarAlerta"></transition>
+		<transition to="P01_ConfirmarNotifiReqPagoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P01_AutoDespachandoEjecucion" name="vueltaAtras"></transition>
+	</state>
+	
+	<decision name="P01_ConfirmarNotifiReqPagoDecision" expression="#{P01_ConfirmarNotificacionReqPagoDecision}">
+		<transition to="P01_BPMTramiteNotificacion" name="NO"></transition>
+		<transition to="P01_ConfirmarSiExisteOposicion" name="SI"></transition>
+	</decision>
+
+<!--	<decision name="ConfirmarNotifiReqPagoDecision">-->
+<!--		<transition to="BPMTramiteNotificacion" name="NO"></transition>-->
+<!--		<transition to="ConfirmarSiExisteOposicion" name="SI"></transition>-->
+<!--		<handler class="es.pfsgroup.bpm.generic.GroovyDecisionHandler"-->
+<!--			config-type="bean">-->
+<!--			<script>-->
+<!--				valores['ConfirmarNotificacionReqPago']['comboResultado'] ==-->
+<!--				diccionarios['DDSiNo'].SI ? 'SI' : 'NO'-->
+<!--			</script>-->
+<!--		</handler>-->
+<!--	</decision>-->
+
+	<state name="P01_BPMTramiteNotificacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_ConfirmarSiExisteOposicion" name="tramiteNotificacionV4"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P01_ConfirmarSiExisteOposicion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>hipotecarioLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_ConfirmarSiExisteOposicion" name="activarAlerta"></transition>
+		<transition to="P01_ConfirmarSiExisteOpoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P01_ConfirmarNotificacionReqPago" name="vueltaAtras"></transition>
+	</state>
+	
+	<decision name="P01_ConfirmarSiExisteOpoDecision" expression="#{P01_ConfirmarSiExisteOposicionDecision}">
+		<transition to="BPMTramiteSubastaDecision" name="NO"></transition>
+		<transition to="P01_RegistrarComparecencia" name="SI"></transition>
+	</decision>
+
+<!--	<decision name="ConfirmarSiExisteOpoDecision">-->
+<!--		<transition to="BPMTramiteSubasta" name="NO"></transition>-->
+<!--		<transition to="RegistrarComparecencia" name="SI"></transition>-->
+<!--		<handler class="es.pfsgroup.bpm.generic.GroovyDecisionHandler"-->
+<!--			config-type="bean">-->
+<!--			<script>-->
+<!--				valores['ConfirmarSiExisteOposicion']['comboResultado'] ==-->
+<!--				diccionarios['DDSiNo'].SI ? 'SI' : 'NO'-->
+<!--			</script>-->
+<!--		</handler>-->
+<!--	</decision>-->
+
+
+	
+	<decision name="BPMTramiteSubastaDecision" expression="#{BPMTramiteSubastaDecision}">
+		<transition to="P01_BPMTramiteSubastaBankia" name="BANKIA"></transition>
+		<transition to="P01_BPMTramiteSubastaSareb" name="SAREB"></transition>
+	</decision>
+	
+	<state name="P01_BPMTramiteSubastaBankia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteSubastaBankia"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P01_BPMTramiteSubastaSareb">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteSubastaSareb"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P01_RegistrarComparecencia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_RegistrarResolucion" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P01_ConfirmarSiExisteOposicion" name="vueltaAtras"></transition>
+	</state>
+	
+	<!--	<decision name="RegistrarComparecenciaDecision">-->
+<!--		<transition to="BPMTramiteSubasta" name="NO"></transition>-->
+<!--		<transition to="RegistrarResolucion" name="SI"></transition>-->
+<!--		<handler class="es.pfsgroup.bpm.generic.GroovyDecisionHandler"-->
+<!--			config-type="bean">-->
+<!--			<script>-->
+<!--				valores['RegistrarComparecencia']['comboResultado'] ==-->
+<!--				diccionarios['DDSiNo'].SI ? 'SI' : 'NO'-->
+<!--			</script>-->
+<!--		</handler>-->
+<!--	</decision>-->
+
+	<state name="P01_RegistrarResolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_RegistrarResolucion" name="activarAlerta"></transition>
+		<transition to="P01_ResolucionFirme" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P01_RegistrarComparecencia" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P01_ResolucionFirme">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P01_ResolucionFirme" name="activarAlerta"></transition>
+		<transition to="decision2" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P01_RegistrarResolucion" name="vueltaAtras"></transition>
+	</state>
+	
+	<!--	<decision name="ResolucionFirmeDecision">-->
+<!--		<transition to="decision2" name="NoFaborable"></transition>-->
+<!--		<transition to="BPMTramiteSubasta" name="Faborable"></transition>-->
+<!--		<handler class="es.pfsgroup.bpm.generic.GroovyDecisionHandler"-->
+<!--			config-type="bean">-->
+<!--			<script>-->
+<!--				valores['ResolucionFirme']['comboResultado'] ==-->
+<!--				diccionarios['DDSiNo'].SI ? 'Faborable' : 'NoFaborable'-->
+<!--			</script>-->
+<!--		</handler>-->
+<!--	</decision>-->
+
+	<node name="decision2">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

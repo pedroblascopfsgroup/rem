@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteMejoraEmbargo" width="917" height="699">
+  <node name="Inicio" x="206" y="21" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P14_SolicitudMejoraEmbargo" x="140" y="107" width="264" height="36">
+    <edge>
+      <label x="-8" y="11"/>
+    </edge>
+    <edge>
+      <label x="-94" y="-3"/>
+    </edge>
+    <edge>
+      <label x="-26" y="-19"/>
+      <bendpoint w1="399" h1="-1" w2="-2" h2="-94"/>
+    </edge>
+  </node>
+  <node name="P14_RegistroDecretoEmbargo_new1" x="147" y="200" width="249" height="36">
+    <edge>
+      <label x="-85" y="4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-3" y="-19"/>
+    </edge>
+    <edge>
+      <label x="0" y="-27"/>
+      <bendpoint w1="-219" h1="-51" w2="-220" h2="42"/>
+    </edge>
+  </node>
+  <node name="P14_BPMVigilanciaCaducidadAnotacion" x="147" y="364" width="249" height="36">
+    <edge>
+      <label x="-124" y="13"/>
+      <bendpoint w1="285" h1="-1" w2="2" h2="78"/>
+    </edge>
+  </node>
+  <node name="Decision" x="488" y="285" width="132" height="36">
+    <edge>
+      <label x="-37" y="-8"/>
+    </edge>
+  </node>
+  <node name="P14_RegistroDecretoEmbargo_new1Decision" x="135" y="281" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-16" y="-22"/>
+    </edge>
+  </node>
+  <node name="Fin" x="607" y="200" width="132" height="36"/>
+</root-container>

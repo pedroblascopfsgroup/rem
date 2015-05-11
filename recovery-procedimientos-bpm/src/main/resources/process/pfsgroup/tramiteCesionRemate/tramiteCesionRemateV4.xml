@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteCesionRemateV4" xmlns="urn:jbpm.org:jpdl-3.2">
+
+
+
+	<start-state name="Inicio">
+		<transition to="P410_AperturaPlazo" name="avanzaBPM"></transition>
+	</start-state>
+
+
+	<state name="P410_AperturaPlazo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P410_AperturaPlazo" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P410_AperturaPlazoDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="P410_AperturaPlazoDecision" expression="#{P410_AperturaPlazoDecision}">
+		<transition to="Decision1" name="NO"></transition>
+		<transition to="P410_ResenyarFechaComparecencia" name="SI"></transition>
+	</decision>
+
+	<node name="Decision1">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<state name="P410_ResenyarFechaComparecencia">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P410_RealizacionCesionRemate" name="avanzaBPM"></transition>
+		<transition to="P410_ResenyarFechaComparecencia" name="activarAlerta"></transition>
+		<transition to="P410_AperturaPlazo" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P410_RealizacionCesionRemate">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P410_RealizacionCesionRemate" name="activarAlerta"></transition>
+		<transition to="P410_ResenyarFechaComparecencia" name="vueltaAtras"></transition>
+		<transition to="P410_RealizacionCesionRemateDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P410_BPMTramiteAdjudicacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>subastaV4EnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="tramiteAdjudicacion"></transition>	
+		<!-- <transition to="Fin" name="Fin"></transition> -->
+	</state>
+
+	<decision name="P410_RealizacionCesionRemateDecision" expression="#{P410_RealizacionCesionRemateDecision}">
+		<transition to="P410_BPMTramiteAdjudicacion" name="SI"></transition>
+		<transition to="Decision1" name="NO"></transition>
+	</decision>
+
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

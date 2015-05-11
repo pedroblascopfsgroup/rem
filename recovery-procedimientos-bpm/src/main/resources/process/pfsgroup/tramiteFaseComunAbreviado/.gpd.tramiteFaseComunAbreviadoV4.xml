@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteFaseComunAbreviadoV4" width="1254" height="1722">
+  <node name="Inicio" x="250" y="-238" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_RegistrarPublicacionBOE" x="195" y="-153" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="712" h1="3" w2="-29" h2="-706"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-152" h1="0" w2="-152" h2="0"/>
+      <bendpoint w1="-152" h1="-21" w2="-152" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="10" y="-11"/>
+    </edge>
+  </node>
+  <node name="P412_BPMTramiteAceptacionV4" x="190" y="-52" width="263" height="36">
+    <edge>
+      <label x="-59" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_RegistrarInsinuacionCreditos" x="185" y="56" width="269" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="399" h1="98" w2="-345" h2="-402"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="71" h1="44" w2="63" h2="-35"/>
+    </edge>
+  </node>
+  <node name="P412_RegistrarInformeAdmonConcursal" x="216" y="597" width="312" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="380" h1="0" w2="381" h2="-173"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_PresentarEscritoInsinuacion" x="196" y="260" width="287" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="427" h1="11" w2="-342" h2="-285"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-168" h1="0" w2="-168" h2="0"/>
+      <bendpoint w1="-168" h1="-21" w2="-168" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-98" h1="-52" w2="-99" h2="56"/>
+    </edge>
+  </node>
+  <node name="P412_RevisarResultadoInfAdmon" x="211" y="717" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="499" h1="-1" w2="35" h2="-89"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-91" h1="-59" w2="-97" h2="61"/>
+    </edge>
+  </node>
+  <node name="P412_RevisarResultadoInfAdmonDecision" x="214" y="927" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_ValidarAlegaciones" x="566" y="922" width="285" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="194" h1="1" w2="-206" h2="367"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_ValidarAlegacionesDecision" x="582" y="1022" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-312" h1="42" w2="73" h2="-286"/>
+    </edge>
+  </node>
+  <node name="P412_RegistrarResolucionFaseComun" x="237" y="1162" width="232" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="153" h1="-2" w2="-607" h2="546"/>
+    </edge>
+  </node>
+  <node name="P412_RegistrarResolucionFaseComunDecision" x="192" y="1272" width="321" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_BPMTramiteFaseLiquidacion" x="406" y="1410" width="291" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="361" h1="-6" w2="-190" h2="848"/>
+    </edge>
+  </node>
+  <node name="P412_BPMTramiteFaseConvenioV4" x="113" y="1411" width="228" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="2" h1="50" w2="-586" h2="248"/>
+      <bendpoint w1="710" h1="48" w2="-179" h2="903"/>
+    </edge>
+  </node>
+  <node name="P412_ActualizarEstadoCreditos" x="609" y="1174" width="214" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="174" h1="2" w2="-283" h2="633"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_RegistrarProyectoInventario" x="214" y="349" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-102" h1="-46" w2="-100" h2="43"/>
+    </edge>
+  </node>
+  <node name="P412_RegistrarProyectoInventarioDecision" x="195" y="452" width="302" height="36">
+    <edge>
+      <label x="-33" y="-16"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_PresentarRectificacion" x="576" y="456" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="195" h1="5" w2="-190" h2="-95"/>
+    </edge>
+  </node>
+  <node name="P412_RevisarInsinuacionCreditos" x="190" y="152" width="301" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-85" h1="-53" w2="-75" h2="49"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P412_BPMTramiteDemandaIncidental" x="582" y="1094" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1012" y="556" width="103" height="36"/>
+  <node name="P412_BPMTramiteAnalisisContratos" x="561" y="52" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkTrasAceptacion" x="501" y="4" width="136" height="24">
+    <edge>
+      <label x="-18" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-33" y="-7"/>
+    </edge>
+  </node>
+</root-container>

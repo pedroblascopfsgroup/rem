@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteDeRegistro" width="812" height="522">
+  <node name="Inicio" x="247" y="23" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P42_PagoDeImpuestos" x="197" y="96" width="231" height="36">
+    <edge>
+      <label x="-81" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="418" h1="0" w2="35" h2="-345"/>
+    </edge>
+  </node>
+  <node name="P42_InscribirEnRegistroPropiedad" x="197" y="176" width="230" height="36">
+    <edge>
+      <label x="4" y="6"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-6"/>
+    </edge>
+    <edge>
+      <label x="-12" y="-20"/>
+      <bendpoint w1="397" h1="1" w2="369" h2="-261"/>
+    </edge>
+    <edge>
+      <label x="-44" y="11"/>
+      <bendpoint w1="-236" h1="-44" w2="-236" h2="36"/>
+    </edge>
+  </node>
+  <node name="Decision" x="243" y="447" width="132" height="36">
+    <edge>
+      <label x="-10" y="-21"/>
+    </edge>
+  </node>
+  <node name="Fin" x="629" y="446" width="132" height="36"/>
+  <node name="P42_RegistrarEnCatastro" x="205" y="249" width="216" height="36">
+    <edge>
+      <label x="-67" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-3"/>
+      <bendpoint w1="-222" h1="-37" w2="-221" h2="36"/>
+    </edge>
+    <edge>
+      <label x="-24" y="-18"/>
+      <bendpoint w1="354" h1="-1" w2="-28" h2="-198"/>
+    </edge>
+    <edge>
+      <label x="-8" y="9"/>
+    </edge>
+  </node>
+  <node name="P42_CambiarNombre" x="201" y="312" width="216" height="36">
+    <edge>
+      <label x="-62" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-61" y="-4"/>
+      <bendpoint w1="-218" h1="-32" w2="-222" h2="31"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-19"/>
+      <bendpoint w1="341" h1="-2" w2="-45" h2="-136"/>
+    </edge>
+    <edge>
+      <label x="2" y="8"/>
+    </edge>
+  </node>
+  <node name="P42_InformarCambioPropiedad" x="202" y="373" width="216" height="36">
+    <edge>
+      <label x="-20" y="-16"/>
+      <bendpoint w1="332" h1="-1" w2="-53" h2="-74"/>
+    </edge>
+    <edge>
+      <label x="-70" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-59" y="-5"/>
+      <bendpoint w1="-222" h1="-30" w2="-221" h2="31"/>
+    </edge>
+    <edge>
+      <label x="-7" y="5"/>
+    </edge>
+  </node>
+</root-container>

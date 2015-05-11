@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteAnalisisContratosV4" width="2486" height="1103">
+  <node name="Inicio" x="108" y="31" width="132" height="36">
+    <edge>
+      <label x="-36" y="-12"/>
+    </edge>
+  </node>
+  <node name="P402_AnalisisOperacionesConcurso" x="373" y="32" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_ABC_fork" x="382" y="131" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_EstudiarInicioPosEjec" x="160" y="305" width="209" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="39" h1="43" w2="44" h2="-45"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-241" h1="102" w2="-233" h2="-226"/>
+      <bendpoint w1="-239" h1="455" w2="-281" h2="-96"/>
+    </edge>
+  </node>
+  <node name="P402_RevisarPropuestaLetrado" x="132" y="401" width="273" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-56" h1="-43" w2="-52" h2="53"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-203" h1="30" w2="-285" h2="-213"/>
+      <bendpoint w1="-221" h1="332" w2="-259" h2="-123"/>
+    </edge>
+  </node>
+  <node name="P402_RevisarPropuestaLetradoDecision" x="133" y="484" width="266" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-35" y="-8"/>
+    </edge>
+  </node>
+  <node name="P402_BPMInicioEJ_A" x="217" y="806" width="165" height="36">
+    <edge>
+      <label x="-85" y="-32"/>
+    </edge>
+  </node>
+  <node name="P402_ComunicadoDecisionEntidadA" x="318" y="599" width="240" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-15" y="-10"/>
+      <bendpoint w1="-4" h1="165" w2="155" h2="-216"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="46" h1="184" w2="114" h2="-188"/>
+    </edge>
+  </node>
+  <node name="forkA" x="328" y="549" width="127" height="24">
+    <edge>
+      <label x="-24" y="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_SolSolvenciaPatrimonial" x="691" y="285" width="275" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-213" h1="7" w2="-291" h2="-493"/>
+      <bendpoint w1="-199" h1="740" w2="-277" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-6"/>
+    </edge>
+  </node>
+  <node name="P402_SolSolvenciaPatrimonialDecision" x="714" y="358" width="266" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-208" h1="-5" w2="-246" h2="-623"/>
+      <bendpoint w1="-202" h1="640" w2="-261" h2="-30"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_RegistrarResultadoSolvencias" x="711" y="426" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-188" h1="13" w2="-245" h2="-322"/>
+      <bendpoint w1="-195" h1="552" w2="-248" h2="-50"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="154" h1="-38" w2="179" h2="103"/>
+      <bendpoint w1="149" h1="-107" w2="174" h2="34"/>
+    </edge>
+  </node>
+  <node name="P402_RegistrarResultadoSolvenciasDecision" x="695" y="509" width="315" height="36">
+    <edge>
+      <label x="-20" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-11"/>
+    </edge>
+  </node>
+  <node name="forkB" x="967" y="590" width="122" height="24">
+    <edge>
+      <label x="-26" y="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_DictarInstrucciones" x="685" y="821" width="199" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-96" h1="109" w2="-265" h2="-100"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-32" y="-5"/>
+    </edge>
+  </node>
+  <node name="P402_ComunicadoDecisionEntidadB" x="928" y="662" width="256" height="36">
+    <edge>
+      <label x="-19" y="-17"/>
+      <bendpoint w1="-29" h1="264" w2="121" h2="-102"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="31" h1="306" w2="181" h2="-60"/>
+    </edge>
+  </node>
+  <node name="P402_BPMInicioEJ_B" x="745" y="899" width="160" height="36">
+    <edge>
+      <label x="-109" y="-16"/>
+    </edge>
+  </node>
+  <node name="P420_SolicitarNoAfeccionBienes" x="1436" y="100" width="256" height="36">
+    <edge>
+      <label x="-10" y="-351"/>
+      <bendpoint w1="-275" h1="21" w2="-322" h2="-692"/>
+      <bendpoint w1="-283" h1="984" w2="-287" h2="-41"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P420_SolicitarNoAfeccionBienesDecision" x="1436" y="203" width="292" height="36">
+    <edge>
+      <label x="18" y="-308"/>
+      <bendpoint w1="-283" h1="-8" w2="-298" h2="-620"/>
+      <bendpoint w1="-288" h1="872" w2="-274" h2="-50"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_RegResolucionesNoAfeccion" x="1448" y="282" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="19" y="-268"/>
+      <bendpoint w1="-232" h1="-10" w2="-276" h2="-541"/>
+      <bendpoint w1="-262" h1="786" w2="-263" h2="-57"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="155" h1="6" w2="158" h2="188"/>
+      <bendpoint w1="178" h1="-163" w2="181" h2="19"/>
+    </edge>
+  </node>
+  <node name="P402_DecidirSobreEjecuciones" x="1433" y="470" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-147" h1="-32" w2="-154" h2="156"/>
+      <bendpoint w1="-151" h1="-164" w2="-172" h2="55"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-216" h1="-3" w2="-224" h2="-328"/>
+      <bendpoint w1="-241" h1="592" w2="-249" h2="-63"/>
+    </edge>
+  </node>
+  <node name="P402_DecidirSobreEjecucionesDecision" x="1418" y="546" width="323" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_BPMInicioEJ_C1" x="1389" y="972" width="182" height="36">
+    <edge>
+      <label x="-122" y="-20"/>
+    </edge>
+  </node>
+  <node name="P402_ComunicadoDecisionEntidadC1" x="1546" y="696" width="246" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-15"/>
+    </edge>
+    <edge>
+      <label x="-3" y="-14"/>
+      <bendpoint w1="91" h1="55" w2="-51" h2="-129"/>
+    </edge>
+  </node>
+  <node name="P402_RevisarSituacionConcurso" x="2043" y="434" width="264" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-327" h1="-2" w2="56" h2="-462"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_RevisarIniContEjec" x="2053" y="597" width="290" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-202" h1="-2" w2="108" h2="-267"/>
+    </edge>
+    <edge>
+      <label x="4" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="219" h1="-57" w2="220" h2="129"/>
+      <bendpoint w1="222" h1="-162" w2="223" h2="24"/>
+    </edge>
+  </node>
+  <node name="P402_ComunicadoDecisionEntidadC2" x="2103" y="842" width="310" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="98" h1="220" w2="628" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="13" h1="204" w2="543" h2="-18"/>
+    </edge>
+  </node>
+  <node name="P402_BPMInicioEJ_C2" x="1911" y="1002" width="175" height="36">
+    <edge>
+      <label x="-46" y="-8"/>
+    </edge>
+  </node>
+  <node name="P402_RegResolucionesNoAfeccionDecision" x="1461" y="368" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkC" x="1657" y="641" width="129" height="24">
+    <edge>
+      <label x="-32" y="-9"/>
+    </edge>
+    <edge>
+      <label x="-32" y="-13"/>
+    </edge>
+  </node>
+  <node name="P402_RevisarSituacionConcursoDecision" x="2046" y="506" width="246" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision" x="1863" y="513" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkC2" x="2245" y="763" width="115" height="24">
+    <edge>
+      <label x="-29" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_RevisarIniContEjecDecision" x="2024" y="669" width="349" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-273" h1="-21" w2="1" h2="92"/>
+    </edge>
+  </node>
+  <node name="P402_EsperaFDeclaracionConcurso" x="1854" y="356" width="310" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorA" x="112" y="579" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork_IteradorA" x="194" y="742" width="134" height="24">
+    <edge>
+      <label x="-7" y="-10"/>
+      <bendpoint w1="-2" h1="-116" w2="81" h2="41"/>
+    </edge>
+    <edge>
+      <label x="-24" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorADecision" x="72" y="657" width="174" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-30" h1="113" w2="-150" h2="-210"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorB" x="717" y="617" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorBDecision" x="707" y="702" width="168" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="171" h1="1" w2="9" h2="-327"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork_iteradorB" x="718" y="774" width="143" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-5" y="27"/>
+      <bendpoint w1="-88" h1="-23" w2="-86" h2="116"/>
+      <bendpoint w1="-100" h1="-91" w2="-98" h2="48"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorC1" x="1379" y="690" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorC1Decision" x="1435" y="776" width="187" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork_iteradorC1" x="1414" y="889" width="129" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-15" y="38"/>
+      <bendpoint w1="-123" h1="-29" w2="-97" h2="160"/>
+      <bendpoint w1="-112" h1="-164" w2="-86" h2="25"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorC2" x="1922" y="807" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_IteradorC2Decision" x="1855" y="878" width="201" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork_iteradorC2" x="1943" y="955" width="122" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="123" h1="-40" w2="139" h2="71"/>
+    </edge>
+  </node>
+  <node name="P402_AnalisisOperacionesConcursoA" x="228" y="212" width="270" height="36">
+    <edge>
+      <label x="46" y="-335"/>
+      <bendpoint w1="-348" h1="15" w2="-264" h2="-753"/>
+      <bendpoint w1="-347" h1="670" w2="-263" h2="-98"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_AnalisisOperacionesConcursoB" x="572" y="201" width="288" height="36">
+    <edge>
+      <label x="0" y="-359"/>
+      <bendpoint w1="-149" h1="72" w2="-386" h2="-757"/>
+      <bendpoint w1="-112" h1="753" w2="-349" h2="-76"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P402_AnalisisOperacionesConcursoC" x="1113" y="24" width="250" height="36">
+    <edge>
+      <label x="-11" y="-920"/>
+      <bendpoint w1="4" h1="979" w2="-454" h2="-23"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="746" y="18" width="132" height="36"/>
+  <node name="FinA" x="213" y="980" width="132" height="36"/>
+  <node name="FinB" x="887" y="1030" width="132" height="36"/>
+  <node name="FinC" x="1662" y="1064" width="132" height="36"/>
+</root-container>

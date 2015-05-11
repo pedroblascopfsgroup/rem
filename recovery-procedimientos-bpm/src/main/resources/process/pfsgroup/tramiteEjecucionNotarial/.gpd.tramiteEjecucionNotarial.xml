@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteEjecucionNotarial" width="1048" height="1934">
+  <node name="Inicio" x="21" y="43" width="132" height="36">
+    <edge>
+      <label x="-26" y="-42"/>
+    </edge>
+  </node>
+  <node name="P66_entregaActaRequerimiento" x="205" y="44" width="255" height="36">
+    <edge>
+      <label x="-68" y="19"/>
+    </edge>
+    <edge>
+      <label x="11" y="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="373" h1="-2" w2="-2" h2="-83"/>
+    </edge>
+  </node>
+  <node name="P66_registrarSolicitudCertCargas" x="203" y="175" width="257" height="36">
+    <edge>
+      <label x="-79" y="8"/>
+    </edge>
+    <edge>
+      <label x="13" y="-5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="272" h1="-4" w2="-99" h2="62"/>
+    </edge>
+    <edge>
+      <label x="-11" y="-45"/>
+      <bendpoint w1="205" h1="-54" w2="209" h2="93"/>
+      <bendpoint w1="204" h1="-97" w2="208" h2="50"/>
+    </edge>
+  </node>
+  <node name="P66_registrarRecepcionCertCargas" x="212" y="288" width="239" height="36">
+    <edge>
+      <label x="12" y="-8"/>
+      <bendpoint w1="204" h1="-27" w2="205" h2="82"/>
+      <bendpoint w1="204" h1="-77" w2="205" h2="32"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="302" h1="0" w2="-73" h2="159"/>
+    </edge>
+    <edge>
+      <label x="-75" y="6"/>
+    </edge>
+    <edge>
+      <label x="11" y="-7"/>
+    </edge>
+  </node>
+  <node name="Decision" x="638" y="475" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P66_registrarRecepcionCertCargasDecision" x="188" y="349" width="285" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="284" h1="-4" w2="-82" h2="133"/>
+    </edge>
+    <edge>
+      <label x="16" y="-375"/>
+      <bendpoint w1="-295" h1="0" w2="-290" h2="-784"/>
+      <bendpoint w1="-296" h1="596" w2="-293" h2="62"/>
+    </edge>
+  </node>
+  <node name="P66_registrarRequerimientoAdeudor" x="204" y="409" width="252" height="36">
+    <edge>
+      <label x="-63" y="-7"/>
+    </edge>
+    <edge>
+      <label x="11" y="33"/>
+      <bendpoint w1="-196" h1="-2" w2="-195" h2="153"/>
+      <bendpoint w1="-198" h1="-124" w2="-199" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="-7" y="7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="482" h1="5" w2="107" h2="323"/>
+    </edge>
+  </node>
+  <node name="P66_registrarRequerimientoAdeudorDecision" x="182" y="475" width="297" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="15" y="-304"/>
+      <bendpoint w1="-284" h1="14" w2="-279" h2="-644"/>
+      <bendpoint w1="-287" h1="454" w2="-284" h2="46"/>
+    </edge>
+  </node>
+  <node name="P66_registrarPagoDelDeudor" x="210" y="534" width="240" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="502" h1="-28" w2="127" h2="430"/>
+    </edge>
+    <edge>
+      <label x="-61" y="-8"/>
+    </edge>
+    <edge>
+      <label x="4" y="53"/>
+      <bendpoint w1="-189" h1="-21" w2="-189" h2="104"/>
+      <bendpoint w1="-191" h1="-99" w2="-191" h2="26"/>
+    </edge>
+    <edge>
+      <label x="-5" y="5"/>
+    </edge>
+  </node>
+  <node name="P66_registrarPagoDelDeudorDecision" x="191" y="597" width="275" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="228" h1="-1" w2="-146" h2="140"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="15" y="-245"/>
+      <bendpoint w1="-273" h1="3" w2="-270" h2="-533"/>
+      <bendpoint w1="-274" h1="318" w2="-273" h2="32"/>
+    </edge>
+  </node>
+  <node name="P66_registrarNotificacion" x="211" y="665" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="494" h1="-113" w2="119" h2="485"/>
+    </edge>
+    <edge>
+      <label x="-2" y="6"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-5"/>
+    </edge>
+  </node>
+  <node name="P66_notificarPorAnuncio" x="681" y="623" width="199" height="36">
+    <edge>
+      <label x="-85" y="11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="186" h1="-54" w2="259" h2="444"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="123" h1="-67" w2="196" h2="431"/>
+    </edge>
+  </node>
+  <node name="P66_registrarNotificacionDecision" x="209" y="739" width="240" height="36">
+    <edge>
+      <label x="-4" y="-41"/>
+    </edge>
+    <edge>
+      <label x="12" y="-5"/>
+    </edge>
+    <edge>
+      <label x="-61" y="-8"/>
+      <bendpoint w1="-192" h1="-1" w2="-193" h2="73"/>
+      <bendpoint w1="-191" h1="-76" w2="-192" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="-49" y="-29"/>
+      <bendpoint w1="-155" h1="24" w2="-154" h2="-104"/>
+      <bendpoint w1="-157" h1="91" w2="-156" h2="-37"/>
+    </edge>
+    <edge>
+      <label x="7" y="-23"/>
+      <bendpoint w1="-268" h1="8" w2="-264" h2="-386"/>
+      <bendpoint w1="-269" h1="162" w2="-267" h2="18"/>
+    </edge>
+  </node>
+  <node name="fork1" x="497" y="739" width="252" height="24">
+    <edge>
+      <label x="-68" y="-31"/>
+      <bendpoint w1="0" h1="-72" w2="257" h2="62"/>
+    </edge>
+    <edge>
+      <label x="-37" y="25"/>
+    </edge>
+  </node>
+  <node name="fork2" x="202" y="805" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="450" h1="-1" w2="-2" h2="175"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P66_registrarEnvioAlTitular" x="217" y="1120" width="238" height="36">
+    <edge>
+      <label x="-3" y="6"/>
+    </edge>
+    <edge>
+      <label x="-10" y="-20"/>
+      <bendpoint w1="217" h1="0" w2="-176" h2="-104"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-10"/>
+    </edge>
+    <edge>
+      <label x="1" y="-22"/>
+      <bendpoint w1="-200" h1="-31" w2="-193" h2="34"/>
+    </edge>
+  </node>
+  <node name="P66_registrarRecepcionAlTitular" x="200" y="1190" width="271" height="36">
+    <edge>
+      <label x="14" y="-3"/>
+    </edge>
+    <edge>
+      <label x="-26" y="-27"/>
+      <bendpoint w1="-182" h1="-37" w2="-183" h2="33"/>
+    </edge>
+    <edge>
+      <label x="-76" y="3"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-20"/>
+      <bendpoint w1="229" h1="-4" w2="-163" h2="132"/>
+    </edge>
+  </node>
+  <node name="P66_registrarAnuncioSubasta" x="209" y="867" width="239" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-70" y="11"/>
+    </edge>
+    <edge>
+      <label x="-15" y="-17"/>
+      <bendpoint w1="399" h1="1" w2="0" h2="-189"/>
+    </edge>
+  </node>
+  <node name="P66_registrarCelebracion1Subasta" x="218" y="1261" width="239" height="36">
+    <edge>
+      <label x="-38" y="-26"/>
+      <bendpoint w1="-187" h1="-36" w2="-185" h2="35"/>
+    </edge>
+    <edge>
+      <label x="-78" y="4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="200" h1="-3" w2="-185" h2="159"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P66_registrarCelebracion1SubastaDecision" x="194" y="1333" width="283" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="11" y="-175"/>
+      <bendpoint w1="-327" h1="34" w2="-329" h2="-388"/>
+      <bendpoint w1="-329" h1="410" w2="-331" h2="-12"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="273" h1="1" w2="-50" h2="-134"/>
+    </edge>
+  </node>
+  <node name="P66_registrarCelebracion2Subasta" x="219" y="1403" width="238" height="36">
+    <edge>
+      <label x="-60" y="-8"/>
+    </edge>
+    <edge>
+      <label x="6" y="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="397" h1="1" w2="29" h2="283"/>
+    </edge>
+    <edge>
+      <label x="28" y="-5"/>
+      <bendpoint w1="-299" h1="-74" w2="-289" h2="64"/>
+    </edge>
+  </node>
+  <node name="P66_registrarCelebracion2SubastaDecision" x="196" y="1478" width="283" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="13" y="-111"/>
+      <bendpoint w1="-322" h1="21" w2="-322" h2="-256"/>
+      <bendpoint w1="-326" h1="256" w2="-326" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-24"/>
+    </edge>
+  </node>
+  <node name="P66_registrarCelebracion3Subasta" x="222" y="1545" width="232" height="36">
+    <edge>
+      <label x="-58" y="-4"/>
+    </edge>
+    <edge>
+      <label x="-9" y="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="413" h1="5" w2="55" h2="431"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-281" h1="-78" w2="-271" h2="66"/>
+    </edge>
+  </node>
+  <node name="P66_registrarCelebracion3SubastaDecision" x="197" y="1613" width="283" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="9" y="-36"/>
+      <bendpoint w1="-318" h1="7" w2="-317" h2="-135"/>
+      <bendpoint w1="-319" h1="108" w2="-318" h2="-34"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="262" h1="-2" w2="-58" h2="143"/>
+    </edge>
+  </node>
+  <node name="P66_registrarCesionRemate" x="215" y="1686" width="241" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-76" y="4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="444" h1="-3" w2="82" h2="562"/>
+    </edge>
+    <edge>
+      <label x="-3" y="33"/>
+      <bendpoint w1="-206" h1="-71" w2="-209" h2="70"/>
+    </edge>
+  </node>
+  <node name="P66_registrarLiquidacionRemate" x="211" y="1755" width="253" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-72" y="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="457" h1="-2" w2="101" h2="631"/>
+    </edge>
+    <edge>
+      <label x="7" y="-24"/>
+      <bendpoint w1="-257" h1="-34" w2="-255" h2="35"/>
+    </edge>
+  </node>
+  <node name="P66_registrarEscritura" x="236" y="1820" width="204" height="36">
+    <edge>
+      <label x="-7" y="9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="476" h1="-1" w2="119" h2="698"/>
+    </edge>
+    <edge>
+      <label x="-3" y="-27"/>
+      <bendpoint w1="-223" h1="-25" w2="-222" h2="40"/>
+    </edge>
+    <edge>
+      <label x="-164" y="-2"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="589" y="1413" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P66_BPMtramiteDePosesion" x="203" y="1897" width="268" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="520" h1="-28" w2="135" h2="750"/>
+    </edge>
+    <edge>
+      <label x="-84" y="10"/>
+      <bendpoint w1="551" h1="-11" w2="166" h2="767"/>
+    </edge>
+  </node>
+  <node name="P66_entregaActaRequerimientoDecision" x="188" y="113" width="288" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="10" y="-502"/>
+      <bendpoint w1="-321" h1="-2" w2="-314" h2="-1022"/>
+      <bendpoint w1="-314" h1="860" w2="-309" h2="90"/>
+    </edge>
+  </node>
+  <node name="P66_registrarSolicitudCertCargasDecision" x="190" y="235" width="286" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="9" y="-438"/>
+      <bendpoint w1="-307" h1="-1" w2="-299" h2="-899"/>
+      <bendpoint w1="-306" h1="723" w2="-300" h2="75"/>
+    </edge>
+  </node>
+  <node name="P66_registrarSolicitudTasacion" x="215" y="935" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-72" y="4"/>
+    </edge>
+    <edge>
+      <label x="-19" y="17"/>
+      <bendpoint w1="177" h1="-36" w2="177" h2="32"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="373" h1="0" w2="-26" h2="-122"/>
+    </edge>
+  </node>
+  <node name="P66_registrarRecepcionTasacion" x="215" y="995" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="8" y="-29"/>
+      <bendpoint w1="-194" h1="-30" w2="-194" h2="30"/>
+    </edge>
+    <edge>
+      <label x="-70" y="4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="349" h1="-3" w2="-50" h2="-65"/>
+    </edge>
+  </node>
+  <node name="P66_registrarFichaDeSubasta" x="216" y="1055" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-25"/>
+      <bendpoint w1="-195" h1="-27" w2="-194" h2="33"/>
+    </edge>
+    <edge>
+      <label x="-74" y="5"/>
+    </edge>
+    <edge>
+      <label x="0" y="-17"/>
+    </edge>
+  </node>
+  <node name="Fin" x="641" y="125" width="132" height="36"/>
+  <node name="Fin2" x="661" y="1054" width="132" height="36"/>
+</root-container>

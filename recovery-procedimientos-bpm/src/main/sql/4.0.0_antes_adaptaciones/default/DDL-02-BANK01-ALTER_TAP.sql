@@ -1,0 +1,1 @@
+ALTER TABLE tap_tarea_procedimiento MODIFY tap_script_validacion_jbpm VARCHAR2 (1200 CHAR);

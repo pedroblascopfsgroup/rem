@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="tramiteMoratoriaLanzamiento">
+
+	<start-state name="Inicio">
+		<transition to="P418_RegistrarSolicitudMoratoria" name="iniciarProceso"></transition>
+	</start-state>
+
+   
+	<state name="P418_RegistrarSolicitudMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_RegistrarSolicitudMoratoria" name="activarAlerta"></transition>
+		<transition to="P418_RegistrarAdmisionYEmplazamiento" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="P418_RegistrarAdmisionYEmplazamiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_RegistrarAdmisionYEmplazamiento" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_RegistrarSolicitudMoratoria" name="vueltaAtras"></transition>
+		<transition to="P418_RegistrarInformeMoratoria" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P418_RegistrarInformeMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_RegistrarInformeMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_RegistrarAdmisionYEmplazamiento" name="vueltaAtras"></transition>
+		<transition to="P418_RevisarInformeLetradoMoratoria" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P418_RevisarInformeLetradoMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_RevisarInformeLetradoMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_RegistrarInformeMoratoria" name="vueltaAtras"></transition>
+		<transition to="P418_LecturaInstruccionesMoratoria" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P418_LecturaInstruccionesMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_LecturaInstruccionesMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_RevisarInformeLetradoMoratoria" name="vueltaAtras"></transition>
+		<transition to="P418_LecturaInstruccionesMoratoriaDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P418_LecturaInstruccionesMoratoriaDecision" expression="#{P418_LecturaInstruccionesMoratoriaDecision}">
+		<transition to="P418_CelebracionVista" name="HayVista"></transition>
+		<transition to="P418_RegistrarResolucion" name="NoHayVista"></transition>
+		<transition to="P418_PresentarConformidadMoratoria" name="PresentarConformidad"></transition>
+	</decision>
+	
+	<state name="P418_CelebracionVista">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_CelebracionVista" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_LecturaInstruccionesMoratoria" name="vueltaAtras"></transition>
+		<transition to="P418_RegistrarResolucion" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P418_RegistrarResolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_RegistrarResolucion" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_LecturaInstruccionesMoratoria" name="vueltaAtras"></transition>
+		<transition to="P418_RegistrarResolucionDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P418_RegistrarResolucionDecision" expression="#{P418_RegistrarResolucionDecision}">
+		<transition to="Fin" name="Favorable"></transition>
+		<transition to="P418_nodoEsperaController" name="Desfavorable"></transition>
+	</decision>
+	
+	<state name="P418_nodoEsperaController">
+		<event type="node-enter">
+			<action name="CompletarExpedienteAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>nodoEsperaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P418_nodoEsperaControllerDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P418_nodoEsperaControllerDecision" expression="#{P418_nodoEsperaControllerDecision}">
+		<transition to="P418_SolicitarInstrucciones" name="solicita"></transition>
+		<transition to="P418_nodoEsperaWait" name="espera"></transition>
+	</decision>
+	
+	 <state name="P418_nodoEsperaWait">
+		<event type="node-enter">
+			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
+				<name>Timer espera - embargo salarios</name>
+				<duration>1 days</duration>
+				<transicion>avanzaBPM</transicion>
+			</action>
+		</event>
+		<transition to="P418_nodoEsperaController" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>	
+
+	<state name="P418_PresentarConformidadMoratoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_PresentarConformidadMoratoria" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_LecturaInstruccionesMoratoria" name="vueltaAtras"></transition>
+		<transition to="P418_RegistrarResolucion" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P418_SolicitarInstrucciones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P418_SolicitarInstrucciones" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P418_RegistrarResolucion" name="vueltaAtras"></transition>
+		<transition to="Decision" name="avanzaBPM"></transition>
+	</state>
+	
+
+	 
+	
+	
+	<node name="Decision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+		<transition to="Fin"></transition>
+	</node>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

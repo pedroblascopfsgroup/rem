@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteInicioExpJudicialV4" width="1270" height="712">
+  <node name="Inicio" x="197" y="68" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P405_LecturaInstruccionesEntidad" x="93" y="162" width="349" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="234" h1="137" w2="207" h2="-141"/>
+    </edge>
+  </node>
+  <node name="P405_RegistrarMarcaPrelitigio" x="138" y="283" width="234" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="102" h1="44" w2="63" h2="-113"/>
+    </edge>
+    <edge>
+      <label x="-34" y="-25"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-83" h1="-67" w2="-95" h2="54"/>
+    </edge>
+  </node>
+  <node name="Fin" x="228" y="440" width="132" height="36"/>
+</root-container>

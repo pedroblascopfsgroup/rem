@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteArchivo" width="1025" height="650">
+  <node name="Inicio" x="13" y="13" width="132" height="36">
+    <edge>
+      <label x="-38" y="6"/>
+    </edge>
+  </node>
+  <node name="P33_autoArchivo" x="236" y="12" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-15"/>
+      <bendpoint w1="-132" h1="0" w2="-132" h2="0"/>
+      <bendpoint w1="-132" h1="-22" w2="-132" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-19"/>
+      <bendpoint w1="396" h1="-1" w2="0" h2="-212"/>
+    </edge>
+  </node>
+  <node name="P33_dictarInstrucciones" x="234" y="83" width="215" height="38">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-1"/>
+      <bendpoint w1="-152" h1="-37" w2="-154" h2="35"/>
+    </edge>
+    <edge>
+      <label x="-69" y="0"/>
+      <bendpoint w1="-132" h1="0" w2="-132" h2="0"/>
+      <bendpoint w1="-132" h1="-23" w2="-132" h2="-23"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-21"/>
+      <bendpoint w1="239" h1="1" w2="-159" h2="-138"/>
+    </edge>
+  </node>
+  <node name="P33_presentarRecurso" x="234" y="225" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-65" y="-9"/>
+      <bendpoint w1="-166" h1="-70" w2="-166" h2="71"/>
+    </edge>
+    <edge>
+      <label x="-77" y="-7"/>
+      <bendpoint w1="-132" h1="0" w2="-132" h2="0"/>
+      <bendpoint w1="-132" h1="-22" w2="-132" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="-18" y="-26"/>
+      <bendpoint w1="314" h1="-2" w2="-145" h2="-276"/>
+    </edge>
+  </node>
+  <node name="P33_registrarAuto" x="232" y="292" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-18" y="-23"/>
+      <bendpoint w1="-163" h1="-34" w2="-165" h2="33"/>
+    </edge>
+    <edge>
+      <label x="-75" y="-7"/>
+      <bendpoint w1="-132" h1="0" w2="-132" h2="0"/>
+      <bendpoint w1="-132" h1="-22" w2="-132" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="-15" y="-19"/>
+      <bendpoint w1="179" h1="0" w2="-221" h2="69"/>
+    </edge>
+  </node>
+  <node name="P33_recurrirAudiencia" x="232" y="430" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-35"/>
+      <bendpoint w1="-185" h1="-70" w2="-185" h2="68"/>
+    </edge>
+    <edge>
+      <label x="-75" y="-8"/>
+      <bendpoint w1="-132" h1="0" w2="-132" h2="0"/>
+      <bendpoint w1="-132" h1="-22" w2="-132" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="-14" y="-18"/>
+      <bendpoint w1="157" h1="-1" w2="-243" h2="206"/>
+    </edge>
+  </node>
+  <node name="P33_registrarResultado" x="232" y="494" width="215" height="36">
+    <edge>
+      <label x="-64" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-27"/>
+      <bendpoint w1="-160" h1="-33" w2="-160" h2="31"/>
+    </edge>
+    <edge>
+      <label x="-51" y="16"/>
+      <bendpoint w1="-132" h1="0" w2="-132" h2="0"/>
+      <bendpoint w1="-132" h1="-22" w2="-132" h2="-22"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-25"/>
+      <bendpoint w1="151" h1="-3" w2="-249" h2="268"/>
+    </edge>
+  </node>
+  <node name="P33_dictarInstruccionesDecision" x="236" y="155" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-120" y="-17"/>
+      <bendpoint w1="246" h1="1" w2="-150" h2="-67"/>
+    </edge>
+  </node>
+  <node name="P33_registrarAutoDecision" x="232" y="362" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-29"/>
+      <bendpoint w1="175" h1="1" w2="-225" h2="140"/>
+    </edge>
+  </node>
+  <node name="noRecurrir" x="673" y="223" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="734" y="499" width="132" height="36"/>
+  <node name="P33_registrarResultadoDecision" x="207" y="569" width="264" height="36">
+    <edge>
+      <label x="-78" y="-32"/>
+      <bendpoint w1="176" h1="-12" w2="-227" h2="334"/>
+    </edge>
+    <edge>
+      <label x="19" y="-14"/>
+      <bendpoint w1="224" h1="2" w2="-179" h2="348"/>
+    </edge>
+  </node>
+</root-container>

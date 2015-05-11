@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="tramiteSaneamientoCargas">
+
+	<start-state name="Inicio">
+		<transition to="P415_RevisarEstadoCargas" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="P415_RevisarEstadoCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P415_RevisarEstadoCargasDecision" name="avanzaBPM"></transition>
+		<transition to="P415_RevisarEstadoCargas" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="P415_RevisarEstadoCargasDecision" expression="#{P415_RevisarEstadoCargasDecision}">
+		<transition to="P415_RegistrarPresentacionInscripcion" name="registrales"></transition>
+		<transition to="P415_PropuestaCancelacionCargas" name="economicas"></transition>
+		<transition to="fork1" name="ambos"></transition>
+		<transition to="Decision1" name="noCargas"></transition>
+	</decision>
+
+	<fork name="fork1">
+		<transition to="P415_RegistrarPresentacionInscripcion" name="to_P415_RegistrarPresentacionInscripcion"></transition>
+		<transition to="P415_PropuestaCancelacionCargas" name="to_P415_PropuestaCancelacionCargas"></transition>
+	</fork>
+
+	<state name="P415_RegistrarPresentacionInscripcion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P415_RegInsCancelacionCargasReg" name="avanzaBPM"></transition>
+		<transition to="P415_RegistrarPresentacionInscripcion" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P415_PropuestaCancelacionCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P415_RevisarPropuestaCancelacionCargas" name="avanzaBPM"></transition>
+		<transition to="P415_PropuestaCancelacionCargas" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P415_RegInsCancelacionCargasReg">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="P415_RegistrarPresentacionInscripcion" name="vueltaAtras"></transition>
+		<transition to="P415_RegInsCancelacionCargasReg" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P415_RevisarPropuestaCancelacionCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P415_LiquidarCargas" name="avanzaBPM"></transition>
+		<transition to="P415_PropuestaCancelacionCargas" name="vueltaAtras"></transition>
+		<transition to="P415_RevisarPropuestaCancelacionCargas" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P415_LiquidarCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P415_RegInsCancelacionCargasEconomicas" name="avanzaBPM"></transition>
+		<transition to="P415_RevisarPropuestaCancelacionCargas" name="vueltaAtras"></transition>
+		<transition to="P415_LiquidarCargas" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P415_RegInsCancelacionCargasEconomicas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P415_RegInsCancelacionCargasEconomicasDecision" name="avanzaBPM"></transition>
+		<transition to="P415_RegInsCancelacionCargasEconomicas" name="activarAlerta"></transition>
+		<transition to="P415_LiquidarCargas" name="vueltaAtras"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<decision name="P415_RegInsCancelacionCargasEconomicasDecision">
+		<transition to="P415_RegistrarPresentacionInscripcionEco" name="hayCargas"></transition>
+		<transition to="Decision1" name="noHayCargas"></transition>
+	</decision>
+
+	<state name="P415_RegistrarPresentacionInscripcionEco">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="P415_RegInsCancelacionCargasRegEco" name="avanzaBPM"></transition>
+		<transition to="P415_RegInsCancelacionCargasEconomicas" name="vueltaAtras"></transition>
+		<transition to="P415_RegistrarPresentacionInscripcionEco" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P415_RegInsCancelacionCargasRegEco">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin2" name="avanzaBPM"></transition>
+		<transition to="P415_RegistrarPresentacionInscripcionEco" name="vueltaAtras"></transition>
+		<transition to="P415_RegInsCancelacionCargasRegEco" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<node name="Decision1">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>	
+		<transition to="Fin2"></transition>
+	</node>
+
+
+	<end-state name="Fin"></end-state>
+
+	<end-state name="Fin2"></end-state>
+	
+	
+</process-definition>

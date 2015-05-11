@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteIntereses" xmlns="urn:jbpm.org:jpdl-3.2">
+
+   <start-state name="Inicio">
+      <transition to="P10_ElaborarLiquidacion" name="iniciarProceso"></transition>
+   </start-state>
+
+   <state name="P10_ElaborarLiquidacion">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="P10_ElaborarLiquidacion" name="activarAlerta"></transition>
+      <transition to="P10_SolicitarLiquidacion" name="avanzaBPM"></transition>
+   </state>
+
+   <state name="P10_SolicitarLiquidacion">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="P10_RegistrarResolucion" name="avanzaBPM"></transition>
+	  <transition to="P10_ElaborarLiquidacion" name="vueltaAtras"></transition>
+   </state>
+
+   <state name="P10_RegistrarResolucion">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="P10_ConfirmarNotificacion" name="avanzaBPM"></transition>
+      <transition to="P10_SolicitarLiquidacion" name="vueltaAtras"></transition>
+   </state>
+
+   <state name="P10_ConfirmarNotificacion">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="ConfirmarNotificacionDecision" name="avanzaBPM"></transition>
+		<transition to="P10_RegistrarResolucion" name="vueltaAtras"></transition>
+   </state>
+
+
+   <decision name="ConfirmarNotificacionDecision" expression="#{P10_ConfirmarNotificacionDecision}">
+      <transition to="P10_RegistrarImpugnacion" name="SI"></transition>
+      <transition to="P10_BPMTramiteNotificacion" name="NO"></transition>
+   </decision>
+   
+<!-- 
+   <node name="ConfirmarNotificacionDecision">
+      <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+         <targetBean>genericDecisionHandler</targetBean>
+      </action>
+      <transition to="RegistrarImpugnacion" name="SI"></transition>
+      <transition to="BPMTramiteNotificacion" name="NO"></transition>
+   </node>
+-->
+
+	<!-- este nodo lanza un jbpm externo -->
+   <state name="P10_BPMTramiteNotificacion">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="P10_RegistrarImpugnacion" name="tramiteNotificacionV4"></transition>
+   </state>
+
+   <state name="P10_RegistrarImpugnacion">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="RegistrarImpugnacionDecision" name="avanzaBPM"></transition>
+		<transition to="P10_ConfirmarNotificacion" name="vueltaAtras"></transition>
+   </state>
+
+   <decision name="RegistrarImpugnacionDecision" expression="#{P10_RegistrarImpugnacionDecision}">
+      <transition to="P10_RegistrarVista" name="SI"></transition>
+      <transition to="Decision1" name="NO"></transition>
+   </decision>
+
+
+<!-- 
+   <node name="RegistrarImpugnacionDecision">
+       <action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         <targetBean>genericDecisionHandler</targetBean>
+      </action>
+      <transition to="RegistrarVista" name="SI"></transition>
+      <transition to="Decision1" name="NO"></transition>
+   </node>
+-->
+   <node name="Decision1">
+      <action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         <targetBean>genericUserDecisionActionHandler</targetBean>
+      </action>
+      <transition to="Fin" name="Fin"></transition>
+   </node>
+
+   <state name="P10_RegistrarVista">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="P10_RegistrarResolucionVista" name="avanzaBPM"></transition>
+		<transition to="P10_RegistrarImpugnacion" name="vueltaAtras"></transition>
+   </state>
+
+   <state name="P10_RegistrarResolucionVista">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="P10_ResolucionFirme" name="avanzaBPM"></transition>
+		<transition to="P10_RegistrarVista" name="vueltaAtras"></transition>
+   </state>
+
+   <state name="P10_ResolucionFirme">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericEnterActionHandler</targetBean>
+         </action>
+      </event>
+      <event type="node-leave">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>genericLeaveActionHandler</targetBean>
+         </action>
+      </event>
+      <transition to="Decision1" name="avanzaBPM"></transition>
+		<transition to="P10_RegistrarResolucionVista" name="vueltaAtras"></transition>
+   </state>
+
+
+   <end-state name="Fin">
+      <event type="node-enter">
+         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            <targetBean>endProcessActionHandler</targetBean>
+         </action>
+      </event>             
+   </end-state>
+
+</process-definition>

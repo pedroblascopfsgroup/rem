@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dtoAgregar" class="es.pfsgroup.concursal.credito.dto.DtoAgregarCredito"/>
+    
+    <!--  id del credito a modificar -->
+    <input name="idCredito" type="java.lang.Long"/>
+      
+    <!--  se reciviran los nuevos valores  -->
+    <input name="banderaEditar" type="java.lang.Long"/>
+
+    <input name="idProcedimiento" type="java.lang.Long"/>
+    <input name="idContratoExpediente" type="java.lang.Long"/>    
+    <input name="supervisorTipoCredito" type="java.lang.Long"/>
+    <input name="supervisorPrincipal" type="java.lang.Float"/>
+   
+    <decision-state id="decision">
+		<if test="(banderaEditar != '1')" then="formulario" else="guardar"/>
+    </decision-state>    
+   
+    <end-state id="formulario" view="plugin/procedimientos/concursal/editarCreditoSupervisor">
+		<on-entry>
+			<evaluate expression="executor.execute('concursoManager.dameCredito',idCredito)" result="flowScope.credito"/>
+			<evaluate expression="executor.execute('concursoManager.tiposDeCredito')" result="flowScope.tipos"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="guardar" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoAgregar)" />
+			<evaluate expression="executor.execute('concursoManager.editarCreditoSupervisor',dtoAgregar)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+		
+</flow>

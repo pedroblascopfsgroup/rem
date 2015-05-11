@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="aceptacionYdecision" width="1263" height="990">
+  <node name="Inicio" x="338" y="23" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_registrarAceptacion" x="297" y="95" width="214" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="623" h1="-1" w2="590" h2="-518"/>
+    </edge>
+  </node>
+  <node name="P61_registrarAceptacionDecision" x="295" y="161" width="219" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_registrarDecisionProcedimiento_UNNIM" x="22" y="239" width="318" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="450" h1="-3" w2="418" h2="-317"/>
+      <bendpoint w1="803" h1="-10" w2="13" h2="-161"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-191" h1="-77" w2="-193" h2="67"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_BPMHipotecario" x="987" y="908" width="210" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="104" h1="-147" w2="116" h2="142"/>
+    </edge>
+  </node>
+  <node name="P61_BPMMonitorio" x="231" y="508" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="231" w2="-844" h2="377"/>
+      <bendpoint w1="895" h1="240" w2="51" h2="386"/>
+    </edge>
+  </node>
+  <node name="P61_BPMETNJ" x="877" y="851" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="24" h1="-81" w2="-4" h2="380"/>
+    </edge>
+  </node>
+  <node name="P61_BPMVerbal" x="744" y="809" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_BPMETJ" x="617" y="744" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="387" h1="2" w2="99" h2="356"/>
+    </edge>
+  </node>
+  <node name="P61_BPMOrdinario" x="241" y="561" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-42" h1="210" w2="-706" h2="381"/>
+      <bendpoint w1="735" h1="212" w2="71" h2="383"/>
+    </edge>
+  </node>
+  <node name="P61_BPMCambiario" x="300" y="617" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-28" h1="146" w2="-633" h2="373"/>
+      <bendpoint w1="669" h1="155" w2="64" h2="382"/>
+    </edge>
+  </node>
+  <node name="P61_BPMAbreviado" x="378" y="663" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-8" h1="96" w2="-535" h2="369"/>
+      <bendpoint w1="577" h1="100" w2="50" h2="373"/>
+    </edge>
+  </node>
+  <node name="P61_validarNoAceptacion" x="554" y="160" width="188" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-23" h1="-45" w2="221" h2="20"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="248" h1="46" w2="459" h2="-406"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_BPMAceptacionYdecision" x="793" y="158" width="221" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_BPMFaseComunOrdinario" x="489" y="697" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-2" h1="71" w2="-418" h2="378"/>
+      <bendpoint w1="498" h1="67" w2="82" h2="374"/>
+    </edge>
+  </node>
+  <node name="P61_BPMFaseComunAbreviado" x="231" y="455" width="208" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="2" h1="288" w2="-884" h2="374"/>
+      <bendpoint w1="885" h1="293" w2="-1" h2="379"/>
+    </edge>
+  </node>
+  <node name="P61_validarCambioActuacion" x="866" y="390" width="210" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_validarCambioActuacionDecision" x="40" y="314" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-2" h1="-48" w2="-796" h2="-124"/>
+      <bendpoint w1="692" h1="-42" w2="-102" h2="-118"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="56" y="-76"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P61_registrarDecisionProcedimiento_UNNIMDecision" x="-23" y="397" width="329" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="-18" w2="-186" h2="140"/>
+      <bendpoint w1="-145" h1="-152" w2="-185" h2="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="56" w2="-194" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-24" h1="110" w2="-180" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-57" h1="167" w2="-223" h2="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-98" h1="221" w2="-323" h2="1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-133" h1="266" w2="-436" h2="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-162" h1="302" w2="-576" h2="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-147" h1="14" w2="-689" h2="-333"/>
+      <bendpoint w1="-151" h1="344" w2="-693" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="415" w2="-669" h2="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="452" w2="-803" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-12" h1="509" w2="-924" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-131" h1="554" w2="-420" h2="36"/>
+    </edge>
+  </node>
+  <node name="Fin" x="380" y="322" width="450" height="36"/>
+  <node name="P61_BPMSolicitudConcurso" x="1026" y="953" width="202" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+</root-container>

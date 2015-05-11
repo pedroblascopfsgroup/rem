@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteEjecucionNotarial"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="P66_entregaActaRequerimiento" name="iniciarProceso"></transition>
+	</start-state>
+   
+	<state name="P66_entregaActaRequerimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_entregaActaRequerimiento" name="activarAlerta"></transition>
+		<transition to="P66_entregaActaRequerimientoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P66_registrarSolicitudCertCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarSolicitudCertCargas" name="activarAlerta"></transition>
+		<transition to="P66_registrarSolicitudCertCargasDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P66_entregaActaRequerimiento" name="vueltaAtras"></transition>
+	</state>
+
+ 	<state name="P66_registrarRecepcionCertCargas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+      	<transition to="P66_registrarSolicitudCertCargas" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P66_registrarRecepcionCertCargas" name="activarAlerta"></transition>
+		<transition to="P66_registrarRecepcionCertCargasDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<node name="Decision">
+		<transition to="Fin"></transition>
+	</node>
+
+	<decision name="P66_registrarRecepcionCertCargasDecision" expression="#{P66_registrarRecepcionCertCargasDecision}">
+		<transition to="P66_registrarRequerimientoAdeudor" name="correcto"></transition>
+		<transition to="Decision" name="incorrecto"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="porAnuncio"></transition>
+	</decision>
+
+	<state name="P66_registrarRequerimientoAdeudor">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarRequerimientoAdeudorDecision" name="avanzaBPM"></transition>
+		<transition to="P66_registrarRecepcionCertCargas" name="vueltaAtras"></transition>
+		<transition to="P66_registrarRequerimientoAdeudor" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="P66_registrarRequerimientoAdeudorDecision" expression="#{P66_registrarRequerimientoAdeudorDecision}">
+		<transition to="P66_registrarPagoDelDeudor" name="positivo"></transition>
+		<transition to="Decision" name="negativo"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="porAnuncio"></transition>
+	</decision>
+
+	<state name="P66_registrarPagoDelDeudor">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P66_registrarPagoDelDeudorDecision" name="avanzaBPM"></transition>
+		<transition to="P66_registrarRequerimientoAdeudor" name="vueltaAtras"></transition>
+		<transition to="P66_registrarPagoDelDeudor" name="activarAlerta"></transition>
+	</state>
+
+	<decision name="P66_registrarPagoDelDeudorDecision" expression="#{P66_registrarPagoDelDeudorDecision}">
+		<transition to="Decision" name="positivo"></transition>
+		<transition to="P66_registrarNotificacion" name="negativo"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="porAnuncio"></transition>
+	</decision>
+
+	<state name="P66_registrarNotificacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P66_registrarNotificacion" name="activarAlerta"></transition>
+		<transition to="P66_registrarNotificacionDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P66_notificarPorAnuncio">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_notificarPorAnuncio" name="activarAlerta"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	<decision name="P66_registrarNotificacionDecision" expression="#{P66_registrarNotificacionDecision}">
+		<transition to="fork1" name="porAnuncioYpendientes"></transition>
+		<transition to="fork2" name="porAnuncioYnoPendientes"></transition>
+		<transition to="P66_registrarNotificacion" name="notificadoYpendientes"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="notificadoYnoPendientes"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="porAnuncio"></transition>
+	</decision>
+
+	<fork name="fork1">
+		<transition to="P66_registrarNotificacion" name="otraNotificacion"></transition>
+		<transition to="P66_notificarPorAnuncio" name="porAnuncio1"></transition>
+	</fork>
+
+	<fork name="fork2">
+		<transition to="P66_notificarPorAnuncio" name="porAnuncio2"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="noPendientes"></transition>
+	</fork>
+
+	<state name="P66_registrarEnvioAlTitular">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarEnvioAlTitular" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="P66_registrarRecepcionAlTitular" name="avanzaBPM"></transition>
+		<transition to="P66_registrarFichaDeSubasta" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P66_registrarRecepcionAlTitular">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarCelebracion1Subasta" name="avanzaBPM"></transition>
+		<transition to="P66_registrarEnvioAlTitular" name="vueltaAtras"></transition>
+		<transition to="P66_registrarRecepcionAlTitular" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P66_registrarAnuncioSubasta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarSolicitudTasacion" name="avanzaBPM"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P66_registrarCelebracion1Subasta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarRecepcionAlTitular" name="vueltaAtras"></transition>
+		<transition to="P66_registrarCelebracion1Subasta" name="ActivarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="P66_registrarCelebracion1SubastaDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="P66_registrarCelebracion1SubastaDecision" expression="#{P66_registrarCelebracion1SubastaDecision}">
+		<transition to="P66_registrarCelebracion2Subasta" name="noAdjudicado1"></transition>
+		<transition to="P66_registrarLiquidacionRemate" name="adjEntidad1"></transition>
+		<transition to="Decision2" name="adjTercero1"></transition>
+	</decision>
+
+	<state name="P66_registrarCelebracion2Subasta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarCelebracion2SubastaDecision" name="avanzaBPM"></transition>
+		<transition to="P66_registrarCelebracion2Subasta" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="P66_registrarCelebracion1Subasta" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P66_registrarCelebracion2SubastaDecision" expression="#{P66_registrarCelebracion2SubastaDecision}">
+		<transition to="P66_registrarCelebracion3Subasta" name="noAdjudicado2"></transition>
+		<transition to="P66_registrarLiquidacionRemate" name="adjEntidad2"></transition>
+		<transition to="Decision2" name="adjTercero2"></transition>
+	</decision>
+
+	<state name="P66_registrarCelebracion3Subasta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarCelebracion3SubastaDecision" name="avanzaBPM"></transition>
+		<transition to="P66_registrarCelebracion3Subasta" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="P66_registrarCelebracion2Subasta" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="P66_registrarCelebracion3SubastaDecision" expression="#{P66_registrarCelebracion3SubastaDecision}">
+		<transition to="P66_registrarCesionRemate" name="noAdjudicado3"></transition>
+		<transition to="P66_registrarLiquidacionRemate" name="adjEntidad3"></transition>
+		<transition to="Decision2" name="adjTercero3"></transition>
+	</decision>
+
+	<state name="P66_registrarCesionRemate">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarLiquidacionRemate" name="avanzaBPM"></transition>
+		<transition to="P66_registrarCesionRemate" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="P66_registrarCelebracion3Subasta" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P66_registrarLiquidacionRemate">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarEscritura" name="avanzaBPM"></transition>
+		<transition to="P66_registrarLiquidacionRemate" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="P66_registrarCesionRemate" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P66_registrarEscritura">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarEscritura" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="P66_registrarLiquidacionRemate" name="vueltaAtras"></transition>
+		<transition to="P66_BPMtramiteDePosesion" name="avanzaBPM"></transition>
+	</state>
+
+	<node name="Decision2">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin2" name="Fin"></transition>
+	</node>
+
+	<state name="P66_BPMtramiteDePosesion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="Fin2" name="tramiteDePosesion"></transition>
+	</state>
+
+	<decision name="P66_entregaActaRequerimientoDecision" expression="#{P66_entregaActaRequerimientoDecision}">
+		<transition to="P66_registrarSolicitudCertCargas" name="continuar"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="porAnuncio"></transition>
+	</decision>
+
+	<decision name="P66_registrarSolicitudCertCargasDecision" expression="#{P66_registrarSolicitudCertCargasDecision}">
+		<transition to="P66_registrarRecepcionCertCargas" name="continuar"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="porAnuncio"></transition>
+	</decision>
+
+	<state name="P66_registrarSolicitudTasacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarRecepcionTasacion" name="avanzaBPM"></transition>
+		<transition to="P66_registrarSolicitudTasacion" name="activarAlerta"></transition>
+		<transition to="P66_registrarAnuncioSubasta" name="vueltaAtras"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P66_registrarRecepcionTasacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarFichaDeSubasta" name="avanzaBPM"></transition>
+		<transition to="P66_registrarSolicitudTasacion" name="vueltaAtras"></transition>
+		<transition to="P66_registrarRecepcionTasacion" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="P66_registrarFichaDeSubasta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P66_registrarEnvioAlTitular" name="avanzaBPM"></transition>
+		<transition to="P66_registrarRecepcionTasacion" name="vueltaAtras"></transition>
+		<transition to="P66_registrarFichaDeSubasta" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

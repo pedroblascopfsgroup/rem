@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="procedimientoConcursalBloqueado" width="879" height="542">
+  <node name="Inicio" x="258" y="245" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="258" y="336" width="132" height="36"/>
+</root-container>

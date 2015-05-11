@@ -1,0 +1,2 @@
+-- Modificación del Script de Decisión de P23_RegistrarAceptación para que no de un Error de Procesado al Guardar dicha tarea.
+UPDATE TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = '((valores[''P23_registrarAceptacion''][''comboAceptacion''] == DDSiNo.SI) && (valores[''P23_registrarAceptacion''][''comboConflicto''] == DDSiNo.NO)) ?  ''SI'' : ''NO''' WHERE TAP_CODIGO = 'P23_registrarAceptacion';

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="tramiteValoracionBienesInmuebles" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="fork1" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<fork name="fork1">
+		<transition to="P12_SolicitarAvaluo" name="Gestor"></transition>
+		<transition to="P12_SolitarTasacionInterna" name="Supervisor"></transition>
+	</fork>
+
+	<join name="join1">
+		<transition to="P12_EstConformidadOAlegacion" name="avanzaBPM"></transition>
+	</join>
+
+	<state name="P12_SolicitarAvaluo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P12_SolicitarAvaluo" name="activarAlerta"></transition>
+		<transition to="P12_ObtencionAvaluo" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="P12_SolitarTasacionInterna">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P12_SolitarTasacionInterna" name="activarAlerta"></transition>
+		<transition to="SolitarTasacionInternaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="SolitarTasacionInternaDecision" expression="#{P12_SolitarTasacionInternaDecision}">
+		<transition to="P12_ObtencionTasacionInterna" name="SI"></transition>
+		<transition to="join1" name="NO"></transition>
+	</decision>
+	
+	<state name="P12_ObtencionAvaluo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P12_ObtencionAvaluo" name="activarAlerta"></transition>
+		<transition to="join1" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P12_SolicitarAvaluo" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P12_ObtencionTasacionInterna">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P12_ObtencionTasacionInterna" name="activarAlerta"></transition>
+		<transition to="join1" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P12_SolitarTasacionInterna" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P12_EstConformidadOAlegacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P12_EstConformidadOAlegacion" name="activarAlerta"></transition>
+		<transition to="EstConformidadOAlegacionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="EstConformidadOAlegacionDecision" expression="#{P12_EstConformidadOAlegacionDecision}">
+		<transition to="P12_PresentarAlegaciones" name="alegaciones"></transition>
+		<transition to="Decision" name="conforme"></transition>
+	</decision>
+
+	<state name="P12_PresentarAlegaciones">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P12_PresentarAlegaciones" name="activarAlerta"></transition>
+		<transition to="P12_RegistrarResultado" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P12_EstConformidadOAlegacion" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="P12_RegistrarResultado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="P12_RegistrarResultado" name="activarAlerta"></transition>
+		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P12_PresentarAlegaciones" name="vueltaAtras"></transition>
+	</state>
+
+	<node name="Decision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+      	<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="ejecucionTituloJudicial" width="1159" height="734">
+  <node name="Inicio" x="9" y="19" width="132" height="36">
+    <edge>
+      <label x="-84" y="-9"/>
+    </edge>
+  </node>
+  <node name="P16_InterposicionDemanda" x="-2" y="75" width="188" height="36">
+    <edge>
+      <label x="-62" y="12"/>
+    </edge>
+    <edge>
+      <label x="-14" y="-35"/>
+    </edge>
+    <edge>
+      <label x="8" y="-18"/>
+      <bendpoint w1="132" h1="-70" w2="-484" h2="-387"/>
+      <bendpoint w1="990" h1="-70" w2="148" h2="-444"/>
+    </edge>
+  </node>
+  <node name="P16_AutoDespachando_new1" x="227" y="74" width="204" height="36">
+    <edge>
+      <label x="-76" y="14"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-34" y="8"/>
+      <bendpoint w1="2" h1="-60" w2="-376" h2="-378"/>
+      <bendpoint w1="734" h1="-64" w2="129" h2="-439"/>
+    </edge>
+    <edge>
+      <label x="-64" y="3"/>
+      <bendpoint w1="-131" h1="50" w2="107" h2="49"/>
+    </edge>
+  </node>
+  <node name="P16_AutoDespachando_new1Decision" x="227" y="149" width="206" height="36">
+    <edge>
+      <label x="-84" y="33"/>
+      <bendpoint w1="76" h1="-19" w2="76" h2="-92"/>
+      <bendpoint w1="-1" h1="30" w2="-1" h2="-43"/>
+    </edge>
+    <edge>
+      <label x="33" y="-8"/>
+      <bendpoint w1="151" h1="-88" w2="-225" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="30" y="-8"/>
+      <bendpoint w1="-144" h1="69" w2="-145" h2="-73"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="640" y="63" width="132" height="36">
+    <edge>
+      <label x="-56" y="-21"/>
+      <bendpoint w1="324" h1="0" w2="96" h2="-386"/>
+    </edge>
+  </node>
+  <node name="ForkAutoDespachando" x="274" y="226" width="115" height="22">
+    <edge>
+      <label x="14" y="1"/>
+    </edge>
+    <edge>
+      <label x="-23" y="-24"/>
+    </edge>
+  </node>
+  <node name="P16_ConfirmarNotificacion" x="227" y="281" width="206" height="36">
+    <edge>
+      <label x="-98" y="4"/>
+    </edge>
+    <edge>
+      <label x="12" y="1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="165" h1="48" w2="-439" h2="-120"/>
+      <bendpoint w1="211" h1="131" w2="-393" h2="-37"/>
+    </edge>
+  </node>
+  <node name="P16_ConfirmarNotificacionDecision" x="228" y="348" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-242" h1="-1" w2="2" h2="-51"/>
+    </edge>
+  </node>
+  <node name="P16_BPMTramiteNotificacion" x="23" y="398" width="295" height="36">
+    <edge>
+      <label x="11" y="-25"/>
+      <bendpoint w1="4" h1="47" w2="-238" h2="-2"/>
+    </edge>
+  </node>
+  <node name="P16_RegistrarOposicion" x="227" y="447" width="209" height="36">
+    <edge>
+      <label x="-74" y="10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-63" y="10"/>
+      <bendpoint w1="154" h1="-48" w2="156" h2="115"/>
+      <bendpoint w1="153" h1="-100" w2="155" h2="63"/>
+    </edge>
+  </node>
+  <node name="P16_RegistrarOposicionDecision" x="229" y="511" width="209" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision2" x="523" y="513" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P16_HayVista" x="228" y="649" width="207" height="36">
+    <edge>
+      <label x="-74" y="5"/>
+    </edge>
+    <edge>
+      <label x="-23" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="12" h1="53" w2="-591" h2="253"/>
+      <bendpoint w1="800" h1="55" w2="197" h2="255"/>
+      <bendpoint w1="799" h1="-206" w2="196" h2="-6"/>
+    </edge>
+    <edge>
+      <label x="-26" y="-29"/>
+      <bendpoint w1="-152" h1="-41" w2="-152" h2="41"/>
+    </edge>
+  </node>
+  <node name="P16_HayVistaDecision" x="526" y="649" width="154" height="36">
+    <edge>
+      <label x="14" y="8"/>
+      <bendpoint w1="1" h1="-48" w2="-190" h2="22"/>
+    </edge>
+    <edge>
+      <label x="-12" y="-23"/>
+    </edge>
+  </node>
+  <node name="P16_RegistrarVista" x="727" y="552" width="132" height="36">
+    <edge>
+      <label x="-2" y="4"/>
+    </edge>
+    <edge>
+      <label x="-61" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="0" y="9"/>
+      <bendpoint w1="-224" h1="0" w2="239" h2="-70"/>
+    </edge>
+  </node>
+  <node name="P16_RegistrarResolucion" x="728" y="648" width="132" height="36">
+    <edge>
+      <label x="-38" y="8"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="93" h1="46" w2="-46" h2="245"/>
+      <bendpoint w1="309" h1="43" w2="170" h2="242"/>
+      <bendpoint w1="307" h1="-184" w2="168" h2="15"/>
+    </edge>
+    <edge>
+      <label x="-72" y="-16"/>
+      <bendpoint w1="-48" h1="43" w2="416" h2="42"/>
+      <bendpoint w1="-345" h1="46" w2="119" h2="45"/>
+    </edge>
+  </node>
+  <node name="P16_ResolucionFirme" x="939" y="647" width="132" height="36">
+    <edge>
+      <label x="9" y="1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="88" h1="-2" w2="159" h2="196"/>
+      <bendpoint w1="85" h1="-169" w2="156" h2="29"/>
+    </edge>
+    <edge>
+      <label x="15" y="-4"/>
+      <bendpoint w1="-61" h1="36" w2="149" h2="35"/>
+    </edge>
+  </node>
+  <node name="Decision3" x="939" y="560" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P16_ConfirmarPresentacionImpugnacion" x="225" y="567" width="213" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-260" h1="0" w2="-863" h2="118"/>
+      <bendpoint w1="-261" h1="148" w2="-864" h2="266"/>
+      <bendpoint w1="788" h1="134" w2="185" h2="252"/>
+      <bendpoint w1="788" h1="-112" w2="185" h2="6"/>
+    </edge>
+    <edge>
+      <label x="-68" y="5"/>
+    </edge>
+    <edge>
+      <label x="8" y="-4"/>
+    </edge>
+    <edge>
+      <label x="-26" y="-37"/>
+      <bendpoint w1="-180" h1="-61" w2="-180" h2="59"/>
+    </edge>
+  </node>
+  <node name="P16_BPMVigilanciaCaducidadAnotacion" x="540" y="220" width="285" height="36">
+    <edge>
+      <label x="-163" y="-29"/>
+    </edge>
+  </node>
+  <node name="Fin" x="663" y="412" width="132" height="36"/>
+</root-container>

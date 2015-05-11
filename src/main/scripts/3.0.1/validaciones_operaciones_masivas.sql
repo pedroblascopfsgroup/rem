@@ -1,0 +1,2 @@
+update DD_OPM_OPERACION_MASIVA set DD_OPM_VALIDACION_FORMATO = 'n*,s*,n*,s,s,n*,s*,n*,n,i*' where DD_OPM_CODIGO='AAS';
+update DD_OPM_OPERACION_MASIVA set DD_OPM_VALIDACION_FORMATO = 'n*,s*,n*,s,s,n*,b*,b*' where DD_OPM_CODIGO='ALO';

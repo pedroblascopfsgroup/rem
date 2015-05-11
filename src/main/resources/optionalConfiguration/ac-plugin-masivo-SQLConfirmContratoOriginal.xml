@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+	
+<bean class="es.pfsgroup.plugin.recovery.masivo.bvfactory.impl.validators.querys.MSVFactoriaQuerysSQLConfirmContratoOriginal">
+	<property name="configValidacionNumContrato">
+		<map>			
+			<entry key="0" value-ref="MSVSQLOk"/>
+			<entry key="1" value-ref="MSVSQLNoCnt"/>
+			<entry key="2" value-ref="MSVSQLNoPRC"/>
+			<entry key="3" value-ref="MSVSQLPRCtipo"/>
+			<entry key="4" value-ref="MSVSQLNoTarActiva"/>
+			<entry key="5" value-ref="MSVSQLNoTarPRC"/>
+			<entry key="6" value-ref="MSVSQLVAriosProcBO"/>
+		</map>
+	</property>
+  	<property name="sqlValidacionNumContrato"><value>
+  		<![CDATA[SELECT CASE
+          WHEN (
+                   SELECT COUNT(cnt2.cnt_id)
+                     FROM cnt_contratos cnt2
+                    WHERE cnt2.cnt_contrato = VALUETOKEN
+                          AND cnt2.borrado = 0) = 0
+             THEN 1                         /*Que exista el contrato*/
+          WHEN (
+                   SELECT COUNT(cnt2.cnt_id)
+                     FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                          ON cnt2.cnt_id = cex2.cnt_id
+                          JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                          JOIN prc_procedimientos prc2
+                          ON prc_cex.prc_id = prc2.prc_id
+                    WHERE cnt2.cnt_contrato = VALUETOKEN
+                          AND prc2.borrado = 0) = 0
+             THEN 2                    /*Que exista el procedimiento*/
+          WHEN (
+                 SELECT COUNT(cnt2.cnt_id)
+                   FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                        ON cnt2.cnt_id = cex2.cnt_id
+                        JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                        JOIN prc_procedimientos prc2
+                        ON prc_cex.prc_id = prc2.prc_id
+                        JOIN dd_tpo_tipo_procedimiento tpo2
+                        ON prc2.dd_tpo_id = tpo2.dd_tpo_id
+                  WHERE cnt2.cnt_contrato = VALUETOKEN
+                    AND tpo2.dd_tpo_codigo = 'P71') = 0
+             THEN 3                   /*Que el procedimiento sea el correcto*/
+          WHEN (
+                 SELECT COUNT(cnt2.cnt_id)
+                   FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                        ON cnt2.cnt_id = cex2.cnt_id
+                        JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                        JOIN prc_procedimientos prc2
+                        ON prc_cex.prc_id = prc2.prc_id
+                        JOIN dd_tpo_tipo_procedimiento tpo2
+                        ON prc2.dd_tpo_id = tpo2.dd_tpo_id
+                        JOIN tar_tareas_notificaciones tar2
+                        ON prc2.prc_id = tar2.prc_id
+                  WHERE cnt2.cnt_contrato = VALUETOKEN
+                    AND tpo2.dd_tpo_codigo = 'P71'
+                    AND (   tar2.tar_tarea_finalizada IS NULL
+                         OR tar2.tar_tarea_finalizada = 0
+                        )
+                    AND tar2.borrado = 0) = 0
+             THEN 4            /*Que el procedimiento tenga una tarea activa*/
+          WHEN (
+             SELECT COUNT(cnt2.cnt_id)
+                   FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                        ON cnt2.cnt_id = cex2.cnt_id
+                        JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                        JOIN prc_procedimientos prc2
+                        ON prc_cex.prc_id = prc2.prc_id                       
+                        JOIN tar_tareas_notificaciones tar2
+                        ON prc2.prc_id = tar2.prc_id
+                        JOIN TEX_TAREA_EXTERNA TEX2 ON TAR2.TAR_ID = TEX2.TAR_ID
+                        JOIN TAP_TAREA_PROCEDIMIENTO TAP2 ON TEX2.TAP_ID = TAP2.TAP_ID
+                  WHERE cnt2.cnt_contrato = VALUETOKEN                   
+                    AND TAP2.TAP_CODIGO = 'P71_ConfirmarRecepcionContrato'
+                    AND tap2.borrado = 0) = 0
+             THEN 5         /*Que la tarea sea del tipo correcto */
+             WHEN (
+             SELECT count (distinct prc2.prc_id)
+                   FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                        ON cnt2.cnt_id = cex2.cnt_id
+                        JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                        JOIN prc_procedimientos prc2
+                        ON prc_cex.prc_id = prc2.prc_id  and prc2.borrado=0
+                        join asu_asuntos asu on asu.asu_id=prc2.asu_id
+                        join linmaster.dd_eas_estado_asuntos eas on eas.dd_eas_id=asu.dd_eas_id and eas.DD_EAS_CODIGO in ('03', '08')
+                        join dd_tpo_tipo_procedimiento tpo on tpo.dd_tpo_id=prc2.dd_tpo_id and tpo.dd_tpo_codigo='P71'
+                        join linmaster.dd_epr_estado_procedimiento epr on epr.DD_EPR_ID=prc2.DD_EPR_ID and epr.DD_EPR_CODIGO in ('03' , '06', '09')                     
+                  WHERE cnt2.cnt_contrato = VALUETOKEN                  
+                    ) > 1
+             THEN 6  
+          ELSE 0
+       END RESULT
+  FROM DUAL]]>
+  	</value></property>
+  </bean> 
+ 
+</beans>	
+

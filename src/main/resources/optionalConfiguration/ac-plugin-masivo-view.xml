@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<!-- Bruno 20/2/2013: Esto habría que borrarlo <bean p:entity="tabs.asuntos" 
+		p:name="infoJudicialSidhi" p:order="3000" p:fileName="/WEB-INF/jsp/plugin/sidhiweb/asunto/tabs/tabInfoJudicialAsuntoSidhi.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="INFOJUDICIAL_SIDHI"/> <bean p:entity="tabs.asuntos" p:name="actuacionesNoProcesables" 
+		p:order="3500" p:fileName="/WEB-INF/jsp/plugin/sidhiweb/asunto/tabs/tabActuacionesNoProc.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ACTUACIONES_ADICIONAL"/> <bean p:entity="tabs.expediente" p:name="informacionJudicialExpSidhi" 
+		p:order="1500" p:fileName="/WEB-INF/jsp/plugin/sidhiweb/expedientes/tabs/tabInfoJudicialExpSidhi.jsp" 
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="INFOJUDICIAL_SIDHI"/> <bean p:entity="tabs.expediente" p:name="actuacionesNoProcesablesExp" 
+		p:order="1600" p:fileName="/WEB-INF/jsp/plugin/sidhiweb/expedientes/tabs/tabActuacionesNoProcExp.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="ACTUACIONES_ADICIONAL"/> -->
+
+
+	<bean p:entity="menu" p:name="masivo" p:order="500"
+		p:fileName="/WEB-INF/jsp/plugin/masivo/menu/menuMasivo.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="MENU_MASIVO_GENERAL" />
+
+	<bean p:entity="menu" p:name="masivo/procesadoTareas" p:order="510"
+		p:fileName="/WEB-INF/jsp/plugin/masivo/menu/procesadoTareasArchivo-menu.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="PROCESADO_TAREAS" />
+
+	<bean p:entity="menu" p:name="masivo/procesadoArchivos" p:order="511"
+		p:fileName="/WEB-INF/jsp/plugin/masivo/menu/procesadoResoluciones-menu.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="PROCESADO_RESOLUCIONES" />
+
+	<bean parent="clasesDiccionarioAnotadas">
+		<property name="sourceList">
+			<list merge="true">
+				<value>es.pfsgroup.plugin.recovery.masivo.model.MSVDDEsperarContinuar
+				</value>
+				<value>es.pfsgroup.plugin.recovery.masivo.model.MSVDDRequerimientoPrevio
+				</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<util:properties id="masivoProperties"
+		location="classpath:masivoProperties.properties" />
+
+	<!-- Bruno 28/2/2013 Librería JS del controlador asíncrono -->
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsControladorAsincrono" p:order="1"
+		p:fileName="../js/plugin/masivo/ControladorAsincrono.js" p:priority="0"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsFactoriaFormularios" p:order="2"
+		p:fileName="../js/plugin/masivo/FactoriaFormularios.js" p:priority="0"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsColumnHeaderGroup" p:order="3"
+		p:fileName="../js/plugin/masivo/ux/ColumnHeaderGroup.js" p:priority="0"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsRowExpander" p:order="4" p:fileName="../js/plugin/masivo/ux/RowExpander.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssProcesadoMasivo" p:order="1"
+		p:fileName="../js/plugin/masivo/css/procesadoResoluciones.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<!-- Pedro 07/03/2013 Botón de acceso desde Asuntos al Generador de Plantillas -->
+	<!-- Comento la parte de permiso: cualquiera verá el botón Generar Escritos: 
+		he quitado esto p:permission="PANEL_LINDORFF"		 
+		Óscar 04/11/2014 Se oculta este botón para producto-->
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="generarPlantilla"
+		p:order="8" p:fileName="/WEB-INF/jsp/plugin/masivo/buttons/btnGenerarPlantilla.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_GENERAR_ESCRITOS"/>
+		
+	<!-- Manuel:14/03/2013 botón para acceder a la ventana de notificar demandados 
+		desde un procedimiento -->
+	<!-- Pedro:21/06/2013 elimino este bloque porque la ventana estará disponible 
+		desde la ficha de procedimiento -->
+	<!-- o desde el formulario del input correspondiente -->
+	<!-- <bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="accesoDemandados" -->
+	<!-- p:order="100" -->
+	<!-- p:fileName="/WEB-INF/jsp/plugin/masivo/notificacionDemandados/buttons/accesoNotificacionDemandados.jsp" -->
+	<!-- class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+
+	<!-- Carlos:06/06/2013 tab historico tareas y resoluciones -->
+	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"
+		p:order="900"
+		p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<!-- Carlos tab historico tareas y resoluciones para asuntos -->
+	
+	<bean p:entity="tabs.asunto.fast" p:name="historicoAsunto"
+		p:order="2000"
+		p:fileName="/WEB-INF/jsp/plugin/masivo/asuntos/tabs/tabHistoricoAsuntoResoluciones.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+			
+
+	<!-- Pedro:20/06/2013 pestaña de notificación de demandados de un procedimiento -->
+	<!-- DGG:12/09/2014 añadimos permiso para diferenciar de la de bankia -->
+	
+	<bean p:entity="tabs.procedimiento.fast" p:name="notificacionDemandados"
+		p:order="2100"
+		p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabNotificacionDemandados.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB-NOTIFICACION-DEMANDADOS-MSV"
+	/>
+	
+	<!-- DGG:12/09/2014 pestaña de notificación de demandados bankia de un procedimiento -->	
+	<bean p:entity="tabs.procedimiento.fast" p:name="notificacionDemandadosV4"
+        p:order="2200"
+        p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabNotificacionDemandadosV4.jsp"
+        p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+        p:permission="TAB-NOTIFICACION-DEMANDADOS-v4"
+    />	
+
+
+	 <!-- Pedro: botón para el maestro de configuración de impulsos automaticos -->
+	 <bean p:entity="menu" p:name="configuracion/confImpulso" p:order="700"
+		p:fileName="/WEB-INF/jsp/plugin/masivo/confImpulso/menu/confImpulso-menu.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_CONFIMPULSOS"
+		/>
+
+</beans>	
+

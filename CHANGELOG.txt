@@ -1,0 +1,131 @@
+ ----------------------------
+ | RECOVERY - PLUGIN MASIVO |
+ ----------------------------
+### VERSION 2.2.6_fase2 ####
+	* Merge Bankia - Lindorff
+ 
+### VERSION 2.3.0-rc1
+VICENTE:
+	* LPR-120 Limpieza y revisi�n del c�digo de los plugins de Lindorff
+
+### VERSION 2.1.3
+DIANA:
+	* Modificaci�n en las validaciones de tareas masivas de BO para que comprueben que s�lo hay un porocedimiento activo de ese tipo
+DIANA: 
+	* Cambio en el sql de validaci�n de alta de lotes para que deje crear lotes de un contrato que tiene asuntos creados pero cerrados
+	* Cambios en la ventana de procesado resoluciones para que al adjuntar un fichero se indique el tipo de documento adjunto
+ NOTA: se cambia la versi�n del pom para que dependa de la versi�n 1.2.0_rc1 del masivo-common 
+CARLOS: Se quita la validaci�n del tipo de procedimiento del envio masivo a impresion
+ 
+### VERSION 2.1.2_rc1 ###
+
+- PEDRO: Mantenimiento de Configuraciones de Impulsos Autom�ticos
+
+ 
+### VERSION 2.0.3-lin-2013-NOV-23_rc1 ###
+
+- DIANA: Nuevos formularios en la factoria de formularios para t�mite de costas cuando Lindorff es condenado a costas.
+
+- A�adido a la factoria de formulario un id para identificar unitariamente a cada campo de cada formulario.
+
+### VERSION 2.0.3-lin-2013-oct-31_rc1 ###
+
+- Nuevo m�todo MSVProcesadoResolucionesController.getDatosAdicionales, permite recuperar los datos
+	adicionales de un procedimiento. �til para mostrar cualquier dato introducido mediante
+	un input.
+	
+- Nuevo proceso masivo: alta de cartera judicializada.	
+
+### VERSION 2.2.5-rc2_bankia_fase2 ###
+
+-	La pestaña de notificaciones a demandados dentro del procedimiento ahora tiene un permiso:
+
+	TAB-NOTIFICACION-DEMANDADOS-MSV -> version antigua
+	TAB-NOTIFICACION-DEMANDADOS-v4 -> v4 (bankia)
+	
+	Uno de los dos es necesario o no aparecera la pestaña.
+
+### VERSION 2.0.3-lin-2013-sep-27_rc1 ###
+
+- Mejorada la recuperaci�n de las celdas del excel en caso de que el dato sea fecha. 
+
+- Incorporamos nueva operaci�n masiva: Redacci�n Demanda de ETJ (con validaci�n, carga y procesamiento).
+
+- Incorporamos nueva operaci�n masiva: Impulso Procesal (con validaci�n, carga y procesamiento).
+
+- Las listas devueltas por MSVDiccionarioManager pasan a estar ordenadas siempre por descripci�n (alfab�ticamente).
+ 
+- Se permite insertar inputs informativos en procedimientos sin tareas activas desde el procesado de resoluciones. 
+	Configurar en "bpm_tpi_tipo_proc_input" los nodos incluidos o excluidos a�adiendo el nodo "NONEXISTENT".
+	
+- Se ha cambiado el bpm de preparacionEnvioDemandaMonitorio.xml al plugin de recovery-lindorff-common porque tiene que hacer uso de �l el batch	
+- Se ha movido el paquete inputHandler al plugin de recovery-lindorff-common, estas clases no se estaban utilizando en este plugin
+
+- Nueva Operaci�n masiva "Lanzamiento ETJ desde Fin de Monitorio"
+
+### VERSION 2.0.2_rc32 ###
+ Al introducir un nuevo icono para Procesado de Resoluciones hay que copiar manualmente estos ficheros:
+ - application_form_add.gif
+ - application_form_add.png
+ A la carpeta correspondiente $TOMCAT_HOME/webapps/pfs/css 
+ Y adem�s, incluir estas l�neas en el fichero app.css de esta misma carpeta:
+	.icon_resoluciones{
+	  background: transparent url('application_form_add.png') no-repeat;
+	}
+	* html .icon_resoluciones{
+	  background: transparent url('application_form_add.gif') no-repeat;
+	}
+
+- Aparecen todas las resoluciones desplegadas en el historico
+- Se a�ade bot�n para desplegar y contraer todas las resoluciones
+- Se a�aden m�s campos para mostrar en el grid del historico de resoluciones 
+
+### VERSION 2.0.2_rc27 ###
+- Se incluye el campo tipo de procedimiento y estado del procedimiento en la ventana de resoluciones
+- En el buscador de asuntos de la ventana resoluciones se muestra el icono del estado del procedimiento
+- Se modifican los estilos para mejorar la apariencia en IE y hacer las cajas de texto m�s grandes
+
+
+#### VERSION 2.0.2_rc22 ####
+- A�adir botones para visualizar el asunto y prc desde la ventana de resoluciones.
+- Se incluyen las modificaciones necesarias para que se pueda obtener 
+un tipo de input a partir de una funci�n de negocio para Requerimiento
+de Pago, Oficios de Localizaci�n y Solicitud de Horario Nocturno. 
+
+
+#### VERSION 2.0.2_rc20 #### 19/06/2013
+- Modificaciones para obtener inputs por funcion de negocio.
+
+
+#### VERSION 2.0.2_rc19 #### 18/06/2013
+- Historico de resoluciones en procedimientos/asuntos
+
+
+### VERSION 2.0.2_rc18 ### 18/06/2013
+- Resoluci�n de varias incidencias.
+
+
+### VERSION 2.0.2_rc4 ### 16/05/2013
+
+- Las ventanas masivas muestran el nombre del fichero que se sube.
+- La subida de ficheros se hace en background.
+- Los fichero se guardan en una tabla auxiliar y luego se copian al objeto que sea necesario.
+
+
+### VERSION 2.0.2_rc3 ### 10/05/2013
+
+- Se a�aden tipos de resoluciones para otros procedimientos distintos de Monitorio
+- Se cargan los combos de plazas, juzgados, demandados, bienes y domicilios
+- Procesado masivo de reorganizaciones de asuntos mediante fichero excel
+- Procesado masivo de Cancelaciones de asuntos mediante fichero excel
+- Procesado masivo de Paralizaciones de asuntos mediante fichero excel
+
+
+### VERSION 2.0.2_rc2 #### 10/05/2013
+
+- Cuando se libera un ficho cuyo tipo de operaci�n es alta de asuntos o lotes 
+  se copian los datos en tablas de la base de datos.
+- Corregida la fecha de creaci�n en el listado de operaciones masivas.
+- Se a�ade el procesado real a la pantalla de resoluciones. 
+- Correcci�n de errores.
+- Cambios en los tests.

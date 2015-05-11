@@ -1,0 +1,68 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="771" measuredH="372" mockupW="771" mockupH="372">
+  <controls>
+    <control controlID="68" controlTypeID="com.balsamiq.mockups::TitleWindow" x="0" y="0" w="771" h="372" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Notificaci%F3n%20demandados</text>
+      </controlProperties>
+    </control>
+    <control controlID="70" controlTypeID="com.balsamiq.mockups::Button" x="488" y="306" w="-1" h="-1" measuredW="118" measuredH="27" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Not.%20en%20domicilio</text>
+      </controlProperties>
+    </control>
+    <control controlID="71" controlTypeID="com.balsamiq.mockups::Button" x="621" y="306" w="-1" h="-1" measuredW="120" measuredH="27" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Solicitud%20edictos</text>
+      </controlProperties>
+    </control>
+    <control controlID="73" controlTypeID="com.balsamiq.mockups::Label" x="221" y="140" w="356" h="-1" measuredW="336" measuredH="126" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>40</size>
+        <state>disabled</state>
+        <text>Gid%20de%20s%F3lo%20lectura</text>
+        <textOrientation>slanted</textOrientation>
+      </controlProperties>
+    </control>
+    <control controlID="74" controlTypeID="__group__" x="15" y="32" w="741" h="262" measuredW="741" measuredH="262" zOrder="1" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::DataGrid" x="88" y="0" w="621" h="29" measuredW="426" measuredH="29" zOrder="0" locked="false" isInGroup="74">
+          <controlProperties>
+            <alternateRowColor>16777215</alternateRowColor>
+            <borderStyle>none</borderStyle>
+            <color>16777215</color>
+            <hasHeader>false</hasHeader>
+            <rowHeight>24</rowHeight>
+            <text>%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2CRequerimiento%20de%20pago%2C%20Tr%E1mite%20de%20notificaci%F3n</text>
+            <verticalScrollbar>false</verticalScrollbar>
+            <vLines>false</vLines>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="com.balsamiq.mockups::DataGrid" x="88" y="21" w="620" h="29" measuredW="501" measuredH="35" zOrder="1" locked="false" isInGroup="74">
+          <controlProperties>
+            <borderStyle>none</borderStyle>
+            <hasHeader>false</hasHeader>
+            <text>%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2CPositivo%20%20%20%20%20%20%20%20%20%20%2C%20Negativo%20%20%20%20%20%20%20%20%2C%20Av.%20domiciliaria%2C%20Req.%20edictal</text>
+            <vLines>false</vLines>
+          </controlProperties>
+        </control>
+        <control controlID="3" controlTypeID="com.balsamiq.mockups::DataGrid" x="55" y="50" w="686" h="35" measuredW="668" measuredH="35" zOrder="2" locked="false" isInGroup="74">
+          <controlProperties>
+            <borderStyle>none</borderStyle>
+            <hasHeader>false</hasHeader>
+            <text>Intervinientes%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20H.%20Nocturno%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20Solicitud%2C%20Resultado%2C%20Solicitud%2C%20Resultado%20</text>
+            <vLines>false</vLines>
+          </controlProperties>
+        </control>
+        <control controlID="4" controlTypeID="com.balsamiq.mockups::DataGrid" x="0" y="76" w="728" h="186" measuredW="541" measuredH="185" zOrder="3" locked="false" isInGroup="74">
+          <controlProperties>
+            <borderStyle>square</borderStyle>
+            <hasHeader>false</hasHeader>
+            <hLines>true</hLines>
+            <text>Demandado%201%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20Si%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%0ADemandado%202%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20No%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%0ADemandado%203%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20No%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%0ADemandado%204%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20No%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%0ADemandado%205%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20No%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%0ADemandado%206%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20No%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%2C%20%20%20%20%20%20%20%20%20%20%20</text>
+            <vLines>true</vLines>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+  </controls>
+</mockup>

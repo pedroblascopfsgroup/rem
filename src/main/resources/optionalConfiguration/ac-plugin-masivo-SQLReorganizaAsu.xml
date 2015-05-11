@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+	
+<bean class="es.pfsgroup.plugin.recovery.masivo.bvfactory.impl.validators.querys.MSVFactoriaQuerysSQLReorganizaAsu">
+	<property name="configValidacionNumContrato">
+		<map>			
+			<entry key="0" value-ref="MSVSQLOk"/>
+			<entry key="1" value-ref="MSVSQLNoCnt"/>
+			<entry key="2" value-ref="MSVSQLNoASU"/>			
+		</map>
+	</property>
+  	<property name="sqlValidacionNumContrato"><value>
+  		<![CDATA[SELECT CASE
+          WHEN (
+                   SELECT COUNT(cnt2.cnt_id)
+                     FROM cnt_contratos cnt2
+                    WHERE cnt2.cnt_contrato = VALUETOKEN
+                          AND cnt2.borrado = 0) = 0
+             THEN 1                         /*Que exista el contrato*/
+          WHEN (
+                   SELECT count(asu2.asu_id)
+					  FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+					       ON cnt2.cnt_id = cex2.cnt_id
+					       JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+					       JOIN prc_procedimientos prc2 ON prc_cex.prc_id = prc2.prc_id
+					       JOIN asu_asuntos asu2 ON asu2.asu_id = prc2.asu_id
+					 WHERE cnt2.cnt_contrato = VALUETOKEN
+					   AND asu2.borrado = 0
+					   AND asu2.dd_eas_id NOT IN
+					          ((SELECT eas5.dd_eas_id
+					              FROM linmaster.dd_eas_estado_asuntos eas5
+					             WHERE eas5.dd_eas_codigo = '05'),
+					           (SELECT eas6.dd_eas_id
+					              FROM linmaster.dd_eas_estado_asuntos eas6
+					             WHERE eas6.dd_eas_codigo = '06')
+					          )) = 0
+             THEN 2                    /*Que exista el asunto y este activo*/
+          ELSE 0
+       END RESULT
+  FROM DUAL]]>
+  	</value></property>
+  	<property name="configValidacionIdTarea">
+		<map>			
+			<entry key="0" value-ref="MSVSQLOk"/>
+			<entry key="1" value-ref="MSVSQLNoTapTarea"/>
+			<entry key="2" value-ref="MSVSQLNoTarReorg"/>
+			<entry key="3" value-ref="MSVSQLPRCtipo"/>
+		</map>
+	</property>
+  	<property name="sqlValidacionIdTarea"><value>
+  		<![CDATA[SELECT CASE
+          WHEN (SELECT COUNT(TAP_ID) FROM tap_tarea_procedimiento WHERE tap_id = VALUETOKEN) = 0
+             THEN 1 /*Que exista el tipo de tarea*/
+          WHEN (SELECT COUNT(TAP_ID) FROM tap_tarea_procedimiento WHERE tap_id = VALUETOKEN AND (tap_evitar_reorg is null or tap_evitar_reorg <> 1)) = 0
+             THEN 2 /*Que el tipo de tarea se pueda reorganizar*/
+          WHEN (SELECT COUNT(TAP_ID) FROM tap_tarea_procedimiento WHERE tap_id = VALUETOKEN AND DD_TPO_ID in (SELECT DD_TPO_ID from dd_tj_tipo_juicio)) = 0
+             THEN 3 /*Que el tipo de tarea pertenezca a uno de los procedimientos controlados*/
+          ELSE 0
+       END RESULT
+  FROM DUAL]]>
+  	</value></property>
+  </bean>
+
+	<util:map id="mapaErroreSQLReorganizaAsus" key-type="java.lang.Integer"
+		value-type="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQL">
+		<entry key="0" value-ref="MSVSQLOk" />
+		<entry key="1" value-ref="MSVSQLNoTareaAnterior" />
+	</util:map>
+	
+	<bean class="es.pfsgroup.plugin.recovery.masivo.bvfactory.impl.validators.querys.MSVFactoriaMultiQuerySQLReorganizaAsu">
+		<property name="mapaCombinacionesValidacion">
+			<map key-type="java.lang.String">
+				<entry key="Num. Caso NOVA;Fecha">
+					<ref local="mapaErroreSQLReorganizaAsus"/>
+				</entry>
+			</map>
+		</property>
+		<property name="mapaSQLValidaciones">
+			<map>			
+				<entry key="Num. Caso NOVA;Fecha">
+				  	<value>
+				  		<![CDATA[SELECT CASE
+				          WHEN (SELECT count(asu2.asu_id)
+								FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+								ON cnt2.cnt_id = cex2.cnt_id
+								JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+								JOIN prc_procedimientos prc2 ON prc_cex.prc_id = prc2.prc_id
+								JOIN asu_asuntos asu2 ON asu2.asu_id = prc2.asu_id
+								JOIN tar_tareas_notificaciones tar2 on tar2.ASU_ID = asu2.ASU_ID
+								WHERE cnt2.cnt_contrato = VALUETOKEN0
+									and tar2.TAR_TAREA_FINALIZADA is null
+									and tar2.TAR_FECHA_INI >= TO_DATE('VALUETOKEN1', 'dd/MM/yyyy')) > 0
+							THEN 1 /*Que no hayan tareas posteriores a la fecha de cambio solicitada*/
+				          ELSE 0
+				          END RESULT
+	 			          FROM DUAL]]>
+				  	</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+ 
+</beans>	
+

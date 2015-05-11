@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+	
+<bean class="es.pfsgroup.plugin.recovery.masivo.bvfactory.impl.validators.querys.MSVFactoriaQuerysSQLLanzaETJdesdeFM">
+	<property name="configValidacionNumContrato">
+		<map>			
+			<entry key="0" value-ref="MSVSQLOk"/>
+			<entry key="1" value-ref="MSVSQLNoCnt"/>
+			<entry key="2" value-ref="MSVSQLNoPRC"/>
+			<entry key="3" value-ref="MSVSQLPRCtipo"/>
+			<entry key="4" value-ref="MSVSQLNoFM"/>
+			<entry key="5" value-ref="MSVSQLpendienteETJ"/>
+			<entry key="6" value-ref="MSVSQLExisteCntPendiente"/>
+		</map>
+	</property>
+  	<property name="sqlValidacionNumContrato"><value>
+  		<![CDATA[SELECT CASE
+          WHEN (
+                   SELECT COUNT(cnt2.cnt_id)
+                     FROM cnt_contratos cnt2
+                    WHERE cnt2.cnt_contrato = VALUETOKEN
+                          AND cnt2.borrado = 0) = 0
+             THEN 1                         /*Que exista el contrato*/
+          WHEN (
+		          SELECT COUNT (cnt2.cnt_id)
+					  FROM cnt_contratos cnt2 INNER JOIN cex_contratos_expediente cex2
+					       ON cnt2.cnt_id = cex2.cnt_id
+					       INNER JOIN asu_asuntos asu2
+					       ON cex2.exp_id = asu2.exp_id
+					     AND asu2.dd_eas_id = (SELECT eas.dd_eas_id
+					                             FROM linmaster.dd_eas_estado_asuntos eas
+					                            WHERE eas.dd_eas_codigo = '08')
+					 WHERE cnt2.cnt_contrato = VALUETOKEN
+          		) = 0
+          	THEN 4						/*Que el asunto esté en fin de monitorio*/
+          WHEN (
+                   SELECT COUNT(cnt2.cnt_id)
+                     FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                          ON cnt2.cnt_id = cex2.cnt_id
+                          INNER JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                          INNER JOIN prc_procedimientos prc2 
+                          ON prc_cex.prc_id = prc2.prc_id AND prc2.borrado = 0
+                    WHERE cnt2.cnt_contrato = VALUETOKEN
+                ) = 0
+             THEN 2                    /*Que exista el procedimiento*/
+          WHEN (
+                 SELECT COUNT(cnt2.cnt_id)
+                   FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                        ON cnt2.cnt_id = cex2.cnt_id
+                        INNER JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                        INNER JOIN prc_procedimientos prc2
+                        ON prc_cex.prc_id = prc2.prc_id
+                        INNER JOIN dd_tpo_tipo_procedimiento tpo2
+                        ON prc2.dd_tpo_id = tpo2.dd_tpo_id AND tpo2.dd_tpo_codigo = 'P70'
+                  WHERE cnt2.cnt_contrato = VALUETOKEN
+                 ) = 0
+             THEN 3                   /*Que el procedimiento sea el correcto*/
+            WHEN (
+            		SELECT COUNT (cnt2.cnt_id)
+					  FROM cnt_contratos cnt2 INNER JOIN cex_contratos_expediente cex2
+					       ON cnt2.cnt_id = cex2.cnt_id
+					       INNER JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+					       INNER JOIN prc_procedimientos prc2 ON prc_cex.prc_id = prc2.prc_id
+					       INNER JOIN dd_tpo_tipo_procedimiento tpo2
+					       ON prc2.dd_tpo_id = tpo2.dd_tpo_id AND tpo2.dd_tpo_codigo = 'P70'
+					       INNER JOIN tar_tareas_notificaciones tar2
+					       ON prc2.prc_id = tar2.prc_id
+					     AND (tar2.tar_tarea_finalizada IS NULL OR tar2.tar_tarea_finalizada = 0)
+					 WHERE cnt2.cnt_contrato = VALUETOKEN
+            	 ) > 0      		
+            THEN 4					/*Que el asunto esté en Fin de Monitorio, sin tareas activas*/
+            WHEN (
+            		SELECT count(b.BPM_IPT_ID)
+					  FROM bpm_pet_peticiones_batch b INNER JOIN bpm_ipt_input ipt
+					       ON b.bpm_ipt_id = ipt.bpm_ipt_id
+					       INNER JOIN bpm_dd_tin_tipo_input tin
+					       ON ipt.bpm_dd_tin_id = tin.bpm_dd_tin_id
+					     AND tin.bpm_dd_tin_codigo = 'LANZAR_ETJ_DESDE_FM'
+					       INNER JOIN prc_procedimientos prc ON ipt.prc_id = prc.prc_id
+					       INNER JOIN dd_tpo_tipo_procedimiento tpo
+       						ON prc.dd_tpo_id = tpo.dd_tpo_id AND tpo.dd_tpo_codigo = 'P70'
+					       INNER JOIN prc_cex pcex ON prc.prc_id = pcex.prc_id
+					       INNER JOIN cex_contratos_expediente cex ON pcex.cex_id = cex.cex_id
+					       INNER JOIN cnt_contratos cnt
+					       ON cex.cnt_id = cnt.cnt_id AND cnt.cnt_contrato = VALUETOKEN
+					 WHERE b.bpm_pet_procesado = 0
+					) > 0
+            THEN 5					/*Que no esté pendiente de lanzamiento ETJ*/
+            WHEN(
+            		SELECT COUNT (lotes.n_caso)
+						 FROM lin_lotes_nuevos lotes 
+						 WHERE lotes.n_caso = VALUETOKEN AND lotes.creado = 'N') <> 0
+             THEN 6                 /*Que el número de caso no esté pendiente de crear*/
+          ELSE 0
+       END RESULT
+  FROM DUAL]]>
+  	</value></property>
+  </bean> 
+ 
+</beans>	
+

@@ -1,0 +1,116 @@
+.lista_procesos_procesando {
+    background-image: url('../../../../img/plugin/masivo/loading.gif');
+    background-repeat:no-repeat;background-position:right;
+}
+.lista_procesos_procesado {
+    background-image: url('../../../../img/plugin/masivo/accept.gif');
+    background-repeat:no-repeat;background-position:right;
+}
+.lista_procesos_ptevalidar {
+	background-image: url('../../../../img/plugin/masivo/estadosPrc/paralizado.png');
+	background-repeat:no-repeat;background-position:right;
+}
+    .lista_procesos_error {
+    background-image: url('../../../../img/plugin/masivo/cancel.gif');
+    background-repeat:no-repeat;background-position:right;
+}
+
+.tipo_accion_INFO {
+    background-image: url('../../../../img/plugin/masivo/Save_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+.tipo_accion_INFO_RECALCULAR {
+    background-image: url('../../../../img/plugin/masivo/Clock_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+.tipo_accion_GDOC {
+    background-image: url('../../../../img/plugin/masivo/Copy_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+.tipo_accion_FORWARD {
+    background-image: url('../../../../img/plugin/masivo/Redo_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+.tipo_accion_ADVANCE {
+    background-image: url('../../../../img/plugin/masivo/Play_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+.tipo_accion_UPLOAD {
+	background-image: url('../../../../img/plugin/masivo/Save_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+.tipo_accion_AUTOPRORROGA {
+    background-image: url('../../../../img/plugin/masivo/Clock_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+
+.tipo_accion_TAREAS {
+    background-image: url('../../../../img/plugin/masivo/Copy_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+
+
+.tipo_accion_AUTOTAREA {
+    background-image: url('../../../../img/plugin/masivo/Copy_16x16.png');
+    background-repeat:no-repeat;background-position:left;
+}
+
+.tipo_accion_COMUNICACION {
+    background-image: url('../../../../img/plugin/masivo/building_edit.png');
+    background-repeat:no-repeat;background-position:left;
+}
+
+
+.cssEstadoProcedimiento { padding: 20px 10px; background-repeat:no-repeat;background-position:left;}
+
+.cssEstadoProcedimiento00 { background-image: url('../../../../img/plugin/masivo/estadosPrc/paralizado.png');}
+.cssEstadoProcedimiento01 { background-image: url('../../../../img/plugin/masivo/estadosPrc/propuesto.png');}
+.cssEstadoProcedimiento02 { background-image: url('../../../../img/plugin/masivo/estadosPrc/confirmado.png');}
+.cssEstadoProcedimiento03 { background-image: url('../../../../img/plugin/masivo/estadosPrc/aceptado.png');}
+.cssEstadoProcedimiento04 { background-image: url('../../../../img/plugin/masivo/estadosPrc/cancelado.png');}
+.cssEstadoProcedimiento05 { background-image: url('../../../../img/plugin/masivo/estadosPrc/cerrado.png');}
+.cssEstadoProcedimiento06 { background-image: url('../../../../img/plugin/masivo/estadosPrc/derivado.png');}
+.cssEstadoProcedimiento07 { background-image: url('../../../../img/plugin/masivo/estadosPrc/conformacion.png');}
+.cssEstadoProcedimiento08 { background-image: url('../../../../img/plugin/masivo/estadosPrc/pend_reorganizar.png');}
+.cssEstadoProcedimiento09 { background-image: url('../../../../img/plugin/masivo/estadosPrc/reorganizado.png');}
+.cssEstadoProcedimiento10 { background-image: url('../../../../img/plugin/masivo/estadosPrc/fallido.png');}
+.cssEstadoProcedimiento11 { background-image: url('../../../../img/plugin/masivo/estadosPrc/aceptado.png');}
+.cssEstadoProcedimiento12 { background-image: url('../../../../img/plugin/masivo/estadosPrc/cedido.png');}
+
+.searchMatch {
+    font-style: italic;
+    font-weight: bold;
+    background-color: yellow;
+}
+button.icon_expand {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url('../../../../img/plugin/masivo/expand.gif');
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+}
+
+button.icon_collapse {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url('../../../../img/plugin/masivo/collapse.gif');
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+} 
+
+
+.icon_resoluciones{
+  background: transparent url('../../../../img/plugin/masivo/application_form_add.png') no-repeat;
+}
+
+* html .icon_resoluciones{
+  background: transparent url('../../../../img/plugin/masivo/application_form_add.gif') no-repeat;
+}
+	
+	

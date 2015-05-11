@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<!--  
+ 	<bean id="procedimientoMonitorioMasivo.P70_InterposicionDemanda" class="es.pfsgroup.plugin.recovery.masivo.inputHandlers.MSVGenararInputActionHandler">
+	</bean>
+	<bean id="procedimientoMonitorioMasivo.P70_ConfirmarAdmisionDemanda" class="es.pfsgroup.plugin.recovery.masivo.inputHandlers.MSVGenararInputActionHandler">
+	</bean>
+ 	<bean id="procedimientoMonitorioMasivo.P70_ConfirmarReqPrevioTodosDemandados" class="es.pfsgroup.plugin.recovery.masivo.inputHandlers.MSVGenararInputActionHandler">
+	</bean>
+	<bean id="procedimientoMonitorioMasivo.P70_ConfirmarAutoFinMonitorio" class="es.pfsgroup.plugin.recovery.masivo.inputHandlers.MSVGenararInputActionHandler">
+	</bean>
+	<bean id="procedimientoMonitorioMasivo.P70_SolventarRequerimientoPrevio" class="es.pfsgroup.plugin.recovery.masivo.inputHandlers.MSVGenararInputActionHandler">
+	</bean>
+	-->
+	
+	<!-- Plugins movidos a lindorff-common -->
+<!-- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoMonitorioMasivo/procedimientoMonitorioMasivo.xml" p:version="18"/> -->
+<!-- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/ejecucionTituloJudicialMasivo/ejecucionTituloJudicialMasivo.xml" p:version="13"/> -->
+<!-- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteAveriguacionPorDemandado/tramiteAveriguacionPorDemandado.xml" p:version="6"/> -->
+<!-- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEmbargoPorBien/tramiteEmbargoPorBien.xml" p:version="5"/> -->
+<!-- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEmbargoSalarioLindorff/tramiteEmbargoSalarioLindorff.xml" p:version="1"/> -->
+<!-- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/ejecucionTituloNoJudicialMasivo/ejecucionTituloNoJudicialMasivo.xml" p:version="8"/> -->
+<!-- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteAveriguacionDesdeEtnj/tramiteAveriguacionDesdeEtnj.xml" p:version="5"/> -->
+	
+</beans>	

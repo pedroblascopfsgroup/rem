@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+
+	<bean id="MSVSQLOk" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLOK"/>
+	<bean id="MSVSQLNoCnt" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el contrato."/>
+	<bean id="MSVSQLNoPRC" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el procedimiento."/>
+	<bean id="MSVSQLPRCtipo" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El procedimiento no es del tipo correcto."/>
+	<bean id="MSVSQLNoTarActiva" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El procedimiento no tiene ninguna tarea activa."/>
+	<bean id="MSVSQLNoTarPRC" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="La tarea del procedimiento no es la correcta."/>
+	<bean id="MSVSQLNoASU" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe ningún asunto activo para este contrato."/>
+	<bean id="MSVSQLNoTapTarea" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe ningún tipo de tarea para este ID."/> 
+	<bean id="MSVSQLNoTarReorg" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="Este tipo de tarea no permite la reorganización."/> 
+	<bean id="MSVSQLNoPersonas" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El contrato no está relacionado con ninguna persona."/>
+	<bean id="MSVSQLExisteAsunto" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="Ya existe un asunto activo asociado a este contrato."/>
+	<bean id="MSVSQLExisteCntPendiente" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El contrato ya está pendienta de asociar a un asunto."/>	
+	<bean id="MSVSQLNoLetrado" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el letrado."/>
+	<bean id="MSVSQLNoGrupoGestores" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el grupo de gestores."/>
+	<bean id="MSVSQLNoTipoProcedimiento" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el tipo de procedimiento."/>
+	<bean id="MSVSQLNoDespacho" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el despacho."/>
+	<bean id="MSVSQLNoJuzgado" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el juzgado."/>
+	<bean id="MSVSQLNoPlaza" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe la plaza."/>
+	<bean id="MSVSQLNoProcurador" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el procurador."/>
+	<bean id="MSVSQLNoSituacionProcesal" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="La situación procesal no existe."/>
+	<bean id="MSVSQLNoFM" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El asunto no se encuentra en Fin de Monitorio."/>
+	<bean id="MSVSQLpendienteETJ" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El contrato ya está pendiente de alta lote ETJ."/>
+	<bean id="MSVSQLNoTareaAnterior" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No se puede reorganizar un procedimiento a una tarea anterior a la última procesada."/>
+	<bean id="MSVSQLVAriosProcBO" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="Existen varios procedimientos de BO activos para este contrato"/>
+</beans>
+

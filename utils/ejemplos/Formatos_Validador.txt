@@ -1,0 +1,2 @@
+-- Validador formato excel Alta Cartera
+n*,n*,n*,s,n,n,s*,b*,b*,n*,n*,i*,i*

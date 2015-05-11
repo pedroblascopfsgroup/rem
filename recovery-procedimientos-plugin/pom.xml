@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,107 +8,141 @@
 		<version>9.0.1-SNAPSHOT</version>
 	</parent>
 
-	<properties>
-		<project.build.sourceEncoding>ISO8859-1</project.build.sourceEncoding>
-	</properties>
-
 	<groupId>es.pfsgroup.plugin</groupId>
-	<artifactId>recovery-cambiosMasivosAsunto-plugin</artifactId>
+	<artifactId>recovery-procedimientos-plugin</artifactId>
+	<name>recovery-procedimientos-plugin</name>
 
 	<dependencies>
 		<dependency>
+			<artifactId>recovery-procedimientos-bpm</artifactId>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-core</artifactId>
+			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-hibernate</artifactId>
+			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-batch</artifactId>
+			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-bpm</artifactId>
 			<classifier>jdk16</classifier>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-web</artifactId>
 			<classifier>jdk16</classifier>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>1.0.0.GA</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>4.0.0.GA</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>spring-batch-core</artifactId>
 			<version>1.0.1.RELEASE</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>org.springframework.batch.infrastructure</artifactId>
 			<version>1.0.1.RELEASE</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>2.5.6</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
 			<artifactId>pfs-commons-java</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.2.2</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>pfs</groupId>
 			<artifactId>plugins</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-api-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup</groupId>
-			<artifactId>recovery-domain</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfs</groupId>
 			<artifactId>pfs-rec-core</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-api-plugin</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-coreextension-plugin</artifactId>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-mejoras-plugin</artifactId>
+			<groupId>es.pfsgroup</groupId>
+			<artifactId>recovery-domain</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
+			<groupId>javax.mail</groupId>
+			<artifactId>com.springsource.javax.mail</artifactId>
+			<version>1.4.1</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.context.support</artifactId>
+			<version>2.5.6.SEC01</version>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup</groupId>
-			<artifactId>pfs-tesfwk</artifactId>
 			<optional>true</optional>
 		</dependency>
+		 <dependency> 
+		 	<groupId>es.pfsgroup.plugin</groupId> 
+		 	<artifactId>recovery-mejoras-plugin</artifactId>   
+			<scope>provided</scope>
+			<optional>true</optional> 
+			</dependency> 
 	</dependencies>
 	<build>
 		<resources>
@@ -119,10 +153,10 @@
 				<directory>src\main\resources</directory>
 			</resource>
 			<resource>
-				<directory>src/web</directory>
+				<directory>src//web</directory>
 			</resource>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>src//main//resources</directory>
 			</resource>
 		</resources>
 		<plugins>

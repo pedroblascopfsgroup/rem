@@ -3,13 +3,11 @@
 
 	<parent>
 		<groupId>es.pfsgroup</groupId>
-		<artifactId>recovery-parent-pom</artifactId>
-		<version>0.0.29</version>
+		<artifactId>recovery</artifactId>
+		<version>9.0.1-SNAPSHOT</version>
 	</parent>
 
 	<properties>
-		<version>3.0.7</version>
-		<sufijo>-SNAPSHOT</sufijo>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -17,26 +15,22 @@
 	<groupId>es.pfsgroup.recovery</groupId>
 	<artifactId>rec-common</artifactId>
 	<packaging>jar</packaging>
-	<version>${version}${sufijo}</version>
 
 	<dependencies>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-core</artifactId>
-			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-hibernate</artifactId>
-			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-bpm</artifactId>
 			<classifier>jdk16</classifier>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -174,7 +168,6 @@
 		<dependency>
 			<groupId>es.pfsgroup.recovery</groupId>
 			<artifactId>rec-encrypt</artifactId>
-			<version>1.1.2_rc1</version>
 		</dependency>
 	</dependencies>
 
@@ -205,10 +198,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -270,10 +259,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencyManagement>
-		<dependencies>
-
-		</dependencies>
-	</dependencyManagement>
 </project>

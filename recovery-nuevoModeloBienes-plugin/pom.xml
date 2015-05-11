@@ -1,23 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>es.pfsgroup</groupId>
-		<artifactId>recovery-parent-pom</artifactId>
-		<version>0.0.29</version>
+		<artifactId>recovery</artifactId>
+		<version>9.0.1-SNAPSHOT</version>
 	</parent>
 
 	<properties>
-		<version>2.5.19</version>
-		<sufijo>-SNAPSHOT</sufijo>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 	</properties>
 
-	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.pfsgroup.plugin</groupId>
 	<artifactId>recovery-nuevoModeloBienes-plugin</artifactId>
 	<packaging>jar</packaging>
-	<version>${version}${sufijo}</version>
 
 	<dependencies>
 		<dependency>
@@ -235,5 +232,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

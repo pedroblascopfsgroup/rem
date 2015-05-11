@@ -1,35 +1,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>es.pfsgroup</groupId>
-		<artifactId>recovery-parent-pom</artifactId>
-		<version>0.0.30</version>
+		<artifactId>recovery</artifactId>
+		<version>9.0.1-SNAPSHOT</version>
 	</parent>
+
 	<properties>
-		<version>3.5.22</version>
-		<sufijo>-SNAPSHOT</sufijo>
 		<project.build.sourceEncoding>ISO8859-1</project.build.sourceEncoding>
 	</properties>
 
-	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.pfsgroup.plugin</groupId>
 	<artifactId>recovery-coreextension-plugin</artifactId>
 	<packaging>jar</packaging>
-	<version>${version}${sufijo}</version>
 	<name>recovery-coreextension-plugin</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-core</artifactId>
-			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-hibernate</artifactId>
-			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
@@ -121,7 +117,6 @@
 		<dependency>
 			<groupId>es.pfsgroup.recovery</groupId>
 			<artifactId>rec-common</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfs</groupId>
@@ -163,24 +158,6 @@
 			<version>2.3</version>
 			<optional>true</optional>
 		</dependency>
-		<!-- DEPENDENCIAS DE BANKIA -->
-		<!-- MOVIDAS A recovery-bankiaWeb-plugin por PBO -->
-		<!-- a extraer en el futuro a un plugin de Bankia -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>es.bankia</groupId> -->
-<!-- 			<artifactId>krbFiltro</artifactId> -->
-<!-- 			<version>1.0</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>es.bankia</groupId> -->
-<!-- 			<artifactId>AccesoLDAP</artifactId> -->
-<!-- 			<version>1.0</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>es.pfsgroup.plugin</groupId> -->
-<!-- 			<artifactId>recovery-iplus-plugin</artifactId> -->
-<!-- 			<version>1.0.7</version> -->
-<!-- 		</dependency> -->
 	</dependencies>
 	<build>
 		<resources>
@@ -204,7 +181,6 @@
 					<source>1.6</source>
 					<target>1.6</target>
 					<encoding>ISO-8859-1</encoding>
-					<debug>true</debug>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -1,25 +1,25 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>es.pfsgroup</groupId>
-		<artifactId>recovery-parent-pom</artifactId>
-		<version>0.0.30</version>
+		<artifactId>recovery</artifactId>
+		<version>9.0.1-SNAPSHOT</version>
 	</parent>
 
 	<properties>
-		<version>2.5.14-SNAPSHOT</version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.resources.overwrite>true</maven.resources.overwrite>
+
+		<devon.version.web>1.1.1</devon.version.web>
+		<devon.version.webflow>1.1.1</devon.version.webflow>
 	</properties>
 
-	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.pfsgroup.recovery</groupId>
 	<artifactId>rec-web</artifactId>
 	<packaging>war</packaging>
-	<version>${version}</version>
-	<name>rec-web Maven Webapp</name>
+	<name>rec-web</name>
 
 	<dependencies>
 		<!-- Inicio plugins de Recovery -->
@@ -61,6 +61,12 @@
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-coreextension-plugin</artifactId>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
@@ -250,16 +256,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-                        <groupId>es.pfsgroup.plugin</groupId>
-                        <artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
-                        <scope>compile</scope>
-                        <exclusions>
-                                <exclusion>
-                                        <groupId>*</groupId>
-                                        <artifactId>*</artifactId>
-                                </exclusion>
-                        </exclusions>
-                </dependency>
+		    <groupId>es.pfsgroup.plugin</groupId>
+		    <artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+		    <scope>compile</scope>
+		    <exclusions>
+		            <exclusion>
+		                    <groupId>*</groupId>
+		                    <artifactId>*</artifactId>
+		            </exclusion>
+		    </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-liquidaciones-plugin</artifactId>
@@ -511,6 +517,7 @@
 			<artifactId>recovery-bi-plugin</artifactId>
 			<scope>compile</scope>
 		</dependency>
+
 		<!-- Fin paquetes de Cap Gemini -->
 		<!-- Inicio de Devon -->
 		<dependency>
@@ -581,12 +588,6 @@
 			<version>UNKNOWN</version>
 			<scope>compile</scope>
 		</dependency>
-		<!--<dependency>
-			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-			<artifactId>com.springsource.javax.mail</artifactId>
-			<version>UNKNOWN</version>
-			<scope>compile</scope>
-		</dependency>-->
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
 			<artifactId>com.springsource.javax.persistence</artifactId>
@@ -1332,7 +1333,7 @@
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>		
+		</dependency>
 		<!-- importadas de otros plugins -->
 		<dependency>
 			<groupId>javax.ejb</groupId>
@@ -1341,9 +1342,9 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-                	<artifactId>groovy-all</artifactId>
-                	<version>2.2.1</version>
-        	</dependency>		
+			<artifactId>groovy-all</artifactId>
+			<version>2.2.1</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.transaction</groupId>
 			<artifactId>jta</artifactId>
@@ -1355,16 +1356,10 @@
 			<version>1.0.0.GA</version>
 		</dependency>
 		<dependency>
-            		<groupId>com.fasterxml.jackson.core</groupId>
+			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.0.5</version>
-       		</dependency>
-       		<!-- <dependency>
-			<groupId>es.pfsgroup.recovery.framework.libs</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>5.0.1</version>
-			<scope>compile</scope>
-		</dependency>-->
+		</dependency>
 		<!-- JasperReports Dependency -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
@@ -1393,7 +1388,7 @@
 		<!-- Fin provided -->
 	</dependencies>
 	<build>
-		<finalName>pfs</finalName>
+		<finalName>pfs-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1535,18 +1530,11 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>bankia-common</id>
-			<properties>
-				<plugin.bankiaWeb.version>1.0.5</plugin.bankiaWeb.version>
-				<plugin.iplus.version>1.1.1</plugin.iplus.version>
-				<plugin.integracionuvem.version>2.0-rc1</plugin.integracionuvem.version>
-			</properties>
+			<id>bankia</id>
 			<dependencies>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-bankiaWeb-plugin</artifactId>
-					<version>${plugin.bankiaWeb.version}</version>
-					<scope>compile</scope>
 					<exclusions>
 						<exclusion>
 							<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -1581,8 +1569,6 @@
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-iplus-plugin</artifactId>
-					<version>${plugin.iplus.version}</version>
-					<scope>compile</scope>
 					<exclusions>
 						<exclusion>
 							<groupId>es.cm.gw</groupId>
@@ -1718,11 +1704,52 @@
 		  			<artifactId>slf4j-log4j12</artifactId>
 		  			<version>1.7.5</version>
 				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>bankia-test</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/bankia/resources</directory>
+						<excludes>
+							<exclude>ac-devon-web-security.xml</exclude>
+						</excludes>
+					</resource>
+					<resource>
+						<directory>src/custom/bankia/resources-intebankia</directory>
+					</resource>
+				</resources>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<webXml>src/custom/bankia/webapp/WEB-INF/web.xml-intebankia</webXml>
+							<webResources>
+								<resource>
+									<directory>src/custom/bankia/webapp/</directory>
+									<includes>
+										<include>inicioBankia.jsp</include>
+										<include>WEB-INF/config/bankia.htaccess</include>
+									</includes>
+									<filtering>true</filtering>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>bankia-delivery</id>
+			<dependencies>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
-					<version>${plugin.integracionuvem.version}</version>
-					<scope>compile</scope>
 					<exclusions>
 						<exclusion>
 							<groupId>capgemini</groupId>
@@ -1839,47 +1866,6 @@
 					</exclusions>
 				</dependency>
 			</dependencies>
-		</profile>
-		<profile>
-			<id>bankia-test</id>
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-					</resource>
-					<resource>
-						<directory>src/custom/bankia/resources</directory>
-						<excludes>
-							<exclude>ac-devon-web-security.xml</exclude>
-						</excludes>
-					</resource>
-					<resource>
-						<directory>src/custom/bankia/resources-intebankia</directory>
-					</resource>
-				</resources>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<configuration>
-							<webXml>src/custom/bankia/webapp/WEB-INF/web.xml-intebankia</webXml>
-							<webResources>
-								<resource>
-									<directory>src/custom/bankia/webapp/</directory>
-									<includes>
-										<include>inicioBankia.jsp</include>
-										<include>WEB-INF/config/bankia.htaccess</include>
-									</includes>
-									<filtering>true</filtering>
-								</resource>
-							</webResources>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>bankia-delivery</id>
 			<build>
 				<resources>
 					<resource>
@@ -1913,16 +1899,10 @@
 		</profile>
 		<profile>
 			<id>haya</id>
-			<properties>	
-				<plugin.procedimientosHaya.version>1.3.10-SNAPSHOT</plugin.procedimientosHaya.version>
-				<plugin.procedimientosHayaPlugin.version>1.3.10-SNAPSHOT</plugin.procedimientosHayaPlugin.version>
-			</properties>
 			<dependencies>
 					<dependency>
 						<groupId>es.pfsgroup.plugin</groupId>
 						<artifactId>recovery-procedimientos-bpmHaya</artifactId>
-						<version>${plugin.procedimientosHaya.version}</version>
-						<scope>compile</scope>
 						<exclusions>
 							<exclusion>
 								<groupId>es.pfsgroup</groupId>
@@ -1938,8 +1918,6 @@
 					<dependency>
 						<groupId>es.pfsgroup.plugin</groupId>
 						<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
-						<version>${plugin.procedimientosHayaPlugin.version}</version>
-						<scope>compile</scope>
 						<exclusions>
 							<exclusion>
 								<groupId>es.pfsgroup</groupId>

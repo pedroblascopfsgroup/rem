@@ -1,55 +1,30 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-	<properties>
-		<version>2.3</version>
-		<sufijo>-SNAPSHOT</sufijo>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<coreextension.version>3.4.1_rc03</coreextension.version>
-	</properties>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>es.pfsgroup</groupId>
+		<artifactId>recovery</artifactId>
+		<version>9.0.1-SNAPSHOT</version>
+	</parent>
+
 	<groupId>es.pfsgroup.plugin</groupId>
 	<artifactId>recovery-masivo-plugin</artifactId>
-	<packaging>jar</packaging>
-	<version>${version}${sufijo}</version>
-	<url>http://maven.apache.org</url>
 
-	<developers>
-		<developer>
-			<id>bruno</id>
-			<name>Bruno Anglés</name>
-			<email>bruno.angles@pfsgroup.es</email>
-		</developer>
-	</developers>
-
-	<distributionManagement>
-		<repository>
-			<id>pfsrepo</id>
-			<url>scp://interecovery.pfsgroup.es/shared/maven</url>
-		</repository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>pfsrepo</id>
-			<url>http://interecovery.pfsgroup.es:8086</url>
-		</repository>
-	</repositories>
+	<properties>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>pfs</groupId>
 			<artifactId>plugins</artifactId>
-			<version>1.3.8</version>
-			<type>jar</type>
+
 			<scope>provided</scope>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-web</artifactId>
-			<version>1.1.0</version>
 			<classifier>jdk16</classifier>
 			<scope>provided</scope>
 			<optional>true</optional>
@@ -57,47 +32,30 @@
 		<dependency>
 			<groupId>es.pfs</groupId>
 			<artifactId>pfs-rec-core</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<!-- needs extra dependencies: objenesis & hamcrest -->
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<!-- needs extra dependencies: objenesis & hamcrest -->
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-api-plugin</artifactId>
-			<version>1.0.0_rc46</version>
-			<type>jar</type>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-mejoras-plugin</artifactId>
-			<version>6.3.0</version>
-			<type>jar</type>
 			<scope>provided</scope>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-procedimientos-bpm</artifactId>
-			<version>4.1.0_fase2_rc01</version>
-			<type>jar</type>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -122,29 +80,22 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-coreextension-plugin</artifactId>
-			<version>${coreextension.version}</version>
-			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-bpmframework-plugin</artifactId>
-			<version>1.2.0_rc2</version>
-			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-geninformes-plugin</artifactId>
-			<version>1.4.0_rc4</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-masivo-common</artifactId>
-			<version>1.5.0_procuradores_rc3</version>
-			<type>jar</type>
-			<optional>true</optional>			
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -169,7 +120,6 @@
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
 			<artifactId>recovery-domain</artifactId>
-			<version>4.0.2.0.7.3_fase2_rc14</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -177,7 +127,7 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.7.0</version>
 			<optional>true</optional>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -188,8 +138,8 @@
 					<groupId>*</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
-			</exclusions>			
-		</dependency>	            
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
@@ -218,10 +168,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
-<!-- 				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>true</downloadJavadocs>
-				</configuration> -->
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -262,24 +208,6 @@
 					</formats>
 				</configuration>
 			</plugin>
-<!-- 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<encoding>ISO-8859-1</encoding>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> -->
 		</plugins>
 	</build>
-
-
-
 </project>

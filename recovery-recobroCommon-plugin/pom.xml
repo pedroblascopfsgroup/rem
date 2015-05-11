@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -8,20 +8,13 @@
 	</parent>
 
 	<groupId>es.pfsgroup.plugin</groupId>
-	<artifactId>recovery-iplus-plugin</artifactId>
-	<name>recovery-iplus-plugin</name>
-	<description>Modulo de integracion de Recovery con IPLUS</description>
+	<artifactId>recovery-recobroCommon-plugin</artifactId>
 
 	<properties>
 		<devon.version>1.1.0</devon.version>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>es.cm.gw</groupId>
-			<artifactId>GW_IPLUS</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
@@ -73,7 +66,6 @@
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
 			<artifactId>org.springframework.core</artifactId>
 			<version>UNKNOWN</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -92,7 +84,6 @@
 			<groupId>es.pfsgroup.recovery.framework.libs</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>UNKNOWN</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.recovery</groupId>
@@ -106,8 +97,42 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-expediente-plugin</artifactId>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-liquidaciones-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>es.pfsgroup</groupId>
 			<artifactId>pfs-commons-java</artifactId>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.recovery.devon.v1</groupId>
+			<artifactId>devon-core</artifactId>
+			<version>${devon.version}</version>
+			<scope>compile</scope>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -141,9 +166,33 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup.recovery.devon.v1</groupId>
+			<artifactId>devon-hibernate</artifactId>
+			<version>${devon.version}</version>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>2.5.6.SEC01</version>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.0.5</version>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -174,30 +223,15 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- Java Mail API -->
 		<dependency>
-			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-			<artifactId>org.springframework.web.servlet</artifactId>
-			<version>UNKNOWN</version>
-			<scope>compile</scope>
-			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.3</version>
 		</dependency>
 		<dependency>
-			<groupId>capgemini</groupId>
-			<artifactId>devon-core</artifactId>
-			<optional>true</optional>
-			<classifier>jdk16</classifier>
-		</dependency>
-		<dependency>
-			<!-- needs extra dependencies: objenesis & hamcrest -->
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<scope>test</scope>
+			<groupId>es.pfsgroup.recovery</groupId>
+			<artifactId>rec-encrypt</artifactId>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
@@ -205,13 +239,7 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>src\web</directory>
-			</resource>
-			<resource>
 				<directory>src\main\resources</directory>
-			</resource>
-			<resource>
-				<directory>src/web</directory>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -233,6 +261,64 @@
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.7.1</version>
+				<configuration>
+					<sourceEncoding>UTF-8</sourceEncoding>
+					<minimumTokens>20</minimumTokens>
+					<targetJdk>1.6</targetJdk>
+					<rulesets>
+						<!-- Estas reglas están dentro del JAR del PMD -->
+						<ruleset>/rulesets/basic.xml</ruleset>
+						<ruleset>/rulesets/braces.xml</ruleset>
+						<ruleset>/rulesets/clone.xml</ruleset>
+						<ruleset>/rulesets/design.xml</ruleset>
+						<ruleset>/rulesets/unusedcode.xml</ruleset>
+						<ruleset>/rulesets/coupling.xml</ruleset>
+						<ruleset>/rulesets/javabeans.xml</ruleset>
+						<ruleset>/rulesets/j2ee.xml</ruleset>
+						<ruleset>/rulesets/junit.xml</ruleset>
+						<ruleset>/rulesets/logging-java.xml</ruleset>
+						<ruleset>/rulesets/imports.xml</ruleset>
+						<ruleset>/rulesets/naming.xml</ruleset>
+						<ruleset>/rulesets/controversial.xml</ruleset>
+						<ruleset>/rulesets/migrating.xml</ruleset>
+						<ruleset>/rulesets/strings.xml</ruleset>
+						<ruleset>/rulesets/optimizations.xml</ruleset>
+					</rulesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<formats>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

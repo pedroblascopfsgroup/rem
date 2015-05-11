@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<input name="nivel" type="java.lang.String" />
+    <input name="idNivel" type="java.lang.String" />
+	<input name="detalle" type="java.lang.String" />
+	<input name="cod" type="java.lang.String" required="false"/>
+	
+	<view-state id="contratos" view="${view}">
+		<on-entry>
+			<set name="flowScope.view" value="'plugin/panelcontrol/judicial/detalles/listaContratos'" />
+		</on-entry>
+	</view-state>
+	
+	
+</flow>

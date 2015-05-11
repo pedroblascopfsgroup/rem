@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <input name="nivel" type="java.lang.String" />
+    <input name="idNivel" type="java.lang.String" />
+    <input name="cod" type="java.lang.String"/>
+    <input name="tipoProcedimiento" type="java.lang.String" required="false"/>
+    <input name="tipoTarea" type="java.lang.String" required="false"/>
+    <input name="letradoGestor" type="java.lang.String" required="false"/>
+    <input name="campanya" type="java.lang.String" required="false"/>
+    <input name="minImporteFiltro" type="java.lang.String" required="false"/>
+    <input name="maxImporteFiltro" type="java.lang.String" required="false"/>
+    <input name="statusColumns" type="java.lang.String" required="false"/>
+    <input name="rangoImporte" type="java.lang.String" required="false"/>
+    
+    <view-state id="panelControl" view="${view}">
+		<on-entry>
+			<set name="flowScope.view" value="'plugin/panelcontrol/letrados/panelControl_v2'" />
+    		<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+    		<evaluate expression="usuario.entidad.configValue('workingCode')" result="flowScope.entidad"/>			
+		    <evaluate expression="executor.execute('plugin.letrados.panelControl.getNiveles')" result="flowScope.niveles" />
+		    <evaluate expression="executor.execute('plugin.letrados.panelControl.listaTiposActuacion')" result="flowScope.tiposActuacion" />
+		    <evaluate expression="executor.execute('plugin.letrados.panelControl.listaRangoImportes')" result="flowScope.rangoImportes" />  
+			<evaluate expression="executor.execute('plugin.letrados.panelControl.listaProcedimientos')" result="flowScope.tipoProcedimientos" />
+
+		</on-entry>
+	</view-state>
+	
+</flow>
+

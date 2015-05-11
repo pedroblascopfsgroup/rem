@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean p:entity="menu" p:name="analisis/panelControl" p:order="1000"  p:permission="PANEL-CONTROL-GESTION_PRIMARIA"
+		  p:fileName="/WEB-INF/jsp/plugin/panelcontrol/judicial/menuPanelControl.jsp"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+
+	  <bean p:entity="menu" p:name="analisis/panelControlLetrados" p:order="1001" p:permission="PANEL-CONTROL-GESTION_JUDICIAL" 
+		  p:fileName="/WEB-INF/jsp/plugin/panelcontrol/letrados/menuPanelControl.jsp"
+		  p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>				    
+
+	 <!--<bean id="FileAttachmentView" class="es.pfsgroup.recovery.panelcontrol.letrados.web.FileAttachmentView" >
+    	<property name="baseUrl"><value>FileAttachment</value></property>
+    	<property name="link"><value>fileAttachment</value></property>
+  	 </bean>-->
+  	 
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries" p:name="jsTreeGrid" p:order="6"
+		p:fileName="../js/plugin/panelcontrol/ux/treegrid/TreeGrid.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />  	 
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries" p:name="jsTreeGridColumnResizer" p:order="1"
+		p:fileName="../js/plugin/panelcontrol/ux/treegrid/TreeGridColumnResizer.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />  	 
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries" p:name="jsTreeGridColumns" p:order="2"
+		p:fileName="../js/plugin/panelcontrol/ux/treegrid/TreeGridColumns.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />  	 
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries" p:name="jsTreeGridLoader" p:order="4"
+		p:fileName="../js/plugin/panelcontrol/ux/treegrid/TreeGridLoader.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />  	 
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries" p:name="jsTreeGridNodeUI" p:order="5"
+		p:fileName="../js/plugin/panelcontrol/ux/treegrid/TreeGridNodeUI.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />  	 
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries" p:name="jsTreeGridSorter" p:order="3"
+		p:fileName="../js/plugin/panelcontrol/ux/treegrid/TreeGridSorter.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssPanelControl" p:order="1"
+		p:fileName="../js/plugin/panelcontrol/css/panelControl.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+</beans>

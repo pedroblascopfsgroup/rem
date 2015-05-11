@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<input name="nivel" type="java.lang.String" />
+    <input name="idNivel" type="java.lang.String" />
+    <input name="userName" type="java.lang.String" />
+	<input name="cod" type="java.lang.String" required="false"/>
+	<input name="detalle" type="java.lang.String" required="false"/>
+	<input name="nombre" type="java.lang.String" required="false"/>
+	<input name="totalTareas" type="java.lang.Long" required ="false"/>
+	<input name="tipoProcedimiento" type="java.lang.String" required="false"/>
+	<input name="tipoTarea" type="java.lang.String" required="false"/>
+	<input name="letradoGestor" type="java.lang.String" required="false"/>
+    <input name="campanya" type="java.lang.String" required="false"/>
+    <input name="cartera" type="java.lang.String" required="false"/>
+    <input name="lote" type="java.lang.String" required="false"/>
+    <input name="idPlaza" type="java.lang.String" required="false"/>
+    <input name="idJuzgado" type="java.lang.String" required="false"/>
+    <input name="minImporteFiltro" type="java.lang.String" required="false"/>
+    <input name="maxImporteFiltro" type="java.lang.String" required="false"/>
+    <input name="rangoImporte" type="java.lang.String" required="false"/>
+     
+	<view-state id="listado" view="${view}">
+		<on-entry>
+			<set name="flowScope.view" value="'plugin/panelcontrol/letrados/detalles/listaAsuntos'" />
+		</on-entry>
+	</view-state>
+	
+	
+</flow>

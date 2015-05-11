@@ -1,0 +1,37 @@
+RECOVERY - CONFIG
+-----------------------------------------
+
+---------------------------------
+VERSION 2.2.0 [pedro/carlos - 10/05/2014]
+
+Modificaciones necesarias para adaptaciones de Bankia
+Cambio de encoding del Proyecto (a UTF-8)
+Añadido el tipo de gestor al dar de alta un despacho 
+Modificado mantenimiento usuarios para indicar si el usuario es de grupo
+
+[pedro - 05/06/2014]
+Modificado para que los cambios que requieran introducción de contraseña tengan en cuenta
+		la contraseña en el LDAP de Bankia (si corresponde)
+		
+--------------------------------
+
+---------------------------------
+VERSION 2.0.2 [bruno - 17/07/2013]
+--------------------------------
+* Requiere recovery-mejoras-plugin v 5.4.0 o superior
+* Se han movido las CSS dinámicas a su propia hoja de estilos para evitar problemas con IE
+
+---------------------------------
+VERSION 2.0.1
+--------------------------------
+
+UGAS 08/05/2013
+
+*** CODIGO modificado ***
+
+* main/java/es/pfsgroup/plugin/recovery/config/perfiles/ADMPerfilManager.java
+	- UGAS-2597 Al dar de alta un nuevo perfil, indicar por defecto que el campo carterizado es false.
+   
+
+
+NO HAY INFORMACIÓN DE LAS VERSIONES ANTERIORES

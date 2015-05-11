@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteValoracionBienesInmuebles" width="968" height="691">
+  <node name="Inicio" x="284" y="22" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="224" y="103" width="252" height="24">
+    <edge>
+      <label x="1" y="-21"/>
+      <bendpoint w1="-197" h1="-1" w2="0" h2="-54"/>
+    </edge>
+    <edge>
+      <label x="-61" y="-20"/>
+      <bendpoint w1="193" h1="0" w2="0" h2="-52"/>
+    </edge>
+  </node>
+  <node name="join1" x="232" y="277" width="252" height="24">
+    <edge>
+      <label x="-71" y="-6"/>
+    </edge>
+  </node>
+  <node name="H058_SolicitarAvaluo" x="70" y="150" width="166" height="36">
+    <edge>
+      <label x="-6" y="8"/>
+    </edge>
+    <edge>
+      <label x="-72" y="-10"/>
+    </edge>
+    <edge>
+      <label x="15" y="-341"/>
+      <bendpoint w1="-135" h1="0" w2="-547" h2="-356"/>
+      <bendpoint w1="-138" h1="461" w2="-550" h2="105"/>
+      <bendpoint w1="410" h1="457" w2="-2" h2="101"/>
+    </edge>
+  </node>
+  <node name="H058_SolitarTasacionInterna" x="535" y="98" width="226" height="36">
+    <edge>
+      <label x="-89" y="6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="178" h1="-1" w2="261" h2="-409"/>
+      <bendpoint w1="180" h1="410" w2="263" h2="2"/>
+    </edge>
+  </node>
+  <node name="SolitarTasacionInternaDecision" x="527" y="159" width="247" height="36">
+    <edge>
+      <label x="38" y="-7"/>
+    </edge>
+    <edge>
+      <label x="14" y="10"/>
+      <bendpoint w1="-294" h1="-2" w2="-2" h2="-114"/>
+    </edge>
+  </node>
+  <node name="H058_ObtencionAvaluo" x="69" y="224" width="166" height="36">
+    <edge>
+      <label x="-70" y="-17"/>
+      <bendpoint w1="0" h1="49" w2="-206" h2="2"/>
+    </edge>
+    <edge>
+      <label x="-2" y="-24"/>
+    </edge>
+    <edge>
+      <label x="17" y="-444"/>
+      <bendpoint w1="-142" h1="0" w2="-555" h2="-282"/>
+      <bendpoint w1="-142" h1="385" w2="-555" h2="103"/>
+      <bendpoint w1="413" h1="384" w2="0" h2="102"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="105" h1="-42" w2="104" h2="32"/>
+    </edge>
+  </node>
+  <node name="H058_ObtencionTasacionInterna" x="460" y="217" width="219" height="36">
+    <edge>
+      <label x="9" y="-22"/>
+      <bendpoint w1="0" h1="53" w2="186" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-60" y="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="163" h1="-4" w2="147" h2="-293"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="331" h1="-56" w2="252" h2="63"/>
+    </edge>
+  </node>
+  <node name="H058_EstConformidadOAlegacion" x="331" y="329" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="EstConformidadOAlegacionDecision" x="281" y="390" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H058_PresentarAlegaciones" x="56" y="440" width="172" height="36">
+    <edge>
+      <label x="2" y="7"/>
+    </edge>
+    <edge>
+      <label x="-73" y="-11"/>
+    </edge>
+    <edge>
+      <label x="14" y="-23"/>
+      <bendpoint w1="-129" h1="0" w2="-552" h2="-66"/>
+      <bendpoint w1="-129" h1="165" w2="-552" h2="99"/>
+      <bendpoint w1="421" h1="164" w2="-2" h2="98"/>
+    </edge>
+    <edge>
+      <label x="7" y="-22"/>
+      <bendpoint w1="-62" h1="-108" w2="-277" h2="5"/>
+    </edge>
+  </node>
+  <node name="H058_RegistrarResultado" x="59" y="581" width="172" height="36">
+    <edge>
+      <label x="-44" y="8"/>
+    </edge>
+    <edge>
+      <label x="-30" y="3"/>
+      <bendpoint w1="106" h1="-53" w2="-110" h2="23"/>
+    </edge>
+    <edge>
+      <label x="8" y="-29"/>
+      <bendpoint w1="237" h1="91" w2="-186" h2="92"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="46" h1="-84" w2="49" h2="57"/>
+    </edge>
+  </node>
+  <node name="Decision" x="459" y="494" width="132" height="36">
+    <edge>
+      <label x="-9" y="6"/>
+    </edge>
+  </node>
+  <node name="Fin" x="640" y="493" width="132" height="36"/>
+  <node name="H058_ResolucionFirme" x="295" y="505" width="132" height="36">
+    <edge>
+      <label x="-32" y="-10"/>
+      <bendpoint w1="61" h1="-36" w2="-103" h2="-25"/>
+    </edge>
+    <edge>
+      <label x="-17" y="-5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-58" h1="52" w2="158" h2="-24"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="161" h1="51" w2="-184" h2="63"/>
+    </edge>
+  </node>
+</root-container>

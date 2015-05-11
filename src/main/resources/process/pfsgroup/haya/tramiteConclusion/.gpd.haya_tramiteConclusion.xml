@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteConclusion" width="1215" height="678">
+  <node name="Inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H039_registrarCausaConclusion" x="268" y="4" width="276" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="717" h1="1" w2="5" h2="-284"/>
+    </edge>
+  </node>
+  <node name="H039_registrarInformeAdmConcursal" x="263" y="93" width="304" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-163" h1="-45" w2="-154" h2="44"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="664" h1="2" w2="-39" h2="-194"/>
+    </edge>
+  </node>
+  <node name="H039_registrarOposicion" x="272" y="185" width="303" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-182" h1="-40" w2="-157" h2="52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="620" h1="-15" w2="-75" h2="-119"/>
+    </edge>
+  </node>
+  <node name="H039_registrarOposicionDecision" x="275" y="264" width="289" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-25" y="-35"/>
+      <bendpoint w1="-228" h1="0" w2="-101" h2="-197"/>
+      <bendpoint w1="-227" h1="122" w2="-100" h2="-75"/>
+    </edge>
+    <edge>
+      <label x="-23" y="10"/>
+    </edge>
+  </node>
+  <node name="H039_registrarResolucion" x="676" y="264" width="263" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-2" h1="-51" w2="382" h2="28"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-172" h1="121" w2="343" h2="-76"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H039_BPMTramiteDemandaIncidental" x="281" y="359" width="267" height="36">
+    <edge>
+      <label x="-74" y="-21"/>
+    </edge>
+  </node>
+  <node name="H039_registrarConclusionConcurso" x="124" y="461" width="336" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-209" h1="3" w2="-340" h2="279"/>
+      <bendpoint w1="-209" h1="-278" w2="-340" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="429" h1="-30" w2="-397" h2="142"/>
+    </edge>
+  </node>
+  <node name="H039_registrarConclusionConcursoDecision" x="298" y="560" width="304" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision" x="1034" y="530" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1052" y="289" width="132" height="36"/>
+  <node name="H039_InformarSareb" x="818" y="466" width="187" height="36">
+    <edge>
+      <label x="-28" y="27"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-41" y="3"/>
+    </edge>
+  </node>
+</root-container>

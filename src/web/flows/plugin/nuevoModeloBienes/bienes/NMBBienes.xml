@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="NMBbien" class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien" />
+	<var name="dtoNMBBien" class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.DtoNMBBien" />
+
+	<input name="id" type="java.lang.Long"/>
+	<input name="idPersona" type="java.lang.Long"/>
+
+	<decision-state id="newOrEdit">
+		<if test="id!=null" then="buscar" else="formulario"/>
+	</decision-state>
+		
+	<action-state id="buscar">
+		<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.NMBbien"/>
+		<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}" model="dtoNMBBien">
+    	<binder>
+    		<binding property="idTipoBien"/>
+    		<binding property="bien.tipoBien" converter="DDTipoBien"/>
+    		<binding property="bien.descripcionBien"/>
+    		<binding property="bien.participacion"/>
+    		<binding property="bien.valorActual"/>
+    		<binding property="bien.importeCargas"/>
+    		<binding property="bien.fechaVerificacion"/>
+    		<binding property="bien.referenciaCatastral"/>
+    		<binding property="bien.superficie"/>
+    		<binding property="bien.poblacion"/>
+    		<binding property="bien.datosRegistrales"/>
+    		
+    		<binding property="poblacion"/>
+    		<binding property="codPostal"/>
+    		<binding property="numFinca"/>
+    		<binding property="direccion"/>
+    		
+    		<binding property="referenciaCatastralBien"/>
+    		<binding property="tomo"/>
+    		<binding property="libro"/>
+    		<binding property="folio"/>
+    		<binding property="inscripcion"/>
+    		<binding property="fechaInscripcion"/>
+    		<binding property="numRegistro"/>
+    		<binding property="municipoLibro"/>
+    		<binding property="codigoRegistro"/>
+    		<binding property="superficieConstruida"/>
+    		<binding property="superficie"/>
+    		
+    		<binding property="fechaValorSubjetivo"/>
+    		<binding property="importeValorSubjetivo"/>
+    		<binding property="fechaValorApreciacion"/>
+    		<binding property="importeValorApreciacion"/>
+    		<binding property="fechaValorTasacion"/>
+    		<binding property="importeValorTasacion"/>
+    		
+    		<binding property="fecha"/>
+    	</binder>
+    	
+    	<on-entry>
+    		<set name="dtoNMBBien.bien" value="NMBbien" />
+    		<set name="flowScope.view" value="'plugin/nuevoModeloBienes/clientes/bienes.js'" />
+    	</on-entry>
+    	
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.view" value="'default'"/>
+			<set name="flowScope.NMB" value="'1'"/> <!--  bandera para indicar que se accede desde el nuevo modelo de bienes. -->
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoBien')" result="flashScope.tiposBien"/>
+		</on-render>
+		
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false"/>
+		
+    </view-state> 	
+    
+    <action-state id="update">
+    	<evaluate expression="executor.execute('NMBbienManager.createOrUpdate', dtoNMBBien, idPersona)" />
+		<transition to="close"></transition>
+	</action-state>
+	
+	<end-state id="close" view="default" />
+        
+</flow>

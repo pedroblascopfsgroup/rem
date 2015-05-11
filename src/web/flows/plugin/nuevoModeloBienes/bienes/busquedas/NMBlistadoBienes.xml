@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="id" type="java.lang.Long"/>
+	<input name="poblacion" type="java.lang.String"/>
+	<input name="codPostal" type="java.lang.String"/>
+	<input name="codigoTipoBien" type="java.lang.String"/>
+	
+	<input name="valorDesde" type="java.lang.Long"/>
+	<input name="valorHasta" type="java.lang.Long"/>
+	<input name="totalCargasDesde" type="java.lang.Long"/>
+	<input name="totalCargasHasta" type="java.lang.Long"/>
+	
+	<input name="fechaVerificacion" type="java.lang.String"/>
+	<input name="numContrato" type="java.lang.String"/>
+	<input name="codCliente" type="java.lang.String"/>
+	<input name="nifPrimerTitular" type="java.lang.String"/>
+	<input name="nifCliente" type="java.lang.String"/>
+	
+	<input name="numActivo" type="java.lang.Long"/>
+	<input name="numRegistro" type="java.lang.Long"/>
+	<input name="referenciaCatastral" type="java.lang.Long"/>
+	<input name="subtipoBien" type="java.lang.Long"/>
+	<input name="tasacionDesde" type="java.lang.Long"/>
+	<input name="tasacionHasta" type="java.lang.Long"/>
+	<input name="tipoSubastaDesde" type="java.lang.Long"/>
+	<input name="tipoSubastaHasta" type="java.lang.Long"/>
+	
+	<input name="direccion" type="java.lang.String"/>
+	<input name="provincia" type="java.lang.String"/>
+	<input name="localidad" type="java.lang.String"/>
+	<input name="codigoPostal" type="java.lang.String"/>
+	
+  	<end-state id="listado" view="plugin/nuevoModeloBienes/bienes/menu/NMBlistadoBusquedaBienes">
+  		<on-entry>
+  			<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.buttons.left')" result="flowScope.buttonsLeft"/>
+			<evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.buttons.right')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoBien')" result="flashScope.tiposBien"/>
+		</on-entry>
+  	</end-state>
+  
+</flow>

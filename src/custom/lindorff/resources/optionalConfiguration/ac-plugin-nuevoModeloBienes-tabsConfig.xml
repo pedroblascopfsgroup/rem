@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean id="mapaTabsPorTipoBien"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabs">
+		<property name="mapaTabsTipoBien">
+			<map>
+				<entry key="IAJE" value-ref="tabsIngresosCuentaAjenaLINDORFF"/>
+				<entry key="IPRO" value-ref="tabsIngresosCuentaPropiaLINDORFF"/>
+				<entry key="PENS" value-ref="tabsPensionesLINDORFF"/>
+				<entry key="PRES" value-ref="tabsPrestacionesLINDORFF"/>
+				<entry key="PBAN" value-ref="tabsProductosBancariosLINDORFF"/>
+				<entry key="CBAN" value-ref="tabsCuentasBancariasLINDORFF"/>
+				<entry key="VEHI" value-ref="tabsVehiculosLINDORFF"/>
+				<entry key="INMU" value-ref="tabsInmueblesLINDORFF"/>				
+				<entry key="AEAT" value-ref="tabsAeatLINDORFF"/>
+				<entry key="DEFECTO" value-ref="tabsDefectoLINDORFF"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="tabsDefectoLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaLocalizacion</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsIngresosCuentaAjenaLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaEmpresa</value>
+				<value>pestanaLocalizacion</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsIngresosCuentaPropiaLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaIAE</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsPensionesLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsPrestacionesLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsProductosBancariosLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaProductosBanco</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsCuentasBancariasLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaCuentaBancaria</value>
+				<value>pestanaLocalizacion</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsVehiculosLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaValoraciones</value>
+				<value>pestanaVehiculo</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="tabsInmueblesLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaValoraciones</value>
+				<value>pestanaDatosRegistrales</value>
+				<value>pestanaLocalizacion</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+		<bean id="tabsAeatLINDORFF"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien">
+		<property name="listaTabs">
+			<list>
+				<value>pestanaPrincipal</value>
+				<value>pestanaObservaciones</value>
+			</list>
+		</property>
+	</bean>
+</beans>	

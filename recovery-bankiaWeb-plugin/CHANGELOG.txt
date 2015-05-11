@@ -1,0 +1,2 @@
+######### 1.0.0 ############
+Se añade el fichero de configuración del modelo de bienes

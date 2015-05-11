@@ -1,0 +1,10 @@
+define userMasterusuario='pfsmaster';
+define userMasterPassword='admin';
+define user1Usuario='pfs01';
+define user1Password='admin';
+define user2Usuario='pfs02';
+define user2Password='admin';
+define user3Usuario='pfs03';
+define user3Password='admin';
+define user4Usuario='pfs04';
+define user4Password='admin';

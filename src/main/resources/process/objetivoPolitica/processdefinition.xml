@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="objetivoPolitica">
+
+    <start-state name="Inicio">
+        <transition to="EsperaFinObjetivo"></transition>
+    </start-state>
+      
+    <state name="EsperaFinObjetivo">
+      <event type="node-enter">
+           <action name="esperaFin" config-type="bean" 
+               class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+               <targetBean>esperaFinObjetivoActionHandler</targetBean>
+           </action>
+      </event>
+      <transition to="Fin" name="Fin"></transition>
+      <transition to="CompruebaObjetivo" name="CompruebaObjetivo"></transition>
+    </state>
+    
+    <node name="CompruebaObjetivo">
+        <action name="comprueba" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+            <targetBean>compruebaObjetivoActionHandler</targetBean>
+        </action>
+        <transition name="Fin" to="Fin"></transition>
+    </node>
+
+    <end-state name="Fin"></end-state>
+</process-definition>

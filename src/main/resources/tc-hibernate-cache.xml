@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<terracotta-hibernate-cache-configuration> 
+
+   <default-configuration> 
+	     <logging>false</logging> 
+	     <time-to-idle-seconds>60</time-to-idle-seconds> 
+	     <time-to-live-seconds>120</time-to-live-seconds> 
+	     <target-max-in-memory-count>0</target-max-in-memory-count>
+	     <target-max-total-count>0</target-max-total-count>
+   </default-configuration>
+   
+   
+  <!-- Cache elements define more specific settings which are applied to all regions with a matching region-name tag within the cache element. -->
+  <cache>
+
+    <!-- Multiple cache region names can be specified here.  All matching regions will have the enclosed settings applied -->
+    <region-name>masterRegionCache</region-name>
+    <!-- The configuration element contains the settings applied to the matching  regions -->
+    <configuration>
+
+      <!-- Turns on or off the logging in the cache - this can be quite verbose depending on the rate of eviction -->
+      <logging>false</logging>
+
+      <!-- TTI defines the time after which an unaccessed element will be removed from the cache (0 => infinity (never evict)) -->
+      <time-to-idle-seconds>0</time-to-idle-seconds>
+
+      <!-- TTL defines the time after creation at which the element will be removed from the cache (0 => infinity (never evict)) -->
+      <time-to-live-seconds>0</time-to-live-seconds>
+
+      <!-- The target max in memory count defines the number of elements within
+        the region that will be held in local memory on each L1 node.  LRU
+        elements will be flushed to the L2 in order to maintain this count
+        (0 => infinity). -->
+      <target-max-in-memory-count>0</target-max-in-memory-count>
+
+      <!-- The target max total count defines the total number of elements that
+        will be held in the region.  Orphan elements (elements not in-memory on
+        any node) or LRU elements (if their are no orphans) will be removed to
+        maintain this count (0 => infinity) -->
+      <target-max-total-count>0</target-max-total-count>
+
+      <!-- Advanced settings should not normally need to be modified from their
+        defaults by the user except in specialized use-cases. -->
+      <advanced>
+
+        <!-- Disables/enables the local key cache.  The local key cache
+          maintains an in-memory lookup table between hibernate cache keys and
+          the internal keys usedby the terracotta cache.  Enabling can increase
+          the performance of read-only caches at the expense of increased memory
+          usage -->
+        <local-key-optimization>false</local-key-optimization>
+
+        <!-- This defines the maximum size for the local key cache to prevent an
+          accidental OOME of an L1 node due to a very large key set. -->
+        <local-key-maxsize>300000</local-key-maxsize>
+
+        <!-- Enables/disables unlocked reads.  Enabling unlocked reads can
+          increase the performance of a cache by allowing for dirty reads of
+          cache entries.  This is a relaxation of the coherence guarantees
+          normally provided by the cache. -->
+        <unlocked-read>false</unlocked-read>
+
+        <!-- The orphan eviction element contains settings controlling the
+          TTI/TTL based eviction of orphan elements (elements that are not
+          in-memory on any L1 node). -->
+        <orphan-eviction>
+
+          <!-- Enables/disables orphan eviction.  Disabling orphan eviction will
+            prevent the clearing of expired orphan elements from the L2 heap
+            until they are faulted into an L1 node. -->
+          <enabled>true</enabled>
+
+          <!-- The orphan eviction period defines the number of regular (local)
+            eviction cycles that occur between successive orphan evictions. -->
+          <period>4</period>
+        </orphan-eviction>
+      </advanced>
+    </configuration>
+  </cache>
+
+	<!--
+    <environment-settings>
+    	<url>file://terracotta/tc-config.xml</url>
+    </environment-settings>
+    -->
+    
+    <environment-settings>
+       <url>terracotta.server:9510</url>
+    </environment-settings>
+  
+
+
+</terracotta-hibernate-cache-configuration>

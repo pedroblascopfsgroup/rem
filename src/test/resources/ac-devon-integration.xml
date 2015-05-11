@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+    <annotation-config/>
+
+    <!-- Canal de errores -->
+    <publish-subscribe-channel id="errorChannel"/>
+    
+    <!-- Canal genérico de mensajes -->
+    <publish-subscribe-channel id="genericChannel"/>
+    
+    <!-- Canal enrutador del GenericRouter -->
+    <publish-subscribe-channel id="routingChannel" />
+    
+    <!-- Canal enrutador de profiling -->
+    <publish-subscribe-channel id="profilingChannel" />
+    
+    <!-- Canal enrutador de mensajes a usuarios -->
+    <publish-subscribe-channel id="usersChannel" />
+    
+    <!-- ConsumerEndpoint Factory -->    
+    <beans:bean id="integration.consumerEndpointFactoryBean" class="es.capgemini.devon.events.ConsumerEndpointFactoryBean" scope="prototype"/>
+
+    <!-- Events Router -->
+    <beans:bean id="events.router" abstract="true" class="es.capgemini.devon.events.router.GenericRouter"/>
+    <beans:bean id="events.router.regexStrategy" abstract="true" class="es.capgemini.devon.events.router.RegexRouteStrategy"/>
+    <beans:bean id="events.router.groovyStrategy" abstract="true" class="es.capgemini.devon.events.router.GroovyRouteStrategy"/>
+
+</beans:beans>

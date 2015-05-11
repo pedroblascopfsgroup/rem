@@ -1,0 +1,30 @@
+**** VERSION 2.8.0 ****
+Creada la relación entre procedimientos y bienes. IMPORTANTE - Necesario ejecutar el script de creación de la tabla PRC_BIE.
+
+**** VERSION 2.3.0 ****
+[Diana] Modificación de la propiedad del contrato numeroContrato para que coja un substring de lo que hay guardado en base de datos.
+Este substring será configurable, así que es NECESARIO incluir en el devon.properties las siguientes propiedades:
+* contrato.codigo.subStringIni=11
+* contrato.codigo.subStringFin=27
+También habrá que comentar devon.properties el campo contrato.codigoFormato 
+
+
+[Pedro]
+- Incorporación de contraseñas de BD encriptadas
+
+Esta es la rama en la que se incorporan las evoluciones del core que se vayan necesitando para bankia y otros.
+
+Esta versión contiene las adaptaciones hechas por PFS sobre el código de CapGemini
+[Carlos: 02/05/2014]
+- Se cambia la forma de obtener el codigo de contrato. En la nueva versión de Recovery todo el código de contrato
+se almacena en el campo CNT_CONTRATO. 
+Se añade la propiedad contrato.codigoFormato=5,5,17,15 al devon.properties la cual indica que se va a obtener todo el código sólo del campo CNT_CONTRATO 
+y lo formatea añadiendo espacios después del caracter 5, 10 y 27, además le indica que el código será de 42 dígitos.
+
+
+[Pedro: 06/03/2014]
+- Corrección de algunos problemas de mavenización de los tests (dependencias transitivas, etc.)
+- Cambio de grupo del pom.xml: es.pfs.recovery
+
+[Pedro: 23/01/2014]
+- Mavenización del plugin rec-common

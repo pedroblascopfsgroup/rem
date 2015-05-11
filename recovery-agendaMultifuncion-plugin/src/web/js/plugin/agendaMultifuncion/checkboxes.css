@@ -1,0 +1,9 @@
+button.icon_checkbox_off, .icon_checkbox_off {
+  background: transparent url('img/checkboxOff.gif') no-repeat;
+  background-position: center;
+}
+
+button.icon_checkbox_on, .icon_checkbox_on {
+  background: transparent url('img/checkboxOn.gif') no-repeat;
+  background-position: center;
+}

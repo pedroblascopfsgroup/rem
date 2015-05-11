@@ -1,0 +1,65 @@
+RECOVERY - AGENDA MULTIFUNCION
+
+-----------------------------
+
+VERSION 1.3.2 [ Oscar - 22/08/2013]
+
+* La versión anterior tenía la dirección de las css errónea. Bruno lo corrigió pero no lo subió con la versión.
+
+
+-----------------------------
+
+VERSION 1.3.1 [ bruno - 16/07/2013]
+* Esa versi�n depende de recovery-mejoras-plugin v5.4.0 o superior
+* Ahora los estilos CSS de web/jsp/plugin/agendaMultifuncion/window/anotacion.jsp se han movido a una hoja de estilos
+    propia del plugin que se carga como un elemento din�mico.
+
+
+-----------------------------
+
+VERSION 1.3.0
+
+Cambios relacionados con anotaciones de especializada
+* Se implementa la clase necesaria para poder crear anotaciones de tipo especializada
+
+Se sube de versi�n debido al cambio de concepto en general, dado que se trata de 
+anotaciones espec�ficas para asuntos de especializada. 
+
+------------------------
+
+VERSION 1.2.0
+
+Cambios relacionados con la B�squeda de Tareas flexible:
+* Se crea la clase AnotacionTareaEncontrada que contiene los filtros para la b�squeda de Tareas.
+* Se crea la jsp correspondiente a la pesta�a de Anotaciones
+* Se indica en el ac-view que la pesta�a es un elemento din�mico para la b�squeda de Tareas.
+
+
+-------------------------------------------
+
+VERSION 1.1.0
+
+* HAY QUE CREAR LA VARIABLE agendaMultifuncion.mail.tamanyoMaximoAdjustos EN DEVON.PROPERTIES.
+
+* Versi�n para resolver incidencias LIN-268 y LIN-280
+* Punto 1 de LIN-268
+** PARA PODER CONTROLAR EL TAMA�O M�XIMO DE LOS ADJUNTOS QUE SE PUEDEN ENVIAR SE HA CREADO UNA VARIABLE
+	EN DEVON.PROPERTIES QUE SE agendaMultifuncion.mail.tamanyoMaximoAdjustos.
+	
+* Arreglado que si no hay seleccionado ningun mail de la lista el campo "Para" sea obligatorio
+* Arreglado que si los adjuntos superan el tama�o m�ximo no deja enviar el email. 	
+
+-----------------------------------------
+
+VERSION 1.0.8
+
+* Se ha hecho una l�nea m�s grande el campo de texto de la ventana anotaci�n.
+
+-----------------------------------------
+
+VERSION 1.0.6
+* Se ha cambiado el estilo del panel de adjuntos en la ventana de la anotaci�n
+* Se ha a�adido un scroll vertical que aparece al desplegar el panel de adjuntos
+
+
+NO HAY INFORMACI�N DE LAS VERSIONES ANTERIORES

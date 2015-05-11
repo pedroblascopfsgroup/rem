@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssAgenda" p:order="1"
+		p:fileName="../js/plugin/agendaMultifuncion/css/agendaMultifuncion.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<!-- <bean p:entity="menu" p:name="calendario" p:order="520" p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/menuCalendario.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> <bean p:entity="tabs.calendario" 
+		p:name="tabCalendario" p:order="1200" p:fileName="/WEB-INF/jsp/plugin/agendaMutifuncion/calendario.jsp" 
+		p:priority="0" class="es.pfsgroup.plugins.web.menu.ElementoDinamicoPorFuncionYEntidad" 
+		p:plugin="calendario" /> -->
+
+	<!-- <bean p:entity="plugin.mejoras.web.asuntos.consultaAsunto.buttons.left" 
+		p:name="botonNuevaAnotacion" p:order="10000" p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/button/botonNuevaAnotacion.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+	<bean p:entity="entidad.asunto.buttons.left.fast" p:name="botonNuevaAnotacion"
+		p:order="10000"
+		p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/button/botonNuevaAnotacion.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="CREAR_ANOTACIONES" />
+
+	<bean p:entity="plugin.mejoras.web.asuntos.consultaAsunto.buttons.left"
+		p:name="botonNuevaAnotacion" p:order="10000"
+		p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/button/botonNuevaAnotacion.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="CREAR_ANOTACIONES" />
+
+	<bean p:entity="entidad.cliente.buttons.left.fast" p:name="botonNuevaAnotacionCliente"
+		p:order="10000"
+		p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/cliente/button/botonNuevaAnotacion.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="CREAR_ANOTACIONES" />
+
+	<bean p:entity="entidad.expediente.buttons.left.fast" p:name="botonNuevaAnotacionCliente"
+		p:order="10000"
+		p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/expediente/button/botonNuevaAnotacion.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="CREAR_ANOTACIONES" />
+
+	<!-- Búsqueda de asuntos -->
+	<!-- <bean p:entity="plugin.mejoras.web.asuntos.tabs" p:name="filtrosAsuntoAnotaciones" 
+		p:order="2" p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/busqueda/asunto/tabs/filtrosAnotacion.jsp" 
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/> -->
+	<bean p:entity="plugin.mejoras.web.asuntos.tabs" p:name="filtrosAsuntoAnotacionesDinamico"
+		p:order="2"
+		p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/busqueda/asunto/tabs/filtrosAnotacionDinamico.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<!-- Búsqueda de Tareas -->
+	<bean p:entity="plugin.busquedaTareas.web.tareas.tabs" p:name="filtrosTareaAnotacionesDinamico"
+		p:order="5"
+		p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/busqueda/tareas/tabs/filtrosAnotacionTareaDinamico.jsp"
+		p:priority="2" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+
+	<!-- <bean p:entity="menu" p:name="botonNuevaAnotacion" p:order="10000" 
+		p:fileName="/WEB-INF/jsp/plugin/agendaMultifuncion/button/botonNuevaAnotacion.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+
+</beans>

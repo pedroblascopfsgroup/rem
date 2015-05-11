@@ -1,0 +1,2 @@
+coreextension = 1.1.5_globalcaja-SNAPSHOT
+mejoras = 4.0.2.0.5.15 _globalcaja-SNAPSHOT

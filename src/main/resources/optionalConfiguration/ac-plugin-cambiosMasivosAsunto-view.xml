@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean p:entity="tabs.asunto.fast" p:name="filtrosAsuntoCambiosGestores"
+		p:order="5100"
+		p:fileName="/WEB-INF/jsp/plugin/cambiosMasivosAsunto/asunto/tabs/cambiosGestores.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="menu" p:name="configuracion/cambioSelectivoDeGestoresAsunto" p:order="10100"
+		p:fileName="/WEB-INF/jsp/plugin/cambiosMasivosAsunto/asunto/buttons/btnMenuCambioSelectivoAsuntos.jsp"
+		p:priority="1"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="menu" p:name="configuracion/cambioMasivoGestoresAsunto" p:order="10000"
+		p:fileName="/WEB-INF/jsp/plugin/cambiosMasivosAsunto/cambiogestores/button.jsp"
+		p:priority="1"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	<bean p:entity="plugin.cambiosmasivos.web.asuntos.tabs" p:name="filtrosAsuntoDatosGestorMasivos"
+		p:order="1" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabs/filtrosGestor.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/> 
+		
+	<bean p:entity="plugin.cambiosmasivos.web.asuntos.tabs" p:name="filtrosAsuntoDatosGeneralesMasivos"
+		p:order="2" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabs/datosGenerales.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
+</beans>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-autowire="byName">
+
+	<bean id="sqls"
+		class="es.pfsgroup.plugin.recovery.cambiosMasivosAsunto.cambiogestores.dao.impl.CambioMasivoGestoresAsuntoDaoSQL">
+		<property name="insertDirectoPeticiones">
+			<value><![CDATA[
+      	INSERT INTO CMA_CAMBIOS_MASIVOS_ASUNTOS (CMA_ID,SOL_ID, ASU_ID, DD_TGE_ID, USD_ID_ORIGINAL, USD_ID_NUEVO, FECHA_INICIO, FECHA_FIN, USUARIOCREAR, FECHACREAR,VERSION, BORRADO)
+select S_CMA_CAMBIOS_MASIVOS_ASUNTOS.NEXTVAL, :sol, vtar.asu_id, vtar.dd_tge_id, usd.usd_id, :ges_n usu_id_nuevo, :f_ini, :f_fin,:usucrear, sysdate, 0, 0
+from vtar_asu_vs_usu vtar join ${master.schema}.dd_tge_tipo_gestor tge on vtar.dd_tge_id = tge.dd_tge_id join usd_usuarios_despachos usd on vtar.usu_id = usd.usu_id and vtar.des_id = usd.des_id
+where tge.dd_tge_id = :tge and usd.usd_id = :ges_o
+    	]]></value>
+		</property>
+		<property name="countPeticiones">
+			<value><![CDATA[
+			select vtar.asu_id, vtar.dd_tge_id, vtar.usu_id, :ges_n usu_id_nuevo, :f_ini, :f_fin
+from vtar_asu_vs_usu vtar join ${master.schema}.dd_tge_tipo_gestor tge on vtar.dd_tge_id = tge.dd_tge_id join usd_usuarios_despachos usd on vtar.usu_id = usd.usu_id and vtar.des_id = usd.des_id
+where tge.dd_tge_id = :tge and usd.usd_id = :ges_o
+    	]]></value>
+		</property>
+		<property name="insertDirectoPeticionesPorAsunto">
+			<value><![CDATA[
+      	INSERT INTO CMA_CAMBIOS_MASIVOS_ASUNTOS (CMA_ID,SOL_ID, ASU_ID, DD_TGE_ID, USD_ID_ORIGINAL, USD_ID_NUEVO, FECHA_INICIO, FECHA_FIN, USUARIOCREAR, FECHACREAR,VERSION, BORRADO)
+select S_CMA_CAMBIOS_MASIVOS_ASUNTOS.NEXTVAL, :sol, vtar.asu_id, vtar.dd_tge_id, usd.usd_id, :ges_n usu_id_nuevo, :f_ini, :f_fin,:usucrear, sysdate, 0, 0
+from vtar_asu_vs_usu vtar join ${master.schema}.dd_tge_tipo_gestor tge on vtar.dd_tge_id = tge.dd_tge_id join usd_usuarios_despachos usd on vtar.usu_id = usd.usu_id and vtar.des_id = usd.des_id
+where tge.dd_tge_id = :tge 
+    	]]></value>
+		</property>
+		<property name="codigoTipoGestor" value="tge" />
+		<property name="idGestorOriginal" value="ges_o" />
+		<property name="idSolicitante" value="sol" />
+		<property name="idGestorNuevo" value="ges_n" />
+		<property name="fechaInicio" value="f_ini" />
+		<property name="fechaFin" value="f_fin" />
+		<property name="usuarioCrear" value="usucrear" />
+		<property name="asuntosAmodificar" value="asus" />
+	</bean>
+
+</beans>

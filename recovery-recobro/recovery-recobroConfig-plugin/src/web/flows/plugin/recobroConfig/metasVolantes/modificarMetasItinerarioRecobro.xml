@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd" start-state="listado">
+	
+	<var name="formMetasVolantesItinerarios" class="es.pfsgroup.recovery.recobroConfig.metasVolantes.web.RecobroFormMetasVolantesItinerarios" />
+	<input name="id" type="java.lang.Long"/>
+    
+	<!--a partir de este momento solo enviamos ajax -->
+	<view-state id="listado" view="plugin/recobroConfig/metasVolantes/recobroModificarMetas" model="formMetasVolantesItinerarios">
+		<secured attributes="ROLE_VER_METAS" match="any"/>
+		<on-render>
+			<evaluate expression="executor.execute('plugin.recobroConfig.recobroItinerarioManager.getItinerario', id)" result="flowScope.itinerario" />
+			<evaluate expression="executor.execute('plugin.recobroConfig.recobroItinerarioManager.guardaListDDSiNo')" result="flowScope.ddSiNo" />			 
+			<evaluate expression="executor.execute('plugin.recobroConfig.recobroItinerarioManager.buscaMetasPorIti', id)" result="flowScope.formMetasVolantesItinerarios.listaMetas"/>  
+			<evaluate expression="executor.execute('plugin.recobroConfig.recobroItinerarioManager.buscaDtoMetasPorIti', id)" result="flowScope.formMetasVolantesItinerarios.listaDtoMetas"/>
+		</on-render>
+		<transition on="getData" to="getData1"/>	
+		<transition on="fin1" to="fin"/>
+	</view-state>
+    
+	<view-state id="getData1" view="plugin/recobroConfig/metasVolantes/recobroListaMetasEdicionJSON" model="formMetasVolantesItinerarios">
+		<secured attributes="ROLE_VER_METAS" match="any"/>
+		<transition on="update" to="update"/>
+		<transition on="getData" to="getData1"/>
+		<transition on="fin1" to="fin"/>
+		<!-- <exception-handler bean="swfExceptionHandler" /> -->
+	</view-state>
+	
+	<action-state id="update">
+		<secured attributes="ROLE_VER_METAS" match="any"/>
+		<evaluate expression="executor.execute('plugin.recobroConfig.recobroItinerarioManager.guardaListaMetasVolantes',formMetasVolantesItinerarios.listaDtoMetas)"></evaluate>
+		<transition to="fin"/>
+	</action-state>    
+	
+	<end-state id="fin" view="default"></end-state>
+	<exception-handler bean="swfExceptionHandler" />
+</flow>

@@ -1,0 +1,5 @@
+*** VERSIÓN 1.0.2 ****
+[DIANA] Hay que modificar la versión de la carpeta extjs3.4 a la extjs3 para que se pueda visualizar el editor 
+de reglas
+
+[CARLOS] Añadido el permiso MENU_RECOBROCONFIG_GENERAL al menú padre de la configuración

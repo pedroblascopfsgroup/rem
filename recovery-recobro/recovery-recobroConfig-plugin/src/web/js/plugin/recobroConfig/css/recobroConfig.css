@@ -1,0 +1,42 @@
+
+Button.icon_agencias_btn { background-image: url('../../../../img/plugin/recobroConfig/agenciasRecobro/icon_agencias.png');}
+.icon_agencias { background-image: url('../../../../img/plugin/recobroConfig/agenciasRecobro/icon_agencias.png');}
+.icon_cartera { background-image: url('../../../../img/plugin/recobroConfig/cartera/icon_cartera.png');}
+.icon_metas { background-image: url('../../../../img/plugin/recobroConfig/itinerario/icon_metas.png');}
+.icon_esquema { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_esquema.png');}
+.icon_politicas { background-image: url('../../../../img/plugin/recobroConfig/politicaAcuerdos/icon_politicas.png');}
+.icon_ranking { background-image: url('../../../../img/plugin/recobroConfig/ranking/icon_ranking.png');}
+.icon_facturacion { background-image: url('../../../../img/plugin/recobroConfig/facturacion/icon_modeloFacturacion.png');}
+.icon_procesosFacturacion { background-image: url('../../../../img/plugin/recobroConfig/procesosFacturacion/icon_procesosFacturacion.png');}
+
+
+.icon_btn_esquema { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/botones/btn_esquema.png');}
+.icon_btn_cartera { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/botones/btn_cartera.png');}
+.icon_btn_repartos { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/botones/btn_repartos.png');}
+.icon_btn_acuerdos { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/botones/btn_acuerdos.png');}
+.icon_btn_simulacion { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/botones/btn_simulacion.png');}
+
+Button.icon_cambiar_version { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_cambiar_version.png');}
+Button.icon_open_esquema { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_esquema.png');}
+
+Button.icon_distDinamic { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_distDinamic.png');}
+Button.icon_distStatic { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_distStatic.png');}
+Button.icon_providerAdd { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_providerAdd.png');}
+Button.icon_providerDel { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_providerDel.png');}
+Button.icon_simulacion { background-image: url('../../../../img/plugin/recobroConfig/esquemaAgencia/icon_simulacion.png');}
+
+
+.icon_btn_factGeneral { background-image: url('../../../../img/plugin/recobroConfig/facturacion/botones/btn_general_32.png');}
+.icon_btn_factCobros { background-image: url('../../../../img/plugin/recobroConfig/facturacion/botones/btn_cobros_32.png');}
+.icon_btn_factTarifas { background-image: url('../../../../img/plugin/recobroConfig/facturacion/botones/btn_tarifas_32.png');}
+.icon_btn_factCorrectores { background-image: url('../../../../img/plugin/recobroConfig/facturacion/botones/btn_correctores_32.png');}
+
+.icon_btn_calcularFacturacion { background-image: url('../../../../img/plugin/recobroConfig/procesosFacturacion/botones/btn_calcularFacturacion.png');}
+.icon_btn_remesasFacturacion { background-image: url('../../../../img/plugin/recobroConfig/procesosFacturacion/botones/btn_remesas.png');}
+
+Button.icon_download { background-image: url('../../../../img/plugin/recobroConfig/procesosFacturacion/icon_download.png');}
+Button.icon_play { background-image: url('../../../../img/plugin/recobroConfig/procesosFacturacion/icon_play.png');}
+Button.icon_marcar_pte{ background-image: url('../../../../img/plugin/recobroConfig/procesosFacturacion/icon_marcar_pte.png');}
+Button.icon_copy { background-image: url('../../../../img/plugin/recobroConfig/document-copy.png');}
+
+.vtop {vertical-align: top;}

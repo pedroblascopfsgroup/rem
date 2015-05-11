@@ -1,0 +1,28 @@
+Insert into FUN_FUNCIONES
+   (FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+ Values
+   (S_FUN_FUNCIONES.nextVal, 'Pestaña de ciclo de recobro expediente', 'TAB_CICLORECOBRO_EXPEDIENTE', 0, 'DIANA', sysdate, 0);
+
+Insert into FUN_FUNCIONES
+   (FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+ Values
+   (S_FUN_FUNCIONES.nextVal, 'Pestaña de ciclo de recobro persona expediente', 'TAB_CICLORECOBRO_PERS_EXPEDIENTE', 0, 'DIANA', sysdate, 0);
+ 
+Insert into FUN_FUNCIONES
+   (FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+ Values
+   (S_FUN_FUNCIONES.nextVal, 'Pestaña de ciclo de recobro contrato expediente', 'TAB_CICLORECOBRO_CNT_EXPEDIENTE', 0, 'DIANA', sysdate, 0);
+
+Insert into FUN_FUNCIONES
+   (FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+ Values
+   (S_FUN_FUNCIONES.nextVal, 'Pestaña de ciclo de recobro persona', 'TAB_CICLORECOBRO_PERSONA', 0, 'DIANA', sysdate, 0);
+
+   Insert into FUN_FUNCIONES
+   (FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+ Values
+   (S_FUN_FUNCIONES.nextVal, 'Pestaña de ciclo de recobro contrato', 'TAB_CICLORECOBRO_CONTRATO', 0, 'DIANA', sysdate, 0);
+
+
+   
+COMMIT;        

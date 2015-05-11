@@ -1,0 +1,45 @@
+<project name="hudson-pfs-rec-common" default="" basedir="../../build">
+	
+	<import file="${basedir}/build.xml"/>
+
+	<property environment="env"/>
+    <property file="${env.WORKSPACE}\rec-common\tools\hudson\hudson.properties"/> 		
+	
+    <target name="publish" depends="clean, clean-schemas">
+        <echo>****************************************************************************************************************</echo>
+        <echo>*** Realizando tests unitarios </echo>
+        <echo>****************************************************************************************************************</echo>
+		<antcall target="unit-tests-all"/>
+        
+        <echo>****************************************************************************************************************</echo>
+        <echo>*** Publicando el proyecto en el repositorio local </echo>
+        <echo>****************************************************************************************************************</echo>
+		<!--antcall target="publish-local-all"/-->       
+	</target>   
+	
+	<target name="clean" depends="clean-all">
+        <echo>****************************************************************************************************************</echo>
+        <echo>*** Eliminando jars publicados en la carpeta build, en el repositorio local de ivy y en la cache</echo>
+        <echo>****************************************************************************************************************</echo>
+		<delete dir="${ivy.local.root}\${rec-common.publish.dir}"/>
+		<delete dir="${ivy.cache.dir}\repository\es.capgemini\pfs-rec-common"/>
+		<delete file="${basedir}\..\modules\common\build\${rec-common.jar.name}"/>
+	</target>   
+    
+	<target name="clean-schemas">
+        <echo>****************************************************************************************************************</echo>
+        <echo>*** Limpiando los schemas de test</echo>
+        <echo>****************************************************************************************************************</echo>
+		<sql
+			driver="oracle.jdbc.driver.OracleDriver"
+			url="jdbc:oracle:thin:${database.userid}/${database.password}@${database.server}:1521/${database.sid}"
+			userid="${database.userid}"
+			password="${database.password}">
+			<transaction  src="${env.WORKSPACE}\rec-common\tools\hudson\DropUsersTest.sql"/>
+			<transaction  src="${env.WORKSPACE}\rec-common\tools\hudson\CreateUsersTest.sql"/>
+			<classpath>
+				<pathelement location="${env.WORKSPACE}\rec-common\tools\hudson\ojdbc14.jar"/>
+			</classpath>
+		</sql>
+	</target>   
+</project>

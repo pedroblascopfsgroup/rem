@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+    default-autowire="byName">
+
+    <!-- From devon -->
+    <import resource="classpath:ac-devon-core.xml" />
+
+    <!--
+        The controllers are autodetected POJOs labeled with the @Controller annotation. DefaultAnnotationHandlerMapping is
+        driven by these annotations and is enabled by default with Java 5+:
+    -->
+    <context:component-scan base-package="es.capgemini.pfs" />
+    <!--
+        Acceso a datos: Datasource principal Datasource factory de las entidades Session factory de Hibernate para el
+        datasource principal Session factory de Hibernate para los datasource de las entidades Transaction manager principal
+        Transaction manager de las entidades
+    -->
+    <!-- From rec-common -->
+    <import resource="classpath:ac-rec-common-utils.xml" />
+    <import resource="classpath:ac-rec-common-data-access.xml" />
+
+    <!-- Custom Hibernate UserDetailsService -->
+    <bean id="userService" class="es.capgemini.pfs.security.DefaultUserDetailsService"/>
+    
+    <!-- Sobreescribir el Entity Datasource para no utilizar jndi -->
+    <bean name="entityDataSourceManager" class="es.capgemini.pfs.dsm.DataSourceManager" lazy-init="false" init-method="initialize">
+        <property name="flagTable" value="${entity.flagtable}" />
+        <property name="initScripts" value="${entity.initScripts}"/>
+        <property name="destroyScripts" value="${entity.destroyScripts}" />
+        <property name="allwaysInitialize" value="${entity.allwaysInitialize}" />
+        <property name="preferJNDI" value="false"/>        
+    </bean> 
+    
+    
+    <!-- Sobreescribir el Master Datasource para no utilizar jndi -->
+    <bean id="master.internalDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+                p:driverClassName="${master.jdbc.driverClassName}" p:url="${master.jdbc.url}"
+                p:username="${master.jdbc.username}" p:password="${master.jdbc.password}" />
+                
+    <bean id="master.internalDataSourceInfo" class="java.lang.String">
+        <constructor-arg value="Master DataSource in [${master.jdbc.url}] with user [${master.jdbc.username}]"/>
+    </bean>
+    
+    <bean id="masterSessionFactory" parent="abstract.masterSessionFactory">
+        <property name="annotatedClasses">
+          <list merge="true">
+            <!-- Application mappings  
+            <value>es.capgemini.pfs.....</value>
+            -->
+            
+          </list>
+        </property>
+    </bean> 
+
+    <bean id="clasesAnotadasBatch" parent="clasesAnotadas">
+        <property name="sourceList">
+            <list merge="true">
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="entitySessionFactory" parent="abstract.entitySessionFactory">
+        <property name="annotatedClasses" ref="clasesAnotadasBatch" />
+    </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames"  >
+            <list>
+                <value>fwkMessages</value>
+                <value>appMessages</value>
+            </list>
+        </property> 
+    </bean>
+    <alias name="masterTransactionManager" alias="transactionManager" />
+</beans>

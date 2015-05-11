@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="modules/common/main/java"/>
+	<classpathentry kind="src" path="modules/common/main/resources"/>
+	<classpathentry kind="src" path="modules/common/test/java"/>
+	<classpathentry kind="src" path="modules/common/test/resources"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.antlr.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.com.mysql.jdbc.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.com.thoughtworks.xstream.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.javassist.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.javax.persistence.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.javax.transaction.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.javax.xml.stream.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.net.sf.cglib.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.aopalliance.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.codec.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.collections.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.dbcp.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.lang.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.logging.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.net.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.pool.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.log4j.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.oro.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.ws.commons.schema.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.aspectj.runtime.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.aspectj.weaver.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.hibernate.annotations.common.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.hibernate.annotations.jar" sourcepath="C:/work/extracts/hibernate-annotations-3.3.1.GA/src"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.hibernate.jar" sourcepath="C:/work/extracts/hibernate-3.2/src"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.objectweb.asm.attrs.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.objectweb.asm.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.aop.jar" sourcepath="I:/sources/org.springframework/org.springframework.aop/2.5.5.A/spring-aop-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.beans.jar" sourcepath="I:/sources/org.springframework/org.springframework.beans/2.5.5.A/spring-beans-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.context.jar" sourcepath="I:/sources/org.springframework/org.springframework.context/2.5.5.A/spring-context-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.context.support.jar" sourcepath="I:/sources/org.springframework/org.springframework.context-support/2.5.5.A/spring-context-support-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.core.jar" sourcepath="I:/sources/org.springframework/org.springframework.core/2.5.5.A/spring-core-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.integration.adapter.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.integration.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.integration.ws.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.jdbc.jar" sourcepath="I:/sources/org.springframework/org.springframework.jdbc/2.5.5.A/spring-jdbc-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.jms.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.orm.jar" sourcepath="I:/sources/org.springframework/org.springframework.orm/2.5.5.A/spring-orm-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.oxm.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.security.annotation.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.security.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.transaction.jar" sourcepath="I:/sources/org.springframework/org.springframework.transaction/2.5.5.A/spring-tx-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.web.jar" sourcepath="I:/sources/org.springframework/org.springframework.web/2.5.5.A/spring-web-sources.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.ws.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.xml.jar"/>
+	<classpathentry kind="lib" path="lib/provided/com.springsource.javax.servlet.jar"/>
+	<classpathentry kind="lib" path="lib/test/com.springsource.org.apache.commons.logging.jar"/>
+	<classpathentry kind="lib" path="lib/test/com.springsource.org.easymock.jar"/>
+	<classpathentry kind="lib" path="lib/test/com.springsource.org.junit.jar"/>
+	<classpathentry kind="lib" path="lib/test/org.springframework.test.jar"/>
+	<classpathentry kind="lib" path="lib/global/org.springframework.binding.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.bsh.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.apache.commons.io.jar"/>
+	<classpathentry kind="lib" path="lib/global/jbpm-jpdl.jar" sourcepath="C:/work/extracts/jbpm-jpdl-3.2.3/src/jpdl"/>
+	<classpathentry kind="lib" path="lib/global/spring-modules-jbpm31.jar" sourcepath="c:/work/extracts/spring-modules-0.9-with-dependencies/sources/spring-modules-jbpm31-src.zip"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/PFS JRE"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.quartz.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.codehaus.groovy.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.objectweb.asm.tree.analysis.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.objectweb.asm.tree.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.objectweb.asm.util.jar"/>
+	<classpathentry kind="lib" path="lib/global/oval.jar"/>
+	<classpathentry kind="lib" path="lib/global/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="lib/global/backport.util.concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/global/ehcache.jar"/>
+	<classpathentry kind="lib" path="lib/global/jamon.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.edu.oswego.cs.dl.util.concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/global/com.springsource.org.jgroups.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+    <classpathentry kind="lib" path="/devon/bin/bpm">
+        <attributes>
+            <attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+        </attributes>
+    </classpathentry>
+    <classpathentry kind="lib" path="/devon/bin/core">
+        <attributes>
+            <attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+        </attributes>
+    </classpathentry>
+    <classpathentry kind="lib" path="/devon/bin/hibernate">
+        <attributes>
+            <attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+        </attributes>
+    </classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

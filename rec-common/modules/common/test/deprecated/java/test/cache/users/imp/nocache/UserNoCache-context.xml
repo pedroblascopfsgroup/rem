@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+    default-merge="true"
+    default-autowire="byName">
+    
+   <import resource="classpath:ac-devon-bpm.xml"/>
+   <import resource="classpath:ac-rec-common-utils.xml"/>
+   
+   <!-- Agregadooo 
+   <import resource="classpath:ac-devon-test.xml"/>
+   -->
+   
+    
+   <context:component-scan base-package="es.capgemini.pfs" use-default-filters="false">
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.tareaNotificacion\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.expediente\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.itinerario\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.titulo\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.contrato\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.cliente\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.persona\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.antecedente\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.antecedenteexterno\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.arquetipo\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.tareaNotificacion\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.prorroga\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.asunto\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.oficina\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.actitudAptitudActuacion\..*$" />
+    <context:include-filter type="regex" expression="^es\.capgemini\.pfs\.users\..*$" />
+    <context:exclude-filter type="regex" expression="^.*Test$"/>
+    <context:exclude-filter type="regex" expression="^.*context.xml$"/>
+  </context:component-scan>
+  
+  
+  <bean id="hibernatePropertiesEntity" class="java.util.Hashtable">
+    <constructor-arg>
+      <map>
+        <entry key="hibernate.dialect">
+          <value>org.hibernate.dialect.${entity.dialect}</value>
+        </entry>
+        <entry key="hibernate.hbm2ddl.auto">
+          <value>no</value>
+        </entry>
+        <entry key="hibernate.show_sql">
+          <value>false</value>
+        </entry>
+        <entry key="hibernate.cache.provider_class">
+          <value>org.hibernate.cache.EhCacheProvider</value>
+        </entry>
+        <entry key="hibernate.cache.provider_configuration_file_resource_path">
+          <value>ehcache.xml</value>
+        </entry>
+        <entry key="hibernate.connection.pool_size">
+          <value>5</value>
+        </entry>
+        <entry key="hibernate.cache.use_query_cache">
+          <value>true</value>
+        </entry>
+        <entry key="hibernate.cache.use_second_level_cache">
+          <value>false</value>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+  
+  
+  
+  
+</beans>

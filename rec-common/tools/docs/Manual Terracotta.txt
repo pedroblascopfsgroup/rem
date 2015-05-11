@@ -1,0 +1,146 @@
+Terracotta 
+
+http://www.terracotta.org/
+
+Fichero de conf:
+								rec-common\modules\common\main\resources\terracotta\tc-config.xml
+
+
+Configuraciones server:
+
+				<servers>
+          <server host="wxpvllgiavedo" name="pfs_terracota">
+          	<dso-port>9510</dso-port>
+     				<jmx-port>9520</jmx-port>
+     				<data>terracotta/server-data</data>
+     				<logs>terracotta/server-logs</logs>
+     			</server>	
+        </servers>
+        
+host: maquina donde corre terracotta server
+dso-port: puerto al que se conectan los clientes de terracotta
+jmx-port: puerto para la consola de administracion
+data: directorios donde se va a guardar los ficheros internos
+logs: directorios donde se va a guardar los ficheros de logs        
+        
+Configuraciones cliente:  
+
+				<clients>
+          <logs>terracotta/server-logs</logs>
+          <modules>
+            <module name="tim-hibernate-3.2.5" version="1.2.0.SNAPSHOT" />
+            <module name="tim-cglib-2.1.3" version="1.2.0.SNAPSHOT" />
+            <module name="tim-ehcache-1.3"   version="1.4.0.SNAPSHOT" />
+          </modules>
+        </clients>     
+
+logs: directorios donde se va a guardar los ficheros de logs
+modulos: especificacion de los modulos que se van a sincronizar mediante terracotta
+         Nota: estos modulos no vienen por defecto y deben ser instalados tanto para cliente como para servidor.
+
+
+
+
+
+Configuraciones aplicación:  
+
+<application>
+          <spring>
+            <jee-application name="pfs">
+              <session-support>false</session-support>
+              
+jee-application: Asignamos un nombre a la aplicación j2ee
+session-support: Indicamos si vamos a mantener sincronismos entre las sesiones de los distintos frontales
+
+					<instrumented-classes>
+          	<include><class-expression>es.capgemini.pfs.itinerario.model.Estado</class-expression></include>
+          	....
+
+include: Indicamos las clases que van a ser sincronizadas mediante terracotta.
+				 Nota: es importante mantener esta información siempre actualizada a la ultima versión de las entidades 
+				 			 soportadas por la aplicación.
+				 			 En principio y salvo en caso especial se deben listar la totalidad de las entidades soportadas por hibernate. (ver configuración en el fichero ac-rec-common-data-access).
+         
+              
+
+- Se esta trabajando para que cada cliente Terracotta implemente la configuración de su servidor evitando la duplicidad de configuraciones.
+
+Paths (tomando como ejemplo integracion):
+
+		srv:   /home/integracion/terracotta/terracotta-2.7.0-stable1
+		data:  /home/integracion/terracotta/server-data
+		logs:  /home/integracion/terracotta/server-logs
+
+
+Modulos soportados por terracota:
+		
+		terracotta-2.7.0-stable0\modules\org\terracotta\modules
+		
+Para agregar nuevos modulos se debe emplear el comando tim-get ubicado dentro de terracotta/bin
+	VER: http://www.terracotta.org/web/display/docs/tim-get
+	Ejemplo para implementar el modulo de hibernate
+				tim-get.bat install tim-hibernate-3.2.5
+
+				Installing tim-hibernate-3.2.5 (1.2.0-SNAPSHOT) and dependencies...
+				   Installed: tim-cglib-2.1.3 (1.2.0-SNAPSHOT)
+				   Installed: tim-ehcache-commons (1.2.0-SNAPSHOT)
+				   Installed: tim-hibernate-3.2.5 (1.2.0-SNAPSHOT)
+				   Skipped: modules-common (2.7.0-SNAPSHOT)
+				   Installed: tim-ehcache-1.3 (1.2.0-SNAPSHOT)
+				   
+				   
+Iniciar srv terracotta:
+De momento el terracotta srv se encuentra montado en la maquina TOMCAT para cada una de las distintas instancias.
+Para iniciarlo se debe ejecutar el comando:
+				/home/integracion/terracotta_start.sh
+				
+				[integracion@eul0600518 ~]$ ./terracotta_start.sh
+				2008-10-30 11:11:54,862 INFO - Terracotta 2.7.0-stable1, as of 20080911-100942 (Revision 10031 by cruise@rh4mo0 from 2.7)
+				2008-10-30 11:11:55,293 INFO - Configuration loaded from the file at '/home/integracion/tc-config.xml'.
+				2008-10-30 11:11:55,407 INFO - Log file: '/home/integracion/terracotta/server-logs/terracotta-server.log'.
+				2008-10-30 11:11:57,773 INFO - Statistics store: '/home/integracion/statistics'.
+				2008-10-30 11:12:00,005 INFO - Statistics buffer: '/home/integracion/statistics'.
+				2008-10-30 11:12:00,069 INFO - JMX Server started. Available at URL[service:jmx:jmxmp://0.0.0.0:9520]
+				2008-10-30 11:12:00,709 INFO - Terracotta Server has started up as ACTIVE node on 0:0:0:0:0:0:0:0:9510 successfully, and is now ready for work.
+
+Vemos que se esta empleando el fichero de configuracion:		/home/integracion/tc-config.xml
+JMX Port: 9520
+Terracotta Server: 9510
+				
+Consola:
+Una vez iniciado el srv terracotta podemos conectarnos al mismo via JMX mediante la consola.
+Para iniciar la consola se debe ejecutar:
+					
+   terracotta/bin/admin.bat
+   
+Debemos especificar la ip del srv y el puerto jmx con el cual se ha iniciado el srv.
+
+Iniciar cliente TOMCAT + Terracotta:
+	/opt/sw/apache-tomcat-6.0.18/bin/startupIntegracionTerracotta.sh
+	
+	
+	
+	
+Crear el dso-bootHotSpot:
+
+	/usr/java/jdk1.6.0_07/bin/java -Dtc.install-root=/home/integracion/terracotta/terracotta-2.7.0 ${JAVA_OPTS} -cp /home/integracion/terracotta/terracotta-2.7.0/lib/tc.jar com.tc.object.tools.BootJarTool make -f /home/integracion/tc-config.xml
+	
+	
+	
+	
+	
+	
+Terracotta NO VA:
+
+INFO: Server startup in 27940 ms
+Exception in thread "http-8443-4" java.lang.OutOfMemoryError: PermGen space
+Exception in thread "http-8443-2" java.lang.OutOfMemoryError: PermGen space
+Exception in thread "http-8443-6" java.lang.OutOfMemoryError: PermGen space
+Exception in thread "http-8443-3" java.lang.OutOfMemoryError: PermGen space
+Exception in thread "QuartzScheduler_QuartzScheduler-NON_CLUSTERED_ClusterManager" java.lang.OutOfMemoryError: PermGen space
+Exception in thread "http-8443-1" java.lang.OutOfMemoryError: PermGen space
+
+
+http://www.terracotta.org/confluence/display/docs1/Release+Notes+2.6
+
+Solucion!!!! -->  Modificar la variable para JVM  -XX:MaxPermSize=200m

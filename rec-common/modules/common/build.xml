@@ -1,0 +1,10 @@
+<project name="pfs-rec-common" default="">
+	
+    <property file="${user.home}/build.properties"/> 			<!-- propiedades del usuario --> 
+    <property file="${basedir}/module.properties"/>				<!-- propiedades del módulo -->
+    <property file="${project.dir}/build/project.properties"/>	<!-- propiedades del proyecto-->
+    <property file="${common.dir}/default.properties"/>   		<!-- propiedades por defecto -->
+    
+	<import file="${common.dir}/common.xml"/>
+    
+</project>

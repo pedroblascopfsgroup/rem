@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="procesoVacio" xmlns="urn:jbpm.org:jpdl-3.2">
+   
+   <start-state name="Inicio">
+      <transition to="Espera" name="finalizar"></transition>
+   </start-state> 
+
+   <state name="Espera">
+      <timer duedate="30 seconds" transition="finalizar"></timer>
+      <transition to="Fin" name="finalizar"></transition>
+   </state>
+   
+   <end-state name="Fin">
+      <event type="node-enter">
+         <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+            <targetBean>endProcessActionHandler</targetBean>
+         </action>
+      </event>
+   </end-state>
+
+
+</process-definition>

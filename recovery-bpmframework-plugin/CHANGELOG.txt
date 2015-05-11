@@ -1,0 +1,53 @@
+### VERSION 1.2.0_rc3 ####
+[Guillem]
+LPR-171 Aumentar el procesado de inputs manual de 500 a 2000
+(Se modifica la clase RecoveryBPMfwkBatchManager.java para aumentar el máximo de inputs por defecto de 500 a 2000.)
+
+
+### VERSION 1.2.0-rc1 ####
+[Vicente]
+LINPR-2918 Mejora proceso de carga Excels masivos BackOffice.
+LPR-120 Limpieza y revisión del código de los plugins de Lindorff
+
+### VERSION 1.1.0 ####
+[Pedro]
+Modificación para permitir lanzamiento de procesado de inputs pendientes desde botón (control de máximo número de inputs pendientes)
+
+### VERSION 1.0.3_rc1 ####
+[Diana]
+Modificación de la dependencia con el plugin geninformes porque ha cambiado el método general de generar informes y necesita más variables de entrada
+
+#### VERSION 1.0.2_rc28 ####
+
+- Añadida la operación RecoveryBPMfwkDatosProcedimientoApi.borrarDatosPersistidos
+
+#### VERSION 1.0.2_rc27 ####
+
+- Modificaciones necesarias para asociar a las tareas las resoluciones procesadas en batch
+(por carga de ficheros excel).
+
+#### VERSION 1.0.2_rc26 ####
+
+- Nuevo tipo de acción INFO_RECALCULAR con su executor asociado.
+
+#### VERSION 1.0.2_rc16 ####
+- Relación entre inputs y tareas
+- Se añade un nuevo executor que permite ejecutar funciones BO antes y después de procesaro el input.
+- La configuración de los inputs tiene dos campos nuevos para almacenar las funciones BO a ejecutar. Opcionales.
+
+#### VERSION 1.0.2_rc15 #### 18/06/2013
+- Resolución de incidencias varias.
+
+#### VERSION 1.0.2_rc13 #### 11/06/2013
+
+- Los ejecutors se pueden lanzar sobre varios nodos a la vez, como ocurre en el caso de los forks.
+Sigue siendo necesaria una configuración individual para cada nodo.  
+
+#### VERSION 1.0.2_rc4 #### 15/05/2013
+
+- Las excepciones devuelven información sobre la configuración.
+
+#### VERSION 1.0.2_rc2 ####
+
+- El api de configuración tiene en cuenta la tarea y el nodo en la que se encuentra en procedimiento.
+- Cambios en los checks.

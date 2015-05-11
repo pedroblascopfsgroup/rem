@@ -1,0 +1,12 @@
+.icon_calendario_azul{
+  background: transparent url('calendar-blue.png') no-repeat;
+}
+* html .icon_calendario_azul{
+  background: transparent url('calendar-blue.gif') no-repeat;
+}
+
+.icon_deleteFile  {background: transparent url('../../../../img/plugin/expediente/icon_deleteFile.png') no-repeat;background-position: center;}
+.icon_exceptuarPersona {background: transparent url('../../../img/plugin/expediente/icon_exceptuarPersona.png') no-repeat;background-position: center;}
+.icon_deleteContrato  {background: transparent url('../../img/plugin/expediente/icon_deleteContrato.png') no-repeat;background-position: center;}
+
+

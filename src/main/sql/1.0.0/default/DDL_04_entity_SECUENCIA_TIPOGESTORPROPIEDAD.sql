@@ -1,0 +1,1 @@
+create sequence S_TGP_TIPO_GESTOR_PROPIEDAD;

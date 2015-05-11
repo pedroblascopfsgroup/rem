@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+
+		
+	<bean p:entity="tabs.expediente.fast" p:name="tabIncidenciasExpedientes"  
+		p:order="1100" 
+		p:fileName="/WEB-INF/jsp/plugin/expediente/incidenciaExpediente/tabIncidenciaExpediente.jsp" 
+		p:priority="0"  
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="BUSCAR-INCIDENCIAS-EXPEDIENTE" /> 
+			
+	<bean p:entity="tabs.expediente.fast" p:name="expedienteMultigestor"
+		p:order="699" p:fileName="/WEB-INF/jsp/plugin/expediente/gestorEntidad/tabs/tabMultigestorEntidad.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="VER_TAB_GESTORES_EXPEDIENTE"/>
+	
+	<bean p:entity="tabs.expediente.fast" p:name="tabCobrosPagos"  
+		p:order="1300" 
+		p:fileName="/WEB-INF/jsp/plugin/expediente/cobrosPagos/tabs/tabCobrosPagos.jsp" 
+		p:priority="0"  
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_COBROS_PAGOS_EXP" />
+	
+	<bean p:entity="entidad.cliente.buttons.left.fast" p:name="botonExceptuarPersona"
+		p:order="10010"
+		p:fileName="/WEB-INF/jsp/plugin/expediente/exceptuacion/cliente/button/botonExceptuarPersona.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="CREAR_EXCEPCIONES_CLIENTE" />
+		 
+	<bean p:entity="entidad.contrato.buttons.left.fast" p:name="botonExceptuarContrato" p:order="10010"
+		p:fileName="/WEB-INF/jsp/plugin/expediente/exceptuacion/contrato/button/botonExceptuarContrato.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="CREAR_EXCEPCIONES_CONTRATO" />
+		
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+        p:name="cssNombreUnicoParaMiHojaDeEstilo" p:order="1"
+        p:fileName="../js/plugin/expediente/css/expediente.css"
+        p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+
+	
+</beans>	

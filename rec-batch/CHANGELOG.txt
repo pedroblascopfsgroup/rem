@@ -1,0 +1,26 @@
+
+********************************************************
+*  VERSION 1.0.0 Tyrion (Lanister): Rama de desarrollo para las cosas Bankia
+********************************************************
+
+- Guillem: a�adidas nuevas clases que forman el nuevo esqueleto del batch
+para los nuevos procesos de Agencias de Recobro de Bankia. Tambi�n se han 
+a�adido los ficheros de configuraci�n necesarios y los cambios requeridos
+en la configuraci�n actual del batch.
+- Observaciones: se a�ade la carpeta util que contiene el directorio jmxclient 
+con los scripts y las librer�as necesarias para probar los nuevos procesos. 
+- Instalaci�n: generar el jar y sustituir por el existente en el batch, a 
+continuaci�n, copiar los nuevos xml de configuraci�n de recobro en el directorio
+config y finalmente copiar los xml de los nuevos jobs de recobro en el
+directorio de jobs/recobro. 
+
+
+
+********************************************************
+*  VERSION 1.0.0 Mavenizado
+********************************************************
+- Guillem: a partir de las fuentes originales se genera la primera
+versi�n mavenizada.
+- Observaciones: leer el fichero LEEME.txt y usar el comando que all�
+se describe para generar el jar ejecutable y con sus correspondientes
+dependencias. Para generar el jar normal utilizar mvn package

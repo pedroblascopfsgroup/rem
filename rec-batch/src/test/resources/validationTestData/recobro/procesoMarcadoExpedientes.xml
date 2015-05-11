@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM BANKMASTER.DD_TPE_TIPO_EXPEDIENTE</value>
+		<msg>Comprobamos que en el diccionario de tipos de expedientes DD_TPE_TIPO_EXPEDIENTE hay datos.</msg>
+		<expected>1</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_ACTIVOS</value>
+		<msg>Comprobamos que tenemos expedientes activos en la tabla TMP_REC_EXP_ACTIVOS.</msg>
+		<expected>100</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_EXTINCION</value>
+		<msg>Comprobamos el numero de expedientes de extinción de la tabla TMP_REC_EXP_EXTINCION.</msg>
+		<expected>50</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_EXTINCION_RU</value>
+		<msg>Comprobamos el numero de expedientes de extinción en modo ruptura de la tabla TMP_REC_EXP_EXTINCION_RU.</msg>
+		<expected>25</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_EXTINCION_RA</value>
+		<msg>Comprobamos el numero de expedientes de extinción en modo rearquetipado de la tabla TMP_REC_EXP_EXTINCION_RA.</msg>
+		<expected>25</expected>
+	</sql>		
+</sqls>

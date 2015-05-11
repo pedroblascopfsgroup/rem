@@ -1,0 +1,152 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    
+    <entry key="gcl-11.lastLoadDateValidator">
+    	 <![CDATA[
+    	 SELECT FRC_FECHA_EXTRACCION AS ERROR_FIELD,
+         'GCL' AS ENTITY_CODE
+         from FRC_FICHEROS_CARGADOS 
+         where FRC_FECHA_EXTRACCION > to_date(?,'YYYYMMDD')
+         and DD_TFI_ID = (select DD_TFI_ID from ${master.schema}.DD_TFI_TIPO_FICHERO where DD_TFI_CODIGO='GCL')
+    	  ]]>
+    </entry>
+    <entry key="gcl-01.entityValidatorGrupos">
+   		 <![CDATA[
+   		  SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_COD_ENTIDAD AS ENTITY_CODE      
+          FROM TMP_GCL_GRUPOS_CLIENTES WHERE TMP_GCL_COD_ENTIDAD <> ?
+   		  ]]>
+    </entry>
+    <entry key="gcl-05.entityValidatorRelaciones">
+   		 <![CDATA[
+   		  SELECT  TMP_PER_GCL_COD_CLI AS ERROR_FIELD, TMP_PER_GCL_COD_ENTIDAD AS ENTITY_CODE      
+          FROM TMP_PER_GCL WHERE TMP_PER_GCL_COD_ENTIDAD <> ?
+   		  ]]>
+    </entry>
+    <entry key="gcl-02.loadDateValidatorGrupos">
+      <![CDATA[
+         SELECT TMP_GCL_CODIGO AS ERROR_FIELD,
+         TMP_GCL_CODIGO AS ENTITY_CODE
+         from TMP_GCL_GRUPOS_CLIENTES where TMP_GCL_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')
+         ]]>
+    </entry>
+
+    <entry key="gcl-06.loadDateValidatorRelaciones">
+      <![CDATA[
+         SELECT TMP_PER_GCL_COD_CLI AS ERROR_FIELD,
+         TMP_PER_GCL_COD_CLI AS ENTITY_CODE
+         from TMP_PER_GCL where TMP_PER_GCL_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')
+         ]]>
+    </entry>
+
+    <entry key="gcl-03.tipoGrupoValidator">
+    	SELECT TMP_GCL_TIPO_GRUPO AS ERROR_FIELD, TMP_GCL_CODIGO AS ENTITY_CODE
+    	from TMP_GCL_GRUPOS_CLIENTES
+    	where not exists (select * from DD_TGL_TIPO_GRUPO_CLIENTE dd where dd.DD_TGL_CODIGO = TMP_GCL_TIPO_GRUPO )
+    </entry>
+
+    <entry key="gcl-04.gruposVaciosValidator">
+    	SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_CODIGO AS ENTITY_CODE
+    	from TMP_GCL_GRUPOS_CLIENTES glc
+    	where not exists (select * 
+    					  from TMP_PER_GCL rel 
+    					  where glc.TMP_GCL_CODIGO = rel.TMP_PER_GCL_CODIGO_GRUPO
+    					  and glc.TMP_GCL_TIPO_GRUPO = rel.TMP_PER_GCL_TIPO_GRUPO)
+    </entry>
+
+    <entry key="gcl-07.personasValidator">
+    	SELECT pgl.TMP_PER_GCL_COD_CLI AS ERROR_FIELD, pgl.TMP_PER_GCL_COD_CLI AS ENTITY_CODE
+    	from TMP_PER_GCL pgl
+    	where not exists (select * from PER_PERSONAS per where pgl.TMP_PER_GCL_COD_CLI = per.PER_COD_CLIENTE_ENTIDAD)
+    </entry>
+
+    <entry key="gcl-08.personasGruposValidator">
+    	SELECT pgl.TMP_PER_GCL_CODIGO_GRUPO AS ERROR_FIELD, pgl.TMP_PER_GCL_COD_CLI AS ENTITY_CODE
+    	from TMP_PER_GCL pgl
+    	where not exists (select * 
+    					  from TMP_GCL_GRUPOS_CLIENTES g 
+    					  where pgl.TMP_PER_GCL_CODIGO_GRUPO = g.TMP_GCL_CODIGO
+    					  and g.TMP_GCL_TIPO_GRUPO = pgl.TMP_PER_GCL_TIPO_GRUPO)
+    </entry>
+
+    <entry key="gcl-12.gruposRepetidosValidator">
+    	 <![CDATA[
+	    	SELECT  glc1.TMP_GCL_CODIGO AS ERROR_FIELD,  glc1.TMP_GCL_CODIGO AS ENTITY_CODE
+	    	from TMP_GCL_GRUPOS_CLIENTES glc1, TMP_GCL_GRUPOS_CLIENTES glc2
+	    	where glc1.TMP_GCL_CODIGO = glc2.TMP_GCL_CODIGO
+			and glc1.TMP_GCL_TIPO_GRUPO = glc2.TMP_GCL_TIPO_GRUPO
+			and glc1.TMP_GCL_ID <> glc2.TMP_GCL_ID 
+		 ]]> 
+    </entry>
+    
+    <entry key="gcl-13.personasEnMasDeUnGrupoValidator">
+    	 <![CDATA[
+	    	SELECT pgl.TMP_PER_GCL_CODIGO_GRUPO AS ERROR_FIELD, pgl.TMP_PER_GCL_COD_CLI AS ENTITY_CODE
+    		from TMP_PER_GCL pgl,TMP_PER_GCL pgl1
+    		where pgl.TMP_PER_GCL_ID <> pgl1.TMP_PER_GCL_ID
+    		and pgl.TMP_PER_GCL_COD_CLI = pgl1.TMP_PER_GCL_COD_CLI
+		 ]]> 
+    </entry>
+
+    <entry key="gcl.borrarRelacionesAnteriores">
+    	DELETE FROM PER_GCL
+    </entry>
+
+    <entry key="gcl.borrarGruposAnteriores">
+    	DELETE FROM GCL_GRUPOS_CLIENTES
+    </entry>
+	
+	<entry key="gcl.pasajeGruposProduccion">
+		INSERT INTO GCL_GRUPOS_CLIENTES (
+		   GCL_ID,
+		   DD_TGL_ID,
+		   GCL_CODIGO,
+		   GCL_NOMBRE,
+		   GCL_FECHA_EXTRACCION,
+		   GCL_FICHERO_CARGA,		
+		   VERSION,
+		   USUARIOCREAR,
+		   FECHACREAR,
+		   BORRADO
+		)SELECT 
+			S_GCL_GRUPOS_CLIENTES.nextVal,
+			(select dd.DD_TGL_ID from DD_TGL_TIPO_GRUPO_CLIENTE dd where dd.DD_TGL_CODIGO = TMP_GCL_TIPO_GRUPO),
+			TMP_GCL_CODIGO,
+			TMP_GCL_NOMBRE,
+			TMP_GCL_FECHA_EXTRACCION,
+			TMP_GCL_FICHERO_CARGA,
+			0,
+			'${gcl.userPasaje}',
+			SYSDATE,
+			0
+		from TMP_GCL_GRUPOS_CLIENTES	
+	</entry>
+
+	<entry key="gcl.pasajeRelacionesProduccion">
+		INSERT INTO PER_GCL (
+			PER_GCL_ID,
+			GCL_ID,
+			PER_ID,
+			PER_GCL_FECHA_EXTRACCION,
+			PER_GCL_FICHERO_CARGA,
+		    VERSION,
+		    USUARIOCREAR,
+		    FECHACREAR,
+		    BORRADO
+		)
+		SELECT 
+			S_PER_GCL.nextVal,
+			(	select distinct GCL_ID 
+				from GCL_GRUPOS_CLIENTES gcl where gcl.GCL_CODIGO = TMP_PER_GCL_CODIGO_GRUPO 
+				and TMP_PER_GCL_TIPO_GRUPO = (select dd.DD_TGL_CODIGO 
+											  from DD_TGL_TIPO_GRUPO_CLIENTE dd 
+											  where dd.DD_TGL_ID = gcl.DD_TGL_ID )),
+			(select distinct PER_ID from PER_PERSONAS per where TMP_PER_GCL_COD_CLI = per.PER_COD_CLIENTE_ENTIDAD),
+			TMP_PER_GCL_FECHA_EXTRACCION,
+			TMP_PER_GCL_FICHERO_CARGA,
+			0,
+			'${gcl.userPasaje}',
+			SYSDATE,
+			0
+		from TMP_PER_GCL    
+	</entry>
+</properties>

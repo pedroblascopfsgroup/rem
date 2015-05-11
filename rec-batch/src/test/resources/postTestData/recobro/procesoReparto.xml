@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de la tabla TMP_REC_EXP_ASIG_CARTERA</msg>
+		<value>TRUNCATE TABLE TMP_REC_EXP_ASIG_CARTERA</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de la tabla BATCH_DATOS_SALIDA</msg>
+		<value>TRUNCATE TABLE BATCH_DATOS_SALIDA</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de los expedientes de la tabla BATCH_DATOS_ENTRADAS que han sido insertados para pruebas de rotacion</msg>
+		<value>
+			DELETE FROM BATCH_DATOS_ENTRADA WHERE EXP_ID IN (SELECT EXP_ID FROM TMP_REC_EXP_ROTACION)
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Truncado de la tabla TMP_REC_EXP_ROTACION</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_ROTACION
+		</value>
+	</sql>
+</sqls>

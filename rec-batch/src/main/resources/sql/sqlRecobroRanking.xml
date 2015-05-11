@@ -1,0 +1,14 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<!-- A partir de aquí descomentamos y añadimos las queries correspondientes al job de ranking 
+
+  <entry key="facturacion.cuentaControlCobrosDiaQuery">
+    <![CDATA[
+      SELECT COUNT(*) FROM CCR_CONTROL_COBROS_RECOBRO WHERE CCR_FECHA = ?
+    ]]>
+  </entry>
+ -->
+  
+ </properties>
+ 

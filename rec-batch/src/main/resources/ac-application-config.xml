@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:int="http://www.springframework.org/schema/integration"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd"
+    default-autowire="byName">
+    
+    <!-- From devon -->
+    <import resource="classpath:devon/resources/core/ac-devon-core.xml" />  
+    <import resource="classpath:ac-devon-batch.xml"/>
+    <import resource="classpath:devon/resources/bpm/ac-devon-bpm.xml"/>
+    <import resource="classpath:devon/resources/core/ac-devon-monitoring.xml"/>
+    <import resource="classpath:devon/resources/core/ac-devon-integration.xml" />
+    
+    <!-- Canal para eventos del batch -->
+    <int:publish-subscribe-channel id="batchChannel"/>
+    
+    
+    <!--
+        The controllers are autodetected POJOs labeled with the @Controller annotation.
+        DefaultAnnotationHandlerMapping is driven by these annotations and is 
+        enabled by default with Java 5+:
+    -->
+    
+    
+    
+    <import resource="classpath:ac-rec-bpm-pfsgroup.xml" />    
+    
+    <!-- From rec-common -->
+    <import resource="classpath:ac-rec-common-data-access.xml"/>
+    <import resource="classpath:ac-rec-common-utils.xml"/>
+    <import resource="classpath:ac-rec-common-job.xml"/>
+    
+    <!--
+        Acceso a jobs batch
+    -->
+    <import resource="classpath:ac-rec-batch.xml"/>
+    
+    <!--
+        Acceso a procesos bpm
+    -->
+    <import resource="classpath:ac-rec-batch-bpm.xml"/>
+    
+    <import resource="classpath:ac-rec-batch-customer.xml"/>
+    
+
+   <!-- 
+	<bean id="clasesAnotadasBatch" parent="clasesAnotadasEntity">
+		<property name="sourceList">
+			<list merge="true">
+			</list>
+		</property>
+	</bean>
+	<bean id="entitySessionFactory" parent="abstract.entitySessionFactory">
+	    <property name="annotatedClasses" ref="clasesAnotadasBatch" />
+	</bean>
+    -->
+    
+    <!-- <bean name="devon:type=Batch2" class="es.capgemini.pfs.batch.BatchConsolePlugin" autowire="byName"/> -->
+
+  <!-- Bean para el dao generico -->
+  <bean id="genericABMDao" class="es.pfsgroup.plugins.commons.dao.abm.impl.GenericABMEntityDaoImpl">
+	<property name="sessionFactory" ref="entitySessionFactory"/>
+  </bean>  
+  
+  
+  <!-- FIXME Quitar este bean -->
+  <bean id="dynamicElementManager" class="es.capgemini.devon.web.DynamicElementManager" />
+</beans>

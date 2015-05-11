@@ -1,0 +1,73 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
+	<entry key="recobro.borrado.tmp_rec_exp_sin_personas.Oracle9iDialect">
+		<![CDATA[
+			TRUNCATE TABLE TMP_REC_EXP_SIN_PERSONAS
+		]]>
+	</entry>
+	<entry key="recobro.borrado.tmp_rec_exp_sin_riesgos.Oracle9iDialect">
+		<![CDATA[
+			TRUNCATE TABLE TMP_REC_EXP_SIN_RIESGOS
+		]]>
+	</entry>
+	<entry key="recobro.borrado.tmp_rec_exp_sin_contratos.Oracle9iDialect">
+		<![CDATA[
+			TRUNCATE TABLE TMP_REC_EXP_SIN_CONTRATOS
+		]]>
+	</entry>
+	
+	<!-- PASO 2 Obtenemos los expedientes de recobro sin personas o que estas esten exceptuadas -->
+	<entry key="recobro.insert.tmp_rec_exp_sin_personas.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_SIN_PERSONAS
+			SELECT DISTINCT EXP.EXP_ID
+			FROM BATCH_DATOS_EXP EXP
+			WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+			  	AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+          		AND NOT EXISTS (SELECT * FROM BATCH_DATOS_PER_EXP PEX WHERE PEX.EXP_ID = EXP.EXP_ID
+                        AND NOT EXISTS (SELECT * FROM BATCH_DATOS_EXCEPTUADOS EXC WHERE EXC.PER_ID IS NOT NULL AND EXC.PER_ID = PEX.PER_ID)
+          )
+		]]>
+	</entry>
+	
+	<!-- PASO 3 Obtenemos los expedientes de recobro sin contratos o que estos estan exceptuados -->
+	<entry key="recobro.insert.tmp_rec_exp_sin_contratos.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_SIN_CONTRATOS
+			SELECT DISTINCT EXP.EXP_ID
+			FROM BATCH_DATOS_EXP EXP
+			WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+				AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+        		AND NOT EXISTS (SELECT * FROM BATCH_DATOS_CNT_EXP CEX WHERE CEX.EXP_ID = EXP.EXP_ID
+                                	AND NOT EXISTS (SELECT * FROM BATCH_DATOS_EXCEPTUADOS EXCP WHERE EXCP.CNT_ID = CEX.CNT_ID ))				
+		]]>	
+	</entry>
+	<!-- PASO 4 Obtenemos los expedientes de recobro regularizados (suma del riesgo de todos los contratos igual a 0 -->
+	<entry key="recobro.insert.tmp_rec_exp_sin_riesgos.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_SIN_RIESGOS
+			SELECT DISTINCT EXP.EXP_ID
+			FROM BATCH_DATOS_EXP EXP
+  				INNER JOIN BATCH_DATOS_CNT_EXP CEX ON EXP.EXP_ID = CEX.EXP_ID
+  				INNER JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
+			WHERE EXP.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+  				AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+				AND NVL(CNT.CNT_RIESGO, 0) <= 0
+		]]>
+	</entry>
+	<!-- PASO 5 Juntar los expedientes obtenidos en la tabla TMP_REC_EXP_CANCELADOS -->
+	<entry key="recobro.insert.tmp_rec_exp_cancelados.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_CANCELADOS
+			SELECT DISTINCT EXP_ID FROM 
+		  		(SELECT EXP_ID FROM TMP_REC_EXP_SIN_PERSONAS
+		  		UNION
+		  		SELECT EXP_ID FROM TMP_REC_EXP_SIN_CONTRATOS
+		  		UNION
+		  		SELECT EXP_ID FROM TMP_REC_EXP_SIN_RIESGOS
+		  		UNION
+		  		SELECT EXP_ID FROM TMP_REC_EXP_EXTINCION_RU)
+  		]]>
+	</entry>
+</properties>

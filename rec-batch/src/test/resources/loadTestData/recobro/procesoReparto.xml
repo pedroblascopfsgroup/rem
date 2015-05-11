@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_REPARTO_CAR</msg>
+		<value>
+			declare
+				nCount NUMBER;
+				v_sql LONG;
+			begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_REPARTO_CAR';
+				IF(nCount &lt;= 0) THEN
+		      		v_sql:='
+						CREATE TABLE TMP_REC_EXP_REPARTO_CAR (
+							EXP_ID          NUMBER(16) NOT NULL,
+							CAR_ID          NUMBER(16) NOT NULL
+						)
+		      		';
+		  			execute immediate v_sql;
+				END IF;
+			end;			
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_REPARTO_CAR_VRE</msg>
+		<value>
+			declare
+				nCount NUMBER;
+				v_sql LONG;
+			begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_REPARTO_CAR_VRE';
+				IF(nCount &lt;= 0) THEN
+		      		v_sql:='
+						CREATE TABLE TMP_REC_EXP_REPARTO_CAR_VRE (
+							EXP_ID          NUMBER(16) NOT NULL,
+							CAR_ID          NUMBER(16) NOT NULL,
+							RCF_SCA_ID      NUMBER(16),
+							VRE             NUMBER(16,2) NOT NULL
+						)
+		      		';
+		  			execute immediate v_sql;
+				END IF;
+			end;			
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_SUBCAR_COUNT</msg>
+		<value>
+			declare
+				nCount NUMBER;
+				v_sql LONG;
+			begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_REPARTO_SUB';
+				IF(nCount &lt;= 0) THEN
+		      		v_sql:='
+						CREATE TABLE TMP_REC_EXP_REPARTO_SUB (
+							EXP_ID          NUMBER(16) NOT NULL,
+							CAR_ID          NUMBER(16) NOT NULL,
+							RCF_SCA_ID      NUMBER(16) NOT NULL,
+							RCF_AGE_ID_OLD  NUMBER(16),
+							VRE             NUMBER(16,2) NOT NULL
+						);						
+		      		';
+		  			execute immediate v_sql;
+				END IF;
+			end;			
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Creación de la tabla TMP_REC_EXP_REPARTO_AGENCIAS</msg>
+		<value>
+			declare
+				nCount NUMBER;
+				v_sql LONG;
+			begin
+				SELECT COUNT(*) INTO NCOUNT FROM ALL_TABLES WHERE TABLE_NAME = 'TMP_REC_EXP_REPARTO_AGENCIAS';
+				IF(nCount &lt;= 0) THEN
+		      		v_sql:='
+						CREATE TABLE TMP_REC_EXP_REPARTO_AGENCIAS (
+							EXP_ID          NUMBER(16) NOT NULL,
+							CAR_ID          NUMBER(16) NOT NULL,
+							RCF_SCA_ID      NUMBER(16) NOT NULL,
+							RCF_AGE_ID	    NUMBER(16) NOT NULL,
+							VRE		    NUMBER(16,2) NOT NULL
+						)
+		      		';
+		  			execute immediate v_sql;
+				END IF;
+			end;			
+		</value>
+	</sql>	
+	<sql>
+		<type>INSERT</type>
+		<msg>Insertamos expedientes en TMP_REC_EXP_ASIG_CARTERA PARA ser repartaridos en subcarteras</msg>
+		<value>
+			INSERT INTO TMP_REC_EXP_ASIG_CARTERA
+			SELECT EXP_ID, ARQ_ID FROM
+			(
+			SELECT TABLA.EXP_ID, TABLA.VRE, EXP.ARQ_ID,ROW_NUMBER() OVER (ORDER BY VRE DESC) ORDEN
+			FROM
+			  (SELECT NVL(SUM(M.MOV_DEUDA_IRREGULAR), 0) VRE, CEX.EXP_ID
+			    FROM MOV_MOVIMIENTOS M, CEX_CONTRATOS_EXPEDIENTE CEX, CNT_CONTRATOS CNT, DD_TPE_TIPO_PROD_ENTIDAD TPE 
+			    WHERE CEX.BORRADO = 0 AND M.CNT_ID = CEX.CNT_ID AND CNT.CNT_ID = CEX.CNT_ID AND 
+			      M.MOV_FECHA_EXTRACCION = CNT.CNT_FECHA_EXTRACCION  AND CNT.DD_TPE_ID = TPE.DD_TPE_ID  AND M.MOV_RIESGO > 0
+			  GROUP BY CEX.EXP_ID) TABLA
+			INNER JOIN EXP_EXPEDIENTES EXP ON TABLA.EXP_ID = EXP.EXP_ID)
+			WHERE ORDEN &lt;= 20		
+		</value>
+	</sql>
+	<sql>
+		<type>INSERT</type>
+		<msg>Insertamos otros expedientes en BATCH_DATOS_SALIDA para ser respartidos en subcarteras</msg>
+		<value>
+			INSERT INTO BATCH_DATOS_SALIDA (EXP_ID, ARQ_ID,EXP_MANUAL,DD_AEX_ID,EXP_FECHA_EST_ID, OFI_ID,CNT_ID, PER_ID)
+			SELECT EXP_ID, ARQ_ID, 1 EXP_MANUAL, DD_AEX_ID, TRUNC(EXP_FECHA_EST_ID), OFI_ID, CNT_ID, PER_ID FROM
+			(
+			SELECT TABLA.EXP_ID, TABLA.VRE, EXP.ARQ_ID, TABLA.DD_AEX_ID, EXP_FECHA_EST_ID, OFI_ID, PER_ID, CNT_ID, ROW_NUMBER() OVER (ORDER BY VRE DESC) ORDEN
+			FROM
+			  (SELECT NVL(SUM(M.MOV_DEUDA_IRREGULAR), 0) VRE, CEX.EXP_ID, CEX.DD_AEX_ID, CEX.CNT_ID
+			    FROM MOV_MOVIMIENTOS M, CEX_CONTRATOS_EXPEDIENTE CEX, CNT_CONTRATOS CNT, DD_TPE_TIPO_PROD_ENTIDAD TPE 
+			    WHERE CEX.BORRADO = 0 AND M.CNT_ID = CEX.CNT_ID AND CNT.CNT_ID = CEX.CNT_ID AND 
+			      M.MOV_FECHA_EXTRACCION = CNT.CNT_FECHA_EXTRACCION  AND CNT.DD_TPE_ID = TPE.DD_TPE_ID  AND M.MOV_RIESGO > 0
+			  GROUP BY CEX.EXP_ID, CEX.DD_AEX_ID, CEX.CNT_ID) TABLA
+			INNER JOIN EXP_EXPEDIENTES EXP ON TABLA.EXP_ID = EXP.EXP_ID
+			INNER JOIN PEX_PERSONAS_EXPEDIENTE PEX ON EXP.EXP_ID = PEX.EXP_ID)
+			WHERE ORDEN &gt; 20 AND ORDEN &lt;= 40		
+		</value>
+	</sql>
+	<sql>
+		<type>INSERT</type>
+		<msg>Insertamos expedientes en BATCH_DATOS_ENTRADA para probarlos para rotacion</msg>
+		<value>
+			INSERT INTO BATCH_DATOS_ENTRADA (EXP_ID, ARQ_ID, EXP_PROCESS_BPM, EXP_MARCADO_BPM, EXP_BORRADO, 
+					DD_TPE_ID, DD_TPE_CODIGO, DD_TPE_BORRADO, DD_EEX_ID, DD_EEX_CODIGO, DD_EEX_BORRADO,
+					RCF_ESQ_ID, RCF_CAR_ID, RCF_AGE_ID, RCF_SCA_ID)
+			SELECT EXP_ID, 1, 1, 0, 0, 1, 'RECOBRO', 0, 2, '1', 0, 1, 1, 1, 1 FROM
+			(
+			SELECT TABLA.EXP_ID, TABLA.VRE, EXP.ARQ_ID, TABLA.DD_AEX_ID, EXP_FECHA_EST_ID, OFI_ID, PER_ID, CNT_ID, ROW_NUMBER() OVER (ORDER BY VRE DESC) ORDEN
+			FROM
+			  (SELECT NVL(SUM(M.MOV_DEUDA_IRREGULAR), 0) VRE, CEX.EXP_ID, CEX.DD_AEX_ID, CEX.CNT_ID
+			    FROM MOV_MOVIMIENTOS M, CEX_CONTRATOS_EXPEDIENTE CEX, CNT_CONTRATOS CNT, DD_TPE_TIPO_PROD_ENTIDAD TPE 
+			    WHERE CEX.BORRADO = 0 AND M.CNT_ID = CEX.CNT_ID AND CNT.CNT_ID = CEX.CNT_ID AND 
+			      M.MOV_FECHA_EXTRACCION = CNT.CNT_FECHA_EXTRACCION  AND CNT.DD_TPE_ID = TPE.DD_TPE_ID  AND M.MOV_RIESGO > 0
+			  GROUP BY CEX.EXP_ID, CEX.DD_AEX_ID, CEX.CNT_ID) TABLA
+			INNER JOIN EXP_EXPEDIENTES EXP ON TABLA.EXP_ID = EXP.EXP_ID
+			INNER JOIN PEX_PERSONAS_EXPEDIENTE PEX ON EXP.EXP_ID = PEX.EXP_ID)
+			WHERE ORDEN &gt; 40 AND ORDEN &lt;= 60		
+		</value>
+	</sql>
+	<sql>
+		<type>INSERT</type>
+		<msg>Insertamos esos expedientes TMP_REC_EXP_ROTACION</msg>
+		<value>
+			INSERT INTO TMP_REC_EXP_ROTACION (EXP_ID, RCF_AGE_ID, ARQ_ID_NEW)
+			SELECT EXP_ID, RCF_AGE_ID, RCF_SCA_ID, ARQ_ID FROM BATCH_DATOS_ENTRADA		
+		</value>
+	</sql>
+</sqls>

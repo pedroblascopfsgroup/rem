@@ -1,0 +1,179 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName" default-merge="true">
+    <bean id="validacionesCirbeJob" parent="batch.simpleJob" scope="prototype">
+        <property name="steps">
+            <list>
+                <bean id="pasaje.contratos.valdidator" parent="batch.taskletStep" scope="prototype">
+                    <property name="tasklet">
+                        <bean parent="common.validator" scope="prototype">
+                            <property name="validaciones">
+                                <list>
+
+                                    <ref bean="cir-12.countValidator" />
+                                    <ref bean="cir-14.lastLoadDateValidator"/>
+                                    <ref bean="cir-01.entityValidator" />
+                                    <ref bean="cir-02.loadDateValidator"/>
+                                    <ref bean="cir-03.clientValidator" />
+									<ref bean="cir-04.tipoOperacionValidator"/>
+									<ref bean="cir-05.plazoVencimientoValidator"/>
+									<ref bean="cir-06.tipoGarantiaValidator"/>
+									<ref bean="cir-07.tipoSituacionValidator"/>
+									<ref bean="cir-08.codigoDivisaValidator"/>
+									<ref bean="cir-09.claseRiesgoValidator"/>
+									<ref bean="cir-10.codISOPaisValidator"/>
+									<ref bean="cir-11.duplicidadRegFicheroValidator"/>
+									<ref bean="cir-13.duplicidadRegEntreCargas"/>
+									
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <bean id="cir-12.countValidator" class="es.capgemini.pfs.batch.common.RecordCountValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="tableName" value="tmp_cir_cirbe" />
+        <property name="bindings" value="expectedRecords=Cirbe.rowcount" />
+        <property name="message" value="cir-12.countValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+
+ 	<bean id="cir-14.lastLoadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-14.lastLoadDateValidator" />
+        </property>
+        <property name="bindings" value="fileName=csvFileCirbe" />
+        <property name="message" value="cir-14.lastLoadDateValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+
+    <!-- valido que las entidades correspondan con la del archivo -->
+    <bean id="cir-01.entityValidator" class="es.capgemini.pfs.batch.load.EntityValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-01.entityValidator" />
+        </property>
+        <property name="bindings" value="entidad=entidad" />
+        <property name="message" value="cir-01.entityValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="cir-02.loadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-02.loadDateValidator" />
+        </property>
+        <property name="bindings" value="fileName=csvFileCirbe" />
+        <property name="message" value="cir-02.loadDateValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="cir-03.clientValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-03.clientValidator" />
+        </property>
+        <property name="bindings" value="fileName=fileName" />
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-03.clientValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="cir-04.tipoOperacionValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-04.tipoOperacionValidator" />
+        </property>
+        <property name="bindings" value="fileName=fileName" />
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-04.tipoOperacionValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="cir-05.plazoVencimientoValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-05.plazoVencimientoValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-05.plazoVencimientoValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+   
+    <bean id="cir-06.tipoGarantiaValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-06.tipoGarantiaValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-06.tipoGarantiaValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+
+    <bean id="cir-07.tipoSituacionValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-07.tipoSituacionValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-07.tipoSituacionValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+
+    <bean id="cir-08.codigoDivisaValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-08.codigoDivisaValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-08.codigoDivisaValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="cir-09.claseRiesgoValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-09.claseRiesgoValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-09.claseRiesgoValidator" />
+        <property name="severidad" value="error" />
+    </bean>    
+    
+    <bean id="cir-10.codISOPaisValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-10.codISOPaisValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-10.codISOPaisValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="cir-11.duplicidadRegFicheroValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-11.duplicidadRegFicheroValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-11.duplicidadRegFicheroValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+	<!-- La siguiente es la que en el documento de CU figura como cir-10 por segunda vez -->
+	<bean id="cir-13.duplicidadRegEntreCargas" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="cir-13.duplicidadRegEntreCargas" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="cir-13.duplicidadRegEntreCargas" />
+        <property name="severidad" value="info" />
+    </bean>    
+    
+</beans>

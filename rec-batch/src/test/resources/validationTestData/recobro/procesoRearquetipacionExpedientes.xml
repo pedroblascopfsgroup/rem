@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<msg>Obtendremos 1 expediente para rotacion</msg>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_ROTACION</value>
+		<expected>1</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>Obtendremos 1 expediente rearquetipación, en la tabla desnormalizada</msg>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_DESNORMALIZADO</value>
+		<expected>2</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>Obtendremos 1 expediente rearquetipación, en la tabla desnormalizada</msg>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_DESNORMALIZADO_ARQ</value>
+		<expected>2</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>Obtendremos 1 expediente para reasignar cartera</msg>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_ASIG_CARTERA</value>
+		<expected>1</expected>
+	</sql>
+	
+	<sql>
+		<type>COUNT</type>
+		<value>
+		select count(*) from (
+			select distinct arq_id_new from TMP_REC_EXP_ASIG_CARTERA
+		) where arq_id_new = 2
+		</value>
+		<expected>1</expected>
+		<msg>La nueva cartera se ha calculado erróneamente en TMP_REC_EXP_ASIG_CARTERA: </msg>
+	</sql>
+</sqls>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="procesoArquetipadoJob" parent="batch.simpleJob" scope="prototype">
+    <property name="steps">
+      <list>
+		<bean parent="batch.taskletStep" scope="prototype">
+			<property name="tasklet">
+				<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+					<property name="scripts">
+						<list>
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxdrop.jobArquetipado.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.idxdrop.jobArquetipado"/>
+								<entry key="severidad" value="error"/>
+							</map>
+						
+							<!-- Paso 1 -->
+							<!-- Truncado de la tabla TMP_REC_CNT_LIBRES -->
+							<!--  map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_cnt_libres.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_cnt_libres"/>
+								<entry key="severidad" value="error"/>
+							</map -->
+							<!-- Truncado de la tabla TMP_REC_CNT_LIBRES_ARQ_REC -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_cnt_libres_arq_rec.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_cnt_libres_arq_rec"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla TMP_REC_NUEVOS_CLI -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_nuevos_cli.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_nuevos_cli"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla TMP_REC_CNT_LIBRES_DES_ARQ -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_cnt_libres_des_arq.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_cnt_libres_des_arq"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla tmp_rec_cnt_libres_des_arq_rec -->							
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_cnt_libres_des_arq_rec.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_cnt_libres_des_arq_rec"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla tmp_rec_cnt_libres_des_arq_ord -->							
+							<map>								
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_cnt_libres_des_arq_ord.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_cnt_libres_des_arq_ord"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla tmp_rec_cnt_libres_arq_rec_pri -->							
+							<map>								
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_cnt_libres_arq_rec_pri.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_cnt_libres_arq_rec_pri"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!--  Truncado de la tabla TMP_REC_CNT_LIBRES_PER_ARQ -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_cnt_libres_per_arq.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_cnt_libres_per_arq"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							
+							<!--  Truncado de la tabla TMP_REC_DATA_RULE_ENGINE -->
+							<!--  TODO Quitar esto si finalmente no hace falta
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_data_rule_engine.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_data_rule_engine"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							 -->
+							
+							<!-- PASO 2 - Obtenemos todos los contratos libres -->
+							<!--  -TODO Comentado esto porque estamos probando de sustituir esta tabala como una vista. Si lo activamso de nuevo hay que descomentar el drop de los índices al principio
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_cnt_libres.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_cnt_libres"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_cnt_libres.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.idxcreate.tmp_rec_cnt_libres"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							-->
+							
+							<!-- PASO 3 - Recargar la tabla TMP_REC_DATA_RULE_ENGINE -->
+							<!--  TODO Si finalmente no necesitamos este paso, quitarlo
+							           Vamos a probar a eliminar este paso y usar directamente la DATA_RULE_ENGINE
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_data_rule_egine.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.creacion.tmp_rec_data_rule_egine"/>
+								<entry key="severidad" value="error"/>
+							</map>	
+							 -->
+						</list>
+					</property>
+				</bean>
+			</property>
+		</bean>
+		
+		<!-- PASO 4 - Usamos el bean de arquetipación, para que arquetipe las personas de la vista TMP_REC_DATA_RULE_ENGINE -->
+		<bean id="batch.recobro.taskletArquetipacion" parent="batch.taskletStep" scope="prototype">
+			<property name="tasklet">
+				<bean class="es.capgemini.pfs.batch.revisar.arquetipos.RevisionGenericaArquetiposTasklet" scope="prototype">
+					<property name="ruleExecutor">
+						<bean class="es.capgemini.pfs.batch.revisar.arquetipos.engine.ExtendedRuleExecutor">
+							<property name="engine">
+								<bean class="es.capgemini.pfs.ruleengine.RuleExecutor"/>
+							</property>
+							<property name="config">
+								<bean id="arquetiposRuleExecutorConf" class="es.capgemini.pfs.batch.revisar.arquetipos.ExtendedRuleExecutorConfig">
+									<!--  Política de arquetipación: INSERT | UPDATE(deprecated) -->
+									<property name="policy" value="INSERT"/>
+									<!-- Formato de la definición de la regla XML | JSON -->
+									<property name="ruleDefinitionType" value="XML"/>
+									<!-- Tabla desde la que consultamos en busca de variables -->
+									<!--  OJO. En versiones anteriores usábamos TMP_REC_DATA_RULE_ENGINE -->
+									<property name="tableFrom" value="DATA_RULE_ENGINE"/>
+									<property name="columnFromRef" value="PER_ID"/>
+									
+									<!-- Tabla en la que escribimos el resultado de la arquetipación -->
+									<property name="tableToInsert" value="ARP_ARQ_RECOBRO_PERSONA" />
+									<property name="pkColumn" value="ARP_ID" />
+									<property name="pkSequence" value="S_ARP_ARQ_RECOBRO_PERSONA" />
+									<property name="columnToRef" value="PER_ID" />
+									<property name="columnArqId" value="ARQ_ID" />
+									<property name="columnArqName" value="ARQ_NAME" />
+									<property name="columnArqPriority" value="ARQ_PRIO" />
+									<property name="columnArqDate" value="ARQ_DATE" />									
+									
+									<!-- Indicamos que vistas materializadas queremos refrescar al empezar el proceso -->
+									<!-- <property name="refreshViews"><value>TMP_REC_DATA_RULE_ENGINE</value></property>  -->
+								</bean>
+							</property>
+						</bean>
+					</property>
+					<property name="arquetiposRepo">
+						<bean class="es.capgemini.pfs.batch.revisar.arquetipos.repo.RepositorioArquetiposGenerico">
+							<property name="dataSource" ref="entityDataSource"/>
+							<property name="repoConfig">
+								<bean class="es.capgemini.pfs.batch.revisar.arquetipos.repo.RepositorioConfig">
+									<property name="query">
+										<value><![CDATA[
+											SELECT DISTINCT RCF_CAR_ID, RCF_ESC_PRIORIDAD, RCF_CAR_NOMBRE, RD_DEFINITION
+												FROM BATCH_RCF_ENTRADA
+												WHERE RCF_DD_EES_CODIGO = 'LBR'										
+										]]></value>
+									</property>
+									<property name="columnForValue" value="RCF_CAR_ID"/>
+									<property name="columnForPriority" value="RCF_ESC_PRIORIDAD"/>
+									<property name="columnForName" value="RCF_CAR_NOMBRE"/>
+									<property name="columnForRuleDefinition" value="RD_DEFINITION"/>
+								</bean>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</property>
+		</bean>
+		<bean parent="batch.taskletStep" scope="prototype">							
+			<property name="tasklet">
+				<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+					<property name="scripts">
+						<list>
+							<!-- PASO 4 - Obtenemos las personas arquetipadas de los contratos libres, de la tabla salida del bean -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_cnt_libres_per_arq.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_cnt_libres_per_arq"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<!-- PASO 5 - Cruzamos las tablas resultantes anteriores y guardamos las personas arquetipadas -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_cnt_libres_des_arq.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_cnt_libres_des_arq"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<!-- PASO 6 - Extraer de los contratos libres aquellos que no tienen asignados clientes -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_nuevos_cli.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_nuevos_cli"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<!-- PASO 7 - Guardamos los contratos libres arquetipados junto con su riesgo -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_cnt_libres_des_arq_rec.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_cnt_libres_des_arq_rec"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_cnt_libres_des_arq_rec.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.idxcreate.tmp_rec_cnt_libres_des_arq_rec"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<!-- PASO 8 - Ordenamos los contratos libres por la prioridad del arquetipo y por el riesgo -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.create2.tmp_arq_recobro.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.create2.tmp_arq_recobro"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_cnt_libres_des_arq_ord.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_cnt_libres_des_arq_ord"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<!-- PASO 9 - Escojemos el arquetipo prioritario de cada contrato -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_cnt_libres_arq_rec_pri.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_cnt_libres_arq_rec_pri"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<!-- PASO 10 - Borramos los contratos que no tengan personas -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.delete.tmp_rec_cnt_libres_arq_rec_pri.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.delete.tmp_rec_cnt_libres_arq_rec_pri"/>
+								<entry key="severidad" value="error"/>
+							</map>
+						
+							<!-- PASO 11 - Volver a ordenar los contratos por arquetipo y riesgo -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_cnt_libres_arq_rec.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_cnt_libres_arq_rec"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.drop2.tmp_arq_recobro.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.drop2.tmp_arq_recobro"/>
+								<entry key="severidad" value="error"/>
+							</map>
+ 								
+							<!-- PASO 4 - Insertar los nuevos clientes en CLI_CLIENTES -->
+							<!--
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.cli_clientes.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.cli_clientes"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							 -->						
+						</list>
+					</property>
+				</bean>
+			</property>
+		</bean>      
+      </list>
+    </property>
+  </bean>
+</beans>

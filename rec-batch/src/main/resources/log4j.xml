@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %p %t [%c] - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.StringMatchFilter">
+            <param name="StringToMatch" value="select job0_" />
+            <param name="AcceptOnMatch" value="false" />
+        </filter>
+    </appender>
+    
+    <appender name="file" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender"> 
+        <param name="file" value="{DEVON_HOME}/log/pfs.log"/>
+        <param name="MaxFileSize" value="512KB"/>
+        <param name="MaxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout"> 
+            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/> 
+        </layout> 
+        <filter class="org.apache.log4j.varia.StringMatchFilter">
+            <param name="StringToMatch" value="select job0_" />
+            <param name="AcceptOnMatch" value="false" />
+        </filter>
+    </appender>
+    
+    <!-- Hay que setear la propiedad de sistema log_mail_sendError = true si se quiere el envio de mails -->
+   <appender name="email" class="es.capgemini.pfs.utils.log4j.CustomSMTPAppender">
+           <param name="BufferSize" value="1" />
+           <param name="SMTPHost" value="{log_mail_SMTPHost}" />
+           <param name="From" value="{log_mail_From}" />
+           <param name="To" value="{log_mail_To}" />
+           <param name="Subject" value="{log_mail_Subject}" />
+           <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern" value="%d %p [%c] - %m%n"/> 
+           </layout>
+           <filter class="org.apache.log4j.varia.LevelRangeFilter">
+             <param name="LevelMin" value="error" />
+             <param name="LevelMax" value="fatal" />
+           </filter>
+     </appender>
+ 
+    <!-- DEVON -->
+    <logger name="es.capgemini.devon" additivity="false">
+        <level value="info"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    <!-- PFS -->
+    <logger name="es.capgemini.pfs" additivity="false">
+        <level value="info"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    
+    <!-- Spring -->
+    <logger name="org.springframework.aop.framework.Cglib2AopProxy" additivity="false">
+        <level value="error"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    <!-- 
+    <logger name="org.springframework" additivity="false">
+        <level value="warn"/> 
+        <appender-ref ref="console" />
+    </logger>
+    <logger name="org.springframework.binding.mapping" additivity="false">
+        <level value="debug"/> 
+        <appender-ref ref="console" />
+    </logger>
+    <logger name="org.springframework.webflow" additivity="false">
+        <level value="info"/> 
+        <appender-ref ref="console" />
+    </logger>
+     -->
+
+	<!-- Hibernate -->
+    <logger name="org.hibernate.event.def.AbstractFlushingEventListener" additivity="false">
+        <level value="fatal"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    <logger name="org.hibernate.cache.CacheFactory" additivity="false">
+        <level value="error"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    <logger name="org.hibernate.cache.EhCacheProvider" additivity="false">
+        <level value="error"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    <logger name="es.pfsgroup.plugin.recovery.sidhi"  additivity="false">
+        <level value="info"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    <logger name="org.hibernate.engine.StatefulPersistenceContext" additivity="false">
+        <level value="error"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+<!--
+    <logger name="org.hibernate.SQL" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </logger>
+-->    
+    <!-- root -->
+    <root>
+        <priority value="warn" />
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </root>
+    
+    <!-- Monitorización batch -->
+    <logger name="es.capgemini.pfs.batch.revisar.arquetipos" additivity="false">
+        <level value="debug"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    
+    <logger name="es.capgemini.pfs.batch.common" additivity="false">
+        <level value="debug"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="email" />
+    </logger>
+    
+    
+</log4j:configuration>
+

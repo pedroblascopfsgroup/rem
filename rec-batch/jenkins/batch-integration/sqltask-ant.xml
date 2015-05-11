@@ -1,0 +1,13 @@
+<project name="MyProject" default="sqltask" basedir=".">
+
+<target name="sqltask">
+<sql
+    classpath="ojdbc14.jar" driver="oracle.jdbc.OracleDriver"
+    url="jdbc:oracle:thin:${db.user}/${db.password}@//${db.hostname}:${db.port}/${db.sid}"
+    userid="${db.user}" 
+    password="${db.password}"
+    delimiter="/"
+    delimitertype="row"
+    src="${db.sql.script}" />
+</target>
+</project>

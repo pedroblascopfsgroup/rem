@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+	<!-- <sql>
+		<type>UPDATE</type>
+		<msg>Volvemos a restaurar el estado los expedientes marcados como activos y de recobro</msg>
+		<value>
+			UPDATE EXP_EXPEDIENTES
+			SET DD_EEX_ID = 4
+			WHERE DD_EEX_ID = 2
+			AND DD_TPE_ID = 1			
+		</value>		
+	</sql> -->
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_EXCEPTUADOS</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXCEPTUADOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida BATCH_DATOS_SALIDA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_SALIDA
+		</value>
+	</sql>			
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_DESNORMALIZADO</msg>
+		<value>
+				TRUNCATE TABLE TMP_REC_EXP_DESNORMALIZADO
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_ROTACION</msg>
+		<value>
+				TRUNCATE TABLE TMP_REC_EXP_ROTACION
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_ASIG_CARTERA</msg>
+		<value>
+				TRUNCATE TABLE TMP_REC_EXP_ASIG_CARTERA
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_ASIG_CARTERA</msg>
+		<value>
+				TRUNCATE TABLE TMP_REC_EXP_DESNORMALIZADO_ARQ
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla ARP_ARQ_RECOBRO_PERSONA</msg>
+		<value>
+				TRUNCATE TABLE ARP_ARQ_RECOBRO_PERSONA
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Restauramos ARP_ARQ_RECOBRO_PERSONA</msg>
+		<value>
+				INSERT INTO  ARP_ARQ_RECOBRO_PERSONA SELECT * FROM B_ARP_ARQ_RECOBRO_PERSONA 
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borramos el backup de ARP_ARQ_RECOBRO_PERSONA</msg>
+		<value>
+				DROP TABLE B_ARP_ARQ_RECOBRO_PERSONA 
+		</value>
+	</sql>
+</sqls>

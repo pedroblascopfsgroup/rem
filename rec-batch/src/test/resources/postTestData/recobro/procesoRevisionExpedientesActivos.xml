@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes BATCH_DATOS_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXP 
+		</value>		
+	</sql>
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes BATCH_DATOS_CNT_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT_EXP
+		</value>		
+	</sql>
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes BATCH_DATOS_PER_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_PER_EXP
+		</value>		
+	</sql>
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes BATCH_DATOS_CNT_PER</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT_PER
+		</value>		
+	</sql>
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes TMP_REC_EXP_EXTINCION_RA</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RA
+		</value>		
+	</sql>
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes TMP_REC_EXP_DESNORMALIZADO</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_DESNORMALIZADO
+		</value>		
+	</sql>
+</sqls>

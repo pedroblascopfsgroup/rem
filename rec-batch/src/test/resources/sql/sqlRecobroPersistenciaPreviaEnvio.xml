@@ -1,0 +1,2916 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+		<entry key="recobro.idxdrop.jobPersistenciaPreviaEnvio.Oracle9iDialect">
+		<![CDATA[
+DECLARE
+  A_TABLES DBMS_SQL.VARCHAR2_TABLE;
+  nCount NUMBER;
+
+BEGIN
+  A_TABLES(1) := 'TMP_REC_CONTRATOS_CONS_BAJA';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_FICHERO_CONTRATOS';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_EXP_AGE_MAR';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_EXP_AGE_MAR_EXC';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_EXP_AGE_MAR_GES';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_EXP_AGE_CNT';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_EXP_AGE_CNT_EXC';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_GAE_GAGER';
+  A_TABLES(A_TABLES.LAST + 1) := 'REC_FICHERO_CONTRATOS';
+  A_TABLES(A_TABLES.LAST + 1) := 'REC_FICHERO_PERSONAS';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_SAGER_INFO';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_CICLOS_RECOBRO_PTES';
+  A_TABLES(A_TABLES.LAST + 1) := 'TMP_REC_REPARTO_DIA_ANTERIOR';
+
+  FOR I IN A_TABLES.FIRST..A_TABLES.LAST LOOP
+    DBMS_OUTPUT.PUT_LINE('Limpiando índice de '||A_TABLES(I));
+    
+    FOR IDX IN (SELECT INDEX_NAME FROM USER_INDEXES  WHERE TABLE_NAME = A_TABLES(I)) LOOP
+      DBMS_OUTPUT.PUT_LINE('- Borrando índice '||IDX.INDEX_NAME);
+      EXECUTE IMMEDIATE 'DROP INDEX '||IDX.INDEX_NAME;
+    END LOOP;
+  END LOOP;
+
+END;
+		]]>
+	</entry>
+
+
+	<!-- Paso 1: PROCESO DE TAREAS PREVIAS -->
+	<!-- BORRAMOS LA TABLA TMP_REC_CONTRATOS_CONS_BAJA -->
+	<entry key="recobro.borrado.tmp_rec_contratos_cons_baja.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_CONTRATOS_CONS_BAJA
+		]]>
+	</entry>	
+	<!-- BORRAMOS LA TABLA TMPREC_FICHERO_CONTRATOS -->
+	<entry key="recobro.borrado.tmp_rec_fichero_contratos.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_FICHERO_CONTRATOS
+		]]>
+	</entry>
+	<!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_MAR -->
+	<entry key="recobro.borrado.tmp_rec_exp_age_mar.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_EXP_AGE_MAR
+		]]>
+	</entry>		
+	<!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_MAR_EXC -->
+	<entry key="recobro.borrado.tmp_rec_exp_age_mar_exc.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_EXP_AGE_MAR_EXC
+		]]>
+	</entry>	
+	<!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_MAR_GES -->
+	<entry key="recobro.borrado.tmp_rec_exp_age_mar_ges.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_EXP_AGE_MAR_GES
+		]]>
+	</entry>
+	<!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_CNT -->
+	<entry key="recobro.borrado.tmp_rec_exp_age_cnt.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_EXP_AGE_CNT
+		]]>
+	</entry>		
+	<!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_CNT_EXC -->
+	<entry key="recobro.borrado.tmp_rec_exp_age_cnt_exc.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_EXP_AGE_CNT_EXC
+		]]>
+	</entry>
+	
+	<!-- BORRADO DE LA TABLA TMP_GAE_GAGER -->
+	<entry key="recobro.borrado.tmp_gae_gager.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_GAE_GAGER
+		]]>
+	</entry>
+	
+	<!-- BORRADO DE LA TABLA TMP_SAGER_INFO -->
+	<entry key="recobro.borrado.tmp_sager_info.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_SAGER_INFO
+		]]>
+	</entry>
+	
+	<!-- BORRADO DE LA TABLA TMP_CICLOS_RECOBRO_PTES -->
+	<entry key="recobro.borrado.tmp_ciclos_recobro_ptes.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_CICLOS_RECOBRO_PTES
+		]]>
+	</entry>
+	
+	<!-- BORRADO DE LA TABLA TMP_CRE_NUEVOS -->
+	<entry key="recobro.borrado.tmp_cre_nuevos.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_CRE_NUEVOS
+		]]>
+	</entry>
+	
+	<!-- BORRADO DE LA TABLA TMP_CRC_NUEVOS -->
+	<entry key="recobro.borrado.tmp_crc_nuevos.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_CRC_NUEVOS
+		]]>
+	</entry>
+	
+	<!-- BORRADO DE LA TABLA TMP_CRP_NUEVOS -->
+	<entry key="recobro.borrado.tmp_crp_nuevos.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_CRP_NUEVOS
+		]]>
+	</entry>
+	
+	<!-- CONSOLIDAMOS LOS EXPEDIENTES CANCELADOS Y LOS REARQUETIPADOS QUE SON TODOS LOS POSIBLES CONTRATOS DE BAJA -->
+	<entry key="recobro.insert.tmp_rec_contratos_cons_baja.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_CONTRATOS_CONS_BAJA (EXP_ID, CNT_ID, RCF_AGE_ID)
+				SELECT DISTINCT EXP_ID, CNT_ID, RCF_AGE_ID FROM (
+						SELECT CAN.EXP_ID, CEX.CNT_ID, ENT.RCF_AGE_ID 
+						FROM TMP_REC_EXP_CANCELADOS CAN
+							INNER JOIN BATCH_DATOS_EXP ENT ON CAN.EXP_ID = ENT.EXP_ID
+							INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CAN.EXP_ID = CEX.EXP_ID				
+					UNION
+						SELECT EXP_ID, CNT_ID, RCF_AGE_ID 
+						FROM TMP_REC_EXP_DESNORMALIZADO
+				)
+		]]>
+	</entry>
+	
+	<entry key="recobro.idxcreate.tmp_rec_contratos_cons_baja.Oracle9iDialect">
+		<![CDATA[
+			BEGIN
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_CNT_BAJA_1 ON TMP_REC_CONTRATOS_CONS_BAJA (CNT_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_CNT_BAJA_2 ON TMP_REC_CONTRATOS_CONS_BAJA (EXP_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_CNT_BAJA_3 ON TMP_REC_CONTRATOS_CONS_BAJA (RCF_AGE_ID)';
+				
+				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_CONTRATOS_CONS_BAJA COMPUTE STATISTICS';
+				
+				EXECUTE IMMEDIATE 'ANALYZE TABLE CRC_CICLO_RECOBRO_CNT COMPUTE STATISTICS';
+				
+				EXECUTE IMMEDIATE 'ANALYZE TABLE CRE_CICLO_RECOBRO_EXP COMPUTE STATISTICS';
+			END;
+		]]>
+	</entry>
+	
+	<!-- GUARDAMOS EL REPARTO DEL DÍA ANTERIOR MENOS LAS POSIBLES BAJAS DE HOY EN UNA TABLA TEMPORAL PARA TRABAJAR CON ELLA -->
+	<entry key="recobro.insert.tmp_rec_fichero_contratos.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_FICHERO_CONTRATOS (RCF_AGE_ID, RCF_SCA_ID, CNT_ENV_ID, CNT_COD_PROPIETARIO, DD_TPR_CODIGO, CNT_CONTRATO, CNT_ID)      
+	        SELECT CRE.RCF_AGE_ID, CRE.RCF_SCA_ID, CRC.CRC_ID_ENVIO, INFO.CODIGO_PROPIETARIO, INFO.TIPO_PRODUCTO, INFO.NUMERO_CONTRATO, CRC.CNT_ID
+	        FROM CRC_CICLO_RECOBRO_CNT CRC
+	        	JOIN CRE_CICLO_RECOBRO_EXP CRE ON CRE.BORRADO = 0 AND  CRC.CRE_ID = CRE.CRE_ID
+	        	JOIN EXP_EXPEDIENTES EXP ON EXP.BORRADO = 0 AND CRE.EXP_ID = EXP.EXP_ID AND EXP.EXP_MANUAL = 0 AND EXP.DD_EEX_ID = 2
+	       		JOIN BATCH_DATOS_CNT_INFO INFO ON CRC.CNT_ID = INFO.CNT_ID
+            LEFT JOIN TMP_REC_CONTRATOS_CONS_BAJA B ON CRC.CNT_ID = B.CNT_ID
+	       WHERE CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+	       		AND B.CNT_ID IS NULL
+		]]>
+	</entry>
+		
+	<!-- DESNORMALIZAMOS LAS PERSONAS EN LA TABLA TMP_REC_EXP_REPARTO_AGENCIAS QUE CONTIENE EL REPARTO 
+		DE HOY DE EXPEDIENTES EXISTENTES Y NUEVOS MÁS EL REPARTO DE AYER MENOS LAS POSIBLES BAJAS CONSOLIDADAS-->
+	<!-- OJO!! CON EL TEMA DE LOS EXPEDIENTES MANUALES HAY QUE AÑADIR AL BATCH_DATOS_ENTRADAS EL CAMPO EXP_MANUAL
+		 PARA DESPUÉS AÑADIRLOS A LA TABLA TMP_REC_EXP_AGE_MAR -->		
+	<entry key="recobro.insert.tmp_rec_exp_age_mar.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_AGE_MAR
+			SELECT DISTINCT RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID FROM (
+				(SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, PEX.PER_ID
+		         FROM TMP_REC_EXP_REPARTO_AGENCIAS TMP
+		         INNER JOIN BATCH_DATOS_PER_EXP PEX ON PEX.EXP_ID = TMP.EXP_ID
+	        	UNION
+		        SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, SAL.PER_ID
+		         FROM TMP_REC_EXP_REPARTO_AGENCIAS TMP
+		         INNER JOIN BATCH_DATOS_SALIDA SAL ON SAL.EXP_ID = TMP.EXP_ID
+		        UNION
+		        SELECT DISTINCT ENT.RCF_AGE_ID, TMP.RCF_SCA_ID, CEX.EXP_ID, PEX.PER_ID 
+		         FROM TMP_REC_FICHERO_CONTRATOS TMP 
+		         INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.CNT_ID = TMP.CNT_ID
+		         INNER JOIN BATCH_DATOS_PER_EXP PEX ON PEX.EXP_ID = CEX.EXP_ID
+		         INNER JOIN BATCH_DATOS_EXP ENT ON ENT.EXP_ID = CEX.EXP_ID	
+            	UNION
+            	-- añadimos personas de los expedientese manuales
+            	SELECT EXP.RCF_AGE_ID, EXP.RCF_SCA_ID, EXP.EXP_ID, PER.PER_ID
+              	FROM BATCH_DATOS_EXP_MANUAL EXP
+              	INNER JOIN BATCH_DATOS_PER_EXP PER ON EXP.EXP_ID = PER.EXP_ID
+	        	)
+	        )
+		]]>
+	</entry>
+	
+	<entry key="recobro.idxcreate.tmp_rec_exp_age_mar.Oracle9iDialect">
+		<![CDATA[
+			BEGIN
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_1 ON TMP_REC_EXP_AGE_MAR (RCF_AGE_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_2 ON TMP_REC_EXP_AGE_MAR (RCF_SCA_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_3 ON TMP_REC_EXP_AGE_MAR (EXP_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_4 ON TMP_REC_EXP_AGE_MAR (PER_ID)';
+				
+				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_EXP_AGE_MAR COMPUTE STATISTICS';
+			END;
+		]]>
+	</entry>
+		
+	<!-- EXCLUIMOS LAS PERSONAS EXCEPTUADAS Y LAS PERSONAS CUYA DEUDA IRREGULAR DE TODOS SUS CONTRATOS SEA = 0 -->
+	<entry key="recobro.insert.tmp_rec_exp_age_mar_exc.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_AGE_MAR_EXC
+			(SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, TMP.PER_ID         
+	          FROM TMP_REC_EXP_AGE_MAR TMP 
+	          WHERE NOT EXISTS (SELECT PER_ID FROM BATCH_DATOS_EXCEPTUADOS WHERE PER_ID = TMP.PER_ID)
+	        	AND (SELECT NVL(PER.PER_DEUDA_IRREGULAR, 0) FROM BATCH_DATOS_PER PER WHERE PER.PER_ID = TMP.PER_ID) > 0  
+	        )
+		]]>
+	</entry>
+	
+	<entry key="recobro.idxcreate.tmp_rec_exp_age_mar_exc.Oracle9iDialect">
+		<![CDATA[
+			BEGIN
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_EXC_1 ON TMP_REC_EXP_AGE_MAR_EXC (RCF_AGE_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_EXC_2 ON TMP_REC_EXP_AGE_MAR_EXC (RCF_SCA_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_EXC_3 ON TMP_REC_EXP_AGE_MAR_EXC (EXP_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_EXC_4 ON TMP_REC_EXP_AGE_MAR_EXC (PER_ID)';
+				
+				
+				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_EXP_AGE_MAR_EXC COMPUTE STATISTICS';
+			END;
+		]]>
+	</entry>
+			
+	<!-- MARCAMOS LAS PERSONAS QUE TIENEN GESTION COMPARTIDA -->
+	<entry key="recobro.insert.tmp_rec_exp_age_mar_ges.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_AGE_MAR_GES
+			(SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, TMP.PER_ID,
+	          CASE WHEN (SELECT COUNT(*) FROM TMP_REC_EXP_AGE_MAR_EXC MAR WHERE MAR.PER_ID = TMP.PER_ID) = 1 THEN 0 ELSE 1 END
+	          FROM TMP_REC_EXP_AGE_MAR_EXC TMP)
+		]]>
+	</entry>
+	
+	<entry key="recobro.idxcreate.tmp_rec_exp_age_mar_ges.Oracle9iDialect">
+		<![CDATA[
+			BEGIN
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_GES_1 ON TMP_REC_EXP_AGE_MAR_GES (RCF_AGE_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_GES_2 ON TMP_REC_EXP_AGE_MAR_GES (RCF_SCA_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_GES_3 ON TMP_REC_EXP_AGE_MAR_GES (EXP_ID)';
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_EXP_AGE_MAR_GES_4 ON TMP_REC_EXP_AGE_MAR_GES (PER_ID)';
+				
+				
+				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_EXP_AGE_MAR_GES COMPUTE STATISTICS';
+			END;
+		]]>
+	</entry>
+	
+	<!-- DESNORMALIZAMOS LOS CONTRATOS EN LA TABLA TMP_REC_EXP_AGE_CNT -->
+	<entry key="recobro.insert.tmp_rec_exp_age_cnt.Oracle9iDialect">
+		<![CDATA[
+        INSERT INTO TMP_REC_EXP_AGE_CNT
+        SELECT DISTINCT RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID, CNT_ID, GES_ID FROM (
+				(SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, TMP.PER_ID, CEX.CNT_ID, TMP.GES_ID
+		         FROM TMP_REC_EXP_AGE_MAR_GES TMP
+		         INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
+	      		UNION
+		        SELECT DISTINCT  TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, TMP.PER_ID, SAL.CNT_ID, TMP.GES_ID
+		         FROM TMP_REC_EXP_AGE_MAR_GES TMP
+		         INNER JOIN BATCH_DATOS_SALIDA SAL ON SAL.EXP_ID = TMP.EXP_ID
+		        )
+	      )	
+		]]>
+	</entry>	
+	
+	<!-- EXCLUIMOS LOS CONTRATOS EXCEPTUADOS, LOS QUE TENGAN RIESGO = 0 Y LOS QUE TENGAN DEUDA IRREGULAR = 0 -->
+	<entry key="recobro.insert.tmp_rec_exp_age_cnt_exc.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_REC_EXP_AGE_CNT_EXC
+			(SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, TMP.PER_ID, TMP.CNT_ID, TMP.GES_ID	         
+	          FROM TMP_REC_EXP_AGE_CNT TMP 
+	          INNER JOIN BATCH_DATOS_CNT CNT ON TMP.CNT_ID = CNT.CNT_ID AND CNT.CNT_RIESGO > 0
+              LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXCNT ON TMP.CNT_ID = EXCNT.CNT_ID
+              LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXPER ON TMP.PER_ID = EXPER.PER_ID
+	          WHERE EXCNT.CNT_ID IS NULL AND EXPER.PER_ID IS NULL)
+		]]>
+	</entry>
+		
+	<!-- Paso 2: PROCESO DE CALCULO DE BAJAS -->
+	<!-- BORRAMOS LA TABLA TMP_REC_REPARTO_DIA_ANTERIOR -->
+	<entry key="recobro.borrado.tmp_rec_reparto_dia_anterior.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_REPARTO_DIA_ANTERIOR
+		]]>
+	</entry>	
+	<!-- BORRAMOS LA TABLA TMP_REC_CONTRATOS_BAJA -->
+	<entry key="recobro.borrado.tmp_rec_contratos_baja.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_CONTRATOS_BAJA
+		]]>
+	</entry>
+	
+	<!-- BORRAMOS LA TABLA TMP_REC_CONTRATOS_CONS_BAJA_MOT -->
+	<entry key="recobro.borrado.tmp_rec_contratos_baja_mot.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM TMP_REC_CONTRATOS_BAJA_MOT
+		]]>
+	</entry>	
+			
+	<!-- CARGAMOS EL REPARTO DEL DIA ANTERIOR DESDE LA TABLA DE HISTORICO DE REPARTO -->
+	<entry key="recobro.insert.tmp_rec_reparto_dia_anterior.Oracle9iDialect">
+		<![CDATA[
+			declare      
+		        V_FECHA_HIST TIMESTAMP(9);
+		        V_SQL VARCHAR(2000);
+			begin			
+		        select max(FECHA_HIST) into V_FECHA_HIST from H_REC_FICHERO_CONTRATOS;
+		        DBMS_OUTPUT.PUT_LINE(V_FECHA_HIST);		
+		        V_SQL := 'INSERT INTO TMP_REC_REPARTO_DIA_ANTERIOR SELECT DISTINCT CNT.CNT_ID, REC.RCF_AGE_ID 
+		          FROM H_REC_FICHERO_CONTRATOS REC JOIN CNT_CONTRATOS CNT ON REC.NUMERO_CONTRATO = CNT.CNT_CONTRATO
+		          WHERE REC.FECHA_HIST = :V_FECHA_HIST';
+		        EXECUTE IMMEDIATE V_SQL USING V_FECHA_HIST;
+            	EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_REPARTO_DIA_ANT_1 ON TMP_REC_REPARTO_DIA_ANTERIOR (CNT_ID)';
+            	EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_REC_REPARTO_DIA_ANT_2 ON TMP_REC_REPARTO_DIA_ANTERIOR (RCF_AGE_ID)';     
+            	EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_REC_REPARTO_DIA_ANTERIOR COMPUTE STATISTICS';		  			  	
+			end;
+		]]>
+	</entry>
+			
+	<!-- CRUZAMOS POR AGENCIA LA TABLA DEL REPARTO DEL DÍA ANTERIOR JUNTO CON LA TABLA DEL REPARTO DE HOY Y LO QUE FALTE SON LAS BAJAS -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja.Oracle9iDialect">
+		<![CDATA[
+			declare
+				cursor agencias is select distinct RCF_AGE_ID from TMP_REC_REPARTO_DIA_ANTERIOR where RCF_AGE_ID is not null;       
+			begin			
+		        for agencia in agencias
+				loop		     
+		 		 	DBMS_OUTPUT.PUT_LINE(agencia.RCF_AGE_ID);		    
+		    		INSERT INTO TMP_REC_CONTRATOS_BAJA (CNT_ID, RCF_AGE_ID)
+		    		SELECT REC.CNT_ID, agencia.RCF_AGE_ID
+		    		FROM TMP_REC_REPARTO_DIA_ANTERIOR REC
+	                WHERE REC.RCF_AGE_ID = agencia.RCF_AGE_ID AND REC.CNT_ID NOT IN (
+	                  SELECT TMP2.CNT_ID FROM TMP_REC_EXP_AGE_CNT_EXC TMP2 WHERE TMP2.RCF_AGE_ID = agencia.RCF_AGE_ID 
+	                );
+			  	end loop;			  			  	
+			end;
+		]]>
+	</entry>
+	
+	<!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE PLAZO -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja_mot.rotacion.Oracle9iDialect">
+		<![CDATA[
+			declare
+				mob_id number;       
+			begin				 
+				SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'FP' AND BORRADO = 0;				  
+			    INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT 
+				SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
+				FROM TMP_REC_EXP_ROTACION TMP
+					INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
+					INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
+				WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
+				EXCEPTION 
+				WHEN NO_DATA_FOUND THEN 
+					dbms_output.put_line('No se han encontrado datos para el motivo de baja de rotación');			  	
+			end;
+		]]>
+	</entry>
+		
+	<!-- OBTENCIÓN DE CONTRATOS CON MOTIVO CONTRATO EXCEPTUADO -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.contratos.Oracle9iDialect">
+		<![CDATA[
+			declare
+				mob_id number;    
+			begin				 
+				SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'EXC' AND BORRADO = 0;				  
+			    INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT 
+				SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
+				FROM BATCH_DATOS_EXCEPTUADOS TMP
+					INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = TMP.CNT_ID
+				WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);  	
+				EXCEPTION 
+				WHEN NO_DATA_FOUND THEN 
+					dbms_output.put_line('No se han encontrado datos para el motivo de baja de contratos exceptuados');			  	
+			end;
+		]]>
+	</entry>	
+	
+	<!-- OBTENCIÓN DE CONTRATOS CON MOTIVO PERSONA EXCEPTUADA -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.personas.Oracle9iDialect">
+		<![CDATA[
+			declare
+				mob_id number;    
+			begin				 
+				SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'EXP' AND BORRADO = 0;				  
+			    INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT 
+				SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
+				FROM BATCH_DATOS_EXCEPTUADOS TMP
+          			INNER JOIN CPE_CONTRATOS_PERSONAS CPE ON TMP.PER_ID = CPE.PER_ID AND CPE.BORRADO = 0            
+					INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CPE.CNT_ID
+				WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);  	
+				EXCEPTION 
+				WHEN NO_DATA_FOUND THEN 
+					dbms_output.put_line('No se han encontrado datos para el motivo de baja de personas exceptuadas');			  	
+			end;
+		]]>
+	</entry>	
+	
+	<!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE CAMPAÑA POR RUPTURA -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja_mot.ruptura.Oracle9iDialect">
+		<![CDATA[
+			declare
+				mob_id number;       
+			begin				 
+				SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'FDC' AND BORRADO = 0;				  
+			    INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT 
+				SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
+				FROM TMP_REC_EXP_EXTINCION_RU TMP
+					INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
+					INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
+				WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
+				EXCEPTION 
+				WHEN NO_DATA_FOUND THEN 
+					dbms_output.put_line('No se han encontrado datos para el motivo de baja de ruptura');			  	
+			end;
+		]]>
+	</entry>	
+		
+	<!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE CAMPAÑA POR REARQUETIPACION -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja_mot.rearquetipacion.Oracle9iDialect">
+		<![CDATA[
+			declare
+				mob_id number;       
+			begin				 
+				SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'FDC' AND BORRADO = 0;				  
+			    INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT 
+				SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
+				FROM TMP_REC_EXP_EXTINCION_RA TMP
+					INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
+					INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
+				WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
+				EXCEPTION 
+				WHEN NO_DATA_FOUND THEN 
+					dbms_output.put_line('No se han encontrado datos para el motivo de baja de rearquetipación');			  	
+			end;
+		]]>
+	</entry>	
+	
+	<!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE REGULARIZACIÓN -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja_mot.regularizacion.Oracle9iDialect">
+		<![CDATA[
+			declare
+				mob_id number;       
+			begin				 
+				SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'REG' AND BORRADO = 0;				  
+			    INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT 
+				SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
+				FROM TMP_REC_EXP_SIN_RIESGOS TMP
+					INNER JOIN BATCH_DATOS_CNT_EXP CEX ON CEX.EXP_ID = TMP.EXP_ID
+					INNER JOIN TMP_REC_CONTRATOS_BAJA REC ON REC.CNT_ID = CEX.CNT_ID
+				WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);
+				EXCEPTION 
+				WHEN NO_DATA_FOUND THEN 
+					dbms_output.put_line('No se han encontrado datos para el motivo de baja de regularización');			  	
+			end;
+		]]>
+	</entry>		
+				
+	<!-- OBTENCIÓN DEL RESTO DEL MOTIVO OTROS PARA EL RESTO DE CONTRATOS -->
+	<entry key="recobro.insert.tmp_rec_contratos_baja_mot.otros.Oracle9iDialect">
+		<![CDATA[
+			declare
+				mob_id number;     
+			begin				 
+				SELECT DD_MOB_ID INTO mob_id FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = 'OTR' AND BORRADO = 0;				  
+			    INSERT INTO TMP_REC_CONTRATOS_BAJA_MOT 
+				SELECT REC.CNT_ID, REC.RCF_AGE_ID, mob_id AS DD_MOB_ID
+				FROM TMP_REC_CONTRATOS_BAJA REC
+				WHERE REC.CNT_ID NOT IN (SELECT DISTINCT CNT_ID FROM TMP_REC_CONTRATOS_BAJA_MOT);		 
+				EXCEPTION 
+				WHEN NO_DATA_FOUND THEN 
+					dbms_output.put_line('No se han encontrado datos para el motivo de baja de otros');					 	
+			end;
+		]]>
+	</entry>
+	
+					
+	<!-- Paso 3: PASAJE A PRODUCCIÓN DE TODOS LOS DATOS -->	
+	<!-- Subpaso 3.0 - Se desactivan todos los esquemas en extinción que no tengan ningún expediente activo  -->
+	<entry key="recobro.update.desactivar_esquemas.Oracle9iDialect">
+		<![CDATA[
+			declare
+		    	v_sql VARCHAR2(2000 CHAR);
+		    	v_codigo_extincion VARCHAR2(5 CHAR);
+	            v_codigo_desactivado VARCHAR2(5 CHAR);
+	            v_codigo_expediente_activo VARCHAR2(5 CHAR);
+			begin
+		    	v_codigo_extincion:= ${ddEstadoEsquemas.Inactivo.codigo};
+       			v_codigo_desactivado:= ${ddEstadoEsquemas.Desactivado.codigo};
+        		v_codigo_expediente_activo:= ${ddEstadoExpedientes.Activo.codigo};
+				v_sql:='
+      		  		UPDATE RCF_ESQ_ESQUEMA ESQ SET ESQ.RCF_DD_EES_ID = (SELECT EES1.RCF_DD_EES_ID FROM RCF_DD_EES_ESTADO_ESQUEMA EES1 
+		            WHERE EES1.RCF_DD_EES_CODIGO = :v_codigo_desactivado),            
+		            ESQ.RCF_FECHA_DESACT = SYSDATE WHERE ESQ.RCF_ESQ_ID IN (            
+		            SELECT ESQ1.RCF_ESQ_ID FROM RCF_ESQ_ESQUEMA ESQ1  
+		            JOIN RCF_DD_EES_ESTADO_ESQUEMA EES ON ESQ1.RCF_DD_EES_ID = EES.RCF_DD_EES_ID            
+		            WHERE EES.RCF_DD_EES_CODIGO = :v_codigo_extincion AND (SELECT COUNT(DISTINCT EXPE.EXP_ID) 
+		            FROM BATCH_DATOS_EXP EXPE WHERE EXPE.RCF_ESQ_ID = ESQ1.RCF_ESQ_ID AND EXPE.DD_EEX_CODIGO = :v_codigo_expediente_activo) = 0)
+				';
+				execute immediate v_sql using v_codigo_desactivado, v_codigo_extincion, v_codigo_expediente_activo;
+		    COMMIT;        
+		    end;		
+		]]>
+	</entry>		
+	<!-- Subpaso 3.1 - Cancelar los expedientes rotos -->
+	<entry key="recobro.update.cancelar_expedientes.Oracle9iDialect">
+		<![CDATA[
+		declare
+		begin
+			UPDATE EXP_EXPEDIENTES
+			SET DD_EEX_ID = ${ddEstadoExpedientes.Cancelado.id},
+				USUARIOMODIFICAR = '${usuario.crear}',
+				FECHAMODIFICAR = SYSDATE
+			WHERE EXP_ID IN (SELECT EXP_ID FROM TMP_REC_EXP_CANCELADOS);
+		end;
+		]]>
+	</entry>	
+	<!-- Subpaso 3.2 - Actualizar Arq_id en tabla expedientes 
+	OBSOLETO, EL ARQUETIPO NO SE MANTIENE EN ESE CAMPO
+	<entry key="recobro.merge.exp_expendientes_tmp_rec_exp_rearquetipado.Oracle9iDialect">
+		<![CDATA[
+		declare
+		begin
+			MERGE INTO EXP_EXPEDIENTES EXP
+			USING 
+				(SELECT EXP_ID, ARQ_ID_NEW
+			  	FROM TMP_REC_EXP_REARQUETIPADO) RA ON (RA.EXP_ID = EXP.EXP_ID)
+			WHEN MATCHED THEN UPDATE 	
+			    SET EXP.ARQ_ID = ARQ_ID_NEW,
+			    	USUARIOMODIFICAR = '${usuario.crear}',
+					FECHAMODIFICAR = SYSDATE;
+		end;
+		]]>
+	</entry>-->
+	<!-- Subpaso 3.3 - Insertar los nuevos clientes en CLI_CLIENTES 
+		ESTE PASO SE OMITE PORQUE EN PRINCIPIO NO ES NECESARIO... AL IGUAL QUE LA CREACIÓN EN CCL_CONTRATOS_CLIENTES...
+		SI SE DETECTASE QUE FUESE NECESARIO SE ACTIVARIAN LAS QUERIES CORRESPONDIENTES	
+	<entry key="recobro.insert.cli_clientes.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO CLI_CLIENTES (CLI_ID, PER_ID, ARQ_ID, DD_EST_ID, DD_ECL_ID, CLI_FECHA_EST_ID, 
+				VERSION, USUARIOCREAR, FECHACREAR, BORRADO, CLI_FECHA_CREACION, CLI_TELECOBRO, OFI_ID )
+			SELECT S_CLI_CLIENTES.NEXTVAL AS CLI_ID, TMP.PER_ID, (select arq_id from arq_arquetipos where arq_nombre='Generico') ARQ_ID, 
+				1 DD_EST_ID, 3 DD_ECL_ID, SYSDATE CLI_FECHA_EST_ID, 0 VERSION, '${usuario.crear}' USUARIOCREAR, 
+				SYSDATE FECHACREAR, ${borrado.si.id} BORRADO, SYSDATE CLI_FECHA_CREACION, 0 CLI_TELECOBRO, PER.OFI_ID
+			FROM TMP_REC_NUEVOS_CLI TMP
+				INNER JOIN PER_PERSONAS PER ON TMP.PER_ID = PER.PER_ID
+		]]>
+	</entry>	
+	-->
+	<!-- Subpaso 3.4 - Actualizamos arq_id de las personas con contratos libres de la tabla PER_PERSONAS 
+	OJO: Esto no debe hacerse. El ARQ_ID de la PER_PERSONAS no es el arquetipo de recobro. Éste se persiste en la tabla
+	ARP_ARQ_RECOBRO_PERSONA
+	
+	<entry key="recobro.merge.per_personas_arq_id.Oracle9iDialect">
+		<![CDATA[
+		declare
+		begin
+			MERGE INTO PER_PERSONAS PER
+			USING 
+				(SELECT DISTINCT PER_ID, ARQ_ID
+			  	FROM TMP_REC_CNT_LIBRE_DES_ARQ) RA ON (RA.PER_ID = PER.PER_ID)
+			WHEN MATCHED THEN UPDATE 
+			    SET PER.ARQ_ID = RA.ARQ_ID,
+			    	USUARIOMODIFICAR = '${usuario.crear}',
+					FECHAMODIFICAR = SYSDATE;
+		end;
+		]]>
+	</entry>-->		
+	<!-- Subpaso 3.5.1 - Creamos los nuevos expedientes en la tabla EXP_EXPEDIENTES 
+		ES POSIBLE QUE NECESITEMOS ALGÚN OTRO PASO PARA GENERAR EL REGISTRO ESPECÍFICO DEL EXPEDIENTE DE RECOBRO EN LA TABLA EXP_EXPEDIENTE_RECOBRO
+	--> 
+	<entry key="recobro.insert.exp_expedientes_nuevos.Oracle9iDialect">
+		<![CDATA[
+/*
+ * CREACIÓN DE EXPEDIENTES NUEVOS
+ */
+declare
+  /*
+   * CONSTANTES
+   */
+   cUSUARIO_BATCH VARCHAR2(10 CHAR);
+   cARQ_GENERICO NUMBER;
+   cEEX_ID NUMBER;
+   cMASTER_SCHEMA VARCHAR2(10 CHAR);
+   
+   /*
+    * CURSORES
+    */
+  CURSOR curEXP_NUEVOS IS SELECT DISTINCT EXP_ID, EXP_DESCRIPCION, OFI_ID, EXP_MANUAL FROM BATCH_DATOS_SALIDA
+  WHERE CEX_PASE = 1 AND EXP_ID NOT IN (SELECT EXP_ID FROM EXR_EXPEDIENTE_RECOBRO);
+  rEXP curEXP_NUEVOS%ROWTYPE;
+  
+  CURSOR curDATOS_CEX (pEXP_ID NUMBER) IS SELECT DISTINCT EXP_ID, CNT_ID, DD_AEX_CODIGO, CEX_PASE FROM BATCH_DATOS_SALIDA WHERE EXP_ID = pEXP_ID;
+  rDATOS_CEX curDATOS_CEX%ROWTYPE;
+  
+  CURSOR curDATOS_PEX (pEXP_ID NUMBER) IS SELECT DISTINCT EXP_ID, PER_ID, PEX_PASE FROM BATCH_DATOS_SALIDA WHERE EXP_ID = pEXP_ID;
+  rDATOS_PEX curDATOS_PEX%ROWTYPE;
+  /*
+   * VARIABLES
+   */
+  vCEX_ID NUMBER(16);
+  vAEX_ID NUMBER(16);
+  vPEX_ID NUMBER(16);
+  vDD_TPX_ID NUMBER(16);
+  nCount NUMBER;
+begin
+
+      /*
+       * CONSTANTES
+       */
+      cUSUARIO_BATCH := '${usuario.crear}';
+      cARQ_GENERICO := ${id.arquetipo.generico};
+      cMASTER_SCHEMA := '${master.schema}';
+      cEEX_ID := ${ddEstadoExpedientes.Activo.id};
+      
+      /* INICIO BUCLE NUEVOS EXPEDIENTES */
+      IF NOT curEXP_NUEVOS%ISOPEN THEN
+          OPEN curEXP_NUEVOS;
+      END IF;
+      LOOP
+        FETCH curEXP_NUEVOS INTO rEXP;
+        EXIT WHEN curEXP_NUEVOS%NOTFOUND;
+        
+        /* INICIO INSERTAR EXP_EXPEDIENTES */
+        SELECT COUNT(*) INTO NCOUNT FROM EXP_EXPEDIENTES WHERE EXP_ID = rEXP.EXP_ID;
+        IF ncount <= 0 THEN
+          SELECT DD_TPX_ID INTO vDD_TPX_ID FROM DD_TPX_TIPO_EXPEDIENTE WHERE DD_TPX_CODIGO = 'REC';
+        
+          EXECUTE IMMEDIATE 'INSERT INTO EXP_EXPEDIENTES (EXP_ID, EXP_DESCRIPCION, EXP_FECHA_EST_ID, OFI_ID, ARQ_ID, DD_EEX_ID, EXP_MANUAL, DD_TPX_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+                          VALUES(
+                          :EXP_ID, :EXP_DESCRIPCION, SYSDATE, :OFI_ID, :ARQ_ID, :EEX_ID , :EXP_MANUAL, :TPX, 0, :USUARIOCREAR, SYSDATE, 0
+                        )' 
+          USING rEXP.EXP_ID, rEXP.EXP_DESCRIPCION, rEXP.OFI_ID, cARQ_GENERICO, cEEX_ID, rEXP.EXP_MANUAL, vDD_TPX_ID, cUSUARIO_BATCH;
+          
+          /* INICIO INSERTAR EXR_EXPEDIENTE_RECOBRO */
+          EXECUTE IMMEDIATE 'INSERT INTO EXR_EXPEDIENTE_RECOBRO (EXP_ID) VALUES(:EXP_ID)'
+          USING rEXP.EXP_ID;
+          /* FIN INSERTAR EXR_EXPEDIENTE_RECOBRO */
+          
+        END IF;
+        /* FIN INSERTAR EXP_EXPEDIENTES */
+        
+        
+        
+        /* INICIO BUCLE BATCH_DATOS_SALIDA CEX*/
+        IF NOT curDATOS_CEX%ISOPEN THEN
+            OPEN curDATOS_CEX(rEXP.EXP_ID);
+        END IF;
+        LOOP
+          FETCH curDATOS_CEX INTO rDATOS_CEX;
+          EXIT WHEN curDATOS_CEX%NOTFOUND;
+          
+          /* INICIO INSERTAR CEX */
+          SELECT S_CEX_CONTRATOS_EXPEDIENTE.NEXTVAL INTO vCEX_ID FROM DUAL;
+          
+          EXECUTE IMMEDIATE 'SELECT DD_AEX_ID FROM '||cMASTER_SCHEMA||'.DD_AEX_AMBITOS_EXPEDIENTE WHERE DD_AEX_CODIGO=:AEX_CODIGO'
+          INTO vAEX_ID
+          USING rDATOS_CEX.DD_AEX_CODIGO;
+          
+          EXECUTE IMMEDIATE 'INSERT INTO CEX_CONTRATOS_EXPEDIENTE (CEX_ID, CNT_ID, EXP_ID, DD_AEX_ID, CEX_PASE, VERSION, USUARIOCREAR,FECHACREAR, BORRADO)
+                              VALUES (:CEX_ID, :CNT_ID, :EXP_ID, :AEX_ID, :CEX_PASE, 0, :USUARIOCREAR, SYSDATE, 0)'
+          USING vCEX_ID, rDATOS_CEX.CNT_ID, rDATOS_CEX.EXP_ID, vAEX_ID, rDATOS_CEX.CEX_PASE, cUSUARIO_BATCH;
+          /* FIN INSERTAR CEX */
+          
+        END LOOP;
+        /* FIN BUCLE BATCH_DATOS_SALIDA CEX*/
+        CLOSE curDATOS_CEX;
+        
+        
+        /* INICIO BUCLE BATCH_DATOS_SALIDA PEX*/
+        IF NOT curDATOS_PEX%ISOPEN THEN
+            OPEN curDATOS_PEX(rEXP.EXP_ID);
+        END IF;
+        LOOP
+          FETCH curDATOS_PEX INTO rDATOS_PEX;
+          EXIT WHEN curDATOS_PEX%NOTFOUND;
+          
+          /* INICIO INSERTAR PEX */
+          SELECT S_PEX_PERSONAS_EXPEDIENTE.NEXTVAL INTO vPEX_ID FROM DUAL;
+          
+          EXECUTE IMMEDIATE 'INSERT INTO PEX_PERSONAS_EXPEDIENTE (PEX_ID, EXP_ID, PER_ID, DD_AEX_ID, PEX_PASE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+                              VALUES
+                              (:PEX_ID, :EXP_ID, :PER_ID, :AEX_ID, :PEX_PASE, 0, :USUARIOCREAR, SYSDATE, 0)'
+          USING vPEX_ID, rDATOS_PEX.EXP_ID, rDATOS_PEX.PER_ID, vAEX_ID, rDATOS_PEX.PEX_PASE, cUSUARIO_BATCH;
+          /* INICIO INSERTAR PEX */
+          
+        END LOOP;
+        /* FIN BUCLE BATCH_DATOS_SALIDA */
+        CLOSE curDATOS_PEX;
+        
+      END LOOP;
+      /* FIN BUCLE NUEVOS EXPEDIENTES */
+      CLOSE curEXP_NUEVOS;
+      
+      COMMIT;
+      
+      EXECUTE IMMEDIATE 'ANALYZE TABLE EXP_EXPEDIENTES COMPUTE STATISTICS';
+      EXECUTE IMMEDIATE 'ANALYZE TABLE EXR_EXPEDIENTE_RECOBRO COMPUTE STATISTICS';
+      EXECUTE IMMEDIATE 'ANALYZE TABLE CEX_CONTRATOS_EXPEDIENTE COMPUTE STATISTICS';
+      EXECUTE IMMEDIATE 'ANALYZE TABLE PEX_PERSONAS_EXPEDIENTE COMPUTE STATISTICS';
+end;
+		]]>
+	</entry>
+	<!-- Subpaso 3.5.2 - Creamos las relaciones de los nuevos expedientes con sus contratos en la tabla CEX_CONTRATOS_EXPEDIENTE --> 
+	<entry key="recobro.insert.cex_contratos_expediente_nuevos.Oracle9iDialect">
+		<![CDATA[
+/* OBSOLETO */
+		]]>
+	</entry>
+	<!-- Subpaso 3.5.3 - Creamos las relaciones de los nuevos expedientes con sus personas en la tabla PEX_PERSONAS_EXPEDIENTE --> 
+	<entry key="recobro.insert.pex_personas_expediente_nuevos.Oracle9iDialect">
+		<![CDATA[
+		declare
+		begin
+			INSERT INTO PEX_PERSONAS_EXPEDIENTE (PEX_ID, PER_ID, EXP_ID, DD_AEX_ID, 
+				PEX_PASE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT S_PEX_PERSONAS_EXPEDIENTE.NEXTVAL PEX_ID, PER_ID, EXP_ID, DD_AEX_ID, 
+				PEX_PASE, 0 AS VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR, 0 BORRADO
+			FROM BATCH_DATOS_SALIDA;
+		end;
+		]]>
+	</entry>	
+	<!-- Subpaso 3.6 - Asignamos el procedimiento correspondiente al expediente 
+		PENDIENTE DE DESARROLLO
+	--> 
+	<entry key="recobro.insert.exp_expedientes_procedimientos.Oracle9iDialect">
+		<![CDATA[
+			SELECT sysdate FROM DUAL
+		]]>
+	</entry>
+	<entry key="recobro.finalizar.ciclos_recobro_rot_o_ra.Oracle9iDialect">
+		<![CDATA[
+/*
+ * Cierra los ciclos de deuda (exp, cnt y per) de aquellos expedientes que se tengan
+ *  que rearquetipar o rotar.
+ */
+DECLARE
+  /*
+   * CONSTANTES
+   */
+   cUSUARIO_BATCH VARCHAR2(10 CHAR);
+   cMASTER_SCHEMA VARCHAR2(10 CHAR);
+  /*
+   * CURSORES
+   */
+   -- Este cursor nos junta los expedientes que se han rearquetipado
+   --  con los que se han rotado, ya que vamos a cerrar los ciclos de todos
+   --  por igual.
+   CURSOR C_EXPEDIENTES IS SELECT DISTINCT * FROM (
+        SELECT EXP_ID, RCF_AGE_ID, RCF_SCA_ID FROM TMP_REC_EXP_REARQUETIPADO
+        UNION
+        SELECT EXP_ID, RCF_AGE_ID, RCF_SCA_ID FROM TMP_REC_EXP_ROTACION
+    );
+   
+   R_EXP C_EXPEDIENTES%ROWTYPE;
+   
+   /* VARIABLES */
+  V_MOB_ID NUMBER(16);
+   
+BEGIN
+	/*
+  	* CONSTANTES
+	*/
+	cUSUARIO_BATCH := '${usuario.crear}';
+    cMASTER_SCHEMA := '${master.schema}'; 
+  
+  /* OBTENEMOS EL ID DEL MOTIVO BAJA */
+  BEGIN
+  	EXECUTE IMMEDIATE 'SELECT NVL(DD_MOB_ID,-1) FROM '||cMASTER_SCHEMA||'.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO=''FG'''
+  	INTO V_MOB_ID;
+  
+  	EXCEPTION WHEN NO_DATA_FOUND THEN
+    	RAISE_APPLICATION_ERROR(-20000,'NO EXISTE EL MOTIVO DE BAJA CODIGO=FG');
+  END;
+      
+  /* Inicio bucle general de expedientes */
+  IF NOT C_EXPEDIENTES%ISOPEN THEN
+    OPEN C_EXPEDIENTES;
+  END IF;
+  LOOP
+    FETCH C_EXPEDIENTES INTO R_EXP;
+    EXIT WHEN C_EXPEDIENTES%NOTFOUND;
+    
+    -- cerramos los ciclos de recobro de los contratos
+    EXECUTE IMMEDIATE 'UPDATE CRC_CICLO_RECOBRO_CNT
+          SET CRC_FECHA_BAJA = TRUNC(SYSDATE)
+              , DD_MOB_ID = '||V_MOB_ID||'
+              , USUARIOMODIFICAR = '''||cUSUARIO_BATCH||'''
+              , FECHAMODIFICAR = SYSDATE
+          WHERE BORRADO = 0 
+            AND CRC_FECHA_BAJA IS NULL
+            AND CRE_ID IN (SELECT CRE_ID FROM CRE_CICLO_RECOBRO_EXP
+                            WHERE BORRADO = 0 AND EXP_ID = '||R_EXP.EXP_ID||'
+                            AND CRE_FECHA_BAJA IS NULL
+            )
+         ';
+         
+    -- cerramos los ciclos de recobro de las personas
+    EXECUTE IMMEDIATE 'UPDATE CRP_CICLO_RECOBRO_PER
+          SET CRP_FECHA_BAJA = TRUNC(SYSDATE)
+              , DD_MOB_ID = '||V_MOB_ID||'
+              , USUARIOMODIFICAR = '''||cUSUARIO_BATCH||'''
+              , FECHAMODIFICAR = SYSDATE
+          WHERE BORRADO = 0 
+            AND CRP_FECHA_BAJA IS NULL
+            AND CRE_ID IN (SELECT CRE_ID FROM CRE_CICLO_RECOBRO_EXP
+                            WHERE BORRADO = 0 AND EXP_ID = '||R_EXP.EXP_ID||'
+                            AND CRE_FECHA_BAJA IS NULL
+            )
+         ';
+             
+    -- Cerramos el ciclo de recobro del expediente
+    EXECUTE IMMEDIATE 'UPDATE CRE_CICLO_RECOBRO_EXP
+          SET CRE_FECHA_BAJA = TRUNC(SYSDATE)
+              , DD_MOB_ID = '||V_MOB_ID||'
+              , USUARIOMODIFICAR = '''||cUSUARIO_BATCH||'''
+              , FECHAMODIFICAR = SYSDATE
+          WHERE BORRADO = 0 AND EXP_ID = '||R_EXP.EXP_ID||'
+             AND CRE_FECHA_BAJA IS NULL';
+    
+  END LOOP;
+  CLOSE C_EXPEDIENTES;
+  /* Fin bucle general de expedientes */
+  COMMIT;
+END;			
+		]]>
+	</entry>
+	
+	<entry key="recobro.insert.ciclos_recobro.Oracle9iDialect">
+		<![CDATA[
+/*
+ * ABRIR NUEVOS CICLOS DE RECOBRO SI HACE FALTA
+ */ 
+begin
+  
+INSERT INTO TMP_CICLOS_RECOBRO_PTES
+SELECT EXP_ID, RCF_SCA_ID, RCF_AGE_ID, NCRE, NCRC, NCRP FROM (SELECT DISTINCT REP.EXP_ID, REP.RCF_SCA_ID, REP.RCF_AGE_ID
+  -- contamos los ciclos de deuda del expediente creados
+ , COUNT(DISTINCT CRE.CRE_ID) NCRE
+  -- contamos la diferecia entre los contratos y los cilcos de recobro de contratos abiertas
+ , (COUNT(DISTINCT CEX.CNT_ID) - COUNT(DISTINCT CRC.CNT_ID)) NCRC
+ -- contamos la diferencia entre las personas y los ciclos de recobro de personas abiertos
+ , (COUNT(DISTINCT PEX.PER_ID) - COUNT(DISTINCT CRP.PER_ID)) NCRP
+      FROM TMP_REC_EXP_REPARTO_AGENCIAS REP
+      JOIN EXR_EXPEDIENTE_RECOBRO EXP ON REP.EXP_ID = EXP.EXP_ID
+      	-- nos aseguramos que los deben gestionarse
+      	JOIN (
+      		SELECT DISTINCT EXP_ID FROM (
+      			SELECT EXP_ID FROM BATCH_DATOS_EXP
+      			UNION
+      			SELECT EXP_ID FROM BATCH_DATOS_SALIDA
+      		) 
+      	) REX ON EXP.EXP_ID = REX.EXP_ID 
+        JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON EXP.EXP_ID = CEX.EXP_ID AND CEX.BORRADO = 0
+        JOIN PEX_PERSONAS_EXPEDIENTE PEX ON EXP.EXP_ID = PEX.EXP_ID AND PEX.BORRADO = 0
+        LEFT JOIN CRE_CICLO_RECOBRO_EXP CRE ON EXP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL
+        LEFT JOIN CRC_CICLO_RECOBRO_CNT CRC ON CRE.CRE_ID = CRC.CRE_ID AND CRC.CRC_FECHA_BAJA IS NULL
+        LEFT JOIN CRP_CICLO_RECOBRO_PER CRP ON CRE.CRE_ID = CRP.CRE_ID AND CRP.CRP_FECHA_BAJA IS NULL
+      GROUP BY REP.EXP_ID, REP.RCF_SCA_ID, REP.RCF_AGE_ID    
+) WHERE 
+  -- le falte el ciclo del expediente
+  NCRE = 0 
+  -- haya algún contrato sin ciclo
+  OR NCRC > 0 
+  -- haya alguna persona sin ciclo
+  OR NCRP > 0;
+  
+  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_CICLOS_RECOBRO_PTES_1 ON TMP_CICLOS_RECOBRO_PTES(EXP_ID)';
+  
+  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_CICLOS_RECOBRO_PTES_2 ON TMP_CICLOS_RECOBRO_PTES(NCRE)';
+  
+  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_CICLOS_RECOBRO_PTES_3 ON TMP_CICLOS_RECOBRO_PTES(NCRC)';
+  
+  EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_CICLOS_RECOBRO_PTES_4 ON TMP_CICLOS_RECOBRO_PTES(NCRP)';
+  
+  EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_CICLOS_RECOBRO_PTES COMPUTE STATISTICS';
+              
+  
+INSERT INTO TMP_CRE_NUEVOS
+SELECT TMP.EXP_ID
+  , ESC.RCF_ESQ_ID
+  , ESC.RCF_ESC_ID
+  , SCA.RCF_SCA_ID
+  , SUA.RCF_SUA_ID
+  , SUA.RCF_AGE_ID
+  , SUM(NVL(MOV.MOV_POS_VIVA_NO_VENCIDA,0)) AS CRE_POS_VIVA_NO_VENCIDA
+  , SUM(NVL(MOV.MOV_POS_VIVA_VENCIDA,0)) AS CRE_POS_VIVA_VENCIDA
+  , SUM(NVL(MOV.MOV_INT_REMUNERATORIOS,0)) AS CRE_INT_ORDIN_DEVEN
+  , SUM(NVL(MOV.MOV_INT_MORATORIOS,0)) AS CRE_INT_MORAT_DEVEN
+  , SUM(NVL(MOV.MOV_COMISIONES,0)) AS CRE_COMISIONES
+  , SUM(NVL(MOV.MOV_GASTOS,0)) AS CRE_GASTOS
+  , SUM(NVL(MOV.MOV_IMPUESTOS,0)) AS CRE_IMPUESTOS
+FROM TMP_CICLOS_RECOBRO_PTES TMP
+  JOIN RCF_SCA_SUBCARTERA SCA ON TMP.RCF_SCA_ID = SCA.RCF_SCA_ID
+  JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON SCA.RCF_ESC_ID = ESC.RCF_ESC_ID
+  JOIN RCF_SUA_SUBCARTERA_AGENCIAS SUA ON TMP.RCF_AGE_ID = SUA.RCF_AGE_ID AND SCA.RCF_SCA_ID = SUA.RCF_SCA_ID
+  JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON TMP.EXP_ID = CEX.EXP_ID AND CEX.BORRADO = 0
+  JOIN CNT_CONTRATOS CNT ON CEX.CNT_ID = CNT.CNT_ID
+  JOIN MOV_MOVIMIENTOS MOV ON CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+WHERE TMP.NCRE = 0  
+GROUP BY TMP.EXP_ID
+  , ESC.RCF_ESQ_ID
+  , ESC.RCF_ESC_ID
+  , SCA.RCF_SCA_ID
+  , SUA.RCF_SUA_ID
+  , SUA.RCF_AGE_ID;
+  
+
+INSERT INTO CRE_CICLO_RECOBRO_EXP (CRE_ID, EXP_ID, CRE_FECHA_ALTA, RCF_ESQ_ID, RCF_ESC_ID, RCF_SCA_ID, RCF_SUA_ID, RCF_AGE_ID
+                              , CRE_POS_VIVA_NO_VENCIDA, CRE_POS_VIVA_VENCIDA, CRE_INT_ORDIN_DEVEN, CRE_INT_MORAT_DEVEN, CRE_COMISIONES, CRE_GASTOS, CRE_IMPUESTOS
+                              , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT S_CRE_CICLO_RECOBRO_EXP.NEXTVAL
+  , TMP.EXP_ID
+  , TRUNC(SYSDATE)
+  , TMP.RCF_ESQ_ID
+  , TMP.RCF_ESC_ID
+  , TMP.RCF_SCA_ID
+  , TMP.RCF_SUA_ID
+  , TMP.RCF_AGE_ID
+  , TMP.CRE_POS_VIVA_NO_VENCIDA
+  , TMP.CRE_POS_VIVA_VENCIDA
+  , TMP.CRE_INT_ORDIN_DEVEN
+  , TMP.CRE_INT_MORAT_DEVEN
+  , TMP.CRE_COMISIONES
+  , TMP.CRE_GASTOS
+  , TMP.CRE_IMPUESTOS
+  , 0, '${usuario.crear}', SYSDATE,0
+FROM TMP_CRE_NUEVOS TMP;
+
+
+EXECUTE IMMEDIATE 'ANALYZE TABLE CRE_CICLO_RECOBRO_EXP COMPUTE STATISTICS';
+  
+INSERT INTO TMP_CRC_NUEVOS
+SELECT DISTINCT CEX.CNT_ID
+  , CRE.CRE_ID
+  , to_number(to_char(TRUNC(sysdate), 'yyyyMMdd') || CEX.CNT_ID) AS CRC_ID_ENVIO
+  , TRUNC(SYSDATE) AS CRC_FECHA_ALTA
+  , NVL(MOV.MOV_POS_VIVA_NO_VENCIDA,0) AS CRC_POS_VIVA_NO_VENCIDA
+  , NVL(MOV.MOV_POS_VIVA_VENCIDA,0) AS CRC_POS_VIVA_VENCIDA
+  , NVL(MOV.MOV_INT_REMUNERATORIOS,0) AS CRC_INT_ORDIN_DEVEN
+  , NVL(MOV.MOV_INT_MORATORIOS,0) AS CRC_INT_MORAT_DEVEN
+  , NVL(MOV.MOV_COMISIONES,0) AS CRC_COMISIONES
+  , NVL(MOV.MOV_GASTOS,0) AS CRC_GASTOS
+  , NVL(MOV.MOV_IMPUESTOS,0) AS CRC_IMPUESTOS
+FROM TMP_CICLOS_RECOBRO_PTES TMP
+  JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON TMP.EXP_ID = CEX.EXP_ID AND CEX.BORRADO = 0
+  JOIN BATCH_DATOS_CNT CNTB ON CEX.CNT_ID = CNTB.CNT_ID
+  JOIN CRE_CICLO_RECOBRO_EXP CRE ON CEX.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL
+  JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON CRE.RCF_ESC_ID = ESC.RCF_ESC_ID
+  JOIN RCF_DD_TGC_TIPO_GESTION_CART TGC ON ESC.DD_TGC_ID = TGC.DD_TGC_ID
+  JOIN CNT_CONTRATOS CNT ON CEX.CNT_ID = CNT.CNT_ID
+  JOIN MOV_MOVIMIENTOS MOV ON CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+  -- cruzamos con los ciclos de contrato para no volver a abirlos
+  LEFT JOIN  CRC_CICLO_RECOBRO_CNT OTR ON OTR.BORRADO = 0 AND CRE.CRE_ID = OTR.CRE_ID AND OTR.CNT_ID = CEX.CNT_ID AND OTR.CRC_FECHA_BAJA IS NULL
+  WHERE TMP.NCRC > 0
+    AND (TGC.DD_TGC_CODIGO = 'GC' OR CNTB.CNT_RIESGO > 0)
+    -- comprobamos que no haya ciclos de contrato abiertos
+    AND OTR.CRC_ID IS NULL;  
+  
+INSERT INTO CRC_CICLO_RECOBRO_CNT (CRC_ID, CNT_ID, CRE_ID, CRC_ID_ENVIO, CRC_FECHA_ALTA
+                                 , CRC_POS_VIVA_NO_VENCIDA, CRC_POS_VIVA_VENCIDA, CRC_INT_ORDIN_DEVEN, CRC_INT_MORAT_DEVEN, CRC_COMISIONES, CRC_GASTOS, CRC_IMPUESTOS
+                                 , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT S_CRC_CICLO_RECOBRO_CNT.NEXTVAL
+  , CNT_ID
+  , CRE_ID
+  , CRC_ID_ENVIO
+  , TRUNC(SYSDATE) AS CRC_FECHA_ALTA
+  , CRC_POS_VIVA_NO_VENCIDA
+  , CRC_POS_VIVA_VENCIDA
+  , CRC_INT_ORDIN_DEVEN
+  , CRC_INT_MORAT_DEVEN
+  , CRC_COMISIONES
+  , CRC_GASTOS
+  , CRC_IMPUESTOS
+  , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
+FROM TMP_CRC_NUEVOS;   
+  
+EXECUTE IMMEDIATE 'ANALYZE TABLE CRC_CICLO_RECOBRO_CNT COMPUTE STATISTICS';
+
+INSERT INTO TMP_CRP_NUEVOS
+SELECT DISTINCT PEX.PER_ID
+  , CRE.CRE_ID
+  , TRUNC(SYSDATE) AS CRP_FECHA_ALTA
+  , PERB.PER_RIESGO_DIRECTO CRP_RIESGO_DIRECTO
+  , PERB.PER_RIESGO_INDIRECTO CRP_RIESGO_INDIRECTO
+FROM TMP_CICLOS_RECOBRO_PTES TMP
+  JOIN PEX_PERSONAS_EXPEDIENTE PEX ON TMP.EXP_ID = PEX.EXP_ID AND PEX.BORRADO = 0
+  JOIN BATCH_DATOS_PER PERB ON PEX.PER_ID = PERB.PER_ID
+  JOIN CRE_CICLO_RECOBRO_EXP CRE ON PEX.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL
+  JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON CRE.RCF_ESC_ID = ESC.RCF_ESC_ID
+  JOIN RCF_DD_TGC_TIPO_GESTION_CART TGC ON ESC.DD_TGC_ID = TGC.DD_TGC_ID
+  JOIN CPE_CONTRATOS_PERSONAS CPE ON PEX.PER_ID = CPE.PER_ID AND CPE.BORRADO = 0
+  JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON CPE.CNT_ID = CEX.CNT_ID AND CEX.EXP_ID = PEX.EXP_ID AND CEX.BORRADO = 0
+  JOIN BATCH_DATOS_CNT CNTB ON CEX.CNT_ID = CNTB.CNT_ID
+  -- cruzamos con los ciclos de la persona para no volver a abrirlos
+  LEFT JOIN  CRP_CICLO_RECOBRO_PER OTR ON OTR.BORRADO = 0 AND CRE.CRE_ID = OTR.CRE_ID AND OTR.PER_ID = PEX.PER_ID AND OTR.CRP_FECHA_BAJA IS NULL
+WHERE TMP.NCRP > 0 
+  AND (TGC.DD_TGC_CODIGO = 'GC' OR CNTB.CNT_RIESGO > 0)
+  -- comprobamos que ho haya ciclos de persona abiertos
+  AND OTR.PER_ID IS NULL;
+  
+INSERT INTO CRP_CICLO_RECOBRO_PER (CRP_ID, PER_ID, CRE_ID, CRP_FECHA_ALTA, CRP_RIESGO_DIRECTO, CRP_RIESGO_INDIRECTO
+                              , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT S_CRP_CICLO_RECOBRO_PER.NEXTVAL
+  , PER_ID
+  , CRE_ID
+  , CRP_FECHA_ALTA
+  , CRP_RIESGO_DIRECTO
+  , CRP_RIESGO_INDIRECTO
+  , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
+FROM TMP_CRP_NUEVOS;   
+
+EXECUTE IMMEDIATE 'ANALYZE TABLE CRP_CICLO_RECOBRO_PER COMPUTE STATISTICS'; 
+  
+  COMMIT;
+end;		
+		]]>
+	</entry>
+	
+	<entry key="recobro.finalizar.ciclos_recobro_contrato_por_excepcion.Oracle9iDialect">
+		<![CDATA[
+/*
+ * EXCEPTUAR CONTRATOS
+ * - Cierra los ciclos de recobro de un contrato exceptuado
+ * - Cierra los ciclos de recobro de las personas que se van quedando sin deuda
+ *    irregular en el expediente.
+ */
+DECLARE
+  /*
+  * CONSTANTES
+  */
+  C_USUARIO_BATCH VARCHAR2(50 CHAR);
+  C_MASTER_SCHEMA VARCHAR2(50 CHAR); 
+    
+  /* CURSOSRS */
+  /*
+   * Este cursor sirve para recorrer todos los contratos exceptuados
+   */
+  CURSOR C_EXCEPTUADOS IS SELECT * FROM BATCH_DATOS_EXCEPTUADOS WHERE CNT_ID IS NOT NULL;
+  R_EXC C_EXCEPTUADOS%ROWTYPE;
+  
+  /*
+   * Este cursor sirve para localizar los clclos de recobro de un determinado contrato.
+   */
+  CURSOR C_CRC_CICLO_RECOBRO_CNT(P_CNT_ID NUMBER) IS 
+    SELECT *
+    FROM CRC_CICLO_RECOBRO_CNT
+    WHERE CNT_ID = P_CNT_ID
+      AND CRC_FECHA_BAJA IS NULL
+      AND BORRADO = 0;
+  
+  R_CRC C_CRC_CICLO_RECOBRO_CNT%ROWTYPE;
+  
+  /*
+   * Este cursor sirva para localizar los clclos de recobro de las personas que se han quedado
+   *  sin deuda irregulr en el expediente.
+   */
+  CURSOR C_CRP_SIN_DEUDA(P_CRE_ID NUMBER) IS SELECT CRP.CRP_ID
+    FROM CRP_CICLO_RECOBRO_PER CRP
+      -- buscamos contratos de la persona
+      JOIN CPE_CONTRATOS_PERSONAS CPE ON CRP.PER_ID = CPE.PER_ID AND CPE.BORRADO=0
+      -- obtenemos los contratos que tienen ciclos de deuda abiertos en el expediente
+      LEFT JOIN CRC_CICLO_RECOBRO_CNT CRC ON CRP.CRE_ID = CRC.CRE_ID AND CPE.CNT_ID = CRC.CNT_ID AND CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+      LEFT JOIN BATCH_DATOS_CNT CNT ON CRC.CNT_ID = CNT.CNT_ID
+    WHERE CRP.CRE_ID = P_CRE_ID
+    GROUP BY CRP.CRP_ID
+    HAVING SUM(NVL(CNT.CNT_RIESGO,0)) <= 0;
+  
+  R_CRP C_CRP_SIN_DEUDA%ROWTYPE;
+  /* VARIABLES */
+  V_MOB_ID NUMBER(16);
+BEGIN
+  /*
+  * CONSTANTES
+  */
+  C_USUARIO_BATCH := '${usuario.crear}';
+  C_MASTER_SCHEMA := '${master.schema}'; 
+  
+  /* OBTENEMOS EL ID DEL MOTIVO EXCEPTUACION */
+  BEGIN
+  	EXECUTE IMMEDIATE 'SELECT DD_MOB_ID FROM '||C_MASTER_SCHEMA||'.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO=''EXC'''
+  	INTO V_MOB_ID;
+  
+  	EXCEPTION WHEN NO_DATA_FOUND THEN
+	    RAISE_APPLICATION_ERROR(-20000,'NO EXISTE EL MOTIVO DE BAJA CODIGO=EXC');
+  END;
+  
+  /* INICIO BUCLE PRINCIPAL */
+  IF NOT C_EXCEPTUADOS%ISOPEN THEN
+    OPEN C_EXCEPTUADOS;
+  END IF;
+  LOOP
+    FETCH C_EXCEPTUADOS INTO R_EXC;
+    EXIT WHEN C_EXCEPTUADOS%NOTFOUND;
+    
+    /* INICIO CERRAR CICLOS DE RECOBRO CNT ACTUAL */
+    IF C_CRC_CICLO_RECOBRO_CNT%ISOPEN THEN
+      CLOSE C_CRC_CICLO_RECOBRO_CNT;
+    END IF;
+    OPEN C_CRC_CICLO_RECOBRO_CNT(R_EXC.CNT_ID);
+    LOOP
+      FETCH C_CRC_CICLO_RECOBRO_CNT INTO R_CRC;
+      EXIT WHEN C_CRC_CICLO_RECOBRO_CNT%NOTFOUND;
+      
+      UPDATE CRC_CICLO_RECOBRO_CNT
+        SET CRC_FECHA_BAJA = TRUNC(SYSDATE)
+          , EXC_ID = R_EXC.EXC_ID
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+      WHERE CRC_ID = R_CRC.CRC_ID;
+      
+      /* INICIO CERRAR CRP DE PERSONAS SIN DEUDA */
+      IF C_CRP_SIN_DEUDA%ISOPEN THEN
+        CLOSE C_CRP_SIN_DEUDA;
+      END IF;
+      OPEN C_CRP_SIN_DEUDA(R_CRC.CRE_ID);
+      LOOP
+        FETCH C_CRP_SIN_DEUDA INTO R_CRP;
+        EXIT WHEN C_CRP_SIN_DEUDA%NOTFOUND;
+        
+        UPDATE CRP_CICLO_RECOBRO_PER
+          SET CRP_FECHA_BAJA = TRUNC(SYSDATE)
+          , EXC_ID = R_EXC.EXC_ID
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+        WHERE CRP_ID = R_CRP.CRP_ID;
+      END LOOP;
+      CLOSE C_CRP_SIN_DEUDA;
+      /* FIN    CERRAR CRP DE PERSONAS SIN DEUDA */
+    END LOOP;
+    CLOSE C_CRC_CICLO_RECOBRO_CNT;
+    /* FIN    CERRAR CICLOS DE RECOBRO CNT ACTUAL */
+    
+  END LOOP;
+  CLOSE C_EXCEPTUADOS;
+  /* FIN BUCLE PRINCIPAL */
+  COMMIT;
+END;		
+		]]>
+	</entry>
+	
+	<entry key="recobro.finalizar.ciclos_recobro_persona_por_excepcion.Oracle9iDialect">
+		<![CDATA[
+/*
+ * EXCEPTUAR PERSONAS
+ * - Cierra los ciclos de recobro de una persona exceptuado
+ * - Cierra los ciclos de recobro de los contratos que que estaban vinculados
+ *     esas personas y para los cuales no les queda ninguna persona no exceptuada
+ *     en el expediente.
+ */
+DECLARE
+  /*
+  * CONSTANTES
+  */
+  C_USUARIO_BATCH VARCHAR2(50 CHAR);
+  C_MASTER_SCHEMA VARCHAR2(50 CHAR); 
+    
+  /* CURSOSRS */
+  /*
+   * Este cursor sirve para recorrer todas las personas exceptuadas
+   */
+  CURSOR C_EXCEPTUADOS IS SELECT * FROM BATCH_DATOS_EXCEPTUADOS WHERE PER_ID IS NOT NULL;
+  R_EXC C_EXCEPTUADOS%ROWTYPE;
+  
+  /*
+   * Este cursor sirve para localizar los clclos de recobro de una determinada persona.
+   */
+  CURSOR C_CRP_CICLO_RECOBRO_PER(P_PER_ID NUMBER) IS 
+    SELECT *
+    FROM CRP_CICLO_RECOBRO_PER
+    WHERE PER_ID = P_PER_ID
+      AND CRP_FECHA_BAJA IS NULL
+      AND BORRADO = 0;
+  
+  R_CRP C_CRP_CICLO_RECOBRO_PER%ROWTYPE;
+  
+  /*
+   * Este cursor sirva para localizar los clclos de recobro de los contratos que se han quedado
+   *  sin personas en el expediente.
+   */
+  CURSOR C_CRC_SIN_PERSONAS(P_CRE_ID NUMBER) IS SELECT CRC.CRC_ID
+FROM CRC_CICLO_RECOBRO_CNT CRC
+      -- buscamos las personas de los contratos
+      JOIN CPE_CONTRATOS_PERSONAS CPE ON CRC.CNT_ID = CPE.CNT_ID AND CPE.BORRADO=0
+      -- obtenemos las personas que tienen ciclos de deuda abiertas en el expediente
+      LEFT JOIN CRP_CICLO_RECOBRO_PER CRP ON CRC.CRE_ID = CRP.CRE_ID AND CPE.PER_ID = CRP.PER_ID AND CRP.BORRADO = 0 AND CRP.CRP_FECHA_BAJA IS NULL
+    WHERE CRC.CRE_ID = P_CRE_ID
+    GROUP BY CRC.CRC_ID
+    HAVING COUNT(CRP.CRP_ID) <= 0;
+  
+  R_CRC C_CRC_SIN_PERSONAS%ROWTYPE;
+  /* VARIABLES */
+  V_MOB_ID NUMBER(16);
+BEGIN
+  /*
+  * CONSTANTES
+  */
+  C_USUARIO_BATCH := '${usuario.crear}';
+  C_MASTER_SCHEMA := '${master.schema}'; 
+  
+  /* OBTENEMOS EL ID DEL MOTIVO EXCEPTUACION */
+  BEGIN
+  	EXECUTE IMMEDIATE 'SELECT DD_MOB_ID FROM '||C_MASTER_SCHEMA||'.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO=''EXP'''
+  	INTO V_MOB_ID;
+  
+  	EXCEPTION WHEN NO_DATA_FOUND THEN
+    	RAISE_APPLICATION_ERROR(-20000,'NO EXISTE EL MOTIVO DE BAJA CODIGO=EXP');
+  END;
+  
+  /* INICIO BUCLE PRINCIPAL */
+  IF NOT C_EXCEPTUADOS%ISOPEN THEN
+    OPEN C_EXCEPTUADOS;
+  END IF;
+
+  LOOP
+    FETCH C_EXCEPTUADOS INTO R_EXC;
+    EXIT WHEN C_EXCEPTUADOS%NOTFOUND;
+    
+    
+    /* INICIO CERRAR CICLOS DE RECOBRO CRP ACTUAL */
+    IF C_CRP_CICLO_RECOBRO_PER%ISOPEN THEN
+      CLOSE C_CRP_CICLO_RECOBRO_PER;
+    END IF;
+    OPEN C_CRP_CICLO_RECOBRO_PER(R_EXC.PER_ID);
+    LOOP
+      FETCH C_CRP_CICLO_RECOBRO_PER INTO R_CRP;
+      EXIT WHEN C_CRP_CICLO_RECOBRO_PER%NOTFOUND;
+      
+      
+      UPDATE CRP_CICLO_RECOBRO_PER
+        SET CRP_FECHA_BAJA = TRUNC(SYSDATE)
+          , EXC_ID = R_EXC.EXC_ID
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+      WHERE CRP_ID = R_CRP.CRP_ID;
+      
+      /* INICIO CERRAR CRP DE CONTRATOS SIN PERSONA */
+      IF C_CRC_SIN_PERSONAS%ISOPEN THEN
+        CLOSE C_CRC_SIN_PERSONAS;
+      END IF;
+      OPEN C_CRC_SIN_PERSONAS(R_CRP.CRE_ID);
+      LOOP
+        FETCH C_CRC_SIN_PERSONAS INTO R_CRC;
+        EXIT WHEN C_CRC_SIN_PERSONAS%NOTFOUND;
+        
+        UPDATE CRC_CICLO_RECOBRO_CNT
+          SET CRC_FECHA_BAJA = TRUNC(SYSDATE)
+          , EXC_ID = R_EXC.EXC_ID
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+        WHERE CRC_ID = R_CRC.CRC_ID;
+      END LOOP;
+      CLOSE C_CRC_SIN_PERSONAS;
+      /* FIN    CERRAR CRP DE CONTRATOS SIN PERSONA */
+      
+    END LOOP;
+    CLOSE C_CRP_CICLO_RECOBRO_PER;
+    /* FIN    CERRAR CICLOS DE RECOBRO CRP ACTUAL */
+    
+  END LOOP;
+  CLOSE C_EXCEPTUADOS;
+  /* FIN BUCLE PRINCIPAL */
+  COMMIT;
+END;		
+		]]>
+	</entry>
+	
+	<entry key="recobro.insert.ciclos_recobro_contrato_por_fin_excepcion.Oracle9iDialect">
+		<![CDATA[
+declare
+begin
+-- Insertamos un CRC nuevo por cada uno que haya llegado a fin de excepcion
+INSERT INTO CRC_CICLO_RECOBRO_CNT (CRC_ID, CNT_ID, CRE_ID, CRC_ID_ENVIO, CRC_FECHA_ALTA
+                                 , CRC_POS_VIVA_NO_VENCIDA, CRC_POS_VIVA_VENCIDA, CRC_INT_ORDIN_DEVEN, CRC_INT_MORAT_DEVEN, CRC_COMISIONES, CRC_GASTOS, CRC_IMPUESTOS
+                                 , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT S_CRC_CICLO_RECOBRO_CNT.NEXTVAL, D.* FROM (
+SELECT CRC.CNT_ID
+       , CRC.CRE_ID
+       , to_number(to_char(TRUNC(sysdate), 'yyyyMMdd') || CRC.CNT_ID) AS CRC_ID_ENVIO
+       , TRUNC(SYSDATE) AS CRC_FECHA_ALTA
+       , NVL(MOV.MOV_POS_VIVA_NO_VENCIDA,0) AS CRC_POS_VIVA_NO_VENCIDA
+       , NVL(MOV.MOV_POS_VIVA_VENCIDA,0) AS CRC_POS_VIVA_VENCIDA
+       , NVL(MOV.MOV_INT_REMUNERATORIOS,0) AS CRC_INT_ORDIN_DEVEN
+       , NVL(MOV.MOV_INT_MORATORIOS,0) AS CRC_INT_MORAT_DEVEN
+       , NVL(MOV.MOV_COMISIONES,0) AS CRC_COMISIONES
+       , NVL(MOV.MOV_GASTOS,0) AS CRC_GASTOS
+       , NVL(MOV.MOV_IMPUESTOS,0) AS CRC_IMPUESTOS
+       , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
+FROM CRC_CICLO_RECOBRO_CNT CRC
+  JOIN CNT_CONTRATOS CNT ON CRC.CNT_ID = CNT.CNT_ID
+  JOIN MOV_MOVIMIENTOS MOV ON CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+  -- cruzamos con los motivos de baja para asegurarnos que sólo cogemos contratos exceptuados por sí mismos
+  JOIN ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB ON CRC.DD_MOB_ID = MOB.DD_MOB_ID
+  -- cruzamos con los exceptuados para ver que ya no exista
+  LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXC ON CRC.EXC_ID = EXC.EXC_ID
+  -- cruzamos con otrso ciclos de recobro para ver que ya no haya otro abierto.
+  LEFT JOIN CRC_CICLO_RECOBRO_CNT OTR ON CRC.CRE_ID = OTR.CRE_ID AND CRC.CNT_ID = OTR.CNT_ID AND OTR.BORRADO = 0 AND OTR.CRC_FECHA_BAJA IS NULL
+WHERE CRC.BORRADO = 0
+  -- cogemos contratos exceptuados por sí mismos, no porque se haya exceptuado la persona
+  AND MOB.DD_MOB_CODIGO = 'EXC'
+  -- el ciclo de recobro tiene que estar dado de baja
+  AND CRC.CRC_FECHA_BAJA IS NOT NULL
+  -- el ciclo de recobro tiene haber estado exeptuado
+  AND CRC.EXC_ID IS NOT NULL
+  -- la exceptuación ya no está vigente
+  AND EXC.CNT_ID IS NULL
+  -- no hay ningún otro ciclo de recobro abierto
+  AND OTR.CRC_ID IS NULL
+) D;
+
+-- Insertamos los CRP por cada uno que se exceptuaron cuando el contrato
+INSERT INTO CRP_CICLO_RECOBRO_PER (CRP_ID, PER_ID, CRE_ID, CRP_FECHA_ALTA, CRP_RIESGO_DIRECTO, CRP_RIESGO_INDIRECTO
+                              , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT S_CRP_CICLO_RECOBRO_PER.NEXTVAL, D.* FROM (SELECT DISTINCT
+  CRP.PER_ID
+  , CRP.CRE_ID
+  , TRUNC(SYSDATE) AS CRP_FECHA_ALTA
+  , PERB.PER_RIESGO_DIRECTO CRP_RIESGO_DIRECTO
+  , PERB.PER_RIESGO_INDIRECTO CRP_RIESGO_INDIRECTO
+  , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
+FROM CRP_CICLO_RECOBRO_PER CRP
+  JOIN BATCH_DATOS_PER PERB ON CRP.PER_ID = PERB.PER_ID
+  -- cruzamos con los motivos de baja para asegurarnos que sólo cogemos personas exceptuados por un contrato
+  JOIN ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB ON CRP.DD_MOB_ID = MOB.DD_MOB_ID
+  -- cruzamos con los exceptuados para ver que ya no exista
+  LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXC ON CRP.EXC_ID = EXC.EXC_ID
+  -- cruzamos con otrso ciclos de recobro para ver que ya no haya otro abierto.
+  LEFT JOIN CRP_CICLO_RECOBRO_PER OTR ON CRP.CRE_ID = OTR.CRE_ID AND CRP.PER_ID = OTR.PER_ID AND OTR.BORRADO = 0 AND OTR.CRP_FECHA_BAJA IS NULL
+WHERE CRP.BORRADO = 0  
+  -- cogemos personas exceptuadas al exceptuar el contrato
+  AND MOB.DD_MOB_CODIGO = 'EXC'
+  -- el ciclo de recobro tiene que estar dado de baja
+  AND CRP.CRP_FECHA_BAJA IS NOT NULL
+  -- el ciclo de recobro tiene haber estado exeptuado
+  AND CRP.EXC_ID IS NOT NULL
+  -- la exceptuación ya no está vigente
+  AND EXC.CNT_ID IS NULL
+  -- no hay ningún otro ciclo de recobro abierto
+  AND OTR.CRP_ID IS NULL
+) D;
+end;
+		]]>
+	</entry>
+	<entry key="recobro.insert.ciclos_recobro_persona_por_fin_excepcion.Oracle9iDialect">
+		<![CDATA[
+declare
+begin
+-- Insertamos los CRP por cada uno que ha finalizado la excepcion
+INSERT INTO CRP_CICLO_RECOBRO_PER (CRP_ID, PER_ID, CRE_ID, CRP_FECHA_ALTA, CRP_RIESGO_DIRECTO, CRP_RIESGO_INDIRECTO
+                              , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT S_CRP_CICLO_RECOBRO_PER.NEXTVAL, D.* FROM (SELECT DISTINCT
+  CRP.PER_ID
+  , CRP.CRE_ID
+  , TRUNC(SYSDATE) AS CRP_FECHA_ALTA
+  , PERB.PER_RIESGO_DIRECTO CRP_RIESGO_DIRECTO
+  , PERB.PER_RIESGO_INDIRECTO CRP_RIESGO_INDIRECTO
+  , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
+FROM CRP_CICLO_RECOBRO_PER CRP
+  JOIN BATCH_DATOS_PER PERB ON CRP.PER_ID = PERB.PER_ID
+  -- cruzamos con los motivos de baja para asegurarnos que sólo cogemos personas exceptuados por sí mismas
+  JOIN ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB ON CRP.DD_MOB_ID = MOB.DD_MOB_ID
+  -- cruzamos con los exceptuados para ver que ya no exista
+  LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXC ON CRP.EXC_ID = EXC.EXC_ID
+  -- cruzamos con otrso ciclos de recobro para ver que ya no haya otro abierto.
+  LEFT JOIN CRP_CICLO_RECOBRO_PER OTR ON CRP.CRE_ID = OTR.CRE_ID AND CRP.PER_ID = OTR.PER_ID AND OTR.BORRADO = 0 AND OTR.CRP_FECHA_BAJA IS NULL
+WHERE CRP.BORRADO = 0  
+  -- cogemos personas exceptuadas por si mismas, no porque se haya exceptuado el contrato
+  AND MOB.DD_MOB_CODIGO = 'EXP'
+  -- el ciclo de recobro tiene que estar dado de baja
+  AND CRP.CRP_FECHA_BAJA IS NOT NULL
+  -- el ciclo de recobro tiene haber estado exeptuado
+  AND CRP.EXC_ID IS NOT NULL
+  -- la exceptuación ya no está vigente
+  AND EXC.PER_ID IS NULL
+  -- no hay ningún otro ciclo de recobro abierto
+  AND OTR.CRP_ID IS NULL
+) D;
+
+
+-- Insertamos un CRC nuevo por cada uno que se excepctuara cuando la persona
+INSERT INTO CRC_CICLO_RECOBRO_CNT (CRC_ID, CNT_ID, CRE_ID, CRC_ID_ENVIO, CRC_FECHA_ALTA
+                                 , CRC_POS_VIVA_NO_VENCIDA, CRC_POS_VIVA_VENCIDA, CRC_INT_ORDIN_DEVEN, CRC_INT_MORAT_DEVEN, CRC_COMISIONES, CRC_GASTOS, CRC_IMPUESTOS
+                                 , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+SELECT S_CRC_CICLO_RECOBRO_CNT.NEXTVAL, D.* FROM (
+SELECT CRC.CNT_ID
+       , CRC.CRE_ID
+       , to_number(to_char(TRUNC(sysdate), 'yyyyMMdd') || CRC.CNT_ID) AS CRC_ID_ENVIO
+       , TRUNC(SYSDATE) AS CRC_FECHA_ALTA
+       , NVL(MOV.MOV_POS_VIVA_NO_VENCIDA,0) AS CRC_POS_VIVA_NO_VENCIDA
+       , NVL(MOV.MOV_POS_VIVA_VENCIDA,0) AS CRC_POS_VIVA_VENCIDA
+       , NVL(MOV.MOV_INT_REMUNERATORIOS,0) AS CRC_INT_ORDIN_DEVEN
+       , NVL(MOV.MOV_INT_MORATORIOS,0) AS CRC_INT_MORAT_DEVEN
+       , NVL(MOV.MOV_COMISIONES,0) AS CRC_COMISIONES
+       , NVL(MOV.MOV_GASTOS,0) AS CRC_GASTOS
+       , NVL(MOV.MOV_IMPUESTOS,0) AS CRC_IMPUESTOS
+       , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
+FROM CRC_CICLO_RECOBRO_CNT CRC
+  JOIN CNT_CONTRATOS CNT ON CRC.CNT_ID = CNT.CNT_ID
+  JOIN MOV_MOVIMIENTOS MOV ON CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+  -- cruzamos con los motivos de baja para asegurarnos que sólo cogemos exceptuadoa junto con la persona
+  JOIN ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB ON CRC.DD_MOB_ID = MOB.DD_MOB_ID
+  -- cruzamos con los exceptuados para ver que ya no exista
+  LEFT JOIN BATCH_DATOS_EXCEPTUADOS EXC ON CRC.EXC_ID = EXC.EXC_ID
+  -- cruzamos con otrso ciclos de recobro para ver que ya no haya otro abierto.
+  LEFT JOIN CRC_CICLO_RECOBRO_CNT OTR ON CRC.CRE_ID = OTR.CRE_ID AND CRC.CNT_ID = OTR.CNT_ID AND OTR.BORRADO = 0 AND OTR.CRC_FECHA_BAJA IS NULL
+WHERE CRC.BORRADO = 0
+  -- cogemos contratos exceptuados al exceptuar la persona
+  AND MOB.DD_MOB_CODIGO = 'EXP'
+  -- el ciclo de recobro tiene que estar dado de baja
+  AND CRC.CRC_FECHA_BAJA IS NOT NULL
+  -- el ciclo de recobro tiene haber estado exeptuado
+  AND CRC.EXC_ID IS NOT NULL
+  -- la exceptuación ya no está vigente
+  AND EXC.PER_ID IS NULL
+  -- no hay ningún otro ciclo de recobro abierto
+  AND OTR.CRC_ID IS NULL
+) D;
+end;
+		]]>
+	</entry>
+	
+	<entry key="recobro.finalizar.ciclos_recobro_contrato_deuda_saldada.Oracle9iDialect">
+		<![CDATA[
+/*
+ * SALDAR DEUDA DE CONTRATOS
+ * - Cierra los ciclos de recobro de un contrato con deuda saldada
+ * - Cierra los ciclos de recobro de las personas que se van quedando sin deuda
+ *    irregular en el expediente.
+ */
+DECLARE
+  /*
+  * CONSTANTES
+  */
+  C_USUARIO_BATCH VARCHAR2(50 CHAR);
+  C_MASTER_SCHEMA VARCHAR2(50 CHAR); 
+    
+  /* CURSOSRS */
+  /*
+   * Este cursor sirve para recorrer todos los contratos con ciclos abiertos y sin deuda.
+   */
+  CURSOR C_SALDADOS IS SELECT DISTINCT CRC.CRC_ID, CRC.CRE_ID, CNTB.*
+        FROM BATCH_DATOS_CNT CNTB
+          JOIN CRC_CICLO_RECOBRO_CNT CRC ON CNTB.CNT_ID = CRC.CNT_ID AND CRC.BORRADO = 0
+          JOIN CRE_CICLO_RECOBRO_EXP CRE ON CRC.CRE_ID = CRE.CRE_ID AND CRE.CRE_FECHA_BAJA IS NULL
+          JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON CRE.RCF_ESC_ID = ESC.RCF_ESC_ID
+          JOIN RCF_DD_TGC_TIPO_GESTION_CART TGC ON ESC.DD_TGC_ID = TGC.DD_TGC_ID
+        WHERE NVL(CNTB.CNT_RIESGO,0) <= 0 AND CRC.CRC_FECHA_BAJA IS NULL
+          AND TGC.DD_TGC_CODIGO = 'GI';
+        
+  R_SAL C_SALDADOS%ROWTYPE;
+  
+  /*
+   * Este cursor sirva para localizar los clclos de recobro de las personas que se han quedado
+   *  sin deuda irregulr en el expediente.
+   */
+  CURSOR C_CRP_SIN_DEUDA(P_CRE_ID NUMBER) IS SELECT CRP.CRP_ID
+    FROM CRP_CICLO_RECOBRO_PER CRP
+      -- buscamos contratos de la persona
+      JOIN CPE_CONTRATOS_PERSONAS CPE ON CRP.PER_ID = CPE.PER_ID AND CPE.BORRADO=0
+      -- obtenemos los contratos que tienen ciclos de deuda abiertos en el expediente
+      LEFT JOIN CRC_CICLO_RECOBRO_CNT CRC ON CRP.CRE_ID = CRC.CRE_ID AND CPE.CNT_ID = CRC.CNT_ID AND CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+      LEFT JOIN BATCH_DATOS_CNT CNT ON CRC.CNT_ID = CNT.CNT_ID
+    WHERE CRP.CRE_ID = P_CRE_ID
+    GROUP BY CRP.CRP_ID
+    HAVING SUM(NVL(CNT.CNT_RIESGO,0)) <= 0;
+  
+  R_CRP C_CRP_SIN_DEUDA%ROWTYPE;
+  
+  /* VARIABLES */
+  V_MOB_ID NUMBER(16);
+BEGIN
+  /*
+  * CONSTANTES
+  */
+  C_USUARIO_BATCH := '${usuario.crear}';
+  C_MASTER_SCHEMA := '${master.schema}'; 
+  
+  /* OBTENEMOS EL ID DEL MOTIVO EXCEPTUACION */
+  BEGIN
+  	EXECUTE IMMEDIATE 'SELECT DD_MOB_ID FROM '||C_MASTER_SCHEMA||'.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO=''REG'''
+  	INTO V_MOB_ID;
+  
+  	EXCEPTION WHEN NO_DATA_FOUND THEN
+    	RAISE_APPLICATION_ERROR(-20000,'NO EXISTE EL MOTIVO DE BAJA CODIGO=REG');
+  END;
+  
+  /* INICIO BUCLE PRINCIPAL */
+  IF NOT C_SALDADOS%ISOPEN THEN
+    OPEN C_SALDADOS;
+  END IF;
+  LOOP
+    FETCH C_SALDADOS INTO R_SAL;
+    EXIT WHEN C_SALDADOS%NOTFOUND;
+    
+      
+    UPDATE CRC_CICLO_RECOBRO_CNT
+      SET CRC_FECHA_BAJA = TRUNC(SYSDATE)
+        , DD_MOB_ID = V_MOB_ID
+        , USUARIOMODIFICAR = C_USUARIO_BATCH
+        , FECHAMODIFICAR = SYSDATE
+      WHERE CRC_ID = R_SAL.CRC_ID;
+      
+      /* INICIO CERRAR CRP DE PERSONAS SIN DEUDA */
+      IF C_CRP_SIN_DEUDA%ISOPEN THEN
+        CLOSE C_CRP_SIN_DEUDA;
+      END IF;
+      OPEN C_CRP_SIN_DEUDA(R_SAL.CRE_ID);
+      LOOP
+        FETCH C_CRP_SIN_DEUDA INTO R_CRP;
+        EXIT WHEN C_CRP_SIN_DEUDA%NOTFOUND;
+        
+        UPDATE CRP_CICLO_RECOBRO_PER
+          SET CRP_FECHA_BAJA = TRUNC(SYSDATE)
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+        WHERE CRP_ID = R_CRP.CRP_ID;
+      END LOOP;
+      CLOSE C_CRP_SIN_DEUDA;
+      /* FIN    CERRAR CRP DE PERSONAS SIN DEUDA */
+    
+  END LOOP;
+  CLOSE C_SALDADOS;
+  /* FIN BUCLE PRINCIPAL */
+  COMMIT;
+END;
+		]]>
+	</entry>
+	
+	<entry key="recobro.finalizar.expediente_deuda_saldada.Oracle9iDialect">
+		<![CDATA[
+DECLARE
+  /* CURSORES */
+  CURSOR C_REGULARIZADOS IS SELECT CRE.CRE_ID, CRE.EXP_ID
+        FROM CRE_CICLO_RECOBRO_EXP CRE
+          JOIN CRC_CICLO_RECOBRO_CNT CRC ON CRE.CRE_ID = CRC.CRE_ID AND CRE.CRE_FECHA_BAJA IS NULL
+          JOIN BATCH_DATOS_CNT CNT ON CRC.CNT_ID = CNT.CNT_ID
+        GROUP BY CRE.CRE_ID, CRE.EXP_ID
+        HAVING SUM(NVL(CNT.CNT_RIESGO, 0)) <= 0;
+        
+  R_EXP C_REGULARIZADOS%ROWTYPE;
+  
+  /*
+   * CONSTANTES
+   */
+   C_USUARIO_BATCH VARCHAR2(50 CHAR);
+   C_MASTER_SCHEMA VARCHAR2(50 CHAR); 
+  
+  /* VARIABLES */
+  V_DD_EEX_ID NUMBER(16);
+  V_MOB_ID NUMBER(16);
+BEGIN
+  /*
+  * CONSTANTES
+  */
+  C_USUARIO_BATCH := '${usuario.crear}';
+  C_MASTER_SCHEMA := '${master.schema}';  
+  BEGIN
+    /* OBTENEMOS EL ID DEL MOTIVO REGULARIZACIÓN */
+    EXECUTE IMMEDIATE 'SELECT DD_MOB_ID FROM '||C_MASTER_SCHEMA||'.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO=''REG'''
+    INTO V_MOB_ID;
+  
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+      RAISE_APPLICATION_ERROR(-20000,'NO EXISTE EL MOTIVO DE BAJA CODIGO=REG');
+  END;
+  
+  -- Obtenemos el estado cancelado del expediente
+  EXECUTE IMMEDIATE 'SELECT DD_EEX_ID 
+            FROM '||C_MASTER_SCHEMA||'.DD_EEX_ESTADO_EXPEDIENTE
+            WHERE DD_EEX_CODIGO=''5'''
+  INTO V_DD_EEX_ID;
+  
+  
+  IF C_REGULARIZADOS%ISOPEN THEN
+    CLOSE C_REGULARIZADOS;
+  END IF;
+  OPEN C_REGULARIZADOS;
+  LOOP
+    FETCH C_REGULARIZADOS INTO R_EXP;
+    EXIT WHEN C_REGULARIZADOS%NOTFOUND;
+  
+     -- Cerramos el ciclo de deuda del expediente
+    UPDATE CRE_CICLO_RECOBRO_EXP
+          SET CRE_FECHA_BAJA = TRUNC(SYSDATE)
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+    WHERE CRE_ID = R_EXP.CRE_ID;
+    
+    -- Cerramos los ciclos de recobro de los contratos que no lo estuvieran
+    UPDATE CRC_CICLO_RECOBRO_CNT
+          SET CRC_FECHA_BAJA = TRUNC(SYSDATE)
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+    WHERE CRE_ID = R_EXP.CRE_ID AND CRC_FECHA_BAJA IS NULL;
+    
+    -- Cerramos los ciclos de recobro de las personas que no lo estuvieran
+    UPDATE CRP_CICLO_RECOBRO_PER
+          SET CRP_FECHA_BAJA = TRUNC(SYSDATE)
+          , DD_MOB_ID = V_MOB_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE
+    WHERE CRE_ID = R_EXP.CRE_ID AND CRP_FECHA_BAJA IS NULL;
+    
+    -- Actualizamos el estado del expediente a cancelado    
+    UPDATE EXP_EXPEDIENTES
+          SET DD_EEX_ID = V_DD_EEX_ID
+          , USUARIOMODIFICAR = C_USUARIO_BATCH
+          , FECHAMODIFICAR = SYSDATE 
+    WHERE EXP_ID = R_EXP.EXP_ID;  
+  END LOOP;
+  CLOSE C_REGULARIZADOS;
+  
+  COMMIT;
+  
+END;
+		]]>
+	</entry>
+	
+	<entry key="recobro.arranque.bpm.recobro.Oracle9iDialect">
+		<![CDATA[
+/*
+ * Inicia una nueva instancia del BPM de metas volantes para todos aquellos
+ */
+DECLARE
+  /*
+   * CONSTANTES
+   */
+   cUSUARIO_BATCH VARCHAR2(10 CHAR);
+   cMASTER_SCHEMA VARCHAR2(10 CHAR);
+   cENTITY_SCHEMA VARCHAR2(10 CHAR);
+   cBPM_NAME VARCHAR2(20 CHAR);
+   cNODO_INICIO_NAME VARCHAR2(100 CHAR);
+  /*
+   * CURSORES
+   */
+   -- Este cursor devuelve todos los expedientes para los cuales hace falta 
+   --   lanzar un nuevo BPM de metas volantes
+   CURSOR C_EXPEDIENTES IS SELECT CRE.CRE_ID, CRE.EXP_ID 
+          FROM CRE_CICLO_RECOBRO_EXP CRE
+            JOIN BATCH_DATOS_EXP EXP ON CRE.EXP_ID = EXP.EXP_ID
+          WHERE EXP.EXP_MANUAL = 0
+            AND CRE.BORRADO = 0 AND CRE.CRE_FECHA_BAJA IS NULL
+            AND CRE.CRE_PROCESS_BPM IS NULL
+            ;
+   
+   R_EXP C_EXPEDIENTES%ROWTYPE;
+   
+   /*
+    * VARIABLES
+    */
+    V_DBID NUMBER(16);
+    V_PROCESSDEFINITION NUMBER(16);
+    V_PROCESSINSTANCE NUMBER(16);
+    V_TOKEN NUMBER(16);
+    V_NODE_INI_ID NUMBER(16);
+    V_MODULEINSTANCE NUMBER(16);
+    V_VARIABLEMAP NUMBER(16);
+    
+    V_EXP_PROCESS_BPM   NUMBER(16);
+BEGIN
+  /*
+   * CONSTANTES
+   */
+  cUSUARIO_BATCH := '${usuario.crear}';
+  cMASTER_SCHEMA := '${master.schema}';
+  cENTITY_SCHEMA := SYS_CONTEXT('userenv','current_schema');
+  
+  cBPM_NAME          := 'recobro';
+  cNODO_INICIO_NAME  := 'P100_nodoInicioPorSQL';
+  
+  -- obtenemos el id de la db actual
+  EXECUTE IMMEDIATE 'SELECT ENTIDAD_ID
+      FROM '||cMASTER_SCHEMA||'.ENTIDADCONFIG
+        WHERE DATAKEY = ''schema''
+        AND UPPER(DATAVALUE) = UPPER('''||cENTITY_SCHEMA||''')'
+  INTO V_DBID;
+  
+  --obtenemos el ID para el PROCESSDEFINITION
+  EXECUTE IMMEDIATE 'SELECT MAX(ID_) FROM '||cMASTER_SCHEMA||'.JBPM_PROCESSDEFINITION
+                   WHERE NAME_ ='''||cBPM_NAME||''''
+  INTO V_PROCESSDEFINITION;
+  
+  IF V_PROCESSDEFINITION IS NULL THEN
+    RAISE_APPLICATION_ERROR(-20000, 'EL BPM ['||cBPM_NAME||'] no se ha encontrado desplegado');
+  END IF;
+  
+  -- obtenemos el ID para el nodo inicio
+  EXECUTE IMMEDIATE 'SELECT ID_ FROM '||cMASTER_SCHEMA||'.JBPM_NODE
+                WHERE PROCESSDEFINITION_='||V_PROCESSDEFINITION||'
+                  AND NAME_='''||cNODO_INICIO_NAME||''''
+  INTO V_NODE_INI_ID; 
+  
+  IF V_PROCESSDEFINITION IS NULL THEN
+    RAISE_APPLICATION_ERROR(-20001, 'EL BPM ['||cBPM_NAME||'] no esta correctamente definido. Falta nodo ['||cNODO_INICIO_NAME||']');
+  END IF;
+      
+  /* Inicio bucle general de expedientes */
+  IF NOT C_EXPEDIENTES%ISOPEN THEN
+    OPEN C_EXPEDIENTES;
+  END IF;
+  
+  LOOP
+    FETCH C_EXPEDIENTES INTO R_EXP;
+    EXIT WHEN C_EXPEDIENTES%NOTFOUND;
+    
+    DBMS_OUTPUT.PUT_LINE('<BPM> <SET-UP> <Starting  EXP='||R_EXP.EXP_ID||'; CRE_ID='||R_EXP.CRE_ID||'>');
+  
+    
+    
+    /*
+     * Insertamos la instancia del BPM
+     */
+    -- comprobamos si el expediente ya tiene bpm asociado
+    EXECUTE IMMEDIATE 'SELECT EXP_PROCESS_BPM FROM EXP_EXPEDIENTES WHERE EXP_ID='||R_EXP.EXP_ID
+    INTO V_EXP_PROCESS_BPM;
+    
+    IF NOT V_EXP_PROCESS_BPM IS NULL THEN
+      DBMS_OUTPUT.PUT_LINE('<BPM> <SET-UP> <Killing  EXP='||R_EXP.EXP_ID||'; EXP_PROCESS_BPM='||V_EXP_PROCESS_BPM||'>');
+      EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_JOB (ID_, CLASS_, VERSION_, DUEDATE_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,
+          LOCKOWNER_, LOCKTIME_, EXCEPTION_, RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_, PROCESSINSTANCE_, TOKEN_)
+          SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL, ''T'', 0, SYSDATE - 2, NULL, 0, 1, NULL, NULL, NULL, 1,''TIMER_END_REC'', NULL, ''Fin'', NULL, NULL, NULL, NULL
+                ,ID_, ROOTTOKEN_
+          FROM '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE WHERE ID_ ='||V_EXP_PROCESS_BPM;
+    END IF;
+    
+    -- obtenemos el id para la instancia
+    EXECUTE IMMEDIATE 'SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL FROM DUAL'
+    INTO V_PROCESSINSTANCE;
+    
+    -- insertamos la instancia
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE
+        (ID_, VERSION_, START_, END_, ISSUSPENDED_, PROCESSDEFINITION_)
+        VALUES (
+          '||V_PROCESSINSTANCE||'
+            ,1 --VERSION
+            , SYSDATE --START_
+            ,NULL --END_
+            , 0 --ISSUSPENDED_
+            , '||V_PROCESSDEFINITION||' --PRCESSDEFINITION_
+    )';
+    
+    -- insertamos el token del bpm
+    EXECUTE IMMEDIATE 'SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL FROM DUAL'
+    INTO V_TOKEN;
+    
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_TOKEN
+              (ID_, VERSION_, START_, END_, NODEENTER_, ISSUSPENDED_, NODE_, PROCESSINSTANCE_, NEXTLOGINDEX_,ISABLETOREACTIVATEPARENT_,ISTERMINATIONIMPLICIT_)   
+        VALUES ('||V_TOKEN||'
+              , 1 --VERSION_
+              , SYSDATE --START_
+              , NULL --END_
+              , SYSDATE --NODEENTER_
+              , 0 --ISSUSPENDED_
+              , '||V_NODE_INI_ID||' --_ NODE_
+              , '||V_PROCESSINSTANCE||' --PROCESSINSTANCE_
+              ,0
+              ,0
+              ,0
+    )';
+    
+    -- actualizamos el token en el processinstance
+    EXECUTE IMMEDIATE 'UPDATE '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE
+              SET ROOTTOKEN_='||V_TOKEN||'
+              WHERE ID_='||V_PROCESSINSTANCE;
+    
+    -- actualizamos el expediente con el id de la instancia
+    EXECUTE IMMEDIATE 'UPDATE EXP_EXPEDIENTES
+                SET EXP_PROCESS_BPM='||V_PROCESSINSTANCE||'
+                WHERE EXP_ID='||R_EXP.EXP_ID;
+                
+    -- actualizamos el ciclo de recobro con el id de la instancia
+    EXECUTE IMMEDIATE 'UPDATE CRE_CICLO_RECOBRO_EXP
+                SET CRE_PROCESS_BPM='||V_PROCESSINSTANCE||'
+                WHERE CRE_ID='||R_EXP.CRE_ID;
+    
+    -- insertamos un modlue instance
+    EXECUTE IMMEDIATE 'SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL FROM DUAL'
+    INTO V_MODULEINSTANCE;
+    
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_MODULEINSTANCE
+            (ID_, CLASS_, VERSION_, PROCESSINSTANCE_, NAME_)
+         VALUES ('||V_MODULEINSTANCE||'
+            , ''C'' --CLASS_
+            , 0 --VERSION_
+            , '||V_PROCESSINSTANCE||'--PROCESSINSTANCE_
+            , ''org.jbpm.context.exe.ContextInstance'' --NAME_
+    )';
+    
+    -- insertamos un mapa de variables
+    EXECUTE IMMEDIATE 'SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL FROM DUAL'
+    INTO V_VARIABLEMAP;
+    
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_TOKENVARIABLEMAP 
+            (ID_, VERSION_, TOKEN_, CONTEXTINSTANCE_)
+      VALUES ('||V_VARIABLEMAP||'
+        , 0 --VERSION_
+        , '||V_TOKEN||' --ROOTTOKEN_
+        , '||V_MODULEINSTANCE||'  --CONTEXTINSTANCE_
+    )';
+    
+    --
+    -- insertamos variables
+    --
+    
+    -- DB_ID
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+        (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+      SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+      ,''L'' --CLASS_
+      , 0 --VERSION_ 
+      , ''DB_ID'' --NAME_
+      , '||V_TOKEN||' --TOKEM_
+      , '||V_VARIABLEMAP||' --TOKENVARIABLEMAP_
+      , '||V_PROCESSINSTANCE||' --PROCESSINSTANCE_
+      , '||V_DBID||' --LONGVLAUE_
+      FROM DUAL';
+      
+    -- idExpediente
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+        (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+      SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+      ,''L'' --CLASS_
+      , 0 --VERSION_ 
+      , ''idExpediente'' --NAME_
+      , '||V_TOKEN||' --TOKEM_
+      , '||V_VARIABLEMAP||' --TOKENVARIABLEMAP_
+      , '||V_PROCESSINSTANCE||' --PROCESSINSTANCE_
+      , '||R_EXP.EXP_ID||' --LONGVLAUE_
+      FROM DUAL';
+      
+    -- bpmParalizado
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+        (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+      SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+      ,''L'' --CLASS_
+      , 0 --VERSION_ 
+      , ''bpmParalizado'' --NAME_
+      , '||V_TOKEN||' --TOKEM_
+      , '||V_VARIABLEMAP||' --TOKENVARIABLEMAP_
+      , '||V_PROCESSINSTANCE||' --PROCESSINSTANCE_
+      , 0 --LONGVLAUE_
+      FROM DUAL';
+      
+    -- id
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_VARIABLEINSTANCE
+        (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+      SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL
+      ,''L'' --CLASS_
+      , 0 --VERSION_ 
+      , ''id'' --NAME_
+      , '||V_TOKEN||' --TOKEM_
+      , '||V_VARIABLEMAP||' --TOKENVARIABLEMAP_
+      , '||V_PROCESSINSTANCE||' --PROCESSINSTANCE_
+      , null --LONGVLAUE_
+      FROM DUAL';
+      
+    /*
+     Insertamos lso timers cadudados
+     */
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_JOB (ID_, CLASS_, VERSION_, DUEDATE_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,
+    LOCKOWNER_, LOCKTIME_, EXCEPTION_, RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_, PROCESSINSTANCE_, TOKEN_) 
+          SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL, ''T'', 0, SYSDATE - 2, NULL, 0, 1, NULL, NULL, NULL, 1,''TIMER_INI_REC'', NULL, ''avanzaBPM'', NULL, NULL, NULL, NULL
+          ,'||V_PROCESSINSTANCE||', '||V_TOKEN||'
+    FROM DUAL';
+      
+    DBMS_OUTPUT.PUT_LINE('<BPM> <SET-UP> <Finish EXP='||R_EXP.EXP_ID||'; CRE_ID='||R_EXP.CRE_ID||'>');
+    DBMS_OUTPUT.PUT_LINE('');
+      
+  END LOOP;
+  CLOSE C_EXPEDIENTES;
+  /* Fin bucle general de expedientes */
+  COMMIT;
+END;
+			
+		]]>
+	</entry>
+	
+	<entry key="recobro.cierre.ciclos.Oracle9iDialect">
+		<![CDATA[
+			-- SET SERVEROUTPUT ON;
+			DECLARE
+			  V_ID_MOB_ID NUMBER(16,0);
+			BEGIN
+			  -- OBTENEMOS EL ID DEL MOTIVO DE BAJA
+			  SELECT DD_MOB_ID INTO V_ID_MOB_ID FROM ${master.schema}.DD_MOB_MOTIVOS_BAJA WHERE DD_MOB_CODIGO = ${motivobaja.fingestion};
+			
+			  -- PRIMERO CERRRAMOS LOS CICLOS DE RECOBRO
+			  UPDATE CRE_CICLO_RECOBRO_EXP
+			  SET CRE_FECHA_BAJA = TRUNC(SYSDATE),
+			  DD_MOB_ID = V_ID_MOB_ID,
+			  USUARIOMODIFICAR = '${usuario.crear}',
+			  FECHAMODIFICAR = SYSDATE
+			  WHERE 
+			    CRE_ID IN
+			    (SELECT CRE.CRE_ID FROM CRE_CICLO_RECOBRO_EXP CRE
+			      INNER JOIN EXP_EXPEDIENTES EXP ON CRE.EXP_ID = EXP.EXP_ID
+			        LEFT JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE DD ON EXP.DD_EEX_ID = DD.DD_EEX_ID
+			      WHERE CRE.BORRADO = ${borrado.no.id}
+			        AND CRE_FECHA_BAJA IS NULL
+			        AND DD.DD_EEX_CODIGO <> ${ddEstadoExpedientes.Activo.codigo}
+			        AND EXP.BORRADO = ${borrado.no.id}
+			        AND EXP.EXP_MANUAL = ${manual.no.id});
+			
+			  -- AHORA CERRAMOS LOS CICLOS DE CONTRATO        
+			  UPDATE CRC_CICLO_RECOBRO_CNT
+			  SET CRC_FECHA_BAJA = TRUNC(SYSDATE),
+			  DD_MOB_ID = V_ID_MOB_ID,
+			  USUARIOMODIFICAR = '${usuario.crear}',
+			  FECHAMODIFICAR = SYSDATE
+			  WHERE
+			    CRC_ID IN
+			    (SELECT CRC.CRC_ID
+			    FROM CRC_CICLO_RECOBRO_CNT CRC
+			      INNER JOIN CRE_CICLO_RECOBRO_EXP CRE ON CRC.CRE_ID = CRE.CRE_ID
+			      INNER JOIN EXP_EXPEDIENTES EXP ON CRE.EXP_ID = EXP.EXP_ID
+			      LEFT JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE DD ON EXP.DD_EEX_ID = DD.DD_EEX_ID
+			    WHERE CRC.BORRADO = ${borrado.no.id}
+			      AND CRC.CRC_FECHA_BAJA IS NULL
+			      AND DD.DD_EEX_CODIGO <> ${ddEstadoExpedientes.Activo.codigo}
+			      AND EXP.BORRADO = ${borrado.no.id}
+			      AND EXP.EXP_MANUAL = ${manual.no.id});
+			      
+			  -- AHORA CERRAMOS LOS CICLOS DE PERSONAS
+			  UPDATE CRP_CICLO_RECOBRO_PER
+			  SET CRP_FECHA_BAJA = TRUNC(SYSDATE),
+			  DD_MOB_ID = V_ID_MOB_ID,
+			  USUARIOMODIFICAR = '${usuario.crear}',
+			  FECHAMODIFICAR = SYSDATE
+			  WHERE
+			    CRP_ID IN
+			    (SELECT CRP.CRP_ID
+			    FROM CRP_CICLO_RECOBRO_PER CRP
+			      INNER JOIN CRE_CICLO_RECOBRO_EXP CRE ON CRP.CRE_ID = CRE.CRE_ID
+			      INNER JOIN EXP_EXPEDIENTES EXP ON CRE.EXP_ID = EXP.EXP_ID
+			      LEFT JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE DD ON EXP.DD_EEX_ID = DD.DD_EEX_ID
+			    WHERE CRP.BORRADO = ${borrado.no.id}
+			      AND CRP.CRP_FECHA_BAJA IS NULL
+			      AND DD.DD_EEX_CODIGO <> ${ddEstadoExpedientes.Activo.codigo}
+			      AND EXP.BORRADO = ${borrado.no.id}
+			      AND EXP.EXP_MANUAL = ${manual.no.id});  
+			END;		
+		]]>
+	</entry>
+	
+	<entry key="recobro.insert.tmp_gae_gager.Oracle9iDialect">
+		<![CDATA[
+		BEGIN
+			EXECUTE IMMEDIATE '
+				INSERT INTO TMP_GAE_GAGER
+				(SELECT GAE.EXP_ID FROM GAE_GESTOR_ADD_EXPEDIENTE GAE
+			       INNER JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.BORRADO = ${borrado.no.id} AND GAE.GEE_ID = GEE.GEE_ID
+			        INNER JOIN ${master.schema}.DD_TGE_TIPO_GESTOR TGE ON TGE.BORRADO = ${borrado.no.id} AND GEE.DD_TGE_ID = TGE.DD_TGE_ID AND TGE.DD_TGE_CODIGO = '${ddTipoGestor.Recobro.codigo}')
+			';
+			EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_GAE_GEE_ID ON TMP_GAE_GAGER(GEE_ID)';
+			
+		END;
+		
+		]]>
+	</entry>
+	
+	<entry key="recobro.actualizacion.gestores.Oracle9iDialect">
+		<![CDATA[
+			--SET SERVEROUTPUT ON;
+			DECLARE
+			  -- Cursor de expedientes sin gestor de recobro en ciclo de recobro
+				CURSOR C_EXP_SIN_GESTOR_RECOBRO IS
+			  SELECT EXP.EXP_ID
+			  FROM EXP_EXPEDIENTES EXP
+			    INNER JOIN CRE_CICLO_RECOBRO_EXP CRE 
+			      ON CRE.BORRADO = ${borrado.no.id} AND  EXP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL
+			    INNER JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE DD
+			      ON DD.BORRADO = ${borrado.no.id} AND EXP.DD_EEX_ID = DD.DD_EEX_ID AND DD.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+			  WHERE EXP.BORRADO = ${borrado.no.id} AND EXP.EXP_MANUAL = ${manual.no.id}
+			  -- QUE NO TENGAN UN GAE DE TIPO RECOBRO
+			  AND EXP.EXP_ID NOT IN (SELECT GEE_ID FROM TMP_GAE_GAGER);
+			        
+			
+			  -- CURSOR DE EXPEDIENTES QUE TENGAN UN GESTOR DE RECOBRO DISTINTO AL DE LA AGENCIA REPARTIDA
+			  CURSOR C_EXP_CAMBIAR_USU IS
+			  SELECT EXP.EXP_ID, GEE.USU_ID, AGE.USU_ID USU_AGE
+			  FROM EXP_EXPEDIENTES EXP
+			    INNER JOIN CRE_CICLO_RECOBRO_EXP CRE 
+			      ON CRE.BORRADO = ${borrado.no.id} AND EXP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL
+			    INNER JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE DD
+			      ON DD.BORRADO = ${borrado.no.id} AND EXP.DD_EEX_ID = DD.DD_EEX_ID AND DD.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+			    INNER JOIN GAE_GESTOR_ADD_EXPEDIENTE GAE ON EXP.EXP_ID = GAE.EXP_ID    
+			      INNER JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.BORRADO = ${borrado.no.id} AND GAE.GEE_ID = GEE.GEE_ID
+			        INNER JOIN ${master.schema}.DD_TGE_TIPO_GESTOR TGE ON TGE.BORRADO = ${borrado.no.id} AND GEE.DD_TGE_ID = TGE.DD_TGE_ID AND TGE.DD_TGE_CODIGO = ${ddTipoGestor.Recobro.codigo}   
+			    INNER JOIN RCF_AGE_AGENCIAS AGE ON AGE.BORRADO = ${borrado.no.id} AND CRE.RCF_AGE_ID = AGE.RCF_AGE_ID
+			  WHERE EXP.BORRADO = ${borrado.no.id} AND EXP.EXP_MANUAL = ${manual.no.id}
+			  AND GEE.USU_ID <> AGE.USU_ID;  
+			        
+			  V_EXP_ID          NUMBER(16,0);
+			  V_GEE_ID          NUMBER(16,0);
+			  V_DD_TGE_ID       NUMBER(16,0);
+			  V_GEE_USU_ID      NUMBER(16,0);
+			  V_RCF_AGE_USU_ID  NUMBER(16,0);
+			  
+			  V_HGEE_ID         NUMBER(16,0);
+			BEGIN
+			  OPEN C_EXP_SIN_GESTOR_RECOBRO;
+			  
+			  -- OBTENEMOS EL ID DE TIPO GERECOBRO
+			  SELECT TGE.DD_TGE_ID INTO V_DD_TGE_ID FROM ${master.schema}.DD_TGE_TIPO_GESTOR TGE WHERE TGE.BORRADO = ${borrado.no.id} AND TGE.DD_TGE_CODIGO = ${ddTipoGestor.Recobro.codigo};
+			  
+			  LOOP -- EXPEDIENTES SIN GESTOR
+			    FETCH C_EXP_SIN_GESTOR_RECOBRO INTO V_EXP_ID;
+			    EXIT WHEN C_EXP_SIN_GESTOR_RECOBRO%NOTFOUND;
+			    
+			    -- OBTENEMOS EL USU_ID QUE LE CORRESPONDE AL EXPEDIENTE POR EL REPARTO
+			    SELECT AGE.USU_ID INTO V_RCF_AGE_USU_ID
+			    FROM CRE_CICLO_RECOBRO_EXP CRE
+			      INNER JOIN RCF_AGE_AGENCIAS AGE ON AGE.BORRADO = ${borrado.no.id} AND CRE.RCF_AGE_ID = AGE.RCF_AGE_ID
+			    WHERE CRE.BORRADO = ${borrado.no.id} AND CRE.EXP_ID = V_EXP_ID;
+			    
+			    -- INSERTAMOS UN REGISTRO EN GEE_GESTOR_ENTIDAD
+			    SELECT S_GEE_GESTOR_ENTIDAD.NEXTVAL  INTO V_GEE_ID FROM DUAL;
+			    INSERT INTO GEE_GESTOR_ENTIDAD (GEE_ID, USU_ID, DD_TGE_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+			    VALUES(V_GEE_ID, V_RCF_AGE_USU_ID, V_DD_TGE_ID, 0, '${usuario.crear}', SYSDATE, ${borrado.no.id});
+			    
+			    -- INSERTAMOS UN REGISTRO EN GAE_GESTOR_ADD_EXPEDIENTE
+			    INSERT INTO GAE_GESTOR_ADD_EXPEDIENTE (GEE_ID, EXP_ID)
+			    VALUES (V_GEE_ID, V_EXP_ID);
+			    
+			    -- AHORA INSERTAMOS SUS CORRESPONDIENTES REGISTROS DE HISTORICO 
+			    SELECT S_GEH_GESTOR_ENTIDAD_HIST.NEXTVAL INTO V_HGEE_ID FROM DUAL;
+			    INSERT INTO GEH_GESTOR_ENTIDAD_HIST (GEH_ID, USU_ID, DD_TGE_ID, GEH_FECHA_DESDE, GEH_FECHA_HASTA,
+			      VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+			    VALUES (V_HGEE_ID, V_RCF_AGE_USU_ID, V_DD_TGE_ID, TRUNC(SYSDATE), NULL,
+			      0, '${usuario.crear}', SYSDATE, ${borrado.no.id});
+			    INSERT INTO GEH_GESTOR_EXPEDIENTE_HIST
+			      (GEH_ID, EXP_ID) VALUES (V_HGEE_ID, V_EXP_ID);
+			  END LOOP; -- LOOP EXP_SIN_GESTOR_RECOBRO
+			  
+			  CLOSE C_EXP_SIN_GESTOR_RECOBRO;
+			  OPEN C_EXP_CAMBIAR_USU;
+			  
+			  LOOP -- EXPEDIENTES QUE HAY QUE CAMBIAR EL GESTOR DE RECOBRO
+			    FETCH C_EXP_CAMBIAR_USU INTO V_EXP_ID, V_GEE_USU_ID, V_RCF_AGE_USU_ID;
+			    EXIT WHEN C_EXP_CAMBIAR_USU%NOTFOUND;
+			    
+			    -- CANCELAMOS EL HISTORICO DE GEH_GESTORI_ENTIDAD_HIST    
+			    UPDATE GEH_GESTOR_ENTIDAD_HIST
+			      SET GEH_FECHA_HASTA = TRUNC(SYSDATE),
+			      USUARIOMODIFICAR = '${usuario.crear}',
+			      FECHAMODIFICAR   = SYSDATE
+			    WHERE
+			      GEH_ID IN (SELECT GEH_ID FROM GEH_GESTOR_EXPEDIENTE_HIST WHERE EXP_ID = V_EXP_ID)
+			      --AND USU_ID = V_GEE_USU_ID
+			      AND DD_TGE_ID = V_DD_TGE_ID
+			      AND GEH_FECHA_HASTA IS NULL
+			      AND BORRADO = ${borrado.no.id};
+			
+			    -- MARCAMOS COMO BORRADO EL ANTIGUO REGISTRO DE GEE_GESTOR_ENTIDAD
+			    UPDATE GEE_GESTOR_ENTIDAD
+			      SET BORRADO = ${borrado.si.id},
+			      USUARIOBORRAR = '${usuario.crear}',
+			      FECHABORRAR = SYSDATE
+			    WHERE GEE_ID IN (SELECT GEE_ID FROM GAE_GESTOR_ADD_EXPEDIENTE GAE WHERE GAE.EXP_ID = V_EXP_ID)
+			      --AND USU_ID = V_GEE_USU_ID
+			      AND DD_TGE_ID = V_DD_TGE_ID
+			      AND BORRADO = ${borrado.no.id};
+			
+			    -- INSERTAMOS UN REGISTRO EN GEE_GESTOR_ENTIDAD
+			    SELECT S_GEE_GESTOR_ENTIDAD.NEXTVAL  INTO V_GEE_ID FROM DUAL;
+			    INSERT INTO GEE_GESTOR_ENTIDAD (GEE_ID, USU_ID, DD_TGE_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+			    VALUES(V_GEE_ID, V_RCF_AGE_USU_ID, V_DD_TGE_ID, 0, '${usuario.crear}', SYSDATE, ${borrado.no.id});
+			    
+			    -- INSERTAMOS UN REGISTRO EN GAE_GESTOR_ADD_EXPEDIENTE
+			    INSERT INTO GAE_GESTOR_ADD_EXPEDIENTE (GEE_ID, EXP_ID)
+			    VALUES (V_GEE_ID, V_EXP_ID);
+			    
+			    -- AHORA INSERTAMOS SUS CORRESPONDIENTES REGISTROS DE HISTORICO 
+			    SELECT S_GEH_GESTOR_ENTIDAD_HIST.NEXTVAL INTO V_HGEE_ID FROM DUAL;
+			    INSERT INTO GEH_GESTOR_ENTIDAD_HIST (GEH_ID, USU_ID, DD_TGE_ID, GEH_FECHA_DESDE, GEH_FECHA_HASTA,
+			      VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+			    VALUES (V_HGEE_ID, V_RCF_AGE_USU_ID, V_DD_TGE_ID, TRUNC(SYSDATE), NULL,
+			      0, '${usuario.crear}', SYSDATE, ${borrado.no.id});
+			    INSERT INTO GEH_GESTOR_EXPEDIENTE_HIST (GEH_ID, EXP_ID) 
+			    VALUES (V_HGEE_ID, V_EXP_ID);
+			  END LOOP; -- LOOP EXP_CAMBIAR_USU
+			  
+			  CLOSE C_EXP_CAMBIAR_USU;
+			END;	
+		]]>
+	</entry>	
+	
+	<entry key="recobro.parada.bpm.recobro.fin_de_ciclo.Oracle9iDialect">
+		<![CDATA[
+DECLARE
+/*
+   * CONSTANTES
+   */
+   cUSUARIO_BATCH VARCHAR2(10 CHAR);
+   cMASTER_SCHEMA VARCHAR2(10 CHAR);
+   
+  /* CURSORS */
+  CURSOR C_REGULARIZADOS IS SELECT * FROM CRE_CICLO_RECOBRO_EXP WHERE TRUNC(CRE_FECHA_BAJA) = TRUNC(SYSDATE);
+  R_CRE C_REGULARIZADOS%ROWTYPE;
+BEGIN
+  /*
+   * CONSTANTES
+   */
+  cUSUARIO_BATCH := '${usuario.crear}';
+  cMASTER_SCHEMA := '${master.schema}';
+ 
+  IF C_REGULARIZADOS%ISOPEN THEN
+    CLOSE C_REGULARIZADOS;
+  END IF;
+  OPEN C_REGULARIZADOS;
+  
+  LOOP
+    FETCH C_REGULARIZADOS INTO R_CRE;
+    EXIT WHEN C_REGULARIZADOS%NOTFOUND;
+    
+    EXECUTE IMMEDIATE 'INSERT INTO '||cMASTER_SCHEMA||'.JBPM_JOB (ID_, CLASS_, VERSION_, DUEDATE_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,
+          LOCKOWNER_, LOCKTIME_, EXCEPTION_, RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_, PROCESSINSTANCE_, TOKEN_)
+          SELECT '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL, ''T'', 0, SYSDATE - 2, NULL, 0, 1, NULL, NULL, NULL, 1,''TIMER_END_REC'', NULL, ''Fin'', NULL, NULL, NULL, NULL
+                ,ID_, ROOTTOKEN_
+          FROM '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE WHERE ID_ ='||R_CRE.CRE_PROCESS_BPM;
+    
+    
+  END LOOP;
+  CLOSE C_REGULARIZADOS;
+  COMMIT;
+END;
+		]]>
+	</entry>
+	
+	
+	<!-- Paso 4: CARGAR DE LAS TABLAS DE EXTRACCIÓN DE FICHEROS -->	
+	<!-- BORRAMOS LA TABLA REC_FICHERO_CONTRATOS -->
+	<entry key="recobro.borrado.rec_fichero_contratos.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_CONTRATOS
+		]]>
+	</entry>
+	
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_CONTRATO -->
+	<entry key="recobro.insert.tmp_sager_info.Oracle9iDialect">
+		<![CDATA[
+			INSERT INTO TMP_SAGER_INFO
+			SELECT DISTINCT TMP.EXP_ID
+  				, SUBSTR(TRIM(REPLACE(USU.USU_NOMBRE||' '||USU.USU_APELLIDO1||' '||USU.USU_APELLIDO2,'  ',' ')),1,255)
+  				, USU.USU_TELEFONO 
+   				,USU.USU_MAIL 
+			FROM TMP_REC_EXP_AGE_CNT_EXC TMP
+  				LEFT JOIN GAE_GESTOR_ADD_EXPEDIENTE GAE ON GAE.EXP_ID = TMP.EXP_ID
+     			LEFT JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.BORRADO = ${borrado.no.id} AND GEE.GEE_ID = GAE.GEE_ID 
+        		LEFT JOIN ${master.schema}.DD_TGE_TIPO_GESTOR TGE ON TGE.BORRADO = ${borrado.no.id} AND TGE.DD_TGE_ID = GEE.DD_TGE_ID AND TGE.DD_TGE_CODIGO = ${ddTipoGestor.SuperRecobro.codigo}
+        		LEFT JOIN ${master.schema}.USU_USUARIOS USU ON USU.BORRADO = ${borrado.no.id} AND USU.USU_ID = GEE.USU_ID
+		]]>
+	</entry>
+	
+	<entry key="recobro.idxcreate.tmp_sager_info.Oracle9iDialect">
+		<![CDATA[
+			BEGIN
+				EXECUTE IMMEDIATE 'CREATE INDEX IDX_TMP_SAGER_INFO_1 ON TMP_SAGER_INFO (EXP_ID)';
+				
+				EXECUTE IMMEDIATE 'ANALYZE TABLE TMP_SAGER_INFO COMPUTE STATISTICS';
+			END;
+		]]>
+	</entry>
+	
+	<entry key="recobro.insert.rec_fichero_contratos.Oracle9iDialect">
+	
+		<![CDATA[
+declare
+begin
+INSERT INTO REC_FICHERO_CONTRATOS
+SELECT DISTINCT
+  TMP.RCF_AGE_ID
+  , TMP.RCF_SCA_ID
+  , CRC.CRC_ID_ENVIO AS ID_ENVIO
+  , TMP.EXP_ID AS ID_EXPEDIENTE
+  , CAR.RCF_CAR_ID AS ID_CARTERA
+  , CAR.RCF_CAR_NOMBRE AS CARTERA_EXPEDIENTE
+  , CNT.CNT_COD_ENTIDAD AS CODIGO_ENTIDAD
+  , LPAD(OFI_AD.OFI_CODIGO_ENTIDAD_OFICINA, 5, '0')||LPAD(OFI_AD.OFI_CODIGO_OFICINA,4,'0')||LPAD(OFI_AD.OFI_CODIGO_SUBSECCION_OFICINA,2,'0') COD_ENTIDAD_OFI_ADMIN
+  , OFI_AD.OFI_CODIGO COD_OFI_ADMIN
+  , NVL(TRIM(REPLACE(TVD.DD_TVD_DESCRIPCION||' '||OFI_AD.OFI_DOMICILIO||' '||OFI_AD.OFI_NUM_DOMICILIO||' '||OFI_AD.OFI_CODIGO_POSTAL,'  ',' ')),'DESCONOCIDO') DIR_OFI_ADMIN						
+  , INFO.CODIGO_PROPIETARIO CODIGO_PROPIETARIO	
+  , INFO.TIPO_PRODUCTO TIPO_PRODUCTO
+  , INFO.NUMERO_CONTRATO NUMERO_CONTRATO
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'NUMERO_ESPEC')) NUM_ESPEC
+  , CNT.CNT_IBAN IBAN_CONTRATO			
+  , CNT.CNT_CCC_DOMICILIACION CNT_DOMICILIACION
+  , CNT.CNT_CCC_DOMICILIACION IBAN_CNT_DOMICILIACION
+  , EFC.DD_EFC_CODIGO CD_SITUACION_CONTABLE
+  , EFC.DD_EFC_DESCRIPCION SITUACION_CONTABLE
+  , NVL(MOV.MOV_POS_VIVA_NO_VENCIDA,0) POS_VIVA_NO_VENCIDA
+  , NVL(MOV.MOV_POS_VIVA_VENCIDA,0) POS_VIVA_VENCIDA	
+  , NVL(MOV.MOV_INT_REMUNERATORIOS,0) INT_ORDIN_DEVEN		
+  , NVL(MOV.MOV_INT_MORATORIOS,0) INT_MORAT_DEVEN		
+  , NVL(MOV.MOV_COMISIONES,0) COMISIONES			
+  , NVL(MOV.MOV_GASTOS,0) GASTOS
+  , NVL(MOV.MOV_IMPUESTOS,0) IMPUESTOS				
+  , NVL(MOV.MOV_ENTREGAS_A_CUENTA,0) ENTREGAS				
+  , NVL(MOV.MOV_INTERESES_ENTREGAS,0) INT_ENTREGAS	
+  , NVL(MOV.MOV_DEUDA_IRREGULAR,0) DEUDA_IRREGULAR	
+  , NVL(CNT.CNT_LIMITE_INI,0) LIMITE_INICIAL		
+  , NVL(CNT.CNT_LIMITE_FIN,0) LIMITE_ACTUAL			
+  , TRUNC(CNT.CNT_FECHA_CREACION)  FECHA_CREACION
+  , TRUNC(MOV.MOV_CNT_FECHA_INI_EPI_IRREG) FECHA_INI_IRREGU	
+  , TRUNC(MOV.MOV_FECHA_POS_VENCIDA)  FECHA_POS_VENCIDA
+  , CT1.DD_CT1_CODIGO CD_PRODUCTO_COMERCIAL
+  , CT1.DD_CT1_DESCRIPCION CATALOGO1	
+  , TPE.DD_TPE_CODIGO CATALOGO2
+  , GC1.DD_GCN_CODIGO CD_GARANTIA1
+  , GC1.DD_GCN_DESCRIPCION GARANTIA1
+  , GC2.DD_GCN_CODIGO CD_GARANTIA2
+  , GC2.DD_GCN_DESCRIPCION GARANTIA2
+  , SAGER.SAGER_NOM_APE CONTACTO_ENTIDAD_NOMBRE	
+  , SAGER.SAGER_TELEFONO CONTACTO_ENTIDAD_TEL	
+  , SAGER.SAGER_EMAIL CONTACTO_ENTIDAD_EMAIL	
+  , ${ddSituacionGestion.GestVencidos.codigo} SITUACION_GESTION
+  , CNT.CNT_CUOTA_IMPORTE CUOTA_IMPORTE			
+  , CNT.CNT_CUOTA_PERIODICIDAD CUOTA_PERIODICIDAD
+  , FNO.DD_FNO_CODIGO CD_FINALIDAD
+  , FNO.DD_FNO_DESCRIPCION DESC_OFICIAL_FINALIDAD	
+  , TRUNC(CNT.CNT_FECHA_VENC) FECHA_VENCIMIENTO			
+  , SAM.DD_SAM_CODIGO CD_SISTEMA_AMORTIZACION	
+  , SAM.DD_SAM_DESCRIPCION_LARGA SISTEMA_AMORTIZACION	
+  , NVL(CNT.CNT_TIPO_INTERES,0) TIPO_INTERES
+  , CASE WHEN ITV.RCF_ITV_NO_GEST IS NOT NULL THEN TRUNC(CRE.CRE_FECHA_ALTA + ITV.RCF_ITV_NO_GEST) ELSE NULL END FECHA_PLAZO_MINIMO_GESTION
+  , CASE WHEN CBP.RCF_MVL_DIAS_ENT IS NOT NULL THEN TRUNC(CRC.CRC_FECHA_ALTA + CBP.RCF_MVL_DIAS_ENT) ELSE NULL END FECHA_MAX_COBRO_PARCIAL
+  , CASE WHEN CBT.RCF_MVL_DIAS_ENT IS NOT NULL THEN TRUNC(CRC.CRC_FECHA_ALTA + CBT.RCF_MVL_DIAS_ENT) ELSE TRUNC(SYSDATE + 60) END FECHA_MAX_REGULARIZACION
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra1')),'dd/MM/rrrr') FECHA_EXTRA1		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra2')),'dd/MM/rrrr') FECHA_EXTRA2		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra3')),'dd/MM/rrrr') FECHA_EXTRA3		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra4')),'dd/MM/rrrr') FECHA_EXTRA4		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra5')),'dd/MM/rrrr') FECHA_EXTRA5		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra6')),'dd/MM/rrrr') FECHA_EXTRA6	
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra7')),'dd/MM/rrrr') FECHA_EXTRA7		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra8')),'dd/MM/rrrr') FECHA_EXTRA8		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra9')),'dd/MM/rrrr') FECHA_EXTRA9		
+  , TO_DATE((SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'date_extra10')),'dd/MM/rrrr') FECHA_EXTRA10		
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra1')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''') NUMERO_EXTRA1
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra2')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA2
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra3')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA3
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra4')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA4
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra5')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA5
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra6')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA6
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra7')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA7
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra8')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA8
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra9')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA9
+  , TO_NUMBER((SELECT REPLACE(IAC_VALUE,',','.') FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'num_extra10')),'99999999D999999','NLS_NUMERIC_CHARACTERS = ''.,''')NUMERO_EXTRA10
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra1')) LCHAR_EXTRA1
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra2')) LCHAR_EXTRA2
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra3')) LCHAR_EXTRA3
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra4')) LCHAR_EXTRA4
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra5')) LCHAR_EXTRA5
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra6')) LCHAR_EXTRA6
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra7')) LCHAR_EXTRA7
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra8')) LCHAR_EXTRA8
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra9')) LCHAR_EXTRA9
+  , (SELECT IAC_VALUE FROM EXT_IAC_INFO_ADD_CONTRATO WHERE CNT_ID = CNT.CNT_ID AND DD_IFC_ID = (SELECT DD_IFC_ID FROM EXT_DD_IFC_INFO_CONTRATO WHERE DD_IFC_CODIGO = 'lchar_extra10')) LCHAR_EXTRA10
+FROM (SELECT DISTINCT RCF_AGE_ID, RCF_SCA_ID, EXP_ID, CNT_ID, GES_ID FROM TMP_REC_EXP_AGE_CNT_EXC) TMP
+    JOIN CRE_CICLO_RECOBRO_EXP CRE ON TMP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL AND CRE.BORRADO = ${borrado.no.id}
+    JOIN CRC_CICLO_RECOBRO_CNT CRC ON CRE.CRE_ID = CRC.CRE_ID AND TMP.CNT_ID = CRC.CNT_ID AND CRC.CRC_FECHA_BAJA IS NULL AND CRC.BORRADO = ${borrado.no.id}
+    JOIN RCF_ESC_ESQUEMA_CARTERAS ESC ON CRE.RCF_ESC_ID = ESC.RCF_ESC_ID
+    JOIN RCF_CAR_CARTERA CAR ON ESC.RCF_CAR_ID = CAR.RCF_CAR_ID
+    JOIN CNT_CONTRATOS CNT ON TMP.CNT_ID = CNT.CNT_ID
+		LEFT JOIN DD_SAM_SIST_AMORT_CONTRATO SAM ON SAM.BORRADO = ${borrado.no.id} AND SAM.DD_SAM_ID = CNT.CNT_SISTEMA_AMORTIZACION    
+    JOIN RCF_SCA_SUBCARTERA SCA ON CRE.RCF_SCA_ID = SCA.RCF_SCA_ID
+    JOIN RCF_ITV_ITI_METAS_VOLANTES ITV ON SCA.RCF_ITV_ID = ITV.RCF_ITV_ID
+    LEFT JOIN (SELECT * FROM RCF_MVL_META_VOLANTE WHERE RCF_DD_MET_ID IN (SELECT RCF_DD_MET_ID FROM RCF_DD_MET_META_VOLANTE WHERE RCF_DD_MET_CODIGO = 'CBP')) CBP ON ITV.RCF_ITV_ID = CBP.RCF_ITV_ID
+    LEFT JOIN (SELECT * FROM RCF_MVL_META_VOLANTE WHERE RCF_DD_MET_ID IN (SELECT RCF_DD_MET_ID FROM RCF_DD_MET_META_VOLANTE WHERE RCF_DD_MET_CODIGO = 'CBT')) CBT ON ITV.RCF_ITV_ID = CBT.RCF_ITV_ID
+    JOIN MOV_MOVIMIENTOS MOV ON CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+    JOIN OFI_OFICINAS OFI_AD ON CNT.OFI_ID_ADMIN = OFI_AD.OFI_ID
+      LEFT JOIN DD_TVD_TIPO_VIA_DIRECCION TVD ON TVD.BORRADO = ${borrado.no.id} AND OFI_AD.DD_TIPO_VIA = TVD.DD_TVD_ID    
+    JOIN DD_EFC_ESTADO_FINAN_CNT EFC ON CNT.DD_EFC_ID = EFC.DD_EFC_ID
+    JOIN DD_TPE_TIPO_PROD_ENTIDAD TPE ON CNT.DD_TPE_ID = TPE.DD_TPE_ID
+    JOIN DD_CT1_CATALOGO_1 CT1 ON CNT.DD_CT1_ID = CT1.DD_CT1_ID
+    JOIN DD_CT2_CATALOGO_2 CT2 ON CNT.DD_CT2_ID = CT2.DD_CT2_ID
+    JOIN BATCH_DATOS_CNT_INFO INFO ON CNT.CNT_ID = INFO.CNT_ID
+    LEFT JOIN DD_CT3_CATALOGO_3 CT3 ON CNT.DD_CT3_ID = CT3.DD_CT3_ID
+    LEFT JOIN DD_CT4_CATALOGO_4 CT4 ON CNT.DD_CT4_ID = CT4.DD_CT4_ID
+    LEFT JOIN DD_CT5_CATALOGO_5 CT5 ON CNT.DD_CT5_ID = CT5.DD_CT5_ID
+    LEFT JOIN DD_CT6_CATALOGO_6 CT6 ON CNT.DD_CT6_ID = CT6.DD_CT6_ID
+    LEFT JOIN DD_GCN_GARANTIA_CONTRATO GC1 ON CNT.DD_GC1_ID = GC1.DD_GCN_ID
+    LEFT JOIN DD_GCN_GARANTIA_CONTRATO GC2 ON CNT.DD_GC2_ID = GC2.DD_GCN_ID
+    LEFT JOIN DD_FNO_FINALIDAD_OFICIAL FNO ON CNT.DD_FNO_ID = FNO.DD_FNO_ID
+    JOIN TMP_SAGER_INFO SAGER ON TMP.EXP_ID = SAGER.EXP_ID;
+end;	
+		]]>
+	</entry>
+	<!-- BORRAMOS LA TABLA REC_FICHERO_PERSONAS -->
+	<entry key="recobro.borrado.rec_fichero_personas.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_PERSONAS
+		]]>
+	</entry>
+	
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_PERSONAS -->
+	<!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_PERSONAS -->
+	<entry key="recobro.insert.rec_fichero_personas.Oracle9iDialect">
+		<![CDATA[
+declare
+begin
+INSERT INTO REC_FICHERO_PERSONAS
+SELECT distinct 
+    TMP.RCF_AGE_ID			
+    , PRO.DD_PRO_CODIGO CODIGO_PROPIETARIO	
+    , PER.PER_COD_CLIENTE_ENTIDAD CODIGO_PERSONA			
+    , TO_NUMBER(TPE.DD_TPE_CODIGO) TIPO_PERSONA			
+    , TDI.DD_TDI_CODIGO TIPO_DOCUMENTO	
+    , TDI.DD_TDI_DESCRIPCION DS_TIPO_DOCUMENTO		
+    , PER.PER_DOC_ID NIF_CIF_PASAP_NIE		
+    , PER.PER_NOMBRE NOMBRE				
+    , PER.PER_APELLIDO1 APELLIDO1			
+    , PER.PER_APELLIDO2 APELLIDO2
+    , SCE.DD_SCE_CODIGO CD_SEGMENTO_CLIENTE_1	
+    , SCE.DD_SCE_DESCRIPCION SEGMENTO_CLIENTE_1	
+    , PER.PER_FECHA_CONSTITUCION FECHA_CONSTITUCION	
+    , PER.PER_FECHA_NACIMIENTO FECHA_NACIMIENTO		
+    , CIC.DD_CIC_CODIGO CD_NACIONALIDAD	  
+    , CIC.DD_CIC_DESCRIPCION NACIONALIDAD		
+    , PER.PER_SEXO SEXO	
+    , PER.PER_EMAIL CORREO_ELECTRONICO			
+    , NVL(PER.PER_PASIVO_VISTA,0) SALDO_PASIVO
+    , NVL(PER.PER_RIESGO,0) RIESGO_DIRECTO_CLIENTE	
+    , NVL(PER.PER_RIESGO_IND,0) RIESGO_INDIRECTO_CLIENTE		
+    , NVL(PER.PER_RIESGO,0) - NVL(PER.PER_RIESGO_DIR_VENCIDO,0) RIESGO_DIRECTO_IRREGULAR_CLI		
+    , NVL(PER.PER_RIESGO_DIR_VENCIDO,0) RIESGO_INDIRECTO_IRREGULAR_CLI		
+    , (SELECT SUM(GCL.GCL_RIESGO_DIR_VENCIDO) FROM PER_GCL PERGCL LEFT JOIN GCL_GRUPOS_CLIENTES GCL ON GCL.BORRADO = 0 AND GCL.GCL_ID = PERGCL.GCL_ID WHERE PERGCL.BORRADO = ${borrado.no.id} AND PERGCL.PER_ID = PER.PER_ID) RIESG_DIRECT_IRREG_GRUPO		
+    , (SELECT SUM(GCL.GCL_RIESGO_INDIR) FROM PER_GCL PERGCL LEFT JOIN GCL_GRUPOS_CLIENTES GCL ON GCL.BORRADO = 0 AND GCL.GCL_ID = PERGCL.GCL_ID WHERE PERGCL.BORRADO = ${borrado.no.id} AND PERGCL.PER_ID = PER.PER_ID) RIESG_INDIRECT_IRREG_GRUPO		
+    , to_char(NVL(PER.PER_FECHA_DATO,PER.PER_FECHA_EXTRACCION),'ddMMyyyy') ULTIMA_ACTUACION		
+    , TMP.GES_ID GESTION_COMPARTIDA	
+    , TO_DATE((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'date_extra1')),'dd/MM/rrrr') FECHA_EXTRA1		
+    , TO_DATE((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'date_extra2')),'dd/MM/rrrr') FECHA_EXTRA2		
+    , TO_DATE((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'date_extra3')),'dd/MM/rrrr') FECHA_EXTRA3		
+    , TO_DATE((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'date_extra4')),'dd/MM/rrrr') FECHA_EXTRA4		
+    , TO_DATE((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'date_extra5')),'dd/MM/rrrr') FECHA_EXTRA5
+	, TO_NUMBER((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'num_extra1'))) NUMERO_EXTRA1
+    , TO_NUMBER((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'num_extra2'))) NUMERO_EXTRA2
+    , TO_NUMBER((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'num_extra3'))) NUMERO_EXTRA3
+    , TO_NUMBER((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'num_extra4'))) NUMERO_EXTRA4
+    , TO_NUMBER((SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'num_extra5'))) NUMERO_EXTRA5
+	, (SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'lchar_extra1')) LCHAR_EXTRA1
+    , (SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'lchar_extra2')) LCHAR_EXTRA2
+    , (SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'lchar_extra3')) LCHAR_EXTRA3
+    , (SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'lchar_extra4')) LCHAR_EXTRA4
+    , (SELECT ICC_VALUE FROM EXT_ICC_INFO_EXTRA_CLI WHERE PER_ID = PER.PER_ID AND DD_IFX_ID = (SELECT DD_IFX_ID FROM EXT_DD_IFX_INFO_EXTRA_CLI WHERE DD_IFX_CODIGO = 'lchar_extra5')) LCHAR_EXTRA5
+FROM TMP_REC_EXP_AGE_MAR_GES TMP
+  JOIN PER_PERSONAS PER ON TMP.PER_ID = PER.PER_ID
+  LEFT JOIN ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC ON CIC.BORRADO = ${borrado.no.id} AND PER.PER_NACIONALIDAD = CIC.DD_CIC_ID  
+  JOIN DD_PRO_PROPIETARIOS PRO ON PER.DD_PRO_ID = PRO.DD_PRO_ID
+  JOIN CRE_CICLO_RECOBRO_EXP CRE ON TMP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL AND CRE.BORRADO = ${borrado.no.id}
+  JOIN CRP_CICLO_RECOBRO_PER CRP ON CRE.CRE_ID = CRP.CRE_ID AND TMP.PER_ID = CRP.PER_ID AND CRP.CRP_FECHA_BAJA IS NULL  AND CRP.BORRADO = ${borrado.no.id}
+  JOIN ${master.schema}.DD_TPE_TIPO_PERSONA TPE ON PER.DD_TPE_ID = TPE.DD_TPE_ID
+  JOIN DD_TDI_TIPO_DOCUMENTO_ID TDI ON PER.DD_TDI_ID = TDI.DD_TDI_ID
+  JOIN DD_SCE_SEGTO_CLI_ENTIDAD SCE ON PER.DD_SCE_ID = SCE.DD_SCE_ID;
+end;		
+		]]>
+	</entry>
+	<!-- BORRAMOS LA TABLA REC_FICHERO_CONTRATOS_PERSONAS -->
+	<entry key="recobro.borrado.rec_fichero_contratos_personas.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_CONTRATOS_PERSONAS
+		]]>
+	</entry>
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_CONTRATOS_PERSONAS -->
+	<!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_CONTRATOS_PERSONAS -->
+	<entry key="recobro.insert.rec_fichero_contratos_personas.Oracle9iDialect">
+		<![CDATA[
+declare
+begin
+
+EXECUTE IMMEDIATE 'CREATE INDEX IDX_REC_FIC_CNT_1 ON REC_FICHERO_CONTRATOS(ID_ENVIO)';
+
+EXECUTE IMMEDIATE 'CREATE INDEX IDX_REC_FIC_PER_1 ON REC_FICHERO_PERSONAS(CODIGO_PERSONA)';
+
+EXECUTE IMMEDIATE 'ANALYZE TABLE REC_FICHERO_CONTRATOS COMPUTE STATISTICS';
+
+EXECUTE IMMEDIATE 'ANALYZE TABLE REC_FICHERO_PERSONAS COMPUTE STATISTICS';
+
+
+INSERT INTO REC_FICHERO_CONTRATOS_PERSONAS
+SELECT DISTINCT
+    CRE.RCF_AGE_ID
+    , CRC.CRC_ID_ENVIO ID_ENVIO
+    , REC_CNT.CODIGO_PROPIETARIO
+    , PER.PER_COD_CLIENTE_ENTIDAD CODIGO_PERSONA
+    , TIN.DD_TIN_CODIGO CD_TIPO_INTERVENCION
+    , TIN.DD_TIN_DESCRIPCION TIPO_INTERVENCION
+    , CPE.CPE_ORDEN ORDEN
+	  , NULL FECHA_EXTRA1
+	  , NULL FECHA_EXTRA2
+	  , NULL FECHA_EXTRA3
+	  , NULL FECHA_EXTRA4
+	  , NULL FECHA_EXTRA5
+	  , NULL NUMERO_EXTRA1
+	  , NULL NUMERO_EXTRA2
+    , NULL NUMERO_EXTRA3
+    , NULL NUMERO_EXTRA4
+    , NULL NUMERO_EXTRA5
+	  , NULL LCHAR_EXTRA1
+	  , NULL LCHAR_EXTRA2
+	  , NULL LCHAR_EXTRA3
+	  , NULL LCHAR_EXTRA4
+	  , NULL LCHAR_EXTRA5
+FROM (SELECT DISTINCT RCF_AGE_ID, RCF_SCA_ID, EXP_ID, CNT_ID FROM TMP_REC_EXP_AGE_CNT_EXC) TMP
+    JOIN CRE_CICLO_RECOBRO_EXP CRE ON TMP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL AND CRE.BORRADO = 0
+    JOIN CRC_CICLO_RECOBRO_CNT CRC ON CRE.CRE_ID = CRC.CRE_ID AND TMP.CNT_ID = CRC.CNT_ID AND CRC.CRC_FECHA_BAJA IS NULL AND CRC.BORRADO = 0
+    -- cex es para validar que el contrto esté en el expediente
+    JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON CRC.CNT_ID = CEX.CNT_ID AND TMP.EXP_ID = CEX.EXP_ID AND CEX.BORRADO = 0
+    JOIN REC_FICHERO_CONTRATOS REC_CNT ON CRC.CRC_ID_ENVIO = REC_CNT.ID_ENVIO
+    JOIN CPE_CONTRATOS_PERSONAS CPE ON TMP.CNT_ID = CPE.CNT_ID AND CPE.BORRADO = 0
+    -- pex es para validar que la persona también está asociada al expediente
+    JOIN PEX_PERSONAS_EXPEDIENTE PEX ON CPE.PER_ID = PEX.PER_ID AND TMP.EXP_ID = PEX.EXP_ID AND PEX.BORRADO = 0
+    JOIN CRP_CICLO_RECOBRO_PER CRP ON PEX.PER_ID = CRP.PER_ID AND CRP.CRE_ID = CRE.CRE_ID AND CRP.CRP_FECHA_BAJA IS NULL AND CRP.BORRADO = 0
+    JOIN PER_PERSONAS PER ON CPE.PER_ID = PER.PER_ID
+    JOIN REC_FICHERO_PERSONAS REC_PER ON PER.PER_COD_CLIENTE_ENTIDAD = REC_PER.CODIGO_PERSONA
+    JOIN DD_TIN_TIPO_INTERVENCION TIN ON CPE.DD_TIN_ID = TIN.DD_TIN_ID;
+end;    
+		]]>
+	</entry>	
+	<!-- BORRAMOS LA TABLA REC_FICHERO_CONTRATOS_BAJAS -->
+	<entry key="recobro.borrado.rec_fichero_contratos_bajas.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_CONTRATOS_BAJAS
+		]]>
+	</entry>
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_CONTRATOS_BAJAS -->
+	<!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_CONTRATOS_BAJAS -->
+	<entry key="recobro.insert.rec_fichero_contratos_bajas.Oracle9iDialect">
+		<![CDATA[
+declare
+begin
+INSERT INTO REC_FICHERO_CONTRATOS_BAJAS 
+SELECT
+  TMP.RCF_AGE_ID
+	, to_number(to_char(TRUNC(sysdate-(40 + DBMS_RANDOM.VALUE(1, 30))), 'yyyyMMdd') || TMP.CNT_ID) ID_ENVIO
+	, TRUNC(SYSDATE) FECHA_BAJA
+	, MOB.DD_MOB_CODIGO MOTIVO_BAJA
+  , NULL FECHA_EXTRA1
+  , NULL FECHA_EXTRA2
+	, NULL FECHA_EXTRA3
+	, NULL FECHA_EXTRA4
+	, NULL FECHA_EXTRA5
+	, NULL NUMERO_EXTRA1
+	, NULL NUMERO_EXTRA2
+  , NULL NUMERO_EXTRA3
+  , NULL NUMERO_EXTRA4
+  , NULL NUMERO_EXTRA5
+	, NULL LCHAR_EXTRA1
+	, NULL LCHAR_EXTRA2
+	, NULL LCHAR_EXTRA3
+	, NULL LCHAR_EXTRA4
+	, NULL LCHAR_EXTRA5
+FROM TMP_REC_CONTRATOS_BAJA_MOT TMP
+  JOIN ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB ON TMP.DD_MOB_ID = MOB.DD_MOB_ID;
+end;  
+		]]>
+	</entry>							
+	<!-- BORRAMOS LA TABLA REC_FICHERO_PERSONAS_PALANCAS -->
+	<entry key="recobro.borrado.rec_fichero_palancas.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_PALANCAS
+		]]>
+	</entry>
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_PERSONAS_PALANCAS -->
+	<!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_PERSONAS_PALANCAS -->
+	<entry key="recobro.insert.rec_fichero_palancas.Oracle9iDialect">
+		<![CDATA[
+INSERT INTO REC_FICHERO_PALANCAS
+SELECT DISTINCT AGC.RCF_AGE_ID
+  , AGP.CODIGO_PROPIETARIO CD_PROPIETARIO
+  , AGP.CODIGO_PERSONA CD_PERSONA
+  , CRE.EXP_ID ID_EXPEDIENTE
+  , PAA.RCF_PAA_ID ID_PALANCA_PERMITIDA
+  , TPP.RCF_TPP_CODIGO CD_TIPO_PALANCA
+  , TPP.RCF_TPP_DESCRIPCION TIPO_PALANCA
+  , STP.RCF_STP_CODIGO CD_SUBTIPO_PALANCA
+  , STP.RCF_STP_DESCRIPCION SUBTIPO_PALANCA
+  , CASE SIN.DD_SIN_CODIGO 
+      WHEN '01' THEN 1
+      ELSE 0
+    END PALANCA_DELEGADA 
+  , PAA.RCF_PAA_PRIORIDAD PRIORIDAD_PALANCA
+  , NULL DATE_EXTRA1
+  , NULL DATE_EXTRA2
+  , NULL DATE_EXTRA3
+  , NULL DATE_EXTRA4
+  , NULL DATE_EXTRA5
+  , NULL NUM_EXTRA1
+  , NULL NUM_EXTRA2
+  , NULL NUM_EXTRA3
+  , NULL NUM_EXTRA4
+  , NULL NUM_EXTRA5
+  , NULL LCHAR_EXTRA1
+  , NULL LCHAR_EXTRA2
+  , NULL LCHAR_EXTRA3
+  , NULL LCHAR_EXTRA4
+  , NULL LCHAR_EXTRA5
+FROM REC_FICHERO_CONTRATOS AGC
+  JOIN REC_FICHERO_CONTRATOS_PERSONAS AGCP on AGC.ID_ENVIO = AGCP.ID_ENVIO
+  JOIN REC_FICHERO_PERSONAS AGP ON AGCP.CODIGO_PERSONA = AGP.CODIGO_PERSONA
+  JOIN PER_PERSONAS PER ON AGP.CODIGO_PERSONA = PER.PER_COD_CLIENTE_ENTIDAD
+  JOIN CRC_CICLO_RECOBRO_CNT CRC ON AGC.ID_ENVIO = CRC.CRC_ID_ENVIO AND CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+  JOIN CRE_CICLO_RECOBRO_EXP CRE ON CRC.CRE_ID = CRE.CRE_ID AND CRE.BORRADO = 0
+  JOIN CRP_CICLO_RECOBRO_PER CRP ON CRE.CRE_ID = CRP.CRE_ID AND PER.PER_ID = CRP.PER_ID AND CRP.CRP_FECHA_BAJA IS NULL AND CRP.BORRADO = 0
+  --TODO Join con subcartera para obtener la política de acuerdos
+  JOIN RCF_SCA_SUBCARTERA SCA ON CRE.RCF_SCA_ID = SCA.RCF_SCA_ID
+  JOIN RCF_POA_POLITICA_ACUERDOS POA ON SCA.RCF_POA_ID = POA.RCF_POA_ID
+  JOIN RCF_PAA_POL_ACUERDOS_PALANCAS PAA ON POA.RCF_POA_ID = PAA.RCF_POA_ID
+  JOIN RCF_STP_SUBTIPO_PALANCA STP ON PAA.RCF_STP_ID = STP.RCF_STP_ID
+  JOIN RCF_TPP_TIPO_PALANCA TPP ON STP.RCF_TPP_ID = TPP.RCF_TPP_ID
+  LEFT JOIN ${master.schema}.DD_SIN_SINO SIN ON PAA.DD_SIN_ID = SIN.DD_SIN_ID		
+		]]>
+	</entry>
+	<!-- BORRAMOS LA TABLA REC_FICHERO_DIRECCIONES -->
+	<entry key="recobro.borrado.rec_fichero_direcciones.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_DIRECCIONES
+		]]>
+	</entry>
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_DIRECCIONES -->
+	<!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_DIRECCIONES -->
+	<entry key="recobro.insert.rec_fichero_direcciones.Oracle9iDialect">
+		<![CDATA[
+declare
+begin
+INSERT INTO REC_FICHERO_DIRECCIONES
+SELECT DISTINCT 
+  TMP.RCF_AGE_ID
+	, REC_PER.CODIGO_PROPIETARIO
+	, REC_PER.CODIGO_PERSONA
+	, DIR.DIR_COD_DIRECCION CODIGO_DIRECCION
+  , TVI.DD_TVI_CODIGO CD_TIPO_VIA
+  , TVI.DD_TVI_DESCRIPCION TIPO_VIA
+	, DIR.DIR_DOMICILIO NOMBRE_VIA
+	, DIR.DIR_DOM_N NUM_DOMICILIO
+	, DIR.DIR_DOM_PORTAL PORTAL
+	, DIR.DIR_DOM_PISO PISO
+	, DIR.DIR_DOM_ESC ESCALERA
+	, DIR.DIR_DOM_PUERTA PUERTA
+	, LOC.DD_LOC_CODIGO CODIGO_POSTAL
+  , UPPER(PRV.DD_PRV_CODIGO) CD_PROVINCIA
+	, UPPER(PRV.DD_PRV_DESCRIPCION) PROVINCIA
+  , UPPER(LOC.DD_LOC_CODIGO) CD_POBLACION
+	, UPPER(LOC.DD_LOC_DESCRIPCION) POBLACION
+  , UPPER(LOC.DD_LOC_CODIGO)  CD_MUNICIPIO
+	, UPPER(LOC.DD_LOC_DESCRIPCION)  MUNICIPIO
+	, NULL DIRECCION_PRINCIPAL
+	, NULL CD_ESTADO_DIRECCION
+  , NULL ESTADO_DIRECCION
+  , TPD.TPD_CODIGO CD_TIPO_DIRECCION
+	, TPD.TPD_DESCRIPCION TIPO_DIRECCION
+	, NULL DIRECCION_BLOQUEADA
+	, NULL FECHA_EXTRA1
+  , NULL FECHA_EXTRA2
+	, NULL FECHA_EXTRA3
+	, NULL FECHA_EXTRA4
+	, NULL FECHA_EXTRA5
+	, NULL NUMERO_EXTRA1
+	, NULL NUMERO_EXTRA2
+  , NULL NUMERO_EXTRA3
+  , NULL NUMERO_EXTRA4
+  , NULL NUMERO_EXTRA5
+	, NULL LCHAR_EXTRA1
+	, NULL LCHAR_EXTRA2
+	, NULL LCHAR_EXTRA3
+	, NULL LCHAR_EXTRA4
+	, NULL LCHAR_EXTRA5
+FROM TMP_REC_EXP_AGE_MAR_GES TMP
+    JOIN PER_PERSONAS PER ON TMP.PER_ID = PER.PER_ID
+    JOIN CRE_CICLO_RECOBRO_EXP CRE ON TMP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL AND CRE.BORRADO = ${borrado.no.id}
+    JOIN CRP_CICLO_RECOBRO_PER CRP ON CRE.CRE_ID = CRP.CRE_ID AND TMP.PER_ID = CRP.PER_ID AND CRP.CRP_FECHA_BAJA IS NULL  AND CRP.BORRADO = ${borrado.no.id}
+    JOIN DIR_PER ON PER.PER_ID = DIR_PER.PER_ID AND DIR_PER.BORRADO = ${borrado.no.id}
+    JOIN DIR_DIRECCIONES DIR ON DIR_PER.DIR_ID = DIR.DIR_ID AND DIR.BORRADO = ${borrado.no.id}
+		LEFT JOIN TPD_TIPO_DIRECCIONES TPD ON TPD.BORRADO = ${borrado.no.id} AND TPD.TPD_ID = DIR.TPD_ID    
+    JOIN REC_FICHERO_PERSONAS REC_PER ON PER.PER_COD_CLIENTE_ENTIDAD = REC_PER.CODIGO_PERSONA
+    JOIN ${master.schema}.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = DIR.DD_LOC_ID
+    JOIN ${master.schema}.DD_PRV_PROVINCIA PRV ON LOC.DD_PRV_ID = PRV.DD_PRV_ID
+    JOIN ${master.schema}.DD_TVI_TIPO_VIA TVI ON DIR.DD_TVI_ID = TVI.DD_TVI_ID
+;
+end;		
+		]]>
+	</entry>		
+	<!-- BORRAMOS LA TABLA REC_FICHERO_RECIBOS -->
+	<entry key="recobro.borrado.rec_fichero_recibos.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_RECIBOS
+		]]>
+	</entry>
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_RECIBOS -->
+	<!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_RECIBOS -->
+	<entry key="recobro.insert.rec_fichero_recibos.Oracle9iDialect">
+		<![CDATA[
+INSERT INTO REC_FICHERO_RECIBOS
+SELECT DISTINCT AG.RCF_AGE_ID
+  , REC.REC_ID ID_RECIBO
+  , CRC.CRC_ID_ENVIO ID_ENVIO
+  , REC.REC_CODIGO_RECIBO CODIGO_RECIBO
+  , REC.REC_FECHA_VENCIMIENTO FECHA_VENCIMIENTO
+  , REC.REC_FECHA_FACTURACION FECHA_FACTURACION
+  , TRE.DD_TRE_CODIGO CD_TIPO_DE_RECIBO
+  , TRE.DD_TRE_DESCRIPCION TIPO_DE_RECIBO
+  , REC.REC_TIPO_INTERES TIPO_INTERES
+  , SIR.DD_SIR_CODIGO CD_SITUACION_RECIBO
+  , SIR.DD_SIR_DESCRIPCION SITUACION_RECIBO
+  , REC.REC_IMPORTE_RECIBO IMPORTE_RECIBO
+  , REC.REC_IMPORTE_IMPAGADO IMPORTE_IMPAGADO
+  , REC.REC_CAPITAL CAPITAL
+  , REC.REC_INTERESES_ORDINAR INT_ORDIN_DEVEN
+  , REC.REC_INTERESES_MORATOR INT_MORAT_DEVEN
+  , REC.REC_COMISIONES COMISIONES
+  , REC.REC_GASTOS_NO_COBRADOS GASTOS_NO_COBRADOS
+  , REC.REC_IMPUESTOS
+  , REC.REC_DATE_EXTRA1 FECHA_EXTRA1
+  , REC.REC_DATE_EXTRA2 FECHA_EXTRA2
+  , NULL FECHA_EXTRA3
+  , NULL FECHA_EXTRA4
+  , NULL FECHA_EXTRA5
+  , REC.REC_NUM_EXTRA1 NUM_EXTRA1
+  , REC.REC_NUM_EXTRA2 NUM_EXTRA2
+  , NULL NUM_EXTRA3
+  , NULL NUM_EXTRA4
+  , NULL NUM_EXTRA5
+  , REC.REC_CHAR_EXTRA1 LCHAR_EXTRA1
+  , REC.REC_CHAR_EXTRA2 LCHAR_EXTRA2
+  , NULL LCHAR_EXTRA3
+  , NULL LCHAR_EXTRA4
+  , NULL LCHAR_EXTRA5
+FROM REC_FICHERO_CONTRATOS AG
+  JOIN CRC_CICLO_RECOBRO_CNT CRC ON AG.ID_ENVIO = CRC.CRC_ID_ENVIO AND CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+  JOIN REC_RECIBOS REC ON CRC.CNT_ID = REC.CNT_ID
+  LEFT JOIN DD_TRE_TIPO_RECIBO TRE ON REC.DD_TRE_ID = TRE.DD_TRE_ID
+  LEFT JOIN DD_SIR_SITUACION_RECIBO SIR ON REC.DD_SIR_ID = SIR.DD_SIR_ID
+WHERE REC.BORRADO = 0		
+		]]>
+	</entry>	
+	<!-- BORRAMOS LA TABLA REC_FICHERO_TELEFONOS -->
+	<entry key="recobro.borrado.rec_fichero_telefonos.Oracle9iDialect">
+		<![CDATA[
+			DELETE FROM REC_FICHERO_TELEFONOS
+		]]>
+	</entry>
+	<!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_TELEFONOS -->
+	<!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_TELEFONOS -->
+	<entry key="recobro.insert.rec_fichero_telefonos.Oracle9iDialect">
+		<![CDATA[
+declare
+begin
+INSERT INTO REC_FICHERO_TELEFONOS
+SELECT 
+  TMP.RCF_AGE_ID
+	, REC_PER.CODIGO_PROPIETARIO
+	, REC_PER.CODIGO_PERSONA CODIGO_PERSONA
+	, TEL.TEL_TELEFONO TELEFONO
+	, TTE.DD_TTE_CODIGO CD_TIPO_TELEFONO
+  , TTE.DD_TTE_DESCRIPCION TIPO_TELEFONO
+	, CASE TEL.TEL_CONSENTIMIENTO WHEN 0 THEN 1 ELSE 0 END TELEFONO_BLOQUEADO
+	, NULL ULTIMO_CONTACTO
+	, OTE.DD_OTE_CODIGO ORIGEN_TELEFONO
+	, NULL BBDD_ORIGEN_TELEFONO
+	, NULL FECHA_EXP_VIGENCIA_TEL4   
+	, NULL FECHA_EXTRA1
+  , NULL FECHA_EXTRA2
+	, NULL FECHA_EXTRA3
+	, NULL FECHA_EXTRA4
+	, NULL FECHA_EXTRA5
+	, NULL NUMERO_EXTRA1
+	, NULL NUMERO_EXTRA2
+  , NULL NUMERO_EXTRA3
+  , NULL NUMERO_EXTRA4
+  , NULL NUMERO_EXTRA5
+	, NULL LCHAR_EXTRA1
+	, NULL LCHAR_EXTRA2
+	, NULL LCHAR_EXTRA3
+	, NULL LCHAR_EXTRA4
+	, NULL LCHAR_EXTRA5
+FROM TMP_REC_EXP_AGE_MAR_GES TMP
+    JOIN PER_PERSONAS PER ON TMP.PER_ID = PER.PER_ID
+    JOIN CRE_CICLO_RECOBRO_EXP CRE ON TMP.EXP_ID = CRE.EXP_ID AND CRE.CRE_FECHA_BAJA IS NULL AND CRE.BORRADO = 0
+    JOIN CRP_CICLO_RECOBRO_PER CRP ON CRE.CRE_ID = CRP.CRE_ID AND TMP.PER_ID = CRP.PER_ID AND CRP.CRP_FECHA_BAJA IS NULL  AND CRP.BORRADO = 0
+    JOIN DIR_PER ON PER.PER_ID = DIR_PER.PER_ID AND DIR_PER.BORRADO = 0
+    JOIN TEL_PER ON PER.PER_ID = TEL_PER.PER_ID AND TEL_PER.BORRADO = 0
+    JOIN TEL_TELEFONOS TEL ON TEL_PER.TEL_ID = TEL.TEL_ID AND TEL.BORRADO = 0
+    JOIN REC_FICHERO_PERSONAS REC_PER ON PER.PER_COD_CLIENTE_ENTIDAD = REC_PER.CODIGO_PERSONA
+    LEFT JOIN DD_TTE_TIPO_TELEFONO TTE ON TEL.DD_TTE_ID = TTE.DD_TTE_ID
+    LEFT JOIN DD_OTE_ORIGEN_TELEFONO OTE ON TEL.DD_OTE_ID = OTE.DD_OTE_ID;
+end;		
+		]]>
+	</entry>
+	
+	<entry key="recobro.borrado.rec_fichero_efectos.Oracle9iDialect">
+		DELETE FROM REC_FICHERO_EFECTOS
+	</entry>
+	
+	<entry key="recobro.insert.rec_fichero_efectos.Oracle9iDialect">
+INSERT INTO REC_FICHERO_EFECTOS
+SELECT DISTINCT AG.RCF_AGE_ID
+  , CRC.CRC_ID_ENVIO ID_ENVIO
+  , EFC.EFC_ID ID_EFECTO
+  , EFC.EFC_CODIGO_LINEA CODIGO_LINEA
+  , EFC.EFC_CODIGO_ACUERDO CODIGO_ACUERDO
+  , TEF.DD_TEF_CODIGO CD_TIPO_EFECTO
+  , TEF.DD_TEF_DESCRIPCION TIPO_EFECTO
+  , SEF.DD_SEF_CODIGO CD_SITUACION_EFECTO
+  , SEF.DD_SEF_DESCRIPCION SITUACION_EFECTO
+  , MON.DD_MON_CODIGO CD_MONEDA_EFECTO
+  , MON.DD_MON_DESCRIPCION MONEDA_EFECTO
+  , EFC.EFC_IMPORTE_EFECTO IMPORTE_EFECTO
+  , EFC.EFC_CAPITAL CAPITAL
+  , EFC.EFC_INT_ORDIN_DEVEN INT_ORDIN_DEVEN_HASTA_DIA
+  , EFC.EFC_INT_ORDIN_MORAT INT_MORAT_DEVEN_HASTA_DIA
+  , EFC.EFC_COMISIONES COMISIONES
+  , EFC.EFC_GASTOS_NO_COBRADOS GASTOS_INCURRIDOS_NO_COBRADOS
+  , EFC.EFC_IMPUESTOS IMPUESTOS
+  , EFC.EFC_FECHA_DESCUENTO FECHA_DESCUENTO_EFECTO
+  , TFV.DD_TFV_CODIGO CD_TIPO_FECHA_VENCIMIENTO
+  , TFV.DD_TFV_DESCRIPCION TIPO_FECHA_VENCIMIENTO
+  , EFC.EFC_FECHA_VENCIMIENTO FECHA_VENCIMIENTO_EFECTO
+  , EFC.EFC_CHAR_EXTRA1 CHAR_EXTRA1
+  , EFC.EFC_CHAR_EXTRA2 CHAR_EXTRA2
+  , EFC.EFC_FLAG_EXTRA1 FLAG_EXTRA1
+  , EFC.EFC_FLAG_EXTRA2 FLAG_EXTRA2
+  , EFC.EFC_DATE_EXTRA1 DATE_EXTRA1
+  , EFC.EFC_DATE_EXTRA2 DATE_EXTRA2
+  , EFC.EFC_NUM_EXTRA1 NUM_EXTRA1
+  , EFC.EFC_NUM_EXTRA2 NUM_EXTRA2
+FROM REC_FICHERO_CONTRATOS AG
+  JOIN CRC_CICLO_RECOBRO_CNT CRC ON AG.ID_ENVIO = CRC.CRC_ID_ENVIO AND CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+  JOIN EFC_EFECTOS_CNT EFC ON CRC.CNT_ID = EFC.CNT_ID
+  JOIN DD_TEF_TIPO_EFECTO TEF ON EFC.DD_TEF_ID = TEF.DD_TEF_ID
+  JOIN DD_MON_MONEDAS MON ON EFC.DD_MON_ID = MON.DD_MON_ID
+  LEFT JOIN DD_SEF_SITUACION_EFECTO SEF ON EFC.DD_SEF_ID = SEF.DD_SEF_ID
+  LEFT JOIN DD_TFV_TIPO_FECHA_VENC TFV ON EFC.DD_TFV_ID = TFV.DD_TFV_ID
+WHERE EFC.BORRADO = 0
+	</entry>
+	
+	<entry key="recobro.borrado.rec_fichero_efectos_personas.Oracle9iDialect">
+		DELETE FROM REC_FICHERO_EFECTOS_PERSONAS
+	</entry>
+	
+	<entry key="recobro.insert.rec_fichero_efectos_personas.Oracle9iDialect">
+INSERT INTO REC_FICHERO_EFECTOS_PERSONAS
+SELECT DISTINCT AG.RCF_AGE_ID
+  , AG.ID_EFECTO ID_EFECTO
+  , TO_NUMBER(TPE.DD_TPE_CODIGO) TIPO_PERSONA
+  , TDI.DD_TDI_CODIGO TIPO_DOCUMENTO
+  , TDI.DD_TDI_DESCRIPCION DS_TIPO_DOCUMENTO
+  , EFP.EFP_NIF_CIF NIF_CIF_PASAP_NIE
+  , EFP.EFP_NOMBRE NOMBRE
+  , EFP.EFP_APELLIDO1 APELLIDO1
+  , EFP.EFP_APELLIDO2 APELLIDO2
+  , TIE.DD_TIE_CODIGO CD_TIPO_DE_RELACION
+  , TIE.DD_TIE_DESCRIPCION TIPO_DE_RELACION
+  , EFP.EFP_CHAR_EXTRA1 CHAR_EXTRA1
+  , EFP.EFP_CHAR_EXTRA2 CHAR_EXTRA2
+  , EFP.EFP_FLAG_EXTRA1 FLAG_EXTRA1
+  , EFP.EFP_FLAG_EXTRA2 FLAG_EXTRA2
+  , EFP.EFP_DATE_EXTRA1 DATE_EXTRA1
+  , EFP.EFP_DATE_EXTRA2 DATE_EXTRA2
+  , EFP.EFP_NUM_EXTRA1 NUM_EXTRA1
+  , EFP.EFP_NUM_EXTRA2 NUM_EXTRA2
+FROM REC_FICHERO_EFECTOS AG
+  JOIN EFP_EFECTOS_PER EFP ON AG.ID_EFECTO = EFP.EFC_ID
+  JOIN BANKMASTER.DD_TPE_TIPO_PERSONA TPE ON EFP.DD_TPE_ID = TPE.DD_TPE_ID
+  JOIN DD_TDI_TIPO_DOCUMENTO_ID TDI ON EFP.DD_TDI_ID = TDI.DD_TDI_ID
+  JOIN DD_TIE_TIPO_INTERV_EFECTO TIE ON EFP.DD_TIE_ID = TIE.DD_TIE_ID
+WHERE EFP.BORRADO = 0
+	</entry>
+	
+	<entry key="recobro.borrado.rec_fichero_disposiciones.Oracle9iDialect">
+		DELETE FROM REC_FICHERO_DISPOSICIONES
+	</entry>
+	
+	<entry key="recobro.insert.rec_fichero_disposiciones.Oracle9iDialect">
+INSERT INTO REC_FICHERO_DISPOSICIONES
+SELECT DISTINCT AG.RCF_AGE_ID
+  , CRC.CRC_ID_ENVIO ID_ENVIO
+  , DSP.DSP_CODIGO_DISPOSICION CODIGO_DISPOSICION
+  , DTI.DD_DTI_CODIGO CD_TIPO_DISPOSICION
+  , DTI.DD_DTI_DESCRIPCION TIPO_DISPOISICION
+  , DST.DD_DST_CODIGO CD_SUBTIPO_DISPOSICION
+  , DST.DD_DST_DESCRIPCION SUBTIPO_DISPOSICION
+  , DSI.DD_DSI_CODIGO CD_SITUACION_DISPOSICION
+  , DSI.DD_DSI_DESCRIPCION SITUACION_DISPOSICION
+  , MON.DD_MON_CODIGO CD_MONEDA_DISPOSICION
+  , MON.DD_MON_DESCRIPCION MONEDA_DISPOSICION
+  , DSP.DSP_IMPORTE_DISPOSICION IMPORTE_DISPOSICION
+  , DSP.DSP_CAPITAL CAPITAL
+  , DSP.DSP_INT_ORDIN_DEVEN INT_ORDIN_EVEN
+  , DSP.DSP_INT_ORDIN_MORAT INT_MORAT_DEVN
+  , DSP.DSP_COMISIONES COMISIONES
+  , DSP.DSP_GASTOS_NO_COBRADOS GASTOS_INCURRIDOS_NO_COBRADOS
+  , DSP.DSP_IMPUESTOS IMPUESTOS
+  , DSP.DSP_FECHA_VENCIMIENTO FECHA_VENCIMIENTO_DISPOSICION
+  , DSP.DSP_CHAR_EXTRA1 CHAR_EXTRA1
+  , DSP.DSP_CHAR_EXTRA2 CHAR_EXTRA2
+  , DSP.DSP_FLAG_EXTRA1 FLAG_EXTRA1
+  , DSP.DSP_FLAG_EXTRA2 FLAG_EXTRA2
+  , DSP.DSP_DATE_EXTRA1 DATE_EXTRA1
+  , DSP.DSP_DATE_EXTRA2 DATE_EXTRA2
+  , DSP.DSP_NUM_EXTRA1 NUM_EXTRA1
+  , DSP.DSP_NUM_EXTRA2 NUM_EXTRA2
+FROM REC_FICHERO_CONTRATOS AG
+  JOIN CRC_CICLO_RECOBRO_CNT CRC ON AG.ID_ENVIO = CRC.CRC_ID_ENVIO AND CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+  JOIN DSP_DISPOSICIONES DSP ON CRC.CNT_ID = DSP.CNT_ID
+  JOIN DD_DTI_TIPO_DISPOSICION DTI ON DSP.DD_DTI_ID = DTI.DD_DTI_ID
+  JOIN DD_DSI_SITUACION_DISPOSICION DSI ON DSP.DD_DSI_ID = DSI.DD_DSI_ID
+  JOIN DD_MON_MONEDAS MON ON DSP.DD_MON_ID = MON.DD_MON_ID
+  LEFT JOIN DD_DST_SUBTIPO_DISPOSICION DST ON DSP.DD_DST_ID = DST.DD_DST_ID
+WHERE DSP.BORRADO = 0
+	</entry>
+	
+	<entry key="recobro.borrado.rec_fichero_adecuaciones.Oracle9iDialect">
+		DELETE FROM REC_FICHERO_ADECUACIONES
+	</entry>
+	
+	<entry key="recobro.insert.rec_fichero_adecuaciones.Oracle9iDialect">
+INSERT INTO REC_FICHERO_ADECUACIONES
+SELECT DISTINCT AGC.RCF_AGE_ID
+  , CRC.CRC_ID_ENVIO ID_ENVIO
+  , ADC.DD_CODIGO_RECOMENDACION COD_RECOMENDACION
+  , ADC.ADC_IMPORTE_FINANCIAR ADE_IMPORTE_FINANCIAR
+  , ADC.ADC_GASTOS_INCLUIDOS ADE_GASTOS_INCLUIDOS
+  , ADC.ADC_TIPO ADE_TIPO
+  , ADC.ADC_DIFERENCIAL ADE_DIFERENCIAL
+  , ADC.ADC_PLAZO ADE_PLAZO
+  , ADC.ADC_CUOTA ADE_CUOTA
+  , ADC.ADC_CUOTA_TRAS_CARENCIA ADE_CUOTA_TRAS_CARENCIA
+  , ADC.ADC_SISTEMA_AMORTIZACION ADE_SISTEMA_AMORTIZACION 
+  , ADC.ADC_RAZON_PROGRESION ADE_RAZON_PROGRESION
+  , ADC.ADC_PERIODICIDAD_RECIBOS ADE_PERIODICIDAD_RECIBOS
+  , ADC.ADC_PERIODICIDAD_TIPO ADE_PERIODICIDAD_REVISION_TIPO
+  , ADC.ADC_PROXIMA_REVISION ADE_PROXIMA_REVISION_TIPO
+  , ADC.ADC_REVISION_CUOTA ADE_REVISION_CUOTA
+  , ADC.ADC_LCHAR_EXTRA LCHAR_EXTRA1
+  , NULL LCHAR_EXTRA2
+  , NULL LCHAR_EXTRA3
+  , NULL LCHAR_EXTRA4
+  , NULL LCHAR_EXTRA5
+  , NULL LCHAR_EXTRA6
+  , NULL LCHAR_EXTRA7
+  , NULL LCHAR_EXTRA8
+  , NULL LCHAR_EXTRA9
+  , NULL LCHAR_EXTRA10
+  , ADC.ADC_CHAR_EXTRA1
+  , ADC.ADC_CHAR_EXTRA2
+  , ADC.ADC_CHAR_EXTRA3
+  , ADC.ADC_CHAR_EXTRA4
+  , ADC.ADC_CHAR_EXTRA5
+  , NULL CHAR_EXTRA6
+  , NULL CHAR_EXTRA7
+  , NULL CHAR_EXTRA8
+  , NULL CHAR_EXTRA9
+  , NULL CHAR_EXTRA10
+  , ADC.ADC_FLAG_EXTRA1
+  , ADC.ADC_FLAG_EXTRA2
+  , ADC.ADC_FLAG_EXTRA3
+  , ADC.ADC_FLAG_EXTRA4
+  , ADC.ADC_FLAG_EXTRA5
+  , ADC.ADC_FLAG_EXTRA6
+  , ADC.ADC_FLAG_EXTRA7
+  , ADC.ADC_FLAG_EXTRA8
+  , ADC.ADC_FLAG_EXTRA9
+  , ADC.ADC_FLAG_EXTRA10
+  , ADC.ADC_DATE_EXTRA1
+  , ADC.ADC_DATE_EXTRA2
+  , ADC.ADC_DATE_EXTRA3
+  , ADC.ADC_DATE_EXTRA4
+  , ADC.ADC_DATE_EXTRA5
+  , ADC.ADC_DATE_EXTRA6
+  , ADC.ADC_DATE_EXTRA7
+  , ADC.ADC_DATE_EXTRA8
+  , ADC.ADC_DATE_EXTRA9
+  , ADC.ADC_DATE_EXTRA10
+  , ADC.ADC_NUM_EXTRA1
+  , ADC.ADC_NUM_EXTRA2
+  , ADC.ADC_NUM_EXTRA3
+  , ADC.ADC_NUM_EXTRA4
+  , ADC.ADC_NUM_EXTRA5
+  , ADC.ADC_NUM_EXTRA6
+  , ADC.ADC_NUM_EXTRA7
+  , ADC.ADC_NUM_EXTRA8
+  , ADC.ADC_NUM_EXTRA9
+  , ADC.ADC_NUM_EXTRA10
+  , NULL NUM_EXTRA11
+  , NULL NUM_EXTRA12
+  , NULL NUM_EXTRA13
+  , NULL NUM_EXTRA14
+  , NULL NUM_EXTRA15
+FROM REC_FICHERO_CONTRATOS AGC
+  JOIN CRC_CICLO_RECOBRO_CNT CRC ON AGC.ID_ENVIO = CRC.CRC_ID_ENVIO AND CRC.BORRADO = 0 AND CRC.CRC_FECHA_BAJA IS NULL
+  JOIN ADC_ADECUACIONES_CNT ADC ON CRC.CNT_ID = ADC.CNT_ID
+WHERE ADC.BORRADO = 0
+	</entry>
+	
+</properties>

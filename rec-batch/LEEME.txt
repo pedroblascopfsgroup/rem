@@ -1,0 +1,11 @@
+Para generar el jar hay que utilizar el siguiente comando:
+
+mvn clean compile assembly:single
+
+Es necesario copiar los resources al batch
+
+cp -R src/main/resources/properties/* $BATCH_INSTALL_DIR/properties
+
+cp -R src/main/resources/jobs/recobro/* $BATCH_INSTALL_DIR/optionalConfiguration/jobs/recobro
+
+cp -R src/main/resources/config/* $BATCH_INSTALL_DIR/optionalConfiguration/config

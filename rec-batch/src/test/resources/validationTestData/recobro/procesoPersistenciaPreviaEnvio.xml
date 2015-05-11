@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_REPARTO_AGENCIAS</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_REPARTO_AGENCIAS: </msg>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM BATCH_DATOS_SALIDA</value>
+		<msg>Número de registros de la tabla BATCH_DATOS_SALIDA: </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM BATCH_DATOS_ENTRADA</value>
+		<msg>Número de registros de la tabla BATCH_DATOS_ENTRADA: </msg>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM BATCH_DATOS_EXCEPTUADOS</value>
+		<msg>Número de registros totales de la tabla BATCH_DATOS_EXCEPTUADOS: </msg>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM (SELECT CNT_CONTRATO FROM TMP_REC_FICHERO_CONTRATOS UNION SELECT CNT_ID AS CNT_CONTRATO FROM TMP_REC_CONTRATOS_CONS_BAJA)</value>
+		<msg>Número total de contratos del reparto del día de ayer de la tabla REC_FICHERO_CONTRATOS: </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_CANCELADOS</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_CANCELADOS (Número de expedientes cancelados por RU u otros): </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_DESNORMALIZADO</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_DESNORMALIZADO (Número de expedientes que entran en RA): </msg>
+	</sql>			
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CONTRATOS_CONS_BAJA</value>
+		<msg>Número de registros de la tabla TMP_REC_CONTRATOS_CONS_BAJA (Total número de contratos de baja posibles en el reparto de hoy): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_FICHERO_CONTRATOS</value>
+		<msg>Número de registros de la tabla TMP_REC_FICHERO_CONTRATOS (Número de contratos del reparto de ayer que no entran en el batch): </msg>
+	</sql>				
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_AGE_MAR</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_AGE_MAR (Número de expedientes total del reparto de hoy: batch, nuevos, fijos): </msg>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_AGE_MAR_EXC</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_AGE_MAR_EXC (Número de expedientes total del reparto de hoy desnormalizados): </msg>
+	</sql>				
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_AGE_MAR_GES</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_AGE_MAR_GES (Número de expedientes total del reparto de hoy sin personas excluidas): </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_AGE_CNT</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_AGE_CNT (Número de contratos total del reparto de hoy desnormalizados): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_AGE_CNT_EXC</value>
+		<msg>Número de registros de la tabla TMP_REC_EXP_AGE_CNT_EXC (Número de contratos total del reparto de hoy desnormalizados sin contratos excluidos): </msg>
+	</sql>			
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CONTRATOS_BAJA</value>
+		<msg>Número de registros de la tabla TMP_REC_CONTRATOS_BAJA  (Número de contratos de baja en el reparto de hoy): </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_ROTACION</value>
+		<msg>Número de expedientes de la tabla TMP_REC_EXP_ROTACION (Número de contratos que han entrado en rotación): </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_EXTINCION_RU</value>
+		<msg>Número de expedientes de la tabla TMP_REC_EXP_EXTINCION_RU (Número de contratos que han entrado en ruptura): </msg>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_EXTINCION_RA</value>
+		<msg>Número de expedientes de la tabla TMP_REC_EXP_EXTINCION_RA (Número de contratos que han entrado en rearquetipación): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_EXP_SIN_RIESGOS</value>
+		<msg>Número de expedientes de la tabla TMP_REC_EXP_SIN_RIESGOS (Número de contratos que estaban sin riesgo): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM TMP_REC_CONTRATOS_BAJA_MOT</value>
+		<msg>Número de registros de la tabla TMP_REC_CONTRATOS_BAJA_MOT (Número de contratos que han sido baja en el día de hoy junto con su motivo): </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_CONTRATOS</value>
+		<msg>Número de registros de la tabla REC_FICHERO_CONTRATOS (Número de contratos total del reparto de hoy): </msg>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_PERSONAS</value>
+		<msg>Número de registros de la tabla REC_FICHERO_PERSONAS (Número de personas total del reparto de hoy): </msg>
+	</sql>	
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_CONTRATOS_PERSONAS</value>
+		<msg>Número de registros de la tabla REC_FICHERO_CONTRATOS_PERSONAS (Número de relaciones entre contratos y personas del reparto de hoy): </msg>
+	</sql>			
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_CONTRATOS_BAJAS</value>
+		<msg>Número de registros de la tabla REC_FICHERO_CONTRATOS_BAJAS (Número de contratos de baja del reparto de hoy): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_PERSONAS_PALANCAS</value>
+		<msg>Número de registros de la tabla REC_FICHERO_PERSONAS_PALANCAS (Número de relaciones entre persoans y palancas del reparto de hoy): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_DIRECCIONES</value>
+		<msg>Número de registros de la tabla REC_FICHERO_DIRECCIONES (Número de direcciones total del reparto de hoy): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_RECIBOS</value>
+		<msg>Número de registros de la tabla REC_FICHERO_RECIBOS (Número de recibos del reparto de hoy): </msg>
+	</sql>		
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(*) FROM REC_FICHERO_TELEFONOS</value>
+		<msg>Número de registros de la tabla REC_FICHERO_TELEFONOS (Número de telefonos del reparto de hoy): </msg>
+	</sql>								
+</sqls>

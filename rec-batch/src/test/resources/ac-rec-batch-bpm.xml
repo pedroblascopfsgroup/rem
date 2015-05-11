@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+    default-autowire="byName">
+
+    <!-- Add bpm Mappings to "masterSessionFactory" -->
+    <alias name="jbpm.mappings" alias="master.additionalMappings"/> 
+    
+    <bean id="bpm.configuration.batch" abstract="true" class="es.capgemini.devon.bpm.LocalJbpmConfigurationFactoryBean">
+        <!-- pass in existing sessionFactory -->
+        <property name="configuration" value="classpath:bpm/jbpm.batch.cfg.xml" />
+        <property name="createSchema" value="false" />
+        <property name="startJobExecutor" value="false" />
+    </bean>
+
+    
+   <bean id="jbpmConfiguration" parent="bpm.configuration.batch" depends-on="dbIdContextHolder">
+      <property name="sessionFactory" ref="entitySessionFactory" />
+      <property name="processDefinitions" ref="jBPMProcessDefinitionSet" />
+   </bean>
+    
+    <bean id="jbpmTemplate" class="org.springmodules.workflow.jbpm31.JbpmTemplate">
+        <constructor-arg index="0" ref="jbpmConfiguration"/>
+    </bean>
+    
+</beans>

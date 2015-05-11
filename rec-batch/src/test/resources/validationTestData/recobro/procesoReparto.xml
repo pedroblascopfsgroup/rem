@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_REPARTO_SUB WHERE RCF_AGE_ID_OLD IS NULL</value>
+		<msg>Expedientes repartidos, no de reparto</msg>
+		<expected>40</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_REPARTO_SUB</value>
+		<msg>Expedientes repartidos, incluidos los de reparto</msg>
+		<expected>60</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_REPARTO_AGENCIAS</value>
+		<msg>Expedientes repartidos a agencias</msg>
+		<expected>60</expected>
+	</sql>
+</sqls>

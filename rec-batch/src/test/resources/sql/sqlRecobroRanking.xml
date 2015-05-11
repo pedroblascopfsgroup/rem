@@ -1,0 +1,10 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+  <entry key="ranking.calcularContabilidadQuery">
+    <![CDATA[
+      SELECT TRUNC(MAX(FECHA_HIST)) FROM H_RAS_RANKING_SUBCARTERA WHERE BORRADO = 0
+    ]]>
+  </entry>
+ </properties>
+ 

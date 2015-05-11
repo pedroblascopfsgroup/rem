@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" default-autowire="byName"
+   default-merge="true">
+   
+   <bean id="loadAlertasStarterJob" parent="batch.simpleJob" scope="prototype">
+      <property name="steps">
+         <list>
+				<!-- Descomprimir el fichero .TXT -->
+            <bean id="alerta.unzip" parent="batch.taskletStep" scope="prototype">
+               <property name="tasklet">
+                  <bean parent="batch.task.UnZip" p:bindings="zipFileName=zipFile,zipFilesToExtract=zipFilesToExtract,pathToExtract=pathToExtract" scope="prototype">
+                    <property name="severidad" value="error"/>
+                    <property name="message" value="unzip.errorUnziping"/>
+                  </bean>                            
+               </property>
+            </bean>
+				<!-- Convertir el fichero .TXT en .CSV  -->
+            <bean id="cargaAlertas.convert" parent="batch.simpleStep" scope="prototype">
+               <property name="itemReader" ref="cargaAlertas.itemReader" />
+               <property name="itemWriter" ref="cargaAlertas.itemWriter" />
+               <property name="commitInterval" value="5000" />
+            </bean>
+				<!-- Carga de datos -->
+            <bean id="cargaAlertas.load" parent="batch.taskletStep" scope="prototype">
+               <property name="tasklet">
+                  <bean parent="batch.task.DataLoader" scope="prototype"> 
+							<!-- Parámetros Fijos del DataLoader -->
+                     <property name="dataSource" ref="entityDataSource" />
+                     <property name="afterScript">
+                        <value>
+                                UPDATE tmp_ale_alertas SET tmp_ale_fichero_carga = '${inFile}';
+                                ANALYZE TABLE tmp_ale_alertas ${sql.analyze};
+                        </value>
+                     </property>                      
+				     <!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->
+                     <property name="bindings" value="fileSystemResource=csvFileAlertas${batch.loaderParams}" />
+					 <!-- Parámetros Opcionales del DataLoader -->
+                     <property name="params">
+                        <map> 
+						<!-- de Oracle -->
+                           <entry key="pathToSqlLoader" value="${batch.pathToSqlLoader}" />
+                           <entry key="controlFile" value="es/capgemini/pfs/batch/load/alertas/alertasDataLoad.ctl" />
+                           <entry key="connectionInfo" value="${batch.connectionInfo}" />
+                           <entry key="parameters" value="${batch.sqlLoaderParameters}" />
+                        </map>
+                     </property>
+                     <property name="message" value="cargaAlertas.dataLoad" />
+                     <property name="severidad" value="error" />
+                  </bean>
+               </property>
+            </bean> 
+	
+         </list>
+      </property>
+   </bean>
+   
+	<!-- No delimited reader -->
+   <bean id="cargaAlertas.itemReader" parent="batch.task.FlatFileItemReader" scope="prototype">
+      <property name="bindings" value="fileSystemResource=txtFileAlertas" />
+      <property name="recordSeparatorPolicy">
+         <bean class="org.springframework.batch.item.file.separator.SimpleRecordSeparatorPolicy"/>
+      </property>      
+      <property name="lineTokenizer">
+         <bean parent="batch.transform.FixedLengthTokenizer"
+            p:columns="1-8,9-12,13-32,33-37,38-42,43-47,48-57,58-61,62-65" />
+      </property>
+      <property name="fieldSetMapper">
+         <bean parent="batch.mapper.PassThroughFieldSetMapper" />
+      </property>
+      <property name="message" value="cargaAlertas.itemReader.tokenizerError" />
+      <property name="severidad" value="error" />
+   </bean>
+
+	<!-- Custom delimited writer -->
+   <bean id="cargaAlertas.itemWriter" parent="batch.task.FlatFileItemWriter" scope="prototype">
+      <property name="bindings" value="fileSystemResource=csvFileAlertas" />
+      <property name="fieldSetCreator">
+         <bean parent="batch.mapper.PassThroughFieldSetMapper" />
+      </property>
+      <property name="lineAggregator">
+         <bean parent="batch.transform.DelimitedLineAggregator" p:stringFields="1,7" />
+      </property>
+      <property name="message" value="cargaAlertas.itemWriter" />
+      <property name="severidad" value="error" />
+      <property name="trim" value="true" />
+   </bean>
+</beans>

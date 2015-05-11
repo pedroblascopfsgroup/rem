@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXP
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_CNT</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_CNT_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_CNT_EXP
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_PER_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_PER_EXP
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_EXCEPTUADOS</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXCEPTUADOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida BATCH_DATOS_SALIDA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_SALIDA
+		</value>
+	</sql>		
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de datos exceptuados BATCH_DATOS_EXCEPTUADOS</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXCEPTUADOS
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_EXTINCION_RU</msg>
+		<value>
+				TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RU
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_CANCELADOS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_CANCELADOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_SIN_RIESGOS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_SIN_RIESGOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_SIN_PERSONAS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_SIN_PERSONAS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla temporal TMP_REC_EXP_SIN_CONTRATOS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_SIN_CONTRATOS
+		</value>
+	</sql>
+</sqls>

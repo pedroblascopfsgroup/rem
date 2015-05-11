@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT, EXECUTE-->
+<sqls>
+	<!--
+	No hace falta ya que ya no dependemos de EXP_EXPEDIENTES 
+	<sql>
+		<type>UPDATE</type>
+		<msg>Volvemos a dejar el universo de expedientes (EXP_EXPEDIENTES) utilizado en las pruebas como estaban antes</msg>
+		<value>
+			UPDATE EXP_EXPEDIENTES
+			SET DD_EEX_ID = 4,
+			DD_TPE_ID = 1
+			WHERE DD_EEX_ID = 2
+		</value>		
+	</sql>
+	 -->
+	
+	 <sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de configuración de esquemas BATCH_RCF_ENTRADA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_RCF_ENTRADA
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes BATCH_DATOS_EXP</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXP
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de exceptuados BATCH_DATOS_EXCEPTUADOS</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_EXCEPTUADOS
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Vaciamos la tabla de salida BATCH_DATOS_SALIDA</msg>
+		<value>
+			TRUNCATE TABLE BATCH_DATOS_SALIDA
+		</value>
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla de expedientes activos TMP_REC_EXP_ACTIVOS</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_ACTIVOS
+		</value>		
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes de extinción TMP_REC_EXP_EXTINCION</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_EXTINCION
+		</value>		
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes de extinción de ruptura TMP_REC_EXP_EXTINCION_RU</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RU
+		</value>		
+	</sql>		
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Volvemos a vaciar la tabla temporal de expedientes de extinción de reaquetipación TMP_REC_EXP_EXTINCION_RA</msg>
+		<value>
+			TRUNCATE TABLE TMP_REC_EXP_EXTINCION_RA
+		</value>		
+	</sql>
+</sqls>

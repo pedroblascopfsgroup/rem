@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT -->
+<sqls>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de la tabla CCR_CONTROL_COBROS_RECOBRO</msg>
+		<value>
+			TRUNCATE TABLE CCR_CONTROL_COBROS_RECOBRO
+		</value>
+	</sql>	
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de la tabla CPR_COBROS_PAGOS_RECOBRO</msg>
+		<value>
+			TRUNCATE TABLE CPR_COBROS_PAGOS_RECOBRO
+		</value>
+	</sql>
+	<sql>
+		<type>EXECUTE</type>
+		<msg>Borrado de la tabla H_TMP_REC_EXP_AGE_CNT_EXC</msg>
+		<value>
+			TRUNCATE TABLE H_TMP_REC_EXP_AGE_CNT_EXC
+		</value>
+	</sql>	
+	<sql>
+		<type>DROP</type>
+		<msg>Borrado de los cobros de prueba </msg>
+		<value>
+			DELETE FROM CPA_COBROS_PAGOS WHERE CPA_FECHA BETWEEN '04/03/2014' AND '13/03/2014'
+		</value>
+	</sql>
+</sqls>

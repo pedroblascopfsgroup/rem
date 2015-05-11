@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<msg>Procesos pendientes</msg>
+		<value>SELECT COUNT(*)
+				FROM PRF_PROCESO_FACTURACION PRF
+  					INNER JOIN RCF_DD_EPF_ESTADO_PROC_FAC DD ON PRF.RCF_DD_EPF_ID = DD.RCF_DD_EPF_ID
+				WHERE DD.RCF_DD_EPF_CODIGO = 'PTE'</value>
+		<expected>0</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>detalle factura</msg>
+		<value>SELECT COUNT(*)
+				FROM TMP_RECOBRO_DETALLE_FACTURA</value>
+		<expected>x</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>detalle factura</msg>
+		<value>SELECT COUNT(*)
+				FROM FROM RDF_RECOBRO_DETALLE_FACTURA</value>
+		<expected>x</expected>
+	</sql>
+</sqls>

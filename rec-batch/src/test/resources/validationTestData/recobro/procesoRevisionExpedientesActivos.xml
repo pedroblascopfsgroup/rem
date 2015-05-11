@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- VALORES PERMITIDOS EN EL CAMPO TYPE: DROP, CREATE, INSERT, UPDATE, COUNT-->
+<sqls>
+	<sql>
+		<type>COUNT</type>
+		<msg>Se obtienen los expedientes marcados para rearquetipar por sus propios BPMs</msg>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_MARCADO_RA</value>
+		<expected>4</expected>
+	</sql>
+	<sql>
+		<type>COUNT</type>
+		<msg>Se obtienen los expedientes marcados para rearquetipar</msg>
+		<value>SELECT COUNT(1) FROM TMP_REC_EXP_DESNORMALIZADO</value>
+		<expected>8</expected>
+	</sql>
+</sqls>

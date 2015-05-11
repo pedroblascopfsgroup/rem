@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:int="http://www.springframework.org/schema/integration"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd"
+    default-autowire="byName">
+    
+    <!-- From devon -->
+    <import resource="classpath:devon/resources/core/ac-devon-core.xml" />  
+    <import resource="classpath:ac-devon-batch.xml"/>
+    <import resource="classpath:devon/resources/bpm/ac-devon-bpm.xml"/>
+    <import resource="classpath:devon/resources/core/ac-devon-monitoring.xml"/>
+    <import resource="classpath:devon/resources/core/ac-devon-integration.xml" />
+    
+    <!-- Canal para eventos del batch -->
+    <int:publish-subscribe-channel id="batchChannel"/>
+
+    <import resource="classpath:ac-rec-bpm-pfsgroup.xml" />    
+    
+    <!-- From rec-common -->
+    <import resource="classpath:ac-rec-common-data-access.xml"/>
+    <import resource="classpath:ac-rec-common-utils.xml"/>
+    <import resource="classpath:ac-rec-common-job.xml"/>
+    
+    <!--
+        Acceso a jobs batch
+    -->
+    <import resource="classpath:ac-rec-batch.xml"/>
+    
+    <!--
+        Acceso a procesos bpm
+    -->
+    <import resource="classpath:ac-rec-batch-bpm.xml"/>
+    
+    <!-- FIXME Quitar este bean -->
+  	<bean id="dynamicElementManager" class="es.capgemini.devon.web.DynamicElementManager" />
+  
+</beans>

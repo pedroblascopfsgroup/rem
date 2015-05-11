@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="haya_tramiteCalificacion" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="H035_aperturaLiquidacion" name="iniciarProceso"></transition>
+	</start-state>
+
+	<state name="H035_aperturaLiquidacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H035_personacionFaseLiquidacion" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_aperturaLiquidacion" name="activarAlerta"></transition>
+	</state>
+
+	<state name="H035_personacionFaseLiquidacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H035_personacionFaseLiquidacionDecision" name="avanzaBPM"></transition>
+		<transition to="H035_aperturaLiquidacion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_personacionFaseLiquidacion" name="activarAlerta"></transition>
+	</state>
+
+	<state name="H035_escritoPersonacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H035_registrarCalificacionConcursal" name="avanzaBPM"></transition>
+		<transition to="H035_personacionFaseLiquidacion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_escritoPersonacion" name="activarAlerta"></transition>
+	</state>
+
+	<decision name="H035_personacionFaseLiquidacionDecision" expression="#{H035_personacionFaseLiquidacionDecision}">
+		<transition to="H035_escritoPersonacion" name="SI"></transition>
+		<transition to="H035_registrarResolucion" name="NO"></transition>
+	</decision>
+
+	<state name="H035_registrarCalificacionFiscal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_registrarCalificacionFiscal" name="activarAlerta"></transition>
+		<transition to="H035_registrarOposicion" name="avanzaBPM"></transition>
+		<transition to="H035_registrarCalificacionConcursal" name="vueltaAtras"></transition>
+	</state>
+
+	<state name="H035_registrarCalificacionConcursal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_registrarCalificacionConcursal" name="activarAlerta"></transition>
+		<transition to="H035_registrarCalificacionFiscal" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H035_registrarOposicion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H035_registrarOposicionDecision" name="avanzaBPM"></transition>
+		<transition to="H035_registrarCalificacionFiscal" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_registrarOposicion" name="activarAlerta"></transition>
+	</state>
+
+	<decision name="H035_registrarOposicionDecision" expression="#{H035_registrarOposicionDecision}">
+		<transition to="H035_BPMtramiteDemandaIncidental" name="SI"></transition>
+		<transition to="H035_registrarResolucion" name="NO"></transition>
+	</decision>
+
+	<state name="H035_BPMtramiteDemandaIncidental">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="haya_tramiteDemandaIncidental"></transition>
+	</state>
+
+	<state name="H035_registrarResolucion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H035_resolucionFirme" name="avanzaBPM"></transition>
+		<transition to="H035_registrarOposicion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_registrarResolucion" name="activarAlerta"></transition>
+	</state>
+
+	<state name="H035_resolucionFirme">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H035_registrarResolucion" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H035_resolucionFirme" name="activarAlerta"></transition>
+		<transition to="Decision" name="avanzaBPM"></transition>
+	</state>
+
+	<node name="Decision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+      	<transition to="Fin"></transition>
+	</node>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

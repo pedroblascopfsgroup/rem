@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean id="nmbCommonProjectContext" parent="nmbCommonProjectContextDefault">
+		<property name="tiposProcedimientosAdjudicados">
+			<list>
+				<value>H005</value>
+				<value>H008</value>
+				<value>H015</value>
+				<value>H040</value>
+			</list>
+		</property>
+		<property name="mapaTiposPrc">
+			<map>
+				<entry key="ADJUDICACION" value="H005"/>
+				<entry key="SANEAMIENTO" value="H008"/>
+				<entry key="POSESION" value="H015"/>
+				<entry key="GESTION-LLAVES" value="H040"/>
+			</map>
+		</property>
+	</bean>	
+	<bean id="coreProjectContext" parent="coreProjectContextDefault">
+		<property name="tiposProcedimientosAdjudicados">
+			<list>
+				<value>H005</value>
+				<value>H008</value>
+				<value>H015</value>
+				<value>H040</value>
+			</list>
+		</property>
+	</bean>	
+</beans>	

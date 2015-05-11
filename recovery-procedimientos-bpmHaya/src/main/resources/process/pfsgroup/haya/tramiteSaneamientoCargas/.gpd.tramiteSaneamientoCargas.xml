@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteSaneamientoCargas" width="1240" height="1241">
+  <node name="Inicio" x="290" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H008_RevisarEstadoCargas" x="240" y="110" width="240" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="31" y="4"/>
+      <bendpoint w1="-282" h1="0" w2="0" h2="-101"/>
+    </edge>
+  </node>
+  <node name="H008_RevisarEstadoCargasDecision" x="242" y="227" width="240" height="36">
+    <edge>
+      <label x="7" y="32"/>
+      <bendpoint w1="-172" h1="2" w2="0" h2="-128"/>
+    </edge>
+    <edge>
+      <label x="6" y="-361"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="403" h1="-1" w2="-4" h2="-132"/>
+    </edge>
+  </node>
+  <node name="H008_RegistrarPresentacionInscripcion" x="62" y="357" width="256" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-172" h1="-1" w2="-60" h2="145"/>
+      <bendpoint w1="-172" h1="-67" w2="-60" h2="79"/>
+    </edge>
+  </node>
+  <node name="H008_PropuestaCancelacionCargas" x="632" y="358" width="275" height="36">
+    <edge>
+      <label x="9" y="32"/>
+      <bendpoint w1="-191" h1="0" w2="-2" h2="-116"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="364" h1="1" w2="-6" h2="-223"/>
+    </edge>
+  </node>
+  <node name="H008_RegInsCancelacionCargasReg" x="71" y="473" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="99" h1="-60" w2="102" h2="56"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="4" y="-379"/>
+      <bendpoint w1="3" h1="464" w2="-165" h2="-115"/>
+    </edge>
+    <edge>
+      <label x="-17" y="-31"/>
+      <bendpoint w1="-204" h1="0" w2="-89" h2="262"/>
+      <bendpoint w1="-204" h1="-200" w2="-89" h2="62"/>
+    </edge>
+  </node>
+  <node name="H008_RevisarPropuestaCancelacionCargas" x="634" y="556" width="277" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="335" h1="-1" w2="-38" h2="-119"/>
+    </edge>
+  </node>
+  <node name="H008_LiquidarCargas" x="669" y="679" width="205" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="109" h1="-59" w2="108" h2="64"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H008_RegInsCancelacionCargasEconomicas" x="628" y="793" width="288" height="36">
+    <edge>
+      <label x="12" y="23"/>
+      <bendpoint w1="-219" h1="1" w2="-4" h2="-108"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="115" h1="-54" w2="116" h2="60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="266" h1="1" w2="-107" h2="120"/>
+    </edge>
+  </node>
+  <node name="H008_RegInsCancelacionCargasEconomicasDecision" x="387" y="902" width="341" height="36">
+    <edge>
+      <label x="-77" y="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H008_RegistrarPresentacionInscripcionEco" x="644" y="1029" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="144" h1="-113" w2="155" h2="123"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="271" h1="-7" w2="-91" h2="348"/>
+    </edge>
+  </node>
+  <node name="H008_RegInsCancelacionCargasRegEco" x="748" y="1140" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="70" h1="-70" w2="172" h2="41"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="200" y="-19"/>
+      <bendpoint w1="-428" h1="-1" w2="96" h2="87"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="205" h1="-5" w2="-55" h2="461"/>
+    </edge>
+  </node>
+  <node name="Decision1" x="295" y="1052" width="132" height="36">
+    <edge>
+      <label x="378" y="3"/>
+      <bendpoint w1="-1" h1="151" w2="-785" h2="529"/>
+      <bendpoint w1="780" h1="149" w2="-4" h2="527"/>
+    </edge>
+  </node>
+  <node name="H008_BPMTramiteElevarPropSarebAdjudicados" x="419" y="460" width="321" height="36">
+    <edge>
+      <label x="-121" y="-69"/>
+      <bendpoint w1="1" h1="97" w2="-192" h2="1"/>
+    </edge>
+  </node>
+  <node name="Fin" x="12" y="211" width="132" height="36"/>
+  <node name="Fin2" x="1079" y="674" width="132" height="36"/>
+</root-container>

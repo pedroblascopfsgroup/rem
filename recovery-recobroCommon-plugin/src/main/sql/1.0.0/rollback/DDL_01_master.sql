@@ -1,0 +1,6 @@
+
+drop sequence s_DD_MOB_MOTIVOS_BAJA;
+
+drop table DD_MOB_MOTIVOS_BAJA;
+
+delete from DD_STA_SUBTIPO_TAREA_BASE where DD_STA_CODIGO in ('REC_MARCADO_EXP', 'REC_META_VOL_OK', 'REC_META_VOL_KO');

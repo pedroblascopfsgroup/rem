@@ -1,0 +1,21 @@
+button.icon_expand {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url('../../../../img/plugin/recobroWeb/expand.gif');
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+}
+
+button.icon_collapse {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: url('../../../../img/plugin/recobroWeb/collapse.gif');
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+} 

@@ -1,0 +1,7 @@
+------------ Version 1.9.0 ---------------------
+NOTA: Existen scripts SQL a ejecutar en src/main/sql/1.9.0/default
+
+* Bruno Anglés, se añade la clase nueve es.pfsgroup.recovery.recobroCommon.procesosFacturacion.model.RecobroCobroPreprocesado
+* Bruno Anglés, se añade el campo CPR_ID a la tabla RDF_RECOBRO_DETALLE_FACTURA
+* Bruno Anglés, se añade la propiedad es.pfsgroup.recovery.recobroCommon.procesosFacturacion.model.RecobroDetalleFacturacion.cobroPagoPreprocesado
+* Bruno Anglés, al generar la excel de facturación se usa la columna CPR_COBROS_PAGOS_RECOBRO.FECHA_INI_IRREGU para sacar la Fecha Inicio Posición Irregular

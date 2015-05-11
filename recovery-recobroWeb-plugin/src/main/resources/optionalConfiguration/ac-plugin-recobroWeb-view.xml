@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean p:entity="tabs.expediente.fast" p:name="cabeceraExpediente"  p:order="100"
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/tabs/cabeceraRecobro.jsp" 
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+    
+    <bean p:entity="tabs.expediente.fast" p:name="tabExpedienteRecobro"  p:order="1150" 
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/tabs/ciclosRecobroExpediente.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_CICLORECOBRO_EXPEDIENTE"/>
+    
+    <bean p:entity="tabs.expediente.fast" p:name="cicloRecobroPersonas"  p:order="250" 
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/tabs/ciclosRecobroPersonasExpediente.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_CICLORECOBRO_PERS_EXPEDIENTE"/>
+	
+	<bean p:entity="tabs.contrato.fast" p:name="tabContratoCicloRecobro"  p:order="2000" 
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/contratos/tabs/accionesRecobro.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_CICLORECOBRO_CONTRATO"/>
+		
+	<bean p:entity="tabs.contrato.fast" p:name="tabAdecuaciones"  p:order="2100" 
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/contratos/tabs/adecuaciones.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_CICLORECOBRO_CONTRATO"/>	
+		
+	<bean p:entity="tabs.expediente.fast" p:name="cicloRecobroContrato"  p:order="350" 
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/tabs/ciclosRecobroContratosExpediente.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_CICLORECOBRO_CNT_EXPEDIENTE"/>
+	
+	<bean p:entity="tabs.expediente.fast" p:name="acuerdoExpediente"  p:order="370" 
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/tabs/acuerdoExpediente.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_ACUERDO_EXPEDIENTE" />
+	
+		
+	<bean p:entity="tabs.expediente.fast" p:name="accionesExpediente" p:order="400" 
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/accionesExjud/tabs/tabAcciones.jsp" p:priority="0" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="TAB_ACCIONES_EXP" />
+	
+	<bean p:entity="plugin.mejoras.web.expedientes.busqueda.tabs" p:name="filtroRecobroExpediente"
+		p:order="300"
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/busqueda/tabRecobro.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />    
+	
+	<bean p:entity="plugin.mejoras.web.expedientes.busqueda.tabs" p:name="filtroIncidenciasExpediente"
+		p:order="400"
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/busqueda/tabIncidencias.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> 
+		
+	<bean p:entity="plugin.mejoras.web.expedientes.busqueda.tabs" p:name="filtroAcuerdosExpediente"
+		p:order="500"
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/busqueda/tabAcuerdos.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> 		
+		
+		<!-- acciones extrajudiciales del cliente -->
+		
+	<bean p:entity="tabs.cliente.fast" p:name="accionesExtrajudicilesCliente" p:order="1200"
+		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/cliente/tabs/accionesRecobro.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_CICLORECOBRO_PERSONA"/>
+		
+		
+		<!-- librerias de ext para los grids desplegables -->
+		
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsColumnHeaderGroup" p:order="1"
+		p:fileName="../js/plugin/recobroWeb/ux/ColumnHeaderGroup.js" p:priority="0"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+		
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries"
+		p:name="jsRowExpander" p:order="2" p:fileName="../js/plugin/recobroWeb/ux/RowExpander.js"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+
+	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.cssStyles"
+		p:name="cssRecobroWeb" p:order="1"
+		p:fileName="../js/plugin/recobroWeb/css/recobroWeb.css"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	
+</beans>

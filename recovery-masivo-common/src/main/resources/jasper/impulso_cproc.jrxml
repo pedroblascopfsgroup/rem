@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="impulso_cproc" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="75"/>
+	<property name="net.sf.jasperreports.export.docx.flexible.row.height" value="true"/>
+	<parameter name="impulso_casoNova" class="java.lang.String"/>
+	<parameter name="impulso_encabezado2" class="java.lang.String"/>
+	<parameter name="impulso_introproc" class="java.lang.String"/>
+	<parameter name="impulso_cuerpo" class="java.lang.String"/>
+	<parameter name="impulso_prefirma" class="java.lang.String"/>
+	<parameter name="impulso_firmaprocurador" class="java.lang.String"/>
+	<parameter name="impulso_encabezado1" class="java.lang.String"/>
+	<parameter name="firmaAbogado" class="java.lang.String"/>
+	<parameter name="direccionAbogado" class="java.lang.String"/>
+	<parameter name="logoFirmaAbogado" class="java.io.InputStream"/>
+	<parameter name="encabFirmaProcurador" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="450" splitType="Stretch">
+			<textField>
+				<reportElement uuid="43da2fd8-b984-48fd-9875-6e2a06462b3e" x="0" y="129" width="515" height="20"/>
+				<textElement textAlignment="Center" markup="html">
+					<font isBold="true" isItalic="false" isUnderline="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_encabezado2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="8ac12988-4ee3-47d6-b8c6-69bf34aae1f5" isPrintRepeatedValues="false" x="0" y="173" width="515" height="17"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_introproc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="7cf85ed2-c223-4358-8f9e-7e7e6630d872" x="0" y="246" width="515" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_cuerpo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="bdeed099-4f8a-421f-aef9-cb64b1ababf1" x="-1" y="291" width="515" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_prefirma}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cec8ff86-a8e7-4b80-9a1b-b0d92dc450b4" positionType="Float" x="258" y="380" width="257" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_firmaprocurador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ecc70878-8a10-45e2-99c6-e97a7bb2fed2" x="334" y="40" width="180" height="20" forecolor="#666666"/>
+				<textElement textAlignment="Right" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isBold="true" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_casoNova}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="49e78eb5-304f-42c9-aa72-cabe5a5bc62b" x="0" y="79" width="515" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isBold="true" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_encabezado1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9c64f937-2277-4ba6-bcf6-27890b76f31f" positionType="Float" x="258" y="341" width="256" height="19"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{encabFirmaProcurador}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7aef0194-5099-4bfb-97c0-56bf688c77e6" positionType="Float" x="3" y="341" width="255" height="19"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{firmaAbogado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7b63dbbb-ec4d-48dc-9d38-96bcd6cc3c1b" positionType="Float" x="3" y="400" width="255" height="30"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="9" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{direccionAbogado}]]></textFieldExpression>
+			</textField>
+			<image onErrorType="Blank">
+				<reportElement uuid="3040672d-a18c-4aaf-aa23-86aafa6f31b2" positionType="Float" x="15" y="360" width="123" height="40"/>
+				<imageExpression><![CDATA[$P{logoFirmaAbogado}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

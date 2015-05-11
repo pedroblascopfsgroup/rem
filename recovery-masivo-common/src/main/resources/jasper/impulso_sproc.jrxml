@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="impulso_sproc" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.docx.flexible.row.height" value="true"/>
+	<parameter name="impulso_casoNova" class="java.lang.String"/>
+	<parameter name="impulso_encabezado2" class="java.lang.String"/>
+	<parameter name="impulso_introrepre" class="java.lang.String"/>
+	<parameter name="impulso_cuerpo" class="java.lang.String"/>
+	<parameter name="impulso_prefirma" class="java.lang.String"/>
+	<parameter name="impulso_firmarepresentante" class="java.lang.String"/>
+	<parameter name="impulso_encabezado1" class="java.lang.String"/>
+	<parameter name="direccionFirmaRepre" class="java.io.InputStream"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="434" splitType="Stretch">
+			<textField>
+				<reportElement uuid="43da2fd8-b984-48fd-9875-6e2a06462b3e" x="0" y="129" width="515" height="20"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isBold="true" isItalic="false" isUnderline="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_encabezado2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="8ac12988-4ee3-47d6-b8c6-69bf34aae1f5" isPrintRepeatedValues="false" x="0" y="173" width="515" height="17"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_introrepre}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="7cf85ed2-c223-4358-8f9e-7e7e6630d872" x="0" y="246" width="515" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_cuerpo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="bdeed099-4f8a-421f-aef9-cb64b1ababf1" positionType="Float" x="0" y="301" width="515" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_prefirma}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cec8ff86-a8e7-4b80-9a1b-b0d92dc450b4" positionType="Float" x="0" y="370" width="515" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_firmarepresentante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ecc70878-8a10-45e2-99c6-e97a7bb2fed2" x="333" y="40" width="180" height="20" forecolor="#666666"/>
+				<textElement textAlignment="Right" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_casoNova}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="49e78eb5-304f-42c9-aa72-cabe5a5bc62b" x="0" y="79" width="515" height="20"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Microsoft Sans Serif" size="10" isPdfEmbedded="true" isBold="true" />
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{impulso_encabezado1}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RealSize" onErrorType="Blank">
+				<reportElement uuid="bb8b1450-4e50-46da-b5ee-784c42b66066" positionType="Float" x="58" y="390" width="101" height="38"/>
+				<imageExpression><![CDATA[$P{direccionFirmaRepre}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://www.springframework.org/schema/tx
+      					http://www.springframework.org/schema/tx/spring-tx.xsd
+      					http://www.springframework.org/schema/util 
+      					http://www.springframework.org/schema/util/spring-util-2.5.xsd
+      					http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	<!-- more bean definitions go here -->
+ 	<context:annotation-config />
+	
+	<context:component-scan  base-package="es.pfsgroup.plugin.recovery.masivo"/>
+	
+<!-- 	
+	<bean id="recoveryConfigurationPrevisionManager" class="es.pfsgroup.plugin.recovery.previsiones.impl.manager.RecoveryConfigurationPrevisionManager" />
+-->	
+<!-- 	    <bean id="proxyFactory" class="es.pfsgroup.commons.utils.api.ApiProxyFactory" /> -->
+<!--      <bean id="proxyFactory" name="proxyFactory" class="org.mockito.Mockito" factory-method="mock"  >
+		<constructor-arg type="java.lang.Class" value="es.pfsgroup.commons.utils.api.ApiProxyFactory" />
+	</bean>	     -->
+
+  	<!-- <bean id="executor" class="es.capgemini.devon.bo.DefaultExecutor" />  -->
+<!-- 	
+  	<bean id="mockExecutor" class="util.MockitoFactoryBean">
+        <constructor-arg value="es.capgemini.devon.bo.Executor" />
+    </bean>
+ -->    
+<!--	
+	<bean id="recoveryPrevisionesController" class="es.pfsgroup.plugin.recovery.previsiones.impl.web.RecoveryPrevisionesController" />
+	
+	<bean id="proxyFactory" class="es.pfsgroup.commons.utils.api.ApiProxyFactory" />
+	
+	<bean id="executor" name="executor" class="util.MocksFactory">
+        <property name="type" value="es.capgemini.devon.bo.Executor"/>
+    </bean>
+    
+	<bean id="recoveryConfigurationPrevisionApi" name="recoveryConfigurationPrevisionApi" class="util.MocksFactory">
+        <property name="type" value="es.pfsgroup.plugin.recovery.previsiones.api.manager.RecoveryConfigurationPrevisionApi"/>
+    </bean>   -->  
+    
+<!--   	<bean id="executor" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg 
+			type="java.lang.Class" 
+			value="es.capgemini.devon.bo.DefaultExecutor" />
+	</bean> -->
+
+<!--  	<bean id="executor" class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg 
+			type="java.lang.Class" 
+			value="es.capgemini.devon.bo.Executor" />
+	</bean>	 -->
+<!--	 
+     <bean id="proxyFactory" name="proxyFactory" class="org.mockito.Mockito" factory-method="mock"  >
+		<constructor-arg type="java.lang.Class" value="es.pfsgroup.commons.utils.api.ApiProxyFactory" />
+	</bean>
+
+     <bean id="recoveryConfigurationPrevisionApi" name="recoveryConfigurationPrevisionApi" class="org.mockito.Mockito" factory-method="mock"  >
+		<constructor-arg type="java.lang.Class" value="es.pfsgroup.plugin.recovery.previsiones.api.manager.RecoveryConfigurationPrevisionApi" />
+	</bean>	
+ 	 
+ 		<bean id="proxyFactory" class="es.pfsgroup.commons.utils.api.ApiProxyFactory" />
+		<bean id="recoveryPrevisionesController" class="es.pfsgroup.plugin.recovery.previsiones.impl.web.RecoveryPrevisionesController" /> -->
+	
+
+ 
+<!--  	<bean id="sessionFactory" parent="abstractSessionFactory">
+		
+			<property name="packagesToScan"> <list>
+			<value>com/test/**/model</value> </list> </property>
+		
+		<property name="annotatedClasses" ref="clasesAnotadas" />
+	</bean> -->
+ </beans>

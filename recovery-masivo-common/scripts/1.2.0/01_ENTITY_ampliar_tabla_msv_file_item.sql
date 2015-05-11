@@ -1,0 +1,10 @@
+-- añadir nueva columna a la tabla MSV_TMP_FILES para que guarde el tipo de documento adjunto
+
+ALTER TABLE MSV_TMP_FILES ADD(DD_TFA_ID NUMBER(16) );
+
+ALTER TABLE MSV_TMP_FILES ADD (
+  CONSTRAINT FK_MSV_FILE_TFA 
+ FOREIGN KEY (DD_TFA_ID) 
+ REFERENCES DD_TFA_FICHERO_ADJUNTO (DD_TFA_ID));
+ 
+ COMMIT;

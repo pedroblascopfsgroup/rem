@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<trabajos>
+	<Trabajo>
+		<descripcion>Proceso de generación y copia de impulsos automáticos</descripcion>
+		<estado>3</estado>
+<!-- Posiblemente haya que cambiar el id del trabajo-->
+		<id>4</id>
+		<subtrabajos>
+			<id>10</id>
+			<descripcion>Generación de impulsos automáticos</descripcion>
+			<estado>3</estado>
+			<rutaScript>$DIR/procesarImpulsosAutomaticos.sh</rutaScript>
+		    <estadoOk>0</estadoOk>
+		    <estadoError>1</estadoError>
+		    <estadoNoEjecutado>2</estadoNoEjecutado>
+			<tiempoEspera>300</tiempoEspera>
+			<numeroReintentos>4</numeroReintentos>
+		</subtrabajos>
+		<subtrabajos>
+			<id>20</id>
+			<descripcion>Copia por FTP del fichero de rechazos</descripcion>
+			<estado>3</estado>
+			<rutaScript>$DIR/ftp.upload.impulsosRechazos.sh</rutaScript>
+		    <estadoOk>0</estadoOk>
+		    <estadoError>1</estadoError>
+		    <estadoNoEjecutado>2</estadoNoEjecutado>
+			<tiempoEspera>300</tiempoEspera>
+			<numeroReintentos>4</numeroReintentos>
+		</subtrabajos>
+		<subtrabajos>
+			<id>30</id>
+			<descripcion>Copia por FTP de los escritos sin procurador</descripcion>
+			<estado>3</estado>
+			<rutaScript>$DIR/ftp.upload.impulsosSinProc.sh</rutaScript>
+		    <estadoOk>0</estadoOk>
+		    <estadoError>1</estadoError>
+		    <estadoNoEjecutado>2</estadoNoEjecutado>
+			<tiempoEspera>300</tiempoEspera>
+			<numeroReintentos>4</numeroReintentos>
+		</subtrabajos>
+		<subtrabajos>
+			<id>40</id>
+			<descripcion>Copia por FTP de los escritos con procurador</descripcion>
+			<estado>3</estado>
+			<rutaScript>$DIR/ftp.upload.impulsosConProc.sh</rutaScript>
+		    <estadoOk>0</estadoOk>
+		    <estadoError>1</estadoError>
+		    <estadoNoEjecutado>2</estadoNoEjecutado>
+			<tiempoEspera>300</tiempoEspera>
+			<numeroReintentos>4</numeroReintentos>
+		</subtrabajos>
+	</Trabajo>
+</trabajos>

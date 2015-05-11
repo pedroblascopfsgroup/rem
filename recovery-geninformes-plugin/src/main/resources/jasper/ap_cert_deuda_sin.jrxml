@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ap_cert_deuda_sin" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f9d9c98-ef90-4951-9c7c-762743430c71">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="13"/>
+	<parameter name="encabezado" class="java.lang.String"/>
+	<parameter name="parrafo1" class="java.lang.String"/>
+	<parameter name="parrafo2" class="java.lang.String"/>
+	<parameter name="parrafo3" class="java.lang.String"/>
+	<parameter name="parrafo4" class="java.lang.String"/>
+	<parameter name="prefirma" class="java.lang.String"/>
+	<parameter name="firma" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="334" splitType="Stretch">
+			<textField>
+				<reportElement uuid="43da2fd8-b984-48fd-9875-6e2a06462b3e" x="0" y="3" width="555" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{encabezado}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="8ac12988-4ee3-47d6-b8c6-69bf34aae1f5" isPrintRepeatedValues="false" x="0" y="47" width="555" height="17"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{parrafo1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="7cf85ed2-c223-4358-8f9e-7e7e6630d872" x="0" y="95" width="555" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{parrafo2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="bdca20a4-3e31-4a60-aec7-495994e1be40" x="0" y="128" width="555" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{parrafo3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="0bd743fd-989f-4a7d-bebb-b05424b101ab" x="0" y="161" width="555" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{parrafo4}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="bdeed099-4f8a-421f-aef9-cb64b1ababf1" x="0" y="197" width="555" height="20"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prefirma}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="cec8ff86-a8e7-4b80-9a1b-b0d92dc450b4" x="0" y="293" width="555" height="20"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA[$P{firma}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

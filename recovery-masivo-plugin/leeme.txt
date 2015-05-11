@@ -1,0 +1,11 @@
+Configuración del Controlador asíncrono.
+
+es necesario incluir una referencia al fichero js en el main.jsp de la aplicación. Actulamente es el fichero 
+/pfs/WEB-INF/jsp/plugin/mejoras/main/main.jsp
+
+
+Código a añadir: <script type="text/javascript" src="../js/plugin/masivo/ControladorAsincrono.js"></script>
+				 <script type="text/javascript" src="../js/plugin/masivo/FactoriaFormularios.js"></script>
+				 
+Updated: ya no es necesario modificar este fichero porque ahora los imports a ficheros javascript
+ se hacen dinámicamente.

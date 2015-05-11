@@ -1,0 +1,1 @@
+update DD_OPM_OPERACION_MASIVA d set DD_OPM_VALIDACION_FORMATO = 'n*,s*,n*,s,s,n*,b*,s,b*,b*' where DD_OPM_CODIGO = 'ALO';

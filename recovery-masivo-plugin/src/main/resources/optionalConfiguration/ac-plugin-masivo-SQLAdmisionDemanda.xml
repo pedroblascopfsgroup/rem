@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+	
+<bean class="es.pfsgroup.plugin.recovery.masivo.bvfactory.impl.validators.querys.MSVFactoriaQuerysSQLAdmisionDemanda">
+	<property name="configValidacionNumContrato">
+		<map>			
+			<entry key="0" value-ref="MSVSQLOk"/>
+			<entry key="1" value-ref="MSVSQLNoCnt"/>
+			<entry key="2" value-ref="MSVSQLNoASU"/>
+			<entry key="3" value-ref="MSVSQLNoPRC"/>
+			<entry key="4" value-ref="MSVSQLPRCtipo"/>
+		</map>
+	</property>
+  	<property name="sqlValidacionNumContrato"><value>
+  		<![CDATA[SELECT CASE
+          WHEN (
+                   SELECT COUNT(cnt2.cnt_id)
+                     FROM cnt_contratos cnt2
+                    WHERE cnt2.cnt_contrato = VALUETOKEN
+                          AND cnt2.borrado = 0) = 0
+             THEN 1                         /*Que exista el contrato*/
+			WHEN (
+                   SELECT count(asu2.asu_id)
+					  FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+					       ON cnt2.cnt_id = cex2.cnt_id
+					       JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+					       JOIN prc_procedimientos prc2 ON prc_cex.prc_id = prc2.prc_id
+					       JOIN asu_asuntos asu2 ON asu2.asu_id = prc2.asu_id
+					 WHERE cnt2.cnt_contrato = VALUETOKEN
+					   AND asu2.borrado = 0
+					   AND asu2.dd_eas_id NOT IN
+					          ((SELECT eas5.dd_eas_id
+					              FROM linmaster.dd_eas_estado_asuntos eas5
+					             WHERE eas5.dd_eas_codigo = '05'),
+					           (SELECT eas6.dd_eas_id
+					              FROM linmaster.dd_eas_estado_asuntos eas6
+					             WHERE eas6.dd_eas_codigo = '06')
+					          )) = 0
+             THEN 2                    /*Que exista el asunto y este activo*/
+          WHEN (
+                   SELECT COUNT(cnt2.cnt_id)
+                     FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                          ON cnt2.cnt_id = cex2.cnt_id
+                          INNER JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                          INNER JOIN prc_procedimientos prc2 
+                          ON prc_cex.prc_id = prc2.prc_id AND prc2.borrado = 0
+                    WHERE cnt2.cnt_contrato = VALUETOKEN
+                ) = 0
+             THEN 3                    /*Que exista el procedimiento*/
+          WHEN (
+                 SELECT COUNT(cnt2.cnt_id)
+                   FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+                        ON cnt2.cnt_id = cex2.cnt_id
+                        INNER JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+                        INNER JOIN prc_procedimientos prc2
+                        ON prc_cex.prc_id = prc2.prc_id
+                        INNER JOIN dd_tpo_tipo_procedimiento tpo2
+                        ON prc2.dd_tpo_id = tpo2.dd_tpo_id AND tpo2.dd_tpo_codigo IN('P70', 'P72', 'P76', 'P79', 'P80')
+                  WHERE cnt2.cnt_contrato = VALUETOKEN
+                 ) = 0
+             THEN 4                   /*Que el procedimiento sea el correcto*/
+          ELSE 0
+       END RESULT
+  FROM DUAL]]>
+  	</value></property>
+  </bean> 
+ 
+</beans>	
+

@@ -1,0 +1,80 @@
+CREATE TABLE DFN_DIRECCIONES_FECHA_NOT
+(
+  DFN_ID               NUMBER,
+  DFN_PRC_ID           NUMBER,
+  DFN_PER_ID           NUMBER,
+  DFN_COD_DIRECCION    NUMBER,
+  DFN_EXCLUIDO         NUMBER(1)				DEFAULT 0,
+  DFN_TIPO_FECHA       VARCHAR2(15 BYTE),
+  DFN_FECHA_SOLICITUD  DATE,
+  DFN_FECHA_RESULTADO  DATE,
+  DFN_RESULTADO        VARCHAR2(15 BYTE),
+  USUARIOCREAR         VARCHAR2(10 BYTE)        NOT NULL,
+  FECHACREAR           DATE                     NOT NULL,
+  USUARIOBORRAR        VARCHAR2(10 BYTE),
+  FECHABORRAR          DATE,
+  BORRADO              NUMBER(1)                DEFAULT 0,
+  VERSION              INTEGER                  DEFAULT 0                     NOT NULL,
+  USUARIOMODIFICAR     VARCHAR2(12 BYTE),
+  FECHAMODIFICAR       DATE
+)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX DFN_DIRECCIONES_FECHA_NOTIF_PK ON DFN_DIRECCIONES_FECHA_NOT
+(DFN_ID)
+LOGGING
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE DFN_DIRECCIONES_FECHA_NOT ADD (
+  CONSTRAINT DFN_DIRECCIONES_FECHA_NOTIF_PK
+ PRIMARY KEY
+ (DFN_ID)
+    USING INDEX 
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+               
+               
+CREATE SEQUENCE LIN001.S_DFN_DIRECCIONES_FECHA_NOT
+  START WITH 1
+  MAXVALUE 999999999999999999999999999
+  MINVALUE 1
+  NOCYCLE
+  CACHE 100
+  NOORDER;               

@@ -1,0 +1,31 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1030" measuredH="341" mockupW="1030" mockupH="341">
+  <controls>
+    <control controlID="75" controlTypeID="com.balsamiq.mockups::TitleWindow" x="0" y="0" w="1030" h="341" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Notificaci%F3n%20demandados</text>
+      </controlProperties>
+    </control>
+    <control controlID="76" controlTypeID="com.balsamiq.mockups::DataGrid" x="6" y="41" w="999" h="186" measuredW="1086" measuredH="111" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>square</borderStyle>
+        <hasHeader>true</hasHeader>
+        <hLines>true</hLines>
+        <text>Domicilio%2CNotificacion%2C%20Tipo%2C%20Estado%2C%20F.%20Requerimiento%20Positivo%2C%20F.%20requerimiento%20Negativo%2C%20F.%20solicitud%20averiguacion%2C%20F.%20resultado%20averiguacion%2C%20H.Nocturno%0ADirecci%F3n%20domicilio%201%2C%20Si%2C%20Principal%2C%20Correcto%2C%20%2C%20%2C%20%2C%20%2CNo%0ADirecci%F3n%20domicilio%202%2C%20No%2C%20S.%20residencia%2C%20Correcto%2C%20%2C%20%2C%20%2C%20%2CSi%0ADirecci%F3n%20domicilio%203%2C%20No%2C%20R.%20vacaciones%2C%20Err%F3nea%2C%20%2C%20%2C%20%2C%20%2CNo</text>
+        <vLines>true</vLines>
+      </controlProperties>
+    </control>
+    <control controlID="77" controlTypeID="com.balsamiq.mockups::Label" x="251" y="79" w="356" h="-1" measuredW="233" measuredH="98" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <size>40</size>
+        <state>disabled</state>
+        <text>Grid%20editable</text>
+        <textOrientation>slanted</textOrientation>
+      </controlProperties>
+    </control>
+    <control controlID="78" controlTypeID="com.balsamiq.mockups::Button" x="939" y="259" w="-1" h="-1" measuredW="61" measuredH="27" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cerrar</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

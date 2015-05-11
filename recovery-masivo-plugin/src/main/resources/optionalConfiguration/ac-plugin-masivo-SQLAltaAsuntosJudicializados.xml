@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+	
+<bean class="es.pfsgroup.plugin.recovery.masivo.bvfactory.impl.validators.querys.MSVFactoriaQuerysSQLValidarAltaAsuntosJudicializados" init-method="init">
+	<property name="configValidacion">
+		<map>			
+			<entry key="0" value-ref="MSVSQLOk"/>
+			<entry key="1" value-ref="MSVSQLNoCnt"/>
+			<entry key="2" value-ref="MSVSQLNoPersonas"/>
+			<entry key="3" value-ref="MSVSQLExisteAsunto"/>
+			<entry key="4" value-ref="MSVSQLExisteCntPendiente"/>
+			<entry key="21" value-ref="MSVSQLNoLetrado"/>
+			<entry key="31" value-ref="MSVSQLNoGrupoGestores"/>
+			<entry key="41" value-ref="MSVSQLNoTipoProcedimiento"/>
+			<entry key="51" value-ref="MSVSQLNoDespacho"/>
+			<entry key="61" value-ref="MSVSQLNoJuzgado"/>
+			<entry key="71" value-ref="MSVSQLNoPlaza"/>
+			<entry key="81" value-ref="MSVSQLNoProcurador"/>
+			<entry key="91" value-ref="MSVSQLNoSituacionProcesal"/>
+		</map>
+	</property>
+	<property name="sqlValidacion">
+		<map>
+			<entry>
+				<key><value>N_CASO</value></key>
+				<value>
+				<![CDATA[SELECT CASE
+				          WHEN (
+				                   SELECT COUNT(cnt2.cnt_id)
+				                     FROM cnt_contratos cnt2
+				                    WHERE cnt2.cnt_contrato = VALUETOKEN
+				                          AND cnt2.borrado = 0) = 0
+				             THEN 1                         /*Que exista el contrato*/
+				          WHEN (SELECT COUNT (*)
+									  FROM cnt_contratos c, cpe_contratos_personas cpe, per_personas per
+									 		WHERE c.cnt_id = cpe.cnt_id
+									   			AND cpe.per_id = per.per_id
+									   			AND c.borrado = 0
+									   			AND cpe.borrado = 0
+									   			AND per.borrado = 0
+									   			AND c.cnt_contrato = VALUETOKEN) = 0
+				             THEN 2                         /*Que existan personas asociadas al contrato*/
+						WHEN(SELECT count(asu2.asu_id)
+							  FROM cnt_contratos cnt2 JOIN cex_contratos_expediente cex2
+							       ON cnt2.cnt_id = cex2.cnt_id
+							       JOIN prc_cex ON cex2.cex_id = prc_cex.cex_id
+							       JOIN prc_procedimientos prc2 ON prc_cex.prc_id = prc2.prc_id
+							       JOIN asu_asuntos asu2 ON asu2.asu_id = prc2.asu_id
+							 WHERE cnt2.cnt_contrato = VALUETOKEN
+							   AND asu2.borrado = 0
+							   AND asu2.dd_eas_id NOT IN
+							          ((SELECT eas5.dd_eas_id
+							              FROM linmaster.dd_eas_estado_asuntos eas5
+							             WHERE eas5.dd_eas_codigo = '05'),
+							           (SELECT eas6.dd_eas_id
+							              FROM linmaster.dd_eas_estado_asuntos eas6
+							             WHERE eas6.dd_eas_codigo = '06')
+							          )) <> 0
+				             THEN 3                         /*Que no exista el asunto*/	
+						WHEN(SELECT COUNT (l.n_caso)
+  								FROM lin_asuntos_nuevos l
+ 								WHERE l.n_caso = VALUETOKEN AND l.creado = 'N') <> 0
+				             THEN 4                         /*Que el número de caso no esté pendiente de crear*/	
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL]]>				
+				</value>
+			</entry>
+			<entry>
+				<key><value>LETRADO</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (select COUNT(*) from ${master.schema}.USU_USUARIOS where usu_username = 'VALUETOKEN') = 0
+				        then 21 /*Que exista el Letrado*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>				
+				</value>
+			</entry>
+			<entry>
+				<key><value>GRUPO_DE_GESTORES</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (select COUNT(*) from ${master.schema}.USU_USUARIOS where usu_username = 'VALUETOKEN') = 0
+				        then 31 /*Que exista el Grupo de gestores*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>
+			<entry>
+				<key><value>DESPACHO</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (SELECT count(*) FROM DES_DESPACHO_EXTERNO D where D.DES_ID = VALUETOKEN) = 0
+				        then 51 /*Que exista el Despacho*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>
+			<entry>
+				<key><value>JUZGADO</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (SELECT count(*) FROM DD_JUZ_JUZGADOS_PLAZA D where D.DD_JUZ_ID = VALUETOKEN) = 0
+				        then 61 /*Que exista el Juzgado*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>
+			<entry>
+				<key><value>PLAZA</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (SELECT count(*) FROM DD_PLA_PLAZAS D where D.DD_PLA_ID = VALUETOKEN) = 0
+				        then 71 /*Que exista la Plaza*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>
+			<entry>
+				<key><value>PROCURADOR</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (select COUNT(*) from ${master.schema}.USU_USUARIOS where usu_username = 'VALUETOKEN') = 0
+				        then 81 /*Que exista el Procurador*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>
+			<entry>
+				<key><value>SITUACION_PROCESAL</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          	WHEN (select COUNT(*) from TAP_TAREA_PROCEDIMIENTO where tap_id = 'VALUETOKEN') = 0
+				        then 91 /*Que exista la Situación Procesal*/
+				          ELSE 0
+				       END RESULT
+				  FROM DUAL				        
+				    ]]>					
+				</value>
+			</entry>
+		</map>
+	</property>	
+  </bean> 
+ 
+</beans>	
+

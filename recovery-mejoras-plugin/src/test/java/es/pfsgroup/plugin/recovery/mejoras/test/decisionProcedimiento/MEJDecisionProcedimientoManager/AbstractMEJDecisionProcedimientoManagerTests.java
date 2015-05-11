@@ -91,7 +91,7 @@ public abstract class AbstractMEJDecisionProcedimientoManagerTests {
         
         when(mockProxyFactory.proxy(TareaNotificacionApi.class)).thenReturn(mockTareaNotificacionManager);
 
-        new HibernateUtils().setApplicationContext(mockSpringApplicationContext);
+        //new HibernateUtils().setApplicationContext(mockSpringApplicationContext);
         when(mockSpringApplicationContext.getBean("hibernateUtils")).thenReturn(new DummyHibernateUtils());
         
         setUpChildTest();

@@ -1,0 +1,83 @@
+#### VERSIÓN 1.5.0_rc4 #####
+VICENTE: a continuación se detallan los cambios de la versión: 
+LPR-30: Ampliar la cancelación masiva de asuntos (motivo de cancelación y estado del asunto)
+Clases Afectadas:
+-MSVAsuntoManager.java --> Se implementa el metodo de la interfaz MSVAsuntoApi.java cancelaAsunto(Asunto asunto, Date fechaCancelacion)
+-MSVCancelaAsuColumns.java   --> Se añade la constante con el nombre de la nueva columna "Motivo cancelacion"
+-MSVAsuntoApi.java  --> Se define el metodo cancelaAsuntoConMotivo(Asunto asunto, Date fechaCancelacion,String motivoCancelacion);
+-MSVProcesoManager.java  --> Se modifica el metodo cancelaAsunto(Map<String, Object> map) para que en caso de recibir como motivo de la cancelacion "Archivado"
+							o "Inadmision" cancele el asunto con dicho estado
+
+#### VERSIÓN 1.5.0_rc3 #####
+GUILLEM: se modifica la constante que comprovaba el perfil de la LPR-123 porque no era el mismo que en la bbdd.
+
+#### VERSIÓN 1.5.0_rc2 #####
+GUILLEM: a continuación se detallan los cambio de la versión
+
+LPR-123 Añadir perfiles para que vean todos los ficheros procesados.
+Se añade un anueva función y se modifica una existente para que los perfiles de supervisor puedan ver todas las
+operaciones masivas.
+
+LPR-51 Impresión documentación: Si hay dos cartas Hello solo envía a impresión una de ellas
+Se añade una nueva columna a la tabla CEI_CONF_ENVIO_IMPRESION y objeto MSVConfEnvioImpresion para controlar la 
+impresion de todos los documentos del mismo tipo de docuemnto o el último subido. También se modifica la lógica 
+necesaria en el método envioImpresion de la clase MSVEnvioImpresionManager para implementar esta funcionalidad. 
+
+
+#### VERSIÓN 1.5.0-rc1 #####
+VICENTE: LPR-120 Limpieza y revisión del código de los plugins de Lindorff
+
+### VERSIÓN 1.3.0 #####
+/*Se han de ejecutar los scripts de la version*/
+ 
+DIANA: Modificación del alta de lotes de etj para que si un asunto tiene varios monitorios sólo cree un etj y no tantos
+	etj como monitorios tiene el asunto.
+DIANA: 
+	* Modificación de algunos escritos
+	*Arreglar el método MSVProcesoManager.buscaProcedimientoDelContrato para que no tenga en cuenta los asuntos cerrados. 
+	Ahora cogerá los procedimientos activos de todos los expedientes con asuntos activos y no cogerá el primer expediente 
+	activo que encuentre (como hacía antes)
+CARLOS: Modificado el proceso de generación de impulsos para que en caso de existir el excel y/o el zip no lo sobreescriba sino que lo combine.
+CARLOS: Modificado el proceso de carga de documentación para que no se incluya todo el proceso en una transacción y poder indicar más parámetros
+		Estos parámetros del devon son:
+			cargadocs.directorio=/lindorff_adj
+			cargadocs.rutaBackup=/lindorff_adj/backup
+			cargadocs.hacerBackup=false
+			cargadocs.borrarDocs=false
+			cargadocs.mascara=DOCUMENTACION-|workingcode|-|fecha|*.xls
+CARLOS: Se modifica el envio a impresión desde BO para que genere documentos como en el proceso masivo de impresión documentación
+			
+
+#### VERSION 1.2.0 #####
+DIANA: Modificar el adjuntar archivo desde procesado de resoluciones y tareas para que tengan tipología 
+PEDRO: Modificaciones en el procesado de Impulsos Automáticos
+PEDRO: Nueva funcionalidad de Enviar a Imprimir con posibilidad de packs de documentación.
+
+##### VERSION 1.1.0 ######
+DIANA:
+- Añadir valores para decisión de inputs para el nuevo trámite de costas cuando Lindorff es condenado a costas
+
+PEDRO:
+- ABM y Procesamiento de Impulsos Automáticos.
+
+Ejecutar los scripts de la carpeta scripts/1.1.0
+
+##### VERSION 1.0.0 ######
+
+- Nuevo proceso masivo: alta de cartera judicializada.
+
+PEDRO:
+- Incorporamos la posibilidad de realizar validaciones compuestas en ficheros Excel
+(basadas en los valores de varias columnas).
+
+PEDRO:
+* Incorporamos tratamiento de la operación masiva Enviar a Imprimir.
+
+DIANA:
+* Plugin creado para clases que tienen que estar tanto en el batch como en el web
+* Tanto el plugin de lindorff-batch, como el de lindorff-plugin deben depender de este
+* Hay que ejecutar el script vista_alta_lotes.sql para crear una vista que será una copia exacta de la tabla lin_alta_lotes
+
+PEDRO:
+- El tramite de Oposicion paraliza el resto de los trámites y al finalizar los desparaliza.
+

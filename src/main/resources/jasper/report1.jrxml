@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d9af2323-3dba-4180-8e80-4dab6c694a54">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="valor1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="125">
+			<textField>
+				<reportElement uuid="fecf1c34-e779-4a51-b63c-9080a700910e" x="48" y="64" width="360" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{valor1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="02b35276-a827-442f-874e-770283a51edf" positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="48" y="20" width="471" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA["Texto de resumen de la plantilla"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

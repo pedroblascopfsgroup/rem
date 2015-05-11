@@ -1,0 +1,44 @@
+#### VERSION 1.3.2 ####
+- [Diana] Modificar la funcion del informe que muestra si el escrito tiene un adjunto adicional, ya que no lo estaba calculando bien.
+
+#### VERSION 1.3.1 ####
+- [Pedro] Cambio para añadir flexibilidad a la forma de incluir prefijo al escrito según el asunto tenga o no procurador.
+
+#### VERSION 1.3.0 ####
+- [Diana] Nuevo dao para buscar información que necesitan algunos informes 
+
+- [Carlos] Nueva pantalla para generar los informes en base al procedimiento.
+	Es necesario ejecutar el script de creación de la tabla de relación entre el informe y el tipo proc. 
+	scripts/versiones/1.3.0/01-ENTITY-CreateTable_ITP_INFORMES_TPO.sql
+
+- [Pedro] Posibilidad de enviar un mapa de valores precalculados al generar el informe.
+
+#### VERSION 1.2.0 ####
+
+[pedro] Adaptamos el proceso de generación de escritos para que se pueda generar 
+	un segundo escrito adicional dependiente del primero (proceso recursivo)
+	si se dan las circunstancias adecuadas.
+	
+[manuel] Ahora se puede adjuntar un documento adicional en función de la entidad propietaria 
+	cuando se genera un escrito. Para ella hay que acutalizar el campo dd_informes.dd_documento_adicional a 1.
+	El diccionario dd_enp_entidades_propietarias contiene configuración adicional.
+
+	Ejecutar scripts de la carpeta scripts/vsrsiones/1.2.0
+
+#### VERSION 1.1.0_rc1 #### 13/06/2013
+
+- Se incorporan todas las implementaciones necesarias para el envío por email 
+de los escritos adjuntos recién generados (LIN-321).
+
+#### VERSION 1.1.0_rc3 #### 18/06/2013
+
+- Se incorpora funcionalidad de envío automático por email de los escritos generados.
+
+- Se incorpora la funcionalidad para generar (desde el botón de Asuntos) los escritos
+en formato editable (rtf).
+
+- Posibilidad de elegir el tipo de informe generado desde cualquier parte de la aplicacion (RTF o PDF)
+- Dependiendo de la configuración del informe se envia por mail
+- Posibilidad de adjuntar sin enviar por mail
+- Desde la configuración se indica el tipo de informe a adjuntar (DD_TFA_FICHERO_ADJUNTO)
+- Crea un informe de errores y se lo envia al gestor

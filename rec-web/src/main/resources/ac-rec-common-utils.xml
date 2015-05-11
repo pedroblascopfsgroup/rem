@@ -358,8 +358,8 @@
   </bean>  
 
   <bean id="mailManager" parent="mail.mailManager">
-    <!--property name="host" value="${mailManager.host}" /-->
-    <property name="host" value="smtp.gmail.com" />
+    <property name="host" value="${mailManager.host}"/>
+    <!-- <property name="host" value="smtp.gmail.com" />
     <property name="username" value="pedro.blasco@pfsgroup.es" />
     <property name="password" value="Pedrosco1969?" />
     <property name="javaMailProperties">
@@ -369,7 +369,7 @@
         <prop key="mail.smtp.auth">true</prop>
         <prop key="mail.smtp.starttls.enable">true</prop>
     </props>
-    </property>
+    </property>-->
   </bean>
     
   <import resource="classpath:ac-rec-common-rule-engine.xml"/>

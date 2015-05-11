@@ -22,6 +22,7 @@
 	<name>rec-web</name>
 
 	<dependencies>
+		
 		<!-- Inicio plugins de Recovery -->
 		<dependency>
 			<groupId>pfs</groupId>

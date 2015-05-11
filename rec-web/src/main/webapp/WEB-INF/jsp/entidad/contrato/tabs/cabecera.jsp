@@ -210,7 +210,7 @@
    }
    ,title:'<s:message code="contrato.consulta.tabcabecera.datosFinancieros" text="**Datos Financieros"/>'
    ,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375,style:'padding:10px; margin:10px'}
-      ,items : [{items:[moneda, posVivaNoVencida, posVivaVencida, dispuesto, limiteDescubierto, saldoPasivo,limiteInicial,limiteFinal,saldoExcedido,deudaExigible,deudaIrregular,ltvInicial,ltvFinal,riesgoGarantizado, saldoDudoso,extra1,provision,provisionPorcentaje]},
+      ,items : [{items:[moneda, posVivaNoVencida, posVivaVencida, dispuesto, limiteDescubierto, saldoPasivo,limiteInicial,limiteFinal,saldoExcedido,deudaExigible,deudaIrregular,ltvInicial,ltvFinal,riesgoGarantizado<sec:authorize ifNotGranted="OCULTAR_DATOS_CONTRATO">, saldoDudoso,extra1,provision,provisionPorcentaje</sec:authorize>]},
        {items:[entregasCuenta,interesesEntregasCuenta,pendienteDesembolso,sistemaAmort,tipoInteres,interesFijoVariable,importeCuota,periodicidadCuota,numCuotasVencidas,fechaInicioPVV,estadoFinanciero,estadoFinAnterior,garantia1,garantia2]}
       ]
   });

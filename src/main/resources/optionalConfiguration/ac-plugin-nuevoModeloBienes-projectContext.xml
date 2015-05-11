@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean id="nmbCommonProjectContextDefault"
+		class="es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl" abstract="true">
+		<property name="tareasStopValidarLotesSubasta">
+			<set>
+				<value>P401_ValidarPropuesta</value>
+				<value>P409_ValidarPropuesta</value>
+			</set>
+		</property>
+		<property name="nivelZonaOficinaGestoraEnInformes" value="10000000000006"/>
+		<property name="tiposProcedimientosAdjudicados">
+			<list>
+				<value>P413</value>
+				<value>P415</value>
+				<value>P416</value>
+				<value>P417</value>
+			</list>
+		</property>
+		<property name="mapaTiposPrc">
+			<map>
+				<entry key="ADJUDICACION" value="P413"/>
+				<entry key="SANEAMIENTO" value="P415"/>
+				<entry key="POSESION" value="P416"/>
+				<entry key="GESTION-LLAVES" value="P417"/>
+			</map>
+		</property>
+	</bean>	
+	
+	<!-- Implementaciones por defecto-->
+	<bean id="nmbCommonProjectContext" parent="nmbCommonProjectContextDefault"/>
+	 
+</beans>	

@@ -1,0 +1,5 @@
+### VERSION 2.0.0 #####
+
+Nace este plugin que es la parte común del nuevo modelo de bienes para incluir en el Batch
+
+esto es una prueba

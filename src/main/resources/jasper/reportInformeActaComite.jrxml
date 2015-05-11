@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportInformeActaComite" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="44ed4757-b755-40d1-a7c1-8b62a0a14fac">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="DSactaComite" uuid="1de2519b-a80b-4ca8-babe-1eb9acf2c487">
+		<field name="operacion" class="java.lang.String"/>
+		<field name="fechaSubasta" class="java.lang.String"/>
+		<field name="centroGestor" class="java.lang.String"/>
+		<field name="oficina" class="java.lang.String"/>
+		<field name="tipo" class="java.lang.Float"/>
+		<field name="activo" class="java.lang.String"/>
+		<field name="deudaJuzgado" class="java.lang.Float"/>
+		<field name="sinPostores" class="java.lang.Float"/>
+		<field name="conPostoresMin" class="java.lang.Float"/>
+		<field name="conPostoresMax" class="java.lang.Float"/>
+		<field name="tasacion" class="java.lang.Float"/>
+	</subDataset>
+	<subDataset name="Table Dataset 2" uuid="4e5399fc-ff1b-4e7c-8cc3-571a37de90a5"/>
+	<subDataset name="Table Dataset 3" uuid="af4390fc-3cf2-4773-bb0c-a2fd6af8bed3"/>
+	<field name="fecha" class="java.lang.String"/>
+	<field name="datosActaComite" class="java.util.List"/>
+	<variable name="FECHA_INFORME" class="java.lang.String"/>
+	<pageHeader>
+		<band height="67" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="cb489f4a-04a0-4b70-a36a-fd57fe575664" x="0" y="0" width="317" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROPUESTAS INTERVENCIÓN EN SUBASTA]]></text>
+			</staticText>
+			<image>
+				<reportElement uuid="ed42d8be-2901-46de-ad6f-f669d0d5ebbf" x="629" y="0" width="173" height="58"/>
+				<imageExpression><![CDATA["jasper/img/logoBankia.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement uuid="87dd82fe-174e-4465-8a8d-ca14d39d94ec" x="62" y="40" width="255" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4352c4d5-b6f5-4c43-922a-8415d01d762b" x="0" y="20" width="259" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTROL DE LITIGIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="64d3dc70-88f6-4e3e-914c-5cae4d363978" x="0" y="40" width="62" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMITÉ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<componentElement>
+				<reportElement uuid="46294848-4bd7-4316-a74e-551b1eda1c5c" key="table 2" style="table 2" x="0" y="0" width="802" height="82"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+					<datasetRun subDataset="DSactaComite" uuid="95c86172-0aee-4218-9c66-b7d151961ea6">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{datosActaComite})]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="98" uuid="98057f31-2cb7-48ed-9742-504dd643b78c">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="e16e5daf-170a-4597-96c7-8ead07ef8e41" x="0" y="0" width="98" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Operación]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="7b589d27-b267-417f-815c-c540141c544c" x="0" y="0" width="98" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{operacion}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="65" uuid="7ebbf342-23d2-4472-b784-4dcc1c551521">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="7cfeb390-ffd2-4f59-8924-305d6afaaa46" x="0" y="0" width="65" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Fecha
+subasta]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="aada62a8-f441-412d-a557-b99acd5e2f79" x="0" y="0" width="65" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fechaSubasta}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="114" uuid="598779c7-08bb-4a27-9937-33c83d4d83e2">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="fc4808f0-020f-4417-8ba0-7b03390f24cd" x="0" y="0" width="114" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Centro
+recuperaciones]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="bf80d29a-a3a7-4d0d-adff-2c32b3db94d5" x="0" y="0" width="114" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{centroGestor}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="78" uuid="d6b14a31-67fd-4157-b10c-dc3121cbb99d">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="aeb1be57-e524-4000-b940-dd30049bed50" x="0" y="0" width="75" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Oficina]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="238fa1a5-f82a-4ad2-8f8d-cd9144746f38" x="0" y="0" width="75" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{oficina}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="68" uuid="9f3450be-3cc8-46a4-93c5-fd65b4f6445c">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="c77e538e-e1fb-4543-bbd6-f3e64958602b" x="0" y="0" width="64" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Tipo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
+								<reportElement uuid="f2148c31-70e5-4dd8-bbc3-9a8e3e443799" x="0" y="0" width="64" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="65" uuid="9b693810-ce2a-42d7-9200-4314d73dcba5">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="bb4ee588-5c89-40d0-ab70-1169e0727f28" x="0" y="0" width="65" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Activo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField isBlankWhenNull="true">
+								<reportElement uuid="dbb2a148-f3ec-4bc8-9ffa-611e1ec9468a" x="0" y="0" width="65" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{activo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="61" uuid="4a689a5d-c76a-490f-89a5-ea45b8656671">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="3c34fc18-a847-45d8-8b7c-4c7259812d3c" x="0" y="0" width="61" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Deuda
+juzgado]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
+								<reportElement uuid="bdcdc972-2565-4252-ad75-3f34ce939836" x="0" y="0" width="61" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{deudaJuzgado}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="78" uuid="b7577cfb-1aa3-487f-af04-a5b4f3e57de4">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="81b832f1-cc1c-4d71-b552-d70b7d53b6bb" x="0" y="0" width="76" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Sin
+postores]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
+								<reportElement uuid="5a681e8d-3507-4d22-ac05-0bc47c9d4129" x="0" y="0" width="76" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{sinPostores}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="71" uuid="bd72dd49-1bf9-4641-ba07-128c28f8b179">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="14a42f1e-2115-4ac8-ba37-b0a0d6e2de4f" x="0" y="0" width="67" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Con Postores Mínimo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
+								<reportElement uuid="cd89f6e5-3fc7-4409-a48e-84f5f193ee82" x="0" y="0" width="67" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{conPostoresMin}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="69" uuid="845ae0f3-9f4c-438b-ab60-1cf93fc120ef">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="1182bfc9-da1e-489f-9593-387a48123c51" x="0" y="0" width="62" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Con Postores Máximo]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
+								<reportElement uuid="b575ab8e-016f-44f8-a0f9-ed2166c64d4a" x="0" y="0" width="62" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{conPostoresMax}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="63" uuid="35266445-e9f5-4d40-ac45-a5798ef9544f">
+						<jr:columnHeader style="table 2_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement uuid="4de39c18-53d6-4750-8c06-7c73979df9ac" x="0" y="0" width="50" height="30"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="8" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Tasación]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
+								<reportElement uuid="1c45f9ca-6c29-4cd7-872d-a078ba5128a6" x="0" y="0" width="50" height="20"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="8"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{tasacion}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</detail>
+	<summary>
+		<band height="50">
+			<staticText>
+				<reportElement uuid="067f480f-6f62-4e01-b3b6-fc5e354d9ac0" x="568" y="0" width="234" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Director/a Recuperaciones Riesgos Minorista]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="018d1a8a-5444-41f3-bc48-9ececa1edb3b" x="239" y="20" width="100" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fdo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f3658f5a-ee9e-4017-b5ff-eee5e5a421c6" x="239" y="0" width="179" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Director/a Dpto. Control de Litigio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9939919f-7220-4872-b31e-55f2a4272286" x="568" y="20" width="100" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fdo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ecd3ca31-35ad-4f4c-83a7-b7e8d4eb9f07" x="0" y="20" width="100" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fdo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="58c333c5-06b2-4667-81fa-ddd1f0ad7c99" x="0" y="0" width="172" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Técnico Control de Litigio]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

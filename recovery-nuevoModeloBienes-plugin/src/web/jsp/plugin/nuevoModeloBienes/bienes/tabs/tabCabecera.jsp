@@ -408,6 +408,7 @@
 		           width:300,
 		           buttons: Ext.MessageBox.OK
 		        });
+		        return false;
 			}
 			return true;			
 		}

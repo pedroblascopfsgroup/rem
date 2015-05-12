@@ -74,7 +74,6 @@ import org.apache.commons.logging.LogFactory;
 
 
 @Service("subastaManager")
-@Transactional(readOnly = false)
 public class SubastaManager implements SubastaApi {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -186,6 +185,7 @@ public class SubastaManager implements SubastaApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void agregarBienes(Long idSubasta, String[] arrBien,
 			String[] arrLotes) {
 		
@@ -232,6 +232,7 @@ public class SubastaManager implements SubastaApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void excluirBienes(Long idSubasta, String[] arrBien) {
 		Subasta subasta = subastaDao.get(idSubasta);		
 		if (!Checks.esNulo(subasta)) {	
@@ -264,6 +265,7 @@ public class SubastaManager implements SubastaApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void guardaInstruccionesLoteSubasta(GuardarInstruccionesDto dto) {
 		LoteSubasta loteSubasta = this.getLoteSubasta(Long.parseLong(dto.getIdLote()));
 		if (!Checks.esNulo(loteSubasta)) {
@@ -509,7 +511,6 @@ public class SubastaManager implements SubastaApi {
 	 */
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarSubastas")
-	@Transactional
 	public Page buscarSubastas(NMBDtoBuscarSubastas dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		List<Subasta> listaRetorno = new ArrayList<Subasta>();
@@ -536,7 +537,6 @@ public class SubastaManager implements SubastaApi {
 	 */
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarSubastasXLS")
-	@Transactional
 	public FileItem buscarSubastasXLS(NMBDtoBuscarSubastas dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		
@@ -558,7 +558,6 @@ public class SubastaManager implements SubastaApi {
 	
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaBankia")
-	@Transactional
 	public List<TareaProcedimiento> buscarTareasSubastaBankia() {
 
 		//TODO - Revisar este método para Haya		
@@ -574,7 +573,6 @@ public class SubastaManager implements SubastaApi {
 	
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaSareb")
-	@Transactional	
 	public List<TareaProcedimiento> buscarTareasSubastaSareb() {
 		
 		//TODO - Revisar este método para Haya		
@@ -956,6 +954,7 @@ public class SubastaManager implements SubastaApi {
 
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
+	@Transactional(readOnly = false)
 	public void guardaBatchAcuerdoCierre(BatchAcuerdoCierreDeuda autoCierreDeuda) {
 		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 	}
@@ -985,7 +984,6 @@ public class SubastaManager implements SubastaApi {
 	 */
 	@SuppressWarnings("unchecked")
 	@BusinessOperation(BO_NMB_SUBASTA_BUSCAR_LOTES_SUBASTA)
-	@Transactional
 	public Page buscarLotesSubastas(NMBDtoBuscarLotesSubastas dto) {
 		//Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		
@@ -1013,6 +1011,7 @@ public class SubastaManager implements SubastaApi {
 
 	@Override
 	@BusinessOperation(BO_NMB_SUBASTA_PASAR_LOTES_TRAS_PROPUESTO)
+	@Transactional(readOnly = false)
 	public void marcarLotesEstadoTrasPropuesta(Subasta subasta) {
 		List<LoteSubasta> lotes = subasta.getLotesSubasta();
 		// Las subastas DELEGADAS los lotes se aprueban directamente. 
@@ -1030,6 +1029,7 @@ public class SubastaManager implements SubastaApi {
 	}			
 	
 	@BusinessOperation(BO_NMB_SUBASTA_PASAR_LOTES_TRAS_VALIDAR)
+	@Transactional(readOnly = false)
 	public void marcarLotesEstadoTrasValidar(Subasta subasta, TareaExterna tarea, String decision) {
 		List<LoteSubasta> lotes = subasta.getLotesSubasta();
 		List<EXTTareaExternaValor> listadoTareaExternaValor = ((SubastaProcedimientoApi) proxyFactory.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tarea.getId());

@@ -10,18 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
+import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionHandlerDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -33,7 +38,7 @@ public class AdjudicacionHayaLeaveActionHandler extends
 	private static final long serialVersionUID = -5583230911255732281L;
 
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
+	
 	private final static String CODIGO_TIPO_GESTOR_ADMISION = "GAREO";
 
 	@Autowired
@@ -311,18 +316,25 @@ public class AdjudicacionHayaLeaveActionHandler extends
 								for (Usuario usu : lUsuario) {
 									listIdUsuarioGestor.add(usu.getId());
 								}
+								
+								NMBInformacionRegistralBienInfo infoBien = getDatosRegistralesActivo(prc);
 								// Se crea la anotacion y se llamara al EXECUTOR
 								String asunto = "Referencia del asunto de posesi&oacute;n";
-								String cuerpoEmail = "Se ha producido el se&ntilde;alamiento del bien con numero de finca: NNNNN y referencia catastral: NNNNNNNNNAAAAA con fecha DD/MM/AAAA para su informaci&oacute;n";
+								StringBuilder cuerpoEmail = new StringBuilder();
+								cuerpoEmail.append("Se ha producido el se&ntilde;alamiento del");
+								cuerpoEmail.append(" bien con numero de finca:");
+								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getNumFinca() : ""); // numeroFinca
+								cuerpoEmail.append(" y referencia catastral:");
+								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getReferenciaCatastralBien() : ""); // RefCatastral
+								cuerpoEmail.append(" con fecha ");
+								cuerpoEmail.append(DateFormat.toString(valor)); // Fecha
+								cuerpoEmail.append(" para su informaci&oacute;n");
 
 								DtoCrearAnotacion crearAnotacion = DtoCrearAnotacion
 										.crearAnotacionDTO(
 												listIdUsuarioGestor,
-												false,
-												true,
-												null,
-												asunto,
-												cuerpoEmail,
+												false, true, null, asunto,
+												cuerpoEmail.toString(),
 												prc.getAsunto().getId(),
 												DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO,
 												"A");
@@ -412,18 +424,26 @@ public class AdjudicacionHayaLeaveActionHandler extends
 								for (Usuario usu : lUsuario) {
 									listIdUsuarioGestor.add(usu.getId());
 								}
+								
+								NMBInformacionRegistralBienInfo infoBien = getDatosRegistralesActivo(prc);
+								
 								// Se crea la anotacion y se llamara al EXECUTOR
 								String asunto = "Referencia del asunto de posesi&oacute;n";
-								String cuerpoEmail = "Se ha producido el se&ntilde;alamiento de lanzamiento del bien con numero de finca: NNNNN y referencia catastral: NNNNNNNNNAAAAA con fecha DD/MM/AAAA para su informaci&oacute;n";
-
+								StringBuilder cuerpoEmail = new StringBuilder();
+								cuerpoEmail.append("Se ha producido el se&ntilde;alamiento de lanzamiento del bien");
+								cuerpoEmail.append(" con numero de finca:");
+								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getNumFinca() : ""); // numeroFinca
+								cuerpoEmail.append(" y referencia catastral:");
+								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getReferenciaCatastralBien() : ""); // RefCatastral
+								cuerpoEmail.append(" con fecha");
+								cuerpoEmail.append(DateFormat.toString(valor)); // Fecha
+								cuerpoEmail.append(" para su informaci&oacute;n");
+								
 								DtoCrearAnotacion crearAnotacion = DtoCrearAnotacion
 										.crearAnotacionDTO(
 												listIdUsuarioGestor,
-												false,
-												true,
-												null,
-												asunto,
-												cuerpoEmail,
+												false, true, null, asunto,
+												cuerpoEmail.toString(),
 												prc.getAsunto().getId(),
 												DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO,
 												"A");
@@ -598,4 +618,16 @@ public class AdjudicacionHayaLeaveActionHandler extends
 		}
 	}
 
+	private NMBInformacionRegistralBienInfo getDatosRegistralesActivo(
+			Procedimiento prc) {
+		NMBInformacionRegistralBienInfo infoBien = null;
+		if (!Checks.estaVacio(prc.getBienes())) {
+			ProcedimientoBien prcBien = prc.getBienes().get(0);
+			NMBBien nmbBien = (NMBBien) executor.execute(
+					PrimariaBusinessOperation.BO_BIEN_MGR_GET, prcBien.getBien().getId());
+			infoBien = nmbBien.getDatosRegistralesActivo();
+		}
+		return infoBien;
+	}
+	
 }

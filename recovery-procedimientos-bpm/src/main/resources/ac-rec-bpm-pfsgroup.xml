@@ -1261,6 +1261,11 @@
                 return subastaProcedimientoManager.comprobarProvLocFinBien(idProcedimiento);
             }
             
+            def comprobarAdjuntoDecretoFirmeAdjudicacionAsunto = {
+            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+                return adjudicacionProcedimientoManager.comprobarAdjuntoAsunto(idProcedimiento, "DFA");
+            }
+            
             
   			 ]]></value>
   		</list>

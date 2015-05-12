@@ -723,7 +723,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>rec-batch</finalName>
+		<finalName>rec-batch-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src\web</directory>

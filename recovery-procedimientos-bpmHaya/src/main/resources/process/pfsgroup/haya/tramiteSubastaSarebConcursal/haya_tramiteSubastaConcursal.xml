@@ -151,10 +151,10 @@
 	</state>
 
 	<decision name="H003_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision" expression="#{H003_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision}">
-		<transition to="H003_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
-		<transition to="H003_BPMTramiteConsignacion" name="TramiteConsignacion"></transition>
-		<transition to="Fin3" name="Fin"></transition>
 		<transition to="fork2" name="DueDiligenceYTramiteConsignacion"></transition>
+		<transition to="fork3" name="SolicitarDueDiligence"></transition>
+		<transition to="fork4" name="TramiteConsignacion"></transition>
+		<transition to="H003_SolicitarNumActivo" name="Fin"></transition>
 	</decision>
 
 	<state name="H003_BPMTramiteTributacion">
@@ -605,6 +605,15 @@
 		<transition to="H003_SolicitarServicioIndices" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
+	
+	<node name="H003_SolicitarNumActivo">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>solicitarNumActivoHandler
+			</targetBean>
+		</action>
+		<transition to="Fin2" name="avanzaBPM"></transition>
+	</node>
 
 	<state name="H003_BPMTramiteConsignacion">
 		<event type="node-enter">
@@ -629,6 +638,17 @@
 	<fork name="fork2">
 		<transition to="H003_SolicitarDueDiligence" name="dueDiligence"></transition>
 		<transition to="H003_BPMTramiteConsignacion" name="tramiteConsignacion"></transition>
+		<transition to="H003_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
+	</fork>
+	
+	<fork name="fork3">
+		<transition to="H003_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
+		<transition to="H003_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
+	</fork>
+	
+	<fork name="fork4">
+		<transition to="H003_BPMTramiteConsignacion" name="TramiteConsignacion"></transition>
+		<transition to="H003_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
 	</fork>
 
 	<state name="H003_RegistrarResolucionSolicitudSuspension">

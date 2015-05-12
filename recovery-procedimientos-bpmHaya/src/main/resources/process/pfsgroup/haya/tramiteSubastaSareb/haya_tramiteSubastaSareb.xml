@@ -174,11 +174,25 @@
 	</state>
 
 	<decision name="H002_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision" expression="#{H002_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision}">
-		<transition to="H002_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
+		<transition to="fork2" name="SolicitarDueDiligence"></transition>
 		<transition to="H002_SuspenderSubasta" name="SuspenderSubasta"></transition>
 		<transition to="Fin3" name="Fin"></transition>
-		<transition to="Fin3" name="Finalizar"></transition>
+		<transition to="H002_SolicitarNumActivo" name="Finalizar"></transition>
 	</decision>
+	
+	<fork name="fork2">
+		<transition to="H002_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
+		<transition to="H002_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
+	</fork>
+	
+	<node name="H002_SolicitarNumActivo">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>solicitarNumActivoHandler
+			</targetBean>
+		</action>
+		<transition to="Fin3" name="avanzaBPM"></transition>
+	</node>
 
 	<state name="H002_BPMTramiteTributacion">
 		<event type="node-enter">

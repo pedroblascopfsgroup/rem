@@ -151,11 +151,20 @@
 	</state>
 
 	<decision name="H004_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision" expression="#{H004_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision}">
-		<transition to="H004_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
-		<transition to="H004_BPMTramiteConsignacion" name="TramiteConsignacion"></transition>
-		<transition to="Fin3" name="Fin"></transition>
 		<transition to="fork2" name="DueDiligenceYTramiteConsignacion"></transition>
+		<transition to="fork3" name="SolicitarDueDiligence"></transition>
+		<transition to="fork4" name="TramiteConsignacion"></transition>
+		<transition to="H004_SolicitarNumActivo" name="Fin"></transition>
 	</decision>
+	
+	<node name="H004_SolicitarNumActivo">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>solicitarNumActivoHandler
+			</targetBean>
+		</action>
+		<transition to="Fin3" name="avanzaBPM"></transition>
+	</node>
 
 	<state name="H004_BPMTramiteTributacion">
 		<event type="node-enter">
@@ -627,6 +636,17 @@
 	<fork name="fork2">
 		<transition to="H004_SolicitarDueDiligence" name="dueDiligence"></transition>
 		<transition to="H004_BPMTramiteConsignacion" name="tramiteConsignacion"></transition>
+		<transition to="H004_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
+	</fork>
+	
+	<fork name="fork3">
+		<transition to="H004_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
+		<transition to="H004_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
+	</fork>
+	
+	<fork name="fork4">
+		<transition to="H004_BPMTramiteConsignacion" name="TramiteConsignacion"></transition>
+		<transition to="H004_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
 	</fork>
 
 	<state name="H004_RegistrarResolucionSolicitudSuspension">

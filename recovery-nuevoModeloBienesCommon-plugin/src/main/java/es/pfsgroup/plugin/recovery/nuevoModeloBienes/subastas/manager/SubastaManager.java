@@ -20,8 +20,10 @@ import org.springframework.web.util.HtmlUtils;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.APPConstants;
@@ -30,6 +32,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -102,6 +105,9 @@ public class SubastaManager implements SubastaApi {
 
 	@Autowired
 	NMBProjectContext projectContext;
+
+	@Resource
+    private MessageService messageService;
 	
 	
 	@Override
@@ -534,6 +540,16 @@ public class SubastaManager implements SubastaApi {
 	public FileItem buscarSubastasXLS(NMBDtoBuscarSubastas dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 		List<Subasta> listaRetorno = subastaDao.buscarSubastasExcel(dto, usuarioLogado);
+		
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+		Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
+		
+		Integer count = listaRetorno.size();
+		Integer limit = Integer.parseInt(param.getValor());
+				
+		if(count>limit){
+			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limit+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+		}
 		
 		return generarInformeBusquedaSubastas(listaRetorno);		
 	}			
@@ -1190,7 +1206,7 @@ public class SubastaManager implements SubastaApi {
 		public Integer buscarSubastasXLSCount(NMBDtoBuscarSubastas dto) {
 			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 						
-			return  subastaDao.buscarSubastasExcelCount(dto, usuarioLogado);	
+			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado).size();	
 		}
 	
 }

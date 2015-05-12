@@ -539,11 +539,13 @@ public class SubastaManager implements SubastaApi {
 	@Transactional
 	public FileItem buscarSubastasXLS(NMBDtoBuscarSubastas dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-		List<Subasta> listaRetorno = subastaDao.buscarSubastasExcel(dto, usuarioLogado);
 		
 		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
 		Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
-		
+				
+		dto.setLimit(Integer.parseInt(param.getValor())+1);
+		List<Subasta> listaRetorno = subastaDao.buscarSubastasExcel(dto, usuarioLogado);
+				
 		Integer count = listaRetorno.size();
 		Integer limit = Integer.parseInt(param.getValor());
 				

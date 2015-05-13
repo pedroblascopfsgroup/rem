@@ -29,6 +29,7 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
 	private static final long MILLSECS_PER_DAY = 24 * 60 * 60 * 1000; //Milisegundos al día
 	private static final int DIAS_LIMITE_TASACION_VALIDA = 90;
 	private static final String TRANSICION_FIN = "Fin";
+	private static final String TRANSICION_ACTUALIZAR_TASACION = "actualizarTasacion";
 	private static final String TIMER_NAME = "Espera Solicitar Tasacion";
 	private static final String TIMER_DURATION_MASK = "%d days";
 	
@@ -61,10 +62,6 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
 		fechaLimite.add(Calendar.DATE, -DIAS_LIMITE_TASACION_VALIDA);
 
 		Calendar today = Calendar.getInstance();
-		//today.set(Calendar.HOUR_OF_DAY, 0);
-		//today.set(Calendar.MINUTE, 0);
-		//today.set(Calendar.SECOND, 0);
-		//today.set(Calendar.MILLISECOND, 0);		
 		if (today.before(fechaLimite)) {
 			long diasComprobacion = (fechaLimite.getTimeInMillis()-today.getTimeInMillis())/MILLSECS_PER_DAY;
 			String duration = String.format(TIMER_DURATION_MASK, diasComprobacion);
@@ -93,13 +90,10 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
 				boolean tasacionValida = ((valoracion.getFechaValorTasacion() != null && 
 						valoracion.getFechaValorTasacion().after(fechaLimite.getTime())));
 				
-				boolean tieneNumeroActivo = nmbBien.tieneNumeroActivo();
-				
-				if (tieneNumeroActivo && !tasacionValida) {
+				if (tasacionValida) {
 					// llamada solicita_tasacion
-					proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarTasacionByPrcId(bien.getId(), prc.getId());
-				}
-				
+					executionContext.getToken().signal(TRANSICION_ACTUALIZAR_TASACION);
+				}				
 			}
 		}
 

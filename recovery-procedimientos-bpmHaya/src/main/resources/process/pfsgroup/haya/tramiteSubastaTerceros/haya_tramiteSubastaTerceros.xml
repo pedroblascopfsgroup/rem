@@ -171,7 +171,7 @@
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>solicitarTasacionHandler</targetBean>
 		</action>
-		<transition to="Fin4" name="avanzaBPM"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 		<transition to="H004_ActualizarTasacion" name="actualizarTasacion"></transition>
 	</node>
 	

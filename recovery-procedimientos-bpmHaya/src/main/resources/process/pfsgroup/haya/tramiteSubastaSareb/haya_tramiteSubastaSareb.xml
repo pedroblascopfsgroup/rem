@@ -205,7 +205,7 @@
 			<targetBean>solicitarTasacionHandler
 			</targetBean>
 		</action>
-		<transition to="Fin3" name="avanzaBPM"></transition>
+		<transition to="Fin3" name="Fin"></transition>
 		<transition to="H002_ActualizarTasacion" name="actualizarTasacion"></transition>
 	</node>
 	

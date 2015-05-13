@@ -2,6 +2,8 @@ package es.capgemini.pfs.tareaNotificacion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -336,8 +338,10 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 */
 	protected void informarCategoriaTarea(final List<DtoResultadoBusquedaTareasBuzones> lista) {
 		for (DtoResultadoBusquedaTareasBuzones tarea : lista) {
-			if (projectContext.getTareasTipoDecision().contains(tarea.getSubtipoTareaCodigoSubtarea()))
-				tarea.setCategoriaTarea(projectContext.CONST_TAREA_TIPO_DECISION);
+			for(String categoria : projectContext.getCategoriasSubTareas().keySet()) {
+				if (projectContext.getCategoriasSubTareas().get(categoria).contains(tarea.getSubtipoTareaCodigoSubtarea()))
+					tarea.setCategoriaTarea(categoria);
+			}
 		}
 	}
 	

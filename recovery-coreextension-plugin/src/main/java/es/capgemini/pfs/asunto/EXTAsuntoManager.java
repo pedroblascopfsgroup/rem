@@ -9,9 +9,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
@@ -56,6 +59,7 @@ import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfoImpl;
 import es.capgemini.pfs.core.api.registro.HistoricoProcedimientoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
@@ -67,6 +71,7 @@ import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -825,6 +830,24 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			throw new BusinessOperationException(e);
 		}
 	}
+	
+	/**
+	 * Indica si el Usuario Logado es el gestor de Decision del asunto.
+	 * 
+	 * @return true si es el gestor de Decision
+	 */
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
+	@Override
+	public Boolean esGestorDecision() {
+		Usuario usuario =  proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		try {
+			return usuarioGestorDecision(usuario);
+		} catch (Exception e) {
+			logger.fatal("No se ha podido averiguar si el usuario con Id " + usuario.getId() + " es gestor de Decisión del asunto");
+			return false;
+			//throw new BusinessOperationException(e);
+		}
+	}		
 
 	/**
 	 * Indica si el Usuario Logado es el supervisor del asunto.
@@ -1840,5 +1863,60 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params).getTotalCount();
 	}
+	
+	/**
+	 * usuarioGestorDecision
+	 * 
+	 * Nos devuelve si este usuario tiene algún gestor de tipo Decisión
+	 * 
+	 * @param usu Usuario
+	 * @return true / false
+	 */
+
+	private Boolean usuarioGestorDecision(Usuario usu){
+		
+		// Obtenemos los codígos de los tipos de despacho para el usuario logado
+		List<DespachoExterno> dExtList = gestorAdicionalAsuntoDao.getTipoDespachoExternoList(usu.getId());
+		List<String> codTipoDespachoList = new ArrayList<String>();
+		
+		for (DespachoExterno despExt : dExtList){
+			codTipoDespachoList.add(despExt.getTipoDespacho().getCodigo());;
+		}
+		
+		// Ahora obtenderemos los tipos de gestor de las subtareas definidas dentro del grupo de decisión			
+		Set<String> staCodigos = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		
+		// Recorremos el conjunto
+		TreeMap<String, String> tm = new TreeMap<String,String>();
+		String valores = "";
+		StringTokenizer valSt = null;
+		List<EXTTipoGestorPropiedad> tgpList = new ArrayList<EXTTipoGestorPropiedad>();
+		Iterator<String> iter = staCodigos.iterator();
+		while (iter.hasNext()) {
+			tgpList = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(iter.next().toString());
+			
+			// Por cada lista tenemos que ver el valor del campo TGP_VALOR y hacer un split puesto que puede
+			// contener multiples valores separados por coma
+			for (EXTTipoGestorPropiedad tgp : tgpList){
+				valores = tgp.getValor();
+				valSt = new StringTokenizer(valores, ",");
+				
+				// Los valores los metemos en un TreeMap para una consulta posterior
+				while (valSt.hasMoreElements()){
+					tm.put(valSt.nextElement().toString(), "");
+				}				
+			}
+		}
+		
+		// En este punto tenemos en "codTipoDespachoList" la lista de codigo de tipo de despacho
+		// En el TreeMap "tm" los codigos del tipo de gestor para la subtareas.
+		// Debemos comprobar: si algún código de "codTipoDespachoList" está en el TreeMap --> true
+		for (String codTipoDespacho: codTipoDespachoList){
+			if (tm.get(codTipoDespacho) != null)
+				return true;
+		}
+		
+		return false;			
+	}	
 	
 }

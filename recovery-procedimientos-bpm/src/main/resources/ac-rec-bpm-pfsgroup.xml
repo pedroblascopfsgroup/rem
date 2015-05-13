@@ -224,21 +224,55 @@
   			}
 
   			def isBienesConFechaSolicitud = {
-  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
-  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaSolicitud() != null) {return true}};
-  				return false;
+  			
+  				def nmbBienManager = ctx.getBean("nmbBienManager");			
+   				
+				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					
+					for (nmbEmbargoProcedimiento in nmbBienManager.getEmbargos(bien.getId()) ){
+  						
+						if(nmbEmbargoProcedimiento.getFechaSolicitud() == null) {
+  							return false;
+  						}
+  					}
+  				}
+  				
+  				return true;
   			}
 
   			def isBienesConFechaDecreto= {
-  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
-  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaDecreto() != null) {return true}};
-  				return false;
+  			
+  				def nmbBienManager = ctx.getBean("nmbBienManager");			
+   				
+				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					
+					for (nmbEmbargoProcedimiento in nmbBienManager.getEmbargos(bien.getId()) ){
+  						
+						if(nmbEmbargoProcedimiento.getFechaDecreto() == null) {
+  							return false;
+  						}
+  					}
+  				}
+  				
+  				return true;
   			}
+  			
 
   			def isBienesConFechaRegistro= {
-  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
-  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaRegistro() != null) {return true}};
-  				return false;
+  				
+  				def nmbBienManager = ctx.getBean("nmbBienManager");			
+   				
+				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					
+					for (nmbEmbargoProcedimiento in nmbBienManager.getEmbargos(bien.getId()) ){
+  						
+						if(nmbEmbargoProcedimiento.getFechaRegistro() == null) {
+  							return false;
+  						}
+  					}
+  				}
+  				
+  				return true;
   			}
 
             def tieneBienes= {

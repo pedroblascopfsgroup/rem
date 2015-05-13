@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteSubastaTerceros" width="3287" height="1990">
+<root-container name="haya_tramiteSubastaTerceros" width="3752" height="2071">
   <node name="Inicio" x="34" y="133" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -108,6 +108,11 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H004_SolicitarNumActivo" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -425,8 +430,41 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork3" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork4" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork5" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="H004_RegistrarResolucionSolicitudSuspension" x="2293" y="657" width="326" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -441,23 +479,4 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H004_RegistrarResolucionSolicitudSuspensionDecision" x="2278" y="745" width="354" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-250" h1="-3" w2="-2" h2="247"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-254" h1="587" w2="2127" h2="780"/>
-      <bendpoint w1="-1229" h1="1226" w2="1152" h2="1419"/>
-      <bendpoint w1="-2577" h1="1164" w2="-196" h2="1357"/>
-      <bendpoint w1="-3109" h1="482" w2="-728" h2="675"/>
-      <bendpoint w1="-3032" h1="-164" w2="-651" h2="29"/>
-    </edge>
-  </node>
-  <node name="Fin" x="220" y="1715" width="132" height="36"/>
-  <node name="Fin2" x="559" y="32" width="132" height="36"/>
-  <node name="Fin3" x="2141" y="495" width="132" height="36"/>
-  <node name="Fin4" x="1215" y="1046" width="132" height="36"/>
-  <node name="Fin5" x="-587" y="998" width="132" height="36"/>
 </root-container>

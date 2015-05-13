@@ -177,12 +177,17 @@
 		<transition to="fork2" name="SolicitarDueDiligence"></transition>
 		<transition to="H002_SuspenderSubasta" name="SuspenderSubasta"></transition>
 		<transition to="Fin3" name="Fin"></transition>
-		<transition to="H002_SolicitarNumActivo" name="Finalizar"></transition>
+		<transition to="fork3" name="Finalizar"></transition>
 	</decision>
 	
 	<fork name="fork2">
 		<transition to="H002_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
+		<transition to="fork3" name="SolicitarNumActivoTasacion"></transition>
+	</fork>
+	
+	<fork name="fork3">
 		<transition to="H002_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
+		<transition to="H002_SolicitarTasacion" name="SolicitarTasacion"></transition>
 	</fork>
 	
 	<node name="H002_SolicitarNumActivo">
@@ -193,6 +198,36 @@
 		</action>
 		<transition to="Fin3" name="avanzaBPM"></transition>
 	</node>
+	
+	<node name="H002_SolicitarTasacion">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>solicitarTasacionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin3" name="avanzaBPM"></transition>
+		<transition to="H002_ActualizarTasacion" name="actualizarTasacion"></transition>
+	</node>
+	
+	<state name="H002_ActualizarTasacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin3" name="avanzaBPM"></transition>
+	</state>
 
 	<state name="H002_BPMTramiteTributacion">
 		<event type="node-enter">

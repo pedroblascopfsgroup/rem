@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="recobro" xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="P100_nodoEsperaController" name="avanzaBPM"></transition>
+	</start-state>
+
+	<state name="P100_nodoInicioPorSQL">
+		<transition to="P100_nodoEsperaController" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P100_nodoEsperaController">
+		<event type="node-enter">
+			<action name="CompletarExpedienteAction" config-type="bean"	class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>nodoEsperaRecobroActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P100_nodoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="P100_nodoDecision" expression="#{P100_nodoEsperaControllerDecision}">
+		<transition to="marcarExpediente" name="marcarExpediente"></transition>
+		<transition to="P100_nodoEspera" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</decision>
+
+	<node name="marcarExpediente">
+		<action name="MarcadoDeExpedientes" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>marcadoExpedientesRecobroActionHandler</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+	
+	<state name="P100_nodoEspera">
+		<event type="node-enter">
+			<action name="CalculoTimerMetaVolante" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>recobroTimerDelayActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="P100_nodoEsperaController" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+<!-- 
+	<state name="P100_nodoEspera">
+		<event type="node-enter">
+			<action class="es.pfsgroup.plugin.recobro.bpm.handlers.RecobroTimerDelayActionHandler" config-type="field">
+				<name>Calculo del Timer de la meta volante</name>
+				<duration>1 days</duration>
+				<transicion>avanzaBPM</transicion>
+			</action>
+		</event>
+		<transition to="P100_nodoEsperaController" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+ -->
+	<end-state name="Fin"></end-state>
+
+</process-definition>

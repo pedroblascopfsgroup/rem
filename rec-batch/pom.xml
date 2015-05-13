@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -12,8 +13,8 @@
 		<project.reporting.outputEncoding>ISO-8859-1</project.reporting.outputEncoding>
 	</properties>
 
-	<groupId>rec-batch-tyrion</groupId>
-	<artifactId>rec-batch-tyrion</artifactId>
+	<groupId>es.pfsgroup.recovery</groupId>
+	<artifactId>rec-batch</artifactId>
 	<name>rec-batch</name>
 
 	<dependencies>
@@ -109,12 +110,9 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-recobro-bpm</artifactId>
-			<version>1.2.1_rc03</version>
-			<type>jar</type>
-			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>*</groupId>
+					<groupId>capgemini</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
@@ -273,23 +271,15 @@
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>org.springframework.batch.core</artifactId>
 			<version>1.0.1.RELEASE</version>
-			<!-- exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions -->
+			<!-- exclusions> <exclusion> <groupId>*</groupId> <artifactId>*</artifactId> 
+				</exclusion> </exclusions -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.beans</artifactId>
 			<version>2.5.6.SEC01</version>
-			<!-- exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions -->
+			<!-- exclusions> <exclusion> <groupId>*</groupId> <artifactId>*</artifactId> 
+				</exclusion> </exclusions -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -700,30 +690,29 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-				</dependency>
-				<dependency>
-					<groupId>es.pfsgroup.recovery</groupId>
-					<artifactId>rec-encrypt</artifactId>
-				</dependency>
-			<dependency>
-				<groupId>es.pfsgroup.plugin</groupId>
-				<artifactId>recovery-integracionuvem-plugin</artifactId>
-				<exclusions>
-					<exclusion>
-						<groupId>*</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>es.cm.gw</groupId>
-				<artifactId>GW_IPLUS</artifactId>
-				<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.recovery</groupId>
+			<artifactId>rec-encrypt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-integracionuvem-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.cm.gw</groupId>
+			<artifactId>GW_IPLUS</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>rec-batch</finalName>
 		<resources>
 			<resource>
 				<directory>src\web</directory>

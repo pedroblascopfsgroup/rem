@@ -1295,6 +1295,11 @@
                 return subastaProcedimientoManager.comprobarProvLocFinBien(idProcedimiento);
             }
             
+            def validacionesCelebracionSubastaSarebPOST = {
+                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
+                return subastaProcedimientoManager.validacionesCelebracionSubastaSarebPOST(idProcedimiento);
+            }
+            
             
   			 ]]></value>
   		</list>

@@ -309,6 +309,16 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-recobro-bpm</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-controlcalidad-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-tesfwk</artifactId>
 				<version>1.0.3</version>
@@ -462,6 +472,8 @@
 				<module>recovery-recobroBatch-plugin</module>
 				<module>recovery-recobroConfig-plugin</module>
 				<module>recovery-cambiosMasivosAsunto-plugin</module>
+				<module>recovery-recobro-bpm</module>
+				<module>recovery-controlcalidad-plugin</module>
 
 				<module>recovery-bankiaWeb-plugin</module>
 				<module>recovery-iplus-plugin</module>
@@ -507,6 +519,8 @@
 				<module>recovery-recobroBatch-plugin</module>
 				<module>recovery-recobroConfig-plugin</module>
 				<module>recovery-cambiosMasivosAsunto-plugin</module>
+				<module>recovery-recobro-bpm</module>
+				<module>recovery-controlcalidad-plugin</module>
 
 				<module>recovery-procedimientos-bpmHaya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>

@@ -75,7 +75,6 @@
 	});
 	
  	var cellLoteRenderer = function(value, metaData, record, rowIndex, colIndex, store) {
-		debugger;
 		Ext.isEmpty(value)? metaData.attr = "style='background-color : #FCFF99'" : null; 
 		return value;
 	}

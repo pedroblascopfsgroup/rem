@@ -72,9 +72,9 @@ public class OcupantesHayaLeaveActionHandler extends
 				StringBuilder cuerpoEmail = new StringBuilder();
 				cuerpoEmail.append("Le comunico la resoluci&oacute;n favorable de gesti&oacute;n de");
 				cuerpoEmail.append(" ocupantes del inmueble numero de finca:");
-				cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getNumFinca() : ""); // numeroFinca
+				cuerpoEmail.append(!Checks.esNulo(infoBien) && !Checks.esNulo(infoBien.getNumFinca())? infoBien.getNumFinca() : "     "); // numeroFinca
 				cuerpoEmail.append(" y referencia catastral:");
-				cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getReferenciaCatastralBien() : ""); // RefCatastral
+				cuerpoEmail.append(!Checks.esNulo(infoBien) && !Checks.esNulo(infoBien.getReferenciaCatastralBien()) ? infoBien.getReferenciaCatastralBien() : "          "); // RefCatastral
 				cuerpoEmail.append(" para que notifique al departamento de alquileres de la situaci&oacute;n");
 				cuerpoEmail.append(" en la que se encuentra el inmueble.");
 

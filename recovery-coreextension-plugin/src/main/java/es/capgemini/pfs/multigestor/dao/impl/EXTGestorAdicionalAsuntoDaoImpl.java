@@ -89,9 +89,8 @@ public class EXTGestorAdicionalAsuntoDaoImpl extends
 		
 		StringBuffer hql = new StringBuffer();		
 		
-		hql.append("Select tgp from EXTTipoGestorPropiedad tgp ");
-		hql.append("join tgp.tipoGestor as tg, EXTSubtipoTarea sta ");
-		hql.append("where sta.tipoGestor.codigo ='").append(codSta).append("'");
+		hql.append("Select tgp from EXTTipoGestorPropiedad tgp, EXTSubtipoTarea sta ");
+		hql.append("where tgp.tipoGestor = sta.tipoGestor and sta.codigoSubtarea = '").append(codSta).append("'");
 		
 		Query query = getSession().createQuery(hql.toString());
 		

@@ -841,7 +841,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	public Boolean esGestorDecision() {
 		Usuario usuario =  proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		try {
-			return usuarioGestorDecision(usuario);
+			return esUsuarioGestorDecision(usuario);
 		} catch (Exception e) {
 			logger.fatal("No se ha podido averiguar si el usuario con Id " + usuario.getId() + " es gestor de Decisión del asunto");
 			return false;
@@ -1865,50 +1865,53 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	}
 	
 	/**
-	 * usuarioGestorDecision
+	 * esUsuarioGestorDecision
 	 * 
 	 * Nos devuelve si este usuario tiene algún gestor de tipo Decisión
 	 * 
 	 * @param usu Usuario
 	 * @return true / false
 	 */
-	private Boolean usuarioGestorDecision(Usuario usu){
+	private Boolean esUsuarioGestorDecision(Usuario u){
+		Boolean res = false;
 		
-		// Obtenemos los codígos de los tipos de despacho para el usuario logado
-		List<DespachoExterno> dExtList = gestorAdicionalAsuntoDao.getTipoDespachoExternoList(usu.getId());
-		List<String> codTipoDespachoList = new ArrayList<String>();
-		
-		for (DespachoExterno despExt : dExtList){
-			codTipoDespachoList.add(despExt.getTipoDespacho().getCodigo());
+		List<DespachoExterno> deList = gestorAdicionalAsuntoDao.getTipoDespachoExternoList(u.getId());
+		List<String> ctdList = new ArrayList<String>();
+		for (DespachoExterno de : deList){
+			ctdList.add(de.getTipoDespacho().getCodigo());
 		}
 		
-		// Ahora obtenderemos los tipos de gestor de las subtareas definidas dentro del grupo de decisión			
-		Set<String> staCodigos = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		Set<String> staC = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
 		
-		// Recorremos el conjunto
-		Set<String> tm = new HashSet<String>();
-		String valores = "";
-		StringTokenizer valSt = null;
-		List<EXTTipoGestorPropiedad> tgpList = new ArrayList<EXTTipoGestorPropiedad>();
-		for (Object sta_id : staCodigos.toArray()) {
-			tgpList = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(sta_id.toString());
-			for (EXTTipoGestorPropiedad tgp : tgpList) {
-				valores = tgp.getValor();
-				valSt = new StringTokenizer(valores, ",");
-				while (valSt.hasMoreElements()) {
-					tm.add(valSt.nextElement().toString());
+		Set<String> hm = new HashSet<String>();
+		String v = "";
+		StringTokenizer vS = null;
+		List<EXTTipoGestorPropiedad> tgpL = new ArrayList<EXTTipoGestorPropiedad>();
+		
+		for (Object st : staC.toArray()) {
+		
+			tgpL = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(st.toString());
+						
+			// Como en el campo "valor" nos pueden venir datos separados por ","
+			// los trocearemos y guardaremos cada valor individual en un Set
+			// para la comprobación final
+			for (EXTTipoGestorPropiedad tgp : tgpL){
+				v = tgp.getValor();
+				vS = new StringTokenizer(v,",");
+				
+				while (vS.hasMoreElements()){
+					hm.add(vS.nextToken());
 				}
 			}
 		}
-
-		Boolean retorno = false;
-		for (String codTipoDespacho : codTipoDespachoList) {
-			if (tm.contains(codTipoDespacho)) {
-				retorno = true;
-				break;
-			}
+		
+		// Comprobacion final
+		for (String ctd : ctdList) {
+			if (hm.contains(ctd))		
+				res = true;
 		}
-		return retorno;
+		
+		return res;
 	}
 	
 }

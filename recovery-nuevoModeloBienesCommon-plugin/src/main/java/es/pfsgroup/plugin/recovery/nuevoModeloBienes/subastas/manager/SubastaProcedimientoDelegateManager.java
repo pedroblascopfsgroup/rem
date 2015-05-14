@@ -463,7 +463,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					}
 				}
 			
-				if(Checks.esNulo(b.getNumeroActivo())){
+				if(!b.tieneNumeroActivo()){
 					return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe solicitar el n&uacute;mero de activo previamente</div>";
 				}
 			}
@@ -542,7 +542,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		
 		for(Bien bien: listadoBienes) {			
 			NMBBien nmbBien = (NMBBien) bien;			
-			if(Checks.esNulo(nmbBien.getNumeroActivo())){
+			if(!nmbBien.tieneNumeroActivo()){
 				return "Debe solicitar el n&uacute;mero de activo previamente";
 			}
 		}

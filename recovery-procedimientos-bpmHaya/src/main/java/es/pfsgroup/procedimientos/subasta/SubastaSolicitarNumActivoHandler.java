@@ -16,7 +16,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 
-public class SolicitarNumActivoHandler extends PROBaseActionHandler {
+public class SubastaSolicitarNumActivoHandler extends PROBaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
 

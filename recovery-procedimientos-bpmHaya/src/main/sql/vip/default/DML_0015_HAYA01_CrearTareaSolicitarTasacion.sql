@@ -72,7 +72,7 @@ DECLARE
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
       T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ 'H002',
-        /*TAP_CODIGO...................:*/ 'H002_SolicitarTasacion',
+        /*TAP_CODIGO...................:*/ 'H002_ActualizarTasacion',
         /*TAP_VIEW.....................:*/ null,
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
@@ -98,7 +98,7 @@ DECLARE
 
       T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ 'H003',
-        /*TAP_CODIGO...................:*/ 'H003_SolicitarTasacion',
+        /*TAP_CODIGO...................:*/ 'H003_ActualizarTasacion',
         /*TAP_VIEW.....................:*/ null,
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
@@ -125,7 +125,7 @@ DECLARE
         
          T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ 'H004',
-        /*TAP_CODIGO...................:*/ 'H004_SolicitarTasacion',
+        /*TAP_CODIGO...................:*/ 'H004_ActualizarTasacion',
         /*TAP_VIEW.....................:*/ null,
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
@@ -163,7 +163,7 @@ DECLARE
        T_TIPO_PLAZAS(
           /*DD_JUZ_ID(FK)............:*/ null,
           /*DD_PLA_ID(FK)............:*/ null,
-          /*TAP_ID(FK)...............:*/ 'H002_SolicitarTasacion',
+          /*TAP_ID(FK)...............:*/ 'H002_ActualizarTasacion',
           /*DD_PTP_PLAZO_SCRIPT......:*/ '3*24*60*60*1000L',
           /*VERSION..................:*/ '0',
           /*BORRADO..................:*/ '0',
@@ -173,7 +173,7 @@ DECLARE
         T_TIPO_PLAZAS(
           /*DD_JUZ_ID(FK)............:*/ null,
           /*DD_PLA_ID(FK)............:*/ null,
-          /*TAP_ID(FK)...............:*/ 'H003_SolicitarTasacion',
+          /*TAP_ID(FK)...............:*/ 'H003_ActualizarTasacion',
           /*DD_PTP_PLAZO_SCRIPT......:*/ '3*24*60*60*1000L',
           /*VERSION..................:*/ '0',
           /*BORRADO..................:*/ '0',
@@ -183,7 +183,7 @@ DECLARE
         T_TIPO_PLAZAS(
           /*DD_JUZ_ID(FK)............:*/ null,
           /*DD_PLA_ID(FK)............:*/ null,
-          /*TAP_ID(FK)...............:*/ 'H004_SolicitarTasacion',
+          /*TAP_ID(FK)...............:*/ 'H004_ActualizarTasacion',
           /*DD_PTP_PLAZO_SCRIPT......:*/ '3*24*60*60*1000L',
           /*VERSION..................:*/ '0',
           /*BORRADO..................:*/ '0',
@@ -202,7 +202,7 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'H002_SolicitarTasacion',
+            /*DD_TAP_ID..............:*/ 'H002_ActualizarTasacion',
             /*TFI_ORDEN..............:*/ '0',
             /*TFI_TIPO...............:*/ 'label',
             /*TFI_NOMBRE.............:*/ 'titulo',
@@ -216,7 +216,7 @@ DECLARE
         ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
 
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'H003_SolicitarTasacion',
+            /*DD_TAP_ID..............:*/ 'H003_ActualizarTasacion',
             /*TFI_ORDEN..............:*/ '0',
             /*TFI_TIPO...............:*/ 'label',
             /*TFI_NOMBRE.............:*/ 'titulo',
@@ -230,7 +230,7 @@ DECLARE
         ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
         
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'H004_SolicitarTasacion',
+            /*DD_TAP_ID..............:*/ 'H004_ActualizarTasacion',
             /*TFI_ORDEN..............:*/ '0',
             /*TFI_TIPO...............:*/ 'label',
             /*TFI_NOMBRE.............:*/ 'titulo',

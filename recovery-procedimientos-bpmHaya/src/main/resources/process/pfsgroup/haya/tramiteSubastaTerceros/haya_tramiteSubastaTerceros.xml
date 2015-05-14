@@ -160,7 +160,7 @@
 	<node name="H004_SolicitarNumActivo">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>solicitarNumActivoHandler
+			<targetBean>subastaSolicitarNumActivoHandler
 			</targetBean>
 		</action>
 		<transition to="Fin3" name="avanzaBPM"></transition>
@@ -169,7 +169,7 @@
 	<node name="H004_SolicitarTasacion">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>solicitarTasacionHandler</targetBean>
+			<targetBean>subastaSolicitarTasacionHandler</targetBean>
 		</action>
 		<transition to="Fin4" name="Fin"></transition>
 		<transition to="H004_ActualizarTasacion" name="actualizarTasacion"></transition>
@@ -192,7 +192,8 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin4" name="avanzaBPM"></transition>
+		<transition to="H004_SolicitarTasacion" name="avanzaBPM"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<state name="H004_BPMTramiteTributacion">

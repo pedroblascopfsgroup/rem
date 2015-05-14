@@ -15,14 +15,13 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastasServicioTasacionDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 
 
-public class SolicitarTasacionHandler extends PROBaseActionHandler {
+public class SubastaSolicitarTasacionHandler extends PROBaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
 

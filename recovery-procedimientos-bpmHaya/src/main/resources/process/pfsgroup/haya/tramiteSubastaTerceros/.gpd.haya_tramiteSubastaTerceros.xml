@@ -129,6 +129,9 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="H004_BPMTramiteTributacion" x="689" y="392" width="238" height="36">
     <edge>

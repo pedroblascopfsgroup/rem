@@ -1872,7 +1872,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	 * @param usu Usuario
 	 * @return true / false
 	 */
-
 	private Boolean usuarioGestorDecision(Usuario usu){
 		
 		// Obtenemos los codígos de los tipos de despacho para el usuario logado
@@ -1880,43 +1879,36 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		List<String> codTipoDespachoList = new ArrayList<String>();
 		
 		for (DespachoExterno despExt : dExtList){
-			codTipoDespachoList.add(despExt.getTipoDespacho().getCodigo());;
+			codTipoDespachoList.add(despExt.getTipoDespacho().getCodigo());
 		}
 		
 		// Ahora obtenderemos los tipos de gestor de las subtareas definidas dentro del grupo de decisión			
 		Set<String> staCodigos = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
 		
 		// Recorremos el conjunto
-		TreeMap<String, String> tm = new TreeMap<String,String>();
+		Set<String> tm = new HashSet<String>();
 		String valores = "";
 		StringTokenizer valSt = null;
 		List<EXTTipoGestorPropiedad> tgpList = new ArrayList<EXTTipoGestorPropiedad>();
-		Iterator<String> iter = staCodigos.iterator();
-		while (iter.hasNext()) {
-			tgpList = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(iter.next().toString());
-			
-			// Por cada lista tenemos que ver el valor del campo TGP_VALOR y hacer un split puesto que puede
-			// contener multiples valores separados por coma
-			for (EXTTipoGestorPropiedad tgp : tgpList){
+		for (Object sta_id : staCodigos.toArray()) {
+			tgpList = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(sta_id.toString());
+			for (EXTTipoGestorPropiedad tgp : tgpList) {
 				valores = tgp.getValor();
 				valSt = new StringTokenizer(valores, ",");
-				
-				// Los valores los metemos en un TreeMap para una consulta posterior
-				while (valSt.hasMoreElements()){
-					tm.put(valSt.nextElement().toString(), "");
-				}				
+				while (valSt.hasMoreElements()) {
+					tm.add(valSt.nextElement().toString());
+				}
 			}
 		}
-		
-		// En este punto tenemos en "codTipoDespachoList" la lista de codigo de tipo de despacho
-		// En el TreeMap "tm" los codigos del tipo de gestor para la subtareas.
-		// Debemos comprobar: si algún código de "codTipoDespachoList" está en el TreeMap --> true
-		for (String codTipoDespacho: codTipoDespachoList){
-			if (tm.get(codTipoDespacho) != null)
-				return true;
+
+		Boolean retorno = false;
+		for (String codTipoDespacho : codTipoDespachoList) {
+			if (tm.contains(codTipoDespacho)) {
+				retorno = true;
+				break;
+			}
 		}
-		
-		return false;			
-	}	
+		return retorno;
+	}
 	
 }

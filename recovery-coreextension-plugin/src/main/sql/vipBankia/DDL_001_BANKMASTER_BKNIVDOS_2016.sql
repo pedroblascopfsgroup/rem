@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=ALBERTO RAMIREZ
+--## AUTOR=ALBERTO_RAMIREZ
 --## Finalidad: Creación de clave primaria en DD_CIC_CODIGO_ISO_CIRBE_BKP 
 --## INSTRUCCIONES: Relanzable.
 --## VERSIONES:

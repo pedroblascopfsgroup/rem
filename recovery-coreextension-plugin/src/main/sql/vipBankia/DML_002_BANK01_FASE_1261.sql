@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.5.13
 --## INCIDENCIA_LINK=FASE-1261
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -38,9 +38,9 @@ BEGIN
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
 
--- Añadimos validación POST del número activo en  P409_CelebracionSubasta
+-- Añadimos validación POST del número activo en P409_CelebracionSubasta
 
-execute immediate 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''P409_CelebracionSubasta''''][''''comboCelebrada''''] == ''''02'''' ? (valores[''''P409_CelebracionSubasta''''][''''comboSuspension''''] == null ? ''''El campo suspensi&oacute;n es obligatorio'''' : (valores[''''P409_CelebracionSubasta''''][''''comboMotivo''''] == null ? ''''Campo motivo es obligatorio'''' : null )) : (valores[''''P409_CelebracionSubasta''''][''''comboCesion''''] == null ? ''''Campo cesi&oacute;n es obligatorio'''' : (valores[''''P409_CelebracionSubasta''''][''''comboCesion''''] == ''''01'''' ? (valores[''''P409_CelebracionSubasta''''][''''comboComite''''] == null ? ''''Campo comit&eacute; es obligatorio'''' : comprobarImporteEntidadAdjudicacionBienes() ? validacionesCelebracionSubastaSarebPOST() : ''''Debe rellenar en cada bien el importe adjudicaci&oacute;n y la entidad.'''') : validacionesCelebracionSubastaSarebPOST() ))'' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''P409_CelebracionSubasta'')';
+execute immediate 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET USUARIOMODIFICAR = ''FASE-1261'', FECHAMODIFICAR=SYSDATE, TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''P409_CelebracionSubasta''''][''''comboCelebrada''''] == ''''02'''' ? (valores[''''P409_CelebracionSubasta''''][''''comboSuspension''''] == null ? ''''El campo suspensi&oacute;n es obligatorio'''' : (valores[''''P409_CelebracionSubasta''''][''''comboMotivo''''] == null ? ''''Campo motivo es obligatorio'''' : null )) : (valores[''''P409_CelebracionSubasta''''][''''comboCesion''''] == null ? ''''Campo cesi&oacute;n es obligatorio'''' : (valores[''''P409_CelebracionSubasta''''][''''comboCesion''''] == ''''01'''' ? (valores[''''P409_CelebracionSubasta''''][''''comboComite''''] == null ? ''''Campo comit&eacute; es obligatorio'''' : comprobarImporteEntidadAdjudicacionBienes() ? validacionesCelebracionSubastaSarebPOST() : ''''Debe rellenar en cada bien el importe adjudicaci&oacute;n y la entidad.'''') : validacionesCelebracionSubastaSarebPOST() ))'' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''P409_CelebracionSubasta'')';
 
 COMMIT;
 

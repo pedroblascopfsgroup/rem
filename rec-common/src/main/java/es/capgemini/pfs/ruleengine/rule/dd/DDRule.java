@@ -6,9 +6,12 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -18,6 +21,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 
 /**
  * TODO DOCUMENTAR FO.
@@ -57,6 +61,19 @@ public class DDRule implements Serializable, Auditable {
 
     @Column(name = "RD_TAB")
     private String tab;
+    
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TCN_ID")
+	private DDTipoCnae tipoCnae;
+    
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_MRF_ID")
+	private DDMarcaRefinanciacion marcaRefinanciacion;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_IDN_ID")
+	private DDIndicadorNomina indicadorNomina;
+    
 
     @Embedded
     private Auditoria auditoria;
@@ -190,7 +207,31 @@ public class DDRule implements Serializable, Auditable {
         this.tab = tab;
     }
 
-    @Override
+    public DDTipoCnae getTipoCnae() {
+		return tipoCnae;
+	}
+
+	public void setTipoCnae(DDTipoCnae tipoCnae) {
+		this.tipoCnae = tipoCnae;
+	}
+
+	public DDMarcaRefinanciacion getMarcaRefinanciacion() {
+		return marcaRefinanciacion;
+	}
+
+	public void setMarcaRefinanciacion(DDMarcaRefinanciacion marcaRefinanciacion) {
+		this.marcaRefinanciacion = marcaRefinanciacion;
+	}
+
+	public DDIndicadorNomina getIndicadorNomina() {
+		return indicadorNomina;
+	}
+
+	public void setIndicadorNomina(DDIndicadorNomina indicadorNomina) {
+		this.indicadorNomina = indicadorNomina;
+	}
+
+	@Override
     public Auditoria getAuditoria() {
         return auditoria;
     }

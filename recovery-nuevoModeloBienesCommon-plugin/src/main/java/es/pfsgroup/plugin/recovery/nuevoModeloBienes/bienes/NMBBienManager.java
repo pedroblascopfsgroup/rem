@@ -87,7 +87,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
 
-@Service
+@Service("nmbBienManager")
 public class NMBBienManager extends BusinessOperationOverrider<BienApi> implements BienApi {
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");

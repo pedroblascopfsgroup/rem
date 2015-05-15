@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.adjudicacion.dto.DtoNMBBien
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.DtoNMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.DtoRevisionSolvencia;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.NMBDtoBuscarClientes;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
@@ -183,7 +184,7 @@ public interface BienApi {
 	public List<DDUnidadPoblacional> getListUnidadesPoblacionales(String codLocalidad);
 	
 	@BusinessOperationDefinition(GET_LIST_PAISES)
-	public List<DDPais> getListPaises();
+	public List<DDCicCodigoIsoCirbeBKP> getListPaises();
 
 	@BusinessOperationDefinition(GET_LIST_TIPOS_VIA)
 	public List<DDTipoVia> getListTiposVia();

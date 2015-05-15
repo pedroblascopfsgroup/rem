@@ -222,57 +222,23 @@
   			def damePlazo= {
   				new java.text.SimpleDateFormat('yyyy-MM-dd').parse(it).getTime()-System.currentTimeMillis()
   			}
-  			
+
   			def isBienesConFechaSolicitud = {
-  			
-  				def nmbBienManager = ctx.getBean("nmbBienManager");			
-   				
-				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
-  					
-					for (nmbEmbargoProcedimiento in nmbBienManager.getEmbargos(bien.getId()) ){
-  						
-						if(nmbEmbargoProcedimiento.getFechaSolicitud() == null) {
-  							return false;
-  						}
-  					}
-  				}
-  				
-  				return true;
+  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaSolicitud() != null) {return true}};
+  				return false;
   			}
 
   			def isBienesConFechaDecreto= {
-  			
-  				def nmbBienManager = ctx.getBean("nmbBienManager");			
-   				
-				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
-  					
-					for (nmbEmbargoProcedimiento in nmbBienManager.getEmbargos(bien.getId()) ){
-  						
-						if(nmbEmbargoProcedimiento.getFechaDecreto() == null) {
-  							return false;
-  						}
-  					}
-  				}
-  				
-  				return true;
+  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaDecreto() != null) {return true}};
+  				return false;
   			}
-  			
 
   			def isBienesConFechaRegistro= {
-  				
-  				def nmbBienManager = ctx.getBean("nmbBienManager");			
-   				
-				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
-  					
-					for (nmbEmbargoProcedimiento in nmbBienManager.getEmbargos(bien.getId()) ){
-  						
-						if(nmbEmbargoProcedimiento.getFechaRegistro() == null) {
-  							return false;
-  						}
-  					}
-  				}
-  				
-  				return true;
+  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaRegistro() != null) {return true}};
+  				return false;
   			}
 
             def tieneBienes= {
@@ -1293,11 +1259,6 @@
             def comprobarProvLocFinBien = {
             	def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
                 return subastaProcedimientoManager.comprobarProvLocFinBien(idProcedimiento);
-            }
-            
-            def validacionesCelebracionSubastaSarebPOST = {
-                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
-                return subastaProcedimientoManager.validacionesCelebracionSubastaSarebPOST(idProcedimiento);
             }
             
             

@@ -12,7 +12,7 @@
 
 var colorFondo = 'background-color: #473729;';
 var winWidth = 920;
-var winWidthAgregarBien=825;
+var winWidthAgregarBien=950;
 var idSubasta;
 
 var panel = new Ext.Panel({

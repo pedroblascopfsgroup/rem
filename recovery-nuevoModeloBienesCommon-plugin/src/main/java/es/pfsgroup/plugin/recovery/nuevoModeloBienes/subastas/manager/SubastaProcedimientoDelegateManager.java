@@ -373,6 +373,22 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		}
 		return recepcionDue;
 	}
+	
+
+	/**
+	 * Método que comprueba si algún bien del procedimiento que recibe como parámetro no tiene solicitado el número de activo 
+	 * y devuelve el texto del error correspondiente. 
+	 * @param prcId
+	 * @return
+	 */
+	public String comprobarNumeroActivoBien(NMBBien nmbBien) {
+		
+		if(nmbBien.tieneNumeroActivo()){
+			return "Antes de dar la subasta por celebrada, deberá acceder a la ficha del bien y solicitar el número de activo mediante el botón habilitado para tal efecto";
+		}
+		
+		return null;
+	}
 
 
 	/**
@@ -397,6 +413,8 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	public String validacionesCelebracionSubastaPOST(Long prcId) {
 		// Buscamos primero la subasta asociada al prc
 		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		String respuesta = null;
+		
 		if (!Checks.esNulo(sub)) {
 			
 			// buscamos los lotes de la subasta
@@ -424,9 +442,11 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 								}
 								
 								// FASE-1261 Si algún bien no tiene número de activo
-								if(Checks.esNulo(((NMBBien) b).getNumeroActivo())){
-									return "Debe solicitar el n&uacute;mero de activo previamente>";
-								}
+								respuesta = comprobarNumeroActivoBien((NMBBien) b);
+								if(!Checks.esNulo(respuesta)) {
+									return respuesta;									
+								}							
+								
 							}
 						}
 					}
@@ -530,25 +550,6 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		return bienes;
 	}
 
-	/**
-	 * Método que comprueba si algún bien del procedimiento que recibe como parámetro no tiene solicitado el número de activo 
-	 * y devuelve el texto del error correspondiente. 
-	 * @param prcId
-	 * @return
-	 */
-	public String comprobarNumeroActivoBienes(Long prcId) {
-
-		List<Bien> listadoBienes = getBienesSubastaByPrcId(prcId);
-		
-		for(Bien bien: listadoBienes) {			
-			NMBBien nmbBien = (NMBBien) bien;			
-			if(!nmbBien.tieneNumeroActivo()){
-				return "Debe solicitar el n&uacute;mero de activo previamente";
-			}
-		}
-
-		return null;
-	}
 
 	/**
 	 * BANKIA
@@ -561,11 +562,17 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 
 		String respuesta;
 		
-		// FASE-1261 Si algún bien no tiene número de activo
-		respuesta = comprobarNumeroActivoBienes(prcId);								
-		if(!Checks.esNulo(respuesta)) {
-			return respuesta;									
-		}								
+		List<Bien> listadoBienes = getBienesSubastaByPrcId(prcId);
+		
+		for(Bien bien: listadoBienes) {			
+			NMBBien nmbBien = (NMBBien) bien;	
+			
+			// FASE-1261 Si algún bien no tiene número de activo
+			respuesta = comprobarNumeroActivoBien(nmbBien);
+			if(!Checks.esNulo(respuesta)) {
+				return respuesta;									
+			}			
+		}
 
 		return null;
 	}

@@ -526,6 +526,7 @@
 					<module>recovery-procedimientos-bpmHaya-plugin</module>
 
 					<module>rec-web</module>
+					<module>rec-batch</module>
 				</modules>
 			</profile>
 		</profiles>

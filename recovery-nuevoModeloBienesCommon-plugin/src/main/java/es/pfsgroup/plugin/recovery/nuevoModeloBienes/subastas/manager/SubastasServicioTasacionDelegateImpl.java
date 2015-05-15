@@ -98,6 +98,12 @@ public class SubastasServicioTasacionDelegateImpl implements SubastasServicioTas
 		solicitarTasacion(bienId);
 		
 	}
+
+	@Override
+	@BusinessOperation(BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
+	public Integer solicitarNumeroActivoConRespuesta(Long arg0) {
+		return null;
+	}
 	
 
 }

@@ -110,6 +110,7 @@ public class EditBienController {
 	private static final String TIPO_USUARIO_JSON = "plugin/coreextension/asunto/tipoUsuarioJSON";
 	private static final String JSON_LIST_LOCALIDADES = "plugin/nuevoModeloBienes/bienes/LocalidadesJSON";
 	private static final String JSON_LIST_UNIDADES_POBLACIONALES = "plugin/nuevoModeloBienes/bienes/UnidadesPoblacionalesJSON";
+	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";
 
 	@Autowired
 	private Executor executor;
@@ -3986,13 +3987,18 @@ public class EditBienController {
 	 * 
 	 * @param idBien
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String solicitarNumActivo(@RequestParam("id") Long idBien) {
+	public String solicitarNumActivo(WebRequest request,
+			@RequestParam("id") Long idBien, ModelMap model) {
 		// executor.execute(SubastasServicioTasacionDelegateApi.BO_UVEM_SOLICITUD_NUMERO_ACTIVO,
 		// idBien);
-		proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class)
-				.solicitarNumeroActivo(idBien);
-		return "default";
+		// proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivo(idBien);
+		Integer respuesta = proxyFactory.proxy(
+				SubastasServicioTasacionDelegateApi.class)
+				.solicitarNumeroActivoConRespuesta(idBien);
+		model.put("msgError", respuesta);
+		return JSON_RESPUESTA_SERVICIO;
 	}
 
 	/**

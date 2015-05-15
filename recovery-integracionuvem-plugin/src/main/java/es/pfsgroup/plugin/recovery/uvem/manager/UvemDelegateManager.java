@@ -164,6 +164,11 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		
 		solicitarTasacion(idBien, null);
 	}
+	
+	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
+	public Integer solicitarNumeroActivoConRespuesta(Long bienId){
+		return solicitarNumeroActivoRespuesta(bienId, null);
+	}
 
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_NUMERO_ACTIVO_BY_PRCID)
 	public void solicitarNumeroActivoByPrcId(Long idBien, Long prcId) {
@@ -189,6 +194,13 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	//@ManagedOperationParameter(name="bienId", description= "id del bien.")
     @Transactional(readOnly = false)
 	public void solicitarNumeroActivo(Long bienId, Long prcId){
+
+    	solicitarNumeroActivoRespuesta(bienId, prcId);
+    	
+	};
+	
+	@Transactional(readOnly = false)
+	public Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {
 			
@@ -562,22 +574,27 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.execute();
 			 
 			System.out.println("Se recuperan los datos de vuelta del servicio");
+			Integer numeroActivo = servicioGMP5JD20.getIdentificadorActivoEspecialcoacew2();
+			System.out.println("Número de activo: "+numeroActivo);
 			
-			System.out.println(servicioGMP5JD20.getIdentificadorActivoEspecialcoacew2());
-			try{
-				bien.setNumeroActivo(String.valueOf(servicioGMP5JD20.getIdentificadorActivoEspecialcoacew2()));
-			} catch (Exception e){
-				bien.setNumeroActivo(null);
-			} 
-			genericDao.update(NMBBien.class, bien);
+			if( numeroActivo!=null && numeroActivo!=0 ){
+				bien.setNumeroActivo(String.valueOf(numeroActivo));
+				genericDao.update(NMBBien.class, bien);
+				return 1;
+			}
+			else{
+				return -1;
+			}
 		
 		} catch (Exception e) {
 			e.printStackTrace();
+			return -1;
 		}
+		
+	}
 
-		
-		
-	};
+	
+	
 	
 	/**
 	 * Método que solicita la tasacion de un bien a UVEM

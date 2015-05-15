@@ -183,7 +183,8 @@ public class RecobroProcesoFacturacion implements Auditable, Serializable{
 	public Double getTotalImporteCobros(){
 		Double totalCobros=0D;
 		for (RecobroProcesoFacturacionSubcartera subcartera : procesoSubcarteras){
-			totalCobros = totalCobros+subcartera.getTotalImporteCobros();
+			if (subcartera.getTotalImporteCobros()!=null)
+				totalCobros = totalCobros+subcartera.getTotalImporteCobros();
 		}
 		
 		return totalCobros;
@@ -192,7 +193,8 @@ public class RecobroProcesoFacturacion implements Auditable, Serializable{
 	public Double getTotalImporteFacturable(){
 		Double totalImporte=0D;
 		for (RecobroProcesoFacturacionSubcartera subcartera : procesoSubcarteras){
-			totalImporte = totalImporte+subcartera.getTotalImporteFacturable();
+			if (subcartera.getTotalImporteFacturable()!=null)
+				totalImporte = totalImporte+subcartera.getTotalImporteFacturable();
 		}
 		
 		return totalImporte;

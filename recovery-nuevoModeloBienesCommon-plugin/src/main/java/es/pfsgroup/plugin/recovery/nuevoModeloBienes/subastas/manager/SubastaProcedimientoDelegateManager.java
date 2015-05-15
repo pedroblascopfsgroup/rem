@@ -383,8 +383,8 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	 */
 	public String comprobarNumeroActivoBien(NMBBien nmbBien) {
 		
-		if(nmbBien.tieneNumeroActivo()){
-			return "Antes de dar la subasta por celebrada, deberá acceder a la ficha del bien y solicitar el número de activo mediante el botón habilitado para tal efecto";
+		if(!nmbBien.tieneNumeroActivo()){
+			return "Antes de dar la subasta por celebrada, deber&aacute; acceder a la ficha del bien y solicitar el n&uacute;mero de activo mediante el bot&oacute;n habilitado para tal efecto";
 		}
 		
 		return null;

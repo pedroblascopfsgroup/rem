@@ -40,6 +40,7 @@
 			<plugin.plazosExterna.version>1.1.0</plugin.plazosExterna.version>
 			<plugins.sidhi.version>1.1.0_rc1</plugins.sidhi.version>
 			<plugin.sidhiweb.version>1.0.6</plugin.sidhiweb.version>
+			<plugins.sidhibatch.version>1.0.0_rc32</plugins.sidhibatch.version>
 		</properties>
 
 		<repositories>
@@ -266,6 +267,11 @@
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-sidhiweb-plugin</artifactId>
 					<version>${plugin.sidhiweb.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-sidhi-batch</artifactId>
+					<version>${plugins.sidhibatch.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>es.pfs</groupId>

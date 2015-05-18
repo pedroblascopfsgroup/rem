@@ -30,7 +30,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.DDTipoBien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
-import es.capgemini.pfs.cirbe.model.DDPais;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -69,6 +68,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.NMBDtoBuscarClientes
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienesAdjudicaciones;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.InformePropuestaCancelacionBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
@@ -110,6 +110,7 @@ public class EditBienController {
 	private static final String TIPO_USUARIO_JSON = "plugin/coreextension/asunto/tipoUsuarioJSON";
 	private static final String JSON_LIST_LOCALIDADES = "plugin/nuevoModeloBienes/bienes/LocalidadesJSON";
 	private static final String JSON_LIST_UNIDADES_POBLACIONALES = "plugin/nuevoModeloBienes/bienes/UnidadesPoblacionalesJSON";
+	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";
 
 	@Autowired
 	private Executor executor;
@@ -349,9 +350,9 @@ public class EditBienController {
 		List<DDimpuestoCompra> impuestoCompra = (List<DDimpuestoCompra>) executor
 				.execute("dictionaryManager.getList", "DDimpuestoCompra");
 		map.put("impuestoCompra", impuestoCompra);
-		
-		List<DDPais> paises = (List<DDPais>) executor
-				.execute("dictionaryManager.getList", "DDPais");
+
+		List<DDCicCodigoIsoCirbeBKP> paises = (List<DDCicCodigoIsoCirbeBKP>) executor
+				.execute("dictionaryManager.getList", "DDCicCodigoIsoCirbeBKP");
 		map.put("paises", paises);
 		
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
@@ -423,9 +424,9 @@ public class EditBienController {
 		List<DDimpuestoCompra> impuestoCompra = (List<DDimpuestoCompra>) executor
 				.execute("dictionaryManager.getList", "DDimpuestoCompra");
 		map.put("impuestoCompra", impuestoCompra);
-		
-		List<DDPais> paises = (List<DDPais>) executor
-				.execute("dictionaryManager.getList", "DDPais");
+
+		List<DDCicCodigoIsoCirbeBKP> paises = (List<DDCicCodigoIsoCirbeBKP>) executor
+				.execute("dictionaryManager.getList", "DDCicCodigoIsoCirbeBKP");
 		map.put("paises", paises);
 		
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
@@ -463,9 +464,9 @@ public class EditBienController {
 		List<DDimpuestoCompra> impuestoCompra = (List<DDimpuestoCompra>) executor
 				.execute("dictionaryManager.getList", "DDimpuestoCompra");
 		map.put("impuestoCompra", impuestoCompra);
-		
-		List<DDPais> paises = (List<DDPais>) executor
-				.execute("dictionaryManager.getList", "DDPais");
+
+		List<DDCicCodigoIsoCirbeBKP> paises = (List<DDCicCodigoIsoCirbeBKP>) executor
+				.execute("dictionaryManager.getList", "DDCicCodigoIsoCirbeBKP");
 		map.put("paises", paises);
 		
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
@@ -509,9 +510,9 @@ public class EditBienController {
 		List<DDimpuestoCompra> impuestoCompra = (List<DDimpuestoCompra>) executor
 				.execute("dictionaryManager.getList", "DDimpuestoCompra");
 		map.put("impuestoCompra", impuestoCompra);
-		
-		List<DDPais> paises = (List<DDPais>) executor
-				.execute("dictionaryManager.getList", "DDPais");
+
+		List<DDCicCodigoIsoCirbeBKP> paises = (List<DDCicCodigoIsoCirbeBKP>) executor
+				.execute("dictionaryManager.getList", "DDCicCodigoIsoCirbeBKP");
 		map.put("paises", paises);
 		
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
@@ -3986,13 +3987,18 @@ public class EditBienController {
 	 * 
 	 * @param idBien
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String solicitarNumActivo(@RequestParam("id") Long idBien) {
+	public String solicitarNumActivo(WebRequest request,
+			@RequestParam("id") Long idBien, ModelMap model) {
 		// executor.execute(SubastasServicioTasacionDelegateApi.BO_UVEM_SOLICITUD_NUMERO_ACTIVO,
 		// idBien);
-		proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class)
-				.solicitarNumeroActivo(idBien);
-		return "default";
+		// proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivo(idBien);
+		Integer respuesta = proxyFactory.proxy(
+				SubastasServicioTasacionDelegateApi.class)
+				.solicitarNumeroActivoConRespuesta(idBien);
+		model.put("msgError", respuesta);
+		return JSON_RESPUESTA_SERVICIO;
 	}
 
 	/**
@@ -4030,8 +4036,9 @@ public class EditBienController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListPaises(ModelMap model){
-		List<DDPais> list = proxyFactory.proxy(BienApi.class).getListPaises();
+	public String getListPaises(ModelMap model) {
+		List<DDCicCodigoIsoCirbeBKP> list = proxyFactory.proxy(BienApi.class)
+				.getListPaises();
 		model.put("data", list);
 		return DICCIONARIO_JSON;
 	}

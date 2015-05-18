@@ -427,8 +427,25 @@
 			      		page.webflow({
 			      			flow:'editbien/solicitarNumActivo'
 			      			,params:{id:${NMBbien.id}}
-			      			,success: function(){
-			      			   app.abreBienTab(${NMBbien.id}, '${NMBbien.id}' + '${NMBbien.tipoBien.descripcion}', bienTabPanel.getActiveTab().initialConfig.nombreTab);
+			      			,success: function(result,request){
+			      			   debugger;		   
+			      			   if(result.msgError=='1'){
+			      			   		Ext.Msg.show({
+									title:'Operación realizada',
+									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ok"/>',
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.INFO});
+			      			   		app.abreBienTab(${NMBbien.id}, '${NMBbien.id}' + '${NMBbien.tipoBien.descripcion}', bienTabPanel.getActiveTab().initialConfig.nombreTab);
+			      			   	}
+			      			   	else{
+			      			   	
+				      			   	Ext.Msg.show({
+									title:'Advertencia',
+									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ko"/>',
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.WARNING});
+				      			   	
+			      			   	}
 			            	}
 			      		});
 					}

@@ -58,9 +58,15 @@
     };
     var rendererChechkboxMail = function(value, metaData, record, rowIndex, colIndex, store){ 
        
-         var tieneEmail = record.get('tieneEmail');
+        var tieneEmail = record.get('tieneEmail');
+        var activarEmail = false;
+        
+        <sec:authorize ifAllGranted="ACTIVAR_EMAIL_ANOTACIONES">
+        activarEmail = true;
+        </sec:authorize>
+        
                     
-        if(tieneEmail){            
+        if(activarEmail && tieneEmail){          
 	        if(parseInt(value) == 1){ 
 	            metaData.css='icon_checkbox_on';
 	        }
@@ -102,8 +108,8 @@
         //     ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.perfil" text="**perfil" />', width: 50,  dataIndex: 'perfil',sortable:true}
              ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.incorporar" text="**incorporar" />', width: 17,  dataIndex: 'incorporar',sortable:true,renderer:rendererChechkbox}
              ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.fecha" text="**fecha" />', width: 20,  dataIndex: 'fecha',sortable:true, editor: fechaGrid, renderer:rendererFecha}
-             ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.email" text="**email" />', width: 10,  dataIndex: 'email',sortable:true,renderer:rendererChechkboxMail}
-        //   	,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.isOficina" text="**isOficina" />', width: 10,  dataIndex: 'oficina',sortable:false,hidden:false}
+            ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.email" text="**email" />', width: 10,  dataIndex: 'email',sortable:true,renderer:rendererChechkboxMail}
+        //   ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.isOficina" text="**isOficina" />', width: 10,  dataIndex: 'oficina',sortable:false,hidden:false}
     ]});
     
     //Template para el combo de usuarios

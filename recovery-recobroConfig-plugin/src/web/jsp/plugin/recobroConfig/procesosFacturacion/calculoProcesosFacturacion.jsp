@@ -55,19 +55,19 @@
 			sortable="true"  firstHeader="true"/>
 		<pfs:defineHeader dataIndex="fechaDesde"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.fechaDesde" caption="**Fecha desde"
-			sortable="true" />	
+			sortable="true" renderer="app.format.dateRenderer" />	
 		<pfs:defineHeader dataIndex="fechaHasta"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.fechaHasta" caption="**Fecha hasta"
-			sortable="true" />	
+			sortable="true" renderer="app.format.dateRenderer" />	
 		<pfs:defineHeader dataIndex="nombre"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.nombre" caption="**Nombre"
 			sortable="true" />	
 		<pfs:defineHeader dataIndex="totalImporteCobros"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.totalImporteCobros" caption="**Total cobros"
-			sortable="false" />	
+			sortable="false" align="right"/>	
 		<pfs:defineHeader dataIndex="totalImporteFacturable"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.totalImporteFacturable" caption="**Total facturable"
-			sortable="false" />
+			sortable="false" renderer="app.format.moneyRenderer" align="right" />
 		<pfs:defineHeader dataIndex="usuarioCreacion"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.usuarioCreacion" caption="**Usuario"
 			sortable="true" />
@@ -279,10 +279,10 @@
 			sortable="true" />	
 		<pfs:defineHeader dataIndex="totalImporteCobros"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaSubcarteraProceso.totalImporteCobros" caption="**Cobros"
-			sortable="true" />
+			sortable="true" align="right" />
 		<pfs:defineHeader dataIndex="totalImporteFacturable"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaSubcarteraProceso.totalImporteFacturable" caption="**Facturable"
-			sortable="true" />							
+			sortable="true" renderer="app.format.moneyRenderer" align="right" />							
 	</pfs:defineColumnModel>
     
    	<pfs:remoteStore name="subcarterasDS" resultRootVar="subcarteras" recordType="subcarteraFacturacion"  dataFlow="recobroprocesosfacturacion/listaSubcarterasProcesoFacturacion" autoload="false"/>

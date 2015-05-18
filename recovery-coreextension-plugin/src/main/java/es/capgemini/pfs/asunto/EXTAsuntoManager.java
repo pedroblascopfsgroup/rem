@@ -87,6 +87,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -1839,6 +1840,33 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		
 		return results;
+	}
+
+	@Override
+	@BusinessOperation(EXT_BO_ES_TITULIZADA)
+	public String esTitulizada(Long idAsunto) {
+		
+		List<Long> listREsultado = asuntoDao.esTitulizada(idAsunto);
+		if(listREsultado.isEmpty()){
+			return "NO";
+		}
+		else{
+			return "SI";
+		}
+		
+	}
+
+	@Override
+	@BusinessOperation(EXT_BO_ES_GET_FONDO)
+	public String getFondo(Long idAsunto) {
+		String resultado = asuntoDao.getFondo(idAsunto);
+		if(resultado == null){
+			return "Prueba";
+		}
+		else{
+			return resultado;
+		}
+		
 	}
 	
 }

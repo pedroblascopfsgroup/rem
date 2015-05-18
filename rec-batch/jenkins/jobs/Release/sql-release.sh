@@ -1,6 +1,6 @@
 #/bin/bash
 
-SQL_DIR=${WORKSPACE}/src/main/sql
+SQL_DIR=./src/main/sql
 
 if [ "x$1" == "x" ]; then
 	echo "[ERROR] Argumento (1) TAG no especificado"

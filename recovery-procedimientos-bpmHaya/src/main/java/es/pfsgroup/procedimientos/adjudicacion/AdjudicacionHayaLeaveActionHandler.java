@@ -323,11 +323,11 @@ public class AdjudicacionHayaLeaveActionHandler extends
 								StringBuilder cuerpoEmail = new StringBuilder();
 								cuerpoEmail.append("Se ha producido el se&ntilde;alamiento del");
 								cuerpoEmail.append(" bien con numero de finca:");
-								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getNumFinca() : ""); // numeroFinca
+								cuerpoEmail.append(!Checks.esNulo(infoBien) && !Checks.esNulo(infoBien.getNumFinca()) ? infoBien.getNumFinca() : "     "); // numeroFinca
 								cuerpoEmail.append(" y referencia catastral:");
-								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getReferenciaCatastralBien() : ""); // RefCatastral
+								cuerpoEmail.append(!Checks.esNulo(infoBien) && !Checks.esNulo(infoBien.getReferenciaCatastralBien()) ? infoBien.getReferenciaCatastralBien() : "          "); // RefCatastral
 								cuerpoEmail.append(" con fecha ");
-								cuerpoEmail.append(DateFormat.toString(valor)); // Fecha
+								cuerpoEmail.append(!Checks.esNulo(valor) ? DateFormat.toString(valor) : ""); // Fecha
 								cuerpoEmail.append(" para su informaci&oacute;n");
 
 								DtoCrearAnotacion crearAnotacion = DtoCrearAnotacion
@@ -432,11 +432,11 @@ public class AdjudicacionHayaLeaveActionHandler extends
 								StringBuilder cuerpoEmail = new StringBuilder();
 								cuerpoEmail.append("Se ha producido el se&ntilde;alamiento de lanzamiento del bien");
 								cuerpoEmail.append(" con numero de finca:");
-								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getNumFinca() : ""); // numeroFinca
+								cuerpoEmail.append(!Checks.esNulo(infoBien) && !Checks.esNulo(infoBien.getNumFinca()) ? infoBien.getNumFinca() : "     "); // numeroFinca
 								cuerpoEmail.append(" y referencia catastral:");
-								cuerpoEmail.append(!Checks.esNulo(infoBien) ? infoBien.getReferenciaCatastralBien() : ""); // RefCatastral
+								cuerpoEmail.append(!Checks.esNulo(infoBien) && !Checks.esNulo(infoBien.getReferenciaCatastralBien()) ? infoBien.getReferenciaCatastralBien() : "          "); // RefCatastral
 								cuerpoEmail.append(" con fecha");
-								cuerpoEmail.append(DateFormat.toString(valor)); // Fecha
+								cuerpoEmail.append(!Checks.esNulo(valor) ? DateFormat.toString(valor) : ""); // Fecha
 								cuerpoEmail.append(" para su informaci&oacute;n");
 								
 								DtoCrearAnotacion crearAnotacion = DtoCrearAnotacion

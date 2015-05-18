@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=MANUEL MEJIAS
---## FECHA_CREACION=20150513
+--## FECHA_CREACION=20150514
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=1.3.12_rc03
---## INCIDENCIA_LINK=HR-890
+--## VERSION_ARTEFACTO=1.3.13_rc01
+--## INCIDENCIA_LINK=HR-852
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -15,6 +15,7 @@
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
+SET DEFINE OFF;
 DECLARE
     V_MSQL VARCHAR2(4000 CHAR);
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
@@ -28,24 +29,14 @@ DECLARE
     
 BEGIN
 	
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO '
-				|| ' SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoDFA() ? null : ''''Debe adjuntar el Decreto Firme de Adjudicaci&oacute;n.'''''' '
-				|| ' WHERE TAP_CODIGO = ''H005_notificacionDecretoAdjudicacionAEntidad'' '
-				;
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.BIE_BIEN '
+				|| ' ADD BIE_SAREB_ID VARCHAR2(20 CHAR) '
+			;
+ 
 
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL; 
 	COMMIT;
-
-	
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO '
-				|| ' SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoDFA() ? comprobarExisteDocumentoMP() ? null : ''''Debe adjuntar el Mandamiento de Pago'''' : ''''Debe adjuntar el Decreto Firme de Adjudicacion.'''''' '
-				|| ' WHERE TAP_CODIGO = ''H005_ConfirmarTestimonio'' '
-				;
-
-	DBMS_OUTPUT.PUT_LINE(V_MSQL);
-    EXECUTE IMMEDIATE V_MSQL; 
-	COMMIT;					
  
 EXCEPTION
      

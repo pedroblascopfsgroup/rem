@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="recobro" width="970" height="473">
+  <node name="Inicio" x="273" y="66" width="160" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P100_nodoInicioPorSQL" x="544" y="66" width="169" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P100_nodoEsperaController" x="381" y="172" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="342" h1="-2" w2="-2" h2="-108"/>
+    </edge>
+  </node>
+  <node name="P100_nodoDecision" x="389" y="281" width="186" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-34" y="7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="marcarExpediente" x="398" y="396" width="169" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="302" h1="1" w2="-42" h2="119"/>
+    </edge>
+  </node>
+  <node name="P100_nodoEspera" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="0" y="0" width="132" height="36"/>
+</root-container>

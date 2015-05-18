@@ -14,8 +14,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
@@ -31,8 +29,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LotesSubastaDto;
-import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
-import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 import es.pfsgroup.recovery.geninformes.GENINFVisorInformeController;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
@@ -233,6 +229,9 @@ public class SubastaController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformeBusquedaSubastasManager(NMBDtoBuscarSubastas b, ModelMap model) {
+		
+		
+				
 		model.put("fileItem", proxyFactory.proxy(SubastaApi.class).buscarSubastasXLS(b));
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
 	}
@@ -278,18 +277,5 @@ public class SubastaController {
 		// 
 		return DEFAULT;
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-    public String exportacionSubastasCount(NMBDtoBuscarSubastas dto, ModelMap model) {		
-    	
-		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-                Parametrizacion.LIMITE_EXPORT_EXCEL);
-				
-		model.put("count", proxyFactory.proxy(SubastaApi.class).buscarSubastasXLSCount(dto));
-		model.put("limit", Integer.parseInt(param.getValor()));
-		
-        return "plugin/coreextension/exportacionGenericoCountJSON";
-    }
 	
 }

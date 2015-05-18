@@ -1462,18 +1462,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		if (usuarioLogado.getUsuarioExterno())
 			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
 		
-		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
-		
-		Integer limite = Integer.parseInt(param.getValor());
-		
-		Integer count = asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params).getTotalCount();
-		
-		if(count>limite){
-			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limite+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
-		}
-		
-
 		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
 	}
 	
@@ -1830,15 +1818,27 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Override
 	@BusinessOperation(EXTAsuntoApi.EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
-	public Integer findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
+	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params) {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
 		if (usuarioLogado.getUsuarioExterno())
 			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
-
-		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params).getTotalCount();
+		
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
+		
+		Integer limite = Integer.parseInt(param.getValor());
+		
+		dto.setLimit(limite+1);
+		Page results = asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+				
+		if(results.getTotalCount()>limite){
+			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limite+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+		}
+		
+		return results;
 	}
 	
 }

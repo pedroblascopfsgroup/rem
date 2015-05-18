@@ -31,8 +31,8 @@
 			parameters="parametros" />
 			
 	btnGuardar.handler = function() {
-		var sup1 = tipoDefinitivo.getValue();
-		var sup1 = principalDefinitivo.getValue();
+		var sup1 = supervisorTipoCredito.getValue();
+		var sup2 = supervisorPrincipal.getValue();
 
 		if ((sup1 != '' && sup2 == '') || (sup2 != '' && sup1 == '')) {
 			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="asunto.concurso.tabFaseComun.error.supervisorObligatoria"/>');

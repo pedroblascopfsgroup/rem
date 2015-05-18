@@ -21,10 +21,10 @@
 	var esSolicitud=true;
 	<c:if test="${decisionProcedimiento!=null}" >
 		if('${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_ACEPTADO" />'
-			||'${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_RECHAZADO" />' || (${isConsulta != null} && ${isConsulta}))
+			|| '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_RECHAZADO" />' || (${isConsulta != null} && ${isConsulta}))
 			modoConsulta=true;
 	</c:if>
-
+	
 	var esGestor=${esGestor};
 	var esSupervisor=${esSupervisor};
 	var idProcedimiento = new Ext.form.Hidden({
@@ -33,6 +33,11 @@
 			,value:'${procedimiento.id}'
 		</c:if>
 	});
+	
+	<c:if test="${decisionProcedimiento!=null}" >
+		if('${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />' && ${!esSupervisor})			
+			modoConsulta=true;
+	</c:if>
 	
 	var estadoSegunPerfil;
 	if(esGestor)
@@ -820,6 +825,7 @@
 				,triggerAction: 'all'
 				,labelStyle:labelStyle
 				,value:'${decisionProcedimiento.causaDecision.codigo}'
+				,disabled:modoConsulta
 				,fieldLabel : '<s:message code="decisionProcedimiento.causas" text="**Causas" />'
 	});
 	*/
@@ -827,8 +833,8 @@
 	var optionsCausasStoreFinalizar = new Ext.data.JsonStore({fields: ['codigo', 'descripcion'],root: 'diccionario',data : dictCausasFinalizar});
 	var optionsCausasStoreParalizar = new Ext.data.JsonStore({fields: ['codigo', 'descripcion'],root: 'diccionario',data : dictCausasParalizar});
 	
-	var comboCausasFinalizar = new Ext.form.ComboBox({store:optionsCausasStoreFinalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: true && (!chkFinalizarOrigen.checked),mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionFinalizar.codigo}',fieldLabel : '<s:message code="decisionProcedimiento.causasFinalizar" text="Causa" />'});
-	var comboCausasParalizar = new Ext.form.ComboBox({store:optionsCausasStoreParalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: true && (!chkParalizarOrigen.checked),mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionParalizar.codigo}',fieldLabel : '<s:message code="decisionProcedimiento.causasParalizar" text="Causa" />'});
+	var comboCausasFinalizar = new Ext.form.ComboBox({store:optionsCausasStoreFinalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: (true && !chkFinalizarOrigen.checked) || modoConsulta,mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionFinalizar.codigo}',fieldLabel : '<s:message code="decisionProcedimiento.causasFinalizar" text="Causa" />'});
+	var comboCausasParalizar = new Ext.form.ComboBox({store:optionsCausasStoreParalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: (true && !chkParalizarOrigen.checked) || modoConsulta,mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionParalizar.codigo}',fieldLabel : '<s:message code="decisionProcedimiento.causasParalizar" text="Causa" />'});
 	
 	if ( (!chkFinalizarOrigen.checked) && (!chkParalizarOrigen.checked) ){
 		comboCausasParalizar.setVisible(false);
@@ -849,11 +855,10 @@
 	var fechaHasta=new Ext.ux.form.XDateField({
 		fieldLabel:'<s:message code="decisionProcedimiento.fechahasta" text="**Hasta" />'
 		,labelStyle:labelStyle
-		,disabled: ${decisionProcedimiento.finalizada == null || (decisionProcedimiento.finalizada != null && decisionProcedimiento.finalizada)} 
+		,disabled: modoConsulta || ${decisionProcedimiento.finalizada == null || (decisionProcedimiento.finalizada != null && decisionProcedimiento.finalizada)} 
 		,name:'fechaParalizacion'
 		,minValue : hoy
-		,value:	'<fwk:date value="${decisionProcedimiento.fechaParalizacion}" />'
-		
+		,value:	'<fwk:date value="${decisionProcedimiento.fechaParalizacion}" />'			
 	});
 	var comentarios=new Ext.form.TextArea({
 		fieldLabel : '<s:message code="decisionProcedimiento.comentarios" text="**Comentarios" />'
@@ -1040,9 +1045,15 @@
 						new Ext.form.Label({
 							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar" text="**La decisión está aceptada/cancelada y no se puede editar" />'
 							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
-							,hidden: !modoConsulta
+							,hidden: !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
 							})
-						,procedimientoGrid
+						,
+						new Ext.form.Label({
+							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar.propuesto" text="**La decisión está propuesta y no se puede editar" />'
+							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
+							,hidden: !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' != '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
+							})
+						, procedimientoGrid
 					]
 				}
 

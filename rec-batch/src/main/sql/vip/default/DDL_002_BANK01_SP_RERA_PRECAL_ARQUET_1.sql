@@ -1,3 +1,20 @@
+﻿--/*
+--##########################################
+--## AUTOR=LUIS RUIZ
+--## FECHA_CREACION=20150515
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.10.13
+--## INCIDENCIA_LINK=BCFI-614/613
+--## PRODUCTO=SI
+--## Finalidad: DML
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
 create or replace PROCEDURE RERA_PRECAL_ARQUET_1 AS
   ql_stmt VARCHAR2(2000);
 BEGIN
@@ -262,3 +279,6 @@ SELECT TMP_CNT_CODIGO_CNT50 AS CNT_CONTRATO,
   EXECUTE IMMEDIATE ql_stmt;
 
 END RERA_PRECAL_ARQUET_1;
+
+/
+EXIT;

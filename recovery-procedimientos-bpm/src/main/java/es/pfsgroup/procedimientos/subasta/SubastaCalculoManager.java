@@ -305,8 +305,11 @@ public class SubastaCalculoManager {
 	 */
 	private float getDeudaGlobal(Asunto asunto) {
 		float acumulado = 0;
-		List<Contrato> listadoContratosAsuntos = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoContratosAcuerdoByAsuId(asunto.getId());
-		for (Contrato contrato : listadoContratosAsuntos) {
+		List<Contrato> listaContratosAsunto = new ArrayList<Contrato>();
+		if (!Checks.esNulo(asunto)) {
+			listaContratosAsunto.addAll(asunto.getContratos());
+		}
+		for (Contrato contrato : listaContratosAsunto) {
 			Movimiento mov = contrato.getLastMovimiento();
 			if (mov==null) { 
 				continue;

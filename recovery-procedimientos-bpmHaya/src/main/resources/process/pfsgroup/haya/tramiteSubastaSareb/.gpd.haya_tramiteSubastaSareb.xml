@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteSubastaSareb" width="2914" height="1930">
+<root-container name="haya_tramiteSubastaSareb" width="2914" height="1932">
   <node name="Inicio" x="34" y="133" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -253,7 +253,7 @@
       <label x="-48" y="-37"/>
     </edge>
   </node>
-  <node name="Decision1" x="-258" y="981" width="132" height="36">
+  <node name="H002_CelebracionDecision" x="-258" y="981" width="195" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -334,7 +334,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision2" x="643" y="1893" width="132" height="36">
+  <node name="H002_IndicesDecision" x="631" y="1893" width="161" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -469,7 +469,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision3" x="2193" y="530" width="132" height="36">
+  <node name="H002_SuspenderDecision" x="2149" y="530" width="176" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

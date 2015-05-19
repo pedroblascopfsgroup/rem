@@ -221,7 +221,7 @@
       <label x="-33" y="-7"/>
     </edge>
   </node>
-  <node name="Decision" x="990" y="334" width="132" height="36">
+  <node name="H009_ElevacionDecision" x="990" y="334" width="170" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

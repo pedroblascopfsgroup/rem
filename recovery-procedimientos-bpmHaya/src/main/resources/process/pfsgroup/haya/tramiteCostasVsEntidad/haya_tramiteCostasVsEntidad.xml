@@ -171,10 +171,10 @@
 
 	<decision name="H032_ResolucionFirmeDecision" expression="#{H032_ResolucionFirmeDecision}">
 		<transition to="H032_RegistrarPago" name="favorable"></transition>
-		<transition to="Decision" name="desfavorable"></transition>
+		<transition to="H032_ResolucionDecision" name="desfavorable"></transition>
 	</decision>
 
-	<node name="Decision">
+	<node name="H032_ResolucionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

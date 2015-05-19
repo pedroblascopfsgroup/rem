@@ -145,7 +145,7 @@
 
 	<decision name="H023_confirmarAdmisionDemandaDecision" expression="#{H023_confirmarAdmisionDemandaDecision}">
 		<transition to="H023_confirmarOposicion" name="SI"></transition>
-		<transition to="Decision1" name="NO"></transition>
+		<transition to="H023_DemandaDecision" name="NO"></transition>
 	</decision>
 
 	<decision name="H023_confirmarOposicionDecision" expression="#{H023_confirmarOposicionDecision}">
@@ -154,7 +154,7 @@
 		<transition to="H023_registrarVista" name="OPOSICIONVISTA"></transition>
 	</decision>
 
-	<node name="Decision1">
+	<node name="H023_DemandaDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
         	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>
@@ -189,7 +189,7 @@
 	</decision>
 
 	<fork name="fork1">
-		<transition to="Decision1" name="proponerActuacion"></transition>
+		<transition to="H023_DemandaDecision" name="proponerActuacion"></transition>
 		<transition to="H023_informarSareb" name="informarSareb"></transition>
 	</fork>
 

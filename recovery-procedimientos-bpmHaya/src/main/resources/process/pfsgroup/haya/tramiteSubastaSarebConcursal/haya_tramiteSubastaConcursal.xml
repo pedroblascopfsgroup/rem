@@ -506,7 +506,7 @@
 		<transition to="H003_ElevarPropuestaASarebIndices" name="activarAlerta"></transition>
 	</state>
 
-	<node name="Decision2">
+	<node name="H003_ConcursalDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -566,7 +566,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Decision2" name="avanzaBPM"></transition>
+		<transition to="H003_ConcursalDecision" name="avanzaBPM"></transition>
 		<transition to="H003_ElevarPropuestaASarebIndices" name="vueltaAtras"></transition>
 		<transition to="H003_RegistrarRespuestaSarebIndices" name="activarAlerta"></transition>
 	</state>

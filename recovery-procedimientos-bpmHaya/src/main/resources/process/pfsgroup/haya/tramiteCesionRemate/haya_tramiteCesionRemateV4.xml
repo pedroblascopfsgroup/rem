@@ -29,11 +29,11 @@
 	</state>
 
 	<decision name="H006_AperturaPlazoDecision" expression="#{H006_AperturaPlazoDecision}">
-		<transition to="Decision1" name="NO"></transition>
+		<transition to="H006_NoCesionRemateDecision" name="NO"></transition>
 		<transition to="H006_ResenyarFechaComparecencia" name="SI"></transition>
 	</decision>
 
-	<node name="Decision1">
+	<node name="H006_NoCesionRemateDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler</targetBean>
@@ -115,7 +115,7 @@
 
 	<fork name="fork2">
 		<transition to="H006_ConfirmarContabilidad" name="confirmarContabilidad"></transition>
-		<transition to="Decision1" name="decidir"></transition>
+		<transition to="H006_NoCesionRemateDecision" name="decidir"></transition>
 	</fork>
 
 	<state name="H006_ConfirmarContabilidad">

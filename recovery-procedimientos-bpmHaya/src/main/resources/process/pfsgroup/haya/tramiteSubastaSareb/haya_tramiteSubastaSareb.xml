@@ -168,7 +168,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Decision3" name="avanzaBPM"></transition>
+		<transition to="H002_SuspenderDecision" name="avanzaBPM"></transition>
 		<transition to="H002_SuspenderSubasta" name="activarAlerta"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
@@ -404,7 +404,7 @@
 		<transition to="Fin5" name="haya_tramiteSubastaSareb"></transition>
 	</state>
 
-	<node name="Decision1">
+	<node name="H002_CelebracionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -559,7 +559,7 @@
 		<transition to="H002_ElevarPropuestaASarebIndices" name="activarAlerta"></transition>
 	</state>
 
-	<node name="Decision2">
+	<node name="H002_IndicesDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -619,7 +619,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Decision2" name="avanzaBPM"></transition>
+		<transition to="H002_IndicesDecision" name="avanzaBPM"></transition>
 		<transition to="H002_ElevarPropuestaASarebIndices" name="vueltaAtras"></transition>
 		<transition to="H002_RegistrarRespuestaSarebIndices" name="activarAlerta"></transition>
 	</state>
@@ -640,7 +640,7 @@
 	</decision>
 
 	<decision name="B" expression="#{DecisionRama_2}">
-		<transition to="Decision1" name="si"></transition>
+		<transition to="H002_CelebracionDecision" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
 
@@ -669,7 +669,7 @@
 		<transition to="Fin5" name="no"></transition>
 	</decision>
 
-	<node name="Decision3">
+	<node name="H002_SuspenderDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

@@ -138,10 +138,10 @@
 
 	<decision name="H039_registrarConclusionConcursoDecision" expression="#{H039_registrarConclusionConcursoDecision}">
 		<transition to="H039_InformarSareb" name="concluye"></transition>
-		<transition to="Decision" name="noConcluye"></transition>
+		<transition to="H039_ConclusionDecision" name="noConcluye"></transition>
 	</decision>
 
-	<node name="Decision">
+	<node name="H039_ConclusionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

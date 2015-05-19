@@ -196,10 +196,10 @@
 		<transition to="H035_registrarResolucion" name="vueltaAtras"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H035_resolucionFirme" name="activarAlerta"></transition>
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H035_ResolucionDecision" name="avanzaBPM"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H035_ResolucionDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
         	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>

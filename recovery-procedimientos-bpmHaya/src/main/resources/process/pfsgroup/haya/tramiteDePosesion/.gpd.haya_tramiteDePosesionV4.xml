@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteDePosesionV4" width="1466" height="966">
+<root-container name="haya_tramiteDePosesionV4" width="1488" height="966">
   <node name="inicio" x="394" y="30" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -122,12 +122,12 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision" x="155" y="282" width="132" height="36">
+  <node name="H015_RegistrarSolicitudDecision" x="102" y="282" width="224" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision2" x="1080" y="718" width="132" height="36">
+  <node name="H015_LlavesDecision" x="1080" y="718" width="221" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

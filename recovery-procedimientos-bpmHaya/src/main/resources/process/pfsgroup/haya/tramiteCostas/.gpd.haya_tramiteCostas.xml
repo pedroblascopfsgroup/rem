@@ -127,7 +127,7 @@
       <bendpoint w1="158" h1="61" w2="-442" h2="82"/>
     </edge>
   </node>
-  <node name="Decision 2" x="621" y="626" width="173" height="36">
+  <node name="H007_AutoDecision" x="621" y="626" width="173" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

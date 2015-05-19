@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteValoracionBienesInmuebles" width="968" height="691">
+<root-container name="haya_tramiteValoracionBienesInmuebles" width="983" height="691">
   <node name="Inicio" x="284" y="22" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -93,7 +93,7 @@
       <bendpoint w1="331" h1="-56" w2="252" h2="63"/>
     </edge>
   </node>
-  <node name="H058_EstConformidadOAlegacion" x="331" y="329" width="132" height="36">
+  <node name="H058_EstConformidadOAlegacion" x="331" y="329" width="242" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -104,7 +104,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="EstConformidadOAlegacionDecision" x="281" y="390" width="132" height="36">
+  <node name="EstConformidadOAlegacionDecision" x="281" y="390" width="211" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -147,12 +147,11 @@
       <bendpoint w1="46" h1="-84" w2="49" h2="57"/>
     </edge>
   </node>
-  <node name="Decision" x="459" y="494" width="132" height="36">
+  <node name="H058_InmueblesDecision" x="459" y="494" width="132" height="36">
     <edge>
       <label x="-9" y="6"/>
     </edge>
   </node>
-  <node name="Fin" x="640" y="493" width="132" height="36"/>
   <node name="H058_ResolucionFirme" x="295" y="505" width="132" height="36">
     <edge>
       <label x="-32" y="-10"/>
@@ -170,4 +169,5 @@
       <bendpoint w1="161" h1="51" w2="-184" h2="63"/>
     </edge>
   </node>
+  <node name="Fin" x="640" y="493" width="132" height="36"/>
 </root-container>

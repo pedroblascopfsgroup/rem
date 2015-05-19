@@ -52,11 +52,11 @@
 	</state>
 
 	<decision name="H001_AutoDespachandoEjecucionDecision" expression="#{H001_AutoDespachandoEjecucionDecision}">
-		<transition to="decision1" name="NO"></transition>
+		<transition to="H001_AutoDespachandoDecision" name="NO"></transition>
 		<transition to="fork1" name="SI"></transition>
 	</decision>
 
-	<node name="decision1">
+	<node name="H001_AutoDespachandoDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -225,12 +225,12 @@
 			</action>
 		</event>
 		<transition to="H001_ResolucionFirme" name="activarAlerta"></transition>
-		<transition to="decision2" name="avanzaBPM"></transition>
+		<transition to="H001_ResolucionFirmeDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H001_RegistrarResolucion" name="vueltaAtras"></transition>
 	</state>
 
-	<node name="decision2">
+	<node name="H001_ResolucionFirmeDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

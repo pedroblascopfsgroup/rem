@@ -101,12 +101,12 @@
             	<targetBean>genericLeaveActionHandler</targetBean>
         	 </action>
       	</event>
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H034_AcuerdoDecision" name="avanzaBPM"></transition>
 		<transition to="H034_AcuerdoEntrega" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H034_AcuerdoDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>

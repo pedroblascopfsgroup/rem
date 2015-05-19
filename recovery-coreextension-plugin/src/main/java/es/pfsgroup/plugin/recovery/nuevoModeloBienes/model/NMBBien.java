@@ -189,9 +189,6 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	@JoinColumn(name="DD_QCI_ID")
 	private DDimpuestoCompra impuestoCompra;
 	
-	@Column(name = "BIE_SAREB_ID")
-    private String sarebId;
-	
 //	@Transient
 //	private Boolean adjudicacionOK;
 //	
@@ -908,14 +905,6 @@ public class NMBBien extends Bien implements NMBBienInfo{
 
 	public void setImpuestoCompra(DDimpuestoCompra impuestoCompra) {
 		this.impuestoCompra = impuestoCompra;
-	}
-
-	public String getSarebId() {
-		return sarebId;
-	}
-
-	public void setSarebId(String sarebId) {
-		this.sarebId = sarebId;
 	}
 	
 }

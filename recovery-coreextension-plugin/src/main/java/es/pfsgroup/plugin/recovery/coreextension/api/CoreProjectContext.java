@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension.api;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Set;
 
@@ -10,14 +11,13 @@ import java.util.Set;
  */
 public interface CoreProjectContext {
 	
-	public static final String CONST_TAREA_TIPO_DECISION = "DECISION";	
+	public static final String CATEGORIA_SUBTAREA_TOMA_DECISION = "TOMA_DE_DECISION";	
 	
 	/**
-	 * Devuelve los codigos (DD_STA_CODIGO) de las tareas que se consideran de tipo decisión
+	 * Devuelve los codigos (DD_STA_CODIGO) agrupadas por categorias (DECISION, ....)
 	 * @return Set<String>
 	 */
-	Set<String> getTareasTipoDecision();	
-	
-	List<String> getTiposProcedimientosAdjudicados();
+	public Map<String, Set<String>> getCategoriasSubTareas();	
 
+	List<String> getTiposProcedimientosAdjudicados();
 }

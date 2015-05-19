@@ -20,13 +20,16 @@
     <!-- Canal para eventos del batch -->
     <int:publish-subscribe-channel id="batchChannel"/>
     
+    
     <!--
         The controllers are autodetected POJOs labeled with the @Controller annotation.
         DefaultAnnotationHandlerMapping is driven by these annotations and is 
         enabled by default with Java 5+:
     -->
-    <import resource="classpath*:optionalConfiguration/ac-rec-bpm-*.xml" />
-    <import resource="classpath*:optionalConfiguration/ac-*-projectContext.xml" />
+    
+    
+    
+    <import resource="classpath:ac-rec-bpm-pfsgroup.xml" />    
     
     <!-- From rec-common -->
     <import resource="classpath:ac-rec-common-data-access.xml"/>

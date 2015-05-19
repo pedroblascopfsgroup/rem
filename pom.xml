@@ -531,7 +531,6 @@
 
 					<module>recovery-procedimientos-bpmHaya</module>
 					<module>recovery-procedimientos-bpmHaya-plugin</module>
-					<module>recovery-integracionuvem-plugin</module>
 
 					<module>rec-web</module>
 					<module>rec-batch</module>

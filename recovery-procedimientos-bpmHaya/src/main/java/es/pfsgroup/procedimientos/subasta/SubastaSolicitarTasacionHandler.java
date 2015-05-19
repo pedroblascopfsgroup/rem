@@ -26,7 +26,7 @@ public class SubastaSolicitarTasacionHandler extends PROBaseActionHandler {
 	private static final long serialVersionUID = 1L;
 
 	private static final long MILLSECS_PER_DAY = 24 * 60 * 60 * 1000; //Milisegundos al día
-	private static final int DIAS_LIMITE_TASACION_VALIDA = 90;
+	private static final int DIAS_LIMITE_TASACION_VALIDA = 540; //18 meses
 	private static final String TRANSICION_FIN = "Fin";
 	private static final String TRANSICION_ACTUALIZAR_TASACION = "actualizarTasacion";
 	private static final String TIMER_NAME = "Espera Solicitar Tasacion";
@@ -89,7 +89,7 @@ public class SubastaSolicitarTasacionHandler extends PROBaseActionHandler {
 				boolean tasacionValida = ((valoracion.getFechaValorTasacion() != null && 
 						valoracion.getFechaValorTasacion().after(fechaLimite.getTime())));
 				
-				if (tasacionValida) {
+				if (!tasacionValida) {
 					// llamada solicita_tasacion
 					executionContext.getToken().signal(TRANSICION_ACTUALIZAR_TASACION);
 				}				

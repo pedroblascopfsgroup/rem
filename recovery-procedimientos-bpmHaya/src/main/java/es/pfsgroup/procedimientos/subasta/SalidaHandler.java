@@ -1,156 +1,166 @@
 package es.pfsgroup.procedimientos.subasta;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.jbpm.graph.exe.ExecutionContext;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.BPMContants;
-import es.capgemini.pfs.bpm.generic.GenericActionHandler;
 import es.capgemini.pfs.bpm.generic.JBPMLeaveEventHandler;
+import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
-import es.capgemini.pfs.utils.JBPMProcessManager;
+import es.pfsgroup.procedimientos.PROGenericActionHandler;
+import es.pfsgroup.procedimientos.PROJBPMLeaveEventHandler;
+import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
+import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 
-/**
- * PONER JAVADOC FO.
- */
-@Component
-public class SalidaHandler extends GenericActionHandler {
+public class SalidaHandler extends PROGenericActionHandler {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4727308329810928607L;
+	private String city;
 
-    @Autowired
-    private JBPMProcessManager jbpmUtils;
+	@Override
+	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
+		printInfoNode("Sale nodo", executionContext);
 
-    private String city;
+		// Llamamos al nodo gen�rico de transici�n
+		if (delegateTransitionClass instanceof PROJBPMLeaveEventHandler) {
+			((PROJBPMLeaveEventHandler) delegateTransitionClass).onLeave(executionContext);
+		}
 
-    /**
-     * PONER JAVADOC FO.
-     * @param delegateTransitionClass delegateTransitionClass
-     * @param delegateSpecificClass delegateSpecificClass
-     */
-    @Override
-    protected void process(Object delegateTransitionClass, Object delegateSpecificClass) {
-        printInfoNode("Sale nodo");
+		// Llamamos al nodo espec�fico
+		if (delegateSpecificClass instanceof PROJBPMLeaveEventHandler) {
+			((PROJBPMLeaveEventHandler) delegateSpecificClass).onLeave(executionContext);
+		}
 
-        //Llamamos al nodo genï¿½rico de transiciï¿½n
-        if (delegateTransitionClass instanceof JBPMLeaveEventHandler) {
-            ((JBPMLeaveEventHandler) delegateTransitionClass).onLeave();
-        }
+		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(delegateTransitionClass)) {
+			if (debeDestruirTareaProcedimiento(executionContext)) {
+				if (isDecisionNode(executionContext)) {
+					String nombreDecision = getNombreNodo(executionContext) + "Decision";
+					setVariable(nombreDecision, getDecision(executionContext), executionContext);
+					logger.debug("\tDecisi�n de la tarea: " + getVariable(nombreDecision, executionContext));
+				}
 
-        //Llamamos al nodo especï¿½fico
-        if (delegateSpecificClass instanceof JBPMLeaveEventHandler) {
-            ((JBPMLeaveEventHandler) delegateSpecificClass).onLeave();
-        }
+				proxyFactory.proxy(EXTJBPMProcessApi.class).borraTimersTarea(getTareaExterna(executionContext).getId());
 
-        if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(delegateTransitionClass)) {
-            if (debeDestruirTareaProcedimiento()) {
-                if (isDecisionNode()) {
-                    String nombreDecision = getNombreNodo() + "Decision";
-                    setVariable(nombreDecision, getDecision());
-                    logger.debug("\tDecisión de la tarea: " + getVariable(nombreDecision));
-                }
+				finalizarTarea(executionContext);
+				finalizarOperacionesAsociadas(executionContext);
+			}
+		}
 
-                finalizarTarea();
-                finalizarOperacionesAsociadas();
-            }
-        }
+		// Borramos las posibles variables de listado de tareas del nodo
+		executionContext.getContextInstance().deleteVariable(BPMContants.BPM_LISTADO_TAREAS_VUELTA_ATRAS + "_" + getNombreNodo(executionContext));
 
-        //Borramos las posibles variables de listado de tareas del nodo
-        getExecutionContext().getContextInstance().deleteVariable(BPMContants.BPM_LISTADO_TAREAS_VUELTA_ATRAS + "_" + getNombreNodo());
-    }
+		// A�adimos el nombre del nodo actual al contexto para poder detectar
+		// una reentrada en el PROGenericEnterActionHandler
+		setVariable(ConstantesBPMPFS.NOMBRE_NODO_SALIENTE, getNombreNodo(executionContext), executionContext);
 
-    /**
-     * Finaliza las operaciones asociadas a la tarea (prorrogas, ...).
-     */
-    protected void finalizarOperacionesAsociadas() {
-        //Buscamos si tiene prorroga activa
-        Prorroga prorroga = getTareaExterna().getTareaPadre().getProrrogaAsociada();
+	}
 
-        //Borramos (finalizamos) la prorroga si es que tiene
-        if (prorroga != null) {
-            tareaNotificacionManager.borrarNotificacionTarea(prorroga.getTarea().getId());
-        }
-    }
+	/**
+	 * Finaliza las operaciones asociadas a la tarea (prorrogas, ...).
+	 */
+	protected void finalizarOperacionesAsociadas(ExecutionContext executionContext) {
+		// Buscamos si tiene prorroga activa
+		Prorroga prorroga = getTareaExterna(executionContext).getTareaPadre().getProrrogaAsociada();
 
-    /**
-     * Finaliza la tarea activa del BPM del procedimiento.
-     */
-    protected void finalizarTarea() {
-        TareaExterna tareaExterna = getTareaExterna();
-        //TareaNotificacion tarea = tareaExterna.getTareaPadre();
-        TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
+		// Borramos (finalizamos) la prorroga si es que tiene
+		if (prorroga != null) {
+			proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
+			// tareaNotificacionManager.borrarNotificacionTarea(prorroga.getTarea().getId());
+		}
+	}
 
-        String scriptValidacion = tareaProcedimiento.getScriptValidacionJBPM();
-        //        String scriptAmpliado = context.get(BPMContants.FUNCIONES_GLOBALES_SCRIPT) + scriptValidacion;
+	/**
+	 * Finaliza la tarea activa del BPM del procedimiento.
+	 */
+	protected void finalizarTarea(ExecutionContext executionContext) {
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+		// TareaNotificacion tarea = tareaExterna.getTareaPadre();
+		TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
 
-        if (!StringUtils.isBlank(scriptValidacion)) {
-            try {
-                Object result = jbpmUtils.evaluaScript(getProcedimiento().getId(), tareaExterna.getId(),
-                        tareaExterna.getTareaProcedimiento().getId(), null, scriptValidacion);
+		String scriptValidacion = tareaProcedimiento.getScriptValidacionJBPM();
+		// String scriptAmpliado =
+		// context.get(BPMContants.FUNCIONES_GLOBALES_SCRIPT) +
+		// scriptValidacion;
 
-                if (result instanceof Boolean && !(Boolean) result) { throw new UserException("bpm.error.script"); }
+		/**
+		 * Comprobamos que la transicion que se está ejecutando es la de vuelta
+		 * atras. En tal caso, no debe ejecutar el script de validacion, dado
+		 * que está volviendo hacia atrás
+		 */
+		String transicion = executionContext.getTransition().getName();
+		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion)) {
+			try {
+				Object result = proxyFactory.proxy(JBPMProcessApi.class).evaluaScript(getProcedimiento(executionContext).getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
+						null, scriptValidacion);
 
-                if (result instanceof String && ((String) result).length() > 0 && !"null".equalsIgnoreCase((String) result)) { throw new UserException(
-                        (String) result); }
+				if (result instanceof Boolean && !(Boolean) result) {
+					throw new UserException("bpm.error.script");
+				}
 
-            } catch (UserException e) {
-                logger.info("No se ha podido validar el formulario correctamente. Procedimiento [" + getProcedimiento().getId() + "], tarea ["
-                        + tareaExterna.getId() + "]. Mensaje [" + e.getMessage() + "]", e);
-                //Relanzamos la userException para que le aparezca al usuario en pantalla
-                throw (e);
-            } catch (Exception e) {
-                logger.info("No se ha podido validar el formulario correctamente. Procedimiento [" + getProcedimiento().getId() + "], tarea ["
-                        + tareaExterna.getId() + "]", e);
-                throw new UserException("bpm.error.script");
-            }
-        }
+				if (result instanceof String && ((String) result).length() > 0 && !"null".equalsIgnoreCase((String) result)) {
+					throw new UserException((String) result);
+				}
 
-        //La seteamos por si acaso avanza sin haber despertado el BPM
-        tareaExterna.setDetenida(false);
-        tareaExternaManager.borrar(tareaExterna);
+			} catch (UserException e) {
+				logger.info("No se ha podido validar el formulario correctamente. Procedimiento [" + getProcedimiento(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
+						+ e.getMessage() + "]", e);
+				// Relanzamos la userException para que le aparezca al usuario
+				// en pantalla
+				throw (e);
+			} catch (Exception e) {
+				logger.info("No se ha podido validar el formulario correctamente. Procedimiento [" + getProcedimiento(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]", e);
+				throw new UserException("bpm.error.script");
+			}
+		}
 
-        logger.debug("\tCaducamos la tarea: " + getNombreNodo());
-    }
+		// La seteamos por si acaso avanza sin haber despertado el BPM
+		tareaExterna.setDetenida(false);
+		proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
 
-    /**
-     * PONER JAVADOC FO.
-     * @return boolean
-     */
-    protected boolean isDecisionNode() {
-        TareaExterna tareaExterna = getTareaExterna();
-        String script = tareaExterna.getTareaProcedimiento().getScriptDecision();
+		logger.debug("\tCaducamos la tarea: " + getNombreNodo(executionContext));
+	}
 
-        return (!StringUtils.isBlank(script));
-    }
+	/**
+	 * PONER JAVADOC FO.
+	 * 
+	 * @return boolean
+	 */
+	protected boolean isDecisionNode(ExecutionContext executionContext) {
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+		String script = tareaExterna.getTareaProcedimiento().getScriptDecision();
 
-    /**
-     * PONER JAVADOC FO.
-     * @return string
-     */
-    protected String getDecision() {
-        TareaExterna tareaExterna = getTareaExterna();
-        String script = tareaExterna.getTareaProcedimiento().getScriptDecision();
-        String result;
-        try {
-            result = jbpmUtils.evaluaScript(getProcedimiento().getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(), null,
-                    script).toString();
-        } catch (Exception e) {
-            logger.info("Error en el script de decisión [" + script + "]. Procedimiento [" + getProcedimiento().getId() + "], tarea ["
-                    + tareaExterna.getId() + "].", e);
-            throw new UserException("bpm.error.script");
-        }
-        return result;
-    }
+		return (!StringUtils.isBlank(script));
+	}
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+	/**
+	 * PONER JAVADOC FO.
+	 * 
+	 * @return string
+	 */
+	protected String getDecision(ExecutionContext executionContext) {
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+		String script = tareaExterna.getTareaProcedimiento().getScriptDecision();
+		String result;
+		try {
+			result = proxyFactory.proxy(JBPMProcessApi.class)
+					.evaluaScript(getProcedimiento(executionContext).getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(), null, script).toString();
+		} catch (Exception e) {
+			logger.info("Error en el script de decisi�n [" + script + "]. Procedimiento [" + getProcedimiento(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "].", e);
+			throw new UserException("bpm.error.script");
+		}
+		return result;
+	}
 
-    public String getCity() {
-        return city;
-    }
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getCity() {
+		return city;
+	}
 
 }

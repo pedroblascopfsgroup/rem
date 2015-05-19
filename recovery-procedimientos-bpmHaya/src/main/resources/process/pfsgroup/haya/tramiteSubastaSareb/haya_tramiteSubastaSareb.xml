@@ -214,7 +214,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>entradaHandler
+				<targetBean>genericEnterActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -222,13 +222,12 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>salidaHandler
+				<targetBean>subastaV4HayaLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
 		<transition to="H002_SolicitarTasacion" name="avanzaBPM"></transition>
-		<transition to="Fin3" name="Fin"></transition>
-		<transition to="H002_SolicitarTasacion" name="vueltaAtras"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<state name="H002_BPMTramiteTributacion">

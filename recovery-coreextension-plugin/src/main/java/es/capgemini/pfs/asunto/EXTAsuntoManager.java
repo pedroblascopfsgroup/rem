@@ -97,6 +97,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
@@ -1846,7 +1847,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@BusinessOperation(EXT_BO_ES_TITULIZADA)
 	public String esTitulizada(Long idAsunto) {
 		
-		List<Long> listREsultado = asuntoDao.esTitulizada(idAsunto);
+		List<DDTipoFondo> listREsultado = asuntoDao.esTitulizada(idAsunto);
 		if(listREsultado.isEmpty()){
 			return "NO";
 		}
@@ -1859,12 +1860,13 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@Override
 	@BusinessOperation(EXT_BO_ES_GET_FONDO)
 	public String getFondo(Long idAsunto) {
-		String resultado = asuntoDao.getFondo(idAsunto);
-		if(resultado == null){
-			return "Prueba";
+		
+		List<DDTipoFondo> listREsultado = asuntoDao.esTitulizada(idAsunto);
+		if(listREsultado.isEmpty()){
+			return null;
 		}
 		else{
-			return resultado;
+			return listREsultado.get(0).getDescripcion();
 		}
 		
 	}

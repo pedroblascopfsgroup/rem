@@ -47,6 +47,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.api.asunto.EXTBusquedaAsuntoFiltroDinamico;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -1026,12 +1027,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return listado;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> esTitulizada(Long idAsunto) {
+	public List<DDTipoFondo> esTitulizada(Long idAsunto) {
 		
-		List<Long> listResultado = new ArrayList<Long>();
+		List<DDTipoFondo> listResultado = new ArrayList<DDTipoFondo>();
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select distinct tfo.id ");
+		hql.append(" select distinct tfo ");
 		hql.append(" from Contrato cnt, ExpedienteContrato cex, ProcedimientoContratoExpediente pc,");
 		hql.append(" Procedimiento prc, Asunto asu, EXTInfoAdicionalContrato iac, DDTipoFondo tfo");
 		hql.append(" where asu.id = :idAsunto ");
@@ -1048,12 +1050,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		listResultado = q.list();
 		
 		return listResultado;
-	}
-
-	@Override
-	public String getFondo(Long idAsunto) {
-
-		return null;
 	}
 
 }

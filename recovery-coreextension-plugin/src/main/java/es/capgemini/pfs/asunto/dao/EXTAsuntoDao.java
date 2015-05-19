@@ -9,6 +9,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 
 public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
@@ -51,18 +52,11 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
 	List<DtoReportAnotacionAgenda> getListaTareasPendientes(Long asuId);
 	
 	/**
-     * Calcula si es titulizado al menos un contrato de los procedimientos de un asunto
+     * Devuelve los tipos de fondo "dd_tfo_tipo_fondo" de los contratos de los procedimientos de un asunto
      * @param idAsunto
      * @return
      */
-	List<Long> esTitulizada(Long idAsunto);
+	List<DDTipoFondo> esTitulizada(Long idAsunto);
 	
-	/**
-     * Obtiene la descripcion del Tipo de fondo
-     * @param idAsunto
-     * @param idAsuntoOriginal Si es un asunto ya existente se comprueba que el nombre seleccionado sea de otro asunto y no del original
-     * @return
-     */
-	String getFondo(Long idAsunto);
     
 }

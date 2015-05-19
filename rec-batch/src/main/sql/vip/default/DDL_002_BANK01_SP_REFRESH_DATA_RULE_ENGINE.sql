@@ -1,3 +1,20 @@
+﻿--/*
+--##########################################
+--## AUTOR=LUIS RUIZ
+--## FECHA_CREACION=20150515
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.10.13
+--## INCIDENCIA_LINK=BCFI-614/613
+--## PRODUCTO=SI
+--## Finalidad: DML
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
 create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
   CURSOR CUR IS
   SELECT /*+ PARALLEL */ per.per_id, per_riesgo, per_riesgo_autorizado, per_riesgo_ind, per_riesgo_dir_vencido,
@@ -447,3 +464,6 @@ BEGIN
   CLOSE CUR;
   COMMIT;
 END REFRESH_DATA_RULE_ENGINE;
+
+/
+EXIT;

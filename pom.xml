@@ -529,6 +529,7 @@
 					<module>recovery-recobro-bpm</module>
 					<module>recovery-controlcalidad-plugin</module>
 
+					<module>recovery-integracionuvem-plugin</module>
 					<module>recovery-procedimientos-bpmHaya</module>
 					<module>recovery-procedimientos-bpmHaya-plugin</module>
 

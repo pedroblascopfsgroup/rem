@@ -683,12 +683,12 @@ public class SubastaManager implements SubastaApi {
 	 */
 	private FileItem generarInformeBusquedaSubastas(List<Subasta> listaSubastas){
 		String exportFileType = !Checks.esNulo(appProperties.getProperty("exportar.filetype.buscadorSubastas")) ? 
-				appProperties.getProperty("exportar.filetype.buscadorSubastas") : "XLS";
+				appProperties.getProperty("exportar.filetype.buscadorSubastas") : "CSV";
 		try {
-			if(exportFileType.equalsIgnoreCase("CSV")){
-				return generarInformeBusquedaSubastasCSV(listaSubastas);
+			if(exportFileType.equalsIgnoreCase("XLS")){
+				return generarInformeBusquedaSubastasXLS(listaSubastas);
 			}else{
-				return generarInformeBusquedaSubastasXLS(listaSubastas);				
+				return generarInformeBusquedaSubastasCSV(listaSubastas);				
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

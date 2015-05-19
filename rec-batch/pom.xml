@@ -181,14 +181,21 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>es.pfsgroup.recovery</groupId>
-			<artifactId>rec-encrypt</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>es.bankia</groupId>
+			<artifactId>AccesoLDAP</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>krbFiltro</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>org.springframework.web</artifactId> 
+			<version>2.5.6.SEC01</version> <exclusions> <exclusion> <groupId>*</groupId> 
+			<artifactId>*</artifactId> </exclusion> </exclusions> </dependency> -->
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-iplus-plugin</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
@@ -199,26 +206,6 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-geninformes-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-bpmframework-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-liquidaciones-plugin</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-sidhi-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-sidhi-batch</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -284,11 +271,15 @@
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>org.springframework.batch.core</artifactId>
 			<version>1.0.1.RELEASE</version>
+			<!-- exclusions> <exclusion> <groupId>*</groupId> <artifactId>*</artifactId> 
+				</exclusion> </exclusions -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.beans</artifactId>
 			<version>2.5.6.SEC01</version>
+			<!-- exclusions> <exclusion> <groupId>*</groupId> <artifactId>*</artifactId> 
+				</exclusion> </exclusions -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -406,7 +397,6 @@
 			<groupId>org.springframework.batch</groupId>
 			<artifactId>org.springframework.batch.test</artifactId>
 			<version>2.1.0.RELEASE</version>
-			<scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -702,6 +692,10 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup.recovery</groupId>
+			<artifactId>rec-encrypt</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-integracionuvem-plugin</artifactId>
 			<exclusions>
@@ -710,6 +704,11 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.cm.gw</groupId>
+			<artifactId>GW_IPLUS</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 
@@ -838,25 +837,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>haya</id>
-			<dependencies>
-					<dependency>
-						<groupId>es.pfsgroup.plugin</groupId>
-						<artifactId>recovery-procedimientos-bpmHaya</artifactId>
-						<exclusions>
-							<exclusion>
-								<groupId>es.pfsgroup</groupId>
-								<artifactId>recovery-domain</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>*</groupId>
-								<artifactId>*</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 </project>

@@ -1151,10 +1151,10 @@
 			case '800': /*Tarea del Letrado*/
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;
-			case '801':/*Tarea del Supervisor UCO*/
+			case '801':/*Tarea del Supervisor UCL*/
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;
-			case '802':/*Tarea del Gestor UCO*/
+			case '802':/*Tarea del Gestor UCL*/
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;
 			case '803':/*Tarea del Gestor subastas*/
@@ -1193,16 +1193,7 @@
 			case '814':/*Tarea del Supervisor admisión REO*/
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;
-			case '815':/*Tarea del Director UCO*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '816':/*Tarea del Gestor ULI*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '817':/*Tarea del Supervisor ULI*/
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
-				break;
-			case '818':/*Tarea del Director ULI*/
+			case '815':/*Tarea del Director UCL*/
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 				break;
 			case '1001':/*Gestor gestoria adjudicacion*/

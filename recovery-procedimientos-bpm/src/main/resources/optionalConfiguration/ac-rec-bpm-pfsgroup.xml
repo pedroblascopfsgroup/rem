@@ -1265,7 +1265,12 @@
             	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
                 return adjudicacionProcedimientoManager.comprobarAdjuntoAsunto(idProcedimiento, "DFA");
             }
-            
+             
+            def validacionesCelebracionSubastaSarebPOST = {
+                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
+                return subastaProcedimientoManager.validacionesCelebracionSubastaSarebPOST(idProcedimiento);
+            }
+                        
             
   			 ]]></value>
   		</list>

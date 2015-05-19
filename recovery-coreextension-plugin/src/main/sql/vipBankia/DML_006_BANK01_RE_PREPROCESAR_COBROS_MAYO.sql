@@ -34,8 +34,12 @@ BEGIN
 -- ###############################################################################
 DBMS_OUTPUT.PUT_LINE('[START] Borrar cobros preprocesados de MAYO 2015 en adelante');
 EXECUTE IMMEDIATE '
-	DELETE FROM BANK01.CPR_COBROS_PAGOS_RECOBRO
-	WHERE CPA_FECHA >= TRUNC(TO_DATE(''01/05/2015'',''DD/MM/YYYY''))
+	DELETE FROM '||v_schema||'.CPR_COBROS_PAGOS_RECOBRO WHERE CPR_ID IN (
+	    SELECT CPR.CPR_ID 
+	    FROM '||v_schema||'.CPR_COBROS_PAGOS_RECOBRO CPR
+	        JOIN CPA_COBROS_PAGOS CPA ON CPR.CPA_ID = CPA.CPA_ID
+	    WHERE CPA.CPA_FECHA_EXTRACCION >= TRUNC(TO_DATE(''01/05/2015'',''DD/MM/YYYY''))
+	)
 ';
 DBMS_OUTPUT.PUT_LINE('Borrado cobros preprocesados ... OK');
 -- ###############################################################################
@@ -43,7 +47,7 @@ DBMS_OUTPUT.PUT_LINE('Borrado cobros preprocesados ... OK');
 -- ###############################################################################
 DBMS_OUTPUT.PUT_LINE('[START] Borrar fechas control cobros preprocesados de MAYO 2015 en adelante');
 EXECUTE IMMEDIATE '
-	DELETE FROM BANK01.CCR_CONTROL_COBROS_RECOBRO
+	DELETE FROM '||v_schema||'.CCR_CONTROL_COBROS_RECOBRO
 	WHERE TRUNC(CCR_FECHA) >= TRUNC(TO_DATE(''01/05/2015'',''DD/MM/YYYY''))
 ';
 DBMS_OUTPUT.PUT_LINE('Borrado fechas control cobros preprocesados ... OK');

@@ -150,7 +150,6 @@
 		</event>	
 		<transition to="P401_PrepararCesionRemate" name="activarAlerta"></transition>
 		<transition to="P401_AprobacionPropCesionRemate" name="avanzaBPM"></transition>
-		<transition to="P401_CelebracionSubasta" name="vueltaAtras"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
 	
@@ -363,7 +362,6 @@
 		</event>	
 		<transition to="Fin" name="avanzaBPM"></transition>		
 		<transition to="P401_RegistrarActaSubasta" name="activarAlerta"></transition>
-		<transition to="P401_CelebracionSubasta" name="vueltaAtras"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
 		

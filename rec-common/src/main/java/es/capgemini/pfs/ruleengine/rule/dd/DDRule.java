@@ -73,6 +73,10 @@ public class DDRule implements Serializable, Auditable {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_IDN_ID")
 	private DDIndicadorNomina indicadorNomina;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_MOM_ID")
+	private DDMotivoMarcaR motivoMarcaR;
     
 
     @Embedded
@@ -229,6 +233,14 @@ public class DDRule implements Serializable, Auditable {
 
 	public void setIndicadorNomina(DDIndicadorNomina indicadorNomina) {
 		this.indicadorNomina = indicadorNomina;
+	}
+	
+	public DDMotivoMarcaR getMotivoMarcaR() {
+		return motivoMarcaR;
+	}
+
+	public void setMotivoMarcaR(DDMotivoMarcaR motivoMarcaR) {
+		this.motivoMarcaR = motivoMarcaR;
 	}
 
 	@Override

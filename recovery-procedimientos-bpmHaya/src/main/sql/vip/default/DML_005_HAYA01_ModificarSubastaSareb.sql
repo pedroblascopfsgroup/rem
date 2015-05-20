@@ -15,6 +15,7 @@
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
+SET DEFINE OFF;
 DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
@@ -25,6 +26,14 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
 BEGIN
+	
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+	          ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H002_CelebracionSubasta''''][''''comboCelebrada''''] == DDSiNo.NO ? (valores[''''H002_CelebracionSubasta''''][''''comboDecisionSuspension''''] == null ? ''''El campo Decisi&oacute;n suspensi&oacute;n es obligatorio'''' : null) : (comprobarExisteDocumentoACS() ? null: ''''Es necesario adjuntar el documento Acta de subasta'''') '' ' ||
+	          ' WHERE TAP_CODIGO = ''H002_CelebracionSubasta''';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando label de los campos.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Label de los campos actualizada.');
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 	          ' SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">' || 
@@ -55,8 +64,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Instrucciones actualizadas.');
 	
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
-	          ' SET BORRADO = 1 ' ||
+	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 	          ' WHERE TFI_NOMBRE = ''comboCesionRemate'' AND' ||
 	          ' TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_CelebracionSubasta'')';
     DBMS_OUTPUT.PUT_LINE('[INFO] Borrando campo.......');
@@ -64,14 +72,22 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Campo borrado.');
     
-    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
-	          ' SET BORRADO = 1 ' ||
+    V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 	          ' WHERE TFI_NOMBRE = ''comboAdjudicadoEntidad'' AND' ||
 	          ' TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_CelebracionSubasta'')';
     DBMS_OUTPUT.PUT_LINE('[INFO] Borrando campo.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Campo borrado.');
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+	          ' SET TFI_LABEL = ''Decisi&oacuten suspensi&oacuten'' ' ||
+	          ' WHERE TFI_NOMBRE = ''comboDecisionSuspension'' AND' ||
+	          ' TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_CelebracionSubasta'')';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando label de los campos.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Label de los campos actualizada.');
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 	          ' SET TFI_ORDEN = 3 ' ||

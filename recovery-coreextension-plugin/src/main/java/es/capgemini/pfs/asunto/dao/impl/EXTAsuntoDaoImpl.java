@@ -26,6 +26,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.StringUtils;
+import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.asunto.dao.EXTAsuntoDao;
 import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
 import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
@@ -1041,12 +1042,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		hql.append(" and pc.expedienteContrato = cex.id");
 		hql.append(" and prc.id = pc.procedimiento");
 		hql.append(" and asu.id = prc.asunto.id");
-		hql.append(" and iac.contrato.id = cnt.id and iac.tipoInfoContrato.id = 37");
+		hql.append(" and iac.contrato.id = cnt.id and iac.tipoInfoContrato.codigo = :codigo");
 		hql.append(" and tfo.codigo = iac.value and tfo.cesionRemate = 1");
 		
 		Query q = getSession().createQuery(hql.toString());
 		
 		q.setParameter("idAsunto", idAsunto);
+		q.setParameter("codigo", APPConstants.CHAR_EXTRA7);
+		;
 		listResultado = q.list();
 		
 		return listResultado;

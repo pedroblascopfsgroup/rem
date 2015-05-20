@@ -453,17 +453,6 @@
 		<transition to="Fin5" name="haya_tramiteAdjudicacionV4"></transition>
 	</state>
 
-	<state name="H002_EsperaPosibleCesionRemate">
-		<event type="node-enter">
-			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
-				<name>Timer espera - F. auto declación concurso</name>
-				<duration>20 days</duration>
-				<transicion>avanzaBPM</transicion>
-			</action>
-		</event>	
-		<transition to="H002_BPMTramiteAdjudicacionV4" name="avanzaBPM"></transition>
-	</state>
-
 	<state name="H002_SolicitarMandamientoPago">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -629,7 +618,6 @@
 		<transition to="B" name="B"></transition>
 		<transition to="D" name="D"></transition>
 		<transition to="C" name="C"></transition>
-		<transition to="E" name="E"></transition>
 		<transition to="F" name="F"></transition>
 		<transition to="G" name="G"></transition>
 	</fork>
@@ -652,11 +640,6 @@
 	<decision name="C" expression="#{DecisionRama_3}">
 		<transition to="H002_BPMTramiteCesionRemate" name="si"></transition>
 		<transition to="Fin4" name="no"></transition>
-	</decision>
-
-	<decision name="E" expression="#{DecisionRama_5}">
-		<transition to="H002_EsperaPosibleCesionRemate" name="si"></transition>
-		<transition to="Fin5" name="no"></transition>
 	</decision>
 
 	<decision name="F" expression="#{DecisionRama_6}">

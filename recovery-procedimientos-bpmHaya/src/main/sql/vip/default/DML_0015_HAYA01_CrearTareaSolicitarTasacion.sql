@@ -23,8 +23,8 @@ DECLARE
     * CONFIGURACION: ESQUEMAS
     *---------------------------------------------------------------------
     */
-    PAR_ESQUEMA VARCHAR2(25 CHAR):= 'HAYA01';               -- [PARAMETRO] Configuracion Esquemas
-    PAR_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'HAYAMASTER';    -- [PARAMETRO] Configuracion Esquemas
+    PAR_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';               -- [PARAMETRO] Configuracion Esquemas
+    PAR_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';    -- [PARAMETRO] Configuracion Esquemas
 
     /*
     * CONFIGURACION: TABLAS
@@ -214,6 +214,20 @@ DECLARE
             /*VERSION................:*/ '0',
             /*USUARIOCREAR...........:*/ 'DD'
         ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
+        
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H002_ActualizarTasacion',
+            /*TFI_ORDEN..............:*/ '1',
+            /*TFI_TIPO...............:*/ 'textarea',
+            /*TFI_NOMBRE.............:*/ 'observaciones',
+            /*TFI_LABEL..............:*/ 'Observaciones',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+            /*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
 
         T_TIPO_TFI (
             /*DD_TAP_ID..............:*/ 'H003_ActualizarTasacion',
@@ -230,11 +244,39 @@ DECLARE
         ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
         
         T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H003_ActualizarTasacion',
+            /*TFI_ORDEN..............:*/ '1',
+            /*TFI_TIPO...............:*/ 'textarea',
+            /*TFI_NOMBRE.............:*/ 'observaciones',
+            /*TFI_LABEL..............:*/ 'Observaciones',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+            /*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
+        
+        T_TIPO_TFI (
             /*DD_TAP_ID..............:*/ 'H004_ActualizarTasacion',
             /*TFI_ORDEN..............:*/ '0',
             /*TFI_TIPO...............:*/ 'label',
             /*TFI_NOMBRE.............:*/ 'titulo',
             /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea el gestor de deuda deber&aacute; solicitar la tasaci&oacute;n del bien a trav&eacute;s del aplicativo de Sareb, ATLAS e indicar en Recovery, desde la ficha del bien, en el apartado de Datos economicos, los datos relativos a la tasaci&oacute;n.</p><p style="margin-bottom: 10px">Segun instrucciones de Sareb la tasaci&oacute;n ser&aacute; v&aacute;lida de todos los bienes si la fecha de tasaci&oacute;n es menor a 18 meses.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+            /*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
+        
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H004_ActualizarTasacion',
+            /*TFI_ORDEN..............:*/ '1',
+            /*TFI_TIPO...............:*/ 'textarea',
+            /*TFI_NOMBRE.............:*/ 'observaciones',
+            /*TFI_LABEL..............:*/ 'Observaciones',
             /*TFI_ERROR_VALIDACION...:*/ null,
             /*TFI_VALIDACION.........:*/ null,
             /*TFI_VALOR_INICIAL......:*/ null,

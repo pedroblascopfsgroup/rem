@@ -92,6 +92,7 @@ public class SubastaSolicitarTasacionHandler extends PROBaseActionHandler {
 				if (!tasacionValida) {
 					// llamada solicita_tasacion
 					executionContext.getToken().signal(TRANSICION_ACTUALIZAR_TASACION);
+					return;
 				}				
 			}
 		}

@@ -48,7 +48,9 @@
                     <json:property name="gastos" value="${ec.contrato.lastMovimiento.gastos}" />
                     <json:property name="fechaCreacion">
                         <fwk:date value="${ec.contrato.fechaCreacion}" />
-                    </json:property>                    
+                    </json:property> 
+                    <json:property name="titulizado" value="${ec.contrato.titulizado}" />      
+                    <json:property name="fondo" value="${ec.contrato.fondo}" />           
                 </json:object>
                     <c:forEach items="${ec.contrato.contratoPersonaOrdenado}" var="cp">
                         <c:if test="${cp.persona.id!=ec.contrato.contratoPersonaOrdenado[0].persona.id}">
@@ -66,6 +68,7 @@
                                 <json:property name="movIntMoratorios" value="---" />
                                 <json:property name="comisiones" value="---" />
                                 <json:property name="gastos" value="---" />
+                                <json:property name="titulizado" value="" />
                             </json:object>
                        </c:if>
                     </c:forEach>

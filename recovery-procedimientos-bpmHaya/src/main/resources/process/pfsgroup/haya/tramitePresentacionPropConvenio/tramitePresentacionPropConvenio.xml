@@ -128,7 +128,7 @@
 	<decision name="H037_registrarAdmisionDecision" expression="#{H037_registrarAdmisionDecision}">
 		<transition to="H037_registrarPresentacionSubsanacion" name="subsanable"></transition>
 		<transition to="H037_registrarInformeAdmConcursal" name="SI"></transition>
-		<transition to="Decision" name="noSubsanable"></transition>
+		<transition to="H037_ConvenioDecision" name="noSubsanable"></transition>
 	</decision>
 
 	<state name="H037_registrarPresentacionSubsanacion">
@@ -219,16 +219,16 @@
 		</event>
 		<transition to="H037_registrarInformeAdmConcursal" name="vueltaAtras"></transition>
 		<transition to="H037_registrarAdhesiones" name="activarAlerta"></transition>
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H037_ConvenioDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 	<decision name="H037_registrarResultadoDecision" expression="#{H037_registrarResultadoDecision}">
 		<transition to="H037_registrarInformeAdmConcursal" name="favorable"></transition>
-		<transition to="Decision" name="desfavorable"></transition>
+		<transition to="H037_ConvenioDecision" name="desfavorable"></transition>
 	</decision>
 
-	<node name="Decision">
+	<node name="H037_ConvenioDecision">
 		<action name="miTarea" config-type="bean" 
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          	<targetBean>genericUserDecisionActionHandler</targetBean>

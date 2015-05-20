@@ -27,7 +27,7 @@
 	<decision name="H015_RegistrarSolicitudPosesionDecision" expression="#{H015_RegistrarSolicitudPosesionDecision}">
 		<transition to="H015_BPMTramiteMoratoriaLanzamiento" name="solicitudMoratoriaLanzamiento"></transition>
 		<transition to="H015_BPMTramiteOcupantes" name="posesionConOcupantes"></transition>
-		<transition to="Decision" name="noRequierePosesion"></transition>
+		<transition to="H015_RegistrarSolicitudDecision" name="noRequierePosesion"></transition>
 		<transition to="H015_RegistrarSenyalamientoPosesion" name="posesionSinOcupantes"></transition>
 	</decision>
 
@@ -147,7 +147,7 @@
 		<transition to="H015_RegistrarDecisionLlavesDecision" name="avanzaBPM"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H015_RegistrarSolicitudDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler</targetBean>
@@ -155,7 +155,7 @@
 		<transition to="Fin"></transition>
 	</node>
 
-	<node name="Decision2">
+	<node name="H015_LlavesDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler</targetBean>
@@ -174,12 +174,12 @@
             	<targetBean>genericLeaveActionHandler</targetBean>
         	 </action>
       	</event>
-		<transition to="Decision2" name="haya_tramiteDeGestionDeLlaves"></transition>
+		<transition to="H015_LlavesDecision" name="haya_tramiteDeGestionDeLlaves"></transition>
 	</state>
 
 	<decision name="H015_RegistrarDecisionLlavesDecision" expression="#{H015_RegistrarDecisionLlavesDecision}">
 		<transition to="H015_BPMTramiteGestionLlaves" name="requiereLlaves"></transition>
-		<transition to="Decision2" name="noRequiereLlaves"></transition>
+		<transition to="H015_LlavesDecision" name="noRequiereLlaves"></transition>
 	</decision>
 
 	<state name="H015_BPMTramiteOcupantes2">

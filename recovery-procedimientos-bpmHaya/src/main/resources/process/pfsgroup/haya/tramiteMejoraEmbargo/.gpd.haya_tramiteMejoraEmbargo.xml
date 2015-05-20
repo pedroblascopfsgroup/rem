@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteMejoraEmbargo" width="870" height="497">
+<root-container name="haya_tramiteMejoraEmbargo" width="870" height="563">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-45" y="-14"/>
@@ -33,7 +33,7 @@
       <bendpoint w1="-109" h1="-64" w2="-121" h2="63"/>
     </edge>
   </node>
-  <node name="Decision" x="344" y="447" width="132" height="36">
+  <node name="H046_MejoraDecision" x="344" y="447" width="164" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="408" h1="-12" w2="16" h2="224"/>
@@ -48,7 +48,6 @@
       <bendpoint w1="-138" h1="201" w2="-499" h2="1"/>
     </edge>
   </node>
-  <node name="Fin" x="736" y="211" width="132" height="36"/>
   <node name="H046_registrarAnotacionRegistro" x="386" y="226" width="250" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -77,4 +76,5 @@
       <bendpoint w1="7" h1="-61" w2="172" h2="36"/>
     </edge>
   </node>
+  <node name="Fin" x="736" y="211" width="132" height="36"/>
 </root-container>

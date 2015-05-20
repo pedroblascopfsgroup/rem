@@ -196,10 +196,10 @@
 
 	<decision name="H021_ResolucionFirmeDecision" expression="#{H021_ResolucionFirmeDecision}">
 		<transition to="H021_AutoDeclarandoConcurso" name="Favorable"></transition>
-		<transition to="Decision" name="Desfavorable"></transition>
+		<transition to="H021_ResolucionDecision" name="Desfavorable"></transition>
 	</decision>
 
-	<node name="Decision">
+	<node name="H021_ResolucionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

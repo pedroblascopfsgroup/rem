@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteInvestigacionJudicial" width="1187" height="696">
+<root-container name="haya_tramiteInvestigacionJudicial" width="940" height="606">
   <node name="Inicio" x="376" y="42" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -44,7 +44,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision" x="714" y="300" width="132" height="36">
+  <node name="H044_InvestigacionDecision" x="710" y="303" width="198" height="36">
     <edge>
       <label x="-46" y="-35"/>
       <bendpoint w1="1" h1="140" w2="337" h2="-1"/>
@@ -66,7 +66,7 @@
       <bendpoint w1="-209" h1="-72" w2="-209" h2="73"/>
     </edge>
   </node>
-  <node name="Decision 2" x="367" y="469" width="153" height="36">
+  <node name="H044_RevisarDecision" x="367" y="469" width="171" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

@@ -41,11 +41,11 @@
 	</state>
 
 	<decision name="H031_admisionTramiteConvenioDecision" expression="#{H031_admisionTramiteConvenioDecision}">
-		<transition to="Decision1" name="NO"></transition>
+		<transition to="H031_ConvenioDecision" name="NO"></transition>
 		<transition to="H031_informeAdmonConcursal" name="SI"></transition>
 	</decision>
 
-	<node name="Decision1">
+	<node name="H031_ConvenioDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
         	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>
@@ -109,7 +109,7 @@
 	</state>
 
 	<decision name="H031_informeAdmonConcursalDecision" expression="#{H031_informeAdmonConcursalDecision}">
-		<transition to="Decision1" name="noDescartar"></transition>
+		<transition to="H031_ConvenioDecision" name="noDescartar"></transition>
 		<transition to="H031_RegResolucionConvenio" name="favOContinuar"></transition>
 	</decision>
 
@@ -155,11 +155,15 @@
             <targetBean>genericLeaveActionHandler</targetBean>
          </action>
       	</event>
-		<transition to="Decision1" name="avanzaBPM"></transition>
+		<transition to="H031_ContabilizarDecision" name="avanzaBPM"></transition>
 		<transition to="H031_ContabilizarConvenio" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H031_RegResolucionConvenio" name="vueltaAtras"></transition>
 	</state>
+
+	<node name="H031_ContabilizarDecision">
+		<transition to="Fin"></transition>
+	</node>
 
 	<end-state name="Fin">      
 		<event type="node-enter">

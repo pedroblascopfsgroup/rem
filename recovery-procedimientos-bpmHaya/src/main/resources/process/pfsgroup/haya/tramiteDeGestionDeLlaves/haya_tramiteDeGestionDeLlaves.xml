@@ -72,13 +72,13 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="H040_Decision1" name="avanzaBPM"></transition>
+		<transition to="H040_RecepcionLlavesDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H040_RegistrarEnvioLlaves" name="vueltaAtras"></transition>
 		<transition to="H040_RegistrarRecepcionLlaves" name="activarAlerta"></transition>
 	</state>
 
-	<node name="H040_Decision1">
+	<node name="H040_RecepcionLlavesDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler</targetBean>

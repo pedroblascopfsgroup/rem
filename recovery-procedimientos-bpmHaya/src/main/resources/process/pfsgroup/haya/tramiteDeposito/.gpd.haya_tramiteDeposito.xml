@@ -84,7 +84,7 @@
       <label x="12" y="1"/>
     </edge>
   </node>
-  <node name="Decision" x="857" y="538" width="132" height="36">
+  <node name="H034_AcuerdoDecision" x="857" y="538" width="196" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

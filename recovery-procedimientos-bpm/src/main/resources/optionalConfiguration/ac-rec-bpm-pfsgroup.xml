@@ -1230,7 +1230,7 @@
             	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
                 return adjudicacionProcedimientoManager.existeBienConAdjudicacionE(idProcedimiento);
             }
-           
+
   			def comprobarExisteDocumentoINCS = {
             	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
                 return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INCS");
@@ -1259,6 +1259,11 @@
             def comprobarProvLocFinBien = {
             	def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
                 return subastaProcedimientoManager.comprobarProvLocFinBien(idProcedimiento);
+            }
+            
+            def comprobarAdjuntoDecretoFirmeAdjudicacionAsunto = {
+            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+                return adjudicacionProcedimientoManager.comprobarAdjuntoAsunto(idProcedimiento, "DFA");
             }
             
             

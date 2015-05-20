@@ -89,20 +89,6 @@
         panelNombreAsunto.autoHeight = true;
         panelNombreAsunto.style='margin:0px';   
 			
-	var DatosFieldSet = new Ext.form.FieldSet({
-		autoHeight:'false'
-		,style:'padding:0px'
-		,border:true
-		,layout : 'table'
-		,layoutConfig:{	columns:2 }
-		,width:785
-		,title:'<s:message code="asunto.tabcabecera.fieldset.titulo" text="**Datos Principales"/>'
-		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-		,items : [ { items:[ panelNombreAsunto,codigoAsunto,fecha,estado,expediente,comite,tipoAsunto <sec:authorize ifAllGranted="PUEDE_VER_PROVISIONES">,provision</sec:authorize>,titulizada,fondo]}
-				  ,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador]}
-				 ]
-	});	
-	
 	btnEditarNombre.hide()
 	
 	<sec:authorize ifAllGranted="ROLE_EDIT_CABECERA_ASUNTO">

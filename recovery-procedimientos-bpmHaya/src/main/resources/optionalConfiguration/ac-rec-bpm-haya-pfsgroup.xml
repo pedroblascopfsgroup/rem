@@ -22,6 +22,9 @@
  	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>
  	<bean id="hipotecarioHayaLeaveActionHandler" class="es.pfsgroup.procedimientos.hipotecario.HipotecarioHayaLeaveActionHandler"></bean>
  	<bean id="estamosADosMesesHandler" class="es.pfsgroup.procedimientos.moratoria.EstamosADosMesesHandler"></bean>
+ 	<bean id="subastaSolicitarNumActivoHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarNumActivoHandler"></bean>
+ 	<bean id="subastaSolicitarTasacionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarTasacionHandler"></bean> 	
+
  	    
 	<!-- BPM activos -->
 	<!-- Cambios Rober -->

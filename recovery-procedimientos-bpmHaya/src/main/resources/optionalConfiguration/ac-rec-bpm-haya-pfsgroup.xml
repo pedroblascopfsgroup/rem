@@ -722,7 +722,12 @@
 				def comprobarExisteDocumentoRSARINE = {
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "RSARINE");
-				}			    		                       
+				}
+				
+				def validarBienesCelebracionSubasta = {
+					def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
+                	return subastaProcedimientoManager.comprobarAdjudicacionBienesCelebracionSubasta(idProcedimiento);
+	            }		    		                       
         	            
   			 ]]>
   			</value>

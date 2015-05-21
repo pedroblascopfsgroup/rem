@@ -576,7 +576,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			 
 			System.out.println("Se recuperan los datos de vuelta del servicio");
 			Integer numeroActivo = servicioGMP5JD20.getIdentificadorActivoEspecialcoacew2();
-			System.out.println("Número de activo: "+numeroActivo);
+			System.out.println("Número de activooooo: "+numeroActivo);
 			
 			if( numeroActivo!=null && numeroActivo!=0 ){
 				bien.setNumeroActivo(String.valueOf(numeroActivo));

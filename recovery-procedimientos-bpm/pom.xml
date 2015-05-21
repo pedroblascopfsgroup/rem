@@ -116,11 +116,6 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-mejoras-plugin</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
             <!-- needs extra dependencies: objenesis & hamcrest -->
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>

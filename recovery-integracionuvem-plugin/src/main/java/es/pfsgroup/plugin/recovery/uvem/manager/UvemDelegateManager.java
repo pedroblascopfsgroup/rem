@@ -167,6 +167,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	}
 	
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
+	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
 	public Integer solicitarNumeroActivoConRespuesta(Long bienId){
 		return solicitarNumeroActivoRespuesta(bienId, null);
 	}
@@ -200,8 +201,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
     	
 	};
 	
-	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
-	public Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
+	private Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {
 			

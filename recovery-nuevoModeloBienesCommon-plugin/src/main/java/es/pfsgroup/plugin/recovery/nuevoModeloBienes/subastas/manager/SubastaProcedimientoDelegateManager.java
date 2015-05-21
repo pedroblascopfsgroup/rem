@@ -191,6 +191,47 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		return true;
 	}
 	
+	/**
+	 * 
+	 */
+	@Override
+	@BusinessOperation(overrides = BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION)
+	public boolean comprobarAdjudicacionBienesCelebracionSubasta(Long prcId) {
+		// Buscamos primero la subasta asociada al prc
+		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		if (!Checks.esNulo(sub)) {
+			
+			// buscamos los lotes de la subasta
+			List<LoteSubasta> listadoLotes = sub.getLotesSubasta();
+			if (!Checks.estaVacio(listadoLotes)) {
+				for (LoteSubasta ls : listadoLotes) {
+					if (!Checks.estaVacio(ls.getBienes())) {
+						for (Bien b : ls.getBienes()) {
+							if(b instanceof NMBBien){					
+								if (Checks.esNulo(((NMBBien) b).getAdjudicacion())){
+									return false;
+								} else {
+									if(!Checks.esNulo(((NMBBien) b).getAdjudicacion().getCesionRemate()) && ((NMBBien) b).getAdjudicacion().getCesionRemate()){
+										if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getImporteCesionRemate())){
+											return false;
+										}
+									} else {
+										if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria()) || 
+												Checks.esNulo((((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion())){
+													return false;
+												}
+									}
+									
+								}
+							}
+						}						
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	@Override
 	@BusinessOperation(overrides = BO_SUBASTA_DECIDIR_REGISTRAR_ACTA_SUBASTA)
 	public String decidirRegistrarActaSubasta(Long prcId) {

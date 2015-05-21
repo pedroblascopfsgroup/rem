@@ -375,19 +375,6 @@ public class SubastaV4HayaLeaveActionHandler extends
 				}
 			}
 
-			/*
-			 * else if ("comboSuspension".equals(val.getNombre())){
-			 * comboSuspendida = val.getValor(); if
-			 * ("01".equals(comboSuspendida)){ suspendida = true; } }
-			 */
-
-			if ("comboCesionRemate".equals(val.getNombre())) {
-				comboCesionRemate = val.getValor();
-				if (DDSiNo.SI.equals(comboCesionRemate)) {
-					cesionRemate = true;
-				}
-			}
-
 			if ("comboDecisionSuspension".equals(val.getNombre())) {
 				comboDecisionSuspension = val.getValor();
 				if (DDDecisionSuspension.TERCEROS.equals(comboDecisionSuspension)) {
@@ -396,13 +383,6 @@ public class SubastaV4HayaLeaveActionHandler extends
 				// B - suspendida entidad
 				if (DDDecisionSuspension.ENTIDAD.equals(comboDecisionSuspension)) {
 					suspendidaEntidad = true;
-				}
-			}
-
-			if ("comboAdjudicadoEntidad".equals(val.getNombre())) {
-				comboAdjudicadoEntidad = val.getValor();
-				if (DDSiNo.SI.equals(comboAdjudicadoEntidad)) {
-					adjudicadoEntidadPosibleRemate = true;
 				}
 			}
 
@@ -428,6 +408,9 @@ public class SubastaV4HayaLeaveActionHandler extends
 							} else {
 								bienAdjuTerceroFondo = true;
 							}
+						}
+						if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate())){
+							cesionRemate = true;
 						}
 					}
 				}
@@ -458,17 +441,8 @@ public class SubastaV4HayaLeaveActionHandler extends
 
 			// 1.3 Si hay un bien que se lo ha adjudicado la entidad:
 			if (bienAdjuEntidad) {
-				// 1.3.1 que exista posibilidad de remate, para ello habrá una
-				// tarea de espera de 20 días y transcurrido
-				// ese plazo se lanzaría el Tramite de Adjudicación
-				if (adjudicadoEntidadPosibleRemate) {
-					resultado[4] = true;
-				}
-				// 1.3.2 en el caso que no exista posibilidad de remate, se
 				// lanzará el "Tramite de Adjudicación"
-				else {
-					resultado[3] = true;
-				}
+				resultado[3] = true;				
 			}
 
 		}

@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -166,6 +167,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	}
 	
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
+	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
 	public Integer solicitarNumeroActivoConRespuesta(Long bienId){
 		return solicitarNumeroActivoRespuesta(bienId, null);
 	}
@@ -199,8 +201,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
     	
 	};
 	
-	@Transactional(readOnly = false)
-	public Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
+	private Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {
 			
@@ -575,7 +576,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			 
 			System.out.println("Se recuperan los datos de vuelta del servicio");
 			Integer numeroActivo = servicioGMP5JD20.getIdentificadorActivoEspecialcoacew2();
-			System.out.println("Número de activo: "+numeroActivo);
+			System.out.println("Número de activooooo: "+numeroActivo);
 			
 			if( numeroActivo!=null && numeroActivo!=0 ){
 				bien.setNumeroActivo(String.valueOf(numeroActivo));

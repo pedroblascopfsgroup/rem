@@ -441,11 +441,11 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 									}	
 								}
 								
-								// FASE-1261 Si algún bien no tiene número de activo
+								/* [jmvillel 21/05/2015 - Por el momento no hacemos la validación]
 								respuesta = comprobarNumeroActivoBien((NMBBien) b);
 								if(!Checks.esNulo(respuesta)) {
 									return respuesta;									
-								}							
+								}*/							
 								
 							}
 						}
@@ -567,7 +567,6 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		for(Bien bien: listadoBienes) {			
 			NMBBien nmbBien = (NMBBien) bien;	
 			
-			// FASE-1261 Si algún bien no tiene número de activo
 			respuesta = comprobarNumeroActivoBien(nmbBien);
 			if(!Checks.esNulo(respuesta)) {
 				return respuesta;									

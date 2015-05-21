@@ -41,11 +41,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 -- Modificamos TAP_SCRIPT_VALIDACION_JBPM de P401_SeñalamientoSubasta
 -- Valor actual: ((valores['P401_SenyalamientoSubasta']['principal']).toDouble() >= ((valores['P401_SenyalamientoSubasta']['costasLetrado']).toDouble())) ? null :  '<p>&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal.</p>'
 
-execute immediate 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET USUARIOMODIFICAR = ''FASE1320'', FECHAMODIFICAR=SYSDATE, TAP_SCRIPT_VALIDACION_JBPM = ''comprobarCostasLetradoViviendaHabitual() ? null : ''''&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal.'''''' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''P401_SenyalamientoSubasta'')';
+execute immediate 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET USUARIOMODIFICAR = ''FASE1320'', FECHAMODIFICAR=SYSDATE, TAP_SCRIPT_VALIDACION_JBPM = ''comprobarCostasLetradoViviendaHabitual() ? null : ''''&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal, para un bien que es vivienda habitual.'''''' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''P401_SenyalamientoSubasta'')';
 
 -- Modificamos TAP_SCRIPT_VALIDACION_JBPM de P409_SeñalamientoSubasta
 -- Valor actual: ((valores['P409_SenyalamientoSubasta']['principal']).toDouble() > ((valores['P409_SenyalamientoSubasta']['costasLetrado']).toDouble())) ? 'null' : '<p>&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal.</p>'
-execute immediate 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET USUARIOMODIFICAR = ''FASE1320'', FECHAMODIFICAR=SYSDATE, TAP_SCRIPT_VALIDACION_JBPM = ''comprobarCostasLetradoViviendaHabitual() ? null : ''''&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal.'''''' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''P409_SenyalamientoSubasta'')';
+execute immediate 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET USUARIOMODIFICAR = ''FASE1320'', FECHAMODIFICAR=SYSDATE, TAP_SCRIPT_VALIDACION_JBPM = ''comprobarCostasLetradoViviendaHabitual() ? null : ''''&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal, para un bien que es vivienda habitual.'''''' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''P409_SenyalamientoSubasta'')';
 
 COMMIT;
 

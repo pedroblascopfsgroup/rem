@@ -192,14 +192,14 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	//@ManagedOperation(description ="Metodo que solicita el numero de activo de un bien a UVEM")
 	//@ManagedOperationParameter(name="bienId", description= "id del bien.")
-    @Transactional(readOnly = false)
+    @Transactional
 	public void solicitarNumeroActivo(Long bienId, Long prcId){
 
     	solicitarNumeroActivoRespuesta(bienId, prcId);
     	
 	};
 	
-	@Transactional(readOnly = false)
+	@Transactional
 	public Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {

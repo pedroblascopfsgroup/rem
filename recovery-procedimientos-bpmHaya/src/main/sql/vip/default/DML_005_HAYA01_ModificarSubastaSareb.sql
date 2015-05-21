@@ -28,7 +28,10 @@ DECLARE
 BEGIN
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-	          ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H002_CelebracionSubasta''''][''''comboCelebrada''''] == DDSiNo.NO ? (valores[''''H002_CelebracionSubasta''''][''''comboDecisionSuspension''''] == null ? ''''El campo Decisi&oacute;n suspensi&oacute;n es obligatorio'''' : null) : (comprobarExisteDocumentoACS() ? null: ''''Es necesario adjuntar el documento Acta de subasta'''') '' ' ||
+	          ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H002_CelebracionSubasta''''][''''comboCelebrada''''] == DDSiNo.NO ? ' || 
+	          '(valores[''''H002_CelebracionSubasta''''][''''comboDecisionSuspension''''] == null ? ''''El campo Decisi&oacute;n suspensi&oacute;n es obligatorio'''' : null) : ' || 
+	          '(comprobarExisteDocumentoACS() ? (validarBienesCelebracionSubasta() ? null : ''''Debe rellenar en cada bien los datos de adjudicaci&oacute;n o de cesi&oacute;n remate'''') : ' || 
+	          ' ''''Es necesario adjuntar el documento Acta de subasta'''') '' ' ||
 	          ' WHERE TAP_CODIGO = ''H002_CelebracionSubasta''';
     DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando label de los campos.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -81,7 +84,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] Campo borrado.');
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
-	          ' SET TFI_LABEL = ''Decisi&oacuten suspensi&oacuten'' ' ||
+	          ' SET TFI_LABEL = ''Decisi&oacute;n suspensi&oacute;n'' ' ||
 	          ' WHERE TFI_NOMBRE = ''comboDecisionSuspension'' AND' ||
 	          ' TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_CelebracionSubasta'')';
     DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando label de los campos.......');

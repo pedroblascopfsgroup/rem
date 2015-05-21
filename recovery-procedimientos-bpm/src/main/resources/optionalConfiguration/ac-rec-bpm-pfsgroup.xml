@@ -1266,6 +1266,11 @@
                 return adjudicacionProcedimientoManager.comprobarAdjuntoAsunto(idProcedimiento, "DFA");
             }
             
+            def comprobarCostasLetradoViviendaHabitual = {
+            	def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
+                return subastaProcedimientoManager.comprobarCostasLetradoViviendaHabitual(idProcedimiento, tareaExterna.getId());            
+            }
+            
             
   			 ]]></value>
   		</list>

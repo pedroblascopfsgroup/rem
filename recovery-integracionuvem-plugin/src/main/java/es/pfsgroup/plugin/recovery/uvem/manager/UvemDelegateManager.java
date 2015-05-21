@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -192,14 +193,14 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	//@ManagedOperation(description ="Metodo que solicita el numero de activo de un bien a UVEM")
 	//@ManagedOperationParameter(name="bienId", description= "id del bien.")
-    @Transactional
+    @Transactional(readOnly = false)
 	public void solicitarNumeroActivo(Long bienId, Long prcId){
 
     	solicitarNumeroActivoRespuesta(bienId, prcId);
     	
 	};
 	
-	@Transactional
+	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
 	public Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {

@@ -82,5 +82,6 @@
 		</property>
 	</bean>	
 
-	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>	
+	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
+	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>
 </beans>	

@@ -31,7 +31,6 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.DDSolvenciaGarantia;
 import es.capgemini.pfs.bien.model.DDTipoBien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
-import es.capgemini.pfs.cirbe.model.DDPais;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -60,6 +59,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.adjudicacion.dto.DtoNMBBienAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoInmueble;
@@ -87,7 +87,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
 
-@Service
+@Service("nmbBienManager")
 public class NMBBienManager extends BusinessOperationOverrider<BienApi> implements BienApi {
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -401,16 +401,10 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				nmbLocalizacion.setTipoVia(ddTipoVia);
 			}
 			
-			if (!Checks.esNulo(dtoBien.getTipoVia())) {
-				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoVia());
-				DDTipoVia ddTipoVia = genericDao.get(DDTipoVia.class, f1);
-				nmbLocalizacion.setTipoVia(ddTipoVia);
-			}
-			
 			if (!Checks.esNulo(dtoBien.getPais())) {
 				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getPais());
-				DDPais ddPais = genericDao.get(DDPais.class, f1);
-				nmbLocalizacion.setPais(ddPais);
+				DDCicCodigoIsoCirbeBKP pais = genericDao.get(DDCicCodigoIsoCirbeBKP.class, f1);
+				nmbLocalizacion.setPais(pais);
 			}
 			
 			genericDao.save(NMBLocalizacionesBien.class, nmbLocalizacion);
@@ -1215,10 +1209,10 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	
 	@Override
 	@BusinessOperation(GET_LIST_PAISES)
-	public List<DDPais> getListPaises() {
+	public List<DDCicCodigoIsoCirbeBKP> getListPaises() {
 
 		Filter f = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<DDPais> list = (ArrayList<DDPais>) genericDao.getList(DDPais.class, f);
+		List<DDCicCodigoIsoCirbeBKP> list = (ArrayList<DDCicCodigoIsoCirbeBKP>) genericDao.getList(DDCicCodigoIsoCirbeBKP.class, f);
 		return list;
 	}
 	

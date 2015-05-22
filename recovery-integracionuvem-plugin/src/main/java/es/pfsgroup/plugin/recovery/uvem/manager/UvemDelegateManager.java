@@ -337,7 +337,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			char titexo = ' '; 
 			servicioGMP5JD20.setTipoDeTextotitexo(titexo);
 			System.out.println(" ***REQUERIDO*** NOLGMU"); // 	longitud="50"	 Localidad del inmueble	
-			String nombreLargoMunicipio = bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getLocalidad() != null ? bien.getLocalizacionActual().getLocalidad().getDescripcion() : "";
+			String nombreLargoMunicipio = bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getLocalidad() != null ? bien.getLocalizacionActual().getLocalidad().getDescripcion().toUpperCase() : "";
 			servicioGMP5JD20.setNombreLargoDelMunicipionolgmu(StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50));
 			System.out.println("NOLGMU: "+StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50)); // 	longitud="50"	 Localidad del inmueble	
 			System.out.println(" ***REQUERIDO*** NOLGRP"); // 	longitud="50"	 Localidad del Registro	

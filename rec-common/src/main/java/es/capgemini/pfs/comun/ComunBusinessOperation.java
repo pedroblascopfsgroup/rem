@@ -53,6 +53,7 @@ public final class ComunBusinessOperation {
     public static final String BO_TAREA_MGR_GET_LIST_BY_PROC = "tareaNotificacionManager.getListByProcedimiento";
     public static final String BO_TAREA_MGR_GET_LIST_BY_ASUNTO = "tareaNotificacionManager.getListByAsunto";
     public static final String BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO = "tareaNotificacionManager.getListByProcedimientoSubtipo";
+    public static final String BO_TAREA_MGR_GET_LIST_BY_PROC_LIST_SUBTIPO = "tareaNotificacionManager.getListByProcedimientoListSubtipo";
     public static final String BO_TAREA_MGR_GET_NOTIF_ALERTAS = "tareaNotificacionManager.getNotificacionesAlertas";
     public static final String BO_TAREA_MGR_BUSCAR_TAREA_ACTUAL_EXP = "tareaNotificacionManager.buscarTareaActualExpediente";
     public static final String BO_TAREA_MGR_BUSCAR_COM_CLIENTE = "tareaNotificacionManager.buscarComunicacionesCliente";

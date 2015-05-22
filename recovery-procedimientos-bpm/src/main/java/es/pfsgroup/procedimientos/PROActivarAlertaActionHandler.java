@@ -29,7 +29,7 @@ public class PROActivarAlertaActionHandler extends PROBaseActionHandler implemen
 			if (!t.getAuditoria().isBorrado()) {
 				if(t.getTareaFinalizada() == null || (t.getTareaFinalizada()!=null && t.getTareaFinalizada())){
 					if(t.getTareaExterna()!=null){
-						tareaExternaManager.activar(t.getTareaExterna());
+						tareaExternaManager.activarAlerta(t.getTareaExterna());
 						genericDao.update(TareaNotificacion.class, t);
 						HibernateUtils.merge(t);
 					}

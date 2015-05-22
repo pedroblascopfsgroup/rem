@@ -2,6 +2,7 @@ package es.capgemini.pfs.tareaNotificacion.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.cliente.model.Cliente;
@@ -136,6 +137,14 @@ public interface TareaNotificacionDao extends AbstractDao<TareaNotificacion, Lon
      * @return Un listado de tareasNotificacion
      */
     List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, String subtipoTarea);
+
+    /**
+     * Devuelve una lista de tareasNotificacion que cumplen que pertenecen a un ID de Procedimiento y son de unos tipos determinados de tareas.
+     * @param idProcedimiento ID del procedimiento al que pertenece la tarea
+     * @param List<subtipoTarea> ID del subtipo de tarea
+     * @return Un listado de tareasNotificacion
+     */
+    List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, Set<String> subtipoTarea);
 
     /**
      * Devuelve una lista de tareasNotificacion que cumplen que pertenecen a un ID de Procedimiento ordenadas por fecha de creacion.

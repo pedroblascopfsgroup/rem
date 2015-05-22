@@ -35,7 +35,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
-import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
@@ -305,8 +304,11 @@ public class SubastaCalculoManager {
 	 */
 	private float getDeudaGlobal(Asunto asunto) {
 		float acumulado = 0;
-		List<Contrato> listadoContratosAsuntos = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoContratosAcuerdoByAsuId(asunto.getId());
-		for (Contrato contrato : listadoContratosAsuntos) {
+		List<Contrato> listaContratosAsunto = new ArrayList<Contrato>();
+		if (!Checks.esNulo(asunto)) {
+			listaContratosAsunto.addAll(asunto.getContratos());
+		}
+		for (Contrato contrato : listaContratosAsunto) {
 			Movimiento mov = contrato.getLastMovimiento();
 			if (mov==null) { 
 				continue;

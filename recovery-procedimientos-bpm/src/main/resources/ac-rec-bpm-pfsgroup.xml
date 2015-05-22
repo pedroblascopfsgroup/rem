@@ -1265,7 +1265,28 @@
             	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
                 return adjudicacionProcedimientoManager.comprobarAdjuntoAsunto(idProcedimiento, "DFA");
             }
+
+			
+			
+            def existeAdjuntoUG(String codigo, String entorno) {
+            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+				return adjudicacionProcedimientoManager.existeAdjuntoUG(idProcedimiento, codigo, entorno);
+            }
+
+            def existeAdjuntoUG(String cadenaDAUG) {
+            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+				return adjudicacionProcedimientoManager.existeAdjuntoUG(idProcedimiento, cadenaDAUG);
+            }
+                        
+            def existeAdjuntoUGMensaje(String codigo, String entorno) {
+				def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+            	return adjudicacionProcedimientoManager.existeAdjuntoUGMensajeHTML(codigo, entorno);
+            }
             
+            def existeAdjuntoUGMensaje(String cadenaDAUG) {
+				def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+            	return adjudicacionProcedimientoManager.existeAdjuntoUGMensajeHTML(idProcedimiento, cadenaDAUG);
+            }
             
   			 ]]></value>
   		</list>

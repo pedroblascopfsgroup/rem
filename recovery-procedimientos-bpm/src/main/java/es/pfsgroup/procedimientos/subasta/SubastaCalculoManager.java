@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
+import es.pfsgroup.procedimientos.context.api.ProcedimientosProjectContext;
 
 /**
  * Esta clase se usa para calcular determinados parámetros de la subasta.
@@ -51,21 +52,8 @@ public class SubastaCalculoManager {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	private final float UN_MILLON = 1000000;
-	private final float LIMITE_DEUDA_BIEN = 15000;
-
-	private final String TPO_SUBASTA = "P401";
-	private final String TPO_SUBASTA_SAREB = "P409";
-	private final String TAP_CELEBRACION_SUBASTA = "P401_CelebracionSubasta";
-	private final String TAP_SENYALAMIENTO_SUBASTA = "P401_SenyalamientoSubasta";
-	private final String TAP_CELEBRACION_SUBASTA_SAREB = "P409_CelebracionSubasta";
-	private final String TAP_SENYALAMIENTO_SUBASTA_SAREB = "P409_SenyalamientoSubasta";
-
-	private final String TFI_COSTAS_LETRADO = "costasLetrado";
-	private final String TFI_COSTAS_PROCURADOR = "costasProcurador";
-	private final String TFI_INTERESES = "intereses";
-
-	private final String CARGA_ANTERIOR_CODIGO = "ANT";
+	@Autowired
+	private ProcedimientosProjectContext procedimientosProjectContext;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -107,7 +95,7 @@ public class SubastaCalculoManager {
 		// condicion 1: tiene padre de tipo subasta
 		if (!Checks.esNulo(procedimiento.getProcedimientoPadre())) {
 			prcPadre = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", procedimiento.getProcedimientoPadre().getId()));
-			if (SubastaDao.CODIGO_TIPO_SUBASTA_BANKIA.equals(prcPadre.getTipoProcedimiento().getCodigo()) || SubastaDao.CODIGO_TIPO_SUBASTA_SAREB.equals(prcPadre.getTipoProcedimiento().getCodigo())) {
+			if (procedimientosProjectContext.getTiposSubasta().contains(prcPadre.getTipoProcedimiento().getCodigo())) {
 				// Condicion 1 cumplida. Continuamos
 				condicion1 = true;
 			}
@@ -118,11 +106,11 @@ public class SubastaCalculoManager {
 			// Set<TareaNotificacion> tareas = prcPadre.getTareas();
 			List<TareaNotificacion> tareas = genericDao.getList(TareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcPadre.getId()));
 			for (TareaNotificacion t : tareas) {
-				if (TAP_CELEBRACION_SUBASTA.equals(t.getCodigo()) || TAP_CELEBRACION_SUBASTA_SAREB.equals(t.getCodigo())) {
+				if (procedimientosProjectContext.getTareasCelebracionSubasta().contains(t.getCodigo())) {
 					TareaExterna tareaExterna = t.getTareaExterna();
 					List<TareaExternaValor> valores = tareaExterna.getValores();
 					for (TareaExternaValor tev : valores) {
-						if ("comboSuspension".equals(tev.getNombre())) {
+						if (procedimientosProjectContext.getCamposSuspensionSubasta().contains(tev.getNombre())) {
 							if (DDDecisionSuspension.TERCEROS.equals(tev.getValor())) {
 								condicion2 = true;
 								break;
@@ -262,7 +250,7 @@ public class SubastaCalculoManager {
 	private String determinarTipoSubasta(Procedimiento prc) {
 
 		// TODO: Quitar si las subastas sareb no deben cambiar el tipo de subasta
-		if (TPO_SUBASTA_SAREB.equals(prc.getTipoProcedimiento().getCodigo())) {
+		if (procedimientosProjectContext.getTipoSubastaSareb().equals(prc.getTipoProcedimiento().getCodigo())) {
 			return DDTipoSubasta.NDE;
 		}
 		// ------
@@ -282,7 +270,7 @@ public class SubastaCalculoManager {
 		if (esConcursal) {
 			return DDTipoSubasta.NDE;
 		}
-		if (esLitigio && deudaGlobal>=UN_MILLON) {
+		if (esLitigio && deudaGlobal>=procedimientosProjectContext.getLimiteDeudaGlobal()) {
 			return DDTipoSubasta.NDE;
 		}
 		int comparaVivHabitual = comparaDeudaViviendaHabitual(listadoBienes, deudaTotal);
@@ -291,7 +279,7 @@ public class SubastaCalculoManager {
 		}
 		float percentDeudaTotal = (float) (deudaTotal * 0.1);
 		float diferenciaDeudas = (deudaTotal - totalImporteCargas);
-		if (esLitigio && diferenciaDeudas<percentDeudaTotal && totalImporteCargas>=LIMITE_DEUDA_BIEN) {
+		if (esLitigio && diferenciaDeudas<percentDeudaTotal && totalImporteCargas>=procedimientosProjectContext.getLimiteDeudaBien()) {
 				return DDTipoSubasta.NDE;
 		}
 		return DDTipoSubasta.DEL;
@@ -331,23 +319,20 @@ public class SubastaCalculoManager {
 		float acumulado = 0;
 		List<TareaNotificacion> tareas = genericDao.getList(TareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", procedimiento.getId()));
 		for (TareaNotificacion t : tareas) {
-			if (t.getTareaExterna()==null || 
-					(!TAP_SENYALAMIENTO_SUBASTA.equals(t.getTareaExterna().getTareaProcedimiento().getCodigo()) &&
-					!TAP_SENYALAMIENTO_SUBASTA_SAREB.equals(t.getTareaExterna().getTareaProcedimiento().getCodigo()) )) {
-				continue;
-			}
-			TareaExterna tareaExterna = t.getTareaExterna();
-			List<TareaExternaValor> valores = tareaExterna.getValores();
-			for (TareaExternaValor tev : valores) {
-				if (TFI_COSTAS_LETRADO.equals(tev.getNombre()) || TFI_COSTAS_PROCURADOR.equals(tev.getNombre()) || TFI_INTERESES.equals(tev.getNombre())) {
-					float valor = 0;
-					String valorStr = tev.getValor();
-					try {
-						valor = Float.parseFloat(valorStr);
-					} catch (NumberFormatException nfe) {
-						logger.error("Problema al convertir a float número: " + valorStr, nfe);
+			if (t.getTareaExterna()!=null && t.getTareaExterna().getTareaProcedimiento()!=null && procedimientosProjectContext.getTareasSenyalamientoSubastas().contains(t.getTareaExterna().getTareaProcedimiento().getCodigo())){ 
+				TareaExterna tareaExterna = t.getTareaExterna();
+				List<TareaExternaValor> valores = tareaExterna.getValores();
+				for (TareaExternaValor tev : valores) {
+					if (procedimientosProjectContext.getCamposCostas().contains(tev.getNombre())) {
+						float valor = 0;
+						String valorStr = tev.getValor();
+						try {
+							valor = Float.parseFloat(valorStr);
+						} catch (NumberFormatException nfe) {
+							logger.error("Problema al convertir a float número: " + valorStr, nfe);
+						}
+						acumulado += valor;
 					}
-					acumulado += valor;
 				}
 			}
 		}
@@ -375,10 +360,10 @@ public class SubastaCalculoManager {
 			float tipoSubasta = nmbBien.getTipoSubasta();
 			tipoSubasta = (float) (tipoSubasta * 0.6);
 			float diferenciaDeuda = (deudaTotal - tipoSubasta);
-			if (nmbBien.getViviendaHabitual() && diferenciaDeuda<LIMITE_DEUDA_BIEN) {
+			if (nmbBien.getViviendaHabitual() && diferenciaDeuda<procedimientosProjectContext.getLimiteDeudaBien()) {
 				return -1;
 			}
-			if (nmbBien.getViviendaHabitual() && diferenciaDeuda>=LIMITE_DEUDA_BIEN) {
+			if (nmbBien.getViviendaHabitual() && diferenciaDeuda>=procedimientosProjectContext.getLimiteDeudaBien()) {
 				return 1;
 			}
 		}
@@ -401,7 +386,7 @@ public class SubastaCalculoManager {
 			NMBBien nmbBien = (NMBBien)bien;
 			for (NMBBienCargas carga : nmbBien.getBienCargas()) {
 				DDTipoCarga tipoCarga = carga.getTipoCarga();
-				if (CARGA_ANTERIOR_CODIGO.equals(tipoCarga.getCodigo()) && carga.isEconomica()) {
+				if (procedimientosProjectContext.getCodigoCargaAnterior().equals(tipoCarga.getCodigo()) && carga.isEconomica()) {
 					float importe = (carga.getImporteEconomico() != null) ? carga.getImporteEconomico() : 0;
 					acumulado +=importe;
 				}

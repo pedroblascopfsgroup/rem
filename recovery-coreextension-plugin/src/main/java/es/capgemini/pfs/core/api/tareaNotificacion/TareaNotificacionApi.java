@@ -1,6 +1,7 @@
 package es.capgemini.pfs.core.api.tareaNotificacion;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +43,12 @@ public interface TareaNotificacionApi {
     public void contestarProrroga(DtoSolicitarProrroga dto);
     
     /**
-     * Crea una notificación para un expediente.
-     * @param idEntidadInformacion el id de la entidad que genera la notificación.
+     * Crea una notificaciï¿½n para un expediente.
+     * @param idEntidadInformacion el id de la entidad que genera la notificaciï¿½n.
      * @param idTipoEntidadInformacion indica a que tipo de entidad corresponde el id anterior.
-     * @param codigoSubtipoTarea el código de la notificacion a insertar.
+     * @param codigoSubtipoTarea el cï¿½digo de la notificacion a insertar.
      * @param descripcion descripcion
-     * @return el id de la notificación que se creó.
+     * @return el id de la notificaciï¿½n que se creï¿½.
      */
     @BusinessOperationDefinition(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION)
     public Long crearNotificacion(Long idEntidadInformacion, String idTipoEntidadInformacion, String codigoSubtipoTarea, String descripcion);
@@ -68,9 +69,9 @@ public interface TareaNotificacionApi {
     public Long crearTarea(DtoGenerarTarea dto);
     
     /**
-     * Crea una notificacion para el gestor indicando que su solicitud de cancelación de un expediente fue rechazada.
-     * @param expediente el expediente que se quería cancelar.
-     * @param sc la solicitud de cancelación.
+     * Crea una notificacion para el gestor indicando que su solicitud de cancelaciï¿½n de un expediente fue rechazada.
+     * @param expediente el expediente que se querï¿½a cancelar.
+     * @param sc la solicitud de cancelaciï¿½n.
      */
     @BusinessOperationDefinition(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_NOTIFICAR_SOLICITUD_CANCELACION_RECHAZADA)
     public void notificarSolCancelacRechazada(Expediente expediente, SolicitudCancelacion sc);
@@ -78,7 +79,7 @@ public interface TareaNotificacionApi {
     /**
      * solicita una cancelacion de un expediente.
      * @param idExpediente id expediente
-     * @param detalle el detalle de la solicitud de cancelación.
+     * @param detalle el detalle de la solicitud de cancelaciï¿½n.
      * @param esSupervisor indica si el usuario es supervisor, para que no se genere una tarea.
      */
     @BusinessOperationDefinition(ComunBusinessOperation.BO_TAREA_MGR_SOL_CANCELACION_EXP)
@@ -138,8 +139,8 @@ public interface TareaNotificacionApi {
      * Crea una tarea a traves del proceso bpm generico.
      * @param idEntidad id de la entidad
      * @param tipoEntidad cdigo de tipo de entidad
-     * @param subtipoTarea código del subtipo de tarea.
-     * @param codigoPlazo código del plazo default.
+     * @param subtipoTarea cï¿½digo del subtipo de tarea.
+     * @param codigoPlazo cï¿½digo del plazo default.
      * @return bpm id
      */
     @BusinessOperationDefinition(ComunBusinessOperation.BO_TAREA_MGR_CREAR_TAREA_CON_BPM)
@@ -156,7 +157,16 @@ public interface TareaNotificacionApi {
     public List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, String subtipoTarea);
 
     /**
-	 * método para marcar una tarea alertada como revisada
+     * Devuelve una lista de tareasNotificacion que cumplen que pertenecen a un ID de Procedimiento y son de una lista de tipos determinado de tareas.
+     * @param idProcedimiento ID del procedimiento al que pertenece la tarea
+     * @param Set<subtipoTarea> ID del subtipo de tarea
+     * @return Un listado de tareasNotificacion
+     */
+    @BusinessOperationDefinition(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_LIST_SUBTIPO)
+    public List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, Set<String> subtipoTarea);
+
+    /**
+	 * mï¿½todo para marcar una tarea alertada como revisada
 	 * @param id de la tarea, marcar como revisada y comentarios
 	 */
 	@BusinessOperationDefinition(EXT_BO_TAREA_EDITAR_ALERTA)
@@ -171,7 +181,7 @@ public interface TareaNotificacionApi {
     public List<Long> obtenerCantidadDeTareasPendientes(DtoBuscarTareaNotificacion dto);
     
     /**
-     * Realiza la búsqueda de Tareas NOtificaciones para reporte Excel.
+     * Realiza la bï¿½squeda de Tareas NOtificaciones para reporte Excel.
      * @param dto DtoBuscarTareaNotificacion
      * @return lista de tareas
      */
@@ -179,7 +189,7 @@ public interface TareaNotificacionApi {
     public List<ResultadoBusquedaTareasBuzonesDto> buscarTareasParaExcel(DtoBuscarTareaNotificacion dto);
     
     /**
-     * Realiza la búsqueda de Tareas NOtificaciones para reporte Excel.
+     * Realiza la bï¿½squeda de Tareas NOtificaciones para reporte Excel.
      * @param dto DtoBuscarTareaNotificacion
      * @return lista de tareas
      */

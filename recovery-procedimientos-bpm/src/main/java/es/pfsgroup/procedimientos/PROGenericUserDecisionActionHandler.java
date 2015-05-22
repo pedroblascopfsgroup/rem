@@ -39,7 +39,7 @@ public class PROGenericUserDecisionActionHandler extends PROBaseActionHandler {
 				EXTTareaProcedimiento tareaProc = (EXTTareaProcedimiento)getTareaProcedimientoBBDD(executionContext);
 			
 				if (tareaProc !=null && tareaProc.getSubtipoTareaNotificacion()!=null)
-					idSubtipoTarea = tareaProc.getSubtipoTareaNotificacion().getId().toString();
+					idSubtipoTarea = tareaProc.getSubtipoTareaNotificacion().getCodigoSubtarea().toString();
 			}
 
 			String descripcion = subtipoTareaDao

@@ -532,15 +532,13 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 	}
 	
 	public Boolean existeAdjuntoUG(Long idProcedimiento, String codigoDocAdjunto, String uGestion){
-		AdjudicacionProcedimientoManager adjudicacionPM = new AdjudicacionProcedimientoManager();
-
 		//Balancea la comprobación de existencia de archivos adjuntos, dentro de la unidad de gestión indicada:
 		// Asunto.........: ASU
 		// Procedimiento..: PRC
 		if (uGestion.equals("ASU")){
-			return adjudicacionPM.comprobarAdjuntoAsunto(idProcedimiento, codigoDocAdjunto);
+			return comprobarAdjuntoAsunto(idProcedimiento, codigoDocAdjunto);
 		}else if (uGestion.equals("PRC")){
-			return adjudicacionPM.comprobarAdjunto(idProcedimiento, codigoDocAdjunto);
+			return comprobarAdjunto(idProcedimiento, codigoDocAdjunto);
 		}else{
 			return false;
 		}
@@ -570,7 +568,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 
 		//Si la unidad de gestión no es ninguna de las definidas, retorna un mensaje fijo de advertencia.
-		if (uGestion.isEmpty() || !uGestion.equals("ASU") || !uGestion.equals("PRC")){
+		if (uGestion.isEmpty() && !uGestion.equals("ASU") && !uGestion.equals("PRC")){
 			mensajeValidacion = "ATENCION: No es posible verificar la existencia de un adjunto en esta unidad de gestión: " + uGestion;
 		}
 		

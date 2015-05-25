@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -220,5 +221,23 @@ public class coreextensionController {
 
 	public GenericABMDao getGenericDao() {
 		return genericDao;
+	}
+	
+	/**
+	 * Comprueba si el gestor asociado tiene provisiones 
+	 * 
+	 * @param idAsunto
+	 * @return Boolean
+	 */
+	@RequestMapping
+	public String contieneProvisiones(Long idAsunto){
+		//return proxyFactory.proxy(EXTAsuntoManager.class).contieneProvisiones(idAsunto);
+		EXTAsuntoManager asu = proxyFactory.proxy(EXTAsuntoManager.class);
+		
+		if (asu.contieneProvisiones(idAsunto)){
+			return "si";
+		}else{
+			return "no";
+		}
 	}
 }

@@ -49,8 +49,10 @@
                     <json:property name="fechaCreacion">
                         <fwk:date value="${ec.contrato.fechaCreacion}" />
                     </json:property> 
-                    <json:property name="titulizado" value="${ec.contrato.titulizado}" />      
-                    <json:property name="fondo" value="${ec.contrato.fondo}" />           
+                    <json:property name="titulizado" value="${ec.contrato.titulizado}" />
+                    <c:if test="${ec.contrato.titulizado==1}">
+                    	<json:property name="fondo" value="${ec.contrato.fondo}" />
+                    </c:if>                               
                 </json:object>
                     <c:forEach items="${ec.contrato.contratoPersonaOrdenado}" var="cp">
                         <c:if test="${cp.persona.id!=ec.contrato.contratoPersonaOrdenado[0].persona.id}">

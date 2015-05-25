@@ -62,6 +62,7 @@ public class DDRule implements Serializable, Auditable {
     @Column(name = "RD_TAB")
     private String tab;
 
+
     @Embedded
     private Auditoria auditoria;
 

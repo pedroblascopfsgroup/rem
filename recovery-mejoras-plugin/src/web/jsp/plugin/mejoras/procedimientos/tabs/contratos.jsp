@@ -40,6 +40,8 @@
         ,{name:'comisiones'}
         ,{name:'gastos'}
         ,{name:'fechaCreacion'}
+        ,{name:'titulizado'}
+        ,{name:'fondo'}
     ]);
 
     var contratoStore = page.getStore({
@@ -80,6 +82,10 @@
             {header: '<s:message code="contratos.comisiones" text="**Comisiones" />', width: 135, dataIndex: 'comisiones', hidden:true,renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.gastos" text="**Gastos" />', width: 135, dataIndex: 'gastos', hidden:true,renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.fCreacion" text="**Fecha Creacion" />', width: 135, dataIndex: 'fechaCreacion', hidden:true}
+            <sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">
+            ,{header: '<s:message code="contratos.titulizado" text="**Titulizado" />', width: 135, dataIndex: 'titulizado', renderer: app.format.booleanFlagToYesNoRenderer}
+            ,{header: '<s:message code="contratos.fondo" text="**Fondo" />', width: 135, dataIndex: 'fondo'}
+            </sec:authorize>
         ]
     );
 

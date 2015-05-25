@@ -1265,6 +1265,11 @@
             	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
                 return adjudicacionProcedimientoManager.comprobarAdjuntoAsunto(idProcedimiento, "DFA");
             }
+           
+            def comprobarCostasLetradoViviendaHabitual = {
+            	def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
+                return subastaProcedimientoManager.comprobarCostasLetradoViviendaHabitual(idProcedimiento, tareaExterna.getId());            
+            }           
              
             def validacionesCelebracionSubastaSarebPOST = {
                 def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");

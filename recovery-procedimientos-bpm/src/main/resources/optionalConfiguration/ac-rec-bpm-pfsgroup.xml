@@ -1275,8 +1275,7 @@
                 def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
                 return subastaProcedimientoManager.validacionesCelebracionSubastaSarebPOST(idProcedimiento);
             }
-                        
-            
+
             def existeAdjuntoUG(String codigo, String entorno) {
             	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 				return adjudicacionProcedimientoManager.existeAdjuntoUG(idProcedimiento, codigo, entorno);

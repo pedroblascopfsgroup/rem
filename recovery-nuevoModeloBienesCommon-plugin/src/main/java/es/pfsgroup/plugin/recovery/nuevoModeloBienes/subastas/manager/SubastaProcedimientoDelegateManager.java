@@ -414,6 +414,22 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		}
 		return recepcionDue;
 	}
+	
+
+	/**
+	 * Método que comprueba si algún bien del procedimiento que recibe como parámetro no tiene solicitado el número de activo 
+	 * y devuelve el texto del error correspondiente. 
+	 * @param prcId
+	 * @return
+	 */
+	public String comprobarNumeroActivoBien(NMBBien nmbBien) {
+		
+		if(!nmbBien.tieneNumeroActivo()){
+			return "Antes de dar la subasta por celebrada, deber&aacute; acceder a la ficha del bien y solicitar el n&uacute;mero de activo mediante el bot&oacute;n habilitado para tal efecto";
+		}
+		
+		return null;
+	}
 
 
 	/**
@@ -424,29 +440,9 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	@Override
 	@BusinessOperation(overrides = BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_PRE)
 	public String validacionesCelebracionSubastaPRE(Long prcId) {
-		// Buscamos primero la subasta asociada al prc
-		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-		if (!Checks.esNulo(sub)) {
-			
-			// buscamos los lotes de la subasta
-			List<LoteSubasta> listadoLotes = sub.getLotesSubasta();
-			if (!Checks.estaVacio(listadoLotes)) {
-				for (LoteSubasta ls : listadoLotes) {
-					if (!Checks.estaVacio(ls.getBienes())) {
-						for (Bien b : ls.getBienes()) {
-							if (b instanceof NMBBien) {
-								if(Checks.esNulo(((NMBBien) b).getNumeroActivo())){
-									return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe solicitar el n&uacute;mero de activo previamente</div>";
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
 		return null;
 	}
+
 	
 	/**
 	 * BANKIA
@@ -458,6 +454,8 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	public String validacionesCelebracionSubastaPOST(Long prcId) {
 		// Buscamos primero la subasta asociada al prc
 		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		String respuesta = null;
+		
 		if (!Checks.esNulo(sub)) {
 			
 			// buscamos los lotes de la subasta
@@ -469,20 +467,27 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 							if (b instanceof NMBBien) {
 								if(!Checks.esNulo(((NMBBien) b).getAdjudicacion())){
 									if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria())){
-										return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar la entidad adjudicataria</div>";
+										return "Debe completar la entidad adjudicataria";
 									}
 									if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getImporteAdjudicacion())){
-										return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar el importe de adjudicaci&oacute;n</div>";
+										return "Debe completar el importe de adjudicaci&oacute;n";
 									}
 									else if(((NMBBien) b).getAdjudicacion().getImporteAdjudicacion() == 0){
-										return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">El importe de adjudicaci&oacute;n debe ser mayor que cero</div>";
+										return "El importe de adjudicaci&oacute;n debe ser mayor que cero";
 									}
 									if(DDEntidadAdjudicataria.ENTIDAD.equals((((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria().getCodigo()))){
 										if(Checks.estaVacio(((NMBBien) b).getContratos())){
-											return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Todos los bienes afectos deben tener al menos un contrato relacionado</div>";
+											return "Todos los bienes afectos deben tener al menos un contrato relacionado";
 										}										
-									}
+									}	
 								}
+								
+								// FASE-1261 Si algún bien no tiene número de activo
+								respuesta = comprobarNumeroActivoBien((NMBBien) b);
+								if(!Checks.esNulo(respuesta)) {
+									return respuesta;									
+								}							
+								
 							}
 						}
 					}
@@ -519,7 +524,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					}
 				}
 			
-				if(Checks.esNulo(b.getNumeroActivo())){
+				if(!b.tieneNumeroActivo()){
 					return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe solicitar el n&uacute;mero de activo previamente</div>";
 				}
 			}
@@ -546,17 +551,70 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 			
 			if(!Checks.esNulo(b.getAdjudicacion())){
 				if(Checks.esNulo(b.getAdjudicacion().getImporteAdjudicacion())){
-					return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar el importe de adjudicaci&oacute;n</div>";
+					return "Debe completar el importe de adjudicaci&oacute;n";
 				}
 				else if(b.getAdjudicacion().getImporteAdjudicacion() == 0){
-					return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">El importe de adjudicaci&oacute;n debe ser mayor que cero</div>";
+					return "El importe de adjudicaci&oacute;n debe ser mayor que cero";
 				}
 				if(Checks.esNulo(b.getAdjudicacion().getEntidadAdjudicataria())){
-					return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar la entidad adjudicataria</div>";
+					return "Debe completar la entidad adjudicataria";
 				}
 			}			
 		}
 		
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param prcId
+	 * @return
+	 */
+	private List<Bien> getBienesSubastaByPrcId(Long prcId){
+		// Buscamos primero la subasta asociada al prc
+		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		
+		List<Bien> bienes = new ArrayList<Bien>();
+		
+		if (!Checks.esNulo(sub)) {
+
+			// buscamos los lotes de la subasta
+			List<LoteSubasta> listadoLotes = sub.getLotesSubasta();
+			
+			if (!Checks.estaVacio(listadoLotes)) {
+				for(int i=0; i<listadoLotes.size(); i++){		
+					bienes.addAll(listadoLotes.get(i).getBienes());
+				}
+			}
+		}
+		
+		return bienes;
+	}
+
+
+	/**
+	 * BANKIA
+	 * Metodo que devuelve null en caso de todo ir bien, en caso contrario devuelve el mensaje de error
+	 * Validaciones POST
+	 */
+	@Override
+	@BusinessOperation(overrides = BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST)
+	public String validacionesCelebracionSubastaSarebPOST(Long prcId) {
+
+		String respuesta;
+		
+		List<Bien> listadoBienes = getBienesSubastaByPrcId(prcId);
+		
+		for(Bien bien: listadoBienes) {			
+			NMBBien nmbBien = (NMBBien) bien;	
+			
+			// FASE-1261 Si algún bien no tiene número de activo
+			respuesta = comprobarNumeroActivoBien(nmbBien);
+			if(!Checks.esNulo(respuesta)) {
+				return respuesta;									
+			}			
+		}
+
 		return null;
 	}
 	

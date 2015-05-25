@@ -165,9 +165,10 @@ create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
                   ,cnt_arq.DD_MRF_ID
                   ,cnt_arq.DD_MOM_ID
                   ,cnt_arq.DD_IDN_ID
+                  ,nvl(acn.ACN_NUM_REINCIDEN, 0) ACN_NUM_REINCIDEN
 					      FROM  per_personas per
 					       LEFT JOIN cpe_contratos_personas cpe ON per.per_id = cpe.per_id --PER_CPE
-                 				LEFT JOIN dd_tin_tipo_intervencion tin on cpe.dd_tin_id = tin.dd_tin_id
+                 LEFT JOIN dd_tin_tipo_intervencion tin on cpe.dd_tin_id = tin.dd_tin_id
 					       LEFT JOIN cnt_contratos cnt ON cpe.cnt_id = cnt.cnt_id        --CPE_CNT
 					       LEFT JOIN mov_movimientos mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion --CNT_MOV
 					       LEFT JOIN  ant_antecedentes ant ON ant.ant_id = per.ant_id
@@ -176,6 +177,7 @@ create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
 					       LEFT JOIN  gcl_grupos_clientes gcl ON pg.gcl_id = gcl.gcl_id
 					       LEFT JOIN  PER_PRECALCULO_ARQ per_arq on per.per_cod_cliente_entidad = per_arq.per_cod_cliente_entidad
 					       LEFT JOIN  CNT_PRECALCULO_ARQ cnt_arq on cnt.cnt_contrato = cnt_arq.cnt_contrato
+                 LEFT JOIN  ACN_ANTECED_CONTRATOS acn ON acn.CNT_ID=cnt.CNT_ID
 					       LEFT JOIN (select cnt_id,
 				                zonN0.zon_id as zon_idN0, zonN0.zon_cod as zon_codN0, zonN0.zon_num_centro as zon_num_centroN0, zonN0.zon_descripcion as zon_descripcionN0, zonN0.zon_pid as zon_pidN0, nivN0.niv_id as niv_idN0, nivN0.niv_codigo as niv_codigoN0, nivN0.niv_descripcion as niv_descripcionN0,
 				                zonN1.zon_id as zon_idN1, zonN1.zon_cod as zon_codN1, zonN1.zon_num_centro as zon_num_centroN1, zonN1.zon_descripcion as zon_descripcionN1, zonN1.zon_pid as zon_pidN1, nivN1.niv_id as niv_idN1, nivN1.niv_codigo as niv_codigoN1, nivN1.niv_descripcion as niv_descripcionN1,
@@ -344,8 +346,9 @@ BEGIN
 			,MAX_DIAS_IRREGULAR
 			,DD_TCN_ID
 			,DD_MRF_ID
-            ,DD_MOM_ID
-			,DD_IDN_ID)
+      ,DD_MOM_ID
+			,DD_IDN_ID
+      ,ACN_NUM_REINCIDEN)
     VALUES 			
       (L_DATA(I).PER_ID
 			,L_DATA(I).PER_RIESGO

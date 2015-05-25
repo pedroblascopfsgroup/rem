@@ -245,15 +245,34 @@
 		,cls: 'x-btn-text-icon'
 		//,disabled:true
 		,handler:function(){
-			if(validar()){
-				insertarFunction();
-				resetCombos();
-			}
-			else{
-				alert('Obligado');
+			alert('contieneProvisiones: ' + contieneProvisiones());
+			if(contieneProvisiones()){
+				if(validar()){
+					insertarFunction();
+					resetCombos();
+				}
+				else{
+					alert('Obligado');
+				}
+			}else{
+				alert('El gestor asociado contiene provisiones.');
 			}
 		}
 	});
+
+
+	var contieneProvisiones=function(){
+		data = entidad.get("data");
+		var resultado = null;
+		Ext.Ajax.request({
+			url: page.resolveUrl('coreextension/contieneProvisiones')
+			,params: {
+				idAsunto:data.id
+			}
+			,success:function ( result, request ) {resultado = result.responseText	}
+		});
+		return resultado;
+	}; 
 	
 	var insertarFunction=function(){
 		data = entidad.get("data");

@@ -61,23 +61,7 @@ public class DDRule implements Serializable, Auditable {
 
     @Column(name = "RD_TAB")
     private String tab;
-    
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_TCN_ID")
-	private DDTipoCnae tipoCnae;
-    
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_MRF_ID")
-	private DDMarcaRefinanciacion marcaRefinanciacion;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_IDN_ID")
-	private DDIndicadorNomina indicadorNomina;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_MOM_ID")
-	private DDMotivoMarcaR motivoMarcaR;
-    
+
 
     @Embedded
     private Auditoria auditoria;
@@ -210,38 +194,6 @@ public class DDRule implements Serializable, Auditable {
     public void setTab(String tab) {
         this.tab = tab;
     }
-
-    public DDTipoCnae getTipoCnae() {
-		return tipoCnae;
-	}
-
-	public void setTipoCnae(DDTipoCnae tipoCnae) {
-		this.tipoCnae = tipoCnae;
-	}
-
-	public DDMarcaRefinanciacion getMarcaRefinanciacion() {
-		return marcaRefinanciacion;
-	}
-
-	public void setMarcaRefinanciacion(DDMarcaRefinanciacion marcaRefinanciacion) {
-		this.marcaRefinanciacion = marcaRefinanciacion;
-	}
-
-	public DDIndicadorNomina getIndicadorNomina() {
-		return indicadorNomina;
-	}
-
-	public void setIndicadorNomina(DDIndicadorNomina indicadorNomina) {
-		this.indicadorNomina = indicadorNomina;
-	}
-	
-	public DDMotivoMarcaR getMotivoMarcaR() {
-		return motivoMarcaR;
-	}
-
-	public void setMotivoMarcaR(DDMotivoMarcaR motivoMarcaR) {
-		this.motivoMarcaR = motivoMarcaR;
-	}
 
 	@Override
     public Auditoria getAuditoria() {

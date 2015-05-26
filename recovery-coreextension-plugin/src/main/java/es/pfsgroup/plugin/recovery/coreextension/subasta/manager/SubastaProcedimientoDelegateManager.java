@@ -148,5 +148,13 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		return false;
 	}
 	
+	//BANKIA
+	@Override
+	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST)
+	public String validacionesCelebracionSubastaSarebPOST(Long prcId) {
+		//  Este metodo se implementa en el nuevoModeloBienes
+		return null;		
+	}
+
 
 }

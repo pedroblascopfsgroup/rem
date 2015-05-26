@@ -13,6 +13,7 @@
 			<json:property name="subtipo" value="${tar.subtipoTarea.descripcion}" />
 			<json:property name="codigoSubtipoTarea" value="${tar.subtipoTarea.codigoSubtarea}" />
 			<json:property name="dtype" value="${tar.class.simpleName}" />
+			<json:property name="categoriaTarea" value="${tar.categoriaTarea}" />
 			<!-- Si es gestion de vencidos, entra en el grupo "esta semana" -->
 			<c:if test='${tar.subtipoTarea.codigoSubtarea == 1 || tar.subtipoTarea.codigoSubtarea == 98 || tar.subtipoTarea.codigoSubtarea == 99}'>
 				<json:property name="group" value="2" />
@@ -70,6 +71,7 @@
 				<json:property name="volumenRiesgoSQL" value="${tar.volumenRiesgoSQL}"/>
 				<json:property name="volumenRiesgoVencido" value="${tar.volumenRiesgoSQL}"/>
 				<json:property name="itinerario" value="${tar.tipoItinerarioEntidad}"/>
+				
 			</c:if>
 			<c:if test='${tar.subtipoTarea.codigoSubtarea == "503" }'>
 				<json:property name="fechaPropuesta" >

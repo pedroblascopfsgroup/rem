@@ -20,6 +20,7 @@ public interface SubastaProcedimientoDelegateApi {
 	public static final String BO_SUBASTA_VALIDACIONES_CONFIRMAR_TESTIMONIO_POST = "es.pfsgroup.recovery.subasta.validacionesConfirmarTestimonioPOST";
 	public static final String BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION = "es.pfsgroup.recovery.subasta.validacionesCelebracionSubastaAdjudicacion";
 	public static final String BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION_DOC = "es.pfsgroup.recovery.subasta.validacionesCelebracionSubastaAdjudicacionDoc";
+	public static final String BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST = "es.pfsgroup.recovery.subasta.validacionesCelebracionSubastaSarebPOST";
 	
 	@BusinessOperationDefinition(BO_SUBASTA_IS_BIEN_WITH_TIPO_SUBASTA)
 	public Boolean isTipoSubasta(Long bienId);
@@ -76,5 +77,9 @@ public interface SubastaProcedimientoDelegateApi {
 	//HAYA
 	@BusinessOperationDefinition(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION_DOC)
 	boolean comprobarAdjudicacionDocBienesCelebracionSubasta(Long prcId);
+	
+	//BANKIA
+	@BusinessOperationDefinition(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST)
+	public String validacionesCelebracionSubastaSarebPOST(Long prcId);
 
 }

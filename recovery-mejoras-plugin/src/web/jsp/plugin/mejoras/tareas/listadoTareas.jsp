@@ -424,6 +424,7 @@
 		,{name:'revisada', type:'bool'}
 		,{name:'fechaRevisionAlerta'}
 		,{name:'dtype'}
+		,{name:'categoriaTarea'}
 	]);
 	
 	Ext.grid.CheckColumn = function(config){ 
@@ -806,6 +807,7 @@
 	tareasGrid.on('rowclick', function(grid, rowIndex, e) {
 		var rec = grid.getStore().getAt(rowIndex);
 		var codigoSubtipoTarea = rec.get('codigoSubtipoTarea');
+		
 		var tipoTareaNotificacion=rec.get('dtype');
 		
 		if(!permisosVisibilidadGestorSupervisor(rec.get('supervisorId')) //no es supervisor de la tarea
@@ -932,8 +934,7 @@
 		var rec = grid.getStore().getAt(rowIndex);
 		
 		var codigoSubtipoTarea = rec.get('codigoSubtipoTarea');
-		
-		
+		var categoriaTarea = rec.get('categoriaTarea');
 		
 		
 		if(codigoSubtipoTarea==app.subtipoTarea.CODIGO_TAREA_COMUNICACION_DE_GESTOR && permisosVisibilidadGestorSupervisor(rec.get('gestorId')) == true){
@@ -1226,10 +1227,12 @@
 			case app.subtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_SUPERVISOR: 
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'recursos');
 			break;
-			case app.subtipoTarea.CODIGO_TOMA_DECISION_BPM:
+			<%--
+			case app.subtipoTarea.CODIGO_TOMA_DECISION_BPM: --Pasado a default para varios tipos DECISION
 				app.openTab(rec.get('descripcion'), 'procedimientos/consultaProcedimiento', {id:rec.get('idEntidad'),tarea:rec.get('id'),fechaVenc:rec.get('fechaVenc'),nombreTab:'decision'} , {id:'procedimiento'+rec.get('idEntidad'),iconCls:'icon_procedimiento'});
-				//app.addFavorite(rec.get('idEntidad'), rec.get('descripcion'), app.constants.FAV_TIPO_PROCEDIMIENTO);
+				app.addFavorite(rec.get('idEntidad'), rec.get('descripcion'), app.constants.FAV_TIPO_PROCEDIMIENTO);
 			break;
+			 --%>
 			case app.subtipoTarea.CODIGO_PROPUESTA_DECISION_PROCEDIMIENTO:
 			//case app.subtipoTarea.CODIGO_ACEPTACION_DECISION_PROCEDIMIENTO:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'decision');
@@ -1348,49 +1351,58 @@
 		break;
 			// Por default abre una notificacion standard
 			default:
+				//Seleccionarmos por tipo de Categoria Tarea
+				switch(categoriaTarea) {
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION:
+						app.openTab(rec.get('descripcion'), 'procedimientos/consultaProcedimiento', {id:rec.get('idEntidad'),tarea:rec.get('id'),fechaVenc:rec.get('fechaVenc'),nombreTab:'decision'} , {id:'procedimiento'+rec.get('idEntidad'),iconCls:'icon_procedimiento'});
+						//app.addFavorite(rec.get('idEntidad'), rec.get('descripcion'), app.constants.FAV_TIPO_PROCEDIMIENTO);
+						break;
+						
+					default:
 				
-				var w = app.openWindow({
-						flow : 'tareas/consultaNotificacion'
-						,title : '<s:message code="tareas.notificacion" text="**Notificacion" />'
-						,width:400 
-						,params : {
-								idEntidad: rec.get('idEntidad')
-								,codigoTipoEntidad: rec.get('codigoEntidadInformacion')
-								,descripcion: rec.get(nombreTareaField)
-								,fecha: rec.get('fcreacionEntidad')
-								,situacion: rec.get('codigoSituacion')
-								,descripcionTareaAsociada: rec.get('descripcionTareaAsociada')
-								,idTareaAsociada: rec.get('idTareaAsociada')
-								,idTarea:rec.get('id')
-                                ,tipoTarea:rec.get('tipoTarea')
-						}
-					});
-					w.on(app.event.CANCEL, function(){ w.close(); });
-					w.on(app.event.DONE, function(){ 
-                            w.close();
-                            tareasStore.webflow(paramsBusquedaInicial); 
-							//Recargamos el arbol de tareas
-							app.recargaTree();
-                    });
-					w.on(app.event.OPEN_ENTITY, function(){
-						w.close();
-						if (rec.get('codigoEntidadInformacion') == '1'){
-							app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
-						}
-						if (rec.get('codigoEntidadInformacion') == '2'){
-							app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
-						}	
-						if (rec.get('codigoEntidadInformacion') == '3'){
-							app.abreAsunto(rec.get('idEntidad'), rec.get('descripcion'));
-						}
-						if (rec.get('codigoEntidadInformacion') == '5'){
-							app.abreProcedimiento(rec.get('idEntidad'), rec.get('descripcion'));
-						}			
-                        if (rec.get('codigoEntidadInformacion') == '7'){
-                            app.abreClienteTab(rec.get('idEntidadPersona'), rec.get('descripcion'),'politicaPanel');
-                        }	
-					});
-			break;
+					var w = app.openWindow({
+							flow : 'tareas/consultaNotificacion'
+							,title : '<s:message code="tareas.notificacion" text="**Notificacion" />'
+							,width:400 
+							,params : {
+									idEntidad: rec.get('idEntidad')
+									,codigoTipoEntidad: rec.get('codigoEntidadInformacion')
+									,descripcion: rec.get(nombreTareaField)
+									,fecha: rec.get('fcreacionEntidad')
+									,situacion: rec.get('codigoSituacion')
+									,descripcionTareaAsociada: rec.get('descripcionTareaAsociada')
+									,idTareaAsociada: rec.get('idTareaAsociada')
+									,idTarea:rec.get('id')
+	                                ,tipoTarea:rec.get('tipoTarea')
+							}
+						});
+						w.on(app.event.CANCEL, function(){ w.close(); });
+						w.on(app.event.DONE, function(){ 
+	                            w.close();
+	                            tareasStore.webflow(paramsBusquedaInicial); 
+								//Recargamos el arbol de tareas
+								app.recargaTree();
+	                    });
+						w.on(app.event.OPEN_ENTITY, function(){
+							w.close();
+							if (rec.get('codigoEntidadInformacion') == '1'){
+								app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
+							}
+							if (rec.get('codigoEntidadInformacion') == '2'){
+								app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
+							}	
+							if (rec.get('codigoEntidadInformacion') == '3'){
+								app.abreAsunto(rec.get('idEntidad'), rec.get('descripcion'));
+							}
+							if (rec.get('codigoEntidadInformacion') == '5'){
+								app.abreProcedimiento(rec.get('idEntidad'), rec.get('descripcion'));
+							}			
+	                        if (rec.get('codigoEntidadInformacion') == '7'){
+	                            app.abreClienteTab(rec.get('idEntidadPersona'), rec.get('descripcion'),'politicaPanel');
+	                        }	
+						});
+					break;
+				}				
 		}
 		
 		//var tipoTarea = rec.get('tipoTarea');

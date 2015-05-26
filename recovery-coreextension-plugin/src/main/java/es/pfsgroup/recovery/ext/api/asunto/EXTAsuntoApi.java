@@ -6,6 +6,7 @@ import java.util.Set;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.dto.DtoProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
@@ -57,6 +58,13 @@ public interface EXTAsuntoApi {
 
 	@BusinessOperationDefinition(EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params);
+	
+	/**
+     * Indica si el Usuario Logado es el gestor de decision del asunto.
+     * @return true si es el gestor.
+     */
+    @BusinessOperationDefinition(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
+    public Boolean esGestorDecision(); 		
 	
 
 

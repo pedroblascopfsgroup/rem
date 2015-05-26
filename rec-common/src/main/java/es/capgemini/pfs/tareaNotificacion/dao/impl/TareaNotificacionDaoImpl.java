@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -28,6 +29,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.utils.StringUtils;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Implementación del dao de notificaciones para Hibenate.
@@ -523,6 +525,18 @@ public class TareaNotificacionDaoImpl extends AbstractEntityDao<TareaNotificacio
         String hql = "FROM TareaNotificacion t WHERE t.procedimiento.id = ? and t.subtipoTarea.codigoSubtarea = ?";
 
         return getHibernateTemplate().find(hql, new Object[] { idProcedimiento, subtipoTarea });
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, Set<String> subtipoTarea) {
+    	String subTipos = "";
+    	for (String string : subtipoTarea) {
+			subTipos += "".equals(subTipos) ? "'"+string+"'" : ", '" + string + "'";
+    	}    	
+        String hql = "FROM TareaNotificacion t WHERE t.procedimiento.id = ? and t.subtipoTarea.codigoSubtarea ";
+        hql += subtipoTarea.size() == 1 ? " = " + subTipos : " in ("+subTipos+")";
+
+        return getHibernateTemplate().find(hql, new Object[] { idProcedimiento });
     }
 
     /**

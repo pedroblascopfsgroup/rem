@@ -155,6 +155,8 @@ public class CalculoFacturacionManagerImpl implements CalculoFacturacionManager 
 						pfs.setProcesoFacturacion(recobroProcesoFacturacion);
 						pfs.setSubCartera(recobroSubCartera);
 						pfs.setModeloFacturacionInicial(recobroSubCartera.getModeloFacturacion());
+						pfs.setTotalImporteCobros(0d);
+						pfs.setTotalImporteFacturable(0d);
 						recobroProcesoFacturacionSubcarteraManager.saveProcesoFacturacion(pfs);
 	
 						listPfs.add(pfs);

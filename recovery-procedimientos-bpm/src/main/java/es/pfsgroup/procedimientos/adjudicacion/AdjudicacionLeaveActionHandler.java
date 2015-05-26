@@ -104,7 +104,7 @@ public class AdjudicacionLeaveActionHandler extends PROGenericLeaveActionHandler
 							/*
 							 * Acciones con nombre
 							 */
-							String nombre = formatter.format(tev.getValor());
+							String nombre = tev.getValor();
 							executor.execute(AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_NOMBRE_ER_DEPO, prc.getId(), nombre);
 
 						} else if ("fecha".equals(tev.getNombre()) && !Checks.esNulo(tev.getValor())) {
@@ -159,7 +159,7 @@ public class AdjudicacionLeaveActionHandler extends PROGenericLeaveActionHandler
 							/*
 							 * Acciones con nombre
 							 */
-							String nombre = formatter.format(tev.getValor());
+							String nombre = tev.getValor();
 							executor.execute(AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_NOMBRE_DEPO_FINAL, prc.getId(), nombre);
 
 						} else if ("fecha".equals(tev.getNombre()) && !Checks.esNulo(tev.getValor())) {

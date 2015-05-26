@@ -80,7 +80,7 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 
 		Procedimiento prc = getProcedimiento(executionContext);
 		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prc.getId());
-		
+		List<Long> bienesInsertados = new ArrayList<Long>(); 
 		if (executionContext.getNode().getName().contains("BPMTramiteAdjudicacion")) {
 			//
 			// Tenemos que crear un procedimiento adjudicación por cada uno de
@@ -92,9 +92,12 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 						List<Bien> bienes = ls.getBienes();
 						if (!Checks.estaVacio(bienes)) {
 							for (Bien b : bienes) {
-								Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
-								if (creoProcedimiento) {
-										creaProcedimientoAdjudicacion(prc, b);
+								if(!bienesInsertados.contains(b.getId())){
+									Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
+									if (creoProcedimiento) {
+											creaProcedimientoAdjudicacion(prc, b);
+											bienesInsertados.add(b.getId());
+									}
 								}
 							}
 						}
@@ -105,7 +108,10 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 				List<ProcedimientoBien> bienes = prc.getBienes();
 				if (!Checks.estaVacio(bienes)) {
 					for (ProcedimientoBien b : bienes) {
-						creaProcedimientoAdjudicacion(prc, b.getBien());
+						if(!bienesInsertados.contains(b.getId())){
+							creaProcedimientoAdjudicacion(prc, b.getBien());
+							bienesInsertados.add(b.getId());
+						}
 					}
 				}
 			}

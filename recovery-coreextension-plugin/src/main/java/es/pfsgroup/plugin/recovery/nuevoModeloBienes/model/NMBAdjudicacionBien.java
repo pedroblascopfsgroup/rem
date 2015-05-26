@@ -212,7 +212,8 @@ public class NMBAdjudicacionBien implements Serializable, Auditable{
     @Column(name = "BIE_ADJ_CESION_REMATE_IMP")
     private Float importeCesionRemate;
     
-    @Column(name = "DD_DAD_ID")
+    @OneToOne
+    @JoinColumn(name = "DD_DAD_ID")
 	private DDDocAdjudicacion tipoDocAdjudicacion;
 
 	@Embedded

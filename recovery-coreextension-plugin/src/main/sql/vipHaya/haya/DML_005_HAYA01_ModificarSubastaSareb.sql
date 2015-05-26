@@ -37,6 +37,14 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Label de los campos actualizada.');
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+	          ' SET BORRADO = 1 ' ||
+	          ' WHERE TAP_CODIGO = ''H002_EsperaPosibleCesionRemate''';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando borrado de la tarea.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Borrado lógico de la tarea realizado.');
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 	          ' SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">' || 

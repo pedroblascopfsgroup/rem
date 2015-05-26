@@ -400,17 +400,6 @@
 		<transition to="Fin5" name="haya_tramiteAdjudicacionV4"></transition>
 	</state>
 
-	<state name="H003_EsperaPosibleCesionRemate">
-		<event type="node-enter">
-			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
-				<name>Timer espera - F. auto declación concurso</name>
-				<duration>20 days</duration>
-				<transicion>avanzaBPM</transicion>
-			</action>
-		</event>	
-		<transition to="H003_BPMTramiteAdjudicacion" name="avanzaBPM"></transition>
-	</state>
-
 	<state name="H003_SolicitarMandamientoPago">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -574,11 +563,10 @@
 	<fork name="forkCelebracion">
 		<transition to="D" name="D"></transition>
 		<transition to="C" name="C"></transition>
-		<transition to="E" name="E"></transition>
 		<transition to="F" name="F"></transition>
 		<transition to="G" name="G"></transition>
 		<transition to="H" name="H"></transition>
-		<transition to="I" name="I"></transition>
+		<transition to="A" name="A"></transition>
 	</fork>
 
 	<decision name="D" expression="#{DecisionRama_4}">
@@ -589,11 +577,6 @@
 	<decision name="C" expression="#{DecisionRama_3}">
 		<transition to="H003_BPMTramiteCesionRemate" name="si"></transition>
 		<transition to="Fin4" name="no"></transition>
-	</decision>
-
-	<decision name="E" expression="#{DecisionRama_5}">
-		<transition to="H003_EsperaPosibleCesionRemate" name="si"></transition>
-		<transition to="Fin5" name="no"></transition>
 	</decision>
 
 	<decision name="F" expression="#{DecisionRama_6}">
@@ -684,22 +667,19 @@
 		<transition to="Fin5" name="no"></transition>
 	</decision>
 
-	<decision name="I" expression="#{DecisionRama_9}">
-		<transition to="H003_EsperaPosibleCesionRemate2" name="si"></transition>
+	<node name="H003_SuspenderDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin5" name="Fin"></transition>	
+	</node>
+
+	<decision name="A" expression="#{DecisionRama_1}">
+		<transition to="H003_SuspenderDecision" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
-
-	<state name="H003_EsperaPosibleCesionRemate2">
-		<event type="node-enter">
-			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
-				<name>Timer espera - F. auto declación concurso</name>
-				<duration>20 days</duration>
-				<transicion>avanzaBPM</transicion>
-			</action>
-		</event>	
-		<transition to="H003_BPMTramiteInscripcionDelTitulo" name="avanzaBPM"></transition>
-	</state>
-
 
 	<end-state name="Fin">
 		<event type="node-enter">

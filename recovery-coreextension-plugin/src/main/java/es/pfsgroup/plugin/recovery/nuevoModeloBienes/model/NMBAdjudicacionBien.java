@@ -211,6 +211,9 @@ public class NMBAdjudicacionBien implements Serializable, Auditable{
     
     @Column(name = "BIE_ADJ_CESION_REMATE_IMP")
     private Float importeCesionRemate;
+    
+    @Column(name = "DD_DAD_ID")
+	private DDDocAdjudicacion tipoDocAdjudicacion;
 
 	@Embedded
 	private Auditoria auditoria;
@@ -679,7 +682,13 @@ public class NMBAdjudicacionBien implements Serializable, Auditable{
 	public void setImporteCesionRemate(Float importeCesionRemate) {
 		this.importeCesionRemate = importeCesionRemate;
 	}
-	
-	
+
+	public DDDocAdjudicacion getTipoDocAdjudicacion() {
+		return tipoDocAdjudicacion;
+	}
+
+	public void setTipoDocAdjudicacion(DDDocAdjudicacion tipoDocAdjudicacion) {
+		this.tipoDocAdjudicacion = tipoDocAdjudicacion;
+	}
 	
 }

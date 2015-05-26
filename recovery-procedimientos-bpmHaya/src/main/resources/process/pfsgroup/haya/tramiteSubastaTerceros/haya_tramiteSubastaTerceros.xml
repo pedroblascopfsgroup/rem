@@ -399,6 +399,26 @@
 		</event>	
 		<transition to="Fin5" name="haya_tramiteAdjudicacionV4"></transition>
 	</state>
+	
+	<state name="H004_BPMInscripcionDelTitulo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>subastaV4HayaConcursalEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin5" name="haya_tramiteInscripcionDelTitulo"></transition>
+	</state>
 
 	<state name="H004_SolicitarMandamientoPago">
 		<event type="node-enter">
@@ -559,13 +579,34 @@
 		<transition to="H004_ElevarPropuestaASarebIndices" name="vueltaAtras"></transition>
 		<transition to="H004_RegistrarRespuestaSarebIndices" name="activarAlerta"></transition>
 	</state>
+	
+	<node name="H004_SuspensionDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>	
+		<transition to="Fin5" name="Fin"></transition>
+	</node>
 
 	<fork name="forkCelebracion">
+		<transition to="A" name="A"></transition>
 		<transition to="D" name="D"></transition>
+		<transition to="H" name="H"></transition>
 		<transition to="C" name="C"></transition>
 		<transition to="F" name="F"></transition>
 		<transition to="G" name="G"></transition>
 	</fork>
+	
+	<decision name="A" expression="#{DecisionRama_1}">
+		<transition to="H004_SuspensionDecision" name="si"></transition>
+		<transition to="Fin5" name="no"></transition>
+	</decision>
+	
+	<decision name="H" expression="#{DecisionRama_8}">
+		<transition to="H004_BPMInscripcionDelTitulo" name="si"></transition>
+		<transition to="Fin5" name="no"></transition>
+	</decision>
 
 	<decision name="D" expression="#{DecisionRama_4}">
 		<transition to="H004_BPMTramiteAdjudicacion" name="si"></transition>

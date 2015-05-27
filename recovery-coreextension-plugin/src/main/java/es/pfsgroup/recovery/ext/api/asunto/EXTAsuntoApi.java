@@ -66,7 +66,4 @@ public interface EXTAsuntoApi {
     @BusinessOperationDefinition(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
     public Boolean esGestorDecision(); 		
 	
-
-
-	
 }

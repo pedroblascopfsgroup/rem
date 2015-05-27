@@ -24,9 +24,14 @@
 				<json:property name="fechaInicio" > 
 					<fwk:date value="${tar.fechaInicio}"/>
 				</json:property>
- 				<json:property name="group">
-						<app:groupTareasOptimizacion value="${tar.groupTareasDataInfo}" />
-				</json:property>	
+				<c:if test='${!tieneProcurador}'>
+	 				<json:property name="group">
+							<app:groupTareasOptimizacion value="${tar.groupTareasDataInfo}" />
+					</json:property>	
+				</c:if>
+<%-- 				<c:if test='${tieneProcurador}'> --%>
+<%-- 					<json:property name="group" value="${tar.groupTareas}" />	 --%>
+<%-- 				</c:if> --%>
 				<json:property name="id" value="${tar.id}" />
  				<json:property name="plazo" value="${tar.plazo}" /> 
  				<json:property name="entidadInformacion" value="${tar.entidadInformacion}"/> 

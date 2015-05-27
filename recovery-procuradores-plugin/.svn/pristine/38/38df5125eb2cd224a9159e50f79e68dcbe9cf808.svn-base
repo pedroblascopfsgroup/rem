@@ -1,0 +1,198 @@
+<%@page pageEncoding="iso-8859-1" contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json"%>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="app" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
+<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+
+<fwk:page>
+	var limit = 25;
+	var isBusqueda = true;
+	
+	var paramsBusquedaInicial={
+		start:0
+		,limit:limit
+		,idCategoria: '${idCategoria}'
+	};
+	
+<!-- 	var dateRenderer = Ext.util.Format.dateRenderer('d/m/Y'); -->
+	
+	var recordatoriosRecord = Ext.data.Record.create([
+		{name:'id'}
+		,{name:'titulo'}
+		,{name:'descripcion'}
+		,{name:'fecha', type:'date', dateFormat:'c'}
+	]);
+	
+	
+	
+	var recordatorioStore = page.getStore({
+		id:'recordatorioStore'
+		,remoteSort:true
+		,event:'listado'
+		,storeId:'recordatorioStore'
+		,limit:limit
+		,baseParams:paramsBusquedaInicial
+		,flow:'recrecordatorio/getListaRecordatorios'
+		,reader: new Ext.data.JsonReader({root:'recordatorios',totalProperty:'total',idProperty: 'id'},recordatoriosRecord)
+	});
+	
+	var tareasCm = new Ext.grid.ColumnModel([
+		{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.id" text="**Id" />', dataIndex: 'id', sortable:true, hidden:true}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.titulo" text="**Titulo" />', dataIndex: 'titulo', sortable:true, sortable:true}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.descripcion" text="**Descripción" />',  dataIndex: 'descripcion', sortable:true}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fecha" text="**Fecha señalamiento" />', dataIndex: 'fecha', sortable:true, renderer:app.format.dateRenderer}
+	]);
+	
+	var pagingBar=fwk.ux.getPaging(recordatorioStore);
+	
+	var btnCrear=new Ext.Button({
+		text:'<s:message code="app.botones.recordatorios.crear" text="**Crear" />'
+		,iconCls:'icon_limpiar'
+		,handler:function(){
+				var titulo = "Crear recordatorio";
+				var w = app.openWindow({
+				  flow : 'recrecordatorio/abreVentanaNuevoRecordatorio'
+				  //,width:320
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : titulo
+				  ,params:{}
+				
+				});
+				w.on(app.event.DONE, function(){      
+				  buscarFunc();
+				  w.close();
+				});
+				w.on(app.event.CANCEL, function(){
+				  w.close();
+				});
+		}
+	});	
+	
+	var tareasGrid=app.crearGrid(recordatorioStore,tareasCm,{
+		title:'<s:message code="plugin.procuradores.recordatorios.gridcolumn.tituloGrid" text="**Recordatorios" />'
+		,style : 'margin-bottom:10px;padding-right:10px'
+        ,autoWidth: true
+        ,height:350
+        ,bbar : [ pagingBar,btnCrear ]
+	});
+	
+	tareasGrid.on('rowdblclick', function(grid, rowIndex, e){
+		
+		var rec = grid.getStore().getAt(rowIndex);
+		var id = rec.get('id');
+		
+		var titulo = "Crear recordatorio";
+		var w = app.openWindow({
+		  	flow : 'recrecordatorio/abreVentanaNuevoRecordatorio'
+		  	//,width:320
+		  	,autoWidth:true
+		  	,closable:true
+		  	,title : titulo
+		  	,params:{idRecordatorio:id}
+		
+		});
+		w.on(app.event.DONE, function(){      
+		  	buscarFunc();
+		  	w.close();
+		});
+		w.on(app.event.CANCEL, function(){
+		  	w.close();
+		});
+		
+	});
+	
+	
+    var titRecordatorio=new Ext.form.TextField({
+    	fieldLabel:'<s:message code="plugin.procuradores.tareas.busqueda.titRecordatorio" text="**Título" />'
+    	,listeners:{
+			specialkey: function(f,e){  
+	            if(e.getKey()==e.ENTER){  
+	                buscarFunc();
+	            }  
+	        } 
+		}
+    });
+
+
+	var btnBuscar=app.crearBotonBuscar({
+		handler:function(){
+			buscarFunc();
+		}
+	});
+	
+	var getParametrosBusqueda=function(){
+		return {
+			 start:0
+			,limit:limit
+			,titulo:titRecordatorio.getValue()
+			,idCategoria: '${idCategoria}'
+		}
+	}
+	
+	var btnClean=new Ext.Button({
+		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
+		,iconCls:'icon_limpiar'
+		,handler:function(){
+			app.resetCampos([titRecordatorio]);
+			recordatorioStore.webflow(paramsBusquedaInicial);
+			panelFiltros.collapse(true);
+		}
+	});	
+	
+	
+	var panelFiltros = new Ext.Panel({
+		title : '<s:message code="plugin.procuradores.recordatorios.busqueda" text="**Buscar Recordatorios"/>'
+		,collapsible : true
+		,titleCollapse : true
+		,layout:'table'
+		,layoutConfig : {columns:2}
+		,bodyStyle:'cellspacing:10px;padding-right:10px;'
+		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;'}
+		,items:[{
+				layout:'form'
+				,defaults:{xtype:'fieldset',border:false}
+				,width:'320px'
+				,items:[titRecordatorio]
+			}
+		]              
+		,tbar:[btnBuscar,btnClean]
+	});
+	
+	var buscarFunc=function(){
+		isBusqueda=true;
+		panelFiltros.collapse(true);
+		recordatorioStore.webflow(getParametrosBusqueda());
+	}
+	
+	var mainPanel = new Ext.Panel({
+        labelWidth: 50,
+    	autoWidth:true,
+    	autoHeight:true,
+    	border:true,
+        bodyStyle: 'padding:5px;border:0',
+        layout: 'form',
+        items: [{
+   					bodyStyle:'padding: 5px;padding-right:15px;',
+   					border:false,
+   					items:[panelFiltros]
+   				},{
+   					bodyStyle:'padding: 5px',
+   					border:false,
+   					items:[tareasGrid]
+   				}]
+    });
+    
+    
+    page.add(mainPanel);
+    
+        
+   	Ext.onReady(function(){
+		recordatorioStore.webflow({idCategoria: '${idCategoria}'});
+	});
+	
+</fwk:page>

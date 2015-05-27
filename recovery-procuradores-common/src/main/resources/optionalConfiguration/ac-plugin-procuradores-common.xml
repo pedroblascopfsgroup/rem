@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+<!-- 	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/lindorff/preparacionEnvioDemandaMonitorioMasivo/preparacionEnvioDemandaMonitorioMasivo.xml" p:version="11"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/lindorff/tramiteOposicion/tramiteOposicion.xml" p:version="5"/>
+	 
+  	<bean id="finalizarPorInadmision" class="es.pfsgroup.plugin.recovery.lindorff.procedimientos.PROFinalizarPorInadmisionActionHandler"/>
+	<bean id="archivar" class="es.pfsgroup.plugin.recovery.lindorff.procedimientos.PROArchivarActionHandler"/>
+	<bean id="SinContrato" class="es.pfsgroup.plugin.recovery.lindorff.inputHandlers.LINGenararInputActionHandler"/>
+	<bean id="sinContratoSinTestimonio" class="es.pfsgroup.plugin.recovery.lindorff.inputHandlers.LINGenararInputActionHandler"/>
+	<bean id="linNodoEsperaActionHandler" class="es.pfsgroup.plugin.recovery.lindorff.procedimientos.LINNodoEsperaActionHandler"/>
+	<bean id="endOposicionProcessActionHandler" class="es.pfsgroup.plugin.recovery.lindorff.oposicion.LINoposicionEndProcessActionHandler"/>  
+ -->	
+<!-- 	<bean id="jbpmUtilLINDORFFProcedimientos" class="es.pfsgroup.plugin.recovery.lindorff.utils.JBPMProcessLINDORFFProcedimientosManager"> -->
+<!--   	<property name="contextScripts"> -->
+<!--   		<list> -->
+<!--   			<value><![CDATA[ -->
+  			
+<!-- 				def getTieneContrato ={   -->
+<!-- 					def altaLotesManager = ctx.getBean("LINAltaLotesManager"); -->
+<!-- 					return altaLotesManager.getTieneContrato(idProcedimiento); -->
+				
+<!-- 				} -->
+				
+<!-- 				def getConTestimonio = { -->
+<!-- 					def altaLotesManager = ctx.getBean("LINAltaLotesManager"); -->
+<!-- 					return altaLotesManager.getConTestimonio(idProcedimiento); -->
+<!-- 				} -->
+				
+<!--   			 ]]></value> -->
+<!--   		</list> -->
+<!--   	</property> -->
+<!--   </bean>  -->
+</beans>	

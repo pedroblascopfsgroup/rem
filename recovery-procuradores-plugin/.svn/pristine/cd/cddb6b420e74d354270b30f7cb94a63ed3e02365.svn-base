@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="id" type="java.lang.Long"/>
+    <input name="idProcedimiento" type="java.lang.Long"/>
+    
+    <!--a partir de este momento sólo enviamos ajax -->
+    <end-state id="listado" view="plugin/procuradores/procedimientos/formulario/tareasProcedimientoJSON" >
+		<on-entry>
+			<evaluate expression="executor.execute('tareaExternaManager.obtenerTareasDeUsuarioPorProcedimiento',idProcedimiento)" result="flowScope.tareas" />
+			<evaluate expression="executor.execute('plugin.mejoras.tareaNotificacion.permiteProrrogas',idProcedimiento)" result="flowScope.flagPermiteProrrogas" />
+		</on-entry>
+	</end-state>
+	
+    
+</flow>

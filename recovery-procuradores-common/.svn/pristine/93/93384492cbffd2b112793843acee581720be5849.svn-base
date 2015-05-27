@@ -1,0 +1,69 @@
+SET DEFINE OFF;
+
+-- HIPOTECARIO --
+INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
+     VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'HIP', 'Hipotecario', 'Hipotecario', 0, 'MOD_PROC',
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P01'));
+
+-- SUBASTA BANKIA--
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'SUB', 'Subasta Bankia', 'Subasta Bankia', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P401'));
+
+
+-- CESION DE REMATE--
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'CES', 'Cesión de remate', 'Cesión de remate', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P410'));
+
+-- ADJUDICACION --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'ADJ', 'Adjudicación', 'Adjudicación', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P413'));
+
+-- COSTAS --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'TCS', 'Trámite de Costas', 'Trámite de Costas', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P07'));
+ 			
+-- CERTIFICACION CARGAS --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'CCG', 'Certificación cargas', 'Certificación cargas', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P08'));
+ 			
+-- T.INTERESES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'INT', 'T. Intereses', 'T. Intereses', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P10'));
+ 			
+ -- T.GESTIÓN DE LLAVES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'GLL', 'T. Gestión de llaves', 'T. Gestión de llaves', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P417'));
+ 			
+ -- T.OCUPANTES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'OCU', 'T. Ocupantes', 'T. Ocupantes', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P419'));
+ 			
+ -- T.MORATORIA DE LANZAMIENTO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'MRL', 'T. Moratoria de lanzamiento', 'T. Moratoria de lanzamiento', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P418'));
+   
+ -- T.DE POSESIÓN --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'POS', 'T. de posesión', 'T. de posesión', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P416'));
+ 			
+COMMIT;

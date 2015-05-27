@@ -1,0 +1,122 @@
+package es.pfsgroup.plugin.recovery.procuradores.recordatorio.impl;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.WebRequest;
+
+import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.pagination.Page;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.procuradores.categorias.api.CategoriaApi;
+import es.pfsgroup.plugin.recovery.procuradores.categorias.model.Categoria;
+import es.pfsgroup.plugin.recovery.procuradores.recordatorio.api.RECRecordatorioApi;
+import es.pfsgroup.plugin.recovery.procuradores.recordatorio.dao.RECRecordatorioDao;
+import es.pfsgroup.plugin.recovery.procuradores.recordatorio.dto.RECRecordatorioDto;
+import es.pfsgroup.plugin.recovery.procuradores.recordatorio.model.RECRecordatorio;
+import es.pfsgroup.recovery.api.UsuarioApi;
+
+/**
+ * Implementación de la api de {@link RECRecordatorio}
+ * @author carlos gil
+ *
+ */
+@Service("RECRecordatorio")
+@Transactional(readOnly = false)
+public class RECRecordatorioManager  implements RECRecordatorioApi {
+
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private RECRecordatorioDao recRecordatorioDao;
+
+
+	@Override
+	@BusinessOperation(PLUGIN_PROCURADORES_GET_LISTA_RECORDATORIOS)
+	public Page getListaRecordatorios(RECRecordatorioDto dto) {
+		dto.setUsuario(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado());
+		dto.setOpen(true);
+		return recRecordatorioDao.getListaRecordatorios(dto);
+	}
+
+	@Override
+	@BusinessOperation(PLUGIN_PROCURADORES_GET_RECORDATORIO)
+	public RECRecordatorio getRecRecordatorio(Long idRecordatorio) {
+		return recRecordatorioDao.getRecRecordatorio(idRecordatorio);
+	}
+
+	@Override
+	@BusinessOperation(PLUGIN_PROCURADORES_SAVE_RECORDATORIO)
+	public void saveRecRecordatorio(WebRequest request) {
+		///Actualizamos todos los datos
+		RECRecordatorioDto dto = DynamicDtoUtils.create(RECRecordatorioDto.class, request);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		RECRecordatorio recRecordatorio = new RECRecordatorio();
+		recRecordatorio.setDescripcion(dto.getDescripcion());
+		recRecordatorio.setTitulo(dto.getTitulo());
+		recRecordatorio.setOpen(true);
+		try {
+			Date d =  formatter.parse(request.getParameter("fecha"));
+			recRecordatorio.setFecha(d);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		recRecordatorio.setUsuario(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado());
+		if(!Checks.esNulo(request.getParameter("categoria"))){
+			recRecordatorio.setCategoria(proxyFactory.proxy(CategoriaApi.class).getCategoria(Long.parseLong(request.getParameter("categoria"))));
+		}
+		
+		Calendar calendar = new GregorianCalendar();
+		
+		
+		for(String dias : request.getParameterValues("dias_tarea")){
+
+			calendar.setTime(recRecordatorio.getFecha());
+			int dias_habiles_encontrados = 0;
+			
+			while(dias_habiles_encontrados < Integer.parseInt(dias)){
+				
+				calendar.add(Calendar.DAY_OF_MONTH, -1);
+				
+				if(calendar.get(Calendar.DAY_OF_WEEK)!= 7 && calendar.get(Calendar.DAY_OF_WEEK)!= 8){
+					///Incrementamos días habiles encontrados
+					dias_habiles_encontrados ++;
+				}
+			}
+			
+			///El calendario esta situado en la fecha indicada, creamos la tarea
+			Date d = calendar.getTime();
+		}
+		
+		recRecordatorioDao.saveOrUpdate(recRecordatorio);
+	}
+
+	@Override
+	@BusinessOperation(PLUGIN_PROCURADORES_COUNT_LISTA_RECORDATORIOS)
+	public Long getCountListadoRecordatorios() {
+		return recRecordatorioDao.getCountListadoRecordatorios(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getId());
+	}
+
+	@Override
+	@BusinessOperation(PLUGIN_PROCURADORES_RESULEVE_RECORDATORIO)
+	public void resolverRecordatorio(long idRecordatorio) {
+
+		RECRecordatorio recordatorio = recRecordatorioDao.getRecRecordatorio(idRecordatorio);
+		recordatorio.setOpen(false);
+		recRecordatorioDao.update(recordatorio);
+		
+	}
+
+}

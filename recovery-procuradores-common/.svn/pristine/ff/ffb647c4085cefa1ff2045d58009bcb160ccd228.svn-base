@@ -1,0 +1,53 @@
+package es.pfsgroup.plugin.recovery.procuradores.tareas.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.tareaNotificacion.EXTAbstractTareaNotificacionManager;
+import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.recovery.procuradores.tareas.api.PCDProcuradoresApi;
+import es.pfsgroup.plugin.recovery.procuradores.tareas.dao.PCDProcuradoresDao;
+import es.pfsgroup.plugin.recovery.procuradores.tareas.dto.PCDProcuradoresDto;
+
+
+@Component
+public class PCDProcuradoresManager  extends EXTAbstractTareaNotificacionManager implements PCDProcuradoresApi {
+
+	@Autowired
+	private PCDProcuradoresDao pcdprocuradoresDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+
+	@Override
+	@BusinessOperationDefinition(PCD_COUNT_LISTADO_TAREAS_PENDIENTES)
+	public Long getCountListadoTareasPendientes(PCDProcuradoresDto dto) {
+		return pcdprocuradoresDao.getCountListadoTareasPendientesValidar(dto);
+	}
+	
+	@Override
+	@BusinessOperation(PCD_GET_LISTADO_TAREAS_PENDIENTES)
+	public Page getListadoTareasPendientesValidar(PCDProcuradoresDto dto){
+		return pcdprocuradoresDao.getListadoTareasPendientesValidar(dto);
+	}
+	
+	@Override
+	@BusinessOperation(PCD_BUSCAR_TAREAS_PENDIENTES)
+	@Transactional
+	public Page buscarTareasPendientesDelegator(DtoBuscarTareaNotificacion dto,  String comboEstado, Long comboCtgResol) {
+		//return proxyFactory.proxy(EXTTareasApi.class).buscarTareasPendientesDelegator(dto);
+		return pcdprocuradoresDao.buscarTareasPendientes(dto, comboEstado, comboCtgResol);
+
+	}
+
+	@Override
+	public String managerName() {
+		return "tareaNotificacionManager";
+	}
+
+}

@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=1.3.13_rc01
 --## INCIDENCIA_LINK=HR-853
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --##
 --## Finalidad:
 --## INSTRUCCIONES: 

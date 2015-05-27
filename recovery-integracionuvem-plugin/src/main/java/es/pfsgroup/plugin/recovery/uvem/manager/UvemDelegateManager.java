@@ -4,10 +4,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -953,17 +955,27 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	};
 	*/
 	
-	private String quitaTildes(String input) {
-	    // Cadena de caracteres original a sustituir.
-	    String original = "áàäéèëíìïóòöúùuÁÀÄÉÈËÍÌÏÓÒÖÚÙÜçÇ";
-	    // Cadena de caracteres ASCII que reemplazarán los originales.
-	    String ascii = "aaaeeeiiiooouuuAAAEEEIIIOOOUUUcC";
-	    String output = input;
-	    for (int i=0; i<original.length(); i++) {
-	        // Reemplazamos los caracteres especiales.
-	        output = output.replace(original.charAt(i), ascii.charAt(i));
-	    }//for i
-	    return output;
-	}//remove1
+
+	private String quitaTildes(String str) {
+
+		String ejemplo = str;
+		StringBuilder sb = new StringBuilder();
+		try {
+			String proc = java.text.Normalizer.normalize(ejemplo,
+					java.text.Normalizer.Form.NFD);
+			for (char c : proc.toCharArray()) {
+				if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BASIC_LATIN) {
+					sb.append(c);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("quitaTildes: " + e);
+		}
+		return sb.toString();
+
+	}
+
+	
+	
 
 }

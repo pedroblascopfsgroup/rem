@@ -26,10 +26,16 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     PAR_TABLENAME_TARPR VARCHAR2(50 CHAR) := 'TAP_TAREA_PROCEDIMIENTO';     -- [PARAMETRO] TABLA para tareas del procedimiento. Por defecto TAP_TAREA_PROCEDIMIENTO
     PAR_TABLENAME_TPROC VARCHAR2(50 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO';   -- [PARAMETRO] TABLA para tipo de procedimiento. Por defecto DD_TPO_TIPO_PROCEDIMIENTO 
-	VAR_SEQUENCENAME VARCHAR2(50 CHAR);                 -- Variable para secuencias
+	PAR_TABLENAME_TPLAZ VARCHAR2(50 CHAR) := 'DD_PTP_PLAZOS_TAREAS_PLAZAS'; -- [PARAMETRO] TABLA para plazos de tareas. Por defecto DD_PTP_PLAZOS_TAREAS_PLAZAS
+    PAR_TABLENAME_TFITE VARCHAR2(50 CHAR) := 'TFI_TAREAS_FORM_ITEMS';       -- [PARAMETRO] TABLA para items del form de tareas. Por defecto TFI_TAREAS_FORM_ITEMS
+    VAR_SEQUENCENAME VARCHAR2(50 CHAR);                 -- Variable para secuencias
     VAR_CURR_ROWARRAY VARCHAR2(25 CHAR);                -- Variable con fila array actual - para excepciones
     VAR_CURR_TABLE VARCHAR2(50 CHAR);                   -- Variable con tabla actual - para excepciones
     V_CODIGO_TAP VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Tap tareas
+    V_CODIGO_PLAZAS VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Plazos
+    V_CODIGO1_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo1 FK con codigo de TFI Items
+    V_CODIGO2_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo2 FK con codigo de TFI Items
+    
     
      /*
     * ARRAY TABLA2: TAP_TAREA_PROCEDIMIENTO
@@ -91,6 +97,48 @@ DECLARE
 	        )
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
+    
+    /*
+    * ARRAYS TABLA: DD_PTP_PLAZOS_TAREAS_PLAZAS
+    *---------------------------------------------------------------------
+    */
+    TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
+    TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
+    V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
+       T_TIPO_PLAZAS(
+          /*DD_JUZ_ID(FK)............:*/ null,
+          /*DD_PLA_ID(FK)............:*/ null,
+          /*TAP_ID(FK)...............:*/ 'H004_BPMInscripcionDelTitulo',
+          /*DD_PTP_PLAZO_SCRIPT......:*/ '300*24*60*60*1000L',
+          /*VERSION..................:*/ '0',
+          /*BORRADO..................:*/ '0',
+          /*USUARIOCREAR.............:*/ 'DD'
+        )
+   ); 
+   V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
+   
+   /*
+    * ARRAYS TABLA: TFI_TAREAS_FORM_ITEMS
+    *---------------------------------------------------------------------
+    */
+    TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
+    TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
+    V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H004_BPMInscripcionDelTitulo',
+            /*TFI_ORDEN..............:*/ '0',
+            /*TFI_TIPO...............:*/ 'label',
+            /*TFI_NOMBRE.............:*/ 'titulo',
+            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tr&aacute;mite de Inscripci&oacute;n del T&iacute;tulo.</p></div>',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+            /*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        )
+    ); 
+    V_TMP_TIPO_TFI T_TIPO_TFI;
 
 BEGIN
 	--MODIFICACIONES
@@ -262,6 +310,111 @@ BEGIN
                 VAR_CURR_ROWARRAY := I;
                 --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                 --DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_TIPO_TAP(2)||''','''||TRIM(V_TMP_TIPO_TAP(9))||'''');
+                EXECUTE IMMEDIATE V_MSQL;
+        END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
+    
+     /*
+    * LOOP ARRAY BLOCK-CODE: DD_PTP_PLAZOS_TAREAS_PLAZAS
+    *---------------------------------------------------------------------
+    */
+    VAR_CURR_TABLE := PAR_TABLENAME_TPLAZ;
+    V_CODIGO_PLAZAS := 'TAP_CODIGO';
+    VAR_CURR_ROWARRAY := 0;
+    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || PAR_TABLENAME_TPLAZ || '....');
+    FOR I IN V_TIPO_PLAZAS.FIRST .. V_TIPO_PLAZAS.LAST
+      LOOP
+        V_TMP_TIPO_PLAZAS := V_TIPO_PLAZAS(I);
+
+        --EXISTENCIA DE REGISTROS: Mediante consulta a la tabla, se verifica si existen ya los registros a insertar mas adelante,
+        -- si ya existían los registros en la tabla, se informa de q existen y no se hace nada
+        -----------------------------------------------------------------------------------------------------------
+        DBMS_OUTPUT.PUT_LINE('[INFO] Array codigo '||V_CODIGO_PLAZAS||' = '''||V_TMP_TIPO_PLAZAS(3)||''' Descripcion = '''||V_TMP_TIPO_PLAZAS(4)||'''---------------------------------'); 
+        DBMS_OUTPUT.PUT('[INFO] Verificando existencia de REGISTROS de la tabla '||VAR_CURR_TABLE||', con codigo '||V_CODIGO_PLAZAS||' = '''||V_TMP_TIPO_PLAZAS(3)||'''...'); 
+
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||VAR_CURR_TABLE||' WHERE TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''|| V_TMP_TIPO_PLAZAS(3) ||''') ';
+        --DBMS_OUTPUT.PUT_LINE(V_SQL);
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('OK - YA existe');
+            DBMS_OUTPUT.PUT_LINE('[INFO] NO se inserta el registro del array porque ya existe en '||VAR_CURR_TABLE);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('OK - NO existe');
+
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || PAR_TABLENAME_TPLAZ || 
+                        '(DD_PTP_ID,DD_JUZ_ID,DD_PLA_ID,TAP_ID,DD_PTP_PLAZO_SCRIPT,VERSION,BORRADO,USUARIOCREAR,FECHACREAR)' ||
+                        'SELECT ' ||
+                        'S_DD_PTP_PLAZOS_TAREAS_PLAZAS.NEXTVAL, ' ||
+                        '(SELECT DD_JUZ_ID FROM ' || V_ESQUEMA || '.DD_JUZ_JUZGADOS_PLAZA WHERE DD_JUZ_CODIGO = ''' || TRIM(V_TMP_TIPO_PLAZAS(1)) || '''), ' ||
+                        '(SELECT DD_PLA_ID FROM ' || V_ESQUEMA || '.DD_PLA_PLAZAS WHERE DD_PLA_CODIGO = ''' || TRIM(V_TMP_TIPO_PLAZAS(2)) || '''), ' ||
+                        '(SELECT TAP_ID FROM ' || V_ESQUEMA || '.' || PAR_TABLENAME_TARPR || ' WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_PLAZAS(3)) || '''), ' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(4)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(5)),'''','''''') || ''','   ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(6)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(7)),'''','''''') || 
+                        ''', sysdate FROM DUAL'; 
+
+                VAR_CURR_ROWARRAY := I;
+                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                --DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_PLAZAS(3) ||''','''||TRIM(V_TMP_TIPO_PLAZAS(4))||'''');
+                EXECUTE IMMEDIATE V_MSQL;
+        END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
+
+
+
+    /*
+    * LOOP ARRAY BLOCK-CODE: TFI_TAREAS_FORM_ITEMS
+    *---------------------------------------------------------------------
+    */
+    VAR_CURR_TABLE := PAR_TABLENAME_TFITE;
+    V_CODIGO1_TFI := 'TAP_CODIGO';
+    V_CODIGO2_TFI := 'TFI_NOMBRE';
+    VAR_CURR_ROWARRAY := 0;
+    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || PAR_TABLENAME_TFITE || '..........');
+    FOR I IN V_TIPO_TFI.FIRST .. V_TIPO_TFI.LAST
+      LOOP
+        V_TMP_TIPO_TFI := V_TIPO_TFI(I);
+
+        --EXISTENCIA DE REGISTROS: Mediante consulta a la tabla, se verifica si existen ya los registros a insertar mas adelante,
+        -- si ya existían los registros en la tabla, se informa de q existen y no se hace nada
+        -----------------------------------------------------------------------------------------------------------
+        DBMS_OUTPUT.PUT_LINE('[INFO] Array codigos '||V_CODIGO1_TFI||' = '''||V_TMP_TIPO_TFI(1)||''', '||V_CODIGO2_TFI||' = '''||V_TMP_TIPO_TFI(4)||''' Descripcion = '''||V_TMP_TIPO_TFI(5)||'''---------------------------------'); 
+        DBMS_OUTPUT.PUT('[INFO] Verificando existencia de REGISTROS de la tabla '||VAR_CURR_TABLE||', con codigo '||V_CODIGO1_TFI||' = '''||V_TMP_TIPO_TFI(1)||''', '||V_CODIGO2_TFI||' = '''||V_TMP_TIPO_TFI(4)||'''...'); 
+
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||VAR_CURR_TABLE||' WHERE TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE '||V_CODIGO1_TFI||' = '''||V_TMP_TIPO_TFI(1)||''') AND '||V_CODIGO2_TFI||' = '''||V_TMP_TIPO_TFI(4)||''' ';
+        --DBMS_OUTPUT.PUT_LINE(V_SQL);
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('OK - YA existe');
+            DBMS_OUTPUT.PUT_LINE('[INFO] NO se inserta el registro del array porque ya existe en '||VAR_CURR_TABLE);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('OK - NO existe');
+
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || PAR_TABLENAME_TFITE || 
+                        '(TFI_ID,TAP_ID,TFI_ORDEN,TFI_TIPO,TFI_NOMBRE,TFI_LABEL,TFI_ERROR_VALIDACION,TFI_VALIDACION,TFI_VALOR_INICIAL,TFI_BUSINESS_OPERATION,VERSION,USUARIOCREAR,FECHACREAR,BORRADO)' ||
+                        'SELECT ' ||
+                        'S_TFI_TAREAS_FORM_ITEMS.NEXTVAL, ' ||
+                        '(SELECT TAP_ID FROM ' || V_ESQUEMA || '.' || PAR_TABLENAME_TARPR || ' WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_TFI(1)) || '''), ' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(2)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TFI(3)),'''','''''') || ''',' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(4)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TFI(5)),'''','''''') || ''',' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(6)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TFI(7)),'''','''''') || ''',' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(8)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TFI(9)),'''','''''') || ''',' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(10)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TFI(11)),'''','''''') || 
+                        ''',sysdate,0 FROM DUAL';
+
+                VAR_CURR_ROWARRAY := I;
+                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                --DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TFI(1) ||''','''||TRIM(V_TMP_TIPO_TFI(4))||'''');
                 EXECUTE IMMEDIATE V_MSQL;
         END IF;
     END LOOP;

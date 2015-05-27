@@ -93,7 +93,7 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 						List<Bien> bienes = ls.getBienes();
 						if (!Checks.estaVacio(bienes)) {
 							for (Bien b : bienes) {
-								Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
+								Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_DECRETO, b.getId());
 								if (creoProcedimiento) {
 										creaProcedimientoAdjudicacion(prc, b, nombreTarea);
 								}

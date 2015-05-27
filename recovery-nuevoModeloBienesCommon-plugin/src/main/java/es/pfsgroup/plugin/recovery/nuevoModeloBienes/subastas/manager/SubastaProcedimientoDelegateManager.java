@@ -261,7 +261,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 												Checks.esNulo((((NMBBien) b)).getAdjudicacion().getImporteAdjudicacion())){
 													return false;
 												}else{
-													if(Checks.esNulo(((NMBBien) b).getAdjudicacion().getTipoDocAdjudicacion())){
+													if(((NMBBien) b).getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0 && Checks.esNulo(((NMBBien) b).getAdjudicacion().getTipoDocAdjudicacion())){
 														return false;
 													}
 												}

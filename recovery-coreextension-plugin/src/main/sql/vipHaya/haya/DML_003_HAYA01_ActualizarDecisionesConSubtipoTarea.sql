@@ -63,7 +63,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -89,7 +89,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -115,7 +115,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -141,7 +141,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -167,7 +167,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GAREO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -193,7 +193,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GAREO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -219,7 +219,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GAREO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -245,7 +245,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GAREO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -271,7 +271,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -297,7 +297,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '1011',
+        /*DD_STA_ID(FK)................:*/ '820',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GAREO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -323,7 +323,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'SDEU',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -349,7 +349,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -375,7 +375,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -401,7 +401,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -427,7 +427,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GDEU',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -453,7 +453,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GDEU',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -479,7 +479,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -505,7 +505,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -531,7 +531,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -557,7 +557,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -583,7 +583,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -609,7 +609,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -635,7 +635,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -661,7 +661,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -687,7 +687,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -713,7 +713,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'SAREO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -739,7 +739,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -765,7 +765,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -791,7 +791,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -817,7 +817,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -843,7 +843,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -869,7 +869,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -895,7 +895,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '805',
+        /*DD_STA_ID(FK)................:*/ '822',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'SSDE',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -921,7 +921,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -947,7 +947,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -973,7 +973,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -999,7 +999,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1025,7 +1025,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '807',
+        /*DD_STA_ID(FK)................:*/ '823',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1051,7 +1051,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1077,7 +1077,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1103,7 +1103,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1129,7 +1129,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'SDEU',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1155,7 +1155,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1181,7 +1181,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1207,7 +1207,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1233,7 +1233,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1259,7 +1259,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1285,7 +1285,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1311,7 +1311,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1337,7 +1337,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1363,7 +1363,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1389,7 +1389,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '803',
+        /*DD_STA_ID(FK)................:*/ '821',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        
@@ -1415,7 +1415,7 @@ DECLARE
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ '819',
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GULI',
         /*TAP_BUCLE_BPM................:*/ null        

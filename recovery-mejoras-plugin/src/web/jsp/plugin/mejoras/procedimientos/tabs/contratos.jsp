@@ -57,13 +57,13 @@
     
     entidad.cacheStore(contratoStore);
     
-    var titulizadoRenderer = funtion(value, record) {
+    var titulizadoRenderer = function(value, cmp, record) {
     
-    	if(record.get("idPersona") == null) {
+    	if(!Ext.isEmpty(record.data.idContrato)) {
     		if(Ext.isEmpty(value)) {
     			return app.format.NO;
     		} else {
-    			return booleanFlagToYesNoRenderer(value);
+    			return app.format.booleanFlagToYesNoRenderer(value);
     		}    	
     	} else {
     		return "";

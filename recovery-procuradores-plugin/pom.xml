@@ -12,7 +12,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<cxf.version>2.2.5</cxf.version>
-		<recoveryapi.version>1.0.0_rc1</recoveryapi.version>
 	</properties>
 
 	<groupId>es.pfsgroup.plugin</groupId>
@@ -30,8 +29,6 @@
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-core</artifactId>
-			<version>1.1.0</version>
-			<optional>false</optional>
 			<classifier>jdk16</classifier>
 			<exclusions>
 				<exclusion>
@@ -65,27 +62,21 @@
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-hibernate</artifactId>
-			<version>1.1.0</version>
-			<optional>false</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-batch</artifactId>
-			<version>1.1.0</version>
-			<optional>false</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-bpm</artifactId>
-			<version>1.1.0</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-web</artifactId>
-			<version>1.1.0</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
@@ -119,7 +110,6 @@
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
 			<artifactId>pfs-commons-java</artifactId>
-			<version>2.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -129,9 +119,6 @@
 		<dependency>
 			<groupId>pfs</groupId>
 			<artifactId>plugins</artifactId>
-			<version>1.3.8</version>
-			<type>jar</type>
-			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -142,28 +129,18 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-api-plugin</artifactId>
-			<version>${recoveryapi.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-coreextension-plugin</artifactId>
-				<version>3.5.13_pr_rc01</version>
-			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-liquidaciones-plugin</artifactId>
-			<version>1.3.0_rc15</version>
-			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
 			<artifactId>recovery-domain</artifactId>
-			<version>4.0.2.0.6.16</version>
-			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>net.sourceforge.cglib</groupId>
@@ -195,8 +172,6 @@
 		<dependency>
 			<groupId>es.pfs</groupId>
 			<artifactId>pfs-rec-core</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -207,42 +182,29 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-mejoras-plugin</artifactId>
-			<version>6.3.0</version>
-			<type>jar</type>
-			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-agendaMultifuncion-plugin</artifactId>
-			<version>1.4.0_procuradores_rc1</version>
 			<!--<version>1.4-SNAPSHOT</version>-->
-			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-nuevoModeloBienes-plugin</artifactId>
-			<version>1.1.0_rc40</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-busquedaProcedimientos-plugin</artifactId>
-			<version>1.1.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-procedimientos-plugin</artifactId>
-			<version>3.2.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<!--
 		<dependency>
@@ -265,14 +227,10 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-bpmframework-plugin</artifactId>
-			<version>1.1.0_rc1</version>
-			<type>jar</type>
 		</dependency>	
 		<dependency>
             <groupId>es.pfsgroup.plugin</groupId>
             <artifactId>recovery-geninformes-plugin</artifactId>
-            <version>1.3.0_rc4</version>
-            <type>jar</type>
         </dependency>	
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
@@ -309,7 +267,6 @@
 			<!-- needs extra dependencies: objenesis & hamcrest -->
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

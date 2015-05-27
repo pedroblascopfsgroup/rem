@@ -14,21 +14,18 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<recoveryapi.version>1.0.0_rc48</recoveryapi.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.4</version>
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-core</artifactId>
-			<version>1.1.0</version>
 			<optional>true</optional>
 			<classifier>jdk16</classifier>
 			<exclusions>
@@ -49,21 +46,18 @@
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-hibernate</artifactId>
-			<version>1.1.0</version>
 			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-batch</artifactId>
-			<version>1.1.0</version>
 			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-bpm</artifactId>
-			<version>1.1.0</version>
 			<optional>true</optional>
 			<classifier>jdk16</classifier>
 		</dependency>
@@ -71,16 +65,11 @@
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-coreextension-plugin</artifactId>
 <!-- 			<version>3.5.13-SNAPSHOT</version> -->
-				<version>3.5.13_pr_rc01</version>
-			<type>jar</type>
-			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-procedimientos-bpm</artifactId>
-			<version>4.1.0_fase2_rc01</version>
-			<scope>provided</scope>
 			<optional>true</optional>
 			<exclusions>
 				<exclusion>
@@ -92,46 +81,36 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-bpmframework-plugin</artifactId>
-			<version>1.2.0_rc2</version>
-			<type>jar</type>
 			<optional>true</optional>
 		</dependency>	
 		<dependency>
             <groupId>es.pfsgroup.plugin</groupId>
             <artifactId>recovery-geninformes-plugin</artifactId>
-            <version>1.4.0_rc3</version>
-            <type>jar</type>
             <optional>true</optional>
         </dependency>
  		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-masivo-common</artifactId>
-			<version>1.5-SNAPSHOT</version>
-			<type>jar</type>
 		</dependency>        
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
 			<artifactId>pfs-commons-java</artifactId>
 <!-- 			<version>2.6.0</version> -->
-			<version>2.7.0</version>
 			<optional>true</optional>
 		</dependency> 
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
 			<artifactId>recovery-domain</artifactId>
-			<version>4.0.2.0.7.3_fase2_rc14</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-api-plugin</artifactId>
-			<version>${recoveryapi.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.recovery</groupId>
 			<artifactId>rec-common</artifactId>
-			<version>2.9.1_rc01</version>
 			<optional>true</optional>
 		</dependency>	
 		<dependency>

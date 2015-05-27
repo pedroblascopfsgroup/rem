@@ -1,53 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>es.pfsgroup</groupId>
+		<artifactId>recovery</artifactId>
+		<version>9.1-SNAPSHOT</version>
+	</parent>
 
 	<groupId>es.pfsgroup.plugin</groupId>
 	<artifactId>recovery-procuradores-common</artifactId>
-	<version>${version}${sufijo}</version>
-	<packaging>jar</packaging>
-	<name>recovery-procuradores-common</name>
-	<url>http://maven.apache.org</url>
-
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8
-		</project.build.sourceEncoding>
-		<version>1.0</version>
-		<sufijo>-SNAPSHOT</sufijo>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<recoveryapi.version>1.0.0_rc48</recoveryapi.version>
 	</properties>
-
-	<distributionManagement>
-		<repository>
-			<id>pfsrepo</id>
-			<url>scp://interecovery.pfsgroup.es/shared/maven</url>
-		</repository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>pfsrepo</id>
-			<url>http://interecovery.pfsgroup.es:8086</url>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.release</id>
-			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle
-				Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Bundle
-				Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
-		</repository>
-		<repository>
-			<id>DynamicJasperReportFonts</id>
-			<name>Dynamic Jasper Reports Core Fonts</name>
-			<url>http://archiva.fdvs.com.ar/repository/public1</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>

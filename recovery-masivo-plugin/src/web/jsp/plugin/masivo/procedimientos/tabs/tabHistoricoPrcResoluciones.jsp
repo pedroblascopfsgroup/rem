@@ -110,19 +110,25 @@
 
 		//tareas del bpm
 		if(tipoEntidad == constantes.TIPO_ENTIDAD_TAREA){
-		  return;
-//			page.webflow({
-//				flow : 'bpm/buscarDatosTarea'
-//				,params : {id:idEntidad}
-//				,success : function(response, config){ 
-//				  var recDatos = response['datos'];
-//				  titulo = panel.getData().nombreProcedimiento+ ' - ' + rec.get('tarea');
-//				  webflow = 'generico/genericForm';
-//				  width = null;    
-//				  parametros = {idTareaExterna:recDatos['idTareaExterna'], readOnly:'true', idProcedimiento:panel.getProcedimientoId()};
-//				  funcionVerTarea(webflow, id, titulo, parametros, width);
-//				}
-//			});
+			
+			if(entidad.get("data").tieneProcurador){
+				////Tiene el plugin de procuradores
+				page.webflow({
+					flow : 'bpm/buscarDatosTarea'
+					,params : {id:idEntidad}
+					,success : function(response, config){ 
+					  var recDatos = response['datos'];
+					  titulo = panel.getData().nombreProcedimiento+ ' - ' + rec.get('tarea');
+					  webflow = 'generico/genericForm';
+					  width = null;    
+					  parametros = {idTareaExterna:recDatos['idTareaExterna'], readOnly:'true', idProcedimiento:panel.getProcedimientoId()};
+					  funcionVerTarea(webflow, id, titulo, parametros, width);
+					}
+				});
+			}else{
+				return;
+			}
+			
 		}//comunicaciones
 		else if (tipoEntidad == constantes.TIPO_ENTIDAD_COMUNICACION){
 			page.webflow({
@@ -369,13 +375,30 @@
 		    var row = "myrow-" + record.get("idEntidad");
 		    var id2 = "mygrid-" + record.get("idEntidad");  
 		
-		   var gridX = new Ext.grid.GridPanel({
-		        store: dynamicStore,
-		        stripeRows: true,	        
-		        cm: historicoResCM,
-		        autoHeight: true,
-		        id: id2                  
-		    });        
+			var data=entidad.get("data");
+			
+			if(data.tieneProcurador){
+				var gridX = new Ext.grid.GridPanel({
+			        store: dynamicStore,
+			        stripeRows: true,	        
+			        cm: historicoResCM,
+			        autoHeight: true,
+			        id: id2,
+			        hideHeaders : true,     
+			        style: {
+			            marginLeft: '19px'
+			        }                  
+			    });
+			}else{
+				var gridX = new Ext.grid.GridPanel({
+			        store: dynamicStore,
+			        stripeRows: true,	        
+			        cm: historicoResCM,
+			        autoHeight: true,
+			        id: id2                  
+			    });
+			}
+			      
 		
 		    gridX.render(row);
 		    gridX.getEl().swallowEvent([ 'mouseover', 'mousedown', 'click', 'dblclick' ]);

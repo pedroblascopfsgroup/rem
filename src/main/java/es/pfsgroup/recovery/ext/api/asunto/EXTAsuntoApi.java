@@ -56,7 +56,7 @@ public interface EXTAsuntoApi {
 	List<DtoProcedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId);
 
 	@BusinessOperationDefinition(EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
-	public Integer findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params);
+	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params);
 	
 
 

@@ -135,7 +135,9 @@ app.format.booleanFlagToYesNoRenderer = function(flag){
 
 	if (flag === 1 || flag === "1"){
 		return app.format.YES;
-	} else {
+	} else if (flag === 0 || flag ==="0"){
 		return app.format.NO;
+	} else {	
+		return "";
 	}
 };

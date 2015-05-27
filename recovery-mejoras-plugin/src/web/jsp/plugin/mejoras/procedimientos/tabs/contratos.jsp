@@ -1,4 +1,4 @@
-﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+﻿﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@page import="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -56,6 +56,19 @@
     });
     
     entidad.cacheStore(contratoStore);
+    
+    var titulizadoRenderer = funtion(value, record) {
+    
+    	if(record.get("idPersona") == null) {
+    		if(Ext.isEmpty(value)) {
+    			return app.format.NO;
+    		} else {
+    			return booleanFlagToYesNoRenderer(value);
+    		}    	
+    	} else {
+    		return "";
+    	}
+    }
 
     var contratosRDCm= new Ext.grid.ColumnModel([
             {header: '<s:message code="contratos.cc" text="**Codigo" />', width: 120,  dataIndex: 'cc', id:'colCodigoContrato'},
@@ -83,7 +96,7 @@
             {header: '<s:message code="contratos.gastos" text="**Gastos" />', width: 135, dataIndex: 'gastos', hidden:true,renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.fCreacion" text="**Fecha Creacion" />', width: 135, dataIndex: 'fechaCreacion', hidden:true}
             <sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">
-            ,{header: '<s:message code="contratos.titulizado" text="**Titulizado" />', width: 135, dataIndex: 'titulizado', renderer: app.format.booleanFlagToYesNoRenderer}
+            ,{header: '<s:message code="contratos.titulizado" text="**Titulizado" />', width: 135, dataIndex: 'titulizado', renderer: titulizadoRenderer}
             ,{header: '<s:message code="contratos.fondo" text="**Fondo" />', width: 135, dataIndex: 'fondo'}
             </sec:authorize>
         ]

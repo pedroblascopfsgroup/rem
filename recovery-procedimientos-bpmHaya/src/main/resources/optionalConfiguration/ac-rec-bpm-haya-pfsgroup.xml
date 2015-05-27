@@ -727,6 +727,11 @@
 				def validarBienesCelebracionSubasta = {
 					def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
                 	return subastaProcedimientoManager.comprobarAdjudicacionBienesCelebracionSubasta(idProcedimiento);
+	            }
+	            
+	            def validarBienesDocCelebracionSubasta = {
+					def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
+                	return subastaProcedimientoManager.comprobarAdjudicacionDocBienesCelebracionSubasta(idProcedimiento);
 	            }		    		                       
         	            
   			 ]]>

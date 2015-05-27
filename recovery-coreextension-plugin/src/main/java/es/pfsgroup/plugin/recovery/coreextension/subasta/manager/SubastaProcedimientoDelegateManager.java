@@ -140,6 +140,14 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		return false;
 	}
 	
+	//HAYA
+	@Override
+	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION_DOC)
+	public boolean comprobarAdjudicacionDocBienesCelebracionSubasta(Long prcId) {
+	//  Este metodo se implementa en el nuevoModeloBienes
+		return false;
+	}
+	
 	//BANKIA
 	@Override
 	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST)
@@ -147,5 +155,6 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		//  Este metodo se implementa en el nuevoModeloBienes
 		return null;		
 	}
+
 
 }

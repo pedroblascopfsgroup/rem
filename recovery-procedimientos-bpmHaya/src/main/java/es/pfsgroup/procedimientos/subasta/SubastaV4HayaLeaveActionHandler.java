@@ -400,7 +400,9 @@ public class SubastaV4HayaLeaveActionHandler extends
 			if (b instanceof NMBBien) {
 				NMBBien bien = (NMBBien) b;
 				if (!Checks.esNulo(bien.getAdjudicacion())) {
-					if (!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
+					if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate())){
+						cesionRemate = true;
+					}else if (!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
 						if (!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
 							if (bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo()
 								.compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0) {
@@ -408,9 +410,6 @@ public class SubastaV4HayaLeaveActionHandler extends
 							} else {
 								bienAdjuTerceroFondo = true;
 							}
-						}
-						if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate())){
-							cesionRemate = true;
 						}
 					}
 				}

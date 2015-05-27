@@ -1,3 +1,4 @@
+--/*
 --##########################################
 --## AUTOR=PEDROBLASCO
 --## FECHA_CREACION=20150519
@@ -113,5 +114,7 @@ BEGIN
             RAISE;
 
 END;
+
+\
 
 EXIT

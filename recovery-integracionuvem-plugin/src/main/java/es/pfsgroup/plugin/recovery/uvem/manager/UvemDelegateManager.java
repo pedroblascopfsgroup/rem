@@ -4,12 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.Normalizer;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +44,6 @@ import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
-import es.cm.arq.inf.infraestructurabase.TableContainer;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.ImporteMonetario;
@@ -340,7 +337,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setTipoDeTextotitexo(titexo);
 			System.out.println(" ***REQUERIDO*** NOLGMU"); // 	longitud="50"	 Localidad del inmueble	
 			String nombreLargoMunicipio = bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getLocalidad() != null ? bien.getLocalizacionActual().getLocalidad().getDescripcion().toUpperCase() : "";
-			nombreLargoMunicipio = quitaTildes(nombreLargoMunicipio);
+			//nombreLargoMunicipio = quitaTildes(nombreLargoMunicipio);
 			servicioGMP5JD20.setNombreLargoDelMunicipionolgmu(StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50));
 			System.out.println("NOLGMU: "+StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50)); // 	longitud="50"	 Localidad del inmueble	
 			System.out.println(" ***REQUERIDO*** NOLGRP"); // 	longitud="50"	 Localidad del Registro	
@@ -958,20 +955,24 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 
 	private String quitaTildes(String str) {
 
-		String ejemplo = str;
+		
 		StringBuilder sb = new StringBuilder();
 		try {
+			String ejemplo = str.replaceAll("Ñ", "!");	
 			String proc = java.text.Normalizer.normalize(ejemplo,
 					java.text.Normalizer.Form.NFD);
+			//proc.replace("N~","Ñ");
 			for (char c : proc.toCharArray()) {
 				if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BASIC_LATIN) {
 					sb.append(c);
 				}
 			}
+						
 		} catch (Exception e) {
 			logger.error("quitaTildes: " + e);
 		}
-		return sb.toString();
+
+		return sb.toString().replaceAll("!", "Ñ");
 
 	}
 

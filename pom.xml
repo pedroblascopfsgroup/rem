@@ -88,7 +88,8 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-mejoras-plugin</artifactId>
-			<version>6.3.0</version>
+<!-- 			<version>6.3.0</version> -->
+			<version>6.3.2-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
 			<optional>true</optional>

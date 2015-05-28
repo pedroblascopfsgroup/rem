@@ -18,7 +18,6 @@
 				recovery-api-plugin
 				recovery-ayuda-plugin
 				recovery-burofax-plugin
-				recovery-comites-plugin
 				recovery-diccionarios-plugin
 				recovery-editor-plugin
 				recovery-itinerarios-plugin
@@ -166,7 +165,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-comites-plugin</artifactId>
-				<version>${plugin.comites.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -479,6 +478,7 @@
 		<module>recovery-cambiosMasivosAsunto-plugin</module>
 		<module>recovery-recobro-bpm</module>
 		<module>recovery-controlcalidad-plugin</module>
+		<module>recovery-comites-plugin</module>
 		<module>sql</module>
 	</modules>
 

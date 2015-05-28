@@ -12,6 +12,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -230,14 +231,16 @@ public class coreextensionController {
 	 * @return Boolean
 	 */
 	@RequestMapping
-	public String contieneProvisiones(Long idAsunto){
+	public String contieneProvisiones(Long idAsunto) throws Exception{
 		//return proxyFactory.proxy(EXTAsuntoManager.class).contieneProvisiones(idAsunto);
 		EXTAsuntoManager asu = new EXTAsuntoManager();
+		//Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dtoAsunto.getIdAsunto());
+		//GestorDespacho procuradorAnterior = asu.getProcurador();
 		
 		if (asu.contieneProvisiones(idAsunto)){
 			return "si";
 		}else{
-			return "no";
+			return "default";
 		}
 	}
 }

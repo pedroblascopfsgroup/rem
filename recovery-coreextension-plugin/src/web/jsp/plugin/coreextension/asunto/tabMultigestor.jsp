@@ -246,17 +246,17 @@
 		//,disabled:true
 		,handler:function(){
 			alert('contieneProvisiones: ' + contieneProvisiones());
-			if(contieneProvisiones()){
-				if(validar()){
-					insertarFunction();
-					resetCombos();
-				}
-				else{
-					alert('Obligado');
-				}
-			}else{
-				alert('El gestor asociado contiene provisiones.');
+			//if(contieneProvisiones() == 'si'){
+			if(validar()){
+				insertarFunction();
+				resetCombos();
 			}
+			else{
+				alert('Obligado');
+			}
+			//}else{
+			//	alert('El gestor asociado contiene provisiones.');
+			//}
 		}
 	});
 
@@ -264,13 +264,19 @@
 	var contieneProvisiones=function(){
 		data = entidad.get("data");
 		var resultado = null;
+		//alert('TGestor: ' + comboTipoUsuario.value());
+		alert('Entra contieneProvisiones');
 		Ext.Ajax.request({
 			url: page.resolveUrl('coreextension/contieneProvisiones')
 			,params: {
 				idAsunto:data.id
 			}
-			,success:function ( result, request ) {resultado = result.responseText	}
+			,success:function ( result, request ) {
+				alert('Result: ' + result.responseText);
+				resultado = result.responseText;
+			}
 		});
+		alert('Resultado: ' + resultado);
 		return resultado;
 	}; 
 	

@@ -37,7 +37,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -45,26 +44,28 @@ import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 
 public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterActionHandler {
 	
+	private static final String CODIGO_ADJUDICACION = "H005";
+	private static final String CODIGO_INSCRIPCION_TITULO = "H066";
+	private static final String CODIGO_CESION_REMATE = "H006";
+	private static final String CODIGO_GESTOR_LITIGIOS = "816";
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2432508306623792426L;
-
-	@Autowired
-	protected ApiProxyFactory proxyFactory;
-
+	
 	@Autowired
 	protected GenericABMDao genericDao;
-
+	
 	@Autowired
-	protected SubastaDao subastaDao;
+	protected ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private Executor executor;	
 
-    @Autowired
-    private JBPMProcessManager jbpmUtil;
-
+	@Autowired
+	private JBPMProcessManager jbpmUtils;
+	
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
         
@@ -85,7 +86,7 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 		if (nombreTarea.contains("BPMTramiteAdjudicacion")) {
 			//
 			// Tenemos que crear un procedimiento adjudicación por cada uno de
-			// los bienes asociados a la subasta
+			// los bienes asociados a la subasta adjudicados a la entidad con decreto
 			if (!Checks.esNulo(sub)) {
 				List<LoteSubasta> listado = sub.getLotesSubasta();
 				if (!Checks.estaVacio(listado)) {
@@ -95,7 +96,49 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 							for (Bien b : bienes) {
 								Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_DECRETO, b.getId());
 								if (creoProcedimiento) {
-										creaProcedimientoAdjudicacion(prc, b, nombreTarea);
+									creaProcedimientoAdjudicacion(prc, b, nombreTarea);
+								}
+							}
+						}
+					}
+				}
+
+			}
+		} else if(nombreTarea.contains("BPMTramiteCesionRemate")){
+			//
+			// Tenemos que crear un procedimiento cesión remate por cada uno de
+			// los bienes asociados a la subasta con cesión remate
+			if (!Checks.esNulo(sub)) {
+				List<LoteSubasta> listado = sub.getLotesSubasta();
+				if (!Checks.estaVacio(listado)) {
+					for (LoteSubasta ls : listado) {
+						List<Bien> bienes = ls.getBienes();
+						if (!Checks.estaVacio(bienes)) {
+							for (Bien b : bienes) {
+								Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_ES_BIEN_CON_CESION_REMATE, b.getId());
+								if (creoProcedimiento) {
+									creaProcedimientoCesionRemate(prc, b, nombreTarea);
+								}
+							}
+						}
+					}
+				}
+
+			}
+		} else if(nombreTarea.contains("InscripcionDelTitulo")){
+			//
+			// Tenemos que crear un procedimiento cesión remate por cada uno de
+			// los bienes asociados a la subasta con cesión remate
+			if (!Checks.esNulo(sub)) {
+				List<LoteSubasta> listado = sub.getLotesSubasta();
+				if (!Checks.estaVacio(listado)) {
+					for (LoteSubasta ls : listado) {
+						List<Bien> bienes = ls.getBienes();
+						if (!Checks.estaVacio(bienes)) {
+							for (Bien b : bienes) {
+								Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA, b.getId());
+								if (creoProcedimiento) {
+									creaProcedimientoInscripcionTitulo(prc, b, nombreTarea);
 								}
 							}
 						}
@@ -123,9 +166,23 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 
 	}
 
-	private void creaProcedimientoAdjudicacion(Procedimiento procPadre, Bien b, String nombreTarea) {
+	public void creaProcedimientoAdjudicacion(Procedimiento procPadre, Bien b, String nombreTarea) {
+		creaProcedimiento(procPadre, b, CODIGO_ADJUDICACION);
+		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de adjudicación por cada bien", CODIGO_GESTOR_LITIGIOS);
+	}
+	
+   public void creaProcedimientoCesionRemate(Procedimiento procPadre, Bien b, String nombreTarea) {
+		creaProcedimiento(procPadre, b, CODIGO_CESION_REMATE);
+		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de cesión remate por cada bien", CODIGO_GESTOR_LITIGIOS);
+	}
+	
+   public void creaProcedimientoInscripcionTitulo(Procedimiento procPadre, Bien b, String nombreTarea) {
+		creaProcedimiento(procPadre, b, CODIGO_INSCRIPCION_TITULO);
+		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de inscripción del título por cada bien", CODIGO_GESTOR_LITIGIOS);
+	}
+	
+	public void creaProcedimiento(Procedimiento procPadre, Bien b, String codigoProc){
 		MEJProcedimiento procHijo = new MEJProcedimiento();
-		
 		
 		procHijo.setAuditoria(Auditoria.getNewInstance());
 		procHijo.setProcedimientoPadre(procPadre);
@@ -153,7 +210,7 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 		procHijo.setTipoActuacion(tipoActuacion);
 
 		// seteo el tipo de prodecimiento adjudicación
-		TipoProcedimiento tipoProcedimiento = genericDao.get(TipoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "H005"));
+		TipoProcedimiento tipoProcedimiento = genericDao.get(TipoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoProc));
 		procHijo.setTipoProcedimiento(tipoProcedimiento);
 		
 		// seteo el tipo de reclamación heredado del padre		
@@ -187,27 +244,25 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 		executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
 		
 		// Lanzar los JBPM para cada procedimiento
-        String nombreJBPM = procHijo.getTipoProcedimiento().getXmlJbpm();
-        Map<String, Object> param = new HashMap<String, Object>();
-        param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, procHijo.getId());
-        Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
-        
-        procHijo.setProcessBPM(idBPM);
-        executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
-        
-		//FIXME
-		crearNotificacionManualAdjudicacion(procPadre, nombreTarea);
+       String nombreJBPM = procHijo.getTipoProcedimiento().getXmlJbpm();
+       Map<String, Object> param = new HashMap<String, Object>();
+       param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, procHijo.getId());
+       Long idBPM = jbpmUtils.crearNewProcess(nombreJBPM, param);
+       
+       procHijo.setProcessBPM(idBPM);
+       executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
+       
 
 	}
 
-	private void crearNotificacionManualAdjudicacion(Procedimiento prc, String nombreTarea) {
+	public void crearNotificacionManual(Procedimiento prc, String nombreTarea, String descripcion, String codigoGestor) {
 		EXTTareaNotificacion notificacion = new EXTTareaNotificacion();
 		notificacion.setProcedimiento(prc);
 		notificacion.setAsunto(prc.getAsunto());
 		notificacion.setEstadoItinerario(genericDao.get(DDEstadoItinerario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoItinerario.ESTADO_ASUNTO)));
-		SubtipoTarea subtipoTarea = genericDao.get(SubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR));
+		SubtipoTarea subtipoTarea = genericDao.get(SubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", codigoGestor));
 		if (subtipoTarea == null) {
-			throw new GenericRollbackException("tareaNotificacion.subtipoTareaInexistente", SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR);
+			throw new GenericRollbackException("tareaNotificacion.subtipoTareaInexistente", codigoGestor);
 		}
 
 		notificacion.setEspera(Boolean.FALSE);
@@ -250,8 +305,8 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 		genericDao.save(TareaExterna.class, tex);
 
 	}
+	
 
 	
 	
-
 }

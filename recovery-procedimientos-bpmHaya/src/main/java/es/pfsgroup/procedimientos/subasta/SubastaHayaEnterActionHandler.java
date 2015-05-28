@@ -37,6 +37,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -57,13 +58,16 @@ public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler 
 	protected GenericABMDao genericDao;
 	
 	@Autowired
+	protected SubastaDao subastaDao;
+	
+	@Autowired
 	protected ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private Executor executor;	
 
 	@Autowired
-	private JBPMProcessManager jbpmUtils;
+	private JBPMProcessManager jbpmUtil;
 
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
@@ -144,18 +148,18 @@ public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler 
 
 	}
 	
-	public void creaProcedimientoAdjudicacion(Procedimiento procPadre, Bien b, String nombreTarea) {
+	private void creaProcedimientoAdjudicacion(Procedimiento procPadre, Bien b, String nombreTarea) {
 		creaProcedimiento(procPadre, b, CODIGO_ADJUDICACION);
 		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de adjudicación por cada bien", CODIGO_GESTOR_LITIGIOS);
 	}
 	
-   public void creaProcedimientoCesionRemate(Procedimiento procPadre, Bien b, String nombreTarea) {
+	private void creaProcedimientoCesionRemate(Procedimiento procPadre, Bien b, String nombreTarea) {
 		creaProcedimiento(procPadre, b, CODIGO_CESION_REMATE);
 		crearNotificacionManual(procPadre, nombreTarea, "Se inicia trámite de cesión remate por cada bien", CODIGO_GESTOR_LITIGIOS);
 	}
 	
 	
-	public void creaProcedimiento(Procedimiento procPadre, Bien b, String codigoProc){
+	private void creaProcedimiento(Procedimiento procPadre, Bien b, String codigoProc){
 		MEJProcedimiento procHijo = new MEJProcedimiento();
 		
 		procHijo.setAuditoria(Auditoria.getNewInstance());
@@ -221,7 +225,7 @@ public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler 
        String nombreJBPM = procHijo.getTipoProcedimiento().getXmlJbpm();
        Map<String, Object> param = new HashMap<String, Object>();
        param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, procHijo.getId());
-       Long idBPM = jbpmUtils.crearNewProcess(nombreJBPM, param);
+       Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
        
        procHijo.setProcessBPM(idBPM);
        executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
@@ -229,7 +233,7 @@ public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler 
 
 	}
 
-	public void crearNotificacionManual(Procedimiento prc, String nombreTarea, String descripcion, String codigoGestor) {
+	private void crearNotificacionManual(Procedimiento prc, String nombreTarea, String descripcion, String codigoGestor) {
 		EXTTareaNotificacion notificacion = new EXTTareaNotificacion();
 		notificacion.setProcedimiento(prc);
 		notificacion.setAsunto(prc.getAsunto());
@@ -273,7 +277,7 @@ public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler 
 		if(!Checks.esNulo(nombreTarea)){
 			tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", nombreTarea)));
 		} else {
-			tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "H002_BPMTramiteAdjudicacion")));
+			tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "H002_BPMTramiteAdjudicacionV4")));
 		}
 		tex.setDetenida(false);
 		genericDao.save(TareaExterna.class, tex);

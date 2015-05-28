@@ -532,7 +532,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		Bien bien = genericDao.get(Bien.class, genericDao.createFilter(FilterType.EQUALS, "id", bieId));
 		
 		if (bien instanceof NMBBien) {
-			if(!Checks.esNulo(((NMBBien) bien).getAdjudicacion())){
+			if(!Checks.esNulo(((NMBBien) bien).getAdjudicacion()) && !Checks.esNulo(((NMBBien) bien).getAdjudicacion().getCesionRemate())){
 				if(((NMBBien) bien).getAdjudicacion().getCesionRemate()){
 					return true;
 				}

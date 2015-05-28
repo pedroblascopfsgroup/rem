@@ -165,7 +165,7 @@ public class AdjudicacionProcedimientoDelegateManager implements AdjudicacionPro
 	}
 
 	@Override
-	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA)
+	@BusinessOperation(BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA)
 	public Boolean comprobarBienEntidadAdjudicatariaConEscritura(Long bienId) {
 		// Este metodo se implementa en el nuevoModeloBienes
 		return null;

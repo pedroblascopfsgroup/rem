@@ -518,6 +518,10 @@
 			<artifactId>recovery-bi-plugin</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-sync-plugin</artifactId>
+		</dependency>
 
 		<!-- Fin paquetes de Cap Gemini -->
 		<!-- Inicio de Devon -->
@@ -1359,7 +1363,6 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.0.5</version>
 		</dependency>
 		<!-- JasperReports Dependency -->
 		<dependency>

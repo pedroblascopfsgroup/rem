@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+
+	<bean id="syncJSONTranslator" class="es.pfsgroup.recovery.plugin.sync.SyncJSONTranslator" />
+	<bean id="syncFolderConnector" class="es.pfsgroup.recovery.plugin.sync.SyncFolderConnector">
+		<property name="translator" ref="syncJSONTranslator" />
+		<property name="path" ref="/Documentos/borrar/mensajes" />
+	</bean>
+	<bean id="syncFolderConnector2" class="es.pfsgroup.recovery.plugin.sync.SyncFolderConnector">
+		<property name="translator" ref="syncJSONTranslator" />
+		<property name="path" ref="/Documentos/borrar/mensajes2" />
+	</bean>
+
+	<bean id="syncMsgBPMEventFactory" class="es.pfsgroup.recovery.plugin.sync.SyncMsgBPMEventFactory">
+		<constructor-arg index="0">
+			<list>
+				<ref bean="syncFolderConnector" />
+				<ref bean="syncFolderConnector2" />
+			</list>
+		</constructor-arg>
+		<constructor-arg index="1" ref="syncJSONTranslator"/>
+		<!-- constructor-arg index="2">
+			<set>
+				<value>H120</value>
+				<value>H121</value>
+			</set>
+		</constructor-arg -->
+	</bean>
+
+	<bean id="syncDefaultFramework" class="es.pfsgroup.recovery.plugin.sync.SyncFolderConnector">
+		<constructor-arg index="0">
+			<list>
+				<ref bean="syncMsgBPMEventFactory" />
+			</list>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<list>
+				<ref bean="syncFolderConnector" />
+			</list>
+		</constructor-arg>
+	</bean>
+<!-- 
+	<bean id="configMsgCreaBPMFactory">
+		<constructor-arg index="0">
+			<map>
+				<entry key="H120" value="P120"/>
+				<entry key="H121" value="P121"/>
+			</map>
+		</constructor-arg>
+	</bean>
+-->
+</beans>

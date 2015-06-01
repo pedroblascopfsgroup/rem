@@ -546,10 +546,10 @@ public class SubastaManager implements SubastaApi {
 			Integer numRegistrosExportar = (Integer) resultadoCount.get(0).get("count");
 			Integer limite = Integer.parseInt(parametroLimite.getValor());
 
-			/*if (numRegistrosExportar > limite) {
+			if (numRegistrosExportar > limite) {
 				throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") + limite + " "
 						+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
-			}*/
+			}
 		}
 
 		List<HashMap<String, Object>> resultadosExportar = subastaDao.buscarSubastasExcel(dto, usuarioLogado, false);

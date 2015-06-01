@@ -335,7 +335,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				} else {
 					where.add(multiGestor);
 				}
-			
+
 			} else {
 				// Gestor propio
 				Query propioGestorQuery = getSession().createQuery("SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa WHERE gaa.gestor.usuario.id = " + usuLogado.getId());

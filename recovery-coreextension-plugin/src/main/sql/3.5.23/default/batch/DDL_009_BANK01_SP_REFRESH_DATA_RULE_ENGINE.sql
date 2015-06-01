@@ -1,3 +1,20 @@
+﻿--/*
+--##########################################
+--## AUTOR=LUIS RUIZ
+--## FECHA_CREACION=20150515
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.10.13
+--## INCIDENCIA_LINK=BCFI-614/613
+--## PRODUCTO=SI
+--## Finalidad: DML
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
 create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
   CURSOR CUR IS
   SELECT /*+ PARALLEL */ per.per_id, per_riesgo, per_riesgo_autorizado, per_riesgo_ind, per_riesgo_dir_vencido,
@@ -168,7 +185,7 @@ create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
                   ,nvl(acn.ACN_NUM_REINCIDEN, 0) ACN_NUM_REINCIDEN
 					      FROM  per_personas per
 					       LEFT JOIN cpe_contratos_personas cpe ON per.per_id = cpe.per_id --PER_CPE
-                 LEFT JOIN dd_tin_tipo_intervencion tin on cpe.dd_tin_id = tin.dd_tin_id
+                 				LEFT JOIN dd_tin_tipo_intervencion tin on cpe.dd_tin_id = tin.dd_tin_id
 					       LEFT JOIN cnt_contratos cnt ON cpe.cnt_id = cnt.cnt_id        --CPE_CNT
 					       LEFT JOIN mov_movimientos mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion --CNT_MOV
 					       LEFT JOIN  ant_antecedentes ant ON ant.ant_id = per.ant_id
@@ -451,3 +468,6 @@ BEGIN
   CLOSE CUR;
   COMMIT;
 END REFRESH_DATA_RULE_ENGINE;
+
+/
+EXIT;

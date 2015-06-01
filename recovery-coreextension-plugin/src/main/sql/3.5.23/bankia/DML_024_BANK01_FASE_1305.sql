@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=OSCAR DORADO
---## FECHA_CREACION=20150519
+--## AUTOR=ALBERTO_RAMIREZ
+--## FECHA_CREACION=20150520
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.0.1
---## INCIDENCIA_LINK=NO_TIENE
---## PRODUCTO=SI
+--## INCIDENCIA_LINK=FASE-1305
+--## PRODUCTO=NO
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -35,13 +35,22 @@ DECLARE
 BEGIN
 
 
-DBMS_OUTPUT.PUT_LINE('[INICIO]');
+DBMS_OUTPUT.PUT_LINE('[INICIO]: Asignar la nueva función PUEDE_VER_TITULZADA a todos los usuarios');
 
+V_SQL := 'SELECT COUNT (*) FROM '||V_ESQUEMA||'.FUN_PEF fp WHERE fp.FUN_ID = (SELECT DISTINCT fun.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES fun where fun.FUN_DESCRIPCION = ''PUEDE_VER_TITULZADA'' )';
 
--- quitamos vuelta atrás de cesión de remate
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-execute immediate 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET USUARIOMODIFICAR = ''bug'', FECHAMODIFICAR=SYSDATE, TAP_ALERT_VUELTA_ATRAS = NULL  WHERE TAP_CODIGO = ''P401_PrepararCesionRemate''';
-
+IF V_NUM_TABLAS > 0 THEN	  
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.FUN_PEF ...no se modificará nada.');
+ELSE
+	EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF fp
+	( fp.FP_ID, fp.FUN_ID, fp.PEF_ID, fp.VERSION, fp.USUARIOCREAR, fp.FECHACREAR, fp.BORRADO )
+	SELECT '||V_ESQUEMA||'.S_FUN_PEF.nextval, (SELECT DISTINCT fun.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES fun WHERE fun.FUN_DESCRIPCION = ''PUEDE_VER_TITULZADA'' ), pef.PEF_ID, 0, ''FASE-1305'',SYSDATE,0 
+	FROM '||V_ESQUEMA||'.PEF_PERFILES pef';
+	DBMS_OUTPUT.PUT_LINE('[INFO] Datos insertados correctamente en la tabla '||V_ESQUEMA||'.FUN_PEF .');
+END IF;
+	
 COMMIT;
 
 DBMS_OUTPUT.PUT_LINE('[FIN]');

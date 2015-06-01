@@ -69,6 +69,7 @@
    var tieneIngresosDomiciliados =     label('tieneIngresosDomiciliados','<s:message code="menu.clientes.consultacliente.datosTab.tieneIngresosDomiciliados" text="**Ingresos domiciliados" />');
    var volumenFacturacion = label('volumenFacturacion','<s:message code="menu.clientes.consultacliente.datosTab.volumenFacturacion" text="**Volumen facturación" />');
    var fechaVolumenFacturacion = label('fechaVolumenFacturacion','<s:message code="menu.clientes.consultacliente.datosTab.fechaVolumenFacturacion" text="**Fecha vol. facturación" />');
+   var cnae = label('cnae','<s:message code="menu.clientes.consultacliente.datosTab.cnae" text="**CNAE" />');
    var centroGestor=        label('centroGestor','<s:message code="menu.clientes.consultacliente.datosTab.centroGestor" text="**centro Gestor" />');
    var perfilGestor=        label('perfilGestor','<s:message code="menu.clientes.consultacliente.datosTab.perfilGestor" text="**perfil Gestor" />');
    var areaGestion=        label('areaGestion','<s:message code="menu.clientes.consultacliente.datosTab.areaGestion" text="**Área gestion" />');
@@ -110,12 +111,13 @@
    politicaEntidad.autoHeight=true;
    zonaPersona.autoHeight=true;
    zonaTerritorial.autoHeight=true;
+   cnae.autoHeight=true;
 
 	var telefonosFieldSet = fieldSet( '<s:message code="menu.clientes.consultacliente.menu.Telefonos" text="**Telefonos"/>'
 			,[ {items:[fijo3,fijo4]}, {items:[fijo5,fijo6]} ]);	
 
 	var datosPersonalesFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosPersonales" text="**Datos Personales"/>'
-			   , [{items:[fechaConstitucion,nacionalidad,paisNacimiento,numEmpleados, sexo]}, {items:[esEmpleado, volumenFacturacion,fechaVolumenFacturacion]} ] );
+			   , [{items:[fechaConstitucion,nacionalidad,paisNacimiento,numEmpleados, sexo]}, {items:[esEmpleado, volumenFacturacion,fechaVolumenFacturacion, cnae]} ] );
 
 	var datosGestionFieldSet = fieldSet( '<s:message code="menu.clientes.consultacliente.menu.DatosGestion" text="**Datos Gestion"/>'
 			, [ {items:[tipoGestorEntidad,oficinaGestora,zonaPersona,zonaTerritorial]}, {items:[centroGestor,grupoGestor,usuarioGestor]} ] );
@@ -165,6 +167,7 @@
 		entidad.setLabel("tieneIngresosDomiciliados", d.tieneIngresosDomiciliados);
 		entidad.setLabel("volumenFacturacion", app.format.moneyRenderer(d.volumenFacturacion));
 		entidad.setLabel("fechaVolumenFacturacion", d.fechaVolumenFacturacion);
+		entidad.setLabel("cnae", d.cnae);
 		entidad.setLabel("tipoGestorEntidad", d.tipoGestorEntidad);
 		entidad.setLabel("oficinaGestora", d.oficinaGestora);
 		entidad.setLabel("centroGestor", d.centroGestor);

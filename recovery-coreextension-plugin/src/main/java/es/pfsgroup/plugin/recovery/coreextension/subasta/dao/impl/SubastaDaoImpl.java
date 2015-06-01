@@ -245,11 +245,11 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	private List<Criterion> restriccionesCliente(NMBDtoBuscarSubastas filtro, Criteria query) {
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		Boolean filtroClienteInformado = (!StringUtils.emtpyString(filtro.getCodigoCliente()) 
+		Boolean filtroClienteInformado = Boolean.valueOf((!StringUtils.emtpyString(filtro.getCodigoCliente()) 
 										|| !StringUtils.emtpyString(filtro.getNombre()) 
 										|| !StringUtils.emtpyString(filtro.getApellidos())
 										|| !StringUtils.emtpyString(filtro.getNif()) 
-										|| !StringUtils.emtpyString(filtro.getTipoPersona()));
+										|| !StringUtils.emtpyString(filtro.getTipoPersona())));
 
 		if (filtroClienteInformado) {
 
@@ -264,8 +264,18 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			}
 
 			if (!StringUtils.emtpyString(filtro.getApellidos())) {
-				// JODO esto tiene pinta de que no funciona!
-				//criteria.add(Restrictions.sqlRestriction("upper({alias}.apellido1)||' '||upper({alias}.apellido2) like '%" + filtro.getApellidos().toUpperCase() + "%' "));
+				String[] apellidos = filtro.getApellidos().split(" ");
+
+				// Distingue entre apellido1 espacio apellido2 y solo un apellido, el cual podria ser el primero o el segundo.
+				if (apellidos.length >= 2) {
+					query.add(Restrictions.like("persona.apellido1", apellidos[0], MatchMode.ANYWHERE).ignoreCase());
+					query.add(Restrictions.like("persona.apellido2", apellidos[1], MatchMode.ANYWHERE).ignoreCase());
+				} else if (apellidos.length == 1) {
+					query.add(
+							Restrictions.or(
+									Restrictions.like("persona.apellido1", apellidos[0], MatchMode.ANYWHERE).ignoreCase(), 
+									Restrictions.like("persona.apellido2", apellidos[0], MatchMode.ANYWHERE).ignoreCase()));
+				}
 			}
 
 			if (!StringUtils.emtpyString(filtro.getNif())) {
@@ -322,8 +332,10 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			if (multiGestor != null) {
 				if (monoGestor != null) {
 					where.add(Restrictions.or(monoGestor, multiGestor));
+				} else {
+					where.add(multiGestor);
 				}
-				where.add(multiGestor);
+			
 			} else {
 				// Gestor propio
 				Query propioGestorQuery = getSession().createQuery("SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa WHERE gaa.gestor.usuario.id = " + usuLogado.getId());
@@ -331,8 +343,9 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 
 				if (monoGestor != null) {
 					where.add(Restrictions.or(monoGestor, propioGestor));
+				} else {
+					where.add(propioGestor);
 				}
-				where.add(propioGestor);
 			}
 
 			query.createAlias("asunto.estadoAsunto", "estadoAsunto", CriteriaSpecification.LEFT_JOIN);
@@ -404,7 +417,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		if (!StringUtils.emtpyString(filtro.getTotalCargasAnterioresDesde())) {
 			where.add(Restrictions.ge("cargasAnteriores", filtro.getTotalCargasAnterioresDesde()));
 		}
-		
+
 		if (!StringUtils.emtpyString(filtro.getTotalCargasAnterioresHasta())) {
 			where.add(Restrictions.le("cargasAnteriores", filtro.getTotalCargasAnterioresHasta()));
 		}

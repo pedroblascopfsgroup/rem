@@ -9,6 +9,7 @@
     <end-state id="buscaContrato" view="entidad/contrato/contratoJSON">
     	<on-entry>
     		<evaluate expression="executor.execute('contratoManager.get', id)" result="flowScope.contrato"/>
+    		<evaluate expression="executor.execute('contratoManager.contadorReincidencias', id)" result="flowScope.contadorReincidencia"/>
     		 <!-- comprobar si el contrato está exceptuado -->
              <evaluate expression="executor.execute('es.pfsgroup.recovery.expediente.api.existeExceptuacionByPerIdTipo',id, '2')" result="flowScope.contratoExceptuado" />
     		<evaluate expression="executor.execute('consultaContratoManager.getTabs', id)" result="flowScope.tabsContrato"/>

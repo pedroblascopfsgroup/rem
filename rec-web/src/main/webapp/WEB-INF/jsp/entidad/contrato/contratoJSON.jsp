@@ -144,6 +144,10 @@
     <json:property name="charextra6" value="${contrato.charextra6}" />
     <json:property name="charextra7" value="${contrato.charextra7}" />
     <json:property name="charextra8" value="${contrato.charextra8}" />
+    <json:property name="marca" value="${contrato.marcaOperacion}" />
+    <json:property name="motivoMarca" value="${contrato.motivoMarca}" />
+    <json:property name="indicador" value="${contrato.indicadorNominaPension}" />
+    <json:property name="contadorReincidencia" value="${contadorReincidencia}" />
   </json:object>
   
   

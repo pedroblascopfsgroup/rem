@@ -234,6 +234,18 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     private Date fechaVencimiento;
     
   //BANKIA extras
+   
+    
+  	@Formula("(select tfo.dd_tfo_ces_rem from ext_iac_info_add_contrato iac,dd_tfo_tipo_fondo tfo where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = tfo.dd_tfo_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA7 + "'))")
+  	private String titulizado;
+  	
+  	@Formula("(select tfo.dd_tfo_descripcion from ext_iac_info_add_contrato iac,dd_tfo_tipo_fondo tfo where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = tfo.dd_tfo_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA7 + "'))")
+  	private String fondo;  	
+  	
 
   	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
   			+ "  and iac.dd_ifc_id = ("
@@ -324,6 +336,16 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
   			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
   			+ APPConstants.FLAG_EXTR3 + "'))")
   	private String flagextra3;
+  	
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getTitulizado() {
+  		return titulizado;
+  	}
+  	
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getFondo() {
+  		return fondo;
+  	}
 
   	@Basic(fetch=FetchType.LAZY)
   	public String getNumextra1() {

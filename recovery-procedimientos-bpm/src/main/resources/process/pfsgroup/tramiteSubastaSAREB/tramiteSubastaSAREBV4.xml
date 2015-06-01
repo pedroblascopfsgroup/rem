@@ -434,22 +434,11 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="P409_RegistrarActaSubastaDecision" name="avanzaBPM"></transition>		
+		<transition to="Fin" name="avanzaBPM"></transition>		
 		<transition to="P409_RegistrarActaSubasta" name="activarAlerta"></transition>
 		<transition to="Fin3" name="Fin"></transition>
-	</state>
-	
-	<decision name="P409_RegistrarActaSubastaDecision" expression="#{P409_RegistrarActaSubastaDecision}">
-		<transition to="P409_SolicitarMtoPago" name="terceros"></transition>
-		<transition to="P409_BPMTramiteAdjudicacionV4" name="entidad"></transition>
-		<transition to="forkMixto" name="mixto"></transition>
-	</decision>
-
-	<fork name="forkMixto">
-		<transition to="P409_SolicitarMtoPago" name="tercerosDesdeMixto"></transition>
-		<transition to="P409_BPMTramiteAdjudicacionV4" name="entidadDesdeMixto"></transition>
-	</fork>
-	
+	</state>	
+		
 	<state name="P409_SolicitarMtoPago">
 		<event type="node-enter">
 			<action name="miTarea"

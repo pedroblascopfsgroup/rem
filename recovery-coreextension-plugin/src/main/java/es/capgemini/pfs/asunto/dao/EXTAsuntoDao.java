@@ -9,6 +9,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 
 public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
@@ -49,5 +50,13 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
 	 * @return
 	 */
 	List<DtoReportAnotacionAgenda> getListaTareasPendientes(Long asuId);
+	
+	/**
+     * Devuelve los tipos de fondo "dd_tfo_tipo_fondo" de los contratos de los procedimientos de un asunto
+     * @param idAsunto
+     * @return
+     */
+	List<DDTipoFondo> esTitulizada(Long idAsunto);
+	
     
 }

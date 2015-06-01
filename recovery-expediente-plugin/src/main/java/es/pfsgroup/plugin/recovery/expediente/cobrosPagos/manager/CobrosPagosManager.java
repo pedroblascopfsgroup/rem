@@ -14,7 +14,7 @@ import es.pfsgroup.plugin.recovery.expediente.cobrosPagos.dto.DtoCobrosPagos;
 import es.pfsgroup.plugin.recovery.expediente.cobrosPagos.model.RecobroPagoContrato;
 
 /**
- * Mánager de la entidad cobros pagos.
+ * Mï¿½nager de la entidad cobros pagos.
  * 
  * @author Oscar
  * 
@@ -32,10 +32,13 @@ public class CobrosPagosManager implements CobrosPagosApi {
 	@BusinessOperation(BO_GET_LISTADO_COBROS_PAGOS)
 	public Page getListadoCobrosPagos(DtoCobrosPagos dto) {
 		
-		Long cntId = cobrosPagosDao.getCntIdPaseByExpId(dto.getId());
+		/*Long cntId = cobrosPagosDao.getCntIdPaseByExpId(dto.getId());
 		Contrato cnt = genericDao.get(Contrato.class, genericDao.createFilter(FilterType.EQUALS, "id", cntId));
 		dto.setContrato(cnt);
-		return cobrosPagosDao.getListadoCobrosPagos(dto);
+		return cobrosPagosDao.getListadoCobrosPagos(dto);*/
+		
+		
+		return cobrosPagosDao.getListadoCobrosPagosExpediente(dto);
 		
 	}
 

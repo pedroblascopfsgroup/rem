@@ -17,12 +17,11 @@ public interface SubastaDao extends AbstractDao<Subasta, Long>{
 	public static final String CODIGO_TIPO_SUBASTA_SAREB = "P409";
 	
 	Page buscarSubastasPaginados(NMBDtoBuscarSubastas dto, Usuario usuLogado);
-	List<HashMap<String, Object>> buscarSubastasExcel(NMBDtoBuscarSubastas dto, Usuario usuLogado);
+	List<HashMap<String, Object>> buscarSubastasExcel(NMBDtoBuscarSubastas dto, Usuario usuLogado, Boolean isCount);
 	List<Subasta> getSubastasporIdBien (Long id);
 	Page buscarLotesSubastasPaginados(NMBDtoBuscarLotesSubastas dto);
 	Page buscarLotesSubastasPaginados(NMBDtoBuscarLotesSubastas dto,Usuario usuLogado);
 	List<LoteSubasta> buscarLoteSubastasExcel(NMBDtoBuscarLotesSubastas dto);
 	List<LoteSubasta> buscarLoteSubastasExcel(NMBDtoBuscarLotesSubastas dto,Usuario usuLogado);
-	Integer buscarSubastasExcelCount(NMBDtoBuscarSubastas dto, Usuario usuLogado);
 
 }

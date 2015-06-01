@@ -22,6 +22,7 @@ import org.springframework.web.util.HtmlUtils;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
@@ -32,6 +33,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -65,6 +67,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
 
@@ -526,39 +529,33 @@ public class SubastaManager implements SubastaApi {
 		}
 		return page;
 	}	
-	
+
 	/**
-	 * Método para buscar subastas según filtros indicados en el DTO para EXCEL.
+	 * Metodo optimizado de busqueda de subastas para exportar a excel 
 	 */
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarSubastasXLS")
 	public FileItem buscarSubastasXLS(NMBDtoBuscarSubastas dto) {
-
-//JODO
-long startAll = System.currentTimeMillis();
-
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 
-		/*Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-		Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);*/
+		Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+				Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
 
-long start = System.currentTimeMillis();
-		//dto.setLimit(Integer.parseInt(param.getValor())+1);
-		List<HashMap<String, Object>> listaRetorno = subastaDao.buscarSubastasExcel(dto, usuarioLogado);
-logger.warn("JODO buscarSubastasExcel " + (System.currentTimeMillis() - start));
-start = System.currentTimeMillis();		
-		//Integer count = listaRetorno.size();
-		//Integer limit = Integer.parseInt(param.getValor());
+		List<HashMap<String, Object>> resultadoCount = subastaDao.buscarSubastasExcel(dto, usuarioLogado, true);
 
-		/*if(count>limit){
-			//throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limit+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
-		}*/
+		if (resultadoCount.size() > 0) {
+			Integer numRegistrosExportar = (Integer) resultadoCount.get(0).get("count");
+			Integer limite = Integer.parseInt(parametroLimite.getValor());
 
-		FileItem out = generarInformeBusquedaSubastas(listaRetorno);	
-logger.warn("JODO generarInformeBusquedaSubastas " + (System.currentTimeMillis() - start));
-logger.warn("JODO FINAL PROCESO COMPLETO " + (System.currentTimeMillis() - startAll));
-		
-		return out;
-	}			
+			/*if (numRegistrosExportar > limite) {
+				throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") + limite + " "
+						+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+			}*/
+		}
+
+		List<HashMap<String, Object>> resultadosExportar = subastaDao.buscarSubastasExcel(dto, usuarioLogado, false);
+
+		return generarInformeBusquedaSubastas(resultadosExportar);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaBankia")
@@ -709,8 +706,23 @@ logger.warn("JODO FINAL PROCESO COMPLETO " + (System.currentTimeMillis() - start
 			filaExportar.add(ObjectUtils.toString(row.get("gestionAsunto")));				// Gestion
 			filaExportar.add(ObjectUtils.toString(row.get("plaza")));						// Plaza
 			filaExportar.add(ObjectUtils.toString(row.get("juzgado")));						// Juzgado
-			filaExportar.add(ObjectUtils.toString(row.get("despacho")));					// Despacho gestor
-			filaExportar.add(ObjectUtils.toString(row.get("procurador")));					// Procurador
+
+			EXTAsunto asunto = null;
+			if (row.get("asunto") != null) {
+				asunto = (EXTAsunto) row.get("asunto");
+			}
+
+			if (asunto != null && asunto.getGestor() != null && asunto.getGestor().getDespachoExterno()!=null) {
+				filaExportar.add(ObjectUtils.toString(asunto.getGestor().getDespachoExterno().getDespacho()));		// Despacho gestor
+			} else {
+				filaExportar.add("");
+			}
+
+			if (asunto != null && asunto.getProcurador() != null && asunto.getProcurador().getUsuario() != null) {
+				filaExportar.add(ObjectUtils.toString(asunto.getProcurador().getUsuario().getApellidoNombre()));	// Procurador
+			} else {
+				filaExportar.add("");
+			}
 
 			valores.add(filaExportar);
 		}
@@ -1027,13 +1039,4 @@ logger.warn("JODO FINAL PROCESO COMPLETO " + (System.currentTimeMillis() - start
 			if (gc1.get(Calendar.DATE)==gc2.get(Calendar.DATE) && gc1.get(Calendar.MONTH)==gc2.get(Calendar.MONTH) && gc1.get(Calendar.YEAR)==gc2.get(Calendar.YEAR)) elapsed++; // si es el mismo dia cuenta para la suma de meses
 			return elapsed;
 		}
-
-		@Override
-		@BusinessOperation(BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT)
-		public Integer buscarSubastasXLSCount(NMBDtoBuscarSubastas dto) {
-			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-						
-			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado).size();	
-		}
-	
 }

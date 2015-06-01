@@ -49,6 +49,7 @@ public final class PrimariaBusinessOperation {
     public static final String BO_PER_MGR_GET_TIPOS_PERSONAS = "personaManager.getTiposPersonas";
     public static final String BO_PER_MGR_SET_FILE_MANAGER = "personaManager.setFileManager";
     public static final String BO_PER_MGR_OBTENER_ZONA_PERSONA = "personaManager.getZonaPersona";
+    public static final String BO_CNT_MGR_CONTADOR_REINCIDENCIAS = "contratoManager.contadorReincidencias";
     
     /*****************************************************************************
      ** ClienteManager.

@@ -254,9 +254,9 @@
 		  ,items : [{items:[domiciExt,domiciExtFecha,fechaIniEpiIrregular,gestionEspecial,remunEsp
 		  ,numextra1,numextra2,numextra3
 		  ,dateextra1
-		  ,flagextra1,flagextra2,flagextra3,indicador,contadorReincidencia]},
+		  ,flagextra1,flagextra2,flagextra3,indicador]},
 		   {items:[domiciExtTotal,contratoAnt,motivoRenum,riesgo
-		   ,charextra1,charextra2,charextra3,charextra4,charextra5,charextra6,charextra7,charextra8,marca,motivoMarca]}
+		   ,charextra1,charextra2,charextra3,charextra4,charextra5,charextra6,charextra7,charextra8,marca,motivoMarca,contadorReincidencia]}
 		  ]
 	  });
   

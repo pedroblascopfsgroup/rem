@@ -1,6 +1,6 @@
-package es.pfsgroup.recovery.plugin.sync;
+package es.pfsgroup.commons.sync.message;
 
-public class SyncMsgBPMEvent {
+public class SyncMsgBPM {
 	
 	private String codAsunto;
 

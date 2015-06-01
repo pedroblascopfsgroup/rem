@@ -12,15 +12,15 @@
 
 	<bean id="syncJSONTranslator" class="es.pfsgroup.recovery.plugin.sync.SyncJSONTranslator" />
 	<bean id="syncFolderConnector" class="es.pfsgroup.recovery.plugin.sync.SyncFolderConnector">
-		<property name="translator" ref="syncJSONTranslator" />
-		<property name="path" ref="/Documentos/borrar/mensajes" />
+		<constructor-arg index="0" ref="syncJSONTranslator"/>
+		<constructor-arg index="1" value="/Documentos/borrar/mensajes"/>
 	</bean>
 	<bean id="syncFolderConnector2" class="es.pfsgroup.recovery.plugin.sync.SyncFolderConnector">
-		<property name="translator" ref="syncJSONTranslator" />
-		<property name="path" ref="/Documentos/borrar/mensajes2" />
+		<constructor-arg index="0" ref="syncJSONTranslator"/>
+		<constructor-arg index="1" value="/Documentos/borrar/mensajes2"/>
 	</bean>
 
-	<bean id="syncMsgBPMEventFactory" class="es.pfsgroup.recovery.plugin.sync.SyncMsgBPMEventFactory">
+	<bean id="syncMsgBPMTaskFactory" class="es.capgemini.pfs.sync.message.SyncMsgBPMTaskFactory">
 		<constructor-arg index="0">
 			<list>
 				<ref bean="syncFolderConnector" />
@@ -36,10 +36,10 @@
 		</constructor-arg -->
 	</bean>
 
-	<bean id="syncDefaultFramework" class="es.pfsgroup.recovery.plugin.sync.SyncFolderConnector">
+	<bean id="syncDefaultFramework" class="es.pfsgroup.recovery.plugin.sync.SyncDefaultFramework">
 		<constructor-arg index="0">
 			<list>
-				<ref bean="syncMsgBPMEventFactory" />
+				<ref bean="syncMsgBPMTaskFactory" />
 			</list>
 		</constructor-arg>
 		<constructor-arg index="1">

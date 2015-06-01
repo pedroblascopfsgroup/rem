@@ -4,11 +4,12 @@
 --## FECHA_CREACION=20150519
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.0.1-rc11-bk
---## INCIDENCIA_LINK=BCFI-627
+--## INCIDENCIA_LINK=BCFI-627 y BCFI-579
 --## PRODUCTO=NO
 --##
 --## Finalidad: Modificar el procedimiento PREPROCESADO_COBROS_FACT para que coja como fecha del cobro el campo
 --## 			CPA_FECHA_VALOR en lugar del campo CPA_FECHA_MOVIMIENTO ambos de la tabla CPA_COBROS_PAGOS
+--##			Ademas evita insertar en CPR, registros de CPA duplicados
 --## INSTRUCCIONES: Relanzable.
 --## VERSIONES:
 --##        0.1 Versión inicial

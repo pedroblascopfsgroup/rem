@@ -99,9 +99,25 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		if (bien.getAdjudicacion() != null){
 			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
 				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
+					if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.DECRETO.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
+						return true;
+					}
+				}			
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA)
+	public Boolean comprobarBienEntidadAdjudicatariaConEscritura(Long bienId){
+		
+		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
+		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
+		if (bien.getAdjudicacion() != null){
+			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
+				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
 					if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.ESCRITURA.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
-						return false;
-					}else{
 						return true;
 					}
 				}			
@@ -516,7 +532,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		Bien bien = genericDao.get(Bien.class, genericDao.createFilter(FilterType.EQUALS, "id", bieId));
 		
 		if (bien instanceof NMBBien) {
-			if(!Checks.esNulo(((NMBBien) bien).getAdjudicacion())){
+			if(!Checks.esNulo(((NMBBien) bien).getAdjudicacion()) && !Checks.esNulo(((NMBBien) bien).getAdjudicacion().getCesionRemate())){
 				if(((NMBBien) bien).getAdjudicacion().getCesionRemate()){
 					return true;
 				}

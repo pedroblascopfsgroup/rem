@@ -245,41 +245,43 @@
 		,cls: 'x-btn-text-icon'
 		//,disabled:true
 		,handler:function(){
-			alert('contieneProvisiones: ' + contieneProvisiones());
-			//if(contieneProvisiones() == 'si'){
+			data = entidad.get("data");
+			
 			if(validar()){
-				insertarFunction();
-				resetCombos();
+			
+				Ext.Ajax.request({
+					url: page.resolveUrl('coreextension/isProcuradorConProvisiones')
+					,params: {
+						idAsunto:data.id
+					}
+					,success:function(result, request){
+						var resultado = Ext.decode(result.responseText);
+						
+						if((resultado.okko == 'KO') ||
+							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR'))){
+							insertarFunction();
+							resetCombos();
+						}else{
+							Ext.Msg.show({
+								title:'Atención: Operación no válida',
+								msg: 'El gestor asociado contiene provisiones y no puede cambiarse.',
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.WARNING});
+						}
+					}
+				});
+
+			}else{
+				Ext.Msg.show({
+					title:'Atención: Operación no válida',
+					msg: 'Tipo gestor, Despacho y Usuario son datos obligatorios.',
+					buttons: Ext.Msg.OK,
+					icon:Ext.MessageBox.WARNING});
 			}
-			else{
-				alert('Obligado');
-			}
-			//}else{
-			//	alert('El gestor asociado contiene provisiones.');
-			//}
 		}
 	});
 
 
-	var contieneProvisiones=function(){
-		data = entidad.get("data");
-		var resultado = null;
-		//alert('TGestor: ' + comboTipoUsuario.value());
-		alert('Entra contieneProvisiones');
-		Ext.Ajax.request({
-			url: page.resolveUrl('coreextension/contieneProvisiones')
-			,params: {
-				idAsunto:data.id
-			}
-			,success:function ( result, request ) {
-				alert('Result: ' + result.responseText);
-				resultado = result.responseText;
-			}
-		});
-		alert('Resultado: ' + resultado);
-		return resultado;
-	}; 
-	
 	var insertarFunction=function(){
 		data = entidad.get("data");
 		Ext.Ajax.request({

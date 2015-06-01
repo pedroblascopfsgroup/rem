@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
@@ -21,10 +22,13 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 
 //FIXME Hay que eliminar esta clase o renombrarla
@@ -37,6 +41,7 @@ public class coreextensionController {
 	private static final String TIPO_USUARIO_JSON = "plugin/coreextension/asunto/tipoUsuarioJSON";
 	private static final String TIPO_USUARIO_PAGINATED_JSON = "plugin/coreextension/asunto/tipoUsuarioPaginatedJSON";
 	private static final String GESTORES_ADICIONALES_JSON = "plugin/coreextension/multigestor/multiGestorAdicionalDataJSON";
+	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -225,22 +230,28 @@ public class coreextensionController {
 	}
 	
 	/**
-	 * Comprueba si el gestor asociado tiene provisiones 
+	 * Comprueba si el procurador asociado al asunto tiene provisiones 
 	 * 
 	 * @param idAsunto
 	 * @return Boolean
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String contieneProvisiones(Long idAsunto) throws Exception{
-		//return proxyFactory.proxy(EXTAsuntoManager.class).contieneProvisiones(idAsunto);
-		EXTAsuntoManager asu = new EXTAsuntoManager();
-		//Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dtoAsunto.getIdAsunto());
-		//GestorDespacho procuradorAnterior = asu.getProcurador();
+	public String isProcuradorConProvisiones(Long idAsunto
+			, WebRequest request, ModelMap model) throws Exception{
+		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
+		Provisiones prov = genericDao.get(Provisiones.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		
-		if (asu.contieneProvisiones(idAsunto)){
-			return "si";
+		//Es un usuario Procurador Con provisiones
+		if (Checks.esNulo(asu) || Checks.esNulo(prov)){
+			model.put("okko",(String)"KO");
 		}else{
-			return "default";
+			if ( (Checks.esNulo(prov.getFechaBaja())) && (asu.getProcurador() != null || !asu.getProcurador().toString().isEmpty()) ){
+				model.put("okko","OK");
+			}else{
+				model.put("okko","KO");
+			}
 		}
+		return OK_KO_RESPUESTA_JSON;
 	}
 }

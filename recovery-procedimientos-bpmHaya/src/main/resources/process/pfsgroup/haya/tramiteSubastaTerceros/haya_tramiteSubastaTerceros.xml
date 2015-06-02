@@ -151,11 +151,50 @@
 	</state>
 
 	<decision name="H004_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision" expression="#{H004_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision}">
-		<transition to="H004_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
-		<transition to="H004_BPMTramiteConsignacion" name="TramiteConsignacion"></transition>
-		<transition to="Fin3" name="Fin"></transition>
 		<transition to="fork2" name="DueDiligenceYTramiteConsignacion"></transition>
+		<transition to="fork3" name="SolicitarDueDiligence"></transition>
+		<transition to="fork4" name="TramiteConsignacion"></transition>
+		<transition to="fork5" name="Fin"></transition>
 	</decision>
+	
+	<node name="H004_SolicitarNumActivo">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>subastaSolicitarNumActivoHandler
+			</targetBean>
+		</action>
+		<transition to="Fin3" name="avanzaBPM"></transition>
+	</node>
+	
+	<node name="H004_SolicitarTasacion">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>subastaSolicitarTasacionHandler</targetBean>
+		</action>
+		<transition to="Fin4" name="Fin"></transition>
+		<transition to="H004_ActualizarTasacion" name="actualizarTasacion"></transition>
+	</node>
+	
+	<state name="H004_ActualizarTasacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H004_SolicitarTasacion" name="avanzaBPM"></transition>
+		<transition to="Fin4" name="Fin"></transition>
+	</state>
 
 	<state name="H004_BPMTramiteTributacion">
 		<event type="node-enter">
@@ -651,6 +690,22 @@
 	<fork name="fork2">
 		<transition to="H004_SolicitarDueDiligence" name="dueDiligence"></transition>
 		<transition to="H004_BPMTramiteConsignacion" name="tramiteConsignacion"></transition>
+		<transition to="fork5" name="SolicitarNumActivoTasacion"></transition>
+	</fork>
+	
+	<fork name="fork3">
+		<transition to="H004_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
+		<transition to="fork5" name="SolicitarNumActivoTasacion"></transition>
+	</fork>
+	
+	<fork name="fork4">
+		<transition to="H004_BPMTramiteConsignacion" name="TramiteConsignacion"></transition>
+		<transition to="fork5" name="SolicitarNumActivoTasacion"></transition>
+	</fork>
+	
+	<fork name="fork5">
+		<transition to="H004_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
+		<transition to="H004_SolicitarTasacion" name="SolicitarTasacion"></transition>
 	</fork>
 
 	<state name="H004_RegistrarResolucionSolicitudSuspension">

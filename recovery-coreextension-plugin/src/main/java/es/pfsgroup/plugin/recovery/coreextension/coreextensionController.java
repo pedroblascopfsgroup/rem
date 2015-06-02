@@ -246,7 +246,7 @@ public class coreextensionController {
 		if (Checks.esNulo(asu) || Checks.esNulo(prov)){
 			model.put("okko",(String)"KO");
 		}else{
-			if ( (Checks.esNulo(prov.getFechaBaja())) && (asu.getProcurador() != null || !asu.getProcurador().toString().isEmpty()) ){
+			if ( (Checks.esNulo(prov.getFechaBaja())) && (asu.getProcurador() != null ) ){
 				model.put("okko","OK");
 			}else{
 				model.put("okko","KO");

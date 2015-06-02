@@ -174,10 +174,10 @@
 	</state>
 
 	<decision name="H002_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision" expression="#{H002_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision}">
-		<transition to="H002_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
+		<transition to="fork2" name="SolicitarDueDiligence"></transition>
 		<transition to="H002_SuspenderSubasta" name="SuspenderSubasta"></transition>
 		<transition to="Fin3" name="Fin"></transition>
-		<transition to="Fin3" name="Finalizar"></transition>
+		<transition to="fork3" name="Finalizar"></transition>
 	</decision>
 	
 	<fork name="fork2">

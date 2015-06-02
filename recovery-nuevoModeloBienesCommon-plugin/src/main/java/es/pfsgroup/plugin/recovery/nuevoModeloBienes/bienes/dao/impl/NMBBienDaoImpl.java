@@ -234,7 +234,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
 			return " and (" + monogestor + " or " + multigestor + ")";
 		}
 		else
-			return "and ("+monogestor+")";
+			return " and ("+monogestor+")";
 	}
 	
 	private String filtroGestorGrupo(List<Long> idsUsuariosGrupo) {

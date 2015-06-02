@@ -16,6 +16,8 @@
 			<json:property name="fechaHasta">
 				<fwk:date  value="${gah.fechaHasta}" />
 			</json:property>
+			<json:property name="telefono" value="${gah.gestor.usuario.telefono}" />
+			<json:property name="email" value="${gah.gestor.usuario.email}" />
 		</json:object>
 	</json:array>
 </fwk:json>

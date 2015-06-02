@@ -160,10 +160,15 @@ create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
 					        WHEN niv_codigoPN9 ='9' THEN SUBSTR(zon_num_centroPN9,-6, 4)
 					        ELSE NULL END AS CENTRONIVELPER9
                   ,nvl(tin.dd_tin_titular, 0) es_titular
-                  , per_arq.MAX_DIAS_IRREGULAR max_dias_irregular
+                  ,per_arq.MAX_DIAS_IRREGULAR max_dias_irregular
+                  ,per_arq.DD_TCN_ID
+                  ,cnt_arq.DD_MRF_ID
+                  ,cnt_arq.DD_MOM_ID
+                  ,cnt_arq.DD_IDN_ID
+                  ,nvl(acn.ACN_NUM_REINCIDEN, 0) ACN_NUM_REINCIDEN
 					      FROM  per_personas per
 					       LEFT JOIN cpe_contratos_personas cpe ON per.per_id = cpe.per_id --PER_CPE
-                 				LEFT JOIN dd_tin_tipo_intervencion tin on cpe.dd_tin_id = tin.dd_tin_id
+                 LEFT JOIN dd_tin_tipo_intervencion tin on cpe.dd_tin_id = tin.dd_tin_id
 					       LEFT JOIN cnt_contratos cnt ON cpe.cnt_id = cnt.cnt_id        --CPE_CNT
 					       LEFT JOIN mov_movimientos mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion --CNT_MOV
 					       LEFT JOIN  ant_antecedentes ant ON ant.ant_id = per.ant_id
@@ -172,6 +177,7 @@ create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
 					       LEFT JOIN  gcl_grupos_clientes gcl ON pg.gcl_id = gcl.gcl_id
 					       LEFT JOIN  PER_PRECALCULO_ARQ per_arq on per.per_cod_cliente_entidad = per_arq.per_cod_cliente_entidad
 					       LEFT JOIN  CNT_PRECALCULO_ARQ cnt_arq on cnt.cnt_contrato = cnt_arq.cnt_contrato
+                 LEFT JOIN  ACN_ANTECED_CONTRATOS acn ON acn.CNT_ID=cnt.CNT_ID
 					       LEFT JOIN (select cnt_id,
 				                zonN0.zon_id as zon_idN0, zonN0.zon_cod as zon_codN0, zonN0.zon_num_centro as zon_num_centroN0, zonN0.zon_descripcion as zon_descripcionN0, zonN0.zon_pid as zon_pidN0, nivN0.niv_id as niv_idN0, nivN0.niv_codigo as niv_codigoN0, nivN0.niv_descripcion as niv_descripcionN0,
 				                zonN1.zon_id as zon_idN1, zonN1.zon_cod as zon_codN1, zonN1.zon_num_centro as zon_num_centroN1, zonN1.zon_descripcion as zon_descripcionN1, zonN1.zon_pid as zon_pidN1, nivN1.niv_id as niv_idN1, nivN1.niv_codigo as niv_codigoN1, nivN1.niv_descripcion as niv_descripcionN1,
@@ -240,16 +246,204 @@ create or replace PROCEDURE REFRESH_DATA_RULE_ENGINE AS
 			               WHERE per.per_fecha_extraccion = (select max(per_fecha_extraccion) from PER_PERSONAS);
   TYPE T_DATA IS TABLE OF CUR%ROWTYPE INDEX BY BINARY_INTEGER;
   L_DATA T_DATA;
+  
 BEGIN
   EXECUTE IMMEDIATE 'TRUNCATE TABLE DATA_RULE_ENGINE';
 
   OPEN CUR;
   LOOP
     FETCH CUR  BULK COLLECT INTO L_DATA LIMIT 1000;
-
     FORALL I IN 1..L_DATA.COUNT
-    INSERT INTO DATA_RULE_ENGINE VALUES L_DATA(I);
-
+    INSERT INTO DATA_RULE_ENGINE
+			(PER_ID
+			,PER_RIESGO
+			,PER_RIESGO_AUTORIZADO
+			,PER_RIESGO_IND
+			,PER_RIESGO_DIR_VENCIDO
+			,PER_SEXO
+			,PER_EMPLEADO
+			,DD_COS_ID
+			,COLECTIVO_SINGULAR
+			,DD_PNV_ID
+			,PER_TITULAR
+			,PER_RIESGO_DISPUESTO
+			,PER_DEUDA_IRREGULAR_DIR
+			,PER_NACIONALIDAD
+			,PER_ECV
+			,DD_SCE_ID
+			,ANT_REINCIDENCIA_INTERNOS
+			,DD_TPE_ID
+			,PER_PAIS_NACIMIENTO
+			,DD_POL_ID
+			,PER_FECHA_NACIMIENTO
+			,SERV_NOMINA_PENSION
+			,DD_REX_ID
+			,PER_FECHA_CONSTITUCION
+			,OFI_ID
+			,PER_DOMICI_EXT
+			,PER_DEUDA_DESC
+			,MOV_INT_REMUNERATORIOS
+			,MOV_INT_MORATORIOS
+			,DD_APO_ID
+			,DD_GC1_ID
+			,CNT_FECHA_ESC
+			,CNT_FECHA_CONSTITUCION
+			,DIAS_IRREGULAR
+			,MOV_DEUDA_IRREGULAR
+			,MOV_SALDO_DUDOSO
+			,MOV_PROVISION
+			,MOV_PROVISION_PORCENTAJE
+			,MOV_RIESGO_GARANT
+			,CNT_FECHA_EFC_ANT
+			,MOV_LTV_INI
+			,CNT_FECHA_EFC
+			,MOV_COMISIONES
+			,MOV_DISPUESTO
+			,DD_FNO_ID
+			,DD_EFC_ID
+			,DD_MON_ID
+			,DD_CT1_ID
+			,CNT_DOMICI_EXT
+			,DD_ESC_ID
+			,DD_ECE_ID
+			,ENT_PROPIE
+			,SEGMENTO_CARTERA
+			,MOV_LTV_FIN
+			,CNT_LIMITE_INI
+			,MOV_SALDO_PASIVO
+			,MOV_FECHA_POS_VENCIDA
+			,MOV_LIMITE_DESC
+			,CNT_FECHA_VENC
+			,CNT_FECHA_CREACION
+			,MOV_SALDO_EXCE
+			,MOV_SCORING
+			,CNT_LIMITE_FIN
+			,DD_EFC_ID_ANT
+			,MOV_GASTOS
+			,PER_DEUDA_IRREGULAR_HIPO
+			,CNT_DIAS_IRREGULAR_HIPO
+			,CENTRONIVEL0
+			,CENTRONIVEL1
+			,CENTRONIVEL2
+			,CENTRONIVEL3
+			,CENTRONIVEL4
+			,CENTRONIVEL5
+			,CENTRONIVEL6
+			,CENTRONIVEL7
+			,CENTRONIVEL8
+			,CENTRONIVEL9
+			,CENTRONIVELPER0
+			,CENTRONIVELPER1
+			,CENTRONIVELPER2
+			,CENTRONIVELPER3
+			,CENTRONIVELPER4
+			,CENTRONIVELPER5
+			,CENTRONIVELPER6
+			,CENTRONIVELPER7
+			,CENTRONIVELPER8
+			,CENTRONIVELPER9
+			,ES_TITULAR
+			,MAX_DIAS_IRREGULAR
+			,DD_TCN_ID
+			,DD_MRF_ID
+      ,DD_MOM_ID
+			,DD_IDN_ID
+      ,ACN_NUM_REINCIDEN)
+    VALUES 			
+      (L_DATA(I).PER_ID
+			,L_DATA(I).PER_RIESGO
+			,L_DATA(I).PER_RIESGO_AUTORIZADO
+			,L_DATA(I).PER_RIESGO_IND
+			,L_DATA(I).PER_RIESGO_DIR_VENCIDO
+			,L_DATA(I).PER_SEXO
+			,L_DATA(I).PER_EMPLEADO
+			,L_DATA(I).DD_COS_ID
+			,L_DATA(I).COLECTIVO_SINGULAR
+			,L_DATA(I).DD_PNV_ID
+			,L_DATA(I).PER_TITULAR
+			,L_DATA(I).PER_RIESGO_DISPUESTO
+			,L_DATA(I).PER_DEUDA_IRREGULAR_DIR
+			,L_DATA(I).PER_NACIONALIDAD
+			,L_DATA(I).PER_ECV
+			,L_DATA(I).DD_SCE_ID
+			,L_DATA(I).ANT_REINCIDENCIA_INTERNOS
+			,L_DATA(I).DD_TPE_ID
+			,L_DATA(I).PER_PAIS_NACIMIENTO
+			,L_DATA(I).DD_POL_ID
+			,L_DATA(I).PER_FECHA_NACIMIENTO
+			,L_DATA(I).SERV_NOMINA_PENSION
+			,L_DATA(I).DD_REX_ID
+			,L_DATA(I).PER_FECHA_CONSTITUCION
+			,L_DATA(I).OFI_ID
+			,L_DATA(I).PER_DOMICI_EXT
+			,L_DATA(I).PER_DEUDA_DESC
+			,L_DATA(I).MOV_INT_REMUNERATORIOS
+			,L_DATA(I).MOV_INT_MORATORIOS
+			,L_DATA(I).DD_APO_ID
+			,L_DATA(I).DD_GC1_ID
+			,L_DATA(I).CNT_FECHA_ESC
+			,L_DATA(I).CNT_FECHA_CONSTITUCION
+			,L_DATA(I).DIAS_IRREGULAR
+			,L_DATA(I).MOV_DEUDA_IRREGULAR
+			,L_DATA(I).MOV_SALDO_DUDOSO
+			,L_DATA(I).MOV_PROVISION
+			,L_DATA(I).MOV_PROVISION_PORCENTAJE
+			,L_DATA(I).MOV_RIESGO_GARANT
+			,L_DATA(I).CNT_FECHA_EFC_ANT
+			,L_DATA(I).MOV_LTV_INI
+			,L_DATA(I).CNT_FECHA_EFC
+			,L_DATA(I).MOV_COMISIONES
+			,L_DATA(I).MOV_DISPUESTO
+			,L_DATA(I).DD_FNO_ID
+			,L_DATA(I).DD_EFC_ID
+			,L_DATA(I).DD_MON_ID
+			,L_DATA(I).DD_CT1_ID
+			,L_DATA(I).CNT_DOMICI_EXT
+			,L_DATA(I).DD_ESC_ID
+			,L_DATA(I).DD_ECE_ID
+			,L_DATA(I).ENT_PROPIE
+			,L_DATA(I).SEGMENTO_CARTERA
+			,L_DATA(I).MOV_LTV_FIN
+			,L_DATA(I).CNT_LIMITE_INI
+			,L_DATA(I).MOV_SALDO_PASIVO
+			,L_DATA(I).MOV_FECHA_POS_VENCIDA
+			,L_DATA(I).MOV_LIMITE_DESC
+			,L_DATA(I).CNT_FECHA_VENC
+			,L_DATA(I).CNT_FECHA_CREACION
+			,L_DATA(I).MOV_SALDO_EXCE
+			,L_DATA(I).MOV_SCORING
+			,L_DATA(I).CNT_LIMITE_FIN
+			,L_DATA(I).DD_EFC_ID_ANT
+			,L_DATA(I).MOV_GASTOS
+			,L_DATA(I).PER_DEUDA_IRREGULAR_HIPO
+			,L_DATA(I).CNT_DIAS_IRREGULAR_HIPO
+			,L_DATA(I).CENTRONIVEL0
+			,L_DATA(I).CENTRONIVEL1
+			,L_DATA(I).CENTRONIVEL2
+			,L_DATA(I).CENTRONIVEL3
+			,L_DATA(I).CENTRONIVEL4
+			,L_DATA(I).CENTRONIVEL5
+			,L_DATA(I).CENTRONIVEL6
+			,L_DATA(I).CENTRONIVEL7
+			,L_DATA(I).CENTRONIVEL8
+			,L_DATA(I).CENTRONIVEL9
+			,L_DATA(I).CENTRONIVELPER0
+			,L_DATA(I).CENTRONIVELPER1
+			,L_DATA(I).CENTRONIVELPER2
+			,L_DATA(I).CENTRONIVELPER3
+			,L_DATA(I).CENTRONIVELPER4
+			,L_DATA(I).CENTRONIVELPER5
+			,L_DATA(I).CENTRONIVELPER6
+			,L_DATA(I).CENTRONIVELPER7
+			,L_DATA(I).CENTRONIVELPER8
+			,L_DATA(I).CENTRONIVELPER9
+			,L_DATA(I).ES_TITULAR
+			,L_DATA(I).MAX_DIAS_IRREGULAR
+			,L_DATA(I).DD_TCN_ID
+			,L_DATA(I).DD_MRF_ID
+            ,L_DATA(I).DD_MOM_ID
+			,L_DATA(I).DD_IDN_ID
+      ,L_DATA(I).ACN_NUM_REINCIDEN);
 
     EXIT WHEN CUR%NOTFOUND;
 

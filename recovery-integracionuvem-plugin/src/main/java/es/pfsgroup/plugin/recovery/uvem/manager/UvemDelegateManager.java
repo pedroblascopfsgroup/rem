@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -43,7 +44,6 @@ import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
-import es.cm.arq.inf.infraestructurabase.TableContainer;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.ImporteMonetario;
@@ -166,6 +166,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	}
 	
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
+	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
 	public Integer solicitarNumeroActivoConRespuesta(Long bienId){
 		return solicitarNumeroActivoRespuesta(bienId, null);
 	}
@@ -199,8 +200,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
     	
 	};
 	
-	@Transactional(readOnly = false)
-	public Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
+	private Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {
 			
@@ -336,7 +336,8 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			char titexo = ' '; 
 			servicioGMP5JD20.setTipoDeTextotitexo(titexo);
 			System.out.println(" ***REQUERIDO*** NOLGMU"); // 	longitud="50"	 Localidad del inmueble	
-			String nombreLargoMunicipio = bien.getLocalizacionActual() != null ? bien.getLocalizacionActual().getPoblacion() : "";
+			String nombreLargoMunicipio = bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getLocalidad() != null ? bien.getLocalizacionActual().getLocalidad().getDescripcion().toUpperCase() : "";
+			//nombreLargoMunicipio = quitaTildes(nombreLargoMunicipio);
 			servicioGMP5JD20.setNombreLargoDelMunicipionolgmu(StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50));
 			System.out.println("NOLGMU: "+StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50)); // 	longitud="50"	 Localidad del inmueble	
 			System.out.println(" ***REQUERIDO*** NOLGRP"); // 	longitud="50"	 Localidad del Registro	
@@ -575,7 +576,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			 
 			System.out.println("Se recuperan los datos de vuelta del servicio");
 			Integer numeroActivo = servicioGMP5JD20.getIdentificadorActivoEspecialcoacew2();
-			System.out.println("Número de activo: "+numeroActivo);
+			System.out.println("Número de activooooo: "+numeroActivo);
 			
 			if( numeroActivo!=null && numeroActivo!=0 ){
 				bien.setNumeroActivo(String.valueOf(numeroActivo));
@@ -950,4 +951,32 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		
 	};
 	*/
+	
+
+	private String quitaTildes(String str) {
+
+		
+		StringBuilder sb = new StringBuilder();
+		try {
+			String ejemplo = str.replaceAll("Ñ", "!");	
+			String proc = java.text.Normalizer.normalize(ejemplo,
+					java.text.Normalizer.Form.NFD);
+			//proc.replace("N~","Ñ");
+			for (char c : proc.toCharArray()) {
+				if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BASIC_LATIN) {
+					sb.append(c);
+				}
+			}
+						
+		} catch (Exception e) {
+			logger.error("quitaTildes: " + e);
+		}
+
+		return sb.toString().replaceAll("!", "Ñ");
+
+	}
+
+	
+	
+
 }

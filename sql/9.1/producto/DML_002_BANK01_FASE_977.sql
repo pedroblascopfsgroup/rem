@@ -5,9 +5,9 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.5.13
 --## INCIDENCIA_LINK=FASE-977
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DML
---##           
+--## 
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial

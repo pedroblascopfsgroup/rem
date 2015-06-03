@@ -893,8 +893,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	public boolean modeloMultiGestor() {
 
 		if (this.modeloMultiGestor == null) {
-			List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericdDao.getList(EXTGestorAdicionalAsunto.class);
-			this.modeloMultiGestor = !Checks.estaVacio(gestoreAdicionales);
+			// workaround, por defecto siempre es multigestor.
+			//List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericdDao.getList(EXTGestorAdicionalAsunto.class);
+			this.modeloMultiGestor = true;//!Checks.estaVacio(gestoreAdicionales);
 		}
 		return modeloMultiGestor;
 	}

@@ -227,9 +227,7 @@ public class GestionIplusBankia implements GestionIplus {
 			miDebug("[GestionIplusBankia.listaDocumentos]: misClaves:"
 						+ misClaves[0].obtenerOrdenClave() + "=" + misClaves[0].obtenerValorClave());
 			
-			InformacionDocumento[] infoDoc;
-
-			infoDoc = miConsulta.obtenerDocumento(true);
+			InformacionDocumento[] infoDoc = miConsulta.obtenerDocumento(true);
 			//listarDocumentos(infoDoc);			
 			
 			listaResultado = obtenerFicheros(idProcedi, dirTmp, miConsulta);
@@ -264,67 +262,67 @@ public class GestionIplusBankia implements GestionIplus {
 		
 	}
 
-	private void listarDocumentos(InformacionDocumento[] infoDoc) {
+//	private void listarDocumentos(InformacionDocumento[] infoDoc) {
+//
+//		int numPags, ordenDoc;
+//		InformacionPagina[] infoPag;
+//
+//		miDebug("[GestionIplusBankia.listaDocumentos]: Número de Documentos: " + infoDoc.length);
+//		
+//		for (int i = 0; i < infoDoc.length; i++) {
+//			infoPag = infoDoc[i].obtenerInformacionPaginas();
+//			ordenDoc = infoDoc[i].obtenerOrden();
+//			numPags = infoDoc[i].obtenerNumeroPaginas();
+//
+//			StringBuffer msj = new StringBuffer("");
+//			if (isIplusDebug()) {
+//				if (numPags == 0) {
+//					msj.append("Datos del documento de orden " + ordenDoc + " (" + 
+//						infoDoc[i].obtenerCodigo() + "\tNo hay ficheros de este tipo.");
+//				} else {
+//					msj.append("Datos del documento de orden " + ordenDoc + " (" + infoDoc[i].obtenerCodigo()
+//							+ ") con " + numPags + " ficheros/s");
+//					msj.append("\tDescripción: " + infoDoc[i].obtenerDescripcion());
+//					msj.append("\tFormato: " + infoDoc[i].obtenerFormato());
+//					msj.append("\tMultiples páginas: " + infoDoc[i].obtenerMultiplesPaginas());
+//					msj.append("\tOrden presentación: " + infoDoc[i].obtenerOrdenPresentacion());
+//					msj.append("\tTipo digitalización: " + infoDoc[i].obtenerTipoDigitalizacion());
+//					msj.append("\tResolución digitalización: " + infoDoc[i].obtenerResolucionDigitalizacion());
+//					msj.append("\tAncho ventana: " + infoDoc[i].obtenerAnchoVentana());
+//					msj.append("\tCódigo icono: " + infoDoc[i].obtenerCodigoIcono());
+//					msj.append("\tExistencia servidor: " + infoDoc[i].obtenerExistenciaServidor());
+//					msj.append("\tNúmero ficheros: " + infoDoc[i].obtenerNumeroPaginas());
+//					msj.append("\tNúmero servidor: " + infoDoc[i].obtenerNumeroServidor());
+//					msj.append("\tEstado: " + infoDoc[i].obtenerEstado());
+//					msj.append("\tDescripcion obligatoria: " + infoDoc[i].obtenerDescripcionObligatoria());
+//					msj.append("\tFormato descripción: " + infoDoc[i].obtenerFormatoDescripcion());
+//
+//					/* Información de ficheros */
+//					for (int j = 0; j < numPags; j++) {
+//						msj.append("\tDatos del fichero " + infoPag[j].obtenerNumero());
+//						msj.append("\t\tPertenece al documento: " + infoPag[j].obtenerOrdenDocumento());
+//						msj.append("\t\tExtensión: " + infoPag[j].obtenerExtensionFichero());
+//						msj.append("\t\tDescripción: " + infoPag[j].obtenerDescripcion());
+//						msj.append("\t\tFecha alta: " + infoPag[j].obtenerFechaAlta());
+//						msj.append("\t\tUsuario alta: " + infoPag[j].obtenerUsuarioAlta());
+//						msj.append("\t\tUbicacion: " + infoPag[j].obtenerUbicacion());
+//						msj.append("\t\tEstado: " + infoPag[j].obtenerEstado());
+//					}
+//				}
+//				miDebug(msj.toString());
+//			}
+//		}
+//
+//	}
 
-		int numPags, ordenDoc;
-		InformacionPagina[] infoPag;
-
-		miDebug("[GestionIplusBankia.listaDocumentos]: Número de Documentos: " + infoDoc.length);
-		
-		for (int i = 0; i < infoDoc.length; i++) {
-			infoPag = infoDoc[i].obtenerInformacionPaginas();
-			ordenDoc = infoDoc[i].obtenerOrden();
-			numPags = infoDoc[i].obtenerNumeroPaginas();
-
-			StringBuffer msj = new StringBuffer("");
-			if (isIplusDebug()) {
-				if (numPags == 0) {
-					msj.append("Datos del documento de orden " + ordenDoc + " (" + 
-						infoDoc[i].obtenerCodigo() + "\tNo hay ficheros de este tipo.");
-				} else {
-					msj.append("Datos del documento de orden " + ordenDoc + " (" + infoDoc[i].obtenerCodigo()
-							+ ") con " + numPags + " ficheros/s");
-					msj.append("\tDescripción: " + infoDoc[i].obtenerDescripcion());
-					msj.append("\tFormato: " + infoDoc[i].obtenerFormato());
-					msj.append("\tMultiples páginas: " + infoDoc[i].obtenerMultiplesPaginas());
-					msj.append("\tOrden presentación: " + infoDoc[i].obtenerOrdenPresentacion());
-					msj.append("\tTipo digitalización: " + infoDoc[i].obtenerTipoDigitalizacion());
-					msj.append("\tResolución digitalización: " + infoDoc[i].obtenerResolucionDigitalizacion());
-					msj.append("\tAncho ventana: " + infoDoc[i].obtenerAnchoVentana());
-					msj.append("\tCódigo icono: " + infoDoc[i].obtenerCodigoIcono());
-					msj.append("\tExistencia servidor: " + infoDoc[i].obtenerExistenciaServidor());
-					msj.append("\tNúmero ficheros: " + infoDoc[i].obtenerNumeroPaginas());
-					msj.append("\tNúmero servidor: " + infoDoc[i].obtenerNumeroServidor());
-					msj.append("\tEstado: " + infoDoc[i].obtenerEstado());
-					msj.append("\tDescripcion obligatoria: " + infoDoc[i].obtenerDescripcionObligatoria());
-					msj.append("\tFormato descripción: " + infoDoc[i].obtenerFormatoDescripcion());
-
-					/* Información de ficheros */
-					for (int j = 0; j < numPags; j++) {
-						msj.append("\tDatos del fichero " + infoPag[j].obtenerNumero());
-						msj.append("\t\tPertenece al documento: " + infoPag[j].obtenerOrdenDocumento());
-						msj.append("\t\tExtensión: " + infoPag[j].obtenerExtensionFichero());
-						msj.append("\t\tDescripción: " + infoPag[j].obtenerDescripcion());
-						msj.append("\t\tFecha alta: " + infoPag[j].obtenerFechaAlta());
-						msj.append("\t\tUsuario alta: " + infoPag[j].obtenerUsuarioAlta());
-						msj.append("\t\tUbicacion: " + infoPag[j].obtenerUbicacion());
-						msj.append("\t\tEstado: " + infoPag[j].obtenerEstado());
-					}
-				}
-				miDebug(msj.toString());
-			}
-		}
-
-	}
-
-	private String obtenerTipoDoc(int ordenDoc) {
-		if (proxyFactory != null) {
-			return proxyFactory.proxy(GestionIplusApi.class)
-				.obtenerTipoDocDeNumOrden(ordenDoc);
-		} else {
-			return "DOC";
-		}
-	}
+//	private String obtenerTipoDoc(int ordenDoc) {
+//		if (proxyFactory != null) {
+//			return proxyFactory.proxy(GestionIplusApi.class)
+//				.obtenerTipoDocDeNumOrden(ordenDoc);
+//		} else {
+//			return "DOC";
+//		}
+//	}
 
 	@Override
 	public FileItem abrirDocumento(String idProcedi, String nombre, String descripcion) {
@@ -376,11 +374,12 @@ public class GestionIplusBankia implements GestionIplus {
 
 		miDebug("[GestionIplusBankia.borrarDocumento]: " + idProcedi + " - " + nombre + " - " + descripcion);
 		
-		int numFichero = obtenerNumFichero(idProcedi, 0, nombre);
-		if (numFichero > 0) {
-			borrarDocumentoIPlus(idProcedi, 0, numFichero);
+		int[] datosFichero = obtenerDatosFichero(idProcedi, 0, descripcion);
+		miDebug("[GestionIplusBankia.borrarDocumento]: " + idProcedi + " - " + datosFichero[1] + " - " + datosFichero[0]);
+		if (datosFichero[0] > 0) {
+			borrarDocumentoIPlus(idProcedi, datosFichero[1], datosFichero[0]);
 		} else {
-			System.out.println("[IPLUS.borrarDocumento]: nombre=" + nombre + " no encontrado.");
+			System.out.println("[GestionIplusBankia.borrarDocumento]: nombre=" + descripcion + " no encontrado.");
 		}
 
 	}
@@ -588,20 +587,20 @@ public class GestionIplusBankia implements GestionIplus {
 		this.appProperties = appProperties;
 	}
 
-	private String obtenerNuevoNombreFicheroTemporal(String nombreFicheroTemporal, String nombreFichero) {
-		
-		//Quitar la extensión tmp y sustituirla por la original
-		int posExtensionTmp = nombreFicheroTemporal.lastIndexOf(".") + 1;
-		int posExtensionOri = nombreFichero.lastIndexOf(".") + 1;
-		String extensionTmp = nombreFicheroTemporal.substring(posExtensionTmp);
-		String extensionOriginal = nombreFichero.substring(posExtensionOri);
-		String nuevoNombreFicheroTemporal = nombreFicheroTemporal;
-		if ("TMP".equalsIgnoreCase(extensionTmp)) {
-			nuevoNombreFicheroTemporal = nombreFicheroTemporal.substring(0,posExtensionTmp-1) + "." + extensionOriginal;
-		}
-		return nuevoNombreFicheroTemporal;
-
-	}
+//	private String obtenerNuevoNombreFicheroTemporal(String nombreFicheroTemporal, String nombreFichero) {
+//		
+//		//Quitar la extensión tmp y sustituirla por la original
+//		int posExtensionTmp = nombreFicheroTemporal.lastIndexOf(".") + 1;
+//		int posExtensionOri = nombreFichero.lastIndexOf(".") + 1;
+//		String extensionTmp = nombreFicheroTemporal.substring(posExtensionTmp);
+//		String extensionOriginal = nombreFichero.substring(posExtensionOri);
+//		String nuevoNombreFicheroTemporal = nombreFicheroTemporal;
+//		if ("TMP".equalsIgnoreCase(extensionTmp)) {
+//			nuevoNombreFicheroTemporal = nombreFicheroTemporal.substring(0,posExtensionTmp-1) + "." + extensionOriginal;
+//		}
+//		return nuevoNombreFicheroTemporal;
+//
+//	}
 
 	private String obtenerExtension(String nombreFichero) {
 		
@@ -611,18 +610,29 @@ public class GestionIplusBankia implements GestionIplus {
 
 	}
 
-	private int obtenerNumFichero(String idProcedi, int orden,
+	private int[] obtenerDatosFichero(String idProcedi, int orden,
 			String nombreFichero) {
 		
-		int numFichero = 0;
+		miDebug("[GestionIplusBankia.obtenerDatosFichero]: " + idProcedi + " - " + orden + " - " + nombreFichero);
 
+		int[] datosFichero = {0, 0};
+		
+		int numFichero = 0;
+		int ordenFichero = 0;
+		
 		try {
 			ClaveExpediente[] misClaves;
 			ConsultaExpediente miConsulta;
 			int numeroClaves = 1;
 			misClaves = new ClaveExpediente[numeroClaves];
 			miConsulta = new ConsultaExpediente();
-			miConsulta.asignarDirectorioLocal(iplusRutaTmp);
+
+			String dirTmp = iplusRutaTmp + idProcedi + File.separator;
+			creacionDirectorioTemporal(dirTmp);
+			
+			miConsulta.asignarDirectorioLocal(dirTmp); // Temporal
+			
+			miDebug("[GestionIplusBankia.obtenerDatosFichero]: Directorio local=" + dirTmp);
 
 			miConsulta.asignarUsuario(iplusUsuario); 
 			miConsulta.asignarBaseDatos(BBDD_IPLUS);
@@ -642,11 +652,16 @@ public class GestionIplusBankia implements GestionIplus {
 				infoPag = infoDoc[i].obtenerInformacionPaginas();
 				ordenDoc = infoDoc[i].obtenerOrden();
 				numPags = infoDoc[i].obtenerNumeroPaginas();
-				if (ordenDoc == orden) {
+				if (orden == 0 || ordenDoc == orden) {
 					if (numPags > 0) {
 						for (int j = 0; j < infoPag.length; j++) {
-							if (infoPag[j].obtenerDescripcion().equalsIgnoreCase(nombreFichero)) {
+							String descripcionDocIPLUS = infoPag[j].obtenerDescripcion() + "." + 
+									infoPag[j].obtenerExtensionFichero().toUpperCase();
+							miDebug("[GestionIplusBankia.obtenerDatosFichero]: " + nombreFichero + " - " + descripcionDocIPLUS);
+							if (nombreFichero.endsWith(descripcionDocIPLUS)) {
 								numFichero = infoPag[j].obtenerNumero();
+								ordenFichero = infoPag[j].obtenerOrdenDocumento();
+								miDebug("[GestionIplusBankia.obtenerDatosFichero] resultado: " + numFichero + " - " + ordenFichero);
 								break;
 							}
 						}
@@ -660,24 +675,26 @@ public class GestionIplusBankia implements GestionIplus {
 			if (th instanceof ExcepcionIplus) {
 				ExcepcionIplus ex;
 				ex = (ExcepcionIplus) th;
-				System.out.println("[GestionIplusBankia.obtenerNumFichero]: CodigoRetorno=" + ex.obtenerCodigoRetorno());
-				System.out.println("[GestionIplusBankia.obtenerNumFichero]: MensajeError=" + ex.obtenerMensajeError());
+				System.out.println("[GestionIplusBankia.obtenerDatosFichero]: CodigoRetorno=" + ex.obtenerCodigoRetorno());
+				System.out.println("[GestionIplusBankia.obtenerDatosFichero]: MensajeError=" + ex.obtenerMensajeError());
 			}
 			if (th.getMessage() != null) {
-				System.out.println("[GestionIplusBankia.obtenerNumFichero]: excepcion=" + th.getMessage());
+				System.out.println("[GestionIplusBankia.obtenerDatosFichero]: excepcion=" + th.getMessage());
 			} else {
 				th.printStackTrace();
 			}
 		}
-			
-		return numFichero;
+		
+		datosFichero[0] = numFichero;
+		datosFichero[1] = ordenFichero;
+		return datosFichero;
 	}
 
 	private void borrarDocumentoIPlus(String idProcedi, int ordenDoc, int numFichero) {
 		
 		miDebug("[GestionIplusBankia.borrarDocumentoIPlus]: " + idProcedi + " - " + ordenDoc + " - " + numFichero);
 	
-		int documentos = 1, numeroClaves = 1;
+		int numeroClaves = 1;
 
 		ClaveExpediente[] misClaves = null;
 		AccionSobreExpediente02 miAccionExp = null;

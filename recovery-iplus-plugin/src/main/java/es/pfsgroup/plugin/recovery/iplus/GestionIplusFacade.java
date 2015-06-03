@@ -72,21 +72,21 @@ public class GestionIplusFacade {
 	public FileItem abrirDocumento(String idProcedi, String nombre, String descripcion) {
 		
 		//FASE-1166 Intento de diagnostico error solo produccion (eliminar siguiente linea al resolver link)
-		System.out.println("[GestionIplusFacade.abrirDocumento] (1) (antes normalizar)  Driver: "+ driver.toString());
+		//System.out.println("[GestionIplusFacade.abrirDocumento] (1) (antes normalizar)  Driver: "+ driver.toString());
 		
 		if (driver == null) {
 			obtenerDriver();
 		}
 		
 		//FASE-1166 Intento de diagnostico error solo produccion (eliminar siguiente linea al resolver link)
-		System.out.println("[GestionIplusFacade.abrirDocumento] (2) (antes normalizar) idProcedi: " + idProcedi + ", Nombre: "+ nombre + ", Descripcion: " + descripcion + ", driver: "+ driver.toString());
+		//System.out.println("[GestionIplusFacade.abrirDocumento] (2) (antes normalizar) idProcedi: " + idProcedi + ", Nombre: "+ nombre + ", Descripcion: " + descripcion + ", driver: "+ driver.toString());
 		
 		//Corregir nombre y descripcion de ficheros (quitar carácteres extraños)
 		nombre = normalizar(nombre);
 		descripcion = normalizar(descripcion);
 
 		//FASE-1166 Intento de diagnostico error solo produccion (eliminar siguiente linea al resolver link)
-		System.out.println("[GestionIplusFacade.abrirDocumento] (3) (despues normalizar) idProcedi: " + idProcedi + ", Nombre: "+ nombre + ", Descripcion: " + descripcion + ", driver: "+ driver.toString());
+		//System.out.println("[GestionIplusFacade.abrirDocumento] (3) (despues normalizar) idProcedi: " + idProcedi + ", Nombre: "+ nombre + ", Descripcion: " + descripcion + ", driver: "+ driver.toString());
 		
 		return driver.abrirDocumento(idProcedi, nombre, descripcion);
 	}

@@ -25,6 +25,9 @@
 		,{name:'titulo'}
 		,{name:'descripcion'}
 		,{name:'fecha', type:'date', dateFormat:'c'}
+		,{name:'fechaTareaUno', type:'date', dateFormat:'c'}
+		,{name:'fechaTareaDos', type:'date', dateFormat:'c'}
+		,{name:'fechaTareaTres', type:'date', dateFormat:'c'}
 	]);
 	
 	
@@ -63,6 +66,9 @@
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.titulo" text="**Titulo" />', dataIndex: 'titulo', sortable:true, sortable:true}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.descripcion" text="**Descripción" />',  dataIndex: 'descripcion', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fecha" text="**Fecha señalamiento" />', dataIndex: 'fecha', sortable:true, renderer:app.format.dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaPrimerRecordatorio" text="**Primer recordatorio" />', dataIndex: 'fechaTareaUno', sortable:true, renderer:app.format.dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaSegundoRecordatorio" text="**Segundo recordatorio" />', dataIndex: 'fechaTareaDos', sortable:true, renderer:app.format.dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaTercerRecordatorio" text="**Tercer recordatorio" />', dataIndex: 'fechaTareaTres', sortable:true, renderer:app.format.dateRenderer}
 	]);
 	
 	var pagingBar=fwk.ux.getPaging(recordatorioStore);
@@ -90,9 +96,11 @@
 				  ,params:{}
 				
 				});
-				w.on(app.event.DONE, function(){      
-				  buscarFunc();
-				  w.close();
+				w.on(app.event.DONE, function(){ 
+					w.close();     
+				  	buscarFunc();
+				  	buscarFuncTar();
+				  	app.recargaRecordatoriosTree();
 				});
 				w.on(app.event.CANCEL, function(){
 				  w.close();
@@ -116,8 +124,10 @@
 				
 				});
 				w.on(app.event.DONE, function(){      
-				  buscarFuncTar();
-				  w.close();
+				  	w.close();
+				  	buscarFunc();
+				  	buscarFuncTar();
+				  	app.recargaRecordatoriosTree();
 				});
 				w.on(app.event.CANCEL, function(){
 				  w.close();
@@ -149,9 +159,10 @@
 		
 		});
 		w.on(app.event.DONE, function(){      
+		  	w.close();
 		  	buscarFunc();
 		  	buscarFuncTar();
-		  	w.close();
+		  	app.recargaRecordatoriosTree();
 		});
 		w.on(app.event.CANCEL, function(){
 		  	w.close();
@@ -184,11 +195,14 @@
           w.on(app.event.DONE, function(){
            	w.close();
            	tareasStore.webflow(paramsBusquedaInicial); 
+           	app.recargaRecordatoriosTree();
 			//Recargamos el arbol de tareas
-			app.recargaTree();
+			//app.recargaTree();
           });
           
-         w.on(app.event.CANCEL, function(){ w.close(); });
+         w.on(app.event.CANCEL, function(){
+          w.close(); 
+         });
 		
 	});
 	

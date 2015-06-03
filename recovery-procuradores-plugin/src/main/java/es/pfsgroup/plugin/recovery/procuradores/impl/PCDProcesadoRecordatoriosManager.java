@@ -47,7 +47,7 @@ public class PCDProcesadoRecordatoriosManager implements PCDProcesadoRecordatori
 	
 	private static final String COD_ENTIDAD = "4";
 	private static final String TIPO_ANOTACION_TAREA = "T";
-	private static final String SUBTIPO_ANOTACION_AUTOTAREA = "810";
+	private static final String SUBTIPO_ANOTACION_AUTOTAREA = "TAREA_RECORDATORIO";
 	
 	
 	@Override
@@ -70,13 +70,13 @@ public class PCDProcesadoRecordatoriosManager implements PCDProcesadoRecordatori
 				clavAj ++;
 				
 				calendar.setTime(recRecordatorio.getFecha());
-				int dias_habiles_encontrados = 0;
+				int dias_habiles_encontrados = 1;
 				
 				while(dias_habiles_encontrados <= Integer.parseInt(dia)){
 					
 					calendar.add(Calendar.DAY_OF_MONTH, -1);
 					
-					if(calendar.get(Calendar.DAY_OF_WEEK)!= 7 && calendar.get(Calendar.DAY_OF_WEEK)!= 8){
+					if(calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SATURDAY && calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SUNDAY){
 						///Incrementamos días habiles encontrados
 						dias_habiles_encontrados ++;
 					}

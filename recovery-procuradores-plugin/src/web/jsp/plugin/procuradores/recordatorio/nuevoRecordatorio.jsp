@@ -117,12 +117,6 @@
     		,fieldLabel: '<s:message code="plugin.procuradores.recordatorios.formalta.seleccionable.categorias" text="**Categorias" />' 
  		,width: 250 
  		,forceSelection: true 
- 		,listeners:{ 
- 			select: function(combo,  record,  index ) {	 		 
-                 var iddesp = Ext.getCmp("idDespExt"); 
-                 iddesp.setValue(combo.getValue());  
- 	        }  
- 		}
  		,value: '${recordatorio.categoria.nombre}'
  		
  	}); 
@@ -134,6 +128,7 @@
     	,id:'tituloRec'
     	,width:400
 		,name:'titulo'
+		,allowBlank:false
 		,value: '${recordatorio.titulo}'
     });
 
@@ -171,7 +166,8 @@
 	var aviso1 = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.procuradores.recordatorios.form.campo.aviso1" text="**Aviso días antes" />'				
 		, name: 'dias_tarea'
-<%-- 		, value: '${Categoria.orden}' --%>
+		,allowBlank:false
+		, value: '${diasTareaUno}'
 		, allowDecimals: false
 		, allowNegative: false
 		, maxValue: 999
@@ -181,7 +177,7 @@
 	var aviso2 = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.procuradores.recordatorios.form.campo.aviso2" text="**Aviso días antes" />'				
 		, name: 'dias_tarea'
-<%-- 		, value: '${Categoria.orden}' --%>
+		, value: '${diasTareaDos}'
 		, allowDecimals: false
 		, allowNegative: false
 		, maxValue: 999
@@ -192,7 +188,7 @@
 	var aviso3 = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.procuradores.recordatorios.form.campo.aviso3" text="**Aviso días antes" />'				
 		, name: 'dias_tarea'
-<%-- 		, value: '${Categoria.orden}' --%>
+		, value: '${diasTareaTres}'
 		, allowDecimals: false
 		, allowNegative: false
 		, maxValue: 999

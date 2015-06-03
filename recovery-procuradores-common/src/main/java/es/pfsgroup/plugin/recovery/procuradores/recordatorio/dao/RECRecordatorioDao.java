@@ -16,5 +16,7 @@ public interface RECRecordatorioDao  extends AbstractDao<RECRecordatorio, Long>{
 	
 	public Long getCountListadoRecordatorios(Long idUsuario);
 	
+	public Long getCountListadoTareasRecordatorios(Long idUsuario);
+	
 	public RECRecordatorio getRecordatorioByTarea(Long idTarea);
 }

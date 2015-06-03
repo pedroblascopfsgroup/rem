@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.recovery.procuradores.recordatorio.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoRecordatoriosApi;
 import es.pfsgroup.plugin.recovery.procuradores.categorias.api.CategoriaApi;
 import es.pfsgroup.plugin.recovery.procuradores.recordatorio.api.RECRecordatorioApi;
@@ -86,6 +88,20 @@ public class RECRecordatorioController {
 	}
 	
 	/**
+	 * Método que devuelve cuantas tareas de recordatorios existen.
+	 * 
+	 * @param 
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getCountListadoTareasRecordatorios(ModelMap model) {
+		model.put("total", proxyFactory.proxy(RECRecordatorioApi.class).getCountListadoTareasRecordatorios());
+		return JSON_COUNT_LISTADO_RECORDATORIOS;
+	}
+	
+	/**
 	 * Guarda {@link RECRecordatorio}
 	 * @param request
 	 */
@@ -136,11 +152,67 @@ public class RECRecordatorioController {
 	 * @return JSP del nuevo recordatorio 
 	 */
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String abreVentanaNuevoRecordatorio( WebRequest request,  ModelMap map){
 		
+		
 		if(!Checks.esNulo(request.getParameter("idRecordatorio"))){
-			map.put("recordatorio", proxyFactory.proxy(RECRecordatorioApi.class).getRecRecordatorio(Long.parseLong(request.getParameter("idRecordatorio"))));
+			
+			RECRecordatorio rec = proxyFactory.proxy(RECRecordatorioApi.class).getRecRecordatorio(Long.parseLong(request.getParameter("idRecordatorio")));
+			map.put("recordatorio", rec);
+			
+			Calendar calendar = new GregorianCalendar();
+			
+			///Obtenmos el numero de días de las tareas apartir de la fecha de tarea y la de señalamiento
+			
+			if(!Checks.esNulo(rec.getTareaUno())){
+				
+				calendar.setTime(rec.getTareaUno().getFechaVenc());
+				int dias = 0;
+				
+				while(calendar.getTime().before(rec.getFecha())){
+					if(calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SATURDAY && calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SUNDAY){
+						///Incrementamos días habiles encontrados
+						dias ++;
+					}
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+
+				map.put("diasTareaUno", dias);
+			}
+			
+			if(!Checks.esNulo(rec.getTareaDos())){
+				
+				calendar.setTime(rec.getTareaDos().getFechaVenc());
+				int dias = 0;
+				
+				while(calendar.getTime().before(rec.getFecha())){
+					if(calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SATURDAY && calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SUNDAY){
+						///Incrementamos días habiles encontrados
+						dias ++;
+					}
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+				
+				map.put("diasTareaDos", dias);
+			}
+			
+			if(!Checks.esNulo(rec.getTareaTres())){
+				
+				calendar.setTime(rec.getTareaTres().getFechaVenc());
+				int dias = 0;
+				
+				while(calendar.getTime().before(rec.getFecha())){
+					if(calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SATURDAY && calendar.get(Calendar.DAY_OF_WEEK)!= Calendar.SUNDAY){
+						///Incrementamos días habiles encontrados
+						dias ++;
+					}
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+				map.put("diasTareaTres", dias);
+			}
+			
 		}
 		
 		return JSP_VENTANA_NUEVO_RECORDATORIO;

@@ -89,6 +89,13 @@ public class RECRecordatorioManager  implements RECRecordatorioApi {
 	public Long getCountListadoRecordatorios() {
 		return recRecordatorioDao.getCountListadoRecordatorios(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getId());
 	}
+	
+	
+	@Override
+	@BusinessOperation(PLUGIN_PROCURADORES_COUNT_LISTA_TAREAS_RECORDATORIOS)
+	public Long getCountListadoTareasRecordatorios() {
+		return recRecordatorioDao.getCountListadoTareasRecordatorios(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getId());
+	}
 
 	@Override
 	@BusinessOperation(PLUGIN_PROCURADORES_RESULEVE_RECORDATORIO)

@@ -32,7 +32,7 @@ public class RECRecordatorioDaoImpl extends AbstractEntityDao<RECRecordatorio, L
 		
 		HQLBuilder hb = new HQLBuilder(" from EXTTareaNotificacion tar ");
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "tar.descripcionTarea", dto.getTitulo(), true);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tar.subtipoTarea.codigoSubtarea", "810");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tar.subtipoTarea.codigoSubtarea", "TAREA_RECORDATORIO");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tar.destinatarioTarea.id", dto.getUsuario().getId());
 		hb.appendWhere("tar.tareaFinalizada is null OR tar.tareaFinalizada = 0");
 		
@@ -59,6 +59,17 @@ public class RECRecordatorioDaoImpl extends AbstractEntityDao<RECRecordatorio, L
 
 		return (long) HibernateQueryUtils.list(this, hb).size();
 	}
+	
+	@Override
+	public Long getCountListadoTareasRecordatorios(Long idUsuario) {
+		
+		HQLBuilder hb = new HQLBuilder(" from EXTTareaNotificacion tar ");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tar.subtipoTarea.codigoSubtarea", "TAREA_RECORDATORIO");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tar.destinatarioTarea.id", idUsuario);
+		hb.appendWhere("tar.tareaFinalizada is null OR tar.tareaFinalizada = 0");
+		
+		return (long) HibernateQueryUtils.list(this, hb).size();
+	}
 
 	@Override
 	public RECRecordatorio getRecordatorioByTarea(Long idTarea) {
@@ -69,6 +80,8 @@ public class RECRecordatorioDaoImpl extends AbstractEntityDao<RECRecordatorio, L
 		return HibernateQueryUtils.uniqueResult(this, hb);
 		
 	}
+
+
 
 	
 }

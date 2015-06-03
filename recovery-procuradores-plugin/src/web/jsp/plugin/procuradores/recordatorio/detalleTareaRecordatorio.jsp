@@ -9,9 +9,9 @@
 
 <fwk:page>
 
+var fechaSeny = app.format.dateRenderer('${data.recordatorio.fecha}'.substring(0, 10));
 
-
-var txtFechaseny = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios.fechaseny" text="**Fecha señalamiento" />','${data.recordatorio.fecha}');
+var txtFechaseny = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios.fechaseny" text="**Fecha señalamiento" />',fechaSeny);
 var txtTitulo = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios.titulo" text="**Título" />','${data.recordatorio.titulo}');
 
 
@@ -48,10 +48,6 @@ var txtTitulo = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios
 			,style:'font-weight:bolder; font-size:11',bodyStyle:'padding:5px'
 			});
 			
-	var tituloLabelArchivoAdjunto = new Ext.form.Label({
-	    	text:'<s:message code="ext.comunicaciones.generarnotificacion.ficheroAdjunto" text="**Fichero Adjunto" />'
-			,style:'font-weight:bolder; font-size:11; margin-right:15px',bodyStyle:'padding:5px'
-			});
 			
 	
 	var labeltareaOriginal = new Ext.form.HtmlEditor({
@@ -83,19 +79,15 @@ var txtTitulo = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios
 	
 	
 	var descEstado = '${data.situacion}';
-	var fechaCrear = '${data.fecha}';
+	var fechaRecordatorio = '${data.fechaVencimiento}';
 	var idEntidad = new Ext.form.Hidden({name:'idEntidad', value :'${data.idAsunto}'}) ;
 	var idTarea = new Ext.form.Hidden({name:'idTarea', value :'${data.idTarea}'}) ;
 	var codUg = '${data.codUg}';
-
+		
 	
-		
-
-	//textfield que va a contener la situacion de la entidad
-	var txtSituacion = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.situacion" text="**Situacion" />'	,descEstado);
-		
-	//textfield que va a contener la fecha de creacion de la entidad
-	var txtFechaCreacion = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.fechacreacion" text="**fecha Creacion" />', fechaCrear);
+		//textfield que va a contener la fecha de creacion de la entidad
+	var txtFechaRecordatorio = app.creaLabel('<s:message code="plugin.procuradores.recordatorio.detallerecordatorio.fechaRecordatorio" text="**Fecha recordatorio" />', fechaRecordatorio);
+	
 	
 	var btnEntidad = new Ext.Button({
 		text : '<s:message code="app.botones.verdetalle" text="**Ver detalle" />'
@@ -153,6 +145,7 @@ var txtTitulo = app.creaLabel('<s:message code="ext.comunicaciones.recordatorios
 		,items : [
 			{ items : [
 				panelDatosEntidad
+				,txtFechaRecordatorio
 				,titulolabeltareaOriginal
 				,labeltareaOriginal
 				,idEntidad

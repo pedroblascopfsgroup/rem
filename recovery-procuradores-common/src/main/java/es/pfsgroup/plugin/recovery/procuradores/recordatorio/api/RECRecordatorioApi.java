@@ -1,8 +1,8 @@
 package es.pfsgroup.plugin.recovery.procuradores.recordatorio.api;
 
-import org.springframework.web.context.request.WebRequest;
-
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.procuradores.recordatorio.dto.RECRecordatorioDto;
 import es.pfsgroup.plugin.recovery.procuradores.recordatorio.model.RECRecordatorio;
@@ -13,6 +13,7 @@ public interface RECRecordatorioApi {
 	public static final String PLUGIN_PROCURADORES_GET_LISTA_RECORDATORIOS = "plugin.procuradores.recordatorio.getListaRecordatorios";
 	public static final String PLUGIN_PROCURADORES_GET_LISTA_TAREAS_RECORDATORIOS = "plugin.procuradores.recordatorio.getListaTareasRecordatorios";
 	public static final String PLUGIN_PROCURADORES_COUNT_LISTA_RECORDATORIOS = "plugin.procuradores.recordatorio.getCountRecordatorios";
+	public static final String PLUGIN_PROCURADORES_COUNT_LISTA_TAREAS_RECORDATORIOS = "plugin.procuradores.recordatorio.getCountTareasRecordatorios";
 	public static final String PLUGIN_PROCURADORES_GET_RECORDATORIO = "plugin.procuradores.recordatorio.getRecordatorio";
 	public static final String PLUGIN_PROCURADORES_SAVE_RECORDATORIO = "plugin.procuradores.recordatorio.saveRecordatorio";
 	public static final String PLUGIN_PROCURADORES_RESULEVE_RECORDATORIO = "plugin.procuradores.recordatorio.resolverRecordatorio";
@@ -59,6 +60,14 @@ public interface RECRecordatorioApi {
 	 */
 	@BusinessOperationDefinition(PLUGIN_PROCURADORES_COUNT_LISTA_RECORDATORIOS)
 	public Long getCountListadoRecordatorios();
+	
+	
+	/**
+	 * Obtiene el número de {@link EXTTareaNotificacion}. 
+	 * @return Long.
+	 */
+	@BusinessOperationDefinition(PLUGIN_PROCURADORES_COUNT_LISTA_TAREAS_RECORDATORIOS)
+	public Long getCountListadoTareasRecordatorios();
 	
 	
 	/**

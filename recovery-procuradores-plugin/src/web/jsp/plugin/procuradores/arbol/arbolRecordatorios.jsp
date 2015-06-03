@@ -13,8 +13,7 @@
         							"procuradores/getPanelListadoRecordatorios",{},{id:'tareas_recordatorios_panel'});
         							}
         }
-        ,init:function(){
-        
+        ,init: app.recargaRecordatoriosTree = function(){
         
                 tree.getNodeById('arbol_tareas_nodo_recordatorios').getUI().hide();
         		var params = {idUsuario:app.usuarioLogado.id}; 
@@ -27,7 +26,7 @@
  		                      			tree.getNodeById('arbol_tareas_nodo_recordatorios').getUI().show();
  		                      		   	
  		                      		   	Ext.Ajax.request({
-											url: '/pfs/recrecordatorio/getCountListadoRecordatorios.htm'
+											url: '/pfs/recrecordatorio/getCountListadoTareasRecordatorios.htm'
 											,params: {idUsuario:app.usuarioLogado.id}
 											,method: 'POST'
 											,success: function (result, request){

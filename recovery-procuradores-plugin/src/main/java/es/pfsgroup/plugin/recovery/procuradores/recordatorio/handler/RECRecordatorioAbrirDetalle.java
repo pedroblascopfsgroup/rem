@@ -20,7 +20,7 @@ public class RECRecordatorioAbrirDetalle implements BuzonTareasViewHandler {
 
 	protected static final Log logger = LogFactory.getLog(RECRecordatorioAbrirDetalle.class);
 	private static final String JSP_NAME = "plugin/procuradores/recordatorio/detalleTareaRecordatorio";
-	private static final String SUBTIPO_TAREA = "810";	
+	private static final String SUBTIPO_TAREA = "TAREA_RECORDATORIO";	
 	
 	@Autowired
 	private EXTTareaNotificacionDao extTareaNotificacionDao;

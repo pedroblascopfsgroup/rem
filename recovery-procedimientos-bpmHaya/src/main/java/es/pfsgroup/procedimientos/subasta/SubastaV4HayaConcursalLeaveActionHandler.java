@@ -371,13 +371,13 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 			if(b instanceof NMBBien){
 				NMBBien bien = (NMBBien) b;
 				if (!Checks.esNulo(bien.getAdjudicacion())) {
-					if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate())){
-						cesionRemate = true;
-					}else if(!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
+					if(!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
 						if (!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
 							if(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0) 
-							{					
-								if(!Checks.esNulo(bien.getAdjudicacion().getTipoDocAdjudicacion())){
+							{	
+								if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate()){
+									cesionRemate = true;
+								}else if(!Checks.esNulo(bien.getAdjudicacion().getTipoDocAdjudicacion())){
 									if(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo().compareTo(DDDocAdjudicacion.ESCRITURA) == 0){
 										otorgamientoEscritura = true;
 									}else{

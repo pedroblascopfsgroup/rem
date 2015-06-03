@@ -99,8 +99,10 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		if (bien.getAdjudicacion() != null){
 			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
 				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
-					if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.DECRETO.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
-						return true;
+					if(bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())){
+						if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.DECRETO.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
+							return true;
+						}
 					}
 				}			
 			}
@@ -117,8 +119,10 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		if (bien.getAdjudicacion() != null){
 			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
 				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
-					if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.ESCRITURA.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
-						return true;
+					if(bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())){
+						if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.ESCRITURA.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
+							return true;
+						}
 					}
 				}			
 			}

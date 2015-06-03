@@ -319,6 +319,7 @@
 					});
 					w.on(app.event.DONE, function(){      
 					  w.close();
+					  app.recargaResolucionesTree();
 					});
 					w.on(app.event.CANCEL, function(){
 					  w.close();

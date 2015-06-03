@@ -13,21 +13,28 @@
         							"procuradores/getPanelListadoTareasPendientes",{},{id:'tareas_resoluciones_panel'});
         							}
         }
-        ,init:function(){
+        ,init: function(){
         		tree.getNodeById('arbol_tareas_nodo_resoluciones').getUI().hide();
-                this.recargaDatosCategorias();
+        		app.recargaDatosCategorias();
+                //this.recargaDatosCategorias();
                 //this.cargaCategorias();
                 //Comentado para evitar que se hagan llamadas periodicas a recovery
                 //setInterval(this.recargaDatosResoluciones, ${appProperties.arbolTareasTiempoRecarga});
                 
         }
-        ,recargaDatosCategorias:function(){
+        
+        ,recargaResolucionesTree: app.recargaResolucionesTree = function(){
+        		tree.getNodeById('arbol_tareas_nodo_resoluciones').getUI().hide();
+        		tree.getNodeById('arbol_tareas_nodo_resoluciones').removeAll();
+        		app.recargaDatosCategorias();
+        }
+        
+        ,recargaDatosCategorias: app.recargaDatosCategorias = function(){
 		              var params = {idUsuario:app.usuarioLogado.id};
 		              page.webflow({
 		                      flow:"categorias/getListaCategoriasByUsuario"
 		                      ,params: params
 		                      ,success: function(datos){
-		                      //debugger;
 		                      		if(datos.despachoIntegral){
 		                      			 if (datos.categorias.length > 0){
 		                      			 	tree.getNodeById('arbol_tareas_nodo_resoluciones').expand(true);

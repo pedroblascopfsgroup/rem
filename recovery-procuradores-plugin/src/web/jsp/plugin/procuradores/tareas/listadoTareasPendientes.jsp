@@ -85,6 +85,7 @@
 				});
 				w.on(app.event.DONE, function(){      
 				  w.close();
+				  app.recargaResolucionesTree();
 				  //app.abreProcedimientoTab(panel.getProcedimientoId(), null, 'tareas');
 				});
 				w.on(app.event.CANCEL, function(){

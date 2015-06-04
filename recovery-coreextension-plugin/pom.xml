@@ -19,6 +19,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core</artifactId>
+			<version>1.3.0.RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>capgemini</groupId>
 			<artifactId>devon-core</artifactId>
 			<classifier>jdk16</classifier>

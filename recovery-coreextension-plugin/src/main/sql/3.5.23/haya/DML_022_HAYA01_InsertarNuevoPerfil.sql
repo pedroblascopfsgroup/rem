@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.0.1-rc03-hy
 --## INCIDENCIA_LINK=HR-596
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##
 --## Finalidad: Nuevo perfil con permisos para la función FUNCION_SUPERVISOR
 --## INSTRUCCIONES: 

@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.0.1-rc03-hy
 --## INCIDENCIA_LINK=HR-596
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##
 --## Finalidad: Insertar en el perfil de haya FPFSRFUNSUPER el permiso para FUNCION_SUPERVISOR
 --## INSTRUCCIONES: 

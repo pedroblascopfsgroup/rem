@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.0.1-rc03-hy
 --## INCIDENCIA_LINK=HR-596
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##
 --## Finalidad: Asignar usuarios al nuevo perfil FPFSRFUNSUPER
 --## INSTRUCCIONES: 

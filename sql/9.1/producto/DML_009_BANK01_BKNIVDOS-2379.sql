@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3
 --## INCIDENCIA_LINK=BKNIVDOS-2379
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

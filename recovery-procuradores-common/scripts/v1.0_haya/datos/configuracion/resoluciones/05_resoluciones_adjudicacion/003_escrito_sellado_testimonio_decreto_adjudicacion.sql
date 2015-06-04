@@ -7,7 +7,7 @@
 -- Insertamos en la tabla dd_tr_tipos_resolucion el tipo de resolución
 INSERT INTO dd_tr_tipos_resolucion
             (dd_tr_id, dd_tr_codigo, dd_tr_descripcion, dd_tr_descripcion_larga, dd_tj_id, VERSION, usuariocrear, fechacrear, borrado, dd_tr_ayuda, bpm_dd_tac_id)
-   SELECT '219', 'R_TR_ADJ_TEST_DEC_ADJ', 'Testimonio de decreto de adjudicacion', 'Testimonio de decreto de adjudicacion', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'ADJ')
+   SELECT '225', 'R_TR_ADJ_TEST_DEC_ADJ', 'Testimonio de decreto de adjudicacion', 'Testimonio de decreto de adjudicacion', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'ADJ')
           , '0','MOD_PROC', SYSDATE, '0', 'Testimonio de decreto de adjudicacion.', (SELECT bpm_dd_tac_id FROM bpm_dd_tac_tipo_accion WHERE bpm_dd_tac_codigo = 'ADVANCE')
      FROM DUAL;
 

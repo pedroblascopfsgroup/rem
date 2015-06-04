@@ -7,13 +7,13 @@
 -- Insertamos en la tabla dd_tr_tipos_resolucion el tipo de resolución.
 INSERT INTO dd_tr_tipos_resolucion
             (dd_tr_id, dd_tr_codigo, dd_tr_descripcion, dd_tr_descripcion_larga, dd_tj_id, VERSION, usuariocrear, fechacrear, borrado, dd_tr_ayuda, bpm_dd_tac_id)
-   SELECT '210', 'R_PR_HIP_AUTO_EST_OP', 'Auto estimado oposicion', 'Auto estimado oposicion', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'HIP')
+   SELECT '208', 'R_PR_HIP_AUTO_EST_OP', 'Auto estimado oposicion', 'Auto estimado oposicion', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'HIP')
           , '0','MOD_PROC', SYSDATE, '0', 'Ayuda de auto estimado oposicion.', (SELECT bpm_dd_tac_id FROM bpm_dd_tac_tipo_accion WHERE bpm_dd_tac_codigo = 'ADVANCE')
      FROM DUAL;
 
 INSERT INTO dd_tr_tipos_resolucion
             (dd_tr_id, dd_tr_codigo, dd_tr_descripcion, dd_tr_descripcion_larga, dd_tj_id, VERSION, usuariocrear, fechacrear, borrado, dd_tr_ayuda, bpm_dd_tac_id)
-   SELECT '211', 'R_PR_HIP_AUTO_DESEST_OP', 'Auto desestimado oposicion', 'Auto desestimado oposicion', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'HIP')
+   SELECT '209', 'R_PR_HIP_AUTO_DESEST_OP', 'Auto desestimado oposicion', 'Auto desestimado oposicion', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'HIP')
           , '0','MOD_PROC', SYSDATE, '0', 'Ayuda de auto desestimado oposicion.', (SELECT bpm_dd_tac_id FROM bpm_dd_tac_tipo_accion WHERE bpm_dd_tac_codigo = 'ADVANCE')
      FROM DUAL;
          

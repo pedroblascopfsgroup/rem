@@ -7,7 +7,7 @@
 
 INSERT INTO dd_tr_tipos_resolucion
             (dd_tr_id, dd_tr_codigo, dd_tr_descripcion, dd_tr_descripcion_larga, dd_tj_id, VERSION, usuariocrear, fechacrear, borrado, dd_tr_ayuda, bpm_dd_tac_id)
-   SELECT '208', 'R_PR_HIP_ESCR_OPOS_CONTR', 'Escrito de oposición de contrario', 'Escrito de oposición de contrario', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'HIP')
+   SELECT '206', 'R_PR_HIP_ESCR_OPOS_CONTR', 'Escrito de oposición de contrario', 'Escrito de oposición de contrario', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'HIP')
           , '0','MOD_PROC', SYSDATE, '0', 'Ayuda de escrito de oposición de contrario.', (SELECT bpm_dd_tac_id FROM bpm_dd_tac_tipo_accion WHERE bpm_dd_tac_codigo = 'ADVANCE')
      FROM DUAL;    
 

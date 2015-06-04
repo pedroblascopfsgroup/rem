@@ -4,6 +4,74 @@ SET DEFINE OFF;
 INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
      VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'HIP', 'P. hipotecario - HAYA', 'Procedimiento hipotecario', 0, 'MOD_PROC',
              SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H001'));
+             
+-- SUBASTA SAREB --
+INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
+     VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'SBS', 'Subasta Sareb - HAYA', 'Subasta Sareb - HAYA', 0, 'MOD_PROC',
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H002'));
+             
+-- SUBASTA A TERCEROS --
+INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
+     VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'SBT', 'Subasta a terceros - HAYA', 'Subasta a terceros - HAYA', 0, 'MOD_PROC',
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H004'));ç
+             
+             
+-- CESION DE REMATE --
+INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
+     VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'CES', 'T. de cesión de remate - HAYA', 'T. de cesión de remate - HAYA', 0, 'MOD_PROC',
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H006'));
+             
+-- ADJUDICACIÓN --
+INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
+     VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'ADJ', 'T. adjudicación - HAYA', 'T. adjudicación - HAYA', 0, 'MOD_PROC',
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H005'));
+             
+-- TRAMITE DE COSTAS --
+INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
+     VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'TCS', 'Trámite de costas - HAYA', 'Trámite de costas - HAYA', 0, 'MOD_PROC',
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H007'));
+             
+-- CERTIFICACION CARGAS --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'CCG', 'Certificación cargas - HAYA', 'Certificación cargas - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H030'));
+ 			
+ -- T.INTERESES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'INT', 'T. Intereses - HAYA', 'T. Intereses - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H042'));
+             
+-- T.GESTIÓN DE LLAVES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'GLL', 'T. Gestión de llaves - HAYA', 'T. Gestión de llaves - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H040'));
+ 			
+-- T.OCUPANTES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'OCU', 'T. Ocupantes - HAYA', 'T. Ocupantes - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H048'));
+ 			
+ -- T.MORATORIA DE LANZAMIENTO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'MRL', 'T. Moratoria de lanzamiento - HAYA', 'T. Moratoria de lanzamiento - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H011'));
+ 			
+ -- T.DE POSESIÓN --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'POS', 'T. de posesión - HAYA', 'T. de posesión - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H015'));
+ 			
+ -- T.SUBSANACIÓN DECRETO ADJUDICACIÓN --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'SDA', 'T. Subsanación decreto adjudicación - HAYA', 'T. Subsanación decreto adjudicación - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H052'));
 
              
 /* Configurar a partir de aquí

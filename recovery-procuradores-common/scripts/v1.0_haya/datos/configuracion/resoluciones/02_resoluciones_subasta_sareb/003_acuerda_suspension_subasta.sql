@@ -7,7 +7,7 @@
 -- Insertamos en la tabla dd_tr_tipos_resolucion el tipo de resolución
 INSERT INTO dd_tr_tipos_resolucion
             (dd_tr_id, dd_tr_codigo, dd_tr_descripcion, dd_tr_descripcion_larga, dd_tj_id, VERSION, usuariocrear, fechacrear, borrado, dd_tr_ayuda, bpm_dd_tac_id)
-   SELECT '214', 'R_TR_SUB_SAR_SUS_SUB', 'Acuerda suspensión de subasta SAREB', 'Acuerda suspensión de subasta SAREB', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'SBS')
+   SELECT '212', 'R_TR_SUB_SAR_SUS_SUB', 'Acuerda suspensión de subasta SAREB', 'Acuerda suspensión de subasta SAREB', (SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'SBS')
           , '0','MOD_PROC', SYSDATE, '0', 'Ayuda de acuerda suspensión de subasta SAREB.', (SELECT bpm_dd_tac_id FROM bpm_dd_tac_tipo_accion WHERE bpm_dd_tac_codigo = 'ADVANCE')
      FROM DUAL;
 

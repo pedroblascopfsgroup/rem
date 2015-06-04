@@ -882,8 +882,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
 	// id: 212 : TRAMITE SUBASTA : Escrito sellado solicitando respuesta. 
 		this.arrayCampos.push([
-					   			{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSolicitud","fieldLabel":"Solicitud de subasta por terceros","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboSolicitud'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
-					                                 }
+					   			{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSolicitud","fieldLabel":"Solicitud de subasta por terceros","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboSolicitud'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 					   			,{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha Solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }			   		
 					   		]);
 

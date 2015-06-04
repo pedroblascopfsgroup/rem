@@ -81,7 +81,7 @@
     </logger>
      -->
     <logger name="org.springframework.security.ldap" additivity="false">
-        <level value="debug"/> 
+        <level value="warn"/> 
         <appender-ref ref="console" />
         <appender-ref ref="file" />
     </logger>

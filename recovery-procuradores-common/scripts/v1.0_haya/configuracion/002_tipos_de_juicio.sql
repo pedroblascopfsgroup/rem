@@ -13,7 +13,7 @@ INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_
 -- SUBASTA A TERCEROS --
 INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
      VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'SBT', 'Subasta a terceros - HAYA', 'Subasta a terceros - HAYA', 0, 'MOD_PROC',
-             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H004'));ç
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H004'));
              
              
 -- CESION DE REMATE --

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
+			http://www.springframework.org/schema/integration/file
+			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
+
+	<!-- ************************************ -->
+	<!-- ******* CANAL DE COMUNICACION ****** -->
+	<!-- ************************************ -->
+	
+	<integration:channel id="recoveryRequest"/>
+	<integration:publish-subscribe-channel id="outgoingChannel" />
+	<integration:bridge input-channel="recoveryRequest" output-channel="outgoingChannel"/>
+
+	<!-- EL ORDEN DE LAS ACCIONES ES IMPORTANTE ***
+	<integration:chain input-channel="recoveryRequest"
+		output-channel="outgoingChannel">
+	</integration:chain>
+	-->
+	
+	<file:outbound-channel-adapter id="backupFiles"
+		channel="outgoingChannel" directory="file:/Documentos/borrar/mensajes/backup"/>
+
+	<file:outbound-channel-adapter id="outgoingFiles"
+		channel="outgoingChannel" directory="file:/Documentos/borrar/mensajes/output"/>
+
+</beans>

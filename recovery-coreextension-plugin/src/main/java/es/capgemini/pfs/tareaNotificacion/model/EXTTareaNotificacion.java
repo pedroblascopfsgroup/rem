@@ -3,6 +3,7 @@ package es.capgemini.pfs.tareaNotificacion.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -22,6 +23,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.integration.Guid;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.Persona;
@@ -29,12 +31,11 @@ import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.tareaNotificacion.VencimientoTarea;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.sync.SyncEntity;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 @Entity
-public class EXTTareaNotificacion extends TareaNotificacion implements SyncEntity {
+public class EXTTareaNotificacion extends TareaNotificacion {
 
 	private static final long serialVersionUID = 1222231003584045081L;
 
@@ -81,9 +82,28 @@ public class EXTTareaNotificacion extends TareaNotificacion implements SyncEntit
 	@JoinColumn(name = "PER_ID")
 	private Persona persona;
 
-	@Column(name = "SYN_REFERENCIA")
-	private String referenciaSincronizacion;
+	@Column(name="SYS_GUID")
+	private String guid;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 	
+	/*@Embedded
+	private Guid guid;
+	
+	public Guid getGuid() {
+		return guid;
+	}
+
+	public void setGuid(Guid guid) {
+		this.guid = guid;
+	}*/
+
 	private static final String _SELECT_ENTIDAD_ASUNTO = " "
 			+ " select NVL(per.per_riesgo, 0)"
 			+ " from   TAR_TAREAS_NOTIFICACIONES ttt, cli_clientes cli, per_personas per"
@@ -1007,12 +1027,4 @@ public class EXTTareaNotificacion extends TareaNotificacion implements SyncEntit
 		return persona;
 	}
 
-	public String getReferenciaSincronizacion() {
-		return referenciaSincronizacion;
-	}
-
-	public void setReferenciaSincronizacion(String referenciaSincronizacion) {
-		this.referenciaSincronizacion = referenciaSincronizacion;
-	}
-	
 }

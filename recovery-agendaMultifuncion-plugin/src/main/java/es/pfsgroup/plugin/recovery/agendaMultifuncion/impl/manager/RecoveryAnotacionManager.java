@@ -119,7 +119,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class)
 				.getUsuarioLogado();
 
-		// FIXME Refactorizar toda esta parte para obtener el nombre y ug. Utilizar una factoría o algo.
+		// FIXME Refactorizar toda esta parte para obtener el nombre y ug. Utilizar una factorï¿½a o algo.
 		String nombre = "";
 		String ug = "";
 		String codUg = dto.getCodUg();
@@ -405,7 +405,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						StringUtils.collectionToCommaDelimitedString(mailsPara),
 						dto.getAsuntoMail(), ug, nombre, HtmlUtils.htmlUnescape(dto.getCuerpoEmail()),
 						dto);
-				// DIANA: Nuevo método para añadir adjuntos al email
+				// DIANA: Nuevo mï¿½todo para aï¿½adir adjuntos al email
 				enviarMailConAdjuntos(mailsPara, emailFrom, dto.getDireccionesMailCc(),
 						asuntoMail, cuerpoEmail, dto.getAdjuntosList());
 				dejarTraza(
@@ -503,7 +503,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	}
 	
 	/*
-	 * Este método es protected para poder hacer un spy durante el testeo
+	 * Este mï¿½todo es protected para poder hacer un spy durante el testeo
 	 */
 	protected void enviarMailConAdjuntos(List<String> mailsPara,
 			String emailFrom, List<String> direccionesMailCc,
@@ -516,7 +516,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		}
 		helper.setSubject(asuntoMail);
 		helper.setText(cuerpoEmail, true);
-		// diana : añadimos aquí los adjuntos
+		// diana : aï¿½adimos aquï¿½ los adjuntos
 		if(!Checks.esNulo(list) && !Checks.estaVacio(list)){
 			for(DtoAdjuntoMail adj : list){
 				helper.addAttachment(adj.getNombre(), adj.getAdjunto().getFileItem().getFile());
@@ -711,7 +711,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 
 		if (customize != null) {
 			model.putAll(customize);
-			//FIXME ¿Cómo sabemos que el mapa debe tener esa propiedad?, buscar un modo mejor de hacer esto.
+			//FIXME ï¿½Cï¿½mo sabemos que el mapa debe tener esa propiedad?, buscar un modo mejor de hacer esto.
 			customizeTempate = customize.get(AgendaMultifuncionCustomTemplate.LOCATION_TEMPLATE_KEY);
 		}
 
@@ -732,7 +732,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	}
 
 	/*
-	 * Este método se pone como protected para poder hacer un spy sobre el durante el testeo
+	 * Este mï¿½todo se pone como protected para poder hacer un spy sobre el durante el testeo
 	 */
 	protected Long crearTarea(Long idUg, String codUg, String asuntoMail,
 			Long idUsuarioDestinatarioTarea, boolean enEspera,

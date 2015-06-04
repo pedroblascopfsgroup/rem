@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
+import es.capgemini.pfs.integration.bpm.IntegracionBpmService;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -22,8 +23,11 @@ public class PROActivarTareaActionHandler extends PROBaseActionHandler implement
 	@Autowired
 	ApiProxyFactory proxyFactory;
 
+	@Autowired
+	IntegracionBpmService bpmIntegrationService;
+	
 	/**
-     * Override del método onEnter. Se ejecuta al entrar al nodo
+     * Override del mï¿½todo onEnter. Se ejecuta al entrar al nodo
      */
     public void onEnter(ExecutionContext executionContext) {
         //Seteamos el tiempo de aplazamiento
@@ -54,6 +58,9 @@ public class PROActivarTareaActionHandler extends PROBaseActionHandler implement
         setVariable(BPMContants.BPM_DETENIDO, 0L, executionContext);
         
         cambiaEstadoProcedimientoAActivado(tareaExterna);
+        
+        // IntegraciÃ³n
+        bpmIntegrationService.notificaActivarTarea(tareaExterna);
         
     }
 	

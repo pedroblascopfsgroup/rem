@@ -61,8 +61,6 @@ import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.registro.AceptarProrrogaListener;
-import es.capgemini.pfs.sync.message.SyncMsgBPMTaskDto;
-import es.capgemini.pfs.sync.message.SyncMsgBPMTaskFactory;
 import es.capgemini.pfs.tareaNotificacion.VencimientoUtils.TipoCalculo;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
@@ -80,8 +78,6 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
-import es.pfsgroup.commons.sync.SyncFramework;
-import es.pfsgroup.commons.sync.SyncMsgFactory;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -90,7 +86,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
-import groovy.swing.factory.ModelFactory;
+
 @Component
 public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionManager implements TareaNotificacionApi {
 
@@ -128,9 +124,6 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     @Autowired
     private EXTModelClassFactory modelClassFactory;
 
-    @Autowired
-    private SyncFramework syncFramework;
-    
     @Override
     @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_MGR_GET)
     @Transactional
@@ -701,12 +694,6 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         // Seteo la entidad en el campo que corresponda
         decodificarEntidadInformacion(idEntidad, codigoTipoEntidad, notificacionTarea);
         EXTTareaNotificacion tarea = genericDao.save(EXTTareaNotificacion.class, notificacionTarea);
-        if (syncFramework != null) {
-        	SyncMsgFactory<SyncMsgBPMTaskDto> factory = (SyncMsgFactory<SyncMsgBPMTaskDto>)syncFramework.get(SyncMsgBPMTaskFactory.MSG_FACTORY_ID);
-        	SyncMsgBPMTaskDto task = factory.createMessage();
-        	task.load(tarea);
-        	factory.send(task);
-        }
         return tarea.getId();
     }
 
@@ -1287,4 +1274,12 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
         // saveOrUpdate(tarea);
     }
+
+	public EXTTareaNotificacion getTareaNoficiacionByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTTareaNotificacion tareaNotif = genericDao.get(EXTTareaNotificacion.class, filtro);
+		return tareaNotif;
+	}
+    
+
 }

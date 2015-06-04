@@ -28,7 +28,7 @@ public interface CambiosMasivosApi {
 	public List<PeticionCambioMasivoGestoresAsunto> getCambiosGestoresPendientesPaginados(Long idAsunto);
 
 	/**
-	 * Anota en BBDD una petición de cambio masivo de gestores de un asunto para
+	 * Anota en BBDD una peticiï¿½n de cambio masivo de gestores de un asunto para
 	 * su posterior proceso en el batch
 	 * 
 	 * @param dto

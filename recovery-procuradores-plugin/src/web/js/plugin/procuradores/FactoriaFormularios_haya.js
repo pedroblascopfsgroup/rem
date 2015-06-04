@@ -49,7 +49,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         this.initArrays(this.idFactoria);
     },
     
-
+/*
     updateStores: function(){
     	this.dsPlazas.load({params:{idFactoria:this.idFactoria, dsProcedimiento:this.dsProcedimiento}});    	
     	this.dsProcedimiento.load({params:{idFactoria:this.idFactoria, idProcedimiento:this.idProcedimiento}});
@@ -69,6 +69,42 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	this.storeDDPositivoNegativo.load({params:{idFactoria:this.idFactoria}});
     	this.storeDDCorrectoCobro.load({params:{idFactoria:this.idFactoria}});
     	
+    },
+*/    
+    
+    updateStores: function(idTipoResolucion){
+    	
+    	campos = this.arrayCampos[idTipoResolucion];
+
+    	for (var i=0;i<campos.length;i++)
+    	{ 	
+    		var campo=campos[i];
+    		
+    		if(typeof campo.store != 'undefined' && (campo.store instanceof Ext.data.Store) && (campo.store.getTotalCount( ) == 0 && campo.store.url!="/pfs/pcdprocesadoresoluciones/getJuzgadosByPlaza.htm") ){
+    			
+    			var cmp =Ext.getCmp(campo.id);
+    			cmp_selected = cmp.getValue();
+
+    			if(cmp_selected != null && cmp_selected != ''){
+    				////CARGAMOS SOLO EL ELEMENTO SELECCIONADO
+    				campo.store.baseParams.codigo = cmp_selected;
+    				campo.store.baseParams.query = "";
+    				campo.store.load();
+    				campo.store.on('load', function(){  
+    					cmp.setValue(cmp_selected);
+    					cmp.store.events['load'].clearListeners();
+    					cmp.store.baseParams.codigo = "";
+					});
+    				
+    			}else{
+    				campo.store.baseParams.codigo = "";
+    				campo.store.baseParams.query = "";
+    				campo.store.load({params:{idFactoria:this.idFactoria}});	
+    			}
+    			
+    		}
+    		
+    	}
     },
     
     getFormItems: function(idTipoResolucion, idAsunto, codigoProcedimiento, codPlaza,idProcedimiento, filtrar){
@@ -155,22 +191,41 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 //													 ]);
 //    	
     	
-    	//COMENTADO CARLOS
+    	
+    	
     	this.dsPlazas = new Ext.data.Store({
     		autoLoad: false,
     		baseParams: {limit:10, start:0},
-    		url:'/pfs/plugin/procedimientos/plazasDeJuzgados.htm',
+    		url:'/pfs/pcdprocesadoresoluciones/getPlazas.htm',
     		actionMethods: {
     			create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'
     			},
     		reader: new Ext.data.JsonReader({
-    			root: 'plazas'
+    			root: 'diccionario'
     			,totalProperty: 'total'
     		}, [
     			{name: 'codigo', mapping: 'codigo'},
     			{name: 'descripcion', mapping: 'descripcion'}
     		])
     	});
+    	
+    	
+    	//COMENTADO CARLOS PARA AÑADIR QUE BUSQUE POR CODIGO
+//    	this.dsPlazas = new Ext.data.Store({
+//    		autoLoad: false,
+//    		baseParams: {limit:10, start:0},
+//    		url:'/pfs/plugin/procedimientos/plazasDeJuzgados.htm',
+//    		actionMethods: {
+//    			create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'
+//    			},
+//    		reader: new Ext.data.JsonReader({
+//    			root: 'plazas'
+//    			,totalProperty: 'total'
+//    		}, [
+//    			{name: 'codigo', mapping: 'codigo'},
+//    			{name: 'descripcion', mapping: 'descripcion'}
+//    		])
+//    	});
     	
 //    	var dsPlazasRecord = Ext.data.Record.create([
 //    	                                          		 {name:'codigo'}
@@ -717,6 +772,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 							var juzgado=Ext.getCmp('d_juzgado_id' + idFactoria);
 							var storeJuzgado= juzgado.getStore();
 							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+							storeJuzgado.on('load', function(){  
+								juzgado.setValue(juzgado.getValue());
+							});
 						}
         		 }
           }

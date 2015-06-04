@@ -100,10 +100,10 @@
 						}
 					}
 					
-					factoriaFormularios.updateStores();
+					factoriaFormularios.updateStores('${idTipoResolucion}');
 				}
 				,error : function (result, request){
-					factoriaFormularios.updateStores();
+					factoriaFormularios.updateStores('${idTipoResolucion}');
 					alert("error guardarYProcesar");
 				}
 			});

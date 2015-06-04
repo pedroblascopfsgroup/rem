@@ -15,11 +15,14 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PaginationParams;
+import es.capgemini.devon.pagination.PaginationParamsImpl;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.persona.PersonaApi;
+import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
@@ -42,6 +45,7 @@ import es.capgemini.pfs.web.genericForm.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVAsuntoApi;
@@ -65,7 +69,6 @@ import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcu
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.model.RecoveryBPMfwkDatosProcedimiento;
-import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 
 
 /**
@@ -163,6 +166,8 @@ public class PCDProcesadoResolucionesController {
 	private static final String JSON_LISTA_DD_CORRECTO_COBRO = "plugin/procuradores/embargo_salarios/ddCorrectoCobroJSON";
 	
 	private static final String CODIGO_SUBIDA_FICHEROS = "RESOL_ESP_UPLOAD";
+	
+	private static final String JSON_LISTA_DICCIONARIO_GENERICO_PAGE = "plugin/procuradores/diccionarioGenericoJSON";
 	
 	
 	@Autowired
@@ -797,13 +802,56 @@ public class PCDProcesadoResolucionesController {
      */
     @SuppressWarnings("unchecked")
     @RequestMapping
-    public String getPlazas(ModelMap model){
-    	List<TipoPlaza> plazas= apiProxyFactory.proxy(MSVDiccionarioApi.class).dameValoresDiccionario(TipoPlaza.class);
+    public String getPlazas(String codigo,String query, WebRequest request,ModelMap model){
     	
-    	model.put("plazas", plazas);
+
+    	if(!Checks.esNulo(query)){
+        	
+    		BuscaPlazaPaginadoDtoInfo dto = DynamicDtoUtils.create(BuscaPlazaPaginadoDtoInfo.class, request);
+        	dto.setSort("descripcion");
+    		Page plazas = proxyFactory.proxy(PlazaJuzgadoApi.class).buscarPorDescripcion(dto);
+    		model.put("pagina", plazas);
+    		
+    	}else{
+        	
+    		PaginationParams pagination = new PaginationParamsImpl();
+        	pagination.setLimit(Integer.parseInt(request.getParameter("limit")));
+        	pagination.setStart(Integer.parseInt(request.getParameter("start")));
+        	pagination.setSort("descripcion");
+        	Page plazas = apiProxyFactory.proxy(MSVDiccionarioApi.class).dameValoresDiccionarioPage(TipoPlaza.class,pagination,codigo,query);
+        	model.put("pagina", plazas);
+	
+    	}
+
     	
-    	return JSON_LISTA_PLAZAS;
+    	return JSON_LISTA_DICCIONARIO_GENERICO_PAGE;
     }
+    
+    
+//    @SuppressWarnings("unchecked")
+//    @RequestMapping
+//    public String getPlazas(WebRequest request,ModelMap model){
+//    	
+//    	BuscaPlazaPaginadoDtoInfo dto = DynamicDtoUtils.create(BuscaPlazaPaginadoDtoInfo.class, request);
+//    	
+//    	dto.setSort("descripcion");
+//    	
+//		Page plazas = proxyFactory.proxy(PlazaJuzgadoApi.class).buscarPorDescripcion(dto);
+//		model.put("pagina", plazas);
+//    	
+//    	return JSON_LISTA_DICCIONARIO_GENERICO_PAGE;
+//    }
+    
+    
+//    @SuppressWarnings("unchecked")
+//    @RequestMapping
+//    public String getPlazas(ModelMap model){
+//    	
+//    	List<TipoPlaza> plazas = apiProxyFactory.proxy(MSVDiccionarioApi.class).dameValoresDiccionario(TipoPlaza.class);
+//    	model.put("pagina", plazas);
+//    	
+//    	return JSON_LISTA_DICCIONARIO_GENERICO_PAGE;
+//    }
     
     /**
      * Metodo que devuelve los juzgados que perteneces a una plaza
@@ -815,9 +863,10 @@ public class PCDProcesadoResolucionesController {
     @RequestMapping
     public String getJuzgadosByPlaza(String codigoPlaza, ModelMap model) {
     	
-    	List<TipoJuzgado> juzgados = apiProxyFactory.proxy(PlazaJuzgadoApi.class).buscaJuzgadosPorPlaza(codigoPlaza);
-       
-    	model.put("juzgados", juzgados);
+    	if(!Checks.esNulo(codigoPlaza)){
+    		List<TipoJuzgado> juzgados = apiProxyFactory.proxy(PlazaJuzgadoApi.class).buscaJuzgadosPorPlaza(codigoPlaza);
+    	    model.put("juzgados", juzgados);	
+    	}
         
     	return JSON_LISTA_JUZGADOSPLAZA;
     }

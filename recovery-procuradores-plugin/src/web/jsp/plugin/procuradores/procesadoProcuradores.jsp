@@ -110,7 +110,7 @@ onViewClick : function(doFocus){
     		datosResolucion.add({xtype:'hidden',name:'idFichero',value:''});
     		datosResolucion.setVisible(true);
     		datosResolucion.doLayout();
-    		factoriaFormularios.updateStores();
+    		factoriaFormularios.updateStores(comboTipoResolucionNew.getValue());
 			}  
     	} 
     });
@@ -652,7 +652,6 @@ onViewClick : function(doFocus){
     var listaArchivosStore = page.getStore({
       flow:'pcdprocesadoresoluciones/mostarProcesos'
       ,limit:25
-      ,event:'listado'
       ,remoteSort:true
       ,reader: new Ext.data.JsonReader({
         root : 'listaProcesosResolucion'
@@ -727,8 +726,6 @@ onViewClick : function(doFocus){
            }
     });        
     
-    var pagingBar=fwk.ux.getPaging(listaArchivosStore);
-    
     var listaArchivosGrid = app.crearGrid(listaArchivosStore, listaArchivosCM, {
         title : '<s:message code="plugin.procuradores.procesadoResoluciones.gridArchivos.titulo" text="**Estado de cargas" />'
         ,height: 220
@@ -739,13 +736,12 @@ onViewClick : function(doFocus){
         ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
         ,plugins: [filters]
         //,bbar:[ btnRecargar]
-<!-- 		,bbar: new Ext.PagingToolbar({ -->
-<!--             store: listaArchivosStore, -->
-<!--             pageSize: 25, -->
-<!--             plugins: [filters] -->
-<!--         }) -->
-		,bbar:[pagingBar]
-    }); 
+		,bbar: new Ext.PagingToolbar({
+            store: listaArchivosStore,
+            pageSize: 25,
+            plugins: [filters]
+        })
+    });    
 
     listaArchivosGrid.on('rowclick', function(grid, rowIndex, e) {
 		var idResolucion = grid.getStore().getAt(rowIndex).get('idResolucion');
@@ -1016,7 +1012,5 @@ var updateBotonGuardar  = function(){
 	}
 }
 
-   	Ext.onReady(function(){
-		listaArchivosStore.webflow();
-	});
+
 </fwk:page>

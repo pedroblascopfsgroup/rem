@@ -57,7 +57,7 @@
     
     datosResolucion.doLayout();
     datosResolucion.add(factoriaFormularios.getFormItems('${idTipoResolucion}','${idAsunto}', '${codigoTipoProc}', '${codigoPlaza}','${idProcedimiento}',true));
-	factoriaFormularios.updateStores();
+	factoriaFormularios.updateStores('${idTipoResolucion}');
 	
 	
 	var btnCancelar= new Ext.Button({

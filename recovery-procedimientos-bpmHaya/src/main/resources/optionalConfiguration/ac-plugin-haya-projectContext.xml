@@ -27,12 +27,6 @@
 				<entry key="GESTION-LLAVES" value="H040"/>
 			</map>
 		</property>
-		<property name="tareasCierreDeuda">
-			<map>
-				<entry key="CelebracionSubastaSareb" value="H002_CelebracionSubasta"/>
-				<entry key="SenyalamientoSubastaSareb" value="H002_SenyalamientoSubasta"/>
-			</map>
-		</property>
 	</bean>
 
 	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">

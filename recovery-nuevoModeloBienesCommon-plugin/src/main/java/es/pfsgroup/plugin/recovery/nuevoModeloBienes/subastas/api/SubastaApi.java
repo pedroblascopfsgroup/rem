@@ -1,12 +1,10 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api;
 
 import java.util.List;
-import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -14,12 +12,12 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoLoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 
@@ -45,9 +43,6 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_PASAR_LOTES_TRAS_VALIDAR = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.marcarLotesEstadoTrasValidar";
 	public static final String BO_NMB_SUBASTA_PERMITE_SOLICITAR_TASACION = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.permiteSolicitarTasacion";
 	public static final String BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarSubastasXLSCount";
-	public static final String BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.obtenerTareasCierreDeuda";
-	public static final String BO_NMB_SUBASTA_ACTUALIZAR_INFORMACION_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.actualizarInformacionCierreDeuda";
-	public static final String BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.obtenValorNodoPrc";
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -174,14 +169,5 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT)
 	public Integer buscarSubastasXLSCount(NMBDtoBuscarSubastas dto);
-	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
-	public Map<String, String> obtenerTareasCierreDeuda();
-	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
-	public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto);
-	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
-	String obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor);
 	
 }

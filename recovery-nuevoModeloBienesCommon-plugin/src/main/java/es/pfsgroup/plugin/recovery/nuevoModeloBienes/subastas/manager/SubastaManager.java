@@ -1,21 +1,18 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
@@ -30,27 +27,19 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.APPConstants;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
-import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
@@ -75,13 +64,13 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
-import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
-import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 @Service("subastaManager")
@@ -1220,79 +1209,6 @@ public class SubastaManager implements SubastaApi {
 			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 						
 			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado).size();	
-		}
-		
-		@Override
-		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
-		public Map<String, String> obtenerTareasCierreDeuda() {
-			 return projectContext.getTareasCierreDeuda();
-		}
-		
-		@Override
-		@Transactional(readOnly = false)
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
-		public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto) {
-			Subasta subasta = subastaDao.get(Long.valueOf(dto.getIdSubasta()));
-			TipoJuzgado tipoJuzgado = (TipoJuzgado) genericDao.get(TipoJuzgado.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPlazaJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-			TipoPlaza tipoPlaza = (TipoPlaza) genericDao.get(TipoPlaza.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTipoJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-			tipoJuzgado.setPlaza(tipoPlaza);
-			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
-			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
-			
-			// H002/H003/H004
-			HistoricoProcedimiento procedimiento = getNodo(subasta.getProcedimiento(), "");
-			getValorNodoPrc(procedimiento, "");
-			
-			TareaProcedimiento tareaProcedimiento = (TareaProcedimiento) genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "H002ssas"), genericDao.createFilter(FilterType.EQUALS, "codigo", "H002ssas"), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-		}
-		
-		@Override
-		@Transactional(readOnly = false)
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
-		public String obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
-			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
-			return getValorNodoPrc(historicoPrc, valor);
-		}
-		
-		
-		private HistoricoProcedimiento getNodo(Procedimiento procedimiento, String nombreNodo) {
-			HistoricoProcedimiento hPrc = null;
-			if ((!Checks.esNulo(procedimiento)) && (!Checks.esNulo(nombreNodo))) {
-				List<EXTHistoricoProcedimiento> listadoTareasProc = proxyFactory.proxy(EXTHistoricoProcedimientoApi.class).getListByProcedimientoEXT(procedimiento.getId());			
-				if (!Checks.esNulo(listadoTareasProc)) {
-					for (EXTHistoricoProcedimiento hp : listadoTareasProc) {
-						// Filtramos por el código de la tarea donde están los campos que
-						// necesitamos y nos quedamos con el último
-						if (!Checks.esNulo(hp.getCodigoTarea()) &&  nombreNodo.equals(hp.getCodigoTarea())) {
-							hPrc = hp;
-							break;
-						}
-					}
-				}
-			}
-			return hPrc;
-		}
-		
-		private String getValorNodoPrc(HistoricoProcedimiento hPrc, String valor) {
-			// Si hemos encontrado una tarea del tipo especificado
-			if (!Checks.esNulo(hPrc) && !Checks.esNulo(valor)) {
-				if (!Checks.esNulo(hPrc.getIdEntidad())) {
-					TareaNotificacion tareaSS = proxyFactory.proxy(TareaNotificacionApi.class).get(hPrc.getIdEntidad());
-					if (!Checks.esNulo(tareaSS)) {
-						if (!Checks.esNulo(tareaSS.getTareaExterna())) {
-							List<TareaExternaValor> listadoValores = tareaSS.getTareaExterna().getValores();
-							if (!Checks.esNulo(listadoValores)) {
-								for (TareaExternaValor val : listadoValores) {
-									if (valor.equals(val.getNombre())) {
-										return val.getValor();
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			return null;
 		}
 	
 }

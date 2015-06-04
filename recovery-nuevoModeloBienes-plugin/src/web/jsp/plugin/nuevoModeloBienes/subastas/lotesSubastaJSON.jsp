@@ -20,7 +20,6 @@
             <json:property name="observaciones" value="${s.lote.observaciones}" />
             <json:array name="bienes" items="${s.lote.bienes}" var="bien">
 				<json:object>         	
-					<json:property name="idLoteBien" value="${s.lote.id}" />
 					<json:property name="idBien" value="${bien.id}" />
 		            <json:property name="numActivo" value="${bien.numeroActivo}" />
 					<json:property name="referenciaCatastral" value="${bien.referenciaCatastral}"/>

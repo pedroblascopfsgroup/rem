@@ -34,8 +34,14 @@
 				<entry key="POSESION" value="P416"/>
 				<entry key="GESTION-LLAVES" value="P417"/>
 			</map>
+		</property>		
+		<property name="tareasCierreDeuda">
+			<map>
+				<entry key="SenyalamientoSubastaBankia" value="P401_SenyalamientoSubasta"/>
+				<entry key="SenyalamientoSubastaSareb" value="P409_SenyalamientoSubasta"/>
+			</map>
 		</property>
-	</bean>	
+	</bean>
 	
 	<!-- Implementaciones por defecto-->
 	<bean id="nmbCommonProjectContext" parent="nmbCommonProjectContextDefault"/>

@@ -57,6 +57,8 @@ public interface NMBProjectContext {
 	//void setTiposProcedimientosAdjudicados(List<String> tiposPrcAdjudicados);
 	
 	Map<String, String> getMapaTiposPrc();
+
+	Map<String, String> getTareasCierreDeuda();
 	
 	//void setMapaTiposPrc(Map<String, String> mapaTiposPrc);
 	

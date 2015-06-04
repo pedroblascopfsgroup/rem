@@ -354,6 +354,55 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				//ouch!
 			}
 			servicioGMP5JD20.setNumeroDeRegistroDeLaPropiedadnuregw(numeroRegistroPropiedad);
+
+			
+			//NUEVOS CONTENEDORES
+			System.out.println("COTIV4"); // longitud="2"	 Código tipo de via	
+			String tipoDeVia = bien.getLocalizacionActual().getTipoVia().getCodigo();
+			servicioGMP5JD20.setCodigoTipoDeViacotiv4(tipoDeVia);
+
+			System.out.println("COMUID"); // longitud="9"	 Código población Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
+			String comuid = StringUtils.rightPad(bien.getLocalizacionActual().getLocalidad().getCodigo(),9,"0");
+			servicioGMP5JD20.setCodigoDeMunicipioIneSolviacomuid(comuid);
+			
+			//FIXME Debe enviar el código, y no la descripción
+			System.out.println("COMUIX"); // longitud="9"	 Código población registral Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
+			String comuix = StringUtils.rightPad(bien.getDatosRegistralesActivo().getMunicipoLibro(),9,"0");
+			servicioGMP5JD20.setCodigoDeMunicipioRegistroAlfcomuix(comuix);
+			
+			System.out.println("NUPOAC"); // longitud="10"	 Portal	
+			String nupoac = bien.getLocalizacionActual().getPortal();
+			servicioGMP5JD20.setPortalPuntoKilometriconupoac(nupoac);
+			
+			System.out.println("NUESAC"); // longitud="5"	 Escalera
+			String nuesac = bien.getLocalizacionActual().getEscalera();
+			servicioGMP5JD20.setESCALERANUESAC(nuesac);
+			
+			System.out.println("NUPUAC"); // longitud="17"	 Número de puerta
+			String nupuac = bien.getLocalizacionActual().getPuerta();
+			servicioGMP5JD20.setNumeroDePuertanupuac(nupuac);
+			
+			System.out.println("NOBAAC"); // longitud="55"	 Barrio
+			String nobaac = bien.getLocalizacionActual().getBarrio();
+			servicioGMP5JD20.setBarrioOColonianobaac(nobaac);
+			
+			System.out.println("COPOI5"); // longitud="5"	 Código postal
+			String copoi5 = bien.getLocalizacionActual().getCodPostal();
+			servicioGMP5JD20.setCodigoPostalcopoi5(copoi5);
+			
+			System.out.println("NOPRAC"); // longitud="18"	 Nombre de la provincia
+			String noprac = bien.getLocalizacionActual().getProvincia().getDescripcion();
+			servicioGMP5JD20.setNombreDeLaProvincianoprac(noprac);
+			
+			System.out.println("COPAW3"); // longitud="3"	 Codigo pais
+			String copaw3 = bien.getLocalizacionActual().getPais().getDescripcion();
+			servicioGMP5JD20.setCodigoPaisSede1copaw3(copaw3);
+			
+			System.out.println("COBIPW"); // longitud="15"	 Id bien en recovery
+			String cobipw = bien.getId().toString();
+			servicioGMP5JD20.setIdBienEnRecoverycobipw(cobipw);
+			
+			
 			System.out.println(" ***REQUERIDO*** CORPRW"); // 	"NUMERICO_4" longitud="5"	 Código de régimen de protección 	siempre 0
 			servicioGMP5JD20.setRegimenDeProteccioncorprw((short) 00000);
 			System.out.println(" ***REQUERIDO*** COENAX"); // 	"NUMERICO_4" longitud="5"	 Código entrada activo 	siempre 1

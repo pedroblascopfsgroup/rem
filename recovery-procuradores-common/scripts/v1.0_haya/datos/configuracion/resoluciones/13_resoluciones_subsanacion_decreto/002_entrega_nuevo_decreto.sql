@@ -1,5 +1,5 @@
 /**
- * Trámite: Ocupantes.
+ * Trámite: Subsanación decreto adjudicación.
  * Resolución: Solicitud de requerimiento documentación a ocupantes
  * Tareas: H052_EntregarNuevoDecreto 
  **/

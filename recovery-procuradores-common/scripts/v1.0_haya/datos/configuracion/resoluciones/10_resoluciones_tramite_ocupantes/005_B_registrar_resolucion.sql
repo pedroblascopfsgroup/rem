@@ -1,6 +1,6 @@
 /**
  * Trámite: Ocupantes.
- * Resolución: Registrar resolución
+ * Resolución: Registrar resolución no tiene derecho
  * Tareas: H048_RegistrarResolucion 
  **/
 

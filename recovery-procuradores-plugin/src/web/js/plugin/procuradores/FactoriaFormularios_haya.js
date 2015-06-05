@@ -815,23 +815,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
                               ,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboResultado","fieldLabel":"Admisión","autoload":true, mode:'local',triggerAction: 'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
                               }         
                               ]);  
-
-	// id: 204 : TRAMITE HIPOTECARIO : Confirmar notificacion del auto favorable
-		this.arrayCampos.push([
-		    {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima },
-			{"xtype":'combo',"store":storeSINO,"value":"01", "name":"d_comboResultado","fieldLabel":"Confirmar Notificacion","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}		     
-		
-		]);
-
-	// id: 205 : TRAMITE HIPOTECARIO : Confirmar notificacion del auto desfavorable
-		this.arrayCampos.push([
-			{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima },
-			{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboResultado","fieldLabel":"Confirmar Notificacion","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}			
-		
-		]);
     
         
-        // id: 206 : TRAMITE HIPOTECARIO : Requerimiento de Pago Positivo.
+        // id: 204 : TRAMITE HIPOTECARIO : Requerimiento de Pago Positivo.
 		this.arrayCampos.push([
 			{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha oposición",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
@@ -840,7 +826,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		
 		]);
         
-        // id: 207 : TRAMITE HIPOTECARIO : Requerimiento de Pago Negativo.
+        // id: 205 : TRAMITE HIPOTECARIO : Requerimiento de Pago Negativo.
 		this.arrayCampos.push([
 			{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha oposición",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
@@ -849,7 +835,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		
 		]);
         
-        // id: 208 : TRAMITE HIPOTECARIO : Escrito de oposición del contrario.
+        // id: 206 : TRAMITE HIPOTECARIO : Escrito de oposición del contrario.
 		this.arrayCampos.push([
 		   			{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 		   			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
@@ -859,37 +845,36 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		   		]);
 		
 		
-        // id: 209 : TRAMITE HIPOTECARIO : Senyalamiento Vista Oposición.
+        // id: 207 : TRAMITE HIPOTECARIO : Senyalamiento Vista Oposición.
 		this.arrayCampos.push([
 		   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 		   		]);
 		
 
-        // id: 210 : TRAMITE HIPOTECARIO : Auto Estimando Opsición.
+        // id: 208 : TRAMITE HIPOTECARIO : Auto Estimando Opsición.
 		this.arrayCampos.push([
 			   			{"xtype":'combo',"store":storeSINO,"value":"01", "name":"d_resultado","fieldLabel":"Oposición","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 			   			,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha Resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }			   		
 			   		]);
 		
 		
-        // id: 211 : TRAMITE HIPOTECARIO : Auto Desestimando Opsición.     
+        // id: 209 : TRAMITE HIPOTECARIO : Auto Desestimando Opsición.     
 		this.arrayCampos.push([
 					   			{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_resultado","fieldLabel":"Oposición","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 					   			,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha Resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }			   		
 					   		]);
 
 
+		
 
-	// id: 212 : TRAMITE SUBASTA : Escrito sellado solicitando respuesta. 
+	// id: 210 : TRAMITE SUBASTA : Escrito sellado solicitando subasta. 
 		this.arrayCampos.push([
-					   			{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSolicitud","fieldLabel":"Solicitud de subasta por terceros","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboSolicitud'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-					   			,{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha Solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }			   		
-					   		]);
-
-
-	// id: 213 : TRAMITE SUBASTA : Edicto de subasta + D.O. Señalamiento subasta
+					   			{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha Solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }			   		
+					   		]);		
+		
+	// id: 211 : TRAMITE SUBASTA : Edicto de subasta + D.O. Señalamiento subasta
 	this.arrayCampos.push([
-		{"xtype":'numberfield',"name":"d_principal","fieldLabel":"Principal",allowBlank:false}
+		{"xtype":'numberfield',"name":"d_principal","fieldLabel":"Principal",allowBlank:true}
 		,{"xtype":'numberfield',"name":"d_intereses","fieldLabel":"Intereses generados a fecha del señalamiento de subasta.",allowBlank:false}
 		,{"xtype":'numberfield',"name":"d_costasLetrado","fieldLabel":"Costas de letrado",allowBlank:false}
 		,{"xtype":'datefield',"name":"d_fechaAnuncio","fieldLabel":"Fecha anuncio",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
@@ -899,129 +884,201 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
 	]);
 
-	// id: 214 : TRAMITE SUBASTA : Edicto de subasta + D.O. Señalamiento subasta
+	// id: 212 : TRAMITE SUBASTA : Acuerda suspensión de subasta SAREB
 	this.arrayCampos.push([
-		{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboCelebrada","fieldLabel":"Subasta celebrada","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCelebrada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboCesion","fieldLabel":"Cesión de remate","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCesion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivo","fieldLabel":"Motivo de suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboSuspension","fieldLabel":"Decisión de suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboComite","fieldLabel":"Postores en la subasta","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboComite'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-			]);
+	                       {"xtype":'datefield',"name":"d_fechaSuspension","fieldLabel":"Fecha suspensión",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ]);
 
 	
-	// id: 215 : TRAMITE SUBASTA : D.O Entrega de cantidad consignada por 3º
+	// id: 213 : TRAMITE SUBASTA : Acta de subasta
+	this.arrayCampos.push([
+	                       {"xtype":'combo',"store":storeSINO, "name":"d_comboCelebrada","fieldLabel":"Celebrada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCelebrada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO, "name":"d_comboPostores","fieldLabel":"Postores",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPostores'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	]);
+	
+	// id: 214 : TRAMITE SUBASTA :Escrito sellado solicitando entrega de cantidades consignadas.
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	]);
+	
+	// id: 215 : TRAMITE SUBASTA : Entrega de cantidad consignada
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_importe","fieldLabel":"Importe",allowBlank:true}
+	]);
+	
+	
+	
+	
+	// id: 216 : TRAMITE SUBASTA A TERCEROS: Solicitud suspension de subasta.
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ]);
+	
+	
+	// id: 217 : TRAMITE SUBASTA A TERCEROS: Registrar resultado de suspensión de subasta
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":storeSINO, "name":"d_comboSolicitudSubastaSuspendida","fieldLabel":"Solicitud Subasta suspendida",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSolicitudSubastaSuspendida'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ]);
+	
+	// id: 218 : TRAMITE SUBASTA A TERCEROS: Celebración subasta
+	this.arrayCampos.push([
+	                       {"xtype":'combo',"store":storeSINO, "name":"d_comboCelebrada","fieldLabel":"Celebrada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCelebrada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO, "name":"d_comboPostores","fieldLabel":"Postores",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPostores'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	// id: 219 : TRAMITE SUBASTA A TERCEROS: Solicitud mandamiento de pago
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	]);
+	
+	// id: 220 : TRAMITE SUBASTA A TERCEROS: Confirmar mandamiento de pago
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_importe","fieldLabel":"Importe",allowBlank:true}
+	]);
+	
+	
+	
+	
+	// id: 221 : CESION DE REMATE : Acordando fecha de cesión
 	this.arrayCampos.push([
 		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	]);
-
-	// id: 216 : CESION DE REMATE : Resolución acordando fecha de cesión
+	
+	// id: 222 : CESION DE REMATE : Acta cesión de remate
 	this.arrayCampos.push([
 		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+		,{"xtype":'combo',"store":storeSINO, "name":"d_comboTitularizado","fieldLabel":"Titularizado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboTitularizado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	]);
+	
+	
+	
+	
 		
-	// id: 217 : ADJUDICACIÓN : Escrito sellado solicitando adjudicación
+	// id: 223 : ADJUDICACIÓN : Solicitud decreto de adjudicacion
 	this.arrayCampos.push([
 		{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	]);
 
-	// id: 218 : ADJUDICACIÓN : Decereto de adjudicación
+	// id: 224 : ADJUDICACIÓN : Notificacion decreto adjudicacion.
 	this.arrayCampos.push([
 		{"xtype":'datefield',"name":"d_fecha","field":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-		,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSubsanacion","fieldLabel":"Requiere subsanación","autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboSubsanacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		,{"xtype":'combo',"store":this.storeEntidadAdjudicataria, "name":"d_comboEntidadAdjudicataria","fieldLabel":"Entidad Adjudicataria","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboEntidadAdjudicataria'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		,{"xtype":'combo',"store":this.storeFondo, "name":"d_fondo","fieldLabel":"Fondo","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_fondo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+		,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSubsanacion","fieldLabel":"Requiere subsanación","autoload":true, mode:'local',triggerAction:'all',allowBlank:false,resizable:true, 	id:'d_comboSubsanacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	]);
 	
-	// id: 219 : ADJUDICACIÓN : Decereto de adjudicación
+	// id: 225 : ADJUDICACIÓN : Solicicitud de testimonio de decreto adjudicacion
 	this.arrayCampos.push([
 		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	]);
 
-	// id: 220 : ADJUDICACIÓN : Decereto de adjudicación
+	// id: 226 : ADJUDICACIÓN : Confirmar testimonio decreto adjudicacion.
 	this.arrayCampos.push([
 		{"xtype":'datefield',"name":"d_fechaTestimonio","fieldLabel":"Fecha testimonio",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-		,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSubsanacion","fieldLabel":"Requiere subsanación","autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboSubsanacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+		,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSubsanacion","fieldLabel":"Requiere subsanación","autoload":true,allowBlank:false, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboSubsanacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 		,{"xtype":'datefield',"name":"d_fechaEnvioGestoria","fieldLabel":"Fecha envio gestoría",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	]);
 	
 	
-    // id: 221 : TRAMITE COSTAS : Solicitud de tasación de costas
+	
+	
+	
+	
+    // id: 227 : TRAMITE COSTAS : Solicitud de tasación de costas
 	this.arrayCampos.push([
 	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}]);
+					,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}]);
 	   		]);
 	
-    // id: 222 : TRAMITE COSTAS : Tasación de costas del juzgado
-	this.arrayCampos.push([
-	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   				,{"xtype":'numberfield',"name":"d_cuantia","fieldLabel":"Cuantía",allowBlank:false}]);
+    // id: 228 : TRAMITE COSTAS : Tasación de costas del juzgado
+	   		this.arrayCampos.push([
+	   			   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   			   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}]);
+	   							,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}]);
+	   			   		]);
 	
-     //id: 223 : TRAMITE COSTAS : Impugnación tasación de costas del juzgado
+     //id: 229 : TRAMITE COSTAS : Impugnación tasación de costas del juzgado
 	this.arrayCampos.push([
-	                 {"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboImpugnacion","fieldLabel":"Impugnación","autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                 {"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboImpugnacion","fieldLabel":"Impugnación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				,{"xtype":'datefield',"name":"d_fechaImpugnacion","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   				,{"xtype":'datefield',"name":"d_vistaImpugnacion","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				]);
 	   				
-    //id: 224 : TRAMITE COSTAS : Registrar celebración visita
+    //id: 230 : TRAMITE COSTAS : Registrar celebración visita
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   				]);
 	
-    //id: 225 : TRAMITE COSTAS : Registrar resolución
+    //id: 231 : TRAMITE COSTAS : Autoaprobacion de costas
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_resultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAprobada","fieldLabel":"Aprobada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAprobada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}]);
+						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}]);
 	   				]);
 	
-    //id: 226 : TRAMITE COSTAS : Autoaprobacion de costas
-	this.arrayCampos.push([
-	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Aprobadas","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	   				]);
+
 	
-    //id: 227 : TRAMITE CERTIFICACION CARGAS: Solicitud de certificacion de dominio y cargas
+	
+	
+	
+    //id: 232 : TRAMITE CERTIFICACION CARGAS: Solicitud de certificacion de dominio y cargas
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   				]);
 	
-    //id: 228 : TRAMITE CERTIFICACION CARGAS: Registrar certificación
+    //id: 233 : TRAMITE CERTIFICACION CARGAS: Registrar certificación
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Obtenida",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				]);
 	
-    //id: 229 : TRAMITE CERTIFICACION CARGAS: Solicitar información cargas anteriores
+    //id: 234 : TRAMITE CERTIFICACION CARGAS: Solicitar información cargas anteriores
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Solicitada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				]);
 	
-    //id: 230 : TRAMITE CERTIFICACION CARGAS: Registrar recepción información de cargas extinguidas o minoradas
+    //id: 235 : TRAMITE CERTIFICACION CARGAS: Registrar recepción información de cargas extinguidas o minoradas
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeCompletitud,"name":"d_comboCompletitud","fieldLabel":"Información cargas",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCompletitud'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				]);
 	
-    //id: 231 : TRAMITE CERTIFICACION CARGAS: Requerir más información
+    //id: 236 : TRAMITE CERTIFICACION CARGAS: Requerir más información
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   				]);
 	
-    //id: 232 : TRAMITE DE INTERESES: Solicitar liquidación de intereses
+	
+	
+	
+	
+    //id: 237 : TRAMITE DE INTERESES: Solicitar liquidación de intereses
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaRec","fieldLabel":"Fecha de recepción",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'datefield',"name":"d_fechaPre","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_intereses","fieldLabel":"Importe intereses",allowBlank:false}]);
 	   				]);
 	
-    //id: 233 : TRAMITE DE INTERESES: Registrar resolucion
+    //id: 238 : TRAMITE DE INTERESES: Registrar resolucion
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'numberfield',"name":"d_importe","fieldLabel":"Intereses",allowBlank:true}
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				]);
 	
-    //id: 234 : TRAMITE DE INTERESES: Registrar impugnacion
+    //id: 239 : TRAMITE DE INTERESES: Registrar impugnacion
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha impugnación",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Hay visita",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
@@ -1029,78 +1086,111 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboImpugnacion","fieldLabel":"Hay impuganción",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				]);
 	
-    //id: 235 : TRAMITE DE INTERESES: Trámite de notificación
-	this.arrayCampos.push([]);
 	
-    //id: 236 : TRAMITE DE INTERESES: Registrar Vista
+    //id: 240 : TRAMITE DE INTERESES: Registrar Vista
 	this.arrayCampos.push([{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }]);
 	
-	//id: 237 : TRAMITE DE INTERESES: Registrar Resolucion Vista
+	//id: 241 : TRAMITE DE INTERESES: Registrar Resolucion Vista
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 238 : TRAMITE GESTION DE LLAVES: Registrar Cambio de cerradura
+	
+	
+	
+	
+	
+	//id: 242 : TRAMITE GESTION DE LLAVES: Registrar Cambio de cerradura
 	this.arrayCampos.push([{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha cambio cerradura",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }]);
 	
-	//id: 239 : TRAMITE GESTION DE LLAVES: Registrar Envio de Llaves
+	//id: 243 : TRAMITE GESTION DE LLAVES: Registrar Envio de Llaves
 	this.arrayCampos.push([
 	                       {"xtype":'textfield',"name":"d_nombre","fieldLabel":"Nombre del 1er depositario",allowBlank:false,id:'d_nombre_id'+this.idFactoria}
 	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha envio de llaves letrado",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 240 : TRAMITE OCUPANTES: Solicitud de requerimiento documentación a ocupantes
+	
+	
+	
+	
+	//id: 244 : TRAMITE OCUPANTES: Solicitud de requerimiento documentación a ocupantes
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha solicitud",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 241 : TRAMITE OCUPANTES: Registrar recepción de la documentación A
+	//id: 245 : TRAMITE OCUPANTES: Registrar recepción de la documentación A
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Bien ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDocumentacion","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDocumentacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboInquilino","fieldLabel":"Existe algún inquilino",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboInquilino'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaContrato","fieldLabel":"Fecha contrato arrendamiento",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nombreArrendatario","fieldLabel":"Nombre arrendatario",allowBlank:true,id:'d_nombreArrendatario'+this.idFactoria}
+	                      ]);
+	
+	//id: 246 : TRAMITE OCUPANTES: Registrar recepción de la documentación B
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Bien ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDocumentacion","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDocumentacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboInquilino","fieldLabel":"Existe algún inquilino",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboInquilino'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaContrato","fieldLabel":"Fecha contrato arrendamiento",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nombreArrendatario","fieldLabel":"Nombre arrendatario",allowBlank:true,id:'d_nombreArrendatario'+this.idFactoria}
+	                      ]);
+	
+	//id: 247 : TRAMITE OCUPANTES: Registrar recepción de la documentación C
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Bien ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDocumentacion","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDocumentacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboInquilino","fieldLabel":"Existe algún inquilino",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboInquilino'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaContrato","fieldLabel":"Fecha contrato arrendamiento",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nombreArrendatario","fieldLabel":"Nombre arrendatario",allowBlank:true,id:'d_nombreArrendatario'+this.idFactoria}
+	                      ]);
+	
+	//id: 248 : TRAMITE OCUPANTES: Presentar escrito alegaciones
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha presentación",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 242 : TRAMITE OCUPANTES: Registrar recepción de la documentación B
-	this.arrayCampos.push([
-	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                      ]);
-	
-	//id: 243 : TRAMITE OCUPANTES: Registrar recepción de la documentación C
-	this.arrayCampos.push([
-	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                      ]);
-	
-	//id: 244 : TRAMITE OCUPANTES: Presentar escrito alegaciones
-	this.arrayCampos.push([
-	                       	{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha presentación",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                      ]);
-	
-	//id: 245 : TRAMITE OCUPANTES: Confirmar visita
+	//id: 249 : TRAMITE OCUPANTES: Confirmar visita
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboVista","fieldLabel":"Vista",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboVista'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 
-	//id: 246 : TRAMITE OCUPANTES: Registrar resolución
+	//id: 250 : TRAMITE OCUPANTES: Registrar resolución tiene derecho
 	this.arrayCampos.push([
-	                       	{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"fecha resolución",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"fecha resolución",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 247 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar solicitud de moratoria
+	//id: 251 : TRAMITE OCUPANTES: Registrar resolución no tiene derecho
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"fecha resolución",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	
+	
+	
+	
+	
+	//id: 252 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar solicitud de moratoria
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fechaFinMoratoria","fieldLabel":"Fecha de fin de moratoria",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha de solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 248 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar admisión y emplazamiento
+	//id: 253 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar admisión y emplazamiento
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboAdminEmplaza","fieldLabel":"Admisión y emplazamiento",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdminEmplaza'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboVista","fieldLabel":"Vista",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboVista'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
@@ -1108,19 +1198,24 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'datefield',"name":"d_fechaSenyalamiento","fieldLabel":"Fecha de señalamiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 249 : TRAMITE MORATORIA DE LANZAMIENTO: Presentar conformidad a moratoria
+	//id: 254 : TRAMITE MORATORIA DE LANZAMIENTO: Presentar conformidad a moratoria
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 250 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar resolución
+	//id: 255 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar resolución
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaFinMoratoria","fieldLabel":"Fecha fin de moratoria",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"Fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboFavDesf","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboFavDesf'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 251 : TRAMITE DE POSESIÓN: Registrar solicitud de posesión
+	
+	
+	
+	
+	
+	//id: 256 : TRAMITE DE POSESIÓN: Registrar solicitud de posesión
 	this.arrayCampos.push([
 	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboPosesion","fieldLabel":"Combo de posesión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPosesion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha de solicitud de la posesión",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
@@ -1129,12 +1224,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboViviendaHab","fieldLabel":"Vivienda Habitual",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboViviendaHab'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 252 : TRAMITE DE POSESIÓN: Registrar señalamiento posesión
+	//id: 257 : TRAMITE DE POSESIÓN: Registrar señalamiento posesión
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaSenyalamiento","fieldLabel":"Fecha señalamiento para posesión",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 253 : TRAMITE DE POSESIÓN: Registrar posesión y decisión lanzamiento
+	//id: 258 : TRAMITE DE POSESIÓN: Registrar posesión y decisión lanzamiento
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Ocupado en la realización de la Diligencia",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha realización de la posesión",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
@@ -1143,16 +1238,41 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'datefield',"name":"d_fechaSolLanza","fieldLabel":"Fecha solicitud del lanzamiento",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 254 : TRAMITE DE POSESIÓN: Registrar señalamiento lanzamiento
+	//id: 259 : TRAMITE DE POSESIÓN: Registrar señalamiento lanzamiento
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha señalamiento para el lanzamiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 255 : TRAMITE DE POSESIÓN: Registrar lanzamiento efectuado
+	//id: 260 : TRAMITE DE POSESIÓN: Registrar lanzamiento efectuado
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha lanzamiento efectivo",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboFuerzaPublica","fieldLabel":"Necesario fuerza pública",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboFuerzaPublica'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
+	
+	
+	
+	//id: 261 : SUBSANACIÓN DECRETO ADJUDICACIÓN: Solicitud de requerimiento documentación a ocupantes
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	
+	//id: 262 : SUBSANACIÓN DECRETO ADJUDICACIÓN: Solicitud de requerimiento documentación a ocupantes
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaEnvio","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	
+	/* FIN ACTUALIZADO */
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//id: 256 : PROCEDIMIENTO ORDINARIO: Interposicion de la demanda
 	this.arrayCampos.push([

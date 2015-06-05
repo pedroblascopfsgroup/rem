@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:si="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-merge="true" default-autowire="byName">
+
+	<bean id="procesoRevisionHandler"	class="es.capgemini.pfs.batch.revisar.ProcesoRevisionJobLauncher" scope="prototype">
+	<!-- <property name="cronExpression" value="0 0/1 * * * ?" />
+		 <property name="window" value="1" />
+		 <property name="channel" value="procesoRevisionChannel" /> 
+	-->
+	</bean>
+	
+	
+	<!--  
+	<bean id="revisionQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoRevisionChannel" />
+		<property name="beanName" value="procesoRevisionHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	-->
+	
+	<bean id="asuntosDao" class="es.capgemini.pfs.batch.revisar.asuntos.dao.impl.AsuntosBatchDaoImpl">
+		<property name="dataSource" ref="entityDataSource" />
+		<property name="queryBuscarContratosAsunto">
+			<bean parent="sql" p:key="asuntos.queryBuscarContratosAsunto"/>
+		</property>
+	</bean>	
+	<bean id="antecedentesDao" class="es.capgemini.pfs.batch.revisar.antecedentes.dao.impl.AntecedentesBatchDaoImpl">
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="buscarAntecedentePersonaQuery">
+      <bean parent="sql" p:key="antecedentes.buscarAntecedente" />
+    </property>
+    <property name="buscarAntecendeteInternoQuery">
+      <bean parent="sql" p:key="antecedentes.buscarAntecedenteInterno" />
+    </property>
+    <property name="buscarUltimoAntecedenteQuery">
+      <bean parent="sql" p:key="antecedentes.buscarUltimoAntecedente" />
+    </property>
+    <property name="insertarNuevoAntecedenteQuery">
+      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedente.${entity.dialect}" />
+    </property>
+    <property name="updateAntecedenteEnPersonaQuery">
+      <bean parent="sql" p:key="antecedentes.updateAntecedenteEnPersona" />
+    </property>
+    <property name="incrementarAntecedenteQuery">
+      <bean parent="sql" p:key="antecedentes.incrementarAntecedente" />
+    </property>
+    <property name="insertarNuevoAntecedenteInternoQuery">
+      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedenteInterno.${entity.dialect}" />
+    </property>
+    <property name="updateAntecedenteInternoQuery">
+      <bean parent="sql" p:key="antecedentes.updateAntecedenteInterno.${entity.dialect}" />
+    </property>
+  </bean>    
+  <bean id="clientesDao" class="es.capgemini.pfs.batch.revisar.clientes.dao.impl.ClientesBatchDaoImpl">
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="buscarClienteQuery">
+      <bean parent="sql" p:key="clientes.buscar" />
+    </property>
+    <property name="desactivarClienteQuery">
+      <bean parent="sql" p:key="clientes.desactivar" />
+    </property>
+    <property name="borrarClienteContratoQuery">
+      <bean parent="sql" p:key="clientes.borrarContrato" />
+    </property>
+    <property name="borrarClienteContratosQuery">
+      <bean parent="sql" p:key="clientes.borrarContratos" />
+    </property>
+    <property name="buscarClientesActivosQuery">
+      <bean parent="sql" p:key="clientes.buscarClientesActivos" />
+    </property>
+    <property name="buscarContratoPrincipalQuery">
+      <bean parent="sql" p:key="clientes.buscarContratoPrincipal" />
+    </property>
+    <property name="buscarContratosQuery">
+      <bean parent="sql" p:key="clientes.buscarContratosActivos" />
+    </property>
+    <property name="buscarArquetipoQuery">
+      <bean parent="sql" p:key="clientes.buscarArquetipo" />
+    </property>
+    <property name="limpiarContratoPrincipalQuery">
+      <bean parent="sql" p:key="clientes.limpiarContratoPrincipal" />
+    </property>
+    <property name="marcarContratoPrincipalQuery">
+      <bean parent="sql" p:key="clientes.marcarContratoPrincipal" />
+    </property>
+    <property name="buscarPersonaClienteQuery">
+      <bean parent="sql" p:key="clientes.buscarPersonaCliente" />
+    </property>
+    <property name="insertarNuevosContratosVencidosQuery">
+      <bean parent="sql" p:key="clientes.insertarNuevosContratosVencidos.${entity.dialect}" />
+    </property>    
+    <property name="insertarNuevosContratosQuery">
+      <bean parent="sql" p:key="clientes.insertarNuevosContratos.${entity.dialect}" />
+    </property>    
+    <property name="buscarContratosOrdenadoFechaPosVencidaQuery">
+      <bean parent="sql" p:key="clientes.buscarContratosOrdenadoFechaPosVencida" />
+    </property>    
+  </bean>
+  
+  <bean id="cargaVolumenContratosDao" class="es.capgemini.pfs.batch.revisar.cargaVolumenContratos.dao.impl.CargaVolumenContratosBatchDaoImpl">
+    <property name="dataSource" ref="entityDataSource" />
+
+    <property name="buscarUltimaValidacionQuery">
+      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.ultimaValidacion" />
+    </property>
+
+    <property name="buscarDatosValidacionAnteriorQuery">
+      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.validacionAnterior" />
+    </property>
+
+    <property name="cargaContratosVolumenValidatorQuery">
+      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.estadisticas.${entity.dialect}" />
+    </property>
+
+    <property name="insertValidacionCargaQuery">
+      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.insertValidacion.${entity.dialect}" />
+    </property>
+  </bean>
+  
+  <bean id="contratosDao" class="es.capgemini.pfs.batch.revisar.contratos.dao.impl.ContratosBatchDaoImpl">
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="buscarFuturosClientesQuery">
+      <bean parent="sql" p:key="contratos.buscarFuturosClientes" />
+    </property>
+    <property name="buscarFechaPosVencidaParaContratosQuery">
+      <bean parent="sql" p:key="contratos.buscarFechaPosVencidaParaContratos" />
+    </property>
+    <!--  Querys de registro de recuperaciones  -->
+    <property name="registrarRecuperacionQuery">
+      <bean parent="sql" p:key="contratos.registrarRecuperacion.${entity.dialect}" />
+    </property>
+    <property name="buscarSaldoProcedimientoAsuntoQuery">
+      <bean parent="sql" p:key="contratos.buscarSaldoProcedimientoAsunto" />
+    </property>
+    <property name="buscarRecuperacionesQuery">
+      <bean parent="sql" p:key="contratos.buscarRecuperaciones.${entity.dialect}" />
+    </property>
+    <property name="buscarIdRecuperacionesQuery">
+      <bean parent="sql" p:key="contratos.buscarIdRecuperaciones.${entity.dialect}" />
+    </property>
+  </bean>  
+  
+  <bean id="expedientesDao" class="es.capgemini.pfs.batch.revisar.expedientes.dao.impl.ExpedientesBatchDaoImpl">
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="queryExpedientesActivos">
+      <bean parent="sql" p:key="expedientes.expedientesActivos" />
+    </property>
+    <property name="queryLiberarContrato">
+      <bean parent="sql" p:key="expedientes.liberarContrato" />
+    </property>
+    <property name="queryCancelarExpediente">
+      <bean parent="sql" p:key="expedientes.cancelarExpediente" />
+    </property>
+  </bean>
+  
+  <bean id="movimientosDao" class="es.capgemini.pfs.batch.revisar.movimientos.dao.impl.MovimientosBatchDaoImpl">
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="buscarDiasPosVencidaQuery">
+      <bean parent="sql" p:key="movimientos.buscarDiasPosVencida.${entity.dialect}" />
+    </property>
+    <property name="buscarDiasDescubiertoMovimientoQuery">
+      <bean parent="sql" p:key="movimientos.diasDescubiertoMovimiento" />
+    </property>
+    <property name="buscarDiferenciaContratoQuery">
+      <bean parent="sql" p:key="movimientos.buscarDiferenciaContrato" />
+    </property>
+    <property name="historificarMovimientosQuery">
+      <bean parent="sql" p:key="movimientos.historificarMovimientosQuery" />
+    </property>
+    <property name="eliminarMovimientosHistorificadosQuery">
+      <bean parent="sql" p:key="movimientos.eliminarMovimientosHistorificadosQuery" />
+    </property>        
+  </bean>
+  
+  <bean id="resumenDao" class="es.capgemini.pfs.batch.analisis.dao.impl.ResumenDaoImpl">
+		<property name="dataSource" ref="entityDataSource" />
+		<property name="realizarAnalisisQuery">
+              <bean parent="sql" p:key="analisis.realizarResumenClientes.${entity.dialect}" />
+        </property>
+        <property name="borrarAnalisisQuery">
+             <bean parent="sql" p:key="analisis.borrarResumenClientes.${entity.dialect}" />
+        </property> 
+      <property name="realizarAnalisisExternaQuery">
+              <bean parent="sql" p:key="analisis.realizarResumenExterna.${entity.dialect}" />
+        </property>
+        <property name="borrarAnalisisExternaQuery">
+             <bean parent="sql" p:key="analisis.borrarResumenExterna.${entity.dialect}" />
+        </property> 
+  </bean>	
+  
+  <bean id="tareaNotificacionManager" class="es.capgemini.pfs.tareaNotificacion.TareaNotificacionManager" />
+
+  <bean id="asuntosBatchManager" class="es.capgemini.pfs.batch.revisar.asuntos.AsuntosBatchManager" />
+  
+  <bean id="antecedentesBatchManager" class="es.capgemini.pfs.batch.revisar.antecedentes.AntecedentesBatchManager" />   
+  
+  <bean id="clientesBatchManager" class="es.capgemini.pfs.batch.revisar.clientes.ClientesBatchManager" />
+  
+  <bean id="cargaVolumenContratosBatchManager" class="es.capgemini.pfs.batch.revisar.cargaVolumenContratos.CargaVolumenContratosBatchManager" />
+  
+  <bean id="contratosBatchManager" class="es.capgemini.pfs.batch.revisar.contratos.ContratosBatchManager"/>
+  
+  <bean id="expedientesBatchManager" class="es.capgemini.pfs.batch.revisar.expedientes.ExpedientesBatchManager" />
+  
+  <bean id="movimientosBatchManager" class="es.capgemini.pfs.batch.revisar.movimientos.MovimientosBatchManager" />
+
+  <bean id="personasBatchManager" class="es.capgemini.pfs.batch.revisar.personas.PersonasBatchManager" />
+  
+  <bean id="resumenBatchManager" class="es.capgemini.pfs.batch.analisis.ResumenBatchManager" />
+  
+  <bean id="securityDefaultUserId" class="java.lang.Long">
+        <constructor-arg value="1" />
+  </bean>
+  
+</beans>

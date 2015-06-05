@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:si="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-merge="true" default-autowire="byName">
+
+	<!-- Sobreescribimos el batch.simpleJob para heredar de PFSStoppableSimpleJob en lugar de StoppableSimpleJob -->
+	<bean id="batch.simpleJob" class="es.capgemini.pfs.batch.PFSStoppableSimpleJob" abstract="true">
+		<property name="jobRepository" ref="batch.jobRepository" />
+		<property name="restartable" value="true" />
+	</bean>
+
+	<!-- Definimos el bean del job de PreProcesado de Cobros del proceso de Facturación -->
+	<bean id="procesoPreProcesadoCobrosRecobroHandler"	class="es.capgemini.pfs.batch.recobro.facturacion.jobs.ProcesoPreProcesadoCobrosJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoPreProcesadoCobrosFacturacionChannel" /> 
+	</bean>
+	
+	<bean id="procesoPreProcesadoCobrosFacturacionQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoPreProcesadoCobrosFacturacionChannel" />
+		<property name="beanName" value="procesoPreProcesadoCobrosRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+
+	<!-- Definimos el bean del job de Facturacion del proceso de Facturación -->
+	<bean id="procesoFacturacionRecobroHandler"	class="es.capgemini.pfs.batch.recobro.facturacion.jobs.ProcesoFacturacionJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoFacturacionChannel" /> 
+	</bean>
+	
+	<bean id="procesoFacturacionQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoFacturacionChannel" />
+		<property name="beanName" value="procesoFacturacionRecobroHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<!-- Definimos el bean del job de Historización de la Facturacion del proceso de Facturación -->
+	<bean id="procesoHistorizacionFacturacionHandler"	class="es.capgemini.pfs.batch.recobro.facturacion.jobs.ProcesoHistorizacionFacturacionJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoHistorizacionFacturacionChannel" /> 
+	</bean>
+	
+	<bean id="procesoHistorizacionFacturacionQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoHistorizacionFacturacionChannel" />
+		<property name="beanName" value="procesoHistorizacionFacturacionHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
+	<bean id="securityDefaultUserId" class="java.lang.Long">
+	      <constructor-arg value="1" />
+	</bean>
+  
+</beans>

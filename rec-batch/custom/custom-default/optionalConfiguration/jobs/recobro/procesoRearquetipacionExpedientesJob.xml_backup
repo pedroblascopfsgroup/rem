@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="procesoRearquetipacionExpedientesJob" parent="batch.simpleJob" scope="prototype">
+    <property name="steps">
+      <list>
+      	<!--  Paso 1 -->
+		<bean parent="batch.taskletStep" scope="prototype">
+			<property name="tasklet">
+				<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+					<property name="scripts">
+						<!--  Lista de scrpts SQL ha ejecutar -->
+						<list>
+							<!-- Truncado de la tabla TMP_REC_EXP_REARQUETIPADO -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_rearquetipado.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_rearquetipado"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla TMP_REC_EXP_ROTACION -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_rotacion.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_rotacion"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla TMP_REC_EXP_DESNORMALIZADO_ARQ -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_desnormalizado_arq.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_desnormalizado_arq"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Truncado de la tabla TMP_REC_EXP_ASIG_CARTERA -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_asig_cartera.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.borrado.tmp_rec_exp_asig_cartera"/>
+								<entry key="severidad" value="error"/>
+							</map>
+						</list>
+					</property>
+				</bean>
+			</property>
+		</bean>
+		<!-- PASO 2 -->
+		<!-- PASO 3 y 4 -->
+		<bean parent="batch.taskletStep" scope="prototype">
+			<property name="tasklet">
+				<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+					<property name="scripts">
+						<list>
+							<!--  Paso 3 - Rearquetipado de expedientes -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_rearquetipado.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_exp_rearquetipado"/>
+								<entry key="severidad" value="error"/>
+							</map>	
+							<!-- Paso 4 - Actualizar Arq_id de la tabla expedientes -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.merge.exp_expendientes_tmp_rec_exp_rearquetipado.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.merge.exp_expendientes_tmp_rec_exp_rearquetipado"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<!-- Paso 5 - Marcar expedientes para rotación o para asignar a cartera -->
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_rotacion.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_exp_rotacion"/>
+								<entry key="severidad" value="error"/>
+							</map>
+							<map>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_asig_cartera.${entity.dialect}"/></entry>
+								<entry key="message" value="recobro.insert.tmp_rec_exp_asig_cartera"/>
+								<entry key="severidad" value="error"/>
+							</map>			
+						</list>
+					</property>
+				</bean>
+			</property>
+		</bean>
+      </list>
+    </property>
+  </bean>
+</beans>

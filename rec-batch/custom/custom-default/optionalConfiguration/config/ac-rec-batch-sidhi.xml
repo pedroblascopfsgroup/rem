@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:si="http://www.springframework.org/schema/integration"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+	default-merge="true" default-autowire="byName">
+
+	<bean id="procesoDeteccionHitosHandler"	class="es.pfsgroup.plugin.recovery.sidhi.batch.launcher.ProcesoDeteccionHitosJobLauncher" scope="prototype">
+	<!-- <property name="cronExpression" value="0 0/1 * * * ?" />
+		 <property name="window" value="1" />
+		 <property name="channel" value="procesoRevisionChannel" /> 
+	-->
+	</bean>
+  
+  <bean id="securityDefaultUserId" class="java.lang.Long">
+        <constructor-arg value="1" />
+  </bean>
+  
+  
+  	<bean id="hitoInternoDao" class="es.pfsgroup.plugin.recovery.sidhi.batch.app.engine.dao.impl.HitoInternoDaoImpl">
+		<property name="dataSource" ref="masterDataSource" />
+		<property name="queryBuscarHitosInternos">
+			<value><![CDATA[
+   				select node.name_ hitoInterno 
+   				from jbpm_node node join
+    				 jbpm_token token on node.id_ = token.node_
+ 				where token.processinstance_ = ?
+    		]]></value>
+		</property>
+  	</bean>	
+  
+    <bean id="SIDHIEngineTransicionesDao" class="es.pfsgroup.plugin.recovery.sidhi.batch.app.engine.dao.impl.SIDHIEngineTransicionesDaoImpl">
+		<property name="dataSource" ref="entityDataSource" />
+		<property name="queryFindTransicionesPosibles">
+			<value><![CDATA[
+   				select SIG.SIG_ID SIGNAL_ID, SIG.SIG_TRANSICION SIG_TRANSICION, ITF.ITF_ID INTERFAZ_ID, 
+				       ITF.ITF_CODIGO INTERFAZ_CODIGO,  HIN.HIN_ID HITOI_ID, HIN.HIN_CODIGO HINI_CODIGO, 
+				       HIN.HIN_CODIGO_TAREA HINI_COD_TAREA, HEE.DD_HEE_ID HITOEE_ID, HEE.HEE_CODIGO HITOEE_CODIGO,
+				       DER_ID, DER_CAUSA_DECISION, DER_COMENTARIOS, DER_FINALIZAR, DER_PARALIZAR, 
+       				   DER_TIPO_ACT, DER_TIPO_PROD, DER_ESTADO_DECISION, SIG.SIG_BEFORE_SIGNAL, SIG.SIG_AFTER_SIGNAL,
+       				   DER.DER_BEFORE_DERIVATION, DER.DER_AFTER_DERIVATION
+				from SIDHI_ENG_SIG_SIGNALS sig inner join 
+				     SIDHI_CFG_DD_HIN_HITO_INTER hin on SIG.HIN_ID = HIN.HIN_ID inner join
+				     SIDHI_CFG_ITF_INTERFAZ itf on ITF.ITF_ID = SIG.ITF_ID inner join
+				     SIDHI_ENG_DD_HEE hee on SIG.HEE_ID = HEE.DD_HEE_ID left outer join 
+     				 SIDHI_ENG_DER_DERIVACIONES der on DER.SIG_ID = SIG.SIG_ID
+				where HIN.HIN_CODIGO_TAREA = ? and
+				      ITF.ITF_CODIGO = ? and
+				      HEE.HEE_CODIGO = ? 
+    		]]></value>
+		</property>
+		<property name="queryFindValores">
+			<value><![CDATA[
+   				select SVA.SVA_ID SVA_ID, SVA.SVA_KEY SVA_KEY, SVA.SVA_VALUE SVA_VALUE, SVA.SVA_ES_FECHAACCION SVA_ES_FECHAACCION,
+         			   TVA.TVA_ID TVA_ID, TVA.TVA_CODIGO TVA_CODIGO, TVA.TVA_DESCRIPCION TVA_DESCRIPCION
+				from SIDHI_ENG_SVA_SIGNAL_VALUES SVA LEFT OUTER JOIN
+				     SIDHI_DAT_TVA_TIPO_VALOR TVA ON TVA.TVA_ID = SVA.TVA_ID
+				where SVA.SIG_ID = ?
+    		]]></value>
+		</property>
+		<property name="queryFindHitosExternos">
+			<value><![CDATA[
+   				select HEE_HE_ID, EPC.EPC_ID SEPC_ID, EPC.EPC_CODIGO SEPC_CODIGO, EPC.EPC_CODIGO_INTERFAZ SEPC_CODIGO_INTERFAZ,
+				       SEP.SEP_ID SSEP_ID, SEP.SEP_CODIGO SSEP_CODIGO, SEP.SEP_CODIGO_INTERFAZ SSEP_CODIGO_INTERFAZ
+				from SIDHI_ENG_HEE_HE HEE inner join
+				     SIDHI_DAT_EPC_ESTADO_PROCES EPC on HEE.EPC_ID = EPC.EPC_ID LEFT OUTER JOIN
+				     SIDHI_DAT_SEP_SUBEST_PROC SEP on SEP.SEP_ID = HEE.SEP_ID
+				where DD_HEE_ID = ?
+    		]]></value>
+		</property>
+	</bean>	
+	
+</beans>

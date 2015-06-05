@@ -1,7 +1,7 @@
 /**
  * Trámite: Tramite subasta SAREB.
- * Resolución: Edicto de subasta + D.O señalamiento de subasta.
- * Tareas: H002_SenyalamientoSubasta
+ * Resolución: Acuerda suspensión de subasta SAREB.
+ * Tareas: H002_SuspenderSubasta
  **/
 
 -- Insertamos en la tabla dd_tr_tipos_resolucion el tipo de resolución

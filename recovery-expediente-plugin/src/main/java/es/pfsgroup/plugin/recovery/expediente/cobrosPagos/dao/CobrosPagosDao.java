@@ -13,5 +13,7 @@ public interface CobrosPagosDao extends AbstractDao<RecobroPagoContrato, Long> {
 	public RecobroPagoContrato getDetalleCobroPago(DtoCobrosPagos dto);
 
 	public Long getCntIdPaseByExpId(Long idExpediente);
+	
+	public Page getListadoCobrosPagosExpediente(DtoCobrosPagos dto);
 
 }

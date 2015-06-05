@@ -130,3 +130,14 @@ return valor;
 app.format.trueFalseRenderer=function(d){
 	return "<img src='/${appProperties.appName}/css/"+d+".gif' />";
 }
+
+app.format.booleanFlagToYesNoRenderer = function(flag){
+
+	if (flag === 1 || flag === "1"){
+		return app.format.YES;
+	} else if (flag === 0 || flag ==="0"){
+		return app.format.NO;
+	} else {	
+		return "";
+	}
+};

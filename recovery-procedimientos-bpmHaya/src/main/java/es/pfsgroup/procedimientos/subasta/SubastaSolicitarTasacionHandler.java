@@ -68,7 +68,8 @@ public class SubastaSolicitarTasacionHandler extends PROBaseActionHandler {
 	            logger.debug("Timer creado: " + TIMER_NAME);
 	            logger.debug("[subasta= " + sub.getId() + ", duration= " + duration + ", " + BPMContants.TRANSICION_AVANZA_BPM + " ]");
 	        }
-			BPMUtils.createTimer (executionContext, TIMER_NAME, duration, BPMContants.TRANSICION_AVANZA_BPM);			
+//			BPMUtils.createTimer (executionContext, TIMER_NAME, duration, BPMContants.TRANSICION_AVANZA_BPM);			
+			BPMUtils.createTimer (executionContext, TIMER_NAME, duration, TRANSICION_ACTUALIZAR_TASACION);			
 			return;
 		}
 		

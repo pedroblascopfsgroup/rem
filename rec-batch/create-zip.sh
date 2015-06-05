@@ -18,6 +18,7 @@ mkdir -p target/batch
 cd target/batch
 
 cp -Rf ../alternateLocation/* .
+chmod +x run.sh
 
 cp $(find .. -name rec-batch*.jar | grep -i sources) .
 

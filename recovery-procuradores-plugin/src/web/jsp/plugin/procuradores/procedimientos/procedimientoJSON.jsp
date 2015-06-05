@@ -11,6 +11,7 @@
   <json:property name="tarea" value="${tarea}" />
   <json:property name="paralizado" value="${paralizado}" />
   <json:property name="esGestor" value="${esGestor}" />
+  <json:property name="esGestorDecision" value="${esGestorDecision}" />
   <json:property name="esSupervisor" value="${esSupervisor}" />
   <json:property name="esSupervisorMultigestor" value="${esSupervisorMultigestor}" />
   <json:property name="procedimientoAceptado" value="${procedimiento.estaAceptado}" />

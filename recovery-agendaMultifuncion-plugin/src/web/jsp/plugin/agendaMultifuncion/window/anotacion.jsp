@@ -738,7 +738,7 @@
         title:'<s:message code="asuntos.adjuntos.grid" text="**Adjuntos"/>'
         ,collapsible:true
         ,collapsed:true
-        ,autoHeight: true
+        ,height: 200
         ,style : 'padding:0px;'
         ,parentWidth:maxWidth - bordersWidth
         ,width:maxWidth - bordersWidth
@@ -1154,10 +1154,10 @@
                 idUg: idUg
                 ,codUg: codUg
                 ,usuarios: paramUserList
-                <sec:authorize ifAllGranted="ACTIVAR_EMAIL_ANOTACIONES">
+
                 ,para:mailPara.getValue()
                 ,cc:mailCC.getValue()
-                </sec:authorize>
+
                 ,asuntoMail:mailAsunto.getValue()
                 ,cuerpoEmail:cuerpoEmail.getValue()
                 ,tipoAnotacion:tipo.getValue()

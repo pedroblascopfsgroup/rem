@@ -50,5 +50,25 @@ public class CobrosPagosDaoImpl extends AbstractEntityDao<RecobroPagoContrato, L
 		return null;
 
 	}
+	
+	@Override
+	public Page getListadoCobrosPagosExpediente(DtoCobrosPagos dto) {
+		// Obtenemos todos los contratos del expediente
+		String queryString ="SELECT cex.cnt_id FROM cex_contratos_expediente cex "
+				+ "where cex.exp_id = '" + dto.getId() + "' and cex.borrado = 0";
+		
+		SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(queryString);
+		List<String> lista = sqlQuery.list();
+		
+		// Si no se encuentran contratos para el expediente, no se buscan los cobrospagos
+		if (lista.isEmpty())
+			return null;
+		
+		HQLBuilder hb = new HQLBuilder("from RecobroPagoContrato cpa");
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "cpa.contrato.id", lista);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cpa.auditoria.borrado", false);
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
 
 }

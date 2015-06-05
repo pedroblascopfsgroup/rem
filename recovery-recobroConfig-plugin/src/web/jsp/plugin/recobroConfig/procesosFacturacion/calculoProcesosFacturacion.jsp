@@ -38,8 +38,8 @@
 		
 	<pfs:defineRecordType name="procesosFacturacion">
 			<pfs:defineTextColumn name="id" />
-			<pfs:defineTextColumn name="fechaDesde" />
-			<pfs:defineTextColumn name="fechaHasta" />
+			<pfs:defineDateColumn name="fechaDesde" />
+			<pfs:defineDateColumn name="fechaHasta" />
 			<pfs:defineTextColumn name="nombre" />
 			<pfs:defineTextColumn name="totalImporteFacturable" />
 			<pfs:defineTextColumn name="totalImporteCobros" />
@@ -55,10 +55,10 @@
 			sortable="true"  firstHeader="true"/>
 		<pfs:defineHeader dataIndex="fechaDesde"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.fechaDesde" caption="**Fecha desde"
-			sortable="true" renderer="app.format.dateRenderer" />	
+			sortable="true" />	
 		<pfs:defineHeader dataIndex="fechaHasta"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.fechaHasta" caption="**Fecha hasta"
-			sortable="true" renderer="app.format.dateRenderer" />	
+			sortable="true" />	
 		<pfs:defineHeader dataIndex="nombre"
 			captionKey="plugin.recobroConfig.procesoFacturacion.columnaProceso.nombre" caption="**Nombre"
 			sortable="true" />	

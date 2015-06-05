@@ -11,6 +11,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
+import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.core.api.registro.HistoricoProcedimientoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
@@ -26,11 +27,14 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimient
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDEstadoBienContrato;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 
 /**
@@ -47,6 +51,9 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private NMBProjectContext nmbProjectContext;
 	
 	
 	/**
@@ -467,7 +474,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	public String validacionesConfirmarTestimonioPRE(Long prcId) {
 		
 		Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId);	
-		List<ProcedimientoBien> listadoBienes = prc.getBienes();
+		List<ProcedimientoBien> listadoBienes = prc.getBienes();				
 		
 		for(ProcedimientoBien pb: listadoBienes){
 			NMBBien b = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", pb.getBien().getId()));
@@ -486,6 +493,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 				if(!b.tieneNumeroActivo()){
 					return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe solicitar el n&uacute;mero de activo previamente</div>";
 				}
+				
 			}
 		}
 		
@@ -523,6 +531,8 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		
 		return null;
 	}
+	
+
 	
 	/**
 	 * 
@@ -577,4 +587,72 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		return null;
 	}
 	
+	/**
+	 * BANKIA
+	 * Método que comprueba que, si el trámite de adjudicación viene de un tramite de subasta SAREB, todos bienes asociados al procedimiento tienen al menos un contrato activo
+	 * Validaciones POST
+	 */
+	@Override
+	@BusinessOperation(overrides = BO_SUBASTA_VALIDACIONES_CONTRATOS_CONFIRMAR_TESTIMONIO_POST)
+	public boolean validacionesContratosConfirmarTestimonioPOST(Long idProcedimiento){
+	
+		Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProcedimiento);	
+		List<ProcedimientoBien> listadoBienes = prc.getBienes();
+		Procedimiento pAux = prc.getProcedimientoPadre();
+		
+	
+		//Comprobamos si el trámite de adjudicación proviene de uno de los trámites de subasta contemplados para la validación de contrato activo por cada bien FASE-1347
+		boolean vieneDeSubastaContemplada = false;
+		while (pAux!=null && vieneDeSubastaContemplada==false){
+				
+			// Si el procedimiento padre es de tipo subasta
+			if(nmbProjectContext.getCodigosSubastas().contains(pAux.getTipoProcedimiento().getCodigo())){
+				// Si el procedimiento padre es de uno de los tipos de tramite de subasta contemplados por la validación
+				if(nmbProjectContext.getCodigosSubastaValidacion().contains(pAux.getTipoProcedimiento().getCodigo())){
+					vieneDeSubastaContemplada = true;
+				}
+				else{
+					pAux = null;
+				}
+			}
+			else{
+				pAux = pAux.getProcedimientoPadre();
+			}
+		}
+				
+		//Si el procedimiento viene de una de las subastas contempladas, se realiza la comprobación
+		if(vieneDeSubastaContemplada){
+					
+					boolean bienSinContratoActivo = false;
+					//Comprobamos que todos los bienes asociados al procedimiento, tienen al menos un contrato activo
+					for(ProcedimientoBien pb: listadoBienes){
+						NMBBien b = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", pb.getBien().getId()));
+						List<NMBContratoBien> listaContratos = b.getContratos();
+						boolean tieneContratoActivo = false;
+					
+						for(NMBContratoBien c : listaContratos){
+							
+							//Si el contrato está activo
+							if (c.getContrato().getEstadoContrato().getCodigo().equals(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO)){				
+								tieneContratoActivo = true;
+							}								
+						}
+						
+						//Si el bien no tiene ningún contrato activo
+						if(tieneContratoActivo==false){
+							bienSinContratoActivo = true;
+							//Salimos del for al encontrar un bien sin contrato activo.
+							break;
+						}
+					}
+		
+					if(bienSinContratoActivo==true){
+						return false;
+					}
+					else{
+						return true;
+					}
+		}
+		return true;
+	}
 }

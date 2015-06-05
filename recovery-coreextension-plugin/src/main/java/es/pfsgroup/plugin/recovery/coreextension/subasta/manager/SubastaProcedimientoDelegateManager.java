@@ -139,5 +139,13 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		//  Este metodo se implementa en el nuevoModeloBienes
 		return null;		
 	}
+	
+	//BANKIA
+	@Override
+	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CONTRATOS_CONFIRMAR_TESTIMONIO_POST)
+	public boolean validacionesContratosConfirmarTestimonioPOST(Long prcId) {
+		//  Este metodo se implementa en el nuevoModeloBienes
+		return false;
+	}
 
 }

@@ -1295,6 +1295,11 @@
 				def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
             	return adjudicacionProcedimientoManager.existeAdjuntoUGMensajeHTML(idProcedimiento, cadenaDAUG);
             }
+            
+            def validacionesContratosConfirmarTestimonioPOST = {
+                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
+                return subastaProcedimientoManager.validacionesContratosConfirmarTestimonioPOST(idProcedimiento);
+            }
 
             
   			 ]]></value>

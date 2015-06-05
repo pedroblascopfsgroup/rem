@@ -35,6 +35,18 @@
 				<entry key="GESTION-LLAVES" value="P417"/>
 			</map>
 		</property>
+		<property name="codigosSubastaValidacion">
+			<list>
+				<value>P409</value>
+			</list>
+		</property>
+		
+		<property name="codigosSubastas">
+			<list>
+				<value>P409</value>
+				<value>P401</value>
+			</list>
+		</property>
 	</bean>	
 	
 	<!-- Implementaciones por defecto-->

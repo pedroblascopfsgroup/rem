@@ -383,22 +383,6 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	
 
 	/**
-	 * Método que comprueba si algún bien del procedimiento que recibe como parámetro no tiene solicitado el número de activo 
-	 * y devuelve el texto del error correspondiente. 
-	 * @param prcId
-	 * @return
-	 */
-	public String comprobarNumeroActivoBien(NMBBien nmbBien) {
-		
-		if(!nmbBien.tieneNumeroActivo()){
-			return "Antes de dar la subasta por celebrada, deber&aacute; acceder a la ficha del bien y solicitar el n&uacute;mero de activo mediante el bot&oacute;n habilitado para tal efecto";
-		}
-		
-		return null;
-	}
-
-
-	/**
 	 * BANKIA
 	 * Metodo que devuelve null en caso de todo ir bien, en caso contrario devuelve el mensaje de error
 	 * Validaciones PRE
@@ -420,7 +404,6 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	public String validacionesCelebracionSubastaPOST(Long prcId) {
 		// Buscamos primero la subasta asociada al prc
 		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-		String respuesta = null;
 		
 		if (!Checks.esNulo(sub)) {
 			
@@ -447,13 +430,6 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 										}										
 									}	
 								}
-								
-								// FASE-1261 Si algún bien no tiene número de activo
-								respuesta = comprobarNumeroActivoBien((NMBBien) b);
-								if(!Checks.esNulo(respuesta)) {
-									return respuesta;									
-								}							
-								
 							}
 						}
 					}
@@ -559,32 +535,29 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		
 		return bienes;
 	}
-
-
+	
 	/**
 	 * BANKIA
 	 * Metodo que devuelve null en caso de todo ir bien, en caso contrario devuelve el mensaje de error
 	 * Validaciones POST
 	 */
 	@Override
-	@BusinessOperation(overrides = BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST)
-	public String validacionesCelebracionSubastaSarebPOST(Long prcId) {
+	@BusinessOperation(overrides = BO_SUBASTA_COMPROBAR_NUMERO_ACTIVO)
+	public boolean comprobarNumeroActivo(Long prcId) {
 
-		String respuesta;
+		boolean respuesta = true;
 		
 		List<Bien> listadoBienes = getBienesSubastaByPrcId(prcId);
 		
 		for(Bien bien: listadoBienes) {			
-			NMBBien nmbBien = (NMBBien) bien;	
-			
-			// FASE-1261 Si algún bien no tiene número de activo
-			respuesta = comprobarNumeroActivoBien(nmbBien);
-			if(!Checks.esNulo(respuesta)) {
-				return respuesta;									
-			}			
+			NMBBien nmbBien = (NMBBien) bien;			
+			if (!nmbBien.tieneNumeroActivo()) {
+				respuesta = false;
+				
+			}
 		}
 
-		return null;
+		return respuesta;
 	}
 	
 	/**
@@ -654,5 +627,6 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					}
 		}
 		return true;
-	}
+	}	
+
 }

@@ -18,8 +18,10 @@ public interface SubastaProcedimientoDelegateApi {
 	public static final String BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_POST = "es.pfsgroup.recovery.subasta.validacionesCelebracionSubastaPOST";
 	public static final String BO_SUBASTA_VALIDACIONES_CONFIRMAR_TESTIMONIO_PRE = "es.pfsgroup.recovery.subasta.validacionesConfirmarTestimonioPRE";
 	public static final String BO_SUBASTA_VALIDACIONES_CONFIRMAR_TESTIMONIO_POST = "es.pfsgroup.recovery.subasta.validacionesConfirmarTestimonioPOST";
-	public static final String BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST = "es.pfsgroup.recovery.subasta.validacionesCelebracionSubastaSarebPOST";
 	public static final String BO_SUBASTA_VALIDACIONES_CONTRATOS_CONFIRMAR_TESTIMONIO_POST = "es.pfsgroup.recovery.subasta.validacionesContratosConfirmarTestimonioPOST";
+	public static final String BO_SUBASTA_COMPROBAR_NUMERO_ACTIVO = "es.pfsgroup.recovery.subasta.comprobarNumeroActivo";
+	
+
 	
 	@BusinessOperationDefinition(BO_SUBASTA_IS_BIEN_WITH_TIPO_SUBASTA)
 	public Boolean isTipoSubasta(Long bienId);
@@ -70,11 +72,12 @@ public interface SubastaProcedimientoDelegateApi {
 	public String validacionesConfirmarTestimonioPOST(Long prcId);
 	
 	//BANKIA
-	@BusinessOperationDefinition(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST)
-	public String validacionesCelebracionSubastaSarebPOST(Long prcId);
-	
-	//BANKIA
 	@BusinessOperationDefinition(BO_SUBASTA_VALIDACIONES_CONTRATOS_CONFIRMAR_TESTIMONIO_POST)
 	public boolean validacionesContratosConfirmarTestimonioPOST(Long prcId);
+	
+	//BANKIA
+	@BusinessOperationDefinition(BO_SUBASTA_COMPROBAR_NUMERO_ACTIVO)
+	public boolean comprobarNumeroActivo(Long prcId);
+
 
 }

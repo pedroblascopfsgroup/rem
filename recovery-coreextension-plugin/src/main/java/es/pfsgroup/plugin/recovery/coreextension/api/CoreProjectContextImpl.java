@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension.api;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Set;
 
@@ -8,17 +9,16 @@ import org.springframework.stereotype.Component;
 
 public class CoreProjectContextImpl implements CoreProjectContext {
 	
-	private Set<String> tareasTipoDecision;
+	private Map<String, Set<String>> categoriasSubTareas;
 	private List<String> tiposPrcAdjudicados;
-	
-	
+
 	@Override
-	public Set<String> getTareasTipoDecision() {
-		return this.tareasTipoDecision;
+	public Map<String, Set<String>> getCategoriasSubTareas() {
+		return categoriasSubTareas;
 	}
 
-	public void setTareasTipoDecision(Set<String> tareasTipoDecision) {
-		this.tareasTipoDecision = tareasTipoDecision;
+	public void setCategoriasSubTareas(Map<String, Set<String>> categoriasSubTareas) {
+		this.categoriasSubTareas = categoriasSubTareas;
 	}
 	
 	/**

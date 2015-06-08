@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoCambiario" width="1215" height="838">
+<root-container name="haya_procedimientoCambiario" width="1222" height="1008">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-66" y="-14"/>
@@ -37,7 +37,10 @@
       <label x="-47" y="-12"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-451" y="-627"/>
+      <bendpoint w1="633" h1="3" w2="389" h2="-506"/>
+      <bendpoint w1="633" h1="605" w2="389" h2="96"/>
+      <bendpoint w1="242" h1="610" w2="-2" h2="101"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -54,13 +57,6 @@
     </edge>
     <edge>
       <label x="-36" y="6"/>
-    </edge>
-  </node>
-  <node name="Decision1" x="998" y="181" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="121" h1="0" w2="142" h2="-499"/>
-      <bendpoint w1="110" h1="489" w2="61" h2="-42"/>
     </edge>
   </node>
   <node name="H016_confNotifRequerimientoPago" x="384" y="289" width="303" height="36">
@@ -175,7 +171,7 @@
       <bendpoint w1="-72" h1="-88" w2="195" h2="-33"/>
     </edge>
   </node>
-  <node name="Decision2" x="736" y="698" width="132" height="36">
+  <node name="H016_CambiarioDecision" x="692" y="698" width="198" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

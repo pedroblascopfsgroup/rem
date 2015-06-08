@@ -416,6 +416,17 @@
 			,width: 150
 			
 		});
+		
+	var tipoDocAdjudicacion = app.creaCombo({
+			data : <app:dict value="${tipoDocAdjudicacion}" />
+			<app:test id="tipoDocAdjudicacionCombo" addComa="true" />
+			,name : 'tipoDocAdjudicacion'
+			,fieldLabel : '<s:message code="bienesAdjudicacion.documentoAdjudicacion" text="**documentoAdjudicacion" />'
+			,value : '${NMBbien.adjudicacion.tipoDocAdjudicacion.codigo}'
+			,labelStyle:labelStyle
+			,width: 150
+			
+		});
 	
 	var situacionTitulo = app.creaCombo({
 			data : <app:dict value="${situacionTitulo}" />
@@ -496,6 +507,7 @@
 		
 		//DICCIONARIOS
 		parametros.entidadAdjudicataria = entidadAdjudicataria.getValue();
+		parametros.tipoDocAdjudicacion = tipoDocAdjudicacion.getValue();
 		parametros.situacionTitulo = situacionTitulo.getValue();
 		parametros.resolucionMoratoria = resolucionMoratoria.getValue();
 		parametros.fondo = fondo.getValue();
@@ -516,7 +528,7 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion, txtImporteAdjudicacion]},
-				  {items:[entidadAdjudicataria,fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
+				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
 				 ]
 	});
 	

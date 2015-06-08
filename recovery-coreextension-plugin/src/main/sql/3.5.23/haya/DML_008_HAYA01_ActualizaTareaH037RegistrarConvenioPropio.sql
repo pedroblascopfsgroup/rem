@@ -29,10 +29,9 @@ DECLARE
 BEGIN
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO '
-				|| ' SET DD_STA_ID = (SELECT subtipo.DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE subtipo '
-				|| ' WHERE subtipo.DD_TGE_ID = (SELECT gestor.DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR gestor WHERE gestor.DD_TGE_CODIGO = ''LETR'')) '
-				|| ' WHERE TAP_CODIGO = ''H037_registrarConvenioPropio'' '
-				;
+				|| ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE '
+				|| ' WHERE DD_STA_CODIGO = ''814'') '
+				|| ' WHERE TAP_CODIGO = ''H037_registrarConvenioPropio'' ';
 
 				
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);

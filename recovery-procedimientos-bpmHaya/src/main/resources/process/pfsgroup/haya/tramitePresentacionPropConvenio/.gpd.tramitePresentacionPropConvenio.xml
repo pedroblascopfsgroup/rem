@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramitePresentacionPropConvenio" width="1393" height="898">
+<root-container name="haya_tramitePresentacionPropConvenio" width="1000" height="1143">
   <node name="Inicio" x="15" y="29" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -181,7 +181,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision" x="153" y="773" width="207" height="36">
+  <node name="H037_ConvenioDecision" x="153" y="773" width="207" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

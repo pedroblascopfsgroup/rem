@@ -45,6 +45,7 @@ public final class ExternaBusinessOperation {
     public static final String BO_ASU_MGR_BUSCAR_TAREA_PENDIENTE = "asuntosManager.buscarTareaPendiente";
     public static final String BO_ASU_MGR_ES_GESTOR = "asuntosManager.esGestor";
     public static final String BO_ASU_MGR_ES_SUPERVISOR = "asuntosManager.esSupervisor";
+    public static final String BO_ASU_MGR_ES_GESTOR_DECISION = "asuntosManager.esGestorDecision";    
     public static final String BO_ASU_MGR_UPLOAD = "asuntosManager.upload";
     public static final String BO_ASU_MGR_BAJAR_ADJUNTO = "asuntosManager.bajarAdjunto";
     public static final String BO_ASU_MGR_DELETE_ADJUNTO = "asuntosManager.deleteAdjunto";

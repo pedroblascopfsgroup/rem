@@ -49,11 +49,11 @@
 
 	<decision name="H018_AutoDespachandoDecision" expression="#{H018_AutoDespachandoDecision}">
 		<transition to="ForkAutoDespachando" name="AdmitidoYBienesRegistrables"></transition>
-		<transition to="Decision1" name="NoAdmitido"></transition>
+		<transition to="H018_TituloDecision" name="NoAdmitido"></transition>
 		<transition to="H018_ConfirmarNotificacion" name="Admitido"></transition>
 	</decision>
 
-	<node name="Decision1">
+	<node name="H018_TituloDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler</targetBean>
@@ -132,16 +132,8 @@
 
 	<decision name="H018_RegistrarOposicionDecision" expression="#{H018_RegistrarOposicionDecision}">
 		<transition to="H018_ConfirmarPresentacionImpugnacion" name="SI"></transition>
-		<transition to="Decision2" name="NO"></transition>
+		<transition to="H018_TituloDecision" name="NO"></transition>
 	</decision>
-
-	<node name="Decision2">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler</targetBean>
-		</action>
-		<transition to="Fin" name="Fin"></transition>
-	</node>
 
 	<state name="H018_HayVista">
 		<event type="node-enter">
@@ -226,18 +218,10 @@
 			</action>
 		</event>
 		<transition to="H018_ResolucionFirme" name="activarAlerta"></transition>
-		<transition to="Decision3" name="avanzaBPM"></transition>
+		<transition to="H018_TituloDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H018_RegistrarResolucion" name="vueltaAtras"></transition>
 	</state>
-
-	<node name="Decision3">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler</targetBean>
-		</action>
-		<transition to="Fin" name="Fin"></transition>
-	</node>
 
 	<state name="H018_ConfirmarPresentacionImpugnacion">
 		<event type="node-enter">

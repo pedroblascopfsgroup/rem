@@ -129,7 +129,7 @@
       <label x="-39" y="-18"/>
     </edge>
   </node>
-  <node name="Decision" x="1014" y="549" width="132" height="36">
+  <node name="H032_ResolucionDecision" x="988" y="549" width="182" height="36">
     <edge>
       <label x="-20" y="-18"/>
     </edge>

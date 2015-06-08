@@ -9,6 +9,43 @@
     <name>jmeter-demo</name>
     <url>http://maven.apache.org</url>
  
+
+    <profiles>
+        <profile>
+            <id>intebankia</id>
+            <properties>
+                <p.http.host>192.168.0.148</p.http.host>
+                <p.http.protocol>http</p.http.protocol>
+                <p.http.port>7001</p.http.port>
+                <p.http.connectTimeout>0</p.http.connectTimeout>
+                <p.http.responseTimeout>0</p.http.responseTimeout>
+                <p.http.longResponseTimeout>0</p.http.longResponseTimeout>
+                <p.http.maxResponseTimeout>0</p.http.maxResponseTimeout>
+                <p.recovery.user1.username>BANKMASTER</p.recovery.user1.username>
+                <p.recovery.user1.password>1234</p.recovery.user1.password>
+                <p.threadCount>1</p.threadCount>
+                <p.loopCount>1</p.loopCount>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>localhost</id>
+            <properties>
+                <p.http.host>localhost</p.http.host>
+                <p.http.protocol>http</p.http.protocol>
+                <p.http.port>8080</p.http.port>
+                <p.http.connectTimeout>0</p.http.connectTimeout>
+                <p.http.responseTimeout>0</p.http.responseTimeout>
+                <p.http.longResponseTimeout>0</p.http.longResponseTimeout>
+                <p.http.maxResponseTimeout>0</p.http.maxResponseTimeout>
+                <p.recovery.user1.username>BANKMASTER</p.recovery.user1.username>
+                <p.recovery.user1.password>1234</p.recovery.user1.password>
+                <p.threadCount>1</p.threadCount>
+                <p.loopCount>1</p.loopCount>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -21,15 +58,17 @@
                     <suppressJMeterOutput>false</suppressJMeterOutput>
                     <ignoreResultFailures>false</ignoreResultFailures>
                     <propertiesUser>
-                        <http.host>192.168.0.148</http.host>
-                        <http.protocol>http</http.protocol>
-                        <http.port>7001</http.port>
-                        <http.connectTimeout>0</http.connectTimeout>
-                        <http.responseTimeout>0</http.responseTimeout>
-                        <recovery.user1.username>BANKMASTER</recovery.user1.username>
-                        <recovery.user1.password>1234</recovery.user1.password>
-                        <threadCount>1</threadCount>
-                        <loopCount>1</loopCount>
+                        <http.host>${p.http.host}</http.host>
+                        <http.protocol>${p.http.protocol}</http.protocol>
+                        <http.port>${p.http.port}</http.port>
+                        <http.connectTimeout>${p.http.connectTimeout}</http.connectTimeout>
+                        <http.responseTimeout>${p.http.responseTimeout}</http.responseTimeout>
+                        <http.longResponseTimeout>${p.http.longResponseTimeout}</http.longResponseTimeout>
+                        <http.maxResponseTimeout>${p.http.maxResponseTimeout}</http.maxResponseTimeout>
+                        <recovery.user1.username>${p.recovery.user1.username}</recovery.user1.username>
+                        <recovery.user1.password>${p.recovery.user1.password}</recovery.user1.password>
+                        <threadCount>${p.threadCount}</threadCount>
+                        <loopCount>${p.loopCount}</loopCount>
                     </propertiesUser>
                     <propertiesJMeter>
                         <jmeter.save.saveservice.thread_counts>true</jmeter.save.saveservice.thread_counts>

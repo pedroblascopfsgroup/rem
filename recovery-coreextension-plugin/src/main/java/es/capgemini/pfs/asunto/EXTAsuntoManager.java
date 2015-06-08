@@ -64,6 +64,7 @@ import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
+import es.capgemini.pfs.iplus.IPLUSAdjuntoAuxDto;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -444,7 +445,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
-		final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
+		Boolean borrarOtrosUsu = true;
+		
+		if (iplus == null && !iplus.instalado()) {
+			borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
+		}
 
 		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
 		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
@@ -453,14 +458,26 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			Set<AdjuntoAsunto> setAdjuntos = obtieneAdjuntosIplus(asunto.getId());
 			for (AdjuntoAsunto adjuntoAsunto : setAdjuntos) {
 				adjuntoAsunto.setAsunto(asunto);
-				Procedimiento procedimiento = iplus.obtenerProcedimiento(asunto.getId(), adjuntoAsunto.getDescripcion());
-				adjuntoAsunto.setProcedimiento(procedimiento );
+				IPLUSAdjuntoAuxDto dtoAux = iplus.completarInformacionAdjunto(asunto.getId(), adjuntoAsunto.getDescripcion());
+				Procedimiento procedimiento = dtoAux.getProc();
+				adjuntoAsunto.setProcedimiento(procedimiento);
+				String contentType = dtoAux.getContentType();
+				adjuntoAsunto.setContentType(contentType);
+				Long longitud = dtoAux.getLongitud();
+				adjuntoAsunto.setLength(longitud);
+				//DDTipoFicheroAdjunto tipoFicheroAdjunto = dtoAux.getTipoDocumento();
+				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
 			}
 			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
 		}
-		if (adjuntosAsunto == null || adjuntosAsunto.isEmpty()) {
-			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu));
+		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
+		if (iplus != null && iplus.instalado()) {
+			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
+		} else {
+			adjuntosRecovery2 = adjuntosRecovery;
 		}
+		adjuntosAsunto.addAll(adjuntosRecovery2);
 		
 		return ordenaListado(adjuntosAsunto);
 

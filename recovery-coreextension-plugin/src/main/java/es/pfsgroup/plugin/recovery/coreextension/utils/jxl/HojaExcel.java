@@ -43,8 +43,8 @@ public class HojaExcel {
 	
 	private int columnasReales = -1;
 	
-	private Workbook libroExcel; 
-	
+	private Workbook libroExcel;
+
 	private File file;
 
 	public String getRuta() {
@@ -62,21 +62,35 @@ public class HojaExcel {
 	public void setFile(File file) {
 		this.file = file;
 	}
-
+	
 	/**
-	 * devuelve el número de filas reales de una hoja excel.
-	 * Se considera que una fila es real si alguna de sus celda no está vacía.
-	 * @return 
+	 * devuelve el nï¿½mero de filas reales de una hoja excel.
+	 * Se considera que una fila es real si alguna de sus celda no estï¿½ vacï¿½a.
+ 	 *
+	 * @return
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
 	public Integer getNumeroFilas() throws IllegalArgumentException, IOException {
+		return getNumeroFilas(0);
+	}
+
+	/**
+	 * devuelve el nï¿½mero de filas reales de una hoja excel.
+	 * Se considera que una fila es real si alguna de sus celda no estï¿½ vacï¿½a.
+	 * 
+	 * @param nHoja NÃºmero de hoja de la cual se quiere obtener el nÃºmero de filas
+	 * @return 
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public Integer getNumeroFilas(int nHoja) throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
 		
 		if (this.filasReales < 0){
-			Sheet hoja = libroExcel.getSheet(0);
+			Sheet hoja = libroExcel.getSheet(nHoja);
 			this.filasReales = 0;
 			for (int i= hoja.getRows() - 1; i>0; i--) {
 				Cell[] fila = hoja.getRow(i);
@@ -91,10 +105,10 @@ public class HojaExcel {
 	}
 	
 	/**
-	 * Devuelve el número de columns reales de una hoja excel.
-	 * Se considera una columan real cuando la cabecera no está vacía.
+	 * Devuelve el nï¿½mero de columns reales de una hoja excel.
+	 * Se considera una columan real cuando la cabecera no estï¿½ vacï¿½a.
 	 * 
-	 * @return Integer número de columnas
+	 * @return Integer nï¿½mero de columnas
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
@@ -120,9 +134,9 @@ public class HojaExcel {
 	}
 
 	/**
-	 * Comprueba si una fila de una hoja excel está vacia.
-	 * Para que una fila esté vacía todas sus celdas deben estar vacías.
-	 * Una celda está vacía si su contenido es nulo o de tamaño cero.
+	 * Comprueba si una fila de una hoja excel estï¿½ vacia.
+	 * Para que una fila estï¿½ vacï¿½a todas sus celdas deben estar vacï¿½as.
+	 * Una celda estï¿½ vacï¿½a si su contenido es nulo o de tamaï¿½o cero.
 	 * @param fila
 	 * @return
 	 */
@@ -136,9 +150,10 @@ public class HojaExcel {
 		return true;
 	}
 
+	
 	/**
 	 * Devuelve el listado de columnas del excel
-	 * Si el nombre de la columna es nulo devuelve un string vacío.
+	 * Si el nombre de la columna es nulo devuelve un string vacï¿½o.
 	 * Elimina los espacios en blanco al principio y final del nombre de la columna.
 	 * @return lista de columnas
 	 * @throws IllegalArgumentException
@@ -146,10 +161,23 @@ public class HojaExcel {
 	 */
 	public List<String> getCabeceras() 
 			throws IllegalArgumentException, IOException {
+		return getCabeceras(0);
+	}
+	/**
+	 * Devuelve el listado de columnas del excel
+	 * Si el nombre de la columna es nulo devuelve un string vacï¿½o.
+	 * Elimina los espacios en blanco al principio y final del nombre de la columna.
+	 * @param nHoja Hoja de la cual se quieren obtener las cabeceras
+	 * @return lista de columnas
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public List<String> getCabeceras(Integer nHoja) 
+			throws IllegalArgumentException, IOException {
 		if (!isOpen) {
 			abrir();
 		}
-		Sheet hoja = libroExcel.getSheet(0);
+		Sheet hoja = libroExcel.getSheet(nHoja);
 		List<String> lista = new ArrayList<String>();
 		int numColumnas = this.getNumeroColumnas();
 		for (int i=0; i<numColumnas; i++) {
@@ -264,22 +292,50 @@ public class HojaExcel {
 	 * @return booleano que indica si todo ha ido bien
 	 */
 	public boolean crearNuevoExcel(String nombreFichero, List<String> cabeceras, List<List<String>> valores) {
-		return crearExcel(nombreFichero, cabeceras, valores, false);
+		return crearExcel(nombreFichero, cabeceras, valores, false, null);
 		
+	}
+	
+	/**
+	 * Creamos un Excel desde cero, recibiendo la ruta completa del nombre de fichero,
+	 * la lista con las cabeceras y los valores
+ 	 *
+	 * @param nombreFichero
+	 * @param cabeceras
+	 * @param valores
+	 * @param maxFilasPagina paginado por nÃºmero de filas
+	 * @return booleano que indica si todo ha ido bien
+	 */
+	public boolean crearNuevoExcel(String nombreFichero, List<String> cabeceras, List<List<String>> valores, Integer maxFilasPagina) {
+		return crearExcel(nombreFichero, cabeceras, valores, false, maxFilasPagina);
 	}
 
 	/**
-	 * Creamos un Excel desde cero o si se setea el parametro append=true añadimos el contenido al excel si existe, recibiendo la ruta completa del nombre de fichero,
+	 * Creamos un Excel desde cero o si se setea el parametro append=true aï¿½adimos el contenido al excel si existe, recibiendo la ruta completa del nombre de fichero,
 	 * la lista con las cabeceras y los valores
 	 * 
 	 * @param nombreFichero
 	 * @param cabeceras
 	 * @param valores
-	 * @param append indica si se añade al fichero
-	 * @return
+	 * @param append indica si se aï¿½ade al fichero
+	 * @return booleano que indica si todo ha ido bien
 	 */
 	public boolean crearNuevoExcel(String nombreFichero, List<String> cabeceras, List<List<String>> valores, Boolean append) {
-		return crearExcel(nombreFichero, cabeceras, valores, append);
+		return crearExcel(nombreFichero, cabeceras, valores, append, null);
+	}
+	
+	/**
+	 * Crear el excel generico
+	 * 
+	 * @param nombreFichero
+	 * @param cabeceras
+	 * @param valores
+	 * @param append indica si se aï¿½ade al fichero
+	 * @param maxFilasPagina paginado por nÃºmero de filas
+	 * @return booleano que indica si todo ha ido bien
+	 */
+	public boolean crearNuevoExcel(String nombreFichero, List<String> cabeceras, List<List<String>> valores, Boolean append, Integer maxFilasPagina) {
+		return crearExcel(nombreFichero, cabeceras, valores, append, maxFilasPagina);
 	}
 	
 	/**
@@ -289,42 +345,56 @@ public class HojaExcel {
 	 * @param cabeceras
 	 * @param valores
 	 * @param append
-	 * @return
+	 * @param maxFilasPagina paginado por nÃºmero de filas
+	 * @return booleano que indica si todo ha ido bien
 	 */
-	private boolean crearExcel(String nombreFichero, List<String> cabeceras, List<List<String>> valores, Boolean append) {
+	private boolean crearExcel(String nombreFichero, List<String> cabeceras, List<List<String>> valores, Boolean append, Integer maxFilasPagina) {
 		boolean ok = true;
 		boolean copiado = false;
+		int hojaActual;
+		int filaActual;
+		
+		//Si no se especifica, se limita el nÃºmero de filas a 60.000, ya que es el valor mÃ¡ximo que permite la librerÃ­a jxl
+		if (Checks.esNulo(maxFilasPagina))
+			maxFilasPagina = 60000;
 		
 		// Creamos un fichero temporal para copiar en caso de existir y trabajar sobre este en todos los casos
 		String nombreFicheroTMP = nombreFichero + ".tmp.xls"; 
         File fileTMP = new File(nombreFicheroTMP);
                
-        // Este será el fichero final, en el que se comprobará que exista y luego se reemplazará
+        // Este serï¿½ el fichero final, en el que se comprobarï¿½ que exista y luego se reemplazarï¿½
         File fileFinal = new File(nombreFichero);
         
         try {
         	
-        	// Se crea el fichero temporal en todos los casos ya que es aquí donde se va a escribir
+        	// Se crea el fichero temporal en todos los casos ya que es aquï¿½ donde se va a escribir
         	if (fileTMP.exists()) fileTMP.delete();
         	fileTMP.createNewFile();
         	
         	WritableWorkbook workbook = Workbook.createWorkbook(fileTMP);
-        	WritableSheet sheet1 = workbook.createSheet("Hoja 1",0);
-			
-			int filaAnt = 0;
+        	hojaActual = 0;
+        	WritableSheet sheet1 = workbook.createSheet("Hoja " + (hojaActual+1),hojaActual);
+
+			//int filaAnt = 0;
+			filaActual = 0;
 			if (!fileFinal.exists()) {
 			    fileFinal.createNewFile();
 			} else {
-				// Si tiene que añadir al documento, se copiara el contenido de fileFinal a fileTMP
-				if (append) {								
+				// Si tiene que aï¿½adir al documento, se copiara el contenido de fileFinal a fileTMP
+				if (append) {	
 					Workbook target_workbook = Workbook.getWorkbook(fileFinal);
 					workbook = Workbook.createWorkbook(fileTMP, target_workbook);
-					
-					sheet1 = workbook.getSheet(0);
+
 					this.libroExcel = target_workbook;
 					this.setFile(fileFinal);		
 					this.filasReales = -1;
-					filaAnt = getNumeroFilas()-1;
+					
+					hojaActual= workbook.getSheets().length-1;
+					sheet1 = workbook.getSheet(hojaActual);
+					
+					//filaAnt = getNumeroFilas()-1;
+					filaActual=getNumeroFilas(hojaActual);
+					cabeceras = getCabeceras(hojaActual);
 					
 					target_workbook.close();
 					
@@ -333,28 +403,30 @@ public class HojaExcel {
 			} 
 			if (fileTMP.canWrite()) {
 				if (!copiado) {
-					// Pintamos las cabeceras de las columnas.
-				    
-				    WritableFont cellFontBold10 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
-				    WritableFont cellFontBold12 = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
-
-				    WritableCellFormat cellFormatCabeceras = new WritableCellFormat(cellFontBold12);
-				    cellFormatCabeceras.setFont(cellFontBold10);
-				    cellFormatCabeceras.setAlignment(Alignment.CENTRE);
-				    cellFormatCabeceras.setBackground(Colour.PLUM2);
-				    cellFormatCabeceras.setBorder(Border.ALL, BorderLineStyle.THIN);
-				    cellFormatCabeceras.setWrap(false);
-				    for (int i = 0; i < cabeceras.size(); i++) {
-				        Label column = new Label(i, 0, cabeceras.get(i), cellFormatCabeceras);
-				        sheet1.addCell(column);
-				    }
+					escribirCabeceras(sheet1, cabeceras);
+					filaActual=1;
 				}
 				
 			    for (int i = 0; i < valores.size(); i++) {
-					for (int j = 0; j < valores.get(i).size(); j++) {
-						Label celda = new Label(j, i+filaAnt+1, valores.get(i).get(j));
+					if (((filaActual) % maxFilasPagina) == 0) {
+						//Llegado el momento de paginar
+						
+						//Creamos una nueva hoja
+						hojaActual++;
+						workbook.createSheet("Hoja " + (hojaActual+1),hojaActual);
+						sheet1 = workbook.getSheet(hojaActual);
+						
+						//Volvemos a escribir las cabeceras
+						escribirCabeceras(sheet1, cabeceras);
+						//Reiniciamos el contador de fila
+						filaActual=1;
+					}
+
+			    	for (int j = 0; j < valores.get(i).size(); j++) {
+						Label celda = new Label(j, filaActual, valores.get(i).get(j));
 						sheet1.addCell(celda);
 					}
+					filaActual++;
 				}
                 workbook.write();
                 workbook.close();
@@ -380,6 +452,31 @@ public class HojaExcel {
 			e.printStackTrace();
 		}
 		return ok;
+	}
+	
+	/**
+	 * Escribe en la fila 0, las cabeceras con su correspondiente formato de celdas
+	 * @param sheet1
+	 * @param cabeceras
+	 * @throws RowsExceededException
+	 * @throws WriteException
+	 */
+	private void escribirCabeceras (WritableSheet sheet1, List<String> cabeceras) throws RowsExceededException, WriteException {
+		// Pintamos las cabeceras de las columnas.
+	    
+	    WritableFont cellFontBold10 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
+	    WritableFont cellFontBold12 = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
+
+	    WritableCellFormat cellFormatCabeceras = new WritableCellFormat(cellFontBold12);
+	    cellFormatCabeceras.setFont(cellFontBold10);
+	    cellFormatCabeceras.setAlignment(Alignment.CENTRE);
+	    cellFormatCabeceras.setBackground(Colour.PLUM2);
+	    cellFormatCabeceras.setBorder(Border.ALL, BorderLineStyle.THIN);
+	    cellFormatCabeceras.setWrap(false);
+	    for (int i = 0; i < cabeceras.size(); i++) {
+	        Label column = new Label(i, 0, cabeceras.get(i), cellFormatCabeceras);
+	        sheet1.addCell(column);
+	    }
 	}
 		
 }

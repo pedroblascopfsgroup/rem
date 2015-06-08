@@ -207,6 +207,8 @@
 		
 		<json:property name="zonaPersona" value="${zonaPersona.descripcion}" />
 		<json:property name="zonaTerritorial" value="${zonaTerritorial.descripcion}" />
+		
+		<json:property name="cnae" value="${persona.descripcionCnae}" />
 	    
 	</json:object>
 	<json:object name="solvencia">

@@ -994,15 +994,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 227 : TRAMITE COSTAS : Solicitud de tasación de costas
 	this.arrayCampos.push([
 	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}]);
-					,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}]);
+	   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
+					,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
 	   		]);
 	
     // id: 228 : TRAMITE COSTAS : Tasación de costas del juzgado
 	   		this.arrayCampos.push([
 	   			   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   			   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}]);
-	   							,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}]);
+	   			   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
+	   							,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
 	   			   		]);
 	
      //id: 229 : TRAMITE COSTAS : Impugnación tasación de costas del juzgado
@@ -1023,8 +1023,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAprobada","fieldLabel":"Aprobada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAprobada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}]);
-						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}]);
+	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
+						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
 	   				]);
 	
 
@@ -1068,7 +1068,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaRec","fieldLabel":"Fecha de recepción",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'datefield',"name":"d_fechaPre","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'numberfield',"name":"d_intereses","fieldLabel":"Importe intereses",allowBlank:false}]);
+	                       ,{"xtype":'numberfield',"name":"d_intereses","fieldLabel":"Importe intereses",allowBlank:false}
 	   				]);
 	
     //id: 238 : TRAMITE DE INTERESES: Registrar resolucion

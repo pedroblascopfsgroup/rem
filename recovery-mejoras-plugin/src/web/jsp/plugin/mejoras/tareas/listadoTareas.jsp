@@ -1228,6 +1228,9 @@
 			case app.subtipoTarea.CODIGO_TAREA_SOLICITUD_PRORROGA_TOMADECISION:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'cabeceraProcedimiento');
 			break;
+            case app.subtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA:
+                    app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tabAdjuntosAsunto');
+            break;
             case app.subtipoTarea.CODIGO_TAREA_PROPUESTA_BORRADO_OBJETIVO:
                 var idObjetivo = rec.get('idEntidad');
                 var w = app.openWindow({

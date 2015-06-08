@@ -35,6 +35,7 @@ public class DDEstadoAsunto implements Dictionary, Auditable {
     public static final String ESTADO_ASUNTO_VACIO = "04";
     public static final String ESTADO_ASUNTO_CANCELADO = "05";
     public static final String ESTADO_ASUNTO_CERRADO = "06";
+    public static final String ESTADO_ASUNTO_GESTION_FINALIZADA = "20";
 
     @Id
     @Column(name = "DD_EAS_ID")

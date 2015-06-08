@@ -46,13 +46,13 @@
 				</targetBean>
 			</action>
 		</event>			
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H019_PronunciamientoDecision" name="avanzaBPM"></transition>
 		<transition to="H019_RegistrarResultadoSolicitud" name="activarAlerta"></transition>
 		<transition to="H019_presentarSolicitud" name="vueltaAtras"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H019_PronunciamientoDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>	

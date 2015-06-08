@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 
 public class JBPMProcessHayaManager {
+	
+	
        
-       @Autowired
-       private JBPMProcessManager jbpmUtils;
+	@Autowired
+	private JBPMProcessManager jbpmUtils;
        
         /**
     * settter.
@@ -18,5 +20,4 @@ public class JBPMProcessHayaManager {
    public void setContextScripts(List<String> contextScript) {
        jbpmUtils.getContextScripts().addAll(contextScript);
    }
-
 }

@@ -253,11 +253,11 @@
 	
 	<decision name="H048_ResolucionFirmeDecision" expression="#{H048_ResolucionFirmeDecision}">
 		<transition to="FinPosesion" name="favorable"></transition>
-		<transition to="Decision1" name="desfavorable"></transition>
+		<transition to="H048_ResolucionDecision" name="desfavorable"></transition>
 		<transition to="FinPosesion" name="desfavorableTP"></transition>
 	</decision>
 	
-	<node name="Decision1">
+	<node name="H048_ResolucionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

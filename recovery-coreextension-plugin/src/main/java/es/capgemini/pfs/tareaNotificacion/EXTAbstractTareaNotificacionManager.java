@@ -2,12 +2,12 @@ package es.capgemini.pfs.tareaNotificacion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.jamonapi.utils.Logger;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
@@ -19,7 +19,6 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
-import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.dao.EXTTareaNotificacionDao;
 import es.capgemini.pfs.tareaNotificacion.dao.SubtipoTareaDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
@@ -36,7 +35,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
-import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.persona.EXTPersonaApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareas;
@@ -336,8 +334,10 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 */
 	protected void informarCategoriaTarea(final List<DtoResultadoBusquedaTareasBuzones> lista) {
 		for (DtoResultadoBusquedaTareasBuzones tarea : lista) {
-			if (projectContext.getTareasTipoDecision().contains(tarea.getSubtipoTareaCodigoSubtarea()))
-				tarea.setCategoriaTarea(projectContext.CONST_TAREA_TIPO_DECISION);
+			for(String categoria : projectContext.getCategoriasSubTareas().keySet()) {
+				if (projectContext.getCategoriasSubTareas().get(categoria).contains(tarea.getSubtipoTareaCodigoSubtarea()))
+					tarea.setCategoriaTarea(categoria);
+			}
 		}
 	}
 	

@@ -80,10 +80,10 @@
 		<transition to="H064_confirmarRealizacionConsignacion"
 			name="ACEPTADA">
 		</transition>
-		<transition to="Decision" name="DENEGADA"></transition>
+		<transition to="H064_ConsignacionDecision" name="DENEGADA"></transition>
 	</decision>
 
-	<node name="Decision">
+	<node name="H064_ConsignacionDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler</targetBean>
 		</action>

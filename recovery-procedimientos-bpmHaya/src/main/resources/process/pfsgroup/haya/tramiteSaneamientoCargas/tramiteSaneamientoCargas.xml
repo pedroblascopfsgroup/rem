@@ -31,7 +31,7 @@
 
 	<decision name="H008_RevisarEstadoCargasDecision" expression="#{H008_RevisarEstadoCargasDecision}">
 		<transition to="H008_RegistrarPresentacionInscripcion" name="soloRegistrales"></transition>
-		<transition to="Decision1" name="noCargas"></transition>
+		<transition to="H008_SaneamientoDecision" name="noCargas"></transition>
 		<transition to="H008_PropuestaCancelacionCargas" name="conEconomicas"></transition>
 	</decision>
 
@@ -98,7 +98,7 @@
 		</event>	
 		<transition to="H008_RegistrarPresentacionInscripcion" name="vueltaAtras"></transition>
 		<transition to="H008_RegInsCancelacionCargasReg" name="activarAlerta"></transition>
-		<transition to="Decision1" name="avanzaBPM"></transition>
+		<transition to="H008_SaneamientoDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -172,7 +172,7 @@
 
 	<decision name="H008_RegInsCancelacionCargasEconomicasDecision" expression="#{H008_RegInsCancelacionCargasEconomicasDecision}">
 		<transition to="H008_RegistrarPresentacionInscripcionEco" name="conRegistrales"></transition>
-		<transition to="Decision1" name="soloEconomicas"></transition>
+		<transition to="H008_SaneamientoDecision" name="soloEconomicas"></transition>
 	</decision>
 
 	<state name="H008_RegistrarPresentacionInscripcionEco">
@@ -217,11 +217,11 @@
 		</event>	
 		<transition to="H008_RegistrarPresentacionInscripcionEco" name="vueltaAtras"></transition>
 		<transition to="H008_RegInsCancelacionCargasRegEco" name="activarAlerta"></transition>
-		<transition to="Decision1" name="avanzaBPM"></transition>
+		<transition to="H008_SaneamientoDecision" name="avanzaBPM"></transition>
 		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
-	<node name="Decision1">
+	<node name="H008_SaneamientoDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

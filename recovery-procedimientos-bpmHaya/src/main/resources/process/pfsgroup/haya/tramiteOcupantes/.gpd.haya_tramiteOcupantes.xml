@@ -185,7 +185,7 @@
       <bendpoint w1="27" h1="61" w2="-221" h2="-5"/>
     </edge>
   </node>
-  <node name="Decision1" x="334" y="1491" width="132" height="36">
+  <node name="H048_ResolucionDecision" x="334" y="1491" width="187" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

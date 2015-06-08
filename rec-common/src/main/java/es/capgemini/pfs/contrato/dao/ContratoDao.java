@@ -119,4 +119,13 @@ public interface ContratoDao extends AbstractDao<Contrato, Long> {
      * @return la lista de expedientes.
      */
     List<ExpedienteContrato> buscarContratosExpedientesHistoricosContrato(Long idContrato);
+    
+    
+    /**
+     * devuelve el contador de reincidencias de un contrato.
+     * @param idContrato el id del contrato.
+     * @return la lista de expedientes.
+     */
+    Integer contadorReincidencias(Long idContrato);
+    
 }

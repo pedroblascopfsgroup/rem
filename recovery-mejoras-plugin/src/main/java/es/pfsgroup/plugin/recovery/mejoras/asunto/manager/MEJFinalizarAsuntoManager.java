@@ -29,6 +29,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.api.MEJFinalizarAsuntoApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
@@ -73,6 +74,8 @@ public class MEJFinalizarAsuntoManager implements MEJFinalizarAsuntoApi {
 
 		EXTAsunto asunto = genericDao.get(EXTAsunto.class, filtroId,
 				filtroBorrado);
+		
+		Provisiones prov = genericDao.get(Provisiones.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", asunto.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 
 		// Buscamos el estado procedimiento cerrado para asignarselo después al
 		// procedimiento
@@ -122,9 +125,18 @@ public class MEJFinalizarAsuntoManager implements MEJFinalizarAsuntoApi {
 		// cambiar el estado del asunto
 		// Comprobamos que no haya habido ningún error
 		if (!error) {
+			//Estado Asunto por defecto = "Cerrado"
 			DDEstadoAsunto estado = genericDao.get(DDEstadoAsunto.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo",
 							DDEstadoAsunto.ESTADO_ASUNTO_CERRADO));
+			
+			//Se evalúa si existen provisiones -> Se establece estado = "Gestion finalizada"
+			if ( prov != null && (Checks.esNulo(prov.getFechaBaja() )) ){
+				estado = genericDao.get(DDEstadoAsunto.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDEstadoAsunto.ESTADO_ASUNTO_GESTION_FINALIZADA));
+			}
+
 			asunto.setEstadoAsunto(estado);
 			try {
 				genericDao.save(EXTAsunto.class, asunto);

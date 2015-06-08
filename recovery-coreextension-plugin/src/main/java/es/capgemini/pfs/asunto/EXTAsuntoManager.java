@@ -893,8 +893,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	public boolean modeloMultiGestor() {
 
 		if (this.modeloMultiGestor == null) {
-			List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericdDao.getList(EXTGestorAdicionalAsunto.class);
-			this.modeloMultiGestor = !Checks.estaVacio(gestoreAdicionales);
+			// workaround, por defecto siempre es multigestor.
+			//List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericdDao.getList(EXTGestorAdicionalAsunto.class);
+			this.modeloMultiGestor = true;//!Checks.estaVacio(gestoreAdicionales);
 		}
 		return modeloMultiGestor;
 	}
@@ -1849,7 +1850,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
 		
 		Integer limite = Integer.parseInt(param.getValor());
-		
+
 		dto.setLimit(limite+1);
 		Page results = asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
 				

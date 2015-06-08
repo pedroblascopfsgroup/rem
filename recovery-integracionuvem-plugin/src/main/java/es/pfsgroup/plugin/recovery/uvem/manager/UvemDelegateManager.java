@@ -367,7 +367,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				servicioGMP5JD20.setCodigoEntidadcoengw(codigoEntidad);
 				System.out.println(" ***REQUERIDO*** COENOW"); // 	"NUMERICO_4" longitud="5"	 Código de Entidad origen
 				//FUNCIONAL, char_extra5 segun DR
-				short codigoEntidadOrigen = 2038;
+				short codigoEntidadOrigen = 2069;
 				servicioGMP5JD20.setCodigoEntidadOrigencoenow(codigoEntidadOrigen);
 				System.out.println(" ***REQUERIDO*** COSOPW"); // 	"NUMERICO_4" longitud="5"	 Código de Sociedad Patrimonial
 				//FUNCIONAL ??? segun DR

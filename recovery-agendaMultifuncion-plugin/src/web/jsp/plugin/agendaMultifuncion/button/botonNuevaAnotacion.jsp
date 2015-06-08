@@ -22,7 +22,7 @@ new Ext.Button({
             }
             ,width:600
             ,title : '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.window.title" text="**Crear anotacion" />'
-            ,height:530
+            ,height:600
             ,closable:false
             ,resizable: true
             ,modal:true

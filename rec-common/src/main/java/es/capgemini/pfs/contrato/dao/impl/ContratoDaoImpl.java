@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.exception.UserException;
@@ -18,6 +19,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
+import es.capgemini.pfs.contrato.model.AcnAntecedContratos;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -25,6 +27,8 @@ import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.model.Persona;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Clase que implementa los métodos de la interfaz ContratoDao.
@@ -41,6 +45,9 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	private static Date staticCacheFechaCarga = null;
 
 	private static final long FECHA_CARGA_CACHE_TIMEOUT = 7200000;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Resource
 	private PaginationManager paginationManager;
@@ -627,6 +634,18 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			return lista.get(0);
 		}
 		return null;
+	}
+	
+	public Integer contadorReincidencias(Long idContrato){
+		
+		
+		AcnAntecedContratos acn = genericDao.get(AcnAntecedContratos.class, genericDao.createFilter(FilterType.EQUALS, "id", idContrato) );
+		
+		if(acn==null)
+			return 0;
+		else
+			return acn.getNumeroReincidencias();
+		
 	}
 
 }

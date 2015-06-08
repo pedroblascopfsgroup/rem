@@ -507,16 +507,12 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="P401_AprobacionPropCesionRemateDecision" name="avanzaBPM"></transition>
+		<transition to="P401_BPMTramiteCesionRemateV4" name="avanzaBPM"></transition>
 		<transition to="P401_AprobacionPropCesionRemate" name="activarAlerta"></transition>
 		<transition to="P401_PrepararCesionRemate" name="vueltaAtras"> </transition>
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
 	
-	<decision name="P401_AprobacionPropCesionRemateDecision" expression="#{P401_AprobacionPropCesionRemateDecision}">
-		<transition to="P401_BPMTramiteCesionRemateV4" name="OK"></transition>
-		<transition to="Decision2" name="KO"></transition>
-	</decision>
 
 	<node name="P401_SolicitarNumActivo">
 		<action name="miTarea" config-type="bean"

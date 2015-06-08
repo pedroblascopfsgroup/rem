@@ -106,8 +106,9 @@
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
 		var codigoSubtipoTarea = rec.get('codigoSubtipoTarea');
-		if(codigoSubtipoTarea == 700){
 		
+		if(codigoSubtipoTarea == 700 || codigoSubtipoTarea == 'TAREA_RECORDATORIO'){
+
 	    	var idTarea = rec.get('tarea');
             var w = app.openWindow({
                 flow: 'buzontareas/abreTarea'

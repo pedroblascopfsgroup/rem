@@ -3,6 +3,7 @@
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="pfsformat" tagdir="/WEB-INF/tags/pfs/format" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fwk:json>
 	<json:array name="adjuntos" items="${dtos}" var="dto">
@@ -13,7 +14,7 @@
 			<json:property name="length" value="${dto.adjunto.length}" />
 			<json:property name="descripcion" value="${dto.adjunto.descripcion}"/>
 			<json:property name="fechaCrear">
-				<fwk:date value="${dto.adjunto.auditoria.fechaCrear}"/>
+				<fmt:formatDate value="${dto.adjunto.auditoria.fechaCrear}" pattern="dd/MM/yyyy" />
 			</json:property>
 			<json:property name="puedeBorrar" value="${dto.puedeBorrar}" />
 			

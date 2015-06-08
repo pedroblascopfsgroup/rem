@@ -83,7 +83,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     		if(typeof campo.store != 'undefined' && (campo.store instanceof Ext.data.Store) && (campo.store.getTotalCount( ) == 0 && campo.store.url!="/pfs/pcdprocesadoresoluciones/getJuzgadosByPlaza.htm") ){
     			
     			var cmp =Ext.getCmp(campo.id);
-    			cmp_selected = cmp.getValue();
+    			var cmp_selected = cmp.getValue();
 
     			if(cmp_selected != null && cmp_selected != ''){
     				////CARGAMOS SOLO EL ELEMENTO SELECCIONADO
@@ -94,12 +94,11 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     					cmp.setValue(cmp_selected);
     					cmp.store.events['load'].clearListeners();
     					cmp.store.baseParams.codigo = "";
-					});
-    				
+					});	
     			}else{
     				campo.store.baseParams.codigo = "";
     				campo.store.baseParams.query = "";
-    				campo.store.load({params:{idFactoria:this.idFactoria}});	
+    				campo.store.load({params:{idFactoria:this.idFactoria}});
     			}
     			
     		}

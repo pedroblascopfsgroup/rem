@@ -1238,12 +1238,37 @@ public class SubastaManager implements SubastaApi {
 			tipoJuzgado.setPlaza(tipoPlaza);
 			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
 			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
-			
-			// H002/H003/H004
-			HistoricoProcedimiento procedimiento = getNodo(subasta.getProcedimiento(), "");
-			getValorNodoPrc(procedimiento, "");
-			
-			TareaProcedimiento tareaProcedimiento = (TareaProcedimiento) genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "H002ssas"), genericDao.createFilter(FilterType.EQUALS, "codigo", "H002ssas"), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+
+			// Si existe se actualizan los campos si no se lanzan las tareas
+			if(dto.isExisteTareaSenyalamiento()) {
+				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "costasLetrado", dto.getCostasLetrado());
+				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "costasProcurador", dto.getCostasProcurador());
+				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "fechaSenyalamiento", dto.getFechaSenyalamiento());
+			}else{
+				//TODO hay que ver que hacer para crear las tareas y insertar los datos
+			}
+			if(dto.isExisteTareaCelebracion()) {
+				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "comboPostores", dto.getConPostores());
+			}else{
+				//TODO hay que ver que hacer para crear las tareas y insertar los datos
+			}
+		}
+		
+		private void actualizarTareaExternaValor(Long idProcedimiento, String label, String valor) {
+			TareaExternaValor tareaExtValor = (TareaExternaValor) genericDao.get(TareaExternaValor.class, 
+					genericDao.createFilter(FilterType.EQUALS, "nombre", label), 
+					genericDao.createFilter(FilterType.EQUALS, "tareaExterna.tareaProcedimiento.id", idProcedimiento),						
+					genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			tareaExtValor.setValor(valor);
+			genericDao.update(TareaExternaValor.class, tareaExtValor);
+		}
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA)
+		public boolean tareaNoExisteOFinalizada(Procedimiento procedimiento, String nombreNodo) {
+			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
+			return (Checks.esNulo(historicoPrc) || (!Checks.esNulo(historicoPrc) && Checks.esNulo(historicoPrc.getFechaFin())));
 		}
 		
 		@Override
@@ -1253,7 +1278,6 @@ public class SubastaManager implements SubastaApi {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
 			return getValorNodoPrc(historicoPrc, valor);
 		}
-		
 		
 		private HistoricoProcedimiento getNodo(Procedimiento procedimiento, String nombreNodo) {
 			HistoricoProcedimiento hPrc = null;
@@ -1294,5 +1318,41 @@ public class SubastaManager implements SubastaApi {
 			}
 			return null;
 		}
-	
+
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperationDefinition(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
+		public List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien) {
+			Subasta subasta = subastaDao.get(idSubasta);
+			return subastaDao.findBatchAcuerdoCierreDeuda(subasta.getAsunto().getId(), subasta.getProcedimiento().getId(), idBien);
+		}
+
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
+		public void eliminarRegistroCierreDeuda(BatchAcuerdoCierreDeuda batchAcuerdoCierreDeuda, List<BatchAcuerdoCierreDeuda> listBACDD) {
+			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
+				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
+			}
+			guardaBatchAcuerdoCierre(batchAcuerdoCierreDeuda);
+		} 
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
+		public List<NMBBien> enviarBienesCierreDeuda(BatchAcuerdoCierreDeuda cierreDeuda, Long idSubasta, List<Long> idsBien) {
+			List<NMBBien> idBienesNoCierre = new ArrayList<NMBBien>();
+			for(Long idBien : idsBien) {
+				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
+				if(Checks.estaVacio(list)) {
+					cierreDeuda.setIdBien(idBien);
+					guardaBatchAcuerdoCierre(cierreDeuda);
+				}else{
+					NMBBien bien = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", list.get(0).getIdBien()), 
+							genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+					idBienesNoCierre.add(bien);
+				}
+			}
+			return idBienesNoCierre;
+		} 
 }

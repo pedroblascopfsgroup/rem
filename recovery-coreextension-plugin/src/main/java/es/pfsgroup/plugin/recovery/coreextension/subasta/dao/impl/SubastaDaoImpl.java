@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -20,6 +22,7 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
@@ -983,6 +986,35 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				generarHQLBuscarSubastasPaginados(dto, usuLogado));
 		return query.list().size();
 	}
+	@Override
+	public List<BatchAcuerdoCierreDeuda> findBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien){
+		Query query = getSession().createQuery(
+				generarHQLBuscarBatchAcuerdoCierreDeuda(idAsunto, idProcedimiento, idBien));
+		return (List<BatchAcuerdoCierreDeuda>) query.list();
+	}
 
+	private String generarHQLBuscarBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien) {
+		StringBuilder hql = new StringBuilder();
+
+		// Consulta inicial b�sica
+		hql.append(" select baccd ");
+		hql.append(" from BatchAcuerdoCierreDeuda baccd ");
+		hql.append(" where baccd.idProcedimiento = ").append(idProcedimiento);
+		hql.append(" and baccd.idAsunto = ").append(idAsunto);
+		if(!Checks.esNulo(idBien)) {
+			hql.append(" and baccd.idBien = ").append(idBien);
+		}
+		hql.append(" and baccd.fechaEntrega is null ");
+		
+		Calendar calendarInicio = Calendar.getInstance();
+		calendarInicio = new GregorianCalendar(calendarInicio.YEAR, calendarInicio.MONTH, calendarInicio.DAY_OF_MONTH, 0, 0);
+		Calendar calendarFin = Calendar.getInstance();
+		calendarFin = new GregorianCalendar(calendarFin.YEAR, calendarFin.MONTH, calendarFin.DAY_OF_MONTH, 22, 0);
+		
+		hql.append(" and baccd.fechaAlta between ").append(calendarInicio.getTime());
+		hql.append(" and ").append(calendarFin.getTime());
+		
+		return hql.toString();
+	}
 	
 }

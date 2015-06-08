@@ -20,6 +20,8 @@ public class EditarInformacionCierreDto implements Serializable {
 	private String costasProcurador;
 	private String fechaSenyalamiento;
 	private String conPostores;
+	private boolean existeTareaSenyalamiento;
+	private boolean existeTareaCelebracion;
 
 	/**
 	 * @return the idSubasta
@@ -166,5 +168,33 @@ public class EditarInformacionCierreDto implements Serializable {
 	 */
 	public void setCodigoJuzgado(String codigoJuzgado) {
 		this.codigoJuzgado = codigoJuzgado;
+	}
+
+	/**
+	 * @return the existeTareaSenyalamiento
+	 */
+	public boolean isExisteTareaSenyalamiento() {
+		return existeTareaSenyalamiento;
+	}
+
+	/**
+	 * @param existeTareaSenyalamiento the existeTareaSenyalamiento to set
+	 */
+	public void setExisteTareaSenyalamiento(boolean existeTareaSenyalamiento) {
+		this.existeTareaSenyalamiento = existeTareaSenyalamiento;
+	}
+
+	/**
+	 * @return the existeTareaCelebracion
+	 */
+	public boolean isExisteTareaCelebracion() {
+		return existeTareaCelebracion;
+	}
+
+	/**
+	 * @param existeTareaCelebracion the existeTareaCelebracion to set
+	 */
+	public void setExisteTareaCelebracion(boolean existeTareaCelebracion) {
+		this.existeTareaCelebracion = existeTareaCelebracion;
 	}
 }

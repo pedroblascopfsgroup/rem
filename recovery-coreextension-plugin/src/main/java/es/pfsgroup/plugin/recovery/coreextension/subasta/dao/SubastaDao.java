@@ -7,6 +7,7 @@ import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 
@@ -23,5 +24,6 @@ public interface SubastaDao extends AbstractDao<Subasta, Long>{
 	List<LoteSubasta> buscarLoteSubastasExcel(NMBDtoBuscarLotesSubastas dto);
 	List<LoteSubasta> buscarLoteSubastasExcel(NMBDtoBuscarLotesSubastas dto,Usuario usuLogado);
 	Integer buscarSubastasExcelCount(NMBDtoBuscarSubastas dto, Usuario usuLogado);
+	List<BatchAcuerdoCierreDeuda> findBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien);
 
 }

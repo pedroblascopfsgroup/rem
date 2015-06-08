@@ -127,6 +127,9 @@ public class EXTAsunto extends Asunto {
     @JoinColumn(name = "DD_GES_ID")
 	private DDGestionAsunto gestionAsunto;
 	
+	@Column(name = "ERROR_ENVIO_CDD")
+    private Integer errorEnvioCDD;
+	
 	
 	//private Boolean esMultigestor;
 
@@ -360,5 +363,18 @@ public class EXTAsunto extends Asunto {
 		return ultimoProc;
 	}
 
+	/**
+	 * @return the errorEnvioCDD
+	 */
+	public Integer getErrorEnvioCDD() {
+		return errorEnvioCDD;
+	}
+
+	/**
+	 * @param errorEnvioCDD the errorEnvioCDD to set
+	 */
+	public void setErrorEnvioCDD(Integer errorEnvioCDD) {
+		this.errorEnvioCDD = errorEnvioCDD;
+	}
 	
 }

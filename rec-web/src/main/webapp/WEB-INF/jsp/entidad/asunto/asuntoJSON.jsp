@@ -42,6 +42,7 @@
 	  <json:property name="despachoCEXP" value="${asunto.gestorCEXP.despachoExterno.despacho}" />
 	  <json:property name="gestorCEXP" value="${asunto.gestorCEXP.usuario.apellidoNombre}" />
 	  <json:property name="supervisorCEXP" value="${asunto.supervisorCEXP.usuario.apellidoNombre}" />
+	  <json:property name="errorEnvioCDD" value="${asunto.errorEnvioCDD}" />
 	  
 	</json:object>
 	<json:object name="comite">

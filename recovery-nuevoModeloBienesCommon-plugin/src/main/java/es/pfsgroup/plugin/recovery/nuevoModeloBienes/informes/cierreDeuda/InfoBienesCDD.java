@@ -14,6 +14,13 @@ public class InfoBienesCDD {
 	private String fechaTasacion;
 	private String valorJudicial;
 	private String datosLocalizacion;
+	
+	private String provincia;
+	private String localidad; 
+	private String unidadPoblacional; 
+	private String codigoPostal;
+	private String direccion;
+	
 	private String viviendaHabitual;
 	private String resultadoAdjudicacion;
 	private String importeAdjudicacion;
@@ -139,6 +146,46 @@ public class InfoBienesCDD {
 
 	public void setContratosRelacionado(List<String> contratosRelacionado) {
 		this.contratosRelacionado = contratosRelacionado;
+	}
+
+	public String getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+
+	public String getLocalidad() {
+		return localidad;
+	}
+
+	public void setLocalidad(String localidad) {
+		this.localidad = localidad;
+	}
+
+	public String getUnidadPoblacional() {
+		return unidadPoblacional;
+	}
+
+	public void setUnidadPoblacional(String unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
+	}
+
+	public String getCodigoPostal() {
+		return codigoPostal;
+	}
+
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
 	}
 
 }

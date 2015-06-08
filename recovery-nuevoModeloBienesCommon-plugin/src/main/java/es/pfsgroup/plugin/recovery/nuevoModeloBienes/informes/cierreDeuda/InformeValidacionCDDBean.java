@@ -242,10 +242,34 @@ public class InformeValidacionCDDBean {
 			if (Checks.esNulo(infobien.getValorJudicial())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Valor judicial; ");
 			}
-			infobien.setDatosLocalizacion(getDatosLocalizacion(nmbBien));
-			if (Checks.esNulo(infobien.getDatosLocalizacion())) {
-				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Datos localizacion; ");
+			if(!Checks.esNulo(nmbBien.getLocalizacionActual())) {
+				if(!Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia())) {
+					infobien.setProvincia(nmbBien.getLocalizacionActual().getProvincia().getDescripcion());									
+				}
+				if(!Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad())) {
+					infobien.setLocalidad(nmbBien.getLocalizacionActual().getLocalidad().getDescripcion());
+				}
+				if(!Checks.esNulo(nmbBien.getLocalizacionActual().getUnidadPoblacional())) {
+					infobien.setLocalidad(nmbBien.getLocalizacionActual().getUnidadPoblacional().getDescripcion());
+				}
+				infobien.setCodigoPostal(nmbBien.getLocalizacionActual().getCodPostal());
+				infobien.setDireccion(nmbBien.getLocalizacionActual().getDireccion());
 			}
+			if (Checks.esNulo(infobien.getProvincia())) {
+				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Provincia; ");
+			}
+			if (Checks.esNulo(infobien.getLocalidad())) {
+				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Localidad; ");
+			}
+			if (Checks.esNulo(infobien.getUnidadPoblacional())) {
+				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Unidad Poblacional; ");
+			}
+			if (Checks.esNulo(infobien.getDireccion())) {
+				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Dirección; ");
+			}
+			if (Checks.esNulo(infobien.getCodigoPostal())) {
+				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Codigo Postal; ");
+			}	
 			infobien.setViviendaHabitual(convertObjectString(nmbBien.getViviendaHabitual()));
 			if (Checks.esNulo(infobien.getViviendaHabitual())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Vivienda habitual; ");
@@ -321,37 +345,6 @@ public class InformeValidacionCDDBean {
 
 	private String getFechaTestimonioAdjudicacionSareb(Subasta subasta) {
 		return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO, VALOR_FECHA_TESTIMONIO);
-	}
-
-	private String getDatosLocalizacion(NMBBien nmbBien) {
-		StringBuilder sb = new StringBuilder();
-		if(Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia())){
-			sb.append("Provincia: ").append("; ");
-		}else{
-			sb.append("Provincia: ").append(nmbBien.getLocalizacionActual().getProvincia().getDescripcion()).append("; ");			
-		}
-		if(Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad())){
-			sb.append("Localidad: ").append("; ");
-		}else{
-			sb.append("Localidad: ").append(nmbBien.getLocalizacionActual().getLocalidad().getDescripcion()).append("; ");
-		}
-		if(Checks.esNulo(nmbBien.getLocalizacionActual().getUnidadPoblacional())){
-			sb.append("Unidad Poblacional: ").append("; ");
-		}else{
-			sb.append("Unidad Poblacional: ").append(nmbBien.getLocalizacionActual().getUnidadPoblacional().getDescripcion()).append("; ");	
-		}
-		if(Checks.esNulo(nmbBien.getLocalizacionActual().getCodPostal())){
-			sb.append("Codigo Postal: ").append("; ");
-		}else{
-			sb.append("Codigo Postal: ").append(nmbBien.getLocalizacionActual().getCodPostal()).append("; ");	
-		}
-		if(Checks.esNulo(nmbBien.getLocalizacionActual().getDireccion())){
-			sb.append("Dirección: ").append("; ");
-		}else{
-			sb.append("Dirección: ").append(nmbBien.getLocalizacionActual().getDireccion()).append("; ");	
-		}
-		
-		return sb.toString();
 	}
 
 	private List<String> contratosBienRelacionados(NMBBien nmbBien) {

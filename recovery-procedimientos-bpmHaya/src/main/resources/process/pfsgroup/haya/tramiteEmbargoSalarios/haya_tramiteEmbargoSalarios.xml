@@ -40,7 +40,7 @@
    <decision name="ConfirmarRetencionesDecision" expression="#{H038_ConfirmarRetencionesDecision}">
       <transition to="Espera" name="CorrectoCobros"></transition>
       <transition to="H038_GestionarProblemas" name="IncorrectoCobros"></transition>
-	  <transition to="Decision2" name="CorrectoFin"></transition>
+	  <transition to="H038_SalariosDecision" name="CorrectoFin"></transition>
    </decision>
 
 
@@ -78,19 +78,12 @@
             <targetBean>genericLeaveActionHandler</targetBean>
          </action>
       </event>
-      <transition to="Decision1" name="avanzaBPM"></transition>
+      <transition to="H038_SalariosDecision" name="avanzaBPM"></transition>
       <transition to="Fin" name="Fin"></transition>
 		<transition to="H038_ActualizarDatos" name="activarAlerta"></transition>
    </state>
 
-   <node name="Decision1">
-      <action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-         <targetBean>genericUserDecisionActionHandler</targetBean>
-      </action>
-      <transition to="Fin" name="Fin"></transition>
-   </node>
-
-	<node name="Decision2">
+   <node name="H038_SalariosDecision">
       <action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          <targetBean>genericUserDecisionActionHandler</targetBean>
       </action>
@@ -126,7 +119,7 @@
 	</state>
 	
 	<decision name="ConfirmarRequerimientoResultadoDecision" expression="#{H038_ConfirmarRequerimientoResultadoDecision}">
-		<transition to="Decision2" name="ConfirmadoNo"></transition>
+		<transition to="H038_SalariosDecision" name="ConfirmadoNo"></transition>
 		<transition to="Espera" name="ConfirmadoSi"></transition>
 	</decision>
 

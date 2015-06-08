@@ -268,8 +268,8 @@
 		comprobarbtnDesparalizar();
 		entidad.cacheOrLoad(data, decisionProcedimientoStore, {id : data.id});
 		var visibles = [
-			 [btnNuevo, data.procedimientoAceptado && (data.esGestor || data.esSupervisor) ]
-			,[btnEditar, data.procedimientoAceptado && (data.esGestor || data.esSupervisor) ]
+			 [btnNuevo, data.procedimientoAceptado && (data.esGestorDecision || data.esSupervisor) ]
+			,[btnEditar, data.procedimientoAceptado && (data.esGestorDecision || data.esSupervisor) ]
 			,[btnProrroga2, data.tarea!=null && data.tarea!='']
 			,[btnDesparalizar, true]
 		];

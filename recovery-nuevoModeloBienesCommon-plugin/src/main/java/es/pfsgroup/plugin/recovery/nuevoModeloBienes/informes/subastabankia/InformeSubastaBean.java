@@ -41,6 +41,7 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 	private static final String INTERVINIENTE_TITULAR = "TITULAR";
 	private static final String INTERVINIENTE_FIADOR = "FIADOR";
 
+	//TODO - Modificar por projectContext
 	private static final String TAREA_SENYALAMIENTO_SUBASTA = "P401_SenyalamientoSubasta";
 	private static final String TAREA_INTERPOSICION_DEMANDA_HIPOTECARIO = "P01_DemandaCertificacionCargas";
 	private static final String TAREA_INTERPOSICION_DEMANDA_MONITORIO = "P02_InterposicionDemanda";

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoOrdinario" width="1256" height="782">
+<root-container name="haya_procedimientoOrdinario" width="1144" height="784">
   <node name="Inicio" x="61" y="19" width="132" height="36">
     <edge>
       <label x="-28" y="-23"/>
@@ -34,7 +34,7 @@
       <bendpoint w1="-177" h1="-42" w2="-177" h2="41"/>
     </edge>
   </node>
-  <node name="Decision 1" x="822" y="176" width="132" height="36">
+  <node name="H024_OrdinarioDecision" x="822" y="176" width="168" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -122,19 +122,15 @@
       <label x="-45" y="7"/>
     </edge>
     <edge>
-      <label x="-11" y="-26"/>
+      <label x="-54" y="-25"/>
+      <bendpoint w1="182" h1="-2" w2="13" h2="539"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="39" y="-15"/>
     </edge>
     <edge>
       <label x="-25" y="7"/>
       <bendpoint w1="-163" h1="25" w2="164" h2="23"/>
-    </edge>
-  </node>
-  <node name="Decision 2" x="1011" y="717" width="132" height="36">
-    <edge>
-      <label x="-73" y="-5"/>
     </edge>
   </node>
   <node name="H024_ConfirmarNotAdmisionDecision" x="280" y="177" width="228" height="36">

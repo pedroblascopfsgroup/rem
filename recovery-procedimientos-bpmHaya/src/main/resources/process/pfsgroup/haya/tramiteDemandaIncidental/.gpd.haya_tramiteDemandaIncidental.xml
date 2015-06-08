@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteDemandaIncidental" width="1246" height="678">
+<root-container name="haya_tramiteDemandaIncidental" width="1208" height="664">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-53" y="-13"/>
@@ -116,11 +116,11 @@
       <bendpoint w1="261" h1="93" w2="1" h2="-187"/>
     </edge>
   </node>
-  <node name="Decision1" x="944" y="163" width="132" height="36">
+  <node name="H023_DemandaDecision" x="875" y="163" width="201" height="36">
     <edge>
       <label x="-7" y="-7"/>
-      <bendpoint w1="88" h1="5" w2="135" h2="-361"/>
-      <bendpoint w1="88" h1="340" w2="135" h2="-26"/>
+      <bendpoint w1="137" h1="0" w2="149" h2="-366"/>
+      <bendpoint w1="132" h1="336" w2="144" h2="-30"/>
     </edge>
   </node>
   <node name="H023_admisionOposicionYSenalamientoVista" x="5" y="399" width="343" height="36">

@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionPr
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
@@ -82,8 +83,48 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
 		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
 		if (bien.getAdjudicacion() != null){
-			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null && !DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
-				return true;
+			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null && !DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){				
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_DECRETO)
+	public Boolean comprobarBienEntidadAdjudicatariaConDecreto(Long bienId){
+		
+		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
+		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
+		if (bien.getAdjudicacion() != null){
+			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
+				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
+					if(bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())){
+						if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.DECRETO.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
+							return true;
+						}
+					}
+				}			
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA)
+	public Boolean comprobarBienEntidadAdjudicatariaConEscritura(Long bienId){
+		
+		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
+		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
+		if (bien.getAdjudicacion() != null){
+			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
+				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
+					if(bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())){
+						if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.ESCRITURA.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
+							return true;
+						}
+					}
+				}			
 			}
 		}
 		return false;
@@ -495,7 +536,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		Bien bien = genericDao.get(Bien.class, genericDao.createFilter(FilterType.EQUALS, "id", bieId));
 		
 		if (bien instanceof NMBBien) {
-			if(!Checks.esNulo(((NMBBien) bien).getAdjudicacion())){
+			if(!Checks.esNulo(((NMBBien) bien).getAdjudicacion()) && !Checks.esNulo(((NMBBien) bien).getAdjudicacion().getCesionRemate())){
 				if(((NMBBien) bien).getAdjudicacion().getCesionRemate()){
 					return true;
 				}

@@ -53,7 +53,7 @@
 
 	<decision name="H016_confAdmiDecretoEmbargoDecision" expression="#{H016_confAdmiDecretoEmbargoDecision}">
 		<transition to="fork1" name="AdmitidoYBienesRegistrables"></transition>
-		<transition to="Decision1" name="NoAdmitido"></transition>
+		<transition to="H016_CambiarioDecision" name="NoAdmitido"></transition>
 		<transition to="H016_confNotifRequerimientoPago" name="Admitido"></transition>
 	</decision>
 
@@ -81,15 +81,6 @@
 		<transition to="H016_BPMVigilanciaCaducidadEmbargos" name="Registrar"></transition>
 		<transition to="H016_confNotifRequerimientoPago" name="Confirmar"></transition>
 	</fork>
-
-	<node name="Decision1">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler
-			</targetBean>
-		</action>	
-		<transition to="Fin" name="Fin"></transition>
-	</node>
 
 	<state name="H016_confNotifRequerimientoPago">
 		<event type="node-enter">
@@ -205,7 +196,7 @@
 			</action>
 		</event>
 		<transition to="H016_registrarAutoEjecucion" name="activarAlerta"></transition>
-		<transition to="Decision2" name="avanzaBPM"></transition>
+		<transition to="H016_CambiarioDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H016_registrarDemandaOposicion" name="vueltaAtras"></transition>
 	</state>
@@ -251,12 +242,12 @@
 			</action>
 		</event>
 		<transition to="H016_resolucionFirme" name="activarAlerta"></transition>
-		<transition to="Decision2" name="avanzaBPM"></transition>
+		<transition to="H016_CambiarioDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H016_registrarResolucion" name="vueltaAtras"></transition>
 	</state>
 
-	<node name="Decision2">
+	<node name="H016_CambiarioDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

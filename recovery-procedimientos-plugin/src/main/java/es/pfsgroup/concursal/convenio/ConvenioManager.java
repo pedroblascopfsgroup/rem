@@ -1,9 +1,11 @@
 package es.pfsgroup.concursal.convenio;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -367,9 +369,11 @@ public class ConvenioManager {
 	}
 	
 	@BusinessOperation("convenioManager.dameFechaPorDefecto")
-	public Date dameFechaPorDefecto(){
+	public String dameFechaPorDefecto(){
 		Date fechaSistema = new Date();
-		return fechaSistema;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		String fecha = sdf.format(fechaSistema);
+		return fecha;
 	}
 	
 	public boolean existeNumeroAutoEnProcedimiento(Long idProcedimiento){

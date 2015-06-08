@@ -35,6 +35,9 @@
 		,{name:'tipoGestorDescripcion'}
 		,{name:'fechaDesde'}
 		,{name:'fechaHasta'}
+		,{name: 'telefono'}
+		,{name: 'email'}
+		
 		
     ]);
     
@@ -71,9 +74,9 @@
         ,{header: '<s:message code="plugin.coreextension.multigestor.descripcion" text="**Descripcion" />',sortable: false, dataIndex: 'tipoGestorDescripcion',width:50, renderer: coloredRender}
         ,{header: '<s:message code="plugin.coreextension.multigestor.usuario" text="**Usuario" />',sortable: false, dataIndex: 'usuario',width:100, renderer: coloredRender}
         ,{header: '<s:message code="plugin.coreextension.multigestor.tipoGestor" text="**Tipo gestor" />',sortable: false, dataIndex: 'tipoGestor',width:50, hidden:'true', renderer: coloredRender}
-        ,{header: '<s:message code="plugin.coreextension.multigestor.fechaDesde" text="**Desde" />',sortable: false, dataIndex: 'fechaDesde',width:30, renderer: dateColoredRender}
-        ,{header: '<s:message code="plugin.coreextension.multigestor.fechaHasta" text="**Hasta" />',sortable: false, dataIndex: 'fechaHasta',width:30, renderer: dateColoredRender}        
-        
+        ,{header: '<s:message code="plugin.coreextension.multigestor.fechaDesde" text="**Desde" />',sortable: false, dataIndex: 'fechaDesde',width:30, renderer: dateColoredRender}       
+		,{header: '<s:message code="plugin.coreextension.multigestor.telefono" text="**Teléfono" />',sortable: false, dataIndex: 'telefono',width:35, renderer: dateColoredRender} 
+		,{header: '<s:message code="plugin.coreextension.multigestor.email" text="**email" />',sortable: false, dataIndex: 'email',width:80, renderer: dateColoredRender}         
     ]);
 
     var recargar = function(){
@@ -242,16 +245,43 @@
 		,cls: 'x-btn-text-icon'
 		//,disabled:true
 		,handler:function(){
+			data = entidad.get("data");
+			
 			if(validar()){
-				insertarFunction();
-				resetCombos();
-			}
-			else{
-				alert('Obligado');
+			
+				Ext.Ajax.request({
+					url: page.resolveUrl('coreextension/isProcuradorConProvisiones')
+					,params: {
+						idAsunto:data.id
+					}
+					,success:function(result, request){
+						var resultado = Ext.decode(result.responseText);
+						
+						if((resultado.okko == 'KO') ||
+							((resultado.okko == 'OK') && (comboTipoGestor.getRawValue().toUpperCase() != 'PROCURADOR'))){
+							insertarFunction();
+							resetCombos();
+						}else{
+							Ext.Msg.show({
+								title:'Atención: Operación no válida',
+								msg: 'El gestor asociado contiene provisiones y no puede cambiarse.',
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.WARNING});
+						}
+					}
+				});
+
+			}else{
+				Ext.Msg.show({
+					title:'Atención: Operación no válida',
+					msg: 'Tipo gestor, Despacho y Usuario son datos obligatorios.',
+					buttons: Ext.Msg.OK,
+					icon:Ext.MessageBox.WARNING});
 			}
 		}
 	});
-	
+
+
 	var insertarFunction=function(){
 		data = entidad.get("data");
 		Ext.Ajax.request({

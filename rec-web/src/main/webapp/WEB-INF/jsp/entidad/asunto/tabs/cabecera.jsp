@@ -41,7 +41,8 @@
   	var comite = label('comite','<s:message code="comite.edicion.comite" text="**Comite"/>');
   	var tipoAsunto = label('tipoAsunto','<s:message code="asunto.tabcabecera.tipo.asunto" text="**Tipo Asunto"/>');
 	var provision = label('provision', '<s:message code="asunto.tabcabecera.provision" text="**Provisión"/>');
-  	
+	var titulizada = label('titulizada','<s:message code="asunto.tabcabecera.titulizada" text="**Titulizada*"/>')
+  	var fondo = label('fondo','<s:message code="asunto.tabcabecera.fondo" text="**Fondo"/>')
 	// formulario para editar el nombre del asunto.
 		
 	var btnEditarNombre = new Ext.Button({
@@ -88,20 +89,6 @@
         panelNombreAsunto.autoHeight = true;
         panelNombreAsunto.style='margin:0px';   
 			
-	var DatosFieldSet = new Ext.form.FieldSet({
-		autoHeight:'false'
-		,style:'padding:0px'
-		,border:true
-		,layout : 'table'
-		,layoutConfig:{	columns:2 }
-		,width:785
-		,title:'<s:message code="asunto.tabcabecera.fieldset.titulo" text="**Datos Principales"/>'
-		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-		,items : [ { items:[ panelNombreAsunto,codigoAsunto,fecha,estado,expediente,comite,tipoAsunto <sec:authorize ifAllGranted="PUEDE_VER_PROVISIONES">,provision</sec:authorize>]}
-				  ,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador]}
-				 ]
-	});	
-	
 	btnEditarNombre.hide()
 	
 	<sec:authorize ifAllGranted="ROLE_EDIT_CABECERA_ASUNTO">
@@ -123,7 +110,7 @@
 		,items : [
 				  
 				  { items:[ panelNombreAsunto,codigoAsunto,fecha,estado,expediente,comite,tipoAsunto<sec:authorize ifAllGranted="PUEDE_VER_PROVISIONES">,provision</sec:authorize>]}
-				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador]}
+				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador<sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">,titulizada,fondo</sec:authorize>]}
 		 	 
 		]
 	});	
@@ -259,7 +246,8 @@
 		entidad.setLabel("expediente", cabecera.expediente);
 		entidad.setLabel("comite", cabecera.comite.nobmre);
 		entidad.setLabel("provision", sinoRender(data.toolbar.provision));
-		
+		entidad.setLabel("titulizada", cabecera.titulizada);
+		entidad.setLabel("fondo", cabecera.fondo);
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;

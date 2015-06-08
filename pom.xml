@@ -33,7 +33,6 @@
 		<diccionarios.version>1.0.2_rc2</diccionarios.version>
 		<plugin.ayuda.version>1.2.0_rc2</plugin.ayuda.version>
 		<plugin.burofax.version>1.1.0</plugin.burofax.version>
-		<plugin.comites.version>1.2.0-rc-01</plugin.comites.version>
 		<plugin.liquidaciones.version>2.0.2</plugin.liquidaciones.version>
 		<plugin.plazasJuzgados.version>1.2.0-rc-01</plugin.plazasJuzgados.version>
 		<plugin.plazosExterna.version>1.1.0</plugin.plazosExterna.version>
@@ -324,11 +323,6 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup</groupId>
-				<artifactId>sql</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-tesfwk</artifactId>
 				<version>1.0.3</version>
 				<scope>test</scope>
@@ -479,7 +473,6 @@
 		<module>recovery-recobro-bpm</module>
 		<module>recovery-controlcalidad-plugin</module>
 		<module>recovery-comites-plugin</module>
-		<module>sql</module>
 	</modules>
 
 	<profiles>

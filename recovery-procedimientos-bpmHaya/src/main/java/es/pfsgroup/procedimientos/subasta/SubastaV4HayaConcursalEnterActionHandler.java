@@ -272,8 +272,8 @@ public class SubastaV4HayaConcursalEnterActionHandler extends PROGenericEnterAct
 		notificacion.setEspera(Boolean.FALSE);
 		notificacion.setAlerta(Boolean.FALSE);
 
-		notificacion.setTarea("Se inicia trámite de adjudicación por cada bien");
-		notificacion.setDescripcionTarea("Se inicia trámite de adjudicación por cada bien");
+		notificacion.setTarea(descripcion);
+		notificacion.setDescripcionTarea(descripcion);
 
 		notificacion.setCodigoTarea(subtipoTarea.getTipoTarea().getCodigoTarea());
 		notificacion.setSubtipoTarea(subtipoTarea);

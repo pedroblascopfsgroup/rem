@@ -22,8 +22,10 @@
 			<evaluate expression="executor.execute('asuntosManager.esSupervisorTemporal',id)" result="flowScope.esSupervisorTemporal" />
 			<evaluate expression="executor.execute('concursoManager.dameNumDeProcsFaseComun',id)" result="flowScope.procedimientosConcursales" />
 			<evaluate expression="executor.execute('core.asunto.puedeVerTabSubasta',id)" result="flowScope.puedeVerTabSubasta" />
-			<!-- <evaluate expression="executor.execute('core.asunto.contieneProvisiones',id)" result="flowScope.provision"/> -->
 			<evaluate expression="executor.execute('core.asunto.puedeVerTabAdjudicados',id)" result="flowScope.puedeVerTabAdjudicados" />
+			<evaluate expression="executor.execute('core.asunto.contieneProvisiones',id)" result="flowScope.provision"/>
+			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.esTitulizada',id)" result="flowScope.titulizada" />
+			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.getFondo',id)" result="flowScope.fondo" />
 	    </on-entry>
     </end-state> 	
     

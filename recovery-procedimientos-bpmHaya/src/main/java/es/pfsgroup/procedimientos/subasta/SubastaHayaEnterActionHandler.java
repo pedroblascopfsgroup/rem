@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 
 public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler {
@@ -97,9 +98,14 @@ public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler 
 						List<Bien> bienes = ls.getBienes();
 						if (!Checks.estaVacio(bienes)) {
 							for (Bien b : bienes) {
-								Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
-								if (creoProcedimiento) {
-									creaProcedimientoAdjudicacion(prc, b, nombreTarea);
+								if(b instanceof NMBBien){
+									NMBBien bi = (NMBBien) b;
+									if(bi.getAdjudicacion()!= null && (bi.getAdjudicacion().getCesionRemate() == null || bi.getAdjudicacion().getCesionRemate() == false)){ //No=false, Si=true
+										Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
+										if (creoProcedimiento) {
+											creaProcedimientoAdjudicacion(prc, b, nombreTarea);
+										}
+									}
 								}
 							}
 						}
@@ -246,8 +252,8 @@ public class SubastaHayaEnterActionHandler extends PROGenericEnterActionHandler 
 		notificacion.setEspera(Boolean.FALSE);
 		notificacion.setAlerta(Boolean.FALSE);
 
-		notificacion.setTarea("Se inicia trámite de adjudicación por cada bien");
-		notificacion.setDescripcionTarea("Se inicia trámite de adjudicación por cada bien");
+		notificacion.setTarea(descripcion);
+		notificacion.setDescripcionTarea(descripcion);
 
 		notificacion.setCodigoTarea(subtipoTarea.getTipoTarea().getCodigoTarea());
 		notificacion.setSubtipoTarea(subtipoTarea);

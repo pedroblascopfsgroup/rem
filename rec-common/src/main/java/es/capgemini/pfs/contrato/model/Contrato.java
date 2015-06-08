@@ -234,6 +234,18 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     private Date fechaVencimiento;
     
   //BANKIA extras
+   
+    
+  	@Formula("(select tfo.dd_tfo_ces_rem from ext_iac_info_add_contrato iac,dd_tfo_tipo_fondo tfo where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = tfo.dd_tfo_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA7 + "'))")
+  	private String titulizado;
+  	
+  	@Formula("(select tfo.dd_tfo_descripcion from ext_iac_info_add_contrato iac,dd_tfo_tipo_fondo tfo where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = tfo.dd_tfo_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA7 + "'))")
+  	private String fondo;  	
+  	
 
   	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
   			+ "  and iac.dd_ifc_id = ("
@@ -324,6 +336,42 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
   			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
   			+ APPConstants.FLAG_EXTR3 + "'))")
   	private String flagextra3;
+  	
+  	@Formula("(select mrf.dd_mrf_descripcion from ext_iac_info_add_contrato iac,${master.schema}.dd_mrf_marca_refinanciacion mrf where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = mrf.dd_mrf_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA9 + "'))")
+  	private String marcaOperacion;
+  	
+  	@Formula("(select mom.dd_mom_descripcion from ext_iac_info_add_contrato iac,${master.schema}.dd_mom_motivo_marca_r mom where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = mom.dd_mom_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA10 + "'))")
+  	private String motivoMarca;
+  	
+  	@Formula("(select idn.dd_idn_descripcion from ext_iac_info_add_contrato iac,${master.schema}.dd_idn_indicador_nomina idn where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = idn.dd_idn_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA4 + "'))")
+  	private String indicadorNominaPension;
+  	
+  	/**@Formula("select acn.acn_num_reinciden from acn_anteced_contratos acn where acn.cnt_id = cnt_id")
+  	private Integer contadorReincidencias;*/
+  	
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getTitulizado() {
+  		return titulizado;
+  	}
+  	
+  	/**@Basic(fetch=FetchType.LAZY)
+  	public Integer getContadorReincidencias() {
+  		if(contadorReincidencias == null)
+  			return 0;
+  		else
+  			return contadorReincidencias;
+  	}*/
+  	
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getFondo() {
+  		return fondo;
+  	}
 
   	@Basic(fetch=FetchType.LAZY)
   	public String getNumextra1() {
@@ -2145,6 +2193,23 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	
 	public void setBienes(List<Bien> bienes) {
 		this.bienes = bienes;
-	}	
+	}
+
+	@Basic(fetch=FetchType.LAZY)
+	public String getMarcaOperacion() {
+		return marcaOperacion;
+	}
+	
+	@Basic(fetch=FetchType.LAZY)
+	public String getMotivoMarca() {
+		return motivoMarca;
+	}
+	
+	@Basic(fetch=FetchType.LAZY)
+	public String getIndicadorNominaPension() {
+		return indicadorNominaPension;
+	}
+
+	
 	
 }

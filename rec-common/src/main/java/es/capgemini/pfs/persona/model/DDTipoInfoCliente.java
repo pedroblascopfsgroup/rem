@@ -38,6 +38,7 @@ public class DDTipoInfoCliente implements Auditable, Dictionary{
 	public static final String TIPO_INFO_ADICIONAL_CLIENTE_ULTIMA_ACTUACION = "ULTIMA_ACTUACION";
 	public static final String NUM_EXTRA1 = "num_extra1";
 	public static final String NUM_EXTRA2 = "num_extra2";
+	public static final String CHAR_EXTRA1 = "char_extra1";
 	
 
 	@Id

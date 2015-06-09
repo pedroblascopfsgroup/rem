@@ -13,6 +13,16 @@ var storeSINO = new Ext.data.JsonStore({
 	});
 storeSINO.loadData(Ext.decode(dataSINO));
 
+function OnLoadCampo(campo){
+	var cmp =Ext.getCmp(campo.id);
+    var cmp_selected = cmp.getValue();
+    campo.store.on('load', function(){  
+            cmp.setValue(cmp_selected);
+            cmp.store.events['load'].clearListeners();
+            cmp.store.baseParams.codigo = "";
+        }); 
+}
+
 es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1  
     
 	attrb: "att1",  
@@ -72,39 +82,37 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     },
 */    
     
+    
     updateStores: function(idTipoResolucion){
-    	
-    	campos = this.arrayCampos[idTipoResolucion];
+        
+        campos = this.arrayCampos[idTipoResolucion];
 
-    	for (var i=0;i<campos.length;i++)
-    	{ 	
-    		var campo=campos[i];
-    		
-    		if(typeof campo.store != 'undefined' && (campo.store instanceof Ext.data.Store) && (campo.store.getTotalCount( ) == 0 && campo.store.url!="/pfs/pcdprocesadoresoluciones/getJuzgadosByPlaza.htm") ){
-    			
-    			var cmp =Ext.getCmp(campo.id);
-    			var cmp_selected = cmp.getValue();
+        for (var i=0;i<campos.length;i++)
+        {        
+                var campo=campos[i];
+                
+                if(typeof campo.store != 'undefined' && (campo.store instanceof Ext.data.Store) && (campo.store.getTotalCount( ) == 0 && campo.store.url!="/pfs/pcdprocesadoresoluciones/getJuzgadosByPlaza.htm") ){
+                        
+                        var cmp_selected = Ext.getCmp(campo.id).getValue();
 
-    			if(cmp_selected != null && cmp_selected != ''){
-    				////CARGAMOS SOLO EL ELEMENTO SELECCIONADO
-    				campo.store.baseParams.codigo = cmp_selected;
-    				campo.store.baseParams.query = "";
-    				campo.store.load();
-    				campo.store.on('load', function(){  
-    					cmp.setValue(cmp_selected);
-    					cmp.store.events['load'].clearListeners();
-    					cmp.store.baseParams.codigo = "";
-					});	
-    			}else{
-    				campo.store.baseParams.codigo = "";
-    				campo.store.baseParams.query = "";
-    				campo.store.load({params:{idFactoria:this.idFactoria}});
-    			}
-    			
-    		}
-    		
-    	}
+                        if(cmp_selected != null && cmp_selected != ''){
+                                ////CARGAMOS SOLO EL ELEMENTO SELECCIONADO
+                                campo.store.baseParams.codigo = cmp_selected;
+                                campo.store.baseParams.query = "";
+                                campo.store.load();
+                                OnLoadCampo(campo);        
+                        }else{
+                                campo.store.baseParams.codigo = "";
+                                campo.store.baseParams.query = "";
+                                campo.store.load({params:{idFactoria:this.idFactoria}});
+                        }
+                        
+                }
+                
+        }
     },
+
+
     
     getFormItems: function(idTipoResolucion, idAsunto, codigoProcedimiento, codPlaza,idProcedimiento, filtrar){
     	//debugger;

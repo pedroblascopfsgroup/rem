@@ -25,10 +25,10 @@
 		{name:'usuario'}
 		,{name:'tarea'}
 		,{name:'asunto'}
-		,{name:'tareaTarea'}
-		,{name:'tareaDescripcion'}
+		,{name:'nombreTarea'}
+		,{name:'descripcionTarea'}
 		,{name:'procedimiento'}
-		,{name:'fechaVencimiento', type:'date', dateFormat:'c'}
+		,{name:'fechaVenc', type:'date', dateFormat:'c'}
 		,{name:'resolucion'}
 		,{name:'idResolucion'}
 		,{name:'idTipoResolucion'}
@@ -56,10 +56,10 @@
 		{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.usuario" text="**Usuario" />', dataIndex: 'usuario', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tarea" text="**Tarea" />', dataIndex: 'tarea', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.asunto" text="**Asunto" />', width: 25, dataIndex: 'asunto', sortable:true}
-		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaTarea" text="**TareaTarea" />', dataIndex: 'tareaTarea', sortable:true}
-		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaDescripcion" text="**TareaDescripcion" />',width: 180, dataIndex: 'tareaDescripcion', sortable:true}
+		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaTarea" text="**TareaTarea" />', dataIndex: 'nombreTarea', sortable:true}
+		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaDescripcion" text="**TareaDescripcion" />',width: 180, dataIndex: 'descripcionTarea', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.procedimiento" text="**Procedimiento" />', dataIndex: 'procedimiento', sortable:true, hidden:true}
-		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.fechaVencimiento" text="**FechaVencimiento" />', width: 40, dataIndex: 'fechaVencimiento', sortable:true, renderer:dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.fechaVencimiento" text="**FechaVencimiento" />', width: 40, dataIndex: 'fechaVenc', sortable:true, renderer:dateRenderer}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.resolucion" text="**Resolucion" />', dataIndex: 'resolucion', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.idResolucion" text="**IdResolucion" />', width: 35, dataIndex: 'idResolucion', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.idTipoResolucion" text="**idTipoResolucion" />', width: 35, dataIndex: 'idTipoResolucion', sortable:true, hidden:true}

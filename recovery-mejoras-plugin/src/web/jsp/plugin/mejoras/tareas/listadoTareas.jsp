@@ -1256,6 +1256,7 @@
                             app.recargaTree();
                         });
                         w.on(app.event.OPEN_ENTITY, function(){
+                            w.close();
                             //Abre docadjunta del procedimiento
                             app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tabAdjuntosAsunto');
                         });

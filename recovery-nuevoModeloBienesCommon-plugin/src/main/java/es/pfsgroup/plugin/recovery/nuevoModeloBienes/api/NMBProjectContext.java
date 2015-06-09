@@ -60,4 +60,18 @@ public interface NMBProjectContext {
 	
 	//void setMapaTiposPrc(Map<String, String> mapaTiposPrc);
 	
+	/**
+	 * Devuelve los códigos de las subastas sobre las que hacer la validacion PRE en la tarea Confirmar testimonio del trámite de adjudicación. 
+	 * 
+	 * @return Listado de códigos de subasta
+	 */
+	List<String> getCodigosSubastaValidacion();
+	
+	/**
+	 * Devuelve los códigos de todas las subastas  
+	 * 
+	 * @return Listado de códigos de subasta
+	 */
+	List<String> getCodigosSubastas();
+	
 }

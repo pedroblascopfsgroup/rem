@@ -27,10 +27,18 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TIPO_PROCEDIMIENTO_POSESION = "POSESION";
 	public static final String CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES = "GESTION-LLAVES";
 	
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB = "CelebracionSubastaSareb";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB = "SenyalamientoSubastaSareb";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_CONCURSAL = "CelebracionSubastaConcursal";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_CONCURSAL= "SenyalamientoSubastaConcursal";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_TERCEROS = "CelebracionSubastaTerceros";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_TERCEROS = "SenyalamientoSubastaTerceros";
+	
 	private Set<String> tareasStopValidarLotesSubasta;
 	private Long nivelZonaOficinaGestoraEnInformes;
 	private List<String> tiposPrcAdjudicados;
 	private Map<String, String> mapaTiposPrc;
+	private Map<String, String> tareasCierreDeuda;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -177,6 +185,15 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		lote.setObservacionesComite(observacionesComite);
 		lote.setEstado(estadoLote);;
 		lote.setFechaEstado(fecha);
+	}
+	
+	@Override
+	public Map<String, String> getTareasCierreDeuda() {
+		return tareasCierreDeuda;
+	}
+
+	public void setTareasCierreDeuda(Map<String, String> tareasCierreDeuda) {
+		this.tareasCierreDeuda = tareasCierreDeuda;
 	}
 	
 }

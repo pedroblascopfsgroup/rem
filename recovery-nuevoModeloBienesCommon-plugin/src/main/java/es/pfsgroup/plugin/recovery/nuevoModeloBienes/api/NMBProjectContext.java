@@ -60,4 +60,6 @@ public interface NMBProjectContext {
 	
 	//void setMapaTiposPrc(Map<String, String> mapaTiposPrc);
 	
+	Map<String, String> getTareasCierreDeuda();
+	
 }

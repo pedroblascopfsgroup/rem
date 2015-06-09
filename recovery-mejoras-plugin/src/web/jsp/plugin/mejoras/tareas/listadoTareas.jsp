@@ -1233,7 +1233,7 @@
                 var w = app.openWindow({
                                 flow : 'tareas/consultaNotificacion'
                                 ,title : 'Notificacion'
-                                ,width:400
+                                ,width:500
                                 ,params : {
                                                 idEntidad: rec.get('idEntidad')
                                                 ,codigoTipoEntidad: rec.get('codigoEntidadInformacion')
@@ -1243,21 +1243,24 @@
                                                 ,descripcionTareaAsociada: rec.get('descripcionTareaAsociada')
                                                 ,idTareaAsociada: rec.get('idTareaAsociada')
                                                 ,idTarea:rec.get('id')
-                ,tipoTarea:rec.get('tipoTarea')
+                                                ,tipoTarea:rec.get('tipoTarea')
                                 }
                         });
-                        w.on(app.event.CANCEL, function(){ w.close(); });
+                        w.on(app.event.CANCEL, function(){ 
+                            w.close();
+                        });
                         w.on(app.event.DONE, function(){
                             w.close();
                             tareasStore.webflow(paramsBusquedaInicial);
                             //Recargamos el arbol de tareas
                             app.recargaTree();
+                        });
+                        w.on(app.event.OPEN_ENTITY, function(){
                             //Abre docadjunta del procedimiento
                             app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tabAdjuntosAsunto');
-
-                });
-            
+                        });
             break;
+
             case app.subtipoTarea.CODIGO_TAREA_PROPUESTA_BORRADO_OBJETIVO:
                 var idObjetivo = rec.get('idEntidad');
                 var w = app.openWindow({

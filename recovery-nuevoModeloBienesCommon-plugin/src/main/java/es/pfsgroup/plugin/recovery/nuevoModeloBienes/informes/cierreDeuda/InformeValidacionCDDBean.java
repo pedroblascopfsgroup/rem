@@ -332,15 +332,18 @@ public class InformeValidacionCDDBean {
 		String tareaSenyalamientoSubasta = "";
 
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB);
-		} else if (TIPO_PROCEDIMIENTO_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_CONCURSAL);
-		} else if (TIPO_PROCEDIMIENTO_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_TERCEROS);
+		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
+			if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB);
+			} else if (TIPO_PROCEDIMIENTO_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_CONCURSAL);
+			} else if (TIPO_PROCEDIMIENTO_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_TERCEROS);
+			}
+			
+			return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, VALOR_COSTAS_PROCURADOR);			
 		}
-
-		return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, VALOR_COSTAS_PROCURADOR);
+		return null;
 	}
 
 	private String getFechaTestimonioAdjudicacionSareb(Subasta subasta) {
@@ -349,9 +352,9 @@ public class InformeValidacionCDDBean {
 
 	private List<String> contratosBienRelacionados(NMBBien nmbBien) {
 		List<String> listContratosBien = new ArrayList<String>();
-		for (NMBContratoBien contrato : nmbBien.getContratos()) {
-			listContratosBien.add(contrato.getContrato().getDescripcion());
-		}
+//		for (NMBContratoBien contrato : contratos) {
+//			listContratosBien.add(contrato.getContrato().getDescripcion());
+//		}
 		return listContratosBien;
 	}
 

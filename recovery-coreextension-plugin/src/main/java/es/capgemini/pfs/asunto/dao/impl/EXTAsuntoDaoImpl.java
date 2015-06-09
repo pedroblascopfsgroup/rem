@@ -22,7 +22,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.StringUtils;
@@ -41,6 +40,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -778,7 +778,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 				logger.error("Error parseando la fecha hasta", e);
 			}
 		}
-
+		
+		//FILTRO ERROR CDD
+		if (dto.getComboErrorCDD()!=null && !"".equals(dto.getComboErrorCDD())) {
+			hql.append(" and asu.errorEnvioCDD = :errorCDD");
+			params.put("errorCDD", (dto.getComboErrorCDD().equals(DDSiNo.SI) ? 1 : 0));
+		}
+		
 		// FILTRO GESTION
 		if (dto.getComboGestion() != null && !"".equals(dto.getComboGestion())) {
 			hql.append(" and asu.gestionAsunto.codigo = :gestionAsunto");

@@ -42,6 +42,7 @@
 			<evaluate expression="executor.execute('procedimientoManager.getEstadosProcedimientos')" result="flowScope.estadosAnalisis" />
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
 			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDSiNo')" result="flowScope.sino" />
 			<evaluate expression="executor.execute('tipoProcedimientoManager.getTipoProcedimientos')" result="flowScope.tipoProcedimientos" />
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getTabs')" result="flowScope.tabs"/>
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoLeft')" result="flowScope.buttonsLeft"/>

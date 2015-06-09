@@ -1233,7 +1233,7 @@
                 var w = app.openWindow({
                                 flow : 'tareas/consultaNotificacion'
                                 ,title : 'Notificacion'
-                                ,width:500
+                                ,width:400
                                 ,params : {
                                                 idEntidad: rec.get('idEntidad')
                                                 ,codigoTipoEntidad: rec.get('codigoEntidadInformacion')
@@ -1256,6 +1256,7 @@
                             app.recargaTree();
                         });
                         w.on(app.event.OPEN_ENTITY, function(){
+                            w.close();
                             //Abre docadjunta del procedimiento
                             app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tabAdjuntosAsunto');
                         });

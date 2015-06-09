@@ -12,7 +12,7 @@
 <%-- 			<json:property name="tareaTarea" value="${tar.nombreTarea}" /> --%>
 			<json:property name="tareaDescripcion" value="${tar.descripcionTarea}" />
 			<json:property name="procedimiento" value="${tar.procedimiento}" />
-			<json:property name="fechaVencimiento" value="${tar.fechaVenc}" />
+			<json:property name="fechaVenc" value="${tar.fechaVenc}" />
 <%-- 			<json:property name="resolucion" value="${tar.resolucion}" /> --%>
 <%-- 			<json:property name="idResolucion" value="${tar.idResolucion}" /> --%>
 <%-- 			<json:property name="idTipoResolucion" value="${tar.idTipoResolucion}" /> --%>

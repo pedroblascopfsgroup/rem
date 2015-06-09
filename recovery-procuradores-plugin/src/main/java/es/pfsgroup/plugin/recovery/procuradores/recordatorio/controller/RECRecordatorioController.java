@@ -50,6 +50,12 @@ public class RECRecordatorioController {
 	@RequestMapping
 	public String getListaRecordatorios(RECRecordatorioDto dto, ModelMap map, WebRequest request){
 		
+		if(!Checks.esNulo(dto.getSort())){
+			if(dto.getSort().equals("fechaTareaUno")){dto.setSort("rec.tareaUno.fechaVenc");}
+			if(dto.getSort().equals("fechaTareaDos")){dto.setSort("rec.tareaDos.fechaVenc");}
+			if(dto.getSort().equals("fechaTareaTres")){dto.setSort("rec.tareaTres.fechaVenc");}
+		}
+
 		Page p = proxyFactory.proxy(RECRecordatorioApi.class).getListaRecordatorios(dto);
 		map.put("pagina", p);
 		return JSON_LISTA_RECORDATORIOS_JSON;

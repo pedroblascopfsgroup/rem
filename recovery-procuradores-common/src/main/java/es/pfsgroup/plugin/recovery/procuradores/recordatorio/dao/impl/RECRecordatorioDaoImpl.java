@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.procuradores.recordatorio.dao.RECRecordatorioDao;
@@ -21,7 +22,13 @@ public class RECRecordatorioDaoImpl extends AbstractEntityDao<RECRecordatorio, L
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "rec.titulo", dto.getTitulo(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "rec.open", dto.getOpen());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "rec.usuario.id", dto.getUsuario().getId(), true);
-		hb.orderBy("rec.fecha", HQLBuilder.ORDER_DESC );
+		
+		if (!Checks.esNulo(dto.getSort()) && !Checks.esNulo(dto.getDir())){
+			hb.orderBy(dto.getSort(), dto.getDir().toLowerCase() );
+		}else{
+			hb.orderBy("rec.fecha", HQLBuilder.ORDER_DESC );
+		}
+		
 
 		return HibernateQueryUtils.page(this, hb, dto);
 		
@@ -36,7 +43,12 @@ public class RECRecordatorioDaoImpl extends AbstractEntityDao<RECRecordatorio, L
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tar.destinatarioTarea.id", dto.getUsuario().getId());
 		hb.appendWhere("tar.tareaFinalizada is null OR tar.tareaFinalizada = 0");
 		
-		hb.orderBy("tar.fechaVenc", HQLBuilder.ORDER_DESC );
+		if (!Checks.esNulo(dto.getSort()) && !Checks.esNulo(dto.getDir())){
+			hb.orderBy(dto.getSort(), dto.getDir().toLowerCase() );
+		}else{
+			hb.orderBy("tar.fechaVenc", HQLBuilder.ORDER_DESC );	
+		}
+		
 
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

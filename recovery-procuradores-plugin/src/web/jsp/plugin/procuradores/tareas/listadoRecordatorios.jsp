@@ -35,7 +35,7 @@
 		{name:'tarea'}
 		,{name:'codigoSubtipoTarea'}
 		,{name:'tareaDescripcion'}
-		,{name:'fechaVencimiento', type:'date', dateFormat:'c'}
+		,{name:'fechaVenc', type:'date', dateFormat:'c'}
 	]);
 	
 	
@@ -77,7 +77,7 @@
 		{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.id" text="**Id" />', dataIndex: 'tarea', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.codigoSubtipoTarea" text="**codigoSubtipoTarea" />', dataIndex: 'codigoSubtipoTarea', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaDescripcion" text="**TareaDescripcion" />',width: 180, dataIndex: 'tareaDescripcion', sortable:true}
-		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.fechaVencimiento" text="**FechaVencimiento" />', width: 40, dataIndex: 'fechaVencimiento', sortable:true, renderer:dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.fechaVencimiento" text="**FechaVencimiento" />', width: 40, dataIndex: 'fechaVenc', sortable:true, renderer:dateRenderer}
 	]);
 	
 	var pagingBarTarea=fwk.ux.getPaging(tareasStore);

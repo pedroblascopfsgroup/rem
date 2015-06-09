@@ -255,22 +255,22 @@
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>
-				<entry key="RESOL_PROCU_AUTO">
-					<list>
-						<bean
-							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
-							<property name="codigoInput">
-								<value>I_RESOL_PROCU_AUTO</value>
-							</property>
-						</bean>
-					</list>
-				</entry>
 				<entry key="R_TR_CES_FECH_CES">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
 								<value>I_TR_CES_FECH_CES</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_TR_CES_ACT_CES">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_CES_ACT_CES</value>
 							</property>
 						</bean>
 					</list>

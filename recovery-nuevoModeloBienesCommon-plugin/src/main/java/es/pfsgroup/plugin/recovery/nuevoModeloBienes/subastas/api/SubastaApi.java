@@ -42,7 +42,6 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_PASAR_LOTES_TRAS_PROPUESTO = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.marcarLotesEstadoTrasPropuesta";
 	public static final String BO_NMB_SUBASTA_PASAR_LOTES_TRAS_VALIDAR = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.marcarLotesEstadoTrasValidar";
 	public static final String BO_NMB_SUBASTA_PERMITE_SOLICITAR_TASACION = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.permiteSolicitarTasacion";
-	public static final String BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarSubastasXLSCount";
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -166,8 +165,5 @@ public interface SubastaApi {
 
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_PERMITE_SOLICITAR_TASACION)
 	public Integer permiteSolicitarTasacion(Long id);
-	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT)
-	public Integer buscarSubastasXLSCount(NMBDtoBuscarSubastas dto);
 	
 }

@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 
 public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
@@ -93,10 +94,15 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 						if (!Checks.estaVacio(bienes)) {
 							for (Bien b : bienes) {
 								if(!bienesInsertados.contains(b.getId())){
-									Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
-									if (creoProcedimiento) {
-											creaProcedimientoAdjudicacion(prc, b);
-											bienesInsertados.add(b.getId());
+									if(b instanceof NMBBien){
+										NMBBien bi = (NMBBien) b;
+										if(bi.getAdjudicacion()!= null && bi.getAdjudicacion().getCesionRemate() == false){ //No=false, Si=true
+											Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
+											if (creoProcedimiento) {
+													creaProcedimientoAdjudicacion(prc, b);
+													bienesInsertados.add(b.getId());
+											}
+										}
 									}
 								}
 							}

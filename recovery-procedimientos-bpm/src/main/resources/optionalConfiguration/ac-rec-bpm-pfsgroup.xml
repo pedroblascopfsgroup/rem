@@ -1270,10 +1270,11 @@
             	def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
                 return subastaProcedimientoManager.comprobarCostasLetradoViviendaHabitual(idProcedimiento, tareaExterna.getId());            
             }           
-             
-            def validacionesCelebracionSubastaSarebPOST = {
+
+            
+            def comprobarNumeroActivo = {
                 def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
-                return subastaProcedimientoManager.validacionesCelebracionSubastaSarebPOST(idProcedimiento);
+                return subastaProcedimientoManager.comprobarNumeroActivo(idProcedimiento);
             }
 
             def existeAdjuntoUG(String codigo, String entorno) {
@@ -1294,6 +1295,11 @@
             def existeAdjuntoUGMensaje(String cadenaDAUG) {
 				def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
             	return adjudicacionProcedimientoManager.existeAdjuntoUGMensajeHTML(idProcedimiento, cadenaDAUG);
+            }
+            
+            def validacionesContratosConfirmarTestimonioPOST = {
+                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
+                return subastaProcedimientoManager.validacionesContratosConfirmarTestimonioPOST(idProcedimiento);
             }
 
             

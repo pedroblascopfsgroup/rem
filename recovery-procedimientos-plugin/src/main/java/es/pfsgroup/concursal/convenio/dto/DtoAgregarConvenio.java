@@ -1,6 +1,7 @@
 package es.pfsgroup.concursal.convenio.dto;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -40,6 +41,7 @@ public class DtoAgregarConvenio extends WebDto{
 	private Long tipo;
 	
 	@NotNull(message="procedimiento.agregarConvenio.fecha")
+	@Size(min=10,max=10,message="procedimiento.agregarConvenio.fecha.formato")
 	private String fecha;
 	
 	private String descripcion;

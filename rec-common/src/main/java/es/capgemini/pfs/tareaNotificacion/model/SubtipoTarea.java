@@ -105,6 +105,8 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_TAREA_PROPUESTA_CUMPLIMIENTO_OBJETIVO = "63";
     public static final String CODIGO_ACEPTACION_PROPUESTA_CUMPLIMIENTO_OBJETIVO = "64";
     public static final String CODIGO_TAREA_JUSTIFICAR_INCUMPLIMIENTO_OBJETIVO = "65";
+    
+    public static final String CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA = "NTGPS";
 
     public static final String CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG = "501";
     

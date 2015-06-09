@@ -341,7 +341,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setNombreLargoDelMunicipionolgmu(StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50));
 			System.out.println("NOLGMU: "+StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50)); // 	longitud="50"	 Localidad del inmueble	
 			System.out.println(" ***REQUERIDO*** NOLGRP"); // 	longitud="50"	 Localidad del Registro	
-			String nombreLargoRegistroPropiedad = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro() : "" : "";
+			String nombreLargoRegistroPropiedad = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro().toUpperCase() : "" : "";
 			servicioGMP5JD20.setNombreLargoRegistoDeLaPropiedadnolgrp(StringUtils.rightPad(nombreLargoRegistroPropiedad, 50, ' ').substring(0, 50));
 			System.out.println(" ***REQUERIDO*** NUMFIN"); // 	longitud="14"	 Número de finca
 			String numeroFincaRegistral = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getNumFinca() != null ? bien.getDatosRegistralesActivo().getNumFinca() : "" : "";
@@ -367,7 +367,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				servicioGMP5JD20.setCodigoEntidadcoengw(codigoEntidad);
 				System.out.println(" ***REQUERIDO*** COENOW"); // 	"NUMERICO_4" longitud="5"	 Código de Entidad origen
 				//FUNCIONAL, char_extra5 segun DR
-				short codigoEntidadOrigen = 2038;
+				short codigoEntidadOrigen = 2069;
 				servicioGMP5JD20.setCodigoEntidadOrigencoenow(codigoEntidadOrigen);
 				System.out.println(" ***REQUERIDO*** COSOPW"); // 	"NUMERICO_4" longitud="5"	 Código de Sociedad Patrimonial
 				//FUNCIONAL ??? segun DR

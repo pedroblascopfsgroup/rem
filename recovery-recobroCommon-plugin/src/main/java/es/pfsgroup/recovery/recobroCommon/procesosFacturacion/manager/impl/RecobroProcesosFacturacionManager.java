@@ -226,7 +226,21 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 							recobroAdjuntosDao.saveOrUpdate(factura);*/
 						//}
 
-					}					
+					}
+					
+					if (estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_LIBERADO) || estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_CANCELADO)) { 
+						Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+						//Actualizar fechas de cambios y el usuario que realiza el cambio
+						if (estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_LIBERADO)) {
+							proceso.setFechaLiberacion(new Date());
+							proceso.setUsuarioLiberacion(usuarioLogado);
+						}
+						
+						if (estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_CANCELADO)) {
+							proceso.setFechaCancelacion(new Date());
+							proceso.setUsuarioCancelacion(usuarioLogado);
+						}
+					}
 					
 					recobroProcesoFacturacionDao.save(proceso);
 				} else {
@@ -406,7 +420,7 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 			
 			makeDir(rutaFicheroResultados);
 			String nombreFicheroResultados = "procFactu_" +	procesoFacturacion.getNombre() + "_" + procesoFacturacion.getId()+".xls";			
-			excel.crearNuevoExcel(rutaFicheroResultados + nombreFicheroResultados, cabeceras, listaValores,false);
+			excel.crearNuevoExcel(rutaFicheroResultados + nombreFicheroResultados, cabeceras, listaValores,false, 50000);
 
 			FileItem excelFileItem = new FileItem(excel.getFile());
 			excelFileItem.setFileName(nombreFicheroResultados);

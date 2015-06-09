@@ -1281,7 +1281,7 @@ app.crearGrid=	function(myStore,columnModel, config){
 		if (config.plugins) cfg.plugins=config.plugins;
 		if (config.cls) cfg.cls=config.cls;
 
-		//implementa el tooltip para ver el contenido de las celdas
+		//implementa el tooltip para ver el contenido de las celdas si tienen valor
 		cfg.onRender = function() {
         	Ext.grid.GridPanel.prototype.onRender.apply(this, arguments);
         	this.addEvents("beforetooltipshow");
@@ -1308,7 +1308,7 @@ app.crearGrid=	function(myStore,columnModel, config){
 			            	this.fireEvent("beforetooltipshow", this, row, cell, rowData);
 			            }
 			            this.lastRowData = rowData;
-			            if (!rowData) return false;
+			            if (!rowData || Ext.isEmpty(rowData.trim())) return false;
 	        		},
 	        		scope: this
 	        	}
@@ -1407,6 +1407,7 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
 
 			            var store = this.getStore();
 			            var row = v.findRowIndex(qt.baseTarget);
+			            if (row===false || row===-1) return;
 			            var cell = v.findCellIndex(qt.baseTarget);
 			            if (cell===false) return;
 			            var field = this.getColumnModel().config[cell].dataIndex;
@@ -1418,7 +1419,7 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
 			            	this.fireEvent("beforetooltipshow", this, row, cell, rowData);
 			            }
 			            this.lastRowData = rowData;
-			            if (!rowData) return false;
+			            if (!rowData || Ext.isEmpty(rowData.trim())) return false;
 	        		},
 	        		scope: this
 	        	}

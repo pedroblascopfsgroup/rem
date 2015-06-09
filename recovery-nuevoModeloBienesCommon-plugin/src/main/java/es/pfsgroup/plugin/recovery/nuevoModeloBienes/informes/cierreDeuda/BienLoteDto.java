@@ -1,5 +1,5 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
-
+ 
 public class BienLoteDto {
 	private Long idBien;
 	private String bien;

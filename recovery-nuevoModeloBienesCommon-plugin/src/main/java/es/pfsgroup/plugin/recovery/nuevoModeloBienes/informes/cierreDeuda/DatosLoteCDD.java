@@ -1,5 +1,5 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
-
+ 
 import java.util.List;
 
 public class DatosLoteCDD {

@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
 
 public class ProcedimientoSubastaCDD {
-
+ 
 	private String tipoProcedimiento;
 	private String letrado;
 	private String juzgado;

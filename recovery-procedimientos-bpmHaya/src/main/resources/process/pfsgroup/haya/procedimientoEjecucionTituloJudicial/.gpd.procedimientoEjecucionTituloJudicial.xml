@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_ejecucionTituloJudicial" width="1135" height="723">
+<root-container name="haya_ejecucionTituloJudicial" width="1217" height="723">
   <node name="Inicio" x="9" y="19" width="132" height="36">
     <edge>
       <label x="-84" y="-9"/>
@@ -41,18 +41,17 @@
       <label x="-60" y="-9"/>
     </edge>
     <edge>
-      <label x="33" y="-8"/>
-      <bendpoint w1="171" h1="-55" w2="-205" h2="31"/>
+      <label x="-433" y="-25"/>
+      <bendpoint w1="686" h1="2" w2="2" h2="-69"/>
     </edge>
     <edge>
       <label x="30" y="-8"/>
       <bendpoint w1="-144" h1="69" w2="-145" h2="-73"/>
     </edge>
   </node>
-  <node name="Decision1" x="640" y="63" width="132" height="36">
+  <node name="H018_TituloDecision" x="949" y="220" width="169" height="36">
     <edge>
       <label x="-56" y="-21"/>
-      <bendpoint w1="297" h1="0" w2="274" h2="-349"/>
     </edge>
   </node>
   <node name="ForkAutoDespachando" x="385" y="219" width="115" height="22">
@@ -106,12 +105,8 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="Decision2" x="523" y="513" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
+      <label x="-557" y="-18"/>
+      <bendpoint w1="700" h1="-6" w2="0" h2="285"/>
     </edge>
   </node>
   <node name="H018_HayVista" x="228" y="649" width="207" height="36">
@@ -170,12 +165,14 @@
       <bendpoint w1="307" h1="-184" w2="168" h2="15"/>
     </edge>
   </node>
-  <node name="H018_ResolucionFirme" x="939" y="647" width="132" height="36">
+  <node name="H018_ResolucionFirme" x="939" y="647" width="153" height="36">
     <edge>
       <label x="9" y="1"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-39" y="-92"/>
+      <bendpoint w1="150" h1="-2" w2="113" h2="425"/>
+      <bendpoint w1="148" h1="-430" w2="111" h2="-3"/>
     </edge>
     <edge>
       <label x="-9" y="60"/>
@@ -185,11 +182,6 @@
     <edge>
       <label x="15" y="-4"/>
       <bendpoint w1="-61" h1="36" w2="149" h2="35"/>
-    </edge>
-  </node>
-  <node name="Decision3" x="939" y="560" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="H018_ConfirmarPresentacionImpugnacion" x="225" y="567" width="213" height="36">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoHipotecario" width="1900" height="1098">
+<root-container name="haya_procedimientoHipotecario" width="1900" height="1100">
   <node name="Inicio" x="27" y="22" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -46,7 +46,7 @@
       <label x="309" y="-19"/>
     </edge>
   </node>
-  <node name="decision1" x="1358" y="223" width="132" height="36">
+  <node name="H001_AutoDespachandoDecision" x="1358" y="223" width="245" height="36">
     <edge>
       <label x="20" y="-5"/>
     </edge>
@@ -162,7 +162,7 @@
       <bendpoint w1="144" h1="-132" w2="-229" h2="18"/>
     </edge>
   </node>
-  <node name="decision2" x="1007" y="1050" width="132" height="36">
+  <node name="H001_ResolucionFirmeDecision" x="1007" y="1050" width="271" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="483" h1="-239" w2="313" h2="503"/>

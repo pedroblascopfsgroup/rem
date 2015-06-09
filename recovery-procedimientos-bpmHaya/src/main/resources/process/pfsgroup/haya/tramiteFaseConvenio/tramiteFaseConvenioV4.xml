@@ -358,7 +358,7 @@
 			</action>
 		</event>
 		<transition to="Fin3" name="Fin"></transition>
-		<transition to="Decision3" name="DENEGADA"></transition>
+		<transition to="H017_ElevarDecision" name="DENEGADA"></transition>
 		<transition to="H017_lecturaAceptacionInstrucciones" name="ACCONCAM"></transition>
 		<transition to="H017_lecturaAceptacionInstrucciones" name="ACEPTADA"></transition>
 	</state>
@@ -395,10 +395,10 @@
 		<transition to="Fin3" name="Fin"></transition>
 		<transition to="H017_BPMtramitePresentacionPropConvenio" name="ACEPTADA"></transition>
 		<transition to="H017_BPMtramitePresentacionPropConvenio" name="ACCONCAM"></transition>
-		<transition to="Decision3" name="DENEGADA"></transition>
+		<transition to="H017_ElevarDecision" name="DENEGADA"></transition>
 	</state>
 
-	<node name="Decision3">
+	<node name="H017_ElevarDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

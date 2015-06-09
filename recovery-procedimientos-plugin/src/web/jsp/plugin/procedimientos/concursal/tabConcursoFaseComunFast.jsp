@@ -5,6 +5,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 (function(page,entidad){
 
@@ -286,6 +287,9 @@
 		}
 
    	});
+   	
+   	var funcSuper = false;
+   	<sec:authorize ifAllGranted="FUNCION_SUPERVISOR">funcSuper = true;</sec:authorize>
 
 	var panel = new Ext.Panel({
 		title : '<s:message code="asunto.concurso.tabFaseComun.title" text="**Fase común" />'
@@ -311,8 +315,8 @@
 		btRemoveCredito.setDisabled(true);
 
 		var esVisible = [
-			  [btEditCreditoGestor, data.toolbar.esSupervisor ? false : data.toolbar.esGestor]
-			 ,[btEditCreditoSupervisor, data.toolbar.esSupervisor]
+			  [btEditCreditoGestor, (data.toolbar.esSupervisor || funcSuper) ? false : data.toolbar.esGestor]
+			 ,[btEditCreditoSupervisor, data.toolbar.esSupervisor ? true : funcSuper]
 			 ,[btEditCreditoDefinitivo, data.toolbar.esGestor]
 		];
 		entidad.setVisible(esVisible);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoMonitorio" width="1336" height="705">
+<root-container name="haya_procedimientoMonitorio" width="1294" height="728">
   <node name="Inicio" x="-2" y="-44" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -25,14 +25,10 @@
   <node name="H022_ConfirmarAdmisionDemandaDecision" x="431" y="114" width="298" height="36">
     <edge>
       <label x="-7" y="-16"/>
+      <bendpoint w1="233" h1="-1" w2="-8" h2="-315"/>
     </edge>
     <edge>
       <label x="7" y="-14"/>
-    </edge>
-  </node>
-  <node name="Decision 1" x="888" y="114" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="H022_ConfirmarNotificacionReqPago" x="57" y="115" width="235" height="36">
@@ -97,12 +93,7 @@
       <label x="-121" y="6"/>
     </edge>
   </node>
-  <node name="Decision 2" x="647" y="485" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="Decision 4" x="499" y="385" width="132" height="36">
+  <node name="H022_MonitorioDecision" x="730" y="428" width="182" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

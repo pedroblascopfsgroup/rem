@@ -134,7 +134,7 @@
 
 	<decision name="EstConformidadOAlegacionDecision" expression="#{H058_EstConformidadOAlegacionDecision}">
 		<transition to="H058_PresentarAlegaciones" name="alegaciones"></transition>
-		<transition to="Decision" name="conforme"></transition>
+		<transition to="H058_InmueblesDecision" name="conforme"></transition>
 	</decision>
 
 	<state name="H058_PresentarAlegaciones">
@@ -183,7 +183,7 @@
 		<transition to="H058_PresentarAlegaciones" name="vueltaAtras"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H058_InmueblesDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
         	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>
@@ -207,7 +207,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H058_InmueblesDecision" name="avanzaBPM"></transition>
 		<transition to="H058_ResolucionFirme" name="activarAlerta"></transition>
 		<transition to="H058_RegistrarResultado" name="vueltaAtras"></transition>
 		<transition to="Fin" name="Fin"></transition>

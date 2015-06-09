@@ -18,12 +18,12 @@
             	<targetBean>genericLeaveActionHandler</targetBean>
         	 </action>
       	</event>		
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H029_ResolucionDecision" name="avanzaBPM"></transition>
 		<transition to="H029_registrarResolucion" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H029_ResolucionDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>		

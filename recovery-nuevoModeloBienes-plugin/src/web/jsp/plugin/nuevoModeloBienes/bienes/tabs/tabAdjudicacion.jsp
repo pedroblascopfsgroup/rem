@@ -70,6 +70,7 @@
 	var  entidadAdjudicataria = app.creaLabel('<s:message code="bienesAdjudicacion.entidadAdjudicataria" text="**entidadAdjudicataria"/>','${NMBbien.adjudicacion.entidadAdjudicataria.descripcion}', {labelStyle:labelStyle});
 	var  situacionTitulo = app.creaLabel('<s:message code="bienesAdjudicacion.situacionTitulo" text="**situacionTitulo"/>','${NMBbien.adjudicacion.situacionTitulo.descripcion}', {labelStyle:labelStyle});
 	var  resolucionMoratoria = app.creaLabel('<s:message code="bienesAdjudicacion.resolucionMoratoria" text="**resolucionMoratoria"/>','${NMBbien.adjudicacion.resolucionMoratoria.descripcion}', {labelStyle:labelStyle});
+	var  tipoDocAdjudicacion = app.creaLabel('<s:message code="bienesAdjudicacion.documentoAdjudicacion" text="**documentoAdjudicacion"/>','${NMBbien.adjudicacion.tipoDocAdjudicacion.descripcion}', {labelStyle:labelStyle});
 
 	//IMPORTES
 	var  txtImporteAdjudicacion = app.creaLabel('<s:message code="bienesAdjudicacion.importeAdjudicacion" text="**importeAdjudicacion"/>','${NMBbien.adjudicacion.importeAdjudicacion}', {labelStyle:labelStyle});	
@@ -89,7 +90,7 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion,txtImporteAdjudicacion]},
-				  {items:[entidadAdjudicataria,fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
+				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
 				 ]
 	});
 	

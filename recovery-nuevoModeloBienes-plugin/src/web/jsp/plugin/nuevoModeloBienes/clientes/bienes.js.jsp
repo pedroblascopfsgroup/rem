@@ -43,6 +43,8 @@
 	var inscripcion_valor = '';
 	var numRegistro_valor = '';
 	var municipoLibro_valor = '';
+	var municipioRegistro_valor = '';
+	var provinciaRegistro_valor = '';
 	var codigoRegistro_valor = '';
 	var superficieConstruida_valor = '';
 	var superficie_valor = '';
@@ -99,8 +101,8 @@
 		numFinca_valor = '${NMBbien.datosRegistralesActivo.numFinca}';
 		numRegistro_valor = '${NMBbien.datosRegistralesActivo.numRegistro}';
 		municipoLibro_valor = '${NMBbien.datosRegistralesActivo.municipoLibro}';
-		localidadRegistro_valor = '${NMBbien.datosRegistralesActivo.provincia.codigo}';
-		provinciaRegistro_valor = '${NMBbien.datosRegistralesActivo.localidad.codigo}';
+		municipioRegistro_valor = '${NMBbien.datosRegistralesActivo.localidad.codigo}';
+		provinciaRegistro_valor = '${NMBbien.datosRegistralesActivo.provincia.codigo}';
 		codigoRegistro_valor = '${NMBbien.datosRegistralesActivo.codigoRegistro}';
 		superficieConstruida_valor = '${NMBbien.datosRegistralesActivo.superficieConstruida}';
 		superficie_valor = '${NMBbien.datosRegistralesActivo.superficie}';   
@@ -597,20 +599,20 @@
 						
 	 	});
 	 	
-	 	var optionsLocalidadRegistroStore = page.getStore({
+	 	var optionsMunicipioRegistroStore = page.getStore({
 		       flow: 'editbien/getListLocalidades'
 		       ,reader: new Ext.data.JsonReader({
 		    	 root : 'localidades'	 		
 		    }, localidades)	       
 		});
 		
-		optionsLocalidadRegistroStore.on('load', function() {
-	 	 				// Cargar localidad
+		optionsMunicipioRegistroStore.on('load', function() {
+	 	 				// Cargar municipio
  	 				
- 	 				if(!Ext.isEmpty(localidadRegistro_valor)) {	 	 					
- 	 					comboLocalidadRegistro.setValue(localidad_valor);
- 	 					comboLocalidadRegistro.fireEvent("select");				
- 	 					localidadRegistro_valor = '';
+ 	 				if(!Ext.isEmpty(municipioRegistro_valor)) {	 	 					
+ 	 					comboMunicipioRegistro.setValue(municipioRegistro_valor);
+ 	 					comboMunicipioRegistro.fireEvent("select");				
+ 	 					municipioRegistro_valor = '';
  	 				}
 						
 	 	});
@@ -624,6 +626,7 @@
 			,fieldLabel : '<s:message code="plugin.nuevoModeloBienes.provincia" text="**Provincia" />'
 			,value : provincia_valor
 			,valueField:'codigo'
+			,emptyText:'-- Seleccione provincia --'
 			,labelStyle:labelStyle
 			,width:180
 			,listeners: {
@@ -776,39 +779,38 @@
 			,style:'margin:0px'		
 		});
 		var numRegistro = app.creaText('numRegistro', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**Número de registro" />' , numRegistro_valor, {maxLength:6,labelStyle : labelStyle});
-		var municipoLibro = app.creaText('municipoLibro', '<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio registro" />' , municipoLibro_valor, {maxLength:50,labelStyle : labelStyle, disabled: true});
+		var municipoLibro = app.creaText('municipoLibro','<s:message code="plugin.mejoras.bienesNMB.municipoLibroMigrado" text="**Municipio (migrado)" />' , municipoLibro_valor, {maxLength:50,labelStyle : labelStyle, disabled: true});
 		var comboProvinciaRegistro = app.creaCombo({
 			data : <app:dict value="${provincias}" />
 			<app:test id="comboProvinciaRegistro" addComa="true" />
 			,name : 'bien.datosRegistrales.provincia'
-			,fieldLabel : '<s:message code="plugin.nuevoModeloBienes.provincia" text="**Provincia" />'
+			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.provinciaRegistro" text="**Provincia registro" />'
 			,value : provinciaRegistro_valor
 			,valueField:'codigo'
 			,labelStyle:labelStyle
+			,emptyText:'-- Seleccione provincia --'
 			,width:180
 			,listeners: {
  	 			select: function() {
  	 				// Cargar localidades registro 	 				
-					comboLocalidadRegistro.reset();
-					comboLocalidad.setDisabled(false);
-					optionsLocalidadesRegistroStore.removeAll();
-					optionsLocalidadesStoreRegistro.webflow({'codProvincia': comboProvinciaRegistro.getValue()});
+					comboMunicipioRegistro.reset();
+					comboMunicipioRegistro.setDisabled(false);
+					optionsMunicipioRegistroStore.removeAll();
+					optionsMunicipioRegistroStore.webflow({'codProvincia': comboProvinciaRegistro.getValue()});
 					
  	 			}, 	 			
  	 			afterrender: function(combo) {
  	 			
  	 				if(!Ext.isEmpty(provinciaRegistro_valor)) {
- 	 					combo.fireEvent("select");
- 	 							
+ 	 					combo.fireEvent("select"); 	 							
  	 				}
  	 			
  	 			}
  	 		}
 		});
 		
-		var comboLocalidadRegistro = app.creaCombo({
-			store:optionsLocalidadesRegistroStore
-			//,value: localidad_valor
+		var comboMunicipioRegistro = app.creaCombo({
+			store:optionsMunicipioRegistroStore
 			,displayField:'descripcion'
 			,valueField:'codigo'
 			,mode: 'remote'
@@ -817,13 +819,11 @@
 			,forceSelection: true
 			,disabled: true
 			,editable: false
-			,emptyText:'-- Seleccione localidad --'
+			,emptyText:'-- Seleccione municipio --'
 			,triggerAction: 'all'
-			,fieldLabel: '<s:message code="plugin.nuevoModeloBienes.localidad" text="**Localidad" />'
+			,fieldLabel: '<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio registro" />'
 			,labelStyle:labelStyle
-		});
-		
-		
+		});	
 		
 		
 		var codigoRegistro = app.creaText('codigoRegistro', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.codigoRegistro" text="**Tipo registro" />' , codigoRegistro_valor, {maxLength:50,labelStyle : labelStyle});
@@ -1499,6 +1499,8 @@
 			parametros.numRegistro=numRegistro.getValue();
 			parametros.numFinca=numFinca.getValue();
 			parametros.municipoLibro=municipoLibro.getValue();
+			parametros.municipioRegistro=comboMunicipioRegistro.getValue();
+			parametros.provinciaRegistro=comboProvinciaRegistro.getValue();
 			parametros.codigoRegistro=codigoRegistro.getValue();
 			parametros.superficieConstruida=superficieConstruida.getValue();
 			parametros.superficie=superficieNMB.getValue();
@@ -1717,10 +1719,10 @@
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:350'}
 			,items:[{
 					layout:'form'
-					,items: [tipoInmueble, superficieNMB, superficieConstruida, tomo, libro, folio, municipoLibro ]
+					,items: [tipoInmueble, superficieNMB, superficieConstruida, tomo, libro, folio, comboProvinciaRegistro ]
 				},{
 					layout:'form'
-					,items: [numRegistro, referenciaCatastral, codigoRegistro, inscripcion, fechaInscripcion, numFinca]
+					,items: [numRegistro, referenciaCatastral, codigoRegistro, inscripcion, fechaInscripcion, numFinca, comboMunicipioRegistro, municipoLibro]
 				}]
 		});
 		
@@ -1817,7 +1819,7 @@
 				,autoScroll: true
 				,autoHeight: true
 				,height: 450
-				,width : 1000
+				//,width : 1000
 				,border : false	
 				,activeItem:0
 				,bbar : [btnCancelar]
@@ -1831,7 +1833,7 @@
 		 			 id:'tabsinform-form'
 		 			,border:false
 		 			,height: 450
-		 			,width : 1000
+		 			//,width : 1000
 	  			  	,items: {	  			  	
 						 xtype: 'tabpanel'
 						,id:'idTabPanel'
@@ -1853,7 +1855,7 @@
 		 			 id:'tabsinform-form'
 		 			,border:false
 					,height: 450
-					,width : 1000
+					//,width : 1000
 	  			  	,items: {
 						 xtype: 'tabpanel'
 						,id:'idTabPanel'

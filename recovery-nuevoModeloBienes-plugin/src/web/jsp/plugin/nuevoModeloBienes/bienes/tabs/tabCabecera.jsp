@@ -97,7 +97,9 @@
 	var tomo				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.tomo" text="**Tomo"/>','${NMBbien.datosRegistralesActivo.tomo}',{labelStyle:labelStyle});
 	var libro				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.libro" text="**Libro"/>','${NMBbien.datosRegistralesActivo.libro}',{labelStyle:labelStyle});
 	var folio				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.folio" text="**Folio"/>','${NMBbien.datosRegistralesActivo.folio}',{labelStyle:labelStyle});
-	var minicipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />',{labelStyle:labelStyle});	
+	//var minicipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />',{labelStyle:labelStyle});
+	var municipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipioRegistro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.localidad.descripcion}" />',{labelStyle:labelStyle});
+	var provinciaRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.provinciaRegistro" text="**"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.provincia.descripcion}" />',{labelStyle:labelStyle});	
 	var numRegistro			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**N� Registro"/>','${NMBbien.datosRegistralesActivo.numRegistro}',{labelStyle:labelStyle});
 	var tipoRegistro		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.codigoRegistro" text="**Tipo registro"/>','${NMBbien.datosRegistralesActivo.codigoRegistro}',{labelStyle:labelStyle});
 	var refCatastral		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.referenciaCatastral" text="**Ref. Catastral"/>','${NMBbien.datosRegistralesActivo.referenciaCatastralBien}',{labelStyle:labelStyle});
@@ -337,8 +339,8 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosRegistrales.titulo" text="**Datos registrales"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[tiposInmuebles, supTerreno, supConstruida, tomo, libro, folio, minicipioRegistro]},
-				  {items:[numRegistro, refCatastral, tipoRegistro, inscripcion, fechaInscripcion, numFinca]}
+	    ,items : [{items:[tiposInmuebles, supTerreno, supConstruida, tomo, libro, folio, provinciaRegistro/*minicipioRegistro*/]},
+				  {items:[numRegistro, refCatastral, tipoRegistro, inscripcion, fechaInscripcion, numFinca, municipioRegistro]}
 				 ]
 	});
 	

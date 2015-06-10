@@ -11,7 +11,7 @@
         ,handler:function(){
 			var w = app.openWindow({
 				flow : 'editbien/nuevoBien'
-				,width:760
+				,width:1000
 				,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnNuevoBien" text="**Nuevo bien" />' 
 			});
 			w.on(app.event.DONE, function(args){

@@ -438,6 +438,19 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			nmbInformacionRegistralBien.setCodigoRegistro(dtoBien.getCodigoRegistro());
 			nmbInformacionRegistralBien.setSuperficieConstruida(dtoBien.getSuperficieConstruida());
 			nmbInformacionRegistralBien.setSuperficie(dtoBien.getSuperficie());
+			
+			if (!Checks.esNulo(dtoBien.getProvinciaRegistro())) {
+				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getProvinciaRegistro());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, f1);
+				nmbInformacionRegistralBien.setProvincia(provincia);
+			}
+			
+			if (!Checks.esNulo(dtoBien.getMunicipioRegistro())) {
+				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getMunicipioRegistro());
+				Localidad localidad = genericDao.get(Localidad.class, f1);
+				nmbInformacionRegistralBien.setLocalidad(localidad);
+			}
+			
 			genericDao.save(NMBInformacionRegistralBien.class, nmbInformacionRegistralBien);
 
 			/* Datos adicionales */

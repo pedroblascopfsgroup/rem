@@ -37,6 +37,7 @@
 	var arrendadoSinOpcCompra = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.arrendadoSinOpcCompra" text="**arrendadoSinOpcCompra"/>','${NMBbien.arrendadoSinOpcCompra}', {labelStyle:labelStyle});
 	var usoPromotorMayorDosAnyos = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.usoPromotorMayorDosAnyos" text="**usoPromotorMayorDosAnyos"/>','${NMBbien.usoPromotorMayorDosAnyos}', {labelStyle:labelStyle});
 
+        
 	// DATOS DESCRIPCION
 	var Descripcion = new Ext.form.TextArea({
 		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.descripcion" text="**Descripciï¿½n" />'
@@ -155,7 +156,8 @@
 	
 	//Inmueble
 	var tiposInmuebles		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tipoInmueble" text="**Tipo Inmueble"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoInmueble.descripcion}" />',{labelStyle:labelStyle});
-	
+	var codigoTipoInmueble          = "${NMBbien.adicional.tipoInmueble.codigo}";
+        
 	//activosFinancieros
 	var tiposFinancieros	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tiposFinaciero" text="**Tipo Financiero"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoProdBancario.descripcion}" />',{labelStyle:labelStyle});
 	var valorProdBancario	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoraciï¿½n"/>',app.format.moneyRenderer('${NMBbien.adicional.valoracion}'),{labelStyle:labelStyle});
@@ -401,8 +403,9 @@
 		
 		
 		var validarProvLocFinBien = function() {
-			
-			if(numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
+
+                        //Se valida por existencia de codigoTipoInmueble porque es dato obligatorio en el diccionario y no puede ser null en un tipo de inmueble
+			if(codigoTipoInmueble=='' || numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
 				Ext.MessageBox.show({
 		           title: 'Campos obligatorios',
 		           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolNumActivoCamposObligatorios" text="**Los campos provincia, localidad, número de finca y número de registro son obligatorios para solicitar el número de activo" />',
@@ -413,7 +416,7 @@
 			}
 			return true;			
 		}
-		
+                
 		var btnSolicitarNumActivo = new Ext.Button({
 		    text: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarNumActivo" text="**Solicitar Numero de Activo" />'
 			<app:test id="btnSolicitarNumActivo" addComa="true" />

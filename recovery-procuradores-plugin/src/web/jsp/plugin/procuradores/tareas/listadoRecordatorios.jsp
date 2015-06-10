@@ -34,7 +34,7 @@
 	var tareasRecord = Ext.data.Record.create([
 		{name:'tarea'}
 		,{name:'codigoSubtipoTarea'}
-		,{name:'tareaDescripcion'}
+		,{name:'descripcionTarea'}
 		,{name:'fechaVenc', type:'date', dateFormat:'c'}
 	]);
 	
@@ -67,8 +67,8 @@
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.descripcion" text="**Descripción" />',  dataIndex: 'descripcion', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fecha" text="**Fecha señalamiento" />', dataIndex: 'fecha', sortable:true, renderer:app.format.dateRenderer}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaPrimerRecordatorio" text="**Primer recordatorio" />', dataIndex: 'fechaTareaUno', sortable:true, renderer:app.format.dateRenderer}
-		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaSegundoRecordatorio" text="**Segundo recordatorio" />', dataIndex: 'fechaTareaDos', sortable:true, renderer:app.format.dateRenderer}
-		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaTercerRecordatorio" text="**Tercer recordatorio" />', dataIndex: 'fechaTareaTres', sortable:true, renderer:app.format.dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaSegundoRecordatorio" text="**Segundo recordatorio" />', dataIndex: 'fechaTareaDos', renderer:app.format.dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaTercerRecordatorio" text="**Tercer recordatorio" />', dataIndex: 'fechaTareaTres',  renderer:app.format.dateRenderer}
 	]);
 	
 	var pagingBar=fwk.ux.getPaging(recordatorioStore);
@@ -76,7 +76,7 @@
 	var tareasCm2 = new Ext.grid.ColumnModel([
 		{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.id" text="**Id" />', dataIndex: 'tarea', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.codigoSubtipoTarea" text="**codigoSubtipoTarea" />', dataIndex: 'codigoSubtipoTarea', sortable:true, hidden:true}
-		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaDescripcion" text="**TareaDescripcion" />',width: 180, dataIndex: 'tareaDescripcion', sortable:true}
+		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaDescripcion" text="**TareaDescripcion" />',width: 180, dataIndex: 'descripcionTarea', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.fechaVencimiento" text="**FechaVencimiento" />', width: 40, dataIndex: 'fechaVenc', sortable:true, renderer:dateRenderer}
 	]);
 	

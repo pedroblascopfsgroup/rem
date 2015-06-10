@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -13,8 +15,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.recovery.Encriptador;
@@ -87,8 +92,10 @@ public class AgendaMultifuncionCorreoUtils {
 			}
 			
 			message.setSubject(asuntoMail);
+			message.setText(cuerpoEmail, "UTF-8", "html");
+			
 
-			// Si hay adjuntos reconfiguramos el mensaje para añadirlos junto al texto html del email		
+			// diana : a�adimos aqu� los adjuntos
 			if(!Checks.esNulo(list) && !Checks.estaVacio(list)){
 				
 				 Multipart multipart = new MimeMultipart("mixed");
@@ -98,17 +105,10 @@ public class AgendaMultifuncionCorreoUtils {
 			            messageAttachment.attachFile(adj.getAdjunto().getFileItem().getFile());
 				        messageAttachment.setFileName(adj.getNombre());
 				        multipart.addBodyPart(messageAttachment);
-				 }	
-				 
-				 MimeBodyPart htmlPart = new MimeBodyPart();
-				 htmlPart.setContent(cuerpoEmail, "text/html; charset=utf-8");			     
-				 multipart.addBodyPart(htmlPart);
-				 message.setContent(multipart);
-
-			} else {
+				 }				
 				
-				message.setText(cuerpoEmail, "UTF-8", "html");		
-			}
+				message.setContent(multipart);
+			}	
 
 			logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] mensaje=" + emailFrom + ", " + mailsPara.toString() + "," + direccionesMailCc.toString() + "," + asuntoMail);
 

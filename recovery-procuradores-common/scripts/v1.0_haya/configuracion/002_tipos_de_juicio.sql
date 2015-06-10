@@ -73,6 +73,7 @@ INSERT into DD_TJ_TIPO_JUICIO
  VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'SDA', 'T. Subsanación decreto adjudicación - HAYA', 'T. Subsanación decreto adjudicación - HAYA', 0, 'MOD_PROC', 
  			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H052'));
  			
+
  			
 -- T.CONSIGNACIÓN --
 INSERT into DD_TJ_TIPO_JUICIO
@@ -85,6 +86,97 @@ INSERT into DD_TJ_TIPO_JUICIO
 INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
      VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'TCE', 'Trámite de costas contra Entidad - HAYA', 'Trámite de costas contra Entidad - HAYA', 0, 'MOD_PROC',
              SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H032'));
+
+ -- P. CAMBIARIO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'PCM', 'P. Cambiario', 'P. Cambiario', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H016'));
+ 			
+ -- P. DE DEPOSITO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'PDD', 'P. De depósito', 'P. De depósito', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H034'));
+ 			
+-- P. EJECUCION TITULO NO JUDICIAL --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'PNJ', 'P. Ejecución título no judicial', 'P. Ejecución título no judicial', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H020'));
+ 			
+-- P.MONITORIO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'MON', 'Procedimiento monitorio', 'Procedimiento monitorio', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H022'));
+ 			
+-- P.ORDINARIO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'ORD', 'Procedimiento ordinario', 'Procedimiento ordinario', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H024'));
+ 			
+-- P. DE PRECINTO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'PRE', 'P. De precinto', 'P. De precinto', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H050'));
+ 			
+-- P. EJECUCION TITULO JUDICIAL --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'PTJ', 'P. Ejecución título judicial', 'P. Ejecución título judicial', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H018'));
+ 			
+-- P.VERBAL --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'VBL', 'Procedimiento verbal', 'Procedimiento verbal', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H026'));
+
+ -- P.VERBAL DESDE MONITORIO--
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'VMN', 'Procedimiento verbal desde monitorio', 'Procedimiento verbal desde monitorio', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H028'));
+ 			
+-- T. CERTIFICADO DE CARGAS Y REVISIÓN --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'CCR', 'Trámite certificado de cargas y revisión', 'Trámite certificado de cargas y revisión', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H030'));
+ 			
+ -- T. EMBARGO DE SALARIOS --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'EMS', 'T. Embargo de salarios', 'T. Embargo de salarios', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H038'));
+ 			
+-- T. INVESTIGACIÓN JUDICIAL --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'INJ', 'T. Investigación judicial', 'T. Investigación judicial', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H044'));
+ 			
+-- TRAMITE DE MEJORA DE EMBARGO --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'MEM', 'T. Mejora de embargo', 'T. Mejora de embargo', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H046')); 
+ 			
+-- TRAMITE DE VALORACIÓN DE BIENES INMUEBLES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'VBI', 'T. Valoración de bienes e inmuebles', 'T. Valoración de bienes e inmuebles', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H058'));
+ 			
+-- TRAMITE DE VALORACIÓN DE BIENES MUEBLES --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'VBM', 'T. Valoración de bienes muebles', 'T. Valoración de bienes muebles', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H060'));
+
              
 /* Configurar a partir de aquí
 -- SUBASTA BANKIA--

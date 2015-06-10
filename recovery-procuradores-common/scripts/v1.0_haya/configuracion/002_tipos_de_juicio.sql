@@ -72,7 +72,19 @@ INSERT into DD_TJ_TIPO_JUICIO
    (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
  VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'SDA', 'T. Subsanación decreto adjudicación - HAYA', 'T. Subsanación decreto adjudicación - HAYA', 0, 'MOD_PROC', 
  			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H052'));
+ 			
+ 			
+-- T.CONSIGNACIÓN --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'CON', 'T. Consignación - HAYA', 'T. Subsanación decreto adjudicación - HAYA', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H064'));
 
+ 			
+-- TRAMITE DE COSTAS CONTRA ENTIDAD --
+INSERT INTO dd_tj_tipo_juicio (dd_tj_id, dd_tj_codigo, dd_tj_descripcion, dd_tj_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tpo_id)
+     VALUES (s_dd_tj_tipo_juicio.NEXTVAL, 'TCE', 'Trámite de costas contra Entidad - HAYA', 'Trámite de costas contra Entidad - HAYA', 0, 'MOD_PROC',
+             SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H032'));
              
 /* Configurar a partir de aquí
 -- SUBASTA BANKIA--

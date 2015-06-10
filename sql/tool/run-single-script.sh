@@ -118,7 +118,7 @@ function obtenerSetEnv() {
       exit 1
   fi
 
-  export INCIDENCIA_LINK=`cat $1 | grep ' INCIDENCIA_LINK=' | cut -d'=' -f2`
+  export INCIDENCIA_LINK=`cat $1 | grep ' INCIDENCIA_LINK=' | cut -d'=' -f2 | sed -e 's/ /_/g'`
   if [ "$INCIDENCIA_LINK" == "" ] ; then
       echo "No está definido el campo INCIDENCIA_LINK en el fichero $1. No se puede procesar."
       exit 1
@@ -130,11 +130,15 @@ function obtenerSetEnv() {
       exit 1
   fi
 
+  if [ -f $SETENVGLOBAL ] ; then
+      source $SETENVGLOBAL
+  fi
+
   # Eliminar los espacios dentro de VARIABLES_SUSTITUCION
   VARIABLES_SUSTITUCION=`echo -e "${VARIABLES_SUSTITUCION}" | tr -d '[[:space:]]'`
 
   echo "#!/bin/bash" > $BASEDIR/tmp/$nombreSetEnv
-  echo "export NOMBRE_SCRIPT=$1" >> $BASEDIR/tmp/$nombreSetEnv
+  echo "export NOMBRE_SCRIPT=$(basename $1)" >> $BASEDIR/tmp/$nombreSetEnv
   echo "export ESQUEMA_EJECUCION=$ESQUEMA_EJECUCION" >> $BASEDIR/tmp/$nombreSetEnv
   echo "export VARIABLES_SUSTITUCION='$VARIABLES_SUSTITUCION'" >> $BASEDIR/tmp/$nombreSetEnv
   echo "export AUTOR='$AUTOR'" >> $BASEDIR/tmp/$nombreSetEnv
@@ -192,11 +196,15 @@ cp -f $BASEDIR/scripts/reg_sql.sh $BASEDIR/tmp/$nombreSinDirSinExt.sh
 cp -f $BASEDIR/scripts/reg?.sql $BASEDIR/tmp/
 chmod u+x $BASEDIR/tmp/$nombreSinDirSinExt.sh
 
+echo "Ejecutando:"
+echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
 if [ $PRINT = "SI" ] ; then
     $BASEDIR/tmp/$nombreSinDirSinExt.sh -p
 else
     $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
 fi
+
+echo "Ejecutado! Revise el fichero de log"
 
 #rm -f `date +%Y`*.sql
 #rm -f reg*

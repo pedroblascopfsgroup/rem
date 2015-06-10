@@ -25,23 +25,27 @@ function print_banner() {
 
 clear
 
-if [ "$#" -lt 4 ]; then
+if [ "$#" -lt 3 ]; then
     print_banner
     echo ""
     echo "Para simular antes de ejecutar:"
     echo ""
-    echo "   Uso: $0 'YYYY-MM-DD HH:MM' [haya|bankia] password_esquema_principal@sid user_con_Oracle"
+    echo "   Uso: $0 'YYYY-MM-DD HH:MM' [haya|bankia] password_esquema_principal@sid"
     echo ""
     echo "Para ejecutarlo:"
     echo ""
-    echo "   Uso: $0 'YYYY-MM-DD HH:MM' [haya|bankia] password_esquema_principal@sid user_con_Oracle go!"
+    echo "   Uso: $0 'YYYY-MM-DD HH:MM' [haya|bankia] password_esquema_principal@sid go!"
     echo ""
-    echo "Ojo! Hasta que se corrija, si el usuario que tiene la instalación de Oracle no es el usuario con el que usas Git,"
-    echo "tendrás que hacer lo siguiente para que no te pida la contraseña con cada ejecución (visudo):"
-    echo ""
-    echo "  user_con_Oracle ALL=(usuario) NOPASSWD: $(dirname $0)/$0"
     echo "******************************************************************************************"
     echo "******************************************************************************************"
+    exit
+fi
+
+if [ "$ORACLE_HOME" == "" ] ; then
+    print_banner
+    echo ""
+    echo "Defina su variable de entorno ORACLE_HOME"
+    echo ""
     exit
 fi
 
@@ -70,15 +74,11 @@ cat $BASEDIR/tmp/from-date-list-1.txt | grep "$CUSTOMER_IN_LOWERCASE" | sort | c
 
 
 
-if [[ "$#" -eq 5 ]] && [[ "$5" == "go!" ]]; then
+if [[ "$#" -eq 4 ]] && [[ "$4" == "go!" ]]; then
     while read -r line
     do
         echo "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE"
-        if [[ `whoami` == $4 ]]; then
-            $BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE
-        else 
-            sudo -u $4 "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE"
-        fi
+        $BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE
     done < $BASEDIR/tmp/from-date-list-2.txt
 else
     echo ""

@@ -1393,6 +1393,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
 		            							var storeJuzgado= juzgado.getStore();
 		            							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+		            							storeJuzgado.on('load', function(){  
+		            								juzgado.setValue(juzgado.getValue());
+		            							});
 		            						}
 		                      		 }
 		                        }

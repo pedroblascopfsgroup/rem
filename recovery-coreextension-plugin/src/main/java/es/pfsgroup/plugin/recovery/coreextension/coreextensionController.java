@@ -101,20 +101,22 @@ public class coreextensionController {
 	public String getListTipoDespachoData(ModelMap model, Long idTipoGestor, 
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
 			@RequestParam(value="adicional", required=false) Boolean adicional,
-			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional){
+			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional,
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
 		
 		List<DespachoExterno> listadoDespachos = null;
 		
 		if (porUsuario==null) porUsuario = false;
 		if (adicional==null) adicional = false;
 		if (procuradorAdicional==null) procuradorAdicional = false;
-
+		if (incluirBorrados==null) incluirBorrados = false;
+		
 		// POR USUARIO
 		if (porUsuario) {
 			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListDespachosDeUsuario(idTipoGestor, usuario.getId(), adicional, procuradorAdicional);
 		} else {
-			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListDespachos(idTipoGestor);
+			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
 		}
 		//////
 		
@@ -134,7 +136,7 @@ public class coreextensionController {
 	public String getListUsuariosData(ModelMap model, Long idTipoDespacho,
 			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
 		
-		incluirBorrados = incluirBorrados != null ? incluirBorrados : Boolean.FALSE;
+		incluirBorrados = incluirBorrados != null ? incluirBorrados : false;
 		
 		List<Usuario> listadoUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(idTipoDespacho, incluirBorrados);
 		model.put("listadoUsuarios", listadoUsuarios);

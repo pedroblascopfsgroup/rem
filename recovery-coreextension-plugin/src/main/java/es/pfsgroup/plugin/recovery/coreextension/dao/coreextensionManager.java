@@ -136,12 +136,23 @@ public class coreextensionManager implements coreextensionApi {
 		return listado;
 	}
 
+
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListDespachos(java.lang.Long)
 	 */
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_DESPACHO)
 	public List<DespachoExterno> getListDespachos(Long idTipoGestor) {
+		
+		return getListAllDespachos(idTipoGestor, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListDespachos(java.lang.Long)
+	 */
+	@Override
+	@BusinessOperation(GET_LIST_ALL_TIPO_DESPACHO)
+	public List<DespachoExterno> getListAllDespachos(Long idTipoGestor, Boolean incluirBorrados) {
 
 		List<DespachoExterno> listadoTotal = new ArrayList<DespachoExterno>();
 		List<EXTTipoGestorPropiedad> listaTGP = tipoGestorPropiedadDao.getByClave(EXTTipoGestorPropiedad.TGP_CLAVE_DESPACHOS_VALIDOS);
@@ -157,9 +168,19 @@ public class coreextensionManager implements coreextensionApi {
 								genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 						
 						if(ddTiposDespacho != null){
-							List<DespachoExterno> listaDespachos = genericDao.getList(DespachoExterno.class, 
-									genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
-									genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+							
+							List<DespachoExterno> listaDespachos;
+							
+							if(incluirBorrados) {
+								listaDespachos = genericDao.getList(DespachoExterno.class, 
+										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho));
+								
+							} else {
+								listaDespachos = genericDao.getList(DespachoExterno.class, 
+										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+								
+							}							
 							
 							if(listaDespachos != null)
 								listadoTotal.addAll(listaDespachos);

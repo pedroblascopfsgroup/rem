@@ -23,6 +23,7 @@ public interface coreextensionApi {
 	String GET_STRING_TIPOS_GESTOR_DESPACHO = "plugin.recovery.coreextension.api.getStringTiposGestor";
 	String GET_LIST_TIPO_GESTOR_ADICIONAL = "plugin.recovery.coreextension.api.getListTipoGestorAdicional";
 	String GET_LIST_TIPO_DESPACHO = "plugin.recovery.coreextension.api.getListDespacho";
+	String GET_LIST_ALL_TIPO_DESPACHO = "plugin.recovery.coreextension.api.getListAllDespachos";	
 	String GET_LIST_USUARIOS = "plugin.recovery.coreextension.api.getListUsuariosData";
 	String GET_LIST_ALL_USUARIOS = "plugin.recovery.coreextension.api.getListAllUsuariosData";
 	String GET_LIST_USUARIOS_PAGINATED = "plugin.recovery.coreextension.api.getListUsuariosPaginatedData";
@@ -56,6 +57,17 @@ public interface coreextensionApi {
 	 */
 	@BusinessOperationDefinition(GET_LIST_TIPO_DESPACHO)
 	List<DespachoExterno> getListDespachos(Long idTipoGestor);
+	
+	/**
+	 * Funci�n de negocio que devuelve el listado de despachos para un tipo de gestor dado.
+	 * Ordenado por el campo despacho.
+	 * 
+	 * @param idTipoGestor id del tipo de gestor. {@link EXTDDTipoGestor}
+	 * @return Lista de despachos. {@link DespachoExterno}
+	 */
+	@BusinessOperationDefinition(GET_LIST_ALL_TIPO_DESPACHO)
+	List<DespachoExterno> getListAllDespachos(Long idTipoGestor, Boolean incluirBorrados);
+	
 
 
 	/**

@@ -2043,6 +2043,26 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	
 	
+	
+	
+	
+	
+	//id: 344 : P. DE PRECINTO: Solicitud de precinto
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 345 : P. DE PRECINTO: Acuerdo de precinto
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 346 : P. DE PRECINTO: Confirmar fecha precinto
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	
 		for(var i=319; i<1000; i++){
 			this.arrayCampos.push([]);
 		}

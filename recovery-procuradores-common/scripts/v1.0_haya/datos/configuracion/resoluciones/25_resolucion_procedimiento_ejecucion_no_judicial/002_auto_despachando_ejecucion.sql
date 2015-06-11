@@ -7,7 +7,7 @@
 -- Insertamos en la tabla dd_tr_tipos_resolucion el tipo de resolución
 INSERT INTO dd_tr_tipos_resolucion
             (dd_tr_id, dd_tr_codigo, dd_tr_descripcion, dd_tr_descripcion_larga, dd_tj_id, VERSION, usuariocrear, fechacrear, borrado, dd_tr_ayuda, bpm_dd_tac_id)
-   SELECT '309', 'R_AUT_DSP_PNJ', 'Auto despachando ejecución','Auto despachando ejecución',(SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'PNJ')
+   SELECT '321', 'R_AUT_DSP_PNJ', 'Auto despachando ejecución','Auto despachando ejecución',(SELECT dd_tj_id FROM dd_tj_tipo_juicio WHERE dd_tj_codigo = 'PNJ')
           , '0','MOD_PROC', SYSDATE, '0', 'Ayuda auto despachando ejecución.', (SELECT bpm_dd_tac_id FROM bpm_dd_tac_tipo_accion WHERE bpm_dd_tac_codigo = 'ADVANCE')
      FROM DUAL;
 

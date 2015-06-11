@@ -1719,10 +1719,10 @@
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:350'}
 			,items:[{
 					layout:'form'
-					,items: [tipoInmueble, superficieNMB, superficieConstruida, tomo, libro, folio, comboProvinciaRegistro ]
+					,items: [tipoInmueble, superficieNMB, superficieConstruida, tomo, libro, folio, comboProvinciaRegistro, comboMunicipioRegistro, municipoLibro ]
 				},{
 					layout:'form'
-					,items: [numRegistro, referenciaCatastral, codigoRegistro, inscripcion, fechaInscripcion, numFinca, comboMunicipioRegistro, municipoLibro]
+					,items: [numRegistro, referenciaCatastral, codigoRegistro, inscripcion, fechaInscripcion, numFinca]
 				}]
 		});
 		

@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.NMBDtoBuscarClientes
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienesAdjudicaciones;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.InformePropuestaCancelacionBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
@@ -199,6 +200,9 @@ public class EditBienController {
 		List<DDEntidadAdjudicataria> entidadAdjudicataria = (List<DDEntidadAdjudicataria>) executor
 				.execute("dictionaryManager.getList", "DDEntidadAdjudicataria");
 		map.put("entidadAdjudicataria", entidadAdjudicataria);
+		List<DDDocAdjudicacion> tipoDocAdjudicacion = (List<DDDocAdjudicacion>) executor
+				.execute("dictionaryManager.getList", "DDDocAdjudicacion");
+		map.put("tipoDocAdjudicacion", tipoDocAdjudicacion);
 		List<DDSituacionTitulo> situacionTitulo = (List<DDSituacionTitulo>) executor
 				.execute("dictionaryManager.getList", "DDSituacionTitulo");
 		map.put("situacionTitulo", situacionTitulo);
@@ -1434,6 +1438,16 @@ public class EditBienController {
 			adjudicacion.setEntidadAdjudicataria(entidadAdjudicataria);
 		} else {
 			adjudicacion.setEntidadAdjudicataria(null);
+		}
+		
+		if (!Checks.esNulo(request.getParameter("tipoDocAdjudicacion"))) {
+			DDDocAdjudicacion tipoDocAdjudicacion = (DDDocAdjudicacion) proxyFactory
+					.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(
+							DDDocAdjudicacion.class,
+							request.getParameter("tipoDocAdjudicacion"));
+			adjudicacion.setTipoDocAdjudicacion(tipoDocAdjudicacion);
+		} else {
+			adjudicacion.setTipoDocAdjudicacion(null);
 		}
 
 		if (!Checks.esNulo(request.getParameter("situacionTitulo"))) {
@@ -3910,6 +3924,8 @@ public class EditBienController {
 			} else {
 				// adjudicacion.setResolucionMoratoria(null);
 			}
+			
+			
 
 			// BIEN
 			if (!Checks.esNulo(bienAdjudicacion.getHabitual())) {

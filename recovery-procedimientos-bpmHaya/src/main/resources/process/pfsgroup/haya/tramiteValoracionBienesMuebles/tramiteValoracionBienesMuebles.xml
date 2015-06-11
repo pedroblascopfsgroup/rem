@@ -34,12 +34,12 @@
          	</action>
       	</event>
       	<transition to="H060_RegistrarJustiprecio" name="activarAlerta"></transition>
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H060_MueblesDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H060_SolicitarJustiprecio" name="vueltaAtras"></transition>
 	</state>
 
-   	<node name="Decision">
+   	<node name="H060_MueblesDecision">
       	<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>

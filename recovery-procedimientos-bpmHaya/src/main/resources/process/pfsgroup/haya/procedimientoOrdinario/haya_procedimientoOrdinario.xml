@@ -53,13 +53,13 @@
 		<transition to="H024_InterposicionDemanda" name="vueltaAtras"></transition>
 	</state>
 
-	<node name="Decision 1">
+	<node name="H024_OrdinarioDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
 			</targetBean>
 		</action>
-		<transition to="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</node>
 
 	<state name="H024_ConfirmarNotDemanda">
@@ -214,22 +214,13 @@
 			</action>
 		</event>
 		<transition to="H024_ResolucionFirme" name="activarAlerta"></transition>
-		<transition to="Decision 2" name="avanzaBPM"></transition>
+		<transition to="H024_OrdinarioDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H024_RegistrarResolucion" name="vueltaAtras"></transition>
 	</state>
 
-	<node name="Decision 2">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler
-			</targetBean>
-		</action>
-		<transition to="Fin" name="avanzaBPM"></transition>
-	</node>
-
 	<decision name="H024_ConfirmarNotAdmisionDecision" expression="#{H024_ConfirmarAdmisionDecision}">
-		<transition to="Decision 1" name="NO"></transition>
+		<transition to="H024_OrdinarioDecision" name="NO"></transition>
 		<transition to="H024_ConfirmarNotDemanda" name="SI"></transition>
 	</decision>
 

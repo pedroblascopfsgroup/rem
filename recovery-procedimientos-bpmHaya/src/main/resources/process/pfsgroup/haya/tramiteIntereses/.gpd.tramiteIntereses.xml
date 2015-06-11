@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteIntereses" width="1254" height="729">
+<root-container name="haya_tramiteIntereses" width="909" height="699">
   <node name="Inicio" x="12" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -102,7 +102,7 @@
       <label x="-8" y="-17"/>
     </edge>
   </node>
-  <node name="Decision1" x="467" y="561" width="132" height="36">
+  <node name="H042_InteresesDecision" x="467" y="561" width="206" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="301" h1="-7" w2="-8" h2="275"/>

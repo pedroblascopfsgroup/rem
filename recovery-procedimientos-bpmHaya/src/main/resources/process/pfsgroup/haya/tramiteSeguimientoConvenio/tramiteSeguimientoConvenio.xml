@@ -51,7 +51,7 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H041_ConvenioDecision">
 		<action name="miTarea" config-type="bean" 
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          	<targetBean>genericUserDecisionActionHandler</targetBean>
@@ -61,7 +61,7 @@
 
 	<decision name="H041_registrarCumplimientoDecision" expression="#{H041_registrarCumplimientoDecision}">
 		<transition to="H041_validarFinSeguimiento" name="cumpleTerminar"></transition>
-		<transition to="Decision" name="incumple"></transition>
+		<transition to="H041_ConvenioDecision" name="incumple"></transition>
 		<transition to="H041_espera" name="cumpleSeguir"></transition>
 	</decision>
 

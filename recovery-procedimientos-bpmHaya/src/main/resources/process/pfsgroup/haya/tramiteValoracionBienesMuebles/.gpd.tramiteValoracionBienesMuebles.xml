@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteValoracionBienesMuebles" width="1187" height="696">
+<root-container name="haya_tramiteValoracionBienesMuebles" width="852" height="562">
   <node name="Inicio" x="329" y="21" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -34,7 +34,7 @@
       <bendpoint w1="-168" h1="-53" w2="-169" h2="42"/>
     </edge>
   </node>
-  <node name="Decision" x="330" y="290" width="132" height="36">
+  <node name="H060_MueblesDecision" x="311" y="289" width="178" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

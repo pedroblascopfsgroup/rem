@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -65,6 +66,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
@@ -107,6 +109,9 @@ public class MEJDecisionProcedimientoManager extends
 	
 	@Autowired
     private DecisionProcedimientoDao decisionProcedimientoDao;
+	
+	@Autowired
+	private CoreProjectContext coreProjectContext;
     
     
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
@@ -777,9 +782,11 @@ public class MEJDecisionProcedimientoManager extends
 	}
 
 	private void finalizaTareaTomaDecision(Long prcId) {
+		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		
 		List<TareaNotificacion> vTareas = proxyFactory.proxy(
 				TareaNotificacionApi.class).getListByProcedimientoSubtipo(
-				prcId, SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
+				prcId, tomasDeDecision);
 
 		if (!Checks.estaVacio(vTareas)) {
 			for (TareaNotificacion tn : vTareas) {

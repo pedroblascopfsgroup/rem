@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteCalificacion" width="919" height="695">
+<root-container name="haya_tramiteCalificacion" width="864" height="695">
   <node name="Inicio" x="42" y="40" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -164,7 +164,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision" x="638" y="553" width="132" height="36">
+  <node name="H035_ResolucionDecision" x="630" y="553" width="181" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

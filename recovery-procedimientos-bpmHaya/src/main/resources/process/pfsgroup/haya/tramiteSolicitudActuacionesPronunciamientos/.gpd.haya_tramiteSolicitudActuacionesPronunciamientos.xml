@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteSolicitudActuacionesPronunciamientos" width="800" height="453">
+<root-container name="haya_tramiteSolicitudActuacionesPronunciamientos" width="852" height="564">
   <node name="Inicio" x="183" y="-1" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -32,7 +32,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision" x="191" y="327" width="132" height="36">
+  <node name="H019_PronunciamientoDecision" x="116" y="327" width="259" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

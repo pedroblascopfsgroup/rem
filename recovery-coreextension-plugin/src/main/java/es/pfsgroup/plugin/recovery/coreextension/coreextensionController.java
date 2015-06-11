@@ -134,6 +134,8 @@ public class coreextensionController {
 	public String getListUsuariosData(ModelMap model, Long idTipoDespacho,
 			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
 		
+		incluirBorrados = incluirBorrados != null ? incluirBorrados : Boolean.FALSE;
+		
 		List<Usuario> listadoUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(idTipoDespacho, incluirBorrados);
 		model.put("listadoUsuarios", listadoUsuarios);
 		

@@ -18,7 +18,9 @@ function print_banner() {
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     echo ""
-    echo "                 EJECUTO LOS SCRIPTS DE BD DESDE UN TAG DETERMINADO"
+    echo " EJECUTO LOS SCRIPTS DE BD DESDE UN TAG (PERO TODOS! NO SÓLO LOS QUE CUELGAN DE SQL/ ...."
+    echo ""
+    echo " ....... ahora ya sabes porque soy bypass, porque esto de paso ;))"
     echo ""
     echo "******************************************************************************************"
 }
@@ -68,7 +70,7 @@ BASEDIR=$(dirname $0)
 
 rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql
 
-for file in `git diff $1 --name-only sql/ | grep "\.sql"`
+for file in `git diff $1 --name-only  | grep "\.sql"`
 do
         git log $file >> /dev/null 2>&1
         if [ $? -eq 0 ]; then

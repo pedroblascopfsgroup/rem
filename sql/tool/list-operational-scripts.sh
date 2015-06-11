@@ -18,7 +18,7 @@ function print_banner() {
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     echo ""
-    echo "                 EJECUTO LOS SCRIPTS DE BD DESDE UN TAG DETERMINADO"
+    echo "                 LISTO LOS SCRIPTS DE OPERACIONAL DE sql/"
     echo ""
     echo "******************************************************************************************"
 }
@@ -35,72 +35,37 @@ if [ "$0" != "./sql/tool/$(basename $0)" ]; then
     exit
 fi
 
-if [ "$#" -lt 3 ]; then
+if [ "$#" -lt 1 ]; then
     print_banner
     echo ""
-    echo "Para simular antes de ejecutar:"
+    echo "   Uso: $0 [haya|bankia]"
     echo ""
-    echo "   Uso: $0 <tag> [haya|bankia] password_esquemas"
-    echo ""
-    echo "Para ejecutarlo:"
-    echo ""
-    echo "   Uso: $0 <tag> [haya|bankia] password_esquemas go!"
     echo ""
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     exit
 fi
-
-if [ "$ORACLE_HOME" == "" ] ; then
-    print_banner
-    echo ""
-    echo "Defina su variable de entorno ORACLE_HOME"
-    echo ""
-    exit
-fi
-
-CUSTOMER_IN_UPPERCASE=`echo $2 | tr '[:lower:]' '[:upper:]'`
-CUSTOMER_IN_LOWERCASE=`echo $2 | tr '[:upper:]' '[:lower:]'`
 
 print_banner
 
+CUSTOMER_IN_LOWERCASE=`echo $1 | tr '[:upper:]' '[:lower:]'`
+
 BASEDIR=$(dirname $0)
 
-rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql
+rm -rf $BASEDIR/tmp/*.txt
 
-for file in `git diff $1 --name-only sql/ | grep "\.sql"`
+for directory in `find ./sql -mindepth 1 -maxdepth 1 -name '?\.*'`
 do
+    for file in `find $directory -maxdepth 4 -type f -name *.sql`
+    do
         git log $file >> /dev/null 2>&1
         if [ $? -eq 0 ]; then
             HASH=`git rev-list HEAD $file | tail -n 1`    
             DATE=`git show -s --format="%ct" $HASH --`   
             printf "%s#%s \n" "$DATE" $file >> $BASEDIR/tmp/from-date-list-1.txt
         fi
+    done
 done
 
-#cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto\|$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
-cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
-cat $BASEDIR/tmp/from-date-list-1.txt | grep "$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 >> $BASEDIR/tmp/from-date-list-2.txt
-
-
-if [[ "$#" -eq 4 ]] && [[ "$4" == "go!" ]]; then
-    while read -r line
-    do
-        echo "--------------------------------------------------------------------------------"
-        echo "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE"
-        $BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE
-        echo "--------------------------------------------------------------------------------"
-    done < $BASEDIR/tmp/from-date-list-2.txt
-else
-    echo ""
-    echo "Lo que pretendo ejecutar es:"
-    echo ""
-    while read -r line
-    do
-        echo "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE"
-    done < $BASEDIR/tmp/from-date-list-2.txt
-    echo ""
-    echo "Si estás de acuerdo, añade go! al final de la línea de comandos"
-    echo ""
-    echo "******************************************************************************************"
-fi
+cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto" | sort | cut -d# -f2 
+cat $BASEDIR/tmp/from-date-list-1.txt | grep "$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 

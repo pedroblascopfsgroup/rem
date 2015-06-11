@@ -1270,21 +1270,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      ]);
 	
 	
-	/* FIN ACTUALIZADO */
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	//id: 256 : PROCEDIMIENTO ORDINARIO: Interposicion de la demanda
+	//id: 263 : PROCEDIMIENTO ORDINARIO: Interposicion de la demanda
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'combo',"store":this.dsPlazas,allowBlank:true, "name":"d_plazaJuzgado","hiddenName":"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
+	                       ,{"xtype":'combo',"store":this.dsPlazas,allowBlank:false, "name":"d_plazaJuzgado","hiddenName":"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
 		                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
 		                      		,listeners:{afterRender:function(combo){
 		                      			 combo.mode='remote';
@@ -1292,9 +1284,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                      		 }
 		                        }
 	                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false}
 	                      ]);
 	
-	//id: 257 : PROCEDIMIENTO ORDINARIO: Confirmar admision de demanda
+	//id: 264 : PROCEDIMIENTO ORDINARIO: Confirmar admision de demanda
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha admisión",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.dsPlazas,allowBlank:true, "name":"d_nPlaza","hiddenName":"d_nPlaza",fieldLabel:"Plaza",triggerAction: 'all',resizable:true, id:'d_nPlaza'+this.idFactoria
@@ -1310,54 +1305,64 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            						}
 		                      		 }
 		                        }
-	                       ,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Plaza",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false}
+	                       ,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Juzgado designado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,validator : function(v) {
+          						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+	           					}
+	                       	}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 258 : PROCEDIMIENTO ORDINARIO: Confirmar notificacion de demanda
+	//id: 265 : PROCEDIMIENTO ORDINARIO: Confirmar notificacion de demanda
 	this.arrayCampos.push([
-	                       {"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       {"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 259 : PROCEDIMIENTO ORDINARIO: Confirmar si existe oposición
+	//id: 266 : PROCEDIMIENTO ORDINARIO: Confirmar si existe oposición
 	this.arrayCampos.push([
 	                       {"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'datefield',"name":"d_fechaAudiencia","fieldLabel":"Fecha audiencia prévia",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 260 : PROCEDIMIENTO ORDINARIO: Registrar audiencia previa
+	//id: 267 : PROCEDIMIENTO ORDINARIO: Registrar audiencia previa
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Visto para sentencia",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'datefield',"name":"d_fechaJuicio","fieldLabel":"Fecha Juicio",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 261 : PROCEDIMIENTO ORDINARIO: Confirmar celebración de juicio
+	//id: 268 : PROCEDIMIENTO ORDINARIO: Confirmar celebración de juicio
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 262 : PROCEDIMIENTO ORDINARIO: Registrar resolucion favorable
+	//id: 269 : PROCEDIMIENTO ORDINARIO: Registrar resolucion favorable
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"value":"01","name":"d_comboResultado","fieldLabel":"Resultado",readOnly: true, allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 263 : PROCEDIMIENTO ORDINARIO: Registrar resolucion desfavorable
+	//id: 270 : PROCEDIMIENTO ORDINARIO: Registrar resolucion desfavorable
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"value":"02","name":"d_comboResultado","fieldLabel":"Resultado",readOnly: true, allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 264 : PROCEDIMIENTO ORDINARIO: Resolución firme
+	//id: 271 : PROCEDIMIENTO ORDINARIO: Resolución firme
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha firmeza",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 265 : PROCEDIMIENTO MONITORIO: Interposición de la demanda
+	
+	
+	
+	
+	
+	
+	
+	//id: 272 : PROCEDIMIENTO MONITORIO: Interposición de la demanda
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_plazaJuzgado","hiddenName":"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
@@ -1367,11 +1372,16 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      		 		}
 	                      		 }
 	                        }
+	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false}
 	                      ]);
 	
-	//id: 266 : PROCEDIMIENTO MONITORIO: Confirmar admisión de demanda
+	//id: 273 : PROCEDIMIENTO MONITORIO: Confirmar admisión de demanda
 	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       {"xtype":'combo',"store":this.dsPlazas,allowBlank:true, "name":"d_nPlaza","hiddenName":"d_nPlaza",fieldLabel:"Plaza",triggerAction: 'all',resizable:true, id:'d_nPlaza'+this.idFactoria
 		                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
 		                      		,listeners:{afterRender:function(combo){
@@ -1385,10 +1395,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            						}
 		                      		 }
 		                        }
-	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-//	                       ,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Juzgado designado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       
 	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Juzgado designado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_juzgado_id' + this.idFactoria }
-	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:function(idTipoResolucion){idTipoResolucion==1 || idTipoResolucion==92 || idTipoResolucion==135},id:'d_numProcedimiento_id'+this.idFactoria
+	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento_id'+this.idFactoria
 		           				,validator : function(v) {
 		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
 		           				}
@@ -1397,14 +1406,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      ]);
 	
 	
-	//id: 267 : PROCEDIMIENTO MONITORIO: Confirmar notificación requerimiento de pago
+	//id: 274 : PROCEDIMIENTO MONITORIO: Confirmar notificación requerimiento de pago
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'combo',"store":this.dsPlazas,"name":"d_plazaJuzgado","fieldLabel":"Plaza del juzgado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 268 : PROCEDIMIENTO MONITORIO: Confirmar oposicion y cuantía
+	//id: 275 : PROCEDIMIENTO MONITORIO: Confirmar oposicion y cuantía
 	this.arrayCampos.push([
 							{"xtype":'textfield',"name":"d_procedimiento","fieldLabel":"Nº de procedimiento",allowBlank:true,id:'d_procedimiento'+this.idFactoria
 									,validator : function(v) {
@@ -1417,12 +1425,14 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 							,{"xtype":'datefield',"name":"d_fechaJuicio","fieldLabel":"Fecha Juicio",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 269 : PROCEDIMIENTO MONITORIO: Registrar auto despachando ejecución
-	this.arrayCampos.push([
-							{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de auto",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                      ]);
 	
-	//id: 270 : PROCEDIMIENTO VERBAL: INTERPOSICION DE LA DEMANDA
+	
+	
+	
+	
+
+	
+	//id: 276 : PROCEDIMIENTO VERBAL: INTERPOSICION DE LA DEMANDA
 	this.arrayCampos.push([
 							{"xtype":'datefield',"name":"d_fechainterposicion","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_comboPlaza","hiddenName":"d_comboPlaza",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_comboPlaza'+this.idFactoria
@@ -1432,10 +1442,14 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                      		 		}
 		                      		 }
 		                        }
+	                       	,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 							,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
+		                    ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false}
+		                    ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false}
+		                    ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false}
 	                      ]);
 	
-	//id: 271 : PROCEDIMIENTO VERBAL: CONFIRMAR ADMISIÓN DE DEMANDA
+	//id: 277 : PROCEDIMIENTO VERBAL: CONFIRMAR ADMISIÓN DE DEMANDA
 	this.arrayCampos.push([
 							{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha admisión",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 		                    ,{"xtype":'combo',"store":this.dsPlazas,allowBlank:true, "name":"d_comboPlaza","hiddenName":"d_comboPlaza",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_comboPlaza'+this.idFactoria
@@ -1451,7 +1465,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            						}
 		                      		 }
 		                        }
-							,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Nº Juzgado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+							,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Nº Juzgado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 							,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento'+this.idFactoria
 								,validator : function(v) {
 										return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
@@ -1460,36 +1474,43 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 							,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmisionDemanda","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmisionDemanda'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 272 : PROCEDIMIENTO VERBAL: CONFIRMAR NOTIFICACIÓN DE DEMANDA
+	//id: 278 : PROCEDIMIENTO VERBAL: CONFIRMAR NOTIFICACIÓN DE DEMANDA
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha notificación",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'datefield',"name":"d_fechaJuicio","fieldLabel":"Fecha juicio",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 273 : PROCEDIMIENTO VERBAL: REGISTRAR JUICIO
+	//id: 279 : PROCEDIMIENTO VERBAL: REGISTRAR JUICIO
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha celebración",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 274 : PROCEDIMIENTO VERBAL: REGISTRAR RESOLUCION DESFAVORABLE
+	//id: 280 : PROCEDIMIENTO VERBAL: REGISTRAR RESOLUCION DESFAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"value":"02","name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"value":"02","name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 275 : PROCEDIMIENTO VERBAL: REGISTRAR RESOLUCION FAVORABLE
+	//id: 281 : PROCEDIMIENTO VERBAL: REGISTRAR RESOLUCION FAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"value":"01","name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"value":"01","name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 276 : PROCEDIMIENTO VERBAL: RESOLUCIÓN FIRME
+	//id: 282 : PROCEDIMIENTO VERBAL: RESOLUCIÓN FIRME
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 277 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR JUICIO VERBAL
+	
+	
+	
+	
+	
+	
+	
+	//id: 283 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR JUICIO VERBAL
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha celebración",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento'+this.idFactoria
@@ -1499,59 +1520,69 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	}
 	                      ]);
 	
-	//id: 278 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN DESFAVORABLE
+	//id: 284 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN DESFAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 279 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN FAVORABLE
+	//id: 285 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN FAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 280 : PROCEDIMIENTO VERBAL DESDE MONITORIO: RESOLUCIÓN FIRME
+	//id: 286 : PROCEDIMIENTO VERBAL DESDE MONITORIO: RESOLUCIÓN FIRME
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha firmeza",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 281 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Solicitar certificación de dominio y cargas
+	
+	
+	
+	
+	
+	//id: 287 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Solicitar certificación de dominio y cargas
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 282 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Registrar certificación
+	//id: 288 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Registrar certificación
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Obtenida",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 283 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Solicitar información cargas anteriores
+	//id: 289 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Solicitar información cargas anteriores
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Solicitada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       	,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 284 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Registrar recepción información cargas extinguidas o minoradas
+	//id: 290 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Registrar recepción información cargas extinguidas o minoradas
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":this.storeCompletitud,"name":"d_comboCompletitud","fieldLabel":"Información cargas",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCompletitud'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 285 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Requerir información que falta
+	//id: 291 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Requerir información que falta
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 286 : T. EMBARGO DE SALARIOS: Solicitar la notificacion retención al pagador
+	
+	
+	
+	
+	
+	//id: 292 : T. EMBARGO DE SALARIOS: Solicitar la notificacion retención al pagador
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'numberfield',"name":"d_importeNom","fieldLabel":"Importe base retención",allowBlank:true}
 	                       	,{"xtype":'numberfield',"name":"d_importeRet","fieldLabel":"Importe de retención",allowBlank:false}
 	                      ]);
 	
-	//id: 287 : T. EMBARGO DE SALARIOS: Confirmar requerimiento de resultado
+	//id: 293 : T. EMBARGO DE SALARIOS: Confirmar requerimiento de resultado
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboRequerido","fieldLabel":"Requerido",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRequerido'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
@@ -1560,16 +1591,20 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	,{"xtype":'numberfield',"name":"d_importeRet","fieldLabel":"Importe de retención",allowBlank:true}
 	                      ]);
 	
-	//id: 288 : T. EMBARGO DE SALARIOS: Confirmar retenciones
+	//id: 294 : T. EMBARGO DE SALARIOS: Confirmar retenciones
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":this.storeDDCorrectoCobro,"name":"d_comboCorr","fieldLabel":"Situación",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCorr'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
-	//id: 289 : T. EMBARGO DE SALARIOS: Confirmar retenciones
+	//id: 295 : T. EMBARGO DE SALARIOS: Confirmar retenciones
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
+	
+	
+	
+	
 	
 	//id: 290 : T. VALORACIÓN INMUEBLE: Solicitar avaluo
 	this.arrayCampos.push([

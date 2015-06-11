@@ -247,7 +247,9 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="H008_RevisarPropuestaCancelacionCargas" name="haya_tramiteElevacionPropSarebAdjudicados"></transition>
+		<transition to="H008_RevisarPropuestaCancelacionCargas" name="ACEPTADA"></transition>
+		<transition to="H008_SaneamientoDecision" name="DENEGADA"></transition>
+		<transition to="H008_RevisarPropuestaCancelacionCargas" name="ACCONCAM"></transition>
 	</state>
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteHomologacionAcuerdo" width="1010" height="1852">
+<root-container name="haya_tramiteHomologacionAcuerdo" width="1214" height="1852">
   <node name="Inicio" x="449" y="71" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -147,9 +147,17 @@
       <bendpoint w1="0" h1="201" w2="-437" h2="-48"/>
     </edge>
   </node>
-  <node name="H027_BPMTramiteElevarPropSarebLitigios" x="362" y="653" width="311" height="36">
+  <node name="H027_BPMTramiteElevarPropSarebLitigios" x="177" y="650" width="311" height="36">
     <edge>
-      <label x="-121" y="-21"/>
+      <label x="-52" y="-14"/>
+      <bendpoint w1="183" h1="56" w2="-6" h2="-73"/>
+    </edge>
+    <edge>
+      <label x="-44" y="-22"/>
+    </edge>
+    <edge>
+      <label x="-35" y="-10"/>
+      <bendpoint w1="-3" h1="65" w2="-192" h2="-64"/>
     </edge>
   </node>
   <node name="H027_RegistrarResultadoAcuerdo" x="357" y="921" width="331" height="36">
@@ -193,4 +201,9 @@
     </edge>
   </node>
   <node name="Fin" x="828" y="780" width="132" height="36"/>
+  <node name="H027_AceptarPropuestaDecision" x="634" y="649" width="222" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

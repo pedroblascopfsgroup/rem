@@ -181,15 +181,7 @@ public class coreextensionManager implements coreextensionApi {
 	@Override
 	@BusinessOperation(GET_LIST_USUARIOS)
 	public List<Usuario> getListUsuariosData(long idTipoDespacho) {
-
-		List<Usuario> listaUsuarios = gestoresDao.getGestoresByDespacho(idTipoDespacho);
-		if (listaUsuarios.size() > 0 ){
-			Locale locale = new Locale("es_ES");
-			Collator c = Collator.getInstance();
-			c.setStrength(Collator.PRIMARY);
-			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
-		}
-		return listaUsuarios;
+		return getListAllUsuariosData(idTipoDespacho, false);
 	}
 	
 	/* (non-Javadoc)
@@ -471,6 +463,23 @@ public class coreextensionManager implements coreextensionApi {
 
 		// Con esto tenemos los tipo gestor.
 		return listaTipoGestor;
+	}
+
+	
+	@Override
+	@BusinessOperation(GET_LIST_ALL_USUARIOS)
+	public List<Usuario> getListAllUsuariosData(long idTipoDespacho, boolean incluirBorrados) {
+		
+		List<Usuario> listaUsuarios = gestoresDao.getGestoresByDespacho(idTipoDespacho, incluirBorrados);
+		if (listaUsuarios.size() > 0 ){
+			Locale locale = new Locale("es_ES");
+			Collator c = Collator.getInstance();
+			c.setStrength(Collator.PRIMARY);
+			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
+		}
+		return listaUsuarios;
+		
+		
 	}
 
 }

@@ -83,7 +83,7 @@
 	
 	comboDespachos.on('select', function(){
 		comboGestor.reset();
-		optionsGestoresStore.webflow({'idTipoDespacho': comboDespachos.getValue()}); 
+		optionsGestoresStore.webflow({'idTipoDespacho': comboDespachos.getValue(), 'incluirBorrados': true}); 
 				
 		comboGestor.setDisabled(false);
 	});

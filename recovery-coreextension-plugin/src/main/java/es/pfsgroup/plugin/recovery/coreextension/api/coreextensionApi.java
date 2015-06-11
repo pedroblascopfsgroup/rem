@@ -24,6 +24,7 @@ public interface coreextensionApi {
 	String GET_LIST_TIPO_GESTOR_ADICIONAL = "plugin.recovery.coreextension.api.getListTipoGestorAdicional";
 	String GET_LIST_TIPO_DESPACHO = "plugin.recovery.coreextension.api.getListDespacho";
 	String GET_LIST_USUARIOS = "plugin.recovery.coreextension.api.getListUsuariosData";
+	String GET_LIST_ALL_USUARIOS = "plugin.recovery.coreextension.api.getListAllUsuariosData";
 	String GET_LIST_USUARIOS_PAGINATED = "plugin.recovery.coreextension.api.getListUsuariosPaginatedData";
 	String GET_LIST_HISTORICO_GESTORES_ADICIONALES = "plugin.recovery.coreextension.api.getListGestorAdicionalAsuntoHistoricosData";
 	String SAVE_GESTOR = "plugin.recovery.coreextension.api.insertarGestor";
@@ -66,6 +67,18 @@ public interface coreextensionApi {
 	 */
 	@BusinessOperationDefinition(GET_LIST_USUARIOS)
 	List<Usuario> getListUsuariosData(long idTipoDespacho);
+	
+	/**
+	 * Funci�n de negocio que devuelve el listado de usuarios para un tipo de despacho dado
+	 * e incluyendo los borrados en función del valor de incluirBorrados.
+	 * Ordenado por {@link Usuario#getApellidoNombre()}
+	 * 
+	 * @param idTipoDespacho id del despacho. {@link DespachoExterno}
+	 * @param incluirBorrados true or false
+	 * @return Lista de usuarios. {@link Usuario}
+	 */
+	@BusinessOperationDefinition(GET_LIST_ALL_USUARIOS)
+	List<Usuario> getListAllUsuariosData(long idTipoDespacho, boolean incluirBorrados);
 	
 	/**
 	 * Funci�n de negocio que devuelve el listado de usuarios para un tipo de despacho dado.

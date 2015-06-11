@@ -809,6 +809,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
                       							var juzgado=Ext.getCmp('d_juzgado_id' + idFactoria);
                       							var storeJuzgado= juzgado.getStore();
                       							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+                    							storeJuzgado.on('load', function(){  
+                    								juzgado.setValue(juzgado.getValue());
+                    							});
                       						}
                               		 }
                                 }
@@ -1303,6 +1306,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
 		            							var storeJuzgado= juzgado.getStore();
 		            							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+		            							storeJuzgado.on('load', function(){  
+		            								juzgado.setValue(juzgado.getValue());
+		            							});
 		            						}
 		                      		 }
 		                        }
@@ -1466,6 +1472,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
 		            							var storeJuzgado= juzgado.getStore();
 		            							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+		            							storeJuzgado.on('load', function(){  
+		            								juzgado.setValue(juzgado.getValue());
+		            							});
 		            						}
 		                      		 }
 		                        }
@@ -1704,6 +1713,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		              							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
 		              							var storeJuzgado= juzgado.getStore();
 		              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+		            							storeJuzgado.on('load', function(){  
+		            								juzgado.setValue(juzgado.getValue());
+		            							});
 		              						}
 		                      		 }
 		                        }
@@ -1792,8 +1804,246 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-        
-		for(var i=295; i<1000; i++){
+	
+	
+	
+	
+	//id: 320 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Interposicion de la demanda - marcado de bienes
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fechaInterposicion","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                        ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_nPlaza","hiddenName":"d_nPlaza",fieldLabel:"Plaza",triggerAction: 'all',resizable:true, id:'d_nPlaza'+this.idFactoria
+	                       	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
+	                       		,listeners:{afterRender:function(combo){
+	                       			 combo.mode='remote';
+	                       		 		}
+	                       		 }
+	                         }
+		                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+		                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
+		                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false}
+		                       ,{"xtype":'numberfield',"name":"d_capitalNoVencido","fieldLabel":"Capital no vencido (en el cierre)",allowBlank:false}
+		                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false}
+		                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false}
+	                        
+	                      ]);
+	
+	
+	//id: 321 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Auto despachando ejecucion - marcado de bienes decreto embargo
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store": this.dsPlazas, "name":"d_comboPlaza","hiddenName":"d_comboPlaza",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_comboPlaza'+this.idFactoria
+	                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
+	                      		,listeners:{afterRender:function(combo){
+	                      			 combo.mode='remote';
+	                      		 		},
+	                      		 		select :function(combo){
+	              							var idFactoria = combo.id.replace('d_comboPlaza','');
+	              							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
+	              							var storeJuzgado= juzgado.getStore();
+	              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+	            							storeJuzgado.on('load', function(){  
+	            								juzgado.setValue(juzgado.getValue());
+	            							});
+	              						}
+	                      		 }
+	                        }
+	                       
+	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
+	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento_id'+this.idFactoria
+		           				,validator : function(v) {
+		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+		           				}
+	                        }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmisionDemanda","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmisionDemanda'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_bienesEmbargables","fieldLabel":"Existen bienes embargables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_bienesEmbargables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]); 
+	
+	//id: 322 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Auto despachando ejecucion - marcado de bienes decreto embargo (clausulas abusivas)
+	this.arrayCampos.push([
+	                       {"xtype":'combo',"store": this.dsPlazas, "name":"d_comboPlaza","hiddenName":"d_comboPlaza",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_comboPlaza'+this.idFactoria
+	                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
+	                      		,listeners:{afterRender:function(combo){
+	                      			 combo.mode='remote';
+	                      		 		},
+	                      		 		select :function(combo){
+	              							var idFactoria = combo.id.replace('d_comboPlaza','');
+	              							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
+	              							var storeJuzgado= juzgado.getStore();
+	              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+	            							storeJuzgado.on('load', function(){  
+	            								juzgado.setValue(juzgado.getValue());
+	            							});
+	              						}
+	                      		 }
+	                        }
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
+	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento_id'+this.idFactoria
+		           				,validator : function(v) {
+		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+		           				}
+	                        }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmisionDemanda","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmisionDemanda'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 323 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Auto despachando ejecucion - marcado de bienes decreto embargo (clausulas abusivas)
+	this.arrayCampos.push([
+	                       /*{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_repetir","fieldLabel":"Activar alerta periódica",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_repetir'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}*/
+	                      ]);
+	
+	//id: 324 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Confirmar notificacion requerimiento de pago
+	this.arrayCampos.push([
+	                       {"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboConfirmacionReqPago","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboConfirmacionReqPago'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 325 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Confirmar si existe oposición
+	this.arrayCampos.push([
+	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboConfirmacion","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboConfirmacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 326 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Confirmar presentación de impugnación
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 327 : T. EJECUCIÓN TÍTULO NO JUDICIAL:Confirmar si hay vista
+	this.arrayCampos.push([
+	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboHayVista","fieldLabel":"Hay vista",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboHayVista'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 328 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Registrar celebración vista
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 329 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Registrar resolucion desfavorable
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_combo","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_combo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 330 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Registrar resolucion favorable
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_combo","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_combo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 331 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Resolución firme
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"Fecha firmeza",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+    
+	
+	
+	
+	
+	
+	//id: 332 : T. EJECUCIÓN TÍTULO JUDICIAL: Interposición de la demanda
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store": this.dsPlazas, "name":"d_plazaJuzgado","hiddenName":"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
+	                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
+	                      		,listeners:{afterRender:function(combo){
+	                      			 combo.mode='remote';
+	                      		 		},
+	                      		 		select :function(combo){
+	              							var idFactoria = combo.id.replace('d_plazaJuzgado','');
+	              							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
+	              							var storeJuzgado= juzgado.getStore();
+	              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
+	            							storeJuzgado.on('load', function(){  
+	            								juzgado.setValue(juzgado.getValue());
+	            							});
+	              						}
+	                      		 }
+	                        }
+	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
+	                      ]);
+	
+	//id: 333 : T. EJECUCIÓN TÍTULO JUDICIAL: Auto despachando ejecucion
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nProc","fieldLabel":"Nº de procedimiento",allowBlank:true,id:'d_nProc'+this.idFactoria
+		           				,validator : function(v) {
+		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+		           				}
+	                        }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienesRegistrables","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienesRegistrables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 334 : T. EJECUCIÓN TÍTULO JUDICIAL: Auto despachando ejecucion clausulas abusivas
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nProc","fieldLabel":"Nº de procedimiento",allowBlank:true,id:'d_nProc'+this.idFactoria
+		           				,validator : function(v) {
+		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+		           				}
+	                        }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienesRegistrables","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienesRegistrables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 335 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar anotacion en registro
+	this.arrayCampos.push([
+	                       /*{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_repetir","fieldLabel":"Activar alerta periódica",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_repetir'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}*/
+	                      ]);
+	
+	//id: 336 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar notificacion
+	this.arrayCampos.push([
+	                       	{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSiNo","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);   
+	
+	//id: 337 : T. EJECUCIÓN TÍTULO JUDICIAL: Registrar oposicion vista
+	this.arrayCampos.push([
+	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:true,id:'d_motivo'+this.idFactoria}
+	                      ]);
+	
+	//id: 338 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar presentar impugnacion
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 339 : T. EJECUCIÓN TÍTULO JUDICIAL: Hay Vista
+	this.arrayCampos.push([
+	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Hay vista",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 340 : T. EJECUCIÓN TÍTULO JUDICIAL: Registrar Vista
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 341 : T. EJECUCIÓN TÍTULO JUDICIAL: Registrar resolución desfavorable
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"value":"02","name":"d_resultado","fieldLabel":"Resultado",readOnly: true, allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 342 : T. EJECUCIÓN TÍTULO JUDICIAL: Registrar Favorable
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"value":"01","name":"d_resultado","fieldLabel":"Resultado",readOnly: true, allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 343 : T. EJECUCIÓN TÍTULO JUDICIAL: Resolución firme
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha firmeza",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	
+	
+		for(var i=319; i<1000; i++){
 			this.arrayCampos.push([]);
 		}
 		

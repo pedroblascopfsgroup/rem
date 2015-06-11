@@ -52,6 +52,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	storeCompletitud:{},
 	storeDDPositivoNegativo:{},
 	storeDDCorrectoCobro:{},
+	storeDDIndebidaExcesiva:{},
     
     constructor : function(options){    //Step 2  
     	Date.now = Date.now || function() { return +new Date; };
@@ -537,7 +538,22 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 			root : 'ddCorrectoCobro'
 		} , DDCorrectoCobro)
 	});
-	   
+    
+    
+    ////storeDDIndebidaExcesiva
+    var DDIndebidaExcesiva = Ext.data.Record.create([
+                                                	{id:'id'}
+  	                                        	,{name:'codigo'}
+													,{name:'descripcion'}
+													 ]);
+
+
+  this.storeDDIndebidaExcesiva= new Ext.data.Store({
+	url:'/pfs/pcdprocesadoresoluciones/getDDIndebidaExcesiva.htm'
+		,reader: new Ext.data.JsonReader({
+			root : 'diccionario'
+		} , DDIndebidaExcesiva)
+	});
 
     	
 //    	this.dsPlazas.on('load', function(combo, r, options){    			
@@ -2063,7 +2079,93 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      ]);
 	
 	
-		for(var i=319; i<1000; i++){
+	
+	
+	//id: 347 : T. INVESTIGACIÓN JUDICIAL: Solicitud de investigación judicial
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	//id: 348 : T. INVESTIGACIÓN JUDICIAL: Registrar resultado de investigación
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboRegistro","fieldLabel":"Resultados",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRegistro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAgTribut","fieldLabel":"Agencia tributaria",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAgTribut'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSegSocial","fieldLabel":"Seg. social",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSegSocial'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboCatastro","fieldLabel":"Catastro",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCatastro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'numberfield',"name":"d_solvencia","fieldLabel":"Solvencia encontrada",allowBlank:true}
+	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",allowBlank:true}
+	                       	
+	                      ]);
+	
+	//id: 349 : T. INVESTIGACIÓN JUDICIAL: Revisar resultado de investigación y actualizacion de datos
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboRegistro","fieldLabel":"Resultados",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRegistro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAgTribut","fieldLabel":"Agesncia tributaria",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAgTribut'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSegSocial","fieldLabel":"Seg. social",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSegSocial'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboCatastro","fieldLabel":"Catastro",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCatastro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'},{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'numberfield',"name":"d_solvencia","fieldLabel":"Solvencia encontrada",allowBlank:true}
+	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",allowBlank:true}
+	                      ]);
+	
+	
+	
+	
+	//id: 350 : T. DE CONSIGNACIÓN: Escrito sellado acreditando consignación
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                      ]);
+	
+	
+	
+	
+    // id: 351 : TRAMITE COSTAS CONTRA ENTIDAD : Solicitud costas entidad
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	// id: 352 : TRAMITE COSTAS CONTRA ENTIDAD : Tasación de costas
+	this.arrayCampos.push([
+	   	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha decreto",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   	   				,{"xtype":'numberfield',"name":"d_costasProcurador","fieldLabel":"Costas del procurador",allowBlank:false}
+	   	   				,{"xtype":'numberfield',"name":"d_costasLetrado","fieldLabel":"Costas de letrado",allowBlank:false}
+	   	   				,{"xtype":'numberfield',"name":"d_suplidos","fieldLabel":"Suplidos",allowBlank:false}
+	   	   				,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboImpugnacion","fieldLabel":"Presentación de impugnación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	   	   		]);
+	
+    // id: 353 : TRAMITE COSTAS CONTRA ENTIDAD : Escrito sellado impugnando costas
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha presentación impugnación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   				,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   				,{"xtype":'combo',"store":this.storeDDIndebidaExcesiva,"name":"d_tipoImpugnacion","fieldLabel":"Tipo de impugnación",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_tipoImpugnacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	   		]);
+    
+	// id: 354 : TRAMITE COSTAS CONTRA ENTIDAD : Diligencia señalando vista impugnación tasación de costas
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	// id: 355 : TRAMITE COSTAS CONTRA ENTIDAD : Decreto aprobando tasación de costas
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   				,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_resultado","fieldLabel":"Resultado de la resolución",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	   		]);
+	
+	// id: 356 : TRAMITE COSTAS CONTRA ENTIDAD : Escrito sellado acreditando consignación
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de pago",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	
+		
+		var lengthArrayCampos = arrayCampos.length + 1;
+		
+		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);
 		}
 		

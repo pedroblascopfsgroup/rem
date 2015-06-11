@@ -9,20 +9,12 @@ function uso_correcto() {
     echo -e "-----------------------------------------------------------------------------"
     echo -e "Uso incorrecto de $1. Estos son los posibles usos correctos"
     echo -e "Uso 1: $1 password_esquema_principal@sid"
-    echo -e "Uso 2: $1 password_esquema_principal@sid esquema_principal"
-    echo -e "Uso 3: $1 -p"
-    echo -e "Uso 4: $1 -p password_esquema_principal@sid"
-    echo -e "Uso 5: $1 -p password_esquema_principal@sid esquema_principal"
+    echo -e "Uso 2: $1 -p"
     echo -e "-----------------------------------------------------------------------------"
 }
 
 
-if [[ $# -gt 3 ]] || [[ $# -lt 1 ]] ; then
-    uso_correcto $0
-    exit
-fi
-
-if [[ $# -eq 3 ]] && [[ "$1" != "-p" ]] ; then
+if [[ $# -gt 1 ]] || [[ $# -lt 1 ]] ; then
     uso_correcto $0
     exit
 fi
@@ -44,20 +36,9 @@ if [[ "$#" -eq 1 ]] && [[ "$1" != "-p" ]] ; then
    PW=$1
 fi
 
-if [[ "$#" -eq 2 ]] && [[ "$1" != "-p" ]] ; then
-   PW=$1
-   ESQUEMA_EJECUCION=$2
-fi
-
-if [ "$#" -eq 3 ] ; then
-   PW=$2
-   ESQUEMA_EJECUCION=$3
-fi
-
 if [ "$1" = "-p" ] ; then
    echo "###############################################################"
    echo 'NOMBRE_SCRIPT='$NOMBRE_SCRIPT
-   echo 'ESQUEMA_EJECUCION='$ESQUEMA_EJECUCION
    echo 'VARIABLES_SUSTITUCION='$VARIABLES_SUSTITUCION
    echo 'AUTOR='$AUTOR
    echo 'ARTEFACTO='$ARTEFACTO
@@ -72,7 +53,6 @@ fi
 
 echo "###############################################################"  > $BASEDIR/$nombreLog
 echo 'NOMBRE_SCRIPT='$NOMBRE_SCRIPT   >> $BASEDIR/$nombreLog
-echo 'ESQUEMA_EJECUCION='$ESQUEMA_EJECUCION  >> $BASEDIR/$nombreLog
 echo 'VARIABLES_SUSTITUCION='$VARIABLES_SUSTITUCION  >> $BASEDIR/$nombreLog
 echo 'AUTOR='$AUTOR  >> $BASEDIR/$nombreLog
 echo 'ARTEFACTO='$ARTEFACTO  >> $BASEDIR/$nombreLog
@@ -83,11 +63,23 @@ echo 'PRODUCTO='$PRODUCTO  >> $BASEDIR/$nombreLog
 echo "###############################################################"  >> $BASEDIR/$nombreLog
 echo ""  >> $BASEDIR/$nombreLog
 
+ESQUEMA_MASTER=''
+ESQUEMA_ENTIDAD=''
 CADENAS_SUSTITUCION=""
 IFS=',' read -a array <<< "$VARIABLES_SUSTITUCION"
 for index in "${!array[@]}"
 do
 #    echo "$index ${array[index]}"
+
+    KEY=`echo ${array[index]} | cut -d\; -f1`
+    VALUE=`echo ${array[index]} | cut -d\; -f2`
+    if [[ $KEY == '#ESQUEMA_MASTER#' ]]; then
+       ESQUEMA_MASTER=$VALUE
+    fi
+    if [[ $KEY == '#ESQUEMA_ENTIDAD#' ]]; then
+       ESQUEMA_ENTIDAD=$VALUE
+    fi
+
     IFS=';' read -a array2 <<< "${array[index]}"
     for index2 in "${!array2[@]}"
     do
@@ -97,11 +89,19 @@ do
        if [ "$index2" -eq "1" ] ; then
           CADENA="$CADENA""${array2[index2]}/g "
        fi
-#      echo "--- $index2 ${array2[index2]}"
+       #echo "--- $index2 ${array2[index2]}"
     done
     CADENAS_SUSTITUCION="$CADENAS_SUSTITUCION""$CADENA "
 done
 #echo "$CADENAS_SUSTITUCION"
+
+ESQUEMA_EJECUCION=`echo $nombreFichero | cut -d_ -f3`
+if [[ $ESQUEMA_EJECUCION == "BANK01" ]] || [[ $ESQUEMA_EJECUCION == "ENTITY" ]] || [[ $ESQUEMA_EJECUCION == "HAYA01" ]]; then
+    ESQUEMA_EJECUCION=$ESQUEMA_ENTIDAD 
+fi
+if [[ $ESQUEMA_EJECUCION == "BANKMASTER" ]] || [[ $ESQUEMA_EJECUCION == "MASTER" ]] || [[ $ESQUEMA_EJECUCION == "HAYAMASTER" ]]; then
+    ESQUEMA_EJECUCION=$ESQUEMA_MASTER
+fi
 
 #Invocar PASO1
 export PASO1=reg1.sql

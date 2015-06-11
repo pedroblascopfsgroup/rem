@@ -73,12 +73,13 @@ cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto" | sort | cut -d# -f2 > $
 cat $BASEDIR/tmp/from-date-list-1.txt | grep "$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 >> $BASEDIR/tmp/from-date-list-2.txt
 
 
-
 if [[ "$#" -eq 4 ]] && [[ "$4" == "go!" ]]; then
     while read -r line
     do
+        echo "--------------------------------------------------------------------------------"
         echo "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE"
         $BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE
+        echo "--------------------------------------------------------------------------------"
     done < $BASEDIR/tmp/from-date-list-2.txt
 else
     echo ""

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,12 +44,12 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
-import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -1233,31 +1234,37 @@ public class SubastaManager implements SubastaApi {
 		@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
 		public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto) {
 			Subasta subasta = subastaDao.get(Long.valueOf(dto.getIdSubasta()));
-			TipoJuzgado tipoJuzgado = (TipoJuzgado) genericDao.get(TipoJuzgado.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdPlazaJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-			TipoPlaza tipoPlaza = (TipoPlaza) genericDao.get(TipoPlaza.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTipoJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-			tipoJuzgado.setPlaza(tipoPlaza);
+			TipoJuzgado tipoJuzgado = (TipoJuzgado) genericDao.get(TipoJuzgado.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTipoJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			tipoJuzgado.setPlaza(tipoJuzgado.getPlaza());
 			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
 			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
-
+			try {
+				subasta.setFechaSenyalamiento(DateFormat.toDate(dto.getFechaSenyalamiento()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			boolean existeTareaSenyalamiento = tareaNoExisteOFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
+			boolean existeTareaCelebracion = tareaNoExisteOFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
 			// Si existe se actualizan los campos si no se lanzan las tareas
-			if(dto.isExisteTareaSenyalamiento()) {
-				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "costasLetrado", dto.getCostasLetrado());
-				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "costasProcurador", dto.getCostasProcurador());
-				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "fechaSenyalamiento", dto.getFechaSenyalamiento());
+			if(existeTareaSenyalamiento) {
+				actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
+				actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
 			}else{
 				//TODO hay que ver que hacer para crear las tareas y insertar los datos
 			}
-			if(dto.isExisteTareaCelebracion()) {
-				actualizarTareaExternaValor(subasta.getProcedimiento().getId(), "comboPostores", dto.getConPostores());
+			if(existeTareaCelebracion) {
+				actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
 			}else{
 				//TODO hay que ver que hacer para crear las tareas y insertar los datos
 			}
+			subastaDao.save(subasta);
 		}
 		
-		private void actualizarTareaExternaValor(Long idProcedimiento, String label, String valor) {
+		private void actualizarTareaExternaValor(Long idValorNodoTarea, String valor) {
 			TareaExternaValor tareaExtValor = (TareaExternaValor) genericDao.get(TareaExternaValor.class, 
-					genericDao.createFilter(FilterType.EQUALS, "nombre", label), 
-					genericDao.createFilter(FilterType.EQUALS, "tareaExterna.tareaProcedimiento.id", idProcedimiento),						
+					genericDao.createFilter(FilterType.EQUALS, "id", idValorNodoTarea),						
 					genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			tareaExtValor.setValor(valor);
 			genericDao.update(TareaExternaValor.class, tareaExtValor);
@@ -1274,7 +1281,7 @@ public class SubastaManager implements SubastaApi {
 		@Override
 		@Transactional(readOnly = false)
 		@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
-		public String obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
+		public ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
 			return getValorNodoPrc(historicoPrc, valor);
 		}
@@ -1297,7 +1304,7 @@ public class SubastaManager implements SubastaApi {
 			return hPrc;
 		}
 		
-		private String getValorNodoPrc(HistoricoProcedimiento hPrc, String valor) {
+		private ValorNodoTarea getValorNodoPrc(HistoricoProcedimiento hPrc, String valor) {
 			// Si hemos encontrado una tarea del tipo especificado
 			if (!Checks.esNulo(hPrc) && !Checks.esNulo(valor)) {
 				if (!Checks.esNulo(hPrc.getIdEntidad())) {
@@ -1308,7 +1315,7 @@ public class SubastaManager implements SubastaApi {
 							if (!Checks.esNulo(listadoValores)) {
 								for (TareaExternaValor val : listadoValores) {
 									if (valor.equals(val.getNombre())) {
-										return val.getValor();
+										return new ValorNodoTarea(val.getId(), val.getValor());
 									}
 								}
 							}
@@ -1316,7 +1323,7 @@ public class SubastaManager implements SubastaApi {
 					}
 				}
 			}
-			return null;
+			return new ValorNodoTarea();
 		}
 
 		@Override
@@ -1355,4 +1362,43 @@ public class SubastaManager implements SubastaApi {
 			}
 			return idBienesNoCierre;
 		} 
+		
+		public class ValorNodoTarea {
+			private Long idTareaNodoValor;
+			private String valor;
+			
+			public ValorNodoTarea() {
+			}
+			
+			public ValorNodoTarea(Long idTareaNodoValor, String valor) {
+				this.idTareaNodoValor = idTareaNodoValor;
+				this.valor = valor;
+			}
+			
+			/**
+			 * @return the idTareaNodoValor
+			 */
+			public Long getIdTareaNodoValor() {
+				return idTareaNodoValor;
+			}
+			/**
+			 * @param idTareaNodoValor the idTareaNodoValor to set
+			 */
+			public void setIdTareaNodoValor(Long idTareaNodoValor) {
+				this.idTareaNodoValor = idTareaNodoValor;
+			}
+			/**
+			 * @return the valor
+			 */
+			public String getValor() {
+				return valor;
+			}
+			/**
+			 * @param valor the valor to set
+			 */
+			public void setValor(String valor) {
+				this.valor = valor;
+			}
+			
+		}
 }

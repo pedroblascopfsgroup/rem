@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
 
 public interface SubastaApi {
 	
@@ -187,7 +188,7 @@ public interface SubastaApi {
 	public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
-	String obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor);
+	ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor);
 
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA)
 	boolean tareaNoExisteOFinalizada(Procedimiento procedimiento, String nombreNodo);

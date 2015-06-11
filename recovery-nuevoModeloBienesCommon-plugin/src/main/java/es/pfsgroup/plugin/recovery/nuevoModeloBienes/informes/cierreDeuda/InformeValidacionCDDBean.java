@@ -27,13 +27,14 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 public class InformeValidacionCDDBean {
 
 	private static final String CODIGO_TIPO_LETRADO = "LETR";
+	private static final String VALOR_COSTAS_LETRADO = "costasLetrado";
 	private static final String VALOR_COSTAS_PROCURADOR = "costasProcurador";
 	private static final String VALOR_COMBO_POSTORES = "comboPostores";
 	private static final String VALOR_FECHA_TESTIMONIO = "fechaTestimonio";
 
-	private static final String TIPO_PROCEDIMIENTO_SAREB = "H002";
-	private static final String TIPO_PROCEDIMIENTO_CONCURSAL = "H003";
-	private static final String TIPO_PROCEDIMIENTO_TERCEROS = "H004";
+	public static final String TIPO_PROCEDIMIENTO_SAREB_HY = "H002";
+	public static final String TIPO_PROCEDIMIENTO_BANKIA = "P401";
+	public static final String TIPO_PROCEDIMIENTO_SAREB_BNK = "P409";
 
 	private static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "H005_ConfirmarTestimonio";
 
@@ -96,12 +97,12 @@ public class InformeValidacionCDDBean {
 			sb.append("Deuda judicial; ");
 		}
 
-		procedimientoSubastaCDD.setCostasLetrado(convertObjectString(subasta.getCostasLetrado()));
+		procedimientoSubastaCDD.setCostasLetrado(getCostas(subasta, VALOR_COSTAS_LETRADO));
 		if (Checks.esNulo(procedimientoSubastaCDD.getCostasLetrado())) {
 			sb.append("Costas letrado; ");
 		}
 
-		procedimientoSubastaCDD.setCostasProcurador(getCostasProcurador(subasta));
+		procedimientoSubastaCDD.setCostasProcurador(getCostas(subasta, VALOR_COSTAS_PROCURADOR));
 		if (Checks.esNulo(procedimientoSubastaCDD.getCostasProcurador())) {
 			sb.append("Costas procurador; ");
 		}
@@ -198,10 +199,12 @@ public class InformeValidacionCDDBean {
 			if (Checks.esNulo(infobien.getDescripcion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion; ");
 			}
-			if(Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumRegistro())) {
+			if(Checks.esNulo(nmbBien.getDatosRegistralesActivo())) {
 				infobien.setNumRegistro(null);
+				infobien.setNumFinca(null);
 			}else{
-				infobien.setNumRegistro(nmbBien.getDatosRegistralesActivo().getNumRegistro());				
+				infobien.setNumRegistro(nmbBien.getDatosRegistralesActivo().getNumRegistro());
+				infobien.setNumFinca(nmbBien.getDatosRegistralesActivo().getNumFinca());
 			}
 			if (Checks.esNulo(infobien.getNumRegistro())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Numero registro; ");
@@ -209,11 +212,6 @@ public class InformeValidacionCDDBean {
 			infobien.setReferenciaCatastral(nmbBien.getReferenciaCatastral());
 			if (Checks.esNulo(infobien.getReferenciaCatastral())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Referencia catastral; ");
-			}
-			if(Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumFinca())) {
-				infobien.setNumFinca(null);
-			} else {
-				infobien.setNumFinca(nmbBien.getDatosRegistralesActivo().getNumFinca());				
 			}
 			if (Checks.esNulo(infobien.getNumFinca())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Numero finca; ");
@@ -224,16 +222,13 @@ public class InformeValidacionCDDBean {
 			}
 			if(Checks.esNulo(nmbBien.getValoracionActiva())) {
 				infobien.setValorTasacion(null);
+				infobien.setFechaTasacion(null);
 			}else{
-				infobien.setValorTasacion(convertObjectString(nmbBien.getValoracionActiva().getImporteValorTasacion()));				
+				infobien.setValorTasacion(convertObjectString(nmbBien.getValoracionActiva().getImporteValorTasacion()));
+				infobien.setFechaTasacion(convertObjectString(nmbBien.getValoracionActiva().getFechaValorTasacion()));
 			}
 			if (Checks.esNulo(infobien.getValorTasacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Valor tasacion; ");
-			}
-			if(Checks.esNulo(nmbBien.getValoracionActiva())) {
-				infobien.setFechaTasacion(null);
-			}else{
-				infobien.setFechaTasacion(convertObjectString(nmbBien.getValoracionActiva().getFechaValorTasacion()));
 			}
 			if (Checks.esNulo(infobien.getFechaTasacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha tasacion; ");
@@ -276,16 +271,13 @@ public class InformeValidacionCDDBean {
 			}
 			if(Checks.esNulo(nmbBien.getAdjudicacion()) && Checks.esNulo(nmbBien.getAdjudicacion().getEntidadAdjudicataria())) {
 				infobien.setResultadoAdjudicacion(null);
+				infobien.setImporteAdjudicacion(null);
 			}else{
 				infobien.setResultadoAdjudicacion(nmbBien.getAdjudicacion().getEntidadAdjudicataria().getDescripcion());
+				infobien.setImporteAdjudicacion(convertObjectString(nmbBien.getAdjudicacion().getImporteAdjudicacion()));				
 			}
 			if (Checks.esNulo(infobien.getResultadoAdjudicacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Resultado adjudicacion; ");
-			}
-			if(Checks.esNulo(nmbBien.getAdjudicacion())) {
-				infobien.setImporteAdjudicacion(null);
-			}else{
-				infobien.setImporteAdjudicacion(convertObjectString(nmbBien.getAdjudicacion().getImporteAdjudicacion()));				
 			}
 			if (Checks.esNulo(infobien.getImporteAdjudicacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Importe adjudicacion; ");
@@ -317,37 +309,38 @@ public class InformeValidacionCDDBean {
 		String tareaCelebracionSubasta = "";
 
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB);
-		} else if (TIPO_PROCEDIMIENTO_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_CONCURSAL);
-		} else if (TIPO_PROCEDIMIENTO_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_TERCEROS);
+		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
+			if (TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY);
+			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK);
+			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_BANKIA);
+			}
+			return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, VALOR_COMBO_POSTORES).getValor();
 		}
-
-		return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, VALOR_COMBO_POSTORES);
+		return null;
 	}
-
-	private String getCostasProcurador(Subasta subasta) {
+	
+	private String getCostas(Subasta subasta, String costas) {
 		String tareaSenyalamientoSubasta = "";
-
+		
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
 		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
-			if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB);
-			} else if (TIPO_PROCEDIMIENTO_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_CONCURSAL);
-			} else if (TIPO_PROCEDIMIENTO_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_TERCEROS);
+			if (TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_HY);
+			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK);
+			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA);
 			}
-			
-			return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, VALOR_COSTAS_PROCURADOR);			
+			return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas).getValor();
 		}
 		return null;
 	}
 
 	private String getFechaTestimonioAdjudicacionSareb(Subasta subasta) {
-		return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO, VALOR_FECHA_TESTIMONIO);
+		return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO, VALOR_FECHA_TESTIMONIO).getValor();
 	}
 
 	private List<String> contratosBienRelacionados(NMBBien nmbBien) {
@@ -363,14 +356,14 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		BooleanBienes booleanBienes = new BooleanBienes();
 		if (validaProcedimientoContratos(subasta)) {
-			sb.append("El procedimiento no tienen ninguna operación activa");
+			sb.append("El procedimiento no tienen ninguna operaci&oacute;n activa. <br/>");
 		}
 		booleanBienes = validaBienesContratos();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relación con ningún contrato");
+				sb.append(" no tiene relaci&oacute;n con ning&uacute;n contrato. <br/>");
 			}
 		}
 		booleanBienes = validaBienesPersonas();
@@ -378,18 +371,18 @@ public class InformeValidacionCDDBean {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relación con ninguna persona");
+				sb.append(" no tiene relaci&oacute;n con ninguna persona. <br/>");
 			}
 		}
 		if (validaSinLotes()) {
-			sb.append("Se ha de incluir, al menos, un lote en el procedimiento");
+			sb.append("Se ha de incluir, al menos, un lote en el procedimiento. <br/>");
 		}
 		booleanBienes = validaLoteSinBien();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El lote ");
 				sb.append(descBien);
-				sb.append(" no contiene ningún bien");
+				sb.append(" no contiene ning&uacute;n bien. <br/>");
 			}
 		}
 		BooleanBienesLotes bienLotes = validaBienVariosLote();
@@ -397,7 +390,7 @@ public class InformeValidacionCDDBean {
 			for (BienManyLotes bienLote : bienLotes.getBienLote()) {
 				sb.append("El Bien ");
 				sb.append(bienLote.getBien());
-				sb.append(" se encuentra en más de un lote (");
+				sb.append(" se encuentra en m&aacute;s de un lote (");
 				int contador = 1;
 				for (Integer numLote : bienLote.getLotes()) {
 					sb.append(numLote);
@@ -406,7 +399,7 @@ public class InformeValidacionCDDBean {
 						contador++;
 					}
 				}
-				sb.append(")");
+				sb.append("). <br/>");
 			}
 		}
 		mensajesValidacion = sb.toString();
@@ -464,11 +457,11 @@ public class InformeValidacionCDDBean {
 
 	// Comprueba si no existe ningun lote
 	private boolean validaSinLotes() {
-		boolean correcto = true;
+		boolean incorrecto = false;
 		if (Checks.estaVacio(getDatosLoteCDD())) {
-			correcto = false;
+			incorrecto = true;
 		}
-		return correcto;
+		return incorrecto;
 	}
 
 	// Comprueba si existe algun lote sin bien
@@ -616,7 +609,7 @@ public class InformeValidacionCDDBean {
 			} else if (variable instanceof Float) {
 				ret = Float.toString((Float) variable);
 			} else if (variable instanceof Boolean) {
-				ret = ((Boolean) variable ? "true" : "false");
+				ret = ((Boolean) variable ? "SI" : "NO");
 			} else if (variable instanceof BigDecimal) {
 				ret = ((BigDecimal) variable).toString();
 			}

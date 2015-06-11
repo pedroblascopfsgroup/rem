@@ -17,11 +17,13 @@ public class EditarInformacionCierreDto implements Serializable {
 	private String codigoJuzgado;
 	private BigDecimal principalDemanda;
 	private String costasLetrado;
+	private Long idValorCostasLetrado;
 	private String costasProcurador;
+	private Long idValorCostasProcurador;
 	private String fechaSenyalamiento;
 	private String conPostores;
-	private boolean existeTareaSenyalamiento;
-	private boolean existeTareaCelebracion;
+	private Long idValorConPostores;
+	private boolean habilitarEditarInformacionCDD;
 
 	/**
 	 * @return the idSubasta
@@ -54,6 +56,21 @@ public class EditarInformacionCierreDto implements Serializable {
 	}
 
 	/**
+	 * @return the codigoPlaza
+	 */
+	public String getCodigoPlaza() {
+		return codigoPlaza;
+	}
+
+	/**
+	 * @param codigoPlaza
+	 *            the codigoPlaza to set
+	 */
+	public void setCodigoPlaza(String codigoPlaza) {
+		this.codigoPlaza = codigoPlaza;
+	}
+
+	/**
 	 * @return the idTipoJuzgado
 	 */
 	public Long getIdTipoJuzgado() {
@@ -69,6 +86,21 @@ public class EditarInformacionCierreDto implements Serializable {
 	}
 
 	/**
+	 * @return the codigoJuzgado
+	 */
+	public String getCodigoJuzgado() {
+		return codigoJuzgado;
+	}
+
+	/**
+	 * @param codigoJuzgado
+	 *            the codigoJuzgado to set
+	 */
+	public void setCodigoJuzgado(String codigoJuzgado) {
+		this.codigoJuzgado = codigoJuzgado;
+	}
+
+	/**
 	 * @return the principalDemanda
 	 */
 	public BigDecimal getPrincipalDemanda() {
@@ -76,7 +108,8 @@ public class EditarInformacionCierreDto implements Serializable {
 	}
 
 	/**
-	 * @param principalDemanda the principalDemanda to set
+	 * @param principalDemanda
+	 *            the principalDemanda to set
 	 */
 	public void setPrincipalDemanda(BigDecimal principalDemanda) {
 		this.principalDemanda = principalDemanda;
@@ -98,6 +131,21 @@ public class EditarInformacionCierreDto implements Serializable {
 	}
 
 	/**
+	 * @return the idValorCostasLetrado
+	 */
+	public Long getIdValorCostasLetrado() {
+		return idValorCostasLetrado;
+	}
+
+	/**
+	 * @param idValorCostasLetrado
+	 *            the idValorCostasLetrado to set
+	 */
+	public void setIdValorCostasLetrado(Long idValorCostasLetrado) {
+		this.idValorCostasLetrado = idValorCostasLetrado;
+	}
+
+	/**
 	 * @return the costasProcurador
 	 */
 	public String getCostasProcurador() {
@@ -110,6 +158,21 @@ public class EditarInformacionCierreDto implements Serializable {
 	 */
 	public void setCostasProcurador(String costasProcurador) {
 		this.costasProcurador = costasProcurador;
+	}
+
+	/**
+	 * @return the idValorCostasProcurador
+	 */
+	public Long getIdValorCostasProcurador() {
+		return idValorCostasProcurador;
+	}
+
+	/**
+	 * @param idValorCostasProcurador
+	 *            the idValorCostasProcurador to set
+	 */
+	public void setIdValorCostasProcurador(Long idValorCostasProcurador) {
+		this.idValorCostasProcurador = idValorCostasProcurador;
 	}
 
 	/**
@@ -143,58 +206,33 @@ public class EditarInformacionCierreDto implements Serializable {
 	}
 
 	/**
-	 * @return the codigoPlaza
+	 * @return the idValorConPostores
 	 */
-	public String getCodigoPlaza() {
-		return codigoPlaza;
+	public Long getIdValorConPostores() {
+		return idValorConPostores;
 	}
 
 	/**
-	 * @param codigoPlaza the codigoPlaza to set
+	 * @param idValorConPostores
+	 *            the idValorConPostores to set
 	 */
-	public void setCodigoPlaza(String codigoPlaza) {
-		this.codigoPlaza = codigoPlaza;
+	public void setIdValorConPostores(Long idValorConPostores) {
+		this.idValorConPostores = idValorConPostores;
 	}
 
 	/**
-	 * @return the codigoJuzgado
+	 * @return the habilitarEditarInformacionCDD
 	 */
-	public String getCodigoJuzgado() {
-		return codigoJuzgado;
+	public boolean isHabilitarEditarInformacionCDD() {
+		return habilitarEditarInformacionCDD;
 	}
 
 	/**
-	 * @param codigoJuzgado the codigoJuzgado to set
+	 * @param habilitarEditarInformacionCDD the habilitarEditarInformacionCDD to set
 	 */
-	public void setCodigoJuzgado(String codigoJuzgado) {
-		this.codigoJuzgado = codigoJuzgado;
+	public void setHabilitarEditarInformacionCDD(
+			boolean habilitarEditarInformacionCDD) {
+		this.habilitarEditarInformacionCDD = habilitarEditarInformacionCDD;
 	}
 
-	/**
-	 * @return the existeTareaSenyalamiento
-	 */
-	public boolean isExisteTareaSenyalamiento() {
-		return existeTareaSenyalamiento;
-	}
-
-	/**
-	 * @param existeTareaSenyalamiento the existeTareaSenyalamiento to set
-	 */
-	public void setExisteTareaSenyalamiento(boolean existeTareaSenyalamiento) {
-		this.existeTareaSenyalamiento = existeTareaSenyalamiento;
-	}
-
-	/**
-	 * @return the existeTareaCelebracion
-	 */
-	public boolean isExisteTareaCelebracion() {
-		return existeTareaCelebracion;
-	}
-
-	/**
-	 * @param existeTareaCelebracion the existeTareaCelebracion to set
-	 */
-	public void setExisteTareaCelebracion(boolean existeTareaCelebracion) {
-		this.existeTareaCelebracion = existeTareaCelebracion;
-	}
 }

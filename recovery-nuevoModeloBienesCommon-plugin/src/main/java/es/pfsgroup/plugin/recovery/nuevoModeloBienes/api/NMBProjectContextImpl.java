@@ -27,12 +27,12 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TIPO_PROCEDIMIENTO_POSESION = "POSESION";
 	public static final String CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES = "GESTION-LLAVES";
 	
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB = "CelebracionSubastaSareb";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB = "SenyalamientoSubastaSareb";
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_CONCURSAL = "CelebracionSubastaConcursal";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_CONCURSAL= "SenyalamientoSubastaConcursal";
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_TERCEROS = "CelebracionSubastaTerceros";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_TERCEROS = "SenyalamientoSubastaTerceros";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY = "HYCelebracionSubastaSareb";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_HY = "HYSenyalamientoSubastaSareb";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_BANKIA = "CelebracionSubastaBankia";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA = "SenyalamientoSubastaBankia";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK = "CelebracionSubastaSareb";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK = "SenyalamientoSubastaSareb";
 	
 	private Set<String> tareasStopValidarLotesSubasta;
 	private Long nivelZonaOficinaGestoraEnInformes;

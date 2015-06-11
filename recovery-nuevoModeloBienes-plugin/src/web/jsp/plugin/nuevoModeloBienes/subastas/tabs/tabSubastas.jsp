@@ -222,10 +222,13 @@ var idBienEnviarCierre;
 				
 		if(idSubasta!=null && idSubasta!='') {
 			lotesStore.webflow({idSubasta:idSubasta});
+			disableBotonesCDDStore.webflow({idSubasta:idSubasta});
 		}
 		
 		btnInfSubasta.setDisabled(false);
 		btnInstrucSubasta.setDisabled(false);
+		btnInstrucLotes.setDisabled(true);
+
 		if (codEstadoSubasta == 'SUS' || codEstadoSubasta == 'CAN' || codEstadoSubasta == 'CEL' ) {
 			btnAgregarBien.setDisabled(true);
 			btnExcluirBien.setDisabled(true);
@@ -233,13 +236,6 @@ var idBienEnviarCierre;
 			btnAgregarBien.setDisabled(false);
 			btnExcluirBien.setDisabled(false);
 		}
-		
-		btnInfSubasta.setDisabled(false);
-		btnInstrucSubasta.setDisabled(false);
-		btnInstrucLotes.setDisabled(true);
-		btnGenerarInformeCierre.setDisabled(false);
-		btnEnviarCierre.setDisabled(false);
-		btnEditarInfoCierre.setDisabled(false);
 	});
 	
 	
@@ -271,6 +267,11 @@ var lotesRT = Ext.data.Record.create([
 		,{name:'70porCien'}
 		,{name:'observaciones'}
 		,{name:'bienes'}
+		,{name:'disableBotonesCDD'}		
+	]);
+	
+	var disableBotonesCDD = Ext.data.Record.create([
+		{name:'valorDisable'}
 	]);
 	
     var expanderLote = new Ext.ux.grid.RowExpander({
@@ -302,8 +303,25 @@ var lotesRT = Ext.data.Record.create([
         )
 	}); 
 	
+    var disableBotonesCDDStore = page.getStore({
+		flow : 'subasta/getDisableBotonesCDD'
+		,storeId : 'disableBotonesCDDStore'
+		,reader : new Ext.data.JsonReader(
+			{root : 'disableBotonesCDD'}
+			, disableBotonesCDD
+		)
+	});
+	
     lotesStore.on('load', function(store, records, options){
-	   expandAll();
+	   	expandAll();	   	
+	});
+	
+	disableBotonesCDDStore.on('load', function(store, records, options){
+	   	var disable = store.getAt(0);
+		btnEditarInfoCierre.setDisabled(disable.get('valorDisable'));
+	   	btnGenerarInformeCierre.setDisabled(disable.get('valorDisable'));
+	   	btnEnviarCierre.setDisabled(disable.get('valorDisable'));
+	   	
 	});
     
     

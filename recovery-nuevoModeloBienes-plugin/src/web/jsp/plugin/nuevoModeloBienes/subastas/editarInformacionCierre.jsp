@@ -19,7 +19,7 @@
 		labelKey="subastas.editarIncormacionCierre.costas.letrado" 
 		label="**Costas Letrado" value="${dto.costasLetrado}"
 		obligatory="true" />
-		
+			
 	<pfs:currencyfield name="costasProcurador" 
 		labelKey="subastas.editarIncormacionCierre.costas.procurador" 
 		label="**Costas Procurador" value="${dto.costasProcurador}"
@@ -30,7 +30,7 @@
 			,height:20
 			,name:'fechaSenyalamiento'
 			,fieldLabel:'<s:message code="subastas.editarIncormacionCierre.fecha.senyalamiento" text="**Fecha se&ntilde;alamiento" />'
-			,value:'<fwk:date value="${dto.fechaSenyalamiento}" />'
+			,value:'${dto.fechaSenyalamiento}'
 		});
 		
 	var diccionarioRecord = Ext.data.Record.create([
@@ -61,7 +61,7 @@
 		,resizable: true
 		,mode: 'local'
 		,triggerAction : 'all'
-		,value : '${dto.conPostores}' == '' ? '' : '${dto.conPostores}' == 'true' ? 'Si' : 'No'
+		,value : '${dto.conPostores}' == '' ? '' : '${dto.conPostores}' == '01' ? 'Si' : 'No'
 	});
 	
 	var codPlaza = '';
@@ -100,7 +100,7 @@
 		pageSize: 10,
 		triggerAction: 'all',
 		mode: 'local',
-		value:'${dto.idPlazaJuzgado}'
+		value:'${dto.codigoPlaza}'
 	});	
 	
 	
@@ -132,7 +132,7 @@
 		,mode:'local'
 		,fieldLabel:'<s:message code="subastas.editarIncormacionCierre.tipo.juzgado" text="**Tipo de Juzgado" />'
 		,width:200
-		,value:'${dto.idTipoJuzgado}'
+		,value:''
 		
 	});
 	
@@ -188,10 +188,13 @@
 	var getParametros = function() {
 	 	var p = {};
 	 	p.idSubasta = ${dto.idSubasta};
+	 	p.idValorCostasLetrado = ${dto.idValorCostasLetrado};
+	 	p.idValorCostasProcurador = ${dto.idValorCostasProcurador};
+	 	p.idValorConPostores = ${dto.idValorConPostores}; 
 	 	p.principalDemanda = principal.getValue() ? principal.getValue() : '';
 	 	p.idPlazaJuzgado = idTipoPlaza.getValue() ? idTipoPlaza.getValue() : '';
 	 	p.idTipoJuzgado = idTipoJuzgado.getValue() ? idTipoJuzgado.getValue() : '';
-	 	p.fechaSenyalamiento = fechaSenyalamiento.getValue() ? fechaSenyalamiento.getValue() : '';
+	 	p.fechaSenyalamiento = fechaSenyalamiento.getValue() != '' ? fechaSenyalamiento.getValue().format('d/m/Y') : '';
 	 	p.costasLetrado = costasLetrado.getValue() ? costasLetrado.getValue() : '';
 	 	p.costasProcurador = costasProcurador.getValue() ? costasProcurador.getValue() : '';
 	 	p.conPostores = cmbConPostores.getValue() ? cmbConPostores.getValue() : '';

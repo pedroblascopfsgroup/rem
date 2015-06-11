@@ -1840,12 +1840,12 @@
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_TR_COS_ENT_DECRE_TAS_COS">
+				<entry key="R_TR_COS_ENT_DECRE_TAS_CO">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_TR_COS_ENT_DECRE_TAS_COS</value>
+								<value>I_TR_COS_ENT_DECRE_TAS_CO</value>
 							</property>
 						</bean>
 					</list>

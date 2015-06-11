@@ -226,7 +226,7 @@
 		<transition to="Fin" name="ACEPTADA"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="ACCONCAM"></transition>
-		<transition to="Fin" name="DENEGADA"></transition>
+		<transition to="H025_ResolucionDecision" name="DENEGADA"></transition>
 	</state>
 
 	<state name="H025_registrarResolucion">

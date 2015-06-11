@@ -124,8 +124,10 @@
             <targetBean>genericLeaveActionHandler</targetBean>
          </action>
       	</event>
-		<transition to="H031_ValidarInstrucciones" name="haya_tramiteElevacionPropSarebLitigios"></transition>
+		<transition to="H031_ValidarInstrucciones" name="ACEPTADA"></transition>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_ConvenioDecision" name="DENEGADA"></transition>
+		<transition to="H031_ValidarInstrucciones" name="ACCONCAM"></transition>
 	</state>
 
 	<state name="H031_ValidarInstrucciones">

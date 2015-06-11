@@ -24,7 +24,8 @@
       <bendpoint w1="-172" h1="2" w2="0" h2="-128"/>
     </edge>
     <edge>
-      <label x="6" y="-361"/>
+      <label x="60" y="-653"/>
+      <bendpoint w1="-101" h1="701" w2="-142" h2="-124"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -46,8 +47,7 @@
   </node>
   <node name="H008_PropuestaCancelacionCargas" x="632" y="358" width="275" height="36">
     <edge>
-      <label x="9" y="32"/>
-      <bendpoint w1="-191" h1="0" w2="-2" h2="-116"/>
+      <label x="6" y="-15"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -59,7 +59,7 @@
   </node>
   <node name="H008_RegInsCancelacionCargasReg" x="71" y="473" width="245" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-48" y="19"/>
       <bendpoint w1="99" h1="-60" w2="102" h2="56"/>
     </edge>
     <edge>
@@ -167,10 +167,19 @@
       <bendpoint w1="780" h1="149" w2="-4" h2="527"/>
     </edge>
   </node>
-  <node name="H008_BPMTramiteElevarPropSarebAdjudicados" x="419" y="460" width="321" height="36">
+  <node name="H008_BPMTramiteElevarPropSarebAdjudicados" x="632" y="443" width="321" height="36">
     <edge>
-      <label x="-121" y="-69"/>
-      <bendpoint w1="1" h1="97" w2="-192" h2="1"/>
+      <label x="-36" y="-8"/>
+      <bendpoint w1="55" h1="56" w2="75" h2="-57"/>
+    </edge>
+    <edge>
+      <label x="112" y="-200"/>
+      <bendpoint w1="-403" h1="-4" w2="-14" h2="-613"/>
+      <bendpoint w1="-481" h1="418" w2="-92" h2="-191"/>
+    </edge>
+    <edge>
+      <label x="-40" y="-4"/>
+      <bendpoint w1="-111" h1="49" w2="-91" h2="-64"/>
     </edge>
   </node>
   <node name="Fin" x="12" y="211" width="132" height="36"/>

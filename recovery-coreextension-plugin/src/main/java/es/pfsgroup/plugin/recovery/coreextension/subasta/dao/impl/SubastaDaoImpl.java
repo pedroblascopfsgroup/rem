@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +84,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	 * Optimizada para exportacion excel
 	 */
 	public List<HashMap<String, Object>> buscarSubastasExcel(NMBDtoBuscarSubastas filtro, Usuario usuLogado, Boolean isCount) {
-		Criteria query = getSession().createCriteria(Subasta.class);
+		Criteria query = getSession().createCriteria(Subasta.class, "subasta");
 
 		// Select
 		query.setProjection(selectSubastasExcel(isCount));
@@ -364,6 +366,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesDatosSubasta(NMBDtoBuscarSubastas filtro) {
+
 		List<Criterion> where = new ArrayList<Criterion>();
 
 		if (filtro.getId() != null) {
@@ -374,28 +377,36 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			where.add(Restrictions.like("procedimiento.codigoProcedimientoEnJuzgado", filtro.getNumAutos(), MatchMode.ANYWHERE));
 		}
 
-		if (!StringUtils.emtpyString(filtro.getFechaSolicitudDesde())) {
-			where.add(Restrictions.ge("fechaSolicitud", filtro.getFechaSolicitudDesde()));
-		}
+		try {
 
-		if (!StringUtils.emtpyString(filtro.getFechaSolicitudHasta())) {
-			where.add(Restrictions.le("fechaSolicitud", filtro.getFechaSolicitudHasta()));
-		}
+			SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("MM/dd/yyyy");
+			
+			if (!StringUtils.emtpyString(filtro.getFechaSolicitudDesde())) {
+				where.add(Restrictions.ge("subasta.fechaSolicitud", formatoFechaFiltroWeb.parse(filtro.getFechaSolicitudDesde())));
+			}
 
-		if (!StringUtils.emtpyString(filtro.getFechaAnuncioDesde())) {
-			where.add(Restrictions.ge("fechaAnuncio", filtro.getFechaAnuncioDesde()));
-		}
+			if (!StringUtils.emtpyString(filtro.getFechaSolicitudHasta())) {
+				where.add(Restrictions.le("subasta.fechaSolicitud", formatoFechaFiltroWeb.parse(filtro.getFechaSolicitudHasta())));
+			}
 
-		if (!StringUtils.emtpyString(filtro.getFechaAnuncioHasta())) {
-			where.add(Restrictions.le("fechaAnuncio", filtro.getFechaAnuncioHasta()));
-		}
+			if (!StringUtils.emtpyString(filtro.getFechaAnuncioDesde())) {
+				where.add(Restrictions.ge("subasta.fechaAnuncio", formatoFechaFiltroWeb.parse(filtro.getFechaAnuncioDesde())));
+			}
 
-		if (!StringUtils.emtpyString(filtro.getFechaSenyalamientoDesde())) {
-			where.add(Restrictions.ge("fechaSenyalamiento", filtro.getFechaSenyalamientoDesde()));
-		}
+			if (!StringUtils.emtpyString(filtro.getFechaAnuncioHasta())) {
+				where.add(Restrictions.le("subasta.fechaAnuncio", formatoFechaFiltroWeb.parse(filtro.getFechaAnuncioHasta())));
+			}
 
-		if (!StringUtils.emtpyString(filtro.getFechaSenyalamientoHasta())) {
-			where.add(Restrictions.le("fechaSenyalamiento", filtro.getFechaSenyalamientoHasta()));
+			if (!StringUtils.emtpyString(filtro.getFechaSenyalamientoDesde())) {
+				where.add(Restrictions.ge("subasta.fechaSenyalamiento", formatoFechaFiltroWeb.parse(filtro.getFechaSenyalamientoDesde())));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getFechaSenyalamientoHasta())) {
+				where.add(Restrictions.le("subasta.fechaSenyalamiento", formatoFechaFiltroWeb.parse(filtro.getFechaSenyalamientoHasta())));
+			}
+
+		} catch (ParseException e) {
+			logger.error(e.getLocalizedMessage());
 		}
 
 		if (!StringUtils.emtpyString(filtro.getIdComboInfLetradoCompleto())) {

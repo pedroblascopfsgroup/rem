@@ -537,7 +537,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 			if(!Checks.estaVacio( b.getValoraciones())){
 				for(NMBValoracionesBien v: b.getValoraciones()){
 					if(Checks.esNulo(v.getFechaValorTasacion())){
-						return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Todos los bienes afectos deben tener al menos un contrato relacionado</div>";
+						return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar la fecha valor tasaci&oacute;n</div>";
 					}
 					if(Checks.esNulo(v.getImporteValorTasacion())){
 						return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar el importe de tasaci&oacute;n</div>";

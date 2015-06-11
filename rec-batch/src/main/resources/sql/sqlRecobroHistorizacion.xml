@@ -44,6 +44,16 @@
 		    END IF;
 		  END LOOP; --LOOP TABLAS
 		  COMMIT;
+		  FOR I IN V_TABLAS_HISTORIFICAR.FIRST .. V_TABLAS_HISTORIFICAR.LAST
+		  LOOP
+		    V_TABLA_HISTORIFICAR := V_TABLAS_HISTORIFICAR(I);
+		    -- Los nombres de tabla no pueden tener mas de 30 caracteres
+		    V_TABLA_HISTORICO := 'H_'||SUBSTR(V_TABLAS_HISTORIFICAR(I),1,28);
+		    DBMS_OUTPUT.PUT_LINE('');
+		    DBMS_OUTPUT.PUT_LINE('ACTUALIZAMOS ESTADISTICAS: '||V_TABLA_HISTORIFICAR);
+		    DBMS_OUTPUT.PUT_LINE('============================================================');
+		    SYS.DBMS_STATS.GATHER_TABLE_STATS (ownname => 'BANK01', tabname => V_TABLA_HISTORIFICAR, estimate_percent => 20);
+		  END LOOP;
 		END;
     ]]>
   </entry>   

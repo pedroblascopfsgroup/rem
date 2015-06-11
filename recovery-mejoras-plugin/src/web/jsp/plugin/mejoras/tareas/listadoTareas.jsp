@@ -17,7 +17,7 @@
 	var buttonsRTE = <app:includeArray files="${buttonsRightTarEspera}" />;
 	var buttonsLTE = <app:includeArray files="${buttonsLeftTarEspera}" />;
 	var buttonsRNot=<app:includeArray files="${buttonsRightNotificacion}" />;
-	var buttonsLNot=<app:includeArray files="${buttonsLeftNotificacion}" />;
+	var buttonsLNot=<app:includeArray files="${buttonsLeftNotificacion}" />;12
 	var buttonsRAle=<app:includeArray files="${buttonsRightAlertas}" />;
 	var buttonsLAle=<app:includeArray files="${buttonsLeftAlertas}" />;
 	var buzonOptimizado='${buzonOptimizado}';

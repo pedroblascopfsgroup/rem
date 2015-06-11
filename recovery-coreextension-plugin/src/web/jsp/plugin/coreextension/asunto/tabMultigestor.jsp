@@ -376,7 +376,7 @@
 		,viewConfig : { columns : 2 }
 		,autoHeight : true
 		,bodyStyle:'padding-top:10px;padding-bottom:0px;padding-right:10px;padding-left:10px;margin-bottom:5px'
-		,items : [{ columnWidth:1, border:false, items:[grid]},{ columnWidth:1, border:false, items:[panelGestores]}]
+		,items : [{ columnWidth:1, border:false, items:[panelGestores]},{ columnWidth:1, border:false, items:[grid]}]
 		,nombreTab : 'tabContratoBienes'
 	});
 	

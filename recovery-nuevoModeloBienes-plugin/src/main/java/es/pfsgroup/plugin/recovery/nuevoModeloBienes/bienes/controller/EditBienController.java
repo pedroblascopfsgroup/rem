@@ -674,6 +674,12 @@ public class EditBienController {
 			dto.setMunicipoLibro(request.getParameter("municipoLibro"));
 		if (!Checks.esNulo(request.getParameter("codigoRegistro")))
 			dto.setCodigoRegistro(request.getParameter("codigoRegistro"));
+		if (!Checks.esNulo(request.getParameter("municipioRegistro")))
+			dto.setMunicipioRegistro(request.getParameter("municipioRegistro"));
+		if (!Checks.esNulo(request.getParameter("provinciaRegistro")))
+			dto.setProvinciaRegistro(request.getParameter("provinciaRegistro"));
+		
+		
 
 		/* NMB Datos Localizacion */
 		if (!Checks.esNulo(request.getParameter("poblacion")))

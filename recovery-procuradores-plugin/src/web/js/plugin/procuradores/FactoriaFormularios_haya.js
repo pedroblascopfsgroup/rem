@@ -2163,7 +2163,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	
 		
-		var lengthArrayCampos = arrayCampos.length + 1;
+		var lengthArrayCampos = this.arrayCampos.length + 1;
 		
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

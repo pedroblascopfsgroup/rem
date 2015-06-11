@@ -219,6 +219,8 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			UVEMUtils();
 			
 			System.out.println("Iniciando.... solicitarNumeroActivo");
+			logger.debug("Iniciando.... solicitarNumeroActivo");
+			logger.info("Iniciando.... solicitarNumeroActivo");
 			//final Entidad entidad = entidadDao.findByWorkingCode(workingCode);
 			//DbIdContextHolder.setDbId(entidad.getId());
 			

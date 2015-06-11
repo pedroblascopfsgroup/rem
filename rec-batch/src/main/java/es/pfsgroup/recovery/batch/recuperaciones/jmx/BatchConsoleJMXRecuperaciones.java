@@ -1,0 +1,45 @@
+package es.pfsgroup.recovery.batch.recuperaciones.jmx;
+
+import java.util.Date;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.stereotype.Component;
+
+import es.capgemini.devon.utils.ApplicationContextUtil;
+import es.capgemini.pfs.batch.recobro.constantes.RecobroConstantes.ProcesoMarcadoExpedientes;
+import es.capgemini.pfs.batch.recobro.jobs.ProcesoMarcadoExpedientesJobLauncher;
+import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes;
+import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoArquetipadoRecuperaciones;
+import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoArquetipadoRecuperacionesJobLauncher;
+
+/**
+ * Lanzadores JMX para los jobs del batch de recuperaciones.
+ * @author carlos
+ *
+ */
+@Component
+@ManagedResource("devon:type=BatchRecuperaciones")
+public class BatchConsoleJMXRecuperaciones {
+	
+	
+	private final Log logger = LogFactory.getLog(getClass());
+	
+	@ManagedOperation(description = "Ejecuta el proceso de Arquetipado para el batch de Recuperaciones. Se debe indicar el workingCode")
+	public void ejecutarProcesoArquetipado(String workingCode) {
+		
+		logger.debug("Encolando " + ProcesoArquetipadoRecuperaciones.PROCESO_ARQUETIPADO_RECUPERACIONES_HANDLER);
+		
+		ProcesoArquetipadoRecuperacionesJobLauncher marcadoExpedientesJobLauncher = (ProcesoArquetipadoRecuperacionesJobLauncher)ApplicationContextUtil.
+    			getApplicationContext().getBean(ProcesoArquetipadoRecuperaciones.PROCESO_ARQUETIPADO_RECUPERACIONES_HANDLER);
+		
+		
+    	marcadoExpedientesJobLauncher.handle(workingCode,new Date());
+    	
+    	logger.debug(ProcesoArquetipadoRecuperaciones.PROCESO_ARQUETIPADO_RECUPERACIONES_HANDLER + " ya se ha encolado");
+		
+	}
+
+}

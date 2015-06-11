@@ -25,16 +25,26 @@ function print_banner() {
 
 clear
 
+if [ "$0" != "./sql/tool/$(basename $0)" ]; then
+    print_banner
+    echo ""
+    echo "AUCH!! No me ejecutes desde aquí, por favor, que me electrocuto... sal a la raiz del repositorio RECOVERY y ejecútame como:"
+    echo ""
+    echo "    ./sql/tool/$(basename $0)"
+    echo ""
+    exit
+fi
+
 if [ "$#" -lt 3 ]; then
     print_banner
     echo ""
     echo "Para simular antes de ejecutar:"
     echo ""
-    echo "   Uso: $0 'YYYY-MM-DD HH:MM' [haya|bankia] password_esquema_principal@sid"
+    echo "   Uso: $0 <tag> [haya|bankia] password_esquemas"
     echo ""
     echo "Para ejecutarlo:"
     echo ""
-    echo "   Uso: $0 'YYYY-MM-DD HH:MM' [haya|bankia] password_esquema_principal@sid go!"
+    echo "   Uso: $0 <tag> [haya|bankia] password_esquemas go!"
     echo ""
     echo "******************************************************************************************"
     echo "******************************************************************************************"
@@ -56,16 +66,13 @@ print_banner
 
 BASEDIR=$(dirname $0)
 
-rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh
+rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql
 
-for directory in `find $BASEDIR/../ -mindepth 1 -maxdepth 1 -name '?\.*'`
+for file in `git diff $1 --name-only sql/ | grep "\.sql"`
 do
-    for file in `find $directory -maxdepth 4 -type f -name *.sql -newermt "$1"`
-    do    
         HASH=`git rev-list HEAD $file | tail -n 1`    
         DATE=`git show -s --format="%ct" $HASH --`    
         printf "%s#%s \n" "$DATE" $file >> $BASEDIR/tmp/from-date-list-1.txt
-    done
 done
 
 #cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto\|$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt

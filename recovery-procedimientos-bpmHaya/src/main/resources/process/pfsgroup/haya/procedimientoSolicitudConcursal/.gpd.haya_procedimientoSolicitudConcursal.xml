@@ -150,7 +150,7 @@
       <label x="-33" y="-20"/>
     </edge>
   </node>
-  <node name="Decision" x="601" y="589" width="94" height="36">
+  <node name="H021_ResolucionDecision" x="569" y="589" width="191" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="1" h1="42" w2="-722" h2="372"/>

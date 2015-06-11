@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -92,7 +93,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
     private static final TipoCalculo TIPO_CALCULO_FECHA_POR_DEFECTO = TipoCalculo.TODO;
     private static final String BO_TAREA_MGR_OBTENER_COMUNICACION = "EXTtareaNotificacionManager.obtenerComunicacion";
-    private final static String[] NOMBRES_COLUMNAS = new String[] { "ID", "Nombre", "Unidad de Gestión", "Descripción", "Fecha Inicio", "Fecha Vencimiento", "Tipo Solicitud", "Días Vencida",
+    private final static String[] NOMBRES_COLUMNAS = new String[] { "ID", "Nombre", "Unidad de GestiÃ³n", "DescripciÃ³n", "Fecha Inicio", "Fecha Vencimiento", "Tipo Solicitud", "DÃ­as Vencida",
             "Responsable de la tarea", "Supervisor", "Letrado", "VR", "VR Vencido" };
     private final static String LISTA_ASUNTOS_XLS = "ListaTarea.xls";
     private final static String LISTA_ASUNTOS = "Lista Tareas";
@@ -209,7 +210,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 tareaAsociada.setFechaVenc(dto.getFechaPropuesta());
                 this.saveOrUpdate(tareaAsociada);
             }
-            // guardo la información sobre la prorroga aceptada en un escuchador
+            // guardo la informaciï¿½n sobre la prorroga aceptada en un escuchador
             if (listeners != null) {
                 for (AceptarProrrogaListener l : listeners) {
                     l.fireEvent(map);
@@ -221,13 +222,13 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 // Ahora si se regenerara el timer.
                 // BUG no entiendo porque se hacia saltar el timer de solicitar
                 // prorroga y luego volver a saltar el timer a generar
-                // notificación
+                // notificaciï¿½n
                 // jbpmUtils.recalculaTimer(idBPM, timerName,
                 // dto.getFechaPropuesta(),
                 // ExpedienteBPMConstants.TRANSITION_PRORROGA_EXTRA);
 
                 // Directamente se setea el timer para que salte a generar
-                // notificación
+                // notificaciï¿½n
                 executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREA_O_RECALCULA_TIMER, idBPM, timerName, dto.getFechaPropuesta(), ExpedienteBPMConstants.GENERAR_NOTIFICACION);
             } else {
                 if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad.getCodigo())) {
@@ -480,7 +481,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         EventFactory.onMethodStart(this.getClass());
         Prorroga prorroga = (Prorroga) executor.execute(InternaBusinessOperation.BO_PRORR_MGR_CREAR_NUEVA_PRORROGA, dto);
 
-        // FIXME Pasamos un código pero en el DTO la propiedad hace referencia a
+        // FIXME Pasamos un cï¿½digo pero en el DTO la propiedad hace referencia a
         // un ID
         DDTipoEntidad tipoEntidad = (DDTipoEntidad) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoEntidad.class, dto.getIdTipoEntidadInformacion());
 
@@ -555,6 +556,12 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     public List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, String subtipoTarea) {
         return parent().getListByProcedimientoSubtipo(idProcedimiento, subtipoTarea);
     }
+    
+    @Override
+	public List<TareaNotificacion> getListByProcedimientoSubtipo(
+			Long idProcedimiento, Set<String> subtipoTarea) {
+		return parent().getListByProcedimientoSubtipo(idProcedimiento, subtipoTarea);
+	}
 
     @Override
     @BusinessOperation(EXT_BO_TAREA_EDITAR_ALERTA)
@@ -789,7 +796,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             tareaNotificacion.setEmisor(emisor);
         } catch (Exception e) {
             // Por si no estoy logueado y es un proceso del sistema
-            tareaNotificacion.setEmisor("Automático");
+            tareaNotificacion.setEmisor("Automï¿½tico");
         }
     }
 
@@ -818,7 +825,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     @Transactional
     public Page buscarTareasPendiente(DtoBuscarTareaNotificacion dto) {
 
-        // Conversión de los operadores para evitar el carácter = en las urls
+        // Conversiï¿½n de los operadores para evitar el carï¿½cter = en las urls
         if (dto.getFechaVencDesdeOperador() != null) {
             if (dto.getFechaVencDesdeOperador().equals(PluginCoreextensionConstantes.OPERADOR_MAYOR_IGUAL)) {
                 dto.setFechaVencDesdeOperador(">=");
@@ -850,7 +857,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         } catch (UnsupportedEncodingException e) {
             logger.error(e);
         }
-        // Conversión de los operadores para evitar el carácter = en las urls
+        // Conversiï¿½n de los operadores para evitar el carï¿½cter = en las urls
         if (dto.getFechaVencDesdeOperador() != null) {
             if (dto.getFechaVencDesdeOperador().equals(PluginCoreextensionConstantes.OPERADOR_MAYOR_IGUAL)) {
                 dto.setFechaVencDesdeOperador(">=");
@@ -886,7 +893,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     }
 
     /**
-     * Realiza la búsqueda de Tareas NOtificaciones para reporte Excel.
+     * Realiza la bï¿½squeda de Tareas NOtificaciones para reporte Excel.
      * 
      * @param dto
      *            DtoBuscarTareaNotificacion
@@ -895,7 +902,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     @SuppressWarnings("unchecked")
     @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PARA_EXCEL)
     @Override
-    // TODO Búsqeda optimizada
+    // TODO Bï¿½sqeda optimizada
     public List<ResultadoBusquedaTareasBuzonesDto> buscarTareasParaExcel(DtoBuscarTareaNotificacion dto) {
 
         dto.setLimit(Integer.MAX_VALUE - 1);
@@ -918,7 +925,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     }
 
     /**
-     * Realiza la búsqueda de Tareas NOtificaciones para reporte Excel.
+     * Realiza la bï¿½squeda de Tareas NOtificaciones para reporte Excel.
      * 
      * @param dto
      *            DtoBuscarTareaNotificacion
@@ -928,7 +935,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     @Override
     public Integer buscarTareasParaExcelCount(DtoBuscarTareaNotificacion dto) {
 
-        // Conversión de los operadores para evitar el carácter = en las urls
+        // Conversiï¿½n de los operadores para evitar el carï¿½cter = en las urls
         if (dto.getFechaVencDesdeOperador() != null) {
             if (dto.getFechaVencDesdeOperador().equals(PluginCoreextensionConstantes.OPERADOR_MAYOR_IGUAL)) {
                 dto.setFechaVencDesdeOperador(">=");
@@ -1028,7 +1035,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 TareaNotificacion tarNotificacion = getExtTareaNotificacionDao().get(EXTdto.getIdTarea());
                 if (tarNotificacion != null) {
 
-                    // Indicamos si la comunicación requiere respuesta o no
+                    // Indicamos si la comunicaciï¿½n requiere respuesta o no
                     if (tarNotificacion.getSubtipoTarea() != null) {
                         if (tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR)
@@ -1063,18 +1070,19 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_CE)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_RE)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CIERRA_SESION)
-                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)) {
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)) {
                             param.put("fuerzaChkLeida", "true");
                         }
                     }
 
-                    // Añadimos en parámetros el emisor de la tarea
+                    // Aï¿½adimos en parï¿½metros el emisor de la tarea
                     if (tarNotificacion.getAuditoria() != null && tarNotificacion.getAuditoria().getUsuarioCrear() != null) {
                         param.put("emisor", tarNotificacion.getAuditoria().getUsuarioCrear());
                     }
 
-                    // Añadimos el parametro finalizada para saber si ya se ha
-                    // leido la comunicación
+                    // Aï¿½adimos el parametro finalizada para saber si ya se ha
+                    // leido la comunicaciï¿½n
                     if (tarNotificacion.getTareaFinalizada() != null && tarNotificacion.getTareaFinalizada()) {
                         param.put("finalizada", "true");
                     } else {
@@ -1274,4 +1282,6 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
         // saveOrUpdate(tarea);
     }
+
+	
 }

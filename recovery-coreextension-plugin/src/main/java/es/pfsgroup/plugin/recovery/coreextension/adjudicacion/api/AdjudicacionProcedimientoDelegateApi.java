@@ -22,6 +22,8 @@ public interface AdjudicacionProcedimientoDelegateApi {
 	public static final String BO_ADJUDICACION_COMPROBAR_FECHA_REVISION= "es.pfsgroup.recovery.adjudicacion.comprobarFechaRevision";
 	public static final String BO_ADJUDICACION_EXISTE_BIEN_CON_ADJU_ENTIDAD= "es.pfsgroup.recovery.adjudicacion.existeBienConAdjuEntidad";
 	public static final String BO_ADJUDICACION_ES_BIEN_CON_CESION_REMATE = "es.pfsgroup.recovery.adjudicacion.esBienConCesionRemate";
+	public static final String BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_DECRETO = "es.pfsgroup.recovery.adjudicacion.comprobarBienEntidadAdjudicatariaDecreto";
+	public static final String BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA = "es.pfsgroup.recovery.adjudicacion.comprobarBienEntidadAdjudicatariaEscritura";
 	
 	/**
 	 * Método que comprueba si existe un adjunto x asociado al procedimiento
@@ -200,5 +202,21 @@ public interface AdjudicacionProcedimientoDelegateApi {
 	 */
 	@BusinessOperationDefinition(BO_ADJUDICACION_COMPROBAR_BIEN_SUJETO_IVA)
 	public String comprobarBienSujetoIVA(Long prcId);
+	
+	/**
+	 * Metodo que comprueba si un bien es adjudicable con decreto
+	 * @param bienId
+	 * @return
+	 */
+	@BusinessOperationDefinition(BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_DECRETO)
+	Boolean comprobarBienEntidadAdjudicatariaConDecreto(Long bienId);
+	
+	/**
+	 * Metodo que comprueba si un bien es adjudicable con escritura
+	 * @param bienId
+	 * @return
+	 */
+	@BusinessOperationDefinition(BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA)
+	Boolean comprobarBienEntidadAdjudicatariaConEscritura(Long bienId);
 
 }

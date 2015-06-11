@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteRegistrarResolucionInteres" width="752" height="497">
+<root-container name="haya_tramiteRegistrarResolucionInteres" width="852" height="563">
   <node name="Inicio" x="11" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -19,7 +19,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision" x="355" y="125" width="132" height="36">
+  <node name="H029_ResolucionDecision" x="355" y="125" width="211" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

@@ -17,7 +17,8 @@
 		
 	// DATOS PRINCIPALES
 	var codBien				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.CodigoBien" text="**Código"/>','${NMBbien.id}', {labelStyle:labelStyle});
-	var codigoInterno		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codigoInterno" text="**Código interno"/>','${NMBbien.codigoInterno}', {labelStyle:labelStyle});
+	var garantiaBien		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.garantiaBien" text="**Garantia Bien"/>','${NMBbien.sarebId}', {labelStyle:labelStyle});
+	var codigoInterno 		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codigoInterno" text="**Código interno"/>','${NMBbien.codigoInterno}', {labelStyle:labelStyle});
 	var origen				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.origenCarga" text="**Origen"/>','${NMBbien.origen.descripcion}', {labelStyle:labelStyle});
 	var valorActual			= app.creaLabel('<s:message code="bienesCliente.valorActual" text="**Valor actual"/>',app.format.moneyRenderer('${NMBbien.valorActual}'), {labelStyle:labelStyle});
 	var ValorTotalCargas	= app.creaLabel('<s:message code="bienesCliente.cargas" text="**Cargas"/>',app.format.moneyRenderer('${NMBbien.importeCargas}'), {labelStyle:labelStyle});
@@ -36,6 +37,7 @@
 	var arrendadoSinOpcCompra = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.arrendadoSinOpcCompra" text="**arrendadoSinOpcCompra"/>','${NMBbien.arrendadoSinOpcCompra}', {labelStyle:labelStyle});
 	var usoPromotorMayorDosAnyos = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.usoPromotorMayorDosAnyos" text="**usoPromotorMayorDosAnyos"/>','${NMBbien.usoPromotorMayorDosAnyos}', {labelStyle:labelStyle});
 
+        
 	// DATOS DESCRIPCION
 	var Descripcion = new Ext.form.TextArea({
 		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.descripcion" text="**Descripciï¿½n" />'
@@ -96,7 +98,9 @@
 	var tomo				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.tomo" text="**Tomo"/>','${NMBbien.datosRegistralesActivo.tomo}',{labelStyle:labelStyle});
 	var libro				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.libro" text="**Libro"/>','${NMBbien.datosRegistralesActivo.libro}',{labelStyle:labelStyle});
 	var folio				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.folio" text="**Folio"/>','${NMBbien.datosRegistralesActivo.folio}',{labelStyle:labelStyle});
-	var minicipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />',{labelStyle:labelStyle});	
+	//var minicipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />',{labelStyle:labelStyle});
+	var municipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipioRegistro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.localidad.descripcion}" />',{labelStyle:labelStyle});
+	var provinciaRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.provinciaRegistro" text="**"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.provincia.descripcion}" />',{labelStyle:labelStyle});	
 	var numRegistro			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**Nï¿½ Registro"/>','${NMBbien.datosRegistralesActivo.numRegistro}',{labelStyle:labelStyle});
 	var tipoRegistro		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.codigoRegistro" text="**Tipo registro"/>','${NMBbien.datosRegistralesActivo.codigoRegistro}',{labelStyle:labelStyle});
 	var refCatastral		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.referenciaCatastral" text="**Ref. Catastral"/>','${NMBbien.datosRegistralesActivo.referenciaCatastralBien}',{labelStyle:labelStyle});
@@ -154,7 +158,8 @@
 	
 	//Inmueble
 	var tiposInmuebles		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tipoInmueble" text="**Tipo Inmueble"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoInmueble.descripcion}" />',{labelStyle:labelStyle});
-	
+	var codigoTipoInmueble          = "${NMBbien.adicional.tipoInmueble.codigo}";
+        
 	//activosFinancieros
 	var tiposFinancieros	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tiposFinaciero" text="**Tipo Financiero"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoProdBancario.descripcion}" />',{labelStyle:labelStyle});
 	var valorProdBancario	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoraciï¿½n"/>',app.format.moneyRenderer('${NMBbien.adicional.valoracion}'),{labelStyle:labelStyle});
@@ -226,7 +231,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosPrincipales.titulo" text="**Datos Principales"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[mensajeSolvenciaNoEncontrada, origen, codigoInterno ,codBien, tipoBien, solvenciaNoEncontrada, obraEnCurso, dueDilligence, situacionPosesoria,viviendaHabitual,usoPromotorMayorDosAnyos,tipoSubasta]},
+	    ,items : [{items:[mensajeSolvenciaNoEncontrada, origen, codigoInterno ,codBien <sec:authorize ifAllGranted="PERSONALIZACION-HY">, garantiaBien </sec:authorize>, tipoBien, solvenciaNoEncontrada, obraEnCurso, dueDilligence, situacionPosesoria,viviendaHabitual,usoPromotorMayorDosAnyos,tipoSubasta]},
 				  {items:[numeroActivo,licenciaPrimeraOcupacion,primeraTransmision,transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra,Descripcion]}
 				 ]
 	});
@@ -336,8 +341,8 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosRegistrales.titulo" text="**Datos registrales"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[tiposInmuebles, supTerreno, supConstruida, tomo, libro, folio, minicipioRegistro]},
-				  {items:[numRegistro, refCatastral, tipoRegistro, inscripcion, fechaInscripcion, numFinca]}
+	    ,items : [{items:[tiposInmuebles, supTerreno, supConstruida, tomo, libro, folio, provinciaRegistro/*minicipioRegistro*/]},
+				  {items:[numRegistro, refCatastral, tipoRegistro, inscripcion, fechaInscripcion, numFinca, municipioRegistro]}
 				 ]
 	});
 	
@@ -400,8 +405,9 @@
 		
 		
 		var validarProvLocFinBien = function() {
-			
-			if(numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
+
+                        //Se valida por existencia de codigoTipoInmueble porque es dato obligatorio en el diccionario y no puede ser null en un tipo de inmueble
+			if(codigoTipoInmueble=='' || numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
 				Ext.MessageBox.show({
 		           title: 'Campos obligatorios',
 		           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolNumActivoCamposObligatorios" text="**Los campos provincia, localidad, número de finca y número de registro son obligatorios para solicitar el número de activo" />',
@@ -412,7 +418,7 @@
 			}
 			return true;			
 		}
-		
+                
 		var btnSolicitarNumActivo = new Ext.Button({
 		    text: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarNumActivo" text="**Solicitar Numero de Activo" />'
 			<app:test id="btnSolicitarNumActivo" addComa="true" />

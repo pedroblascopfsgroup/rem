@@ -515,7 +515,10 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 			
 			NMBBien nmbBien = (NMBBien) bien;
 			
-			if (Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia()) || Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad()) || Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumFinca())) {
+			if (Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia()) 
+                                || Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad()) 
+                                || Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumFinca())
+                                || Checks.esNulo(nmbBien.getAdicional().getTipoInmueble().getCodigo())) {
 				return false;
 			}
 

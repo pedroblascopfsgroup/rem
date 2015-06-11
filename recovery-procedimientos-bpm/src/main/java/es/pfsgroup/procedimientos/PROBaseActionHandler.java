@@ -692,6 +692,32 @@ public class PROBaseActionHandler implements ActionHandler {
     public TareaProcedimiento getTareaProcedimiento(ExecutionContext executionContext) {
         return getTareaProcedimiento(getNombreNodo(executionContext), executionContext);
     }
+    
+    /**
+     * PONER JAVADOC FO.
+     * 
+     * @return tp
+     */
+    public TareaProcedimiento getTareaProcedimientoBBDD(ExecutionContext executionContext) {
+        return getTareaProcedimientoBBDD(getNombreNodo(executionContext), executionContext);
+    }  
+    
+    /**
+     * Devuelve la tarea asociada al nodo en ejecución y en el tipo de
+     * procedimiento que se le indica de la BBDD
+     * 
+     * @param codigoTarea
+     *            Código de la tarea que se está ejecutando en el nodo
+     * @return Devuelve una TareaProcedimiento asociada al nodo y al
+     *         procedimiento
+     */
+    protected TareaProcedimiento getTareaProcedimientoBBDD(String codigoTarea, ExecutionContext executionContext) {
+
+        Long idTipoProcedimiento = getProcedimiento(executionContext).getTipoProcedimiento().getId();
+        TareaProcedimiento tareaProcedimiento = proxyFactory.proxy(TareaProcedimientoApi.class).getByCodigoTareaIdTipoProcedimiento(idTipoProcedimiento, codigoTarea);    
+        
+        return tareaProcedimiento;
+    }    
 
     /**
      * Detecta una reentrada al nodo.

@@ -35,7 +35,10 @@
 		,{name:'tipoGestorDescripcion'}
 		,{name:'fechaDesde'}
 		,{name:'fechaHasta'}
-		,{name: 'telefono'}
+		,{name: 'tipoVia'}
+		,{name: 'domicilio'}
+		,{name: 'domicilioPlaza'}
+		,{name: 'telefono1'}
 		,{name: 'email'}
 		
 		
@@ -71,13 +74,16 @@
 	var gestorCM  = new Ext.grid.ColumnModel([
         {header: 'Id',sortable: false, dataIndex: 'id', hidden:'true'}
         ,{header: 'IdGestor',sortable: false, dataIndex: 'idGestor', hidden:'true'}
-        ,{header: '<s:message code="plugin.coreextension.multigestor.descripcion" text="**Descripcion" />',sortable: false, dataIndex: 'tipoGestorDescripcion',width:50, renderer: coloredRender}
-        ,{header: '<s:message code="plugin.coreextension.multigestor.usuario" text="**Usuario" />',sortable: false, dataIndex: 'usuario',width:100, renderer: coloredRender}
+        ,{header: '<s:message code="plugin.coreextension.multigestor.descripcion" text="**Descripcion" />',sortable: false, dataIndex: 'tipoGestorDescripcion',width:100, renderer: coloredRender}
+        ,{header: '<s:message code="plugin.coreextension.multigestor.usuario" text="**Usuario" />',sortable: false, dataIndex: 'usuario',width:150, renderer: coloredRender}
         ,{header: '<s:message code="plugin.coreextension.multigestor.tipoGestor" text="**Tipo gestor" />',sortable: false, dataIndex: 'tipoGestor',width:50, hidden:'true', renderer: coloredRender}
-        ,{header: '<s:message code="plugin.coreextension.multigestor.fechaDesde" text="**Desde" />',sortable: false, dataIndex: 'fechaDesde',width:30, renderer: dateColoredRender}       
-		,{header: '<s:message code="plugin.coreextension.multigestor.fechaHasta" text="**Hasta" />',sortable: false, dataIndex: 'fechaHasta',width:30, renderer: dateColoredRender}
-		,{header: '<s:message code="plugin.coreextension.multigestor.telefono" text="**Teléfono" />',sortable: false, dataIndex: 'telefono',width:35, renderer: dateColoredRender} 
-		,{header: '<s:message code="plugin.coreextension.multigestor.email" text="**email" />',sortable: false, dataIndex: 'email',width:80, renderer: dateColoredRender}         
+        ,{header: '<s:message code="plugin.coreextension.multigestor.fechaDesde" text="**Desde" />',sortable: false, dataIndex: 'fechaDesde',width:50, renderer: dateColoredRender}       
+		,{header: '<s:message code="plugin.coreextension.multigestor.fechaHasta" text="**Hasta" />',sortable: false, dataIndex: 'fechaHasta',width:50, renderer: dateColoredRender}
+		,{header: '<s:message code="plugin.coreextension.multigestor.tVia" text="**T.Via" />',sortable: false, dataIndex: 'tipoVia',width:30, renderer: coloredRender}
+		,{header: '<s:message code="plugin.coreextension.multigestor.domicilio" text="**Domicilio" />',sortable: false, dataIndex: 'domicilio',width:150, renderer: coloredRender}
+		,{header: '<s:message code="plugin.coreextension.multigestor.localidad" text="**Localidad" />',sortable: false, dataIndex: 'domicilioPlaza',width:100, renderer: coloredRender}
+		,{header: '<s:message code="plugin.coreextension.multigestor.telefono" text="**Teléfono" />',sortable: false, dataIndex: 'telefono1',width:50, renderer: coloredRender} 
+		,{header: '<s:message code="plugin.coreextension.multigestor.email" text="**email" />',sortable: false, dataIndex: 'email', renderer: coloredRender}      
     ]);
 
     var recargar = function(){
@@ -327,6 +333,7 @@
 	 	title:'<s:message code="plugin.coreextension.multigestor.formGestores.titulo" text="**Modificar Gestores" />'
 	 	,layout:'form'
 	 	,bodyStyle:'padding-top:10px;padding-bottom:0px;padding-right:10px;padding-left:10px;'
+	 	,style : 'margin-bottom:10px;padding-right:10px'
 	 	,items: [comboTipoGestor, comboTipoDespacho, comboTipoUsuario]
 	 	 <sec:authorize ifAllGranted="EDIT_GESTORES">
 		,bbar:[insertar] 
@@ -337,7 +344,7 @@
 		title:'<s:message code="plugin.coreextension.multigestor.gridGestores.titulo" text="**Lista gestores" />'
         ,style : 'margin-bottom:10px;padding-right:10px'
         ,iconCls : 'icon_bienes'
-       ,height: 400
+       ,height: 300
 	   //,width:100
 	   ,autoWidth:false
 	   ,store: gestorStore
@@ -366,10 +373,10 @@
     var panel = new Ext.Panel({
 		title:'<s:message code="plugin.coreextension.multigestor.panel.titulo" text="**Gestores" />'
 		,layout : 'column'
-		,viewConfig : { columns : 1 }
+		,viewConfig : { columns : 2 }
 		,autoHeight : true
 		,bodyStyle:'padding-top:10px;padding-bottom:0px;padding-right:10px;padding-left:10px;margin-bottom:5px'
-		,items : [{ columnWidth:0.6, border:false, items:[grid]},{ columnWidth:0.4, border:false, items:[panelGestores]}]
+		,items : [{ columnWidth:1, border:false, items:[grid]},{ columnWidth:1, border:false, items:[panelGestores]}]
 		,nombreTab : 'tabContratoBienes'
 	});
 	

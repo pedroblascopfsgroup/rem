@@ -367,7 +367,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			
 			//FIXME Debe enviar el código, y no la descripción
 			System.out.println("COMUIX"); // longitud="9"	 Código población registral Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
-			String comuix = StringUtils.rightPad(bien.getDatosRegistralesActivo().getMunicipoLibro(),9,"0");
+			String comuix = StringUtils.rightPad(bien.getDatosRegistralesActivo().getLocalidad().getCodigo(),9,"0");
 			servicioGMP5JD20.setCodigoDeMunicipioRegistroAlfcomuix(comuix);
 			
 			System.out.println("NUPOAC"); // longitud="10"	 Portal	

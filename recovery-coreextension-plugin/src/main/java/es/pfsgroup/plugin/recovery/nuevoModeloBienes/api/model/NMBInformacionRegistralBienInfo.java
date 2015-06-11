@@ -90,7 +90,7 @@ public interface NMBInformacionRegistralBienInfo {
 	Auditoria getAuditoria();	
 	
 	/**
-	 * Auditoria
+	 * Localidad
 	 */
 	Localidad getLocalidad();	
 	

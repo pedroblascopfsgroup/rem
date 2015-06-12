@@ -136,12 +136,23 @@ public class coreextensionManager implements coreextensionApi {
 		return listado;
 	}
 
+
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListDespachos(java.lang.Long)
 	 */
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_DESPACHO)
 	public List<DespachoExterno> getListDespachos(Long idTipoGestor) {
+		
+		return getListAllDespachos(idTipoGestor, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListDespachos(java.lang.Long)
+	 */
+	@Override
+	@BusinessOperation(GET_LIST_ALL_TIPO_DESPACHO)
+	public List<DespachoExterno> getListAllDespachos(Long idTipoGestor, Boolean incluirBorrados) {
 
 		List<DespachoExterno> listadoTotal = new ArrayList<DespachoExterno>();
 		List<EXTTipoGestorPropiedad> listaTGP = tipoGestorPropiedadDao.getByClave(EXTTipoGestorPropiedad.TGP_CLAVE_DESPACHOS_VALIDOS);
@@ -157,9 +168,19 @@ public class coreextensionManager implements coreextensionApi {
 								genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 						
 						if(ddTiposDespacho != null){
-							List<DespachoExterno> listaDespachos = genericDao.getList(DespachoExterno.class, 
-									genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
-									genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+							
+							List<DespachoExterno> listaDespachos;
+							
+							if(incluirBorrados) {
+								listaDespachos = genericDao.getList(DespachoExterno.class, 
+										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho));
+								
+							} else {
+								listaDespachos = genericDao.getList(DespachoExterno.class, 
+										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+								
+							}							
 							
 							if(listaDespachos != null)
 								listadoTotal.addAll(listaDespachos);
@@ -181,15 +202,7 @@ public class coreextensionManager implements coreextensionApi {
 	@Override
 	@BusinessOperation(GET_LIST_USUARIOS)
 	public List<Usuario> getListUsuariosData(long idTipoDespacho) {
-
-		List<Usuario> listaUsuarios = gestoresDao.getGestoresByDespacho(idTipoDespacho);
-		if (listaUsuarios.size() > 0 ){
-			Locale locale = new Locale("es_ES");
-			Collator c = Collator.getInstance();
-			c.setStrength(Collator.PRIMARY);
-			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
-		}
-		return listaUsuarios;
+		return getListAllUsuariosData(idTipoDespacho, false);
 	}
 	
 	/* (non-Javadoc)
@@ -471,6 +484,23 @@ public class coreextensionManager implements coreextensionApi {
 
 		// Con esto tenemos los tipo gestor.
 		return listaTipoGestor;
+	}
+
+	
+	@Override
+	@BusinessOperation(GET_LIST_ALL_USUARIOS)
+	public List<Usuario> getListAllUsuariosData(long idTipoDespacho, boolean incluirBorrados) {
+		
+		List<Usuario> listaUsuarios = gestoresDao.getGestoresByDespacho(idTipoDespacho, incluirBorrados);
+		if (listaUsuarios.size() > 0 ){
+			Locale locale = new Locale("es_ES");
+			Collator c = Collator.getInstance();
+			c.setStrength(Collator.PRIMARY);
+			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
+		}
+		return listaUsuarios;
+		
+		
 	}
 
 }

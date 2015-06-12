@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIService;
 
 import es.cajamadrid.servicios.GM.GMP5JD20_INS.GMP5JD20_INS;
@@ -345,7 +346,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setNombreLargoDelMunicipionolgmu(StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50));
 			System.out.println("NOLGMU: "+StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50)); // 	longitud="50"	 Localidad del inmueble	
 			System.out.println(" ***REQUERIDO*** NOLGRP"); // 	longitud="50"	 Localidad del Registro	
-			String nombreLargoRegistroPropiedad = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro() : "" : "";
+			String nombreLargoRegistroPropiedad = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro().toUpperCase() : "" : "";
 			servicioGMP5JD20.setNombreLargoRegistoDeLaPropiedadnolgrp(StringUtils.rightPad(nombreLargoRegistroPropiedad, 50, ' ').substring(0, 50));
 			System.out.println(" ***REQUERIDO*** NUMFIN"); // 	longitud="14"	 Número de finca
 			String numeroFincaRegistral = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getNumFinca() != null ? bien.getDatosRegistralesActivo().getNumFinca() : "" : "";
@@ -677,6 +678,28 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			}
 		
 		} catch (Exception e) {
+			if  (e instanceof WIException){
+				WIException wi = ((WIException)e);
+				logger.debug(wi.getAlias());
+				logger.debug(wi.getCause());
+				logger.debug(wi.getConfigurationVersion());
+				logger.debug(wi.getClass());
+				logger.debug(wi.getErrorCode());
+				logger.debug(wi.getErrorCodeCommunication());
+				logger.debug(wi.getErrorType());
+				logger.debug(wi.getInfoDebug());
+				logger.debug(wi.getLocalizedMessage());
+				logger.debug(wi.getMaquinaEjecucion());
+				logger.debug(wi.getMessage());
+				logger.debug(wi.getOperationId());
+				logger.debug(wi.getProveedor());
+				logger.debug(wi.getService_module());
+				logger.debug(wi.getService_name());
+				logger.debug(wi.getService_version());
+				logger.debug(wi.getStackTrace());
+				logger.debug(wi.getSubsystem());
+				logger.debug(wi.getUrl());
+			}
 			e.printStackTrace();
 			return -1;
 		}

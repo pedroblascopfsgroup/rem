@@ -1855,7 +1855,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		
 		
 		Integer limite = Integer.parseInt(param.getValor());
-		
+
 		dto.setLimit(limite+1);
 		Page results = asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
 				

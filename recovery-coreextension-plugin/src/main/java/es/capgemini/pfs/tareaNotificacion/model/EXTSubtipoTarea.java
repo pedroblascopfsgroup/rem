@@ -36,7 +36,8 @@ public class EXTSubtipoTarea extends SubtipoTarea {
     public static final String CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR_EXPTE = "586";
     public static final String CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR_EXPTE = "587";
     public static final String CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR_EXPTE = "588";
-
+    public static final String CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA = "NTGPS";
+    
     //INTERCOMUNICACIONES
     public static final String CODIGO_NOTIFICACION_INTERCOMUNICACION = "589";
     public static final String CODIGO_TAREA_COMUNICACION_INTERCOMUNICACION = "590";

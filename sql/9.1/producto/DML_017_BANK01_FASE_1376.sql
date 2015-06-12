@@ -48,7 +48,7 @@ SET DD_TVI_ID = ( SELECT tvia.DD_TVI_ID FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA t
 WHERE DD_TVI_ID IN ( 
     SELECT tvi.DD_TVI_ID 
     FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA tvi 
-    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CR'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
+    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
 
 DBMS_OUTPUT.PUT_LINE('[INFO]: Actualización realizada correctamente');
 
@@ -62,7 +62,7 @@ SET DD_TVI_ID = ( SELECT tvia.DD_TVI_ID FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA t
 WHERE DD_TVI_ID IN ( 
     SELECT tvi.DD_TVI_ID 
     FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA tvi 
-    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CR'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
+    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
 
 DBMS_OUTPUT.PUT_LINE('[INFO]: Actualización realizada correctamente');
 
@@ -76,7 +76,7 @@ SET DD_TVI_ID = ( SELECT tvia.DD_TVI_ID FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA t
 WHERE DD_TVI_ID IN ( 
     SELECT tvi.DD_TVI_ID 
     FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA tvi 
-    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CR'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
+    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
 
 DBMS_OUTPUT.PUT_LINE('[INFO]: Actualización realizada correctamente');
 
@@ -90,7 +90,7 @@ SET DD_TVI_ID = ( SELECT tvia.DD_TVI_ID FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA t
 WHERE DD_TVI_ID IN ( 
     SELECT tvi.DD_TVI_ID 
     FROM '||V_ESQUEMA_M||'.DD_TVI_TIPO_VIA tvi 
-    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CR'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
+    WHERE tvi.DD_TVI_CODIGO NOT IN (''AV'',''BD'',''CA'',''CJ'',''CL'',''CN'',''CO'',''CT'',''CU'',''CV'',''ET'',''GL'',''LU'',''PA'',''PB'',''PG'',''PJ'',''PL'',''PR'',''RA'',''RO'',''TV'',''UB''))';
 
 DBMS_OUTPUT.PUT_LINE('[INFO]: Actualización realizada correctamente');
     

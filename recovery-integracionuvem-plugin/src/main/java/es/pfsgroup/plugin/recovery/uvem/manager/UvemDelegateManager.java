@@ -336,7 +336,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			String novias = bien.getDescripcionBien() != null ? bien.getDescripcionBien() : ""; 
 			servicioGMP5JD20.setNombreDeLaVianovias(StringUtils.rightPad(novias, 60, ' ').substring(0, 60));
 			System.out.println(" ***REQUERIDO*** NUPIIN"); // 	longitud="10"	 Piso del inmueble	siempre " " (spaces)
-			servicioGMP5JD20.setPisoDelInmuebleLong10Nupiin(StringUtils.rightPad("", 10, ' ').substring(0, 10));
+			servicioGMP5JD20.setPisoDelInmuebleLong10Nupiin(StringUtils.rightPad(bien.getLocalizacionActual().getPiso(), 10, ' ').substring(0, 10));
 			System.out.println(" ***REQUERIDO*** TITEXO"); // 	longitud="1"	 Tipo de texto	siempre " " (spaces)
 			char titexo = ' '; 
 			servicioGMP5JD20.setTipoDeTextotitexo(titexo);
@@ -419,27 +419,27 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				
 			}
 
-			logger.info("COBIPW: " + cobipw);
+			System.out.println("COBIPW: " + cobipw);
 			servicioGMP5JD20.setIdBienEnRecoverycobipw(cobipw);
-			logger.info("COPAW3: " + comuix);
+			System.out.println("COPAW3: " + comuix);
 			servicioGMP5JD20.setCodigoDeMunicipioRegistroAlfcomuix(comuix);
-			logger.info("COTIV4: " + cotiv4);
+			System.out.println("COTIV4: " + cotiv4);
 			servicioGMP5JD20.setCodigoTipoDeViacotiv4(cotiv4);
-			logger.info("COMUID: " + comuid);
+			System.out.println("COMUID: " + comuid);
 			servicioGMP5JD20.setCodigoDeMunicipioIneSolviacomuid(comuid);
-			logger.info("NUPOAC: " + nupoac);
+			System.out.println("NUPOAC: " + nupoac);
 			servicioGMP5JD20.setPortalPuntoKilometriconupoac(nupoac);
-			logger.info("NUESAC: " + nuesac);
+			System.out.println("NUESAC: " + nuesac);
 			servicioGMP5JD20.setESCALERANUESAC(nuesac);
-			logger.info("NUPUAC: " + nupuac);
+			System.out.println("NUPUAC: " + nupuac);
 			servicioGMP5JD20.setNumeroDePuertanupuac(nupuac);
-			logger.info("NOBAAC: " + nobaac);
+			System.out.println("NOBAAC: " + nobaac);
 			servicioGMP5JD20.setBarrioOColonianobaac(nobaac);
-			logger.info("COPOI5: " + copoi5);
+			System.out.println("COPOI5: " + copoi5);
 			servicioGMP5JD20.setCodigoPostalcopoi5(copoi5);
-			logger.info("NOPRAC: " + noprac);
+			System.out.println("NOPRAC: " + noprac);
 			servicioGMP5JD20.setNombreDeLaProvincianoprac(noprac);
-			logger.info("COPAW3: " + copaw3);
+			System.out.println("COPAW3: " + copaw3);
 			servicioGMP5JD20.setCodigoPaisSede1copaw3(copaw3);
 			
 			//FIN DE NUEVO CONTENEDORES

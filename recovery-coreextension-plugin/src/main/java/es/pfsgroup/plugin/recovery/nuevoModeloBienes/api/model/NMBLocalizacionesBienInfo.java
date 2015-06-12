@@ -62,6 +62,8 @@ public interface NMBLocalizacionesBienInfo {
 	
 	DDCicCodigoIsoCirbeBKP getPais();
 	
+	String getPiso();
+	
 	/**
 	 * Auditoria
 	 */

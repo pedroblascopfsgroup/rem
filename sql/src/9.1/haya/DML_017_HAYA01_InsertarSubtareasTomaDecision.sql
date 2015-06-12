@@ -59,6 +59,20 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
+        ),
+        
+        T_TIPO_STB(
+        /*dd_sta_id..................:*/ V_ESQUEMA_M || '.S_DD_STA_SUBTIPO_TAREA_BASE.NEXTVAL',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ '825',
+        /*dd_sta_descripcion,........:*/ 'Toma de decisión del Gestor de Litigios',
+        /*dd_sta_descripcion_larga...:*/ 'Toma de decisión del Gestor de Litigios',
+        /*dd_tge_id..................:*/ 'GULI',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
         )
         
     ); 

@@ -14,8 +14,10 @@ var storeSINO = new Ext.data.JsonStore({
 storeSINO.loadData(Ext.decode(dataSINO));
 
 function OnLoadCampo(campo){
+
 	var cmp =Ext.getCmp(campo.id);
     var cmp_selected = cmp.getValue();
+
     campo.store.on('load', function(){  
             cmp.setValue(cmp_selected);
             cmp.store.events['load'].clearListeners();
@@ -85,7 +87,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     
     
     updateStores: function(idTipoResolucion){
-        
+
         campos = this.arrayCampos[idTipoResolucion];
 
         for (var i=0;i<campos.length;i++)
@@ -1726,7 +1728,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                      		 		},
 		                      		 		select :function(combo){
 		              							var idFactoria = combo.id.replace('d_comboPlaza','');
-		              							var juzgado=Ext.getCmp('d_numJuzgado' + idFactoria);
+		              							var juzgado=Ext.getCmp('d_comboJuzgado' + idFactoria);
 		              							var storeJuzgado= juzgado.getStore();
 		              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 		            							storeJuzgado.on('load', function(){  

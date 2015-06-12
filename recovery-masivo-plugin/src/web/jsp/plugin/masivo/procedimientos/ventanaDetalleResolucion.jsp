@@ -65,8 +65,9 @@
 		datosResolucion.add(factoriaFormularios.getFormItems('${idTipoResolucion}','${idAsunto}', '${codigoTipoProc}', '${codigoPlaza}','${idProcedimiento}',true));
 	}else{
 		datosResolucion.add(factoriaFormularios.getFormItems('${idTipoResolucion}','${idAsunto}', '${codigoTipoProc}', '${codigoPlaza}','${idProcedimiento}'));
+		factoriaFormularios.updateStores();
 	}
-	factoriaFormularios.updateStores();
+	
 	
 	
 	var btnCancelar= new Ext.Button({
@@ -132,6 +133,10 @@ Ext.onReady(function(){
 				if (itemsFormPanel[i].isXType('combo')) {
 					itemsFormPanel[i].fireEvent('select',itemsFormPanel[i]);
 				}
+			}
+			
+			if(${tieneProcurador}){
+				factoriaFormularios.updateStores('${idTipoResolucion}');
 			}
 
 		}

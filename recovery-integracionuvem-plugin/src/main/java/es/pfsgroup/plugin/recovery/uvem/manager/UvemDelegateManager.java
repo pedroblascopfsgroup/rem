@@ -54,6 +54,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastasServicioTasacionDelegateApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
@@ -359,51 +361,87 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 
 			
 			//NUEVOS CONTENEDORES
-			System.out.println("COTIV4"); // longitud="2"	 Código tipo de via	
-			String tipoDeVia = bien.getLocalizacionActual().getTipoVia().getCodigo();
-			servicioGMP5JD20.setCodigoTipoDeViacotiv4(tipoDeVia);
-
-			System.out.println("COMUID"); // longitud="9"	 Código población Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
-			String comuid = StringUtils.rightPad(bien.getLocalizacionActual().getLocalidad().getCodigo(),9,"0");
-			servicioGMP5JD20.setCodigoDeMunicipioIneSolviacomuid(comuid);
 			
-			//FIXME Debe enviar el código, y no la descripción
-			System.out.println("COMUIX"); // longitud="9"	 Código población registral Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
-			String comuix = StringUtils.rightPad(bien.getDatosRegistralesActivo().getLocalidad().getCodigo(),9,"0");
-			servicioGMP5JD20.setCodigoDeMunicipioRegistroAlfcomuix(comuix);
-			
-			System.out.println("NUPOAC"); // longitud="10"	 Portal	
-			String nupoac = bien.getLocalizacionActual().getPortal();
-			servicioGMP5JD20.setPortalPuntoKilometriconupoac(nupoac);
-			
-			System.out.println("NUESAC"); // longitud="5"	 Escalera
-			String nuesac = bien.getLocalizacionActual().getEscalera();
-			servicioGMP5JD20.setESCALERANUESAC(nuesac);
-			
-			System.out.println("NUPUAC"); // longitud="17"	 Número de puerta
-			String nupuac = bien.getLocalizacionActual().getPuerta();
-			servicioGMP5JD20.setNumeroDePuertanupuac(nupuac);
-			
-			System.out.println("NOBAAC"); // longitud="55"	 Barrio
-			String nobaac = bien.getLocalizacionActual().getBarrio();
-			servicioGMP5JD20.setBarrioOColonianobaac(nobaac);
-			
-			System.out.println("COPOI5"); // longitud="5"	 Código postal
-			String copoi5 = bien.getLocalizacionActual().getCodPostal();
-			servicioGMP5JD20.setCodigoPostalcopoi5(copoi5);
-			
-			System.out.println("NOPRAC"); // longitud="18"	 Nombre de la provincia
-			String noprac = bien.getLocalizacionActual().getProvincia().getDescripcion();
-			servicioGMP5JD20.setNombreDeLaProvincianoprac(noprac);
-			
-			System.out.println("COPAW3"); // longitud="3"	 Codigo pais
-			String copaw3 = bien.getLocalizacionActual().getPais().getDescripcion();
-			servicioGMP5JD20.setCodigoPaisSede1copaw3(copaw3);
+			String cotiv4 = "";
+			String comuid = "";
+			String nupoac = "";
+			String nuesac = "";
+			String nupuac = "";
+			String nobaac = "";
+			String copoi5 = "";
+			String noprac = "";
+			String copaw3 = "";
+			String cobipw = "";
+			String comuix = "";
 			
 			System.out.println("COBIPW"); // longitud="15"	 Id bien en recovery
-			String cobipw = bien.getId().toString();
-			servicioGMP5JD20.setIdBienEnRecoverycobipw(cobipw);
+			cobipw = bien.getId().toString();
 			
+			if(!Checks.esNulo(bien.getDatosRegistralesActivo())){
+				NMBInformacionRegistralBienInfo infoRegActual = bien.getDatosRegistralesActivo();
+				
+				// longitud="9"	 Código población registral Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
+				comuix = infoRegActual.getLocalidad() != null ? infoRegActual.getLocalidad().getCodigo() : "";
+				comuix = StringUtils.rightPad(comuix,9,"0");
+			}
+			
+			if(!Checks.esNulo(bien.getLocalizacionActual())){
+				NMBLocalizacionesBienInfo locActual = bien.getLocalizacionActual();
+			
+				// longitud="2"	 Código tipo de via	
+				cotiv4 = locActual.getTipoVia() != null? locActual.getTipoVia().getCodigo() : "";
+				
+				// longitud="9"	 Código población Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
+				comuid = locActual.getLocalidad() != null ? locActual.getLocalidad().getCodigo() : "";
+				comuid = StringUtils.rightPad(comuid,9,"0");
+				
+				// longitud="10"	 Portal	
+				nupoac = locActual.getPortal();
+				
+				// longitud="5"	 Escalera
+				nuesac = locActual.getEscalera();
+				
+				// longitud="17"	 Número de puerta
+				nupuac = locActual.getPuerta();
+				
+				// longitud="55"	 Barrio
+				nobaac = locActual.getBarrio();
+				
+				// longitud="5"	 Código postal
+				copoi5 = locActual.getCodPostal();
+				
+				// longitud="18"	 Nombre de la provincia
+				noprac = locActual.getProvincia() != null ? locActual.getProvincia().getDescripcion() : "";
+				
+				// longitud="3"	 Codigo pais
+				copaw3 = locActual.getPais() != null ? locActual.getPais().getDescripcion() : "";
+				
+			}
+
+			logger.info("COBIPW: " + cobipw);
+			servicioGMP5JD20.setIdBienEnRecoverycobipw(cobipw);
+			logger.info("COPAW3: " + comuix);
+			servicioGMP5JD20.setCodigoDeMunicipioRegistroAlfcomuix(comuix);
+			logger.info("COTIV4: " + cotiv4);
+			servicioGMP5JD20.setCodigoTipoDeViacotiv4(cotiv4);
+			logger.info("COMUID: " + comuid);
+			servicioGMP5JD20.setCodigoDeMunicipioIneSolviacomuid(comuid);
+			logger.info("NUPOAC: " + nupoac);
+			servicioGMP5JD20.setPortalPuntoKilometriconupoac(nupoac);
+			logger.info("NUESAC: " + nuesac);
+			servicioGMP5JD20.setESCALERANUESAC(nuesac);
+			logger.info("NUPUAC: " + nupuac);
+			servicioGMP5JD20.setNumeroDePuertanupuac(nupuac);
+			logger.info("NOBAAC: " + nobaac);
+			servicioGMP5JD20.setBarrioOColonianobaac(nobaac);
+			logger.info("COPOI5: " + copoi5);
+			servicioGMP5JD20.setCodigoPostalcopoi5(copoi5);
+			logger.info("NOPRAC: " + noprac);
+			servicioGMP5JD20.setNombreDeLaProvincianoprac(noprac);
+			logger.info("COPAW3: " + copaw3);
+			servicioGMP5JD20.setCodigoPaisSede1copaw3(copaw3);
+			
+			//FIN DE NUEVO CONTENEDORES
 			
 			System.out.println(" ***REQUERIDO*** CORPRW"); // 	"NUMERICO_4" longitud="5"	 Código de régimen de protección 	siempre 0
 			servicioGMP5JD20.setRegimenDeProteccioncorprw((short) 00000);

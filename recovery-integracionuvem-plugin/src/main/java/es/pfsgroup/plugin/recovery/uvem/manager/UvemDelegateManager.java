@@ -389,7 +389,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				NMBLocalizacionesBienInfo locActual = bien.getLocalizacionActual();
 			
 				// longitud="2"	 Código tipo de via	
-				cotiv4 = locActual.getTipoVia() != null? locActual.getTipoVia().getCodigo() : "";
+				cotiv4 = locActual.getTipoVia() != null? locActual.getTipoVia().getCodigoUvem() : "";
 				
 				// longitud="9"	 Código población Recibimos 5 dítigos, pero enviamos 9, rellenado con ceros por la derecha	
 				comuid = locActual.getLocalidad() != null ? locActual.getLocalidad().getCodigo() : "";

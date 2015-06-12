@@ -15,7 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import es.capgemini.pfs.users.domain.Usuario;
 
 /**
- * Tests del método {@link es.pfsgroup.plugin.recovery.coreextension.coreextensionController#getListUsuariosData(org.springframework.ui.ModelMap, Long)}
+ * Tests del mï¿½todo {@link es.pfsgroup.plugin.recovery.coreextension.coreextensionController#getListUsuariosData(org.springframework.ui.ModelMap, Long)}
  * @author manuel
  *
  */
@@ -43,7 +43,7 @@ public class GetListUsuariosDataTest extends AbstractCoreextensionControllerTest
 		
 		when(mockCoreextensionApi.getListUsuariosData(idTipoDespacho)).thenReturn(listaUsuarios);
 		
-		String resultado = coreextensionController.getListUsuariosData(modelMap, idTipoDespacho);
+		String resultado = coreextensionController.getListUsuariosData(modelMap, idTipoDespacho, false);
 		
 		assertSame(modelMap.get("listadoUsuarios"),listaUsuarios);
 		assertEquals(resultado,"plugin/coreextension/asunto/tipoUsuarioJSON");

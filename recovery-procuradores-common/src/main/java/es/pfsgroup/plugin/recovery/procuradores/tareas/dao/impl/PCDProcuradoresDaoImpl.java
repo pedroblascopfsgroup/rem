@@ -49,7 +49,9 @@ public class PCDProcuradoresDaoImpl extends AbstractEntityDao<PCDProcuradores, L
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "asunto", dto.getAsunto(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "nombreTarea", dto.getTareaTarea(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategoria", dto.getIdCategoria());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategorizacion", dto.getIdCategorizacion());
+		if(!Checks.esNulo(dto.getIdCategoria())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategorizacion", dto.getIdCategorizacion());
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "usuarioPendiente", dto.getUsuarioLogado().getId());
 		List<String> vals = new ArrayList<String>();
 		vals.add("'PRC'");
@@ -68,7 +70,9 @@ public class PCDProcuradoresDaoImpl extends AbstractEntityDao<PCDProcuradores, L
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "asunto", dto.getAsunto(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "nombreTarea", dto.getTareaTarea(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategoria", dto.getIdCategoria());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategorizacion", dto.getIdCategorizacion());
+		if(!Checks.esNulo(dto.getIdCategoria())){
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategorizacion", dto.getIdCategorizacion());
+		}
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "usuarioPendiente", dto.getUsuarioLogado().getId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "estadoProcesoCodigo", "PAU");
 

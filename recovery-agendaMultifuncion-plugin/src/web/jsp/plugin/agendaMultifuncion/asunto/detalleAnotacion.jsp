@@ -103,19 +103,52 @@
 		,fieldLabel:'<s:message code="comunicaciones.generarnotificacion.leida" text="**Leida" />'			
 	});	
 
+        
+	var submitLeido = function(){
+            <c:if test="${data.fechaVencimiento != null}">
+            if(labeltareaRespuesta.getValue() == null || labeltareaRespuesta.getValue() ==''){
+                     Ext.MessageBox.show({
+                       title: 'Aviso',
+                       msg: 'Debe escribir una respuesta',
+                       width:300,
+                       buttons: Ext.MessageBox.OK
+
+               });
+            }else{	
+            Ext.Ajax.request({
+                    url: page.resolveUrl('recoveryagendamultifuncionanotacion/responderTarea')
+                    ,params: {idTarea: idTarea.getValue(), respuesta:labeltareaRespuesta.getValue(), idUg:idEntidad.getValue(), leida:false, codUg:'${data.codUg}'}
+
+                    ,success: function(){ page.fireEvent(app.event.DONE) }
+            });
+            }
+            </c:if>
+            <c:if test="${data.fechaVencimiento == null}">
+            Ext.Ajax.request({
+                    url: page.resolveUrl('recoveryagendamultifuncionanotacion/marcarTareaLeida')
+                    ,params: {idTarea: idTarea.getValue(),leida:chkLeida.getValue()}
+
+                    ,success: function(){ page.fireEvent(app.event.DONE) }
+            });
+            </c:if>
+        }
+	
+	var submitNoLeido = function(){
+            Ext.Ajax.request({
+                    url: page.resolveUrl('recoveryagendamultifuncionanotacion/marcarTareaLeida')
+                    ,params: {idTarea: idTarea.getValue(),leida:chkLeida.getValue()}
+
+                    ,success: function(){ page.fireEvent(app.event.CANCEL) }
+            });
+	}
+	
 	var changeUpdate = function(){
-		if(app.usuarioLogado.apellidoNombre == destinatario || app.usuarioLogado.apellidoNombre == emisor){
-			if(emisor == destinatario){
-				btnGuardar.setDisabled(false);
-			} else if((chkLeida.isVisible() && chkLeida.getValue()) || !chkLeida.isVisible()){
-				btnGuardar.setDisabled(false);
-			} else{
-				btnGuardar.setDisabled(true);
-			}
-		}else{
-			btnGuardar.setDisabled(true);	
-		}
-	}	
+            if (chkLeida.getValue()){
+                    btnGuardar.setHandler(submitLeido);
+            }else{
+                    btnGuardar.setHandler(submitNoLeido);
+            }
+	}
 	
 	var descEstado = '${data.situacion}';
 	var fechaCrear = '${data.fecha}';
@@ -254,33 +287,12 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			<c:if test="${data.fechaVencimiento != null}">
-			if(labeltareaRespuesta.getValue() == null || labeltareaRespuesta.getValue() ==''){
-				 Ext.MessageBox.show({
-				   title: 'Aviso',
-				   msg: 'Debe escribir una respuesta',
-				   width:300,
-				   buttons: Ext.MessageBox.OK
-				 
-			   });
-			}else{	
-			Ext.Ajax.request({
-				url: page.resolveUrl('recoveryagendamultifuncionanotacion/responderTarea')
-				,params: {idTarea: idTarea.getValue(), respuesta:labeltareaRespuesta.getValue(), idUg:idEntidad.getValue(), leida:false, codUg:'${data.codUg}'}
-				
-				,success: function(){ page.fireEvent(app.event.DONE) }
-			});
-			}
-			</c:if>
-			<c:if test="${data.fechaVencimiento == null}">
-			Ext.Ajax.request({
-				url: page.resolveUrl('recoveryagendamultifuncionanotacion/marcarTareaLeida')
-				,params: {idTarea: idTarea.getValue(),leida:chkLeida.getValue()}
-				
-				,success: function(){ page.fireEvent(app.event.DONE) }
-			});
-			</c:if>
-		}
+                    if (chkLeida.getValue()){
+                            submitLeido;
+                    }else{
+                            submitNoLeido;
+                    }
+                }
 		<app:test id="btnGuardarABM" addComa="true"/>
 	});
 	

@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.recovery.procuradores.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -58,12 +60,16 @@ public class PCDProcesadoRecordatoriosManager implements PCDProcesadoRecordatori
 		
 		Usuario user = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		
+		List<String> diasList = Arrays.asList(dias);
+		Collections.sort(diasList);
+		Collections.reverse(diasList);
+		
 		///Creamos las tareas
 		Calendar calendar = new GregorianCalendar();
 		
 		int clavAj = 0;
 		
-		for(String dia : dias){
+		for(String dia : diasList){
 			
 			if(!Checks.esNulo(dia) &&  !dia.equals("")){
 				
@@ -100,7 +106,7 @@ public class PCDProcesadoRecordatoriosManager implements PCDProcesadoRecordatori
 				serviceDto.setUsuarios(listaUsuarios);
 				serviceDto.setCodUg(COD_ENTIDAD);
 				serviceDto.setTipoAnotacion(TIPO_ANOTACION_TAREA);
-				serviceDto.setAsuntoMail(recRecordatorio.getTitulo());
+				serviceDto.setAsuntoMail("Recordatorio "+" "+clavAj+" - "+ recRecordatorio.getTitulo());
 
 				
 				try {

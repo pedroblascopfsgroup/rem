@@ -28,6 +28,7 @@
 		,{name:'fechaTareaUno', type:'date', dateFormat:'c'}
 		,{name:'fechaTareaDos', type:'date', dateFormat:'c'}
 		,{name:'fechaTareaTres', type:'date', dateFormat:'c'}
+		,{name:'categoria'}
 	]);
 	
 	
@@ -69,6 +70,7 @@
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaPrimerRecordatorio" text="**Primer recordatorio" />', dataIndex: 'fechaTareaUno', sortable:true, renderer:app.format.dateRenderer}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaSegundoRecordatorio" text="**Segundo recordatorio" />', dataIndex: 'fechaTareaDos', renderer:app.format.dateRenderer}
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.fechaTercerRecordatorio" text="**Tercer recordatorio" />', dataIndex: 'fechaTareaTres',  renderer:app.format.dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.categoria" text="**Categoría" />',  dataIndex: 'categoria', sortable:true}
 	]);
 	
 	var pagingBar=fwk.ux.getPaging(recordatorioStore);

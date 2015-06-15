@@ -15,6 +15,7 @@
 				<json:property name="fechaTareaUno" value="${rec.tareaUno.fechaVenc}"/>
 				<json:property name="fechaTareaDos" value="${rec.tareaDos.fechaVenc}"/>
 				<json:property name="fechaTareaTres" value="${rec.tareaTres.fechaVenc}"/>
+				<json:property name="categoria" value="${rec.categoria.nombre}"/>
 			</json:object>
 		</json:array>
 </fwk:json>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean id="procedimientosProjectContextDefault"
+		class="es.pfsgroup.procedimientos.context.api.ProcedimientosProjectContextImpl" abstract="true">
+		<property name="limiteDeudaGlobal" value="1000000"/>
+		<property name="limiteDeudaBien" value="15000"/>
+		<property name="tipoSubastaSareb" value="P409"/>
+		<property name="codigoCargaAnterior" value="ANT"/>
+		<property name="tiposSubasta">
+			<list>
+				<value>P401</value>
+				<value>P409</value>
+			</list>
+		</property>
+		<property name="tareasCelebracionSubasta">
+			<list>
+				<value>P401_CelebracionSubasta</value>
+				<value>P409_CelebracionSubasta</value>
+			</list>
+		</property>
+		<property name="tareasSenyalamientoSubastas">
+			<list>
+				<value>P401_SenyalamientoSubasta</value>
+				<value>P409_SenyalamientoSubasta</value>
+			</list>
+		</property>
+		<property name="camposCostas">
+			<list>
+				<value>costasLetrado</value>
+				<value>costasProcurador</value>
+				<value>intereses</value>
+			</list>
+		</property>
+		<property name="camposSuspensionSubasta">
+			<list>
+				<value>comboSuspension</value>
+			</list>
+		</property>
+	</bean>	
+	
+	<!-- Implementaciones por defecto-->
+	<bean id="procedimientosProjectContext" parent="procedimientosProjectContextDefault"/>
+</beans>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteMoratoriaLanzamiento" width="1214" height="1351">
+<root-container name="haya_tramiteMoratoriaLanzamiento" width="1178" height="1351">
   <node name="Inicio" x="169" y="10" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -158,7 +158,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision" x="976" y="1237" width="132" height="36">
+  <node name="H011_InstruccionesDecision" x="941" y="1237" width="203" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -168,7 +168,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="1045" y="701" width="132" height="36"/>
   <node name="H011_RegistrarResolucionDecision" x="204" y="1163" width="238" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -178,4 +177,5 @@
       <bendpoint w1="641" h1="8" w2="-147" h2="470"/>
     </edge>
   </node>
+  <node name="Fin" x="1045" y="701" width="132" height="36"/>
 </root-container>

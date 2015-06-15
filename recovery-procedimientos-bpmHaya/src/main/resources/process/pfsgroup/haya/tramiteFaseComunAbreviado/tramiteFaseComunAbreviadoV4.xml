@@ -336,7 +336,7 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="Decision" name="haya_tramiteElevacionPropSarebLitigios"></transition>
+		<transition to="H009_ElevacionDecision" name="haya_tramiteElevacionPropSarebLitigios"></transition>
 	</state>
 
 	<fork name="forkTrasAceptacion">
@@ -344,7 +344,7 @@
 		<transition to="H009_BPMhaya_tramiteElevacionPropSarebLitigiosA" name="elevarSareb"></transition>
 	</fork>
 
-	<node name="Decision">
+	<node name="H009_ElevacionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

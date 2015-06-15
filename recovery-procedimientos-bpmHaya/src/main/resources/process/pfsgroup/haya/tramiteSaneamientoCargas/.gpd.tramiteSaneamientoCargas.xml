@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteSaneamientoCargas" width="1240" height="1241">
+<root-container name="haya_tramiteSaneamientoCargas" width="1242" height="1241">
   <node name="Inicio" x="290" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -160,7 +160,7 @@
       <bendpoint w1="205" h1="-5" w2="-55" h2="461"/>
     </edge>
   </node>
-  <node name="Decision1" x="295" y="1052" width="132" height="36">
+  <node name="H008_SaneamientoDecision" x="295" y="1052" width="216" height="36">
     <edge>
       <label x="378" y="3"/>
       <bendpoint w1="-1" h1="151" w2="-785" h2="529"/>

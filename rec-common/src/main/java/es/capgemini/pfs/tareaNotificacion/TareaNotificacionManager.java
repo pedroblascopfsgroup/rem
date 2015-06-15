@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -660,6 +661,17 @@ public class TareaNotificacionManager {
      */
     @BusinessOperation(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO)
     public List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, String subtipoTarea) {
+        return tareaNotificacionDao.getListByProcedimientoSubtipo(idProcedimiento, subtipoTarea);
+    }
+
+    /**
+     * Devuelve una lista de tareasNotificacion que cumplen que pertenecen a un ID de Procedimiento y son de una lista de tipos determinado de tareas.
+     * @param idProcedimiento ID del procedimiento al que pertenece la tarea
+     * @param Set<subtipoTarea> ID del subtipo de tarea
+     * @return Un listado de tareasNotificacion
+     */
+    @BusinessOperation(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_LIST_SUBTIPO)
+    public List<TareaNotificacion> getListByProcedimientoSubtipo(Long idProcedimiento, Set<String> subtipoTarea) {
         return tareaNotificacionDao.getListByProcedimientoSubtipo(idProcedimiento, subtipoTarea);
     }
 

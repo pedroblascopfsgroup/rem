@@ -145,8 +145,10 @@ public class EXTTareaExternaManager extends BusinessOperationOverrider<TareaExte
      */
 
     @Override
+    @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_ACTIVAR_ALERTA)
+    @Transactional(readOnly = false)
     public void activarAlerta(TareaExterna tareaExterna) {
-        // TODO Auto-generated method stub
+    	 parent().activarAlerta(tareaExterna);
 
     }
 

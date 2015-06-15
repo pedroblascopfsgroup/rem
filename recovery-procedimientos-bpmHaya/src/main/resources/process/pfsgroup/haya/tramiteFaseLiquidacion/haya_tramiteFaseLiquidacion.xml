@@ -189,12 +189,12 @@
 	</state>
 
 	<decision name="H033_regInformeTrimestral2Decision" expression="#{H033_regInformeTrimestral2Decision}">
-		<transition to="decision1" name="SI"></transition>
+		<transition to="H033_LiquidacionDecision" name="SI"></transition>
 		<transition to="H033_regInformeTrimestral2" name="NO"></transition>
 		<transition to="H033_separacionAdministradores" name="No365"></transition>
 	</decision>
 
-	<node name="decision1">
+	<node name="H033_LiquidacionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -272,7 +272,7 @@
 
 	<decision name="H033_separacionAdministradoresDecision" expression="#{H033_separacionAdministradoresDecision}">
 		<transition to="H033_presentarSeparacion" name="SI"></transition>
-		<transition to="decision1" name="NO"></transition>
+		<transition to="H033_LiquidacionDecision" name="NO"></transition>
 	</decision>
 
 	<fork name="fork2">

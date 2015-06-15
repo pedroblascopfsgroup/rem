@@ -156,4 +156,18 @@ public class AdjudicacionProcedimientoDelegateManager implements AdjudicacionPro
 		// Este metodo se implementa en el nuevoModeloBienes
 		return null;
 	}
+
+	@Override
+	@BusinessOperation(BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_DECRETO)
+	public Boolean comprobarBienEntidadAdjudicatariaConDecreto(Long bienId) {
+		// Este metodo se implementa en el nuevoModeloBienes
+		return null;
+	}
+
+	@Override
+	@BusinessOperation(BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA)
+	public Boolean comprobarBienEntidadAdjudicatariaConEscritura(Long bienId) {
+		// Este metodo se implementa en el nuevoModeloBienes
+		return null;
+	}
 }

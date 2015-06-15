@@ -1,11 +1,12 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.Column;
 
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1006,15 +1007,35 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 		hql.append(" and baccd.fechaEntrega is null ");
 		
-		Calendar calendarInicio = Calendar.getInstance();
-		calendarInicio = new GregorianCalendar(calendarInicio.YEAR, calendarInicio.MONTH, calendarInicio.DAY_OF_MONTH, 0, 0);
-		Calendar calendarFin = Calendar.getInstance();
-		calendarFin = new GregorianCalendar(calendarFin.YEAR, calendarFin.MONTH, calendarFin.DAY_OF_MONTH, 22, 0);
+		SimpleDateFormat dateFormatInit = new SimpleDateFormat("dd/MM/yyyy 00:00:00");
+		SimpleDateFormat dateFormatFin = new SimpleDateFormat("dd/MM/yyyy 22:00:00");
 		
-		hql.append(" and baccd.fechaAlta between ").append(calendarInicio.getTime());
-		hql.append(" and ").append(calendarFin.getTime());
+		Date date = new Date();
+		
+		String formatInit = dateFormatInit.format(date); //2014/08/06 15:59:48
+		String formatFin = dateFormatFin.format(date);
+		
+		hql.append(" and baccd.fechaAlta between to_date('").append(formatInit).append("', 'DD/MM/YYYY HH24:MI:SS')");
+		hql.append(" and to_date('").append(formatFin).append("', 'DD/MM/YYYY HH24:MI:SS')");
 		
 		return hql.toString();
 	}
+	
+	
+//	void guardarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
+//		StringBuilder sb = new StringBuilder();
+//		sb.append(" insert into BatchAcuerdoCierreDeuda bacd ");
+//		sb.append(" (idProcedimiento, fechaAlta, idAsunto, fechaEntrega, usuarioCrear, idBien, entidad) ");
+//		sb.append(" values ");
+//		sb.append("  ");
+//		
+//		insert into contact_number (mobile_number, person_id, id) values (?, ?, ?)
+//		
+//		Query query = session.createQuery("insert into Stock(stock_code, stock_name)" +
+//    			"select stock_code, stock_name from backup_stock");
+//int result = query.executeUpdate();
+//
+//		query.executeUpdate();
+//		}
 	
 }

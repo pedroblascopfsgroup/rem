@@ -4,18 +4,18 @@ import java.util.List;
 
 public class DatosLoteCDD {
 
-	private Integer numLote;
+	private Long numLote;
 	private String sinPostores;
 	private String conPostoresDesde;
 	private String conPostoresHasta;
 	private String valorSubasta;
 	private List<InfoBienesCDD> infoBienes;
 
-	public Integer getNumLote() {
+	public Long getNumLote() {
 		return numLote;
 	}
 	
-	public void setNumLote(Integer numLote) {
+	public void setNumLote(Long numLote) {
 		this.numLote = numLote;
 	}
 		

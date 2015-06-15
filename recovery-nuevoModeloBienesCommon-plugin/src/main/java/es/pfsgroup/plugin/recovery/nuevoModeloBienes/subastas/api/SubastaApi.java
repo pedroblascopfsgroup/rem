@@ -34,6 +34,7 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_GET_CHECK_VALIDA_INS = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getCheckValidaIns";
 	public static final String BO_NMB_SUBASTA_GET_FLAGS_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getFlagsSubasta";
 	public static final String BO_NMB_SUBASTA_GET_BIENES_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getBienes";
+	public static final String BO_NMB_SUBASTA_GET_BIENES_LOTE_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getBienesLoteSubasta";
 	public static final String BO_NMB_SUBASTA_GET_DATOS_ACTA_COMITE = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getDatosActaComite";
 	public static final String BO_NMB_SUBASTA_GET_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getSubasta";
 	public static final String BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierre";
@@ -130,6 +131,9 @@ public interface SubastaApi {
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GET_BIENES_SUBASTA)
 	List<Bien> getBienesSubasta(Long idSubasta);	
 	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_GET_BIENES_LOTE_SUBASTA)
+	List<Bien> getBienesLoteSubasta(Long idLote);	
+	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GET_DATOS_ACTA_COMITE)
 	List<DatosActaComiteBean> getDatosActaComite(NMBDtoBuscarLotesSubastas dto);	
 	
@@ -160,8 +164,7 @@ public interface SubastaApi {
 	public Subasta getSubasta(Long idSubasta);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
-	public void guardaBatchAcuerdoCierre(BatchAcuerdoCierreDeuda autoCierreDeuda);
-
+	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_BUSCAR_LOTES_SUBASTA)	
 	public Page buscarLotesSubastas(NMBDtoBuscarLotesSubastas dto);	
@@ -197,8 +200,10 @@ public interface SubastaApi {
 	List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien);
 
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
-	void eliminarRegistroCierreDeuda(BatchAcuerdoCierreDeuda bACDD, List<BatchAcuerdoCierreDeuda> listBatchAcuerdoCierreDeuda);
+	void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBatchAcuerdoCierreDeuda);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
-	List<NMBBien> enviarBienesCierreDeuda(BatchAcuerdoCierreDeuda cierreDeuda, Long idSubasta, List<Long> idsBien);
+	List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien);
+	
+	
 }

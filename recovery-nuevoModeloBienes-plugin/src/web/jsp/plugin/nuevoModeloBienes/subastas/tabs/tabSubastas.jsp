@@ -16,6 +16,7 @@ var winWidthAgregarBien= 950;
 var idSubasta;
 var idBien;
 var idBienEnviarCierre;
+var idBienSelec =[];
 
 	var panel = new Ext.Panel({
 		title: '<s:message code="plugin.nuevoModeloBienes.subastas.tabTitle" text="**Subastas" />'
@@ -217,7 +218,8 @@ var idBienEnviarCierre;
 	
 		var rec = gridSubastas.getStore().getAt(rowIndex);
 		idSubasta = rec.get('id');
-		idBien = null;
+		idBien = '';
+		idBienEnviarCierre ='';
 		var codEstadoSubasta = rec.get('codEstadoSubasta');
 				
 		if(idSubasta!=null && idSubasta!='') {
@@ -255,7 +257,7 @@ var idBienEnviarCierre;
 		return coloredRender(value, meta, record);
 	};
 	
-var lotesRT = Ext.data.Record.create([
+	var lotesRT = Ext.data.Record.create([
 		{name:'idLote'}
 		,{name:'numLote'}
 		,{name:'pujaSin'}
@@ -435,7 +437,7 @@ var lotesRT = Ext.data.Record.create([
         	//la plantilla se elije en el controller
 			var plantilla='';
 		    var flow='/pfs/subasta/generarInformeValidacionCDD';
-		    if (idBien != null){
+		    if (idBien != ''){
 				var params = {idSubasta:idSubasta,idBien:idBien};
 	        	app.openBrowserWindow(flow,params);
 			} else {
@@ -453,7 +455,7 @@ var lotesRT = Ext.data.Record.create([
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
         	var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
-        	if (idBien != null){
+        	if (idBien != ''){
         		var texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien " />';
         		texto += idBienEnviarCierre + ' '; 
         		texto += '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien2" text=" a cierre de deudas?" />';
@@ -524,32 +526,7 @@ var lotesRT = Ext.data.Record.create([
 		btnInstrucLotes.setDisabled(false);
 	});	
 	
-	var smCheckBien = new Ext.grid.CheckboxSelectionModel({
-		checkOnly : true
-		,singleSelect: false
-		,listeners: {
-            selectionchange: function(smCheckBien) {
-            	var strIds = '';
-            	var enviarCierre = '';
-            	var bienSel = smCheckBien.getSelections();
-				for(i=0;i < smCheckBien.getCount();i++){
-					if(strIds!='') {
-						strIds += ',';
-					}
-					if(enviarCierre!='') {
-						enviarCierre += ',';
-					}
-					strIds += bienSel[i].data.idBien;	
-					strIds += ';';
-					enviarCierre += bienSel[i].data.idBien;
-					strIds += bienSel[i].data.idLoteBien;				
-				}
-				idBien = strIds;
-				idBienEnviarCierre = enviarCierre;
-            }            
-         }
-	});
-	
+	var smCheckBien = new Ext.grid.RowSelectionModel({});
 	
   	var bienesCM = new Ext.grid.ColumnModel([
   		smCheckBien
@@ -597,18 +574,74 @@ var lotesRT = Ext.data.Record.create([
 						],
 				data: bienes
 			});
-			
-		   var id2 = "mygrid-bien-" + record.get("idLote");
-		   
+		
+		function contains(a, obj) {
+		    for (var i = 0; i < a.length; i++) {
+		        if (a[i] === obj) {
+		            return true;
+		        }
+		    }
+		    return false;
+		}
+		   		   
 		   var gridXLote = new Ext.grid.GridPanel({
-		        store: dynamicStoreBienes,
+		   		store: dynamicStoreBienes,
 		        stripeRows: true,
 		        autoHeight: true,
 		        cm: bienesCM,
-		        sm: smCheckBien
+		        sm: new Ext.grid.RowSelectionModel({
+       	        	checkOnly : true
+       	        	,singleSelect: false
+       	        	,sortable: false
+       	        	,listeners: {
+           				selectionchange: function(smCheckBien) {
+            				var strIds = '';
+            				var enviarCierre = '';
+			            	var bienSel = smCheckBien.getSelections();
+			            	var hayMasSeleccionados = smCheckBien.hasNext();
+			            	var c = smCheckBien.getCount();
+			            	var d = smCheckBien.getSelected();
+							
+							for(i=0;i < smCheckBien.getCount();i++){
+								
+								var contiene = false;
+								if(idBienSelec.length > 0) {
+									 contiene = contains(idBienSelec, bienSel[i].data.idBien);
+								}
+																
+								if(!contiene) {
+									idBienSelec.push(bienSel[i].data.idBien);
+									
+									if(strIds!='' || idBien!='') {
+										strIds += ',';
+									}
+									if(enviarCierre!='' || idBien!='') {
+										enviarCierre += ',';
+									}
+								}
+									strIds += bienSel[i].data.idBien;	
+									strIds += ';';
+									enviarCierre += bienSel[i].data.idBien;
+									strIds += bienSel[i].data.idLoteBien;
+							}
+							
+							if(!contiene) {
+								if(idBien != '') {
+									idBien += strIds;
+									idBienEnviarCierre += enviarCierre;
+								}else{
+									idBien = strIds;
+									idBienEnviarCierre = enviarCierre;
+								}	
+							}else{
+								idBien = idBien.replace(strIds, '');
+								idBienEnviarCierre = idBienEnviarCierre.replace(enviarCierre, '');
+							}
+           				}            
+					}
+				})
 		    });        
 		    gridXLote.render(row);
-		    gridXLote.getEl().swallowEvent([ 'mouseover', 'mousedown', 'click', 'dblclick' ]);
 		    
 		    gridXLote.on('rowdblclick', function(grid, rowIndex, e) {
 		    	var rec = grid.getStore().getAt(rowIndex);

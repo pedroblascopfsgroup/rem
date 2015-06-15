@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
 
 public class InformeValidacionCDDBean {
 
@@ -124,7 +125,7 @@ public class InformeValidacionCDDBean {
 		datosLoteCDD = new ArrayList<DatosLoteCDD>();
 		for (LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
 			if(!Checks.estaVacio(getBienesLote())){
-				List<Integer> lotes = new ArrayList<Integer>();
+				List<Long> lotes = new ArrayList<Long>();
 				for(BienLoteDto bienLote : getBienesLote()) {
 					if(!lotes.contains(bienLote.getLote()) && loteSubasta.getId().equals(bienLote.getLote())) {
 						lotes.add(bienLote.getLote());
@@ -140,7 +141,7 @@ public class InformeValidacionCDDBean {
 	private DatosLoteCDD completaDatosLote(LoteSubasta loteSubasta) {
 		StringBuilder sb = new StringBuilder();
 		DatosLoteCDD datosLote = new DatosLoteCDD();
-		datosLote.setNumLote(loteSubasta.getNumLote());
+		datosLote.setNumLote(loteSubasta.getNumLote().longValue());
 		if (Checks.esNulo(datosLote.getNumLote())) {
 			sb.append("Numero Lote; ");
 		}
@@ -188,7 +189,8 @@ public class InformeValidacionCDDBean {
 		List<InfoBienesCDD> listInfoBienes = new ArrayList<InfoBienesCDD>();
 		StringBuilder sb = new StringBuilder();
 		for (Bien bien : loteSubasta.getBienes()) {
-			NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).get(bien.getId());
+			Long idBien = bien.getId();
+			NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(idBien);
 			InfoBienesCDD infobien = new InfoBienesCDD();
 
 			infobien.setIdBien(nmbBien.getId());
@@ -317,14 +319,16 @@ public class InformeValidacionCDDBean {
 			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_BANKIA);
 			}
-			return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, VALOR_COMBO_POSTORES).getValor();
+			ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, VALOR_COMBO_POSTORES);
+			if(!Checks.esNulo(vnt)) {
+				return vnt.getValor();
+			}
 		}
 		return null;
 	}
 	
 	private String getCostas(Subasta subasta, String costas) {
 		String tareaSenyalamientoSubasta = "";
-		
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
 		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
 			if (TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
@@ -334,20 +338,27 @@ public class InformeValidacionCDDBean {
 			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA);
 			}
-			return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas).getValor();
+			ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas);
+			if(!Checks.esNulo(vnt)) {
+				return vnt.getValor();
+			}
 		}
 		return null;
 	}
 
 	private String getFechaTestimonioAdjudicacionSareb(Subasta subasta) {
-		return subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO, VALOR_FECHA_TESTIMONIO).getValor();
+		ValorNodoTarea valor = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO, VALOR_FECHA_TESTIMONIO);
+		if(!Checks.esNulo(valor)) {
+			return valor.getValor();
+		}
+		return null;
 	}
 
 	private List<String> contratosBienRelacionados(NMBBien nmbBien) {
 		List<String> listContratosBien = new ArrayList<String>();
-//		for (NMBContratoBien contrato : contratos) {
-//			listContratosBien.add(contrato.getContrato().getDescripcion());
-//		}
+		for (NMBContratoBien contrato : nmbBien.getContratos()) {
+			listContratosBien.add(contrato.getContrato().getDescripcion());
+		}
 		return listContratosBien;
 	}
 
@@ -356,14 +367,14 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		BooleanBienes booleanBienes = new BooleanBienes();
 		if (validaProcedimientoContratos(subasta)) {
-			sb.append("El procedimiento no tienen ninguna operaci&oacute;n activa. <br/>");
+			sb.append("El procedimiento no tienen ninguna operación activa;"); // Alguna deberia ser
 		}
 		booleanBienes = validaBienesContratos();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relaci&oacute;n con ning&uacute;n contrato. <br/>");
+				sb.append(" no tiene relación con ningún contrato;");
 			}
 		}
 		booleanBienes = validaBienesPersonas();
@@ -371,18 +382,18 @@ public class InformeValidacionCDDBean {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relaci&oacute;n con ninguna persona. <br/>");
+				sb.append(" no tiene relación con ninguna persona;");
 			}
 		}
 		if (validaSinLotes()) {
-			sb.append("Se ha de incluir, al menos, un lote en el procedimiento. <br/>");
+			sb.append("Se ha de incluir, al menos, un lote en el procedimiento;");
 		}
 		booleanBienes = validaLoteSinBien();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El lote ");
 				sb.append(descBien);
-				sb.append(" no contiene ning&uacute;n bien. <br/>");
+				sb.append(" no contiene ningún bien;");
 			}
 		}
 		BooleanBienesLotes bienLotes = validaBienVariosLote();
@@ -390,16 +401,16 @@ public class InformeValidacionCDDBean {
 			for (BienManyLotes bienLote : bienLotes.getBienLote()) {
 				sb.append("El Bien ");
 				sb.append(bienLote.getBien());
-				sb.append(" se encuentra en m&aacute;s de un lote (");
+				sb.append(" se encuentra en más de un lote (");
 				int contador = 1;
-				for (Integer numLote : bienLote.getLotes()) {
+				for (Long numLote : bienLote.getLotes()) {
 					sb.append(numLote);
 					if (contador < bienLote.getLotes().size()) {
 						sb.append(", ");
 						contador++;
 					}
 				}
-				sb.append("). <br/>");
+				sb.append(");");
 			}
 		}
 		mensajesValidacion = sb.toString();
@@ -412,6 +423,7 @@ public class InformeValidacionCDDBean {
 			for (Contrato contrato : subasta.getAsunto().getContratos()) {
 				if (!contrato.estaCancelado()) {
 					correcto = true;
+					break;
 				}
 			}
 		}
@@ -425,7 +437,7 @@ public class InformeValidacionCDDBean {
 		validacion.setValidacionCorrecta(false);
 		for (DatosLoteCDD datoLote : getDatosLoteCDD()) {
 			for (InfoBienesCDD infoBien : datoLote.getInfoBienes()) {
-				NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).get(infoBien.getIdBien());
+				NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(infoBien.getIdBien());
 				if (Checks.estaVacio(nmbBien.getContratos())) {
 					validacion.getListBienes().add(nmbBien.getDescripcionBien());
 				}
@@ -445,7 +457,7 @@ public class InformeValidacionCDDBean {
 		validacion.setValidacionCorrecta(true);
 		for (DatosLoteCDD datoLote : getDatosLoteCDD()) {
 			for (InfoBienesCDD infoBien : datoLote.getInfoBienes()) {
-				NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).get(infoBien.getIdBien());
+				NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(infoBien.getIdBien());
 				if (Checks.estaVacio(nmbBien.getPersonas())) {
 					validacion.setValidacionCorrecta(false);
 					validacion.getListBienes().add(nmbBien.getDescripcionBien());
@@ -705,7 +717,7 @@ public class InformeValidacionCDDBean {
 
 	private class BienManyLotes {
 		private String bien;
-		private List<Integer> lotes;
+		private List<Long> lotes;
 
 		public String getBien() {
 			return bien;
@@ -715,11 +727,11 @@ public class InformeValidacionCDDBean {
 			this.bien = bien;
 		}
 
-		public List<Integer> getLotes() {
+		public List<Long> getLotes() {
 			return lotes;
 		}
-
-		public void setLotes(List<Integer> lotes) {
+		
+		public void setLotes(List<Long> lotes) {
 			this.lotes = lotes;
 		}
 	}

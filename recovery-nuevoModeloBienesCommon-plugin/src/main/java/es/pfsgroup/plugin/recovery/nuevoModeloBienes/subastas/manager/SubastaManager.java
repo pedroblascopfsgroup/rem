@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -81,6 +85,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruc
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -89,6 +94,12 @@ import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 public class SubastaManager implements SubastaApi {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
+	
+	private static final String DEVON_PROPERTIES = "devon.properties";
+	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
+	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
+	private static final String DEVON_HOME = "DEVON_HOME";
+	private static final String PROYECTO_HAYA = "HAYA";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -423,6 +434,13 @@ public class SubastaManager implements SubastaApi {
 			}
 		}
 		return bienes;
+	}
+	
+	@BusinessOperation(BO_NMB_SUBASTA_GET_BIENES_LOTE_SUBASTA)
+	public List<Bien> getBienesLoteSubasta(Long idLote){
+		LoteSubasta loteSubasta = genericDao.get(LoteSubasta.class, genericDao.createFilter(FilterType.EQUALS, "id", idLote), 
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		return loteSubasta.getBienes();
 	}
 	
 	@BusinessOperation(BO_NMB_SUBASTA_GET_DATOS_ACTA_COMITE)
@@ -967,7 +985,8 @@ public class SubastaManager implements SubastaApi {
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)
-	public void guardaBatchAcuerdoCierre(BatchAcuerdoCierreDeuda autoCierreDeuda) {
+	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien) {
+		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idBien);
 		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 	}
 	
@@ -1278,8 +1297,6 @@ public class SubastaManager implements SubastaApi {
 			return (Checks.esNulo(historicoPrc) || (!Checks.esNulo(historicoPrc) && Checks.esNulo(historicoPrc.getFechaFin())));
 		}
 		
-		@Override
-		@Transactional(readOnly = false)
 		@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
 		public ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
@@ -1323,7 +1340,7 @@ public class SubastaManager implements SubastaApi {
 					}
 				}
 			}
-			return new ValorNodoTarea();
+			return null;
 		}
 
 		@Override
@@ -1337,23 +1354,40 @@ public class SubastaManager implements SubastaApi {
 		@Override
 		@Transactional(readOnly = false)
 		@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
-		public void eliminarRegistroCierreDeuda(BatchAcuerdoCierreDeuda batchAcuerdoCierreDeuda, List<BatchAcuerdoCierreDeuda> listBACDD) {
+		public void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBACDD) {
 			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
 				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
 			}
-			guardaBatchAcuerdoCierre(batchAcuerdoCierreDeuda);
+			guardaBatchAcuerdoCierre(idSubasta, null);
 		} 
+		
+		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien) {
+			Subasta subasta = getSubasta(idSubasta);
+			Procedimiento procedimiento = subasta.getProcedimiento();
+			Auditoria auditoria = Auditoria.getNewInstance();
+			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
+			cierreDeuda.setIdProcedimiento(procedimiento.getId());
+			cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
+			cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
+			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
+			if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
+				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);	
+			}else{
+				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
+			}
+			cierreDeuda.setIdBien(idBien);
+			return cierreDeuda;
+		};
 		
 		@Override
 		@Transactional(readOnly = false)
 		@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
-		public List<NMBBien> enviarBienesCierreDeuda(BatchAcuerdoCierreDeuda cierreDeuda, Long idSubasta, List<Long> idsBien) {
+		public List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
 			List<NMBBien> idBienesNoCierre = new ArrayList<NMBBien>();
 			for(Long idBien : idsBien) {
 				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
 				if(Checks.estaVacio(list)) {
-					cierreDeuda.setIdBien(idBien);
-					guardaBatchAcuerdoCierre(cierreDeuda);
+					guardaBatchAcuerdoCierre(idSubasta, idBien);
 				}else{
 					NMBBien bien = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", list.get(0).getIdBien()), 
 							genericDao.createFilter(FilterType.EQUALS, "borrado", false));
@@ -1400,5 +1434,44 @@ public class SubastaManager implements SubastaApi {
 				this.valor = valor;
 			}
 			
+		}
+		
+		private String cargarProyectoProperties() {
+			String proyecto = "";	
+			Properties appProperties = cargarProperties(DEVON_PROPERTIES);
+			if (appProperties == null) {
+				System.out.println("No puedo consultar devon.properties");		
+			} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
+				proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
+			} else {
+				System.out.println("UVEM no instalado");
+			}
+			return proyecto;
+		}
+		
+		private Properties cargarProperties(String nombreProps) {
+			InputStream input = null;
+			Properties prop = new Properties();
+			
+			String devonHome = DEVON_HOME_BANKIA_HAYA;
+			if (System.getenv(DEVON_HOME) != null) {
+				devonHome = System.getenv(DEVON_HOME);
+			}
+			
+			try {
+				input = new FileInputStream("/" + devonHome + "/" + nombreProps);
+				prop.load(input);
+			} catch (IOException ex) {
+				System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
+			} finally {
+				if (input != null) {
+					try {
+						input.close();
+					} catch (IOException e) {
+						System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
+					}
+				}
+			}
+			return prop;
 		}
 }

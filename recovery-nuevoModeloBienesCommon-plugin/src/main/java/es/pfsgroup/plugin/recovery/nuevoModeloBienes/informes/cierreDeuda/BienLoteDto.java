@@ -3,9 +3,10 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
 public class BienLoteDto {
 	private Long idBien;
 	private String bien;
-	private Integer lote;
+	private Long lote;
+	
 
-	public BienLoteDto(Long idBien, String bien, Integer lote) {
+	public BienLoteDto(Long idBien, String bien, Long lote) {
 		this.idBien = idBien;
 		this.bien = bien;
 		this.lote = lote;
@@ -26,12 +27,10 @@ public class BienLoteDto {
 	public void setBien(String bien) {
 		this.bien = bien;
 	}
-
-	public Integer getLote() {
+	public Long getLote() {
 		return lote;
 	}
-
-	public void setLote(Integer lote) {
+	public void setLote(Long lote) {
 		this.lote = lote;
 	}
 }

@@ -3,20 +3,24 @@ package es.pfsgroup.plugin.recovery.coreextension.utils.jxl;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import jxl.Workbook;
+import jxl.WorkbookSettings;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.format.Colour;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
+import jxl.write.WritableCell;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
+
 
 
 public class HojaExcelInformeSubasta extends HojaExcel{
@@ -63,23 +67,25 @@ public class HojaExcelInformeSubasta extends HojaExcel{
 		String nombreFicheroTMP = nombreFichero + ".tmp.xls"; 
         File fileTMP = new File(nombreFicheroTMP);
                
-        // Este ser· el fichero final, en el que se comprobar· que exista y luego se reemplazar·
+        // Este ser√° el fichero final, en el que se comprobar√° que exista y luego se reemplazar√°
         File fileFinal = new File(nombreFichero);
-        
+          
         try {
         	
-        	// Se crea el fichero temporal en todos los casos ya que es aquÌ donde se va a escribir
+        	// Se crea el fichero temporal en todos los casos ya que es aqu√≠ donde se va a escribir
         	if (fileTMP.exists()) fileTMP.delete();
         	fileTMP.createNewFile();
-        	
-        	WritableWorkbook workbook = Workbook.createWorkbook(fileTMP);
+        	WorkbookSettings ws = new WorkbookSettings();
+        	ws.setEncoding("UTF-8");
+        	ws.setLocale(new Locale("ES"));
+        	WritableWorkbook workbook = Workbook.createWorkbook(fileTMP,ws);
         	WritableSheet sheet1 = workbook.createSheet("Hoja 1",0);
 			
 			int filaAnt = 0;
 			if (!fileFinal.exists()) {
 			    fileFinal.createNewFile();
 			} else {
-				// Si tiene que aÒadir al documento, se copiara el contenido de fileFinal a fileTMP
+				// Si tiene que a√±adir al documento, se copiara el contenido de fileFinal a fileTMP
 				if (append) {								
 					Workbook target_workbook = Workbook.getWorkbook(fileFinal);
 					workbook = Workbook.createWorkbook(fileTMP, target_workbook);
@@ -120,13 +126,50 @@ public class HojaExcelInformeSubasta extends HojaExcel{
 				WritableFont cellFontBold10 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
 			    for (int i = 0; i < valores.size(); i++) {
 					for (int j = 0; j < valores.get(i).size(); j++) {
-						String [] contenidoColor=valores.get(i).get(j).split(";");
-						Label celda = new Label(j, i+filaAnt+1, contenidoColor[0]);
-						WritableCellFormat cellFormat = new WritableCellFormat();
+						String [] contenidoColor=new String[3];
+						
+						contenidoColor=valores.get(i).get(j).split(";");
+						
+						
+						if(contenidoColor.length!=3){
+							contenidoColor=new String[3];
+							contenidoColor[0]=" ";
+							contenidoColor[1]=" ";
+							contenidoColor[2]=" ";
+						}
+						
+						WritableCell celda=null;
+						WritableCellFormat cellFormat=null;
+						
+						if(contenidoColor[2].equalsIgnoreCase("Number")){
+							try{
+								jxl.write.NumberFormat currency = new jxl.write.NumberFormat("#,###.00 \u20AC",jxl.write.NumberFormat.COMPLEX_FORMAT); 
+								cellFormat = new WritableCellFormat(currency);
+								celda=new jxl.write.Number(j, i+filaAnt+1,Double.parseDouble(contenidoColor[0]), cellFormat);
+								
+							}catch(Exception e){
+								cellFormat=new WritableCellFormat();
+								celda = new Label(j, i+filaAnt+1, contenidoColor[0]); 
+							}
+						}
+						else{
+							cellFormat=new WritableCellFormat();
+							celda = new Label(j, i+filaAnt+1, contenidoColor[0]); 
+							
+						}
+						
 						Colour myColour=null;
 						if(contenidoColor[1].equals("Blue")){
 							myColour=Colour.BLUE;
 							cellFormat.setFont(cellFontBold10);
+							if(contenidoColor[0].equalsIgnoreCase("MENSAJES VALIDACION")){
+								sheet1.mergeCells(0, i+2, 4, i+2);
+								sheet1.mergeCells(0, i+3, 4, i+3);
+								sheet1.mergeCells(0, i+4, 4, i+4);
+								sheet1.mergeCells(0, i+5, 4, i+5);
+								sheet1.mergeCells(0, i+6, 4, i+6);
+								sheet1.mergeCells(0, i+7, 4, i+7);
+							}
 						}
 						else if(contenidoColor[1].equals("Grey")){
 							myColour=Colour.GRAY_25;
@@ -137,6 +180,7 @@ public class HojaExcelInformeSubasta extends HojaExcel{
 							WritableFont cellFontError = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
 							cellFontError.setColour(Colour.WHITE);
 							cellFormat.setFont(cellFontError);
+							cellFormat.setAlignment(Alignment.LEFT);
 						
 						}
 						else{
@@ -144,7 +188,6 @@ public class HojaExcelInformeSubasta extends HojaExcel{
 						}
 						
 						cellFormat.setBackground(myColour);
-						cellFormat.setAlignment(Alignment.CENTRE);
 						celda.setCellFormat(cellFormat);
 						sheet1.setColumnView(i, 30);
 						sheet1.addCell(celda);

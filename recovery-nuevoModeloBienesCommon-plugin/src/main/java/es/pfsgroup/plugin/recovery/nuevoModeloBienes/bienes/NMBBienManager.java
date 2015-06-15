@@ -143,6 +143,19 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			return b;
 		}
 	}
+	
+	@BusinessOperation(GET_BIEN_BY_ID)
+	public Bien getBienById(Long id) {
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id",id);
+		Bien b = genericDao.get(Bien.class, f1);
+		try {
+			NMBBien bien = new NMBBien();
+			bien = getNMBBien(b);
+			return bien;
+		} catch (Exception e) {
+			return b;
+		}
+	}
 
 	private NMBBien getNMBBien(Bien b) {
 		NMBBien bien;

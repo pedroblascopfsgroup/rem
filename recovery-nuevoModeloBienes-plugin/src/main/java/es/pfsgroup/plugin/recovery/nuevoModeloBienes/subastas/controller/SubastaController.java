@@ -1,13 +1,8 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +15,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -53,7 +48,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformac
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LotesSubastaDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
-import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.geninformes.GENINFVisorInformeController;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
@@ -62,6 +56,7 @@ public class SubastaController {
 
 	private static final String SUBASTAS_JSON = "plugin/nuevoModeloBienes/subastas/subastasJSON"; 
 	private static final String LOTES_SUBASTA_JSON = "plugin/nuevoModeloBienes/subastas/lotesSubastaJSON"; 
+	private static final String BIENES_LOTE_JSON = "plugin/nuevoModeloBienes/subastas/bienesByLoteJSON";
 	private static final String DISABLED_BOTONES_CDD_JSON = "plugin/nuevoModeloBienes/subastas/disableBotonesCDDJSON";
 	private static final String WIN_AGREGAR_EXCLUIR_BIEN = "plugin/nuevoModeloBienes/subastas/agregarExcluirBien"; 
 	private static final String BIENES_JSON = "plugin/nuevoModeloBienes/subastas/bienesJSON";
@@ -70,11 +65,6 @@ public class SubastaController {
 	private static final String LOTES_SUBASTA_BUSCADOR_JSON = "plugin/nuevoModeloBienes/subastas/resultadoLotesSubastaJSON"; 
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
-	private static final String DEVON_PROPERTIES = "devon.properties";
-	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
-	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
-	private static final String DEVON_HOME = "DEVON_HOME";
-	private static final String PROYECTO_HAYA = "HAYA";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -124,6 +114,14 @@ public class SubastaController {
 		
 		map.put("lotes", lotesDto);
 		return LOTES_SUBASTA_JSON;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getBienesLote(@RequestParam(value = "idLote", required = true) Long idLote, ModelMap map) {		
+		List<Bien> bienes = subastaApi.getBienesLoteSubasta(idLote);
+		map.put("bienes", bienes);
+		return BIENES_LOTE_JSON;
 	}
 	
 	private Boolean disableEditInfoCDD(Subasta subasta){
@@ -284,20 +282,18 @@ public class SubastaController {
 		if(!informe.getValidacionOK()) {
 			return creaExcelValidacion(informe,model);
 		}else{
-			BatchAcuerdoCierreDeuda cdd = getCierreDeudaInstance(idSubasta, null);
 			if(Checks.esNulo(idsBien)) {
 				List<BatchAcuerdoCierreDeuda> registrosBACDD = subastaApi.findRegistroCierreDeuda(idSubasta, null);
 				if(!Checks.estaVacio(registrosBACDD)) {
-					subastaApi.eliminarRegistroCierreDeuda(cdd, registrosBACDD);						
+					subastaApi.eliminarRegistroCierreDeuda(idSubasta, registrosBACDD);						
 				}else{
-					subastaApi.guardaBatchAcuerdoCierre(cdd);
+					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null);
 				}
 			}else{
-				List<NMBBien> bienesNoCDD = subastaApi.enviarBienesCierreDeuda(cdd, idSubasta, obtenerBienEnviarCierre(idsBien));
-				
+				List<NMBBien> bienesNoCDD = subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
 			}
 		}
-		return null;
+		return DEFAULT;
 	}
 	
 	private List<Long> obtenerBienEnviarCierre(String idsBien) {
@@ -321,7 +317,7 @@ public class SubastaController {
 			for (String loteBien : arrLoteBien) {
 				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
 				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
-				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Integer.valueOf(lote));
+				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
 				listBienLote.add(dto);
 			}
 			informe.setBienesLote(listBienLote);
@@ -382,24 +378,6 @@ public class SubastaController {
 		subastaApi.actualizarInformacionCierreDeuda(dto);
 		return DEFAULT;
 	}
-
-	private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien) {
-		Subasta subasta = subastaApi.getSubasta(idSubasta);
-		Procedimiento procedimiento = subasta.getProcedimiento();
-		Auditoria auditoria = Auditoria.getNewInstance();
-		BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
-		cierreDeuda.setIdProcedimiento(procedimiento.getId());
-		cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
-		cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
-		cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
-		if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
-			cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);	
-		}else{
-			cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
-		}
-		cierreDeuda.setIdBien(idBien);
-		return cierreDeuda;
-	};
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -509,46 +487,7 @@ public class SubastaController {
 		Page plazas = proxyFactory.proxy(PlazaJuzgadoApi.class).buscarPorDescripcion(dto);
 		map.put("pagina", plazas);
 		return "plugin/coreextension/tipoPlaza/listadoPlazasJSON";
-	}
-	
-	public String cargarProyectoProperties() {
-		String proyecto = "";	
-		Properties appProperties = cargarProperties(DEVON_PROPERTIES);
-		if (appProperties == null) {
-			System.out.println("No puedo consultar devon.properties");		
-		} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
-			proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
-		} else {
-			System.out.println("UVEM no instalado");
-		}
-		return proyecto;
-	}
-	
-	private Properties cargarProperties(String nombreProps) {
-		InputStream input = null;
-		Properties prop = new Properties();
-		
-		String devonHome = DEVON_HOME_BANKIA_HAYA;
-		if (System.getenv(DEVON_HOME) != null) {
-			devonHome = System.getenv(DEVON_HOME);
-		}
-		
-		try {
-			input = new FileInputStream("/" + devonHome + "/" + nombreProps);
-			prop.load(input);
-		} catch (IOException ex) {
-			System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
-				}
-			}
-		}
-		return prop;
-	}
+	}	
 	
 	@SuppressWarnings("unchecked")
 	private String creaExcelValidacion(InformeValidacionCDDBean informe,ModelMap model){
@@ -571,136 +510,140 @@ public class SubastaController {
 		
 		fila=new ArrayList<String>();
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getTipoProcedimiento())){
-			fila.add(informe.getProcedimientoSubastaCDD().getTipoProcedimiento()+"; ");
+			fila.add(informe.getProcedimientoSubastaCDD().getTipoProcedimiento().concat(";White;Text"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getLetrado())){
-			fila.add(informe.getProcedimientoSubastaCDD().getLetrado()+"; ");
+			fila.add(informe.getProcedimientoSubastaCDD().getLetrado().concat(";White;Text"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getJuzgado())){
-			fila.add(informe.getProcedimientoSubastaCDD().getJuzgado()+"; ");
+			fila.add(informe.getProcedimientoSubastaCDD().getJuzgado().concat(";White;Text"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
-		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getPrincipal())){
-			fila.add(informe.getProcedimientoSubastaCDD().getPrincipal()+"; ");
+		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getPrincipal()) && !informe.getProcedimientoSubastaCDD().getPrincipal().equals("0")){
+			fila.add(informe.getProcedimientoSubastaCDD().getPrincipal().concat(";White;Number"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
-		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getDeudaJudicial())){
-			fila.add(informe.getProcedimientoSubastaCDD().getDeudaJudicial()+"; ");
+		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getDeudaJudicial()) && !informe.getProcedimientoSubastaCDD().getDeudaJudicial().equals("0")){
+			fila.add(informe.getProcedimientoSubastaCDD().getDeudaJudicial().concat(";White;Number"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
-		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasLetrado())){
-			fila.add(informe.getProcedimientoSubastaCDD().getCostasLetrado()+"; ");
+		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasLetrado()) && !informe.getProcedimientoSubastaCDD().getCostasLetrado().equals("0")){
+			fila.add(informe.getProcedimientoSubastaCDD().getCostasLetrado().concat(";White;Number"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
-		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasProcurador())){
-			fila.add(informe.getProcedimientoSubastaCDD().getCostasProcurador()+"; ");
+		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasProcurador()) && !informe.getProcedimientoSubastaCDD().getCostasProcurador().equals("0")){
+			fila.add(informe.getProcedimientoSubastaCDD().getCostasProcurador().concat(";White;Number"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getFechaCelebracionSubasta())){
-			fila.add(informe.getProcedimientoSubastaCDD().getFechaCelebracionSubasta()+"; ");
+			fila.add(informe.getProcedimientoSubastaCDD().getFechaCelebracionSubasta().concat(";White;Text"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getSubastaConPostores())){
-			fila.add(informe.getProcedimientoSubastaCDD().getSubastaConPostores()+"; ");
+			fila.add(informe.getProcedimientoSubastaCDD().getSubastaConPostores().concat(";White;Text"));
 		}
 		else{
-			fila.add("******;Red");
+			fila.add("******;Red;Text");
 		}
 		valores.add(fila);
 		
 		for(DatosLoteCDD datosLoteCDD : informe.getDatosLoteCDD())
 		{	
 			fila=new ArrayList<String>();
-			fila.add("LOTE;Blue");
-			fila.add("PUJA SIN POSTORES;Blue");
-			fila.add("PUJA CON POSTORES DESDE;Blue");
-			fila.add("PUJA CON POSTORES HASTA;Blue");
-			fila.add("VALOR SUBASTA;Blue");
+			fila.add("LOTE;Blue;Text");
+			fila.add("PUJA SIN POSTORES;Blue;Text");
+			fila.add("PUJA CON POSTORES DESDE;Blue;Text");
+			fila.add("PUJA CON POSTORES HASTA;Blue;Text");
+			fila.add("VALOR SUBASTA;Blue;Text");
 			valores.add(fila);
 			
 			fila=new ArrayList<String>();
 			if(!Checks.esNulo(datosLoteCDD.getNumLote())){
-				fila.add(datosLoteCDD.getNumLote().toString().concat(";Grey"));
+				fila.add(datosLoteCDD.getNumLote().toString().concat(";Grey;Text"));
 			}
 			else{
-				fila.add("******;Red");
+				fila.add("******;Red;Text");
 			}
 			
-			if(!Checks.esNulo(datosLoteCDD.getSinPostores())){
-				fila.add(datosLoteCDD.getSinPostores().toString().concat(";Grey"));
+			if(!Checks.esNulo(datosLoteCDD.getSinPostores()) && !datosLoteCDD.getSinPostores().equals("0")){
+				String sinPostores=datosLoteCDD.getSinPostores().replace(",",".");
+				fila.add(sinPostores.concat(";Grey;Number"));
+				
 			}
 			else{
-				fila.add("******;Red");
+				fila.add("******;Red;Text");
 			}
 			
-			if(!Checks.esNulo(datosLoteCDD.getConPostoresDesde())){
-				fila.add(datosLoteCDD.getConPostoresDesde().toString().concat(";Grey"));
+			if(!Checks.esNulo(datosLoteCDD.getConPostoresDesde()) && !datosLoteCDD.getConPostoresDesde().equals("0")){
+				String conPostores=datosLoteCDD.getConPostoresDesde().replace(",", ".");
+				fila.add(conPostores.concat(";Grey;Number"));
 			}
 			else{
-				fila.add("******;Red");
+				fila.add("******;Red;Text");
 			}
 			
-			if(!Checks.esNulo(datosLoteCDD.getConPostoresHasta())){
-				fila.add(datosLoteCDD.getConPostoresHasta().toString().concat(";Grey"));
+			if(!Checks.esNulo(datosLoteCDD.getConPostoresHasta()) && !datosLoteCDD.getConPostoresHasta().equals("0")){
+				String conPostoresHasta=datosLoteCDD.getConPostoresHasta().replace(",", ".");
+				fila.add(conPostoresHasta.concat(";Grey;Number"));
 			}
 			else
 			{
-				fila.add("******;Red");
+				fila.add("******;Red;Text");
 			}
 			
-			if(!Checks.esNulo(datosLoteCDD.getValorSubasta())){
-				fila.add(datosLoteCDD.getValorSubasta().concat(";Grey"));
+			if(!Checks.esNulo(datosLoteCDD.getValorSubasta()) && !datosLoteCDD.getValorSubasta().equals("0")){
+				String valorSubasta=datosLoteCDD.getValorSubasta().replace(",", ".");
+				fila.add(valorSubasta.concat(";Grey;Number"));
 			}
 			else
 			{
-				fila.add("******;Red");
+				fila.add("******;Red;Text");
 			}
 			valores.add(fila);
 			
 			if(!Checks.esNulo(datosLoteCDD.getInfoBienes())){
 					
 				fila=new ArrayList<String>();
-				fila.add(" ; ");
-				fila.add("Nº FINCA;Blue");
-				fila.add("Nº ACTIVO;Blue");
-				fila.add("REFERENCIA CATASTRAL;Blue");
-				//fila.add("ORIGEN;Blue");
-				fila.add("DESCRIPCION;Blue");
-				fila.add("Nº REGISTRO;Blue");
-				fila.add("VALOR TASACION;Blue");
-				fila.add("FECHA TASACIÓN;Blue");
-				fila.add("VALOR JUDICIAL;Blue");
-				fila.add("DATOS LOCALIZACIÓN;Blue");
-				fila.add("VIVIENDA HABITUAL;Blue");
-				fila.add("RESULTADO ADJUDICACIÓN;Blue");
-				fila.add("IMPORTE ADJUDICACIÓN;Blue");
-				fila.add("F. TESTIMONIO ADJ SAREB;Blue");
+				fila.add(" ; ;Text");
+				fila.add("Nº FINCA;Blue;Text");
+				fila.add("Nº ACTIVO;Blue;Text");
+				fila.add("REFERENCIA CATASTRAL;Blue;Text");
+				fila.add("DESCRIPCIÓN;Blue;Text");
+				fila.add("Nº REGISTRO;Blue;Text");
+				fila.add("VALOR TASACIÓN;Blue;Text");
+				fila.add("FECHA TASACIÓN;Blue;Text");
+				fila.add("VALOR JUDICIAL;Blue;Text");
+				fila.add("DATOS LOCALIZACIÓN;Blue;Text");
+				fila.add("VIVIENDA HABITUAL;Blue;Text");
+				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
+				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
+				fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
 				
 				valores.add(fila);
 				
@@ -708,103 +651,106 @@ public class SubastaController {
 				{	fila=new ArrayList<String>();
 					fila.add(" ; ");
 					if(!Checks.esNulo(infoBienes.getNumFinca())){
-						fila.add(infoBienes.getNumFinca().concat("; "));
+						fila.add(infoBienes.getNumFinca().concat(";White;Text"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getNumeroActivo())){
-						fila.add(infoBienes.getNumeroActivo().concat("; "));
+						fila.add(infoBienes.getNumeroActivo().concat(";White;Text"));
 					}
 					else{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getReferenciaCatastral())){
-						fila.add(infoBienes.getReferenciaCatastral().concat("; "));
+						fila.add(infoBienes.getReferenciaCatastral().concat(";White;Text"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getDescripcion())){
-						fila.add(infoBienes.getDescripcion().concat("; "));
+						fila.add(infoBienes.getDescripcion().concat(";White;Text"));
 					}
 					else{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getNumRegistro())){
-						fila.add(infoBienes.getNumRegistro().concat("; "));
+						fila.add(infoBienes.getNumRegistro().concat(";White;Text"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
-					if(!Checks.esNulo(infoBienes.getValorTasacion())){
-						fila.add(infoBienes.getValorTasacion().concat("; "));
+					if(!Checks.esNulo(infoBienes.getValorTasacion()) && !infoBienes.getValorTasacion().equals("0")){
+						String valorTasacion=infoBienes.getValorTasacion().replace(",",".");
+						fila.add(valorTasacion.concat(";White;Number"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getFechaTasacion())){
-						fila.add(infoBienes.getFechaTasacion().concat("; "));
+						fila.add(infoBienes.getFechaTasacion().concat(";White;Text"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
-					if(!Checks.esNulo(infoBienes.getValorJudicial())){
-						fila.add(infoBienes.getValorJudicial().concat("; "));
+					if(!Checks.esNulo(infoBienes.getValorJudicial()) && !infoBienes.getValorJudicial().equals("0")){
+						String valorJudicial=infoBienes.getValorJudicial().replace(",", ".");
+						fila.add(valorJudicial.concat(";White;Number"));
 					}
 					else{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getDatosLocalizacion())){
-						fila.add(infoBienes.getDatosLocalizacion().concat("; "));
+						fila.add(infoBienes.getDatosLocalizacion().concat(";White;Number"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getViviendaHabitual())){
-						fila.add(infoBienes.getViviendaHabitual().concat("; "));
+						fila.add(infoBienes.getViviendaHabitual().concat(";White;Text"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getResultadoAdjudicacion())){
-						fila.add(infoBienes.getResultadoAdjudicacion().concat("; "));
+						fila.add(infoBienes.getResultadoAdjudicacion().concat(";White;Text"));
 					}
 					else{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
-					if(!Checks.esNulo(infoBienes.getImporteAdjudicacion())){
-						fila.add(infoBienes.getImporteAdjudicacion().concat("; "));
+					if(!Checks.esNulo(infoBienes.getImporteAdjudicacion()) && !infoBienes.getImporteAdjudicacion().equals("0")){
+						String importeAdjudicacion=infoBienes.getImporteAdjudicacion().replace(",", ".");
+						fila.add(importeAdjudicacion.concat(";White;Number"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
-						fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat("; "));
+						fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
 					}
 					else
 					{
-						fila.add("******;Red");
+						fila.add("******;Red;Text");
 					}
 					
 					valores.add(fila);
@@ -815,19 +761,19 @@ public class SubastaController {
 		}
 		
 		fila=new ArrayList<String>();
-		fila.add(" ; ");
-		fila.add(" ; ");
-		fila.add(" ; ");
-		fila.add(" ; ");
-		fila.add(" ; ");
+		fila.add(" ;White;Text");
+		fila.add(" ;White;Text");
+		fila.add(" ;White;Text");
+		fila.add(" ;White;Text");
+		fila.add(" ;White;Text");
 		valores.add(fila);
 		
 		fila=new ArrayList<String>();
-		fila.add("MENSAJES VALIDACION;Blue");
-		fila.add(" ;Blue");
-		fila.add(" ;Blue");
-		fila.add(" ;Blue");
-		fila.add(" ;Blue");
+		fila.add("MENSAJES VALIDACION;Blue;Text");
+		fila.add(" ;Blue;Text");
+		fila.add(" ;Blue;Text");
+		fila.add(" ;Blue;Text");
+		fila.add(" ;Blue;Text");
 		valores.add(fila);
 		
 		if(!informe.getValidacionOK()){
@@ -836,11 +782,11 @@ public class SubastaController {
 			
 			for(String mensaje : arrayMensajes){
 				fila=new ArrayList<String>();
-				fila.add(mensaje.concat(";Red"));
-				fila.add(";Red");
-				fila.add(";Red");
-				fila.add(" ;Red");
-				fila.add(" ;Red");
+				fila.add(mensaje.concat(" ;Red;Text"));
+				fila.add(" ;Red;Text");
+				fila.add(" ;Red;Text");
+				fila.add(" ;Red;Text");
+				fila.add(" ;Red;Text");
 				valores.add(fila);
 				
 			}
@@ -850,10 +796,10 @@ public class SubastaController {
 		
 		
 		HojaExcelInformeSubasta hojaExcel = new HojaExcelInformeSubasta();
-		hojaExcel.crearNuevoExcel("prueba_excell.xls", cabeceras, valores);
+		hojaExcel.crearNuevoExcel("informe_validacion.xls", cabeceras, valores);
 		
 		FileItem excelFileItem = new FileItem(hojaExcel.getFile());
-        excelFileItem.setFileName("prueba_excell.xls");
+        excelFileItem.setFileName("informe_validacion.xls");
         excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
         excelFileItem.setLength(hojaExcel.getFile().length());
 	    

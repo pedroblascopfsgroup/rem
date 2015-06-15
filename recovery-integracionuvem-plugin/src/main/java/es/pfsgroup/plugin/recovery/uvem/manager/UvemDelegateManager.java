@@ -419,28 +419,28 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				
 			}
 
-			System.out.println("COBIPW: " + cobipw);
-			logger.debug("COBIPW: " + cobipw);
+			System.out.println("COBIPW identificador bien recovery: " + cobipw);
+			logger.debug("COBIPW identificador bien recovery: " + cobipw);
 			servicioGMP5JD20.setIdBienEnRecoverycobipw(cobipw);
-			System.out.println("COPAW3: " + comuix);
+			System.out.println("COMUIX municipio registro: " + comuix);
 			servicioGMP5JD20.setCodigoDeMunicipioRegistroAlfcomuix(comuix);
-			System.out.println("COTIV4: " + cotiv4);
+			System.out.println("COTIV4 tipo de vía: " + cotiv4);
 			servicioGMP5JD20.setCodigoTipoDeViacotiv4(cotiv4);
-			System.out.println("COMUID: " + comuid);
+			System.out.println("COMUID localidad localización: " + comuid);
 			servicioGMP5JD20.setCodigoDeMunicipioIneSolviacomuid(comuid);
-			System.out.println("NUPOAC: " + nupoac);
+			System.out.println("NUPOAC portal: " + nupoac);
 			servicioGMP5JD20.setPortalPuntoKilometriconupoac(nupoac);
-			System.out.println("NUESAC: " + nuesac);
+			System.out.println("NUESAC escalera: " + nuesac);
 			servicioGMP5JD20.setESCALERANUESAC(nuesac);
-			System.out.println("NUPUAC: " + nupuac);
+			System.out.println("NUPUAC número de puerta: " + nupuac);
 			servicioGMP5JD20.setNumeroDePuertanupuac(nupuac);
-			System.out.println("NOBAAC: " + nobaac);
+			System.out.println("NOBAAC barrio: " + nobaac);
 			servicioGMP5JD20.setBarrioOColonianobaac(nobaac);
-			System.out.println("COPOI5: " + copoi5);
+			System.out.println("COPOI5 código postal: " + copoi5);
 			servicioGMP5JD20.setCodigoPostalcopoi5(copoi5);
-			System.out.println("NOPRAC: " + noprac);
+			System.out.println("NOPRAC nombre de la provincia localización: " + noprac);
 			servicioGMP5JD20.setNombreDeLaProvincianoprac(noprac);
-			System.out.println("COPAW3: " + copaw3);
+			System.out.println("COPAW3 pais: " + copaw3);
 			servicioGMP5JD20.setCodigoPaisSede1copaw3(copaw3);
 			
 			//FIN DE NUEVO CONTENEDORES
@@ -577,7 +577,9 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 					tipoInmueble = bien.getAdicional().getTipoInmueble().getCodigo();
 				}
 			}
+			/*
 			if(tipoInmueble.equals("VIV"))
+			 
 			{
 				tipoInmueble = "VI01";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : bien.getViviendaHabitual()  ? '1' : '2' );
@@ -621,7 +623,10 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				tipoInmueble = "OT05";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}
-			servicioGMP5JD20.setCodigoTipoSubtipoDeInmueblecotsin(StringUtils.rightPad(tipoInmueble,4,' ').substring(0, 4));
+			*/
+			System.out.println("COTSIN tipo inmueble: " + tipoInmueble);
+			tipoInmueble = StringUtils.rightPad(tipoInmueble,4,' ').substring(0, 4);
+			servicioGMP5JD20.setCodigoTipoSubtipoDeInmueblecotsin(tipoInmueble);
 			
 			//IDDSFU	longitud="4"	IDENTIFICADOR DISCRIMINADOR FUNCION	Elementos nuevos para la dirección del inmueble.
 			// no lo encuentro

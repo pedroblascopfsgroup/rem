@@ -93,6 +93,11 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup</groupId>
+			<artifactId>pfs-tesfwk</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-coreextension-plugin</artifactId>
 			<type>jar</type>

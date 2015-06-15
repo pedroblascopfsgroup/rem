@@ -190,6 +190,8 @@ cp -f $BASEDIR/scripts/reg_sql.sh $BASEDIR/tmp/$nombreSinDirSinExt.sh
 cp -f $BASEDIR/scripts/reg?.sql $BASEDIR/tmp/
 chmod u+x $BASEDIR/tmp/$nombreSinDirSinExt.sh
 
+cp $1 $BASEDIR/tmp/
+
 echo "Ejecutando:"
 echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
 if [ $PRINT = "SI" ] ; then

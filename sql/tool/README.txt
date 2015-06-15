@@ -22,6 +22,10 @@
 
 Lo que se puede probar ahora mismo es:
 
-    run-scripts-from-date.sh
+    run-scripts-from-tag.sh            
 
-Ejecútalo sin más para que te diga qué parámetros necesita.
+    run-scripts-from-tag-bypass.sh  (TEMPORAL! Busca scripts en todo el repositorio)
+
+    run-single-script.sh 
+
+Ejecútalos sin más para que te diga qué parámetros necesita.

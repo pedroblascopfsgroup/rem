@@ -319,6 +319,11 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-arquetipos-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-tesfwk</artifactId>
 				<version>1.0.3</version>
@@ -470,7 +475,8 @@
 		<module>recovery-recobro-bpm</module>
 		<module>recovery-controlcalidad-plugin</module>
 		<module>recovery-comites-plugin</module>
-		<module>recovery-editor-plugin</module>		
+		<module>recovery-editor-plugin</module>
+		<module>recovery-arquetipos-plugin</module>				
 	</modules>
 
 	<profiles>

@@ -336,7 +336,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			String novias = bien.getDescripcionBien() != null ? bien.getDescripcionBien() : ""; 
 			servicioGMP5JD20.setNombreDeLaVianovias(StringUtils.rightPad(novias, 60, ' ').substring(0, 60));
 			System.out.println(" ***REQUERIDO*** NUPIIN"); // 	longitud="10"	 Piso del inmueble	siempre " " (spaces)
-			servicioGMP5JD20.setPisoDelInmuebleLong10Nupiin(StringUtils.rightPad(bien.getLocalizacionActual().getPiso(), 10, ' ').substring(0, 10));
+			servicioGMP5JD20.setPisoDelInmuebleLong10Nupiin(StringUtils.rightPad(bien.getLocalizacionActual().getPiso() != null ? bien.getLocalizacionActual().getPiso() : "", 10, ' ').substring(0, 10));
 			System.out.println(" ***REQUERIDO*** TITEXO"); // 	longitud="1"	 Tipo de texto	siempre " " (spaces)
 			char titexo = ' '; 
 			servicioGMP5JD20.setTipoDeTextotitexo(titexo);
@@ -420,6 +420,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			}
 
 			System.out.println("COBIPW: " + cobipw);
+			logger.debug("COBIPW: " + cobipw);
 			servicioGMP5JD20.setIdBienEnRecoverycobipw(cobipw);
 			System.out.println("COPAW3: " + comuix);
 			servicioGMP5JD20.setCodigoDeMunicipioRegistroAlfcomuix(comuix);

@@ -650,45 +650,75 @@
               
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXCEPTUADOS_2 ON BATCH_DATOS_EXCEPTUADOS(CNT_ID)';
               
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_EXCEPTUADOS', estimate_percent => 20);
+              
               
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_1 ON BATCH_DATOS_CNT(CNT_ID)';
               
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_2 ON BATCH_DATOS_CNT(CNT_RIESGO)';            
+              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_2 ON BATCH_DATOS_CNT(CNT_RIESGO)';
+              
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT', estimate_percent => 20);
                               
               
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_1 ON BATCH_DATOS_CNT_INFO(CNT_ID)';            
               
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_2 ON BATCH_DATOS_CNT_INFO(NUMERO_CONTRATO)';                  
+              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_INFO_2 ON BATCH_DATOS_CNT_INFO(NUMERO_CONTRATO)';
+              
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT_INFO', estimate_percent => 20);
               
               
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_EXP_1 ON BATCH_DATOS_CNT_EXP(EXP_ID)';
               
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_EXP_2 ON BATCH_DATOS_CNT_EXP(CNT_ID)';              
+              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_EXP_2 ON BATCH_DATOS_CNT_EXP(CNT_ID)';
+
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT_EXP', estimate_percent => 20);              
               
               
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_PER_1 ON BATCH_DATOS_CNT_PER(PER_ID)';
               
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_PER_2 ON BATCH_DATOS_CNT_PER(CNT_ID)';
               
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_PER_3 ON BATCH_DATOS_CNT_PER(CNT_PER_ARRASTRE)';               
+              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_CNT_PER_3 ON BATCH_DATOS_CNT_PER(CNT_PER_ARRASTRE)';
+              
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_CNT_PER', estimate_percent => 20);
              
             
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_PER_1 ON BATCH_DATOS_PER(PER_DEUDA_IRREGULAR)';
               
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_PER', estimate_percent => 20);
+              
               
               EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_1 ON BATCH_DATOS_PER_EXP(EXP_ID)';
               
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_2 ON BATCH_DATOS_PER_EXP(PER_ID)';              
+              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_PER_EXP_2 ON BATCH_DATOS_PER_EXP(PER_ID)';
+
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_PER_EXP', estimate_percent => 20);              
                                  
               
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXP_1 ON BATCH_DATOS_EXP(EXP_ID)';                                         
+              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXP_1 ON BATCH_DATOS_EXP(EXP_ID)';
+              
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_EXP', estimate_percent => 20);
               
               
-              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXP_MANUAL_1 ON BATCH_DATOS_EXP_MANUAL(EXP_ID)'; 
+              EXECUTE IMMEDIATE 'CREATE INDEX IDX_BATCH_DATOS_EXP_MANUAL_1 ON BATCH_DATOS_EXP_MANUAL(EXP_ID)';
+              
+              --** Actualizamos estadísticas
+              DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_EXP_MANUAL', estimate_percent => 20);
               
               EXECUTE IMMEDIATE 'CREATE INDEX INDX_BATCH_DATOS_GCL_1 ON BATCH_DATOS_GCL(GCL_ID)';
               
-			  EXECUTE IMMEDIATE 'CREATE INDEX INDX_BATCH_DATOS_GCL_2 ON BATCH_DATOS_GCL(PER_ID)';                 
+	      EXECUTE IMMEDIATE 'CREATE INDEX INDX_BATCH_DATOS_GCL_2 ON BATCH_DATOS_GCL(PER_ID)'; 
+	      
+	      --** Actualizamos estadísticas
+	      DBMS_STATS.gather_table_stats( ownname => 'BANK01', tabname => 'BATCH_DATOS_GCL', estimate_percent => 20);
             
             END;
 		]]>

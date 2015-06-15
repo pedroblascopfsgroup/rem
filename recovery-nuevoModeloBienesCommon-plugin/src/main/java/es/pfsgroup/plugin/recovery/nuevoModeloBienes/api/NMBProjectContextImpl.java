@@ -31,6 +31,8 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private Long nivelZonaOficinaGestoraEnInformes;
 	private List<String> tiposPrcAdjudicados;
 	private Map<String, String> mapaTiposPrc;
+	private List<String> codigosSubastaValidacion;
+	private List<String> codigosSubastas;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -177,6 +179,29 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		lote.setObservacionesComite(observacionesComite);
 		lote.setEstado(estadoLote);;
 		lote.setFechaEstado(fecha);
+	}
+	
+	public List<String> getCodigosSubastaValidacion(){
+		
+		return codigosSubastaValidacion; 
+		
+	}
+	
+	public void setCodigosSubastaValidacion( List<String> codigosSubastaValidacion ){
+		
+		this.codigosSubastaValidacion = codigosSubastaValidacion; 
+	}
+	
+	public List<String> getCodigosSubastas(){
+		
+		return codigosSubastas;
+		
+	}
+	
+	public void setCodigosSubastas(List<String> codigosSubastas){
+		
+		this.codigosSubastas = codigosSubastas ;
+		
 	}
 	
 }

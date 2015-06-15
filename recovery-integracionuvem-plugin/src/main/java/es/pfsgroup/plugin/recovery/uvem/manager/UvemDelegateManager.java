@@ -577,53 +577,52 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 					tipoInmueble = bien.getAdicional().getTipoInmueble().getCodigo();
 				}
 			}
-			/*
-			if(tipoInmueble.equals("VIV"))
-			 
+			
+			if(tipoInmueble.contains("VI"))			 
 			{
-				tipoInmueble = "VI01";
+				//tipoInmueble = "VI01";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : bien.getViviendaHabitual()  ? '1' : '2' );
 			}
-			else if(tipoInmueble.equals("UNI"))
+			else if(tipoInmueble.contains("UN"))
 			{	
-			    tipoInmueble = "VI04";
+			    //tipoInmueble = "VI04";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : bien.getViviendaHabitual()  ? '1' : '2' );
 			}
-			else if(tipoInmueble.equals("COM"))
+			else if(tipoInmueble.contains("CO"))
 			{
-				tipoInmueble = "CO01";
+				//tipoInmueble = "CO01";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}            
-			else if(tipoInmueble.equals("IND"))
+			else if(tipoInmueble.contains("IN"))
 			{
-				tipoInmueble = "IN01";
+				//tipoInmueble = "IN01";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}
-			else if(tipoInmueble.equals("SUE"))
+			else if(tipoInmueble.contains("SU"))
 			{
-				tipoInmueble = "SU01";
+				//tipoInmueble = "SU01";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}
-			else if(tipoInmueble.equals("GAR"))
+			else if(tipoInmueble.contains("GA") || tipoInmueble.contains("GJ"))
 			{
-				tipoInmueble = "OT01";
+				//tipoInmueble = "OT01";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}
-			else if(tipoInmueble.equals("TRA"))
+			else if(tipoInmueble.contains("TR"))
 			{
-				tipoInmueble = "OT03";
+				//tipoInmueble = "OT03";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}
-			else if(tipoInmueble.equals("OTR"))
+			else if(tipoInmueble.contains("OT"))
 			{
-				tipoInmueble = "OT01";
+				//tipoInmueble = "OT01";
 			    servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}
 			else {
-				tipoInmueble = "OT05";
+				//tipoInmueble = "OT05";
 				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh('0');
 			}
-			*/
+			
 			System.out.println("COTSIN tipo inmueble: " + tipoInmueble);
 			tipoInmueble = StringUtils.rightPad(tipoInmueble,4,' ').substring(0, 4);
 			servicioGMP5JD20.setCodigoTipoSubtipoDeInmueblecotsin(tipoInmueble);

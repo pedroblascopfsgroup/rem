@@ -1432,7 +1432,6 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
         cfg.listeners = {
 			render: function(g) {
 			g.on("beforetooltipshow", function(grid, row, col, rowData) {
-				//debugger;
 				if (grid.colModel.config[col].tooltipInstruccion!=null){
 				}else {
 					grid.tooltip.body.update(rowData);

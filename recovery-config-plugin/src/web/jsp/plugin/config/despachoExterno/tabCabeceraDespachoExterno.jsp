@@ -7,7 +7,6 @@
 	<pfsforms:textfield labelKey="plugin.config.despachoExterno.field.personaContacto" label="**Persona de contacto" name="personaContacto" value="${despacho.personaContacto}" readOnly="true" labelWidth="150"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExterno.field.telefono1" label="**Telefono 1" name="telefono1" value="${despacho.telefono1}" readOnly="true" labelWidth="150"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExterno.field.telefono2" label="**Telefono 2" name="telefono2" value="${despacho.telefono2}" readOnly="true" labelWidth="150"/>
-	//debugger;	
 	var txtTiposGestor='';
 	<c:forEach items="${tiposGestorPropiedad}" var="tiposGestor">
 		txtTiposGestor = txtTiposGestor + '<p>- ${tiposGestor.descripcion}</p>';

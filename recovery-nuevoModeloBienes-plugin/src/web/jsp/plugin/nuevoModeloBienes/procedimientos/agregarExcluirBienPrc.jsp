@@ -116,7 +116,6 @@
 	var getParams = function() {
 		
 		var objParams = {};
-		debugger;
 		
 		var store = gridBienes.getStore();
 		var strIds = '';

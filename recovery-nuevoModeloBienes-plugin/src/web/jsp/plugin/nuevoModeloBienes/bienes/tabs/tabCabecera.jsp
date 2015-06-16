@@ -434,7 +434,6 @@
 			      			flow:'editbien/solicitarNumActivo'
 			      			,params:{id:${NMBbien.id}}
 			      			,success: function(result,request){
-			      			   debugger;		   
 			      			   if(result.msgError=='1'){
 			      			   		Ext.Msg.show({
 									title:'Operación realizada',

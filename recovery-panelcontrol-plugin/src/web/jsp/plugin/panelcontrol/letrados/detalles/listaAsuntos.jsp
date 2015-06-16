@@ -157,7 +157,6 @@
 	
  	asuntoGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e){
     	var rec = grid.getStore().getAt(rowIndex);
-    	//debugger;
         if(rec && rec.get('idasunto')){
                     var id = rec.get('idasunto');
                     var desc = rec.get('nombreAsunto');

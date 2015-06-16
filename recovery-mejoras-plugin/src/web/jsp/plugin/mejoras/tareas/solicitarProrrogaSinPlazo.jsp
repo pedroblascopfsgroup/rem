@@ -8,7 +8,6 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <fwk:page>
-debugger;
 	var labelStyle='font-weight:bolder;width:150';
 	var tipoEntidad='${codigoTipoEntidad}';
 	var situacion = '${situacion}';

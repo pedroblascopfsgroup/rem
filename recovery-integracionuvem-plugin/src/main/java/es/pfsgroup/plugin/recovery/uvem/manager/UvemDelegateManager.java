@@ -685,25 +685,25 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		} catch (Exception e) {
 			if  (e instanceof WIException){
 				WIException wi = ((WIException)e);
-				logger.debug(wi.getAlias());
-				logger.debug(wi.getCause());
-				logger.debug(wi.getConfigurationVersion());
-				logger.debug(wi.getClass());
-				logger.debug(wi.getErrorCode());
-				logger.debug(wi.getErrorCodeCommunication());
-				logger.debug(wi.getErrorType());
-				logger.debug(wi.getInfoDebug());
-				logger.debug(wi.getLocalizedMessage());
-				logger.debug(wi.getMaquinaEjecucion());
-				logger.debug(wi.getMessage());
-				logger.debug(wi.getOperationId());
-				logger.debug(wi.getProveedor());
-				logger.debug(wi.getService_module());
-				logger.debug(wi.getService_name());
-				logger.debug(wi.getService_version());
-				logger.debug(wi.getStackTrace());
-				logger.debug(wi.getSubsystem());
-				logger.debug(wi.getUrl());
+				System.out.println(wi.getAlias());
+				System.out.println(wi.getCause());
+				System.out.println(wi.getConfigurationVersion());
+				System.out.println(wi.getClass());
+				System.out.println(wi.getErrorCode());
+				System.out.println(wi.getErrorCodeCommunication());
+				System.out.println(wi.getErrorType());
+				System.out.println(wi.getInfoDebug());
+				System.out.println(wi.getLocalizedMessage());
+				System.out.println(wi.getMaquinaEjecucion());
+				System.out.println(wi.getMessage());
+				System.out.println(wi.getOperationId());
+				System.out.println(wi.getProveedor());
+				System.out.println(wi.getService_module());
+				System.out.println(wi.getService_name());
+				System.out.println(wi.getService_version());
+				System.out.println(wi.getStackTrace());
+				System.out.println(wi.getSubsystem());
+				System.out.println(wi.getUrl());
 			}
 			e.printStackTrace();
 			return -1;

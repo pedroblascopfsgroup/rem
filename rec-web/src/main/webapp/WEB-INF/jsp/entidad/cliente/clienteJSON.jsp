@@ -228,6 +228,7 @@
 			<fwk:date value="${antecedente.fechaVerificacion}"/>
 		</json:property>
 		<json:property name="observaciones" value="${antecedente.observaciones}" />
+		<json:property name="numReincidenciasInterno" value="${antecedente.numReincidenciasInterno}" />
 	</json:object>
 	<json:object name="umbral">
 		<json:property name="importeUmbral" value="${persona.importeUmbral}" />

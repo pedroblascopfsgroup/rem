@@ -1,14 +1,24 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
+import java.util.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.Column;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -71,21 +81,380 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 	}
 
-	
-	@SuppressWarnings("unchecked")
-	public List<Subasta> buscarSubastasExcel(NMBDtoBuscarSubastas dto,
-			Usuario usuLogado) {
-		// Establece el orden de la búsqueda
-		setSortSubastas(dto);
-		
-		// return paginationManager.getHibernatePage(getHibernateTemplate(),
-		// generarHQLBuscarSubastasPaginados(dto,usuLogado), dto);
+	/**
+	 * Busqueda de subastas por filtro. (solo se trae lo necesario para la exportacion)
+	 * 
+	 * Optimizada para exportacion excel
+	 */
+	public List<HashMap<String, Object>> buscarSubastasExcel(NMBDtoBuscarSubastas filtro, Usuario usuLogado, Boolean isCount) {
+		Criteria query = getSession().createCriteria(Subasta.class, "subasta");
 
-		Query query = getSession().createQuery(
-				generarHQLBuscarSubastasPaginados(dto, usuLogado));
-		return (List<Subasta>) query.list();
+		// Select
+		query.setProjection(selectSubastasExcel(isCount));
+
+		// From
+		query.createAlias("asunto", "asunto", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("asunto.propiedadAsunto", "propiedadAsunto", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("asunto.gestionAsunto", "gestionAsunto", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("estadoSubasta", "estadoSubasta", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("procedimiento", "procedimiento", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("procedimiento.juzgado", "juzgado", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("procedimiento.juzgado.plaza", "plaza", CriteriaSpecification.LEFT_JOIN);
+
+		// Where
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		where.add(Restrictions.eq("auditoria.borrado", false));
+		where.add(Restrictions.eq("asunto.auditoria.borrado", false));
+
+		// Filtros Pestañas
+		where.addAll(restriccionesPorUsuarioExterno(usuLogado, query));
+		where.addAll(restriccionesDatosSubasta(filtro));
+		where.addAll(restriccionesCliente(filtro, query));
+		where.addAll(restriccionesContrato(filtro, usuLogado, query));
+		where.addAll(restriccionesJerarquia(filtro, query));
+		where.addAll(restriccionesAsunto(filtro));
+
+		// Añadir filtros a la consulta
+		for (Criterion condicion : where) {
+			query.add(condicion);
+		}
+
+		query.addOrder(Order.asc("id"));
+		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+
+		return query.list();
 	}
 
+	/**
+	 * Metodo de ayuda (buscarSubastasExcel)
+	 * @return devuelve un listado de proyecciones para la exportacion a excel de subastas.
+	 */
+	private ProjectionList selectSubastasExcel(Boolean isCount) {
+		ProjectionList select = Projections.projectionList();
+
+		// Realizar solo un count
+		if(isCount){
+			select.add(Projections.count("id").as("count"));
+			return select;
+		}
+
+		select.add(Projections.property("fechaSolicitud").as("fechaSolicitud"));
+		select.add(Projections.property("fechaAnuncio").as("fechaAnuncio"));
+		select.add(Projections.property("fechaSenyalamiento").as("fechaSenyalamiento"));
+		select.add(Projections.property("estadoSubasta.descripcion").as("estadoSubastaDescripcion"));
+		select.add(Projections.property("tasacion").as("tasacion"));
+		select.add(Projections.property("embargo").as("embargo"));
+		select.add(Projections.property("infoLetrado").as("infoLetrado"));
+		select.add(Projections.property("instrucciones").as("instrucciones"));
+		select.add(Projections.property("subastaRevisada").as("subastaRevisada"));
+		select.add(Projections.property("cargasAnteriores").as("cargasAnteriores"));
+		select.add(Projections.property("totalImporteAdjudicado").as("totalImporteAdjudicado"));
+		select.add(Projections.property("asunto.codigoExterno").as("codigoExterno"));
+		select.add(Projections.property("asunto.nombre").as("nombre"));
+		select.add(Projections.property("propiedadAsunto.descripcion").as("propiedadAsunto"));
+		select.add(Projections.property("gestionAsunto.descripcion").as("gestionAsunto"));
+		select.add(Projections.property("procedimiento.codigoProcedimientoEnJuzgado").as("nAutos"));
+		select.add(Projections.property("juzgado.descripcion").as("juzgado"));
+		select.add(Projections.property("plaza.descripcion").as("plaza"));
+		select.add(Projections.property("asunto").as("asunto"));
+		return select;
+	}
+
+	/**
+	 * Metodo de ayuda (buscarSubastasExcel)
+	 * @param filtro datos que vienen de la web
+	 * @return devuelve las restricciones aplicar a la consutla
+	 */
+	private List<Criterion> restriccionesAsunto(NMBDtoBuscarSubastas filtro) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (!StringUtils.emtpyString(filtro.getGestion())) {
+			where.add(Restrictions.eq("gestionAsunto.codigo", filtro.getGestion()));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getPropiedad())) {
+			where.add(Restrictions.eq("propiedadAsunto.codigo", filtro.getPropiedad()));
+		}
+
+		return where;
+	}
+
+	/**
+	 * Metodo de ayuda (buscarSubastasExcel)
+	 * @param filtro datos que vienen de la web
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @return devuelve las restricciones aplicar a la consutla
+	 */
+	private List<Criterion> restriccionesJerarquia(NMBDtoBuscarSubastas filtro, Criteria query) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (!StringUtils.emtpyString(filtro.getCodigoZona())) {
+			query.createAlias("contrato.oficinaContable", "oficinaContable");
+			query.createAlias("oficinaContable.zona", "oficinaContableZona");
+
+			where.add(Restrictions.in("oficinaContableZona.codigo", filtro.getCodigoZona().split(",")));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getCodigoZonaAdm())) {
+			query.createAlias("contrato.oficinaAdministrativa", "oficinaAdministrativa");
+			query.createAlias("oficinaAdministrativa.zona", "oficinaAdministrativaZona");
+
+			where.add(Restrictions.in("oficinaAdministrativaZona.codigo", filtro.getCodigoZonaAdm().split(",")));
+		}
+
+		return where;
+	}
+
+	/**
+	 * Metodo de ayuda (buscarSubastasExcel)
+	 * @param filtro datos que vienen de la web
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @return devuelve las restricciones aplicar a la consutla
+	 */
+	private List<Criterion> restriccionesContrato(NMBDtoBuscarSubastas filtro, Usuario usuLogado, Criteria query) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (necesitaContratos(filtro, usuLogado)) {
+			query.createAlias("asunto.expediente", "expediente", CriteriaSpecification.LEFT_JOIN);
+			query.createAlias("expediente.contratos", "expcontrato");
+			query.createAlias("expcontrato.contrato", "contrato");
+
+			where.add(Restrictions.eq("expcontrato.auditoria.borrado", false));
+			where.add(Restrictions.eq("expcontrato.sinActuacion", false));
+
+			if (!StringUtils.emtpyString(filtro.getNroContrato())) {
+				where.add(Restrictions.like("contrato.nroContrato", filtro.getNroContrato(), MatchMode.ANYWHERE));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getStringEstadosContrato())) {
+				query.createAlias("contrato.estadoContrato", "estadoContrato");
+				where.add(Restrictions.in("estadoContrato.codigo", filtro.getStringEstadosContrato().split(",")));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getTiposProductoEntidad())) {
+				query.createAlias("contrato.tipoProductoEntidad", "tipoProductoEntidad");
+				where.add(Restrictions.in("tipoProductoEntidad.codigo", filtro.getTiposProductoEntidad().split(",")));
+			}
+		}
+
+		return where;
+	}
+
+	/**
+	 * Metodo de ayuda (buscarSubastasExcel)
+	 * @param filtro datos que vienen de la web
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @return devuelve las restricciones aplicar a la consutla
+	 */
+	private List<Criterion> restriccionesCliente(NMBDtoBuscarSubastas filtro, Criteria query) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		Boolean filtroClienteInformado = Boolean.valueOf((!StringUtils.emtpyString(filtro.getCodigoCliente()) 
+										|| !StringUtils.emtpyString(filtro.getNombre()) 
+										|| !StringUtils.emtpyString(filtro.getApellidos())
+										|| !StringUtils.emtpyString(filtro.getNif()) 
+										|| !StringUtils.emtpyString(filtro.getTipoPersona())));
+
+		if (filtroClienteInformado) {
+
+			query.createAlias("procedimiento.personasAfectadas", "persona", CriteriaSpecification.LEFT_JOIN);
+
+			if (!StringUtils.emtpyString(filtro.getCodigoCliente())) {
+				where.add(Restrictions.like("persona.codClienteEntidad", filtro.getCodigoCliente(), MatchMode.ANYWHERE));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getNombre())) {
+				where.add(Restrictions.like("persona.nombre", filtro.getNombre(), MatchMode.ANYWHERE).ignoreCase());
+			}
+
+			if (!StringUtils.emtpyString(filtro.getApellidos())) {
+				String[] apellidos = filtro.getApellidos().split(" ");
+
+				// Distingue entre apellido1 espacio apellido2 y solo un apellido, el cual podria ser el primero o el segundo.
+				if (apellidos.length >= 2) {
+					query.add(Restrictions.like("persona.apellido1", apellidos[0], MatchMode.ANYWHERE).ignoreCase());
+					query.add(Restrictions.like("persona.apellido2", apellidos[1], MatchMode.ANYWHERE).ignoreCase());
+				} else if (apellidos.length == 1) {
+					query.add(
+							Restrictions.or(
+									Restrictions.like("persona.apellido1", apellidos[0], MatchMode.ANYWHERE).ignoreCase(), 
+									Restrictions.like("persona.apellido2", apellidos[0], MatchMode.ANYWHERE).ignoreCase()));
+				}
+			}
+
+			if (!StringUtils.emtpyString(filtro.getNif())) {
+				where.add(Restrictions.like("persona.docId", filtro.getNif(), MatchMode.ANYWHERE).ignoreCase());
+			}
+
+			if (!StringUtils.emtpyString(filtro.getTipoPersona())) {
+				query.createAlias("persona.tipoPersona", "tipoPersona");
+				where.add(Restrictions.eq("tipoPersona.codigo", filtro.getTipoPersona()));
+			}
+		}
+
+		return where;
+	}
+
+	/**
+	 * Metodo de ayuda (buscarSubastasExcel)
+	 * @param filtro datos que vienen de la web
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @return devuelve las restricciones aplicar a la consutla
+	 */
+	private List<Criterion> restriccionesPorUsuarioExterno(Usuario usuLogado, Criteria query) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (usuLogado.getUsuarioExterno()) {
+
+			// es MonoGestor
+			Query monogestorSubQuery = getSession().createQuery("SELECT a.id FROM Asunto a WHERE a.gestor.usuario.id = " + usuLogado.getId());
+			List<Object> asuntoIds = monogestorSubQuery.list();
+
+			Criterion monoGestor = null;
+
+			if (asuntoIds != null && !asuntoIds.isEmpty()) {
+				monoGestor = Restrictions.in("asunto.id", asuntoIds);
+			}
+
+			// es Multigestor
+			Criterion multiGestor = null;
+			List<Long> idsUsuariosGrupo = extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuLogado);
+
+			if (idsUsuariosGrupo.size() > 0) {
+				StringBuilder listIds = new StringBuilder();
+
+				for (Long id : idsUsuariosGrupo) {
+					listIds.append(",").append(id);
+				}
+
+				if (listIds.length() > 0) {
+					Query multiGestorQuery = getSession().createQuery("SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa WHERE gaa.gestor.usuario.id IN (" + listIds.deleteCharAt(0).toString() + ")");
+					multiGestor = Restrictions.in("asunto.id", multiGestorQuery.list());
+				}
+			}
+
+			if (multiGestor != null) {
+				if (monoGestor != null) {
+					where.add(Restrictions.or(monoGestor, multiGestor));
+				} else {
+					where.add(multiGestor);
+				}
+
+			} else {
+				// Gestor propio
+				Query propioGestorQuery = getSession().createQuery("SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa WHERE gaa.gestor.usuario.id = " + usuLogado.getId());
+				Criterion propioGestor = Restrictions.in("asunto.id", propioGestorQuery.list());
+
+				if (monoGestor != null) {
+					where.add(Restrictions.or(monoGestor, propioGestor));
+				} else {
+					where.add(propioGestor);
+				}
+			}
+
+			query.createAlias("asunto.estadoAsunto", "estadoAsunto", CriteriaSpecification.LEFT_JOIN);
+			where.add(
+					Restrictions.not(
+							Restrictions.in("estadoAsunto.codigo", new String[] { DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO, DDEstadoAsunto.ESTADO_ASUNTO_CERRADO })));
+		}
+
+		return where;
+	}
+
+	/**
+	 * Metodo de ayuda (buscarSubastasExcel)
+	 * @param filtro datos que vienen de la web
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @return devuelve las restricciones aplicar a la consutla
+	 */
+	private List<Criterion> restriccionesDatosSubasta(NMBDtoBuscarSubastas filtro) {
+
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (filtro.getId() != null) {
+			where.add(Restrictions.eq("id", filtro.getId()));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getNumAutos())) {
+			where.add(Restrictions.like("procedimiento.codigoProcedimientoEnJuzgado", filtro.getNumAutos(), MatchMode.ANYWHERE));
+		}
+
+		try {
+
+			SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("MM/dd/yyyy");
+			
+			if (!StringUtils.emtpyString(filtro.getFechaSolicitudDesde())) {
+				where.add(Restrictions.ge("subasta.fechaSolicitud", formatoFechaFiltroWeb.parse(filtro.getFechaSolicitudDesde())));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getFechaSolicitudHasta())) {
+				where.add(Restrictions.le("subasta.fechaSolicitud", formatoFechaFiltroWeb.parse(filtro.getFechaSolicitudHasta())));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getFechaAnuncioDesde())) {
+				where.add(Restrictions.ge("subasta.fechaAnuncio", formatoFechaFiltroWeb.parse(filtro.getFechaAnuncioDesde())));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getFechaAnuncioHasta())) {
+				where.add(Restrictions.le("subasta.fechaAnuncio", formatoFechaFiltroWeb.parse(filtro.getFechaAnuncioHasta())));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getFechaSenyalamientoDesde())) {
+				where.add(Restrictions.ge("subasta.fechaSenyalamiento", formatoFechaFiltroWeb.parse(filtro.getFechaSenyalamientoDesde())));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getFechaSenyalamientoHasta())) {
+				where.add(Restrictions.le("subasta.fechaSenyalamiento", formatoFechaFiltroWeb.parse(filtro.getFechaSenyalamientoHasta())));
+			}
+
+		} catch (ParseException e) {
+			logger.error(e.getLocalizedMessage());
+		}
+
+		if (!StringUtils.emtpyString(filtro.getIdComboInfLetradoCompleto())) {
+			where.add(Restrictions.eq("infoLetrado", "1".equals(filtro.getIdComboInfLetradoCompleto())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getIdComboInstruccionesCompletadas())) {
+			where.add(Restrictions.eq("instrucciones", "1".equals(filtro.getIdComboInstruccionesCompletadas())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getIdComboSubastaRevisada())) {
+			where.add(Restrictions.eq("subastaRevisada", "1".equals(filtro.getIdComboSubastaRevisada())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getComboFiltroEstadoDeGestion())) {
+			where.add(Restrictions.in("estadoSubasta.codigo", filtro.getComboFiltroEstadoDeGestion().split(",")));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getTotalCargasAnterioresDesde())) {
+			where.add(Restrictions.ge("cargasAnteriores", filtro.getTotalCargasAnterioresDesde()));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getTotalCargasAnterioresHasta())) {
+			where.add(Restrictions.le("cargasAnteriores", filtro.getTotalCargasAnterioresHasta()));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getTotalImporteAdjudicadoDesde())) {
+			where.add(Restrictions.ge("totalImporteAdjudicado", filtro.getTotalImporteAdjudicadoDesde()));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getTotalImporteAdjudicadoHasta())) {
+			where.add(Restrictions.le("totalImporteAdjudicado", filtro.getTotalImporteAdjudicadoHasta()));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getIdComboTasacionCompletada())) {
+			where.add(Restrictions.eq("tasacion", "1".equals(filtro.getIdComboTasacionCompletada())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getIdComboEmbargo())) {
+			where.add(Restrictions.eq("embargo", "1".equals(filtro.getIdComboEmbargo())));
+		}
+
+		return where;
+	}
+	
 	public Page buscarSubastasPaginados(NMBDtoBuscarSubastas dto,
 			Usuario usuLogado) {
 		// Establece el orden de la búsqueda
@@ -118,7 +487,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				",'yyyyMMdd')) <= ").concat(fechaEnNumero));
 
 	}
-
+	
 	private String generarHQLBuscarSubastasPaginados(NMBDtoBuscarSubastas dto,
 			Usuario usuLogado) {
 		StringBuffer hqlSelect = new StringBuffer();
@@ -460,7 +829,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			return "and (" + monogestor + " or " + filtroGestorPropio(usuLogado.getId()) + ")";
 		
 	}
-	
+		
 	private String filtroGestorPropio(Long idUsuario) {
 		if (Checks.esNulo(idUsuario))
 			return "";

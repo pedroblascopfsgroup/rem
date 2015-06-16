@@ -1,5 +1,6 @@
 package es.pfsgroup.procedimientos.subasta;
 
+import es.capgemini.devon.bo.Executor;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +13,13 @@ import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
+import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastasServicioTasacionDelegateApi;
@@ -34,9 +41,16 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
 	
 	@Autowired
 	protected ApiProxyFactory proxyFactory;
+        
+	@Autowired
+	private GenericABMDao genericDao;
+        
+	@Autowired
+	private Executor executor;
 	
     /**
      * Solicita un número de activo para cada bien.
+     * @param executionContext
      * @throws Exception e
      */
     @Override
@@ -48,7 +62,7 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
 
 		// Si el procedimiento está acabado sale:
 		if (prc.getEstadoProcedimiento().getCodigo() == DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO ||
-				prc.getEstadoProcedimiento().getCodigo() == DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO) {
+                                prc.getEstadoProcedimiento().getCodigo() == DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO) {
 			executionContext.getToken().signal(TRANSICION_FIN);
 			return;
 		}
@@ -98,13 +112,38 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
 				if (tieneNumeroActivo && !tasacionValida) {
 					// llamada solicita_tasacion
 					proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarTasacionByPrcId(bien.getId(), prc.getId());
+                                        
+                                        String mensaje = "Solicitud autom&aacute;tica de tasaci&oacute;n";
+                                        mensaje += "Activo n. " + nmbBien.getNumeroActivo() + " | " + prc.getNombreProcedimiento();
+                                        // llamada a generar Notificacion
+					notificarGestorSubasta(prc.getId(),  mensaje);
 				}
-				
 			}
 		}
 
 		// En cualquier caso finaliza el trámite.
 		executionContext.getToken().signal(TRANSICION_FIN);
+    }
+    
+    private void notificarGestorSubasta(Long idProcedimiento, String textoNotificacion){
+    	
+        String subtipoTarea = "NTGPS";
+
+        SubtipoTarea st = genericDao.get(SubtipoTarea.class, genericDao
+                        .createFilter(FilterType.EQUALS, "codigoSubtarea", subtipoTarea));
+
+        if (st == null) {
+                logger.warn("No se ha configurado el Subtipo Tarea Base "
+                                + subtipoTarea
+                                + ", no se va a mandar la segunda notificaci�n");
+        } else {
+                proxyFactory.proxy(TareaNotificacionApi.class).crearNotificacion(
+                                idProcedimiento,
+                                DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, 
+                                st.getCodigoSubtarea(),
+                                textoNotificacion);
+        }
+    	
     }
 
 }

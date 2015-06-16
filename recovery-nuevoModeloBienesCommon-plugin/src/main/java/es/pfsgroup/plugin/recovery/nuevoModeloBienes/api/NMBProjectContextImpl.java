@@ -39,6 +39,8 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private List<String> tiposPrcAdjudicados;
 	private Map<String, String> mapaTiposPrc;
 	private Map<String, String> tareasCierreDeuda;
+	private List<String> codigosSubastaValidacion;
+	private List<String> codigosSubastas;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -194,6 +196,29 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 
 	public void setTareasCierreDeuda(Map<String, String> tareasCierreDeuda) {
 		this.tareasCierreDeuda = tareasCierreDeuda;
+	}
+
+	public List<String> getCodigosSubastaValidacion(){
+		
+		return codigosSubastaValidacion; 
+		
+	}
+	
+	public void setCodigosSubastaValidacion( List<String> codigosSubastaValidacion ){
+		
+		this.codigosSubastaValidacion = codigosSubastaValidacion; 
+	}
+	
+	public List<String> getCodigosSubastas(){
+		
+		return codigosSubastas;
+		
+	}
+	
+	public void setCodigosSubastas(List<String> codigosSubastas){
+		
+		this.codigosSubastas = codigosSubastas ;
+		
 	}
 	
 }

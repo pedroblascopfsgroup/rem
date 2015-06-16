@@ -73,7 +73,7 @@
 				,remoteSort : false
 			});
 			
-			antIntSt.on('load', setTituloTabla);
+			//antIntSt.on('load', setTituloTabla);
 
 
 			var externo = Ext.data.Record.create([
@@ -119,17 +119,23 @@
 			]);
 
 
-			function getTituloTabla(){
+			function getTituloTabla(contador){
+			
+			
 				var titulo 	= '<s:message code="menu.clientes.consultacliente.antecedentesTab.antInt" text="**Antecedentes Internos"/>';
-				titulo += ' (' +antIntSt.getCount() + ')';
+				
+				// FASE-1362
+				//titulo += ' (' +antIntSt.getCount() + ')';
+				Ext.isEmpty(contador) ? contador = 0: contador = contador;
+				titulo += ' (' + contador + ')';
 	
 				return titulo;			
 			}			
 			
-			function setTituloTabla()
+			function setTituloTabla(contador)
 			{
 				
-				panel.antInternosGrid.setTitle(getTituloTabla());								
+				panel.antInternosGrid.setTitle(getTituloTabla(contador));								
 			}				
 				
 				
@@ -279,6 +285,7 @@
 
          fechaVerificacion.setValue(data.antecedentes.fechaVerificacion);
          observaciones.setValue(data.antecedentes.observaciones);
+         setTituloTabla(data.antecedentes.numReincidenciasInterno);
          
 		}
    

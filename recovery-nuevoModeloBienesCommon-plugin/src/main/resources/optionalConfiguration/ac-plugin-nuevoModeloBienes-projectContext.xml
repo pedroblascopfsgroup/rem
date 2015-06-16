@@ -43,7 +43,19 @@
 				<entry key="CelebracionSubastaSareb" value="P409_CelebracionSubasta"/>
 			</map>
 		</property>
-	</bean>
+		<property name="codigosSubastaValidacion">
+			<list>
+				<value>P409</value>
+			</list>
+		</property>
+		
+		<property name="codigosSubastas">
+			<list>
+				<value>P409</value>
+				<value>P401</value>
+			</list>
+		</property>
+	</bean>	
 	
 	<!-- Implementaciones por defecto-->
 	<bean id="nmbCommonProjectContext" parent="nmbCommonProjectContextDefault"/>

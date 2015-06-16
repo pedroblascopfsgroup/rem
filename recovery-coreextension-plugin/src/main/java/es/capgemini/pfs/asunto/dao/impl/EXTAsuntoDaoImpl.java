@@ -607,7 +607,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		final int bufferSize = 1024;
 		StringBuffer hql = new StringBuffer(bufferSize);
 
-		hql.append("from Asunto a where a.id in ");
+		hql.append("from Asunto a ");
+		hql.append(" JOIN FETCH a.estadoAsunto ");
+		hql.append(" LEFT JOIN FETCH a.fichaAceptacion ");
+		hql.append("where a.id in ");
 
 		/***
 		 * La lista de los par�metros din�nmicos debe venir de la siguiente

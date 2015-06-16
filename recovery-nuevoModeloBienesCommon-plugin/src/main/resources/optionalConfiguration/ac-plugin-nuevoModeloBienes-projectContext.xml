@@ -34,6 +34,26 @@
 				<entry key="POSESION" value="P416"/>
 				<entry key="GESTION-LLAVES" value="P417"/>
 			</map>
+		</property>		
+		<property name="tareasCierreDeuda">
+			<map>
+				<entry key="SenyalamientoSubastaBankia" value="P401_SenyalamientoSubasta"/>
+				<entry key="CelebracionSubastaBankia" value="P401_CelebracionSubasta"/>
+				<entry key="SenyalamientoSubastaSareb" value="P409_SenyalamientoSubasta"/>
+				<entry key="CelebracionSubastaSareb" value="P409_CelebracionSubasta"/>
+			</map>
+		</property>
+		<property name="codigosSubastaValidacion">
+			<list>
+				<value>P409</value>
+			</list>
+		</property>
+		
+		<property name="codigosSubastas">
+			<list>
+				<value>P409</value>
+				<value>P401</value>
+			</list>
 		</property>
 	</bean>	
 	

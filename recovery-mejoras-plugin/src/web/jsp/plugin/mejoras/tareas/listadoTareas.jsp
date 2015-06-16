@@ -17,7 +17,7 @@
 	var buttonsRTE = <app:includeArray files="${buttonsRightTarEspera}" />;
 	var buttonsLTE = <app:includeArray files="${buttonsLeftTarEspera}" />;
 	var buttonsRNot=<app:includeArray files="${buttonsRightNotificacion}" />;
-	var buttonsLNot=<app:includeArray files="${buttonsLeftNotificacion}" />;
+	var buttonsLNot=<app:includeArray files="${buttonsLeftNotificacion}" />;12
 	var buttonsRAle=<app:includeArray files="${buttonsRightAlertas}" />;
 	var buttonsLAle=<app:includeArray files="${buttonsLeftAlertas}" />;
 	var buzonOptimizado='${buzonOptimizado}';
@@ -1240,6 +1240,40 @@
 			case app.subtipoTarea.CODIGO_TAREA_SOLICITUD_PRORROGA_TOMADECISION:
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'cabeceraProcedimiento');
 			break;
+            case 'NTGPS':
+            
+                var w = app.openWindow({
+                                flow : 'tareas/consultaNotificacion'
+                                ,title : 'Notificacion'
+                                ,width:400
+                                ,params : {
+                                                idEntidad: rec.get('idEntidad')
+                                                ,codigoTipoEntidad: rec.get('codigoEntidadInformacion')
+                                                ,descripcion: rec.get('descripcion')
+                                                ,fecha: rec.get('fcreacionEntidad')
+                                                ,situacion: rec.get('codigoSituacion')
+                                                ,descripcionTareaAsociada: rec.get('descripcionTareaAsociada')
+                                                ,idTareaAsociada: rec.get('idTareaAsociada')
+                                                ,idTarea:rec.get('id')
+                                                ,tipoTarea:rec.get('tipoTarea')
+                                }
+                        });
+                        w.on(app.event.CANCEL, function(){ 
+                            w.close();
+                        });
+                        w.on(app.event.DONE, function(){
+                            w.close();
+                            tareasStore.webflow(paramsBusquedaInicial);
+                            //Recargamos el arbol de tareas
+                            app.recargaTree();
+                        });
+                        w.on(app.event.OPEN_ENTITY, function(){
+                            w.close();
+                            //Abre docadjunta del procedimiento
+                            app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tabAdjuntosAsunto');
+                        });
+            break;
+
             case app.subtipoTarea.CODIGO_TAREA_PROPUESTA_BORRADO_OBJETIVO:
                 var idObjetivo = rec.get('idEntidad');
                 var w = app.openWindow({

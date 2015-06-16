@@ -27,10 +27,20 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TIPO_PROCEDIMIENTO_POSESION = "POSESION";
 	public static final String CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES = "GESTION-LLAVES";
 	
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY = "HYCelebracionSubastaSareb";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_HY = "HYSenyalamientoSubastaSareb";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_BANKIA = "CelebracionSubastaBankia";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA = "SenyalamientoSubastaBankia";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK = "CelebracionSubastaSareb";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK = "SenyalamientoSubastaSareb";
+	
 	private Set<String> tareasStopValidarLotesSubasta;
 	private Long nivelZonaOficinaGestoraEnInformes;
 	private List<String> tiposPrcAdjudicados;
 	private Map<String, String> mapaTiposPrc;
+	private Map<String, String> tareasCierreDeuda;
+	private List<String> codigosSubastaValidacion;
+	private List<String> codigosSubastas;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -177,6 +187,38 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		lote.setObservacionesComite(observacionesComite);
 		lote.setEstado(estadoLote);;
 		lote.setFechaEstado(fecha);
+	}
+	
+	@Override
+	public Map<String, String> getTareasCierreDeuda() {
+		return tareasCierreDeuda;
+	}
+
+	public void setTareasCierreDeuda(Map<String, String> tareasCierreDeuda) {
+		this.tareasCierreDeuda = tareasCierreDeuda;
+	}
+
+	public List<String> getCodigosSubastaValidacion(){
+		
+		return codigosSubastaValidacion; 
+		
+	}
+	
+	public void setCodigosSubastaValidacion( List<String> codigosSubastaValidacion ){
+		
+		this.codigosSubastaValidacion = codigosSubastaValidacion; 
+	}
+	
+	public List<String> getCodigosSubastas(){
+		
+		return codigosSubastas;
+		
+	}
+	
+	public void setCodigosSubastas(List<String> codigosSubastas){
+		
+		this.codigosSubastas = codigosSubastas ;
+		
 	}
 	
 }

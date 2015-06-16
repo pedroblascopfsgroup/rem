@@ -1,18 +1,27 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
@@ -27,18 +36,26 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.APPConstants;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -64,19 +81,26 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
+import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
+import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 @Service("subastaManager")
 public class SubastaManager implements SubastaApi {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
+	
+	private static final String DEVON_PROPERTIES = "devon.properties";
+	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
+	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
+	private static final String DEVON_HOME = "DEVON_HOME";
+	private static final String PROYECTO_HAYA = "HAYA";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -106,8 +130,7 @@ public class SubastaManager implements SubastaApi {
 	NMBProjectContext projectContext;
 
 	@Resource
-    private MessageService messageService;
-	
+    private MessageService messageService;	
 	
 	@Override
 	public List<Subasta> getSubastasAsunto(Long idAsunto) {
@@ -413,6 +436,13 @@ public class SubastaManager implements SubastaApi {
 		return bienes;
 	}
 	
+	@BusinessOperation(BO_NMB_SUBASTA_GET_BIENES_LOTE_SUBASTA)
+	public List<Bien> getBienesLoteSubasta(Long idLote){
+		LoteSubasta loteSubasta = genericDao.get(LoteSubasta.class, genericDao.createFilter(FilterType.EQUALS, "id", idLote), 
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		return loteSubasta.getBienes();
+	}
+	
 	@BusinessOperation(BO_NMB_SUBASTA_GET_DATOS_ACTA_COMITE)
 	public List<DatosActaComiteBean> getDatosActaComite(NMBDtoBuscarLotesSubastas dto){
 		
@@ -531,30 +561,33 @@ public class SubastaManager implements SubastaApi {
 		}
 		return page;
 	}	
-	
+
 	/**
-	 * Método para buscar subastas según filtros indicados en el DTO para EXCEL.
+	 * Metodo optimizado de busqueda de subastas para exportar a excel 
 	 */
-	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarSubastasXLS")
 	public FileItem buscarSubastasXLS(NMBDtoBuscarSubastas dto) {
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-		
-		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-		Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
-				
-		dto.setLimit(Integer.parseInt(param.getValor())+1);
-		List<Subasta> listaRetorno = subastaDao.buscarSubastasExcel(dto, usuarioLogado);
-				
-		Integer count = listaRetorno.size();
-		Integer limit = Integer.parseInt(param.getValor());
-				
-		if(count>limit){
-			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limit+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+
+		Parametrizacion parametroLimite = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+				Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
+
+		List<HashMap<String, Object>> resultadoCount = subastaDao.buscarSubastasExcel(dto, usuarioLogado, true);
+
+		if (resultadoCount.size() > 0) {
+			Integer numRegistrosExportar = (Integer) resultadoCount.get(0).get("count");
+			Integer limite = Integer.parseInt(parametroLimite.getValor());
+
+			if (numRegistrosExportar > limite) {
+				throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") + limite + " "
+						+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+			}
 		}
-		
-		return generarInformeBusquedaSubastas(listaRetorno);		
-	}			
+
+		List<HashMap<String, Object>> resultadosExportar = subastaDao.buscarSubastasExcel(dto, usuarioLogado, false);
+
+		return generarInformeBusquedaSubastas(resultadosExportar);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarTareasSubastaBankia")
@@ -681,20 +714,66 @@ public class SubastaManager implements SubastaApi {
 	 * @param listaSubastas
 	 * @return
 	 */
-	private FileItem generarInformeBusquedaSubastas(List<Subasta> listaSubastas){
-		String exportFileType = !Checks.esNulo(appProperties.getProperty("exportar.filetype.buscadorSubastas")) ? 
-				appProperties.getProperty("exportar.filetype.buscadorSubastas") : "XLS";
-		try {
-			if(exportFileType.equalsIgnoreCase("CSV")){
-				return generarInformeBusquedaSubastasCSV(listaSubastas);
-			}else{
-				return generarInformeBusquedaSubastasXLS(listaSubastas);				
+	private FileItem generarInformeBusquedaSubastas(List<HashMap<String, Object>> listaSubastas){
+		List<List<String>> valores = new ArrayList<List<String>>();
+
+		for (HashMap<String, Object> row : listaSubastas) {
+			List<String> filaExportar = new ArrayList<String>();
+
+			filaExportar.add(ObjectUtils.toString(row.get("nombre"))); 						// Asunto
+			filaExportar.add(ObjectUtils.toString(row.get("nAutos")));						// N.Autos
+			filaExportar.add(ObjectUtils.toString(row.get("fechaSolicitud")));				// F.Solicitud
+			filaExportar.add(ObjectUtils.toString(row.get("fechaAnuncio")));				// F.Anuncio
+			filaExportar.add(ObjectUtils.toString(row.get("fechaSenyalamiento")));			// F.Señalamiento
+			filaExportar.add(ObjectUtils.toString(row.get("estadoSubastaDescripcion")));	// Estado
+			filaExportar.add(ObjectUtils.toString(row.get("tasacion")));					// Tasación
+			filaExportar.add(ObjectUtils.toString(row.get("embargo")));						// Embargo
+			filaExportar.add(ObjectUtils.toString(row.get("infoLetrado")));					// Inf.Letrado
+			filaExportar.add(ObjectUtils.toString(row.get("instrucciones")));				// Instrucciones
+			filaExportar.add(ObjectUtils.toString(row.get("subastaRevisada")));				// Subasta Revisada
+			filaExportar.add(ObjectUtils.toString(row.get("cargasAnteriores")));			// Total cargas anteriores
+			filaExportar.add(ObjectUtils.toString(row.get("totalImporteAdjudicado"))); 		// Total importe adjudicado
+			filaExportar.add(ObjectUtils.toString(row.get("codigoExterno")));				// Codigo externo
+			filaExportar.add(ObjectUtils.toString(row.get("propiedadAsunto")));				// Propiedad
+			filaExportar.add(ObjectUtils.toString(row.get("gestionAsunto")));				// Gestion
+			filaExportar.add(ObjectUtils.toString(row.get("plaza")));						// Plaza
+			filaExportar.add(ObjectUtils.toString(row.get("juzgado")));						// Juzgado
+
+			EXTAsunto asunto = null;
+			if (row.get("asunto") != null) {
+				asunto = (EXTAsunto) row.get("asunto");
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			logger.error(e);
+
+			if (asunto != null && asunto.getGestor() != null && asunto.getGestor().getDespachoExterno()!=null) {
+				filaExportar.add(ObjectUtils.toString(asunto.getGestor().getDespachoExterno().getDespacho()));		// Despacho gestor
+			} else {
+				filaExportar.add("");
+			}
+
+			if (asunto != null && asunto.getProcurador() != null && asunto.getProcurador().getUsuario() != null) {
+				filaExportar.add(ObjectUtils.toString(asunto.getProcurador().getUsuario().getApellidoNombre()));	// Procurador
+			} else {
+				filaExportar.add("");
+			}
+
+			valores.add(filaExportar);
 		}
-		return null;
+
+		String nombreFichero = (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "-listadoBusquedaSubastas.xls";
+		String rutaCompletaFichero = !Checks.esNulo(appProperties.getProperty("files.temporaryPath")) ? appProperties.getProperty("files.temporaryPath") : "";
+
+		rutaCompletaFichero += File.separator.equals(rutaCompletaFichero.substring(rutaCompletaFichero.length()-1)) || rutaCompletaFichero.length() == 0 ? nombreFichero : File.separator+nombreFichero; 
+
+		//Creo el fichero excel
+		HojaExcel hojaExcel = new HojaExcel();
+		hojaExcel.crearNuevoExcel(rutaCompletaFichero, getListaCabecera(), valores);
+
+		FileItem excelFileItem = new FileItem(hojaExcel.getFile());
+		excelFileItem.setFileName(rutaCompletaFichero);
+		excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
+		excelFileItem.setLength(hojaExcel.getFile().length());
+
+		return excelFileItem;
 	}
 
 	private ArrayList<String> getListaCabecera(){
@@ -726,216 +805,6 @@ public class SubastaManager implements SubastaApi {
 		return cabeceras;
 	}
 	
-	/**
-	 * Genera un archivo de texto UTF8, con separadores de columna y que lleva el resultado de la b�squeda de subastas
-	 * @param listaSubastas
-	 * @return
-	 */
-	private FileItem generarInformeBusquedaSubastasCSV(List<Subasta> listaSubastas) throws Exception {
-		String nombreFichero = (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "-listadoBusquedaSubastas.csv";
-		String rutaCompletaFichero = !Checks.esNulo(appProperties.getProperty("files.temporaryPath")) ? 
-				appProperties.getProperty("files.temporaryPath") : "";
-		rutaCompletaFichero += File.separator.equals(rutaCompletaFichero.substring(rutaCompletaFichero.length()-1)) || rutaCompletaFichero.length() == 0 ? nombreFichero : File.separator+nombreFichero;
-
-		List<String> cabeceras = new ArrayList<String>();
-		String cabecerasRegCSV = new String();
-		String datosSubastasRegCSV = new String();
-		
-        FileWriter fstream = new FileWriter(rutaCompletaFichero, false);
-        BufferedWriter out = new BufferedWriter(fstream);
-        
-		//Cabecera de las columnas
-		cabeceras = getListaCabecera();
-		
-		//Carga las cabeceras en un registro para archivos CSV
-		for (int i=0; i<cabeceras.size(); i++) {
-        	cabecerasRegCSV += cabeceras.get(i) + ",";
-        }
-        
-        //Escribe las cabeceras en el archivo CSV
-		out.write(cabecerasRegCSV);
-		out.newLine();
-		
-		//Lista todos los registros de Subastas y los carga en registros para archivos CSV
-		for (Subasta subasta : listaSubastas) {
-			if(!Checks.esNulo(subasta.getAsunto())){
-				datosSubastasRegCSV = (Checks.esNulo(subasta.getAsunto().getNombre())? "" :  subasta.getAsunto().getNombre().replaceAll(",",".")) + ",";
-			} else {
-				datosSubastasRegCSV = ",";
-			}
-			if(!Checks.esNulo(subasta.getProcedimiento())){
-				datosSubastasRegCSV += (Checks.esNulo(subasta.getProcedimiento().getCodigoProcedimientoEnJuzgado())? "" : subasta.getProcedimiento().getCodigoProcedimientoEnJuzgado()) + ",";
-			} else {
-				datosSubastasRegCSV = ",";				
-			}
-			//TODO - REVISAR EN BANKIA
-			datosSubastasRegCSV += (Checks.esNulo(subasta.getFechaSolicitud())? "" : dateToString(subasta.getFechaSolicitud()) ) + ",";
-			datosSubastasRegCSV += (Checks.esNulo(subasta.getFechaAnuncio())? "" : dateToString(subasta.getFechaAnuncio()) ) + ",";
-			datosSubastasRegCSV += (Checks.esNulo(subasta.getFechaSenyalamiento())? "" : dateToString(subasta.getFechaSenyalamiento()) ) + ",";
-			datosSubastasRegCSV += (Checks.esNulo(subasta.getEstadoSubasta().getDescripcion())? "" : subasta.getEstadoSubasta().getDescripcion().replaceAll(",",".")) + ",";
-			//TODO -REVISAR EN BANKIA
-			if(!Checks.esNulo(appProperties.getProperty(APPConstants.PROYECTO))){
-				datosSubastasRegCSV += (booleanToString(subasta.isTasacion(appProperties.getProperty(APPConstants.PROYECTO))) ) + ",";
-			} else{
-				datosSubastasRegCSV += (Checks.esNulo(subasta.isTasacion())? "" : booleanToString(subasta.isTasacion())) + ",";
-			}
-
-			datosSubastasRegCSV += (Checks.esNulo(subasta.getEmbargo())? "" : booleanToString(subasta.getEmbargo()) ) + ",";
-			datosSubastasRegCSV += (Checks.esNulo(subasta.isInfoLetrado())? "" : booleanToString(subasta.isInfoLetrado()) ) + ",";
-			datosSubastasRegCSV += (Checks.esNulo(subasta.isInstrucciones())? "" : booleanToString(subasta.isInstrucciones()) ) + ",";
-			datosSubastasRegCSV += (Checks.esNulo(subasta.isSubastaRevisada())? "" : booleanToString(subasta.isSubastaRevisada()) ) + ",";
-			datosSubastasRegCSV += (Checks.esNulo(subasta.getCargasAnteriores())? "" : subasta.getCargasAnteriores()) + ",";				
-			datosSubastasRegCSV += (Checks.esNulo(subasta.getTotalImporteAdjudicado())? "" : subasta.getTotalImporteAdjudicado()) + ",";
-			
-			EXTAsunto asunto = (EXTAsunto) subasta.getAsunto();			
-			if (asunto!=null) {
-				datosSubastasRegCSV += (Checks.esNulo(asunto.getCodigoExterno())? "" : asunto.getCodigoExterno()) + ",";
-				datosSubastasRegCSV += (Checks.esNulo(asunto.getPropiedadAsunto())? "" : asunto.getPropiedadAsunto().getDescripcion().replaceAll(",",".")) + ",";
-				datosSubastasRegCSV += (Checks.esNulo(asunto.getGestionAsunto())? "" : asunto.getGestionAsunto().getDescripcion().replaceAll(",",".")) + ",";
-			} else {
-				datosSubastasRegCSV += ",";
-				datosSubastasRegCSV += ",";
-				datosSubastasRegCSV += ",";
-			}
-
-			if (!Checks.esNulo(subasta.getProcedimiento()) && !Checks.esNulo(subasta.getProcedimiento().getJuzgado())){
-				datosSubastasRegCSV += (Checks.esNulo(subasta.getProcedimiento().getJuzgado().getPlaza().getDescripcion())? "" : subasta.getProcedimiento().getJuzgado().getPlaza().getDescripcion().replaceAll(",",".")) + ",";
-				datosSubastasRegCSV += (Checks.esNulo(subasta.getProcedimiento().getJuzgado().getDescripcion())? "" : subasta.getProcedimiento().getJuzgado().getDescripcion().replaceAll(",",".")) + ",";
-			}else{
-				datosSubastasRegCSV += ",";
-				datosSubastasRegCSV += ",";				
-			}
-			if(!Checks.esNulo(subasta.getAsunto()) && !Checks.esNulo(subasta.getAsunto().getGestor())){
-				datosSubastasRegCSV += (Checks.esNulo(subasta.getAsunto().getGestor().getDespachoExterno().getDescripcion())? "" : subasta.getAsunto().getGestor().getDespachoExterno().getDescripcion().replaceAll(",",".")) + ",";
-			} else {
-				datosSubastasRegCSV += ",";				
-			}
-			if(!Checks.esNulo(subasta.getAsunto()) && !Checks.esNulo(subasta.getAsunto().getProcurador())){
-				datosSubastasRegCSV += (Checks.esNulo(subasta.getAsunto().getProcurador().getUsuario().getApellidoNombre())? "" : subasta.getAsunto().getProcurador().getUsuario().getApellidoNombre().replaceAll(",",".")) + ",";
-			} else {
-				datosSubastasRegCSV += ",";
-			}
-
-			//Almacena el nuevo registro en el archivo en disco
-            out.write(datosSubastasRegCSV);
-            out.newLine();
-            out.flush();
-             
-		}
-		
-		//Almacena los registros que han quedado cacheados
-		out.flush();
-        fstream.flush();
-        
-        //Cierra archivos
-		out.close();
-        fstream.close();
-        
-        //Env�a el archivo generado temporalmente a trav�s del navegador
-		File fCSV = new File(rutaCompletaFichero);
-		FileItem fiCSV = new FileItem(fCSV);
-		fiCSV.setFileName(rutaCompletaFichero);
-		fiCSV.setContentType("text/csv");
-		fiCSV.setLength(fCSV.length());
-	
-		return fiCSV;
-	}
-	
-	private FileItem generarInformeBusquedaSubastasXLS(List<Subasta> listaSubastas) throws Exception{
-		HojaExcel hojaExcel = new HojaExcel();
-		
-		String nombreFichero = (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "-listadoBusquedaSubastas.xls";
-		
-		List<String> cabeceras = new ArrayList<String>();
-		
-		List<List<String>> valores = new ArrayList<List<String>>();
-
-		//Cabecera de las columnas
-		cabeceras = getListaCabecera();
-		
-		for (Subasta subasta : listaSubastas) {
-			List<String> datosSubastas = new ArrayList<String>();
-			datosSubastas.add(subasta.getAsunto().getNombre());
-			datosSubastas.add(subasta.getProcedimiento().getCodigoProcedimientoEnJuzgado());
-			//TODO - REVISAR EN BANKIA
-			datosSubastas.add(dateToString(subasta.getFechaSolicitud()) );
-			datosSubastas.add(dateToString(subasta.getFechaAnuncio()) );
-			datosSubastas.add(dateToString(subasta.getFechaSenyalamiento()) );
-			if(!Checks.esNulo(subasta.getEstadoSubasta())){
-				datosSubastas.add(subasta.getEstadoSubasta().getDescripcion());
-			} else {
-				datosSubastas.add("");
-			}
-			//TODO -REVISAR EN BANKIA
-			if(!Checks.esNulo(appProperties.getProperty(APPConstants.PROYECTO))){
-				datosSubastas.add(booleanToString(subasta.isTasacion(appProperties.getProperty(APPConstants.PROYECTO))) );
-			} else{
-				datosSubastas.add(booleanToString(subasta.isTasacion()));
-			}
-
-			datosSubastas.add(booleanToString(subasta.getEmbargo()) );
-			datosSubastas.add(booleanToString(subasta.isInfoLetrado()) );
-			datosSubastas.add(booleanToString(subasta.isInstrucciones()) );
-			datosSubastas.add(booleanToString(subasta.isSubastaRevisada()) );
-			datosSubastas.add(subasta.getCargasAnteriores());				
-			datosSubastas.add(subasta.getTotalImporteAdjudicado());
-			
-			EXTAsunto asunto = (EXTAsunto) subasta.getAsunto();			
-			if (asunto!=null) {
-				datosSubastas.add(asunto.getCodigoExterno()!=null?asunto.getCodigoExterno():"");
-				datosSubastas.add(asunto.getPropiedadAsunto()!=null?asunto.getPropiedadAsunto().getDescripcion():"");
-				datosSubastas.add(asunto.getGestionAsunto()!=null?asunto.getGestionAsunto().getDescripcion():"");
-			} else {
-				datosSubastas.add("");
-				datosSubastas.add("");
-				datosSubastas.add("");
-			}
-			if(!Checks.esNulo(subasta.getProcedimiento()) && !Checks.esNulo(subasta.getProcedimiento().getJuzgado())){				
-				datosSubastas.add(subasta.getProcedimiento().getJuzgado().getDescripcion());
-				if(!Checks.esNulo(subasta.getProcedimiento().getJuzgado().getPlaza())){
-					datosSubastas.add(subasta.getProcedimiento().getJuzgado().getPlaza().getDescripcion());
-				}else{
-					datosSubastas.add("");
-				}
-			} else{
-				datosSubastas.add("");
-				datosSubastas.add("");
-			}
-			if(!Checks.esNulo(subasta.getAsunto())){
-				if(!Checks.esNulo(subasta.getAsunto().getGestor()) && !Checks.esNulo(subasta.getAsunto().getGestor().getDespachoExterno())){				
-					datosSubastas.add(subasta.getAsunto().getGestor().getDespachoExterno().getDescripcion());
-				}else{
-					datosSubastas.add("");
-				}
-				if(!Checks.esNulo(subasta.getAsunto().getProcurador()) && !Checks.esNulo(subasta.getAsunto().getProcurador().getUsuario())){				
-					datosSubastas.add(subasta.getAsunto().getProcurador().getUsuario().getApellidoNombre());
-				}else{
-					datosSubastas.add("");
-				}
-			}else{
-				datosSubastas.add("");
-				datosSubastas.add("");
-			}
-			
-			valores.add(datosSubastas);
-		}
-		
-		String rutaCompletaFichero = !Checks.esNulo(appProperties.getProperty("files.temporaryPath")) ? 
-				appProperties.getProperty("files.temporaryPath") : "";
-		rutaCompletaFichero += File.separator.equals(rutaCompletaFichero.substring(rutaCompletaFichero.length()-1)) || rutaCompletaFichero.length() == 0 ? nombreFichero : File.separator+nombreFichero; 
-
-		//Creo el fichero excel
-		hojaExcel.crearNuevoExcel(rutaCompletaFichero, cabeceras, valores);
-		
-		
-		FileItem excelFileItem = new FileItem(hojaExcel.getFile());
-		excelFileItem.setFileName(rutaCompletaFichero);
-		excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
-		excelFileItem.setLength(hojaExcel.getFile().length());
-		
-		return excelFileItem;
-	}
-	
 	@Override
 	@BusinessOperation(BO_NMB_SUBASTA_INFORME_SUBASTA_LETRADO)
 	public InformeSubastaLetradoBean getInformeSubastasLetrado(Long idSubasta) {
@@ -955,7 +824,8 @@ public class SubastaManager implements SubastaApi {
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)
-	public void guardaBatchAcuerdoCierre(BatchAcuerdoCierreDeuda autoCierreDeuda) {
+	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien) {
+		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idBien);
 		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 	}
 	
@@ -1207,8 +1077,238 @@ public class SubastaManager implements SubastaApi {
 		@BusinessOperation(BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT)
 		public Integer buscarSubastasXLSCount(NMBDtoBuscarSubastas dto) {
 			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-						
-			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado).size();	
+			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado,true).size();	
 		}
-	
+		
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
+		public Map<String, String> obtenerTareasCierreDeuda() {
+			 return projectContext.getTareasCierreDeuda();
+		}
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_ACTUALIZAR_INFORMACION_CIERRE_DEUDA)
+		public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto) {
+			Subasta subasta = subastaDao.get(Long.valueOf(dto.getIdSubasta()));
+			TipoJuzgado tipoJuzgado = (TipoJuzgado) genericDao.get(TipoJuzgado.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTipoJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			tipoJuzgado.setPlaza(tipoJuzgado.getPlaza());
+			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
+			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
+			try {
+				subasta.setFechaSenyalamiento(DateFormat.toDate(dto.getFechaSenyalamiento()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			boolean existeTareaSenyalamiento = tareaNoExisteOFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
+			boolean existeTareaCelebracion = tareaNoExisteOFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
+			// Si existe se actualizan los campos si no se lanzan las tareas
+			if(existeTareaSenyalamiento) {
+				actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
+				actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
+			}else{
+				//TODO hay que ver que hacer para crear las tareas y insertar los datos
+			}
+			if(existeTareaCelebracion) {
+				actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
+			}else{
+				//TODO hay que ver que hacer para crear las tareas y insertar los datos
+			}
+			subastaDao.save(subasta);
+		}
+		
+		private void actualizarTareaExternaValor(Long idValorNodoTarea, String valor) {
+			TareaExternaValor tareaExtValor = (TareaExternaValor) genericDao.get(TareaExternaValor.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", idValorNodoTarea),						
+					genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			tareaExtValor.setValor(valor);
+			genericDao.update(TareaExternaValor.class, tareaExtValor);
+		}
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA)
+		public boolean tareaNoExisteOFinalizada(Procedimiento procedimiento, String nombreNodo) {
+			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
+			return (Checks.esNulo(historicoPrc) || (!Checks.esNulo(historicoPrc) && Checks.esNulo(historicoPrc.getFechaFin())));
+		}
+		
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
+		public ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
+			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
+			return getValorNodoPrc(historicoPrc, valor);
+		}
+		
+		private HistoricoProcedimiento getNodo(Procedimiento procedimiento, String nombreNodo) {
+			HistoricoProcedimiento hPrc = null;
+			if ((!Checks.esNulo(procedimiento)) && (!Checks.esNulo(nombreNodo))) {
+				List<EXTHistoricoProcedimiento> listadoTareasProc = proxyFactory.proxy(EXTHistoricoProcedimientoApi.class).getListByProcedimientoEXT(procedimiento.getId());			
+				if (!Checks.esNulo(listadoTareasProc)) {
+					for (EXTHistoricoProcedimiento hp : listadoTareasProc) {
+						// Filtramos por el código de la tarea donde están los campos que
+						// necesitamos y nos quedamos con el último
+						if (!Checks.esNulo(hp.getCodigoTarea()) &&  nombreNodo.equals(hp.getCodigoTarea())) {
+							hPrc = hp;
+							break;
+						}
+					}
+				}
+			}
+			return hPrc;
+		}
+		
+		private ValorNodoTarea getValorNodoPrc(HistoricoProcedimiento hPrc, String valor) {
+			// Si hemos encontrado una tarea del tipo especificado
+			if (!Checks.esNulo(hPrc) && !Checks.esNulo(valor)) {
+				if (!Checks.esNulo(hPrc.getIdEntidad())) {
+					TareaNotificacion tareaSS = proxyFactory.proxy(TareaNotificacionApi.class).get(hPrc.getIdEntidad());
+					if (!Checks.esNulo(tareaSS)) {
+						if (!Checks.esNulo(tareaSS.getTareaExterna())) {
+							List<TareaExternaValor> listadoValores = tareaSS.getTareaExterna().getValores();
+							if (!Checks.esNulo(listadoValores)) {
+								for (TareaExternaValor val : listadoValores) {
+									if (valor.equals(val.getNombre())) {
+										return new ValorNodoTarea(val.getId(), val.getValor());
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
+		public List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien) {
+			Subasta subasta = subastaDao.get(idSubasta);
+			return subastaDao.findBatchAcuerdoCierreDeuda(subasta.getAsunto().getId(), subasta.getProcedimiento().getId(), idBien);
+		}
+
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
+		public void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBACDD) {
+			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
+				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
+			}
+			guardaBatchAcuerdoCierre(idSubasta, null);
+		} 
+		
+		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien) {
+			Subasta subasta = getSubasta(idSubasta);
+			Procedimiento procedimiento = subasta.getProcedimiento();
+			Auditoria auditoria = Auditoria.getNewInstance();
+			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
+			cierreDeuda.setIdProcedimiento(procedimiento.getId());
+			cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
+			cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
+			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
+			if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
+				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);	
+			}else{
+				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
+			}
+			cierreDeuda.setIdBien(idBien);
+			return cierreDeuda;
+		};
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
+		public List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
+			List<NMBBien> idBienesNoCierre = new ArrayList<NMBBien>();
+			for(Long idBien : idsBien) {
+				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
+				if(Checks.estaVacio(list)) {
+					guardaBatchAcuerdoCierre(idSubasta, idBien);
+				}else{
+					NMBBien bien = nmbBienDao.get(list.get(0).getIdBien());
+					idBienesNoCierre.add(bien);
+				}
+			}
+			return idBienesNoCierre;
+		} 
+		
+		public class ValorNodoTarea {
+			private Long idTareaNodoValor;
+			private String valor;
+			
+			public ValorNodoTarea() {
+			}
+			
+			public ValorNodoTarea(Long idTareaNodoValor, String valor) {
+				this.idTareaNodoValor = idTareaNodoValor;
+				this.valor = valor;
+			}
+			
+			/**
+			 * @return the idTareaNodoValor
+			 */
+			public Long getIdTareaNodoValor() {
+				return idTareaNodoValor;
+			}
+			/**
+			 * @param idTareaNodoValor the idTareaNodoValor to set
+			 */
+			public void setIdTareaNodoValor(Long idTareaNodoValor) {
+				this.idTareaNodoValor = idTareaNodoValor;
+			}
+			/**
+			 * @return the valor
+			 */
+			public String getValor() {
+				return valor;
+			}
+			/**
+			 * @param valor the valor to set
+			 */
+			public void setValor(String valor) {
+				this.valor = valor;
+			}
+			
+		}
+		
+		private String cargarProyectoProperties() {
+			String proyecto = "";	
+			Properties appProperties = cargarProperties(DEVON_PROPERTIES);
+			if (appProperties == null) {
+				System.out.println("No puedo consultar devon.properties");		
+			} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
+				proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
+			} else {
+				System.out.println("UVEM no instalado");
+			}
+			return proyecto;
+		}
+		
+		private Properties cargarProperties(String nombreProps) {
+			InputStream input = null;
+			Properties prop = new Properties();
+			
+			String devonHome = DEVON_HOME_BANKIA_HAYA;
+			if (System.getenv(DEVON_HOME) != null) {
+				devonHome = System.getenv(DEVON_HOME);
+			}
+			
+			try {
+				input = new FileInputStream("/" + devonHome + "/" + nombreProps);
+				prop.load(input);
+			} catch (IOException ex) {
+				System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
+			} finally {
+				if (input != null) {
+					try {
+						input.close();
+					} catch (IOException e) {
+						System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
+					}
+				}
+			}
+			return prop;
+		}
 }

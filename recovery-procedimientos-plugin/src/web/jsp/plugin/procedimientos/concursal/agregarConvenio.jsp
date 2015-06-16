@@ -21,7 +21,14 @@
 	<pfs:ddCombo name="inicio" labelKey="asunto.concurso.tabConvenio.inicio" label="**Origen" value="" dd="${inicios}" />
 	<pfs:ddCombo name="tipo" labelKey="asunto.concurso.tabConvenio.tipo" label="**Tipo" value="" dd="${tipos}" />
 	<pfs:ddCombo name="tipoAdhesion" labelKey="asunto.concurso.tabConvenio.Adhesion" label="**Adherirse" value="" dd="${tipoAdhesion}" />
-	<pfs:datefield name="fecha" labelKey="asunto.concurso.tabConvenio.fechaPropuesta" label="**Fecha propuesta" obligatory="true" value="${fecha_por_defecto}" />
+	
+	var fecha = new Ext.ux.form.XDateField({
+		name : 'fecha'
+		,fieldLabel : '<s:message code="asunto.concurso.tabConvenio.fechaPropuesta" text="**Fecha propuesta"/>'
+		,value: '${fecha_por_defecto}'
+		,allowBlank: false
+	});
+	
 	<pfs:currencyfield name="numeroProponentes" labelKey="asunto.concurso.tabConvenio.numProponentes" label="**Nº proponentes" value="" />
 	<pfs:currencyfield name="totalMasa" labelKey="asunto.concurso.tabConvenio.totalMasaPasiva" label="Total masa pasiva" value="" />
 	<pfs:currencyfield name="porcentaje" labelKey="asunto.concurso.tabConvenio.porcentajeSobreMasa" label="Porcentaje S/masa pasiva" value="" />
@@ -30,7 +37,7 @@
 	<pfs:textfield name="descripcion" width="510" labelKey="asunto.concurso.tabConvenios.observaciones" label="**Descripcion proponentes" value="" />
 	<pfs:textfield name="descripcionAdhesiones" width="490" labelKey="asunto.concurso.tabConvenio.descripAdhesiones" label="**Descripcion adhesiones" value="" />
 	<pfs:ddCombo name="alternativa" labelKey="plugin.ugas.asunto.concurso.tabConvenios.alternativa" label="Alternativa" value="" dd="${tipoAlternativa}" />	
-	
+
 		var descripcionTerceros = new Ext.form.TextArea({
 			fieldLabel:'<s:message code="asunto.concurso.tabConvenio.descripTerceros" text="**Descripción terceros"/>'
 			,width:170

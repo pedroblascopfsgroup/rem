@@ -14,8 +14,9 @@ var colorFondo = 'background-color: #473729;';
 var winWidth = 920;
 var winWidthAgregarBien= 950;
 var idSubasta;
+var bienSel='';
 
-var panel = new Ext.Panel({
+	var panel = new Ext.Panel({
 		title: '<s:message code="plugin.nuevoModeloBienes.subastas.tabTitle" text="**Subastas" />'
 		,autoHeight: true
 		,nombreTab : 'tabSubastas'			
@@ -130,7 +131,59 @@ var panel = new Ext.Panel({
 		}
 	});
 	
-	
+	var btnEditarInfoCierre = new Ext.Button({
+		text : '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEditarInfoCierre" text="**Editar información cierre" />'
+		,iconCls : 'icon_edit'
+		,disabled : true
+		,cls: 'x-btn-text-icon'
+        ,handler:function() {
+        	//la plantilla se elije en el controller
+			var plantilla='';
+	        var w = app.openWindow({
+					flow: 'subasta/editarInformacionCierre'
+					,params: {idSubasta:idSubasta}
+					,title: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEditarInfoCierre" text="**Editar información cierre" />'
+					,width: winWidth
+				});
+				w.on(app.event.DONE, function() {
+					w.close(); });
+				w.on(app.event.CANCEL, function(){ w.close(); });
+		}
+	});
+	 
+	var editarDescripcionAdjuntoExpediente = new  Ext.Button({
+		text:'<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcion" text="**Editar descripcion"/>'
+		,iconCls : 'icon_edit'
+		,handler : function() {
+			if (grid.getSelectionModel().getCount()>0){
+				if (grid.getSelectionModel().getSelected().get('id')!=''){
+    			var idAdjunto = grid.getSelectionModel().getSelected().get('id');
+    			var parametros = {
+								idAdjunto : idAdjunto
+					};
+    			var w= app.openWindow({
+                                         flow: '/pfs/subasta/editarInformacionCierre'
+                                         ,closable: true
+                                         ,width : 700
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />'
+                                         ,params: parametros
+                        });
+           	 		w.on(app.event.DONE, function(){
+								w.close();
+								recargarAdjuntos() ;
+								
+					});
+					w.on(app.event.CANCEL, function(){
+								 w.close(); 
+					});
+			
+			}else{
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+			}
+		}
+		}	
+		
+	});
 	
 	var gridSubastas = app.crearGrid(storeSubastas, cmSubasta, {
 		title : '<s:message code="plugin.nuevoModeloBienes.subastas.grid" text="**Subastas" />'
@@ -139,7 +192,7 @@ var panel = new Ext.Panel({
 		,autoWidth: true
 		,style:'padding-right:10px'
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-		,bbar: [btnInfSubasta, btnInstrucSubasta]
+		,bbar: [btnInfSubasta, btnInstrucSubasta <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnEditarInfoCierre</sec:authorize>]
 	});
 
 	gridSubastas.on('expand', function(){
@@ -160,14 +213,19 @@ var panel = new Ext.Panel({
 	
 		var rec = gridSubastas.getStore().getAt(rowIndex);
 		idSubasta = rec.get('id');
+		idBien = '';
+		idBienEnviarCierre ='';
 		var codEstadoSubasta = rec.get('codEstadoSubasta');
 				
 		if(idSubasta!=null && idSubasta!='') {
 			lotesStore.webflow({idSubasta:idSubasta});
+			disableBotonesCDDStore.webflow({idSubasta:idSubasta});
 		}
 		
 		btnInfSubasta.setDisabled(false);
 		btnInstrucSubasta.setDisabled(false);
+		btnInstrucLotes.setDisabled(true);
+
 		if (codEstadoSubasta == 'SUS' || codEstadoSubasta == 'CAN' || codEstadoSubasta == 'CEL' ) {
 			btnAgregarBien.setDisabled(true);
 			btnExcluirBien.setDisabled(true);
@@ -175,10 +233,6 @@ var panel = new Ext.Panel({
 			btnAgregarBien.setDisabled(false);
 			btnExcluirBien.setDisabled(false);
 		}
-		
-		btnInfSubasta.setDisabled(false);
-		btnInstrucSubasta.setDisabled(false);
-		btnInstrucLotes.setDisabled(true);
 	});
 	
 	
@@ -198,7 +252,7 @@ var panel = new Ext.Panel({
 		return coloredRender(value, meta, record);
 	};
 	
-var lotesRT = Ext.data.Record.create([
+	var lotesRT = Ext.data.Record.create([
 		{name:'idLote'}
 		,{name:'numLote'}
 		,{name:'pujaSin'}
@@ -210,6 +264,11 @@ var lotesRT = Ext.data.Record.create([
 		,{name:'70porCien'}
 		,{name:'observaciones'}
 		,{name:'bienes'}
+		,{name:'disableBotonesCDD'}		
+	]);
+	
+	var disableBotonesCDD = Ext.data.Record.create([
+		{name:'valorDisable'}
 	]);
 	
     var expanderLote = new Ext.ux.grid.RowExpander({
@@ -241,8 +300,25 @@ var lotesRT = Ext.data.Record.create([
         )
 	}); 
 	
+    var disableBotonesCDDStore = page.getStore({
+		flow : 'subasta/getDisableBotonesCDD'
+		,storeId : 'disableBotonesCDDStore'
+		,reader : new Ext.data.JsonReader(
+			{root : 'disableBotonesCDD'}
+			, disableBotonesCDD
+		)
+	});
+	
     lotesStore.on('load', function(store, records, options){
-	   expandAll();
+	   	expandAll();	   	
+	});
+	
+	disableBotonesCDDStore.on('load', function(store, records, options){
+	   	var disable = store.getAt(0);
+		btnEditarInfoCierre.setDisabled(disable.get('valorDisable'));
+	   	btnGenerarInformeCierre.setDisabled(disable.get('valorDisable'));
+	   	btnEnviarCierre.setDisabled(disable.get('valorDisable'));
+	   	
 	});
     
     
@@ -345,7 +421,89 @@ var lotesRT = Ext.data.Record.create([
 			}
 		}
 	});
-
+	
+	var btnGenerarInformeCierre = new Ext.Button({
+		text : '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnGenerarInforme" text="**Generar informe cierre" />'
+		,iconCls : 'icon_pdf'
+		,disabled : true
+		,cls: 'x-btn-text-icon'
+        ,handler:function() {
+        	var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
+        	//la plantilla se elije en el controller
+			var plantilla='';
+		    var flow='/pfs/subasta/generarInformeValidacionCDD';
+		    if (bienSel != ''){
+		    	var strIds = '';
+		    	for(i=0;i < bienSel.length;i++){
+		    		if(strIds != '') {
+						strIds += ',';
+					}
+		    		strIds += bienSel[i].data.idBien;	
+					strIds += ';';
+					strIds += bienSel[i].data.idLoteBien;
+		    	}
+				var params = {idSubasta:idSubasta,idBien:strIds};
+	        	app.openBrowserWindow(flow,params);
+			} else {
+				var params = {idSubasta:idSubasta};
+	        	app.openBrowserWindow(flow,params);
+			}
+		    page.fireEvent(app.event.DONE);
+		}
+	});
+	
+	var btnEnviarCierre = new Ext.Button({
+		text : '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre" text="**Enviar cierre" />'
+		,iconCls : 'icon_aplicar'
+		,disabled : true
+		,cls: 'x-btn-text-icon'
+        ,handler:function() {
+        	var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
+        	if (bienSel != ''){
+        		var strIds = '';
+		    	for(i=0;i < bienSel.length;i++){
+		    		if(strIds != '') {
+						strIds += ',';
+					}
+		    		strIds += bienSel[i].data.idBien;	
+					strIds += ';';
+					strIds += bienSel[i].data.idLoteBien;
+		    	}
+        		var texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien " />';
+        		texto += strIds + ' '; 
+        		texto += '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien2" text=" a cierre de deudas?" />';
+        		Ext.Msg.confirm(fwk.constant.confirmar, texto, this.decide, this);
+			} else { 
+				Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.sinBien" text="**¿Esta seguro de enviar la operación a cierre de deudas?" />', this.decide, this);
+			}
+		}
+		,decide : function(boton){
+			if (boton=='yes'){ this.enviar(); }
+		}
+		,enviar : function(){
+			var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
+			//la plantilla se elije en el controller
+			var plantilla='';
+		    var flow='/pfs/subasta/generarInformeCierre';
+			if (bienSel != ''){
+				var strIds = '';
+		    	for(i=0;i < bienSel.length;i++){
+		    		if(strIds != '') {
+						strIds += ',';
+					}
+		    		strIds += bienSel[i].data.idBien;	
+					strIds += ';';
+					strIds += bienSel[i].data.idLoteBien;
+		    	}
+				var params = {idSubasta:idSubasta,idBien:strIds};
+	        	app.openBrowserWindow(flow,params);
+			} else {
+				var params = {idSubasta:idSubasta};
+	        	app.openBrowserWindow(flow,params);
+			}
+		    page.fireEvent(app.event.DONE);
+		}
+	});
 	
     var lotesCM = new Ext.grid.ColumnModel([
     		expanderLote,
@@ -374,7 +532,7 @@ var lotesRT = Ext.data.Record.create([
 			,groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
 			,enableNoGroups:true
 		})
-		,bbar:[ btnExpandAll, btnCollapseAll, btnAgregarBien, btnExcluirBien, btnInstrucLotes ]
+		,bbar:[ btnExpandAll, btnCollapseAll, btnAgregarBien, btnExcluirBien, btnInstrucLotes <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>]
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);
@@ -389,23 +547,6 @@ var lotesRT = Ext.data.Record.create([
 		var idLote = rec.get('idLote');
 		btnInstrucLotes.setDisabled(false);
 	});	
-  	
-  	var bienesCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.numActivo" text="**N&ordm; Activo"/>', dataIndex : 'numActivo'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.codigo" text="**C&oacute;digo"/>', hidden:true, dataIndex : 'codigo'}		
-		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroFinca" text="**N&uacute;mero finca"/>', sortable: true, dataIndex : 'numFinca' }
-		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', sortable: true, dataIndex : 'referenciaCatastral' }
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.origen" text="**Origen"/>', dataIndex : 'origen'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.descripcion" text="**Descripci&oacute;n"/>', dataIndex : 'descripcion'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.tipo" text="**Tipo"/>', dataIndex : 'tipo'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.viviendaHab" text="**Vivienda habitual"/>', dataIndex : 'viviendaHabitual',renderer : SI_NO_Render}		
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.SitPosesoria" text="**Sit. posesoria"/>', dataIndex : 'sitPosesoria'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.RevCargas" text="**Rev. cargas"/>', dataIndex : 'revCargas' }
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.FSolTasacion" text="**F. sol. tasaci&oacute;n"/>', dataIndex : 'fSolTasacion'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.FTasacion" text="**F. tasaci&oacute;n"/>', dataIndex : 'fTasacion'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.Adjudicacion" text="**Adjudicaci&oacute;n"/>', dataIndex : 'Adjudicacion'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.ImpAdjudicado" text="**Imp. adjudicado"/>', dataIndex : 'impAdjudicado',renderer: app.format.moneyRenderer}		
-	]);
 	
     function expandedRowLote(obj, record, body, rowIndex){
 	    var absId = record.get('id');
@@ -431,21 +572,57 @@ var lotesRT = Ext.data.Record.create([
 						,'fTasacion'
 						,'Adjudicacion'
 						,'impAdjudicado'
+						,'idLoteBien'
 						],
 				data: bienes
 			});
+		
+			function contains(a, obj) {
+			    for (var i = 0; i < a.length; i++) {
+			        if (a[i] === obj) {
+			            return true;
+			        }
+			    }
+			    return false;
+			}
 			
-		   var id2 = "mygrid-bien-" + record.get("idLote");
-		   
-		   var gridXLote = new Ext.grid.GridPanel({
-		        store: dynamicStoreBienes,
+		    var smCheckBien = new Ext.grid.CheckboxSelectionModel({
+       	        	checkOnly : true
+       	        	,singleSelect: false
+       	        	,listeners: {
+           				selectionchange: function(sel) {
+			            	bienSel = sel.getSelections();
+			            	
+			            }            
+					}
+				});
+	
+		  	var bienesCM = new Ext.grid.ColumnModel([
+	  		 	<sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">smCheckBien,</sec:authorize>
+				 {header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.numActivo" text="**N&ordm; Activo"/>', dataIndex : 'numActivo'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.codigo" text="**C&oacute;digo"/>', hidden:true, dataIndex : 'codigo'}		
+				,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroFinca" text="**N&uacute;mero finca"/>', sortable: true, dataIndex : 'numFinca' }
+				,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', sortable: true, dataIndex : 'referenciaCatastral' }
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.origen" text="**Origen"/>', dataIndex : 'origen'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.descripcion" text="**Descripci&oacute;n"/>', dataIndex : 'descripcion'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.tipo" text="**Tipo"/>', dataIndex : 'tipo'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.viviendaHab" text="**Vivienda habitual"/>', dataIndex : 'viviendaHabitual',renderer : SI_NO_Render}		
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.SitPosesoria" text="**Sit. posesoria"/>', dataIndex : 'sitPosesoria'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.RevCargas" text="**Rev. cargas"/>', dataIndex : 'revCargas' }
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.FSolTasacion" text="**F. sol. tasaci&oacute;n"/>', dataIndex : 'fSolTasacion'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.FTasacion" text="**F. tasaci&oacute;n"/>', dataIndex : 'fTasacion'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.Adjudicacion" text="**Adjudicaci&oacute;n"/>', dataIndex : 'Adjudicacion'}
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.ImpAdjudicado" text="**Imp. adjudicado"/>', dataIndex : 'impAdjudicado',renderer: app.format.moneyRenderer}		
+			]);
+		   		   
+		   var gridXLote = new Ext.grid.EditorGridPanel({
+		   		store: dynamicStoreBienes,
 		        stripeRows: true,
 		        autoHeight: true,
-		        cm: bienesCM,
-		        id: id2                  
+		        cm: bienesCM
+		        <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, sm: smCheckBien </sec:authorize>
 		    });        
 		    gridXLote.render(row);
-		    gridXLote.getEl().swallowEvent([ 'mouseover', 'mousedown', 'click', 'dblclick' ]);
 		    
 		    gridXLote.on('rowdblclick', function(grid, rowIndex, e) {
 		    	var rec = grid.getStore().getAt(rowIndex);
@@ -498,6 +675,8 @@ var lotesRT = Ext.data.Record.create([
 		btnInfSubasta.setDisabled(true);
 		btnInstrucSubasta.setDisabled(true);
 		btnInstrucLotes.setDisabled(true);
+		btnGenerarInformeCierre.setDisabled(true);
+		btnEnviarCierre.setDisabled(true);
 	}
 	
 	

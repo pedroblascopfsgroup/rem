@@ -1649,7 +1649,7 @@
 				<dependency>
 		  			<groupId>es.bankia</groupId>
 		 		 	<artifactId>GMP5JD20_INS</artifactId>
-		  			<version>1.0.0</version>
+		  			<version>1.0.1</version>
 				</dependency>
 				<dependency>
 		  			<groupId>es.bankia</groupId>

@@ -2,14 +2,11 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
 import java.io.BufferedWriter;
 import java.io.File;
-<<<<<<< HEAD
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-=======
->>>>>>> master
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,10 +19,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
-<<<<<<< HEAD
-=======
 import org.apache.commons.lang.ObjectUtils;
->>>>>>> master
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +35,9 @@ import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
-<<<<<<< HEAD
 import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-=======
->>>>>>> master
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -1083,14 +1074,12 @@ public class SubastaManager implements SubastaApi {
 			if (gc1.get(Calendar.DATE)==gc2.get(Calendar.DATE) && gc1.get(Calendar.MONTH)==gc2.get(Calendar.MONTH) && gc1.get(Calendar.YEAR)==gc2.get(Calendar.YEAR)) elapsed++; // si es el mismo dia cuenta para la suma de meses
 			return elapsed;
 		}
-<<<<<<< HEAD
 
 		@Override
 		@BusinessOperation(BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT)
 		public Integer buscarSubastasXLSCount(NMBDtoBuscarSubastas dto) {
 			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-						
-			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado).size();	
+			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado,true).size();	
 		}
 		
 		@Override
@@ -1325,6 +1314,4 @@ public class SubastaManager implements SubastaApi {
 			}
 			return prop;
 		}
-=======
->>>>>>> master
 }

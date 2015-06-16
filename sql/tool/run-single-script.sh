@@ -23,14 +23,8 @@ function print_banner() {
 
 if [ "$ORACLE_HOME" == "" ] ; then
     print_banner
-    echo "Debe ejecutar este shell desde un usuario que tenga permisos de ejecución de Oracle. Este usuario tiene ORACLE_HOME vacío"
-    echo "Como alternativa, para no tener que iniciar sesión con otro usuario, puede utilizar el comando:"
     echo ""
-    echo "   $> su - otroUsuario -c 'comando'"
-    echo ""
-    echo "Por ejemplo"
-    echo ""
-    echo "   $> su - otroUsuario -c '$0 fichero_sql password_esquema_principal@sid [BANKIA|HAYA|-]'"
+    echo "Defina su variable de entorno ORACLE_HOME"
     echo ""
     exit
 fi
@@ -195,6 +189,8 @@ fi
 cp -f $BASEDIR/scripts/reg_sql.sh $BASEDIR/tmp/$nombreSinDirSinExt.sh
 cp -f $BASEDIR/scripts/reg?.sql $BASEDIR/tmp/
 chmod u+x $BASEDIR/tmp/$nombreSinDirSinExt.sh
+
+cp $1 $BASEDIR/tmp/
 
 echo "Ejecutando:"
 echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW

@@ -177,7 +177,14 @@ INSERT into DD_TJ_TIPO_JUICIO
  VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'VBM', 'T. Valoración de bienes muebles', 'T. Valoración de bienes muebles', 0, 'MOD_PROC', 
  			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H060'));
 
+-- TRAMITE DE NOTIFICACIÓN --
+INSERT into DD_TJ_TIPO_JUICIO
+   (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'NOT', 'T. Notificación', 'T. Notificación', 0, 'MOD_PROC', 
+ 			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'P400'));
+
              
+ 			
 /* Configurar a partir de aquí
 -- SUBASTA BANKIA--
 INSERT into DD_TJ_TIPO_JUICIO

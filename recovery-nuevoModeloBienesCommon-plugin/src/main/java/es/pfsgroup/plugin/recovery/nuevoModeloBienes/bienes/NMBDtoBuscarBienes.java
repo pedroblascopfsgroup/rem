@@ -53,6 +53,8 @@ public class NMBDtoBuscarBienes extends WebDto {
 	private String provincia;
 	private String localidad;
 	private String codigoPostal;
+	
+	private String numFinca;
 
 	public String getNifPrimerTitular() {
 		return nifPrimerTitular;
@@ -272,6 +274,14 @@ public class NMBDtoBuscarBienes extends WebDto {
 
 	public void setCodigoPostal(String codigoPostal) {
 		this.codigoPostal = codigoPostal;
+	}
+
+	public String getNumFinca() {
+		return numFinca;
+	}
+
+	public void setNumFinca(String numFinca) {
+		this.numFinca = numFinca;
 	}
 	
 	

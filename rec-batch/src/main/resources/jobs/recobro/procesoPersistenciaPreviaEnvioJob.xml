@@ -383,12 +383,6 @@
 								<entry key="severidad" value="error"/>
 							</map>
 							
-							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.arranque.bpm.recobro.${entity.dialect}"/></entry>
-								<entry key="message" value="recobro.arranque.bpm.recobro" />
-								<entry key="severidad" value="error"/>
-							</map>
-							
 							<!-- Actualización gestores expedientes/agencias repartidos -->
 							<map>
 								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_gae_gager.${entity.dialect}"/></entry>
@@ -399,12 +393,6 @@
 							<map>
 								<entry key="sql"><bean parent="sql" p:key="recobro.actualizacion.gestores.${entity.dialect}"/></entry>
 								<entry key="message" value="recobro.actualizacion.gestores"/>
-								<entry key="severidad" value="error"/>
-							</map>
-							
-							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.parada.bpm.recobro.fin_de_ciclo.${entity.dialect}"/></entry>
-								<entry key="message" value="recobro.parada.bpm.recobro.fin_de_ciclo" />
 								<entry key="severidad" value="error"/>
 							</map>
 							

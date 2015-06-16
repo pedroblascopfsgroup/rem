@@ -1265,12 +1265,37 @@
             	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
                 return adjudicacionProcedimientoManager.comprobarAdjuntoAsunto(idProcedimiento, "DFA");
             }
+           
+            def comprobarCostasLetradoViviendaHabitual = {
+            	def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
+                return subastaProcedimientoManager.comprobarCostasLetradoViviendaHabitual(idProcedimiento, tareaExterna.getId());            
+            }           
              
             def validacionesCelebracionSubastaSarebPOST = {
                 def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
                 return subastaProcedimientoManager.validacionesCelebracionSubastaSarebPOST(idProcedimiento);
             }
+
+            def existeAdjuntoUG(String codigo, String entorno) {
+            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+				return adjudicacionProcedimientoManager.existeAdjuntoUG(idProcedimiento, codigo, entorno);
+            }
+
+            def existeAdjuntoUG(String cadenaDAUG) {
+            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+				return adjudicacionProcedimientoManager.existeAdjuntoUG(idProcedimiento, cadenaDAUG);
+            }
                         
+            def existeAdjuntoUGMensaje(String codigo, String entorno) {
+				def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+            	return adjudicacionProcedimientoManager.existeAdjuntoUGMensajeHTML(codigo, entorno);
+            }
+            
+            def existeAdjuntoUGMensaje(String cadenaDAUG) {
+				def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+            	return adjudicacionProcedimientoManager.existeAdjuntoUGMensajeHTML(idProcedimiento, cadenaDAUG);
+            }
+
             
   			 ]]></value>
   		</list>

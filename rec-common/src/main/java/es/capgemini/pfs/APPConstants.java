@@ -78,6 +78,7 @@ public class APPConstants {
 	public static final String NUM_EXTRA1 = "num_extra1";
 	public static final String NUM_EXTRA2 = "num_extra2";
 	public static final String NUM_EXTRA3 = "num_extra3";
+	public static final String NUM_EXTRA4 = "num_extra4";
 	public static final String DATE_EXTRA1 = "date_extra1";
 	public static final String FLAG_EXTR3 = "flag_extra3";
 	public static final String FLAG_EXTRA2 = "flag_extra2";
@@ -90,5 +91,7 @@ public class APPConstants {
 	public static final String CHAR_EXTRA3 = "char_extra3";
 	public static final String CHAR_EXTRA2 = "char_extra2";
 	public static final String CHAR_EXTRA1 = "char_extra1";
+	public static final String CHAR_EXTRA9 = "char_extra9";
+	public static final String CHAR_EXTRA10 = "char_extra10";
 	public static final String PROYECTO = "proyecto";
 }

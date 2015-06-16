@@ -577,4 +577,12 @@ public class ContratoManager {
 			return null;
 		}
 	}
+	
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_MGR_CONTADOR_REINCIDENCIAS)
+	public Integer contadorReincidencias(Long idContrato){
+		
+		return contratoDao.contadorReincidencias(idContrato);
+		
+	}
+	
 }

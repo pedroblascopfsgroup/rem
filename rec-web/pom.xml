@@ -1964,5 +1964,25 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>haya-delivery</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework.ldap</groupId>
+					<artifactId>spring-ldap-core</artifactId>
+					<version>1.3.0.RELEASE</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/haya/resources</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
 	</profiles>
 </project>

@@ -64,6 +64,7 @@ import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
+import es.capgemini.pfs.iplus.IPLUSAdjuntoAuxDto;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -88,6 +89,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -97,6 +99,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
@@ -442,7 +445,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
-		final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
+		Boolean borrarOtrosUsu = true;
+		
+		if (iplus == null && !iplus.instalado()) {
+			borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
+		}
 
 		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
 		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
@@ -451,14 +458,26 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			Set<AdjuntoAsunto> setAdjuntos = obtieneAdjuntosIplus(asunto.getId());
 			for (AdjuntoAsunto adjuntoAsunto : setAdjuntos) {
 				adjuntoAsunto.setAsunto(asunto);
-				Procedimiento procedimiento = iplus.obtenerProcedimiento(asunto.getId(), adjuntoAsunto.getDescripcion());
-				adjuntoAsunto.setProcedimiento(procedimiento );
+				IPLUSAdjuntoAuxDto dtoAux = iplus.completarInformacionAdjunto(asunto.getId(), adjuntoAsunto.getDescripcion());
+				Procedimiento procedimiento = dtoAux.getProc();
+				adjuntoAsunto.setProcedimiento(procedimiento);
+				String contentType = dtoAux.getContentType();
+				adjuntoAsunto.setContentType(contentType);
+				Long longitud = dtoAux.getLongitud();
+				adjuntoAsunto.setLength(longitud);
+				//DDTipoFicheroAdjunto tipoFicheroAdjunto = dtoAux.getTipoDocumento();
+				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
 			}
 			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
 		}
-		if (adjuntosAsunto == null || adjuntosAsunto.isEmpty()) {
-			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu));
+		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
+		if (iplus != null && iplus.instalado()) {
+			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
+		} else {
+			adjuntosRecovery2 = adjuntosRecovery;
 		}
+		adjuntosAsunto.addAll(adjuntosRecovery2);
 		
 		return ordenaListado(adjuntosAsunto);
 
@@ -1846,75 +1865,32 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		return results;
 	}
-	
-	/**
-	 * Indica si el Usuario Logado es el gestor de Decision del asunto.
-	 * 
-	 * @return true si es el gestor de Decision
-	 */
-	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
+
 	@Override
-	public Boolean esGestorDecision() {
-		Usuario usuario =  proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		try {
-			return esUsuarioGestorDecision(usuario);
-		} catch (Exception e) {
-			logger.fatal("No se ha podido averiguar si el usuario con Id " + usuario.getId() + " es gestor de Decisión del asunto");
-			return false;
-			//throw new BusinessOperationException(e);
-		}
-	}		
-
-
-	
-	/**
-	 * esUsuarioGestorDecision
-	 * 
-	 * Nos devuelve si este usuario tiene algún gestor de tipo Decisión
-	 * 
-	 * @param usu Usuario
-	 * @return true / false
-	 */
-	private Boolean esUsuarioGestorDecision(Usuario u){
-		Boolean res = false;
+	@BusinessOperation(EXT_BO_ES_TITULIZADA)
+	public String esTitulizada(Long idAsunto) {
 		
-		List<DespachoExterno> deList = gestorAdicionalAsuntoDao.getTipoDespachoExternoList(u.getId());
-		List<String> ctdList = new ArrayList<String>();
-		for (DespachoExterno de : deList){
-			ctdList.add(de.getTipoDespacho().getCodigo());
+		List<DDTipoFondo> listREsultado = asuntoDao.esTitulizada(idAsunto);
+		if(listREsultado.isEmpty()){
+			return "NO";
+		}
+		else{
+			return "SI";
 		}
 		
-		Set<String> staC = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
-		
-		Set<String> hm = new HashSet<String>();
-		String v = "";
-		StringTokenizer vS = null;
-		List<EXTTipoGestorPropiedad> tgpL = new ArrayList<EXTTipoGestorPropiedad>();
-		
-		for (Object st : staC.toArray()) {
-		
-			tgpL = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(st.toString());
-						
-			// Como en el campo "valor" nos pueden venir datos separados por ","
-			// los trocearemos y guardaremos cada valor individual en un Set
-			// para la comprobación final
-			for (EXTTipoGestorPropiedad tgp : tgpL){
-				v = tgp.getValor();
-				vS = new StringTokenizer(v,",");
-				
-				while (vS.hasMoreElements()){
-					hm.add(vS.nextToken());
-				}
-			}
-		}
-		
-		// Comprobacion final
-		for (String ctd : ctdList) {
-			if (hm.contains(ctd))		
-				res = true;
-		}
-		
-		return res;
 	}
-	
+
+	@Override
+	@BusinessOperation(EXT_BO_ES_GET_FONDO)
+	public String getFondo(Long idAsunto) {
+		
+		List<DDTipoFondo> listREsultado = asuntoDao.esTitulizada(idAsunto);
+		if(listREsultado.isEmpty()){
+			return null;
+		}
+		else{
+			return listREsultado.get(0).getDescripcion();
+		}
+		
+	}
 }

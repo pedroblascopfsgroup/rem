@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+
+	<bean id="contextSource"
+		class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+		<constructor-arg value="ldap://10.126.128.2:389 ldap://10.126.128.130:389" /> <!-- LDAP Madrid Valencia -->
+		<property name="userDn" value="cn=read_only_user,cn=users,dc=corp,dc=int" />
+		<property name="password" value="Reina2014" />
+		<property name="baseEnvironmentProperties">
+			<map>
+				<entry key="com.sun.jndi.ldap.connect.timeout" value="5000" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="ldapAuthProvider"
+		class="org.springframework.security.providers.ldap.LdapAuthenticationProvider">
+		<security:custom-authentication-provider />
+		<constructor-arg index="0"> <!-- urlList -->
+			<bean
+				class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
+				<constructor-arg ref="contextSource" />
+				<!-- property name="userDnPatterns"> <list> <value>cn={0},ou=People</value> 
+					</list> </property -->
+				<property name="userSearch">
+					<bean
+						class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+						<constructor-arg index="0" value="dc=corp,dc=int" />
+						<constructor-arg index="1"
+							value="(&amp;(objectClass=user)(sAMAccountName={0}))" />
+						<constructor-arg index="2" ref="contextSource" />
+					</bean>
+				</property>
+			</bean>
+		</constructor-arg>
+		<!-- constructor-arg index="1"> <bean class=" org.springframework.security.ldap.populator.UserDetailsServiceLdapAuthoritiesPopulator"> 
+			<constructor-arg index="0" ref="userService" /> </bean> </constructor-arg -->
+		<property name="userDetailsContextMapper" ref="ldapUserDetailsContextMapper" />
+	</bean>
+
+	<bean id="ldapUserDetailsContextMapper" class="es.capgemini.pfs.security.LDAPUserDetailsContextMapper" />
+
+</beans>

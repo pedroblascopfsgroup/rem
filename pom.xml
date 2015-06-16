@@ -335,11 +335,6 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup</groupId>
-				<artifactId>sql</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-tesfwk</artifactId>
 				<version>1.0.3</version>
 				<scope>test</scope>
@@ -491,7 +486,6 @@
 		<module>recovery-controlcalidad-plugin</module>
 		<module>recovery-procuradores-common</module>
 		<module>recovery-procuradores-plugin</module>
-		<module>sql</module>
 	</modules>
 
 	<profiles>

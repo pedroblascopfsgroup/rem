@@ -39,8 +39,9 @@ public class InformeValidacionCDDBean {
 
 	private static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "H005_ConfirmarTestimonio";
 
-	protected ApiProxyFactory proxyFactory;
 	protected SubastaApi subastaApi;
+	protected ApiProxyFactory proxyFactory;
+	
 	private List<BienLoteDto> bienesLote;
 	private Long idSubasta;
 	private ProcedimientoSubastaCDD procedimientoSubastaCDD;

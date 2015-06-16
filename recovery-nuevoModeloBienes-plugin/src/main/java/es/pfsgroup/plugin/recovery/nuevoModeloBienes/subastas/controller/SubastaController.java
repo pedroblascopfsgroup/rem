@@ -278,10 +278,11 @@ public class SubastaController {
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
-		if(!informe.getValidacionOK()) {
-			return creaExcelValidacion(informe,model);
-		}else{
+//		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+//		if(!informe.getValidacionOK()) {
+//		if(false) {			
+//			return creaExcelValidacion(informe,model);
+//		}else{
 			if(Checks.esNulo(idsBien)) {
 				List<BatchAcuerdoCierreDeuda> registrosBACDD = subastaApi.findRegistroCierreDeuda(idSubasta, null);
 				if(!Checks.estaVacio(registrosBACDD)) {
@@ -292,7 +293,7 @@ public class SubastaController {
 			}else{
 				List<NMBBien> bienesNoCDD = subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
 			}
-		}
+//		}
 		return DEFAULT;
 	}
 	
@@ -322,9 +323,9 @@ public class SubastaController {
 			}
 			informe.setBienesLote(listBienLote);
 		}
-		informe.setIdSubasta(idSubasta);
 		informe.setProxyFactory(proxyFactory);
 		informe.setSubastaApi(subastaApi);
+		informe.setIdSubasta(idSubasta);
 		informe.create();
 		return informe;
 	}

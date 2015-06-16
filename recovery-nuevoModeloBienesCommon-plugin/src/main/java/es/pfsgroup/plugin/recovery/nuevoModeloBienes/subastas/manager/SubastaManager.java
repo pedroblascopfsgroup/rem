@@ -57,7 +57,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
@@ -131,8 +130,7 @@ public class SubastaManager implements SubastaApi {
 	NMBProjectContext projectContext;
 
 	@Resource
-    private MessageService messageService;
-	
+    private MessageService messageService;	
 	
 	@Override
 	public List<Subasta> getSubastasAsunto(Long idAsunto) {
@@ -1090,7 +1088,7 @@ public class SubastaManager implements SubastaApi {
 		
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
+		@BusinessOperation(BO_NMB_SUBASTA_ACTUALIZAR_INFORMACION_CIERRE_DEUDA)
 		public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto) {
 			Subasta subasta = subastaDao.get(Long.valueOf(dto.getIdSubasta()));
 			TipoJuzgado tipoJuzgado = (TipoJuzgado) genericDao.get(TipoJuzgado.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTipoJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
@@ -1131,13 +1129,13 @@ public class SubastaManager implements SubastaApi {
 		
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA)
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA)
 		public boolean tareaNoExisteOFinalizada(Procedimiento procedimiento, String nombreNodo) {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
 			return (Checks.esNulo(historicoPrc) || (!Checks.esNulo(historicoPrc) && Checks.esNulo(historicoPrc.getFechaFin())));
 		}
 		
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
 		public ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
 			return getValorNodoPrc(historicoPrc, valor);
@@ -1185,7 +1183,7 @@ public class SubastaManager implements SubastaApi {
 
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
+		@BusinessOperation(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
 		public List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien) {
 			Subasta subasta = subastaDao.get(idSubasta);
 			return subastaDao.findBatchAcuerdoCierreDeuda(subasta.getAsunto().getId(), subasta.getProcedimiento().getId(), idBien);
@@ -1193,7 +1191,7 @@ public class SubastaManager implements SubastaApi {
 
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
+		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
 		public void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBACDD) {
 			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
 				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
@@ -1221,7 +1219,7 @@ public class SubastaManager implements SubastaApi {
 		
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
+		@BusinessOperation(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
 		public List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
 			List<NMBBien> idBienesNoCierre = new ArrayList<NMBBien>();
 			for(Long idBien : idsBien) {
@@ -1229,8 +1227,7 @@ public class SubastaManager implements SubastaApi {
 				if(Checks.estaVacio(list)) {
 					guardaBatchAcuerdoCierre(idSubasta, idBien);
 				}else{
-					NMBBien bien = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", list.get(0).getIdBien()), 
-							genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+					NMBBien bien = nmbBienDao.get(list.get(0).getIdBien());
 					idBienesNoCierre.add(bien);
 				}
 			}

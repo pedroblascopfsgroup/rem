@@ -57,12 +57,12 @@ public class HistoricoProcedimientoComparatorV4 implements java.util.Comparator 
 	
 
 	private Long getId(Object o) {
-		if (o instanceof HistoricoProcedimiento) {
-			return ((HistoricoProcedimiento) o).getIdProcedimiento();
-		} else if (o instanceof HistoricoAsuntoInfoImpl) {
+		if (o instanceof HistoricoAsuntoInfoImpl) {
 			return ((HistoricoAsuntoInfoImpl) o).getProcedimiento().getId();
-		} else if (o instanceof HistoricoAsuntoInfo) {
+		} else if(o instanceof HistoricoProcedimiento) {
 			return ((HistoricoProcedimiento) o).getIdProcedimiento();
+		} else if (o instanceof HistoricoAsuntoInfo) {
+			return ((HistoricoAsuntoInfo) o).getProcedimiento().getId();
 		} else if (o instanceof DtoProcedimiento) {
 			return ((DtoProcedimiento) o).getProcedimiento().getId();
 		} else {
@@ -85,10 +85,10 @@ public class HistoricoProcedimientoComparatorV4 implements java.util.Comparator 
 	private Date getDate(Object o) {
 		if (o instanceof HistoricoAsuntoInfoImpl) {
 			return ((HistoricoAsuntoInfoImpl) o).getProcedimiento().getAuditoria().getFechaCrear();
-		} else if (o instanceof HistoricoAsuntoInfo) {
-			return ((HistoricoAsuntoInfo) o).getTarea().getFechaIni();
 		} else if (o instanceof HistoricoProcedimiento) {
 			return ((HistoricoProcedimiento) o).getFechaIni();
+		} else if (o instanceof HistoricoAsuntoInfo) {
+			return ((HistoricoAsuntoInfo) o).getTarea().getFechaIni();
 		} else if (o instanceof DtoProcedimiento) {
 			return ((DtoProcedimiento) o).getProcedimiento().getAuditoria().getFechaCrear();
 		} else {

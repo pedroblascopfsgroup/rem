@@ -134,7 +134,7 @@ public class SubastaController {
 		} else if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
 			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_BANKIA);
 		}
-		return subastaApi.tareaNoExisteOFinalizada(subasta.getProcedimiento(), tareaCelebracionSubasta);
+		return !subastaApi.tareaExisteYFinalizada(subasta.getProcedimiento(), tareaCelebracionSubasta);
 	}
 	
 	@SuppressWarnings("unchecked")

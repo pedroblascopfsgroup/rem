@@ -1,9 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -35,7 +33,6 @@ import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
-import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
@@ -1102,8 +1099,8 @@ public class SubastaManager implements SubastaApi {
 				e.printStackTrace();
 			}
 			
-			boolean existeTareaSenyalamiento = tareaNoExisteOFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
-			boolean existeTareaCelebracion = tareaNoExisteOFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
+			boolean existeTareaSenyalamiento = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
+			boolean existeTareaCelebracion = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
 			// Si existe se actualizan los campos si no se lanzan las tareas
 			if(existeTareaSenyalamiento) {
 				actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
@@ -1129,10 +1126,10 @@ public class SubastaManager implements SubastaApi {
 		
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperation(BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA)
-		public boolean tareaNoExisteOFinalizada(Procedimiento procedimiento, String nombreNodo) {
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA)
+		public boolean tareaExisteYFinalizada(Procedimiento procedimiento, String nombreNodo) {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
-			return (Checks.esNulo(historicoPrc) || (!Checks.esNulo(historicoPrc) && Checks.esNulo(historicoPrc.getFechaFin())));
+			return (!Checks.esNulo(historicoPrc) && !Checks.esNulo(historicoPrc.getFechaFin()));
 		}
 		
 		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)

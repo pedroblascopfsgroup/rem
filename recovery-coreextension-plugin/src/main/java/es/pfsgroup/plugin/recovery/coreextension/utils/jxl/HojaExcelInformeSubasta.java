@@ -75,10 +75,7 @@ public class HojaExcelInformeSubasta extends HojaExcel{
         	// Se crea el fichero temporal en todos los casos ya que es aquí donde se va a escribir
         	if (fileTMP.exists()) fileTMP.delete();
         	fileTMP.createNewFile();
-        	WorkbookSettings ws = new WorkbookSettings();
-        	ws.setEncoding("UTF-8");
-        	ws.setLocale(new Locale("ES"));
-        	WritableWorkbook workbook = Workbook.createWorkbook(fileTMP,ws);
+        	WritableWorkbook workbook = Workbook.createWorkbook(fileTMP);
         	WritableSheet sheet1 = workbook.createSheet("Hoja 1",0);
 			
 			int filaAnt = 0;

@@ -1,9 +1,11 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -352,7 +354,7 @@ public class SubastaController {
 			dto.setIdTipoJuzgado(procedimiento.getJuzgado().getId());
 			dto.setCodigoJuzgado(procedimiento.getJuzgado().getCodigo());
 		}
-		//TODO HACER DINAMICO EL SEÃ‘ALAMIENTO Y CELEBRACION DE SUBASTAS (SAREB BANKIA)
+		//TODO HACER DINAMICO EL SEÃƒÂ‘ALAMIENTO Y CELEBRACION DE SUBASTAS (SAREB BANKIA)
 		dto.setPrincipalDemanda(procedimiento.getSaldoRecuperacion());
 		ValorNodoTarea costasLetrado = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasLetrado");
 		ValorNodoTarea costasProcurador = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasProcurador");
@@ -413,7 +415,7 @@ public class SubastaController {
 	}
 
 	/**
-	 * MÃ©todo para buscar subastas segÃºn filtros indicados en el DTO.
+	 * MÃƒÂ©todo para buscar subastas segÃƒÂºn filtros indicados en el DTO.
 	 */
 	@RequestMapping
 	public String buscarLotesSubasta(NMBDtoBuscarLotesSubastas dto, ModelMap model) {
@@ -504,7 +506,7 @@ public class SubastaController {
 		cabeceras.add("DEUDA");
 		cabeceras.add("COSTAS LETRADO");
 		cabeceras.add("COSTAS PROCURADOR");
-		cabeceras.add("F. SEÃ‘ALAMIENTO");
+		cabeceras.add("F. SEÑALAMIENTO");
 		cabeceras.add("CON POSTORES");
 		
 		
@@ -632,18 +634,18 @@ public class SubastaController {
 					
 				fila=new ArrayList<String>();
 				fila.add(" ; ;Text");
-				fila.add("NÂº FINCA;Blue;Text");
-				fila.add("NÂº ACTIVO;Blue;Text");
+				fila.add("Nº FINCA;Blue;Text");
+				fila.add("Nº ACTIVO;Blue;Text");
 				fila.add("REFERENCIA CATASTRAL;Blue;Text");
-				fila.add("DESCRIPCIÃ“N;Blue;Text");
-				fila.add("NÂº REGISTRO;Blue;Text");
-				fila.add("VALOR TASACIÃ“N;Blue;Text");
-				fila.add("FECHA TASACIÃ“N;Blue;Text");
+				fila.add("DESCRIPCIÓN;Blue;Text");
+				fila.add("Nº REGISTRO;Blue;Text");
+				fila.add("VALOR TASACIÓN;Blue;Text");
+				fila.add("FECHA TASACIÓN;Blue;Text");
 				fila.add("VALOR JUDICIAL;Blue;Text");
-				fila.add("DATOS LOCALIZACIÃ“N;Blue;Text");
+				fila.add("DATOS LOCALIZACIÓN;Blue;Text");
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
-				fila.add("RESULTADO ADJUDICACIÃ“N;Blue;Text");
-				fila.add("IMPORTE ADJUDICACIÃ“N;Blue;Text");
+				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
+				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
 				fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
 				
 				valores.add(fila);

@@ -105,7 +105,7 @@ public class EXTHistoricoProcedimientoManager extends
 		for (HistoricoProcedimientoDto dto : historico) {
 			EXTHistoricoProcedimiento hp = new EXTHistoricoProcedimiento();
 			try {
-				BeanUtils.copyProperties(hp, dto);
+				BeanUtils.copyProperties(dto, hp);
 				lista.add(hp);
 			} catch (Exception e) {
 				BusinessOperationException ex = new BusinessOperationException(
@@ -156,7 +156,8 @@ public class EXTHistoricoProcedimientoManager extends
 		for (HistoricoProcedimientoDto dto : historico) {
 			HistoricoProcedimiento hp = new HistoricoProcedimiento();
 			try {
-				BeanUtils.copyProperties(hp, dto);
+				//BeanUtils.copyProperties(hp, dto);
+				BeanUtils.copyProperties(dto, hp);
 				lista.add(hp);
 			} catch (Exception e) {
 				BusinessOperationException ex = new BusinessOperationException(

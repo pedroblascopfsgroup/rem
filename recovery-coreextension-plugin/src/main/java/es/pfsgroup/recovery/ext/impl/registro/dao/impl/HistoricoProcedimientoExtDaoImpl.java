@@ -32,7 +32,7 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
 
         try {
             String query = "SELECT TIPO_ENTIDAD, ID_ENTIDAD, RESPUESTA, NOMBRE, FECHA, FECHA_INI, FECHA_VENC, FECHA_FIN, USUARIO,"
-            		+ "DECODE(USU_RES, null, (SELECT USU_USERNAME FROM HAYAMASTER.USU_USUARIOS, VTAR_TAREA_VS_USUARIO VTAR WHERE VTAR.USU_PENDIENTES = USU_ID AND VTAR.TAR_ID = ID_ENTIDAD), USU_RES) AS RESPONSABLE, "
+            		+ "DECODE(USU_RES, null, (SELECT DISTINCT(USU_USERNAME) FROM HAYAMASTER.USU_USUARIOS, VTAR_TAREA_VS_USUARIO VTAR WHERE VTAR.USU_PENDIENTES = USU_ID AND VTAR.TAR_ID = TAREA), USU_RES) AS RESPONSABLE, "
             		+ "FECHA_VENC_REAL, STA_CODIGO, TAR_DESCRIPCION, TAP_CODIGO FROM ("
                     + getConsultaAgregada() + ") WHERE PRC_ID = " + idProcedimiento + " ORDER BY FECHA ASC";
 
@@ -76,25 +76,25 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
 	private String getConsultaAgregada() {
         AbstractMessageSource ms = MessageUtils.getMessageSource();
 
-        return "SELECT TIPO_ENTIDAD, ID_ENTIDAD, RESPUESTA, PRC_ID, NOMBRE, FECHA, FECHA_INI, FECHA_VENC, FECHA_FIN, USUARIO, USU_RES, FECHA_VENC_REAL, STA_CODIGO, TAR_DESCRIPCION, TAP_CODIGO FROM "
+        return "SELECT TIPO_ENTIDAD, ID_ENTIDAD, TAREA, RESPUESTA, PRC_ID, NOMBRE, FECHA, FECHA_INI, FECHA_VENC, FECHA_FIN, USUARIO, USU_RES, FECHA_VENC_REAL, STA_CODIGO, TAR_DESCRIPCION, TAP_CODIGO FROM "
         //Tareas externa
                 + "( " + "    SELECT "
                 + HistoricoProcedimiento.TIPO_ENTIDAD_TAREA
                 //Tareas externas canceladas
-                + " AS TIPO_ENTIDAD, TEX.TAR_ID AS ID_ENTIDAD, 0 AS RESPUESTA, TAR.PRC_ID AS PRC_ID, TAR_TAREA AS NOMBRE, TEX.FECHACREAR AS FECHA"
+                + " AS TIPO_ENTIDAD, TEX.TAR_ID AS ID_ENTIDAD, TEX.TAR_ID AS TAREA, 0 AS RESPUESTA, TAR.PRC_ID AS PRC_ID, TAR_TAREA AS NOMBRE, TEX.FECHACREAR AS FECHA"
                 + ", TAR.TAR_FECHA_INI AS FECHA_INI, TAR.TAR_FECHA_VENC AS FECHA_VENC, TAR.TAR_FECHA_FIN AS FECHA_FIN, TAR.USUARIOCREAR AS USUARIO, TAR.USUARIOBORRAR AS USU_RES, TAR.TAR_FECHA_VENC_REAL AS FECHA_VENC_REAL, STA5.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, TAP.TAP_CODIGO AS TAP_CODIGO "
                 + "FROM TAR_TAREAS_NOTIFICACIONES TAR, TEX_TAREA_EXTERNA TEX, TAP_TAREA_PROCEDIMIENTO TAP, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA5 WHERE TEX.TAR_ID = TAR.TAR_ID "
                 + "AND TAR.PRC_ID IS NOT NULL AND TAP.TAP_ID = TEX.TAP_ID AND (TEX_CANCELADA = 0 OR TEX_CANCELADA IS NULL) AND TAR.DD_STA_ID = STA5.DD_STA_ID "
                 + "    UNION SELECT "
                 + HistoricoProcedimiento.TIPO_ENTIDAD_TAREA_CANCELADA
-                + " AS TIPO_ENTIDAD, TEX.TAR_ID AS ID_ENTIDAD, 0 AS RESPUESTA, TAR.PRC_ID AS PRC_ID, TAR_TAREA AS NOMBRE, TEX.FECHACREAR AS FECHA"
+                + " AS TIPO_ENTIDAD, TEX.TAR_ID AS ID_ENTIDAD, TEX.TAR_ID AS TAREA, 0 AS RESPUESTA, TAR.PRC_ID AS PRC_ID, TAR_TAREA AS NOMBRE, TEX.FECHACREAR AS FECHA"
                 + ", TAR.TAR_FECHA_INI AS FECHA_INI, TAR.TAR_FECHA_VENC AS FECHA_VENC, TAR.TAR_FECHA_FIN AS FECHA_FIN, TAR.USUARIOCREAR AS USUARIO, TAR.USUARIOBORRAR AS USU_RES, TAR.TAR_FECHA_VENC_REAL AS FECHA_VENC_REAL, STA6.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, TAP.TAP_CODIGO AS TAP_CODIGO "
                 + "FROM TAR_TAREAS_NOTIFICACIONES TAR, TEX_TAREA_EXTERNA TEX, TAP_TAREA_PROCEDIMIENTO TAP, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA6 WHERE TEX.TAR_ID = TAR.TAR_ID AND TAP.TAP_ID = TEX.TAP_ID AND TAR.PRC_ID IS NOT NULL AND TEX_CANCELADA = 1 "
                 + " AND TAR.DD_STA_ID = STA6.DD_STA_ID "
                 + "    UNION SELECT "
                 //Tareas comunicacion que no tengan ninguna tarea notificacion asociada (comunicaciones sin respuesta)
                 + HistoricoProcedimiento.TIPO_ENTIDAD_COMUNICACION
-                + ", TAR_ID, 0, PRC.PRC_ID, TAR_TAREA, TAR.FECHACREAR, TAR.TAR_FECHA_INI, TAR.TAR_FECHA_VENC, TAR.TAR_FECHA_FIN, TAR.USUARIOCREAR, TAR.USUARIOBORRAR, TAR.TAR_FECHA_VENC_REAL AS FECHA_VENC_REAL, STA.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL "
+                + ", TAR_ID, TAR_ID, 0, PRC.PRC_ID, TAR_TAREA, TAR.FECHACREAR, TAR.TAR_FECHA_INI, TAR.TAR_FECHA_VENC, TAR.TAR_FECHA_FIN, TAR.USUARIOCREAR, TAR.USUARIOBORRAR, TAR.TAR_FECHA_VENC_REAL AS FECHA_VENC_REAL, STA.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL "
                 + "FROM TAR_TAREAS_NOTIFICACIONES TAR, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA, PRC_PROCEDIMIENTOS PRC, ASU_ASUNTOS ASU "
                 + "WHERE TAR.DD_STA_ID = STA.DD_STA_ID AND STA.DD_STA_CODIGO IN ('"
                 + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_GESTOR
@@ -124,7 +124,7 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
                 //Tareas comunicacion con notificacion (comunicaciones con respuesta)
                 + "    UNION SELECT "
                 + HistoricoProcedimiento.TIPO_ENTIDAD_COMUNICACION
-                + ", TAR_ID, 0, PRC.PRC_ID, TAR_TAREA, TAR.FECHACREAR, TAR.TAR_FECHA_INI, TAR.TAR_FECHA_VENC, TAR.TAR_FECHA_FIN, TAR.USUARIOCREAR, TAR.USUARIOBORRAR, TAR.TAR_FECHA_VENC_REAL AS FECHA_VENC_REAL, STA.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL "
+                + ", TAR_ID, TAR_ID, 0, PRC.PRC_ID, TAR_TAREA, TAR.FECHACREAR, TAR.TAR_FECHA_INI, TAR.TAR_FECHA_VENC, TAR.TAR_FECHA_FIN, TAR.USUARIOCREAR, TAR.USUARIOBORRAR, TAR.TAR_FECHA_VENC_REAL AS FECHA_VENC_REAL, STA.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL "
                 + "FROM TAR_TAREAS_NOTIFICACIONES TAR, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA, PRC_PROCEDIMIENTOS PRC, ASU_ASUNTOS ASU "
                 + "WHERE TAR.DD_STA_ID = STA.DD_STA_ID AND STA.DD_STA_CODIGO IN ('"
                 + SubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR
@@ -138,35 +138,35 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
                 + "    UNION SELECT "
                 //Peticiones de recurso
                 + HistoricoProcedimiento.TIPO_ENTIDAD_PETICION_RECURSO
-                + ", REC.RCR_ID, 0, TAR.PRC_ID, '"
+                + ", REC.RCR_ID, TAR.TAR_ID, 0, TAR.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.recursoInterpuesto", new Object[] {}, "**Recurso interpuesto", MessageUtils.DEFAULT_LOCALE)
                 + "', REC.FECHACREAR, REC.FECHACREAR, null, null, REC.USUARIOCREAR, TAR.USUARIOBORRAR, null, STA7.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL FROM TAR_TAREAS_NOTIFICACIONES TAR, RCR_RECURSOS_PROCEDIMIENTOS REC, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA7 "
                 + "WHERE REC.TAR_ID = TAR.TAR_ID AND TAR.PRC_ID IS NOT NULL AND TAR.DD_STA_ID = STA7.DD_STA_ID "
                 + "    UNION SELECT "
                 //Respuestas de recurso
                 + HistoricoProcedimiento.TIPO_ENTIDAD_RESPUESTA_RECURSO
-                + ", REC.RCR_ID, 1, TAR.PRC_ID, '"
+                + ", REC.RCR_ID, TAR.TAR_ID, 1, TAR.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.recursoResuelto", new Object[] {}, "**Recurso resuelto", MessageUtils.DEFAULT_LOCALE)
                 + "', REC.FECHAMODIFICAR, REC.FECHACREAR, null, REC.FECHAMODIFICAR, REC.USUARIOMODIFICAR, TAR.USUARIOBORRAR, null, STA8.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL FROM TAR_TAREAS_NOTIFICACIONES TAR, RCR_RECURSOS_PROCEDIMIENTOS REC, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA8 "
                 + "WHERE REC.TAR_ID = TAR.TAR_ID AND TAR.PRC_ID IS NOT NULL AND REC.RCR_FECHA_RESOLUCION IS NOT NULL AND TAR.DD_STA_ID = STA8.DD_STA_ID"
                 + "    UNION SELECT "
                 //Peticiones de prorroga
                 + HistoricoProcedimiento.TIPO_ENTIDAD_PETICION_PRORROGA
-                + ", SPR.SPR_ID, 0, TAR.PRC_ID, '"
+                + ", SPR.SPR_ID, TAR.TAR_ID, 0, TAR.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.peticionProrroga", new Object[] {}, "**Petici�n de prorroga", MessageUtils.DEFAULT_LOCALE)
                 + "', SPR.FECHACREAR, SPR.FECHACREAR, null, null, SPR.USUARIOCREAR, TAR.USUARIOBORRAR, null, STA9.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL FROM TAR_TAREAS_NOTIFICACIONES TAR, SPR_SOLICITUD_PRORROGA SPR, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA9 "
                 + "WHERE SPR.TAR_ID = TAR.TAR_ID AND TAR.PRC_ID IS NOT NULL AND TAR.DD_STA_ID = STA9.DD_STA_ID"
                 + "    UNION SELECT "
                 //Respuestas de prorroga
                 + HistoricoProcedimiento.TIPO_ENTIDAD_RESPUESTA_PRORROGA
-                + ", SPR.SPR_ID, 1, TAR.PRC_ID, '"
+                + ", SPR.SPR_ID, TAR.TAR_ID, 1, TAR.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.respuestaProrroga", new Object[] {}, "**Respuesta de prorroga", MessageUtils.DEFAULT_LOCALE)
                 + "', SPR.FECHAMODIFICAR, SPR.FECHACREAR, null, SPR.FECHAMODIFICAR, SPR.USUARIOMODIFICAR, TAR.USUARIOBORRAR, null, STA10.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL FROM TAR_TAREAS_NOTIFICACIONES TAR, SPR_SOLICITUD_PRORROGA SPR, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA10 "
                 + "WHERE SPR.TAR_ID = TAR.TAR_ID AND TAR.PRC_ID IS NOT NULL AND SPR.DD_RPR_ID IS NOT NULL AND TAR.DD_STA_ID = STA10.DD_STA_ID"
                 + "    UNION SELECT "
                 //Peticiones de acuerdos
                 + HistoricoProcedimiento.TIPO_ENTIDAD_PETICION_ACUERDO
-                + ", ACU.ACU_ID, 0, PRC.PRC_ID, '"
+                + ", ACU.ACU_ID, ACU.ACU_ID,0, PRC.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.propuestaAcuerdo", new Object[] {}, "**Propuesta de acuerdo", MessageUtils.DEFAULT_LOCALE)
                 + "', ACU.FECHACREAR, ACU.FECHACREAR, null, null, ACU.USUARIOCREAR, ACU.USUARIOMODIFICAR, null, null, null, NULL FROM ACU_ACUERDO_PROCEDIMIENTOS ACU, PRC_PROCEDIMIENTOS PRC"
                 + ", ASU_ASUNTOS ASU, ${master.schema}.DD_EAC_ESTADO_ACUERDO EAC "
@@ -178,7 +178,7 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
                 + "    UNION SELECT "
                 //Respuestas de acuerdos
                 + HistoricoProcedimiento.TIPO_ENTIDAD_RESPUESTA_ACUERDO
-                + ", ACU.ACU_ID, 1, PRC.PRC_ID, '"
+                + ", ACU.ACU_ID, ACU.ACU_ID, 1, PRC.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.respuestaAcuerdo", new Object[] {}, "**Acuerdo ", MessageUtils.DEFAULT_LOCALE)
                 + "' || eac.dd_eac_descripcion_larga, ACU.FECHAMODIFICAR, ACU.FECHAMODIFICAR, null, ACU.FECHAMODIFICAR, ACU.USUARIOMODIFICAR, ACU.USUARIOMODIFICAR, null, null, ACU.ACU_MOTIVO, NULL "
                 + "FROM ACU_ACUERDO_PROCEDIMIENTOS ACU, PRC_PROCEDIMIENTOS PRC, ASU_ASUNTOS ASU, ${master.schema}.DD_EAC_ESTADO_ACUERDO EAC "
@@ -190,14 +190,14 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
                 + "    UNION SELECT "
                 //Peticiones de decision
                 + HistoricoProcedimiento.TIPO_ENTIDAD_PETICION_DECISION
-                + ", DPR.DPR_ID, 0, PRC.PRC_ID, '"
+                + ", DPR.DPR_ID, DPR.DPR_ID, 0, PRC.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.propuestaDecision", new Object[] {}, "**Propuesta de decisi�n", MessageUtils.DEFAULT_LOCALE)
                 + "', DPR.FECHACREAR, DPR.FECHACREAR, null, null, DPR.USUARIOCREAR, DPR.USUARIOMODIFICAR, null, null, null, NULL FROM DPR_DECISIONES_PROCEDIMIENTOS DPR, PRC_PROCEDIMIENTOS PRC"
                 + ", ${master.schema}.DD_EDE_ESTADOS_DECISION EDE "
                 + "WHERE DPR.PRC_ID = PRC.PRC_ID AND DPR.DD_EDE_ID = EDE.DD_EDE_ID "
                 + "    UNION SELECT "
                 //Respuestas de decision
-                + HistoricoProcedimiento.TIPO_ENTIDAD_RESPUESTA_DECISION + ", DPR.DPR_ID, 1, PRC.PRC_ID, '"
+                + HistoricoProcedimiento.TIPO_ENTIDAD_RESPUESTA_DECISION + ", DPR.DPR_ID, DPR.DPR_ID, 1, PRC.PRC_ID, '"
                 + ms.getMessage("historicoProcedimiento.respuestaDecision", new Object[] {}, "**Respuesta de decisi�n", MessageUtils.DEFAULT_LOCALE)
                 + "', DPR.FECHAMODIFICAR, DPR.FECHACREAR, null, DPR.FECHAMODIFICAR, DPR.USUARIOMODIFICAR, DPR.USUARIOMODIFICAR, null, null, null, NULL FROM DPR_DECISIONES_PROCEDIMIENTOS DPR"
                 + ", PRC_PROCEDIMIENTOS PRC, ${master.schema}.DD_EDE_ESTADOS_DECISION EDE "

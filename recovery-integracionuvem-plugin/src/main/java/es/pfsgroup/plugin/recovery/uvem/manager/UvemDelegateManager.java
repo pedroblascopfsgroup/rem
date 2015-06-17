@@ -332,9 +332,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setCodigoObjetoAccesocopace(StringUtils.rightPad("", 8, ' ').substring(0, 8));
 			System.out.println(" ***REQUERIDO*** OBRTOR"); // 	longitud="40"	 Texto explicativo del código de retorno	siempre " " (spaces)
 			servicioGMP5JD20.setTextoExplicativoDeCodigoRetornoobrtor(StringUtils.rightPad("", 40, ' ').substring(0, 40));
-			System.out.println(" ***REQUERIDO*** NOVIAS"); // 	longitud="60"	 Dirección o Descripción del bien
-			String novias = bien.getDescripcionBien() != null ? bien.getDescripcionBien() : ""; 
-			servicioGMP5JD20.setNombreDeLaVianovias(StringUtils.rightPad(novias, 60, ' ').substring(0, 60));
+			
 			System.out.println(" ***REQUERIDO*** NUPIIN"); // 	longitud="10"	 Piso del inmueble	siempre " " (spaces)
 			servicioGMP5JD20.setPisoDelInmuebleLong10Nupiin(StringUtils.rightPad(bien.getLocalizacionActual().getPiso() != null ? bien.getLocalizacionActual().getPiso() : "", 10, ' ').substring(0, 10));
 			System.out.println(" ***REQUERIDO*** TITEXO"); // 	longitud="1"	 Tipo de texto	siempre " " (spaces)
@@ -374,6 +372,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			String copaw3 = "";
 			String cobipw = "";
 			String comuix = "";
+			String novias = "";
 			
 			System.out.println("COBIPW"); // longitud="15"	 Id bien en recovery
 			cobipw = bien.getId().toString();
@@ -417,6 +416,9 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				// longitud="3"	 Codigo pais
 				copaw3 = locActual.getPais() != null ? locActual.getPais().getDescripcion() : "";
 				
+				novias = locActual.getDireccion() != null ? locActual.getDireccion() : "";
+				novias += locActual.getNumeroDomicilio() != null ? locActual.getNumeroDomicilio() : "";
+				
 			}
 
 			System.out.println("COBIPW identificador bien recovery: " + cobipw);
@@ -442,6 +444,9 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setNombreDeLaProvincianoprac(noprac);
 			System.out.println("COPAW3 pais: " + copaw3);
 			servicioGMP5JD20.setCodigoPaisSede1copaw3(copaw3);
+			System.out.println(" ***REQUERIDO*** NOVIAS:" + novias); // 	longitud="60"	 Dirección o Descripción del bien
+			servicioGMP5JD20.setNombreDeLaVianovias(StringUtils.rightPad(novias, 60, ' ').substring(0, 60));
+			
 			
 			//FIN DE NUEVO CONTENEDORES
 			

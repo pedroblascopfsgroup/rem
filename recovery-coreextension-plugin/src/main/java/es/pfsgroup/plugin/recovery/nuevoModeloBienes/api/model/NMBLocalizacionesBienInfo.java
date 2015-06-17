@@ -64,6 +64,8 @@ public interface NMBLocalizacionesBienInfo {
 	
 	String getPiso();
 	
+	String getNumeroDomicilio();
+	
 	/**
 	 * Auditoria
 	 */

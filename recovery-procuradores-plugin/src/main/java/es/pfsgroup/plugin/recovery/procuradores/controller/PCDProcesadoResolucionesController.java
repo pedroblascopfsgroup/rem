@@ -431,7 +431,7 @@ public class PCDProcesadoResolucionesController {
 			
 			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(msvResolucion.getId());
 				
-			if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
+			if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA) && !msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO"))
 			{
 				DtoGenericForm dto = this.rellenaDTO(msvResolucion);
 				executor.execute("genericFormManager.saveValues",dto);

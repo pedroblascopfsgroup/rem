@@ -906,12 +906,22 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		servicioGMPETS07_INS.setFechaDeLaTasacionlfetas(0000000000);
 		//NOMBDO	longitud="34"	NOMBRE DEL DOCUMENTO
 		System.out.println("*** NUMOG1"); // 	Repetición veces="500"	 Tabla con números de activo.	TABLA  
-		System.out.println("Numero Activo: "+ bien.getNumeroActivo() != null ? Integer.parseInt(bien.getNumeroActivo()) : "DESCONOCIDO");
+		Integer numeroActivo = 0;
+		if(!Checks.esNulo(bien.getNumeroActivo())){
+			try{
+			numeroActivo = Integer.parseInt(bien.getNumeroActivo());
+			System.out.println("Numero Activo: "+ numeroActivo);
+			}
+			catch(NumberFormatException e){
+				System.out.println("solicitarTasacion(): error al parsear a integer " + e);
+			}
+		}
+		
         VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1 numeroOcurrencias1 = new VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1();
         
         // Registro 1
         StructGMPETS07_INS_NumeroDeOcurrenciasnumog1 numeroOcurrencias1Registro = new StructGMPETS07_INS_NumeroDeOcurrenciasnumog1();
-        numeroOcurrencias1Registro.setCodigoDeSituacionDelInmueblelcoace(bien.getNumeroActivo() != null ? Integer.parseInt(bien.getNumeroActivo()) : 0);
+        numeroOcurrencias1Registro.setCodigoDeSituacionDelInmueblelcoace(numeroActivo);
         numeroOcurrencias1.setStructGMPETS07_INS_NumeroDeOcurrenciasnumog1(numeroOcurrencias1Registro);
        
         // Registro n

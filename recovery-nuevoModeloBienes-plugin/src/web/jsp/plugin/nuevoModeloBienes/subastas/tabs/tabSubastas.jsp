@@ -14,7 +14,10 @@ var colorFondo = 'background-color: #473729;';
 var winWidth = 920;
 var winWidthAgregarBien= 950;
 var idSubasta;
-var bienSel='';
+var deselecciona;
+var arrayBienSel=[];
+var arrayBienSelId=[];
+var arrayBienLote=[];
 
 	var panel = new Ext.Panel({
 		title: '<s:message code="plugin.nuevoModeloBienes.subastas.tabTitle" text="**Subastas" />'
@@ -225,6 +228,10 @@ var bienSel='';
 		btnInfSubasta.setDisabled(false);
 		btnInstrucSubasta.setDisabled(false);
 		btnInstrucLotes.setDisabled(true);
+		
+		arrayBienSel=[];
+		arrayBienSelId=[];
+		arrayBienLote=[];
 
 		if (codEstadoSubasta == 'SUS' || codEstadoSubasta == 'CAN' || codEstadoSubasta == 'CEL' ) {
 			btnAgregarBien.setDisabled(true);
@@ -432,15 +439,14 @@ var bienSel='';
         	//la plantilla se elije en el controller
 			var plantilla='';
 		    var flow='/pfs/subasta/generarInformeValidacionCDD';
-		    if (bienSel != ''){
+		    if (arrayBienLote.length > 0){
 		    	var strIds = '';
-		    	for(i=0;i < bienSel.length;i++){
+		    	for(i=1;i < arrayBienLote.length;i++){
 		    		if(strIds != '') {
 						strIds += ',';
 					}
-		    		strIds += bienSel[i].data.idBien;	
-					strIds += ';';
-					strIds += bienSel[i].data.idLoteBien;
+		    		strIds += arrayBienLote[i];	
+		    		i++;
 		    	}
 				var params = {idSubasta:idSubasta,idBien:strIds};
 	        	app.openBrowserWindow(flow,params);
@@ -459,15 +465,14 @@ var bienSel='';
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
         	var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
-        	if (bienSel != ''){
-        		var strIds = '';
-		    	for(i=0;i < bienSel.length;i++){
+        	if (arrayBienLote.length > 0){
+		    	var strIds = '';
+		    	for(i=1;i < arrayBienLote.length;i++){
 		    		if(strIds != '') {
 						strIds += ',';
 					}
-		    		strIds += bienSel[i].data.idBien;	
-					strIds += ';';
-					strIds += bienSel[i].data.idLoteBien;
+		    		strIds += arrayBienLote[i];	
+		    		i++;
 		    	}
         		var texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien " />';
         		texto += strIds + ' '; 
@@ -485,15 +490,14 @@ var bienSel='';
 			//la plantilla se elije en el controller
 			var plantilla='';
 		    var flow='/pfs/subasta/generarInformeCierre';
-			if (bienSel != ''){
-				var strIds = '';
-		    	for(i=0;i < bienSel.length;i++){
+			if (arrayBienLote.length > 0){
+		    	var strIds = '';
+		    	for(i=1;i < arrayBienLote.length;i++){
 		    		if(strIds != '') {
 						strIds += ',';
 					}
-		    		strIds += bienSel[i].data.idBien;	
-					strIds += ';';
-					strIds += bienSel[i].data.idLoteBien;
+		    		strIds += arrayBienLote[i];	
+		    		i++;
 		    	}
 				var params = {idSubasta:idSubasta,idBien:strIds};
 	        	app.openBrowserWindow(flow,params);
@@ -586,14 +590,64 @@ var bienSel='';
 			    return false;
 			}
 			
+			function deseleccionado(array, lote, idBien) {
+				for (var i = 0; i < array.length; i++) {
+					var elemento = array[i];
+			        if (elemento.indexOf(lote)==0) {
+			        	if(idBien == '') {
+			        		return array[i+1];
+			        	}else{
+							if(array[i].indexOf(idBien) == -1) {
+				        		return array[i+1];
+				        	}			        	
+			        	}
+			        }
+			    }
+			}
+			
 		    var smCheckBien = new Ext.grid.CheckboxSelectionModel({
        	        	checkOnly : true
        	        	,singleSelect: false
        	        	,listeners: {
-           				selectionchange: function(sel) {
-			            	bienSel = sel.getSelections();
+           				selectionchange: function(sel) {			            	
+			            	var loteSeleccionado = record.get("idLote");
+			            	var bienSel = sel.getSelections();
+			            	var numBienSelec = sel.getCount();
+		            		var indexSeleccionado = numBienSelec - 1;
+			            	if(deselecciona) {
+				            	if(sel.getCount() == 0) {
+				            		var idBienDeseleccionado = deseleccionado(arrayBienSelId, loteSeleccionado, '');
+			            			var pos = arrayBienSel.indexOf(idBienDeseleccionado);
+			            			arrayBienSel.splice(pos,1);
+			            			
+			            			var posBL = arrayBienLote.indexOf(idBienDeseleccionado);
+			            			arrayBienLote.splice(posBL,1);
+			            			arrayBienLote.splice(posBL,1);
+				            	}
+			            		for(i=0;i < sel.getCount();i++){
+			            			var idBienDeseleccionado = deseleccionado(arrayBienSelId, loteSeleccionado, bienSel[i].id);
+			            			var pos = arrayBienSel.indexOf(idBienDeseleccionado);
+			            			arrayBienSel.splice(pos,1);
+			            			
+			            			var posBL = arrayBienLote.indexOf(idBienDeseleccionado);
+			            			arrayBienLote.splice(posBL,1);
+			            			arrayBienLote.splice(posBL,1);
+			            		}
+			            	}else{
+			            		if(!contains(arrayBienSel, bienSel[indexSeleccionado].data.idBien)) {
+				            			arrayBienSel.push(bienSel[indexSeleccionado].data.idBien);
+				            			arrayBienSelId.push(loteSeleccionado+"."+bienSel[indexSeleccionado].id);
+				            			arrayBienSelId.push(bienSel[indexSeleccionado].data.idBien);
+				            			arrayBienLote.push(bienSel[indexSeleccionado].data.idBien);
+				            			arrayBienLote.push(bienSel[indexSeleccionado].data.idBien+';'+bienSel[indexSeleccionado].data.idLoteBien);
+				            	}
+			            	}
 			            	
-			            }            
+			            }, rowselect: function(sel) {
+			            	deselecciona = false;
+			            }, rowdeselect: function(sel) {
+			            	deselecciona = true;
+			            }
 					}
 				});
 	

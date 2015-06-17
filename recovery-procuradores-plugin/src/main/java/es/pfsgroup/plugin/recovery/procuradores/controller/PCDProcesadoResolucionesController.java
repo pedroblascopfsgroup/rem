@@ -45,12 +45,14 @@ import es.capgemini.pfs.web.genericForm.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVAsuntoApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVDiccionarioApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
+import es.pfsgroup.plugin.recovery.masivo.dao.MSVResolucionDao;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
@@ -184,6 +186,9 @@ public class PCDProcesadoResolucionesController {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private MSVResolucionDao msvResolucionDao;
 	
 	/**
 	 * Muestra la pantalla de procesado de resoluciones.
@@ -388,48 +393,61 @@ public class PCDProcesadoResolucionesController {
 	@RequestMapping
 	public String procesar(MSVResolucionesDto dtoResolucion, ModelMap model, WebRequest request) throws Exception{
 		
+		String resultadoProceso = MSVDDEstadoProceso.CODIGO_PROCESADO;
+		
 		@SuppressWarnings("rawtypes")
 		Map enu = request.getParameterMap();
 		Map<String,String> camposDinamicos = this.getCamposDinamicos(enu);
 		dtoResolucion.setCamposDinamicos(camposDinamicos);
 		dtoResolucion.setIdResolucion(this.getIdResolucion(enu));
-
 		
 		// MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
 		MSVResolucion msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
 		
-		//Se sobreescribe el fichero del procurador.
-		if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
-		{
-			apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
-			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
-		}else{
-			//El gestor adjunta un fichero y no había
-			if(!Checks.esNulo(dtoResolucion.getIdFichero()))
+		try{
+			
+			//Se sobreescribe el fichero del procurador.
+			if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
 			{
+				apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
 				msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
-			//No se adjunta ningún fichero.
 			}else{
-				  msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarResolucion(dtoResolucion);
+				//El gestor adjunta un fichero y no había
+				if(!Checks.esNulo(dtoResolucion.getIdFichero()))
+				{
+					msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
+				//No se adjunta ningún fichero.
+				}else{
+					  msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarResolucion(dtoResolucion);
+				}
 			}
-		}
+				
 			
-		
-		dtoResolucion.setIdTarea(msvResolucion.getTarea().getId());
-		if(msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
-		{
-			apiProxyFactory.proxy(PCDProcesadoResolucionesApi.class).generarAutoprorroga(dtoResolucion);
-		}
-		
-		msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(msvResolucion.getId());
+			dtoResolucion.setIdTarea(msvResolucion.getTarea().getId());
+			if(msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
+			{
+				apiProxyFactory.proxy(PCDProcesadoResolucionesApi.class).generarAutoprorroga(dtoResolucion);
+			}
 			
-		if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
-		{
-			DtoGenericForm dto = this.rellenaDTO(msvResolucion);
-			executor.execute("genericFormManager.saveValues",dto);
+			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(msvResolucion.getId());
+				
+			if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
+			{
+				DtoGenericForm dto = this.rellenaDTO(msvResolucion);
+				executor.execute("genericFormManager.saveValues",dto);
+			}
+			
+			model.put("resolucion", msvResolucion);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			resultadoProceso = MSVDDEstadoProceso.CODIGO_ERROR;
+		}finally{
+			msvResolucion.setEstadoResolucion(genericDao.get(MSVDDEstadoProceso.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", resultadoProceso)));
+			msvResolucionDao.saveOrUpdate(msvResolucion);
 		}
 		
-		model.put("resolucion", msvResolucion);
 		
 		return JSON_GRABAR_PROCESAR;
 	}

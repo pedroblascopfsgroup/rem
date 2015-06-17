@@ -419,7 +419,7 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 							appProperties.getProperty("procesoFacturacion.rutaExcelDetalles") : "tmp" + File.separator;
 			
 			makeDir(rutaFicheroResultados);
-			String nombreFicheroResultados = "procFactu_" +	procesoFacturacion.getNombre() + "_" + procesoFacturacion.getId()+".xls";			
+			String nombreFicheroResultados = "procFactu_" +	procesoFacturacion.getId()+".xls";			
 			excel.crearNuevoExcel(rutaFicheroResultados + nombreFicheroResultados, cabeceras, listaValores,false, 50000);
 
 			FileItem excelFileItem = new FileItem(excel.getFile());

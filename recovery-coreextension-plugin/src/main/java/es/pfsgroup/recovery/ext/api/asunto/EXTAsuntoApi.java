@@ -65,9 +65,9 @@ public interface EXTAsuntoApi {
      * Indica si el Usuario Logado es el gestor de decision del asunto.
      * @return true si es el gestor.
      */
-    @BusinessOperationDefinition(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
-    public Boolean esGestorDecision(); 		
-
+	@BusinessOperationDefinition(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
+	public Boolean esGestorDecision();
+	
 	@BusinessOperationDefinition(EXT_BO_ES_TITULIZADA)
 	public String esTitulizada(Long idAsunto);
 	

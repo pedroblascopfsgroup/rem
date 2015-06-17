@@ -48,6 +48,9 @@
 				<!-- Procedimientos hipotecarios NUEVOS -->
 				<entry key="H064" value-ref="mapaTramiteConsigacion"/>
 				<entry key="H032" value-ref="mapaTramiteCostasEntidad"/>
+				
+				<!-- Trámite de Notificación -->
+				<entry key="P400" value-ref="mapaTramiteNotificacion"/>
 			</map>
 		</property>
 	</bean>
@@ -1864,5 +1867,84 @@
 		</property>
 	</bean>
 	
+	
+	<!-- P400 mapaTramiteNotificacion -->
+		<bean id="mapaTramiteNotificacion"
+		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
+		<property name="mapaTiposResoluciones">
+			<map>				
+				<entry key="R_TR_NOTI_ESC_SELL_NOT">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_NOTI_ESC_SELL_NOT</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_TR_NOTI_ESC_SELL_AVE">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_NOTI_ESC_SELL_AVE</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_TR_NOTI_RES_ACU_NOTI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_NOTI_RES_ACU_NOTI</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_TR_NOTI_RES_ACU_AVE">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_NOTI_RES_ACU_AVE</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_TR_NOTI_DIL_REQ">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_NOTI_DIL_REQ</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_TR_NOTI_ESC_SELL_EDI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_NOTI_ESC_SELL_EDI</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_TR_NOTI_DO_ACO_NOTI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_NOTI_DO_ACO_NOTI</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
 	
 </beans>	

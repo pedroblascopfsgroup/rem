@@ -1866,6 +1866,80 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return results;
 	}
 
+	
+
+	
+	/**
+	 * Indica si el Usuario Logado es el gestor de Decision del asunto.
+	 * 
+	 * @return true si es el gestor de Decision
+	 */
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
+	@Override
+	public Boolean esGestorDecision() {
+		Usuario usuario =  proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		try {
+			return esUsuarioGestorDecision(usuario);
+		} catch (Exception e) {
+			logger.fatal("No se ha podido averiguar si el usuario con Id " + usuario.getId() + " es gestor de Decisión del asunto");
+			return false;
+			//throw new BusinessOperationException(e);
+		}
+	}		
+
+
+	
+	/**
+	 * esUsuarioGestorDecision
+	 * 
+	 * Nos devuelve si este usuario tiene algún gestor de tipo Decisión
+	 * 
+	 * @param usu Usuario
+	 * @return true / false
+	 */
+	private Boolean esUsuarioGestorDecision(Usuario u){
+		Boolean res = false;
+		
+		List<DespachoExterno> deList = gestorAdicionalAsuntoDao.getTipoDespachoExternoList(u.getId());
+		List<String> ctdList = new ArrayList<String>();
+		for (DespachoExterno de : deList){
+			ctdList.add(de.getTipoDespacho().getCodigo());
+		}
+		
+		Set<String> staC = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		
+		Set<String> hm = new HashSet<String>();
+		String v = "";
+		StringTokenizer vS = null;
+		List<EXTTipoGestorPropiedad> tgpL = new ArrayList<EXTTipoGestorPropiedad>();
+		
+		for (Object st : staC.toArray()) {
+		
+			tgpL = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(st.toString());
+						
+			// Como en el campo "valor" nos pueden venir datos separados por ","
+			// los trocearemos y guardaremos cada valor individual en un Set
+			// para la comprobación final
+			for (EXTTipoGestorPropiedad tgp : tgpL){
+				v = tgp.getValor();
+				vS = new StringTokenizer(v,",");
+				
+				while (vS.hasMoreElements()){
+					hm.add(vS.nextToken());
+				}
+			}
+		}
+		
+		// Comprobacion final
+		for (String ctd : ctdList) {
+			if (hm.contains(ctd))		
+				res = true;
+		}
+		
+		return res;
+ 	}
+
+
 	@Override
 	@BusinessOperation(EXT_BO_ES_TITULIZADA)
 	public String esTitulizada(Long idAsunto) {
@@ -1893,4 +1967,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		
 	}
+	
 }
+

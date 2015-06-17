@@ -2195,6 +2195,43 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de pago",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   		]);
 	
+	// id: 357 : TRAMITE NOTIFICACION : Escrito sellado solicitando notificación en otros domicilios.
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	// id: 358 : TRAMITE NOTIFICACION : Escrito sellado solicitando averiguación domiciliaria.
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	// id: 359 : TRAMITE NOTIFICACION : Resolución acuerda notificación en otros domicilios.
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fechaNotificacion","fieldLabel":"Fecha de notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	// id: 360 : TRAMITE NOTIFICACION : Resolución acuerda averiguación domiciliaria.
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fechaNotificacion","fieldLabel":"Fecha de notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	// id: 361 : TRAMITE NOTIFICACION : Diligencia de requerimiento.
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fechaRequerimiento","fieldLabel":"Fecha de requerimiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+                   	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboPositivoNegativo","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPositivoNegativo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+					,{"xtype":'textfield',"name":"d_direccion","fieldLabel":"Direccion",allowBlank:true,id:'d_direccion'+this.idFactoria}
+
+	   		]);
+	
+	// id: 362 : TRAMITE NOTIFICACION : Escrito sellado solicitando notificación por edictos
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
+	
+	// id: 363 : TRAMITE NOTIFICACION : D.O. acordando notificación por edictos
+	this.arrayCampos.push([
+	   				{"xtype":'datefield',"name":"d_fechaExpedicion","fieldLabel":"Fecha de expedición",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	   		]);
 	
 		
 		var lengthArrayCampos = this.arrayCampos.length;

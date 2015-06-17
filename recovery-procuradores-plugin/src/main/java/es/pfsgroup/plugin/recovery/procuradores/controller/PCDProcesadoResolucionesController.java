@@ -44,15 +44,12 @@ import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.capgemini.pfs.web.genericForm.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVAsuntoApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVDiccionarioApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
-import es.pfsgroup.plugin.recovery.masivo.dao.MSVResolucionDao;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
@@ -179,16 +176,13 @@ public class PCDProcesadoResolucionesController {
 	private Executor executor;
 	
 	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
 	private ConfiguracionDespachoExternoApi configuracionDespachoExternoApi;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
-	private MSVResolucionDao msvResolucionDao;
+	private PCDResolucionProcuradorApi pcdResolucionProcuradorApi;
 	
 	/**
 	 * Muestra la pantalla de procesado de resoluciones.
@@ -393,8 +387,6 @@ public class PCDProcesadoResolucionesController {
 	@RequestMapping
 	public String procesar(MSVResolucionesDto dtoResolucion, ModelMap model, WebRequest request) throws Exception{
 		
-		String resultadoProceso = MSVDDEstadoProceso.CODIGO_PROCESADO;
-		
 		@SuppressWarnings("rawtypes")
 		Map enu = request.getParameterMap();
 		Map<String,String> camposDinamicos = this.getCamposDinamicos(enu);
@@ -441,11 +433,9 @@ public class PCDProcesadoResolucionesController {
 			
 		}catch(Exception e){
 			e.printStackTrace();
-			resultadoProceso = MSVDDEstadoProceso.CODIGO_ERROR;
-		}finally{
-			msvResolucion.setEstadoResolucion(genericDao.get(MSVDDEstadoProceso.class, 
-					genericDao.createFilter(FilterType.EQUALS, "codigo", resultadoProceso)));
-			msvResolucionDao.saveOrUpdate(msvResolucion);
+			String resultadoProceso = MSVDDEstadoProceso.CODIGO_ERROR;
+			dtoResolucion.setEstadoResolucion(resultadoProceso);
+			pcdResolucionProcuradorApi.guardarResolucion(dtoResolucion);
 		}
 		
 		

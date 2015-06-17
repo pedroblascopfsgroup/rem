@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.Column;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -28,6 +27,7 @@ import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
@@ -1391,20 +1391,23 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 	
 	
-//	void guardarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
-//		StringBuilder sb = new StringBuilder();
-//		sb.append(" insert into BatchAcuerdoCierreDeuda bacd ");
-//		sb.append(" (idProcedimiento, fechaAlta, idAsunto, fechaEntrega, usuarioCrear, idBien, entidad) ");
-//		sb.append(" values ");
-//		sb.append("  ");
-//		
-//		insert into contact_number (mobile_number, person_id, id) values (?, ?, ?)
-//		
-//		Query query = session.createQuery("insert into Stock(stock_code, stock_name)" +
-//    			"select stock_code, stock_name from backup_stock");
-//int result = query.executeUpdate();
-//
-//		query.executeUpdate();
-//		}
+	public void guardarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
+		StringBuilder sb = new StringBuilder();
+		sb.append(" insert into BatchAcuerdoCierreDeuda ");
+		sb.append(" (idProcedimiento, fechaAlta, idAsunto, fechaEntrega, usuarioCrear, idBien, entidad) ");
+		sb.append(" values ");
+		sb.append(" (");
+		sb.append(acuerdoCierreDeuda.getIdProcedimiento()).append(",");
+		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaAlta())).append(",");
+		sb.append(acuerdoCierreDeuda.getIdAsunto()).append(",");
+		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaEntrega())).append(",");
+		sb.append(acuerdoCierreDeuda.getUsuarioCrear()).append(",");
+		sb.append(acuerdoCierreDeuda.getIdBien()).append(",");
+		sb.append(acuerdoCierreDeuda.getEntidad());
+		sb.append(")");
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
 	
 }

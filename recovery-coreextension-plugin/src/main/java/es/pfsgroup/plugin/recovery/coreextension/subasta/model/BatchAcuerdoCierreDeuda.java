@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -56,6 +57,10 @@ public class BatchAcuerdoCierreDeuda implements Serializable {
 	
 	@Column(name = "ENTIDAD")
 	private String entidad;
+	
+	@Column(name = "VERSION")
+	@Version
+    private Integer version;
 	
 	public Long getId() {
 		return id;
@@ -120,5 +125,20 @@ public class BatchAcuerdoCierreDeuda implements Serializable {
 	public void setEntidad(String entidad) {
 		this.entidad = entidad;
 	}
+
+	/**
+	 * @return the version
+	 */
+	public Integer getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+	
 	
 }

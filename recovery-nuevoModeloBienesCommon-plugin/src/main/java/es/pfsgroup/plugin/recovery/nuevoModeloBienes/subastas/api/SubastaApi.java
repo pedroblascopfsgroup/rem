@@ -50,11 +50,13 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.obtenerTareasCierreDeuda";
 	public static final String BO_NMB_SUBASTA_ACTUALIZAR_INFORMACION_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.actualizarInformacionCierreDeuda";
 	public static final String BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.obtenValorNodoPrc";
-	public static final String BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaNoExisteOFinalizada";
+	public static final String BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExisteYFinalizada";
 	public static final String BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.existeRegistroCierreDeuda";
 	public static final String BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarRegistroCierreDeuda";
 	public static final String BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarBienesCierreDeuda";
-
+	public static final String BO_NMB_SUBASTA_RELLENAR_INFORME_CDD = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.rellenarInformeValidacionCDD";	
+	public static final String BO_NMB_SUBASTA_ENVIAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarCierreDeuda";
+	
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -187,14 +189,14 @@ public interface SubastaApi {
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
 	public Map<String, String> obtenerTareasCierreDeuda();
 	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_ACTUALIZAR_INFORMACION_CIERRE_DEUDA)
 	public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
 	ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor);
 
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_NOEXISTE_O_FINALIZADA)
-	boolean tareaNoExisteOFinalizada(Procedimiento procedimiento, String nombreNodo);
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA)
+	boolean tareaExisteYFinalizada(Procedimiento procedimiento, String nombreNodo);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
 	List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien);
@@ -204,6 +206,5 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
 	List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien);
-	
 	
 }

@@ -26,6 +26,6 @@ public interface SubastaDao extends AbstractDao<Subasta, Long>{
 	List<LoteSubasta> buscarLoteSubastasExcel(NMBDtoBuscarLotesSubastas dto,Usuario usuLogado);
 	Integer buscarSubastasExcelCount(NMBDtoBuscarSubastas dto, Usuario usuLogado);
 	List<BatchAcuerdoCierreDeuda> findBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien);	
-//	void guardarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda);
+	void guardarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda);
 
 }

@@ -33,7 +33,9 @@ public class InformeValidacionCDDBean {
 	private static final String VALOR_COMBO_POSTORES = "comboPostores";
 	private static final String VALOR_FECHA_TESTIMONIO = "fechaTestimonio";
 
-	public static final String TIPO_PROCEDIMIENTO_SAREB_HY = "H002";
+	public static final String TIPO_PROCEDIMIENTO_SAREB = "H002";
+	public static final String TIPO_PROCEDIMIENTO_SAREB_CONCURSAL = "H003";
+	public static final String TIPO_PROCEDIMIENTO_SAREB_TERCEROS = "H004";
 	public static final String TIPO_PROCEDIMIENTO_BANKIA = "P401";
 	public static final String TIPO_PROCEDIMIENTO_SAREB_BNK = "P409";
 
@@ -142,8 +144,7 @@ public class InformeValidacionCDDBean {
 	private DatosLoteCDD completaDatosLote(LoteSubasta loteSubasta) {
 		StringBuilder sb = new StringBuilder();
 		DatosLoteCDD datosLote = new DatosLoteCDD();
-		//datosLote.setNumLote(loteSubasta.getNumLote().longValue());
-		datosLote.setNumLote(Long.valueOf(1000));
+		datosLote.setNumLote(loteSubasta.getNumLote().longValue());
 		if (Checks.esNulo(datosLote.getNumLote())) {
 			sb.append("Numero Lote; ");
 		}
@@ -189,7 +190,7 @@ public class InformeValidacionCDDBean {
 
 	private List<InfoBienesCDD> rellenaInfoBienes(LoteSubasta loteSubasta) {
 		List<InfoBienesCDD> listInfoBienes = new ArrayList<InfoBienesCDD>();
-		StringBuilder sb = new StringBuilder();/*
+		StringBuilder sb = new StringBuilder();
 		for (Bien bien : loteSubasta.getBienes()) {
 			Long idBien = bien.getId();
 			NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(idBien);
@@ -295,7 +296,7 @@ public class InformeValidacionCDDBean {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", List Contratos relacionado; ");
 			}
 			listInfoBienes.add(infobien);
-		}*/
+		}
 		mensajesValidacion += sb.toString();
 		return listInfoBienes;
 	}
@@ -314,8 +315,12 @@ public class InformeValidacionCDDBean {
 
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
 		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
-			if (TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY);
+			if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB);
+			} else if (TIPO_PROCEDIMIENTO_SAREB_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_CONCURSAL);
+			} else if (TIPO_PROCEDIMIENTO_SAREB_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_TERCEROS);
 			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK);
 			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
@@ -333,8 +338,12 @@ public class InformeValidacionCDDBean {
 		String tareaSenyalamientoSubasta = "";
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
 		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
-			if (TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_HY);
+			if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB);
+			} else if (TIPO_PROCEDIMIENTO_SAREB_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_CONCURSAL);
+			} else if (TIPO_PROCEDIMIENTO_SAREB_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_TERCEROS);
 			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK);
 			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
@@ -376,7 +385,7 @@ public class InformeValidacionCDDBean {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relaciÃ³n con ningún contrato;");
+				sb.append(" no tiene relación con ningún contrato;");
 			}
 		}
 		booleanBienes = validaBienesPersonas();
@@ -421,14 +430,14 @@ public class InformeValidacionCDDBean {
 	// Si el procedimiento no tiene relaciÃ³n con algÃºn contrato no cancelado
 	private boolean validaProcedimientoContratos(Subasta subasta) {
 		boolean correcto = false;
-		/*if (subasta.getAsunto() != null && subasta.getAsunto().getContratos() != null) {
+		if (subasta.getAsunto() != null && subasta.getAsunto().getContratos() != null) {
 			for (Contrato contrato : subasta.getAsunto().getContratos()) {
 				if (!contrato.estaCancelado()) {
 					correcto = true;
 					break;
 				}
 			}
-		}*/
+		}
 		return correcto;
 	}
 

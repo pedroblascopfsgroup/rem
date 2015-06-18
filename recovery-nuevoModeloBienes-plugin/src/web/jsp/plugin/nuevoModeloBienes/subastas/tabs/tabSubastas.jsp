@@ -18,7 +18,8 @@ var deselecciona;
 var arrayBienSel=[];
 var arrayBienSelId=[];
 var arrayBienLote=[];
-
+var validacionCDD;
+	
 	var panel = new Ext.Panel({
 		title: '<s:message code="plugin.nuevoModeloBienes.subastas.tabTitle" text="**Subastas" />'
 		,autoHeight: true
@@ -140,18 +141,26 @@ var arrayBienLote=[];
 		,disabled : true
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-        	//la plantilla se elije en el controller
-			var plantilla='';
-	        var w = app.openWindow({
-					flow: 'subasta/editarInformacionCierre'
-					,params: {idSubasta:idSubasta}
-					,title: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEditarInfoCierre" text="**Editar información cierre" />'
-					,width: winWidth
+        	if(validacionCDD != '') {
+	        	Ext.Msg.show({
+				   title:'Aviso',
+				   msg: validacionCDD,
+				   buttons: Ext.Msg.OK,
 				});
-				w.on(app.event.DONE, function() {
-					w.close(); });
-				w.on(app.event.CANCEL, function(){ w.close(); });
-		}
+        	}else{
+	        	//la plantilla se elije en el controller
+				var plantilla='';
+		        var w = app.openWindow({
+						flow: 'subasta/editarInformacionCierre'
+						,params: {idSubasta:idSubasta}
+						,title: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEditarInfoCierre" text="**Editar información cierre" />'
+						,width: winWidth
+					});
+					w.on(app.event.DONE, function() {
+						w.close(); });
+					w.on(app.event.CANCEL, function(){ w.close(); });
+			}
+		}				
 	});
 	 
 	var editarDescripcionAdjuntoExpediente = new  Ext.Button({
@@ -222,12 +231,16 @@ var arrayBienLote=[];
 				
 		if(idSubasta!=null && idSubasta!='') {
 			lotesStore.webflow({idSubasta:idSubasta});
+			panel.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>','x-mask-loading');
 			disableBotonesCDDStore.webflow({idSubasta:idSubasta});
 		}
 		
 		btnInfSubasta.setDisabled(false);
 		btnInstrucSubasta.setDisabled(false);
 		btnInstrucLotes.setDisabled(true);
+		btnEditarInfoCierre.setDisabled(false);
+	   	btnGenerarInformeCierre.setDisabled(false);
+	   	btnEnviarCierre.setDisabled(false);
 		
 		arrayBienSel=[];
 		arrayBienSelId=[];
@@ -321,11 +334,8 @@ var arrayBienLote=[];
 	});
 	
 	disableBotonesCDDStore.on('load', function(store, records, options){
-	   	var disable = store.getAt(0);
-		btnEditarInfoCierre.setDisabled(disable.get('valorDisable'));
-	   	btnGenerarInformeCierre.setDisabled(disable.get('valorDisable'));
-	   	btnEnviarCierre.setDisabled(disable.get('valorDisable'));
-	   	
+	   	validacionCDD = store.getAt(0).get('valorDisable');
+	   	panel.el.unmask();
 	});
     
     
@@ -737,7 +747,6 @@ var arrayBienLote=[];
  	panel.setVisibleTab = function(data){
 		return data.toolbar.puedeVerTabSubasta;
 	}
-	
 	
 	return panel;
 })

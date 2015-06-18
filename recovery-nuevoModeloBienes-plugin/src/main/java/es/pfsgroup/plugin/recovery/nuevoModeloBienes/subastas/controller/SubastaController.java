@@ -1,11 +1,9 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,7 +15,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -25,6 +22,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
@@ -50,6 +48,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformac
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LotesSubastaDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.geninformes.GENINFVisorInformeController;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
@@ -58,7 +57,6 @@ public class SubastaController {
 
 	private static final String SUBASTAS_JSON = "plugin/nuevoModeloBienes/subastas/subastasJSON"; 
 	private static final String LOTES_SUBASTA_JSON = "plugin/nuevoModeloBienes/subastas/lotesSubastaJSON"; 
-	private static final String BIENES_LOTE_JSON = "plugin/nuevoModeloBienes/subastas/bienesByLoteJSON";
 	private static final String DISABLED_BOTONES_CDD_JSON = "plugin/nuevoModeloBienes/subastas/disableBotonesCDDJSON";
 	private static final String WIN_AGREGAR_EXCLUIR_BIEN = "plugin/nuevoModeloBienes/subastas/agregarExcluirBien"; 
 	private static final String BIENES_JSON = "plugin/nuevoModeloBienes/subastas/bienesJSON";
@@ -93,8 +91,8 @@ public class SubastaController {
 	@RequestMapping
 	public String getDisableBotonesCDD(@RequestParam(value = "idSubasta", required = true) Long id, ModelMap map) {
 		Subasta subasta = subastaApi.getSubasta(id);
-		List<Boolean> list = new ArrayList<Boolean>();
-		list.add(disableEditInfoCDD(subasta));
+		List<String> list = new ArrayList<String>();
+		list.add(disableEditInfoCDD(subasta, null));
 		map.put("disableBotonesCDD", list);
 		return DISABLED_BOTONES_CDD_JSON;
 	}
@@ -113,30 +111,43 @@ public class SubastaController {
 			lotesDto.add(loteSubastaDto);
 		}
 
-		
 		map.put("lotes", lotesDto);
 		return LOTES_SUBASTA_JSON;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-	public String getBienesLote(@RequestParam(value = "idLote", required = true) Long idLote, ModelMap map) {		
-		List<Bien> bienes = subastaApi.getBienesLoteSubasta(idLote);
-		map.put("bienes", bienes);
-		return BIENES_LOTE_JSON;
-	}
-	
-	private Boolean disableEditInfoCDD(Subasta subasta){
-		String tareaCelebracionSubasta = "";
+	private String disableEditInfoCDD(Subasta subasta, List<Long> idsBien){
+		String tarea = "";
+		Boolean deshabilitar = false;
+		String resultado = "";
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY);
-		} else if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK);
+		if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())
+				|| InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())
+				|| InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+			tarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_ADJUDICACION_CONFIRMAR_CONTABILIDAD);
+			deshabilitar = subastaApi.validacionCierreDeuda(subasta, idsBien, tarea);
+			if(!deshabilitar) {
+				resultado ="No es posible el envío a cierre de deuda al no tener iniciada todos los bienes la tarea 'Confirmar contabilidad' del trámite de adjudicación de cada bien.";
+			}
 		} else if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_BANKIA);
+			String propAsunto = (String) proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerPropiedadAsunto(subasta.getProcedimiento().getId());
+			if(DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(propAsunto)) {
+				tarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_BNK);
+				deshabilitar = subastaApi.tareaExiste(subasta.getProcedimiento(), tarea);
+				if(!deshabilitar) {
+					resultado ="No es posible el envío a cierre de deuda al no tener iniciada todos los bienes la tarea 'Contabilizar activos/cierre de deudas' del trámite de adjudicación de cada bien.";
+				}
+			}
+		} else if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+			String propAsunto = (String) proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerPropiedadAsunto(subasta.getProcedimiento().getId());
+			if(DDPropiedadAsunto.PROPIEDAD_SAREB.equals(propAsunto)) {
+				tarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_SAREB);
+				deshabilitar = subastaApi.validacionCierreDeuda(subasta, idsBien, tarea);
+				if(!deshabilitar) {
+					resultado ="No es posible el envío a cierre de deuda al no tener iniciada la tarea 'Contabilizar activos/cierre de deudas' del trámite de subasta correspondiente.";
+				}
+			}
 		}
-		return !subastaApi.tareaExisteYFinalizada(subasta.getProcedimiento(), tareaCelebracionSubasta);
+		return resultado;
 	}
 	
 	@SuppressWarnings("unchecked")

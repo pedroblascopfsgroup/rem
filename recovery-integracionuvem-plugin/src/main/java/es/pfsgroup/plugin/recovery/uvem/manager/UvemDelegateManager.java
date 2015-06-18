@@ -416,7 +416,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				// longitud="3"	 Codigo pais
 				copaw3 = locActual.getPais() != null ? locActual.getPais().getDescripcion() : "";
 				
-				novias = locActual.getDireccion() != null ? locActual.getDireccion() : "";
+				novias = locActual.getNombreVia() != null ? locActual.getNombreVia() : "";
 				novias += locActual.getNumeroDomicilio() != null ? locActual.getNumeroDomicilio() : "";
 				
 			}

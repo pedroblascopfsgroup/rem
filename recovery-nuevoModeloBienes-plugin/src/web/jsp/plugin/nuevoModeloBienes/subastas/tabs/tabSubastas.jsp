@@ -476,17 +476,12 @@ var validacionCDD;
         ,handler:function() {
         	var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
         	if (arrayBienLote.length > 0){
-		    	var strIds = '';
-		    	for(i=1;i < arrayBienLote.length;i++){
-		    		if(strIds != '') {
-						strIds += ',';
-					}
-		    		strIds += arrayBienLote[i];	
-		    		i++;
+		    	var texto;
+		    	if(arrayBienLote.length > 2) {
+	        		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien2" text="**Esta seguro de enviar los bienes a cierre de deudas" />';
+		    	}else{	    	
+		    		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien a cierre de deudas?" />';
 		    	}
-        		var texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien " />';
-        		texto += strIds + ' '; 
-        		texto += '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien2" text=" a cierre de deudas?" />';
         		Ext.Msg.confirm(fwk.constant.confirmar, texto, this.decide, this);
 			} else { 
 				Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.sinBien" text="**¿Esta seguro de enviar la operación a cierre de deudas?" />', this.decide, this);

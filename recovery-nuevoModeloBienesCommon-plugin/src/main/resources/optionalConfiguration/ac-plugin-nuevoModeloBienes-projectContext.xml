@@ -43,6 +43,7 @@
 				<entry key="CelebracionSubastaBankia" value="P401_CelebracionSubasta"/>
 				<entry key="SenyalamientoSubastaSarebBankia" value="P409_SenyalamientoSubasta"/>
 				<entry key="CelebracionSubastaSarebBankia" value="P409_CelebracionSubasta"/>
+				<entry key="ConfirmarTestimonio" value="P413_ConfirmarTestimonio"/>
 			</map>
 		</property>
 		<property name="codigosSubastaValidacion">

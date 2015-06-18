@@ -1218,18 +1218,13 @@ public class SubastaManager implements SubastaApi {
 		@Override
 		@Transactional(readOnly = false)
 		@BusinessOperation(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
-		public List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
-			List<NMBBien> idBienesNoCierre = new ArrayList<NMBBien>();
+		public void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
 			for(Long idBien : idsBien) {
 				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
 				if(Checks.estaVacio(list)) {
 					guardaBatchAcuerdoCierre(idSubasta, idBien);
-				}else{
-					NMBBien bien = nmbBienDao.get(list.get(0).getIdBien());
-					idBienesNoCierre.add(bien);
 				}
 			}
-			return idBienesNoCierre;
 		} 
 		
 		public class ValorNodoTarea {

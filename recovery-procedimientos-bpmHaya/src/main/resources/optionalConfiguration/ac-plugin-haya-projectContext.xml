@@ -36,6 +36,7 @@
 				<entry key="SenyalamientoSubastaConcursal" value="H003_SenyalamientoSubasta"/>
 				<entry key="CelebracionSubastaTerceros" value="H004_CelebracionSubasta"/>
 				<entry key="SenyalamientoSubastaTerceros" value="H004_SenyalamientoSubasta"/>
+				<entry key="ConfirmarTestimonio" value="H005_ConfirmarTestimonio"/>
 			</map>
 		</property>
 	</bean>

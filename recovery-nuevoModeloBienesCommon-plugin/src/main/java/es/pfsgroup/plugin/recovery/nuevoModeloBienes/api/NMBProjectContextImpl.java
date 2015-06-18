@@ -42,6 +42,8 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TAREA_ADJUDICACION_CONFIRMAR_CONTABILIDAD = "ConfirmarContabilidad";
 	public static final String CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_BNK = "ContabilizarActivosCDDBNK";
 	public static final String CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_SAREB = "ContabilizarActivosCDDSAREB";
+	
+	public static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "ConfirmarTestimonio";
 
 	
 	private Set<String> tareasStopValidarLotesSubasta;

@@ -207,7 +207,7 @@ public interface SubastaApi {
 	void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBatchAcuerdoCierreDeuda);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
-	List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien);
+	void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA)
 	boolean validacionCierreDeuda(Subasta subasta, List<Long> idsBien, String nombreNodo);

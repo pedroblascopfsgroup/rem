@@ -33,6 +33,7 @@
 		,{name:'idResolucion'}
 		,{name:'idTipoResolucion'}
 		,{name:'codigoSubtipoTarea'}
+		,{name:'tipoAccionCodigo'}
 	]);
 	
 	
@@ -63,6 +64,7 @@
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.resolucion" text="**Resolucion" />', dataIndex: 'resolucion', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.idResolucion" text="**IdResolucion" />', width: 35, dataIndex: 'idResolucion', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.idTipoResolucion" text="**idTipoResolucion" />', width: 35, dataIndex: 'idTipoResolucion', sortable:true, hidden:true}
+		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tipoAccionCodigo" text="**tipoAccionCodigo" />', dataIndex: 'tipoAccionCodigo', hidden:true}
 	]);
 	
 	var pagingBar=fwk.ux.getPaging(tareasStore);
@@ -106,6 +108,7 @@
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
 		var codigoSubtipoTarea = rec.get('codigoSubtipoTarea');
+		var codigoTipoAccion = rec.get('tipoAccionCodigo');
 		
 		if(codigoSubtipoTarea == 700 || codigoSubtipoTarea == 'TAREA_RECORDATORIO'){
 
@@ -126,7 +129,34 @@
            });
           w.on(app.event.CANCEL, function(){ w.close(); });
 		}else{
-			app.abreProcedimientoTab(rec.get('procedimiento'), rec.get('tareaDescripcion'), 'tareas');
+		
+			if(codigoTipoAccion == 'INFO'){
+				
+				var idResol = rec.get('idResolucion');
+				var titulo = rec.get('descripcionTarea');
+				
+				var w = app.openWindow({
+				  flow : 'pcdprocesadoresoluciones/abreFormularioDinamicoDesdeProcedimiento'
+				  ,width:858
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : titulo
+				  ,params:{idResolucion:idResol}
+				
+				});
+				w.on(app.event.DONE, function(){      
+	            	w.close();
+	            	tareasStore.webflow(paramsBusquedaInicial); 
+					//Recargamos el arbol de tareas
+					app.recargaTree();
+				});
+				w.on(app.event.CANCEL, function(){
+				  w.close();
+				});
+				
+			}else{
+				app.abreProcedimientoTab(rec.get('procedimiento'), rec.get('tareaDescripcion'), 'tareas');
+			}
 		}
 		
 	});

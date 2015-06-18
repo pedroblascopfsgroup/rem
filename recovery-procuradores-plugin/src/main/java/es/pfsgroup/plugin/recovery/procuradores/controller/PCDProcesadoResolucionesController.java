@@ -279,7 +279,12 @@ public class PCDProcesadoResolucionesController {
 		Long idTarea = msvResolucion.getTarea().getId();
 		String codigoTipoProc = msvResolucion.getTipoResolucion().getCodigo();
 		String html = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).dameAyuda(idTipoResolucion);
-		String validacion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).dameValidacion(idTarea);
+		String validacion = null;
+				
+		if(!msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO")){
+			validacion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).dameValidacion(idTarea);	
+		}
+		
 		
 		model.put("html", html);
 		model.put("idTipoResolucion", idTipoResolucion);

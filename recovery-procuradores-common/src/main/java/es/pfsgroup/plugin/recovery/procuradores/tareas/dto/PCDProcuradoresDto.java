@@ -67,7 +67,8 @@ public class PCDProcuradoresDto extends PaginationParamsImpl{
 
     private Boolean traerGestionVencidos;
 	
-	
+    private String tipoAccionCodigo;
+    
 	public Long getUsuario() {
 		return usuario;
 	}
@@ -332,5 +333,11 @@ public class PCDProcuradoresDto extends PaginationParamsImpl{
     }
     public void setEstadoProcesoCodigo(String estadoProcesoCodigo) {
         this.estadoProcesoCodigo = estadoProcesoCodigo;
+    }
+	public String getTipoAccionCodigo() {
+        return tipoAccionCodigo;
+    }
+	public void setTipoAccionCodigo(String tipoAccionCodigo) {
+        this.tipoAccionCodigo = tipoAccionCodigo;
     }
 }

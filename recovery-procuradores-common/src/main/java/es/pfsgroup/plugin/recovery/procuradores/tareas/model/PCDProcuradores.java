@@ -196,6 +196,9 @@ public class PCDProcuradores implements Serializable{
 		
 		@Column(name = "ESTADO_PROCES_CODIGO")
 		private String estadoProcesoCodigo;
+		
+	    @Column(name = "TIPO_ACCION_CODIGO", insertable = false, updatable = false)
+	    private String tipoAccionCodigo;
 
 		
 	    public Long getGroupTareas() {
@@ -649,6 +652,14 @@ public class PCDProcuradores implements Serializable{
 
 	    public void setEstadoProcesoCodigo(String estadoProcesoCodigo) {
 	        this.estadoProcesoCodigo = estadoProcesoCodigo;
+	    }
+	    
+		public String getTipoAccionCodigo() {
+	        return tipoAccionCodigo;
+	    }
+
+	    public void setTipoAccionCodigo(String tipoAccionCodigo) {
+	        this.tipoAccionCodigo = tipoAccionCodigo;
 	    }
 
 		

@@ -365,7 +365,7 @@ onViewClick : function(doFocus){
 	var newAsuntoTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
             '<p><span class="cssEstadoProcedimiento cssEstadoProcedimiento{codEstadoPrc}">&nbsp;</span>{[this.highlightMatch(values.nombre)]}</p>',
-            '<p align="right"><i>Plaza {[this.highlightMatch(values.plaza)]} - Juzgado {[this.highlightMatch(values.juzgado)]} - Auto {[this.highlightMatch(values.auto)]} - {tipoPrc} - {desEstadoPrc} - {principal}&euro;</i></p>',
+            '<p align="right"><i> {[this.highlightMatch(values.tarTarea)]} - Plaza {[this.highlightMatch(values.plaza)]} - Juzgado {[this.highlightMatch(values.juzgado)]} - Auto {[this.highlightMatch(values.auto)]} - {tipoPrc} - {desEstadoPrc} - {principal}&euro;</i></p>',
         '</div></tpl>', {
                 highlightMatch: function (input) {
                     var searchQuery = filtroAsunto.getValue();
@@ -384,7 +384,7 @@ onViewClick : function(doFocus){
         ,autoLoad: false
         ,reader : new Ext.data.JsonReader({
             root:'data'
-            ,fields:['id','idAsunto','idProcedimiento','principal','nombre','plaza','juzgado','auto','tipoPrc','codEstadoPrc','desEstadoPrc','idTarea']
+            ,fields:['id','idAsunto','idProcedimiento','principal','nombre','plaza','juzgado','auto','tipoPrc','codEstadoPrc','desEstadoPrc','idTarea', 'tarTarea']
         })
     });    
     

@@ -23,9 +23,10 @@
 		var nombreDeudor='${data.nombreDeudor}';
 		var txtNombreDeudor = app.creaLabel('<s:message code="plugin.ugas.asunto.tabcabecera.nombreDeudor" text="**Nombre Deudor" />',nombreDeudor);
 	</c:if>
-	<c:if test="${data.fechaVencimiento != null}">
-		var fecha_vencimiento='${data.fechaVencimiento}';
-		
+
+        var fecha_vencimiento='${data.fechaVencimiento}';
+        
+        <c:if test="${data.fechaVencimiento != null}">
 		//textfield que va a contener la fecha vencimiento
 		var txtFechaVencimiento = app.creaLabel('<s:message code="ext.comunicaciones.generarnotificacion.fechaVencimiento" text="**Fecha vencimiento" />',fecha_vencimiento);
 	</c:if>
@@ -143,12 +144,18 @@
 	}
 	
 	var changeUpdate = function(){
-            if (chkLeida.getValue()){
-                    btnGuardar.setHandler(submitLeido);
+        
+            if (fecha_vencimiento == null || fecha_vencimiento == ''){
+                if (chkLeida.getValue()){
+                        btnGuardar.setHandler(submitLeido);
+                }else{
+                        btnGuardar.setHandler(submitNoLeido);
+                }
             }else{
-                    btnGuardar.setHandler(submitNoLeido);
+                btnGuardar.setHandler(submitLeido);
             }
-	}
+
+        }
 	
 	var descEstado = '${data.situacion}';
 	var fechaCrear = '${data.fecha}';
@@ -287,10 +294,14 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-                    if (chkLeida.getValue()){
-                            submitLeido;
+                    if (fecha_vencimiento == null || fecha_vencimiento == ''){
+                        if (chkLeida.getValue()){
+                                submitLeido;
+                        }else{
+                                submitNoLeido;
+                        }
                     }else{
-                            submitNoLeido;
+                        submitLeido;
                     }
                 }
 		<app:test id="btnGuardarABM" addComa="true"/>

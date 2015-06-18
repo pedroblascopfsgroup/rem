@@ -332,9 +332,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setCodigoObjetoAccesocopace(StringUtils.rightPad("", 8, ' ').substring(0, 8));
 			System.out.println(" ***REQUERIDO*** OBRTOR"); // 	longitud="40"	 Texto explicativo del código de retorno	siempre " " (spaces)
 			servicioGMP5JD20.setTextoExplicativoDeCodigoRetornoobrtor(StringUtils.rightPad("", 40, ' ').substring(0, 40));
-			System.out.println(" ***REQUERIDO*** NOVIAS"); // 	longitud="60"	 Dirección o Descripción del bien
-			String novias = bien.getDescripcionBien() != null ? bien.getDescripcionBien() : ""; 
-			servicioGMP5JD20.setNombreDeLaVianovias(StringUtils.rightPad(novias, 60, ' ').substring(0, 60));
+			
 			System.out.println(" ***REQUERIDO*** NUPIIN"); // 	longitud="10"	 Piso del inmueble	siempre " " (spaces)
 			servicioGMP5JD20.setPisoDelInmuebleLong10Nupiin(StringUtils.rightPad(bien.getLocalizacionActual().getPiso() != null ? bien.getLocalizacionActual().getPiso() : "", 10, ' ').substring(0, 10));
 			System.out.println(" ***REQUERIDO*** TITEXO"); // 	longitud="1"	 Tipo de texto	siempre " " (spaces)
@@ -346,7 +344,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setNombreLargoDelMunicipionolgmu(StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50));
 			System.out.println("NOLGMU: "+StringUtils.rightPad((nombreLargoMunicipio!=null) ? nombreLargoMunicipio : "", 50, ' ').substring(0, 50)); // 	longitud="50"	 Localidad del inmueble	
 			System.out.println(" ***REQUERIDO*** NOLGRP"); // 	longitud="50"	 Localidad del Registro	
-			String nombreLargoRegistroPropiedad = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro() != null ? bien.getDatosRegistralesActivo().getMunicipoLibro().toUpperCase() : "" : "";
+			String nombreLargoRegistroPropiedad = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getLocalidad() != null ? bien.getDatosRegistralesActivo().getLocalidad().getDescripcion().toUpperCase() : "" : "";
 			servicioGMP5JD20.setNombreLargoRegistoDeLaPropiedadnolgrp(StringUtils.rightPad(nombreLargoRegistroPropiedad, 50, ' ').substring(0, 50));
 			System.out.println(" ***REQUERIDO*** NUMFIN"); // 	longitud="14"	 Número de finca
 			String numeroFincaRegistral = bien.getDatosRegistralesActivo() != null ? bien.getDatosRegistralesActivo().getNumFinca() != null ? bien.getDatosRegistralesActivo().getNumFinca() : "" : "";
@@ -374,6 +372,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			String copaw3 = "";
 			String cobipw = "";
 			String comuix = "";
+			String novias = "";
 			
 			System.out.println("COBIPW"); // longitud="15"	 Id bien en recovery
 			cobipw = bien.getId().toString();
@@ -417,6 +416,9 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				// longitud="3"	 Codigo pais
 				copaw3 = locActual.getPais() != null ? locActual.getPais().getDescripcion() : "";
 				
+				novias = locActual.getNombreVia() != null ? locActual.getNombreVia() : "";
+				novias += locActual.getNumeroDomicilio() != null ? locActual.getNumeroDomicilio() : "";
+				
 			}
 
 			System.out.println("COBIPW identificador bien recovery: " + cobipw);
@@ -442,6 +444,9 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setNombreDeLaProvincianoprac(noprac);
 			System.out.println("COPAW3 pais: " + copaw3);
 			servicioGMP5JD20.setCodigoPaisSede1copaw3(copaw3);
+			System.out.println(" ***REQUERIDO*** NOVIAS:" + novias); // 	longitud="60"	 Dirección o Descripción del bien
+			servicioGMP5JD20.setNombreDeLaVianovias(StringUtils.rightPad(novias, 60, ' ').substring(0, 60));
+			
 			
 			//FIN DE NUEVO CONTENEDORES
 			
@@ -685,25 +690,25 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		} catch (Exception e) {
 			if  (e instanceof WIException){
 				WIException wi = ((WIException)e);
-				logger.debug(wi.getAlias());
-				logger.debug(wi.getCause());
-				logger.debug(wi.getConfigurationVersion());
-				logger.debug(wi.getClass());
-				logger.debug(wi.getErrorCode());
-				logger.debug(wi.getErrorCodeCommunication());
-				logger.debug(wi.getErrorType());
-				logger.debug(wi.getInfoDebug());
-				logger.debug(wi.getLocalizedMessage());
-				logger.debug(wi.getMaquinaEjecucion());
-				logger.debug(wi.getMessage());
-				logger.debug(wi.getOperationId());
-				logger.debug(wi.getProveedor());
-				logger.debug(wi.getService_module());
-				logger.debug(wi.getService_name());
-				logger.debug(wi.getService_version());
-				logger.debug(wi.getStackTrace());
-				logger.debug(wi.getSubsystem());
-				logger.debug(wi.getUrl());
+				System.out.println("ALIAS: " + wi.getAlias());
+				System.out.println("CAUSE: " + wi.getCause());
+				System.out.println("CONFIGURATIONVERSION: " + wi.getConfigurationVersion());
+				System.out.println("CLASS: " + wi.getClass());
+				System.out.println("ERRORCODE: " +wi.getErrorCode());
+				System.out.println("ERRORCODECOMMUNICATION: " + wi.getErrorCodeCommunication());
+				System.out.println("ERRORTYPE: " + wi.getErrorType());
+				System.out.println("INFODEBUG: " +wi.getInfoDebug());
+				System.out.println("LOCALIZEDMESSAGE: " + wi.getLocalizedMessage());
+				System.out.println("MAQUINAEJECUCION: " + wi.getMaquinaEjecucion());
+				System.out.println("MESSAGE: " + wi.getMessage());
+				System.out.println("OPERATION: " + wi.getOperationId());
+				System.out.println("PROVEEDOR: " + wi.getProveedor());
+				System.out.println("SERVICE_MODULE: " + wi.getService_module());
+				System.out.println("SERVICE_NAME: " + wi.getService_name());
+				System.out.println("SERVICE_VERSION: " + wi.getService_version());
+				System.out.println("STACKTRACE: " + wi.getStackTrace());
+				System.out.println("SUBSYSTEM: " + wi.getSubsystem());
+				System.out.println("URL: " + wi.getUrl());
 			}
 			e.printStackTrace();
 			return -1;
@@ -906,12 +911,22 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		servicioGMPETS07_INS.setFechaDeLaTasacionlfetas(0000000000);
 		//NOMBDO	longitud="34"	NOMBRE DEL DOCUMENTO
 		System.out.println("*** NUMOG1"); // 	Repetición veces="500"	 Tabla con números de activo.	TABLA  
-		System.out.println("Numero Activo: "+ bien.getNumeroActivo() != null ? Integer.parseInt(bien.getNumeroActivo()) : "DESCONOCIDO");
+		Integer numeroActivo = 0;
+		if(!Checks.esNulo(bien.getNumeroActivo())){
+			try{
+			numeroActivo = Integer.parseInt(bien.getNumeroActivo());
+			System.out.println("Numero Activo: "+ numeroActivo);
+			}
+			catch(NumberFormatException e){
+				System.out.println("solicitarTasacion(): error al parsear a integer " + e);
+			}
+		}
+		
         VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1 numeroOcurrencias1 = new VectorGMPETS07_INS_NumeroDeOcurrenciasnumog1();
         
         // Registro 1
         StructGMPETS07_INS_NumeroDeOcurrenciasnumog1 numeroOcurrencias1Registro = new StructGMPETS07_INS_NumeroDeOcurrenciasnumog1();
-        numeroOcurrencias1Registro.setCodigoDeSituacionDelInmueblelcoace(bien.getNumeroActivo() != null ? Integer.parseInt(bien.getNumeroActivo()) : 0);
+        numeroOcurrencias1Registro.setCodigoDeSituacionDelInmueblelcoace(numeroActivo);
         numeroOcurrencias1.setStructGMPETS07_INS_NumeroDeOcurrenciasnumog1(numeroOcurrencias1Registro);
        
         // Registro n

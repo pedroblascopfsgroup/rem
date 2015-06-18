@@ -690,25 +690,25 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		} catch (Exception e) {
 			if  (e instanceof WIException){
 				WIException wi = ((WIException)e);
-				System.out.println(wi.getAlias());
-				System.out.println(wi.getCause());
-				System.out.println(wi.getConfigurationVersion());
-				System.out.println(wi.getClass());
-				System.out.println(wi.getErrorCode());
-				System.out.println(wi.getErrorCodeCommunication());
-				System.out.println(wi.getErrorType());
-				System.out.println(wi.getInfoDebug());
-				System.out.println(wi.getLocalizedMessage());
-				System.out.println(wi.getMaquinaEjecucion());
-				System.out.println(wi.getMessage());
-				System.out.println(wi.getOperationId());
-				System.out.println(wi.getProveedor());
-				System.out.println(wi.getService_module());
-				System.out.println(wi.getService_name());
-				System.out.println(wi.getService_version());
-				System.out.println(wi.getStackTrace());
-				System.out.println(wi.getSubsystem());
-				System.out.println(wi.getUrl());
+				System.out.println("ALIAS: " + wi.getAlias());
+				System.out.println("CAUSE: " + wi.getCause());
+				System.out.println("CONFIGURATIONVERSION: " + wi.getConfigurationVersion());
+				System.out.println("CLASS: " + wi.getClass());
+				System.out.println("ERRORCODE: " +wi.getErrorCode());
+				System.out.println("ERRORCODECOMMUNICATION: " + wi.getErrorCodeCommunication());
+				System.out.println("ERRORTYPE: " + wi.getErrorType());
+				System.out.println("INFODEBUG: " +wi.getInfoDebug());
+				System.out.println("LOCALIZEDMESSAGE: " + wi.getLocalizedMessage());
+				System.out.println("MAQUINAEJECUCION: " + wi.getMaquinaEjecucion());
+				System.out.println("MESSAGE: " + wi.getMessage());
+				System.out.println("OPERATION: " + wi.getOperationId());
+				System.out.println("PROVEEDOR: " + wi.getProveedor());
+				System.out.println("SERVICE_MODULE: " + wi.getService_module());
+				System.out.println("SERVICE_NAME: " + wi.getService_name());
+				System.out.println("SERVICE_VERSION: " + wi.getService_version());
+				System.out.println("STACKTRACE: " + wi.getStackTrace());
+				System.out.println("SUBSYSTEM: " + wi.getSubsystem());
+				System.out.println("URL: " + wi.getUrl());
 			}
 			e.printStackTrace();
 			return -1;

@@ -37,10 +37,13 @@
 		</property>		
 		<property name="tareasCierreDeuda">
 			<map>
+				<entry key="ContabilizarActivosCDDSAREB" value="P413_ContabilizarCierreDeuda"/>
+				<entry key="ContabilizarActivosCDDBNK" value="P401_ContabilizarCierreDeuda"/>
 				<entry key="SenyalamientoSubastaBankia" value="P401_SenyalamientoSubasta"/>
 				<entry key="CelebracionSubastaBankia" value="P401_CelebracionSubasta"/>
-				<entry key="SenyalamientoSubastaSareb" value="P409_SenyalamientoSubasta"/>
-				<entry key="CelebracionSubastaSareb" value="P409_CelebracionSubasta"/>
+				<entry key="SenyalamientoSubastaSarebBankia" value="P409_SenyalamientoSubasta"/>
+				<entry key="CelebracionSubastaSarebBankia" value="P409_CelebracionSubasta"/>
+				<entry key="ConfirmarTestimonio" value="P413_ConfirmarTestimonio"/>
 			</map>
 		</property>
 		<property name="codigosSubastaValidacion">

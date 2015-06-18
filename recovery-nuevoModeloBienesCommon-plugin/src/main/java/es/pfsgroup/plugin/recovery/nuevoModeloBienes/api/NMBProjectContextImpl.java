@@ -27,12 +27,24 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TIPO_PROCEDIMIENTO_POSESION = "POSESION";
 	public static final String CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES = "GESTION-LLAVES";
 	
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY = "HYCelebracionSubastaSareb";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_HY = "HYSenyalamientoSubastaSareb";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB = "CelebracionSubastaSareb";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB = "SenyalamientoSubastaSareb";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_CONCURSAL = "CelebracionSubastaConcursal";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_CONCURSAL = "SenyalamientoSubastaConcursal";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_TERCEROS = "CelebracionSubastaTerceros";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_TERCEROS = "SenyalamientoSubastaTerceros";
+	
 	public static final String CONST_TAREA_CELEBRACION_SUBASTA_BANKIA = "CelebracionSubastaBankia";
 	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA = "SenyalamientoSubastaBankia";
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK = "CelebracionSubastaSareb";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK = "SenyalamientoSubastaSareb";
+	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK = "CelebracionSubastaSarebBankia";
+	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK = "SenyalamientoSubastaSarebBankia";
+	
+	public static final String CONST_TAREA_ADJUDICACION_CONFIRMAR_CONTABILIDAD = "ConfirmarContabilidad";
+	public static final String CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_BNK = "ContabilizarActivosCDDBNK";
+	public static final String CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_SAREB = "ContabilizarActivosCDDSAREB";
+	
+	public static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "ConfirmarTestimonio";
+
 	
 	private Set<String> tareasStopValidarLotesSubasta;
 	private Long nivelZonaOficinaGestoraEnInformes;

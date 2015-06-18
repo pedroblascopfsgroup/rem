@@ -134,7 +134,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         //Nuevos filtros datos del bien
 
         if (dto.getNumActivo() != null){
-        	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".numeroActivo = ".concat(dto.getNumActivo().toString())));
+        	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".numeroActivo = '").concat(dto.getNumActivo().toString()).concat("'"));
         }
         if (dto.getNumRegistro() != null){
         	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".codigoInterno = ".concat(dto.getNumRegistro().toString())));

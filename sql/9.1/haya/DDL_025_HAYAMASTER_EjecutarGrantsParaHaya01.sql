@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.1-hy-rc01
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK= -
 --## PRODUCTO=SI
 --##
 --## Finalidad:

@@ -155,7 +155,7 @@
 				});
 				
 			}else{
-				app.abreProcedimientoTab(rec.get('procedimiento'), rec.get('tareaDescripcion'), 'tareas');
+				app.abreProcedimientoTab(rec.get('procedimiento'), rec.get('descripcionTarea'), 'tareas');
 			}
 		}
 		

@@ -73,7 +73,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	//this.storeDemandados.load({params:{idProcedimiento:this.idProcedimiento, idFactoria:this.idFactoria}});
     	this.dsDatosAdicionales.load({params:{idProcedimiento:this.idProcedimiento}});
     	this.storeMotivosSuspension.load({params:{idFactoria:this.idFactoria}});
-    	this.storeDecisionSuspension.load({params:{idFactoria:this.idFactoria}});
+    	this.storeDecisionSuspension.load({params:{idFactoriRa:this.idFactoria}});
     	this.storeEntidadAdjudicataria.load({params:{idFactoria:this.idFactoria}});
     	this.storeFondo.load({params:{idFactoria:this.idFactoria}});
     	this.storeMotivoImpugnacion.load({params:{idFactoria:this.idFactoria}});
@@ -2233,6 +2233,10 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	   				{"xtype":'datefield',"name":"d_fechaExpedicion","fieldLabel":"Fecha de expedición",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   		]);
 	
+	// id: 364 : TRAMITE CESIÓN DE REMATE : Acta de subasta
+	this.arrayCampos.push([
+	               		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	               	]);
 		
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

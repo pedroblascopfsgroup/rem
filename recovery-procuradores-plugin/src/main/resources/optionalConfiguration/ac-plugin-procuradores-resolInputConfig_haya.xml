@@ -277,7 +277,17 @@
 	<bean id="mapaTramiteCesionRemate"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
-			<map>				
+			<map>
+			<entry key="R_TR_CES_ACTA">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_TR_CES_ACTA</value>
+							</property>
+						</bean>
+					</list>
+				</entry>				
 				<entry key="R_TR_CES_FECH_CES">
 					<list>
 						<bean

@@ -94,20 +94,33 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
      * {@inheritDoc}
      */
     public Page obtenerAsuntosDeUnaPersonaPaginados(DtoListadoAsuntos dto) {
+        StringBuilder hql1 = new StringBuilder();
         StringBuilder hql = new StringBuilder();
-        hql
+        
+        hql1
                 .append("select distinct asu from Asunto asu, ExpedienteContrato cex, ProcedimientoContratoExpediente pce, ContratoPersona cpe, Procedimiento prc ");
-        hql.append(" where cpe.contrato.id = cex.contrato.id ");
-        hql.append(" and cex.id = pce.expedienteContrato and prc.id = pce.procedimiento ");
-        hql.append(" and prc.asunto.id = asu.id ");
-        hql.append(" and asu.auditoria.borrado = false ");
-        hql.append(" and prc.auditoria.borrado = false ");
-        hql.append(" and cpe.persona.id = :idPersona ");
+        hql1.append(" where cpe.contrato.id = cex.contrato.id ");
+        hql1.append(" and cex.id = pce.expedienteContrato and prc.id = pce.procedimiento ");
+        hql1.append(" and prc.asunto.id = asu.id ");
+        hql1.append(" and asu.auditoria.borrado = false ");
+        hql1.append(" and prc.auditoria.borrado = false ");
+        hql1.append(" and cpe.persona.id = :idPersona ");
+        
+        hql
+        .append("select distinct asu from Asunto asu, Procedimiento prc, ProcedimientoPersona prcper ");
+		hql.append(" where prc.asunto.id = asu.id ");
+		hql.append(" and prcper.procedimiento = prc");
+		hql.append(" and prcper.persona.id = :idPersona ");        
+        
 
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("idPersona", dto.getIdPersona());
+        
+        Page page1 = paginationManager.getHibernatePage(getHibernateTemplate(), hql1.toString(), dto, params);
+        
+        Page page = paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, params);
 
-        return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, params);
+        return page;//paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, params);
 
     }
 

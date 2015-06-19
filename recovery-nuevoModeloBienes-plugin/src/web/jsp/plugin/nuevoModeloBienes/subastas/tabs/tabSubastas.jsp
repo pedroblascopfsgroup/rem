@@ -734,6 +734,7 @@ var validacionCDD;
 		btnInfSubasta.setDisabled(true);
 		btnInstrucSubasta.setDisabled(true);
 		btnInstrucLotes.setDisabled(true);
+		btnEditarInfoCierre.setDisabled(true);
 		btnGenerarInformeCierre.setDisabled(true);
 		btnEnviarCierre.setDisabled(true);
 	}

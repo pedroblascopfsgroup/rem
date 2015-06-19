@@ -113,8 +113,7 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
 					// llamada solicita_tasacion
 					proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarTasacionByPrcId(bien.getId(), prc.getId());
                                         
-                                        String mensaje = "Solicitud autom&aacute;tica de tasaci&oacute;n";
-                                        mensaje += "Activo n. " + nmbBien.getNumeroActivo() + " | " + prc.getNombreProcedimiento();
+                                        String mensaje = nmbBien.getNumeroActivo() + " | " + prc.getAsunto().getNombre();
                                         // llamada a generar Notificacion
 					notificarGestorSubasta(prc.getId(),  mensaje);
 				}
@@ -139,7 +138,7 @@ public class SolicitarTasacionHandler extends PROBaseActionHandler {
         } else {
                 proxyFactory.proxy(TareaNotificacionApi.class).crearNotificacion(
                                 idProcedimiento,
-                                DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, 
+                                DDTipoEntidad.CODIGO_ENTIDAD_NOTIFICACION, 
                                 st.getCodigoSubtarea(),
                                 textoNotificacion);
         }

@@ -1,0 +1,4 @@
+-- rec-web --
+* Setear correctamente la variable DEVON_HOME en el plugin de jetty
+* Añadir al repo un devon.properties de ejemplo y copiarlo al DEVON_HOME para testing
+* Gestionar por profiles la configuración de jetty en jetty/desarrollo/*

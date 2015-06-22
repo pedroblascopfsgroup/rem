@@ -65,6 +65,10 @@ public class DtoNMBBien extends WebDto {
 	private String municipoLibro;
 	
 	private String codigoRegistro;
+	
+	private String municipioRegistro;
+	
+	private String provinciaRegistro;
     
 	/* Datos Localizacion */
 	private String provincia;
@@ -352,6 +356,22 @@ public class DtoNMBBien extends WebDto {
 
 	public void setCodigoRegistro(String codigoRegistro) {
 		this.codigoRegistro = codigoRegistro;
+	}
+
+	public String getMunicipioRegistro() {
+		return municipioRegistro;
+	}
+
+	public void setMunicipioRegistro(String municipioRegistro) {
+		this.municipioRegistro = municipioRegistro;
+	}
+
+	public String getProvinciaRegistro() {
+		return provinciaRegistro;
+	}
+
+	public void setProvinciaRegistro(String provinciaRegistro) {
+		this.provinciaRegistro = provinciaRegistro;
 	}
 
 	public String getProvincia() {

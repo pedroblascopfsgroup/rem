@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -19,6 +20,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBInformacionRegistralBienInfo;
 
 @Entity
@@ -73,6 +76,15 @@ public class NMBInformacionRegistralBien implements  Serializable, Auditable, NM
 	
 	@Column(name = "BIE_DREG_NUM_FINCA")
     private String numFinca;
+	
+	@OneToOne
+    @JoinColumn(name = "DD_PRV_ID")
+    private DDProvincia provincia;
+	
+	@OneToOne
+	@JoinColumn(name = "DD_LOC_ID")
+	private Localidad localidad;	
+	
 	
 	@Embedded
     private Auditoria auditoria;
@@ -202,5 +214,21 @@ public class NMBInformacionRegistralBien implements  Serializable, Auditable, NM
 
 	public void setNumFinca(String numFinca) {
 		this.numFinca = numFinca;
+	}
+	
+	public DDProvincia getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(DDProvincia provincia) {
+		this.provincia = provincia;
+	}
+	
+	public Localidad getLocalidad() {
+		return localidad;
+	}
+
+	public void setLocalidad(Localidad localidad) {
+		this.localidad = localidad;
 	}
 }

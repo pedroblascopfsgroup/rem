@@ -1527,6 +1527,37 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- JETTY PLUGIN -->
+			<plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>8.1.3.v20120416</version>
+                <configuration>
+                	<systemProperties>
+      					<systemProperty>
+         					<name>DEVON_HOME</name>
+         					<value>home/bruno/mydata/work/Git-Dev/Unirepo/recovery/rec-web/target</value>
+       					</systemProperty>
+    				</systemProperties>
+    				<jettyXml>jetty/desarrollo/jetty-env-bankia.xml</jettyXml>
+                	<war>${project.build.directory}/pfs-${version}.war</war>
+                  	<scanIntervalSeconds>10</scanIntervalSeconds>
+                  	<connectors>
+	                    <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                      	<port>8888</port>
+                      	<maxIdleTime>60000</maxIdleTime>
+                    	</connector>
+                  	</connectors>
+                </configuration>
+                <!--<dependencies>
+                	<dependency>
+						<groupId>es.pfsgroup.recovery.framework.libs</groupId>
+						<artifactId>ojdbc14</artifactId>
+						<version>UNKNOWN</version>
+					</dependency>
+                </dependencies>-->
+            </plugin>
+            <!-- JETTY PLUGIN (end) -->
 		</plugins>
 	</build>
 	<profiles>
@@ -1618,7 +1649,7 @@
 				<dependency>
 		  			<groupId>es.bankia</groupId>
 		 		 	<artifactId>GMP5JD20_INS</artifactId>
-		  			<version>1.0.0</version>
+		  			<version>1.0.1</version>
 				</dependency>
 				<dependency>
 		  			<groupId>es.bankia</groupId>

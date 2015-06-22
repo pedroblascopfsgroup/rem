@@ -410,15 +410,15 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(filtro.getIdComboInfLetradoCompleto())) {
-			where.add(Restrictions.eq("infoLetrado", "1".equals(filtro.getIdComboInfLetradoCompleto())));
+			where.add(Restrictions.eq("subasta.infoLetrado", "1".equals(filtro.getIdComboInfLetradoCompleto())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getIdComboInstruccionesCompletadas())) {
-			where.add(Restrictions.eq("instrucciones", "1".equals(filtro.getIdComboInstruccionesCompletadas())));
+			where.add(Restrictions.eq("subasta.instrucciones", "1".equals(filtro.getIdComboInstruccionesCompletadas())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getIdComboSubastaRevisada())) {
-			where.add(Restrictions.eq("subastaRevisada", "1".equals(filtro.getIdComboSubastaRevisada())));
+			where.add(Restrictions.eq("subasta.subastaRevisada", "1".equals(filtro.getIdComboSubastaRevisada())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getComboFiltroEstadoDeGestion())) {
@@ -426,27 +426,27 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(filtro.getTotalCargasAnterioresDesde())) {
-			where.add(Restrictions.ge("cargasAnteriores", filtro.getTotalCargasAnterioresDesde()));
+			where.add(Restrictions.ge("subasta.cargasAnteriores", filtro.getTotalCargasAnterioresDesde()));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getTotalCargasAnterioresHasta())) {
-			where.add(Restrictions.le("cargasAnteriores", filtro.getTotalCargasAnterioresHasta()));
+			where.add(Restrictions.le("subasta.cargasAnteriores", filtro.getTotalCargasAnterioresHasta()));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getTotalImporteAdjudicadoDesde())) {
-			where.add(Restrictions.ge("totalImporteAdjudicado", filtro.getTotalImporteAdjudicadoDesde()));
+			where.add(Restrictions.ge("subasta.totalImporteAdjudicado", filtro.getTotalImporteAdjudicadoDesde()));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getTotalImporteAdjudicadoHasta())) {
-			where.add(Restrictions.le("totalImporteAdjudicado", filtro.getTotalImporteAdjudicadoHasta()));
+			where.add(Restrictions.le("subasta.totalImporteAdjudicado", filtro.getTotalImporteAdjudicadoHasta()));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getIdComboTasacionCompletada())) {
-			where.add(Restrictions.eq("tasacion", "1".equals(filtro.getIdComboTasacionCompletada())));
+			where.add(Restrictions.eq("subasta.tasacion", "1".equals(filtro.getIdComboTasacionCompletada())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getIdComboEmbargo())) {
-			where.add(Restrictions.eq("embargo", "1".equals(filtro.getIdComboEmbargo())));
+			where.add(Restrictions.eq("subasta.embargo", "1".equals(filtro.getIdComboEmbargo())));
 		}
 
 		return where;

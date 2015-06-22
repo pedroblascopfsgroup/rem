@@ -44,12 +44,13 @@ onViewClick : function(doFocus){
     	
     var panelWidth=850;
     
+    var recordSelect;
+    
     var tipoResolucionRecord = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'codigo'}
 		,{name:'descripcion'}
 		,{name:'accion'}
-		
 	]);
 
 	var tipoResolucionStore = page.getStore({
@@ -59,6 +60,43 @@ onViewClick : function(doFocus){
 	    }, tipoResolucionRecord)
 	       
 	});
+	
+	tipoResolucionStore.on('load', function(){
+			existenResolucionesPendientesValidar(recordSelect.idTarea);
+	});
+	
+	
+	var existenResolucionesPendientesValidar = function(idTarea){
+        Ext.Ajax.request({
+			url: '/pfs/pcdprocesadoresoluciones/getExistenResolucionesPendientesValidar.htm'
+			,params: {idTarea:idTarea}
+			,method: 'POST'
+			,success: function (result, request){
+				var r = Ext.util.JSON.decode(result.responseText);
+				if(Boolean(r.existen)){
+<!-- 					tipoResolucionStore.data.each(function(item, index, totalItems ) { -->
+<!-- 						if(parseInt(item['id']) < 1000){ -->
+<!-- 							item['banned'] = true; -->
+<!-- 						} -->
+<!-- 	    			}); -->
+<!-- 	    			comboTipoResolucionNew.load(); -->
+
+						Ext.getCmp('comboTipoResolucionNew').on('beforeselect', function(combo, record, index){
+						
+							if(parseInt(record.data.id) < 1000){ 
+								Ext.MessageBox.alert("Tarea pendiente","No se puede crear esta tarea. Existen tareas pendientes de validar en la resolución.");
+	 							return false; 
+							}else{
+								return true;
+							}
+							
+						});
+
+				}
+			}
+		});
+	}
+	
 	
     var obtenerCodigoPlaza = function(idAsunto){
  		Ext.Ajax.request({
@@ -87,6 +125,7 @@ onViewClick : function(doFocus){
 	                
     var comboTipoResolucionNew = new Ext.form.ComboBox({
     	name:'comboTipoResolucionNew'
+    	,id:'comboTipoResolucionNew'
     	,store:tipoResolucionStore
     	,displayField:'descripcion'
     	,valueField:'id'
@@ -111,7 +150,7 @@ onViewClick : function(doFocus){
     		datosResolucion.setVisible(true);
     		datosResolucion.doLayout();
     		factoriaFormularios.updateStores(comboTipoResolucionNew.getValue());
-			}  
+			} 
     	} 
     });
     
@@ -435,6 +474,7 @@ onViewClick : function(doFocus){
         ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
         ,onSelect: function(record) {
         //debugger;
+        	recordSelect = record.data;
         	filtroPlaza.setValue(record.data.plaza);
         	filtroJuzgado.setValue(record.data.juzgado);
         	filtroAuto.setValue(record.data.auto);

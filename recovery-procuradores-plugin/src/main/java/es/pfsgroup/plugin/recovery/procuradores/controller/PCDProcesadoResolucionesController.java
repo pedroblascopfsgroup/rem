@@ -66,6 +66,7 @@ import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoResolucionesApi;
 import es.pfsgroup.plugin.recovery.procuradores.configuracion.api.ConfiguracionDespachoExternoApi;
 import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import es.pfsgroup.recovery.bpmframework.config.model.RecoveryBPMfwkDDTipoAccion;
 import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.model.RecoveryBPMfwkDatosProcedimiento;
 
@@ -167,6 +168,8 @@ public class PCDProcesadoResolucionesController {
 	private static final String CODIGO_SUBIDA_FICHEROS = "RESOL_ESP_UPLOAD";
 	
 	private static final String JSON_LISTA_DICCIONARIO_GENERICO_PAGE = "plugin/procuradores/diccionarioGenericoJSON";
+	
+	private static final String JSON_EXISTEN_TAREAS_PENDIENTES_VALIDAR = "plugin/procuradores/tareas/existenTareasPendientesValidarJSON";
 	
 	
 	@Autowired
@@ -582,6 +585,31 @@ public class PCDProcesadoResolucionesController {
     	model.put("data", listTipoSResolucion);
         return JSON_LISTA_TIPOS_RESOLUCION;
           
+    }
+    
+    
+    /**
+     * Metodo que comprueba si existen resoluciones pendientes de validar
+     * @param idTarea
+     * @param idProcedimiento
+     * @return 
+     */
+    @RequestMapping
+    public String getExistenResolucionesPendientesValidar(ModelMap model,Long idTarea){
+    	
+    	List<String> tipoResolucionAccionBaned = new ArrayList<String>();
+    	
+    	tipoResolucionAccionBaned.add("INFO"); 
+    	
+    	List<MSVResolucion> resolucionesPTV = pcdResolucionProcuradorApi.getResolucionesPendientesValidar(idTarea, tipoResolucionAccionBaned);
+    	
+    	if(resolucionesPTV.size() > 0){
+    		model.put("tareasPendientesValidar", true);
+    	}else{
+    		model.put("tareasPendientesValidar", false);
+    	}
+    	
+    	return JSON_EXISTEN_TAREAS_PENDIENTES_VALIDAR;
     }
     
     /**

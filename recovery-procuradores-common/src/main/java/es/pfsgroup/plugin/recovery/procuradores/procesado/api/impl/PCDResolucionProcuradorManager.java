@@ -280,5 +280,13 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		}
 		return value;
 	}
+
+	@Override
+	@BusinessOperation(PCD_MSV_GET_RESOLUCIONES_PENDIENTES_VALIDAR)
+	public List<MSVResolucion> getResolucionesPendientesValidar(Long idTarea,List<String> tipoResolucionAccionBaned) {
+
+		return  msvResolucionDao.getResolucionesPendientesValidar(idTarea,tipoResolucionAccionBaned);
+		
+	}
 	
 }

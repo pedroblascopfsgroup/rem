@@ -353,7 +353,7 @@ public class InformeValidacionCDDBean {
 	private void crearMensajeValidacion(Subasta subasta) {
 		StringBuilder sb = new StringBuilder();
 		BooleanBienes booleanBienes = new BooleanBienes();
-		if (validaProcedimientoContratos(subasta)) {
+		if (!validaProcedimientoContratos(subasta)) {
 			sb.append("El procedimiento no tienen ninguna operación activa;"); // Alguna deberia ser
 		}
 		booleanBienes = validaBienesContratos();

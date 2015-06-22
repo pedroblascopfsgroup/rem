@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteSaneamientoCargas" width="1242" height="1241">
+<root-container name="haya_tramiteSaneamientoCargas" width="1240" height="1241">
   <node name="Inicio" x="290" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -24,7 +24,8 @@
       <bendpoint w1="-172" h1="2" w2="0" h2="-128"/>
     </edge>
     <edge>
-      <label x="6" y="-361"/>
+      <label x="60" y="-653"/>
+      <bendpoint w1="-101" h1="701" w2="-142" h2="-124"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -46,20 +47,19 @@
   </node>
   <node name="H008_PropuestaCancelacionCargas" x="632" y="358" width="275" height="36">
     <edge>
-      <label x="9" y="32"/>
-      <bendpoint w1="-191" h1="0" w2="-2" h2="-116"/>
+      <label x="6" y="-15"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="364" h1="1" w2="-6" h2="-223"/>
+      <bendpoint w1="378" h1="4" w2="2" h2="-312"/>
     </edge>
   </node>
   <node name="H008_RegInsCancelacionCargasReg" x="71" y="473" width="245" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-48" y="19"/>
       <bendpoint w1="99" h1="-60" w2="102" h2="56"/>
     </edge>
     <edge>
@@ -84,7 +84,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="335" h1="-1" w2="-38" h2="-119"/>
+      <bendpoint w1="247" h1="42" w2="-126" h2="-76"/>
     </edge>
   </node>
   <node name="H008_LiquidarCargas" x="669" y="679" width="205" height="36">
@@ -167,12 +167,25 @@
       <bendpoint w1="780" h1="149" w2="-4" h2="527"/>
     </edge>
   </node>
-  <node name="H008_BPMTramiteElevarPropSarebAdjudicados" x="419" y="460" width="321" height="36">
+  <node name="H008_BPMTramiteElevarPropSarebAdjudicados" x="632" y="443" width="321" height="36">
     <edge>
-      <label x="-121" y="-69"/>
-      <bendpoint w1="1" h1="97" w2="-192" h2="1"/>
+      <label x="-36" y="-8"/>
+      <bendpoint w1="55" h1="56" w2="75" h2="-57"/>
+    </edge>
+    <edge>
+      <label x="-56" y="-23"/>
+      <bendpoint w1="237" h1="0" w2="1" h2="-64"/>
+    </edge>
+    <edge>
+      <label x="-40" y="-4"/>
+      <bendpoint w1="-111" h1="49" w2="-91" h2="-64"/>
     </edge>
   </node>
   <node name="Fin" x="12" y="211" width="132" height="36"/>
   <node name="Fin2" x="1079" y="674" width="132" height="36"/>
+  <node name="H008_SarebDecision" x="938" y="507" width="181" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

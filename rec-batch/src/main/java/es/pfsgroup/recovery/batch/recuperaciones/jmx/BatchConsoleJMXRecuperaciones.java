@@ -13,7 +13,9 @@ import es.capgemini.pfs.batch.recobro.constantes.RecobroConstantes.ProcesoMarcad
 import es.capgemini.pfs.batch.recobro.jobs.ProcesoMarcadoExpedientesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoArquetipadoRecuperaciones;
+import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionClientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoArquetipadoRecuperacionesJobLauncher;
+import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionClientesRecuperacionesJobLauncher;
 
 /**
  * Lanzadores JMX para los jobs del batch de recuperaciones.
@@ -39,6 +41,22 @@ public class BatchConsoleJMXRecuperaciones {
     	marcadoExpedientesJobLauncher.handle(workingCode,new Date());
     	
     	logger.debug(ProcesoArquetipadoRecuperaciones.PROCESO_ARQUETIPADO_RECUPERACIONES_HANDLER + " ya se ha encolado");
+		
+	}
+	
+	
+	@ManagedOperation(description = "Ejecuta el proceso de Creacion clientes para el batch de Recuperaciones. Se debe indicar el workingCode")
+	public void ejecutarProcesoCreacionClientes(String workingCode) {
+		
+		logger.debug("Encolando " + ProcesoCreacionClientesRecuperaciones.PROCESO_CREACION_CLIENTES_RECUPERACIONES_HANDLER);
+		
+		ProcesoCreacionClientesRecuperacionesJobLauncher creacionClientesJobLauncher = (ProcesoCreacionClientesRecuperacionesJobLauncher)ApplicationContextUtil.
+    			getApplicationContext().getBean(ProcesoCreacionClientesRecuperaciones.PROCESO_CREACION_CLIENTES_RECUPERACIONES_HANDLER);
+		
+		
+    	creacionClientesJobLauncher.handle(workingCode,new Date());
+    	
+    	logger.debug(ProcesoCreacionClientesRecuperaciones.PROCESO_CREACION_CLIENTES_RECUPERACIONES_HANDLER + " ya se ha encolado");
 		
 	}
 

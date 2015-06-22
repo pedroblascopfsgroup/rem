@@ -243,5 +243,12 @@
     ]]>
   </entry>
    
+   <entry key="clientes.procedure.creacionClientes.Oracle9iDialect">
+    <![CDATA[
+      	BEGIN
+			CREACION_CLIENTES();
+		END;
+    ]]>
+  </entry>
   
 </properties>

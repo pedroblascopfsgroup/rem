@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -18,7 +17,6 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
@@ -37,14 +35,16 @@ public class AgendaMultifuncionCorreoUtils {
 	private static final String MAIL_SMTP_HOST = "mail.smtp.host";
 	private static final String TRANSPORT_SMTP = "smtp";
 
+	
 	private static final String DEVON_PROPERTIES = "devon.properties";
 	
 	// Entradas en devon.properties que servirán para componer el mensaje
 
-	private static final String SERVIDOR_CORREO = "mailManager.host";
-	private static final String PUERTO_CORREO = "mailManager.port";
-	private static final String USUARIO_CORREO = "mail.acuerdo.from";
-	private static final String PWD_CORREO = "mail.acuerdo.pwFrom";
+	private static final String SERVIDOR_CORREO = "agendaMultifuncion.mail.server";
+	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
+	private static final String FROM = "agendaMultifuncion.mail.from";
+	private static final String USUARIO_CORREO = "agendaMultifuncion.mail.usuario";
+	private static final String PWD_CORREO = "agendaMultifuncion.mail.pwd";
 	
 	private Properties appProperties;
 
@@ -59,13 +59,25 @@ public class AgendaMultifuncionCorreoUtils {
 	}
 	
 	public AgendaMultifuncionCorreoUtils() {
+		
 		this.appProperties = cargarProperties(DEVON_PROPERTIES);
+		
+		System.out.println(this.getClass() + " [LOG DEBUG: "+ logger.isDebugEnabled() +"]");
+		System.out.println(this.getClass() + " [LOG ERROR: "+ logger.isErrorEnabled() +"]");
+		System.out.println(this.getClass() + " [LOG FATAL: "+ logger.isFatalEnabled() +"]");
+		System.out.println(this.getClass() + " [LOG INFO: "+ logger.isInfoEnabled() +"]");
+		System.out.println(this.getClass() + " [LOG TRACE: "+ logger.isTraceEnabled() +"]");
+		System.out.println(this.getClass() + " [LOG WARN: "+ logger.isWarnEnabled() +"]");
+		
+		System.out.println(this.getClass() + " [Cargar properties de: " + DEVON_PROPERTIES + " ]"); 
 	}
 	
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara
 			,List<String> direccionesMailCc, String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
 
 		try {
+			
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [PARAMETROS: emailFrom: "+emailFrom+", mailsPara: "+mailsPara.toString()+", direccionesMailCc: "+direccionesMailCc.toString()+",asuntoMail: "+asuntoMail+", cuerpoEmail: "+cuerpoEmail+"]");
 			
 			// Propiedades de la conexión
 			Properties props = getPropiedades();
@@ -75,42 +87,62 @@ public class AgendaMultifuncionCorreoUtils {
 			Session session = Session.getDefaultInstance(props);
 			session.setDebugOut(System.out);
 			session.setDebug(true);
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Creamos la sesión]");
 			
-			// Construimos el mensaje
+			
+			
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Construimos el mensaje]");
 			MimeMessage message = new MimeMessage(session);
 			
+			if(Checks.esNulo(emailFrom)) {
+				emailFrom = appProperties.getProperty(FROM);
+				System.out.println(this.getClass() + " enviarCorreoAdjuntos: EMAIL FROM IS NULL: [NUEVO VALOR: "+emailFrom+" ]");
+			}
+			
 			message.setFrom(new InternetAddress(emailFrom));
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos emailFrom al from]");
+			
 			
 			for (String emailPara: mailsPara) {				
-				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));				
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
+				System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Añadimos al TO: "+emailPara+"]");
 			}
 
 			if (direccionesMailCc != null && direccionesMailCc.size() > 0) {				
 				for (String emailCC: direccionesMailCc) {					
-					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));					
+					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));	
+					System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Añadimos al CC: "+emailCC+"]");
 				}
 			}
 			
 			message.setSubject(asuntoMail);
-			message.setText(cuerpoEmail, "UTF-8", "html");
-			
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos asuntoMail al subject]");
 
-			// diana : a�adimos aqu� los adjuntos
+			// Si hay adjuntos los añadimos	
 			if(!Checks.esNulo(list) && !Checks.estaVacio(list)){
-				
+				System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Se adjuntan "+list.size() +" archivos.]");
 				 Multipart multipart = new MimeMultipart("mixed");
 				 for(DtoAdjuntoMail adj : list){
-					 
+					 	
 						MimeBodyPart messageAttachment = new MimeBodyPart();    
 			            messageAttachment.attachFile(adj.getAdjunto().getFileItem().getFile());
 				        messageAttachment.setFileName(adj.getNombre());
 				        multipart.addBodyPart(messageAttachment);
-				 }				
-				
-				message.setContent(multipart);
-			}	
+				 }	
+				 
+				 MimeBodyPart htmlPart = new MimeBodyPart();
+				 htmlPart.setContent(cuerpoEmail, "text/html; charset=utf-8");			     
+				 multipart.addBodyPart(htmlPart);
+				 message.setContent(multipart);
+				 System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos cuerpoEmail al body]");
 
-			logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] mensaje=" + emailFrom + ", " + mailsPara.toString() + "," + direccionesMailCc.toString() + "," + asuntoMail);
+			} else {
+				
+				message.setText(cuerpoEmail, "UTF-8", "html");
+				System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos cuerpoEmail al body]");
+			}
+
+			//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] mensaje=" + emailFrom + ", " + mailsPara.toString() + "," + direccionesMailCc.toString() + "," + asuntoMail);
 
 			// Lo enviamos.
 			Transport t = session.getTransport(TRANSPORT_SMTP);
@@ -126,15 +158,19 @@ public class AgendaMultifuncionCorreoUtils {
 				// Si da error la desencriptación o el parseo lo intentaremos con el valor obtenido del properties directamente.
 				pass = passValueProp;
 				logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee=" + ee.getMessage());
-			}	
+			}
+			
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Usuario: "+usuario+" , Pwd: "+pass+" ]");
 			
 			//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] usuario=" + usuario + ", pass= " + pass);
 			t.connect(usuario, pass);
-			logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] Autenticado");
+			//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] Autenticado");
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Usuario Autentificado]");
 			t.sendMessage(message, message.getAllRecipients());
-			
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Correo enviado]");
 			// Cierre.
 			t.close();
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Conexión cerrada]");
 		}
 
 		catch (Exception e) {
@@ -153,6 +189,9 @@ public class AgendaMultifuncionCorreoUtils {
 		props.setProperty(MAIL_SMTP_STARTTLS_ENABLE, "true");
 		props.setProperty(MAIL_SMTP_AUTH, "true");		
 		props.setProperty(MAIL_SMTP_USER, appProperties.getProperty(USUARIO_CORREO));
+		
+		System.out.println(this.getClass() + " getPropiedades: [VALORES: "+props.toString()+"]");
+		
 
 		return props;
 	}

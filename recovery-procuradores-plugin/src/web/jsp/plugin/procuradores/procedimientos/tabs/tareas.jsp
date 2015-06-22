@@ -373,6 +373,7 @@
 		}
 	});
 	var idResolucion = '';
+	var codigoTipoAccion = '';
 	var buscaResolucion = function(params){
 		Ext.Ajax.request({
 			url: '/'+app.getAppName()+'/pcdprocesadoresoluciones/getResolucionByTarea.htm'
@@ -382,6 +383,7 @@
 				//debugger;
 				var r = Ext.util.JSON.decode(result.responseText);
 				idResolucion = r.resolucion.idResolucion;
+				codigoTipoAccion = r.resolucion.codigoTipoAccion;
 				actualizaBotonValidar();
 				//Ext.MessageBox.alert("resultado","Resultado Ok.");
 				
@@ -395,7 +397,7 @@
 	};
 	
 	var actualizaBotonValidar = function(){
-		if (idResolucion!= null && idResolucion!= ''){
+		if (idResolucion!= null && idResolucion!= '' && codigoTipoAccion != "INFO"){
 			btnValidar.enable();
 			btnValidar.setVisible(true);
 		}

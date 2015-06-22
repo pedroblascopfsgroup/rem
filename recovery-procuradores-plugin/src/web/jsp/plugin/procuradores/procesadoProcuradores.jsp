@@ -74,12 +74,6 @@ onViewClick : function(doFocus){
 			,success: function (result, request){
 				var r = Ext.util.JSON.decode(result.responseText);
 				if(Boolean(r.existen)){
-<!-- 					tipoResolucionStore.data.each(function(item, index, totalItems ) { -->
-<!-- 						if(parseInt(item['id']) < 1000){ -->
-<!-- 							item['banned'] = true; -->
-<!-- 						} -->
-<!-- 	    			}); -->
-<!-- 	    			comboTipoResolucionNew.load(); -->
 
 						Ext.getCmp('comboTipoResolucionNew').on('beforeselect', function(combo, record, index){
 						

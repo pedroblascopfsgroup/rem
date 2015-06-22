@@ -295,7 +295,6 @@ public class InformeValidacionCDDBean {
 			}
 			listInfoBienes.add(infobien);
 		}
-		
 		mensajesValidacion += sb.toString();
 		return listInfoBienes;
 	}
@@ -369,7 +368,7 @@ public class InformeValidacionCDDBean {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relación con ninguna persona;");
+				sb.append(" no tiene relaciï¿½n con ninguna persona;");
 			}
 		}
 		if (validaSinLotes()) {
@@ -380,7 +379,7 @@ public class InformeValidacionCDDBean {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El lote ");
 				sb.append(descBien);
-				sb.append(" no contiene ningún bien;");
+				sb.append(" no contiene ningï¿½n bien;");
 			}
 		}
 		BooleanBienesLotes bienLotes = validaBienVariosLote();
@@ -388,7 +387,7 @@ public class InformeValidacionCDDBean {
 			for (BienManyLotes bienLote : bienLotes.getBienLote()) {
 				sb.append("El Bien ");
 				sb.append(bienLote.getBien());
-				sb.append(" se encuentra en más de un lote (");
+				sb.append(" se encuentra en mï¿½s de un lote (");
 				int contador = 1;
 				for (Long numLote : bienLote.getLotes()) {
 					sb.append(numLote);

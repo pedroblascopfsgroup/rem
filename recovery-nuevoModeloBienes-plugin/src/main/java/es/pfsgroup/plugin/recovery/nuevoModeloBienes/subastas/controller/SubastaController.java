@@ -319,6 +319,7 @@ public class SubastaController {
 		EditarInformacionCierreDto dto = new EditarInformacionCierreDto();
 		dto.setIdSubasta(subasta.getId());
 		dto.setFechaSenyalamiento(DateFormat.toString(subasta.getFechaSenyalamiento()));
+		dto.setDeudaJudicial(subasta.getDeudaJudicial());
 		if(Checks.esNulo(procedimiento.getJuzgado())) {
 			dto.setIdPlazaJuzgado(null);			
 			dto.setCodigoPlaza("");
@@ -330,7 +331,6 @@ public class SubastaController {
 			dto.setIdTipoJuzgado(procedimiento.getJuzgado().getId());
 			dto.setCodigoJuzgado(procedimiento.getJuzgado().getCodigo());
 		}
-		//TODO HACER DINAMICO EL SEÃALAMIENTO Y CELEBRACION DE SUBASTAS (SAREB BANKIA)
 		dto.setPrincipalDemanda(procedimiento.getSaldoRecuperacion());
 		ValorNodoTarea costasLetrado = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasLetrado");
 		ValorNodoTarea costasProcurador = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasProcurador");
@@ -347,7 +347,6 @@ public class SubastaController {
 			dto.setConPostores(conPostores.getValor());
 			dto.setIdValorConPostores(conPostores.getIdTareaNodoValor());	
 		}
-		
 		model.put("dto", dto);
 		return EDITAR_INFORMACION_CIERRE;
 	}

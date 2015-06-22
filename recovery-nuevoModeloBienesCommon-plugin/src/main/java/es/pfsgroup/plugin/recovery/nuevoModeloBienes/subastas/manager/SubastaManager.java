@@ -1093,26 +1093,21 @@ public class SubastaManager implements SubastaApi {
 			tipoJuzgado.setPlaza(tipoJuzgado.getPlaza());
 			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
 			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
+			subasta.setDeudaJudicial(dto.getDeudaJudicial());
 			try {
 				subasta.setFechaSenyalamiento(DateFormat.toDate(dto.getFechaSenyalamiento()));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			
 			boolean existeTareaSenyalamiento = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
 			boolean existeTareaCelebracion = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
-			// Si existe se actualizan los campos si no se lanzan las tareas
+			// Si existe se actualizan los campos
 			if(existeTareaSenyalamiento) {
 				actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
 				actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
-			}else{
-				//TODO hay que ver que hacer para crear las tareas y insertar los datos
 			}
 			if(existeTareaCelebracion) {
 				actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
-			}else{
-				//TODO hay que ver que hacer para crear las tareas y insertar los datos
 			}
 			subastaDao.save(subasta);
 		}

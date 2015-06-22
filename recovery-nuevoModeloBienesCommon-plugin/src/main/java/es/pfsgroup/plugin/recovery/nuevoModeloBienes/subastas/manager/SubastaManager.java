@@ -1332,7 +1332,7 @@ public class SubastaManager implements SubastaApi {
 						if(Checks.estaVacio(procedimientoBien)) {
 							return false;
 						}else{
-							return tareaExiste(subasta.getProcedimiento(), nombreNodo);							
+							return tareaExiste(procedimientoBien.get(0).getProcedimiento(), nombreNodo);							
 						}
 					}
 				}

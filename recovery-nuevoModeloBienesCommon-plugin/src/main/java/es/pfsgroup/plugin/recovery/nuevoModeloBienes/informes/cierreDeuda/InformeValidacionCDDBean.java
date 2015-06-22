@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
@@ -32,12 +33,6 @@ public class InformeValidacionCDDBean {
 	private static final String VALOR_COSTAS_PROCURADOR = "costasProcurador";
 	private static final String VALOR_COMBO_POSTORES = "comboPostores";
 	private static final String VALOR_FECHA_TESTIMONIO = "fechaTestimonio";
-
-	public static final String TIPO_PROCEDIMIENTO_SAREB_HY = "H002";
-	public static final String TIPO_PROCEDIMIENTO_BANKIA = "P401";
-	public static final String TIPO_PROCEDIMIENTO_SAREB_BNK = "P409";
-
-	private static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "H005_ConfirmarTestimonio";
 
 	protected SubastaApi subastaApi;
 	protected ApiProxyFactory proxyFactory;
@@ -142,8 +137,7 @@ public class InformeValidacionCDDBean {
 	private DatosLoteCDD completaDatosLote(LoteSubasta loteSubasta) {
 		StringBuilder sb = new StringBuilder();
 		DatosLoteCDD datosLote = new DatosLoteCDD();
-		datosLote.setNumLote(loteSubasta.getNumLote().longValue());
-		//datosLote.setNumLote(Long.valueOf(1000));
+		datosLote.setNumLote(Checks.esNulo(loteSubasta.getNumLote()) ? null : loteSubasta.getNumLote().longValue());
 		if (Checks.esNulo(datosLote.getNumLote())) {
 			sb.append("Numero Lote; ");
 		}
@@ -167,18 +161,7 @@ public class InformeValidacionCDDBean {
 		if (Checks.esNulo(datosLote.getValorSubasta())) {
 			sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Valor subasta; ");
 		}
-
-		if(!Checks.estaVacio(getBienesLote())){
-			List<Bien> bienes = new ArrayList<Bien>();
-			for(BienLoteDto bienLoteDTO : getBienesLote()) {
-				if(loteSubasta.getId().equals(bienLoteDTO.getLote())) {					
-					Bien bien = new Bien();
-					bien.setId(bienLoteDTO.getIdBien());
-					bienes.add(bien);	
-				}
-			}
-			loteSubasta.setBienes(bienes);
-		}
+		
 		datosLote.setInfoBienes(rellenaInfoBienes(loteSubasta));
 		if (Checks.estaVacio(datosLote.getInfoBienes())) {
 			sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Info bienes; ");
@@ -189,10 +172,24 @@ public class InformeValidacionCDDBean {
 
 	private List<InfoBienesCDD> rellenaInfoBienes(LoteSubasta loteSubasta) {
 		List<InfoBienesCDD> listInfoBienes = new ArrayList<InfoBienesCDD>();
+		List<Long> bienes = new ArrayList<Long>();
 		StringBuilder sb = new StringBuilder();
-		for (Bien bien : loteSubasta.getBienes()) {
-			Long idBien = bien.getId();
-			NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(idBien);
+		NMBBien nmbBien = null;
+		
+		if(!Checks.estaVacio(getBienesLote())){
+			for(BienLoteDto bienLoteDTO : getBienesLote()) {
+				if(loteSubasta.getId().equals(bienLoteDTO.getLote())) {					
+					bienes.add(bienLoteDTO.getIdBien());
+				}
+			}
+		}else{
+			for(Bien bien : loteSubasta.getBienes()) {
+				bienes.add(bien.getId());
+			}
+		}
+		for(Long idBien : bienes) {
+			nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(idBien);
+			
 			InfoBienesCDD infobien = new InfoBienesCDD();
 
 			infobien.setIdBien(nmbBien.getId());
@@ -273,7 +270,7 @@ public class InformeValidacionCDDBean {
 			if (Checks.esNulo(infobien.getViviendaHabitual())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Vivienda habitual; ");
 			}
-			if(Checks.esNulo(nmbBien.getAdjudicacion()) && Checks.esNulo(nmbBien.getAdjudicacion().getEntidadAdjudicataria())) {
+			if(Checks.esNulo(nmbBien.getAdjudicacion()) || (!Checks.esNulo(nmbBien.getAdjudicacion()) && Checks.esNulo(nmbBien.getAdjudicacion().getEntidadAdjudicataria()))) {
 				infobien.setResultadoAdjudicacion(null);
 				infobien.setImporteAdjudicacion(null);
 			}else{
@@ -286,9 +283,11 @@ public class InformeValidacionCDDBean {
 			if (Checks.esNulo(infobien.getImporteAdjudicacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Importe adjudicacion; ");
 			}
-			infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(loteSubasta.getSubasta()));
-			if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
-				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
+			if(!"P401".equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(nmbBien));
+				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
+					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
+				}				
 			}
 			infobien.setContratosRelacionado(contratosBienRelacionados(nmbBien));
 			if (Checks.esNulo(infobien.getContratosRelacionado())) {
@@ -310,46 +309,31 @@ public class InformeValidacionCDDBean {
 	}
 
 	private String getSubastaConPostores(Subasta subasta) {
-		String tareaCelebracionSubasta = "";
-
-		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
-			if (TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK);
-			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_BANKIA);
-			}
-			ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, VALOR_COMBO_POSTORES);
-			if(!Checks.esNulo(vnt)) {
-				return vnt.getValor();
-			}
+		String tareaCelebracionSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_CelebracionSubasta";
+		ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, VALOR_COMBO_POSTORES);
+		if(!Checks.esNulo(vnt)) {
+			return vnt.getValor();
 		}
 		return null;
 	}
 	
 	private String getCostas(Subasta subasta, String costas) {
-		String tareaSenyalamientoSubasta = "";
-		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
-			if (TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_HY);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK);
-			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA);
-			}
-			ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas);
-			if(!Checks.esNulo(vnt)) {
-				return vnt.getValor();
-			}
+		String tareaSenyalamientoSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_SenyalamientoSubasta";
+		ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas);
+		if(!Checks.esNulo(vnt)) {
+			return vnt.getValor();
 		}
 		return null;
 	}
 
-	private String getFechaTestimonioAdjudicacionSareb(Subasta subasta) {
-		ValorNodoTarea valor = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO, VALOR_FECHA_TESTIMONIO);
+	private String getFechaTestimonioAdjudicacionSareb(NMBBien nmbBien) {
+		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
+		String nombreTarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO);
+		Procedimiento prc = null;
+		if(!Checks.estaVacio(nmbBien.getProcedimientos())) {
+			prc = nmbBien.getProcedimientos().get(0).getProcedimiento();
+		}
+		ValorNodoTarea valor = subastaApi.obtenValorNodoPrc(prc, nombreTarea, VALOR_FECHA_TESTIMONIO);
 		if(!Checks.esNulo(valor)) {
 			return valor.getValor();
 		}
@@ -368,15 +352,15 @@ public class InformeValidacionCDDBean {
 	private void crearMensajeValidacion(Subasta subasta) {
 		StringBuilder sb = new StringBuilder();
 		BooleanBienes booleanBienes = new BooleanBienes();
-		if (validaProcedimientoContratos(subasta)) {
-			sb.append("El procedimiento no tienen ninguna operaciï¿½n activa;"); // Alguna deberia ser
+		if (!validaProcedimientoContratos(subasta)) {
+			sb.append("El procedimiento no tienen ninguna operación activa;"); // Alguna deberia ser
 		}
 		booleanBienes = validaBienesContratos();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relaciÃ³n con ningï¿½n contrato;");
+				sb.append(" no tiene relación con ningún contrato;");
 			}
 		}
 		booleanBienes = validaBienesPersonas();
@@ -719,7 +703,7 @@ public class InformeValidacionCDDBean {
 
 	private class BienManyLotes {
 		private String bien;
-		private List<Long> lotes;
+		private List<Long> lotes = new ArrayList<Long>();
 
 		public String getBien() {
 			return bien;

@@ -29,8 +29,7 @@
 		</property>
 		<property name="tareasCierreDeuda"> 
 			<map>
-				<entry key="HYCelebracionSubastaSareb" value="H002_CelebracionSubasta"/>
-				<entry key="HYSenyalamientoSubastaSareb" value="H002_SenyalamientoSubasta"/>
+				<entry key="ConfirmarTestimonio" value="H005_ConfirmarTestimonio"/>
 			</map>
 		</property>
 	</bean>

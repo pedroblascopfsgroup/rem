@@ -36,6 +36,7 @@ import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
@@ -1092,26 +1093,21 @@ public class SubastaManager implements SubastaApi {
 			tipoJuzgado.setPlaza(tipoJuzgado.getPlaza());
 			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
 			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
+			subasta.setDeudaJudicial(dto.getDeudaJudicial());
 			try {
 				subasta.setFechaSenyalamiento(DateFormat.toDate(dto.getFechaSenyalamiento()));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			
 			boolean existeTareaSenyalamiento = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
 			boolean existeTareaCelebracion = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
-			// Si existe se actualizan los campos si no se lanzan las tareas
+			// Si existe se actualizan los campos
 			if(existeTareaSenyalamiento) {
 				actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
 				actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
-			}else{
-				//TODO hay que ver que hacer para crear las tareas y insertar los datos
 			}
 			if(existeTareaCelebracion) {
 				actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
-			}else{
-				//TODO hay que ver que hacer para crear las tareas y insertar los datos
 			}
 			subastaDao.save(subasta);
 		}
@@ -1217,18 +1213,13 @@ public class SubastaManager implements SubastaApi {
 		@Override
 		@Transactional(readOnly = false)
 		@BusinessOperation(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
-		public List<NMBBien> enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
-			List<NMBBien> idBienesNoCierre = new ArrayList<NMBBien>();
+		public void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
 			for(Long idBien : idsBien) {
 				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
 				if(Checks.estaVacio(list)) {
 					guardaBatchAcuerdoCierre(idSubasta, idBien);
-				}else{
-					NMBBien bien = nmbBienDao.get(list.get(0).getIdBien());
-					idBienesNoCierre.add(bien);
 				}
 			}
-			return idBienesNoCierre;
 		} 
 		
 		public class ValorNodoTarea {
@@ -1303,9 +1294,52 @@ public class SubastaManager implements SubastaApi {
 						input.close();
 					} catch (IOException e) {
 						System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
-					}
-				}
+																																																																																				}
+																																																																																			}
 			}
 			return prop;
 		}
+		
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA)
+		public boolean validacionCierreDeuda(Subasta subasta, List<Long> idsBien, String nombreNodo) {
+			for(LoteSubasta ls : subasta.getLotesSubasta()) {
+				for(Bien bien : ls.getBienes()) {
+					if(!Checks.estaVacio(idsBien)) {
+						for(Long idBien : idsBien) {
+							if(idBien.equals(bien.getId())) {
+								List<ProcedimientoBien> procedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
+										genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId()), 
+										genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
+										genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", nombreNodo.subSequence(0, 3)));
+								if(Checks.estaVacio(procedimientoBien)) {
+									return false;
+								}else{
+									return tareaExiste(subasta.getProcedimiento(), nombreNodo);							
+								}
+							}
+						}
+					}else{
+						List<ProcedimientoBien> procedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
+								genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId()), 
+								genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
+								genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", nombreNodo.subSequence(0, 4)));
+						if(Checks.estaVacio(procedimientoBien)) {
+							return false;
+						}else{
+							return tareaExiste(procedimientoBien.get(0).getProcedimiento(), nombreNodo);							
+						}
+					}
+				}
+			}
+			return false;
+		}
+			
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE)
+		public boolean tareaExiste(Procedimiento procedimiento, String nombreNodo) {
+			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
+			return !Checks.esNulo(historicoPrc);
+		}
+		
 }

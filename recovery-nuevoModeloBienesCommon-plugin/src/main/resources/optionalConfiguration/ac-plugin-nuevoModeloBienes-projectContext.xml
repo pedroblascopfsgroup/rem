@@ -37,10 +37,7 @@
 		</property>		
 		<property name="tareasCierreDeuda">
 			<map>
-				<entry key="SenyalamientoSubastaBankia" value="P401_SenyalamientoSubasta"/>
-				<entry key="CelebracionSubastaBankia" value="P401_CelebracionSubasta"/>
-				<entry key="SenyalamientoSubastaSareb" value="P409_SenyalamientoSubasta"/>
-				<entry key="CelebracionSubastaSareb" value="P409_CelebracionSubasta"/>
+				<entry key="ConfirmarTestimonio" value="P413_ConfirmarTestimonio"/>
 			</map>
 		</property>
 		<property name="codigosSubastaValidacion">

@@ -1,11 +1,9 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,7 +15,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -34,7 +31,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.BienLoteDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.DatosLoteCDD;
@@ -43,7 +39,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.Inform
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastaSareb.InformeSubastaSarebBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
@@ -58,7 +53,6 @@ public class SubastaController {
 
 	private static final String SUBASTAS_JSON = "plugin/nuevoModeloBienes/subastas/subastasJSON"; 
 	private static final String LOTES_SUBASTA_JSON = "plugin/nuevoModeloBienes/subastas/lotesSubastaJSON"; 
-	private static final String BIENES_LOTE_JSON = "plugin/nuevoModeloBienes/subastas/bienesByLoteJSON";
 	private static final String DISABLED_BOTONES_CDD_JSON = "plugin/nuevoModeloBienes/subastas/disableBotonesCDDJSON";
 	private static final String WIN_AGREGAR_EXCLUIR_BIEN = "plugin/nuevoModeloBienes/subastas/agregarExcluirBien"; 
 	private static final String BIENES_JSON = "plugin/nuevoModeloBienes/subastas/bienesJSON";
@@ -94,7 +88,7 @@ public class SubastaController {
 	public String getDisableBotonesCDD(@RequestParam(value = "idSubasta", required = true) Long id, ModelMap map) {
 		Subasta subasta = subastaApi.getSubasta(id);
 		List<Boolean> list = new ArrayList<Boolean>();
-		list.add(disableEditInfoCDD(subasta));
+		list.add(!habilitarEditInfoCDD(subasta));
 		map.put("disableBotonesCDD", list);
 		return DISABLED_BOTONES_CDD_JSON;
 	}
@@ -113,30 +107,13 @@ public class SubastaController {
 			lotesDto.add(loteSubastaDto);
 		}
 
-		
 		map.put("lotes", lotesDto);
 		return LOTES_SUBASTA_JSON;
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-	public String getBienesLote(@RequestParam(value = "idLote", required = true) Long idLote, ModelMap map) {		
-		List<Bien> bienes = subastaApi.getBienesLoteSubasta(idLote);
-		map.put("bienes", bienes);
-		return BIENES_LOTE_JSON;
-	}
-	
-	private Boolean disableEditInfoCDD(Subasta subasta){
-		String tareaCelebracionSubasta = "";
-		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB_HY.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_HY);
-		} else if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK);
-		} else if (InformeValidacionCDDBean.TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-			tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_BANKIA);
-		}
-		return !subastaApi.tareaExisteYFinalizada(subasta.getProcedimiento(), tareaCelebracionSubasta);
+	private Boolean habilitarEditInfoCDD(Subasta subasta){
+		String tareaCelebracionSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_CelebracionSubasta";
+		return subastaApi.tareaExisteYFinalizada(subasta.getProcedimiento(), tareaCelebracionSubasta);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -280,11 +257,10 @@ public class SubastaController {
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-//		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
-//		if(!informe.getValidacionOK()) {
-//		if(false) {			
-//			return creaExcelValidacion(informe,model);
-//		}else{
+		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+		if(!informe.getValidacionOK()) {
+			return creaExcelValidacion(informe,model);
+		}else{
 			if(Checks.esNulo(idsBien)) {
 				List<BatchAcuerdoCierreDeuda> registrosBACDD = subastaApi.findRegistroCierreDeuda(idSubasta, null);
 				if(!Checks.estaVacio(registrosBACDD)) {
@@ -293,9 +269,9 @@ public class SubastaController {
 					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null);
 				}
 			}else{
-				List<NMBBien> bienesNoCDD = subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
+				subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
 			}
-//		}
+		}
 		return DEFAULT;
 	}
 	
@@ -343,6 +319,7 @@ public class SubastaController {
 		EditarInformacionCierreDto dto = new EditarInformacionCierreDto();
 		dto.setIdSubasta(subasta.getId());
 		dto.setFechaSenyalamiento(DateFormat.toString(subasta.getFechaSenyalamiento()));
+		dto.setDeudaJudicial(subasta.getDeudaJudicial());
 		if(Checks.esNulo(procedimiento.getJuzgado())) {
 			dto.setIdPlazaJuzgado(null);			
 			dto.setCodigoPlaza("");
@@ -354,7 +331,6 @@ public class SubastaController {
 			dto.setIdTipoJuzgado(procedimiento.getJuzgado().getId());
 			dto.setCodigoJuzgado(procedimiento.getJuzgado().getCodigo());
 		}
-		//TODO HACER DINAMICO EL SEÃALAMIENTO Y CELEBRACION DE SUBASTAS (SAREB BANKIA)
 		dto.setPrincipalDemanda(procedimiento.getSaldoRecuperacion());
 		ValorNodoTarea costasLetrado = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasLetrado");
 		ValorNodoTarea costasProcurador = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasProcurador");
@@ -371,7 +347,6 @@ public class SubastaController {
 			dto.setConPostores(conPostores.getValor());
 			dto.setIdValorConPostores(conPostores.getIdTareaNodoValor());	
 		}
-		
 		model.put("dto", dto);
 		return EDITAR_INFORMACION_CIERRE;
 	}

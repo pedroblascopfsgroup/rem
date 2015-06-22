@@ -255,7 +255,7 @@
 		entidad.setLabel("provision", sinoRender(data.toolbar.provision));
 		entidad.setLabel("titulizada", cabecera.titulizada);
 		entidad.setLabel("fondo", cabecera.fondo);
-		entidad.setLabel("cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asunto.tabCabecera.editar" text="plugin.mejoras.asunto.tabCabecera.editar" />' : ''));
+		entidad.setLabel("cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" text="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" />' : ''));
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;

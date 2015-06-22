@@ -73,7 +73,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	//this.storeDemandados.load({params:{idProcedimiento:this.idProcedimiento, idFactoria:this.idFactoria}});
     	this.dsDatosAdicionales.load({params:{idProcedimiento:this.idProcedimiento}});
     	this.storeMotivosSuspension.load({params:{idFactoria:this.idFactoria}});
-    	this.storeDecisionSuspension.load({params:{idFactoriRa:this.idFactoria}});
+    	this.storeDecisionSuspension.load({params:{idFactoria:this.idFactoria}});
     	this.storeEntidadAdjudicataria.load({params:{idFactoria:this.idFactoria}});
     	this.storeFondo.load({params:{idFactoria:this.idFactoria}});
     	this.storeMotivoImpugnacion.load({params:{idFactoria:this.idFactoria}});
@@ -151,8 +151,20 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	var dinamicElementsLeft2 = {width:400,items:dinamicElementsLeft};
     	var dinamicElementsRight2 = {width:400,items:dinamicElementsRight}; 
     	
+    	/* Obligatoriedad del adjunto */
     	var esResolEspecial = true;
     	if( idTipoResolucion < 1000 ){esResolEspecial = false;}
+    	
+    	var resolucionesSinAdjunto = [];
+    	resolucionesSinAdjunto.push(242) /* H040_RegistrarCambioCerradura */
+    	
+    	var adjuntoNoObligatorio = false;
+    	if(esResolEspecial || resolucionesSinAdjunto.indexOf(idTipoResolucion)!=-1)
+    	{
+    		adjuntoNoObligatorio = true;
+    	}
+    	//debugger;
+    	
     	
     	var items = [{colspan:2, width:800, style:'padding-top:0px;padding-bottom:0px',
 			items:[{"xtype":'textfield',"name":"d_numAutos","fieldLabel":"N&uacute;mero de autos",allowBlank:function(idTipoResolucion){idTipoResolucion==1 || idTipoResolucion==92 || idTipoResolucion==135},
@@ -170,7 +182,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	        ,{colspan:2, width:800, style:'padding-top:0px;padding-bottom:0px',
 				items:	[ 
 				      	  	{"xtype":'displayfield',"name":"file","id":"file","fieldLabel":"Fichero","value":"No se ha adjuntado ning&uacute;n fichero.",allowBlank:false,width:500}
-				      	  	,{"xtype": 'textfield', "id": 'file_upload_ok',"name": 'file_upload_ok',"value": "",allowBlank:esResolEspecial,hidden:true}
+				      	  	,{"xtype": 'textfield', "id": 'file_upload_ok',"name": 'file_upload_ok',"value": "",allowBlank:adjuntoNoObligatorio,hidden:true}
 						]
 			}
 	        
@@ -771,17 +783,17 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         		 		}
         		 }
           }
-         ,{"xtype":'datefield',"name":"d_fechaCierreDeuda","fieldLabel":"Fecha cierre de la deuda",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+         ,{"xtype":'datefield',"name":"d_fechaCierreDeuda","fieldLabel":"Fecha cierre de la deuda",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar:true }
          ,{"xtype":'numberfield',"name":"d_principalDeLaDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_capitalVencidoEnElCierre","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_capitalNoVencidoEnElCierre","fieldLabel":"Capital no vencido (en el cierre)",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_interesesOrdinariosEnElCierre","fieldLabel":"Intereses ordinarios (en el cierre)",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_interesesDeDemoraEnElCierre","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_plazoInteresesOrdinarios","fieldLabel":"Plazo intereses ordinarios",allowBlank:false}         
-         ,{"xtype":'numberfield',"name":"d_tipoMaximoInteresesOrdinarios","fieldLabel":"Tipo máximo intereses ordinarios",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_plazoInteresesDemora","fieldLabel":"Plazo intereses demora",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_tipoMaximoInteresesDemora","fieldLabel":"Tipo máximo intereses demora",allowBlank:false}
-         ,{"xtype":'numberfield',"name":"d_tipoInteresDemora","fieldLabel":"Tipo de interés de demora",allowBlank:false}         
+         ,{"xtype":'numberfield',"name":"d_capitalVencidoEnElCierre","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_capitalNoVencidoEnElCierre","fieldLabel":"Capital no vencido (en el cierre)",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_interesesOrdinariosEnElCierre","fieldLabel":"Intereses ordinarios (en el cierre)",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_interesesDeDemoraEnElCierre","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_plazoInteresesOrdinarios","fieldLabel":"Plazo intereses ordinarios",allowBlank:false, filtrar:true}         
+         ,{"xtype":'numberfield',"name":"d_tipoMaximoInteresesOrdinarios","fieldLabel":"Tipo máximo intereses ordinarios",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_plazoInteresesDemora","fieldLabel":"Plazo intereses demora",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_tipoMaximoInteresesDemora","fieldLabel":"Tipo máximo intereses demora",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_tipoInteresDemora","fieldLabel":"Tipo de interés de demora",allowBlank:false, filtrar:true}         
          ]);
         
         // id: 202 : TRAMITE HIPOTECARIO : Auto Despachando Ejecución Favorable
@@ -906,8 +918,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		,{"xtype":'numberfield',"name":"d_intereses","fieldLabel":"Intereses generados a fecha del señalamiento de subasta.",allowBlank:false, filtrar:true}
 		,{"xtype":'numberfield',"name":"d_costasLetrado","fieldLabel":"Costas de letrado",allowBlank:false, filtrar:true}
 		,{"xtype":'datefield',"name":"d_fechaAnuncio","fieldLabel":"Fecha anuncio",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-		,{"xtype":'numberfield',"name":"d_costasProcurador","fieldLabel":"Costas del procurador",allowBlank:false}
-		,{"xtype":'datefield',"name":"d_fechaSenyalamiento","fieldLabel":"Fecha del señalamiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+		,{"xtype":'numberfield',"name":"d_costasProcurador","fieldLabel":"Costas del procurador",allowBlank:false, filtrar:true}
+		,{"xtype":'datefield',"name":"d_fechaSenyalamiento","fieldLabel":"Fecha del señalamiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar:true }
 		
 
 	]);
@@ -1135,7 +1147,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 243 : TRAMITE GESTION DE LLAVES: Registrar Envio de Llaves
 	this.arrayCampos.push([
 	                       {"xtype":'textfield',"name":"d_nombre","fieldLabel":"Nombre del 1er depositario",allowBlank:false,id:'d_nombre_id'+this.idFactoria}
-	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha envio de llaves letrado",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha envío de llaves a la entidad o al letrado",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
 	
@@ -1150,8 +1162,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 245 : TRAMITE OCUPANTES: Registrar recepción de la documentación A
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Bien ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDocumentacion","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDocumentacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboInquilino","fieldLabel":"Existe algún inquilino",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboInquilino'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
@@ -1162,8 +1174,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 246 : TRAMITE OCUPANTES: Registrar recepción de la documentación B
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Bien ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDocumentacion","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDocumentacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboInquilino","fieldLabel":"Existe algún inquilino",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboInquilino'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
@@ -1174,8 +1186,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 247 : TRAMITE OCUPANTES: Registrar recepción de la documentación C
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaFinAle","fieldLabel":"Fecha fin alegaciones",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Bien ocupado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDocumentacion","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDocumentacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboInquilino","fieldLabel":"Existe algún inquilino",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboInquilino'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
@@ -1245,7 +1257,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	//id: 256 : TRAMITE DE POSESIÓN: Registrar solicitud de posesión
 	this.arrayCampos.push([
-	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboPosesion","fieldLabel":"Combo de posesión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPosesion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboPosesion","fieldLabel":"Posesión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPosesion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha de solicitud de la posesión",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboOcupado","fieldLabel":"Ocupado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOcupado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboMoratoria","fieldLabel":"Moratoria",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMoratoria'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}

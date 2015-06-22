@@ -125,7 +125,7 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
         for (Asunto asunto : (List<Asunto>) pagetemp.getResults()) {        	
         	ids += asunto.getId() + ",";       
         }        
-        logger.error(" obtenerAsuntosDeUnaPersonaPaginados: [RESULTADO SQL] (TOTAL ASUNTOS DESDE CPE_CONTRATOS_PERSONAS) : " + pagetemp.getTotalCount() + " | IDS: " + ids );
+        System.out.println(" obtenerAsuntosDeUnaPersonaPaginados: [RESULTADO SQL] (TOTAL ASUNTOS DESDE CPE_CONTRATOS_PERSONAS) : " + pagetemp.getTotalCount() + " | IDS: " + ids );
         
         Page page = paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, params);
         String ids2 = "";
@@ -133,7 +133,7 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
         	ids2 += asunto.getId() + ",";       
         }
         
-        logger.error(" obtenerAsuntosDeUnaPersonaPaginados: [RESULTADO SQL] (TOTAL ASUNTOS DESDE PRC_PER) : " + page.getTotalCount() + " | IDS: " + ids2 );
+        System.out.println(" obtenerAsuntosDeUnaPersonaPaginados: [RESULTADO SQL] (TOTAL ASUNTOS DESDE PRC_PER) : " + page.getTotalCount() + " | IDS: " + ids2 );
 
         return page;//paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dto, params);
 

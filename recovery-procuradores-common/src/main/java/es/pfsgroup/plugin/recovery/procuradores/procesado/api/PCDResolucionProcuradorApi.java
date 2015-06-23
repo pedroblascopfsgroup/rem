@@ -14,12 +14,14 @@ import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.dto.MSVTipoResolucionDto;
+import es.pfsgroup.recovery.bpmframework.config.model.RecoveryBPMfwkDDTipoAccion;
 
 /**
  * Manager encargado de la gestión de las operaciones relacionadas con las resoluciones.
  * @author manuel
  *
  */
+@SuppressWarnings("unused")
 public interface PCDResolucionProcuradorApi {
 	
 	public static final String PCD_MSV_BO_MOSTRAR_RESOLUCIONES = "es.pfsgroup.plugin.recovery.procuradores.procesado.api.mostrarResoluciones";
@@ -45,6 +47,8 @@ public interface PCDResolucionProcuradorApi {
 	public static final String PCD_MSV_BO_BORRAR_ADJUNTO = "es.plugin.recovery.procuradores.procesado.api.borrarAdjunto";
 	public static final String PCD_MSV_BO_DAME_VALIDACION_RESOLUCION = "es.plugin.recovery.procuradores.procesado.api.dameResolucion";
 	public static final String PCD_MSV_GUARDAR_DATOS_HISTORICO = "es.plugin.recovery.procuradores.procesado.api.guardarDatosHistorico";
+	
+	public static final String PCD_MSV_GET_RESOLUCIONES_PENDIENTES_VALIDAR = "es.pfsgroup.plugin.recovery.procuradores.procesado.api.getResolucionesPendientesValidar";
 	
 	/**
 	 * Devuelve el listado de resoluciones.
@@ -162,4 +166,7 @@ public interface PCDResolucionProcuradorApi {
 	
 	@BusinessOperationDefinition(PCD_MSV_GUARDAR_DATOS_HISTORICO)
 	public void guardarDatosHistorico(MSVResolucionesDto dtoResolucion, MSVResolucion msvResolucion);
+	
+	@BusinessOperationDefinition(PCD_MSV_GET_RESOLUCIONES_PENDIENTES_VALIDAR)
+	public List<MSVResolucion> getResolucionesPendientesValidar(Long idTarea, List<String> tipoResolucionAccionBaned);
 }

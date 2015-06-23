@@ -810,7 +810,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 							var storeJuzgado= juzgado.getStore();
 							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 							storeJuzgado.on('load', function(){  
-								juzgado.setValue(juzgado.getValue());
+								  var foundValue = false;
+								  storeJuzgado.each(function(record)  
+								  {
+									  if(record.get("codigo") == juzgado.getValue()){
+										  juzgado.setValue(juzgado.getValue());
+										  foundValue = true;
+									  }
+
+								  }, this); 
+								
+								  if(!foundValue){
+									  juzgado.setValue("");
+								  }
 							});
 						}
         		 }
@@ -840,7 +852,21 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
                       							var storeJuzgado= juzgado.getStore();
                       							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
                     							storeJuzgado.on('load', function(){  
-                    								juzgado.setValue(juzgado.getValue());
+
+                    								  var foundValue = false;
+                    								  storeJuzgado.each(function(record)  
+                    								  {
+                    									  if(record.get("codigo") == juzgado.getValue()){
+                    										  juzgado.setValue(juzgado.getValue());
+                    										  foundValue = true;
+                    									  }
+
+                    								  }, this); 
+                    								
+                    								  if(!foundValue){
+                    									  juzgado.setValue("");
+                    								  }
+                    								  
                     							});
                       						}
                               		 }
@@ -1337,7 +1363,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            							var storeJuzgado= juzgado.getStore();
 		            							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 		            							storeJuzgado.on('load', function(){  
-		            								juzgado.setValue(juzgado.getValue());
+	                  								  var foundValue = false;
+	                								  storeJuzgado.each(function(record)  
+	                								  {
+	                									  if(record.get("codigo") == juzgado.getValue()){
+	                										  juzgado.setValue(juzgado.getValue());
+	                										  foundValue = true;
+	                									  }
+	
+	                								  }, this); 
+	                								
+	                								  if(!foundValue){
+	                									  juzgado.setValue("");
+	                								  }
 		            							});
 		            						}
 		                      		 }
@@ -1438,7 +1476,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            							var storeJuzgado= juzgado.getStore();
 		            							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 		            							storeJuzgado.on('load', function(){  
-		            								juzgado.setValue(juzgado.getValue());
+	                  								  var foundValue = false;
+	                								  storeJuzgado.each(function(record)  
+	                								  {
+	                									  if(record.get("codigo") == juzgado.getValue()){
+	                										  juzgado.setValue(juzgado.getValue());
+	                										  foundValue = true;
+	                									  }
+	
+	                								  }, this); 
+	                								
+	                								  if(!foundValue){
+	                									  juzgado.setValue("");
+	                								  }
 		            							});
 		            						}
 		                      		 }
@@ -1511,7 +1561,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            							var storeJuzgado= juzgado.getStore();
 		            							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 		            							storeJuzgado.on('load', function(){  
-		            								juzgado.setValue(juzgado.getValue());
+	                  								  var foundValue = false;
+	                								  storeJuzgado.each(function(record)  
+	                								  {
+	                									  if(record.get("codigo") == juzgado.getValue()){
+	                										  juzgado.setValue(juzgado.getValue());
+	                										  foundValue = true;
+	                									  }
+	
+	                								  }, this); 
+	                								
+	                								  if(!foundValue){
+	                									  juzgado.setValue("");
+	                								  }
 		            							});
 		            						}
 		                      		 }
@@ -1752,7 +1814,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		              							var storeJuzgado= juzgado.getStore();
 		              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 		            							storeJuzgado.on('load', function(){  
-		            								juzgado.setValue(juzgado.getValue());
+	                  								  var foundValue = false;
+	                								  storeJuzgado.each(function(record)  
+	                								  {
+	                									  if(record.get("codigo") == juzgado.getValue()){
+	                										  juzgado.setValue(juzgado.getValue());
+	                										  foundValue = true;
+	                									  }
+	
+	                								  }, this); 
+	                								
+	                								  if(!foundValue){
+	                									  juzgado.setValue("");
+	                								  }
 		            							});
 		              						}
 		                      		 }
@@ -1880,7 +1954,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	              							var storeJuzgado= juzgado.getStore();
 	              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 	            							storeJuzgado.on('load', function(){  
-	            								juzgado.setValue(juzgado.getValue());
+	              								  var foundValue = false;
+	            								  storeJuzgado.each(function(record)  
+	            								  {
+	            									  if(record.get("codigo") == juzgado.getValue()){
+	            										  juzgado.setValue(juzgado.getValue());
+	            										  foundValue = true;
+	            									  }
+	
+	            								  }, this); 
+	            								
+	            								  if(!foundValue){
+	            									  juzgado.setValue("");
+	            								  }
 	            							});
 	              						}
 	                      		 }
@@ -1909,7 +1995,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	              							var storeJuzgado= juzgado.getStore();
 	              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 	            							storeJuzgado.on('load', function(){  
-	            								juzgado.setValue(juzgado.getValue());
+	              								  var foundValue = false;
+	            								  storeJuzgado.each(function(record)  
+	            								  {
+	            									  if(record.get("codigo") == juzgado.getValue()){
+	            										  juzgado.setValue(juzgado.getValue());
+	            										  foundValue = true;
+	            									  }
+	
+	            								  }, this); 
+	            								
+	            								  if(!foundValue){
+	            									  juzgado.setValue("");
+	            								  }
 	            							});
 	              						}
 	                      		 }
@@ -2019,7 +2117,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	              							var storeJuzgado= juzgado.getStore();
 	              							storeJuzgado.load({params:{codigoPlaza:combo.getValue()}});
 	            							storeJuzgado.on('load', function(){  
-	            								juzgado.setValue(juzgado.getValue());
+	              								  var foundValue = false;
+	            								  storeJuzgado.each(function(record)  
+	            								  {
+	            									  if(record.get("codigo") == juzgado.getValue()){
+	            										  juzgado.setValue(juzgado.getValue());
+	            										  foundValue = true;
+	            									  }
+	
+	            								  }, this); 
+	            								
+	            								  if(!foundValue){
+	            									  juzgado.setValue("");
+	            								  }
 	            							});
 	              						}
 	                      		 }

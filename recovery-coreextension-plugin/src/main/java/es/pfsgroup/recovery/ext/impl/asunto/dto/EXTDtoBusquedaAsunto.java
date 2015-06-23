@@ -15,6 +15,7 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	
 	private String comboGestion;
 	private String comboPropiedades;
+	private String comboErrorCDD;
 		
 	
 	private List<Long> idsUsuariosGrupos;
@@ -68,6 +69,12 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 		this.comboPropiedades = comboPropiedades;
 	}
 
+	public String getComboErrorCDD() {
+		return comboErrorCDD;
+	}
 
+	public void setComboErrorCDD(String comboErrorCDD) {
+		this.comboErrorCDD = comboErrorCDD;
+	}
 
 }

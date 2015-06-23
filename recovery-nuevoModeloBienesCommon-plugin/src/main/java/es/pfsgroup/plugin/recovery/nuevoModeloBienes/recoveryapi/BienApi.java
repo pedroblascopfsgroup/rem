@@ -1,22 +1,17 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.bien.model.Bien;
-import es.capgemini.pfs.cirbe.model.DDPais;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.adjudicacion.dto.DtoNMBBienAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.DtoNMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.DtoRevisionSolvencia;
@@ -44,6 +39,8 @@ public interface BienApi {
 	public static String GET_LIST_UNIDADES_POBLACIONALES = "NMBbienManager.getListUnidadesPoblacionales";
 	public static String GET_LIST_PAISES = "NMBbienManager.getListPaises";
 	public static String GET_LIST_TIPOS_VIA = "NMBbienManager.getListTiposVia";
+	public static String GET_BIEN_BY_ID = "NMBbienManager.getBienById";
+	
 	/**
      * Recupera el Bien indicado.
      * @param id Long
@@ -188,5 +185,8 @@ public interface BienApi {
 
 	@BusinessOperationDefinition(GET_LIST_TIPOS_VIA)
 	public List<DDTipoVia> getListTiposVia();
+
+	@BusinessOperationDefinition(GET_BIEN_BY_ID)
+	public Bien getBienById(Long id);
 
 }

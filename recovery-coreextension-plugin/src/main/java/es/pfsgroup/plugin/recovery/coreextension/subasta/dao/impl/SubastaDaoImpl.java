@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
+import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,11 +27,13 @@ import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
@@ -1344,4 +1347,67 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				generarHQLBuscarLotesSubastasPaginados(dto, usuLogado));
 		return (List<LoteSubasta>) query.list();
 	}
+
+
+	@Override
+	public Integer buscarSubastasExcelCount(NMBDtoBuscarSubastas dto, Usuario usuLogado) {
+		
+		Query query = getSession().createQuery(
+				generarHQLBuscarSubastasPaginados(dto, usuLogado));
+		return query.list().size();
+	}
+	@Override
+	public List<BatchAcuerdoCierreDeuda> findBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien){
+		Query query = getSession().createQuery(
+				generarHQLBuscarBatchAcuerdoCierreDeuda(idAsunto, idProcedimiento, idBien));
+		return (List<BatchAcuerdoCierreDeuda>) query.list();
+	}
+
+	private String generarHQLBuscarBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien) {
+		StringBuilder hql = new StringBuilder();
+
+		// Consulta inicial b�sica
+		hql.append(" select baccd ");
+		hql.append(" from BatchAcuerdoCierreDeuda baccd ");
+		hql.append(" where baccd.idProcedimiento = ").append(idProcedimiento);
+		hql.append(" and baccd.idAsunto = ").append(idAsunto);
+		if(!Checks.esNulo(idBien)) {
+			hql.append(" and baccd.idBien = ").append(idBien);
+		}
+		hql.append(" and baccd.fechaEntrega is null ");
+		
+		SimpleDateFormat dateFormatInit = new SimpleDateFormat("dd/MM/yyyy 00:00:00");
+		SimpleDateFormat dateFormatFin = new SimpleDateFormat("dd/MM/yyyy 22:00:00");
+		
+		Date date = new Date();
+		
+		String formatInit = dateFormatInit.format(date); //2014/08/06 15:59:48
+		String formatFin = dateFormatFin.format(date);
+		
+		hql.append(" and baccd.fechaAlta between to_date('").append(formatInit).append("', 'DD/MM/YYYY HH24:MI:SS')");
+		hql.append(" and to_date('").append(formatFin).append("', 'DD/MM/YYYY HH24:MI:SS')");
+		
+		return hql.toString();
+	}
+	
+	
+	public void guardarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
+		StringBuilder sb = new StringBuilder();
+		sb.append(" insert into BatchAcuerdoCierreDeuda ");
+		sb.append(" (idProcedimiento, fechaAlta, idAsunto, fechaEntrega, usuarioCrear, idBien, entidad) ");
+		sb.append(" values ");
+		sb.append(" (");
+		sb.append(acuerdoCierreDeuda.getIdProcedimiento()).append(",");
+		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaAlta())).append(",");
+		sb.append(acuerdoCierreDeuda.getIdAsunto()).append(",");
+		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaEntrega())).append(",");
+		sb.append(acuerdoCierreDeuda.getUsuarioCrear()).append(",");
+		sb.append(acuerdoCierreDeuda.getIdBien()).append(",");
+		sb.append(acuerdoCierreDeuda.getEntidad());
+		sb.append(")");
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
+	
 }

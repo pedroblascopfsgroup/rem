@@ -68,7 +68,16 @@
   </node>
   <node name="H033_BPMTramiteElevarPropSarebLitigios" x="472" y="365" width="297" height="36">
     <edge>
-      <label x="-206" y="-10"/>
+      <label x="-76" y="-21"/>
+      <bendpoint w1="229" h1="7" w2="-140" h2="-40"/>
+    </edge>
+    <edge>
+      <label x="-27" y="-4"/>
+      <bendpoint w1="-102" h1="38" w2="-86" h2="-52"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-16"/>
+      <bendpoint w1="145" h1="51" w2="-224" h2="4"/>
     </edge>
   </node>
   <node name="H033_presentarObs" x="223" y="488" width="182" height="36">
@@ -217,4 +226,9 @@
   </node>
   <node name="Fin" x="798" y="852" width="132" height="36"/>
   <node name="Fin2" x="923" y="412" width="132" height="36"/>
+  <node name="H033_ObsDecision" x="520" y="455" width="168" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

@@ -456,6 +456,11 @@
 			<artifactId>pfs-rec-core</artifactId>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-precontencioso-plugin</artifactId>
+		</dependency>
+		
 		<!-- Fin plugins de Recovery -->
 		<!-- Inicio paquetes de Cap Gemini -->
 		<dependency>

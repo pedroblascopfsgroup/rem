@@ -1,11 +1,11 @@
-package es.pfsgroup.plugin.precontencioso.expediente.dto.buscador;
+package es.pfsgroup.plugin.precontencioso.procedimientoJudicial.dto.buscador;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxFiltroDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoFiltroDTO;
-import es.pfsgroup.plugin.precontencioso.expediente.dto.buscador.filtro.ContratoFiltroDTO;
-import es.pfsgroup.plugin.precontencioso.expediente.dto.buscador.filtro.ExpedienteJudicialFiltroDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionFiltroDTO;
+import es.pfsgroup.plugin.precontencioso.procedimientoJudicial.dto.buscador.filtro.ContratoFiltroDTO;
+import es.pfsgroup.plugin.precontencioso.procedimientoJudicial.dto.buscador.filtro.ExpedienteJudicialFiltroDTO;
 
 public class BusquedaExpedienteJudicialDTO extends WebDto {
 

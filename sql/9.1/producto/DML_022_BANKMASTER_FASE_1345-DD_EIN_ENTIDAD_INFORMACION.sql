@@ -56,8 +56,8 @@ IF V_NUM_TABLAS > 0 THEN
 ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA_M||'.'||V_DDNAME||' '||
-  '(DD_EIN_ID,DD_EIN_CODIGO,DD_EIN_DESCRIPCION,DD_EIN_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '
-  ||V_ESQUEMA_M||'.S_DD_EIN_ENT_INFO.nextval,''10'',''Notificacion'',''Notificacion'',''0'',''FASE1345'',sysdate,''0'') ';
+  '(DD_EIN_ID,DD_EIN_CODIGO,DD_EIN_DESCRIPCION,DD_EIN_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
+  '('||V_ESQUEMA_M||'.S_DD_EIN_ENT_INFO.nextval,''10'',''Notificacion'',''Notificacion'',''0'',''FASE1345'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 

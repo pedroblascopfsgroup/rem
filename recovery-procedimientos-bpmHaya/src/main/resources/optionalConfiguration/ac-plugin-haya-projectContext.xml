@@ -27,6 +27,18 @@
 				<entry key="GESTION-LLAVES" value="H040"/>
 			</map>
 		</property>
+		<property name="tareasCierreDeuda"> 
+			<map>
+				<entry key="ConfirmarContabilidad" value="H005_ConfirmarContabilidad"/>
+				<entry key="CelebracionSubastaSareb" value="H002_CelebracionSubasta"/>
+				<entry key="SenyalamientoSubastaSareb" value="H002_SenyalamientoSubasta"/>
+				<entry key="CelebracionSubastaConcursal" value="H003_CelebracionSubasta"/>
+				<entry key="SenyalamientoSubastaConcursal" value="H003_SenyalamientoSubasta"/>
+				<entry key="CelebracionSubastaTerceros" value="H004_CelebracionSubasta"/>
+				<entry key="SenyalamientoSubastaTerceros" value="H004_SenyalamientoSubasta"/>
+				<entry key="ConfirmarTestimonio" value="H005_ConfirmarTestimonio"/>
+			</map>
+		</property>
 	</bean>
 
 	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">
@@ -40,6 +52,7 @@
 						<value>821</value>
 						<value>822</value>
 						<value>823</value>
+						<value>824</value>
 					</set>
 				</entry>
 			</map>

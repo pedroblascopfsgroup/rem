@@ -14,6 +14,7 @@ public class EXTHistoricoProcedimiento extends HistoricoProcedimiento{
 	private String subtipoTarea;
 	private String descripcionTarea;
 	private String codigoTarea;
+	private String usuarioResponsable;
 
 	public Date getFechaVencReal() {
 		return fechaVencReal;
@@ -45,6 +46,14 @@ public class EXTHistoricoProcedimiento extends HistoricoProcedimiento{
 
 	public void setCodigoTarea(String codigoTarea) {
 		this.codigoTarea = codigoTarea;
+	}
+
+	public String getUsuarioResponsable() {
+		return usuarioResponsable;
+	}
+
+	public void setUsuarioResponsable(String usuarioResponsable) {
+		this.usuarioResponsable = usuarioResponsable;
 	}
 	
 }

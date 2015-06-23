@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -22,7 +23,7 @@
 	<name>rec-web</name>
 
 	<dependencies>
-		
+
 		<!-- Inicio plugins de Recovery -->
 		<dependency>
 			<groupId>pfs</groupId>
@@ -257,16 +258,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>es.pfsgroup.plugin</groupId>
-		    <artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
-		    <scope>compile</scope>
-		    <exclusions>
-		            <exclusion>
-		                    <groupId>*</groupId>
-		                    <artifactId>*</artifactId>
-		            </exclusion>
-		    </exclusions>
-        </dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-liquidaciones-plugin</artifactId>
@@ -1527,6 +1528,37 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- JETTY PLUGIN -->
+			<plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>8.1.3.v20120416</version>
+                <configuration>
+                	<systemProperties>
+      					<systemProperty>
+         					<name>DEVON_HOME</name>
+         					<value>home/bruno/mydata/work/Git-Dev/Unirepo/recovery/rec-web/target</value>
+       					</systemProperty>
+    				</systemProperties>
+    				<jettyXml>jetty/desarrollo/jetty-env-bankia.xml</jettyXml>
+                	<war>${project.build.directory}/pfs-${version}.war</war>
+                  	<scanIntervalSeconds>10</scanIntervalSeconds>
+                  	<connectors>
+	                    <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                      	<port>8888</port>
+                      	<maxIdleTime>60000</maxIdleTime>
+                    	</connector>
+                  	</connectors>
+                </configuration>
+                <!--<dependencies>
+                	<dependency>
+						<groupId>es.pfsgroup.recovery.framework.libs</groupId>
+						<artifactId>ojdbc14</artifactId>
+						<version>UNKNOWN</version>
+					</dependency>
+                </dependencies>-->
+            </plugin>
+            <!-- JETTY PLUGIN (end) -->
 		</plugins>
 	</build>
 	<profiles>
@@ -1586,10 +1618,10 @@
 					</exclusions>
 				</dependency>
 				<dependency>
-			                <groupId>es.cm.gw</groupId>
-			                <artifactId>GW_IPLUS</artifactId>
-			                <version>1.0.0</version>
-			        </dependency>
+					<groupId>es.cm.gw</groupId>
+					<artifactId>GW_IPLUS</artifactId>
+					<version>1.0.0</version>
+				</dependency>
 				<dependency>
 					<groupId>es.bankia</groupId>
 					<artifactId>krbFiltro</artifactId>
@@ -1601,109 +1633,109 @@
 					<version>1.0</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ArquitecturaBase</artifactId>
-		  			<version>00.02.14</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>ArquitecturaBase</artifactId>
+					<version>00.02.14</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ArquitecturaConfMad</artifactId>
-		  			<version>0.0.5</version>
-				</dependency>		
+					<groupId>es.bankia</groupId>
+					<artifactId>ArquitecturaConfMad</artifactId>
+					<version>0.0.5</version>
+				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ArquitecturaMad</artifactId>
-		  			<version>0.0.29</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>ArquitecturaMad</artifactId>
+					<version>0.0.29</version>
 				</dependency>
 				<dependency>
 		  			<groupId>es.bankia</groupId>
 		 		 	<artifactId>GMP5JD20_INS</artifactId>
-		  			<version>1.0.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>GMPETS07_INS</artifactId>
-		  			<version>1.0.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>MADCommons</artifactId>
-		  			<version>0.0.8</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>MADUtilidades</artifactId>
-		  			<version>0.0.3</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ambar-commons</artifactId>
-		  			<version>3.5.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>axis-jaxrpc</artifactId>
-		  			<version>1.4</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>backport-util-concurrent</artifactId>
-		  			<version>3.1</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-arq</artifactId>
-		  			<version>1.0.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-client</artifactId>
-		  			<version>3.7.12</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-commons</artifactId>
-		  			<version>3.7.12</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-criptografia</artifactId>
-		  			<version>3.4.2</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-sn</artifactId>
 		  			<version>1.0.1</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>commons-codec</artifactId>
-		  			<version>1.8</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>GMPETS07_INS</artifactId>
+					<version>1.0.0</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>commons-httpclient</artifactId>
-		  			<version>3.1</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>MADCommons</artifactId>
+					<version>0.0.8</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>commons-logging</artifactId>
-		  			<version>1.1.3</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>MADUtilidades</artifactId>
+					<version>0.0.3</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>hessian</artifactId>
-		  			<version>4.0.7</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>ambar-commons</artifactId>
+					<version>3.5.0</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>slf4j-api</artifactId>
-		  			<version>1.7.5</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>axis-jaxrpc</artifactId>
+					<version>1.4</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>slf4j-log4j12</artifactId>
-		  			<version>1.7.5</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>backport-util-concurrent</artifactId>
+					<version>3.1</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-arq</artifactId>
+					<version>1.0.0</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-client</artifactId>
+					<version>3.7.12</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-commons</artifactId>
+					<version>3.7.12</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-criptografia</artifactId>
+					<version>3.4.2</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-sn</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>commons-codec</artifactId>
+					<version>1.8</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>commons-httpclient</artifactId>
+					<version>3.1</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>commons-logging</artifactId>
+					<version>1.1.3</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>hessian</artifactId>
+					<version>4.0.7</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<version>1.7.5</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+					<version>1.7.5</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -1901,35 +1933,35 @@
 		<profile>
 			<id>haya</id>
 			<dependencies>
-					<dependency>
-						<groupId>es.pfsgroup.plugin</groupId>
-						<artifactId>recovery-procedimientos-bpmHaya</artifactId>
-						<exclusions>
-							<exclusion>
-								<groupId>es.pfsgroup</groupId>
-								<artifactId>recovery-domain</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>*</groupId>
-								<artifactId>*</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-					
-					<dependency>
-						<groupId>es.pfsgroup.plugin</groupId>
-						<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
-						<exclusions>
-							<exclusion>
-								<groupId>es.pfsgroup</groupId>
-								<artifactId>recovery-domain</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>*</groupId>
-								<artifactId>*</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -1941,6 +1973,26 @@
 						</configuration>
 					</plugin>
 				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>haya-delivery</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.springframework.ldap</groupId>
+					<artifactId>spring-ldap-core</artifactId>
+					<version>1.3.0.RELEASE</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/haya/resources</directory>
+					</resource>
+				</resources>
 			</build>
 		</profile>
 	</profiles>

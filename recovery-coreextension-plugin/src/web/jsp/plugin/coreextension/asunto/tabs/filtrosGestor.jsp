@@ -45,7 +45,7 @@
 	comboTiposGestor.on('select', function(){
 		
 		comboDespachos.reset();
-		optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue()}); 
+		optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue(), 'incluirBorrados': true}); 
 		comboGestor.reset();
 		comboDespachos.setDisabled(false);
 		
@@ -83,7 +83,7 @@
 	
 	comboDespachos.on('select', function(){
 		comboGestor.reset();
-		optionsGestoresStore.webflow({'idTipoDespacho': comboDespachos.getValue()}); 
+		optionsGestoresStore.webflow({'idTipoDespacho': comboDespachos.getValue(), 'incluirBorrados': true}); 
 				
 		comboGestor.setDisabled(false);
 	});

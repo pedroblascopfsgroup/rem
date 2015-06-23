@@ -15,13 +15,13 @@
 	var listaTabs = new Array();
 	var msgError = '';
 	
-	bloquearCampos = 0;
+	var bloquearCampos = 0;
 	
-	idPersona = '';
+	var idPersona = '';
 	//DATOS LOCALIZACION
-	poblacion_valor = '';
-	provincia_valor = '';
-	codPostal_valor = '';
+	var poblacion_valor = '';
+	var provincia_valor = '';
+	var codPostal_valor = '';
 	var tipoVia_valor			= '';
 	var nombreVia_valor			= '';
 	var numeroDomicilio_valor	= '';
@@ -35,42 +35,44 @@
 	var localidad_valor			= '';
 	var unidadPoblacional_valor = '';
 	
-	numFinca_valor = '';
-	referenciaCatastralBien_valor = '';
-	tomo_valor = '';
-	libro_valor = '';
-	folio_valor = '';
-	inscripcion_valor = '';
-	numRegistro_valor = '';
-	municipoLibro_valor = '';
-	codigoRegistro_valor = '';
-	superficieConstruida_valor = '';
-	superficie_valor = '';
-	importeValorSubjetivo_valor = '';
-	importeValorApreciacion_valor = '';
-	importeValorTasacion_valor = '';
+	var numFinca_valor = '';
+	var referenciaCatastralBien_valor = '';
+	var tomo_valor = '';
+	var libro_valor = '';
+	var folio_valor = '';
+	var inscripcion_valor = '';
+	var numRegistro_valor = '';
+	var municipoLibro_valor = '';
+	var municipioRegistro_valor = '';
+	var provinciaRegistro_valor = '';
+	var codigoRegistro_valor = '';
+	var superficieConstruida_valor = '';
+	var superficie_valor = '';
+	var importeValorSubjetivo_valor = '';
+	var importeValorApreciacion_valor = '';
+	var importeValorTasacion_valor = '';
 	
-	nomEmpresa_valor = '';
-	cifEmpresa_valor = '';
+	var nomEmpresa_valor = '';
+	var cifEmpresa_valor = '';
 	
-	epigrafeIAE_valor = '';
-	descripcionIAE_valor = '';
+	var epigrafeIAE_valor = '';
+	var descripcionIAE_valor = '';
 	
-	entidad_valor = '';
-	nCuenta_valor  ='';
-	nCuenta_entidad_valor = '';
-	nCuenta_oficina_valor = '';
-	nCuenta_dc_valor = '';
-	nCuenta_cuenta_valor = '';
+	var entidad_valor = '';
+	var nCuenta_valor  ='';
+	var nCuenta_entidad_valor = '';
+	var nCuenta_oficina_valor = '';
+	var nCuenta_dc_valor = '';
+	var nCuenta_cuenta_valor = '';
 	
-	marca_valor = '';
-	modelo_valor = '';
-	matricula_valor = '';
-	//fechaMatriculacion_valor = '';
-	nBastidor_valor = '';
+	var marca_valor = '';
+	var modelo_valor = '';
+	var matricula_valor = '';
+	//var fechaMatriculacion_valor = '';
+	var nBastidor_valor = '';
 		
-	importeValorProdBancario_valor = '';
-	participacion_valor = "${NMBbien.participacion}" || "100";
+	var importeValorProdBancario_valor = '';
+	var participacion_valor = "${NMBbien.participacion}" || "100";
 	
 	
 	var situacionPosesoria = '${NMBbien.situacionPosesoria.descripcion}';
@@ -99,6 +101,8 @@
 		numFinca_valor = '${NMBbien.datosRegistralesActivo.numFinca}';
 		numRegistro_valor = '${NMBbien.datosRegistralesActivo.numRegistro}';
 		municipoLibro_valor = '${NMBbien.datosRegistralesActivo.municipoLibro}';
+		municipioRegistro_valor = '${NMBbien.datosRegistralesActivo.localidad.codigo}';
+		provinciaRegistro_valor = '${NMBbien.datosRegistralesActivo.provincia.codigo}';
 		codigoRegistro_valor = '${NMBbien.datosRegistralesActivo.codigoRegistro}';
 		superficieConstruida_valor = '${NMBbien.datosRegistralesActivo.superficieConstruida}';
 		superficie_valor = '${NMBbien.datosRegistralesActivo.superficie}';   
@@ -263,6 +267,7 @@
 			
 			numRegistro.setValue('');
 			numFinca.setValue('');
+			comboProvinciaRegistro.setValue('');
 			municipoLibro.setValue('');
 			codigoRegistro.setValue('');
 			superficieConstruida.setValue('');
@@ -593,6 +598,26 @@
 
 						
 	 	});
+	 	
+	 	var optionsMunicipioRegistroStore = page.getStore({
+		       flow: 'editbien/getListLocalidades'
+		       ,reader: new Ext.data.JsonReader({
+		    	 root : 'localidades'	 		
+		    }, localidades)	       
+		});
+		
+		optionsMunicipioRegistroStore.on('load', function() {
+	 	 				// Cargar municipio
+ 	 				
+ 	 				if(!Ext.isEmpty(municipioRegistro_valor)) {	 	 					
+ 	 					comboMunicipioRegistro.setValue(municipioRegistro_valor);
+ 	 					comboMunicipioRegistro.fireEvent("select");				
+ 	 					municipioRegistro_valor = '';
+ 	 				}
+						
+	 	});
+	 	
+	 	
 
 		var provincia = app.creaCombo({
 			data : <app:dict value="${provincias}" />
@@ -601,6 +626,7 @@
 			,fieldLabel : '<s:message code="plugin.nuevoModeloBienes.provincia" text="**Provincia" />'
 			,value : provincia_valor
 			,valueField:'codigo'
+			,emptyText:'-- Seleccione provincia --'
 			,labelStyle:labelStyle
 			,width:180
 			,listeners: {
@@ -625,7 +651,6 @@
  	 			}
  	 		}
 		});
-
 
 		var comboLocalidad = app.creaCombo({
 			store:optionsLocalidadesStore
@@ -754,7 +779,53 @@
 			,style:'margin:0px'		
 		});
 		var numRegistro = app.creaText('numRegistro', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**Número de registro" />' , numRegistro_valor, {maxLength:6,labelStyle : labelStyle});
-		var municipoLibro = app.creaText('municipoLibro', '<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio registro" />' , municipoLibro_valor, {maxLength:50,labelStyle : labelStyle});
+		var municipoLibro = app.creaText('municipoLibro','<s:message code="plugin.mejoras.bienesNMB.municipoLibroMigrado" text="**Municipio (migrado)" />' , municipoLibro_valor, {maxLength:50,labelStyle : labelStyle, disabled: true});
+		var comboProvinciaRegistro = app.creaCombo({
+			data : <app:dict value="${provincias}" />
+			<app:test id="comboProvinciaRegistro" addComa="true" />
+			,name : 'bien.datosRegistrales.provincia'
+			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.provinciaRegistro" text="**Provincia registro" />'
+			,value : provinciaRegistro_valor
+			,valueField:'codigo'
+			,labelStyle:labelStyle
+			,emptyText:'-- Seleccione provincia --'
+			,width:180
+			,listeners: {
+ 	 			select: function() {
+ 	 				// Cargar localidades registro 	 				
+					comboMunicipioRegistro.reset();
+					comboMunicipioRegistro.setDisabled(false);
+					optionsMunicipioRegistroStore.removeAll();
+					optionsMunicipioRegistroStore.webflow({'codProvincia': comboProvinciaRegistro.getValue()});
+					
+ 	 			}, 	 			
+ 	 			afterrender: function(combo) {
+ 	 			
+ 	 				if(!Ext.isEmpty(provinciaRegistro_valor)) {
+ 	 					combo.fireEvent("select"); 	 							
+ 	 				}
+ 	 			
+ 	 			}
+ 	 		}
+		});
+		
+		var comboMunicipioRegistro = app.creaCombo({
+			store:optionsMunicipioRegistroStore
+			,displayField:'descripcion'
+			,valueField:'codigo'
+			,mode: 'remote'
+			,resizable: true
+			,width: 180
+			,forceSelection: true
+			,disabled: true
+			,editable: false
+			,emptyText:'-- Seleccione municipio --'
+			,triggerAction: 'all'
+			,fieldLabel: '<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio registro" />'
+			,labelStyle:labelStyle
+		});	
+		
+		
 		var codigoRegistro = app.creaText('codigoRegistro', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.codigoRegistro" text="**Tipo registro" />' , codigoRegistro_valor, {maxLength:50,labelStyle : labelStyle});
 		var superficieConstruida = app.creaNumber(
 			'superficieConstruida'
@@ -1428,6 +1499,8 @@
 			parametros.numRegistro=numRegistro.getValue();
 			parametros.numFinca=numFinca.getValue();
 			parametros.municipoLibro=municipoLibro.getValue();
+			parametros.municipioRegistro=comboMunicipioRegistro.getValue();
+			parametros.provinciaRegistro=comboProvinciaRegistro.getValue();
 			parametros.codigoRegistro=codigoRegistro.getValue();
 			parametros.superficieConstruida=superficieConstruida.getValue();
 			parametros.superficie=superficieNMB.getValue();
@@ -1646,7 +1719,7 @@
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:350'}
 			,items:[{
 					layout:'form'
-					,items: [tipoInmueble, superficieNMB, superficieConstruida, tomo, libro, folio, municipoLibro ]
+					,items: [tipoInmueble, superficieNMB, superficieConstruida, tomo, libro, folio, comboProvinciaRegistro, comboMunicipioRegistro, municipoLibro ]
 				},{
 					layout:'form'
 					,items: [numRegistro, referenciaCatastral, codigoRegistro, inscripcion, fechaInscripcion, numFinca]
@@ -1746,7 +1819,7 @@
 				,autoScroll: true
 				,autoHeight: true
 				,height: 450
-				,width : 1000
+				//,width : 1000
 				,border : false	
 				,activeItem:0
 				,bbar : [btnCancelar]
@@ -1760,7 +1833,7 @@
 		 			 id:'tabsinform-form'
 		 			,border:false
 		 			,height: 450
-		 			,width : 1000
+		 			//,width : 1000
 	  			  	,items: {	  			  	
 						 xtype: 'tabpanel'
 						,id:'idTabPanel'
@@ -1782,7 +1855,7 @@
 		 			 id:'tabsinform-form'
 		 			,border:false
 					,height: 450
-					,width : 1000
+					//,width : 1000
 	  			  	,items: {
 						 xtype: 'tabpanel'
 						,id:'idTabPanel'

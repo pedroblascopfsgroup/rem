@@ -204,7 +204,9 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="H027_LecturaAceptacionInstrucciones" name="haya_tramiteElevacionPropSarebLitigios"></transition>
+		<transition to="H027_LecturaAceptacionInstrucciones" name="ACEPTADA"></transition>
+		<transition to="H027_AceptarPropuestaDecision" name="DENEGADA"></transition>
+		<transition to="H027_LecturaAceptacionInstrucciones" name="ACCONCAM"></transition>
 	</state>
 
 	<state name="H027_RegistrarResultadoAcuerdo">
@@ -259,6 +261,14 @@
 		<transition to="H027_DecisionSupervisor" name="Supervisar"></transition>
 		<transition to="H027_ConfirmarContabilidad" name="ConfirmarContabilidad"></transition>
 	</fork>
+
+	<node name="H027_AceptarPropuestaDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
 
 
 	<end-state name="Fin">

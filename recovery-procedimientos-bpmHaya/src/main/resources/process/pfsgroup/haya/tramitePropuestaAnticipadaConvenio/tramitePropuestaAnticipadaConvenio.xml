@@ -49,7 +49,7 @@
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
         	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>
-      	<transition to="Fin"></transition>
+      	<transition to="Fin" name="Fin"></transition>
 	</node>
 
 	<state name="H031_informeAdmonConcursal">
@@ -124,8 +124,10 @@
             <targetBean>genericLeaveActionHandler</targetBean>
          </action>
       	</event>
-		<transition to="H031_ValidarInstrucciones" name="haya_tramiteElevacionPropSarebLitigios"></transition>
+		<transition to="H031_ValidarInstrucciones" name="ACEPTADA"></transition>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="H031_SarebDecision" name="DENEGADA"></transition>
+		<transition to="H031_ValidarInstrucciones" name="ACCONCAM"></transition>
 	</state>
 
 	<state name="H031_ValidarInstrucciones">
@@ -162,7 +164,17 @@
 	</state>
 
 	<node name="H031_ContabilizarDecision">
-		<transition to="Fin"></transition>
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<node name="H031_SarebDecision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+		<transition to="Fin" name="Fin"></transition>
 	</node>
 
 	<end-state name="Fin">      

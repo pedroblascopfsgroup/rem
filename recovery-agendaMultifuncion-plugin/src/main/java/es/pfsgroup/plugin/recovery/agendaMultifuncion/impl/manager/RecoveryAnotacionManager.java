@@ -387,7 +387,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		mailsPara.addAll(dto.getDireccionesMailPara());
 		mailsCC.addAll(dto.getDireccionesMailCc());
 
-		if (mailsPara.size() > 0) {
+		if (mailsPara.size() > 0 || mailsCC.size() > 0) {
 			try {
 				Usuario usuarioLogueado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 				String textoFrom =  usuarioLogueado.getUsername();

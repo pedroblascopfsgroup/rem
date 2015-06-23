@@ -214,6 +214,10 @@ public class Adecuaciones implements Auditable, Serializable{
 
 	@Column(name="ADC_NUM_EXTRA10" ) //NUMBER(16,2),
 	private Float numExtra10;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_REA_ID")
+	private RecomAdecuacion recomAdecuacion; 
 
 	@Embedded
 	private Auditoria auditoria;
@@ -691,6 +695,15 @@ public class Adecuaciones implements Auditable, Serializable{
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+	
+	public RecomAdecuacion getRecomAdecuacion() {
+		return recomAdecuacion;
+	}
+
+	public void setRecomAdecuacion(
+			RecomAdecuacion recomAdecuacion) {
+		this.recomAdecuacion = recomAdecuacion;
 	}
 
 }

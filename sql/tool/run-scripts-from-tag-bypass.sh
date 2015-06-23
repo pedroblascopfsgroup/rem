@@ -86,6 +86,7 @@ done
 
 #cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto\|$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
 cat $BASEDIR/tmp/from-date-list-1.txt | grep "DEFAULT" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
+cat $BASEDIR/tmp/from-date-list-1.txt | grep "default" | sort | cut -d# -f2 >> $BASEDIR/tmp/from-date-list-2.txt
 cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto" | sort | cut -d# -f2 >> $BASEDIR/tmp/from-date-list-2.txt
 cat $BASEDIR/tmp/from-date-list-1.txt | grep "$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 >> $BASEDIR/tmp/from-date-list-2.txt
 

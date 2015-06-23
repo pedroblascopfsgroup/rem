@@ -654,7 +654,7 @@
 
 		var comboLocalidad = app.creaCombo({
 			store:optionsLocalidadesStore
-			//,value: localidad_valor
+			,value: localidad_valor
 			,displayField:'descripcion'
 			,valueField:'codigo'
 			,mode: 'remote'
@@ -682,7 +682,7 @@
 		
 		var comboUnidadPoblacional = app.creaCombo({
 			store:optionsUnidadesPoblacionalesStore
-			//,value: unidadPoblacional_valor
+			,value: unidadPoblacional_valor
 			,displayField:'descripcion'
 			,valueField:'codigo'
 			,mode: 'remote'
@@ -811,6 +811,7 @@
 		
 		var comboMunicipioRegistro = app.creaCombo({
 			store:optionsMunicipioRegistroStore
+			,value: municipioRegistro_valor
 			,displayField:'descripcion'
 			,valueField:'codigo'
 			,mode: 'remote'

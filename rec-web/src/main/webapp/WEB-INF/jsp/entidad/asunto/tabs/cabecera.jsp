@@ -24,7 +24,7 @@
 			return 'No';
 		}
 	};
-
+	
 	var labelStyle='font-weight:bolder;width:150px';
   	var asunto = label('asunto', '<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>');
   	var codigoAsunto = label('codigoAsunto','<s:message code="asuntos.listado.codigo" text="**Codigo"/>');
@@ -43,6 +43,12 @@
 	var provision = label('provision', '<s:message code="asunto.tabcabecera.provision" text="**Provisión"/>');
 	var titulizada = label('titulizada','<s:message code="asunto.tabcabecera.titulizada" text="**Titulizada*"/>')
   	var fondo = label('fondo','<s:message code="asunto.tabcabecera.fondo" text="**Fondo"/>')
+  	var errorEnvioCDD = new Ext.form.Label({
+		text : '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" text="**Este asunto tiene un error de env&iacute;o a CDD"/>'
+		,id : 'entidad-asunto-cdd'
+		,style: 'color:red; font-size:smaller'
+	});
+  	
 	// formulario para editar el nombre del asunto.
 		
 	var btnEditarNombre = new Ext.Button({
@@ -110,10 +116,11 @@
 		,items : [
 				  
 				  { items:[ panelNombreAsunto,codigoAsunto,fecha,estado,expediente,comite,tipoAsunto<sec:authorize ifAllGranted="PUEDE_VER_PROVISIONES">,provision</sec:authorize>]}
-				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador<sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">,titulizada,fondo</sec:authorize>]}
+				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador<sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">,titulizada,fondo</sec:authorize><sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,errorEnvioCDD</sec:authorize>]}
 		 	 
 		]
 	});	
+
 	 var procedimiento = Ext.data.Record.create([
          'id'
          ,'idGrid'
@@ -248,6 +255,7 @@
 		entidad.setLabel("provision", sinoRender(data.toolbar.provision));
 		entidad.setLabel("titulizada", cabecera.titulizada);
 		entidad.setLabel("fondo", cabecera.fondo);
+		entidad.setLabel("cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asunto.tabCabecera.editar" text="plugin.mejoras.asunto.tabCabecera.editar" />' : ''));
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;

@@ -388,7 +388,6 @@
 				var tipo = recStore.get('tipo');
 				var idResolucion = recStore.get('idResolucion');
 				var idTipoResolucion = recStore.get('idTipoResolucion');
-		    	debugger;
 				var w = app.openWindow({
 						flow : 'msvhistoricotareas/abreFormularioDinamico'
 						,title : tipo

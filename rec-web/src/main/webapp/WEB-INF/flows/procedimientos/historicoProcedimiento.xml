@@ -7,7 +7,7 @@
     <!--a partir de este momento sólo enviamos ajax -->
     <end-state id="listado" view="procedimientos/historicoProcedimientoJSON" >
 		<on-entry>
-         <evaluate expression="executor.execute('historicoProcedimientoManager.getListByProcedimiento', idProcedimiento)" result="flowScope.tareas" />
+         <evaluate expression="executor.execute('es.pfsgroup.plugin.recovery.coreextension.api.historicoProcedimiento.getListByProcedimientoEXT', idProcedimiento)" result="flowScope.tareas" />
  		</on-entry>
 	</end-state>
 	

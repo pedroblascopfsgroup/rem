@@ -353,14 +353,14 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		BooleanBienes booleanBienes = new BooleanBienes();
 		if (!validaProcedimientoContratos(subasta)) {
-			sb.append("El procedimiento no tienen ninguna operación activa;"); // Alguna deberia ser
+			sb.append("El procedimiento no tienen ninguna operaciï¿½n activa;"); // Alguna deberia ser
 		}
 		booleanBienes = validaBienesContratos();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relación con ningún contrato;");
+				sb.append(" no tiene relaciï¿½n con ningï¿½n contrato;");
 			}
 		}
 		booleanBienes = validaBienesPersonas();

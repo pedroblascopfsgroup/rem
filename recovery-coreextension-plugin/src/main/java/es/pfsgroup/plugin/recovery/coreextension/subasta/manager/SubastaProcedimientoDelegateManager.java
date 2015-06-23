@@ -147,7 +147,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	//  Este metodo se implementa en el nuevoModeloBienes
 		return false;
 	}
-	
+
 		
 	//BANKIA
 	@Override

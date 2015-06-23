@@ -57,9 +57,9 @@ public class HistoricoProcedimientoComparatorV4 implements java.util.Comparator 
 	
 
 	private Long getId(Object o) {
-		 if (o instanceof HistoricoAsuntoInfoImpl) {
+		if (o instanceof HistoricoAsuntoInfoImpl) {
 			return ((HistoricoAsuntoInfoImpl) o).getProcedimiento().getId();
-		} else if (o instanceof HistoricoProcedimiento) {
+		} else if(o instanceof HistoricoProcedimiento) {
 			return ((HistoricoProcedimiento) o).getIdProcedimiento();
 		} else if (o instanceof HistoricoAsuntoInfo) {
 			return ((HistoricoAsuntoInfo) o).getProcedimiento().getId();

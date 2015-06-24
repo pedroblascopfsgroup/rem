@@ -3,7 +3,10 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.model;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -19,6 +22,8 @@ public class DDEstadoLiquidacion implements Dictionary, Auditable {
 
 	@Id
 	@Column(name = "DD_PCO_LIQ_ESTADO_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoLiquidacionGenerator")
+    @SequenceGenerator(name = "DDEstadoLiquidacionGenerator", sequenceName = "S_DD_PCO_LIQ_ESTADO")
 	private Long id;
 
 	@Column(name = "DD_PCO_LIQ_CODIGO")
@@ -35,6 +40,10 @@ public class DDEstadoLiquidacion implements Dictionary, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
+
+	/*
+	 * GETTERS & SETTERS
+	 */
 
 	public Long getId() {
 		return id;

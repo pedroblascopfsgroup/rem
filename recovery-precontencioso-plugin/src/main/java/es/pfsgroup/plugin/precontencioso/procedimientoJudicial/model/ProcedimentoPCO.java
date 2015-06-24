@@ -1,0 +1,251 @@
+package es.pfsgroup.plugin.precontencioso.procedimientoJudicial.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
+
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+
+@Entity
+@Table(name = "PCO_PRC_PROCEDIMIENTOS", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class ProcedimentoPCO implements Serializable, Auditable {
+
+	private static final long serialVersionUID = 8036714975464886725L;
+
+	@Id
+	@Column(name = "PCO_PRC_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ProcedimientoPCOGenerator")
+    @SequenceGenerator(name = "ProcedimientoPCOGenerator", sequenceName = "S_PCO_PRC_PROCEDIMIENTOS")
+	private Long id;
+
+	@OneToOne
+	@JoinColumn(name = "PRC_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private Procedimiento procedimiento;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_PCO_PEP_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private DDEstadoPreparacion estadoPreparacion;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_PCO_PTP_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private DDTipoPreparacion tipoPreparacion;
+
+	@Column(name = "TIPO_PRC_PROP")
+	private String tipoProcPropuesto;
+
+	@Column(name = "TIPO_PRC_INICIADO")
+	private String tipoProcIniciado;
+
+	@Column(name = "PRETURNADO")
+	private Boolean preturnado;
+
+	@Column(name = "NOM_EXP_JUD")
+	private String nombreExpJudicial;
+
+	@Column(name = "NUM_EXP_INT")
+	private String numExpInterno;
+
+	@Column(name = "CNT_PRINCIPAL")
+	private String cntPrincipal;
+
+	@Column(name = "FECHA_INICIO")
+	private Date fechaInicio;
+
+	@Column(name = "FECHA_PREPARADO")
+	private Date fechaPreparado;
+
+	@Column(name = "FECHA_ENVIO_LETRADO")
+	private Date fechaEnvioLetrado;
+
+	@Column(name = "FECHA_FINALIZADO")
+	private Date fechaFinalizado;
+
+	@Column(name = "FECHA_ULTIMA_SUBSANACION")
+	private Date fechaUltimaSubsanacion;
+
+	@Column(name = "FECHA_CANCELADO")
+	private Date fechaCancelado;
+
+	@Column(name = "FECHA_PARALIZACION")
+	private Date fechaParalizacion;
+
+	@Version
+	private Integer version;
+
+	@Embedded
+	private Auditoria auditoria;
+
+	/* 
+	 * GETTERS & SETTERS 
+	 */
+
+	public Long getId() {
+		return id;
+	}
+
+	public Procedimiento getProcedimiento() {
+		return procedimiento;
+	}
+
+	public void setProcedimiento(Procedimiento procedimiento) {
+		this.procedimiento = procedimiento;
+	}
+
+	public DDEstadoPreparacion getEstadoPreparacion() {
+		return estadoPreparacion;
+	}
+
+	public void setEstadoPreparacion(DDEstadoPreparacion estadoPreparacion) {
+		this.estadoPreparacion = estadoPreparacion;
+	}
+
+	public DDTipoPreparacion getTipoPreparacion() {
+		return tipoPreparacion;
+	}
+
+	public void setTipoPreparacion(DDTipoPreparacion tipoPreparacion) {
+		this.tipoPreparacion = tipoPreparacion;
+	}
+
+	public String getTipoProcPropuesto() {
+		return tipoProcPropuesto;
+	}
+
+	public void setTipoProcPropuesto(String tipoProcPropuesto) {
+		this.tipoProcPropuesto = tipoProcPropuesto;
+	}
+
+	public String getTipoProcIniciado() {
+		return tipoProcIniciado;
+	}
+
+	public void setTipoProcIniciado(String tipoProcIniciado) {
+		this.tipoProcIniciado = tipoProcIniciado;
+	}
+
+	public Boolean getPreturnado() {
+		return preturnado;
+	}
+
+	public void setPreturnado(Boolean preturnado) {
+		this.preturnado = preturnado;
+	}
+
+	public String getNombreExpJudicial() {
+		return nombreExpJudicial;
+	}
+
+	public void setNombreExpJudicial(String nombreExpJudicial) {
+		this.nombreExpJudicial = nombreExpJudicial;
+	}
+
+	public String getNumExpInterno() {
+		return numExpInterno;
+	}
+
+	public void setNumExpInterno(String numExpInterno) {
+		this.numExpInterno = numExpInterno;
+	}
+
+	public String getCntPrincipal() {
+		return cntPrincipal;
+	}
+
+	public void setCntPrincipal(String cntPrincipal) {
+		this.cntPrincipal = cntPrincipal;
+	}
+
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	public Date getFechaPreparado() {
+		return fechaPreparado;
+	}
+
+	public void setFechaPreparado(Date fechaPreparado) {
+		this.fechaPreparado = fechaPreparado;
+	}
+
+	public Date getFechaEnvioLetrado() {
+		return fechaEnvioLetrado;
+	}
+
+	public void setFechaEnvioLetrado(Date fechaEnvioLetrado) {
+		this.fechaEnvioLetrado = fechaEnvioLetrado;
+	}
+
+	public Date getFechaFinalizado() {
+		return fechaFinalizado;
+	}
+
+	public void setFechaFinalizado(Date fechaFinalizado) {
+		this.fechaFinalizado = fechaFinalizado;
+	}
+
+	public Date getFechaUltimaSubsanacion() {
+		return fechaUltimaSubsanacion;
+	}
+
+	public void setFechaUltimaSubsanacion(Date fechaUltimaSubsanacion) {
+		this.fechaUltimaSubsanacion = fechaUltimaSubsanacion;
+	}
+
+	public Date getFechaCancelado() {
+		return fechaCancelado;
+	}
+
+	public void setFechaCancelado(Date fechaCancelado) {
+		this.fechaCancelado = fechaCancelado;
+	}
+
+	public Date getFechaParalizacion() {
+		return fechaParalizacion;
+	}
+
+	public void setFechaParalizacion(Date fechaParalizacion) {
+		this.fechaParalizacion = fechaParalizacion;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+}

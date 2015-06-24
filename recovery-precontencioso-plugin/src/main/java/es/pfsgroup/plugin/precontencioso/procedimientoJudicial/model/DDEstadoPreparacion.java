@@ -36,6 +36,10 @@ public class DDEstadoPreparacion implements Dictionary, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
+	/*
+	 * GETTERS & SETTERS
+	 */
+
 	public Long getId() {
 		return id;
 	}

@@ -446,7 +446,7 @@
 			      			   	
 				      			   	Ext.Msg.show({
 									title:'Advertencia',
-									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ko"/>',
+									msg: 'No se ha podido obtener el n\u00BA de activo. \n' + result.msgError,
 									buttons: Ext.Msg.OK,
 									icon:Ext.MessageBox.WARNING});
 				      			   	

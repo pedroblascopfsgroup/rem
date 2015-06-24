@@ -447,7 +447,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 		Boolean borrarOtrosUsu = true;
 		
-		if (iplus == null && !iplus.instalado()) {
+		if (iplus == null || !iplus.instalado()) {
 			borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
 		}
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VICENTE LOZANO
---## FECHA_CREACION=23-05-201
+--## FECHA_CREACION=24-06-2015
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-76

@@ -25,6 +25,7 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Indice
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -47,33 +48,36 @@ DECLARE
     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DD_PCO_LIQ_ESTADO'' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    -- Si existe la borramos
+    -- Si existe la tabla no hacemos nada
     IF V_NUM_TABLAS = 1 THEN 
-            V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.DD_PCO_LIQ_ESTADO CASCADE CONSTRAINTS';
-            EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.DD_PCO_LIQ_ESTADO... Tabla borrada');  
-    END IF;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_PCO_LIQ_ESTADO... Comprobaciones previas FIN'); 
-    
-    --Creamos la tabla
-    V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.DD_PCO_LIQ_ESTADO
-               ( ESTADO_LIQ_ID  		  NUMBER(16) 		  NOT NULL ENABLE
-               ,DESCRIPCION  			  VARCHAR2(50 CHAR)   NOT NULL ENABLE
-			   ,DESCRIPCION_LARGA 		  VARCHAR2(250 CHAR)  NOT NULL ENABLE
- 			   ,VERSION 				  INTEGER DEFAULT 0   NOT NULL
-  			   ,USUARIOCREAR              VARCHAR2(10 CHAR)   NOT NULL
-  			   ,FECHACREAR                TIMESTAMP(6)        NOT NULL
-  			   ,USUARIOMODIFICAR          VARCHAR2(10 CHAR)
-  			   ,FECHAMODIFICAR            TIMESTAMP(6)
-  			   ,USUARIOBORRAR             VARCHAR2(10 CHAR)
-  			   ,FECHABORRAR               TIMESTAMP(6)
-  			   ,BORRADO                   NUMBER(1)           DEFAULT 0  NOT NULL
-			   ,CONSTRAINT PK_DD_PCO_LIQ_ESTADO PRIMARY KEY (ESTADO_LIQ_ID),
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.DD_PCO_LIQ_ESTADO... Tabla YA EXISTE');    
+    ELSE  
+    	 --Creamos la tabla
+    	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.DD_PCO_LIQ_ESTADO
+               (DD_PCO_LIQ_ESTADO_ID  	  	  NUMBER(16) 		  NOT NULL ENABLE
+			   ,DD_PCO_LIQ_CODIGO			  VARCHAR2(20 CHAR)   NOT NULL ENABLE
+               ,DD_PCO_LIQ_DESCRIPCION  	  VARCHAR2(50 CHAR)   NOT NULL ENABLE
+			   ,DD_PCO_LIQ_DESCRIPCION_LARGA  VARCHAR2(250 CHAR)  NOT NULL ENABLE
+ 			   ,VERSION 				  	  INTEGER DEFAULT 0   NOT NULL
+  			   ,USUARIOCREAR              	  VARCHAR2(10 CHAR)   NOT NULL
+  			   ,FECHACREAR                	  TIMESTAMP(6)        NOT NULL
+  			   ,USUARIOMODIFICAR          	  VARCHAR2(10 CHAR)
+  			   ,FECHAMODIFICAR            	  TIMESTAMP(6)
+  			   ,USUARIOBORRAR             	  VARCHAR2(10 CHAR)
+  			   ,FECHABORRAR               	  TIMESTAMP(6)
+  			   ,BORRADO                   	  NUMBER(1)           DEFAULT 0  NOT NULL
+			   ,CONSTRAINT PK_DD_PCO_LIQ_ESTADO PRIMARY KEY (DD_PCO_LIQ_ESTADO_ID)
                )';
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_PCO_LIQ_ESTADO... Tabla creada');
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_PCO_LIQ_ESTADO... Tabla creada');
+		
+		V_MSQL := 'CREATE INDEX ' || V_ESQUEMA || '.IDX_DD_PCO_LIQ_ESTADO ON ' || V_ESQUEMA || '.DD_PCO_LIQ_ESTADO (DD_PCO_LIQ_DESCRIPCION) ' ||
+		'  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 ' ||
+  		'  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT) TABLESPACE ' || V_TS_INDEX;
+  		EXECUTE IMMEDIATE V_MSQL;
+  		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_PCO_LIQ_ESTADO... Indice creado');
+    END IF;
     
-  
 EXCEPTION
   WHEN OTHERS THEN
     ERR_NUM := SQLCODE;

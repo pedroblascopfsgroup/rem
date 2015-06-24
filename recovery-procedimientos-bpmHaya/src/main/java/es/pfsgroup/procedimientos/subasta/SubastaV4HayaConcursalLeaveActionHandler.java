@@ -82,7 +82,7 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 			}
 		} else if (executionContext.getNode().getName().contains("AdjuntarInformeSubasta")) {
 
-			if (!Checks.esNulo(sub)) {
+			if (!Checks.esNulo(sub) && !Checks.esNulo(sub.getEstadoSubasta()) && DDEstadoSubasta.PIN.compareTo(sub.getEstadoSubasta().getCodigo()) == 0) {
 
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.PPR);
 			}
@@ -201,7 +201,7 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 						return DDEstadoSubasta.PAC;
 					}
 				}
-				return DDEstadoSubasta.PPR;
+				return DDEstadoSubasta.PCO;
 			}
 		}
 		return null;

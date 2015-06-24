@@ -195,7 +195,7 @@ private void avanzamosEstadoSubasta() {
 						return DDEstadoSubasta.PAC;
 					}
 				}
-				return DDEstadoSubasta.PPR;
+				return DDEstadoSubasta.PCO;
 			}
 		}
 		return null;

@@ -45,12 +45,12 @@ public class ProcedimentoPCO implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_PCO_PEP_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private DDEstadoPreparacion estadoPreparacion;
+	private DDEstadoPreparacionPCO estadoPreparacion;
 
 	@ManyToOne
 	@JoinColumn(name = "DD_PCO_PTP_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private DDTipoPreparacion tipoPreparacion;
+	private DDTipoPreparacionPCO tipoPreparacion;
 
 	@Column(name = "TIPO_PRC_PROP")
 	private String tipoProcPropuesto;
@@ -113,19 +113,19 @@ public class ProcedimentoPCO implements Serializable, Auditable {
 		this.procedimiento = procedimiento;
 	}
 
-	public DDEstadoPreparacion getEstadoPreparacion() {
+	public DDEstadoPreparacionPCO getEstadoPreparacion() {
 		return estadoPreparacion;
 	}
 
-	public void setEstadoPreparacion(DDEstadoPreparacion estadoPreparacion) {
+	public void setEstadoPreparacion(DDEstadoPreparacionPCO estadoPreparacion) {
 		this.estadoPreparacion = estadoPreparacion;
 	}
 
-	public DDTipoPreparacion getTipoPreparacion() {
+	public DDTipoPreparacionPCO getTipoPreparacion() {
 		return tipoPreparacion;
 	}
 
-	public void setTipoPreparacion(DDTipoPreparacion tipoPreparacion) {
+	public void setTipoPreparacion(DDTipoPreparacionPCO tipoPreparacion) {
 		this.tipoPreparacion = tipoPreparacion;
 	}
 

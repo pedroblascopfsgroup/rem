@@ -13,7 +13,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
 @Table(name = "DD_PCO_PRC_ESTADO_PREPARACION", schema = "${master.schema}")
-public class DDEstadoPreparacion implements Dictionary, Auditable {
+public class DDEstadoPreparacionPCO implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = 8837420496603055594L;
 

@@ -24,7 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.precontencioso.procedimientoJudicial.model.ProcedimentoPCO;
 
 @Entity
-@Table(name = "PCO_LIQ_LIQUIDACION", schema = "${entity.schema}")
+@Table(name = "PCO_LIQ_LIQUIDACIONES", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class LiquidacionPCO implements Serializable, Auditable {
 
@@ -33,7 +33,7 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Id
 	@Column(name = "PCO_LIQ_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "LiquidacionPCOGenerator")
-	@SequenceGenerator(name = "LiquidacionPCOGenerator", sequenceName = "S_PCO_LIQ_LIQUIDACION")
+	@SequenceGenerator(name = "LiquidacionPCOGenerator", sequenceName = "S_PCO_LIQ_LIQUIDACIONES")
 	private Long id;
 
 	@ManyToOne

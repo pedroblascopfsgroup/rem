@@ -1,0 +1,2007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="pasajePCRProduccionJob" parent="batch.simpleJob" scope="prototype">
+    <property name="transactional" value="true"/>
+    <property name="transactionManager" ref="entityTransactionManager"/>
+    <property name="steps">
+      <list>
+        <!-- FIN VALIDACIONES // COMIENZO PASAJE DATOS -->
+        <!-- actualizo los contratos que ya están en producción con la última data -->
+        <bean id="pasaje.produccion" parent="batch.taskletStep" scope="prototype">
+          <property name="tasklet">
+            <bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+              <property name="scripts">
+              	<list>
+			<!-- ####################################################
+  			      1º Gestión de los cambios del Número de Contrato
+				EJD:> Comentamos porque no hace lo que queremos.
+			####################################################   		
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.cambioNumeracion.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			-->
+			<!-- ####################################################
+  			      2Aº Update de Contratos del Estado que No llega
+			####################################################   -->			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.deactivate1.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+  			      2º Update de Contratos 
+			####################################################   -->			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.update.contratosNew.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+				3aº Pre-Borrado de Indices del Contrato 
+			####################################################  			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.preDropIndex.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			 -->
+
+			<!-- ####################################################
+				3bº Borrado de Indices del Contrato 
+			####################################################   -->			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.dropIndex.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+				3cº Post-Borrado de Indices del Contrato 
+			####################################################   		-->	
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.postDropIndex.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			
+
+			<!-- ####################################################
+  			      4º Insert de Contratos 
+			####################################################   -->
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.contratosNew.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+  			      5º Creamos Indices de Contratos 
+			####################################################   -->			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.createIndex.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+  			      6º Informarmos estado NO RECIBIDO los Contratos que 
+				han dejado de llegar 
+			####################################################   			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.createIndex.contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			-->
+
+			<!-- ####################################################
+  			      7º Gestión de la Información Adicional del Contrato
+			####################################################   
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.addExtrasCodes.Contratos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+ 			-->
+
+			<!-- ####################################################
+  			      8º Borrar Indices de Movimientos
+			####################################################   -->
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.dropIndex.movimientos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertMovimientos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>	
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+
+
+			<!-- ####################################################
+  			      9º Insert de Movimientos
+			####################################################   -->		
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.movimientosNew.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertMovimientos" />
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>              		
+
+
+			<!-- ####################################################
+  			      10º Crear Indices de Movimientos
+			####################################################   -->	
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.createIndex.movimientos.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertMovimientos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>	
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+					<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.codextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.codextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.codextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.codextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.infextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.infextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.infextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.infextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.infextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.infextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+-->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			-->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.numextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.dateextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.flagextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			-->
+
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.charextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			 -->
+			<!--  Inserción de campos extra en el contrato 
+				EJD:> Queda desactivada en la versión HAYAIA
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.insert.lcharextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+
+
+			<!-- ####################################################
+  			      11º Update de Personas
+			####################################################   -->				
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.update.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+				12aº Pre-Borrado de Indices Personas 
+			####################################################  			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.preDropIndex.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			 -->
+
+
+			<!-- ####################################################
+  			      12º Borrar Indices de Personas
+			####################################################   -->		
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.dropIndex.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+
+			<!-- ####################################################
+  			      12bº Post-Borrado Indices de Personas
+			####################################################   -->		
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.postDropIndex.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+  			      13º Insertar Personas
+			####################################################   -->				
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+  			      14º Crear Indices de Personas
+			####################################################   -->				
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.createIndex.personas.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>		
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+
+			<!-- Campos extra de la persona 
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.numextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.dateextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.flagextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!-- EJD:> Deshabilitado para el modelo HAYAIA
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.charextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> 
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.insert.lcharextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>-->
+			<!-- 
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.numextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.dateextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.flagextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!-- EJD:> Deshabilitado para HAYAIA 
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.charextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra1.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra2.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra3.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra4.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra5.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra6.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra7.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra8.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra9.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.ext.personas.update.lcharextra10.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map> -->
+			<!-- Fin de los campos extra de la persona -->
+              		<!-- Borrar relaciones Persona Direccion, como existen FK con DIR_DIRECCIONES debemos eliminar esto antes que las DIR_DIRECCIONES-->
+			<!-- EJD:> Las direcciones se cargo
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.borrardirecciones.relaciones" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.borrarRelaciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			-->
+	<!-- PBO *********** -->
+	<!--  Suprimido porque se va a utilizar MERGE para poblar la tabla DIR_DIRECCIONES -->
+		      		<!-- Se Borran direcciones de producción -->
+	<!--               		<map> -->
+	<!--               			<entry key="sql"> -->
+	<!--               				<bean parent="sql" p:key="pcr.borrardirecciones.direcciones" /> -->
+	<!--               			</entry> -->
+	<!--               			<entry key="message" value="cargaDirecciones.borrarDirecciones"/> -->
+	<!--               			<entry key="severidad" value="error"/> -->
+	<!--               		</map> -->
+	<!-- Sustituido por mergeDirecciones -->
+	<!--               		<map> -->
+	<!--               			<entry key="sql"> -->
+	<!--               				<bean parent="sql" p:key="insertDirecciones.${entity.dialect}" /> -->
+	<!--               			</entry> -->
+	<!--               			<entry key="message" value="cargaDirecciones.insertNuevos"/> -->
+	<!--               			<entry key="severidad" value="error"/> -->
+	<!--               		</map> -->
+	<!-- Se realiza el MERGE en la tabla de direcciones de producción, dejamos el mensaje anterior (cargaDirecciones.insertNuevos) -->
+
+			<!-- EJD:> Las direcciones se cargo 
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="mergeDirecciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			-->
+
+			<!-- *************** -->
+              		<!-- Se actualiza las direcciones que ya están en producción con la última data --> 
+              		<!-- Suprimida da problemas de rendimiento. El ETL envia todos los datos de direcciones cada vez por eso ahora la secuencia es borrar direcciones y luego todo inserts -->
+              		<!-- 
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="updateDirecciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.updateDatos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+              		 -->
+              		<!--   insertar RELACIONES personas - direcciones   -->
+			<!-- EJD:> Las direcciones se cargo
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="insertRelacionDireccionPersona.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.insertRelaciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			-->
+			<!-- PBO *********** -->
+              		<!--   insertar  Datos adicionales de direcciones   -->
+			<!-- EJD:> Las direcciones se cargo
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="mergeDireccionesAdicionales.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			-->
+			<!-- *************** -->
+
+
+
+			<!-- ####################################################
+  			      14º Borrar Relaciones 
+			####################################################  --> 			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+             		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.borrar.relaciones" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.borrar"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>			
+
+			<!-- ####################################################
+  			      15º Update de Relaciones 
+			#################################################### 
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+             		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.update.relaciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.borrar"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			-->
+
+			<!-- ####################################################
+  			      16º Borrar Indices Relaciones 
+			####################################################   -->
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.dropIndex.relaciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+       			      17aº Insertar Relaciones Previo TRUNCATE
+			####################################################   -->			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.relacionesOld.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.insertRelaciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+
+			<!-- ####################################################
+  			      17º Insertar Relaciones 
+			####################################################   			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.insert.relaciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.insertRelaciones"/>
+              			<entry key="severidad" value="error"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			-->
+
+			<!-- ####################################################
+  			      17º Crear Indices Relaciones 
+			####################################################   -->			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.createIndex.relaciones.${entity.dialect}" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.insertNuevos"/>
+              			<entry key="severidad" value="error"/>
+              		</map>	
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+  			      18º Analize de CONTRATOS
+			####################################################   -->				
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.contratos" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.analizeContratos" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- ####################################################
+  			      19º Analize de MOVIMIENTOS
+			####################################################   -->						
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.movimientos" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.analizeMovimientos" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+			
+			<!-- ####################################################
+  			      20º Analize de PERSONAS
+			####################################################   --> 		
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.personas" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.analizePersonas" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+
+			<!-- EJD:> Las direcciones se cargo
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.direcciones" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.analizeDirecciones" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+			-->
+			<!-- EJD:> Las direcciones se cargo
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.direccionPersona" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.analizeDireccionesPersonas" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+			-->
+			<!-- ####################################################
+  			      21º Analize de RELACIONES
+			####################################################   --> 			
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerbegin.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.relaciones" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.analizeRelaciones" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+			<map><entry key="sql"><bean parent="sql" p:key="pcr.querytimerend.contratos.${entity.dialect}" /></entry><entry key="message" value="cargaContratos.insertNuevos"/><entry key="severidad" value="error"/></map>
+             	</list>
+              </property>
+            </bean>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+</beans>

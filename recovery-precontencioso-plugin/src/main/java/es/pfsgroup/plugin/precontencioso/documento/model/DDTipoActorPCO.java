@@ -34,6 +34,9 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 
 	@Column(name = "DD_PCO_DSA_DESCRIPCION_LARGA")
 	private String descripcionLarga;
+	
+	@Column(name = "PRETURNADO")
+	private Boolean tratamientoExpediente;	
 
 	@Version
 	private Integer version;
@@ -71,6 +74,14 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+
+	public Boolean getTratamientoExpediente() {
+		return tratamientoExpediente;
+	}
+
+	public void setTratamientoExpediente(Boolean tratamientoExpediente) {
+		this.tratamientoExpediente = tratamientoExpediente;
 	}
 
 	public Integer getVersion() {

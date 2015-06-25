@@ -818,7 +818,12 @@ public class SubastaManager implements SubastaApi {
 	public Subasta getSubasta(Long idSubasta) {		
 		return subastaDao.get(idSubasta);
 	}
-
+	
+	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE_DEUDA)
+	@Transactional(readOnly = false)
+	public void guardaBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda autoCierreDeuda) {
+		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
+	}
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)

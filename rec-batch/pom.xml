@@ -219,6 +219,16 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-sidhi-batch</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>es.pfsgroup</groupId>
+					<artifactId>recovery-domain</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>

@@ -14,8 +14,10 @@ import es.capgemini.pfs.batch.recobro.jobs.ProcesoMarcadoExpedientesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoArquetipadoRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionClientesRecuperaciones;
+import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionExpedientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoArquetipadoRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionClientesRecuperacionesJobLauncher;
+import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesJobLauncher;
 
 /**
  * Lanzadores JMX para los jobs del batch de recuperaciones.
@@ -57,6 +59,21 @@ public class BatchConsoleJMXRecuperaciones {
     	creacionClientesJobLauncher.handle(workingCode,new Date());
     	
     	logger.debug(ProcesoCreacionClientesRecuperaciones.PROCESO_CREACION_CLIENTES_RECUPERACIONES_HANDLER + " ya se ha encolado");
+		
+	}
+	
+	@ManagedOperation(description = "Ejecuta el proceso de Creacion expedientes para el batch de Recuperaciones. Se debe indicar el workingCode")
+	public void ejecutarProcesoCreacionExpedientes(String workingCode) {
+		
+		logger.debug("Encolando " + ProcesoCreacionExpedientesRecuperaciones.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_HANDLER);
+		
+		ProcesoCreacionExpedientesRecuperacionesJobLauncher creacionExpedientesJobLauncher = (ProcesoCreacionExpedientesRecuperacionesJobLauncher)ApplicationContextUtil.
+    			getApplicationContext().getBean(ProcesoCreacionExpedientesRecuperaciones.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_HANDLER);
+		
+		
+    	creacionExpedientesJobLauncher.handle(workingCode,new Date());
+    	
+    	logger.debug(ProcesoCreacionExpedientesRecuperaciones.PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_HANDLER + " ya se ha encolado");
 		
 	}
 

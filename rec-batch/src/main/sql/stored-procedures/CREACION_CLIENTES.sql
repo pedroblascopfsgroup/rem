@@ -78,9 +78,10 @@ BEGIN
               inner join ' || V_ESQUEMA || '.dd_tin_tipo_intervencion tin on cpe_.dd_tin_id = tin.dd_tin_id
               where tin.dd_tin_titular = 1)
         , mov as (  --De los anteriores personas y titulares, ordenados por fecha pos vencida ó riesgo
-            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_fecha_pos_vencida, row_mov.mov_riesgo
+            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_fecha_pos_vencida, 
+				(NVL(row_mov.mov_pos_viva_no_vencida,0) + NVL(row_mov.mov_pos_viva_vencida,0)) riesgo
               , row_number () over (partition by per_id order by row_mov.mov_fecha_pos_vencida) n_fecha_pos_vencida
-              , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
+              , row_number () over (partition by per_id order by (NVL(row_mov.mov_pos_viva_no_vencida,0) + NVL(row_mov.mov_pos_viva_vencida,0)) desc) n_mov_riesgo
             from vcpe inner join ' || V_ESQUEMA || '.mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id    
         )
         select distinct tmp.per_id, cpe.cnt_id, cnt.ofi_id, mov.mov_fecha_pos_vencida

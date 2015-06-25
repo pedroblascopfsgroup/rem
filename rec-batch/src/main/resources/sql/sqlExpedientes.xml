@@ -31,4 +31,41 @@
             where exp_id = ? and borrado = 0
   		]]>
   	</entry>
+  	<entry key="expedientes.recuperacion.clientesParaExpedimentar.Oracle9iDialect">
+  		<![CDATA[
+		WITH fechasEstados AS (
+			  SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha, --Sumamos los días
+			    ARQ_ID
+			  FROM arq_arquetipos arq
+			  INNER JOIN iti_itinerarios iti
+			    ON arq.iti_id = iti.iti_id
+			  INNER JOIN est_estados est
+			    ON iti.iti_id = est.iti_id
+			  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est
+			    ON est.dd_est_id = dd_est.dd_est_id
+			    and DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de GestiónVencidos
+			    (SELECT DD_EST_ORDEN
+			    FROM HAYAMASTER.DD_EST_ESTADOS_ITINERARIOS
+			    WHERE DD_EST_CODIGO = 'GV'
+			    )
+			  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+			    ON DD_EST.DD_EIN_ID        = DD_EIN.DD_EIN_ID
+			    AND DD_EIN_CODIGO          = '1'
+			  GROUP BY ARQ.ARQ_ID --Agrupamos por arquetipo para poder calcular el plazo del itinerario de los clientes
+		 )
+		 SELECT cli.cli_id
+		    FROM cli_clientes cli
+		    INNER JOIN fechasEstados vFechas
+		      ON cli.arq_id = vFechas.arq_id
+		    INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est --Solo los que estén en gestionVencidos
+		      ON cli.dd_est_id  = dd_est.dd_est_id
+		      AND dd_est_codigo = 'GV'
+		    INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+		      ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
+		      AND DD_EIN_CODIGO   = '1'
+		    WHERE 
+		      CLI.BORRADO   = 0
+		      AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/YY') <= vFechas.fecha  --Que estén fuera de plazo del itinerario
+  		]]>
+  	</entry>
 </properties>

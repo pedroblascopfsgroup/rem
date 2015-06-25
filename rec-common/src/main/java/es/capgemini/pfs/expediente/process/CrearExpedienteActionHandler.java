@@ -37,13 +37,15 @@ public class CrearExpedienteActionHandler extends JbpmActionHandler implements E
      */
     @Override
     public void run() throws Exception {
+    	System.out.println("Prueba Log");
+    	logger.info("Crear expediente handler");    	
         if (logger.isDebugEnabled()) {
             logger.debug("CrearExpedienteActionHandler......");
         }
         //Invocar a la creación del expediente
         Long idBPMExpediente = executionContext.getProcessInstance().getId();
         logger.debug("Id de proceso creado: " + idBPMExpediente);
-
+        logger.info("Id de proceso creado: " + idBPMExpediente);
         Long idContrato = (Long) executionContext.getVariable(CONTRATO_ID);
         Long idBPMCliente = (Long) executionContext.getVariable(IDBPMCLIENTE);
         Long idArquetipo = (Long) executionContext.getVariable(ARQUETIPO_ID);

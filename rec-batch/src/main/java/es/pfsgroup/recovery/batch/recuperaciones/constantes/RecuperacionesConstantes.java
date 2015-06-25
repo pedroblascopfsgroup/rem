@@ -33,4 +33,12 @@ public interface RecuperacionesConstantes {
 		public static final String FIN_MSG = "El proceso de Creación clientes de Recuperación para la entidad ";
 	}
 	
+	public static class ProcesoCreacionExpedientesRecuperaciones {
+		public static final String DESCRIPCION_PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES = "Ejecuta el proceso de creación expedientes correspondiente a los expedientes de Recuperación. Se debe indicar el workingCode";
+		public static final String PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_HANDLER = "procesoCreacionExpedientesRecuperacionesHandler";
+		public static final String PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_JOBNAME = "procesoCreacionExpedientesRecuperacionesJob";
+		public static final String INICIO_MSG = "Inicio del proceso de Creación expedientes de Recuperación ";
+		public static final String FIN_MSG = "El proceso de Creación expedientes de Recuperación para la entidad ";
+	}
+	
 }

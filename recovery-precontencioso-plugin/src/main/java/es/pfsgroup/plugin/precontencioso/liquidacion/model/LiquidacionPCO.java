@@ -31,49 +31,49 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	private static final long serialVersionUID = -9076449499543642580L;
 
 	@Id
-	@Column(name = "PCO_LIQ_LIQUIDACION_ID")
+	@Column(name = "PCO_LIQ_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "LiquidacionPCOGenerator")
 	@SequenceGenerator(name = "LiquidacionPCOGenerator", sequenceName = "S_PCO_LIQ_LIQUIDACION")
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "PRC_ID")
+	@JoinColumn(name = "PCO_LIQ_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private ProcedimentoPCO procedimientoPCO;
 
 	@ManyToOne
-	@JoinColumn(name = "DD_PCO_LIQ_ESTADO_ID")
+	@JoinColumn(name = "PCO_LIQ_ESTADO_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDEstadoLiquidacion estadoLiquidacion;
 
-	@Column(name = "CNT_ID")
+	@Column(name = "PCO_LIQ_CNT_ID")
 	private Long cntId;
 
-	@Column(name = "FECHA_SOLICITUD")
+	@Column(name = "PCO_LIQ_FECHA_SOLICITUD")
 	private Date fechaSolicitud;
 
-	@Column(name = "FECHA_RECEPCION")
+	@Column(name = "PCO_LIQ_FECHA_RECEPCION")
 	private Date fechaRecepcion;
 
-	@Column(name = "FECHA_CONFIRMACION")
+	@Column(name = "PCO_LIQ_FECHA_CONFIRMACION")
 	private Date fechaConfirmacion;
 
-	@Column(name = "FECHA_CIERRE")
+	@Column(name = "PCO_LIQ_FECHA_CIERRE")
 	private Date fechaCierre;
 
-	@Column(name = "CAPITAL_VENCIDO")
+	@Column(name = "PCO_LIQ_CAPITAL_VENCIDO")
 	private Float capitalVencido;
 
-	@Column(name = "CAPITAL_NO_VENCIDO")
+	@Column(name = "PCO_LIQ_CAPITAL_NO_VENCIDO")
 	private Float capitalNoVencido;
 
-	@Column(name = "INTERESES_DEMORA")
+	@Column(name = "PCO_LIQ_INTERESES_DEMORA")
 	private Float interesesDemora;
 
-	@Column(name = "TOTAL")
+	@Column(name = "PCO_LIQ_TOTAL")
 	private Float total;
 
-	@Column(name = "APODERADO")
+	@Column(name = "PCO_LIQ_APODERADO")
 	private String apoderado;
 
 	@Version

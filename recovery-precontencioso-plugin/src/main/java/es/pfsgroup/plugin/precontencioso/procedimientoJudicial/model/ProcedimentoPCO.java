@@ -43,61 +43,61 @@ public class ProcedimentoPCO implements Serializable, Auditable {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "PRC_ID")
+	@JoinColumn(name = "PCO_PRC_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private Procedimiento procedimiento;
 
 	@ManyToOne
-	@JoinColumn(name = "DD_PCO_PEP_ID")
+	@JoinColumn(name = "PCO_PRC_PREPARACION_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDEstadoPreparacionPCO estadoPreparacion;
 
 	@ManyToOne
-	@JoinColumn(name = "DD_PCO_PTP_ID")
+	@JoinColumn(name = "PCO_PRC_PTP_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDTipoPreparacionPCO tipoPreparacion;
 
-	@Column(name = "TIPO_PRC_PROP")
+	@Column(name = "PCO_PRC_TIPO_PRC_PROP")
 	private String tipoProcPropuesto;
 
-	@Column(name = "TIPO_PRC_INICIADO")
+	@Column(name = "PCO_PRC_TIPO_PRC_INICIADO")
 	private String tipoProcIniciado;
 
-	@Column(name = "PRETURNADO")
+	@Column(name = "PCO_PRC_PRETURNADO")
 	private Boolean preturnado;
 
-	@Column(name = "NOM_EXP_JUD")
+	@Column(name = "PCO_PRC_NOM_EXP_JUD")
 	private String nombreExpJudicial;
 
-	@Column(name = "NUM_EXP_INT")
+	@Column(name = "PCO_PRC_NUM_EXP_INT")
 	private String numExpInterno;
 
-	@Column(name = "CNT_PRINCIPAL")
+	@Column(name = "PCO_PRC_CNT_PRINCIPAL")
 	private String cntPrincipal;
 
-	@Column(name = "FECHA_INICIO")
+	@Column(name = "PCO_PRC_FECHA_INICIO")
 	private Date fechaInicio;
 
-	@Column(name = "FECHA_PREPARADO")
+	@Column(name = "PCO_PRC_FECHA_PREPARADO")
 	private Date fechaPreparado;
 
-	@Column(name = "FECHA_ENVIO_LETRADO")
+	@Column(name = "PCO_PRC_FECHA_ENVIO_LETRADO")
 	private Date fechaEnvioLetrado;
 
-	@Column(name = "FECHA_FINALIZADO")
+	@Column(name = "PCO_PRC_FECHA_FINALIZADO")
 	private Date fechaFinalizado;
 
-	@Column(name = "FECHA_ULTIMA_SUBSANACION")
+	@Column(name = "PCO_PRC_FECHA_ULTIMA_SUBSANA")
 	private Date fechaUltimaSubsanacion;
 
-	@Column(name = "FECHA_CANCELADO")
+	@Column(name = "PCO_PRC_FECHA_CANCELADO")
 	private Date fechaCancelado;
 
-	@Column(name = "FECHA_PARALIZACION")
+	@Column(name = "PCO_PRC_FECHA_PARALIZACION")
 	private Date fechaParalizacion;
 
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PRC_ID")
+	@JoinColumn(name = "PCO_PRC_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<LiquidacionPCO> liquidaciones;
 

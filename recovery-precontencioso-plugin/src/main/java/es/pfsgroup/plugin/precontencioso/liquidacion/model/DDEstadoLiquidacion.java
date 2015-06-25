@@ -21,7 +21,7 @@ public class DDEstadoLiquidacion implements Dictionary, Auditable {
 	private static final long serialVersionUID = 9071990312229316324L;
 
 	@Id
-	@Column(name = "DD_PCO_LIQ_ESTADO_ID")
+	@Column(name = "DD_PCO_LIQ_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoLiquidacionGenerator")
     @SequenceGenerator(name = "DDEstadoLiquidacionGenerator", sequenceName = "S_DD_PCO_LIQ_ESTADO")
 	private Long id;

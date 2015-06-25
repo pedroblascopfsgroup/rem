@@ -32,7 +32,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 @Entity
 @Table(name = "PCO_PRC_PROCEDIMIENTOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ProcedimentoPCO implements Serializable, Auditable {
+public class ProcedimientoPCO implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 8036714975464886725L;
 

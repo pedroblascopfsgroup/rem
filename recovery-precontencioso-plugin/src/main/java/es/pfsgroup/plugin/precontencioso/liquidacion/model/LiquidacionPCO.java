@@ -21,7 +21,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.precontencioso.procedimientoJudicial.model.ProcedimentoPCO;
+import es.pfsgroup.plugin.precontencioso.procedimientoJudicial.model.ProcedimientoPCO;
 
 @Entity
 @Table(name = "PCO_LIQ_LIQUIDACIONES", schema = "${entity.schema}")
@@ -39,7 +39,7 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "PCO_LIQ_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private ProcedimentoPCO procedimientoPCO;
+	private ProcedimientoPCO procedimientoPCO;
 
 	@ManyToOne
 	@JoinColumn(name = "PCO_LIQ_ESTADO_ID")
@@ -94,11 +94,11 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public ProcedimentoPCO getProcedimientoPCO() {
+	public ProcedimientoPCO getProcedimientoPCO() {
 		return procedimientoPCO;
 	}
 
-	public void setProcedimientoPCO(ProcedimentoPCO procedimientoPCO) {
+	public void setProcedimientoPCO(ProcedimientoPCO procedimientoPCO) {
 		this.procedimientoPCO = procedimientoPCO;
 	}
 

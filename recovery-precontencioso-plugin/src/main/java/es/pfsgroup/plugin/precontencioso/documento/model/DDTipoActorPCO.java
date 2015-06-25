@@ -3,7 +3,10 @@ package es.pfsgroup.plugin.precontencioso.documento.model;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -19,6 +22,8 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 
 	@Id
 	@Column(name = "DD_PCO_DSA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoActorPCOGenerator")
+	@SequenceGenerator(name = "DDTipoActorPCOGenerator", sequenceName = "S_DD_PCO_DOC_SOLICIT_ACTOR")
 	private Long id;
 
 	@Column(name = "DD_PCO_DSA_CODIGO")

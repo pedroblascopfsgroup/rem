@@ -77,89 +77,88 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	/*
 	 * GETTERS & SETTERS
 	 */
-
-	public Long getId() {
-		return id;
-	}
-
+	
 	public BurofaxPCO getBurofax() {
 		return burofax;
-	}
-
-	public Direccion getDireccion() {
-		return direccion;
-	}
-
-	public DDTipoBurofaxPCO getTipoBurofax() {
-		return tipoBurofax;
-	}
-
-	public DDResultadoBurofaxPCO getResultadoBurofax() {
-		return resultadoBurofax;
-	}
-
-	public Date getFechaSolicitud() {
-		return fechaSolicitud;
-	}
-
-	public Date getFechaEnvio() {
-		return fechaEnvio;
-	}
-
-	public Date getFechaAcuse() {
-		return fechaAcuse;
-	}
-
-	public String getContenidoBurofax() {
-		return contenidoBurofax;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
 	}
 
 	public void setBurofax(BurofaxPCO burofax) {
 		this.burofax = burofax;
 	}
 
+	public Direccion getDireccion() {
+		return direccion;
+	}
+
 	public void setDireccion(Direccion direccion) {
 		this.direccion = direccion;
+	}
+
+	public DDTipoBurofaxPCO getTipoBurofax() {
+		return tipoBurofax;
 	}
 
 	public void setTipoBurofax(DDTipoBurofaxPCO tipoBurofax) {
 		this.tipoBurofax = tipoBurofax;
 	}
 
+	public DDResultadoBurofaxPCO getResultadoBurofax() {
+		return resultadoBurofax;
+	}
+
 	public void setResultadoBurofax(DDResultadoBurofaxPCO resultadoBurofax) {
 		this.resultadoBurofax = resultadoBurofax;
+	}
+
+	public Date getFechaSolicitud() {
+		return fechaSolicitud;
 	}
 
 	public void setFechaSolicitud(Date fechaSolicitud) {
 		this.fechaSolicitud = fechaSolicitud;
 	}
 
+	public Date getFechaEnvio() {
+		return fechaEnvio;
+	}
+
 	public void setFechaEnvio(Date fechaEnvio) {
 		this.fechaEnvio = fechaEnvio;
+	}
+
+	public Date getFechaAcuse() {
+		return fechaAcuse;
 	}
 
 	public void setFechaAcuse(Date fechaAcuse) {
 		this.fechaAcuse = fechaAcuse;
 	}
 
+	public String getContenidoBurofax() {
+		return contenidoBurofax;
+	}
+
 	public void setContenidoBurofax(String contenidoBurofax) {
 		this.contenidoBurofax = contenidoBurofax;
+	}
+
+	public Integer getVersion() {
+		return version;
 	}
 
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
 
+	public Long getId() {
+		return id;
+	}
 }

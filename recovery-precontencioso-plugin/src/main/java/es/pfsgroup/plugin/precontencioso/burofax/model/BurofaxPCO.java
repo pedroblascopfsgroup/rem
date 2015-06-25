@@ -56,7 +56,6 @@ public class BurofaxPCO implements Serializable, Auditable {
 	private DDEstadoBurofaxPCO estadoBurofax;
 
 	@OneToMany(mappedBy = "burofax", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PCO_BUR_BUROFAX_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<EnvioBurofaxPCO> enviosBurofax;
 

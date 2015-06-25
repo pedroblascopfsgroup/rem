@@ -27,6 +27,8 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 @Entity
@@ -99,7 +101,17 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PCO_PRC_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<DocumentoPCO> documentos;
+
+	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<LiquidacionPCO> liquidaciones;
+
+	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<BurofaxPCO> burofaxes;
 
 	@Version
 	private Integer version;
@@ -243,14 +255,6 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		this.fechaParalizacion = fechaParalizacion;
 	}
 
-	public List<LiquidacionPCO> getLiquidaciones() {
-		return liquidaciones;
-	}
-
-	public void setLiquidaciones(List<LiquidacionPCO> liquidaciones) {
-		this.liquidaciones = liquidaciones;
-	}
-
 	public Integer getVersion() {
 		return version;
 	}
@@ -265,5 +269,29 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public List<DocumentoPCO> getDocumentos() {
+		return documentos;
+	}
+
+	public void setDocumentos(List<DocumentoPCO> documentos) {
+		this.documentos = documentos;
+	}
+
+	public List<LiquidacionPCO> getLiquidaciones() {
+		return liquidaciones;
+	}
+
+	public void setLiquidaciones(List<LiquidacionPCO> liquidaciones) {
+		this.liquidaciones = liquidaciones;
+	}
+
+	public List<BurofaxPCO> getBurofaxes() {
+		return burofaxes;
+	}
+
+	public void setBurofaxes(List<BurofaxPCO> burofaxes) {
+		this.burofaxes = burofaxes;
 	}
 }

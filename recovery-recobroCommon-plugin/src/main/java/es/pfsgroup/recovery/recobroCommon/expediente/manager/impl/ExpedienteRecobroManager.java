@@ -1234,9 +1234,9 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		RecobroEsquema esquema = genericDao.get(RecobroEsquema.class, genericDao.createFilter(FilterType.EQUALS, "nombre", "Expedientes manuales"));
 		cre.setEsquema(esquema);
 		
-		//Cartera
+		//CarteraEsquema
 		RecobroCarteraEsquema carteraEsquema = genericDao.get(RecobroCarteraEsquema.class, genericDao.createFilter(FilterType.EQUALS, "esquema.nombre", "Expedientes manuales"),
-				genericDao.createFilter(FilterType.EQUALS, "cartera.nombre", "Expedientes manuales"));
+				genericDao.createFilter(FilterType.EQUALS, "cartera.nombre", "EXPEDIENTES MANUALES"));
 		cre.setCarteraEsquema(carteraEsquema);
 
 		//SubCartera

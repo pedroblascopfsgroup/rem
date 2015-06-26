@@ -44,7 +44,7 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "PCO_LIQ_ESTADO_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private DDEstadoLiquidacion estadoLiquidacion;
+	private DDEstadoLiquidacionPCO estadoLiquidacion;
 
 	@Column(name = "PCO_LIQ_CNT_ID")
 	private Long cntId;
@@ -102,11 +102,11 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.procedimientoPCO = procedimientoPCO;
 	}
 
-	public DDEstadoLiquidacion getEstadoLiquidacion() {
+	public DDEstadoLiquidacionPCO getEstadoLiquidacion() {
 		return estadoLiquidacion;
 	}
 
-	public void setEstadoLiquidacion(DDEstadoLiquidacion estadoLiquidacion) {
+	public void setEstadoLiquidacion(DDEstadoLiquidacionPCO estadoLiquidacion) {
 		this.estadoLiquidacion = estadoLiquidacion;
 	}
 

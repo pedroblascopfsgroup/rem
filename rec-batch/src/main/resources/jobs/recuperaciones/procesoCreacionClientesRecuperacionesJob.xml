@@ -23,6 +23,14 @@
 										<entry key="message" value="clientes.procedure.creacionClientes" />
 										<entry key="severidad" value="error" />
 									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.carenciaToGestionVencidos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.carenciaToGestionVencidos" />
+										<entry key="severidad" value="error" />
+									</map>
 								</list>
 							</property>
 						</bean>

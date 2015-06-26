@@ -84,6 +84,7 @@ public class CreacionExpedientesRecuperacionTasklet implements Tasklet, StepExec
 			Long idCliente = null;
 			int i = 0;
 			for (Map record : result) {
+				//TODO - quitar el limite de 5 expedientes que se ha puesto para las pruebas
 				if (i==5) break;
 				i++;
 				if (!Checks.esNulo(record)) {
@@ -92,10 +93,10 @@ public class CreacionExpedientesRecuperacionTasklet implements Tasklet, StepExec
 						crearExpediente(idCliente);
 					} catch (Exception e) {
 						logger.error(e.getMessage(),e);
-//						if (severidad != null && "error".equalsIgnoreCase(severidad)) {
-//							ExitStatus exit = new ExitStatus(false, ExitStatus.FAILED.getExitCode(), getMessage());
-//							return exit;
-//						}
+						if (severidad != null && "error".equalsIgnoreCase(severidad)) {
+							ExitStatus exit = new ExitStatus(false, ExitStatus.FAILED.getExitCode(), getMessage());
+							return exit;
+						}
 					}
 				}
 			}

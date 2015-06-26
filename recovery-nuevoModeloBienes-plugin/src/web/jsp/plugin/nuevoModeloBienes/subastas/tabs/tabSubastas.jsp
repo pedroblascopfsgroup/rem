@@ -145,7 +145,7 @@ var validacionCDD;
 	        	Ext.Msg.show({
 				   title:'Aviso',
 				   msg: validacionCDD,
-				   buttons: Ext.Msg.OK,
+				   buttons: Ext.Msg.OK
 				});
         	}else{
 	        	//la plantilla se elije en el controller

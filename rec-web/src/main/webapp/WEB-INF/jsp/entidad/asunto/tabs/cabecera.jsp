@@ -1,4 +1,4 @@
-﻿﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@page import="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -44,8 +44,8 @@
 	var titulizada = label('titulizada','<s:message code="asunto.tabcabecera.titulizada" text="**Titulizada*"/>')
   	var fondo = label('fondo','<s:message code="asunto.tabcabecera.fondo" text="**Fondo"/>')
   	var errorEnvioCDD = new Ext.form.Label({
-		text : '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" text="**Este asunto tiene un error de env&iacute;o a CDD"/>'
-		,id : 'entidad-asunto-cdd'
+		text : ''
+		,id : 'cdd'
 		,style: 'color:red; font-size:smaller'
 	});
   	
@@ -255,7 +255,7 @@
 		entidad.setLabel("provision", sinoRender(data.toolbar.provision));
 		entidad.setLabel("titulizada", cabecera.titulizada);
 		entidad.setLabel("fondo", cabecera.fondo);
-		entidad.setLabel("entidad-asunto-cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" text="**Este asunto tiene un error de envío a CDD" />' : ''));
+		entidad.setLabel("cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" text="**Este asunto tiene un error de envío a CDD" />' : ''));
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;
@@ -279,4 +279,5 @@
 
 	return panel;
 })
+
 

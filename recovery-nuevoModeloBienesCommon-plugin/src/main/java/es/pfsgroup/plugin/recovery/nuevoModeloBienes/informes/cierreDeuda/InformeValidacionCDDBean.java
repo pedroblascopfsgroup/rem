@@ -1,18 +1,19 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
-import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -27,17 +28,16 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaMan
 
 public class InformeValidacionCDDBean {
 
-	private static final String CODIGO_TIPO_LETRADO = "LETR";
 	private static final String VALOR_COSTAS_LETRADO = "costasLetrado";
 	private static final String VALOR_COSTAS_PROCURADOR = "costasProcurador";
-	private static final String VALOR_COMBO_POSTORES = "comboPostores";
+	//private static final String VALOR_COMBO_POSTORES = "comboPostores";
 	private static final String VALOR_FECHA_TESTIMONIO = "fechaTestimonio";
-
-	public static final String TIPO_PROCEDIMIENTO_SAREB = "H002";
-	public static final String TIPO_PROCEDIMIENTO_SAREB_CONCURSAL = "H003";
-	public static final String TIPO_PROCEDIMIENTO_SAREB_TERCEROS = "H004";
-	public static final String TIPO_PROCEDIMIENTO_BANKIA = "P401";
-	public static final String TIPO_PROCEDIMIENTO_SAREB_BNK = "P409";	
+	
+	private static final String DEVON_PROPERTIES = "devon.properties";
+	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
+	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
+	private static final String DEVON_HOME = "DEVON_HOME";
+	private static final String PROYECTO_HAYA = "HAYA";
 
 	protected SubastaApi subastaApi;
 	protected ApiProxyFactory proxyFactory;
@@ -47,6 +47,7 @@ public class InformeValidacionCDDBean {
 	private ProcedimientoSubastaCDD procedimientoSubastaCDD;
 	private List<DatosLoteCDD> datosLoteCDD;
 	private String mensajesValidacion;
+	private String camposVacios;
 	private Boolean validacionOK;
 
 	public List<Object> create() {
@@ -55,10 +56,7 @@ public class InformeValidacionCDDBean {
 		rellenaProcedimientoSubastaCDD(subasta);
 		rellenaDatosLoteCDD(subasta);
 		crearMensajeValidacion(subasta);
-		validacionOK = !(hayAlgunCampoNullProcedimientoSubastaCDD()
-				|| hayAlgunCampoNullDatosLoteCDD()
-				|| hayAlgunCampoNullInfoBienesCDD() 
-				|| !Checks.esNulo(mensajesValidacion));
+		validacionOK = (Checks.esNulo(camposVacios)	&& Checks.esNulo(mensajesValidacion));
 		return Arrays.asList((Object) informe);
 	}
 
@@ -75,7 +73,7 @@ public class InformeValidacionCDDBean {
 			sb.append("Tipo procedimiento; ");
 		}
 
-		procedimientoSubastaCDD.setLetrado(getLetrado(subasta));
+		procedimientoSubastaCDD.setLetrado(subasta.getAsunto().getGestor().getUsuario().getApellidoNombre());
 		if (Checks.esNulo(procedimientoSubastaCDD.getLetrado())) {
 			sb.append("Letrado; ");
 		}
@@ -114,12 +112,12 @@ public class InformeValidacionCDDBean {
 			sb.append("Fecha celebracion subasta; ");
 		}
 
-		procedimientoSubastaCDD.setSubastaConPostores(getSubastaConPostores(subasta));
+		procedimientoSubastaCDD.setSubastaConPostores((getSubastaConPostores(subasta)) == "01" ? "Si" : "No");
 		if (Checks.esNulo(procedimientoSubastaCDD.getSubastaConPostores())) {
 			sb.append("Subasta con postores; ");
 		}
 
-		mensajesValidacion += sb.toString();
+		camposVacios += sb.toString();
 	}
 
 	private void rellenaDatosLoteCDD(Subasta subasta) {
@@ -166,29 +164,35 @@ public class InformeValidacionCDDBean {
 		if (Checks.esNulo(datosLote.getValorSubasta())) {
 			sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Valor subasta; ");
 		}
-
+		
 		datosLote.setInfoBienes(rellenaInfoBienes(loteSubasta));
 		if (Checks.estaVacio(datosLote.getInfoBienes())) {
 			sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Info bienes; ");
 		}
-		mensajesValidacion += sb.toString();
+		camposVacios += sb.toString();
 		return datosLote;
 	}
 
 	private List<InfoBienesCDD> rellenaInfoBienes(LoteSubasta loteSubasta) {
 		List<InfoBienesCDD> listInfoBienes = new ArrayList<InfoBienesCDD>();
+		List<Long> bienes = new ArrayList<Long>();
 		StringBuilder sb = new StringBuilder();
 		NMBBien nmbBien = null;
-		for (Bien bien : loteSubasta.getBienes()) {
-			if(!Checks.estaVacio(getBienesLote())){
-				for(BienLoteDto bienLoteDTO : getBienesLote()) {
-					if(bien.getId().equals(bienLoteDTO.getIdBien())) {
-						nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(bien.getId());
-					}
+		
+		if(!Checks.estaVacio(getBienesLote())){
+			for(BienLoteDto bienLoteDTO : getBienesLote()) {
+				if(loteSubasta.getId().equals(bienLoteDTO.getLote())) {					
+					bienes.add(bienLoteDTO.getIdBien());
 				}
-			}else{
-				nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(bien.getId());
 			}
+		}else{
+			for(Bien bien : loteSubasta.getBienes()) {
+				bienes.add(bien.getId());
+			}
+		}
+		for(Long idBien : bienes) {
+			nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(idBien);
+			
 			InfoBienesCDD infobien = new InfoBienesCDD();
 
 			infobien.setIdBien(nmbBien.getId());
@@ -245,11 +249,14 @@ public class InformeValidacionCDDBean {
 					infobien.setLocalidad(nmbBien.getLocalizacionActual().getLocalidad().getDescripcion());
 				}
 				if(!Checks.esNulo(nmbBien.getLocalizacionActual().getUnidadPoblacional())) {
-					infobien.setLocalidad(nmbBien.getLocalizacionActual().getUnidadPoblacional().getDescripcion());
+					infobien.setUnidadPoblacional(nmbBien.getLocalizacionActual().getUnidadPoblacional().getDescripcion());
 				}
 				infobien.setCodigoPostal(nmbBien.getLocalizacionActual().getCodPostal());
 				infobien.setDireccion(nmbBien.getLocalizacionActual().getDireccion());
 			}
+			
+			infobien.setDatosLocalizacion(rellenaDatosLocalizacion(infobien));
+			
 			if (Checks.esNulo(infobien.getProvincia())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Provincia; ");
 			}
@@ -282,9 +289,11 @@ public class InformeValidacionCDDBean {
 			if (Checks.esNulo(infobien.getImporteAdjudicacion())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Importe adjudicacion; ");
 			}
-			infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(loteSubasta.getSubasta()));
-			if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
-				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
+			if(!"P401".equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				infobien.setFechaTestimonioAdjudicacionSareb(convertObjectString(nmbBien.getAdjudicacion().getFechaDecretoFirme()));
+				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
+					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
+				}				
 			}
 			infobien.setContratosRelacionado(contratosBienRelacionados(nmbBien));
 			if (Checks.esNulo(infobien.getContratosRelacionado())) {
@@ -292,70 +301,51 @@ public class InformeValidacionCDDBean {
 			}
 			listInfoBienes.add(infobien);
 		}
-		mensajesValidacion += sb.toString();
+		camposVacios += sb.toString();
 		return listInfoBienes;
 	}
-
-	private String getLetrado(Subasta subasta) {
-		String usuarioLetrado = "";
-		List<Usuario> usuarios = (List<Usuario>) proxyFactory.proxy(GestorAdicionalAsuntoApi.class).findGestoresByAsunto(subasta.getAsunto().getId(), CODIGO_TIPO_LETRADO);
-		if (!Checks.estaVacio(usuarios) && usuarios.size() == 1) {
-			usuarioLetrado = usuarios.get(0).getApellidoNombre();
-		}
-		return usuarioLetrado;
+	
+	private String rellenaDatosLocalizacion(InfoBienesCDD infobien) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Provincia: ").append(infobien.getProvincia()).append(",");
+		sb.append("Localidad: ").append(infobien.getLocalidad()).append(",");
+		sb.append("Unidad poblacional: ").append(infobien.getUnidadPoblacional()).append(",");
+		sb.append("Codigo postal: ").append(infobien.getCodigoPostal()).append(",");
+		sb.append("Direccion: ").append(infobien.getDireccion()).append("");
+		return sb.toString();
 	}
 
 	private String getSubastaConPostores(Subasta subasta) {
-		String tareaCelebracionSubasta = "";
-
-		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
-			if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_CONCURSAL);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_TERCEROS);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK);
-			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaCelebracionSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_CELEBRACION_SUBASTA_BANKIA);
-			}
-			ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, VALOR_COMBO_POSTORES);
-			if(!Checks.esNulo(vnt)) {
-				return vnt.getValor();
-			}
+		String tareaCelebracionSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_CelebracionSubasta";
+		ValorNodoTarea vnt = null;
+		if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
+			vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, "comboPostores");	
+		}else{
+			vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, "comboCesion");
+		}
+		if(!Checks.esNulo(vnt)) {
+			return vnt.getValor();
 		}
 		return null;
 	}
 	
 	private String getCostas(Subasta subasta, String costas) {
-		String tareaSenyalamientoSubasta = "";
-		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
-		if(!Checks.estaVacio(mapaTareasCierreDeuda)) {
-			if (TIPO_PROCEDIMIENTO_SAREB.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_CONCURSAL.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_CONCURSAL);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_TERCEROS.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_TERCEROS);
-			} else if (TIPO_PROCEDIMIENTO_SAREB_BNK.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK);
-			} else if (TIPO_PROCEDIMIENTO_BANKIA.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
-				tareaSenyalamientoSubasta = mapaTareasCierreDeuda.get(NMBProjectContextImpl.CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA);
-			}
-			ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas);
-			if(!Checks.esNulo(vnt)) {
-				return vnt.getValor();
-			}
+		String tareaSenyalamientoSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_SenyalamientoSubasta";
+		ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas);
+		if(!Checks.esNulo(vnt)) {
+			return vnt.getValor();
 		}
 		return null;
 	}
 
-	private String getFechaTestimonioAdjudicacionSareb(Subasta subasta) {
+	private String getFechaTestimonioAdjudicacionSareb(NMBBien nmbBien) {
 		Map<String, String> mapaTareasCierreDeuda = (Map<String, String>) proxyFactory.proxy(SubastaApi.class).obtenerTareasCierreDeuda();
 		String nombreTarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO);
-		ValorNodoTarea valor = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), nombreTarea, VALOR_FECHA_TESTIMONIO);
+		Procedimiento prc = null;
+		if(!Checks.estaVacio(nmbBien.getProcedimientos())) {
+			prc = nmbBien.getProcedimientos().get(0).getProcedimiento();
+		}
+		ValorNodoTarea valor = subastaApi.obtenValorNodoPrc(prc, nombreTarea, VALOR_FECHA_TESTIMONIO);
 		if(!Checks.esNulo(valor)) {
 			return valor.getValor();
 		}
@@ -374,15 +364,15 @@ public class InformeValidacionCDDBean {
 	private void crearMensajeValidacion(Subasta subasta) {
 		StringBuilder sb = new StringBuilder();
 		BooleanBienes booleanBienes = new BooleanBienes();
-		if (validaProcedimientoContratos(subasta)) {
-			sb.append("El procedimiento no tienen ninguna operaciï¿½n activa;"); // Alguna deberia ser
+		if (!validaProcedimientoContratos(subasta)) {
+			sb.append("El procedimiento no tienen ninguna operacion activa;"); // Alguna deberia ser
 		}
 		booleanBienes = validaBienesContratos();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
 				sb.append("El bien ");
 				sb.append(descBien);
-				sb.append(" no tiene relación con ningún contrato;");
+				sb.append(" no tiene relaciï¿½n con ningï¿½n contrato;");
 			}
 		}
 		booleanBienes = validaBienesPersonas();
@@ -540,86 +530,6 @@ public class InformeValidacionCDDBean {
 		return validacion;
 	}
 
-	private boolean hayAlgunCampoNullProcedimientoSubastaCDD() {
-		Field[] fields = ProcedimientoSubastaCDD.class.getDeclaredFields();
-		for (Field f : fields) {
-			String field = f.getName();
-			try {
-				// Obtener nombre de Metodo Getter
-				Method getter = procedimientoSubastaCDD.getClass().getMethod(
-						"get" + String.valueOf(field.charAt(0)).toUpperCase()
-								+ field.substring(1));
-
-				// Llamo al Metodo especificado de este Objeto
-				// con un array con los respectivos Parametros
-				// En este caso al ser un Getter no recibe parametros
-				Object value = getter.invoke(procedimientoSubastaCDD,
-						new Object[0]);
-				if (Checks.esNulo(value)) {
-					return true;
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		return false;
-	}
-
-	private boolean hayAlgunCampoNullDatosLoteCDD() {
-		Field[] fields = DatosLoteCDD.class.getDeclaredFields();
-		for (Field f : fields) {
-			String field = f.getName();
-			try {
-				// Obtener nombre de Metodo Getter
-				Method getter = datosLoteCDD.getClass().getMethod(
-						"get" + String.valueOf(field.charAt(0)).toUpperCase()
-								+ field.substring(1));
-
-				// Llamo al Metodo especificado de este Objeto
-				// con un array con los respectivos Parametros
-				// En este caso al ser un Getter no recibe parametros
-				Object value = getter.invoke(datosLoteCDD, new Object[0]);
-				if (Checks.esNulo(value)) {
-					return true;
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		return false;
-	}
-
-	private boolean hayAlgunCampoNullInfoBienesCDD() {
-		for (DatosLoteCDD datoLote : datosLoteCDD) {
-			for (InfoBienesCDD infoBien : datoLote.getInfoBienes()) {
-				Field[] fields = InfoBienesCDD.class.getDeclaredFields();
-				for (Field f : fields) {
-					String field = f.getName();
-					try {
-						// Obtener nombre de Metodo Getter
-						Method getter = infoBien.getClass().getMethod(
-								"get"
-										+ String.valueOf(field.charAt(0))
-												.toUpperCase()
-										+ field.substring(1));
-
-						// Llamo al Metodo especificado de este Objeto
-						// con un array con los respectivos Parametros
-						// En este caso al ser un Getter no recibe parametros
-						Object value = getter.invoke(datosLoteCDD,
-								new Object[0]);
-						if (Checks.esNulo(value)) {
-							return true;
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-			}
-		}
-		return false;
-	}
-
 	// Convierte un Objet en String
 	private String convertObjectString(Object variable) {
 		String ret = null;
@@ -701,6 +611,14 @@ public class InformeValidacionCDDBean {
 	public void setValidacionOK(Boolean validacionOK) {
 		this.validacionOK = validacionOK;
 	}
+	
+	public String getCamposVacios() {
+		return camposVacios;
+	}
+	
+	public void setCamposVacios(String camposVacios) {
+		this.camposVacios = camposVacios;
+	}
 
 	private class BooleanBienesLotes {
 		private boolean validacionCorrecta;
@@ -765,5 +683,45 @@ public class InformeValidacionCDDBean {
 		}
 
 	}
+	
+	private String cargarProyectoProperties() {
+		String proyecto = "";	
+		Properties appProperties = cargarProperties(DEVON_PROPERTIES);
+		if (appProperties == null) {
+			System.out.println("No puedo consultar devon.properties");		
+		} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
+			proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
+		} else {
+			System.out.println("UVEM no instalado");
+		}
+		return proyecto;
+	}
+	
+	private Properties cargarProperties(String nombreProps) {
+		InputStream input = null;
+		Properties prop = new Properties();
+		
+		String devonHome = DEVON_HOME_BANKIA_HAYA;
+		if (System.getenv(DEVON_HOME) != null) {
+			devonHome = System.getenv(DEVON_HOME);
+		}
+		
+		try {
+			input = new FileInputStream("/" + devonHome + "/" + nombreProps);
+			prop.load(input);
+		} catch (IOException ex) {
+			System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
+																																																																																			}
+																																																																																		}
+		}
+		return prop;
+	}
+	
 
 }

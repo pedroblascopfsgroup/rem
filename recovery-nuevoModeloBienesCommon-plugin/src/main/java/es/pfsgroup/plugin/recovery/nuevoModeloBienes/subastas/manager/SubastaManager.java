@@ -1098,27 +1098,14 @@ public class SubastaManager implements SubastaApi {
 			tipoJuzgado.setPlaza(tipoJuzgado.getPlaza());
 			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
 			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
+			subasta.setDeudaJudicial(dto.getDeudaJudicial());
 			try {
 				subasta.setFechaSenyalamiento(DateFormat.toDate(dto.getFechaSenyalamiento()));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			
-			boolean existeTareaSenyalamiento = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
-			boolean existeTareaCelebracion = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
-			// Si existe se actualizan los campos si no se lanzan las tareas
-			if(existeTareaSenyalamiento) {
-				actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
-				actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
-			}else{
-				//TODO hay que ver que hacer para crear las tareas y insertar los datos
-			}
-			if(existeTareaCelebracion) {
-				actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
-			}else{
-				//TODO hay que ver que hacer para crear las tareas y insertar los datos
-			}
+			actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
+			actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
+			actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
 			subastaDao.save(subasta);
 		}
 		
@@ -1337,7 +1324,7 @@ public class SubastaManager implements SubastaApi {
 						if(Checks.estaVacio(procedimientoBien)) {
 							return false;
 						}else{
-							return tareaExiste(subasta.getProcedimiento(), nombreNodo);							
+							return tareaExiste(procedimientoBien.get(0).getProcedimiento(), nombreNodo);							
 						}
 					}
 				}

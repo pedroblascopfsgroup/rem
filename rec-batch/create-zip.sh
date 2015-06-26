@@ -23,7 +23,7 @@ mkdir -p target/batch
 cd target/batch
 JAR="../rec-batch-$VERSION.jar"
 if [ -f $JAR ]; then
-	cp $JAR .
+	cp $JAR rec-batch.jar
 else
 	echo "************************"
 	echo "ERROR"

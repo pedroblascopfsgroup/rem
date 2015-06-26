@@ -1231,21 +1231,18 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		
 		//BCFI-587
 		//Esquema
-		RecobroEsquema esquema = genericDao.get(RecobroEsquema.class, genericDao.createFilter(FilterType.EQUALS, "nombre", "Expedientes manuales"),
-				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		RecobroEsquema esquema = genericDao.get(RecobroEsquema.class, genericDao.createFilter(FilterType.EQUALS, "nombre", "Expedientes manuales"));
 		cre.setEsquema(esquema);
 		
 		//Cartera
 		RecobroCarteraEsquema carteraEsquema = genericDao.get(RecobroCarteraEsquema.class, genericDao.createFilter(FilterType.EQUALS, "esquema.nombre", "Expedientes manuales"),
-				genericDao.createFilter(FilterType.EQUALS, "cartera.nombre", "Expedientes manuales"), 
-				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				genericDao.createFilter(FilterType.EQUALS, "cartera.nombre", "Expedientes manuales"));
 		cre.setCarteraEsquema(carteraEsquema);
 
 		//SubCartera
 		RecobroSubCartera subcartera = null;
 		if (carteraEsquema!=null){
-			subcartera = genericDao.get(RecobroSubCartera.class, genericDao.createFilter(FilterType.EQUALS, "carteraEsquema.id", carteraEsquema.getId()),
-										genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			subcartera = genericDao.get(RecobroSubCartera.class, genericDao.createFilter(FilterType.EQUALS, "carteraEsquema.id", carteraEsquema.getId()));
 		}
 		cre.setSubcartera(subcartera);
 		
@@ -1254,8 +1251,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		
 		if( subcartera!=null && age!=null ){
 			subCarteraAgencia = genericDao.get(RecobroSubcarteraAgencia.class, genericDao.createFilter(FilterType.EQUALS, "subCartera.id", subcartera.getId()),
-												genericDao.createFilter(FilterType.EQUALS, "agencia.id", age.getId()),
-												genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+												genericDao.createFilter(FilterType.EQUALS, "agencia.id", age.getId()));
 		}
 		cre.setSubCarteraAgencia(subCarteraAgencia);
 

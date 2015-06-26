@@ -46,8 +46,8 @@ public class InformeValidacionCDDBean {
 	private Long idSubasta;
 	private ProcedimientoSubastaCDD procedimientoSubastaCDD;
 	private List<DatosLoteCDD> datosLoteCDD;
-	private String mensajesValidacion;
-	private String camposVacios;
+	private String mensajesValidacion="";
+	private String camposVacios="";
 	private Boolean validacionOK;
 
 	public List<Object> create() {

@@ -8,7 +8,12 @@ fi
 if [ "x$1" != "x" ]; then
 	VERSION=$1	
 else
-	VERSION=DESCONOCIDA
+	echo "************************"
+	echo "ERROR"
+	echo "VERSION is mandatory"
+	echo "Usage: $0 <version>"
+	echo "************************"
+	exit 1
 fi
 
 rm -Rf target/batch
@@ -16,14 +21,26 @@ rm -Rf target/batch
 mkdir -p target/batch
 
 cd target/batch
+JAR="../rec-batch-$VERSION.jar"
+if [ -f $JAR ]; then
+	cp $JAR .
+else
+	echo "************************"
+	echo "ERROR"
+	echo "$JAR: not found"
+	echo "************************"
+	exit 1
+fi
 
 cp -Rf ../alternateLocation/* .
 chmod +x run.sh
 
-cp $(find .. -name rec-batch*.jar | grep -i sources) .
 
 rm -f sql/sqlRecobro*
 
+if [ ! -d properties ]; then
+	mkdir properties
+fi
 cp -R ../../src/main/resources/properties/* properties/
 
 rm -Rf optionalConfiguration/jobs/recobro/
@@ -39,7 +56,6 @@ mkdir -p optionalConfiguration/config/
 cp -R ../../src/main/resources/config/* optionalConfiguration/config/
 
 cd ..
-pwd
 rm -Rf generated-files
 mkdir -p generated-files
-zip -r generated-files/batch-$VERSION.zip batch
+zip -q -r generated-files/batch-$VERSION.zip batch

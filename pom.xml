@@ -49,8 +49,8 @@
 			<url>http://interecovery.pfsgroup.es:8086</url>
 		</repository>
 		<repository>
-			<id>Framework</id>
-			<url>http://192.168.0.143:8458/nexus/content/repositories/Framework</url>
+			<id>pfsNexusFramework</id>
+			<url>http://nexus.pfsgroup.es/nexus/content/repositories/framework</url>
 		</repository>
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>
@@ -359,6 +359,16 @@
 				<version>${project.version}</version>
 			</dependency>
 			<!-- STANDARD LIBRARIES -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>2.0.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.0.5</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>

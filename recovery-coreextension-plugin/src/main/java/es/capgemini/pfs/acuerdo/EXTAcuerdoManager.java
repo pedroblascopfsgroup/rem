@@ -312,4 +312,10 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 
 	}
 
+	@Override
+	public void proponerAcuerdo(Long idAcuerdo) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

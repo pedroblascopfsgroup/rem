@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
@@ -22,6 +25,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -37,6 +41,15 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 	@Autowired
 	private GenericABMDao genericDao;	
 
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	ProcedimientoManager procedimientoManager;
+	
+	public LoteSubasta getLoteSubasta(Long idLote) {
+		return genericDao.get(LoteSubasta.class, genericDao.createFilter(FilterType.EQUALS, "id", idLote), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -569,5 +582,5 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 
 		return true;
 	}
-	
+
 }

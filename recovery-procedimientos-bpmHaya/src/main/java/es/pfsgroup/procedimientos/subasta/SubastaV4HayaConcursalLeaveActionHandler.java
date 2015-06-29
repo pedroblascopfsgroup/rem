@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicatari
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 //public class SubastaV4HayaConcursalLeaveActionHandler extends SubastaV4LeaveActionHandler {
 public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveActionHandler {
@@ -53,6 +54,9 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 	@Autowired
 	private JBPMProcessManager jbpmUtil;
 
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+	
 	private ExecutionContext executionContext;
 
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
@@ -169,7 +173,8 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 			}
 		}
 
-		genericDao.save(Subasta.class, sub);		
+		genericDao.save(Subasta.class, sub);
+		bpmIntegracionService.enviarCabecera(sub);
 	}
 	
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {

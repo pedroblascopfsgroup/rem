@@ -451,7 +451,6 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
                 pce.setProcedimiento(this);
                 list.add(pce);
             }
-
             procedimientosContratosExpedientes = list;
         }
     }

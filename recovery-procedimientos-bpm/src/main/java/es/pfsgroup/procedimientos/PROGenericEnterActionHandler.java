@@ -32,6 +32,7 @@ import es.pfsgroup.procedimientos.exception.CampoTareaNoEncontradaException;
 import es.pfsgroup.procedimientos.listener.GenerarTransicionListener;
 import es.pfsgroup.procedimientos.requisitoTarea.api.RequisitoTareaApi;
 import es.pfsgroup.procedimientos.requisitoTarea.model.RequisitoTarea;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 	/**
@@ -50,6 +51,9 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 	@Autowired
 	private List<GenerarTransicionListener> listeners;
 
+	@Autowired
+	IntegracionBpmService bpmIntegrationService;
+	
 	/**
 	 * PONER JAVADOC FO.
 	 * 
@@ -350,12 +354,17 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 
 		EXTDtoCrearTareaExterna dto = DynamicDtoUtils.create(EXTDtoCrearTareaExterna.class, valores);
 		Long idTarea = tareaExternaManager.crearTareaExternaDto(dto);
-
+		TareaExterna tareaExterna = tareaExternaManager.get(idTarea);
+		
 		// Si el BPM está detenido, detenemos la nueva tarea creada
 		if (isBPMDetenido(executionContext)) {
-			tareaExternaManager.detener(tareaExternaManager.get(idTarea));
+			tareaExternaManager.detener(tareaExterna);
 		}
 
+		// Sincroniza con el envío de tareas.
+		bpmIntegrationService.notificaInicioTarea(tareaExterna);
+
+		
 		// Guardamos el id de la tarea externa de este nodo por si
 		// necesit�ramos recuperarla posteriormente (generalmente en timers)
 		// NOTA. Si pasa dos veces por el mismo nodo se quedar� la �ltima ID

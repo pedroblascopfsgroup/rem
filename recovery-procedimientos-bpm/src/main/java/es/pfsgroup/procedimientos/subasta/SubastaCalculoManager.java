@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.procedimientos.context.api.ProcedimientosProjectContext;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 /**
  * Esta clase se usa para calcular determinados parámetros de la subasta.
@@ -69,6 +70,9 @@ public class SubastaCalculoManager {
 	@Resource
 	private Properties appProperties;
 
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+	
 	/**
 	 * Actualiza la subasta con los datos del procedimiento, crea la subasta si no existe.
 	 * 
@@ -164,6 +168,7 @@ public class SubastaCalculoManager {
 				// genericDao.save(LoteBien.class, loteBienDuplicado);
 
 			}
+			bpmIntegracionService.enviarCabecera(subastaDuplicada);
 		}
 		
 		//CONDICION 3
@@ -218,6 +223,8 @@ public class SubastaCalculoManager {
 			genericDao.save(Subasta.class, subastaDuplicada);
 			
 			actualizarTipoSubasta(procedimiento);
+			bpmIntegracionService.enviarCabecera(subastaDuplicada);
+			
 		}
 
 	}

@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 
@@ -52,6 +53,9 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
 	
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+    
 	private ExecutionContext executionContext;
 
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
@@ -198,6 +202,7 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 		}
 
 		genericDao.save(Subasta.class, sub);
+		bpmIntegracionService.enviarCabecera(sub);
 	}
 
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {

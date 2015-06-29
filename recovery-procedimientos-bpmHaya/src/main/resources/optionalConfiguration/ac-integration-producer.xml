@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd
+			http://www.springframework.org/schema/integration/jms
+			http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+			http://www.springframework.org/schema/integration/file
+			http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+
+	<!-- CONFIGURACION DE LA SALIDA -->
+	<bean id="filenameGenerator" class="es.pfsgroup.recovery.integration.FilenameGenerator" />
+
+	<!-- ******** Flow BPM ******* -->
+	<integration:gateway 
+		id="notificarEventosBpmGW" 
+		default-request-channel="syncEventosBpmRequest" 
+		service-interface="es.pfsgroup.recovery.integration.bpm.NotificarEventosBPMGateway"/>
+		
+	<integration:chain input-channel="syncEventosBpmRequest" output-channel="dataPayloadOutputChannel">
+		<integration:transformer>
+			<bean class="es.pfsgroup.recovery.integration.bpm.EntityToPayloadTransformer">
+				<constructor-arg ref="diccionarioCodigosProducer"/>
+			</bean>
+		</integration:transformer>
+		<integration:filter method="accept" ref="syncProducerRules" />
+	</integration:chain>
+
+	<!-- ******** Salida ******* -->
+	<!-- CADENA: EL ORDEN DE LAS ACCIONES ES IMPORTANTE *** --> 
+	<integration:chain input-channel="dataPayloadOutputChannel" output-channel="syncOutgoingChannel">
+		<integration:header-enricher error-channel="recoveryRequestErrorChannel"/>
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />
+	</integration:chain>
+
+	<integration:publish-subscribe-channel id="syncOutgoingChannel" />
+	<file:outbound-channel-adapter id="outgoingFolder"
+		channel="syncOutgoingChannel" directory="file:/Documentos/borrar/mensajes/output"
+		filename-generator="filenameGenerator" />
+	<file:outbound-channel-adapter id="syncBackupFolder"
+		channel="syncOutgoingChannel" directory="file:/Documentos/borrar/mensajes/backup"
+		filename-generator="filenameGenerator" />
+	<!-- jms:outbound-channel-adapter id="jmsout" channel="syncOutgoingChannel" destination="requestQueue"  / -->
+
+	<!-- ... CANAL DE DESCARTADOS ... hay que activarlo en el filter.	 
+	<integration:transformer ref="procedimientoMsgTransformer" input-channel="syncDiscard" output-channel="syncDiscardFolder" method="serialize" />
+	<file:outbound-channel-adapter id="syncDiscardFolder"
+		directory="file:/Documentos/borrar/mensajes/discard"
+		filename-generator="filenameGenerator" />
+ 	-->
+
+	<!-- ***************** -->
+	<!-- REGLAS DE SALIDA -->
+	<!-- ***************** -->
+	<bean id="syncProducerRules" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
+		<constructor-arg>
+			<list>
+				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+					<property name="tipo" value=".+" />	<!-- DEJAMOS PASAR TODO -->
+				</bean>
+				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- TRADUCTOR DE CODIGOS PROCEDIMIENTOS, TAREAS, DD -->
+	<bean id ="diccionarioCodigosProducer" class="es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos">
+		<constructor-arg>
+			<map>
+				<entry key="procedimientos">
+					<map>
+					<!-- 
+						<entry key="P416" value="CJ416" />
+						<entry key="P417" value="CJ417" />
+						<entry key="P418" value="CJ418" />
+					 -->
+					</map>
+				</entry>
+				<entry key="tareas">
+					<map>
+					<!-- 
+						<entry key="P413_SenyalamientoSubastas" value="P412_SenyalamientoSubastas" />
+						<entry key="P412_SenyalamientoSubastas" value="CJ412" />
+					 -->
+					</map>
+				</entry>
+				<entry key="DD">
+					<map>
+					<!-- 
+						<entry key="DDSiNo.01" value="01" />
+						<entry key="DDSiNo.01" value="02" />
+						<entry key="DDFavorable.01" value="01" />
+						<entry key="DDFavorable.01" value="02" />
+					 -->
+					</map>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+</beans>

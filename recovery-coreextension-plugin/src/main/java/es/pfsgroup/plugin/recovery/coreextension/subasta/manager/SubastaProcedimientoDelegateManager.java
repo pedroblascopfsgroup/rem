@@ -2,9 +2,6 @@ package es.pfsgroup.plugin.recovery.coreextension.subasta.manager;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.core.api.asunto.AsuntoApi;
-import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 
 /**

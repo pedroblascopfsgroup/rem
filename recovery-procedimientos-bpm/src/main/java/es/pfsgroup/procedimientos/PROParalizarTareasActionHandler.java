@@ -2,11 +2,8 @@ package es.pfsgroup.procedimientos;
 
 import java.util.Date;
 
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bpm.ProcessManager;
@@ -16,13 +13,13 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
-import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
 import es.pfsgroup.procedimientos.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.recovery.api.TareaExternaApi;
 import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 /**
- * Paraliza la tarea. Marca la tarea como borrada lógica y detenida y destruye
+ * Paraliza la tarea. Marca la tarea como borrada lï¿½gica y detenida y destruye
  * los timers asociados a la tarea
  * 
  */
@@ -34,10 +31,13 @@ public class PROParalizarTareasActionHandler extends PROBaseActionHandler implem
     @Autowired
     private ApiProxyFactory proxyFactory;
 
+	@Autowired
+	IntegracionBpmService bpmIntegrationService;
+    
     private static final long serialVersionUID = 1L;
 
     /**
-     * Override del método onEnter. Se ejecuta al entrar al nodo
+     * Override del mï¿½todo onEnter. Se ejecuta al entrar al nodo
      */
     @Override
     @Transactional(readOnly = false)
@@ -58,6 +58,10 @@ public class PROParalizarTareasActionHandler extends PROBaseActionHandler implem
         setVariable(BPMContants.BPM_DETENIDO, 1L, executionContext);
 
         cambiaEstadoProcedimientoAParalizado(tareaExterna);
+
+        // IntegraciÃ³n
+        bpmIntegrationService.notificaParalizarTarea(tareaExterna);
+        
     }
 
     private void cambiaEstadoProcedimientoAParalizado(final TareaExterna tarea) {

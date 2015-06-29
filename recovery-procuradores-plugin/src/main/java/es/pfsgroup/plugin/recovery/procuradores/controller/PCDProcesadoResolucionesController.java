@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.recovery.masivo.model.MSVDDRequerimientoPrevio;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.dto.MSVTipoResolucionDto;
 import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.GenericFormManagerApi;
+import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.MEJGenericFormManager;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoResolucionesApi;
@@ -171,6 +172,10 @@ public class PCDProcesadoResolucionesController {
 	
 	private static final String JSON_EXISTEN_TAREAS_PENDIENTES_VALIDAR = "plugin/procuradores/tareas/existenTareasPendientesValidarJSON";
 	
+	private static final String JSON_LISTA_VALORES_CAMPOS_RESOLUCION = "plugin/procuradores/valoresCamposResolucionJSON";
+	
+	
+	
 	
 	@Autowired
 	private ApiProxyFactory apiProxyFactory;
@@ -186,6 +191,10 @@ public class PCDProcesadoResolucionesController {
 	
 	@Autowired
 	private PCDResolucionProcuradorApi pcdResolucionProcuradorApi;
+	
+	@Autowired
+	private MEJGenericFormManager mejGenericFormManager;
+	
 	
 	/**
 	 * Muestra la pantalla de procesado de resoluciones.
@@ -569,6 +578,7 @@ public class PCDProcesadoResolucionesController {
     @RequestMapping
     public String getTiposDeResolucion(Long idTarea, Long idProcedimiento, ModelMap model) {
     	
+    	
     	//Obtenemos los tipos de resolución normales
     	Set<MSVTipoResolucionDto> setTiposResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).obtenerTiposResoluciones(idProcedimiento, idTarea);
     	
@@ -585,6 +595,39 @@ public class PCDProcesadoResolucionesController {
     	model.put("data", listTipoSResolucion);
         return JSON_LISTA_TIPOS_RESOLUCION;
           
+    }
+    
+	/**
+     * Metodo que devuelve los valores de los campos de las resoluciones anteriores.
+     * @param query
+     * @param model
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getValoresCamposAntRes( ModelMap model, Long idProcedimiento) {
+    
+    	Map<String, Map<String, String>> valores = mejGenericFormManager.getValoresTareas(idProcedimiento);
+    	
+    	List<Map<String, String>> listMap = new ArrayList<Map<String,String>>();
+
+		for (Map.Entry<String, Map<String,String>> entry : valores.entrySet())
+		{
+			//listMap.add(entry.getValue());
+			for (Map.Entry<String, String> cmps : entry.getValue().entrySet())
+			{
+				//System.out.println(cmps.getKey() + "/" + cmps.getValue());
+				Map<String,String> map = new HashMap<String, String>();
+				map.put("campo", cmps.getKey());
+				map.put("valor", cmps.getValue());
+				
+				listMap.add(map);
+			}
+		}
+
+		model.put("data", listMap);
+		
+    	return JSON_LISTA_VALORES_CAMPOS_RESOLUCION;
     }
     
     

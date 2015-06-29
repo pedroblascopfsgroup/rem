@@ -58,12 +58,32 @@ onViewClick : function(doFocus){
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'data'
 	    }, tipoResolucionRecord)
-	       
 	});
 	
 	tipoResolucionStore.on('load', function(){
 			existenResolucionesPendientesValidar(recordSelect.idTarea);
 	});
+	
+	var arrayCamposValoresAntRes = new Array();
+	
+	var valoresCamposAntResols = function(idProcedimiento){
+        Ext.Ajax.request({
+			url: '/pfs/pcdprocesadoresoluciones/getValoresCamposAntRes.htm'
+			,params: {idProcedimiento:idProcedimiento}
+			,method: 'POST'
+			,success: function (result, request){
+			
+					var jsonData =Ext.util.JSON.decode(result.responseText);
+					
+					for (var i = 0; i < jsonData.data.length; i++) {
+					    var cmpval = jsonData.data[i];
+					    if(cmpval.valor!=""){
+					    	arrayCamposValoresAntRes[cmpval.campo.toString()] = cmpval.valor;
+					    }
+					}
+			}
+		});
+	}
 	
 	
 	var existenResolucionesPendientesValidar = function(idTarea){
@@ -137,7 +157,8 @@ onViewClick : function(doFocus){
     		datosResolucion.removeAll(true);
     		datosResolucion.doLayout();
     		
-    		datosResolucion.add(factoriaFormularios.getFormItems(comboTipoResolucionNew.getValue(), idAsunto.getValue() , codigoProcedimiento.getValue(), codigoPlaza, idProcedimiento.getValue(),true));
+    		datosResolucion.add(factoriaFormularios.getFormItems(comboTipoResolucionNew.getValue(), idAsunto.getValue() , codigoProcedimiento.getValue(), codigoPlaza, idProcedimiento.getValue(),true, true));
+    		factoriaFormularios.fullFields(comboTipoResolucionNew.getValue(),arrayCamposValoresAntRes);
 			//resolucionPanel.getBottomToolbar().setDisabled(false);
 			habilitaBotones(false);
     		datosResolucion.add({xtype:'hidden',name:'idFichero',value:''});
@@ -485,6 +506,7 @@ onViewClick : function(doFocus){
 			comboTipoResolucionNew.reset();
 			datosResolucion.setVisible(false);
 			tipoResolucionStore.webflow({idTarea:record.data.idTarea, idProcedimiento:record.data.idProcedimiento});
+			valoresCamposAntResols(record.data.idProcedimiento)
 			//obtenerCodigoPlaza({idAsunto:record.data.idAsunto});
 			tipoFicheroStore.webflow({idAsunto: record.data.idAsunto}); 
 			habilitaBotonesPopUp(false, false);

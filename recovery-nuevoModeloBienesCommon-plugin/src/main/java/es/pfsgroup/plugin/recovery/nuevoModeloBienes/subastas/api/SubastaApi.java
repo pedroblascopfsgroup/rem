@@ -37,6 +37,7 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_GET_BIENES_LOTE_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getBienesLoteSubasta";
 	public static final String BO_NMB_SUBASTA_GET_DATOS_ACTA_COMITE = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getDatosActaComite";
 	public static final String BO_NMB_SUBASTA_GET_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getSubasta";
+	public static final String BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE_DEUDA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierreDeuda";
 	public static final String BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierre";
 	public static final String BO_NMB_SUBASTA_INFORME_SUBASTA_LETRADO ="es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getInformeSubastasLetrado";
 	public static final String CODIGO_TIPO_PROCEDIMIENTO_SUBASTA_BANKIA = "P401";
@@ -166,6 +167,9 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GET_SUBASTA)
 	public Subasta getSubasta(Long idSubasta);
+
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE_DEUDA)
+	public void guardaBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda autoCierreDeuda);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien);

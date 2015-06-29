@@ -23,6 +23,7 @@ public class EditarInformacionCierreDto implements Serializable {
 	private String fechaSenyalamiento;
 	private String conPostores;
 	private Long idValorConPostores;
+	private Float deudaJudicial;
 	private boolean habilitarEditarInformacionCDD;
 
 	/**
@@ -233,6 +234,20 @@ public class EditarInformacionCierreDto implements Serializable {
 	public void setHabilitarEditarInformacionCDD(
 			boolean habilitarEditarInformacionCDD) {
 		this.habilitarEditarInformacionCDD = habilitarEditarInformacionCDD;
+	}
+
+	/**
+	 * @return the deudaJudicial
+	 */
+	public Float getDeudaJudicial() {
+		return deudaJudicial;
+	}
+
+	/**
+	 * @param deudaJudicial the deudaJudicial to set
+	 */
+	public void setDeudaJudicial(Float deudaJudicial) {
+		this.deudaJudicial = deudaJudicial;
 	}
 
 }

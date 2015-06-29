@@ -13,7 +13,7 @@
 			<json:property name="fechaExtraccion">
 				<fwk:date value="${ade.fechaExtraccion}"/>
 			</json:property>
-			<json:property name="codigoRecomendacion" value="${ade.codigoRecomendacion}"/>			
+			<json:property name="codigoRecomendacion" value="${ade.recomAdecuacion.descripcion}"/>			
 			<json:property name="importeFinanciar" value="${ade.importeFinanciar}"/>
 			<json:property name="gastosIncluidos" value="${ade.gastosIncluidos}"/>
 			<json:property name="tipo" value="${ade.tipo}" />

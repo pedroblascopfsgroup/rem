@@ -73,7 +73,6 @@ cb_adjudicacion.on('select', function(){
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			debugger;
 			//page.fireEvent(app.event.DONE);
 			page.submit({
 				eventName : 'ok'

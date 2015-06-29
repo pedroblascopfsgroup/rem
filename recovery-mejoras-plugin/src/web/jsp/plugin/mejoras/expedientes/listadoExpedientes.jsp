@@ -413,7 +413,6 @@
 					paramAux = paramAux+'_param_'+parametrosTab[i];	
 				}
 				parametros['params'] = paramAux;
-				//debugger;
 				if (excel==1) {
 					var flow='expedientes/listadoExpedientesExcelDataDinamico';
                     
@@ -550,7 +549,6 @@
       });
 	
       var dateRendererJuniper = function(value) {
-          //debugger;
           var resultado = "";
           if (value.length > 10) {
 	   	var dt = new Date();

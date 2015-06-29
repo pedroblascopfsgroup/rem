@@ -1,14 +1,12 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20150608
+--## AUTOR=JOSEVI
+--## FECHA_CREACION=20150618
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=FASE-1363
+--## VERSION_ARTEFACTO=9.1.3
+--## INCIDENCIA_LINK=FASE-1345
 --## PRODUCTO=SI
---## Finalidad: DML de migración para insertar los valores de los diccionarios de población y provincia en la tabla
---## 			BIE_DATOS_REGISTRALES haciendo MATCH con el contenido del campo BIE_DREG_MUNICIPIO_LIBRO, y teniendo en cuenta
---##			que el municipio no esté repetido en 2 provincias diferentes.
+--## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,32 +31,39 @@ DECLARE
 	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
-
+    V_VIEWNAME VARCHAR2(30):= 'VTAR_TAREA_VS_USUARIO_PART2';
 
 BEGIN
 
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES DREG
-  USING   
-      (SELECT TMP.BIE_DREG_ID, DDLOC.DD_LOC_ID NUEVALOC, DDPRV.DD_PRV_ID NUEVAPROV
-      FROM '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD DDLOC
-      INNER JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA DDPRV ON DDLOC.DD_PRV_ID = DDPRV.DD_PRV_ID
-      JOIN
-         (SELECT DREG.BIE_DREG_ID, DREG.BIE_DREG_MUNICIPIO_LIBRO MUNICIPIO
-           FROM '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES DREG
-           WHERE BIE_DREG_MUNICIPIO_LIBRO IS NOT NULL AND DREG.DD_LOC_ID IS NULL ) TMP ON UPPER (TMP.MUNICIPIO) = UPPER (DDLOC.DD_LOC_DESCRIPCION)
-           AND UPPER (DDLOC.DD_LOC_DESCRIPCION) NOT IN (SELECT DISTINCT UPPER(DD_LOC_DESCRIPCION) FROM '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD GROUP BY UPPER(DD_LOC_DESCRIPCION) HAVING COUNT(*) > 1)
-      ) POB ON (DREG.BIE_DREG_ID = POB.BIE_DREG_ID) 
-  WHEN MATCHED THEN
-      UPDATE SET DREG.DD_LOC_ID = POB.NUEVALOC, DREG.DD_PRV_ID = POB.NUEVAPROV, usuariomodificar = ''FASE-1363'', fechamodificar = SYSDATE';
+DBMS_OUTPUT.PUT_LINE('[INFO] Bloque scripts para la inclusión de un nuevo tipo del histórico de operaciones - Notificación - (6/7)');
+DBMS_OUTPUT.PUT('[INFO] Modificación de la vista '||V_VIEWNAME||'...');
 
-	DBMS_OUTPUT.PUT_LINE('[NUMERO DE REGISTROS MIGRADOS]: ' || sql%rowcount);    
+--/**
+-- * Modificacion o creación de vista: Si existe modifica y si no, la crea como nueva - Script relanzable
+-- *************************************************************/
+execute immediate
+'  CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_VIEWNAME||' (TAR_ID, USU_PENDIENTES, USU_ALERTA, USU_SUPERVISOR, DD_TGE_ID_ALERTA, DD_TGE_ID_PENDIENTE) AS '||Chr(13)||Chr(10)||
+'  SELECT TAR_ID  '||Chr(13)||Chr(10)||
+'    , t.tar_id_dest usu_pendientes '||Chr(13)||Chr(10)||
+'    --, 0 usu_espera '||Chr(13)||Chr(10)||
+'    , -1 usu_alerta, t.dd_tge_id_supervisor usu_supervisor '||Chr(13)||Chr(10)||
+'    , t.dd_tge_id_alerta '||Chr(13)||Chr(10)||
+'    , t.dd_tge_id_pendiente '||Chr(13)||Chr(10)||
+'  FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_TGE t '||Chr(13)||Chr(10)||
+'  WHERE t.dd_sta_id IN (700, 701, 826) ';
 
-         
+
+--/* Recompilar nueva vista
+--************************************************************/
+execute immediate ('alter view '||V_ESQUEMA||'.'||V_VIEWNAME||' compile');
+
 
 COMMIT;
+
+DBMS_OUTPUT.PUT_LINE('OK modificada');
 
 DBMS_OUTPUT.PUT_LINE('[FIN]');
 
@@ -69,6 +74,7 @@ EXCEPTION
           err_num := SQLCODE;
           err_msg := SQLERRM;
 
+          DBMS_OUTPUT.PUT_LINE('KO no modificada');
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);

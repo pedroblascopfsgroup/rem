@@ -807,7 +807,6 @@ var formBusquedaInstruccionesSubasta=function(){
 			}
 			
 			if (comboEntidad.selectedIndex>0){
-				debugger;
 				var entidadSeleccionada = '';
 				if (comboEntidad.value==3){
 					entidadSeleccionada = 'BANKIA';
@@ -1092,7 +1091,6 @@ var formBusquedaInstruccionesSubasta=function(){
 	
 	subastasStore.on('load', function() {
 		pagingBar.show();
-		debugger;
 	    var match = this.find('estadoCodigo','<%=DDEstadoLoteSubasta.PROPUESTA %>');
 	    var ocultar = (match == -1);
 		subastasGrid.getColumnModel().setHidden(0, ocultar);

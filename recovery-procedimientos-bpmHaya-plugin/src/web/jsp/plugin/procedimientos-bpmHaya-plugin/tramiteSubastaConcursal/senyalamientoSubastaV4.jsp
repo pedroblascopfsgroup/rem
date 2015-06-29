@@ -48,7 +48,6 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 </c:if>
 var bottomBar = [];
 
-debugger;
 
 var principal = items[7 + muestraBotonGuardar];
 //items[7 + muestraBotonGuardar].hide();

@@ -501,7 +501,7 @@ public class SubastaController {
 		cabeceras.add("DEUDA");
 		cabeceras.add("COSTAS LETRADO");
 		cabeceras.add("COSTAS PROCURADOR");
-		cabeceras.add("F. SE�ALAMIENTO");
+		cabeceras.add("F. SEÑALAMIENTO");
 		cabeceras.add("CON POSTORES");
 		
 		
@@ -629,19 +629,22 @@ public class SubastaController {
 					
 				fila=new ArrayList<String>();
 				fila.add(" ; ;Text");
-				fila.add("N� FINCA;Blue;Text");
-				fila.add("N� ACTIVO;Blue;Text");
+				fila.add("Nº FINCA;Blue;Text");
+				fila.add("Nº ACTIVO;Blue;Text");
 				fila.add("REFERENCIA CATASTRAL;Blue;Text");
-				fila.add("DESCRIPCI�N;Blue;Text");
-				fila.add("N� REGISTRO;Blue;Text");
-				fila.add("VALOR TASACI�N;Blue;Text");
-				fila.add("FECHA TASACI�N;Blue;Text");
+				fila.add("DESCRIPCIÓN;Blue;Text");
+				fila.add("Nº REGISTRO;Blue;Text");
+				fila.add("VALOR TASACIÓN;Blue;Text");
+				fila.add("FECHA TASACIÓN;Blue;Text");
 				fila.add("VALOR JUDICIAL;Blue;Text");
-				fila.add("DATOS LOCALIZACI�N;Blue;Text");
+				fila.add("DATOS LOCALIZACIÓN;Blue;Text");
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
-				fila.add("RESULTADO ADJUDICACI�N;Blue;Text");
-				fila.add("IMPORTE ADJUDICACI�N;Blue;Text");
-				fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
+				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
+				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
+				//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
+				if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
+					fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
+				}
 				
 				valores.add(fila);
 				
@@ -742,13 +745,15 @@ public class SubastaController {
 					{
 						fila.add("******;Red;Text");
 					}
-					
-					if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
-						fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
-					}
-					else
-					{
-						fila.add("******;Red;Text");
+					//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
+					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
+						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
+							fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
+						}
+						else
+						{
+							fila.add("******;Red;Text");
+						}
 					}
 					
 					valores.add(fila);

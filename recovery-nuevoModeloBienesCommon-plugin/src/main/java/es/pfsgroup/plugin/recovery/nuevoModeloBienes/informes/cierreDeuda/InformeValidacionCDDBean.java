@@ -49,10 +49,11 @@ public class InformeValidacionCDDBean {
 	private String mensajesValidacion="";
 	private String camposVacios="";
 	private Boolean validacionOK;
+	private Subasta subasta;
 
 	public List<Object> create() {
 		InformeValidacionCDDBean informe = new InformeValidacionCDDBean();
-		Subasta subasta = subastaApi.getSubasta(idSubasta);
+		subasta = subastaApi.getSubasta(idSubasta);
 		rellenaProcedimientoSubastaCDD(subasta);
 		rellenaDatosLoteCDD(subasta);
 		crearMensajeValidacion(subasta);
@@ -721,6 +722,14 @@ public class InformeValidacionCDDBean {
 																																																																																		}
 		}
 		return prop;
+	}
+
+	public Subasta getSubasta() {
+		return subasta;
+	}
+
+	public void setSubasta(Subasta subasta) {
+		this.subasta = subasta;
 	}
 	
 

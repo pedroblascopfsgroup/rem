@@ -43,11 +43,7 @@
 	var provision = label('provision', '<s:message code="asunto.tabcabecera.provision" text="**Provisión"/>');
 	var titulizada = label('titulizada','<s:message code="asunto.tabcabecera.titulizada" text="**Titulizada*"/>')
   	var fondo = label('fondo','<s:message code="asunto.tabcabecera.fondo" text="**Fondo"/>')
-  	var errorEnvioCDD = new Ext.form.Label({
-		text : ''
-		,id : 'cdd'
-		,style: 'color:red; font-size:smaller'
-	});
+  	var errorEnvioCDD = new Ext.form.Label({text : '', id : 'entidad-asunto-cdd', style: 'color:red; font-size:smaller' });
   	
 	// formulario para editar el nombre del asunto.
 		

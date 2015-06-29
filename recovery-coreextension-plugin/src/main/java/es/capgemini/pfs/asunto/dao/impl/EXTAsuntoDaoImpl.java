@@ -387,7 +387,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
 		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto
-				.getFiltroContrato() > 0L));
+				.getFiltroContrato() > 0L) || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
 	}
 
 	private String filtroGestorSupervisorAsuntoMonoGestor(

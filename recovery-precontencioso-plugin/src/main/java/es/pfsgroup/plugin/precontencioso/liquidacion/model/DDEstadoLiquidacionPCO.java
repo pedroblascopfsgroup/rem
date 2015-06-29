@@ -15,7 +15,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_PCO_LIQ_ESTADO", schema = "${master.schema}")
+@Table(name = "DD_PCO_LIQ_ESTADO", schema = "${entity.schema}")
 public class DDEstadoLiquidacionPCO implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = 9071990312229316324L;

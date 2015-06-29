@@ -15,7 +15,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_PCO_BFT_TIPO", schema = "${master.schema}")
+@Table(name = "DD_PCO_BFT_TIPO", schema = "${entity.schema}")
 public class DDTipoBurofaxPCO implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = -3643853609495220884L;

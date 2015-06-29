@@ -3,12 +3,14 @@ package es.pfsgroup.plugin.recovery.mejoras.procedimiento.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.integration.Guid;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 
 //FIXME Mover esta clase de paquete, a uno de coreextension
@@ -33,6 +35,28 @@ public class MEJProcedimiento extends Procedimiento {
 	@Column(name="PRC_PLAZO_PARALIZ_MILS")
 	private Long plazoParalizacion;
 
+	@Column(name="SYS_GUID")
+	private String guid;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
+	/*@Embedded
+	private Guid guid;
+	
+	public Guid getGuid() {
+		return guid;
+	}
+
+	public void setGuid(Guid guid) {
+		this.guid = guid;
+	}*/
+	
 	public void setEstaParalizado(boolean estaParalizado) {
 		this.estaParalizado = estaParalizado;
 	}
@@ -75,4 +99,5 @@ public class MEJProcedimiento extends Procedimiento {
 	public void setPlazoParalizacion(Long plazoParalizacion) {
 		this.plazoParalizacion = plazoParalizacion;
 	}
+
 }

@@ -87,7 +87,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
-import groovy.swing.factory.ModelFactory;
+
 @Component
 public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionManager implements TareaNotificacionApi {
 
@@ -700,8 +700,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         }
         // Seteo la entidad en el campo que corresponda
         decodificarEntidadInformacion(idEntidad, codigoTipoEntidad, notificacionTarea);
-        return genericDao.save(EXTTareaNotificacion.class, notificacionTarea).getId();
-
+        EXTTareaNotificacion tarea = genericDao.save(EXTTareaNotificacion.class, notificacionTarea);
+        return tarea.getId();
     }
 
     private void decodificarEntidadInformacion(Long idEntidad, String codigoTipoEntidad, TareaNotificacion tareaNotificacion) {
@@ -1283,5 +1283,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         // saveOrUpdate(tarea);
     }
 
-	
+	public EXTTareaNotificacion getTareaNoficiacionByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTTareaNotificacion tareaNotif = genericDao.get(EXTTareaNotificacion.class, filtro);
+		return tareaNotif;
+	}
+    
 }

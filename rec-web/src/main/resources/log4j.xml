@@ -79,12 +79,17 @@
         <appender-ref ref="console" />
         <appender-ref ref="file" />
     </logger>
-     -->
     <logger name="org.springframework.security.ldap" additivity="false">
         <level value="warn"/> 
         <appender-ref ref="console" />
         <appender-ref ref="file" />
     </logger>
+    <logger name="org.springframework.integration" additivity="false">
+        <level value="warn"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </logger>
+    -->
 
 	<!-- Hibernate -->
     <logger name="org.hibernate.event.def.AbstractFlushingEventListener" additivity="false">
@@ -137,19 +142,11 @@
      
      
      <!-- Descomentar para Ver las SQL que ejecuta la aplicacion, el Thread, la session y la transaccion en al que se ejecutan-->
-     <!-- 
     <logger name="es.capgemini.pfs.utils.hibernate.HibernateEntitySqlInterceptor" additivity="false">
         <level value="debug"/>
         <appender-ref ref="file" />
         <appender-ref ref="console" />
     </logger>
-    
-    <logger name="es.capgemini.pfs.utils.hibernate.HibernateMasterSqlInterceptor" additivity="false">
-        <level value="debug"/>
-        <appender-ref ref="file" />
-        <appender-ref ref="console" />
-    </logger>
-    -->
    
     <!-- root -->
     <root>

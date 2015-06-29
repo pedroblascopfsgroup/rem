@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -26,6 +27,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
+import es.capgemini.pfs.integration.Guid;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.pfsgroup.commons.utils.Checks;
@@ -129,7 +131,17 @@ public class EXTAsunto extends Asunto {
 	
 	@Column(name = "ERROR_ENVIO_CDD")
     private Integer errorEnvioCDD;
-	
+
+	@Column(name="SYS_GUID")
+	private String guid;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 	
 	//private Boolean esMultigestor;
 

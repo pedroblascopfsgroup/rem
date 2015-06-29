@@ -18,6 +18,9 @@ public class EXTAcuerdo extends Acuerdo {
 	@Column(name = "ACU_FECHA_LIMITE")
 	private Date fechaLimite;	
 
+	@Column(name = "SYS_GUID")
+	private String guid;
+	
 	public String getMotivo() {
 		return motivo;
 	}
@@ -34,6 +37,12 @@ public class EXTAcuerdo extends Acuerdo {
 		this.fechaLimite = fechaLimite;
 	}
 
-	
-	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
 }

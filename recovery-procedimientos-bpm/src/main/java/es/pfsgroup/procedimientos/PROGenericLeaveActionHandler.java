@@ -2,12 +2,13 @@ package es.pfsgroup.procedimientos;
 
 import org.apache.commons.lang.StringUtils;
 import org.jbpm.graph.exe.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.BPMContants;
-import es.capgemini.pfs.bpm.generic.JBPMLeaveEventHandler;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.integration.bpm.IntegracionBpmService;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
@@ -19,6 +20,9 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 	private static final long serialVersionUID = 4727308329810928607L;
 	private String city;
 
+	@Autowired
+	IntegracionBpmService bpmIntegrationService;
+	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
 		printInfoNode("Sale nodo", executionContext);
@@ -33,7 +37,8 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 			((PROJBPMLeaveEventHandler) delegateSpecificClass).onLeave(executionContext);
 		}
 
-		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(delegateTransitionClass)) {
+		String transicion = getTransitionName(executionContext);
+		if (!transicion.equals(BPMContants.TRANSICION_VUELTA_ATRAS)) {
 			if (debeDestruirTareaProcedimiento(executionContext)) {
 				if (isDecisionNode(executionContext)) {
 					String nombreDecision = getNombreNodo(executionContext) + "Decision";
@@ -46,6 +51,8 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 				finalizarTarea(executionContext);
 				finalizarOperacionesAsociadas(executionContext);
 			}
+		} else {
+			vueltaAtras(executionContext);
 		}
 
 		// Borramos las posibles variables de listado de tareas del nodo
@@ -57,6 +64,11 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 
 	}
 
+	protected void vueltaAtras(ExecutionContext executionContext) {
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+		bpmIntegrationService.notificaCancelarTarea(tareaExterna);
+	}
+	
 	/**
 	 * Finaliza las operaciones asociadas a la tarea (prorrogas, ...).
 	 */
@@ -118,7 +130,8 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 		// La seteamos por si acaso avanza sin haber despertado el BPM
 		tareaExterna.setDetenida(false);
 		proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
-
+		bpmIntegrationService.notificaFinTarea(tareaExterna, transicion);
+		
 		logger.debug("\tCaducamos la tarea: " + getNombreNodo(executionContext));
 	}
 

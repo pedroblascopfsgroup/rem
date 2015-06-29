@@ -2,6 +2,7 @@ package es.pfsgroup.recovery.ext.impl.procedimiento;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
@@ -15,6 +16,8 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTUsuarioRelacionadoInfo;
@@ -149,4 +152,26 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		return null;
 	}
     
+	public MEJProcedimiento getProcedimientoByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		MEJProcedimiento procedimiento = genericDao.get(MEJProcedimiento.class, filtro);
+		return procedimiento;
+	}
+
+	public MEJProcedimiento getProcedimientoById(Long id) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		MEJProcedimiento mejProc = genericDao.get(MEJProcedimiento.class, filter);
+		return mejProc;
+	}
+	
+	public MEJProcedimiento prepareGuid(Procedimiento procedimiento) {
+		MEJProcedimiento mejProc = getProcedimientoById(procedimiento.getId());
+		if (Checks.esNulo(mejProc.getGuid())) {
+			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
+			mejProc.setGuid(UUID.randomUUID().toString());
+			extProcedimientoDao.saveOrUpdate(mejProc);
+		}
+		return mejProc;
+	}
+	
 }

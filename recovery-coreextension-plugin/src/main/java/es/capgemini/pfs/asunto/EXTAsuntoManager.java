@@ -1964,4 +1964,16 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 	}
 	
+	public EXTAsunto getAsuntoByGuid(String guid) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+
+	public EXTAsunto getAsuntoById(Long id) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "id", id);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+	
 }

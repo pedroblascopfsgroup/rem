@@ -15,8 +15,8 @@ INSERT INTO dd_tr_tipos_resolucion
 
 Insert into BPM_DD_TIN_TIPO_INPUT (BPM_DD_TIN_ID,BPM_DD_TIN_CODIGO,BPM_DD_TIN_DESCRIPCION,
 BPM_DD_TIN_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR, BORRADO,BPM_DD_TIN_CLASE) 
-SELECT S_BPM_DD_TIN_TIPO_INPUT.nextVal,'I_PR_CON_ESC_SELL_ACR','Input Demanda Sellada',
-'Input Demanda Sellada', 0, 'MOD_PROC', sysdate, '0',null from dual;
+SELECT S_BPM_DD_TIN_TIPO_INPUT.nextVal,'I_PR_CON_ESC_SELL_ACR','Input escrito sellado acreditando consignacion',
+'Input escrito sellado acreditando consignacion', 0, 'MOD_PROC', sysdate, '0',null from dual;
 
 -- Insertamos en BPM_TPI_TIPO_PROC_INPUT para crear la relación entre inputs y los nodos del procedimiento
 Insert into BPM_TPI_TIPO_PROC_INPUT (BPM_TPI_ID, DD_TPO_ID, 

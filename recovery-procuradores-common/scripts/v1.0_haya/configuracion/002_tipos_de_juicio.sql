@@ -73,12 +73,11 @@ INSERT into DD_TJ_TIPO_JUICIO
  VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'SDA', 'T. Subsanación decreto adjudicación - HAYA', 'T. Subsanación decreto adjudicación - HAYA', 0, 'MOD_PROC', 
  			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H052'));
  			
-
  			
 -- T.CONSIGNACIÓN --
 INSERT into DD_TJ_TIPO_JUICIO
    (DD_TJ_ID, DD_TJ_CODIGO, DD_TJ_DESCRIPCION, DD_TJ_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TPO_ID)
- VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'CON', 'T. Consignación - HAYA', 'T. Subsanación decreto adjudicación - HAYA', 0, 'MOD_PROC', 
+ VALUES (S_DD_TJ_TIPO_JUICIO.NEXTVAL, 'CON', 'T. Consignación - HAYA', 'T. Consignación - HAYA', 0, 'MOD_PROC', 
  			SYSDATE, 0, (SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento dd WHERE dd.dd_tpo_codigo = 'H064'));
 
  			

@@ -38,7 +38,7 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-DBMS_OUTPUT.PUT_LINE('[INFO] Bloque scripts para la inclusión de un nuevo tipo del histórico de operaciones - Notificación - (3/4)');
+DBMS_OUTPUT.PUT_LINE('[INFO] Bloque scripts para la inclusión de un nuevo tipo del histórico de operaciones - Notificación - (6/7)');
 DBMS_OUTPUT.PUT('[INFO] Modificación de la vista '||V_VIEWNAME||'...');
 
 --/**

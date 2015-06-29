@@ -141,11 +141,11 @@ var validacionCDD;
 		,disabled : true
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-        	if(validacionCDD != '') {
+        	if(validacionCDD) {
 	        	Ext.Msg.show({
 				   title:'Aviso',
-				   msg: validacionCDD,
-				   buttons: Ext.Msg.OK,
+				   msg: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEditarInfoCierre.aviso" text="**No se puede Editar informaci&oacute;n cierre mientras no se haya celebrado la subasta" />',
+				   buttons: Ext.Msg.OK
 				});
         	}else{
 	        	//la plantilla se elije en el controller

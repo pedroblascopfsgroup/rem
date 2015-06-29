@@ -235,7 +235,7 @@ UPDATE cnt_contratos c SET (
              ,OFI_ID
              ,ZON_ID
              ,CNT_FECHA_CREACION
-             --AQUI EMPIEZAN LOS CAMPOS PARA EL PROYECTO HAYAIA (V10):
+             --AQUI EMPIEZAN LOS CAMPOS PARA EL PROYECTO HAYA (V10):
                ,CNT_FECHA_DATO,
                 DD_APO_ID,
                 CNT_IBAN,
@@ -299,7 +299,7 @@ UPDATE cnt_contratos c SET (
                     AND Z.OFI_CODIGO_SUBSECCION_OFICINA = tc.TMP_CNT_COD_SUBSC_OFI_CNTBLE), 9999) AS OFI_ID
                ,NVL((select max(z.zon_id) from zon_zonificacion z, ofi_oficinas o where o.OFI_CODIGO = tc.TMP_CNT_COD_OFICINA and z.ofi_id = o.ofi_id), 12501) AS ZON_ID
                ,tc.TMP_CNT_FECHA_CONSTITUCION AS CNT_FECHA_CREACION,
-               --AQUI EMPIEZAN LOS CAMPOS PARA EL PROYECTO HAYAIA (V10):
+               --AQUI EMPIEZAN LOS CAMPOS PARA EL PROYECTO HAYA (V10):
                 tc.TMP_CNT_FECHA_DATO,
                 (SELECT DD_APO_ID FROM DD_APO_APLICATIVO_ORIGEN WHERE TRIM(UPPER(DD_APO_CODIGO)) = TRIM(UPPER(tc.TMP_CNT_APLICATIVO_ORIGEN))) AS DD_APO_ID,
                 tc.TMP_CNT_IBAN_CNT AS CNT_IBAN,
@@ -376,7 +376,7 @@ UPDATE cnt_contratos c SET (
                     --MOV_EXTRA_5,
                     --MOV_EXTRA_6
                                         
-                    --AQUI EMPIEZAN LOS CAMPOS DE HAYAIA (V10)
+                    --AQUI EMPIEZAN LOS CAMPOS DE HAYA (V10)
                     MOV_FECHA_DATO,
                     MOV_IMPUESTOS,
                     MOV_ENTREGAS_A_CUENTA,
@@ -426,7 +426,7 @@ UPDATE cnt_contratos c SET (
                     -- MOV_EXTRA_5,
                     --TMP_CNT_EXTRA_6   
                     
-                    --AQUI EMPIEZAN LOS CAMPOS DE HAYAIA (V10)
+                    --AQUI EMPIEZAN LOS CAMPOS DE HAYA (V10)
                     A.TMP_CNT_FECHA_DATO AS MOV_FECHA_DATO,
                     NVL(A.TMP_CNT_IMPUESTOS,0) AS MOV_IMPUESTOS,
                     NVL(A.TMP_CNT_ENTREGAS,0) AS  MOV_ENTREGAS_A_CUENTA,
@@ -677,7 +677,7 @@ UPDATE cnt_contratos c SET (
 																				 ) 
 																			  );
 			
-				   SELECT ZON_ID into n_ZON_PID FROM ZON_ZONIFICACION WHERE ZON_DESCRIPCION = 'CENTRO EMPRESA HAYAIA';
+				   SELECT ZON_ID into n_ZON_PID FROM ZON_ZONIFICACION WHERE ZON_DESCRIPCION = 'CENTRO EMPRESA HAYA';
 			
 				  v_SQLInsert := 'Insert into ZON_ZONIFICACION (
 											  ZON_ID, ZON_COD, ZON_PID,
@@ -1070,7 +1070,7 @@ UPDATE cnt_contratos c SET (
     ]]>
     </entry>
 
-	<!-- ESTA VALIDACION NO ENTRA PARA HAYAIA (V10) -->
+	<!-- ESTA VALIDACION NO ENTRA PARA HAYA (V10) -->
 	<entry key="cnt-21.extra3">
     <![CDATA[
       SELECT tmp_cnt.TMP_CNT_EXTRA_3_CODIGO AS ERROR_FIELD,
@@ -1082,7 +1082,7 @@ UPDATE cnt_contratos c SET (
     ]]>
     </entry>
 
-	<!-- ESTA VALIDACION NO ENTRA PARA HAYAIA (V10) -->
+	<!-- ESTA VALIDACION NO ENTRA PARA HAYA (V10) -->
 	<entry key="cnt-22.extra4">
     <![CDATA[
           SELECT tmp_cnt.TMP_CNT_EXTRA_4_CODIGO AS ERROR_FIELD,
@@ -1119,7 +1119,7 @@ UPDATE cnt_contratos c SET (
             )
     ]]>
     </entry>
-<!-- A PARTIR DE AQUI, LAS NUEVAS VALIDACIONES PARA HAYAIA(V10): -->	
+<!-- A PARTIR DE AQUI, LAS NUEVAS VALIDACIONES PARA HAYA(V10): -->	
 	<entry key="cnt-24.insertAplicativoOrigen">
 		<![CDATA[
 		INSERT INTO DD_APO_APLICATIVO_ORIGEN

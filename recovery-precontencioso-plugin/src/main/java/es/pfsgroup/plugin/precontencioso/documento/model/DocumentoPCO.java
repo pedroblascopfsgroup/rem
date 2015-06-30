@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.documento.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -62,7 +63,23 @@ public class DocumentoPCO implements Serializable, Auditable {
 
 	@Column(name = "PCO_DOC_PDD_ADJUNTO")
 	private Boolean adjuntado;
+	
+	@Column(name = "PCO_DOC_PDD_PROTOCOLO")
+	private String protocolo;
+	
+	@Column(name = "PCO_DOC_PDD_NOTARIO")
+	private String notario;
 
+	@Column(name = "PCO_DOC_PDD_FINCA")
+	private String finca;
+	
+	@Column(name = "PCO_DOC_PDD_FECHA_ESCRIT")
+	private Date fechaEscritura;
+		
+	@Column(name = "PCO_DOC_PDD_OBSERVACIONES")
+	private String observaciones;
+
+	
 	@OneToMany(mappedBy = "documento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<SolicitudDocumentoPCO> solicitudes;
@@ -115,6 +132,46 @@ public class DocumentoPCO implements Serializable, Auditable {
 
 	public void setAdjuntado(Boolean adjuntado) {
 		this.adjuntado = adjuntado;
+	}
+
+	public String getProtocolo() {
+		return protocolo;
+	}
+
+	public void setProtocolo(String protocolo) {
+		this.protocolo = protocolo;
+	}
+
+	public String getNotario() {
+		return notario;
+	}
+
+	public void setNotario(String notario) {
+		this.notario = notario;
+	}
+
+	public String getFinca() {
+		return finca;
+	}
+
+	public void setFinca(String finca) {
+		this.finca = finca;
+	}
+
+	public Date getFechaEscritura() {
+		return fechaEscritura;
+	}
+
+	public void setFechaEscritura(Date fechaEscritura) {
+		this.fechaEscritura = fechaEscritura;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 
 	public Integer getVersion() {

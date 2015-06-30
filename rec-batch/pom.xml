@@ -431,16 +431,6 @@
 		</dependency>
 		<dependency>
 			<groupId>batch.libraries</groupId>
-			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-			<version>STABLE</version>
-		</dependency>
-		<dependency>
-			<groupId>batch.libraries</groupId>
-			<artifactId>com.springsource.org.aspectj.weaver</artifactId>
-			<version>STABLE</version>
-		</dependency>
-		<dependency>
-			<groupId>batch.libraries</groupId>
 			<artifactId>com.springsource.org.codehaus.groovy</artifactId>
 			<version>STABLE</version>
 		</dependency>
@@ -897,10 +887,43 @@
 		</plugins>
 	</build>
 	<profiles>
+		<!-- Perfil por defecto -->
+		<profile>
+			<id>default</id>
+			<activation>
+            	<activeByDefault>true</activeByDefault>
+        	</activation>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+			</dependencies>
+		</profile>
 		<!-- PERFIL BANKIA PARA EL BATCH -->
 		<profile>
 			<id>bankia</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
@@ -911,6 +934,7 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+
 			</dependencies>
 			<build>
 				<plugins>
@@ -948,6 +972,18 @@
 		<profile>
 			<id>haya</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
@@ -1008,10 +1044,20 @@
 		<!-- PERFIL CAJAMAR PARA EL BATCH -->
 		<profile>
 			<id>cajamar</id>
-			<!-- Sin dependencias adicionales
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+    				<groupId>org.aspectj</groupId>
+    				<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+    				<version>1.7.2.RELEASE</version>
+				</dependency>
+				<dependency>
+    				<groupId>org.aspectj</groupId>
+    				<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+    				<version>1.7.2.RELEASE</version>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 			</dependencies>
-			-->
 			<build>
 				<plugins>
 					<plugin>

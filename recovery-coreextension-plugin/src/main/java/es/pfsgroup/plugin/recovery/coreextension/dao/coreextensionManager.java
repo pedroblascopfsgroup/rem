@@ -359,6 +359,12 @@ public class coreextensionManager implements coreextensionApi {
 	public List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacion(String codigoActuacion) {
 		return tipoProcedimientoDao.getListTipoProcedimientosPorTipoActuacion(codigoActuacion);		
 	}
+	
+	@Override
+	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_MENOS_TIPO_ACTUACION)
+	public List<TipoProcedimiento> getListTipoProcedimientosMenosTipoActuacion(String codigoActuacion) {
+		return tipoProcedimientoDao.getListTipoProcedimientosMenosTipoActuacion(codigoActuacion);		
+	}
 
 
 	/* (non-Javadoc)

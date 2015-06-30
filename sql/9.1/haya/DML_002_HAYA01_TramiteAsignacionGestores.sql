@@ -104,8 +104,8 @@ DECLARE
       T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ 'H067',
         /*TAP_CODIGO...................:*/ 'H067_seleccionarProcedimiento',
-        /*TAP_VIEW.....................:*/ null,
-        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_VIEW.....................:*/ 'plugin/procedimientos-bpmHaya-plugin/tramiteAsignacionGestores/seleccionarProcedimiento',
+        /*TAP_SCRIPT_VALIDACION........:*/ 'asuntoConLetrado() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe asignar un letrado al asunto desde la pesta&ntilde;a de gestores del asunto.</div>'' ',
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
         /*TAP_SCRIPT_DECISION..........:*/ null,
         /*DD_TPO_ID_BPM(FK)............:*/ null,
@@ -330,10 +330,10 @@ BEGIN
                              || REPLACE(TRIM(V_TMP_TIPO_TAP(16)),'''','''''') || ''',''' 
                              || REPLACE(TRIM(V_TMP_TIPO_TAP(17)),'''','''''') || ''',''' 
                              || REPLACE(TRIM(V_TMP_TIPO_TAP(18)),'''','''''') || ''',' ||
-                        '(SELECT DD_TGE_ID FROM ' || V_ESQUEMA_MASTER || '.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(19)) || '''),' || 
-                        '(SELECT DD_STA_ID FROM ' || V_ESQUEMA_MASTER || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || '''),' || 
+                        '(SELECT DD_TGE_ID FROM ' || V_ESQUEMA_M || '.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(19)) || '''),' || 
+                        '(SELECT DD_STA_ID FROM ' || V_ESQUEMA_M || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || '''),' || 
                         '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(21)),'''','''''') || ''',' || 
-                        '(SELECT DD_TGE_ID FROM ' || V_ESQUEMA_MASTER || '.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(22)) || '''),' || 
+                        '(SELECT DD_TGE_ID FROM ' || V_ESQUEMA_M || '.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(22)) || '''),' || 
                         '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(23)),'''','''''') 
                         || ''' FROM DUAL';
 

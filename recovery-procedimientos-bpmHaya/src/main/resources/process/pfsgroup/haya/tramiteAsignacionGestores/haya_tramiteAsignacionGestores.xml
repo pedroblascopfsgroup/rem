@@ -31,7 +31,7 @@
 
 	<node name="H067_transicionProcedimiento">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-         	<targetBean>genericUserDecisionActionHandler</targetBean>
+         	<targetBean>asignacionHayaEnterActionHandler</targetBean>
       	</action>	
       	<transition to="Fin" name="Fin"></transition>
 	</node>

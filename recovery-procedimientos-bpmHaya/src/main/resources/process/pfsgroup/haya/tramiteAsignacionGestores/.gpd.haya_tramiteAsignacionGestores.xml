@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteAsignacionGestores" width="754" height="499">
+<root-container name="haya_tramiteAsignacionGestores" width="869" height="440">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

@@ -41,17 +41,17 @@ public class BurofaxPCO implements Serializable, Auditable {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "PCO_BUR_BUROFAX_PRC_ID")
+	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private ProcedimientoPCO procedimientoPCO;
 
 	@ManyToOne
-	@JoinColumn(name = "PCO_BUR_BUROFAX_PER_ID")
+	@JoinColumn(name = "PER_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private Persona demandado;
 
 	@ManyToOne
-	@JoinColumn(name = "PCO_BUR_BUROFAX_ESTADO_ID")
+	@JoinColumn(name = "DD_PCO_BFE_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDEstadoBurofaxPCO estadoBurofax;
 

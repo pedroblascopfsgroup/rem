@@ -41,7 +41,7 @@ public class DocumentoPCO implements Serializable, Auditable {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "PRC_ID")
+	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private ProcedimientoPCO procedimientoPCO;
 

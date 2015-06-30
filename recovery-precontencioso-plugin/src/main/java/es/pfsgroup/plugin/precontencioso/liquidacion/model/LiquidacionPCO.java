@@ -37,12 +37,12 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "PCO_LIQ_PRC_ID")
+	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private ProcedimientoPCO procedimientoPCO;
 
 	@ManyToOne
-	@JoinColumn(name = "PCO_LIQ_ESTADO_ID")
+	@JoinColumn(name = "DD_PCO_LIQ_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDEstadoLiquidacionPCO estadoLiquidacion;
 

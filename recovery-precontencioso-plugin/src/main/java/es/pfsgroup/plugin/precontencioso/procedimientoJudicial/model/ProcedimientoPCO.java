@@ -45,17 +45,17 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@JoinColumn(name = "PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private Procedimiento procedimiento;
 
 	@ManyToOne
-	@JoinColumn(name = "PCO_PRC_PREPARACION_ID")
+	@JoinColumn(name = "DD_PCO_PEP_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDEstadoPreparacionPCO estadoPreparacion;
 
 	@ManyToOne
-	@JoinColumn(name = "PCO_PRC_PTP_ID")
+	@JoinColumn(name = "DD_PCO_PTP_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDTipoPreparacionPCO tipoPreparacion;
 

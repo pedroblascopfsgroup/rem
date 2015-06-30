@@ -113,6 +113,11 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<BurofaxPCO> burofaxes;
 
+	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc;
+	
 	@Version
 	private Integer version;
 
@@ -293,5 +298,14 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setBurofaxes(List<BurofaxPCO> burofaxes) {
 		this.burofaxes = burofaxes;
+	}
+
+	public List<HistoricoEstadoProcedimientoPCO> getEstadosPreparacionProc() {
+		return estadosPreparacionProc;
+	}
+
+	public void setEstadosPreparacionProc(
+			List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc) {
+		this.estadosPreparacionProc = estadosPreparacionProc;
 	}
 }

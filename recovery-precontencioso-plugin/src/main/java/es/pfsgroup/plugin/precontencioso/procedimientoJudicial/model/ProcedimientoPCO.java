@@ -50,11 +50,6 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Procedimiento procedimiento;
 
 	@ManyToOne
-	@JoinColumn(name = "DD_PCO_PEP_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private DDEstadoPreparacionPCO estadoPreparacion;
-
-	@ManyToOne
 	@JoinColumn(name = "DD_PCO_PTP_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDTipoPreparacionPCO tipoPreparacion;
@@ -99,25 +94,25 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Date fechaParalizacion;
 
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<DocumentoPCO> documentos;
 
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<LiquidacionPCO> liquidaciones;
 
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<BurofaxPCO> burofaxes;
 
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "PCO_PRC_PRC_ID")
+	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc;
-	
+
 	@Version
 	private Integer version;
 
@@ -138,14 +133,6 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setProcedimiento(Procedimiento procedimiento) {
 		this.procedimiento = procedimiento;
-	}
-
-	public DDEstadoPreparacionPCO getEstadoPreparacion() {
-		return estadoPreparacion;
-	}
-
-	public void setEstadoPreparacion(DDEstadoPreparacionPCO estadoPreparacion) {
-		this.estadoPreparacion = estadoPreparacion;
 	}
 
 	public DDTipoPreparacionPCO getTipoPreparacion() {
@@ -304,8 +291,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		return estadosPreparacionProc;
 	}
 
-	public void setEstadosPreparacionProc(
-			List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc) {
+	public void setEstadosPreparacionProc(List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc) {
 		this.estadosPreparacionProc = estadosPreparacionProc;
 	}
 }

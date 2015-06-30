@@ -35,6 +35,9 @@ public class DDResultadoSolicitudPCO implements Dictionary, Auditable {
 	@Column(name = "DD_PCO_DSR_DESCRIPCION_LARGA")
 	private String descripcionLarga;
 
+	@Column(name = "DD_PCO_DSR_RESUL_OK")
+	private Boolean resultadoOK;
+
 	@Version
 	private Integer version;
 
@@ -71,6 +74,14 @@ public class DDResultadoSolicitudPCO implements Dictionary, Auditable {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+
+	public Boolean getResultadoOK() {
+		return resultadoOK;
+	}
+
+	public void setResultadoOK(Boolean resultadoOK) {
+		this.resultadoOK = resultadoOK;
 	}
 
 	public Integer getVersion() {

@@ -2006,6 +2006,10 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 				}
 			}
 			
+			Double deudaTotal = acuerdo.getExpediente().getVolumenRiesgo();		
+			
+			acuerdo.setDeudaTotal(Checks.esNulo(deudaTotal) ? 0D : deudaTotal);
+			
 			Long idAcuerdo = acuerdoDao.save(acuerdo);
 			
 			if (!Checks.esNulo(dto.getContratos())){

@@ -471,7 +471,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         hql.append(" and pex.persona.id = ? ");
         hql.append(" and e.estadoExpediente.codigo in ( ?, ?, ?) ");
         hql.append(" and e.arquetipo.itinerario.dDtipoItinerario.codigo IN (?, ?) ");
-
+        // Filtramos los expedientes de recobro
+        hql.append(" and (not exists (select exr.id from ExpedienteRecobro exr where e.id = exr.id)) ");
+        
         List<Expediente> expedientes = getHibernateTemplate().find(
                 hql.toString(),
                 new Object[] { idPersona, DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO,

@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.procedimientoJudicial.dao;
+package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;

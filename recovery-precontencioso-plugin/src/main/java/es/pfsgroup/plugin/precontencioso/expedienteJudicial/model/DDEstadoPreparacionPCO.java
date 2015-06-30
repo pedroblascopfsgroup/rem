@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.procedimientoJudicial.model;
+package es.pfsgroup.plugin.precontencioso.expedienteJudicial.model;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;

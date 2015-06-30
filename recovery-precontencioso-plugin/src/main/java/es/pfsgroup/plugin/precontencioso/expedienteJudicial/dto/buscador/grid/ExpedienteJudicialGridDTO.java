@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.procedimientoJudicial.dto.buscador.grid;
+package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid;
 
 import java.util.Date;
 

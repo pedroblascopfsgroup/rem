@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.procedimientoJudicial.dto.buscador.filtro;
+package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.filtro;
 
 import es.capgemini.devon.dto.WebDto;
 

@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.procedimientoJudicial.model;
+package es.pfsgroup.plugin.precontencioso.expedienteJudicial.model;
 
 import java.io.Serializable;
 import java.util.Date;

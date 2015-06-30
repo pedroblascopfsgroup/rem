@@ -35,6 +35,9 @@ public class DDTipoBurofaxPCO implements Dictionary, Auditable {
 	@Column(name = "DD_PCO_BFT_DESCRIPCION_LARGA")
 	private String descripcionLarga;
 
+	@Column(name = "DD_PCO_BFT_PLANTILLA")
+	private String plantilla;
+
 	@Version
 	private Integer version;
 
@@ -87,5 +90,13 @@ public class DDTipoBurofaxPCO implements Dictionary, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getPlantilla() {
+		return plantilla;
+	}
+
+	public void setPlantilla(String plantilla) {
+		this.plantilla = plantilla;
 	}
 }

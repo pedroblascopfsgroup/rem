@@ -186,10 +186,11 @@ public class InformeValidacionCDDBean {
 					bienes.add(bienLoteDTO.getIdBien());
 				}
 			}
-		}else{
+		}else{/*
 			for(Bien bien : loteSubasta.getBienes()) {
 				bienes.add(bien.getId());
-			}
+			}*/
+			bienes.add(Long.valueOf(1));
 		}
 		for(Long idBien : bienes) {
 			nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(idBien);

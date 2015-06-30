@@ -637,7 +637,6 @@ public class SubastaController {
 				fila.add("VALOR TASACIÓN;Blue;Text");
 				fila.add("FECHA TASACIÓN;Blue;Text");
 				fila.add("VALOR JUDICIAL;Blue;Text");
-				fila.add("DATOS LOCALIZACIÓN;Blue;Text");
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
 				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
 				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
@@ -714,13 +713,6 @@ public class SubastaController {
 						fila.add("******;Red;Text");
 					}
 					
-					if(!Checks.esNulo(infoBienes.getDatosLocalizacion())){
-						fila.add(infoBienes.getDatosLocalizacion().concat(";White;Text"));
-					}
-					else
-					{
-						fila.add("******;Red;Text");
-					}
 					
 					if(!Checks.esNulo(infoBienes.getViviendaHabitual())){
 						fila.add(infoBienes.getViviendaHabitual().concat(";White;Text"));

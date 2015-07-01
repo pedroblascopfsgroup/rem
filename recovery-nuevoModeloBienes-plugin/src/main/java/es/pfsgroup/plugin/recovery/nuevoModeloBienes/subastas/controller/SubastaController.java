@@ -1,8 +1,12 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,6 +65,12 @@ public class SubastaController {
 	private static final String LOTES_SUBASTA_BUSCADOR_JSON = "plugin/nuevoModeloBienes/subastas/resultadoLotesSubastaJSON"; 
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
+	
+	private static final String DEVON_PROPERTIES = "devon.properties";
+	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
+	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
+	private static final String DEVON_HOME = "DEVON_HOME";
+	private static final String PROYECTO_HAYA = "HAYA";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -332,9 +342,19 @@ public class SubastaController {
 			dto.setCodigoJuzgado(procedimiento.getJuzgado().getCodigo());
 		}
 		dto.setPrincipalDemanda(procedimiento.getSaldoRecuperacion());
-		ValorNodoTarea costasLetrado = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasLetrado");
-		ValorNodoTarea costasProcurador = subastaApi.obtenValorNodoPrc(procedimiento, "H002_SenyalamientoSubasta", "costasProcurador");
-		ValorNodoTarea conPostores = subastaApi.obtenValorNodoPrc(procedimiento, "H002_CelebracionSubasta", "comboPostores");
+		
+		String tareaSenyalamientoSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_SenyalamientoSubasta";
+		String tareaCelebracionSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_CelebracionSubasta";
+		
+		ValorNodoTarea costasLetrado = subastaApi.obtenValorNodoPrc(procedimiento, tareaSenyalamientoSubasta, "costasLetrado");
+		ValorNodoTarea costasProcurador = subastaApi.obtenValorNodoPrc(procedimiento, tareaSenyalamientoSubasta, "costasProcurador");
+		
+		ValorNodoTarea conPostores = null;
+		if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
+			conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, "comboPostores");	
+		}else{
+			conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, "comboCesion");
+		}
 		if(!Checks.esNulo(costasLetrado)) {
 			dto.setCostasLetrado(costasLetrado.getValor());
 			dto.setIdValorCostasLetrado(costasLetrado.getIdTareaNodoValor());	
@@ -481,7 +501,7 @@ public class SubastaController {
 		cabeceras.add("DEUDA");
 		cabeceras.add("COSTAS LETRADO");
 		cabeceras.add("COSTAS PROCURADOR");
-		cabeceras.add("F. SEÑALAMIENTO");
+		cabeceras.add("F. SEÃ‘ALAMIENTO");
 		cabeceras.add("CON POSTORES");
 		
 		
@@ -609,19 +629,21 @@ public class SubastaController {
 					
 				fila=new ArrayList<String>();
 				fila.add(" ; ;Text");
-				fila.add("Nº FINCA;Blue;Text");
-				fila.add("Nº ACTIVO;Blue;Text");
+				fila.add("NÂº FINCA;Blue;Text");
+				fila.add("NÂº ACTIVO;Blue;Text");
 				fila.add("REFERENCIA CATASTRAL;Blue;Text");
-				fila.add("DESCRIPCIÓN;Blue;Text");
-				fila.add("Nº REGISTRO;Blue;Text");
-				fila.add("VALOR TASACIÓN;Blue;Text");
-				fila.add("FECHA TASACIÓN;Blue;Text");
+				fila.add("DESCRIPCIÃ“N;Blue;Text");
+				fila.add("NÂº REGISTRO;Blue;Text");
+				fila.add("VALOR TASACIÃ“N;Blue;Text");
+				fila.add("FECHA TASACIÃ“N;Blue;Text");
 				fila.add("VALOR JUDICIAL;Blue;Text");
-				fila.add("DATOS LOCALIZACIÓN;Blue;Text");
 				fila.add("VIVIENDA HABITUAL;Blue;Text");
-				fila.add("RESULTADO ADJUDICACIÓN;Blue;Text");
-				fila.add("IMPORTE ADJUDICACIÓN;Blue;Text");
-				fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
+				fila.add("RESULTADO ADJUDICACIÃ“N;Blue;Text");
+				fila.add("IMPORTE ADJUDICACIÃ“N;Blue;Text");
+				//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
+				if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
+					fila.add("F. TESTIMONIO ADJ SAREB;Blue;Text");
+				}
 				
 				valores.add(fila);
 				
@@ -691,13 +713,6 @@ public class SubastaController {
 						fila.add("******;Red;Text");
 					}
 					
-					if(!Checks.esNulo(infoBienes.getDatosLocalizacion())){
-						fila.add(infoBienes.getDatosLocalizacion().concat(";White;Number"));
-					}
-					else
-					{
-						fila.add("******;Red;Text");
-					}
 					
 					if(!Checks.esNulo(infoBienes.getViviendaHabitual())){
 						fila.add(infoBienes.getViviendaHabitual().concat(";White;Text"));
@@ -722,13 +737,15 @@ public class SubastaController {
 					{
 						fila.add("******;Red;Text");
 					}
-					
-					if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
-						fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
-					}
-					else
-					{
-						fila.add("******;Red;Text");
+					//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
+					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
+						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
+							fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
+						}
+						else
+						{
+							fila.add("******;Red;Text");
+						}
 					}
 					
 					valores.add(fila);
@@ -783,6 +800,45 @@ public class SubastaController {
 	    
         model.put("fileItem",excelFileItem);
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
+	}
+	
+	private String cargarProyectoProperties() {
+		String proyecto = "";	
+		Properties appProperties = cargarProperties(DEVON_PROPERTIES);
+		if (appProperties == null) {
+			System.out.println("No puedo consultar devon.properties");		
+		} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
+			proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
+		} else {
+			System.out.println("UVEM no instalado");
+		}
+		return proyecto;
+	}
+	
+	private Properties cargarProperties(String nombreProps) {
+		InputStream input = null;
+		Properties prop = new Properties();
+		
+		String devonHome = DEVON_HOME_BANKIA_HAYA;
+		if (System.getenv(DEVON_HOME) != null) {
+			devonHome = System.getenv(DEVON_HOME);
+		}
+		
+		try {
+			input = new FileInputStream("/" + devonHome + "/" + nombreProps);
+			prop.load(input);
+		} catch (IOException ex) {
+			System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
+																																																																																			}
+																																																																																		}
+		}
+		return prop;
 	}
 	
 }

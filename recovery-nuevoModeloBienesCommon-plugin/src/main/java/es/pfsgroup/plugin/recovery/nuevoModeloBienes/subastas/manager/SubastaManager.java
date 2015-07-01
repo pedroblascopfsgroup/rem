@@ -818,7 +818,12 @@ public class SubastaManager implements SubastaApi {
 	public Subasta getSubasta(Long idSubasta) {		
 		return subastaDao.get(idSubasta);
 	}
-
+	
+	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE_DEUDA)
+	@Transactional(readOnly = false)
+	public void guardaBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda autoCierreDeuda) {
+		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
+	}
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)
@@ -1098,17 +1103,9 @@ public class SubastaManager implements SubastaApi {
 				subasta.setFechaSenyalamiento(DateFormat.toDate(dto.getFechaSenyalamiento()));
 			} catch (ParseException e) {
 			}
-			
-			boolean existeTareaSenyalamiento = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_SenyalamientoSubasta");
-			boolean existeTareaCelebracion = tareaExisteYFinalizada(subasta.getProcedimiento(), "H002_CelebracionSubasta");
-			// Si existe se actualizan los campos
-			if(existeTareaSenyalamiento) {
-				actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
-				actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
-			}
-			if(existeTareaCelebracion) {
-				actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
-			}
+			actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
+			actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
+			actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
 			subastaDao.save(subasta);
 		}
 		

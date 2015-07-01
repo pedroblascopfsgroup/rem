@@ -218,7 +218,6 @@ var anyadirFechaFaltante = function(response){
 	});	
 
 	var getPlaza = function (){
-		debugger;
 		if (codPlaza!=''){
 			Ext.Ajax.request({
 					url: page.resolveUrl('plugin/procedimientos/paginaDePlaza')
@@ -260,7 +259,6 @@ var anyadirFechaFaltante = function(response){
 		,reader: new Ext.data.JsonReader({root : 'juzgados'} , Juzgado)
 	});
 	comboPlaza.on('select', function(combo) {
-		debugger;
 		codPlaza = combo.getValue();
 		getPlaza();
 		comboJuzgado.reset();

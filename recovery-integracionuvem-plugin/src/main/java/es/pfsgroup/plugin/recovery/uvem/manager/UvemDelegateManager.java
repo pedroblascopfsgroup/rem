@@ -170,7 +170,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
 	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
-	public Integer solicitarNumeroActivoConRespuesta(Long bienId){
+	public String solicitarNumeroActivoConRespuesta(Long bienId){
 		return solicitarNumeroActivoRespuesta(bienId, null);
 	}
 
@@ -203,7 +203,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
     	
 	};
 	
-	private Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
+	private String solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {
 			
@@ -417,7 +417,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				copaw3 = locActual.getPais() != null ? locActual.getPais().getDescripcion() : "";
 				
 				novias = locActual.getNombreVia() != null ? locActual.getNombreVia() : "";
-				novias += locActual.getNumeroDomicilio() != null ? locActual.getNumeroDomicilio() : "";
+				novias += locActual.getNumeroDomicilio() != null ? " " + locActual.getNumeroDomicilio() : "";
 				
 			}
 
@@ -681,10 +681,10 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			if( numeroActivo!=null && numeroActivo!=0 ){
 				bien.setNumeroActivo(String.valueOf(numeroActivo));
 				genericDao.update(NMBBien.class, bien);
-				return 1;
+				return "1";
 			}
 			else{
-				return -1;
+				return "-1";
 			}
 		
 		} catch (Exception e) {
@@ -709,9 +709,10 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				System.out.println("STACKTRACE: " + wi.getStackTrace());
 				System.out.println("SUBSYSTEM: " + wi.getSubsystem());
 				System.out.println("URL: " + wi.getUrl());
+				return wi.getMessage();
 			}
 			e.printStackTrace();
-			return -1;
+			return "-1";
 		}
 		
 	}

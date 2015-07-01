@@ -8,7 +8,6 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <fwk:page>
-debugger;
 	var labelStyle='font-weight:bolder;width:150';
 	var tipoEntidad='${codigoTipoEntidad}';
 	var situacion = '${situacion}';
@@ -88,9 +87,15 @@ debugger;
 		,labelStyle:'font-weight:bolder'
 	});
 	
-	var endDate = new Date(fechaVencimiento.substring(6),(fechaVencimiento.substring(3,5))-1,fechaVencimiento.substring(0,2));
-	
+	var endDate;
+	if(fechaVencimiento.length<10){
+		endDate = new Date();
+	}
+	else {
+		endDate = new Date(fechaVencimiento.substring(6),(fechaVencimiento.substring(3,5))-1,fechaVencimiento.substring(0,2));
+	}
 	var ahora = new Date();
+	
 	if (endDate < ahora){
 	//	endDate  = ahora;
 	}

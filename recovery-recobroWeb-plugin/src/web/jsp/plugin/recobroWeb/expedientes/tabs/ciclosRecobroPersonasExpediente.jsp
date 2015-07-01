@@ -107,7 +107,6 @@
 	});
 	
       var dateRendererJuniper = function(value) {
-          //debugger;
           var resultado = "";
           if (value.length > 10) {
 	   	var dt = new Date();

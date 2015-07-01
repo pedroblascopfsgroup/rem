@@ -77,7 +77,7 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 	 */
 	protected void guardaCierreDeuda() {
 		BatchAcuerdoCierreDeuda cierreDeuda = getCierreDeudaInstance();
-		executor.execute("es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierre", cierreDeuda);
+		executor.execute("es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierreDeuda", cierreDeuda);
 	}
 	
     /**

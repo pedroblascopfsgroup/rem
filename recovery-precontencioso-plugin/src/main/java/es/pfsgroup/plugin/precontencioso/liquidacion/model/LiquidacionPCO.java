@@ -70,6 +70,9 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_LIQ_INTERESES_DEMORA")
 	private Float interesesDemora;
 
+	@Column(name = "PCO_LIQ_INTERESES_ORDINARIOS")
+	private Float interesesOrdinarios;
+
 	@Column(name = "PCO_LIQ_TOTAL")
 	private Float total;
 
@@ -172,6 +175,14 @@ public class LiquidacionPCO implements Serializable, Auditable {
 
 	public void setInteresesDemora(Float interesesDemora) {
 		this.interesesDemora = interesesDemora;
+	}
+
+	public Float getInteresesOrdinarios() {
+		return interesesOrdinarios;
+	}
+
+	public void setInteresesOrdinarios(Float interesesOrdinarios) {
+		this.interesesOrdinarios = interesesOrdinarios;
 	}
 
 	public Float getTotal() {

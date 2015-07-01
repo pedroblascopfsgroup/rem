@@ -85,6 +85,16 @@ onViewClick : function(doFocus){
 		});
 	}
 	
+	var fnBeforeSelectCombo = function(combo, record, index){
+						
+		if(parseInt(record.data.id) < 1000){ 
+			Ext.MessageBox.alert("Tarea pendiente","No se puede crear esta tarea. Existen tareas pendientes de validar en la resolución.");
+				return false; 
+		}else{
+			return true;
+		}
+							
+	}
 	
 	var existenResolucionesPendientesValidar = function(idTarea){
         Ext.Ajax.request({
@@ -93,19 +103,12 @@ onViewClick : function(doFocus){
 			,method: 'POST'
 			,success: function (result, request){
 				var r = Ext.util.JSON.decode(result.responseText);
+				
 				if(Boolean(r.existen)){
+						Ext.getCmp('comboTipoResolucionNew').on('beforeselect', fnBeforeSelectCombo);
 
-						Ext.getCmp('comboTipoResolucionNew').on('beforeselect', function(combo, record, index){
-						
-							if(parseInt(record.data.id) < 1000){ 
-								Ext.MessageBox.alert("Tarea pendiente","No se puede crear esta tarea. Existen tareas pendientes de validar en la resolución.");
-	 							return false; 
-							}else{
-								return true;
-							}
-							
-						});
-
+				}else{
+						Ext.getCmp('comboTipoResolucionNew').un('beforeselect',  fnBeforeSelectCombo);
 				}
 			}
 		});

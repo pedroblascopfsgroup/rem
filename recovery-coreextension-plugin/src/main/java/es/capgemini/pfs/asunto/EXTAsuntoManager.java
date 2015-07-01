@@ -1964,4 +1964,17 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 	}
 	
+	@BusinessOperation(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
+	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor){
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(idAsunto);
+		if(!gestores.isEmpty()){
+			for(EXTGestorAdicionalAsunto gestor : gestores){
+				if(gestor != null && gestor.getTipoGestor() != null && codigoTipoGestor.equals(gestor.getTipoGestor().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 }

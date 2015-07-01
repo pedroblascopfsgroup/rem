@@ -8,9 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class PrecontenciosoController {
 
 	private static final String DEFAULT = "default";
+	private static final String PRECONTENCIOSO_TAB = "plugin/precontencioso/precontenciosoTab";
 
 	@RequestMapping
-	public String testPrecontencioso(ModelMap model) {
-		return DEFAULT;
+	public String tab(ModelMap model) {
+		return PRECONTENCIOSO_TAB;
 	}
 }

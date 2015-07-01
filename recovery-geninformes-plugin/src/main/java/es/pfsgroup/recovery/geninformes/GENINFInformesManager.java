@@ -16,8 +16,10 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRPropertiesUtil;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -720,6 +722,11 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		Locale localeES = new Locale("es","ES");
 		mapaValores = new HashMap<String, Object>();
 		mapaValores.put(JRParameter.REPORT_LOCALE, localeES);
+		//FASE-1323
+		DefaultJasperReportsContext jrContext = DefaultJasperReportsContext.getInstance();
+		//jrContext.setProperty("net.sf.jasperreports.awt.ignore.missing.font", Boolean.TRUE.toString());
+		JRPropertiesUtil jrPropertiesUtil = JRPropertiesUtil.getInstance(jrContext);
+		jrPropertiesUtil.setProperty("net.sf.jasperreports.awt.ignore.missing.font", Boolean.TRUE.toString());
 		return dameInformeArray(plantilla, mapaValores, array);
 	}
 	

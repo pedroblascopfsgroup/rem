@@ -128,7 +128,6 @@
             var parametros = new Array();
             var hayParametros = false;
             var anadirParametros = function(newParametros) {
-            	debugger;
                 for (var i in newParametros) {
                     hayParametros = true;
 					

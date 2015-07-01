@@ -1,4 +1,4 @@
-﻿﻿﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+﻿﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@page import="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -255,7 +255,7 @@
 		entidad.setLabel("provision", sinoRender(data.toolbar.provision));
 		entidad.setLabel("titulizada", cabecera.titulizada);
 		entidad.setLabel("fondo", cabecera.fondo);
-		entidad.setLabel("cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asunto.tabCabecera.editar" text="plugin.mejoras.asunto.tabCabecera.editar" />' : ''));
+		entidad.setLabel("entidad-asunto-cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" text="**Este asunto tiene un error de envío a CDD" />' : ''));
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;
@@ -279,3 +279,4 @@
 
 	return panel;
 })
+

@@ -14,6 +14,11 @@
 		labelKey="subastas.editarIncormacionCierre.principalDemanda" 
 		label="**Principal demanda" value="${dto.principalDemanda}"
 		obligatory="true" />
+	
+	<pfs:currencyfield name="deudaJudicial" 
+		labelKey="subastas.editarIncormacionCierre.deudaJudicial" 
+		label="**Deuda Judicial" value="${dto.deudaJudicial}"
+		obligatory="true" />
 		
 	<pfs:currencyfield name="costasLetrado" 
 		labelKey="subastas.editarIncormacionCierre.costas.letrado" 
@@ -29,7 +34,7 @@
 			width:100
 			,height:20
 			,name:'fechaSenyalamiento'
-			,fieldLabel:'<s:message code="subastas.editarIncormacionCierre.fecha.senyalamiento" text="**Fecha se&ntilde;alamiento" />'
+			,fieldLabel:'<s:message code="subastas.editarIncormacionCierre.fecha.senyalamiento" text="**Fecha celebraci&oacute;n subasta" />'
 			,value:'${dto.fechaSenyalamiento}'
 		});
 		
@@ -192,6 +197,7 @@
 	 	p.idValorCostasProcurador = ${dto.idValorCostasProcurador};
 	 	p.idValorConPostores = ${dto.idValorConPostores}; 
 	 	p.principalDemanda = principal.getValue() ? principal.getValue() : '';
+	 	p.deudaJudicial = deudaJudicial.getValue();
 	 	p.idPlazaJuzgado = idTipoPlaza.getValue() ? idTipoPlaza.getValue() : '';
 	 	p.idTipoJuzgado = idTipoJuzgado.getValue() ? idTipoJuzgado.getValue() : '';
 	 	p.fechaSenyalamiento = fechaSenyalamiento.getValue() != '' ? fechaSenyalamiento.getValue().format('d/m/Y') : '';
@@ -244,12 +250,12 @@
 						layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
 						,columnWidth:.5
-						,items:[costasLetrado, costasProcurador, fechaSenyalamiento]
+						,items:[costasLetrado, costasProcurador, deudaJudicial]
 					},{
 						layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
 						,columnWidth:.5
-						,items:[cmbConPostores]
+						,items:[fechaSenyalamiento, cmbConPostores]
 					}
 				]
 			}

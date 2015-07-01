@@ -510,6 +510,13 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 										}										
 									}	
 								}
+								else{
+									// En caso de que no exista adjudicación, significa que el
+									// usuario no ha introducido nada en la pestaña de
+									// adjudicaciones. Es por ello que le hacemos saltar la primera
+									// de las condiciones
+									return "Debe completar la entidad adjudicataria";
+								}
 							}
 						}
 					}
@@ -548,8 +555,14 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 			
 				if(!b.tieneNumeroActivo()){
 					return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe solicitar el n&uacute;mero de activo previamente</div>";
-				}
-				
+				}				
+			}
+			else{
+				// En caso de que no existe valoración, significa que el
+				// usuario no ha introducido nada en la pestaña de
+				// valoraciones. Es por ello que le hacemos saltar la primera
+				// de las condiciones
+				return "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">Debe completar la fecha valor tasaci&oacute;n</div>";
 			}
 		}
 		
@@ -582,7 +595,14 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 				if(Checks.esNulo(b.getAdjudicacion().getEntidadAdjudicataria())){
 					return "Debe completar la entidad adjudicataria";
 				}
-			}			
+			}
+			else{
+				// En caso de que no exista adjudicación, significa que el
+				// usuario no ha introducido nada en la pestaña de
+				// adjudicaciones. Es por ello que le hacemos saltar la primera
+				// de las condiciones
+				return "Debe completar el importe de adjudicaci&oacute;n";
+			}
 		}
 		
 		return null;

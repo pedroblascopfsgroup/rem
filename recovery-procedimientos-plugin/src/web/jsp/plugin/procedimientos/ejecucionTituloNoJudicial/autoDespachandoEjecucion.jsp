@@ -11,7 +11,6 @@ array['dos']=2;
 array['tres']=3;
 var tipo_wf='${tipoWf}'
 
-debugger;
 
 <%@ include file="/WEB-INF/jsp/plugin/procedimientos/elementos.jsp" %>
 

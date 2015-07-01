@@ -4016,7 +4016,7 @@ public class EditBienController {
 		// executor.execute(SubastasServicioTasacionDelegateApi.BO_UVEM_SOLICITUD_NUMERO_ACTIVO,
 		// idBien);
 		// proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivo(idBien);
-		Integer respuesta = proxyFactory.proxy(
+		String respuesta = proxyFactory.proxy(
 				SubastasServicioTasacionDelegateApi.class)
 				.solicitarNumeroActivoConRespuesta(idBien);
 		model.put("msgError", respuesta);

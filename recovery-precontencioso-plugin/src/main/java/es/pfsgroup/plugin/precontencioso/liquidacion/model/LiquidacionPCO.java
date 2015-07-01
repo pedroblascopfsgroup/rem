@@ -79,6 +79,9 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_LIQ_APODERADO")
 	private String apoderado;
 
+	@Column(name = "SYS_GUID")
+	private String sysGuid;
+
 	@Version
 	private Integer version;
 
@@ -215,5 +218,13 @@ public class LiquidacionPCO implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
 	}
 }

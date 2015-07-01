@@ -54,6 +54,7 @@ DECLARE
 			   ,PCO_PRC_ID    		            NUMBER(16) 		  	NOT NULL ENABLE
 			   ,PER_ID    		                NUMBER(16) 		  	NOT NULL ENABLE
 			   ,DD_PCO_BFE_ID                 	NUMBER(16) 			NOT NULL ENABLE
+			   ,SYS_GUID						VARCHAR2(36 CHAR)
 			   ,VERSION                   		INTEGER             DEFAULT 0  NOT NULL
 			   ,USUARIOCREAR              		VARCHAR2(10 CHAR)   NOT NULL
 			   ,FECHACREAR                		TIMESTAMP(6)        NOT NULL

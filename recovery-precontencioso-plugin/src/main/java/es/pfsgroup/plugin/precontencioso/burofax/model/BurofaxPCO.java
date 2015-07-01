@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.burofax.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -59,6 +60,9 @@ public class BurofaxPCO implements Serializable, Auditable {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<EnvioBurofaxPCO> enviosBurofax;
 
+	@Column(name = "SYS_GUID")
+	private String sysGuid;
+
 	@Version
 	private Integer version;
 
@@ -91,6 +95,14 @@ public class BurofaxPCO implements Serializable, Auditable {
 
 	public void setEstadoBurofax(DDEstadoBurofaxPCO estadoBurofax) {
 		this.estadoBurofax = estadoBurofax;
+	}
+
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
 	}
 
 	public Integer getVersion() {

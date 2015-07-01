@@ -55,6 +55,7 @@ DECLARE
 			   ,DD_PCO_PEP_ID    					NUMBER(16) 		  NOT NULL ENABLE
 			   ,PCO_PRC_HEP_FECHA_INCIO		    	TIMESTAMP(6)
 			   ,PCO_PRC_HEP_FECHA_FIN	    		TIMESTAMP(6) 
+			   ,SYS_GUID							VARCHAR2(36 CHAR)
 			   ,VERSION                   			INTEGER             DEFAULT 0  NOT NULL
 			   ,USUARIOCREAR              			VARCHAR2(10 CHAR)   NOT NULL
 			   ,FECHACREAR                			TIMESTAMP(6)        NOT NULL

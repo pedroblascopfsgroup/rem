@@ -58,7 +58,8 @@ DECLARE
 			   ,PCO_BUR_ENVIO_FECHA_ENVIO    		TIMESTAMP(6) 
 			   ,PCO_BUR_ENVIO_FECHA_ACUSO    		TIMESTAMP(6)
 			   ,DD_PCO_BFR_ID    	               	NUMBER(16)
-			   ,PCO_BUR_ENVIO_CONTENIDO   			VARCHAR2(250 CHAR)		  
+			   ,PCO_BUR_ENVIO_CONTENIDO   			VARCHAR2(250 CHAR)
+			   ,SYS_GUID							VARCHAR2(36 CHAR)		  
 			   ,VERSION                   			INTEGER             DEFAULT 0  NOT NULL
 			   ,USUARIOCREAR              			VARCHAR2(10 CHAR)   NOT NULL
 			   ,FECHACREAR                			TIMESTAMP(6)        NOT NULL

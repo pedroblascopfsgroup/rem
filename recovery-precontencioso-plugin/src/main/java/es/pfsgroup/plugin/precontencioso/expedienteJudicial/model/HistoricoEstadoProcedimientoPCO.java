@@ -56,6 +56,9 @@ public class HistoricoEstadoProcedimientoPCO implements Serializable, Auditable 
 	@Column(name = "PCO_PRC_HEP_FECHA_FIN")
 	private Date fechaFin;
 
+	@Column(name = "SYS_GUID")
+	private String sysGuid;
+
 	@Version
 	private Integer version;
 
@@ -124,6 +127,14 @@ public class HistoricoEstadoProcedimientoPCO implements Serializable, Auditable 
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
 	}
 
 }

@@ -63,6 +63,7 @@ DECLARE
 			   ,PCO_LIQ_INTERESES_ORDINARIOS 	  NUMBER(16)
  			   ,PCO_LIQ_TOTAL 					  NUMBER(16)
 			   ,PCO_LIQ_APODERADO 				  VARCHAR2(50 CHAR)
+			   ,SYS_GUID						  VARCHAR2(36 CHAR)
 			   ,VERSION                   		  INTEGER             DEFAULT 0  NOT NULL
 		  	   ,USUARIOCREAR              		  VARCHAR2(10 CHAR)   NOT NULL
 		  	   ,FECHACREAR                		  TIMESTAMP(6)        NOT NULL

@@ -68,6 +68,9 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 	@Column(name = "PCO_DOC_DSO_FECHA_RECEPCION")
 	private Date fechaRecepcion;
 
+	@Column(name = "SYS_GUID")
+	private String sysGuid;
+
 	@Version
 	private Integer version;
 
@@ -160,5 +163,13 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 
 	public Long getId() {
 		return id;
+	}
+
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
 	}
 }

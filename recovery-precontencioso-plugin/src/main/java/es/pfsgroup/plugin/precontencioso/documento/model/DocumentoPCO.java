@@ -78,11 +78,13 @@ public class DocumentoPCO implements Serializable, Auditable {
 		
 	@Column(name = "PCO_DOC_PDD_OBSERVACIONES")
 	private String observaciones;
-
 	
 	@OneToMany(mappedBy = "documento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<SolicitudDocumentoPCO> solicitudes;
+
+	@Column(name = "SYS_GUID")
+	private String sysGuid;
 
 	@Version
 	private Integer version;
@@ -200,6 +202,14 @@ public class DocumentoPCO implements Serializable, Auditable {
 
 	public void setSolicitudes(List<SolicitudDocumentoPCO> solicitudes) {
 		this.solicitudes = solicitudes;
+	}
+
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
 	}
 
 }

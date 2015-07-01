@@ -113,6 +113,9 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc;
 
+	@Column(name = "SYS_GUID")
+	private String sysGuid;
+	
 	@Version
 	private Integer version;
 
@@ -293,5 +296,13 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setEstadosPreparacionProc(List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc) {
 		this.estadosPreparacionProc = estadosPreparacionProc;
+	}
+
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
 	}
 }

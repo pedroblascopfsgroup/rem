@@ -68,6 +68,9 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	@Column(name = "PCO_BUR_ENVIO_CONTENIDO")
 	private String contenidoBurofax;
 
+	@Column(name = "SYS_GUID")
+	private String sysGuid;
+
 	@Version
 	private Integer version;
 
@@ -142,6 +145,14 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 		this.contenidoBurofax = contenidoBurofax;
 	}
 
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
+	}
+	
 	public Integer getVersion() {
 		return version;
 	}

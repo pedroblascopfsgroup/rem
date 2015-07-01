@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=BCFI-587
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: CREAR LA NUEVA FUNCIÓN PARA VER EL MENSAJE DE AGENCIAS EN LA CABECERA DE EXPEDIENTE DE RECOBRO
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

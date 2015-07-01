@@ -17,11 +17,13 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionTipoEventoRegistro;
@@ -61,6 +63,7 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	private static final int CODIGO_TIPO_RESOLUCION_TAREA = 1003;
 	private static final int CODIGO_TIPO_RESOLUCION_NOTIFICACION = 1005;
 	private static final int CODIGO_TIPO_RESOLUCION_SUBIDA = 1000;
+	private static final String CODIGO_TIPO_LETRADO = "LETR";
 	
 	@Override
 	@BusinessOperation(PCD_BO_GENERAR_AUTOPRORROGA)
@@ -150,10 +153,20 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		DtoCrearAnotacionUsuario du = new DtoCrearAnotacionUsuario();
 		if (dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_TAREA ||
 				dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_NOTIFICACION ||
-				dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_SUBIDA) //Tarea
-			du.setId(asu.getGestor().getUsuario().getId());
-		else //Autotarea
+				dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_SUBIDA){ //Tarea
+			List<Usuario> usuarios = (List<Usuario>) proxyFactory.proxy(GestorAdicionalAsuntoApi.class).findGestoresByAsunto(asu.getId(), CODIGO_TIPO_LETRADO);
+			if(usuarios.size()>0){
+				///Asignamos el letrado de momento para HAYA, se creara una configuración donde se sleccione el destinatario
+				du.setId(usuarios.get(0).getId());
+			}else{
+				///Si no tiene letrado, asignamos al gestor
+				du.setId(asu.getGestor().getUsuario().getId());
+			}
+			///du.setId(asu.getGestor().getUsuario().getId());
+		
+		}else{ //Autotarea
 			du.setId(asu.getProcurador().getUsuario().getId());
+		}
 		
 		du.setIncorporar(true);
 		if(!Checks.esNulo(fecha)) 

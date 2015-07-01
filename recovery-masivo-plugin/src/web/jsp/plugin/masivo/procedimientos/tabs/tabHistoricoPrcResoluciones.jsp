@@ -110,7 +110,7 @@
 
 		//tareas del bpm
 		if(tipoEntidad == constantes.TIPO_ENTIDAD_TAREA){
-			
+		
 			if(entidad.get("data").tieneProcurador){
 				////Tiene el plugin de procuradores
 				page.webflow({

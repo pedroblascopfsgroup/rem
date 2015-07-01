@@ -11,12 +11,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.procuradores.categorias.model.Categoria;
+import es.pfsgroup.plugin.recovery.procuradores.configuracion.api.ConfiguracionDespachoExternoApi;
 import es.pfsgroup.plugin.recovery.procuradores.procurador.api.ProcuradorApi;
 import es.pfsgroup.plugin.recovery.procuradores.procurador.api.RelacionProcuradorProcedimientoApi;
 import es.pfsgroup.plugin.recovery.procuradores.procurador.dto.ProcuradorDto;
 import es.pfsgroup.plugin.recovery.procuradores.procurador.model.Procurador;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 /**
  * @author carlos gil
@@ -28,6 +35,9 @@ public class ProcedimientoProcuradorController {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private ConfiguracionDespachoExternoApi configuracionDespachoExternoApi;
 	
 	public static final String VISTA_EDIT_PROCEDIMIENTO_PROCURADOR = "plugin/procuradores/procurador/editaCabeceraProcedimiento";
 	
@@ -60,6 +70,9 @@ public class ProcedimientoProcuradorController {
 		
 		map.put("procuradorDelProcedimiento", procurador);
 		
+		map.put("isDespachoIntegral", isDespachoIntegral());
+		
+		
 
 		
 		
@@ -73,6 +86,23 @@ public class ProcedimientoProcuradorController {
 		
 		return VISTA_EDIT_PROCEDIMIENTO_PROCURADOR;
 		
+	}
+	
+	@RequestMapping
+	public Boolean isDespachoIntegral(){
+		
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		if (!Checks.esNulo(usuarioLogado)){ 
+			List<GestorDespacho> gestorDespacho = configuracionDespachoExternoApi.buscaDespachosPorUsuarioYTipo(usuarioLogado.getId(), DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO);
+			
+			if((!Checks.esNulo(gestorDespacho) && gestorDespacho.size()>0)){
+				DespachoExterno despacho = gestorDespacho.get(0).getDespachoExterno();	
+				return configuracionDespachoExternoApi.isDespachoIntegral(despacho.getId());
+			}			
+		}
+		
+		return false;
 	}
 	
 

@@ -242,8 +242,10 @@
 			});
 		}
 		
+		<c:if test="${isDespachoIntegral}">
+   			sociedadProcuradores.store.reload();
+		</c:if>
 		
-		sociedadProcuradores.store.reload();
 
 		
 		if (codProc!=''){
@@ -372,9 +374,18 @@
 					}
 	});
 
+
 	var camposFieldSet = new Ext.form.FieldSet({
 		border:false
-		,items : [tipoReclamacion,idTipoPlaza,idTipoJuzgado,sociedadProcuradores,procuradorJuzgado,numeroAutos,principal,plazoRecuperacion,estimacion]
+		<c:choose>
+		    <c:when test="${isDespachoIntegral}">
+		       ,items : [tipoReclamacion,idTipoPlaza,idTipoJuzgado,sociedadProcuradores,procuradorJuzgado,numeroAutos,principal,plazoRecuperacion,estimacion]
+		    </c:when>
+		    <c:otherwise>
+		       ,items : [tipoReclamacion,idTipoPlaza,idTipoJuzgado,numeroAutos,principal,plazoRecuperacion,estimacion]
+		    </c:otherwise>
+		</c:choose>
+		
 	});
 
 	var panelEdicion = new Ext.form.FormPanel({
@@ -391,7 +402,15 @@
 						layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
 						,columnWidth:.5
-						,items:[tipoReclamacion,idTipoPlaza,idTipoJuzgado,sociedadProcuradores,procuradorJuzgado]
+						<c:choose>
+						    <c:when test="${isDespachoIntegral}">
+						       ,items:[tipoReclamacion,idTipoPlaza,idTipoJuzgado,sociedadProcuradores,procuradorJuzgado]
+						    </c:when>
+						    <c:otherwise>
+						       ,items:[tipoReclamacion,idTipoPlaza,idTipoJuzgado]
+						    </c:otherwise>
+						</c:choose>
+						
 					},{
 						layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'

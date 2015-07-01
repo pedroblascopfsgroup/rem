@@ -239,7 +239,7 @@
 		entidad.setLabel('despacho',d.despacho);
 		entidad.setLabel('gestor',d.gestor);
 		entidad.setLabel('supervisor',d.supervisor);
-		entidad.setLabel('procurador',d.procuradorreal);
+		entidad.setLabel('procurador',d.procuradorReal);
 		//entidad.setLabel('procuradorreal',d.procuradorreal);
 		entidad.setLabel('fechaInicio',d.fechaInicio);
 		entidad.setLabel('procedimiento',d.procedimiento);

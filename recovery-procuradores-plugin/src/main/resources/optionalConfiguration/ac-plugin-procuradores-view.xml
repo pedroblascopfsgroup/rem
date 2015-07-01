@@ -103,10 +103,10 @@
 		p:fileName="../js/plugin/procuradores/MultiSelect.js" p:priority="0"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
-	
-	<bean p:entity="tabs.procedimiento.fast" p:name="cabeceraProcedimiento"  p:order="100"
-		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/cabecera.jsp" 
-		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+	<!-- Carlos comentar para utilizar el jsp de el plugin rec-web -->
+<!-- 	<bean p:entity="tabs.procedimiento.fast" p:name="cabeceraProcedimiento"  p:order="100" -->
+<!-- 		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/cabecera.jsp"  -->
+<!-- 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
 		
 	
 <!-- 	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->

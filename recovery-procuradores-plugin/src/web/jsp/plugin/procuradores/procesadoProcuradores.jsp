@@ -72,7 +72,10 @@ onViewClick : function(doFocus){
 			,params: {idProcedimiento:idProcedimiento}
 			,method: 'POST'
 			,success: function (result, request){
-			
+					
+					///Eliminamos los datos anteriores
+					arrayCamposValoresAntRes = new Array();
+					
 					var jsonData =Ext.util.JSON.decode(result.responseText);
 					
 					for (var i = 0; i < jsonData.data.length; i++) {

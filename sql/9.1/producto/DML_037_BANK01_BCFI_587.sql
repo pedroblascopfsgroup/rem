@@ -1,0 +1,77 @@
+--/*
+--##########################################
+--## AUTOR=ALBERTO_RAMIREZ
+--## FECHA_CREACION=20150701
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=BCFI-587
+--## PRODUCTO=SI
+--## Finalidad: ASIGNAR LA NUEVA FUNCIÓN PARA VER EL MENSAJE DE AGENCIAS EN LA CABECERA DE EXPEDIENTE DE RECOBRO A TODOS LOS PERFILES
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+
+BEGIN
+
+
+DBMS_OUTPUT.PUT_LINE('[INICIO]: Asignar la nueva función PUEDE_VER_INFO_ADICIONAL_EXP a todos los perfiles');
+
+V_SQL := 'SELECT COUNT (*) FROM '||V_ESQUEMA||'.FUN_PEF fp WHERE fp.FUN_ID = (SELECT DISTINCT fun.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES fun where fun.FUN_DESCRIPCION = ''PUEDE_VER_INFO_ADICIONAL_EXP'' )';
+
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+IF V_NUM_TABLAS > 0 THEN	  
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.FUN_PEF ...no se modificará nada.');
+ELSE
+	EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF fp
+	( fp.FP_ID, fp.FUN_ID, fp.PEF_ID, fp.VERSION, fp.USUARIOCREAR, fp.FECHACREAR, fp.BORRADO )
+	SELECT '||V_ESQUEMA||'.S_FUN_PEF.nextval, (SELECT DISTINCT fun.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES fun WHERE fun.FUN_DESCRIPCION = ''PUEDE_VER_INFO_ADICIONAL_EXP'' ), pef.PEF_ID, 0, ''BCFI-587'',SYSDATE,0 
+	FROM '||V_ESQUEMA||'.PEF_PERFILES pef';
+	DBMS_OUTPUT.PUT_LINE('[INFO] Datos insertados correctamente en la tabla '||V_ESQUEMA||'.FUN_PEF .');
+END IF;
+	
+COMMIT;
+
+DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT
+

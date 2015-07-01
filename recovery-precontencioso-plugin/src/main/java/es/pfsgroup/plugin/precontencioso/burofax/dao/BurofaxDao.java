@@ -1,8 +1,8 @@
 package es.pfsgroup.plugin.precontencioso.burofax.dao;
 
 import es.capgemini.pfs.dao.AbstractDao;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 
-public interface BurofaxDao extends AbstractDao<NMBBien, Long> {
+public interface BurofaxDao extends AbstractDao<BurofaxPCO, Long> {
 
 }

@@ -76,7 +76,8 @@
 	var itinerarioMV		= label('itinerarioMV',	'<s:message code="expedientes.consulta.tabcabecera.itinerarioMV" text="**Iti. Metas Volantes"/>',cfg);
 	var fechaMaxEnAgencia	= label('fechaMaxEnAgencia',	'<s:message code="expedientes.consulta.tabcabecera.fechaMaxEnAgencia" text="**F. Max. en Agencia"/>',cfg);
 	var fechaMaxCobroParcial= label('fechaMaxCobroParcial',	'<s:message code="expedientes.consulta.tabcabecera.fechaMaxCobroParcial" text="**F. Max. Cobro Parcial"/>',cfg);
-
+	var informacionAdicional= label('informacionAdicional',	'<s:message code="expedientes.consulta.tabcabecera.informacionAdicional" text="**Información Adicional"/>',cfg);
+		
 
 	var datosPrincipalesFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosPrincipales" text="**Datos Principales"/>'
 		,[
@@ -104,7 +105,7 @@
 	var datosRecobroFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosRecobro" text="**Datos Recobro"/>'
 		,[
 				  {items:[cartera, subcartera, agencia, itinerarioMV]},
-				  {items:[fechaAsignacion]}
+				  {items:[fechaAsignacion<sec:authorize ifAllGranted="PUEDE_VER_INFO_ADICIONAL_EXP">,informacionAdicional</sec:authorize>]}
 		]);
 		
 //Panel propiamente dicho...
@@ -178,6 +179,10 @@
 		entidad.setLabel('itinerarioMV', cabeceraRecobro.itinerarioMV);
 		entidad.setLabel('fechaMaxEnAgencia',cabeceraRecobro.fechaMaxEnAgencia);
 		entidad.setLabel('fechaMaxCobroParcial',cabeceraRecobro.fechaMaxCobroParcial);
+		
+		if (cabeceraRecobro.cartera == "" || cabeceraRecobro.subcartera == ""){
+			entidad.setLabel('informacionAdicional','<s:message code="expedientes.consulta.tabcabecera.warning" text="**INFORMACIÓN INCOMPLETA AGENCIAS"/>');
+		}
 		
 		gestor.setVisible(false);
 		situacion.setVisible(false);

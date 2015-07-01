@@ -68,9 +68,6 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 	@Column(name = "PCO_DOC_DSO_FECHA_RECEPCION")
 	private Date fechaRecepcion;
 
-	@Column(name = "PCO_DOC_DSO_COMENTARIO")
-	private String comentario;
-
 	@Version
 	private Integer version;
 
@@ -143,14 +140,6 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 
 	public void setFechaRecepcion(Date fechaRecepcion) {
 		this.fechaRecepcion = fechaRecepcion;
-	}
-
-	public String getComentario() {
-		return comentario;
-	}
-
-	public void setComentario(String comentario) {
-		this.comentario = comentario;
 	}
 
 	public Integer getVersion() {

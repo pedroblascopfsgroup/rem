@@ -35,7 +35,7 @@ BEGIN
 
     -- Si existe los valores
     IF V_NUM_TABLAS > 0 THEN	  
-		--DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.FUN_PEF...no se modifica nada.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.FUN_PEF...no se modifica nada.');
 	ELSE
 		V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF' ||
 					' (FUN_ID, PEF_ID, FP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' || 

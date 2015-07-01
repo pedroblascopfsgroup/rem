@@ -81,22 +81,6 @@ var offset=0;
 	muestraBotonGuardar = 0;
 </c:if>
 
-
-
-var comboJuzgado = new Ext.form.ComboBox({
-		store: juzgadosStore
-		,hiddenName: items[3 + offset].hiddenName
-		,displayField: items[3 + offset].displayField
-		,valueField: items[3 + offset].valueField
-		,mode: items[3 + offset].mode
-		,editable: items[3 + offset].editable
-		,emptyText:''
-		,width: 300
-		,resizable: true		
-		,triggerAction: 'all'
-		,fieldLabel : items[3 + offset].fieldLabel
-	});
-
 if (muestraBotonGuardar==1){
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -221,7 +205,7 @@ var anyadirFechaFaltante = function(response){
 var procedimientosStore = page.getStore({
 	       remoteSort:false
 	       ,id:'procedimientosStore'
-	       ,flow:'asignaciongestores/listTipoProcedimientoPorTipoActuacion'
+	       ,flow:'asignaciongestores/listTipoProcedimiento'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'tiposProcedimiento',fields:[
              {name: 'codigo'}
@@ -243,12 +227,14 @@ var procedimientosStore = page.getStore({
 		,triggerAction: 'all'
 		,fieldLabel : items[1 + offset].fieldLabel
 	});
-	
 	Ext.onReady(function() {
-		procedimientosStore.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});
+		comboProcedimientos.store.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});
 	});
-	
+	//comboProcedimientos.on('select',function() {
+		//comboProcedimientos.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});
+	//});
 	items[1 + offset] = comboProcedimientos;
+	
 
 var panelEdicion=new Ext.form.FormPanel({
 	autoHeight:true

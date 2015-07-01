@@ -23,35 +23,29 @@ public class AsignacionGestoresController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String listTipoProcedimientoPorTipoActuacion(Long idAsunto, ModelMap model){
+	public String listTipoProcedimiento(Long idAsunto, ModelMap model){
+		List<TipoProcedimiento> listado = new ArrayList<TipoProcedimiento>();
 		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
 		if(asunto.getTipoAsunto() != null){
 			if(DDTiposAsunto.CONCURSAL.equals(asunto.getTipoAsunto().getCodigo())){
-				return listTipoProcedimientoPorTipoActuacion("CO", model);
+				listado = listTipoProcedimientoPorTipoActuacion("CO");
 			} else {
-				return listTipoProcedimientoMenosTipoActuacion("CO", model);
+				listado = listTipoProcedimientoMenosTipoActuacion("CO");
 			}
-		} else {
-			model.put("tiposProcedimiento", new ArrayList<TipoProcedimiento>());
-			return "procedimientos/listadoTiposProcedimientoJSON";
 		}
+		model.put("listado", listado);
+		return "procedimientos/listadoTiposProcedimientoJSON";
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-	public String listTipoProcedimientoPorTipoActuacion(String codActuacion, ModelMap model){
-		List<TipoProcedimiento> listaTipoProcedimientos = proxyFactory.proxy(coreextensionApi.class).getListTipoProcedimientosPorTipoActuacion(codActuacion);
-		model.put("tiposProcedimiento", listaTipoProcedimientos);
-		return "procedimientos/listadoTiposProcedimientoJSON";
+	
+	public List<TipoProcedimiento> listTipoProcedimientoPorTipoActuacion(String codActuacion){
+		return proxyFactory.proxy(coreextensionApi.class).getListTipoProcedimientosPorTipoActuacion(codActuacion);
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-	public String listTipoProcedimientoMenosTipoActuacion(String codActuacion, ModelMap model){
-		List<TipoProcedimiento> listaTipoProcedimientos = proxyFactory.proxy(coreextensionApi.class).getListTipoProcedimientosMenosTipoActuacion(codActuacion);
-		model.put("tiposProcedimiento", listaTipoProcedimientos);
-		return "procedimientos/listadoTiposProcedimientoJSON";
+	
+	public List<TipoProcedimiento> listTipoProcedimientoMenosTipoActuacion(String codActuacion){
+		return proxyFactory.proxy(coreextensionApi.class).getListTipoProcedimientosMenosTipoActuacion(codActuacion);
 	}
 	
 }

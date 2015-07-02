@@ -18,6 +18,7 @@
 			<json:property name="idTipoResolucion" value="${tar.idTipoResolucion}" />
 			<json:property name="codigoSubtipoTarea" value="${tar.subtipoTareaCodigoSubtarea}" />
 			<json:property name="tipoAccionCodigo" value="${tar.tipoAccionCodigo}" />
+			<json:property name="descripcionProcedimiento" value="${tar.descripcionProcedimiento}" />
 		</json:object>
 	</json:array>
 </fwk:json>

@@ -3,6 +3,7 @@ DROP VIEW VTAR_TAREA_VS_PROCURADORES;
 
 /*VISTA SIN INCLUIR LOS RECORDATORIOS*/
 
+/* Formatted on 2015/07/02 16:33 (Formatter Plus v4.8.8) */
 CREATE OR REPLACE FORCE VIEW haya01.vtar_tarea_vs_procuradores (usu_pendientes,
                                                                 tar_id,
                                                                 asu_id,
@@ -88,6 +89,7 @@ CREATE OR REPLACE FORCE VIEW haya01.vtar_tarea_vs_procuradores (usu_pendientes,
                                                                 codigocontrato,
                                                                 contrato,
                                                                 tipo_accion_codigo,
+                                                                procedimiento_descripcion,
                                                                 grouptareas
                                                                )
 AS
@@ -120,18 +122,18 @@ AS
           vtar.volumenriesgosql, vtar.tipoitinerarioentidad,
           vtar.prorrogafechapropuesta, vtar.prorrogacausadescripcion,
           vtar.codigocontrato, vtar.contrato, tpa.bpm_dd_tac_codigo,
+          tpo.dd_tpo_descripcion_larga,
           (SELECT CASE
                      WHEN vtar.tar_fecha_venc < SYSTIMESTAMP
-                        THEN '0'      /* Fecha menor a la de hoy => Vencida */
+                        THEN '0'
                      WHEN EXTRACT (DAY FROM (vtar.tar_fecha_venc)) =
                                              EXTRACT (DAY FROM (SYSTIMESTAMP))
-                        THEN '1'    /* Fecha igual a la de hoy => vence hoy */
+                        THEN '1'
                      WHEN vtar.tar_fecha_venc <= (TRUNC (SYSDATE, 'iw') + 6)
-                        THEN '2'  /* Fecha menor o igual al proximo domingo */
+                        THEN '2'
                      WHEN vtar.tar_fecha_venc <= LAST_DAY (SYSTIMESTAMP)
                         THEN '3'
-                     /* Fecha menor o igual al ultimo dia del mes */
-                  ELSE '4'
+                     ELSE '4'
                   END
              FROM DUAL)
      FROM vtar_tarea_vs_usuario vtar JOIN res_resoluciones_masivo res
@@ -146,9 +148,14 @@ AS
           LEFT JOIN rel_categorias relcat ON relcat.rel_id = relctr.rel_id
           LEFT JOIN cat_categorias cat ON cat.cat_id = relcat.cat_id
           LEFT JOIN rec_res_cat rrc ON rrc.res_id = res.res_id
+          LEFT JOIN prc_procedimientos prc ON prc.prc_id = vtar.prc_id
+          LEFT JOIN dd_tpo_tipo_procedimiento tpo
+          ON tpo.dd_tpo_id = prc.dd_tpo_id
     WHERE (   (res.res_epf_id = 2)
            OR (tr.dd_tr_id = 1003 AND res.res_epf_id = 6)
           );
+
+
 
 
           

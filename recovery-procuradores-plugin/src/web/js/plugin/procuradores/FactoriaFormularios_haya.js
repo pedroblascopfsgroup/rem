@@ -915,7 +915,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 						}
         		 }
           }
-         ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_juzgado_id' + this.idFactoria }
+         ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_juzgado_id' + this.idFactoria }
          ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:function(idTipoResolucion){idTipoResolucion==1 || idTipoResolucion==92 || idTipoResolucion==135},
 				id:'d_numProcedimiento_id'+this.idFactoria
 				,validator : function(v) {
@@ -959,7 +959,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
                       						}
                               		 }
                                 }
-                               ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_juzgado_id' + this.idFactoria }
+                               ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_juzgado_id' + this.idFactoria }
                                ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:function(idTipoResolucion){idTipoResolucion==1 || idTipoResolucion==92 || idTipoResolucion==135},
                       				id:'d_numProcedimiento_id'+this.idFactoria
                       				,validator : function(v) {
@@ -1517,7 +1517,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            						}
 		                      		 }
 		                        }
-	                       ,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Juzgado designado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Juzgado designado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',width:280}
 	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,validator : function(v) {
           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
 	           					}
@@ -1592,11 +1592,11 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      		 		}
 	                      		 }
 	                        }
-	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
-	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false}
-	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false}
-	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false,filtradoProcurador:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false,filtradoProcurador:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false,filtradoProcurador:true}
 	                      ]);
 	
 	//id: 273 : PROCEDIMIENTO MONITORIO: Confirmar admisión de demanda
@@ -1631,7 +1631,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                      		 }
 		                        }
 	                       
-	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Juzgado designado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
+	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Juzgado designado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
 	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento_id'+this.idFactoria
 		           				,validator : function(v) {
 		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
@@ -1643,13 +1643,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	//id: 274 : PROCEDIMIENTO MONITORIO: Confirmar notificación requerimiento de pago
 	this.arrayCampos.push([
-	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 275 : PROCEDIMIENTO MONITORIO: Confirmar oposicion y cuantía
 	this.arrayCampos.push([
-							{"xtype":'textfield',"name":"d_procedimiento","fieldLabel":"Nº de procedimiento",allowBlank:true,id:'d_procedimiento'+this.idFactoria
+							{"xtype":'textfield',"name":"d_procedimiento","fieldLabel":"Nº de procedimiento",allowBlank:true,sameValue:"d_numProcedimiento",id:'d_procedimiento'+this.idFactoria
 									,validator : function(v) {
 											return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
 									}
@@ -1715,7 +1715,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		            						}
 		                      		 }
 		                        }
-							,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Nº Juzgado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+							,{"xtype":'combo',"store":this.dsJuzgado,"name":"d_numJuzgado","fieldLabel":"Nº Juzgado",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_numJuzgado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',width:280}
 							,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento'+this.idFactoria
 								,validator : function(v) {
 										return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
@@ -1968,7 +1968,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		              						}
 		                      		 }
 		                        }
-		                     ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_comboJuzgado","hiddenName":"d_comboJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_comboJuzgado' + this.idFactoria }
+		                     ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_comboJuzgado","hiddenName":"d_comboJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_comboJuzgado' + this.idFactoria }
 		                     ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false, id:'d_numProcedimiento_id'+this.idFactoria
 		         				,validator : function(v) {
 		         						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
@@ -2109,7 +2109,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      		 }
 	                        }
 	                       
-	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
+	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
 	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento_id'+this.idFactoria
 		           				,validator : function(v) {
 		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
@@ -2150,7 +2150,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      		 }
 	                        }
 	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
+	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
 	                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento_id'+this.idFactoria
 		           				,validator : function(v) {
 		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
@@ -2271,7 +2271,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	              						}
 	                      		 }
 	                        }
-	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:'300',mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
+	                       ,{"xtype":'combo',"editable":"false", "store":this.dsJuzgado, width:280,mode:'local', "name":"d_numJuzgado","hiddenName":"d_numJuzgado","fieldLabel":"Nº Juzgado",triggerAction: 'all',allowBlank:false, displayField:'descripcion',valueField:'codigo', id:'d_numJuzgado' + this.idFactoria }
 	                      ]);
 	
 	//id: 333 : T. EJECUCIÓN TÍTULO JUDICIAL: Auto despachando ejecucion
@@ -2523,7 +2523,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         
         // id : 1003 : Tarea
         this.arrayCampos.push([
-			{"xtype":'textfield',"name":"d_asunto","fieldLabel":"Asunto",allowBlank:false}
+			{"xtype":'textfield',"name":"d_asunto","fieldLabel":"Título del mensaje",allowBlank:false}
 			,{"xtype":'combo',"store":storeSINO, "name":"d_comboFechaVencimiento","fieldLabel":"Hay fecha vencimiento",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboFechaVencimiento'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 			,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de vencimiento",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima , id:'d_fecha'+this.idFactoria
 				,validator : function(v) {
@@ -2539,14 +2539,14 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         
         // id : 1004 : Autotarea
         this.arrayCampos.push([
-			{"xtype":'textfield',"name":"d_asunto","fieldLabel":"Asunto",allowBlank:false}
+			{"xtype":'textfield',"name":"d_asunto","fieldLabel":"Título del mensaje",allowBlank:false}
 			,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de vencimiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 			,{"xtype":'textarea',"name":"d_mensaje","fieldLabel":"Mensaje",allowBlank:false,width:300}
         ]);
         
         // id : 1005 : Notificación
         this.arrayCampos.push([
-			{"xtype":'textfield',"name":"d_asunto","fieldLabel":"Asunto",allowBlank:false}
+			{"xtype":'textfield',"name":"d_asunto","fieldLabel":"Título del mensaje",allowBlank:false}
 			,{"xtype":'textarea',"name":"d_mensaje","fieldLabel":"Mensaje",allowBlank:false,width:300}
         ]);
    

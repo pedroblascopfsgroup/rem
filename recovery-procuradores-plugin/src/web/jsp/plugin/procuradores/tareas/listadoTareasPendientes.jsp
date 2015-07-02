@@ -34,6 +34,7 @@
 		,{name:'idTipoResolucion'}
 		,{name:'codigoSubtipoTarea'}
 		,{name:'tipoAccionCodigo'}
+		,{name:'descripcionProcedimiento'}
 	]);
 	
 	
@@ -59,6 +60,7 @@
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.asunto" text="**Asunto" />', width: 25, dataIndex: 'asunto', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaTarea" text="**TareaTarea" />', dataIndex: 'nombreTarea', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaDescripcion" text="**TareaDescripcion" />',width: 180, dataIndex: 'descripcionTarea', sortable:true}
+		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.descripcionProcedimiento" text="**Procedimiento" />', dataIndex: 'descripcionProcedimiento', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.procedimiento" text="**Procedimiento" />', dataIndex: 'procedimiento', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.fechaVencimiento" text="**FechaVencimiento" />', width: 40, dataIndex: 'fechaVenc', sortable:true, renderer:dateRenderer}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.resolucion" text="**Resolucion" />', dataIndex: 'resolucion', sortable:true}

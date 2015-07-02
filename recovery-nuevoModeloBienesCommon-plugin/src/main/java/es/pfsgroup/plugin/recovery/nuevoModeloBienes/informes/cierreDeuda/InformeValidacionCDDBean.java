@@ -178,7 +178,7 @@ public class InformeValidacionCDDBean {
 					bienes.add(bienLoteDTO.getIdBien());
 				}
 			}
-		}else{
+		}else{ 
 			for(Bien bien : loteSubasta.getBienes()) {
 				bienes.add(bien.getId());
 			}

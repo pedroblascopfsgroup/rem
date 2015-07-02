@@ -154,7 +154,6 @@
 	 });
 					 
 	 comboAgenciasRecobro.on('select', function(){
-	 	debugger;
 	 	var record = optionsAgenciasRecobroStore.findExact('codigo', comboAgenciasRecobro.getValue());
 		if (record != -1) {
 			optionsUsuarioStore.webflow({'idAgencia': optionsAgenciasRecobroStore.getAt(record).get('id') }); 

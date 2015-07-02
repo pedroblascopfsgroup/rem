@@ -8,6 +8,7 @@ import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfo;
 import es.capgemini.pfs.expediente.model.Evento;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 
 public class MEJHistoricoAsuntoViewDto implements Serializable {
 
@@ -74,9 +75,6 @@ public class MEJHistoricoAsuntoViewDto implements Serializable {
 		this.idTarea = historicoAsunto.getIdTarea();
 		this.idTraza = historicoAsunto.getIdTraza();
 		this.tipoTraza = historicoAsunto.getTipoTraza();
-		this.idEntidad = historicoAsunto.getTarea().getIdEntidad();
-		this.tipoEntidad = historicoAsunto.getTarea().getTipoEntidad();
-		this.tarea = historicoAsunto.getTarea().getNombreTarea();
 		this.tipoActuacion = historicoAsunto.getTipoActuacion();
 		this.setGroup(historicoAsunto.getGroup());
 		if (historicoAsunto.getProcedimiento() != null) {
@@ -98,20 +96,28 @@ public class MEJHistoricoAsuntoViewDto implements Serializable {
 			this.numeroAutos = "";
 			this.importe = new BigDecimal(0);
 		}
-		this.fechaInicio = historicoAsunto.getTarea().getFechaIni();
-		this.fechaVencimiento = historicoAsunto.getTarea()
-				.getFechaVencimiento();
-		this.fechaFin = historicoAsunto.getTarea().getFechaFin();
-		this.nombreUsuario = historicoAsunto.getTarea().getNombreUsuario();
-		String desc = historicoAsunto.getTarea().getNombreTarea();
-		if(!Checks.esNulo(desc)){
-			if(desc.length()>20){
-				desc = desc.substring(0,20)+"...";
+		if(historicoAsunto.getTarea() != null){
+			this.idEntidad = historicoAsunto.getTarea().getIdEntidad();
+			this.tipoEntidad = historicoAsunto.getTarea().getTipoEntidad();
+			this.tarea = historicoAsunto.getTarea().getNombreTarea();
+			this.fechaInicio = historicoAsunto.getTarea().getFechaIni();
+			this.fechaVencimiento = historicoAsunto.getTarea()
+					.getFechaVencimiento();
+			this.fechaFin = historicoAsunto.getTarea().getFechaFin();
+			this.nombreUsuario = historicoAsunto.getTarea().getNombreUsuario();
+			String desc = historicoAsunto.getTarea().getNombreTarea();
+			if(!Checks.esNulo(desc)){
+				if(desc.length()>20){
+					desc = desc.substring(0,20)+"...";
+				}
+				this.descripcionCorta = desc;
 			}
-			this.descripcionCorta = desc;
+			if(historicoAsunto.getTarea() instanceof EXTHistoricoProcedimiento){
+				this.destinatarioTarea = ((EXTHistoricoProcedimiento) historicoAsunto.getTarea()).getUsuarioResponsable();
+			}
 		}
 		this.fechaVencReal = historicoAsunto.getFechaVencReal();
-		this.destinatarioTarea = historicoAsunto.getDestinatarioTarea();
+		//this.destinatarioTarea = historicoAsunto.getDestinatarioTarea();
 		this.descripcionTarea = historicoAsunto.getDescripcionTarea();
 		
 	}

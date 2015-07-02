@@ -16,13 +16,21 @@ public interface EXTGestoresDao extends AbstractDao<Usuario, Long>{
 	 * @return Lista de {@link Usuario}
 	 */
 	List<Usuario> getGestoresByDespacho(long idTipoDespacho);
+	
+	/**
+	 * 
+	 * @param idTipoDespacho id del tipo de despacho.
+	 * @param incluirBorrados true or false 
+	 * @return  Lista de {@link Usuario}
+	 */
+	List<Usuario> getGestoresByDespacho(long idTipoDespacho, boolean incluirBorrados);
 
 	/**
 	 * Dao que obtiene una lista de {@link Usuario} para un tipo de despacho dado.
 	 * Paginado
 	 * 
-	 * @param usuarioDto usuarioDto dto con los datos de búsqueda. {@link UsuarioDto}
-	 * @return página con el resultado de la búsqueda.
+	 * @param usuarioDto usuarioDto dto con los datos de bï¿½squeda. {@link UsuarioDto}
+	 * @return pï¿½gina con el resultado de la bï¿½squeda.
 	 */
 	Page getGestoresByDespacho(UsuarioDto usuarioDto);
 

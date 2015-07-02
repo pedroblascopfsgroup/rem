@@ -8,7 +8,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-	debugger;
 	
 	var labelStyle = 'width:150px;font-weight:bolder",width:375';
 	var labelStyleTextArea = 'font-weight:bolder",width:500';
@@ -139,7 +138,6 @@
 		<app:test id="btnGuardarBien" addComa="true" />
 		,iconCls : 'icon_ok'
 		,handler : function() {
-			debugger;
 			var p = getParametros();
 			 Ext.Ajax.request({
 				url: page.resolveUrl('analisiscontratos/guardarAnalisisContratosBienes')

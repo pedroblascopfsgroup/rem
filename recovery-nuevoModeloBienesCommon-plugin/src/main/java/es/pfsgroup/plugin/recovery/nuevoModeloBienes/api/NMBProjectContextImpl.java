@@ -27,10 +27,13 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TIPO_PROCEDIMIENTO_POSESION = "POSESION";
 	public static final String CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES = "GESTION-LLAVES";
 	
+	public static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "ConfirmarTestimonio";
+	
 	private Set<String> tareasStopValidarLotesSubasta;
 	private Long nivelZonaOficinaGestoraEnInformes;
 	private List<String> tiposPrcAdjudicados;
 	private Map<String, String> mapaTiposPrc;
+	private Map<String, String> tareasCierreDeuda;
 	private List<String> codigosSubastaValidacion;
 	private List<String> codigosSubastas;
 	
@@ -181,6 +184,15 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		lote.setFechaEstado(fecha);
 	}
 	
+	@Override
+	public Map<String, String> getTareasCierreDeuda() {
+		return tareasCierreDeuda;
+	}
+
+	public void setTareasCierreDeuda(Map<String, String> tareasCierreDeuda) {
+		this.tareasCierreDeuda = tareasCierreDeuda;
+	}
+
 	public List<String> getCodigosSubastaValidacion(){
 		
 		return codigosSubastaValidacion; 

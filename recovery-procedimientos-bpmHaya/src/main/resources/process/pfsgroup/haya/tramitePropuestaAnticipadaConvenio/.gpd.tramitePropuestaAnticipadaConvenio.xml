@@ -116,12 +116,21 @@
   </node>
   <node name="H031_BPMElevarPropuestaSarebLitigios" x="249" y="123" width="284" height="36">
     <edge>
-      <label x="-77" y="-9"/>
+      <label x="-69" y="-9"/>
+      <bendpoint w1="108" h1="33" w2="114" h2="-38"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="373" h1="10" w2="383" h2="-590"/>
       <bendpoint w1="373" h1="502" w2="383" h2="-98"/>
+    </edge>
+    <edge>
+      <label x="8" y="-20"/>
+      <bendpoint w1="-263" h1="0" w2="1" h2="-115"/>
+    </edge>
+    <edge>
+      <label x="-30" y="-8"/>
+      <bendpoint w1="-124" h1="34" w2="-118" h2="-37"/>
     </edge>
   </node>
   <node name="H031_ValidarInstrucciones" x="296" y="194" width="179" height="36">
@@ -152,8 +161,13 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="315" y="744" width="132" height="36"/>
   <node name="H031_ContabilizarDecision" x="56" y="745" width="187" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="315" y="744" width="132" height="36"/>
+  <node name="H031_SarebDecision" x="47" y="238" width="161" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

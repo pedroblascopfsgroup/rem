@@ -12,7 +12,6 @@
 
 
 	<!-- valor seteado para pruebas -->
-	debugger;
 	var idExpediente;
 	
 	var idIncidencia;
@@ -282,7 +281,6 @@
 		return true;
 	}
 	var buscarFunc=function(){
-		//debugger;
 		if(validarForm()){
 			isBusqueda=true;
 			panelFiltros.collapse(true);

@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 
 /**
@@ -47,6 +49,24 @@ public interface NMBLocalizacionesBienInfo {
 	Localidad getLocalidad();
 	
 	DDUnidadPoblacional getUnidadPoblacional();
+	
+	DDTipoVia getTipoVia();
+	
+	String getPortal();
+	
+	String getEscalera();
+
+	String getPuerta();
+	
+	String getBarrio();
+	
+	DDCicCodigoIsoCirbeBKP getPais();
+	
+	String getPiso();
+	
+	String getNumeroDomicilio();
+	
+	String getNombreVia();
 	
 	/**
 	 * Auditoria

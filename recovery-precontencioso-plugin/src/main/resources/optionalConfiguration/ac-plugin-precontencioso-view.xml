@@ -10,7 +10,6 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-	<bean p:entity="tabs.procedimiento" p:name="historicoProcedimiento"  p:order="900" p:fileName="/WEB-INF/jsp/procedimientos/tabs/tabHistoricoProcedimiento.jsp" p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
-
+	<bean p:entity="tabs.procedimiento" p:name="Precontencioso"  p:order="900" p:fileName="/WEB-INF/jsp/precontencioso/tabs/tabPrecontencioso.jsp" p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
 </beans>

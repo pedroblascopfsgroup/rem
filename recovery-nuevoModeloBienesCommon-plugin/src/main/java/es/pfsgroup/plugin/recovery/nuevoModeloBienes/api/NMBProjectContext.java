@@ -74,5 +74,7 @@ public interface NMBProjectContext {
 	 * @return Listado de códigos de subasta
 	 */
 	List<String> getCodigosSubastas();
+
+	String getComboPostoresCelebracionSubasta();
 	
 }

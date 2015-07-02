@@ -60,7 +60,6 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.validacionCierreDeuda";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
 	
-	
 	/**
 	 * Obtiene las subastas de un asunto
 	 * @param idAsunto
@@ -216,7 +215,6 @@ public interface SubastaApi {
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA)
 	boolean validacionCierreDeuda(Subasta subasta, List<Long> idsBien, String nombreNodo);
 	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA)
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE)
 	boolean tareaExiste(Procedimiento procedimiento, String nombreNodo);
-	
 }

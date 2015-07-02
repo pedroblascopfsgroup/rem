@@ -45,6 +45,9 @@
 				<value>P409</value>
 			</list>
 		</property>
+		<property name="comboPostoresCelebracionSubasta">
+				<value>comboCesion</value>
+		</property>
 		
 		<property name="codigosSubastas">
 			<list>

@@ -1,9 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,7 +81,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruc
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
-import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -93,12 +89,6 @@ import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 public class SubastaManager implements SubastaApi {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
-	
-	private static final String DEVON_PROPERTIES = "devon.properties";
-	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
-	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
-	private static final String DEVON_HOME = "DEVON_HOME";
-	private static final String PROYECTO_HAYA = "HAYA";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -1191,6 +1181,8 @@ public class SubastaManager implements SubastaApi {
 		
 		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien) {
 			Subasta subasta = getSubasta(idSubasta);
+			EXTAsunto extAsunto = EXTAsunto.instanceOf(subasta.getAsunto()); 
+
 			Procedimiento procedimiento = subasta.getProcedimiento();
 			Auditoria auditoria = Auditoria.getNewInstance();
 			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
@@ -1198,11 +1190,7 @@ public class SubastaManager implements SubastaApi {
 			cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
 			cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
 			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
-			if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
-				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);	
-			}else{
-				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
-			}
+			cierreDeuda.setEntidad(extAsunto.getPropiedadAsunto().getCodigo());	
 			cierreDeuda.setIdBien(idBien);
 			return cierreDeuda;
 		};
@@ -1256,45 +1244,6 @@ public class SubastaManager implements SubastaApi {
 				this.valor = valor;
 			}
 			
-		}
-		
-		private String cargarProyectoProperties() {
-			String proyecto = "";	
-			Properties appProperties = cargarProperties(DEVON_PROPERTIES);
-			if (appProperties == null) {
-				System.out.println("No puedo consultar devon.properties");		
-			} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
-				proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
-			} else {
-				System.out.println("UVEM no instalado");
-			}
-			return proyecto;
-		}
-		
-		private Properties cargarProperties(String nombreProps) {
-			InputStream input = null;
-			Properties prop = new Properties();
-			
-			String devonHome = DEVON_HOME_BANKIA_HAYA;
-			if (System.getenv(DEVON_HOME) != null) {
-				devonHome = System.getenv(DEVON_HOME);
-			}
-			
-			try {
-				input = new FileInputStream("/" + devonHome + "/" + nombreProps);
-				prop.load(input);
-			} catch (IOException ex) {
-				System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
-			} finally {
-				if (input != null) {
-					try {
-						input.close();
-					} catch (IOException e) {
-						System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
-																																																																																				}
-																																																																																			}
-			}
-			return prop;
 		}
 		
 		@Override

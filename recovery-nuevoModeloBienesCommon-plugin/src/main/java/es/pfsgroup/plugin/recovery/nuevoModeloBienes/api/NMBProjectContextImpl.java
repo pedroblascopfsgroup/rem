@@ -36,6 +36,7 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private Map<String, String> tareasCierreDeuda;
 	private List<String> codigosSubastaValidacion;
 	private List<String> codigosSubastas;
+	private String comboPostoresCelebracionSubasta;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -214,6 +215,15 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		
 		this.codigosSubastas = codigosSubastas ;
 		
+	}
+	
+	@Override
+	public String getComboPostoresCelebracionSubasta() {
+		return comboPostoresCelebracionSubasta;
+	}
+	
+	public void setComboPostoresCelebracionSubasta(String comboPostoresCelebracionSubasta) {
+		this.comboPostoresCelebracionSubasta = comboPostoresCelebracionSubasta;
 	}
 	
 }

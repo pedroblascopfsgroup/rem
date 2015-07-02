@@ -203,7 +203,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	
     	/* Obligatoriedad del adjunto */
     	var esResolEspecial = true;
-    	if( idTipoResolucion < 1000 ){esResolEspecial = false;}
+    	if( idTipoResolucion <= 1000 ){esResolEspecial = false;}
     	
     	var resolucionesSinAdjunto = [];
     	//resolucionesSinAdjunto.push(242) /* H040_RegistrarCambioCerradura */

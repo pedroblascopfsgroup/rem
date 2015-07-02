@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +38,6 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -52,6 +53,8 @@ import es.pfsgroup.recovery.ext.impl.multigestor.comparator.EXTUsuarioComparator
 //No a�adir nueva funcionalidad
 @Component
 public class coreextensionManager implements coreextensionApi {
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	GenericABMDao genericDao;
@@ -238,32 +241,41 @@ public class coreextensionManager implements coreextensionApi {
 	 */
 	@BusinessOperation(SAVE_GESTOR_ADICIONAL_ASUNTO)
 	@Transactional(readOnly = false)
-	public void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) {
-		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
-		if (asu instanceof EXTAsunto) {
-			if (!Checks.esNulo(idAsunto) && !Checks.esNulo(idUsuario) && !Checks.esNulo(idTipoDespacho)) {
-				GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
-						genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho));
-				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoGestor));
-				Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
-				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);
-				EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
-				if (Checks.esNulo(gaa)) {
-					gaa = new EXTGestorAdicionalAsunto();
-					gaa.setAsunto(asu);
-					gaa.setTipoGestor(tipoGestor);
-					gaa.setGestor(gestor);
-					gestorAdicionalAsuntoDao.save(gaa);
-					this.guardarHistoricoGestorAdicional(gaa);					
-				}else{
-					gaa.setGestor(gestor);
-					if(idUsuario != gaa.getGestor().getUsuario().getId()){
-						this.actualizaFechaHastaHistoricoGestorAdicional(idAsunto , idTipoGestor);
-						this.guardarHistoricoGestorAdicional(gaa);
+	public void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) throws Exception {
+		
+		try {
+		
+			Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
+			if (asu instanceof EXTAsunto) {
+				if (!Checks.esNulo(idAsunto) && !Checks.esNulo(idUsuario) && !Checks.esNulo(idTipoDespacho)) {
+					GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
+							genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho),
+							genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoGestor));
+					Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
+					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);
+					EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
+					if (Checks.esNulo(gaa)) {
+						gaa = new EXTGestorAdicionalAsunto();
+						gaa.setAsunto(asu);
+						gaa.setTipoGestor(tipoGestor);
+						gaa.setGestor(gestor);
+						gestorAdicionalAsuntoDao.save(gaa);
+						this.guardarHistoricoGestorAdicional(gaa);					
+					}else{
+						gaa.setGestor(gestor);
+						if(idUsuario != gaa.getGestor().getUsuario().getId()){
+							this.actualizaFechaHastaHistoricoGestorAdicional(idAsunto , idTipoGestor);
+							this.guardarHistoricoGestorAdicional(gaa);
+						}
+						gestorAdicionalAsuntoDao.saveOrUpdate(gaa);
 					}
-					gestorAdicionalAsuntoDao.saveOrUpdate(gaa);
 				}
 			}
+		}
+		catch(Exception e) {
+			logger.error("insertarGestorAdicionalAsunto: " + e.getMessage());
+			throw e;
 		}
 		
 	}

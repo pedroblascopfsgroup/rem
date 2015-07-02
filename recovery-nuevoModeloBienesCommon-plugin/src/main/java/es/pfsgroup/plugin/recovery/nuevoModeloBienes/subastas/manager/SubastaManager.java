@@ -1247,45 +1247,18 @@ public class SubastaManager implements SubastaApi {
 		}
 		
 		@Override
-		@BusinessOperation(BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA)
-		public boolean validacionCierreDeuda(Subasta subasta, List<Long> idsBien, String nombreNodo) {
-			for(LoteSubasta ls : subasta.getLotesSubasta()) {
-				for(Bien bien : ls.getBienes()) {
-					if(!Checks.estaVacio(idsBien)) {
-						for(Long idBien : idsBien) {
-							if(idBien.equals(bien.getId())) {
-								List<ProcedimientoBien> procedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
-										genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId()), 
-										genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
-										genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", nombreNodo.subSequence(0, 3)));
-								if(Checks.estaVacio(procedimientoBien)) {
-									return false;
-								}else{
-									return tareaExiste(subasta.getProcedimiento(), nombreNodo);							
-								}
-							}
-						}
-					}else{
-						List<ProcedimientoBien> procedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
-								genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId()), 
-								genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
-								genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", nombreNodo.subSequence(0, 4)));
-						if(Checks.estaVacio(procedimientoBien)) {
-							return false;
-						}else{
-							return tareaExiste(procedimientoBien.get(0).getProcedimiento(), nombreNodo);							
-						}
-					}
-				}
-			}
-			return false;
-		}
+		@BusinessOperation(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
+		public Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento) {
+			Procedimiento prc = null;
+			List<ProcedimientoBien> listProcedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
+					genericDao.createFilter(FilterType.EQUALS, "bien.id", nmbBien.getId()), 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", tipoProcedimiento));
 			
-		@Override
-		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE)
-		public boolean tareaExiste(Procedimiento procedimiento, String nombreNodo) {
-			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
-			return !Checks.esNulo(historicoPrc);
+			if(!Checks.estaVacio(listProcedimientoBien)) {
+				prc = listProcedimientoBien.get(0).getProcedimiento();
+			}
+			return prc;
 		}
 		
 }

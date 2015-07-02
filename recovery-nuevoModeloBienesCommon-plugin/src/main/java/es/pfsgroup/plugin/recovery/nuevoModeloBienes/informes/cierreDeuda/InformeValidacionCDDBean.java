@@ -9,7 +9,6 @@ import java.util.Map;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -23,6 +22,8 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager.SubastaManager.ValorNodoTarea;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 public class InformeValidacionCDDBean {
 
@@ -339,16 +340,8 @@ public class InformeValidacionCDDBean {
 		Map<String, String> mapaTiposProcedimiento = nmbProjectContext.getMapaTiposPrc();
 		String tipoProcedimiento = mapaTiposProcedimiento.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION);
 		
-		Procedimiento prc = null;
-		if(!Checks.estaVacio(nmbBien.getProcedimientos())) {
-			for(ProcedimientoBien prcbien : nmbBien.getProcedimientos()) {
-				if(!Checks.esNulo(prcbien.getProcedimiento().getProcedimientoPadre()) 
-						&& (subasta.getProcedimiento().getId().equals(prcbien.getProcedimiento().getProcedimientoPadre().getId()) 
-								&& tipoProcedimiento.equals(prcbien.getProcedimiento().getTipoProcedimiento().getCodigo()))){
-					prc = prcbien.getProcedimiento();					
-				}
-			}
-		}
+		Procedimiento prc = subastaApi.getProcedimientoBienByIdPadre(nmbBien, subasta, tipoProcedimiento);
+		
 		ValorNodoTarea valor = subastaApi.obtenValorNodoPrc(prc, nombreTarea, VALOR_FECHA_TESTIMONIO);
 		if(!Checks.esNulo(valor)) {
 			return valor.getValor();
@@ -367,32 +360,43 @@ public class InformeValidacionCDDBean {
 	// Crea el mensaje de validacion a partir de si cumple ciertas validaciones
 	private void crearMensajeValidacion(Subasta subasta) {
 		StringBuilder sb = new StringBuilder();
+		EXTAsunto extAsunto = EXTAsunto.instanceOf(subasta.getAsunto());
+		BooleanBienes booleanBienes = new BooleanBienes();
+		
 		if (!Checks.esNulo(camposVacios)) {
 			sb.append("Hay campos obligatorios que estan sin informar;");
 		}
-		BooleanBienes booleanBienes = new BooleanBienes();
-		if (!validaProcedimientoContratos(subasta)) {
-			sb.append("El procedimiento no tienen ninguna operacion activa;"); // Alguna deberia ser
+
+		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
+			if (!validaProcedimientoContratos(subasta)) {
+				sb.append("El procedimiento no tienen ninguna operacion activa;"); // Alguna deberia ser
+			}			
 		}
-		booleanBienes = validaBienesContratos();
-		if (!booleanBienes.isValidacionCorrecta()) {
-			for (String descBien : booleanBienes.getListBienes()) {
-				sb.append("El bien ");
-				sb.append(descBien);
-				sb.append(" no tiene relaci�n con ning�n contrato;");
-			}
+		
+		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && DDPropiedadAsunto.PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
+			booleanBienes = validaBienesContratos();
+			if (!booleanBienes.isValidacionCorrecta()) {
+				for (String descBien : booleanBienes.getListBienes()) {
+					sb.append("El bien ");
+					sb.append(descBien);
+					sb.append(" no tiene relaci�n con ning�n contrato;");
+				}
+			}			
 		}
-		booleanBienes = validaBienesPersonas();
-		if (!booleanBienes.isValidacionCorrecta()) {
-			for (String descBien : booleanBienes.getListBienes()) {
-				sb.append("El bien ");
-				sb.append(descBien);
-				sb.append(" no tiene relaci�n con ninguna persona;");
-			}
-		}
+		
+//		booleanBienes = validaBienesPersonas();
+//		if (!booleanBienes.isValidacionCorrecta()) {
+//			for (String descBien : booleanBienes.getListBienes()) {
+//				sb.append("El bien ");
+//				sb.append(descBien);
+//				sb.append(" no tiene relaci�n con ninguna persona;");
+//			}
+//		}
+		
 		if (validaSinLotes()) {
 			sb.append("Se ha de incluir, al menos, un lote en el procedimiento;");
 		}
+		
 		booleanBienes = validaLoteSinBien();
 		if (!booleanBienes.isValidacionCorrecta()) {
 			for (String descBien : booleanBienes.getListBienes()) {
@@ -401,6 +405,7 @@ public class InformeValidacionCDDBean {
 				sb.append(" no contiene ning�n bien;");
 			}
 		}
+		
 		BooleanBienesLotes bienLotes = validaBienVariosLote();
 		if (!bienLotes.isValidacionCorrecta()) {
 			for (BienManyLotes bienLote : bienLotes.getBienLote()) {

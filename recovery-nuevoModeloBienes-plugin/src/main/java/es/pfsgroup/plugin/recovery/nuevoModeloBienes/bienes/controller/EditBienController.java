@@ -4081,7 +4081,7 @@ public class EditBienController {
 	}
 	
 	/**
-	 * Comprueba si algunos de los bienes pasados por parámetro está incluido en un lote de la subasta asociado al procedimiento o uno de sus padres
+	 * Comprueba si algunos de los bienes pasados por parámetro está incluido en un lote de la subasta asociado al procedimiento
 	 * 
 	 * @param idProcedimiento
 	 * @param idsBien
@@ -4101,8 +4101,17 @@ public class EditBienController {
 			String[] arrBien = idsBien.split(",");
 			Procedimiento procedimiento = proxyFactory.proxy(es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi.class).getProcedimiento(idProcedimiento);
 			
-			if(validarBienAsociadoSubasta(procedimiento, arrBien)) {
-				resultado = "KO";
+			// Se recuperan los bienes asociados a la subasta del procedimiento y se comprueba si alguno de los que se quiere excluir está entre ellos
+			Subasta subasta = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(procedimiento.getId());
+			
+			if(!Checks.esNulo(subasta)) {
+				for(LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+					for(Bien bien : loteSubasta.getBienes()) {
+						if(ArrayUtils.contains(arrBien, bien.getId().toString())) {
+							resultado = "KO";
+						}
+					}			
+				}
 			}
 			
 			model.put("okko", resultado);
@@ -4113,32 +4122,5 @@ public class EditBienController {
 			logger.error("isBienAsociadoSubasta: " + e);
 			throw e;
 		}
-	}
-	
-	private boolean validarBienAsociadoSubasta(Procedimiento procedimiento, String[] arrBien) {
-		
-		boolean asociado = false;
-		
-		// Se recuperan los bienes asociados a la subasta del procedimiento y se comprueba si alguno de los que se quiere excluir está entre ellos
-		Subasta subasta = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(procedimiento.getId());
-		
-		if(!Checks.esNulo(subasta)) {
-			for(LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
-				for(Bien bien : loteSubasta.getBienes()) {
-					if(ArrayUtils.contains(arrBien, bien.getId().toString())) {
-						asociado = true;
-					}
-				}			
-			}
-		}
-		
-		// Si no se ha comprobado que está el bien asociado y el procedimiento no es de tipo subasta se hace la comprobación para el procedimiento padre (si este no es nulo)
-		if(!asociado && 
-				procedimiento.getProcedimientoPadre() != null && 
-				!nmbProjectContext.getCodigosSubastas().contains(procedimiento.getTipoProcedimiento().getCodigo())){
-			asociado = validarBienAsociadoSubasta(procedimiento.getProcedimientoPadre(), arrBien);
-		}
-		
-		return asociado;
 	}
 }

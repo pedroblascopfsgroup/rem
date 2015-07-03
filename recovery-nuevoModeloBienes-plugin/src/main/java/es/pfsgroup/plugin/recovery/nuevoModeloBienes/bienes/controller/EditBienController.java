@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
@@ -44,8 +47,6 @@ import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -56,7 +57,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDTO;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastasServicioTasacionDelegateApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabs;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien;
@@ -68,8 +72,8 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.NMBDtoBuscarClientes
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienesAdjudicaciones;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.InformePropuestaCancelacionBean;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
@@ -112,6 +116,9 @@ public class EditBienController {
 	private static final String JSON_LIST_LOCALIDADES = "plugin/nuevoModeloBienes/bienes/LocalidadesJSON";
 	private static final String JSON_LIST_UNIDADES_POBLACIONALES = "plugin/nuevoModeloBienes/bienes/UnidadesPoblacionalesJSON";
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";
+	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	private Executor executor;
@@ -4072,5 +4079,66 @@ public class EditBienController {
 		model.put("data", list);
 		return DICCIONARIO_JSON;
 	}
-
+	
+	/**
+	 * Comprueba si algunos de los bienes pasados por parámetro está incluido en un lote de la subasta asociado al procedimiento o uno de sus padres
+	 * 
+	 * @param idProcedimiento
+	 * @param idsBien
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isBienAsociadoSubasta(
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "idsBien", required = true) String idsBien,
+			ModelMap model) throws Exception 
+	{
+		try {
+			String resultado = "OK";
+			String[] arrBien = idsBien.split(",");
+			Procedimiento procedimiento = proxyFactory.proxy(es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi.class).getProcedimiento(idProcedimiento);
+			
+			if(validarBienAsociadoSubasta(procedimiento, arrBien)) {
+				resultado = "KO";
+			}
+			
+			model.put("okko", resultado);
+	
+			return OK_KO_RESPUESTA_JSON;
+		}
+		catch(Exception e) {
+			logger.error("isBienAsociadoSubasta: " + e);
+			throw e;
+		}
+	}
+	
+	private boolean validarBienAsociadoSubasta(Procedimiento procedimiento, String[] arrBien) {
+		
+		boolean asociado = false;
+		
+		// Se recuperan los bienes asociados a la subasta del procedimiento y se comprueba si alguno de los que se quiere excluir está entre ellos
+		Subasta subasta = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(procedimiento.getId());
+		
+		if(!Checks.esNulo(subasta)) {
+			for(LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+				for(Bien bien : loteSubasta.getBienes()) {
+					if(ArrayUtils.contains(arrBien, bien.getId().toString())) {
+						asociado = true;
+					}
+				}			
+			}
+		}
+		
+		// Si no se ha comprobado que está el bien asociado y el procedimiento no es de tipo subasta se hace la comprobación para el procedimiento padre (si este no es nulo)
+		if(!asociado && 
+				procedimiento.getProcedimientoPadre() != null && 
+				!nmbProjectContext.getCodigosSubastas().contains(procedimiento.getTipoProcedimiento().getCodigo())){
+			asociado = validarBienAsociadoSubasta(procedimiento.getProcedimientoPadre(), arrBien);
+		}
+		
+		return asociado;
+	}
 }

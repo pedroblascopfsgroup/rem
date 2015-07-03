@@ -147,19 +147,48 @@
 			,iconCls : 'icon_ok'
 	       ,cls: 'x-btn-text-icon'
 	       ,handler:function(){
-				if (comprobarSiHayFilSeleccionada()>=1){								
-	      			page.webflow({
-		      			flow:'editbien/guardarAgregarExcluirBienPrc'
-		      			,params: getParams()
-		      			,success: function(){
-	            		   page.fireEvent(app.event.DONE);
-	            		}	
-		      		});
+				debugger;if (comprobarSiHayFilSeleccionada()>=1){
+				
+					if (accion=='AGREGAR') {
+						page.webflow({
+				      		flow:'editbien/guardarAgregarExcluirBienPrc'
+				      		,params: getParams()
+				      		,success: function(){
+			            		page.fireEvent(app.event.DONE);
+			            	}	
+				      	});
+					}
+				   	else { 			
+						Ext.Ajax.request({
+							url: page.resolveUrl('editbien/isBienAsociadoSubasta')
+							,params: getParams()
+							,success:function(result, request){
+								var resultado = Ext.decode(result.responseText);
+								
+								if((resultado.okko == 'KO')) {
+									Ext.Msg.show({
+										title:'<s:message code="nuevoModeloBienes.agregarExcluirBien.excluir.bienAsociadoSubasta.titulo" text="Atención: Operación no válida"/>',
+										msg: '<s:message code="nuevoModeloBienes.agregarExcluirBien.excluir.bienAsociadoSubasta" text="No es posible excluir el bien al encontrarse éste asociado a un lote de la subasta."/>',
+										buttons: Ext.Msg.OK,
+										icon:Ext.MessageBox.WARNING});
+								}
+								else {
+									page.webflow({
+					      				flow:'editbien/guardarAgregarExcluirBienPrc'
+					      				,params: getParams()
+					      				,success: function(){
+				            		   		page.fireEvent(app.event.DONE);
+				            			}	
+					      			});							
+								}
+							}
+						});
+					}
 	      		}else{
 	      			if (accion=='AGREGAR') {
-						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos" text="**Debe seleccionar algÃºn bien"/>');
+						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.agregar.faltanDatos" text="**Debe seleccionar algún bien"/>');
 					} else {
-						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.excluir.faltanDatos" text="**Debe seleccionar algÃºn bien"/>');
+						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="nuevoModeloBienes.agregarExcluirBien.excluir.faltanDatos" text="**Debe seleccionar algún bien"/>');
 					}
 	      		}
 	     	}

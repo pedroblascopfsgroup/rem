@@ -359,7 +359,7 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosDomicilio.titulo" text="**Domicilio"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [{items:[pais, provincia, localidad, unidadPoblacional, codPostal, tipoVia]},
-				  {items:[nombreVia, numeroDomicilio, portal, escalera, piso, puerta, barrio, direccion]}
+				  {items:[nombreVia, numeroDomicilio, portal, bloque, escalera, piso, puerta, barrio, direccion]}
 				 ]
 	});
 	
@@ -446,7 +446,7 @@
 			      			   	
 				      			   	Ext.Msg.show({
 									title:'Advertencia',
-									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ko"/>',
+									msg: 'No se ha podido obtener el n\u00BA de activo. \n' + result.msgError,
 									buttons: Ext.Msg.OK,
 									icon:Ext.MessageBox.WARNING});
 				      			   	

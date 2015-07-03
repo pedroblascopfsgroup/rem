@@ -23,8 +23,13 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "CNV_AUX_CCDD_PR_CONV_CIERR_DD", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class BatchAcuerdoCierreDeuda implements Serializable {
+public class BatchAcuerdoCierreDeuda implements Serializable{
 
+	public static String PROPIEDAD_AUTOMATICO = "AUTOMATICO";
+	public static String PROPIEDAD_MANUAL = "MANUAL";
+	public static Long PROPIEDAD_RESULTADO_OK = 1L;
+	public static Long PROPIEDAD_RESULTADO_KO= 0L;
+	
 	/**
 	 * 
 	 */
@@ -56,6 +61,12 @@ public class BatchAcuerdoCierreDeuda implements Serializable {
 	
 	@Column(name = "ENTIDAD")
 	private String entidad;
+	
+	@Column(name = "ORIGEN_PROPUESTA")
+	private String origenPropuesta;
+	
+	@Column(name = "RESULTADO_VALIDACION")
+	private Long resultadoValidacion;
 	
 	public Long getId() {
 		return id;
@@ -120,5 +131,21 @@ public class BatchAcuerdoCierreDeuda implements Serializable {
 	public void setEntidad(String entidad) {
 		this.entidad = entidad;
 	}
-	
+
+	public String getOrigenPropuesta() {
+		return origenPropuesta;
+	}
+
+	public void setOrigenPropuesta(String origenPropuesta) {
+		this.origenPropuesta = origenPropuesta;
+	}
+
+	public Long getResultadoValidacion() {
+		return resultadoValidacion;
+	}
+
+	public void setResultadoValidacion(Long resultadoValidacion) {
+		this.resultadoValidacion = resultadoValidacion;
+	}
+
 }

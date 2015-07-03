@@ -1,9 +1,9 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -1405,6 +1405,16 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		sb.append(acuerdoCierreDeuda.getIdBien()).append(",");
 		sb.append(acuerdoCierreDeuda.getEntidad());
 		sb.append(")");
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
+	
+	@Override
+	public void eliminarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
+		StringBuilder sb = new StringBuilder();
+		sb.append(" delete from BatchAcuerdoCierreDeuda ");
+		sb.append(" where id = ").append(acuerdoCierreDeuda.getId());
 		
 		Query query = getSession().createQuery(sb.toString());
 		query.executeUpdate();

@@ -59,6 +59,7 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_ENVIAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarCierreDeuda";
 	public static final String BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.validacionCierreDeuda";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
+	public static final String BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarBatchCierreDeuda";
 	
 	
 	/**
@@ -218,5 +219,8 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA)
 	boolean tareaExiste(Procedimiento procedimiento, String nombreNodo);
+	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
+	void eliminarBatchCierreDeuda(Long idAsunto, Long resultadoValidacion);
 	
 }

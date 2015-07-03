@@ -1339,4 +1339,15 @@ public class SubastaManager implements SubastaApi {
 			return !Checks.esNulo(historicoPrc);
 		}
 		
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
+		public void eliminarBatchCierreDeuda(Long idAsunto, Long resultadoValidacion) {
+			List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
+					genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto), 
+					genericDao.createFilter(FilterType.EQUALS, "resultadoValidacion", resultadoValidacion));
+			
+			for(BatchAcuerdoCierreDeuda baCDD : listBatchCDD) {
+				subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);
+			}
+		}
 }

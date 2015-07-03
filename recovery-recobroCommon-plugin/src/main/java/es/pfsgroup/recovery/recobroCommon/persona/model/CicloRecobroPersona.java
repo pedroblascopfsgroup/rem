@@ -17,6 +17,8 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -62,6 +64,7 @@ public class CicloRecobroPersona implements Serializable, Auditable{
 	
 	@ManyToOne
 	@JoinColumn(name="EXC_ID")
+	@NotFound(action=NotFoundAction.IGNORE)
 	private Exceptuacion exceptuacion;
 	
 	@Column(name = "CRP_FECHA_ALTA")

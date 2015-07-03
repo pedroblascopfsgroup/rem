@@ -66,7 +66,7 @@ public interface EXTAsuntoApi {
      * @return true si es el gestor.
      */
     @BusinessOperationDefinition(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
-    public Boolean esGestorDecision(); 		
+    public Boolean esGestorDecision(Long id); 		
 	
 
 	@BusinessOperationDefinition(EXT_BO_ES_TITULIZADA)

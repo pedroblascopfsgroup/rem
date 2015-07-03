@@ -3,7 +3,7 @@
 --## AUTOR=Manuel Mejias
 --## FECHA_CREACION=20150703
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.2-hy-rc01
+--## VERSION_ARTEFACTO=9.1.3-hy-rc01
 --## INCIDENCIA_LINK=PRODUCTO-109
 --## PRODUCTO=SI
 --##
@@ -14,41 +14,44 @@
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON;
-SET DEFINE OFF;
+SET SERVEROUTPUT ON; 
 DECLARE
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-   	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar 
-   	V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_ENTIDAD#'; -- Configuracion Esquemas
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_COLS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-
 BEGIN	
 
-    DBMS_OUTPUT.PUT_LINE('******** FUN_PEF ********'); 
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ASU_ASUNTOS... Comprobaciones previas'); 
+V_SQL := 'select COUNT(1) from all_tab_cols where UPPER(OWNER)='''||V_ESQUEMA||''' 
+  and UPPER(table_name)=''CNV_AUX_CCDD_PR_CONV_CIERR_DD'' and UPPER(column_name)=''ORIGEN_PROPUESTA''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_COLS;
 
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME=''ERROR_ENVIO_CDD'' AND TABLE_NAME=''ASU_ASUNTOS'' AND OWNER = ''' || V_ESQUEMA || '''';
-
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-
-    -- Si existe los valores
-    IF V_NUM_TABLAS > 0 THEN	  
-		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.ASU_ASUNTOS...no se modifica nada.');
-	ELSE
+IF V_NUM_COLS > 0 THEN 
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...no se modifica nada.');
+ELSE
+	V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD ADD ORIGEN_PROPUESTA VARCHAR2(20 CHAR)'; 
 	
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.ASU_ASUNTOS ADD ERROR_ENVIO_CDD NUMBER(1,0)'; 
-				
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.ASU_ASUNTOS insertados correctamente.');
+END IF;
+		
+EXECUTE IMMEDIATE V_SQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD... Tabla modificada');  
+
+
+
+V_SQL := 'select COUNT(1) from all_tab_cols where UPPER(OWNER)='''||V_ESQUEMA||''' 
+  and UPPER(table_name)=''CNV_AUX_CCDD_PR_CONV_CIERR_DD'' and UPPER(column_name)=''RESULTADO_VALIDACION''';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_COLS;
+
+IF V_NUM_COLS > 0 THEN 
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...no se modifica nada.');
+ELSE
+	V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD ADD RESULTADO_VALIDACION NUMBER(1,0)'; 
 	
-    END IF;	
-    
-    COMMIT;
-    
-	DBMS_OUTPUT.PUT_LINE('[INFO] Fin.');
+END IF;
+		
+EXECUTE IMMEDIATE V_SQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD... Tabla modificada');  
 
 
 EXCEPTION
@@ -60,9 +63,7 @@ EXCEPTION
     DBMS_OUTPUT.put_line(ERR_MSG);
     ROLLBACK;
     RAISE;   
-    
 END;
 /
- 
-EXIT;
-  	
+
+EXIT;  	

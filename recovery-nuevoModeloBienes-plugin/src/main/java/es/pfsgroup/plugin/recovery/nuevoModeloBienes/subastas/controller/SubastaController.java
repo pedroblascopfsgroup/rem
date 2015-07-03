@@ -105,6 +105,13 @@ public class SubastaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
+	public String reiniciarKOCDD(@RequestParam(value = "idAsunto", required = true) Long id, ModelMap map) {
+		subastaApi.eliminarBatchCierreDeuda(id, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO);		
+		return DEFAULT;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
 	public String getLotesSubasta(@RequestParam(value = "idSubasta", required = true) Long idSubasta, ModelMap map) {
 		
 		List<LotesSubastaDto> lotesDto = new ArrayList<LotesSubastaDto>();

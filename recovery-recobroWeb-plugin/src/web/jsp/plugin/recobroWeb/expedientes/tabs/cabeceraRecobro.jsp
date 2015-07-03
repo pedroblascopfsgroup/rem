@@ -31,7 +31,7 @@
 	 }
 	 
 	 var mensajeExceptuacionLabel = new Ext.form.Label({
-	   	text:'<s:message code="expedientes.consulta.tabcabecera.warning" text="**Información incompleta agencias"/>'
+	   	text:'<s:message code="expedientes.consulta.tabcabecera.warning" text="**Faltan datos cartera/subcartera. Contactar Sistemas."/>'
 		,style:'font-weight:bold;font-size:13px;color:red;',id:'entidad-cliente-mensajeLabel'
 	});
 	

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:si="http://www.springframework.org/schema/integration" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx" 
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-1.0.xsd 
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd"
+  default-merge="true" default-autowire="byName">
+
+	<bean id="sqlScripts" parent="main.sqlScipts">
+		<property name="locations">
+            	<list>
+                	<value>classpath:devon/resources/core/sql/sql*.xml</value>
+	                <value>classpath:sql/sql*.xml</value>
+	                <value>classpath:cajamar/sql/sql*.xml</value>
+	            </list>
+	        </property>
+	        <property name="localOverride" value="true" />
+	        <property name="ignoreResourceNotFound" value="true"/>
+	</bean>
+
+	<import resource="classpath:cajamar/jobs/carga/pcr/loadPCRStarterJob.xml" />  
+	<import resource="classpath:cajamar/jobs/carga/pcr/validacionesPCRJob.xml" />  
+	<import resource="classpath:cajamar/jobs/carga/pcr/pasajePCRProduccionJob.xml" /> 
+	<import resource="classpath:cajamar/jobs/carga/pcr/precalculoPCRProduccionJob.xml" /> 
+	<import resource="classpath:cajamar/jobs/mantenimiento/procesoMantenimientoJob.xml" /> 
+
+	<import resource="classpath:cajamar/jobs/carga/gcl/loadGruposClientesStarterJob.xml" />
+	<import resource="classpath:cajamar/jobs/carga/gcl/validacionesGruposClientesJob.xml" />
+
+</beans>

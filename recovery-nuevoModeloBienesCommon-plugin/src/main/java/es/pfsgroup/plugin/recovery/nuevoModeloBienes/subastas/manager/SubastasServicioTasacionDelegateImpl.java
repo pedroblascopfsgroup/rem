@@ -102,7 +102,7 @@ public class SubastasServicioTasacionDelegateImpl implements SubastasServicioTas
 	@Override
 	@BusinessOperation(BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
 	@Transactional(readOnly = false)
-	public Integer solicitarNumeroActivoConRespuesta(Long arg0) {
+	public String solicitarNumeroActivoConRespuesta(Long arg0) {
 		return null;
 	}
 	

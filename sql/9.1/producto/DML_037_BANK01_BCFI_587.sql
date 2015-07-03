@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=JOSEVI
---## FECHA_CREACION=20150618
+--## AUTOR=ALBERTO_RAMIREZ
+--## FECHA_CREACION=20150701
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=FASE-1345
---## PRODUCTO=SI
---## Finalidad: DDL
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=BCFI-587
+--## PRODUCTO=NO
+--## Finalidad: ASIGNAR LA NUEVA FUNCIÓN PARA VER EL MENSAJE DE AGENCIAS EN LA CABECERA DE EXPEDIENTE DE RECOBRO A TODOS LOS PERFILES
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -31,39 +31,27 @@ DECLARE
 	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
-    V_VIEWNAME VARCHAR2(30):= 'VTAR_TAREA_VS_USUARIO_PART2';
 
 BEGIN
 
 
-DBMS_OUTPUT.PUT_LINE('[INICIO]');
+DBMS_OUTPUT.PUT_LINE('[INICIO]: Asignar la nueva función PUEDE_VER_INFO_ADICIONAL_EXP a todos los perfiles');
 
-DBMS_OUTPUT.PUT_LINE('[INFO] Bloque scripts para la inclusión de un nuevo tipo del histórico de operaciones - Notificación - (3/4)');
-DBMS_OUTPUT.PUT('[INFO] Modificación de la vista '||V_VIEWNAME||'...');
+V_SQL := 'SELECT COUNT (*) FROM '||V_ESQUEMA||'.FUN_PEF fp WHERE fp.FUN_ID = (SELECT DISTINCT fun.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES fun where fun.FUN_DESCRIPCION = ''PUEDE_VER_INFO_ADICIONAL_EXP'' )';
 
---/**
--- * Modificacion o creación de vista: Si existe modifica y si no, la crea como nueva - Script relanzable
--- *************************************************************/
-execute immediate
-'  CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_VIEWNAME||' (TAR_ID, USU_PENDIENTES, USU_ALERTA, USU_SUPERVISOR, DD_TGE_ID_ALERTA, DD_TGE_ID_PENDIENTE) AS '||Chr(13)||Chr(10)||
-'  SELECT TAR_ID  '||Chr(13)||Chr(10)||
-'    , t.tar_id_dest usu_pendientes '||Chr(13)||Chr(10)||
-'    --, 0 usu_espera '||Chr(13)||Chr(10)||
-'    , -1 usu_alerta, t.dd_tge_id_supervisor usu_supervisor '||Chr(13)||Chr(10)||
-'    , t.dd_tge_id_alerta '||Chr(13)||Chr(10)||
-'    , t.dd_tge_id_pendiente '||Chr(13)||Chr(10)||
-'  FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_TGE t '||Chr(13)||Chr(10)||
-'  WHERE t.dd_sta_id IN (700, 701, 826) ';
+EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
-
---/* Recompilar nueva vista
---************************************************************/
-execute immediate ('alter view '||V_ESQUEMA||'.'||V_VIEWNAME||' compile');
-
-
+IF V_NUM_TABLAS > 0 THEN	  
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.FUN_PEF ...no se modificará nada.');
+ELSE
+	EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF fp
+	( fp.FP_ID, fp.FUN_ID, fp.PEF_ID, fp.VERSION, fp.USUARIOCREAR, fp.FECHACREAR, fp.BORRADO )
+	SELECT '||V_ESQUEMA||'.S_FUN_PEF.nextval, (SELECT DISTINCT fun.FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES fun WHERE fun.FUN_DESCRIPCION = ''PUEDE_VER_INFO_ADICIONAL_EXP'' ), pef.PEF_ID, 0, ''BCFI-587'',SYSDATE,0 
+	FROM '||V_ESQUEMA||'.PEF_PERFILES pef';
+	DBMS_OUTPUT.PUT_LINE('[INFO] Datos insertados correctamente en la tabla '||V_ESQUEMA||'.FUN_PEF .');
+END IF;
+	
 COMMIT;
-
-DBMS_OUTPUT.PUT_LINE('OK modificada');
 
 DBMS_OUTPUT.PUT_LINE('[FIN]');
 
@@ -74,7 +62,6 @@ EXCEPTION
           err_num := SQLCODE;
           err_msg := SQLERRM;
 
-          DBMS_OUTPUT.PUT_LINE('KO no modificada');
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);

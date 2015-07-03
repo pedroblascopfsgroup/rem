@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="analizePCRProduccionJob" parent="batch.simpleJob">
+    <property name="steps">
+      <list>
+        <!-- FIN VALIDACIONES // COMIENZO PASAJE DATOS -->
+        <!-- actualizo los contratos que ya están en producción con la última data -->
+        <bean id="pasaje.produccion" parent="batch.taskletStep">
+          <property name="tasklet">
+            <bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+              <property name="scripts">
+              	<list>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.contratos" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.analizeContratos" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.movimientos" />
+              			</entry>
+              			<entry key="message" value="cargaContratos.analizeMovimientos" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<!-- Se inserta en la tabla de personas de producción -->
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.personas" />
+              			</entry>
+              			<entry key="message" value="cargaPersonas.analizePersonas" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+	        		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.direcciones" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.analizeDirecciones" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.direccionPersona" />
+              			</entry>
+              			<entry key="message" value="cargaDirecciones.analizeDireccionesPersonas" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+              		<map>
+              			<entry key="sql">
+              				<bean parent="sql" p:key="pcr.analize.relaciones" />
+              			</entry>
+              			<entry key="message" value="cargaRelaciones.analizeRelaciones" />
+              			<entry key="severidad" value="info"/>
+              		</map>
+             	</list>
+              </property>
+            </bean>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+</beans>

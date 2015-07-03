@@ -38,11 +38,7 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-<<<<<<< HEAD
-DBMS_OUTPUT.PUT_LINE('[INFO] Bloque scripts para la inclusión de un nuevo tipo del histórico de operaciones - Notificación - (4/4)');
-=======
-DBMS_OUTPUT.PUT_LINE('[INFO] Bloque scripts para la inclusión de un nuevo tipo del histórico de operaciones - Notificación - (3/3)');
->>>>>>> ef21ba5db1d54ec2ccd40dafa11d31cf493ea73b
+DBMS_OUTPUT.PUT_LINE('[INFO] Bloque scripts para la inclusión de un nuevo tipo del histórico de operaciones - Notificación - (7/7)');
 DBMS_OUTPUT.PUT('[INFO] Modificación de la vista '||V_VIEWNAME||'...');
 
 --/**
@@ -205,11 +201,7 @@ execute immediate
 '      WHEN ''9''  --Persona '||Chr(13)||Chr(10)||
 '        THEN tar.PER_ID '||Chr(13)||Chr(10)||
 '      WHEN ''10'' --Notificacion '||Chr(13)||Chr(10)||
-<<<<<<< HEAD
 '        THEN tar.PRC_ID --Must be PRC_ID '||Chr(13)||Chr(10)||
-=======
-'        THEN tar.TAR_ID '||Chr(13)||Chr(10)||
->>>>>>> ef21ba5db1d54ec2ccd40dafa11d31cf493ea73b
 '        -- TODO poner para el resto de unidades de gestion '||Chr(13)||Chr(10)||
 '      ELSE -1 '||Chr(13)||Chr(10)||
 '    END identidad , '||Chr(13)||Chr(10)||

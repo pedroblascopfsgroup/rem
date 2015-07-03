@@ -9,15 +9,20 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page,entidad){
-	
+
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.precontencioso" text="**Precontencioso"/>'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'
 	});
-	
-  
-  return panel;
+
+	panel.getValue = function() {}
+
+	panel.setValue = function(){
+		var data = entidad.get("data");
+	}
+
+	return panel;
 })
 	

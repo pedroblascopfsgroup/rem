@@ -8,6 +8,7 @@ import es.capgemini.pfs.asunto.dto.DtoProcedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 
@@ -24,6 +25,7 @@ public interface EXTAsuntoApi {
 	public static final String EXT_BO_ES_TITULIZADA = "es.pfsgroup.recovery.ext.api.asunto.esTitulizada";
 	public static final String EXT_BO_ES_GET_FONDO = "es.pfsgroup.recovery.ext.api.asunto.getFondo";
 	public static final String EXT_BO_ES_TIPO_GESTOR_ASIGNADO = "es.pfsgroup.recovery.ext.api.asunto.esTipoGestorAsignado";
+	public static final String BO_ZONA_MGR_GET_ZONAS_POR_NIVEL_BY_CODIGO = "es.pfsgroup.recovery.ext.api.asunto.getZonasPorNivel";
 	
 	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORES)
 	public List<GestorDespacho> getGestoresAsunto(Long idAsunto);
@@ -78,6 +80,9 @@ public interface EXTAsuntoApi {
 	
 	@BusinessOperationDefinition(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
 	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor);
+
+	@BusinessOperationDefinition(BO_ZONA_MGR_GET_ZONAS_POR_NIVEL_BY_CODIGO)
+	List<DDZona> getZonasPorNivel(Integer codigoNivel);
 
 	
 }

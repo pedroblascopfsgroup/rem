@@ -361,7 +361,7 @@
 	]);
     
     var optionsZonasStore = page.getStore({
-	       flow: 'clientes/buscarZonas'
+	       flow: 'asuntos/buscarZonas'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
 	    }, zonasRecord)

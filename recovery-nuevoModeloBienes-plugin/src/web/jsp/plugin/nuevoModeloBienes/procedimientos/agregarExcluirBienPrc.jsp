@@ -147,7 +147,7 @@
 			,iconCls : 'icon_ok'
 	       ,cls: 'x-btn-text-icon'
 	       ,handler:function(){
-				debugger;if (comprobarSiHayFilSeleccionada()>=1){
+				if (comprobarSiHayFilSeleccionada()>=1){
 				
 					if (accion=='AGREGAR') {
 						page.webflow({

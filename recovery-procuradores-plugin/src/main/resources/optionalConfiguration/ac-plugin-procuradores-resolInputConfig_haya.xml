@@ -1319,6 +1319,16 @@
 						</bean>
 					</list>
 				</entry>
+				<entry key="R_REQ_POS_PJU_NGT">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_REQ_POS_PJU_NGT</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 				<entry key="R_ESC_OPO_PJU">
 					<list>
 						<bean

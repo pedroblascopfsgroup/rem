@@ -133,7 +133,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
     			if(valoresCamposAnteriores[campos[i].name.replace("d_","")]){
 
-    				if(campos[i].id){
+    				if(campos[i].id && !campos[i].hidden){
         				var campo = Ext.getCmp(campos[i].id);
         				campo.setValue(valoresCamposAnteriores[campos[i].name.replace("d_","")]);
         				
@@ -233,6 +233,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	    			return false;
 	    	}
     	}});
+    	
+    	resolucionesSinAdjunto.push({idResolucion:337, validateFunction:function(v){
+    		
+    		if(Ext.getCmp('d_comboSiNo' + idf).getValue() == "02"){
+    			return true;
+    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+    				return true;
+	    		}else{
+	    			return false;
+	    	}
+    	}});
+    	
+    	
     	
     	
     	var adjuntoNoObligatorio = false;
@@ -2304,17 +2317,18 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_repetir","fieldLabel":"Activar alerta periódica",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_repetir'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}*/
 	                      ]);
 	
-	//id: 336 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar notificacion
+	//id: 336 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar notificacion positiva
 	this.arrayCampos.push([
-	                       	{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSiNo","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSiNo","value":"01",filtrar:true,"fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);   
+	
 	
 	//id: 337 : T. EJECUCIÓN TÍTULO JUDICIAL: Registrar oposicion vista
 	this.arrayCampos.push([
 	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:true,id:'d_motivo'+this.idFactoria}
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha oposición",allowBlank:false,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:false,filtradoProcurador:true,id:'d_motivo'+this.idFactoria}
 	                      ]);
 	
 	//id: 338 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar presentar impugnacion
@@ -2496,6 +2510,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	this.arrayCampos.push([
 	               		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	               	]);
+	
+	//id: 365 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar notificacion negativa
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSiNo","value":"02",filtrar:true,"fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);  
 		
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

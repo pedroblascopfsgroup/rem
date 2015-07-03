@@ -605,6 +605,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		final int bufferSize = 1024;
+		if(dto != null && !Checks.esNulo(dto.getSort())){
+			if("fechaCrear".equals(dto.getSort())){
+				dto.setSort("a.auditoria." + dto.getSort());
+			} else {
+				dto.setSort("a." + dto.getSort());
+			}
+		}
 		StringBuffer hql = new StringBuffer(bufferSize);
 
 		hql.append("from Asunto a ");

@@ -167,17 +167,23 @@ public class ListadoTareaAnotacionTareaAbrirDetalle implements
 							null));
 			result.setIdAsunto(infoRegistro.getRegistro().getIdEntidadInformacion());
 			
-			result.setTieneResponder(false);
+                        //Todos los usuarios que han recibido la Tarea pueden responder, no solo si el logado = destinatario...
+			result.setTieneResponder(true);
 			Contador c3 = Contador.arranca();
 			Usuario usuLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			c3.para().loguea("Obtener el usuario logado");
-			Long idUsuarioDestino = null;
 			
-			idUsuarioDestino = ((EXTTareaNotificacion)tarea).getDestinatarioTarea().getId();
-				
-			if(idUsuarioDestino != null )
-				if(idUsuarioDestino.equals(usuLogado.getId()))
-					result.setTieneResponder(true);
+                        String usuarioDestino = new String();
+                        String usuarioOrigen = new String();
+			
+			usuarioDestino = ((EXTTareaNotificacion)tarea).getDestinatarioTarea().getUsername();
+                        usuarioOrigen = ((EXTTareaNotificacion)tarea).getEmisor();
+			
+
+                        //...a excepción de Tareas tipo "Autotarea" en las que solo hay respuesta si el logado = destinatario
+			if(!Checks.esNulo(usuarioDestino) && !Checks.esNulo(usuarioOrigen))
+				if(usuarioDestino.equals(usuarioOrigen) && !usuarioDestino.equals(usuLogado.getUsername()))
+					result.setTieneResponder(false);
 				
 			
 			Contador c4 = Contador.arranca();

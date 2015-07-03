@@ -57,7 +57,6 @@ var bottomBar = [];
 			// **************************************************************** //
 			// ***  ANYADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
 			// **************************************************************** //
-			debugger;
 			var cb_existeOposicion = items[1 + muestraBotonGuardar];
 			var tx_fechaOposicion = items[2 + muestraBotonGuardar];
 			var tx_fechaComparecencia = items[3 + muestraBotonGuardar];
@@ -114,7 +113,6 @@ if (muestraBotonGuardar==1){
 			// **************************************************************** //
 			// ***  ANYADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
 			// **************************************************************** //
-			debugger;
 			var cb_existeOposicion = items[1 + muestraBotonGuardar];
 			var tx_fechaOposicion = items[2 + muestraBotonGuardar];
 			var tx_fechaComparecencia = items[3 + muestraBotonGuardar];

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model;
 import java.util.Date;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.Localidad;
 
 /**
  * Datos registrales del Bien
@@ -53,32 +54,32 @@ public interface NMBInformacionRegistralBienInfo {
 	String getFolio();
 	
 	/**
-	 * Inscripción
+	 * Inscripciï¿½n
 	 */
 	String getInscripcion();
 	
 	/**
-	 * Fecha de expedición
+	 * Fecha de expediciï¿½n
 	 */
 	Date getFechaInscripcion();
 	
 	/**
-	 * Inscripción
+	 * Inscripciï¿½n
 	 */
 	String getNumRegistro();
 	
 	/**
-	 * Inscripción
+	 * Inscripciï¿½n
 	 */
 	String getMunicipoLibro();
 	
 	/**
-	 * Inscripción
+	 * Inscripciï¿½n
 	 */
 	String getCodigoRegistro();	
 	
 	/**
-	 * Número de la finca
+	 * Nï¿½mero de la finca
 	 * @return
 	 */
 	String getNumFinca();
@@ -87,5 +88,10 @@ public interface NMBInformacionRegistralBienInfo {
 	 * Auditoria
 	 */
 	Auditoria getAuditoria();	
+	
+	/**
+	 * Localidad
+	 */
+	Localidad getLocalidad();	
 	
 }

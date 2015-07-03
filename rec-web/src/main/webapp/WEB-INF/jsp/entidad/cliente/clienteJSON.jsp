@@ -62,7 +62,7 @@
 			<fwk:date value="${persona.clienteActivo.fechaEstado}"/>
 		</json:property>
 		<json:property name="numExpedientesActivos" value="${persona.numExpedientesActivos}" />
-		<json:property name="numAsuntosActivos" value="${persona.numAsuntosActivos}" />
+		<json:property name="numAsuntosActivos" value="${persona.numAsuntosActivosPorPrc}" />
 		<json:property name="ratingExterno" value="${persona.ratingExterno}" />
 		<json:property name="segmento" value="${persona.segmento}" />
 		<json:property name="segmentoEntidad" value="${persona.segmentoEntidad.descripcion}" />		
@@ -228,6 +228,7 @@
 			<fwk:date value="${antecedente.fechaVerificacion}"/>
 		</json:property>
 		<json:property name="observaciones" value="${antecedente.observaciones}" />
+		<json:property name="numReincidenciasInterno" value="${antecedente.numReincidenciasInterno}" />
 	</json:object>
 	<json:object name="umbral">
 		<json:property name="importeUmbral" value="${persona.importeUmbral}" />

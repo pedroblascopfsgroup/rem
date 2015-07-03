@@ -737,6 +737,16 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 tareaNotificacion.setEmisor(proc.getAsunto().getGestor().getUsuario().getApellidoNombre());
             }
         }
+        if (DDTipoEntidad.CODIGO_ENTIDAD_NOTIFICACION.equals(codigoTipoEntidad)) {
+            Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idEntidad);
+            tareaNotificacion.setProcedimiento(proc);
+            tareaNotificacion.setAsunto(proc.getAsunto());
+            tareaNotificacion.setEstadoItinerario(proc.getAsunto().getEstadoItinerario());
+            if (proc.getAsunto().getGestor() != null) {
+                tareaNotificacion.setEmisor(proc.getAsunto().getGestor().getUsuario().getApellidoNombre());
+            }
+            tareaNotificacion.setEmisor("Automatico");
+        }
         if (DDTipoEntidad.CODIGO_ENTIDAD_OBJETIVO.equals(codigoTipoEntidad)) {
             Objetivo objetivo = (Objetivo) executor.execute(InternaBusinessOperation.BO_OBJ_MGR_GET_OBJETIVO, idEntidad);
 
@@ -1070,7 +1080,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_CE)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_RE)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CIERRA_SESION)
-                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)) {
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)) {
                             param.put("fuerzaChkLeida", "true");
                         }
                     }

@@ -34,6 +34,23 @@
 				<entry key="POSESION" value="P416"/>
 				<entry key="GESTION-LLAVES" value="P417"/>
 			</map>
+		</property>		
+		<property name="tareasCierreDeuda">
+			<map>
+				<entry key="ConfirmarTestimonio" value="P413_ConfirmarTestimonio"/>
+			</map>
+		</property>
+		<property name="codigosSubastaValidacion">
+			<list>
+				<value>P409</value>
+			</list>
+		</property>
+		
+		<property name="codigosSubastas">
+			<list>
+				<value>P409</value>
+				<value>P401</value>
+			</list>
 		</property>
 	</bean>	
 	

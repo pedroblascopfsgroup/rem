@@ -447,7 +447,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 		Boolean borrarOtrosUsu = true;
 		
-		if (iplus == null && !iplus.instalado()) {
+		if (iplus == null || !iplus.instalado()) {
 			borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
 		}
 
@@ -898,8 +898,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	public boolean modeloMultiGestor() {
 
 		if (this.modeloMultiGestor == null) {
-			List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericdDao.getList(EXTGestorAdicionalAsunto.class);
-			this.modeloMultiGestor = !Checks.estaVacio(gestoreAdicionales);
+			// workaround, por defecto siempre es multigestor.
+			//List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericdDao.getList(EXTGestorAdicionalAsunto.class);
+			this.modeloMultiGestor = true;//!Checks.estaVacio(gestoreAdicionales);
 		}
 		return modeloMultiGestor;
 	}
@@ -1966,6 +1967,20 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return listREsultado.get(0).getDescripcion();
 		}
 		
+	}
+
+	
+	@BusinessOperation(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
+	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor){
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(idAsunto);
+		if(!gestores.isEmpty()){
+			for(EXTGestorAdicionalAsunto gestor : gestores){
+				if(gestor != null && gestor.getTipoGestor() != null && codigoTipoGestor.equals(gestor.getTipoGestor().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 }

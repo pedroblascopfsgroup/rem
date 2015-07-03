@@ -167,7 +167,6 @@
     
  	tareaGrid.on('celldblclick', function(grid, rowIndex, columnIndex, e){
     	var rec = grid.getStore().getAt(rowIndex);
-    	//debugger;
         if(rec && rec.get('tar_id')){
                     var id = rec.get('prc_id');
                     //var desc = rec.get('nombreProcedimiento');

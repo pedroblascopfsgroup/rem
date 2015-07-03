@@ -182,15 +182,12 @@ row["codigo"] = asu.getId().longValue()+"&amp;nbsp;";
 row["nombre"] = asu.getNombre();
 row["fechaCrear"] = asu.getAuditoria().getFechaCrear();
 row["estado"] = asu.getCodigoDecodificado();
-if (asu.getGestor() != null) {
-	row["gestor"] = asu.getGestor().getUsuario().getApellidoNombre();
-	row["despacho"] = asu.getGestor().getDespachoExterno().getDespacho();
-}
-if (asu.getSupervisor() != null) {
-	row["supervisor"] = asu.getSupervisor().getUsuario().getApellidoNombre();
-}
-row["saldoTotal"] = asu.getSaldoTotalPorContratos();
+row["gestor"] = asu.getGestorNombreApellidosSQL();
+row["despacho"] = asu.getDespachoSQL();
+row["supervisor"] = asu.getSupervisorNombreApellidosSQL() != null ? asu.getSupervisorNombreApellidosSQL() : "";
+row["saldoTotal"] = asu.getSaldoTotalPorContratosSQL();
 row["importeEstimado"] = asu.getImporteEstimado();
+
 if (asu.getContratos() != null) {
 	contratosIt = asu.getContratos().iterator();
 	if (contratosIt.hasNext()) {
@@ -205,8 +202,6 @@ if (asu.getContratos() != null) {
 		}	
 	}
 }
-
-
 
 
 return true;]]></method>

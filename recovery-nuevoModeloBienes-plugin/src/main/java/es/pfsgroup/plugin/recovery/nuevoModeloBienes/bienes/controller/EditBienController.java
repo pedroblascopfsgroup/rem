@@ -678,6 +678,12 @@ public class EditBienController {
 			dto.setMunicipoLibro(request.getParameter("municipoLibro"));
 		if (!Checks.esNulo(request.getParameter("codigoRegistro")))
 			dto.setCodigoRegistro(request.getParameter("codigoRegistro"));
+		if (!Checks.esNulo(request.getParameter("municipioRegistro")))
+			dto.setMunicipioRegistro(request.getParameter("municipioRegistro"));
+		if (!Checks.esNulo(request.getParameter("provinciaRegistro")))
+			dto.setProvinciaRegistro(request.getParameter("provinciaRegistro"));
+		
+		
 
 		/* NMB Datos Localizacion */
 		if (!Checks.esNulo(request.getParameter("poblacion")))
@@ -4010,7 +4016,7 @@ public class EditBienController {
 		// executor.execute(SubastasServicioTasacionDelegateApi.BO_UVEM_SOLICITUD_NUMERO_ACTIVO,
 		// idBien);
 		// proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivo(idBien);
-		Integer respuesta = proxyFactory.proxy(
+		String respuesta = proxyFactory.proxy(
 				SubastasServicioTasacionDelegateApi.class)
 				.solicitarNumeroActivoConRespuesta(idBien);
 		model.put("msgError", respuesta);

@@ -23,6 +23,7 @@ public interface EXTAsuntoApi {
 	public static final String EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT = "es.pfsgroup.recovery.ext.api.asunto.findAsuntosPaginatedDinamicoCount";
 	public static final String EXT_BO_ES_TITULIZADA = "es.pfsgroup.recovery.ext.api.asunto.esTitulizada";
 	public static final String EXT_BO_ES_GET_FONDO = "es.pfsgroup.recovery.ext.api.asunto.getFondo";
+	public static final String EXT_BO_ES_TIPO_GESTOR_ASIGNADO = "es.pfsgroup.recovery.ext.api.asunto.esTipoGestorAsignado";
 	
 	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORES)
 	public List<GestorDespacho> getGestoresAsunto(Long idAsunto);
@@ -73,6 +74,9 @@ public interface EXTAsuntoApi {
 	
 	@BusinessOperationDefinition(EXT_BO_ES_GET_FONDO)
 	public String getFondo(Long idAsunto);
+	
+	@BusinessOperationDefinition(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
+	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor);
 
 	
 }

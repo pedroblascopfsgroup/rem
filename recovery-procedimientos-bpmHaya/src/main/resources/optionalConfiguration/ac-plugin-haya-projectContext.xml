@@ -27,6 +27,11 @@
 				<entry key="GESTION-LLAVES" value="H040"/>
 			</map>
 		</property>
+		<property name="tareasCierreDeuda"> 
+			<map>
+				<entry key="ConfirmarTestimonio" value="H005_ConfirmarTestimonio"/>
+			</map>
+		</property>
 	</bean>
 
 	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">

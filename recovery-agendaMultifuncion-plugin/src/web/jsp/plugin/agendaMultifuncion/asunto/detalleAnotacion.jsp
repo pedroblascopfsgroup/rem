@@ -25,9 +25,10 @@
 		var nombreDeudor='${data.nombreDeudor}';
 		var txtNombreDeudor = app.creaLabel('<s:message code="plugin.ugas.asunto.tabcabecera.nombreDeudor" text="**Nombre Deudor" />',nombreDeudor);
 	</c:if>
-	<c:if test="${data.fechaVencimiento != null}">
-		var fecha_vencimiento='${data.fechaVencimiento}';
-		
+
+        var fecha_vencimiento='${data.fechaVencimiento}';
+        
+        <c:if test="${data.fechaVencimiento != null}">
 		//textfield que va a contener la fecha vencimiento
 		var txtFechaVencimiento = app.creaLabel('<s:message code="ext.comunicaciones.generarnotificacion.fechaVencimiento" text="**Fecha vencimiento" />',fecha_vencimiento);
 	</c:if>
@@ -110,19 +111,58 @@
 		,fieldLabel:'<s:message code="comunicaciones.generarnotificacion.leida" text="**Leida" />'			
 	});	
 
+        
+	var submitLeido = function(){
+            <c:if test="${data.fechaVencimiento != null}">
+            if(labeltareaRespuesta.getValue() == null || labeltareaRespuesta.getValue() ==''){
+                     Ext.MessageBox.show({
+                       title: 'Aviso',
+                       msg: 'Debe escribir una respuesta',
+                       width:300,
+                       buttons: Ext.MessageBox.OK
+
+               });
+            }else{	
+            Ext.Ajax.request({
+                    url: page.resolveUrl('recoveryagendamultifuncionanotacion/responderTarea')
+                    ,params: {idTarea: idTarea.getValue(), respuesta:labeltareaRespuesta.getValue(), idUg:idEntidad.getValue(), leida:false, codUg:'${data.codUg}'}
+
+                    ,success: function(){ page.fireEvent(app.event.DONE) }
+            });
+            }
+            </c:if>
+            <c:if test="${data.fechaVencimiento == null}">
+            Ext.Ajax.request({
+                    url: page.resolveUrl('recoveryagendamultifuncionanotacion/marcarTareaLeida')
+                    ,params: {idTarea: idTarea.getValue(),leida:chkLeida.getValue()}
+
+                    ,success: function(){ page.fireEvent(app.event.DONE) }
+            });
+            </c:if>
+        }
+	
+	var submitNoLeido = function(){
+            Ext.Ajax.request({
+                    url: page.resolveUrl('recoveryagendamultifuncionanotacion/marcarTareaLeida')
+                    ,params: {idTarea: idTarea.getValue(),leida:chkLeida.getValue()}
+
+                    ,success: function(){ page.fireEvent(app.event.CANCEL) }
+            });
+	}
+	
 	var changeUpdate = function(){
-		if(app.usuarioLogado.apellidoNombre == destinatario || app.usuarioLogado.apellidoNombre == emisor){
-			if(emisor == destinatario){
-				btnGuardar.setDisabled(false);
-			} else if((chkLeida.isVisible() && chkLeida.getValue()) || !chkLeida.isVisible()){
-				btnGuardar.setDisabled(false);
-			} else{
-				btnGuardar.setDisabled(true);
-			}
-		}else{
-			btnGuardar.setDisabled(true);	
-		}
-	}	
+        
+            if (fecha_vencimiento == null || fecha_vencimiento == ''){
+                if (chkLeida.getValue()){
+                        btnGuardar.setHandler(submitLeido);
+                }else{
+                        btnGuardar.setHandler(submitNoLeido);
+                }
+            }else{
+                btnGuardar.setHandler(submitLeido);
+            }
+
+        }
 	
 	var descEstado = '${data.situacion}';
 	var fechaCrear = '${data.fecha}';
@@ -272,33 +312,16 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			<c:if test="${data.fechaVencimiento != null}">
-			if(labeltareaRespuesta.getValue() == null || labeltareaRespuesta.getValue() ==''){
-				 Ext.MessageBox.show({
-				   title: 'Aviso',
-				   msg: 'Debe escribir una respuesta',
-				   width:300,
-				   buttons: Ext.MessageBox.OK
-				 
-			   });
-			}else{	
-			Ext.Ajax.request({
-				url: page.resolveUrl('recoveryagendamultifuncionanotacion/responderTarea')
-				,params: {idTarea: idTarea.getValue(), respuesta:labeltareaRespuesta.getValue(), idUg:idEntidad.getValue(), leida:false, codUg:'${data.codUg}'}
-				
-				,success: function(){ page.fireEvent(app.event.DONE) }
-			});
-			}
-			</c:if>
-			<c:if test="${data.fechaVencimiento == null}">
-			Ext.Ajax.request({
-				url: page.resolveUrl('recoveryagendamultifuncionanotacion/marcarTareaLeida')
-				,params: {idTarea: idTarea.getValue(),leida:chkLeida.getValue()}
-				
-				,success: function(){ page.fireEvent(app.event.DONE) }
-			});
-			</c:if>
-		}
+                    if (fecha_vencimiento == null || fecha_vencimiento == ''){
+                        if (chkLeida.getValue()){
+                                submitLeido;
+                        }else{
+                                submitNoLeido;
+                        }
+                    }else{
+                        submitLeido;
+                    }
+                }
 		<app:test id="btnGuardarABM" addComa="true"/>
 	});
 	

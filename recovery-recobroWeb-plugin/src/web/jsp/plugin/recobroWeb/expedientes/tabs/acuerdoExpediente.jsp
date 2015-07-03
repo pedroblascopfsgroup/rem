@@ -290,7 +290,6 @@
 	};
 	
 	acuerdosGrid.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
-	    debugger;
 		var rec = acuerdosGrid.getStore().getAt(rowIndex);
 		seleccionaRowAcuerdo(rec, rowIndex, e);
 		acuerdoTabPanel.show();
@@ -298,7 +297,6 @@
 	});
 	
 	acuerdosGrid.on('rowclick', function(grid, rowIndex, e) {
-	    debugger;
 		var rec = grid.getStore().getAt(rowIndex);
 		seleccionaRowAcuerdo(rec, rowIndex, e);
 		acuerdoTabPanel.show();

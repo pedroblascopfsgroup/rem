@@ -46,7 +46,7 @@ public class RECRecordatorioDaoImpl extends AbstractEntityDao<RECRecordatorio, L
 		if (!Checks.esNulo(dto.getSort()) && !Checks.esNulo(dto.getDir())){
 			hb.orderBy(dto.getSort(), dto.getDir().toLowerCase() );
 		}else{
-			hb.orderBy("tar.fechaVenc", HQLBuilder.ORDER_DESC );	
+			hb.orderBy("tar.fechaVenc", HQLBuilder.ORDER_ASC );	
 		}
 		
 

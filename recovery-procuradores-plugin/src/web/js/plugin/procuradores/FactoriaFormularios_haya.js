@@ -1592,11 +1592,11 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      		 		}
 	                      		 }
 	                        }
-	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false,filtrar:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
-	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false,filtradoProcurador:true}
-	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false,filtradoProcurador:true}
-	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false,filtradoProcurador:true}
+	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false,filtrar:true}
 	                      ]);
 	
 	//id: 273 : PROCEDIMIENTO MONITORIO: Confirmar admisión de demanda
@@ -1930,11 +1930,11 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                      		 		}
 		                      		 }
 		                     }
-	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la deuda",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la deuda",allowBlank:false,filtrar:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
-	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:true}
-	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:true}
-	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:true}
+	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:true,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:true,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:true,filtrar:true}
 	                      ]);
 	
 	//id: 306 : P. CAMBIARIO: Confirmar admision de la demanda

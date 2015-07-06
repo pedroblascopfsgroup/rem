@@ -290,10 +290,6 @@ public class InformeValidacionCDDBean {
 					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
 				}				
 			}
-			infobien.setContratosRelacionado(contratosBienRelacionados(nmbBien));
-			if (Checks.esNulo(infobien.getContratosRelacionado())) {
-				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", List Contratos relacionado; ");
-			}
 			listInfoBienes.add(infobien);
 		}
 		camposVacios += sb.toString();
@@ -355,14 +351,6 @@ public class InformeValidacionCDDBean {
 		HistoricoProcedimiento historicoPrc = subastaApi.tareaExiste(subasta.getProcedimiento(), nombreTarea);
 		
 		return !Checks.esNulo(historicoPrc);
-	}
-
-	private List<String> contratosBienRelacionados(NMBBien nmbBien) {
-		List<String> listContratosBien = new ArrayList<String>();
-		for (NMBContratoBien contrato : nmbBien.getContratos()) {
-			listContratosBien.add(contrato.getContrato().getDescripcion());
-		}
-		return listContratosBien;
 	}
 
 	// Crea el mensaje de validacion a partir de si cumple ciertas validaciones

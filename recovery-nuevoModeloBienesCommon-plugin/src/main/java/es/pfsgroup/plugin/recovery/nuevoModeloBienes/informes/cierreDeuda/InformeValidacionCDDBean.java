@@ -348,7 +348,7 @@ public class InformeValidacionCDDBean {
 		return null;
 	}
 	
-	private boolean getExisteTareaContabilizarCDD(NMBBien nmbBien) {
+	private boolean getExisteTareaContabilizarCDD() {
 		Map<String, String> mapaTareasCierreDeuda = nmbProjectContext.getTareasCierreDeuda();
 		String nombreTarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.SUBASTA_BANKIA_TAREA_CONTABILIZAR_CDD);
 		
@@ -382,15 +382,18 @@ public class InformeValidacionCDDBean {
 		if (Checks.esNulo(extAsunto.getPropiedadAsunto())) {
 			sb.append("Se tiene que informar la Propiedad Asunto para poder enviar a Cierre de Deuda");
 		} else if (DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo()) && 
-				subastaSareb.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				subasta.getProcedimiento().getTipoProcedimiento().getCodigo().equals(subastaSareb)) {
 			sb.append("No se puede enviar a cierre de deuda una subasta sareb si la propiedad del asunto es bankia");
 		} else if (DDPropiedadAsunto.PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo()) && 
-				subastaBankia.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+				subasta.getProcedimiento().getTipoProcedimiento().getCodigo().equals(subastaBankia)) {
 			sb.append("No se puede enviar a cierre de deuda una subasta bankia si la propiedad del asunto es sareb");
 		}
 		
-		if() {
-			
+		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && 
+				DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo()) && 
+				subasta.getProcedimiento().getTipoProcedimiento().getCodigo().equals(subastaBankia) && 
+				!getExisteTareaContabilizarCDD()) {
+			sb.append("Aun no se ha lanzado la tarea Contabilizar Cierre Deuda de la subasta bankia que intenta enviar a cierre de deuda");
 		}
 
 		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && 

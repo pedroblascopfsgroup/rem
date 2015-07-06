@@ -10,6 +10,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
@@ -57,9 +58,8 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarBienesCierreDeuda";
 	public static final String BO_NMB_SUBASTA_RELLENAR_INFORME_CDD = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.rellenarInformeValidacionCDD";	
 	public static final String BO_NMB_SUBASTA_ENVIAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarCierreDeuda";
-	public static final String BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.validacionCierreDeuda";
+	public static final String BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getProcedimientoBienByIdPadre";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
-	
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -212,11 +212,11 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
 	void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien);
+		
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
+	Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento);
 	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA)
-	boolean validacionCierreDeuda(Subasta subasta, List<Long> idsBien, String nombreNodo);
-	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA)
-	boolean tareaExiste(Procedimiento procedimiento, String nombreNodo);
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE)
+	HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo);
 	
 }

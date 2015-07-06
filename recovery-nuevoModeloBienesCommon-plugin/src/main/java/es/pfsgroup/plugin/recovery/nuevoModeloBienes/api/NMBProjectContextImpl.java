@@ -27,32 +27,21 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TIPO_PROCEDIMIENTO_POSESION = "POSESION";
 	public static final String CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES = "GESTION-LLAVES";
 	
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB = "CelebracionSubastaSareb";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB = "SenyalamientoSubastaSareb";
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_CONCURSAL = "CelebracionSubastaConcursal";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_CONCURSAL = "SenyalamientoSubastaConcursal";
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_TERCEROS = "CelebracionSubastaTerceros";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_TERCEROS = "SenyalamientoSubastaTerceros";
-	
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_BANKIA = "CelebracionSubastaBankia";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_BANKIA = "SenyalamientoSubastaBankia";
-	public static final String CONST_TAREA_CELEBRACION_SUBASTA_SAREB_BNK = "CelebracionSubastaSarebBankia";
-	public static final String CONST_TAREA_SENYALAMIENTO_SUBASTA_SAREB_BNK = "SenyalamientoSubastaSarebBankia";
-	
-	public static final String CONST_TAREA_ADJUDICACION_CONFIRMAR_CONTABILIDAD = "ConfirmarContabilidad";
-	public static final String CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_BNK = "ContabilizarActivosCDDBNK";
-	public static final String CONST_TAREA_CONTABILIZAR_ACTIVOS_CDD_SAREB = "ContabilizarActivosCDDSAREB";
-	
 	public static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "ConfirmarTestimonio";
-
+	public static final String SUBASTA_BANKIA_TAREA_CONTABILIZAR_CDD = "ContabilizarCierreDeuda";
+	
+	public static final String SUBASTA_BANKIA = "BANKIA";
+	public static final String SUBASTA_SAREB = "SAREB";
 	
 	private Set<String> tareasStopValidarLotesSubasta;
 	private Long nivelZonaOficinaGestoraEnInformes;
 	private List<String> tiposPrcAdjudicados;
 	private Map<String, String> mapaTiposPrc;
 	private Map<String, String> tareasCierreDeuda;
+	private Map<String, String> mapaSubastas;
 	private List<String> codigosSubastaValidacion;
 	private List<String> codigosSubastas;
+	private String comboPostoresCelebracionSubasta;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -211,26 +200,36 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	}
 
 	public List<String> getCodigosSubastaValidacion(){
-		
 		return codigosSubastaValidacion; 
-		
 	}
 	
 	public void setCodigosSubastaValidacion( List<String> codigosSubastaValidacion ){
-		
 		this.codigosSubastaValidacion = codigosSubastaValidacion; 
 	}
 	
 	public List<String> getCodigosSubastas(){
-		
 		return codigosSubastas;
-		
 	}
 	
 	public void setCodigosSubastas(List<String> codigosSubastas){
-		
 		this.codigosSubastas = codigosSubastas ;
-		
 	}
 	
+	@Override
+	public String getComboPostoresCelebracionSubasta() {
+		return comboPostoresCelebracionSubasta;
+	}
+	
+	public void setComboPostoresCelebracionSubasta(String comboPostoresCelebracionSubasta) {
+		this.comboPostoresCelebracionSubasta = comboPostoresCelebracionSubasta;
+	}
+	
+	@Override
+	public Map<String, String> getMapaSubastas() {
+		return mapaSubastas;
+	}
+	
+	public void setMapaSubastas(Map<String, String> mapaSubastas) {
+		this.mapaSubastas = mapaSubastas;
+	}
 }

@@ -119,7 +119,7 @@ public class SubastaV4HayaLeaveActionHandler extends
 		} else if (executionContext.getNode().getName()
 				.contains("AdjuntarInformeSubasta")) {
 
-			if (!Checks.esNulo(sub)) {
+			if (!Checks.esNulo(sub) && !Checks.esNulo(sub.getEstadoSubasta()) && DDEstadoSubasta.PIN.compareTo(sub.getEstadoSubasta().getCodigo()) == 0) {
 
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.PPR);
 			}
@@ -230,8 +230,9 @@ public class SubastaV4HayaLeaveActionHandler extends
 
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo())
-				&& DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta()
-						.getCodigo()) != 0) {
+				&& (DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta()
+						.getCodigo()) != 0 || DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta()
+								.getCodigo()) != 0)) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class,
 					genericDao
 							.createFilter(FilterType.EQUALS, "codigo", estado),
@@ -267,7 +268,7 @@ public class SubastaV4HayaLeaveActionHandler extends
 						return DDEstadoSubasta.PAC;
 					}
 				}
-				return DDEstadoSubasta.PPR;
+				return DDEstadoSubasta.PCO;
 			}
 		}
 		return null;

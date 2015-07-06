@@ -25,7 +25,6 @@ public class InfoBienesCDD {
 	private String resultadoAdjudicacion;
 	private String importeAdjudicacion;
 	private String fechaTestimonioAdjudicacionSareb;
-	private List<String> contratosRelacionado;
 
 	public Long getIdBien() {
 		return idBien;
@@ -70,7 +69,7 @@ public class InfoBienesCDD {
 	public String getNumeroActivo() {
 		return numeroActivo;
 	}
-
+	
 	public void setNumeroActivo(String numeroActivo) {
 		this.numeroActivo = numeroActivo;
 	}
@@ -138,14 +137,6 @@ public class InfoBienesCDD {
 	public void setFechaTestimonioAdjudicacionSareb(
 			String fechaTestimonioAdjudicacionSareb) {
 		this.fechaTestimonioAdjudicacionSareb = fechaTestimonioAdjudicacionSareb;
-	}
-
-	public List<String> getContratosRelacionado() {
-		return contratosRelacionado;
-	}
-
-	public void setContratosRelacionado(List<String> contratosRelacionado) {
-		this.contratosRelacionado = contratosRelacionado;
 	}
 
 	public String getProvincia() {

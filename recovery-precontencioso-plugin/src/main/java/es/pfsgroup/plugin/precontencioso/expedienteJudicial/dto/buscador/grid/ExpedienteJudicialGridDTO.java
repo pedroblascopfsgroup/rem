@@ -3,9 +3,6 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
-import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxGridDTO;
-import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoGridDTO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionGridDTO;
 
 public class ExpedienteJudicialGridDTO extends WebDto {
 

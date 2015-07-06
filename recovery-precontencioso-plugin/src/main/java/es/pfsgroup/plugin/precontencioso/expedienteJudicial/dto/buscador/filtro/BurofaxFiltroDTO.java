@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.burofax.dto;
+package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.filtro;
 
 import java.util.Date;
 

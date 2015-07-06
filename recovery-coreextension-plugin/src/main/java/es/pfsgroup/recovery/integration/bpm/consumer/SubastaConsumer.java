@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.bien.BienManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -140,12 +141,14 @@ public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
 		subastaDto.setFechaAnuncio(subastaPayload.getFechaAnuncio());
 		subastaDto.setCostasLetrado(subastaPayload.getCostasLetrado());
 		subastaDto.setDeudaJudicial(subastaPayload.getDeudaJudicial());
-
+		subastaDto.setUsuarioSuplantado("PEPITO");
+		
 		// Carga los lotes de subasta
 		cargaLotes(subastaDto, subastaPayload.getLotesSubasta());
 		
 		return subastaDto;
 	}	
+
 	
 	private void cargaLotes(SubastaDto subasta, List<LoteSubastaPayload> lotes) {
 		String valor;
@@ -185,7 +188,8 @@ public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
 			loteDto.setObservaciones(lotePayload.getObservaciones());
 			loteDto.setRiesgoConsignacion(lotePayload.getRiesgoConsignacion());
 			loteDto.setDeudaJudicial(lotePayload.getDeudaJudicial());
-			
+			loteDto.setUsuarioSuplantado("PEPITO");
+
 			subasta.getLotes().add(loteDto);
 			setBienes(loteDto, lotePayload);
 		}

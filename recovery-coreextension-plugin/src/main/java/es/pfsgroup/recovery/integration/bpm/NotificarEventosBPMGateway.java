@@ -3,11 +3,11 @@ package es.pfsgroup.recovery.integration.bpm;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.Header;
 
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.integration.TypePayload;
 
 public interface NotificarEventosBPMGateway {
@@ -53,15 +53,7 @@ public interface NotificarEventosBPMGateway {
 			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
 
 	@Gateway
-	void notificarPropuestaAcuerdo(EXTAcuerdo acuerdo
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
-
-	@Gateway
-	void notificarCierreAcuerdo(EXTAcuerdo acuerdo
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
-
-	@Gateway
-	void notificarRechazarAcuerdo(EXTAcuerdo acuerdo
+	void enviar(Acuerdo acuerdo
 			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
 
 	@Gateway

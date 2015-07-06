@@ -1,7 +1,6 @@
 package es.pfsgroup.recovery.integration.bpm;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,7 +13,6 @@ import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -22,17 +20,17 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
+import es.capgemini.pfs.termino.model.TerminoBien;
+import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.manager.EXTSubastaManager;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.MEJRecursoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
@@ -206,7 +204,6 @@ public class EntityToPayloadTransformer {
 			recursoPayload.setEsSupervisor(esSupervisor);
 		}
 		
-		
 		recursoPayload.getProcedimiento().translate(diccionarioCodigos);
 		
 		//translateValues(message);
@@ -340,17 +337,43 @@ public class EntityToPayloadTransformer {
 */
 	
 	public Message<DataContainerPayload> transformACU(Message<EXTAcuerdo> message) {
-		
 		EXTAcuerdo acuerdo = message.getPayload();
 		mejAcuerdoManager.prepareGuid(acuerdo);
 		
+		List<TerminoAcuerdo> listadoTerminos = mejAcuerdoManager.getTerminosAcuerdo(acuerdo.getId());
+			
+		String accion = message.getHeaders().containsKey(AcuerdoPayload.HEADER_ACCION) 
+				? (String)message.getHeaders().get(AcuerdoPayload.HEADER_ACCION)
+				: null;
+				
 		DataContainerPayload data = getNewPayload(message);
-		AcuerdoPayload recursoPayload = new AcuerdoPayload(data, acuerdo);
+		AcuerdoPayload acuerdoPayload = new AcuerdoPayload(data, accion, acuerdo)
+				.buildTerminoAcuerdo(listadoTerminos);
+
+		// Información de usuario registrado:
+		if (SecurityUtils.getCurrentUser() != null) {
+			Asunto asunto = acuerdo.getAsunto();
+			boolean esGestor = proxyFactory.proxy(AsuntoApi.class).esGestor(asunto.getId()); 
+			boolean esSupervisor = proxyFactory.proxy(AsuntoApi.class).esSupervisor(asunto.getId()); 
+			acuerdoPayload.setEsGestor(esGestor);
+			acuerdoPayload.setEsSupervisor(esSupervisor);
+		}
+		
+		// Completa los términos
+		List<TerminoAcuerdoPayload> terminosPayload = acuerdoPayload.getTerminosAcuerdo();
+		for (TerminoAcuerdoPayload terminoPayload : terminosPayload) {
+			Long idTermino = terminoPayload.getIdOrigen();
+			List<TerminoContrato> listadoTerminoContratos = mejAcuerdoManager.getTerminoAcuerdoContratos(idTermino);
+			List<TerminoBien> listadoTerminoBienes = mejAcuerdoManager.getTerminoAcuerdoBienes(idTermino);
+			terminoPayload
+				.buildTerminoContrato(listadoTerminoContratos)
+				.buildTerminoBien(listadoTerminoBienes);
+		}
 		
 		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, recursoPayload.getAsunto().getGuid())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAsunto().getGuid())
 				.build();
 		
 		return newMessage;
@@ -363,6 +386,7 @@ public class EntityToPayloadTransformer {
 		
 		DataContainerPayload data = getNewPayload(message);
 		SubastaPayload subastaPayload = new SubastaPayload(data, subasta);
+		
 		
 		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)

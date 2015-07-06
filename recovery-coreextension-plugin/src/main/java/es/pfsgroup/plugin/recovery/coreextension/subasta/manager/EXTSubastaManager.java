@@ -9,8 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
-import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
-import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.BienManager;
 import es.capgemini.pfs.bien.model.Bien;
 import es.pfsgroup.commons.utils.Checks;
@@ -18,13 +17,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 /**
  *
@@ -35,8 +29,6 @@ public class EXTSubastaManager {
 	@Autowired
 	private GenericABMDao genericDao;	
 
-	@Autowired
-	private UtilDiccionarioApi diccionarioApi;
 	
 	@Autowired
 	private ProcedimientoManager procedimientoManager;
@@ -64,8 +56,20 @@ public class EXTSubastaManager {
 			subasta.setProcedimiento(subastaDto.getProcedimiento());
 			subasta.setAsunto(subastaDto.getProcedimiento().getAsunto());
 			subasta.setGuid(subastaDto.getGuid());
+			
+			if (!Checks.esNulo(subastaDto.getUsuarioSuplantado())) {
+				subasta.setAuditoria(Auditoria.getNewInstance());
+				subasta.getAuditoria().setUsuarioCrear(subastaDto.getUsuarioSuplantado());
+				subasta.getAuditoria().setSuplantarUsuario(subastaDto.getUsuarioSuplantado());
+			}
+			
 		} else {
 			subasta = getSubasta(subastaDto.getId());
+			
+			if (!Checks.esNulo(subastaDto.getUsuarioSuplantado())) {
+				subasta.getAuditoria().setSuplantarUsuario(subastaDto.getUsuarioSuplantado());
+			}
+			
 		}
 		
 		subasta.setEstadoSubasta(subastaDto.getEstado());
@@ -96,8 +100,20 @@ public class EXTSubastaManager {
 			loteSubasta = new LoteSubasta();
 			loteSubasta.setGuid(dto.getGuid());
 			loteSubasta.setSubasta(dto.getSubasta());
+			
+			if (!Checks.esNulo(dto.getUsuarioSuplantado())) {
+				loteSubasta.setAuditoria(Auditoria.getNewInstance());
+				loteSubasta.getAuditoria().setUsuarioCrear(dto.getUsuarioSuplantado());
+				loteSubasta.getAuditoria().setSuplantarUsuario(dto.getUsuarioSuplantado());
+			}
+			
 		} else {
 			loteSubasta = this.getLoteSubasta(dto.getId());
+			
+			if (!Checks.esNulo(dto.getUsuarioSuplantado())) {
+				loteSubasta.getAuditoria().setSuplantarUsuario(dto.getUsuarioSuplantado());
+			}
+			
 		}
 		
 		loteSubasta.setNumLote(dto.getNumLote());

@@ -18,8 +18,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
-import es.capgemini.pfs.acuerdo.model.Acuerdo;
-import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -60,6 +58,9 @@ public class TerminoContrato implements Serializable, Auditable{
     @Embedded
     private Auditoria auditoria;
 
+	@Column(name = "SYS_GUID")
+	private String guid;
+    
 	public Long getId() {
 		return id;
 	}
@@ -101,6 +102,12 @@ public class TerminoContrato implements Serializable, Auditable{
 		this.auditoria = auditoria;
 	}
     
-    
+	public String getGuid() {
+		return guid;
+	}
 
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
 }

@@ -470,6 +470,7 @@ public class AcuerdoManager {
             actuacion = actuacionesAExplorarAcuerdoDao.get(dto.getIdActuacion());
         } else {
             actuacion = new ActuacionesAExplorarAcuerdo();
+            actuacion.setGuid(dto.getGuid());
             actuacion.setAuditoria(Auditoria.getNewInstance());
             actuacion.setAcuerdo(acuerdoDao.get(dto.getIdAcuerdo()));
         }
@@ -481,7 +482,6 @@ public class AcuerdoManager {
                 ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDValoracionActuacionAmistosa.class, dto.getDdValoracionActuacionAmistosa());
         actuacion.setDdValoracionActuacionAmistosa(valoracionActuacionAmistosa);
         actuacion.setObservaciones(dto.getObservaciones());
-
         actuacionesAExplorarAcuerdoDao.save(actuacion);
     }
 

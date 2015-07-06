@@ -1,10 +1,10 @@
 package es.pfsgroup.recovery.integration.bpm;
 
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 public interface IntegracionBpmService {
 
@@ -15,13 +15,15 @@ public interface IntegracionBpmService {
 	public static final String TIPO_ACTIVAR_TAREA = "BPM-TAREA-ACTIVAR";
 	public static final String TIPO_FIN_BPM = "BPM-FIN";
 	
-	public static final String TIPO_PROPUESTA_ACUERDO = "BPM-ACUERDO-PROPUESTA";
-	public static final String TIPO_CIERRE_ACUERDO = "BPM-ACUERDO-CIERRE";
-	public static final String TIPO_RECHAZAR_ACUERDO = "BPM-ACUERDO-RECHAZAR";
-	
 	public static final String TIPO_FINALIZAR_BPM = "DO-FINALIZAR-BPM";
 	public static final String TIPO_PARALIZAR_BPM = "DO-PARALIZAR-BPM";
 	public static final String TIPO_ACTIVAR_BPM = "DO-ACTIVAR-BPM";
+
+	public static final String TIPO_CAB_ACUERDO_PROPUESTA = "UPD-ACUERDO-PROP";
+	public static final String TIPO_CAB_ACUERDO_CIERRE = "UPD-ACUERDO-CIERRE";
+	public static final String TIPO_CAB_ACUERDO_RECHAZAR = "UPD-ACUERDO-RECH";
+	public static final String TIPO_CAB_ACUERDO_ACEPTAR = "UPD-ACUERDO-ACEP";
+	public static final String TIPO_CAB_ACUERDO_FINALIZAR = "UPD-ACUERDO-FIN";
 
 	public final static String TIPO_CAB_RECURSO = "CAB-UPD-RECURSO";  
 	public final static String TIPO_CAB_SUBASTA = "CAB-UPD-SUBASTA";  
@@ -141,7 +143,14 @@ public interface IntegracionBpmService {
      */
 	void enviarCabecera(Subasta subasta);
  
-	void notificarPropuestaAcuerdo(EXTAcuerdo acuerdo);
-	void notificarCierreAcuerdo(EXTAcuerdo acuerdo);
-	void notificarRechazarAcuerdo(EXTAcuerdo acuerdo);
+	void enviarPropuesta(Acuerdo acuerdo);
+
+	void enviarRechazo(Acuerdo acuerdo);
+
+	void enviarCierre(Acuerdo acuerdo);
+
+	void enviarAceptar(Acuerdo acuerdo);
+
+	void enviarFinalizar(Acuerdo acuerdo);
+
 }

@@ -27,10 +27,12 @@ public class ProcedimientoPayload {
 
 	private final DataContainerPayload data;
 	private final AsuntoPayload asunto;
+	private final UsuarioPayload usuario;
 
 	public ProcedimientoPayload(DataContainerPayload data) {
 		this.data = data;
 		this.asunto = new AsuntoPayload(data);
+		this.usuario = new UsuarioPayload(data);
 	}
 	
 	public ProcedimientoPayload(String tipo, Procedimiento procedimiento) {
@@ -40,6 +42,7 @@ public class ProcedimientoPayload {
 	public ProcedimientoPayload(DataContainerPayload data, Procedimiento procedimiento) {
 		this.data = data;
 		this.asunto = new AsuntoPayload(data, procedimiento.getAsunto());
+		this.usuario = new UsuarioPayload(data, procedimiento);
 		build(procedimiento);
 	}
 
@@ -252,6 +255,10 @@ public class ProcedimientoPayload {
 
 	public String getTareaOrigenDelBPM() {
 		return data.getExtraInfo(JBPM_TAR_GUID_ORIGEN);
+	}
+
+	public UsuarioPayload getUsuario() {
+		return usuario;
 	}
 	
 }

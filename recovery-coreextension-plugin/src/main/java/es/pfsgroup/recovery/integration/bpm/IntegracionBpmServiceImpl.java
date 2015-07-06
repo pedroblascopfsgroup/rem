@@ -3,6 +3,7 @@ package es.pfsgroup.recovery.integration.bpm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
@@ -96,27 +97,35 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     }
 	
 	@Override
-	public void notificarPropuestaAcuerdo(EXTAcuerdo acuerdo) {
-    	if (notificacionGateway==null) {
-			return;
-		}
-    	notificacionGateway.notificarPropuestaAcuerdo(acuerdo, TIPO_PROPUESTA_ACUERDO);
+	public void enviarPropuesta(Acuerdo acuerdo) {
+		enviar(acuerdo, TIPO_CAB_ACUERDO_PROPUESTA);
 	}
 
 	@Override
-	public void notificarCierreAcuerdo(EXTAcuerdo acuerdo) {
-    	if (notificacionGateway==null) {
-			return;
-		}
-    	notificacionGateway.notificarCierreAcuerdo(acuerdo, TIPO_CIERRE_ACUERDO);
+	public void enviarRechazo(Acuerdo acuerdo) {
+		enviar(acuerdo, TIPO_CAB_ACUERDO_RECHAZAR);
 	}
 
 	@Override
-	public void notificarRechazarAcuerdo(EXTAcuerdo acuerdo) {
+	public void enviarCierre(Acuerdo acuerdo) {
+		enviar(acuerdo, TIPO_CAB_ACUERDO_CIERRE);
+	}
+
+	@Override
+	public void enviarAceptar(Acuerdo acuerdo) {
+		enviar(acuerdo, TIPO_CAB_ACUERDO_ACEPTAR);
+	}
+
+	@Override
+	public void enviarFinalizar(Acuerdo acuerdo) {
+		enviar(acuerdo, TIPO_CAB_ACUERDO_FINALIZAR);
+	}
+	
+	private void enviar(Acuerdo acuerdo, String tipo) {
     	if (notificacionGateway==null) {
 			return;
 		}
-    	notificacionGateway.notificarRechazarAcuerdo(acuerdo, TIPO_RECHAZAR_ACUERDO);
+    	notificacionGateway.enviar(acuerdo, tipo);
 	}
 
 	@Override

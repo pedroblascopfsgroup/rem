@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.procesosJudiciales.dto.EXTDtoCrearTareaExterna;
@@ -26,6 +28,7 @@ import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -43,6 +46,7 @@ import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 import es.pfsgroup.recovery.integration.bpm.TareaExternaPayload;
+import es.pfsgroup.recovery.integration.bpm.UsuarioPayload;
 
 /**
  * 
@@ -180,7 +184,17 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		return tareaNotif;
 	}
 	
+	private void suplantarUsuario(UsuarioPayload usuarioPayload, Auditable auditable) {
+		Auditoria auditoria = auditable.getAuditoria();
+		if (auditoria==null) {
+			auditoria = Auditoria.getNewInstance();
+		}
+		auditoria.setSuplantarUsuario(usuarioPayload.getNombre());
+		auditoria.setUsuarioCrear(usuarioPayload.getNombre());
+	}
+	
 	private void postCrearTarea(TareaExternaPayload tareaExtenaPayload, EXTTareaNotificacion tareaNotif) {
+		
 		// TODO: QUITAR ESTA LINEA (lo hace la línea anterior)
 		tareaNotif.setGuid(this.getGuidTareaNotificacion(tareaExtenaPayload));
 		//tareaNotif.setGuid(tareaExtenaPayload.getGuidTARTarea());
@@ -188,6 +202,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		tareaNotif.setFechaFin(tareaExtenaPayload.getFechaFin());
 		tareaNotif.setFechaVenc(tareaExtenaPayload.getFechaVencimiento());
 		tareaNotif.setFechaVencReal(tareaExtenaPayload.getFechaVencimientoReal());
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), tareaNotif);
 		
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE,
 				tareaNotif);
@@ -227,6 +242,8 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		}
 		
 		TareaExterna tex = tareaNotif.getTareaExterna();
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), tex);
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), tex.getTareaPadre());
 		tex.setDetenida(false);
 		logger.debug(String.format("[INTEGRACION] TEX [%d] Finalizando tarea.", tex.getId()));
 		proxyFactory.proxy(TareaExternaApi.class).borrar(tex);
@@ -253,6 +270,8 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		TareaExterna tex = tareaNotif.getTareaExterna();
         tex.setCancelada(true);
         tex.setDetenida(false);
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), tex);
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), tex.getTareaPadre());
 		logger.debug(String.format("[INTEGRACION] TEX [%d] Cancelando tarea.", tex.getId()));
 		proxyFactory.proxy(TareaExternaApi.class).borrar(tex);
 		logger.debug(String.format("[INTEGRACION] TEX [%d] Tarea cancelada.", tex.getId()));
@@ -274,10 +293,13 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		}
 		MEJProcedimiento prc = (MEJProcedimiento)tareaNotif.getProcedimiento();
 		TareaExterna tex = tareaNotif.getTareaExterna();
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), tex);
 		logger.debug(String.format("[INTEGRACION] TEX [%d] Activando tarea.", tex.getId()));
         tareaExternaManager.activar(tex);
+        //
 		logger.debug(String.format("[INTEGRACION] PRC [%d] ACtivando procedimiento.", prc.getId()));
 		prc.setEstaParalizado(false);
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), prc);
 		procedimientoManager.saveProcedimiento(prc);
 		logger.debug(String.format("[INTEGRACION] TEX [%d] Tarea y procedimientos activados.", tex.getId()));
 			
@@ -299,11 +321,14 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		}
 		MEJProcedimiento prc = (MEJProcedimiento)tareaNotif.getProcedimiento();
 		TareaExterna tex = tareaNotif.getTareaExterna();
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), tex);
 		logger.debug(String.format("[INTEGRACION] TEX [%d] Deteniendo tarea.", tex.getId()));
         tareaExternaManager.detener(tex);
+        //
 		logger.debug(String.format("[INTEGRACION] PRC [%d] Deteniendo procedimiento.", prc.getId()));
 		prc.setEstaParalizado(true);
 		prc.setFechaUltimaParalizacion(new Date());
+		suplantarUsuario(tareaExtenaPayload.getUsuario(), prc);
 		procedimientoManager.saveProcedimiento(prc);
 		logger.debug(String.format("[INTEGRACION] TEX [%d] Tarea y procedimientos activados.", tex.getId()));
 			
@@ -331,7 +356,8 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 			tevValor.setTareaExterna(tarea);
 			tevValor.setNombre(item.getNombre());
 			tevValor.setValor(valor);
-			
+			suplantarUsuario(tareaExtenaPayload.getUsuario(), tevValor);
+
 			// listaValores.add(valor);
 			tareaExternaValorDao.saveOrUpdate(tevValor);
 		}

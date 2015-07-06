@@ -37,6 +37,7 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
 public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
@@ -57,6 +58,9 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 	@Autowired(required = false)
 	private List<CumplimientoAcuerdoListener> listeners;
 
+	@Autowired
+	private IntegracionBpmService bpmIntegracionService;
+	
 	@Override
 	public String managerName() {
 		return "acuerdoManager";
@@ -119,6 +123,8 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 
 		acuerdoDao.saveOrUpdate(acuerdo);
 
+		bpmIntegracionService.enviarCierre(acuerdo);
+		
 		EventFactory.onMethodStop(this.getClass());
 	}
 	
@@ -142,6 +148,7 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 	    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION, acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO,
 	         EXTSubtipoTarea.CODIGO_ACUERDO_CERRADO_POR_SUPERVISOR, acuerdo.getObservaciones());
 
+	    bpmIntegracionService.enviarFinalizar(acuerdo);
 	}
 
 	/**
@@ -186,6 +193,8 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 		}		
 			
 		acuerdoDao.save(acuerdo);
+
+    	bpmIntegracionService.enviarAceptar(acuerdo);
 
 		EventFactory.onMethodStop(this.getClass());
 	}

@@ -15,6 +15,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -200,7 +201,7 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		if (procDto.getProcedimientoPadre()!=null) {
 			Filter filtroProcOr = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoOrigen", procDto.getProcedimientoPadre().getTipoProcedimiento().getCodigo());
 			Filter filtroProcDest = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoDestino", procDto.getTipoProcedimiento().getCodigo());
-			genericDao.get(MEJConfiguracionDerivacionProcedimiento.class, filtroProcOr, filtroProcDest);
+			configuracion = genericDao.get(MEJConfiguracionDerivacionProcedimiento.class, filtroProcOr, filtroProcDest);
 		}
 		
 		if (procDto.getIdProcedimiento()==null) {
@@ -221,6 +222,12 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 					procedimiento.setTipoActuacion(procDto.getTipoProcedimiento().getTipoActuacion());
 				}
 			}
+
+			if (!Checks.esNulo(procDto.getUsuarioSuplantado())) {
+				procedimiento.setAuditoria(Auditoria.getNewInstance());
+				procedimiento.getAuditoria().setUsuarioCrear(procDto.getUsuarioSuplantado());
+				procedimiento.getAuditoria().setSuplantarUsuario(procDto.getUsuarioSuplantado());
+			}
 		
 			
 		} else {
@@ -229,6 +236,11 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 				throw new RuntimeException(String.format("Procedimiento no encontrado para actualizar: %d", procDto.getIdProcedimiento()));
 			}
 			procedimiento = MEJProcedimiento.instanceOf(tmpProcedimiento);
+			
+			if (!Checks.esNulo(procDto.getUsuarioSuplantado())) {
+				procedimiento.getAuditoria().setSuplantarUsuario(procDto.getUsuarioSuplantado());
+			}
+			
 		}
 		
 		procedimiento.setExpedienteContratos(procDto.getExpedienteContratos());

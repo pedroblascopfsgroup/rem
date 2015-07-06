@@ -8,6 +8,7 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.model.Persona;
@@ -36,6 +37,7 @@ public class EXTProcedimientoDto {
 	private DDTipoReclamacion tipoReclamacion;
 	private List<ProcedimientoBien> bienes;
 	private String guid;
+	private String usuarioSuplantado;
 	
 	public Long getIdProcedimiento() {
 		return idProcedimiento;
@@ -156,5 +158,11 @@ public class EXTProcedimientoDto {
 	}
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+	public String getUsuarioSuplantado() {
+		return usuarioSuplantado;
+	}
+	public void setUsuarioSuplantado(String usuarioSuplantado) {
+		this.usuarioSuplantado = usuarioSuplantado;
 	}
 }

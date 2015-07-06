@@ -26,6 +26,7 @@ public class LoteSubastaDto {
 	private String observacionesComite;
 	private DDEstadoLoteSubasta estado;
 	private Date fechaEstado;
+	private String usuarioSuplantado;
 	
 	private List<Long> idBienes;
 
@@ -140,6 +141,14 @@ public class LoteSubastaDto {
 	}
 	public void setIdBienes(List<Long> idBienes) {
 		this.idBienes = idBienes;
+	}
+
+	public String getUsuarioSuplantado() {
+		return usuarioSuplantado;
+	}
+
+	public void setUsuarioSuplantado(String usuarioSuplantado) {
+		this.usuarioSuplantado = usuarioSuplantado;
 	}
 	
 }

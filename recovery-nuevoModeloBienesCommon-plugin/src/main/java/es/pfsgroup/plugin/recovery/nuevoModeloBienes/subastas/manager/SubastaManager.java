@@ -1115,6 +1115,13 @@ public class SubastaManager implements SubastaApi {
 			return (!Checks.esNulo(historicoPrc) && !Checks.esNulo(historicoPrc.getFechaFin()));
 		}
 		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE)
+		public HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo) {
+			return getNodo(procedimiento, nombreNodo);
+		}
+		
 		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
 		public ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);

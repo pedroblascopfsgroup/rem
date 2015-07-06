@@ -10,6 +10,7 @@ import java.util.Map;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -332,8 +333,6 @@ public class InformeValidacionCDDBean {
 	}
 
 	private String getFechaTestimonioAdjudicacionSareb(NMBBien nmbBien) {
-		
-		
 		Map<String, String> mapaTareasCierreDeuda = nmbProjectContext.getTareasCierreDeuda();
 		String nombreTarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO);
 		
@@ -347,6 +346,15 @@ public class InformeValidacionCDDBean {
 			return valor.getValor();
 		}
 		return null;
+	}
+	
+	private boolean getExisteTareaContabilizarCDD(NMBBien nmbBien) {
+		Map<String, String> mapaTareasCierreDeuda = nmbProjectContext.getTareasCierreDeuda();
+		String nombreTarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.SUBASTA_BANKIA_TAREA_CONTABILIZAR_CDD);
+		
+		HistoricoProcedimiento historicoPrc = subastaApi.tareaExiste(subasta.getProcedimiento(), nombreTarea);
+		
+		return !Checks.esNulo(historicoPrc);
 	}
 
 	private List<String> contratosBienRelacionados(NMBBien nmbBien) {
@@ -363,17 +371,37 @@ public class InformeValidacionCDDBean {
 		EXTAsunto extAsunto = EXTAsunto.instanceOf(subasta.getAsunto());
 		BooleanBienes booleanBienes = new BooleanBienes();
 		
+		Map<String, String> mapaSubasta = nmbProjectContext.getMapaSubastas();
+		String subastaSareb = mapaSubasta.get(NMBProjectContextImpl.SUBASTA_SAREB);
+		String subastaBankia = mapaSubasta.get(NMBProjectContextImpl.SUBASTA_BANKIA);
+		
 		if (!Checks.esNulo(camposVacios)) {
 			sb.append("Hay campos obligatorios que estan sin informar;");
 		}
+		
+		if (Checks.esNulo(extAsunto.getPropiedadAsunto())) {
+			sb.append("Se tiene que informar la Propiedad Asunto para poder enviar a Cierre de Deuda");
+		} else if (DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo()) && 
+				subastaSareb.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+			sb.append("No se puede enviar a cierre de deuda una subasta sareb si la propiedad del asunto es bankia");
+		} else if (DDPropiedadAsunto.PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo()) && 
+				subastaBankia.equals(subasta.getProcedimiento().getTipoProcedimiento().getCodigo())) {
+			sb.append("No se puede enviar a cierre de deuda una subasta bankia si la propiedad del asunto es sareb");
+		}
+		
+		if() {
+			
+		}
 
-		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
+		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && 
+				DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
 			if (!validaProcedimientoContratos(subasta)) {
 				sb.append("El procedimiento no tienen ninguna operacion activa;"); // Alguna deberia ser
 			}			
 		}
 		
-		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && DDPropiedadAsunto.PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
+		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && 
+				DDPropiedadAsunto.PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
 			booleanBienes = validaBienesContratos();
 			if (!booleanBienes.isValidacionCorrecta()) {
 				for (String descBien : booleanBienes.getListBienes()) {

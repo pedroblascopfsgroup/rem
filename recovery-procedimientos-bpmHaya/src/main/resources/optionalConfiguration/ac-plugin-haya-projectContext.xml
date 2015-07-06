@@ -35,6 +35,11 @@
 		<property name="comboPostoresCelebracionSubasta">
 				<value>comboPostores</value>
 		</property>
+		<property name="mapaSubastas">
+			<map>
+				<entry key="SAREB" value="H002"/>
+			</map>
+		</property>
 	</bean>
 
 	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">

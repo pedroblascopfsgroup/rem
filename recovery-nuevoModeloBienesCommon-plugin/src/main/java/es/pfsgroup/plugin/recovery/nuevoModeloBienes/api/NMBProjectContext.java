@@ -76,5 +76,7 @@ public interface NMBProjectContext {
 	List<String> getCodigosSubastas();
 
 	String getComboPostoresCelebracionSubasta();
+
+	Map<String, String> getMapaSubastas();
 	
 }

@@ -38,6 +38,13 @@
 		<property name="tareasCierreDeuda">
 			<map>
 				<entry key="ConfirmarTestimonio" value="P413_ConfirmarTestimonio"/>
+				<entry key="ContabilizarCierreDeuda" value="P401_ContabilizarCierreDeuda"/>				
+			</map>
+		</property>
+		<property name="mapaSubastas">
+			<map>
+				<entry key="BANKIA" value="P401"/>
+				<entry key="SAREB" value="P409"/>
 			</map>
 		</property>
 		<property name="codigosSubastaValidacion">

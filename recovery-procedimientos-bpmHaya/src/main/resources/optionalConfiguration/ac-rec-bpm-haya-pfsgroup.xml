@@ -24,6 +24,7 @@
  	<bean id="estamosADosMesesHandler" class="es.pfsgroup.procedimientos.moratoria.EstamosADosMesesHandler"></bean>
  	<bean id="subastaSolicitarNumActivoHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarNumActivoHandler"></bean>
  	<bean id="subastaSolicitarTasacionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarTasacionHandler"></bean> 	
+ 	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
 
  	    
 	<!-- BPM activos -->
@@ -87,6 +88,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubsanacionEscritura/haya_tramiteSubsanacionEscritura.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteInscripcionDelTitulo/haya_tramiteInscripcionDelTitulo.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAsignacionGestores/haya_tramiteAsignacionGestores.xml" p:version="-1"/>
 	
 	<!-- Groovy's -->
 	<bean id="jbpmUtilHaya" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
@@ -732,7 +734,15 @@
 	            def validarBienesDocCelebracionSubasta = {
 					def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
                 	return subastaProcedimientoManager.comprobarAdjudicacionDocBienesCelebracionSubasta(idProcedimiento);
-	            }		    		                       
+	            }
+	            
+	            def asuntoConLetrado = {
+	            	def extAsuntoManager = ctx.getBean("EXTAsuntoManager");
+					if (procedimientoManager.getProcedimiento(idProcedimiento).getAsunto() != null ) 
+						return extAsuntoManager.esTipoGestorAsignado(procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getId(), "LETR");
+					else
+						{return false}
+				}		    		                       
         	            
   			 ]]>
   			</value>

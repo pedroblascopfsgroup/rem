@@ -381,7 +381,7 @@ public class InformeValidacionCDDBean {
 				DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(extAsunto.getPropiedadAsunto().getCodigo()) && 
 				subasta.getProcedimiento().getTipoProcedimiento().getCodigo().equals(subastaBankia) && 
 				!getExisteTareaContabilizarCDD()) {
-			sb.append("Aun no se ha lanzado la tarea Contabilizar Cierre Deuda de la subasta bankia que intenta enviar a cierre de deuda;");
+			sb.append("No esta iniciada la tarea Contabilizar activos/cierre de deudas de la subasta bankia que intenta enviar a cierre de deuda;");
 		}
 
 		if(!Checks.esNulo(extAsunto.getPropiedadAsunto()) && 

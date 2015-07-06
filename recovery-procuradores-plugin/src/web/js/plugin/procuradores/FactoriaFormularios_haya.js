@@ -245,6 +245,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	    	}
     	}});
     	
+    	resolucionesSinAdjunto.push({idResolucion:339, validateFunction:function(v){
+    		
+    		if(Ext.getCmp('d_comboSiNo' + idf).getValue() == "02"){
+    			return true;
+    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+    				return true;
+	    		}else{
+	    			return false;
+	    	}
+    	}});
+    	
+    	resolucionesSinAdjunto.push({idResolucion:343, validateFunction:null});
+    	
     	
     	
     	

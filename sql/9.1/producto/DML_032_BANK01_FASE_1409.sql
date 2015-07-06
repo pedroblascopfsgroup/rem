@@ -44,7 +44,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 -- * SE MODIFICA EL CAMPO BORRADO A 1 DE TODOS LOS VALORES DEL DICCIONARIO QUE NO PROCEDEN.
 -- */
 execute immediate 'UPDATE ' ||
-                  '( SELECT BIE_ADI.DD_TPN_ID, BIE_ADI.USUARIOMODIFICAR, BIE_ADI.FECHAMODIFICAR  FROM '||V_ESQUEMA||'.BIE_ADICIONAL BIE_ADI INNER JOIN DD_TPN_TIPO_INMUEBLE TPN ON BIE_ADI.DD_TPN_ID = TPN.DD_TPN_ID ' ||
+                  '( SELECT BIE_ADI.DD_TPN_ID, BIE_ADI.USUARIOMODIFICAR, BIE_ADI.FECHAMODIFICAR  FROM '||V_ESQUEMA||'.BIE_ADICIONAL BIE_ADI INNER JOIN '||V_ESQUEMA||'.DD_TPN_TIPO_INMUEBLE TPN ON BIE_ADI.DD_TPN_ID = TPN.DD_TPN_ID ' ||
                   ' WHERE TPN.DD_TPN_CODIGO IN (''AD'',''AI'',''AL'',''AP'',''CD'',''CH'',''CO'',''CU'',''DO'',''DU'',''ES'',''GA'',''GJ'',''HO'',''ID'',''LO'',''NC'',''ND'',''NO'',''NU'',''NV'',''OF'',''OT'',''PI'',''RE'',''RM'',''RR'',''RS'',''RT'',''RX'',''SP'',''TR'',''UN'',''UP'')) ' ||
                   ' SET USUARIOMODIFICAR = ''FASE1409'', FECHAMODIFICAR=SYSDATE, ' || 
                   ' DD_TPN_ID = ' ||
@@ -88,7 +88,7 @@ execute immediate 'UPDATE ' ||
             
 
 execute immediate 'UPDATE ' ||
-                  '( SELECT BIE_ENT.DD_TPN_ID, BIE_ENT.USUARIOMODIFICAR, BIE_ENT.FECHAMODIFICAR  FROM '||V_ESQUEMA||'.BIE_BIEN_ENTIDAD BIE_ENT INNER JOIN DD_TPN_TIPO_INMUEBLE TPN ON BIE_ENT.DD_TPN_ID = TPN.DD_TPN_ID ' ||
+                  '( SELECT BIE_ENT.DD_TPN_ID, BIE_ENT.USUARIOMODIFICAR, BIE_ENT.FECHAMODIFICAR  FROM '||V_ESQUEMA||'.BIE_BIEN_ENTIDAD BIE_ENT INNER JOIN '||V_ESQUEMA||'.DD_TPN_TIPO_INMUEBLE TPN ON BIE_ENT.DD_TPN_ID = TPN.DD_TPN_ID ' ||
                   ' WHERE TPN.DD_TPN_CODIGO IN (''AD'',''AI'',''AL'',''AP'',''CD'',''CH'',''CO'',''CU'',''DO'',''DU'',''ES'',''GA'',''GJ'',''HO'',''ID'',''LO'',''NC'',''ND'',''NO'',''NU'',''NV'',''OF'',''OT'',''PI'',''RE'',''RM'',''RR'',''RS'',''RT'',''RX'',''SP'',''TR'',''UN'',''UP'')) ' ||
                   ' SET USUARIOMODIFICAR = ''FASE1409'', FECHAMODIFICAR=SYSDATE, ' || 
                   ' DD_TPN_ID = ' ||

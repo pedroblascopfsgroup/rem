@@ -22,6 +22,8 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -127,6 +129,7 @@ public class RecobroAccionesExtrajudiciales implements Serializable, Auditable  
 	
 	@ManyToOne
 	@JoinColumn(name="DD_DRO_ID")
+	@NotFound(action=NotFoundAction.IGNORE)
 	private RecobroDDDatoNuevoOrigen datoNuevoOrigen;
 	
 	@Column(name="ACE_BBDD_ORIGEN_NUEVO_DATO")

@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@2.1">
+  <actions/>
+  <description>Genera una release con el WAR y el ZIP para el batch</description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>1</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>Entorno</name>
+          <description>bankia,bankia-delivery (para entornos Bankia)
+haya (Entornos haya)</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>bankia,bankia-delivery</string>
+              <string>haya</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <hudson.plugins.disk__usage.DiskUsageProperty plugin="disk-usage@0.23"/>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.4">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>ssh://jenkins_bnk@192.168.0.143:8454/recovery</url>
+        <credentialsId>fdf735e5-0380-41eb-a636-dac7383ec9ee</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>limpieza_cosas_bankia</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <rootModule>
+    <groupId>es.pfsgroup</groupId>
+    <artifactId>recovery</artifactId>
+  </rootModule>
+  <goals>clean package -Dmaven.test.skip=true -P${Entorno}</goals>
+  <mavenName>Maven 3</mavenName>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <ignoreUpstremChanges>true</ignoreUpstremChanges>
+  <archivingDisabled>false</archivingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+  <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+  <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+  <reporters/>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>ficheros_generados/*</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.20">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+  </buildWrappers>
+  <prebuilders>
+    <hudson.tasks.Maven>
+      <targets>versions:set -DnewVersion=${version}</targets>
+      <mavenName>Maven 3</mavenName>
+      <usePrivateRepository>false</usePrivateRepository>
+      <settings class="jenkins.mvn.FilePathSettingsProvider">
+        <path>/home/jenkins/.m2/settings.xml</path>
+      </settings>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    </hudson.tasks.Maven>
+  </prebuilders>
+  <postbuilders>
+    <hudson.tasks.Shell>
+      <command>echo &quot;Uso: compilar.sh &lt;fichero.war&gt;&quot;
+ls /opt/weblogic/wlserver/server/lib/weblogic.jar
+export CLASSPATH=/opt/weblogic/wlserver/server/lib/weblogic.jar
+java weblogic.appc -verbose -k rec-web/target/pfs-${version}*.war</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>echo &quot;batch.version=$version&quot; &gt; ./rec-batch/target/alternateLocation/version.properties
+echo &quot;batch.buildDate=$(date)&quot; &gt;&gt; ./rec-batch/target/alternateLocation/version.properties
+
+cd rec-batch
+./create-zip.sh ${version}
+cd ..
+
+mkdir ficheros_generados
+
+cp rec-batch/target/generated-files/* ./ficheros_generados
+cp ${WORKSPACE}/rec-web/target/pfs-${version}*.war ./ficheros_generados
+</command>
+    </hudson.tasks.Shell>
+  </postbuilders>
+  <runPostStepsIfResult>
+    <name>SUCCESS</name>
+    <ordinal>0</ordinal>
+    <color>BLUE</color>
+    <completeBuild>true</completeBuild>
+  </runPostStepsIfResult>
+</maven2-moduleset>

@@ -148,6 +148,7 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 					.evaluaScript(getProcedimiento(executionContext).getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(), null, script).toString();
 		} catch (Exception e) {
 			logger.info("Error en el script de decisi�n [" + script + "]. Procedimiento [" + getProcedimiento(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "].", e);
+			System.out.println("Error en el script de decisi�n [" + script + "]. Procedimiento [" + getProcedimiento(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]." + e);
 			throw new UserException("bpm.error.script");
 		}
 		return result;

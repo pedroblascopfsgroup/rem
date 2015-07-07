@@ -586,11 +586,6 @@
 		</dependency>
 		<dependency>
 			<groupId>batch.libraries</groupId>
-			<artifactId>ojdbc14</artifactId>
-			<version>STABLE</version>
-		</dependency>
-		<dependency>
-			<groupId>batch.libraries</groupId>
 			<artifactId>opencsv</artifactId>
 			<version>STABLE</version>
 		</dependency>
@@ -906,6 +901,13 @@
 					<version>STABLE</version>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<!-- Driver JDBC -->
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>ojdbc14</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<!-- Fin del driver JDBC -->
 			</dependencies>
 		</profile>
 		<!-- PERFIL BANKIA PARA EL BATCH -->
@@ -924,6 +926,13 @@
 					<version>STABLE</version>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<!-- Driver JDBC -->
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>ojdbc14</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<!-- Fin del driver JDBC -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
@@ -934,7 +943,6 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
-
 			</dependencies>
 			<build>
 				<plugins>
@@ -984,6 +992,13 @@
 					<version>STABLE</version>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<!-- Driver JDBC -->
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>ojdbc14</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<!-- Fin del driver JDBC -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
@@ -1057,6 +1072,13 @@
     				<version>1.7.2.RELEASE</version>
 				</dependency>
 				<!-- Fin versión de AspectJ -->
+				<!-- Driver JDBC -->
+				<dependency>
+					<groupId>batch.libraries</groupId>
+					<artifactId>ojdbc14</artifactId>
+					<version>STABLE</version>
+				</dependency>
+				<!-- Fin del driver JDBC -->
 			</dependencies>
 			<build>
 				<plugins>

@@ -45,6 +45,7 @@ import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.ImporteMonetario;
@@ -587,12 +588,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			if(tipoInmueble.contains("VI"))			 
 			{
 				//tipoInmueble = "VI01";
-				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : bien.getViviendaHabitual()  ? '1' : '2' );
+				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : DDSiNo.SI.equals(bien.getViviendaHabitual())  ? '1' : '2' );
 			}
 			else if(tipoInmueble.contains("UN"))
 			{	
 			    //tipoInmueble = "VI04";
-				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : bien.getViviendaHabitual()  ? '1' : '2' );
+				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : DDSiNo.SI.equals(bien.getViviendaHabitual())  ? '1' : '2' );
 			}
 			else if(tipoInmueble.contains("CO"))
 			{

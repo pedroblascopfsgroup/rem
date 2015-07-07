@@ -238,6 +238,7 @@
 	            }
             }
             if (columnName == 'incorporar') {
+            	debugger;
                 var rec = gridUsuarios.getStore().getAt(rowIndex);
                 if(rec){
                     var fechaEditor = cm.getCellEditor(cm.findColumnIndex('fecha'), rowIndex).field;
@@ -247,6 +248,8 @@
                         value = 0;
                         rec.set('fecha', '');
                         fechaEditor.disable();
+                        // FASE-1441 : No es posible desmarcar la casilla de incorporar y dejar marcada la de email 
+                        rec.set('email', value);
                     }
                     else {
                         fechaEditor.enable();
@@ -254,10 +257,12 @@
                     }
                     
                     rec.set('incorporar', value);
+
                 }
             }
             
             if (columnName == 'email') {
+            debugger;
                 var rec = grid.getStore().getAt(rowIndex);
                 var tieneEmail = rec.get('tieneEmail');
                 if(tieneEmail){
@@ -271,6 +276,8 @@
 	                    else {
 	                    	value = 1;
 	                    	permiteAdjuntar=permiteAdjuntar+1;
+	                    	// FASE-1441 : No es posible marcar la casilla de email sin marcar la de incorporar 
+	                    	rec.set('incorporar', value);
 	                    }
 	                    if((mailPara.validate() && mailPara.getValue()!=null && mailPara.getValue()!='') ||(permiteAdjuntar>0)){
 	                    	panelAdjuntos.setDisabled(false);

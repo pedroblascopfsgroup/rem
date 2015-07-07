@@ -49,8 +49,8 @@
 			<url>http://interecovery.pfsgroup.es:8086</url>
 		</repository>
 		<repository>
-			<id>Framework</id>
-			<url>http://192.168.0.143:8458/nexus/content/repositories/Framework</url>
+			<id>pfsNexusFramework</id>
+			<url>http://nexus.pfsgroup.es/nexus/content/repositories/framework</url>
 		</repository>
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>

@@ -1,9 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,7 +81,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruc
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
-import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -93,12 +89,6 @@ import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 public class SubastaManager implements SubastaApi {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
-	
-	private static final String DEVON_PROPERTIES = "devon.properties";
-	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
-	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
-	private static final String DEVON_HOME = "DEVON_HOME";
-	private static final String PROYECTO_HAYA = "HAYA";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -559,6 +549,13 @@ public class SubastaManager implements SubastaApi {
 		}
 		return page;
 	}	
+	
+	@Override
+	@BusinessOperation(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
+	public Parametrizacion parametrizarLimite(String nombreParametro) {
+		return (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+				nombreParametro);
+	}
 
 	/**
 	 * Metodo optimizado de busqueda de subastas para exportar a excel 
@@ -1125,6 +1122,13 @@ public class SubastaManager implements SubastaApi {
 			return (!Checks.esNulo(historicoPrc) && !Checks.esNulo(historicoPrc.getFechaFin()));
 		}
 		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE)
+		public HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo) {
+			return getNodo(procedimiento, nombreNodo);
+		}
+		
 		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
 		public ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
 			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
@@ -1191,6 +1195,8 @@ public class SubastaManager implements SubastaApi {
 		
 		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien) {
 			Subasta subasta = getSubasta(idSubasta);
+			EXTAsunto extAsunto = EXTAsunto.instanceOf(subasta.getAsunto()); 
+
 			Procedimiento procedimiento = subasta.getProcedimiento();
 			Auditoria auditoria = Auditoria.getNewInstance();
 			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
@@ -1198,11 +1204,7 @@ public class SubastaManager implements SubastaApi {
 			cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
 			cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
 			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
-			if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
-				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);	
-			}else{
-				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
-			}
+			cierreDeuda.setEntidad(extAsunto.getPropiedadAsunto().getCodigo());	
 			cierreDeuda.setIdBien(idBien);
 			return cierreDeuda;
 		};
@@ -1258,85 +1260,19 @@ public class SubastaManager implements SubastaApi {
 			
 		}
 		
-		private String cargarProyectoProperties() {
-			String proyecto = "";	
-			Properties appProperties = cargarProperties(DEVON_PROPERTIES);
-			if (appProperties == null) {
-				System.out.println("No puedo consultar devon.properties");		
-			} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
-				proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
-			} else {
-				System.out.println("UVEM no instalado");
-			}
-			return proyecto;
-		}
-		
-		private Properties cargarProperties(String nombreProps) {
-			InputStream input = null;
-			Properties prop = new Properties();
-			
-			String devonHome = DEVON_HOME_BANKIA_HAYA;
-			if (System.getenv(DEVON_HOME) != null) {
-				devonHome = System.getenv(DEVON_HOME);
-			}
-			
-			try {
-				input = new FileInputStream("/" + devonHome + "/" + nombreProps);
-				prop.load(input);
-			} catch (IOException ex) {
-				System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
-			} finally {
-				if (input != null) {
-					try {
-						input.close();
-					} catch (IOException e) {
-						System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
-																																																																																				}
-																																																																																			}
-			}
-			return prop;
-		}
-		
 		@Override
-		@BusinessOperation(BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA)
-		public boolean validacionCierreDeuda(Subasta subasta, List<Long> idsBien, String nombreNodo) {
-			for(LoteSubasta ls : subasta.getLotesSubasta()) {
-				for(Bien bien : ls.getBienes()) {
-					if(!Checks.estaVacio(idsBien)) {
-						for(Long idBien : idsBien) {
-							if(idBien.equals(bien.getId())) {
-								List<ProcedimientoBien> procedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
-										genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId()), 
-										genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
-										genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", nombreNodo.subSequence(0, 3)));
-								if(Checks.estaVacio(procedimientoBien)) {
-									return false;
-								}else{
-									return tareaExiste(subasta.getProcedimiento(), nombreNodo);							
-								}
-							}
-						}
-					}else{
-						List<ProcedimientoBien> procedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
-								genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId()), 
-								genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
-								genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", nombreNodo.subSequence(0, 4)));
-						if(Checks.estaVacio(procedimientoBien)) {
-							return false;
-						}else{
-							return tareaExiste(procedimientoBien.get(0).getProcedimiento(), nombreNodo);							
-						}
-					}
-				}
-			}
-			return false;
-		}
+		@BusinessOperation(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
+		public Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento) {
+			Procedimiento prc = null;
+			List<ProcedimientoBien> listProcedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
+					genericDao.createFilter(FilterType.EQUALS, "bien.id", nmbBien.getId()), 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", tipoProcedimiento));
 			
-		@Override
-		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE)
-		public boolean tareaExiste(Procedimiento procedimiento, String nombreNodo) {
-			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
-			return !Checks.esNulo(historicoPrc);
+			if(!Checks.estaVacio(listProcedimientoBien)) {
+				prc = listProcedimientoBien.get(0).getProcedimiento();
+			}
+			return prc;
 		}
 		
 		@Override

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="pasajePCRProduccionJob" parent="batch.simpleJob" scope="prototype">
+    <property name="transactional" value="true"/>
+    <property name="transactionManager" ref="entityTransactionManager"/>
+    <property name="steps">
+      <list>
+        <!-- Se deja este job vacío, se puede ver el contenido previo en pasajePCRProduccionJob.xml.old -->
+      </list>
+    </property>
+  </bean>
+</beans>

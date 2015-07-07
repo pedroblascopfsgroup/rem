@@ -1,12 +1,8 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,6 +31,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.BienLoteDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.DatosLoteCDD;
@@ -66,17 +63,14 @@ public class SubastaController {
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
 	
-	private static final String DEVON_PROPERTIES = "devon.properties";
-	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
-	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
-	private static final String DEVON_HOME = "DEVON_HOME";
-	private static final String PROYECTO_HAYA = "HAYA";
-	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private SubastaApi subastaApi;
+	
+	@Autowired
+	private NMBProjectContext nmbProjectContext;
 
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -319,6 +313,7 @@ public class SubastaController {
 		}
 		informe.setProxyFactory(proxyFactory);
 		informe.setSubastaApi(subastaApi);
+		informe.setNmbProjectContext(nmbProjectContext);
 		informe.setIdSubasta(idSubasta);
 		informe.create();
 		return informe;
@@ -356,11 +351,10 @@ public class SubastaController {
 		ValorNodoTarea costasProcurador = subastaApi.obtenValorNodoPrc(procedimiento, tareaSenyalamientoSubasta, "costasProcurador");
 		
 		ValorNodoTarea conPostores = null;
-		if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
-			conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, "comboPostores");	
-		}else{
-			conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, "comboCesion");
-		}
+		
+		String comboPostores = nmbProjectContext.getComboPostoresCelebracionSubasta();
+		conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, comboPostores);	
+		
 		if(!Checks.esNulo(costasLetrado)) {
 			dto.setCostasLetrado(costasLetrado.getValor());
 			dto.setIdValorCostasLetrado(costasLetrado.getIdTareaNodoValor());	
@@ -758,45 +752,6 @@ public class SubastaController {
 	    
         model.put("fileItem",excelFileItem);
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
-	}
-	
-	private String cargarProyectoProperties() {
-		String proyecto = "";	
-		Properties appProperties = cargarProperties(DEVON_PROPERTIES);
-		if (appProperties == null) {
-			System.out.println("No puedo consultar devon.properties");		
-		} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
-			proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
-		} else {
-			System.out.println("UVEM no instalado");
-		}
-		return proyecto;
-	}
-	
-	private Properties cargarProperties(String nombreProps) {
-		InputStream input = null;
-		Properties prop = new Properties();
-		
-		String devonHome = DEVON_HOME_BANKIA_HAYA;
-		if (System.getenv(DEVON_HOME) != null) {
-			devonHome = System.getenv(DEVON_HOME);
-		}
-		
-		try {
-			input = new FileInputStream("/" + devonHome + "/" + nombreProps);
-			prop.load(input);
-		} catch (IOException ex) {
-			System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
-																																																																																			}
-																																																																																		}
-		}
-		return prop;
 	}
 	
 }

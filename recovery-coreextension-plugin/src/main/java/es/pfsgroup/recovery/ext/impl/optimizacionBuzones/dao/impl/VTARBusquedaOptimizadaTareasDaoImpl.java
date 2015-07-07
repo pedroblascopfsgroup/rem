@@ -18,7 +18,9 @@ import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
@@ -42,9 +44,12 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     public Long obtenerCantidadDeTareasPendientes(final DtoBuscarTareaNotificacion dto, final boolean conCarterizacion, final Usuario usuarioLogado) {
         dto.setLimit(1);
 
-        final HQLBuilder hb = new HQLBuilder("select distinct vtar.tarea from VTARTareaVsUsuario vtar");
+        /*final HQLBuilder hb = new HQLBuilder("select distinct vtar.tarea from VTARTareaVsUsuario vtar");
         armaFiltrosBasicos(dto, usuarioLogado, hb);
 
+        final Page list = HibernateQueryUtils.page(this, hb, dto);*/
+        
+        final HQLBuilder hb = new HQLBuilder(createHQLBbuscarTareasPendienteExpediente(dto, usuarioLogado, null).toString());
         final Page list = HibernateQueryUtils.page(this, hb, dto);
 
         return new Long(list != null ? list.getTotalCount() : 0);
@@ -53,7 +58,8 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     @Override
     public Page buscarTareasPendiente(final DtoBuscarTareaNotificacion dto, final boolean conCarterizacion, final Usuario u, Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass) {
 
-        HQLBuilderReutilizable rhql = createHQLBbuscarTareasPendiente(dto, u, modelClass);
+        //HQLBuilderReutilizable rhql = createHQLBbuscarTareasPendiente(dto, u, modelClass);
+    	HQLBuilderReutilizable rhql = createHQLBbuscarTareasPendienteExpediente(dto, u, modelClass);
         HQLBuilder hb = rhql.getHqlBuilder();
         HQLQueryCallback callback = rhql.getQueryCallback();
       
@@ -73,17 +79,31 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     public final HQLBuilderReutilizable createHQLBbuscarTareasPendiente(DtoBuscarTareaNotificacion dto, Usuario u, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass){
     	dto.setSort(reescribeParametro(dto.getSort()));
 
-        final StringBuilder queryStringBuilder = fielsSelector.selectAllFields(modelClass, "vtar", Arrays.asList(Integer.class, Long.class, String.class, Boolean.class, Float.class, Date.class));
+        //final StringBuilder queryStringBuilder = new StringBuilder(fielsSelector.selectAllFields(modelClass, "tartot", Arrays.asList(Integer.class, Long.class, String.class, Boolean.class, Float.class, Date.class))); 
+        //queryStringBuilder.append(" FROM ((");
+        
+        final StringBuilder queryStringBuilder = new StringBuilder();
+        queryStringBuilder.append(fielsSelector.selectAllFields(modelClass, "vtar", Arrays.asList(Integer.class, Long.class, String.class, Boolean.class, Float.class, Date.class)));
         queryStringBuilder.append(" from VTARTareaVsUsuario vtar ");
+        queryStringBuilder.append("where ").append(armaFiltrosBasicosString(dto,u));
+        
+        if (dto.isBusqueda())
+        	queryStringBuilder.append(armaFiltroBusquedaString(dto, u));
+        queryStringBuilder.append(") ");
+        
+        //queryStringBuilder.append(UnionTareasExpedientes(dto, modelClass));
+        
+        //queryStringBuilder.append(") tartot ");
+        
         
         final HQLBuilder hb = new HQLBuilder(queryStringBuilder.toString());
         //final HQLBuilder hb = new HQLBuilder("select distinct vtar from VTARTareaVsUsuario vtar");
         
-        armaFiltrosBasicos(dto, u, hb);
+        //armaFiltrosBasicos(dto, u, hb);
 
-        if (dto.isBusqueda()) {
+        /*if (dto.isBusqueda()) {
             armaFiltroBusqueda(dto, u, hb);
-        }
+        }*/
         
         HQLQueryCallback callback = new HQLQueryCallback() {
 
@@ -100,6 +120,100 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 		};
         
         return new HQLBuilderReutilizable(hb, callback);
+    }
+    
+    public final HQLBuilderReutilizable createHQLBbuscarTareasPendienteExpediente(DtoBuscarTareaNotificacion dto, Usuario u, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass) {
+    	dto.setSort(reescribeParametro(dto.getSort(),"vtarExp"));
+    	
+    	final HQLBuilder hb = new HQLBuilder(UnionTareasExpedientes(dto, modelClass, false).toString());
+    	
+    	HQLQueryCallback callback = new HQLQueryCallback() {
+    		@Override
+    		public TipoResultado getCallbackType() {
+    			return HQLQueryCallback.TipoResultado.PAGE;
+    		}
+    		
+    		@Override
+    		public Page getPage(AbstractHibernateDao ldao,
+    				HQLBuilder lhqlbuilder, WebDto ldto) {
+    			return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass);
+    		}
+    	};
+    	
+    	return new HQLBuilderReutilizable(hb, callback);
+    }
+    
+    private StringBuilder UnionTareasExpedientes (DtoBuscarTareaNotificacion dto, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass, boolean addUnion) {
+        //Añadimos tareas de expediente
+    	StringBuilder queryStringBuilder = new StringBuilder();
+    	if (addUnion)
+    		queryStringBuilder.append(" union (");
+    	
+    	if (!Checks.esNulo(modelClass))
+    		queryStringBuilder.append(fielsSelector.selectAllFields(modelClass, "vtarExp", Arrays.asList(Integer.class, Long.class, String.class, Boolean.class, Float.class, Date.class)));
+    	else
+    		queryStringBuilder.append("select distinct vtarExp.tarea ");
+    
+    	queryStringBuilder.append(" from VTARTareaVsUsuarioP3Exp vtarExp ");
+        
+        
+        StringBuilder params = new StringBuilder();
+        
+        /*queryStringBuilder.append(" and vtarExp.tipoEntidad.codigo = ")
+				.append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append(" ");*/
+        
+		if (dto.getCodigoTipoTarea() != null
+				&& dto.getCodigoTipoTarea().length() > 0) {
+	        if (params.length()>0)
+	        	params.append(" and ");
+			params.append("vtarExp.codigoTarea = " + dto.getCodigoTipoTarea());
+		}
+		
+		if (dto.isEnEspera()) {
+	        if (params.length()>0)
+	        	params.append(" and ");			
+			params.append("vtarExp.espera = true ");
+		}
+		if (dto.isEsAlerta()) {
+	        if (params.length()>0)
+	        	params.append(" and ");			
+	        params.append("vtarExp.alerta = true ");
+		}
+		
+		if (dto.getZonas().size()>0) {
+	        if (params.length()>0)
+	        	params.append(" and ");
+	        params.append("(");
+			for (DDZona zonCodigo : dto.getZonas()) {
+				params.append(" vtarExp.zonCodigo like '")
+						.append(zonCodigo.getCodigo()).append("%' OR");
+			}
+			params.deleteCharAt(params.length() - 1);
+			params.deleteCharAt(params.length() - 1);
+			params.append(")");
+		}
+		
+		if (dto.getPerfiles().size()>0) {
+			if (params.length()>0)
+				params.append(" and ");
+			params.append("(vtarExp.idPerfil IN (");
+			for (Perfil idPerfil : dto.getPerfiles()) {
+				params.append(idPerfil.getId().toString()).append(",");
+			}		
+			params.deleteCharAt(params.length() - 1);
+			params.append(")) ");
+		}
+		
+		if (params.length()>0)
+			params.insert(0, "where ");
+		
+		queryStringBuilder.append(params);
+		
+		if (addUnion)
+			queryStringBuilder.append(" ) ");
+		
+		return queryStringBuilder;
+    	
     }
    
     private <T extends Serializable, K extends Serializable> Page returnPageTransformedFAKE(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz) 
@@ -151,6 +265,51 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             hb.appendWhere("vtar.alerta = 1 ");
             // alertasLetradosActivos(hb);
         }
+    }
+    
+    private StringBuilder armaFiltrosBasicosString(final DtoBuscarTareaNotificacion dto, final Usuario u) {
+    	final StringBuilder hb = new StringBuilder();
+    	
+    	
+    	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
+    	grupos.add(u.getId()); // incluimos el usuario
+    	StringBuilder listaIdUsuarios = new StringBuilder();
+    	String sep = "";
+    	for (Long str : grupos) {
+    		listaIdUsuarios.append(sep).append(str);
+    	    sep = ",";
+    	}
+        if (dto.isEnEspera()) {
+        	String usuIdWhere = String.format(" vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        } else if (dto.isEsAlerta()) {
+        	String usuIdWhere = String.format(" vtar.usuarioAlerta in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        } else {
+        	String usuIdWhere = String.format(" vtar.usuarioPendiente in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        }
+
+        // Que la tarea est� pendiente
+        if (hb.length()>0)
+        	hb.append(" and ");
+        hb.append("(vtar.tarea.tareaFinalizada is null or vtar.tarea.tareaFinalizada = 0)");
+        hb.append(" and vtar.borrado = 0");
+
+        // Filtro por tipo de tarea
+        //HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
+        hb.append(" and vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea());
+
+        // Alertas y espera
+        if (dto.isEnEspera()) {
+            hb.append(" and vtar.espera = 1 ");
+        }
+        if (dto.isEsAlerta()) {
+            hb.append(" and vtar.alerta = 1 ");
+            // alertasLetradosActivos(hb);
+        }
+        
+        return hb;
     }
 
     // private void alertasLetradosActivos(HQLBuilder hb) {
@@ -242,6 +401,102 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         HQLBuilder.addFiltroLikeSiNotNull(hb, "vtar.nombreTarea", dto.getNombreTarea(), true);
 
     }
+    
+    private StringBuilder armaFiltroBusquedaString(final DtoBuscarTareaNotificacion dto, final Usuario u) {
+    	final SimpleDateFormat formateaFecha = new SimpleDateFormat("dd/MM/yyyy");
+    	
+    	final StringBuilder hb = new StringBuilder(); 
+    	
+        // Filtro por fecha de vencimiento
+        if ((!Checks.esNulo(dto.getFechaVencimientoDesde())) || (!Checks.esNulo(dto.getFechaVencimientoHasta()))) {
+            Date fechaDesde = parseaFecha(dto.getFechaVencimientoDesde(), "dd/MM/yyyy");
+            Calendar fechaDesdeParse = Calendar.getInstance();
+            if (fechaDesde != null) {
+                fechaDesdeParse.setTime(fechaDesde);
+                if (dto.getFechaVencDesdeOperador().equals(">")) {
+                    fechaDesdeParse.add(Calendar.DAY_OF_MONTH, 1);
+                }
+            }
+
+            Date fechaHasta = parseaFecha(dto.getFechaVencimientoHasta(), "dd/MM/yyyy");
+            Calendar fechaHastaParsed = Calendar.getInstance();
+            if (fechaHasta != null) {
+                fechaHastaParsed.setTime(fechaHasta);
+                if (dto.getFechaVencimientoHastaOperador().equals("<")) {
+                    fechaHastaParsed.add(Calendar.DAY_OF_MONTH, -1);
+                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
+                    fechaHastaParsed.add(Calendar.MINUTE, 59);
+                    fechaHastaParsed.add(Calendar.SECOND, 59);
+                } else if (dto.getFechaVencimientoHastaOperador().equals("<=")) {
+                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
+                    fechaHastaParsed.add(Calendar.MINUTE, 59);
+                    fechaHastaParsed.add(Calendar.SECOND, 59);
+                }
+            }
+
+            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && dto.getFechaVencDesdeOperador().equals("=")) {
+                fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
+                fechaHastaParsed.add(Calendar.MINUTE, 59);
+                fechaHastaParsed.add(Calendar.SECOND, 59);
+            }
+
+            Date fechaDesdeFinal;
+            if (!Checks.esNulo(dto.getFechaVencimientoDesde())) {
+                fechaDesdeFinal = fechaDesdeParse.getTime();
+            } else {
+                fechaDesdeFinal = null;
+            }
+
+            Date fechaHastaFinal;
+            if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
+                fechaHastaFinal = fechaHastaParsed.getTime();
+            } else {
+                if (dto.getFechaVencDesdeOperador().equals("=") && fechaDesdeParse != null) {
+                    fechaHastaParsed = fechaDesdeParse;
+                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
+                    fechaHastaParsed.add(Calendar.MINUTE, 59);
+                    fechaHastaParsed.add(Calendar.SECOND, 59);
+                    fechaHastaFinal = fechaHastaParsed.getTime();
+                } else {
+                    fechaHastaFinal = null;
+                }
+            }
+
+            //HQLBuilder.addFiltroBetweenSiNotNull(hb, "vtar.fechaVenc", fechaDesdeFinal, fechaHastaFinal);
+            if (!Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal))
+            	hb.append(" vtar.fechaVenc BETWEEN '" +  formateaFecha.format(fechaDesdeFinal) + "' and '" + formateaFecha.format(fechaHastaFinal) + "'" );
+
+        }
+
+        // Filtro por fecha de inicio
+        if ((!Checks.esNulo(dto.getFechaInicioDesde())) || (!Checks.esNulo(dto.getFechaInicioHasta()))) {
+            //Date fechaDesde = parseaFecha(dto.getFechaInicioDesde(), "dd/MM/yyyy");
+            //Date fechaHasta = parseaFecha(dto.getFechaInicioHasta(), "dd/MM/yyyy");
+            //HQLBuilder.addFiltroBetweenSiNotNull(hb, "vtar.fechaInicio", fechaDesde, fechaHasta);
+        	if (hb.length()>0)
+        		hb.append(" and ");
+            hb.append(" vtar.fechaInicio BETWEEN '" + dto.getFechaInicioDesde() + "' and '" + dto.getFechaInicioHasta() + "'");
+        }
+
+        // Descripcion Entidad Informacion
+        //HQLBuilder.addFiltroLikeSiNotNull(hb, "vtar.descripcionTarea", dto.getDescripcionTarea(), true);
+        if (!Checks.esNulo(dto.getDescripcionTarea())) {
+        	if (hb.length()>0)
+        		hb.append(" and ");
+        	hb.append(" UPPER(vtar.descripcionTarea) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'");
+        }
+
+        // Nombre Tarea (TareaNotificacion.getDescripcionTarea)
+        //HQLBuilder.addFiltroLikeSiNotNull(hb, "vtar.nombreTarea", dto.getNombreTarea(), true);
+        if (!Checks.esNulo(dto.getNombreTarea())) {
+        	if (hb.length()>0)
+        		hb.append(" and ");
+        	hb.append(" UPPER(vtar.nombreTarea) like '%" + dto.getNombreTarea().toUpperCase() + "%'");
+        }
+        
+        return hb;
+
+    }    
 
     private Date parseaFecha(final String fecha, final String formato) {
         final SimpleDateFormat sdf = new SimpleDateFormat(formato);
@@ -260,5 +515,13 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
         return "vtar." + parametro;
 
+    }
+    
+    private String reescribeParametro(final String parametro, final String alias) {
+        if (Checks.esNulo(parametro)) {
+            return parametro;
+        }
+
+        return alias + "." + parametro;
     }
 }

@@ -214,15 +214,14 @@ var anyadirFechaFaltante = function(response){
 	});
 	if(btnGuardar == null){
 		var comboProcedimientos = items[1 + offset];
-		comboProcedimientos.store = procedimientosStore;
-		Ext.onReady(function() {
-			comboProcedimientos.store.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});		
-		});
-		comboProcedimientos.store.on('load',function(){
-			comboProcedimientos.setValue(comboProcedimientos.getValue());
-			comboProcedimientos.readOnly = true;
-		});	
-		
+		//comboProcedimientos.store = procedimientosStore;
+		//Ext.onReady(function() {
+		//	comboProcedimientos.store.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});		
+		//});
+		//comboProcedimientos.store.on('load',function(){
+		//	comboProcedimientos.setValue(comboProcedimientos.getValue());			
+		//});	
+		comboProcedimientos.readOnly = true;
 		items[1 + offset] = comboProcedimientos;
 	} else{		
 		var comboProcedimientos = new Ext.form.ComboBox({

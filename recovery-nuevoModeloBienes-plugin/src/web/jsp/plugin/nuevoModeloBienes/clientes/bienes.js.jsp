@@ -511,7 +511,7 @@
 		
 		var viviendaHabitual = app.creaCombo({
 			store:sinoStore
-			,value:  '${NMBbien.viviendaHabitual}' == '' ? '' : '${NMBbien.viviendaHabitual}' == 'true' ? 'Sí' : 'No'
+			,value:  '${NMBbien.viviendaHabitual}' == '' ? '' : '${NMBbien.viviendaHabitual}' == '1' ? 'Sí' : 'No'
 			,displayField:'descripcion'
 			,valueField:'codigo'
 			,mode: 'local'
@@ -1551,7 +1551,7 @@
 				parametros.fechaMatricula=fechaMatriculacion.getValue().format('d/m/Y');
 			}
 			parametros.situacionPosesoria = situacionPosesoria.getValue();
-			parametros.viviendaHabitual = viviendaHabitual.getValue() == '' ? null : viviendaHabitual.getValue() == 'Sí' || viviendaHabitual.getValue() == '01' ? true : false ;
+			parametros.viviendaHabitual = viviendaHabitual.getValue() == '' ? null : viviendaHabitual.getValue() == '01' ? '1' : '2';
 			parametros.tipoSubasta = tipoSubasta.getValue();
 			parametros.numeroActivo  = numeroActivo.getValue();
 			parametros.licenciaPrimeraOcupacion = licenciaPrimeraOcupacion.getValue();

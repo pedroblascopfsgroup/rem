@@ -43,6 +43,18 @@ var validacionCDD;
 			return '<s:message code="label.no" text="**No" />';
 		}
 	};
+        
+	var SI_NO_NULL_Render = function (value, meta, record) {
+                if (Ext.isEmpty(value)){
+                    return '';
+                } else {
+                    if (value) {
+                            return '<s:message code="label.si" text="**S&iacute;" />';
+                    } else {
+                            return '<s:message code="label.no" text="**No" />';
+                    }
+                }
+	};
 
 	var Subasta = Ext.data.Record.create([
 		{name : 'id'}
@@ -665,7 +677,7 @@ var validacionCDD;
 				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.origen" text="**Origen"/>', dataIndex : 'origen'}
 				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.descripcion" text="**Descripci&oacute;n"/>', dataIndex : 'descripcion'}
 				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.tipo" text="**Tipo"/>', dataIndex : 'tipo'}
-				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.viviendaHab" text="**Vivienda habitual"/>', dataIndex : 'viviendaHabitual',renderer : SI_NO_Render}		
+				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.viviendaHab" text="**Vivienda habitual"/>', dataIndex : 'viviendaHabitual',renderer : SI_NO_NULL_Render}		
 				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.SitPosesoria" text="**Sit. posesoria"/>', dataIndex : 'sitPosesoria'}
 				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.RevCargas" text="**Rev. cargas"/>', dataIndex : 'revCargas' }
 				,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.bienesGrid.FSolTasacion" text="**F. sol. tasaci&oacute;n"/>', dataIndex : 'fSolTasacion'}

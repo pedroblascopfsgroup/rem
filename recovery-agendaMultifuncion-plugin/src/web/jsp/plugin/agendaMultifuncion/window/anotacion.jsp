@@ -238,7 +238,7 @@
 	            }
             }
             if (columnName == 'incorporar') {
-            	debugger;
+ 
                 var rec = gridUsuarios.getStore().getAt(rowIndex);
                 if(rec){
                     var fechaEditor = cm.getCellEditor(cm.findColumnIndex('fecha'), rowIndex).field;
@@ -262,7 +262,7 @@
             }
             
             if (columnName == 'email') {
-            debugger;
+
                 var rec = grid.getStore().getAt(rowIndex);
                 var tieneEmail = rec.get('tieneEmail');
                 if(tieneEmail){
@@ -276,8 +276,11 @@
 	                    else {
 	                    	value = 1;
 	                    	permiteAdjuntar=permiteAdjuntar+1;
-	                    	// FASE-1441 : No es posible marcar la casilla de email sin marcar la de incorporar 
+	                    	// FASE-1441 : No es posible marcar la casilla de email sin marcar la de incorporar. 
+	                    	// Al marcar la casilla de incorporar habilitamos el campo de fecha. 
 	                    	rec.set('incorporar', value);
+	                    	var fechaEditor = cm.getCellEditor(cm.findColumnIndex('fecha'), rowIndex).field;
+	                    	fechaEditor.enable();
 	                    }
 	                    if((mailPara.validate() && mailPara.getValue()!=null && mailPara.getValue()!='') ||(permiteAdjuntar>0)){
 	                    	panelAdjuntos.setDisabled(false);

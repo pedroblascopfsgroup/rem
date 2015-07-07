@@ -10,6 +10,7 @@ import java.util.Map;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -174,15 +175,24 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		NMBBien nmbBien = null;
 		
+		Parametrizacion parametroLimite = subastaApi.parametrizarLimite(Parametrizacion.LIMITE_EXPORT_EXCEL_BIENES_SUBASTA_CDD);
+		Integer limite = Integer.parseInt(parametroLimite.getValor());
+		
 		if(!Checks.estaVacio(getBienesLote())){
 			for(BienLoteDto bienLoteDTO : getBienesLote()) {
 				if(loteSubasta.getId().equals(bienLoteDTO.getLote())) {					
 					bienes.add(bienLoteDTO.getIdBien());
+					if(limite > 0 && bienes.size() > limite) {
+						break;
+					}
 				}
 			}
-		}else{ 
+		}else{
 			for(Bien bien : loteSubasta.getBienes()) {
 				bienes.add(bien.getId());
+				if(limite > 0 && bienes.size() > limite) {
+					break;
+				}
 			}
 		}
 		for(Long idBien : bienes) {

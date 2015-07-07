@@ -549,6 +549,13 @@ public class SubastaManager implements SubastaApi {
 		}
 		return page;
 	}	
+	
+	@Override
+	@BusinessOperation(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
+	public Parametrizacion parametrizarLimite(String nombreParametro) {
+		return (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+				nombreParametro);
+	}
 
 	/**
 	 * Metodo optimizado de busqueda de subastas para exportar a excel 

@@ -163,6 +163,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	}
 
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_TASACION)
+	@Transactional(readOnly = false)
 	public void solicitarTasacion(Long idBien) {
 		
 		solicitarTasacion(idBien, null);
@@ -730,8 +731,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	//@ManagedOperation(description ="Método que solicita la tasacion de un bien a UVEM")
 	//@ManagedOperationParameter(name="bienId", description= "id del bien.") 
-	@Transactional(readOnly = false)
-	public void solicitarTasacion(Long bienId, Long prcId){
+	private void solicitarTasacion(Long bienId, Long prcId){
 		
 		try {
 			

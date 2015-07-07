@@ -18,7 +18,7 @@ public class DtoNMBBien extends WebDto {
     private String fechaVerificacion;
     private Float participacionNMB;
     private String situacionPosesoria;
-	private Boolean viviendaHabitual;
+	private String viviendaHabitual;
 	private Float tipoSubasta;
 	private String numeroActivo ;
 	private String licenciaPrimeraOcupacion;
@@ -187,11 +187,11 @@ public class DtoNMBBien extends WebDto {
 		this.situacionPosesoria = situacionPosesoria;
 	}
 
-	public Boolean getViviendaHabitual() {
+	public String getViviendaHabitual() {
 		return viviendaHabitual;
 	}
 
-	public void setViviendaHabitual(Boolean viviendaHabitual) {
+	public void setViviendaHabitual(String viviendaHabitual) {
 		this.viviendaHabitual = viviendaHabitual;
 	}
 

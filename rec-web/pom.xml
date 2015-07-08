@@ -2044,100 +2044,16 @@
 							<artifactId>devon-hibernate</artifactId>
 						</exclusion>
 						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>slf4j-log4j12</artifactId>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-bpm</artifactId>
 						</exclusion>
 						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>slf4j-api</artifactId>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-web</artifactId>
 						</exclusion>
 						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>MADUtilidades</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>MADCommons</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>log4j</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>krbFiltro</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>hessian</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>GMPETS07_INS</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>GMP5JD20_INS</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>commons-logging</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>commons-httpclient</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>commons-codec</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>bisa-sn</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>bisa-criptografia</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>bisa-commons</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>bisa-client</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>bisa-arq</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>backport-util-concurrent</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>axis-jaxrpc</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>ArquitecturaMad</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>ArquitecturaConfMad</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>ArquitecturaBase</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>*</groupId>
-							<artifactId>*</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>es.bankia</groupId>
-							<artifactId>ambar-commons</artifactId>
+							<groupId>pfs</groupId>
+							<artifactId>plugins</artifactId>
 						</exclusion>
 						<exclusion>
 							<groupId>javax.validation</groupId>
@@ -2146,6 +2062,22 @@
 						<exclusion>
 							<groupId>javax.ejb</groupId>
 							<artifactId>ejb-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-coreextension-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienes-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
 						</exclusion>
 					</exclusions>
 				</dependency>

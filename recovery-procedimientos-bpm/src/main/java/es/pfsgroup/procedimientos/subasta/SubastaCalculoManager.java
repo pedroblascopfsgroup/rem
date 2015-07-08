@@ -360,10 +360,10 @@ public class SubastaCalculoManager {
 			float tipoSubasta = nmbBien.getTipoSubasta();
 			tipoSubasta = (float) (tipoSubasta * 0.6);
 			float diferenciaDeuda = (deudaTotal - tipoSubasta);
-			if (DDSiNo.SI.equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda<procedimientosProjectContext.getLimiteDeudaBien()) {
+			if ("1".equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda<procedimientosProjectContext.getLimiteDeudaBien()) {
 				return -1;
 			}
-			if (DDSiNo.SI.equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda>=procedimientosProjectContext.getLimiteDeudaBien()) {
+			if ("1".equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda>=procedimientosProjectContext.getLimiteDeudaBien()) {
 				return 1;
 			}
 		}

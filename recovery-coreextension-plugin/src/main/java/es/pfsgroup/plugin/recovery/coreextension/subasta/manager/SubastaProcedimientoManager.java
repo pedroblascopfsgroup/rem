@@ -564,7 +564,7 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 			
 			NMBBien nmbBien = (NMBBien) bien;
 			
-			if (DDSiNo.SI.equals(nmbBien.getViviendaHabitual())) {
+			if ("1".equals(nmbBien.getViviendaHabitual())) {
 				isViviendaHabitual=true;
 			}
 		}

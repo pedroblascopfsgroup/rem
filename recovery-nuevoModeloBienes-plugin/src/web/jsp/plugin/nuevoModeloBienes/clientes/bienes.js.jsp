@@ -511,7 +511,7 @@
 		
 		var viviendaHabitual = app.creaCombo({
 			store:sinoStore
-			,value:  '${NMBbien.viviendaHabitual}' == '' ? '' : '${NMBbien.viviendaHabitual}' == '1' ? 'Sí' : 'No'
+			,value:  '${NMBbien.viviendaHabitual}' == '1' ? 'Sí' : '${NMBbien.viviendaHabitual}' == '2' ? 'No' : ''
 			,displayField:'descripcion'
 			,valueField:'codigo'
 			,mode: 'local'

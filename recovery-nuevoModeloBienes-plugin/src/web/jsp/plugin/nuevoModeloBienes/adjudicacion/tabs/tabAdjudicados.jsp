@@ -251,7 +251,7 @@
 		}if (value==true ) {
 			return '<s:message code="label.si" text="**S&iacute;" />';
 		}
-		if (value == ""){
+		if (Ext.isEmpty(value)){
 			return '<s:message code="" text="--" />';
 		}
 		else {

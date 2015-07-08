@@ -111,6 +111,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	public void UVEMUtils() {
 		if (appProperties == null) {
 			this.appProperties = cargarProperties(DEVON_PROPERTIES);
+		} else {
+			if(appProperties.contains(UVEM_URL) && appProperties.getProperty(UVEM_URL) != null){
+				URL = appProperties.getProperty(UVEM_URL);
+			}else{
+				System.out.println("UVEM no instalado");
+			}
 		}
 		
 		if (appProperties == null) {
@@ -290,6 +296,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			}
 			
 			System.out.println("Inicialización del endpoint de MidTR. Se realiza una única vez para todos los servicios. La url de MidTR debe estar parametrizada pues varía en cada entorno");
+			System.out.println("URL: " + URL);
 			Hashtable htInitParams = new Hashtable();
 			htInitParams.put(WIService.WORFLOW_PARAM, URL);
 			htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);

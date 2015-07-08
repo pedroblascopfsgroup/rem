@@ -45,10 +45,10 @@ var validacionCDD;
 	};
         
 	var SI_NO_NULL_Render = function (value, meta, record) {
-                if (Ext.isEmpty(value)){
+		        if (Ext.isEmpty(value)){
                     return '';
                 } else {
-                    if (value) {
+                    if (value == '1') {
                             return '<s:message code="label.si" text="**S&iacute;" />';
                     } else {
                             return '<s:message code="label.no" text="**No" />';

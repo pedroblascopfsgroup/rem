@@ -277,7 +277,7 @@ public class InformeValidacionCDDBean {
 //			if (Checks.esNulo(infobien.getCodigoPostal())) {
 //				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Codigo Postal; ");
 //			}	
-			infobien.setViviendaHabitual(convertObjectString(nmbBien.getViviendaHabitual()));
+			infobien.setViviendaHabitual("1".equals(nmbBien.getViviendaHabitual()) ? "SI" : ("2".equals(nmbBien.getViviendaHabitual()) ? "NO" : ""));
 			if (Checks.esNulo(infobien.getViviendaHabitual())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Vivienda habitual; ");
 			}

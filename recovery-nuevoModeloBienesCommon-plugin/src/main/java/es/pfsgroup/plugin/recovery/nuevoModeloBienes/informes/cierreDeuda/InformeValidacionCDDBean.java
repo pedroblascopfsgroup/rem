@@ -182,7 +182,7 @@ public class InformeValidacionCDDBean {
 			for(BienLoteDto bienLoteDTO : getBienesLote()) {
 				if(loteSubasta.getId().equals(bienLoteDTO.getLote())) {					
 					bienes.add(bienLoteDTO.getIdBien());
-					if(limite > 0 && bienes.size() > limite) {
+					if(bienes.size() == limite) {
 						break;
 					}
 				}
@@ -190,7 +190,7 @@ public class InformeValidacionCDDBean {
 		}else{
 			for(Bien bien : loteSubasta.getBienes()) {
 				bienes.add(bien.getId());
-				if(limite > 0 && bienes.size() > limite) {
+				if(bienes.size() == limite) {
 					break;
 				}
 			}

@@ -2079,6 +2079,10 @@
 							<groupId>es.pfsgroup</groupId>
 							<artifactId>recovery-domain</artifactId>
 						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-batch</artifactId>
+						</exclusion>
 					</exclusions>
 				</dependency>
 			</dependencies>

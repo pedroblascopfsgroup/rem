@@ -22,10 +22,15 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.DatosLoteCDD;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InfoBienesCDD;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoLoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -33,10 +38,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteBean;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.BienLoteDto;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.DatosLoteCDD;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InfoBienesCDD;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InformeValidacionCDDBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastaSareb.InformeSubastaSarebBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
@@ -68,6 +69,9 @@ public class SubastaController {
 	
 	@Autowired
 	private SubastaApi subastaApi;
+	
+	@Autowired
+	private SubastaProcedimientoDelegateApi subastaProcedimientoDelegateApi;
 	
 	@Autowired
 	private NMBProjectContext nmbProjectContext;
@@ -256,7 +260,8 @@ public class SubastaController {
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+//		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+		InformeValidacionCDDDto informe = subastaProcedimientoDelegateApi.generarInformeValidacionCDD(null,idSubasta, idsBien);
 		return creaExcelValidacion(informe,model);
 	}
 	
@@ -267,8 +272,12 @@ public class SubastaController {
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+//		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+		InformeValidacionCDDDto informe = subastaProcedimientoDelegateApi.generarInformeValidacionCDD(null,idSubasta, idsBien);
 		if(!informe.getValidacionOK()) {
+			String motivo = informe.getResultadoValidacion().get(0);
+			DDResultadoValidacionCDD resultadoValidacion = (DDResultadoValidacionCDD) diccionarioApi.dameValorDiccionarioByCod(DDResultadoValidacionCDD.class, motivo);
+			subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO, resultadoValidacion);
 			return creaExcelValidacion(informe,model);
 		}else{
 			if(Checks.esNulo(idsBien)) {
@@ -276,7 +285,7 @@ public class SubastaController {
 				if(!Checks.estaVacio(registrosBACDD)) {
 					subastaApi.eliminarRegistroCierreDeuda(idSubasta, registrosBACDD);						
 				}else{
-					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null);
+					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
 				}
 			}else{
 				subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
@@ -297,27 +306,27 @@ public class SubastaController {
 		return listIdsBien;
 	}
 	
-	private InformeValidacionCDDBean rellenarInformeValidacionCDD(Long idSubasta, String idsBien) {
-		InformeValidacionCDDBean informe = new InformeValidacionCDDBean();
-		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
-		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");
-			
-			for (String loteBien : arrLoteBien) {
-				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
-				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
-				listBienLote.add(dto);
-			}
-			informe.setBienesLote(listBienLote);
-		}
-		informe.setProxyFactory(proxyFactory);
-		informe.setSubastaApi(subastaApi);
-		informe.setNmbProjectContext(nmbProjectContext);
-		informe.setIdSubasta(idSubasta);
-		informe.create();
-		return informe;
-	}
+//	private InformeValidacionCDDBean rellenarInformeValidacionCDD(Long idSubasta, String idsBien) {
+//		InformeValidacionCDDBean informe = new InformeValidacionCDDBean();
+//		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
+//		if(!Checks.esNulo(idsBien)) {
+//			String[] arrLoteBien = idsBien.split(",");
+//			
+//			for (String loteBien : arrLoteBien) {
+//				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
+//				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
+//				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
+//				listBienLote.add(dto);
+//			}
+//			informe.setBienesLote(listBienLote);
+//		}
+//		informe.setProxyFactory(proxyFactory);
+//		informe.setSubastaApi(subastaApi);
+//		informe.setNmbProjectContext(nmbProjectContext);
+//		informe.setIdSubasta(idSubasta);
+//		informe.create();
+//		return informe;
+//	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -484,7 +493,7 @@ public class SubastaController {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	private String creaExcelValidacion(InformeValidacionCDDBean informe,ModelMap model){
+	private String creaExcelValidacion(InformeValidacionCDDDto informe,ModelMap model){
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		List<String> fila =new ArrayList<String>();

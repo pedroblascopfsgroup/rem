@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSu
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoLoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
@@ -555,7 +556,7 @@ public class SubastaManager implements SubastaApi {
 	public Parametrizacion parametrizarLimite(String nombreParametro) {
 		return (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
 				nombreParametro);
-	}
+	}	
 
 	/**
 	 * Metodo optimizado de busqueda de subastas para exportar a excel 
@@ -824,8 +825,8 @@ public class SubastaManager implements SubastaApi {
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)
-	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien) {
-		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idBien);
+	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
+		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idBien, resultadoValidacion, motivoValidacion);
 		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 	}
 	
@@ -1190,10 +1191,10 @@ public class SubastaManager implements SubastaApi {
 			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
 				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
 			}
-			guardaBatchAcuerdoCierre(idSubasta, null);
+			guardaBatchAcuerdoCierre(idSubasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
 		} 
 		
-		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien) {
+		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
 			Subasta subasta = getSubasta(idSubasta);
 			EXTAsunto extAsunto = EXTAsunto.instanceOf(subasta.getAsunto()); 
 
@@ -1206,6 +1207,11 @@ public class SubastaManager implements SubastaApi {
 			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
 			cierreDeuda.setEntidad(extAsunto.getPropiedadAsunto().getCodigo());	
 			cierreDeuda.setIdBien(idBien);
+			cierreDeuda.setResultadoValidacion(resultadoValidacion);
+			cierreDeuda.setOrigenPropuesta(BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
+			if(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO.equals(resultadoValidacion)){
+				cierreDeuda.setResultadoValidacionCDD(motivoValidacion);
+			}
 			return cierreDeuda;
 		};
 		
@@ -1216,7 +1222,7 @@ public class SubastaManager implements SubastaApi {
 			for(Long idBien : idsBien) {
 				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
 				if(Checks.estaVacio(list)) {
-					guardaBatchAcuerdoCierre(idSubasta, idBien);
+					guardaBatchAcuerdoCierre(idSubasta, idBien, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
 				}
 			}
 		} 

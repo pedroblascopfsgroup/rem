@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -67,6 +70,10 @@ public class BatchAcuerdoCierreDeuda implements Serializable{
 	
 	@Column(name = "RESULTADO_VALIDACION")
 	private Long resultadoValidacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RVC_ID")
+	private DDResultadoValidacionCDD resultadoValidacionCDD;
 	
 	public Long getId() {
 		return id;
@@ -146,6 +153,14 @@ public class BatchAcuerdoCierreDeuda implements Serializable{
 
 	public void setResultadoValidacion(Long resultadoValidacion) {
 		this.resultadoValidacion = resultadoValidacion;
+	}
+	
+	public DDResultadoValidacionCDD getResultadoValidacionCDD() {
+		return resultadoValidacionCDD;
+	}
+	
+	public void setResultadoValidacionCDD(DDResultadoValidacionCDD resultadoValidacionCDD) {
+		this.resultadoValidacionCDD = resultadoValidacionCDD;
 	}
 
 }

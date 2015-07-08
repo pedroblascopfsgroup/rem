@@ -23,18 +23,19 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.BienLoteDto;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InformeValidacionCDDBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDEstadoBienContrato;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 
 /**
@@ -103,6 +104,33 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 				return false;
 		}
 		return true;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
+	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idProcedimiento, Long idSubasta, String idsBien) {
+		InformeValidacionCDDDto informe = new InformeValidacionCDDDto();
+		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
+		if(!Checks.esNulo(idsBien)) {
+			String[] arrLoteBien = idsBien.split(",");
+			
+			for (String loteBien : arrLoteBien) {
+				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
+				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
+				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
+				listBienLote.add(dto);
+			}
+			informe.setBienesLote(listBienLote);
+		}
+		if(!Checks.esNulo(idProcedimiento)) {
+			Subasta subasta = genericDao.get(Subasta.class, 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
+			idSubasta = subasta.getId();
+		}
+		informe.setIdSubasta(idSubasta);
+		InformeValidacionCDDBean informeBean = new InformeValidacionCDDBean();
+		informeBean.create(informe);
+		return informeBean.getInformeDTO();
 	}
 
 	@Override

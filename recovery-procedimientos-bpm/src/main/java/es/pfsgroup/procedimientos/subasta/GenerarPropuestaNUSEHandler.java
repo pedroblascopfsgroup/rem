@@ -12,7 +12,11 @@ import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
@@ -24,6 +28,9 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 	
 	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 	
 	private Procedimiento procedimiento = null;
 	
@@ -68,6 +75,17 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 				cierreDeuda.getIdProcedimiento(), 
 				cierreDeuda.getIdAsunto(), 
 				cierreDeuda.getEntidad()));
+		cierreDeuda.setOrigenPropuesta(BatchAcuerdoCierreDeuda.PROPIEDAD_AUTOMATICO);
+			
+		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class).generarInformeValidacionCDD(procedimiento.getId(), null, null);
+		if(informe.getValidacionOK()) {
+			cierreDeuda.setResultadoValidacion(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK);
+		}else{
+			String motivo = informe.getResultadoValidacion().get(0);
+			DDResultadoValidacionCDD resultadoValidacion = (DDResultadoValidacionCDD) diccionarioApi.dameValorDiccionarioByCod(DDResultadoValidacionCDD.class, motivo);
+			cierreDeuda.setResultadoValidacion(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO);
+			cierreDeuda.setResultadoValidacionCDD(resultadoValidacion);
+		}
 		
 		return cierreDeuda;
 	}
@@ -76,7 +94,7 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 	 * Guarda el cierre de deuda.
 	 */
 	protected void guardaCierreDeuda() {
-		BatchAcuerdoCierreDeuda cierreDeuda = getCierreDeudaInstance();
+		BatchAcuerdoCierreDeuda cierreDeuda = getCierreDeudaInstance();		
 		executor.execute("es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierreDeuda", cierreDeuda);
 	}
 	

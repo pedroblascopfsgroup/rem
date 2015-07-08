@@ -2,9 +2,7 @@ package es.pfsgroup.plugin.recovery.coreextension.subasta.manager;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.core.api.asunto.AsuntoApi;
-import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 
 /**
@@ -163,6 +161,13 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	public boolean validacionesContratosConfirmarTestimonioPOST(Long prcId) {
 		//  Este metodo se implementa en el nuevoModeloBienes
 		return false;
+	}
+
+	@Override
+	@BusinessOperation(BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
+	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idProcedimiento, Long idSubasta, String idsBien) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

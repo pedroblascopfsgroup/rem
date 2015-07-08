@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.api;
 
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 
 public interface SubastaProcedimientoDelegateApi {
 	
@@ -23,7 +24,8 @@ public interface SubastaProcedimientoDelegateApi {
 	public static final String BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST = "es.pfsgroup.recovery.subasta.validacionesCelebracionSubastaSarebPOST";
 	public static final String BO_SUBASTA_VALIDACIONES_CONTRATOS_CONFIRMAR_TESTIMONIO_POST = "es.pfsgroup.recovery.subasta.validacionesContratosConfirmarTestimonioPOST";
 	public static final String BO_SUBASTA_COMPROBAR_NUMERO_ACTIVO = "es.pfsgroup.recovery.subasta.comprobarNumeroActivo";
-
+	public static final String BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.generarInformeValidacionCDD";
+	
 	
 	@BusinessOperationDefinition(BO_SUBASTA_IS_BIEN_WITH_TIPO_SUBASTA)
 	public Boolean isTipoSubasta(Long bienId);
@@ -89,5 +91,6 @@ public interface SubastaProcedimientoDelegateApi {
 	@BusinessOperationDefinition(BO_SUBASTA_COMPROBAR_NUMERO_ACTIVO)
 	public boolean comprobarNumeroActivo(Long prcId);
 
-
+	@BusinessOperationDefinition(BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
+	InformeValidacionCDDDto generarInformeValidacionCDD(Long idProcedimiento, Long idSubasta, String idsBien);
 }

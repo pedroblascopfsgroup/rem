@@ -621,8 +621,7 @@ public class EditBienController {
 					.getParameter("situacionPosesoria"));
 
 		if (!Checks.esNulo(request.getParameter("viviendaHabitual")))
-			dto.setViviendaHabitual(Boolean.parseBoolean(request
-					.getParameter("viviendaHabitual")));
+			dto.setViviendaHabitual(request.getParameter("viviendaHabitual"));
 
 		if (!Checks.esNulo(request.getParameter("tipoSubasta")))
 			dto.setTipoSubasta(new Float(request.getParameter("tipoSubasta")));
@@ -3021,9 +3020,7 @@ public class EditBienController {
 								tev = new TareaExternaValor();
 								tev.setTareaExterna(tareaExterna);
 								tev.setNombre("comboViviendaHab");
-								tev.setValor(bien.getViviendaHabitual() != null
-										&& bien.getViviendaHabitual() ? DDSiNo.SI
-										: DDSiNo.NO);
+								tev.setValor(bien.getViviendaHabitual());
 								genericDao.save(TareaExternaValor.class, tev);
 
 								tev = new TareaExternaValor();
@@ -3936,9 +3933,7 @@ public class EditBienController {
 
 			// BIEN
 			if (!Checks.esNulo(bienAdjudicacion.getHabitual())) {
-				bien.setViviendaHabitual(Boolean.parseBoolean(bienAdjudicacion
-						.getHabitual())
-						|| DDSiNo.SI.compareTo(bienAdjudicacion.getHabitual()) == 0);
+				bien.setViviendaHabitual(bienAdjudicacion.getHabitual());
 			} else {
 				// adjudicacion.setOcupado(null);
 			}

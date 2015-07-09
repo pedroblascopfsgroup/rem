@@ -243,7 +243,8 @@ public class coreextensionManager implements coreextensionApi {
 		if (asu instanceof EXTAsunto) {
 			if (!Checks.esNulo(idAsunto) && !Checks.esNulo(idUsuario) && !Checks.esNulo(idTipoDespacho)) {
 				GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
-						genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho));
+						genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho),
+						genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
 				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoGestor));
 				Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);

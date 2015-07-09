@@ -201,8 +201,7 @@ var anyadirFechaFaltante = function(response){
 // *************************************************************** //
 // ***  AÑADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
 // *************************************************************** //
-
-var procedimientosStore = page.getStore({
+	var procedimientosStore = page.getStore({
 	       remoteSort:false
 	       ,id:'procedimientosStore'
 	       ,flow:'asignaciongestores/listTipoProcedimiento'
@@ -213,27 +212,39 @@ var procedimientosStore = page.getStore({
          ]
 	    })	       
 	});
-	
-	var comboProcedimientos = new Ext.form.ComboBox({
-		store: procedimientosStore
-		,hiddenName: items[1 + offset].hiddenName
-		,displayField: items[1 + offset].displayField
-		,valueField: items[1 + offset].valueField
-		,mode: items[1 + offset].mode
-		,editable: items[1 + offset].editable
-		,emptyText:''
-		,width: 300
-		,resizable: true		
-		,triggerAction: 'all'
-		,fieldLabel : items[1 + offset].fieldLabel
-	});
-	Ext.onReady(function() {
-		comboProcedimientos.store.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});
-	});
-	//comboProcedimientos.on('select',function() {
-		//comboProcedimientos.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});
-	//});
-	items[1 + offset] = comboProcedimientos;
+	if(btnGuardar == null){
+		var comboProcedimientos = items[1 + offset];
+		//comboProcedimientos.store = procedimientosStore;
+		//Ext.onReady(function() {
+		//	comboProcedimientos.store.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});		
+		//});
+		//comboProcedimientos.store.on('load',function(){
+		//	comboProcedimientos.setValue(comboProcedimientos.getValue());			
+		//});	
+		comboProcedimientos.readOnly = true;
+		items[1 + offset] = comboProcedimientos;
+	} else{		
+		var comboProcedimientos = new Ext.form.ComboBox({
+			store: procedimientosStore
+			,hiddenName: items[1 + offset].hiddenName
+			,displayField: items[1 + offset].displayField
+			,valueField: items[1 + offset].valueField
+			,mode: items[1 + offset].mode
+			,editable: items[1 + offset].editable
+			,emptyText:''
+			,width: 300
+			,resizable: true		
+			,triggerAction: 'all'
+			,fieldLabel : items[1 + offset].fieldLabel
+		});
+		Ext.onReady(function() {
+			comboProcedimientos.store.webflow({idAsunto:"${form.tareaExterna.tareaPadre.asunto.id}"});
+		});
+			
+		items[1 + offset] = comboProcedimientos;
+	}
+
+
 	
 
 var panelEdicion=new Ext.form.FormPanel({

@@ -58,7 +58,7 @@ public class InformeValidacionCDDBean {
 		rellenaProcedimientoSubastaCDD(subasta);
 		rellenaDatosLoteCDD(subasta);
 		crearMensajeValidacion(subasta);
-		validacionOK = (Checks.esNulo(camposVacios)	&& Checks.esNulo(mensajesValidacion));
+		validacionOK = Checks.esNulo(mensajesValidacion);
 		return Arrays.asList((Object) informe);
 	}
 
@@ -347,7 +347,8 @@ public class InformeValidacionCDDBean {
 		if(!Checks.estaVacio(nmbBien.getProcedimientos())) {
 			for(ProcedimientoBien prcbien : nmbBien.getProcedimientos()) {
 				if(!Checks.esNulo(prcbien.getProcedimiento().getProcedimientoPadre()) 
-						&& subasta.getProcedimiento().getId().equals(prcbien.getProcedimiento().getProcedimientoPadre().getId())){
+						&& (subasta.getProcedimiento().getId().equals(prcbien.getProcedimiento().getProcedimientoPadre().getId()) 
+								&& "H005".equals(prcbien.getProcedimiento().getTipoProcedimiento().getCodigo()))){
 					prc = prcbien.getProcedimiento();					
 				}
 			}
@@ -370,6 +371,9 @@ public class InformeValidacionCDDBean {
 	// Crea el mensaje de validacion a partir de si cumple ciertas validaciones
 	private void crearMensajeValidacion(Subasta subasta) {
 		StringBuilder sb = new StringBuilder();
+		if (!Checks.esNulo(camposVacios)) {
+			sb.append("Hay campos obligatorios que estan sin informar;");
+		}
 		BooleanBienes booleanBienes = new BooleanBienes();
 		if (!validaProcedimientoContratos(subasta)) {
 			sb.append("El procedimiento no tienen ninguna operacion activa;"); // Alguna deberia ser

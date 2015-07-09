@@ -250,7 +250,6 @@ public class SubastaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-
 	public String generarInformeValidacionCDD(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
@@ -402,9 +401,6 @@ public class SubastaController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformeBusquedaSubastasManager(NMBDtoBuscarSubastas b, ModelMap model) {
-		
-		
-				
 		model.put("fileItem", proxyFactory.proxy(SubastaApi.class).buscarSubastasXLS(b));
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
 	}
@@ -450,7 +446,6 @@ public class SubastaController {
 		// 
 		return DEFAULT;
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -504,75 +499,63 @@ public class SubastaController {
 		cabeceras.add("F. SEÑALAMIENTO");
 		cabeceras.add("CON POSTORES");
 		
-		
-		
 		fila=new ArrayList<String>();
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getTipoProcedimiento())){
 			fila.add(informe.getProcedimientoSubastaCDD().getTipoProcedimiento().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getLetrado())){
 			fila.add(informe.getProcedimientoSubastaCDD().getLetrado().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getJuzgado())){
 			fila.add(informe.getProcedimientoSubastaCDD().getJuzgado().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getPrincipal()) && !informe.getProcedimientoSubastaCDD().getPrincipal().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getPrincipal().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getDeudaJudicial()) && !informe.getProcedimientoSubastaCDD().getDeudaJudicial().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getDeudaJudicial().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasLetrado()) && !informe.getProcedimientoSubastaCDD().getCostasLetrado().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getCostasLetrado().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasProcurador()) && !informe.getProcedimientoSubastaCDD().getCostasProcurador().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getCostasProcurador().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getFechaCelebracionSubasta())){
 			fila.add(informe.getProcedimientoSubastaCDD().getFechaCelebracionSubasta().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getSubastaConPostores())){
 			fila.add(informe.getProcedimientoSubastaCDD().getSubastaConPostores().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		valores.add(fila);
 		
-		for(DatosLoteCDD datosLoteCDD : informe.getDatosLoteCDD())
-		{	
+		for(DatosLoteCDD datosLoteCDD : informe.getDatosLoteCDD()) {	
 			fila=new ArrayList<String>();
 			fila.add("LOTE;Blue;Text");
 			fila.add("PUJA SIN POSTORES;Blue;Text");
@@ -584,43 +567,35 @@ public class SubastaController {
 			fila=new ArrayList<String>();
 			if(!Checks.esNulo(datosLoteCDD.getNumLote())){
 				fila.add(datosLoteCDD.getNumLote().toString().concat(";Grey;Text"));
-			}
-			else{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getSinPostores()) && !datosLoteCDD.getSinPostores().equals("0")){
 				String sinPostores=datosLoteCDD.getSinPostores().replace(",",".");
 				fila.add(sinPostores.concat(";Grey;Number"));
-				
-			}
-			else{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getConPostoresDesde()) && !datosLoteCDD.getConPostoresDesde().equals("0")){
 				String conPostores=datosLoteCDD.getConPostoresDesde().replace(",", ".");
 				fila.add(conPostores.concat(";Grey;Number"));
-			}
-			else{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getConPostoresHasta()) && !datosLoteCDD.getConPostoresHasta().equals("0")){
 				String conPostoresHasta=datosLoteCDD.getConPostoresHasta().replace(",", ".");
 				fila.add(conPostoresHasta.concat(";Grey;Number"));
-			}
-			else
-			{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getValorSubasta()) && !datosLoteCDD.getValorSubasta().equals("0")){
 				String valorSubasta=datosLoteCDD.getValorSubasta().replace(",", ".");
 				fila.add(valorSubasta.concat(";Grey;Number"));
-			}
-			else
-			{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			valores.add(fila);
@@ -631,7 +606,7 @@ public class SubastaController {
 				fila.add(" ; ;Text");
 				fila.add("Nº FINCA;Blue;Text");
 				fila.add("Nº ACTIVO;Blue;Text");
-				fila.add("REFERENCIA CATASTRAL;Blue;Text");
+//				fila.add("REFERENCIA CATASTRAL;Blue;Text");
 				fila.add("DESCRIPCIÓN;Blue;Text");
 				fila.add("Nº REGISTRO;Blue;Text");
 				fila.add("VALOR TASACIÓN;Blue;Text");
@@ -647,111 +622,90 @@ public class SubastaController {
 				
 				valores.add(fila);
 				
-				for(InfoBienesCDD infoBienes : datosLoteCDD.getInfoBienes())
-				{	fila=new ArrayList<String>();
+				for(InfoBienesCDD infoBienes : datosLoteCDD.getInfoBienes()) {	
+					fila=new ArrayList<String>();
 					fila.add(" ; ");
 					if(!Checks.esNulo(infoBienes.getNumFinca())){
 						fila.add(infoBienes.getNumFinca().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getNumeroActivo())){
 						fila.add(infoBienes.getNumeroActivo().concat(";White;Text"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
-					if(!Checks.esNulo(infoBienes.getReferenciaCatastral())){
-						fila.add(infoBienes.getReferenciaCatastral().concat(";White;Text"));
-					}
-					else
-					{
-						fila.add("******;Red;Text");
-					}
+//					if(!Checks.esNulo(infoBienes.getReferenciaCatastral())){
+//						fila.add(infoBienes.getReferenciaCatastral().concat(";White;Text"));
+//					}
+//					else
+//					{
+//						fila.add("******;Red;Text");
+//					}
 					
 					if(!Checks.esNulo(infoBienes.getDescripcion())){
 						fila.add(infoBienes.getDescripcion().concat(";White;Text"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getNumRegistro())){
 						fila.add(infoBienes.getNumRegistro().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getValorTasacion()) && !infoBienes.getValorTasacion().equals("0")){
 						String valorTasacion=infoBienes.getValorTasacion().replace(",",".");
 						fila.add(valorTasacion.concat(";White;Number"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getFechaTasacion())){
 						fila.add(infoBienes.getFechaTasacion().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getValorJudicial()) && !infoBienes.getValorJudicial().equals("0")){
 						String valorJudicial=infoBienes.getValorJudicial().replace(",", ".");
 						fila.add(valorJudicial.concat(";White;Number"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					
 					if(!Checks.esNulo(infoBienes.getViviendaHabitual())){
 						fila.add(infoBienes.getViviendaHabitual().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getResultadoAdjudicacion())){
 						fila.add(infoBienes.getResultadoAdjudicacion().concat(";White;Text"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getImporteAdjudicacion()) && !infoBienes.getImporteAdjudicacion().equals("0")){
 						String importeAdjudicacion=infoBienes.getImporteAdjudicacion().replace(",", ".");
 						fila.add(importeAdjudicacion.concat(";White;Number"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
 							fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
-						}
-						else
-						{
+						} else {
 							fila.add("******;Red;Text");
 						}
 					}
-					
 					valores.add(fila);
-						
 				}
-				
 			}	
 		}
 		
@@ -783,10 +737,7 @@ public class SubastaController {
 				fila.add(" ;Red;Text");
 				fila.add(" ;Red;Text");
 				valores.add(fila);
-				
 			}
-			
-			
 		}
 		
 		

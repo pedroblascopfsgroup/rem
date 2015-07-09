@@ -36,7 +36,7 @@ DECLARE
 BEGIN
 
 SELECT COUNT(1) INTO V_NUM_TABLAS FROM all_tab_cols  
-         WHERE UPPER(table_name) = 'CNV_AUX_CCDD_PR_CONV_CIERR_DD' and (UPPER(column_name) = 'DD_RVC_ID') 
+         WHERE UPPER(table_name) = 'DD_RVC_RES_VALIDACION_CDD' and (UPPER(column_name) = 'DD_RVC_ID') 
          AND OWNER = V_ESQUEMA; 
           
      if V_NUM_TABLAS = 0 then 

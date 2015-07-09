@@ -704,4 +704,25 @@ public class MSVResolucionManager implements MSVResolucionApi {
 
 	}
 
+	@Override
+	@BusinessOperation(MSV_BO_GUARDAR_ARCHIVO_ADJUNTO_RESOLUCION)
+	public MSVResolucion guardarAdjuntoResolucion(MSVResolucionesDto dtoResolucion) {
+		
+		MSVResolucion msvResolucion = getResolucion(dtoResolucion.getIdResolucion());
+		
+		if (dtoResolucion.getIdFichero() != null){
+			//MSVFileItem msvFileItem = proxyFactory.proxy(MSVFileManagerApi.class).getFile(dtoResolucion.getIdFichero());
+			MSVFileItem msvFileItem = this.getFile(dtoResolucion);
+			msvResolucion.setNombreFichero(msvFileItem.getNombre());
+			msvResolucion.setContenidoFichero(msvFileItem.getFileItem());
+			msvResolucion.setAdjunto(msvFileItem);
+			msvResolucion.setAdjuntoFinal(adjuntarFicheroFinal(msvResolucion.getAdjunto(), msvResolucion));
+			msvResolucionDao.saveOrUpdate(msvResolucion);
+		}
+		
+		//msvResolucionDao.saveOrUpdate(msvResolucion);
+
+		return msvResolucion;
+	}
+
 }

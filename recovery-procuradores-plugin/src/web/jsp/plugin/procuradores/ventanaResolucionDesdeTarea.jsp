@@ -357,18 +357,21 @@ var creaVentanaUpload = function(){
                //controlador.nuevoProceso(comboTipoJuicioNew.getValue(),upload.getForm(), fn_nuevoProcesoOk);
                var formulario = panelEdicion.getForm();//.findField('idResolucion');
                var idProcedimiento = formulario.findField('idProcedimiento').getValue();
-				upload.getForm().findField('idProcedimiento').setValue(idProcedimiento);
+			   upload.getForm().findField('idProcedimiento').setValue(idProcedimiento);
 
                //DatosFieldSet.find('name','idResolucion')[0];//Ext.getCmp('idResolucion');
                //controlador.uploadFicheroResolucion(resolucion.getValue(), upload, fn_subirFicheroOk, fn_subirFicheroError);
                //controlador.uploadFicheroResolucionTareas(upload, fn_subirFicheroOk, fn_subirFicheroError);
                 formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
 					
-					
                 uploading = true;
-                updateBotonGuardar();
+
                 controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
-               win.hide();
+		
+		        //updateBotonGuardar();
+		        
+		        win.hide();
+                
                }
            },{
                text: 'Cancelar',
@@ -395,14 +398,35 @@ var creaVentanaUpload = function(){
 
 var fn_subirFicheroOk = function(r){
     //debugger;
-    uploading = false;
-    updateBotonGuardar();
+				
+    uploading = true;
+    
     var id = r.resultado;
     panelEdicion.getForm().findField('idFichero').setValue(id);
     panelEdicion.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>');    
     var nombreAdjunto = panelEdicion.getForm().findField('file').getValue('file');
 
 	panelEdicion.getForm().findField('file').setValue("<a href='/pfs/procuradores/descargarAdjunto.htm?idResolucion="+${idResolucion}+"')>"+nombreAdjunto+"</a>");
+	
+	            var valores = panelEdicion.getForm().getFieldValues();
+				valores['idResolucion'] = ${idResolucion};
+
+				Ext.Ajax.request({
+					url: '/pfs/pcdprocesadoresoluciones/adjuntaFicheroResolucion.htm'
+					,params: valores
+					,method: 'POST'
+					,success: function (result, request){
+<!-- 						panelEdicion.container.unmask(); -->
+<!-- 						//btnCancelar.fireEvent('click',btnCancelar); -->
+<!-- 						page.fireEvent(app.event.DONE); -->
+							updateBotonGuardar();
+					}
+					,error: function(result, request){
+<!-- 						panelEdicion.container.unmask(); -->
+<!-- 						alert("Error procesar"); -->
+							updateBotonGuardar();
+					}
+				});
     
     win.hide();
     
@@ -417,11 +441,23 @@ var fn_subirFicheroError = function(r){
 }
 
 var updateBotonGuardar  = function(){
-	if (uploading){
-		btnGuardar.setDisabled(true);
-	}else{
-		btnGuardar.setDisabled(false);
-	}
+
+			Ext.Ajax.request({
+				url: '/pfs/pcdprocesadoresoluciones/dameValidacion.htm'
+				,params: {idResolucion: ${idResolucion}}
+				,method: 'POST'
+				,success: function (result, request){
+					var r = Ext.util.JSON.decode(result.responseText);
+					if (r.resultadoDatosvalidacion.validacion == "" ){
+						btnGuardar.setDisabled(false);
+					}else{
+						btnGuardar.setDisabled(true);
+					}
+					
+				}
+				,error: function(result, request){
+				}
+			});
 }
 
 

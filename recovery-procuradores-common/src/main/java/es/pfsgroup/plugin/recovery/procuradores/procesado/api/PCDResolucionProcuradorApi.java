@@ -50,6 +50,8 @@ public interface PCDResolucionProcuradorApi {
 	
 	public static final String PCD_MSV_GET_RESOLUCIONES_PENDIENTES_VALIDAR = "es.pfsgroup.plugin.recovery.procuradores.procesado.api.getResolucionesPendientesValidar";
 	
+	public static final String PCD_MSV_BO_ADJUNTAR_FICHERO_RESOLUCION = "es.pfsgroup.plugin.recovery.procuradores.procesado.api.adjuntarFicheroResolucion";
+	
 	/**
 	 * Devuelve el listado de resoluciones.
 	 * @return
@@ -169,4 +171,12 @@ public interface PCDResolucionProcuradorApi {
 	
 	@BusinessOperationDefinition(PCD_MSV_GET_RESOLUCIONES_PENDIENTES_VALIDAR)
 	public List<MSVResolucion> getResolucionesPendientesValidar(Long idTarea, List<String> tipoResolucionAccionBaned);
+	
+	/**
+	 * Guarda el fichero adjunto en la resolucion.
+	 * @param dtoResolucion
+	 * @return
+	 */
+	@BusinessOperationDefinition(PCD_MSV_BO_ADJUNTAR_FICHERO_RESOLUCION)
+	public MSVResolucion adjuntaFicheroResolucuion(MSVResolucionesDto dtoResolucion);
 }

@@ -174,6 +174,8 @@ public class PCDProcesadoResolucionesController {
 	
 	private static final String JSON_LISTA_VALORES_CAMPOS_RESOLUCION = "plugin/procuradores/valoresCamposResolucionJSON";
 	
+	public static final String JSON_VALIDACION = "plugin/procuradores/datosValidacionResolucionJSON";
+	
 	
 	
 	
@@ -331,6 +333,29 @@ public class PCDProcesadoResolucionesController {
 	
 	
 	/**
+	 * devuelve la validacion.
+	 * @param model
+	 * @return String validacion
+	 */
+	@RequestMapping
+	public String dameValidacion(Long idResolucion, ModelMap model) throws Exception{
+		
+		MSVResolucion msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).getResolucion(idResolucion);
+		
+		Long idTarea = msvResolucion.getTarea().getId();
+		
+		String validacion = null;
+		
+		if(!msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO")){
+			validacion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).dameValidacion(idTarea);	
+		}
+		
+		model.put("validacion", validacion);
+		
+		return JSON_VALIDACION;
+	}
+	
+	/**
 	 * adjunta un fichero.
 	 * @param model
 	 * @return json indicando si la subida ha sido correcta. 
@@ -456,6 +481,35 @@ public class PCDProcesadoResolucionesController {
 		}
 		
 		
+		return JSON_GRABAR_PROCESAR;
+	}
+	
+	
+	/**
+	 * adjunta el fichero a la resolucion.
+	 * @param MSVResolucionesDto
+	 * @param model
+	 * @return 
+	 * @throws Exception 
+	 */
+	@RequestMapping
+	public String adjuntaFicheroResolucion(MSVResolucionesDto dtoResolucion, ModelMap model) throws Exception{
+		
+		MSVResolucion msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
+		
+		//Se sobreescribe el fichero del procurador.
+		if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
+		{
+			apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
+			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
+		}else{
+			//El gestor adjunta un fichero y no había
+			if(!Checks.esNulo(dtoResolucion.getIdFichero()))
+			{
+				msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
+			}
+		}
+
 		return JSON_GRABAR_PROCESAR;
 	}
 	

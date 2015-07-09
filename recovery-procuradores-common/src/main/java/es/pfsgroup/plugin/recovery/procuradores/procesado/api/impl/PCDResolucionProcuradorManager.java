@@ -288,5 +288,11 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		return  msvResolucionDao.getResolucionesPendientesValidar(idTarea,tipoResolucionAccionBaned);
 		
 	}
+
+	@Override
+	@BusinessOperation(PCD_MSV_BO_ADJUNTAR_FICHERO_RESOLUCION)
+	public MSVResolucion adjuntaFicheroResolucuion(MSVResolucionesDto dtoResolucion) {
+		return proxyFactory.proxy(MSVResolucionApi.class).guardarAdjuntoResolucion(dtoResolucion);
+	}
 	
 }

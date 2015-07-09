@@ -10,6 +10,7 @@ import java.util.Map;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -174,15 +175,24 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		NMBBien nmbBien = null;
 		
+		Parametrizacion parametroLimite = subastaApi.parametrizarLimite(Parametrizacion.LIMITE_EXPORT_EXCEL_BIENES_SUBASTA_CDD);
+		Integer limite = Integer.parseInt(parametroLimite.getValor());
+		
 		if(!Checks.estaVacio(getBienesLote())){
 			for(BienLoteDto bienLoteDTO : getBienesLote()) {
 				if(loteSubasta.getId().equals(bienLoteDTO.getLote())) {					
 					bienes.add(bienLoteDTO.getIdBien());
+					if(bienes.size() == limite) {
+						break;
+					}
 				}
 			}
-		}else{ 
+		}else{
 			for(Bien bien : loteSubasta.getBienes()) {
 				bienes.add(bien.getId());
+				if(bienes.size() == limite) {
+					break;
+				}
 			}
 		}
 		for(Long idBien : bienes) {
@@ -267,7 +277,7 @@ public class InformeValidacionCDDBean {
 //			if (Checks.esNulo(infobien.getCodigoPostal())) {
 //				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Codigo Postal; ");
 //			}	
-			infobien.setViviendaHabitual(convertObjectString(nmbBien.getViviendaHabitual()));
+			infobien.setViviendaHabitual("1".equals(nmbBien.getViviendaHabitual()) ? "SI" : ("2".equals(nmbBien.getViviendaHabitual()) ? "NO" : ""));
 			if (Checks.esNulo(infobien.getViviendaHabitual())) {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Vivienda habitual; ");
 			}
@@ -289,10 +299,6 @@ public class InformeValidacionCDDBean {
 				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
 					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");
 				}				
-			}
-			infobien.setContratosRelacionado(contratosBienRelacionados(nmbBien));
-			if (Checks.esNulo(infobien.getContratosRelacionado())) {
-				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", List Contratos relacionado; ");
 			}
 			listInfoBienes.add(infobien);
 		}
@@ -355,14 +361,6 @@ public class InformeValidacionCDDBean {
 		HistoricoProcedimiento historicoPrc = subastaApi.tareaExiste(subasta.getProcedimiento(), nombreTarea);
 		
 		return !Checks.esNulo(historicoPrc);
-	}
-
-	private List<String> contratosBienRelacionados(NMBBien nmbBien) {
-		List<String> listContratosBien = new ArrayList<String>();
-		for (NMBContratoBien contrato : nmbBien.getContratos()) {
-			listContratosBien.add(contrato.getContrato().getDescripcion());
-		}
-		return listContratosBien;
 	}
 
 	// Crea el mensaje de validacion a partir de si cumple ciertas validaciones

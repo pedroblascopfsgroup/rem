@@ -56,19 +56,13 @@
         });
     
    var revisionCuotaRenderer = function(value) {   
-   		var valueRendered = parseInt(value)/100;
-   		if (valueRendered == 0) {
-   			valueRendered = "0.00";
-   		}
-   		return valueRendered.toString().replace(".", app.format.DECIMAL_SEPARATOR);
+   		var valueRendered = parseInt(value)/100;   		
+   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(2).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
    
    var razonProgresionRenderer = function(value) {   
    		var valueRendered = parseInt(value)/100;
-   		if (valueRendered == 0) {
-   			valueRendered = "0.00";
-   		}
-   		return valueRendered.toString().replace(".", app.format.DECIMAL_SEPARATOR);
+   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(2).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
  
    var adecuacionesCM  = new Ext.grid.ColumnModel([

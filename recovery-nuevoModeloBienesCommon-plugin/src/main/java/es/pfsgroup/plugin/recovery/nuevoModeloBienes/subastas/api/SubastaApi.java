@@ -8,6 +8,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
@@ -60,6 +61,7 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_ENVIAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarCierreDeuda";
 	public static final String BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getProcedimientoBienByIdPadre";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
+	public static final String BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.parametrizarLimite";
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -219,4 +221,6 @@ public interface SubastaApi {
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE)
 	HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo);
 	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
+	Parametrizacion parametrizarLimite(String nombreParametro);
 }

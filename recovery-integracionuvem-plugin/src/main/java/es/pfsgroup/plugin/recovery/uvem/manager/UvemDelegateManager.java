@@ -463,7 +463,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setCodigoDeEntradaDelActivocoenax((short) 1);
 			System.out.println(" ***REQUERIDO*** COPRAC"); // 	longitud="1"	 Procedencia del activo	siempre S
 			servicioGMP5JD20.setProcedenciaDelActivocoprac('S');
-			if("SAREB".compareTo(asunto.getPropiedadAsunto().getCodigo()) == 0){
+			if(asunto.getPropiedadAsunto() != null && "SAREB".compareTo(asunto.getPropiedadAsunto().getCodigo()) == 0){
 				System.out.println(" ***REQUERIDO*** COENGW"); // 	"NUMERICO_4" longitud="5"	 Código de Entidad	
 				//FUNCIONAL, char_extra1 segun DR -> vease appconstants
 				short codigoEntidad = 5074;
@@ -503,7 +503,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			int identificadorExpediente = asunto.getId().intValue();
 			servicioGMP5JD20.setIdentificadorExpedienteEnSedasidexsw(identificadorExpediente);
 			System.out.println(" ***REQUERIDO*** NOCURA"); // 	longitud="40"	 Nombre del Procurador	
-			String nombreProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getApellidoNombre(), 40,' ').substring(0, 40);
+			String nombreProcurador = null;
+			if(procuradorAsunto != null){
+				nombreProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getApellidoNombre(), 40,' ').substring(0, 40);
+			}else{
+				nombreProcurador = StringUtils.rightPad("null", 40,' ').substring(0, 40);
+			}
 			servicioGMP5JD20.setNombreProcuradornocura(nombreProcurador);
 			System.out.println(" ***REQUERIDO*** OBRECO"); // 	longitud="6"	 Referencia del Procurador
 			String referenciaProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getUsername(), 6,' ');

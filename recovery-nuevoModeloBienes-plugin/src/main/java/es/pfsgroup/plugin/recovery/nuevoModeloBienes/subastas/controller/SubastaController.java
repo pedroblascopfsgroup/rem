@@ -71,9 +71,6 @@ public class SubastaController {
 	private SubastaApi subastaApi;
 	
 	@Autowired
-	private SubastaProcedimientoDelegateApi subastaProcedimientoDelegateApi;
-	
-	@Autowired
 	private NMBProjectContext nmbProjectContext;
 
 	@Autowired
@@ -260,8 +257,8 @@ public class SubastaController {
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-//		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
-		InformeValidacionCDDDto informe = subastaProcedimientoDelegateApi.generarInformeValidacionCDD(null,idSubasta, idsBien);
+		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+				.generarInformeValidacionCDD(null,idSubasta, idsBien);
 		return creaExcelValidacion(informe,model);
 	}
 	
@@ -272,8 +269,8 @@ public class SubastaController {
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-//		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
-		InformeValidacionCDDDto informe = subastaProcedimientoDelegateApi.generarInformeValidacionCDD(null,idSubasta, idsBien);
+		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+				.generarInformeValidacionCDD(null,idSubasta, idsBien);
 		if(!informe.getValidacionOK()) {
 			String motivo = informe.getResultadoValidacion().get(0);
 			DDResultadoValidacionCDD resultadoValidacion = (DDResultadoValidacionCDD) diccionarioApi.dameValorDiccionarioByCod(DDResultadoValidacionCDD.class, motivo);

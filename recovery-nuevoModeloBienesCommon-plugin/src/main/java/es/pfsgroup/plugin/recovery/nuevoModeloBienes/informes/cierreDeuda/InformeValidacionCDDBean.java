@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -40,25 +38,19 @@ public class InformeValidacionCDDBean {
 	private static final String VALOR_COSTAS_PROCURADOR = "costasProcurador";
 	private static final String VALOR_FECHA_TESTIMONIO = "fechaTestimonio";
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
-	private SubastaApi subastaApi;
-	
-	@Autowired
-	private NMBProjectContext nmbProjectContext;
+	protected ApiProxyFactory proxyFactory;
+	protected NMBProjectContext nmbProjectContext;
 	
 	private InformeValidacionCDDDto informeDTO;
 	private String camposVacios="";
 
 	public void create(InformeValidacionCDDDto informeDTO) {
-		informeDTO.setSubasta(subastaApi.getSubasta(informeDTO.getIdSubasta()));
-		informeDTO.setProcedimientoSubastaCDD(rellenaProcedimientoSubastaCDD(informeDTO.getSubasta()));
-		informeDTO.setDatosLoteCDD(rellenaDatosLoteCDD(informeDTO.getSubasta()));
-		informeDTO.setMensajesValidacion(crearMensajeValidacion(informeDTO.getSubasta()));
-		informeDTO.setValidacionOK(Checks.esNulo(informeDTO.getMensajesValidacion()));
 		this.informeDTO = informeDTO;
+		this.informeDTO.setSubasta((Subasta) proxyFactory.proxy(SubastaApi.class).getSubasta(this.informeDTO.getIdSubasta()));
+		this.informeDTO.setProcedimientoSubastaCDD(rellenaProcedimientoSubastaCDD(this.informeDTO.getSubasta()));
+		this.informeDTO.setDatosLoteCDD(rellenaDatosLoteCDD(this.informeDTO.getSubasta()));
+		this.informeDTO.setMensajesValidacion(crearMensajeValidacion(this.informeDTO.getSubasta()));
+		this.informeDTO.setValidacionOK(Checks.esNulo(this.informeDTO.getMensajesValidacion()));
 	}
 
 	private ProcedimientoSubastaCDD rellenaProcedimientoSubastaCDD(Subasta subasta) {
@@ -125,9 +117,9 @@ public class InformeValidacionCDDBean {
 	private List<DatosLoteCDD> rellenaDatosLoteCDD(Subasta subasta) {
 		List<DatosLoteCDD> datosLoteCDD = new ArrayList<DatosLoteCDD>();
 		for (LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
-			if(!Checks.estaVacio(informeDTO.getBienesLote())){
+			if(!Checks.estaVacio(this.informeDTO.getBienesLote())){
 				List<Long> lotes = new ArrayList<Long>();
-				for(BienLoteDto bienLote : informeDTO.getBienesLote()) {
+				for(BienLoteDto bienLote : this.informeDTO.getBienesLote()) {
 					if(!lotes.contains(bienLote.getLote()) && loteSubasta.getId().equals(bienLote.getLote())) {
 						lotes.add(bienLote.getLote());
 						datosLoteCDD.add(completaDatosLote(loteSubasta));
@@ -182,11 +174,11 @@ public class InformeValidacionCDDBean {
 		StringBuilder sb = new StringBuilder();
 		NMBBien nmbBien = null;
 		
-		Parametrizacion parametroLimite = subastaApi.parametrizarLimite(Parametrizacion.LIMITE_EXPORT_EXCEL_BIENES_SUBASTA_CDD);
+		Parametrizacion parametroLimite = (Parametrizacion) proxyFactory.proxy(SubastaApi.class).parametrizarLimite(Parametrizacion.LIMITE_EXPORT_EXCEL_BIENES_SUBASTA_CDD);
 		Integer limite = Integer.parseInt(parametroLimite.getValor());
 		
-		if(!Checks.estaVacio(informeDTO.getBienesLote())){
-			for(BienLoteDto bienLoteDTO : informeDTO.getBienesLote()) {
+		if(!Checks.estaVacio(this.informeDTO.getBienesLote())){
+			for(BienLoteDto bienLoteDTO : this.informeDTO.getBienesLote()) {
 				if(loteSubasta.getId().equals(bienLoteDTO.getLote())) {					
 					bienes.add(bienLoteDTO.getIdBien());
 					if(bienes.size() == limite) {
@@ -328,7 +320,7 @@ public class InformeValidacionCDDBean {
 		ValorNodoTarea vnt = null;
 		
 		String comboPostores = nmbProjectContext.getComboPostoresCelebracionSubasta();
-		vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, comboPostores);	
+		vnt = (ValorNodoTarea) proxyFactory.proxy(SubastaApi.class).obtenValorNodoPrc(subasta.getProcedimiento(), tareaCelebracionSubasta, comboPostores);	
 		
 		if(!Checks.esNulo(vnt)) {
 			return vnt.getValor();
@@ -338,7 +330,7 @@ public class InformeValidacionCDDBean {
 	
 	private String getCostas(Subasta subasta, String costas) {
 		String tareaSenyalamientoSubasta = subasta.getProcedimiento().getTipoProcedimiento().getCodigo() + "_SenyalamientoSubasta";
-		ValorNodoTarea vnt = subastaApi.obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas);
+		ValorNodoTarea vnt = (ValorNodoTarea) proxyFactory.proxy(SubastaApi.class).obtenValorNodoPrc(subasta.getProcedimiento(), tareaSenyalamientoSubasta, costas);
 		if(!Checks.esNulo(vnt)) {
 			return vnt.getValor();
 		}
@@ -352,9 +344,9 @@ public class InformeValidacionCDDBean {
 		Map<String, String> mapaTiposProcedimiento = nmbProjectContext.getMapaTiposPrc();
 		String tipoProcedimiento = mapaTiposProcedimiento.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION);
 		
-		Procedimiento prc = subastaApi.getProcedimientoBienByIdPadre(nmbBien, informeDTO.getSubasta(), tipoProcedimiento);
-		
-		ValorNodoTarea valor = subastaApi.obtenValorNodoPrc(prc, nombreTarea, VALOR_FECHA_TESTIMONIO);
+		Procedimiento prc = (Procedimiento) proxyFactory.proxy(SubastaApi.class).getProcedimientoBienByIdPadre(nmbBien, this.informeDTO.getSubasta(), tipoProcedimiento);
+		ValorNodoTarea valor = (ValorNodoTarea) proxyFactory.proxy(SubastaApi.class).obtenValorNodoPrc(prc, nombreTarea, VALOR_FECHA_TESTIMONIO);
+
 		if(!Checks.esNulo(valor)) {
 			return valor.getValor();
 		}
@@ -365,7 +357,7 @@ public class InformeValidacionCDDBean {
 		Map<String, String> mapaTareasCierreDeuda = nmbProjectContext.getTareasCierreDeuda();
 		String nombreTarea = mapaTareasCierreDeuda.get(NMBProjectContextImpl.SUBASTA_BANKIA_TAREA_CONTABILIZAR_CDD);
 		
-		HistoricoProcedimiento historicoPrc = subastaApi.tareaExiste(informeDTO.getSubasta().getProcedimiento(), nombreTarea);
+		HistoricoProcedimiento historicoPrc = (HistoricoProcedimiento) proxyFactory.proxy(SubastaApi.class).tareaExiste(this.informeDTO.getSubasta().getProcedimiento(), nombreTarea);
 		
 		return !Checks.esNulo(historicoPrc);
 	}
@@ -470,7 +462,7 @@ public class InformeValidacionCDDBean {
 				sb.append(");");
 			}
 		}
-		informeDTO.setResultadoValidacion(resultadoValidacion);
+		this.informeDTO.setResultadoValidacion(resultadoValidacion);
 		return sb.toString();
 	}
 
@@ -493,7 +485,7 @@ public class InformeValidacionCDDBean {
 	private BooleanBienes validaBienesContratos() {
 		BooleanBienes validacion = new BooleanBienes();
 		validacion.setValidacionCorrecta(false);
-		for (DatosLoteCDD datoLote : informeDTO.getDatosLoteCDD()) {
+		for (DatosLoteCDD datoLote : this.informeDTO.getDatosLoteCDD()) {
 			for (InfoBienesCDD infoBien : datoLote.getInfoBienes()) {
 				NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(infoBien.getIdBien());
 				if (Checks.estaVacio(nmbBien.getContratos())) {
@@ -510,25 +502,25 @@ public class InformeValidacionCDDBean {
 	}
 
 	// Si algún bien incluido en el envío no tiene relación con alguna persona
-	private BooleanBienes validaBienesPersonas() {
-		BooleanBienes validacion = new BooleanBienes();
-		validacion.setValidacionCorrecta(true);
-		for (DatosLoteCDD datoLote : informeDTO.getDatosLoteCDD()) {
-			for (InfoBienesCDD infoBien : datoLote.getInfoBienes()) {
-				NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(infoBien.getIdBien());
-				if (Checks.estaVacio(nmbBien.getPersonas())) {
-					validacion.setValidacionCorrecta(false);
-					validacion.getListBienes().add(nmbBien.getDescripcionBien());
-				}
-			}
-		}
-		return validacion;
-	}
+//	private BooleanBienes validaBienesPersonas() {
+//		BooleanBienes validacion = new BooleanBienes();
+//		validacion.setValidacionCorrecta(true);
+//		for (DatosLoteCDD datoLote : this.informeDTO.getDatosLoteCDD()) {
+//			for (InfoBienesCDD infoBien : datoLote.getInfoBienes()) {
+//				NMBBien nmbBien = (NMBBien) proxyFactory.proxy(BienApi.class).getBienById(infoBien.getIdBien());
+//				if (Checks.estaVacio(nmbBien.getPersonas())) {
+//					validacion.setValidacionCorrecta(false);
+//					validacion.getListBienes().add(nmbBien.getDescripcionBien());
+//				}
+//			}
+//		}
+//		return validacion;
+//	}
 
 	// Comprueba si no existe ningun lote
 	private boolean validaSinLotes() {
 		boolean incorrecto = false;
-		if (Checks.estaVacio(informeDTO.getDatosLoteCDD())) {
+		if (Checks.estaVacio(this.informeDTO.getDatosLoteCDD())) {
 			incorrecto = true;
 		}
 		return incorrecto;
@@ -538,7 +530,7 @@ public class InformeValidacionCDDBean {
 	private BooleanBienes validaLoteSinBien() {
 		BooleanBienes validacion = new BooleanBienes();
 		validacion.setValidacionCorrecta(true);
-		for (DatosLoteCDD datoLote : informeDTO.getDatosLoteCDD()) {
+		for (DatosLoteCDD datoLote : this.informeDTO.getDatosLoteCDD()) {
 			if (Checks.estaVacio(datoLote.getInfoBienes())) {
 				validacion.setValidacionCorrecta(false);
 				validacion.getListBienes()
@@ -555,7 +547,7 @@ public class InformeValidacionCDDBean {
 		List<BienLoteDto> bienLoteDup = new ArrayList<BienLoteDto>();
 		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>();
 		validacion.setValidacionCorrecta(true);
-		for (DatosLoteCDD datoLote : informeDTO.getDatosLoteCDD()) {
+		for (DatosLoteCDD datoLote : this.informeDTO.getDatosLoteCDD()) {
 			for (InfoBienesCDD infoBien : datoLote.getInfoBienes()) {
 				if (!lIdBien.contains(infoBien.getIdBien())) {
 					lIdBien.add(infoBien.getIdBien());
@@ -687,6 +679,20 @@ public class InformeValidacionCDDBean {
 		this.informeDTO = informeDTO;
 	}
 	
+	public ApiProxyFactory getProxyFactory() {
+		return proxyFactory;
+	}
 	
+	public void setProxyFactory(ApiProxyFactory proxyFactory) {
+		this.proxyFactory = proxyFactory;
+	}
+	
+	public NMBProjectContext getNmbProjectContext() {
+		return nmbProjectContext;
+	}
+	
+	public void setNmbProjectContext(NMBProjectContext nmbProjectContext) {
+		this.nmbProjectContext = nmbProjectContext;
+	}
 
 }

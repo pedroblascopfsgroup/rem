@@ -129,6 +129,8 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		}
 		informe.setIdSubasta(idSubasta);
 		InformeValidacionCDDBean informeBean = new InformeValidacionCDDBean();
+		informeBean.setProxyFactory(proxyFactory);
+		informeBean.setNmbProjectContext(nmbProjectContext);
 		informeBean.create(informe);
 		return informeBean.getInformeDTO();
 	}

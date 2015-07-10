@@ -4,6 +4,7 @@
 --## FECHA_CREACION=20150601
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
+--## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
 --## Finalidad: Tabla que recoge la configuración de los despachos externos.
@@ -64,7 +65,7 @@ BEGIN
 		NOCOMPRESS 
 		NOCACHE
 		NOPARALLEL
-		MONITORING;
+		MONITORING
 		';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.DEC_DESPACHO_EXT_CONFIG... Tabla creada');

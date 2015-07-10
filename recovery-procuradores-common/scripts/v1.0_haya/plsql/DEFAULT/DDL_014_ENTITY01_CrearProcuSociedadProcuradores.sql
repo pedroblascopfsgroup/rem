@@ -4,6 +4,7 @@
 --## FECHA_CREACION=20150622
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
+--## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
 --## Finalidad: Tabla que recoge la relación entre los procuradores y las sociedades de procuradores.
@@ -54,7 +55,7 @@ BEGIN
 		NOCOMPRESS 
 		NOCACHE
 		NOPARALLEL
-		NOMONITORING;
+		NOMONITORING
 		';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.PSP_PROC_SOCI_PROCS... Tabla creada');

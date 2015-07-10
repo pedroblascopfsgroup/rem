@@ -4,6 +4,7 @@
 --## FECHA_CREACION=20150617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
+--## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
 --## Finalidad: Nuevo campo en DD_TR_TIPOS_RESOLUCION
@@ -29,8 +30,8 @@ DECLARE
     
 BEGIN
 
-	DBMS_OUTPUT.PUT_LINE('******** PRO_PROCURADORES ********'); 
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.PRO_PROCURADORES... Comprobaciones previas');
+	DBMS_OUTPUT.PUT_LINE('******** DD_TR_TIPOS_RESOLUCION ********'); 
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION... Comprobaciones previas');
 
 	-- Comprobamos si ya existe la columna
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_TR_CATEGORIZAR'' and TABLE_NAME=''DD_TR_TIPOS_RESOLUCION'' and owner = '''||V_ESQUEMA||'''';

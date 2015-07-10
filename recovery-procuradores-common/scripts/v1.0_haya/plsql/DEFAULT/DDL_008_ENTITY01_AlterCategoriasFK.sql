@@ -4,6 +4,7 @@
 --## FECHA_CREACION=20150617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
+--## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
 --## Finalidad: Relaciones de categorías y categorizaciones.

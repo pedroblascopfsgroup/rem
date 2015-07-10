@@ -4,6 +4,7 @@
 --## FECHA_CREACION=20150623
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
+--## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
 --## Finalidad: Realiza las inserciones de la resolución Demanda Sellada para la tarea H001_DemandaCertificacionCargas.
@@ -93,7 +94,7 @@ BEGIN
 				   'DD_TR_ID, DD_TR_CODIGO, DD_TR_DESCRIPCION, DD_TR_DESCRIPCION_LARGA, DD_TJ_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TR_AYUDA, BPM_DD_TAC_ID) ' ||
 				   'SELECT '''||V_TR_ID||''','''||V_TR_CODIGO||''','''||V_TR_DESCRIPCION||''','''||V_TR_DESCRIPCION||''','||
 				   		'(SELECT DD_TJ_ID FROM '||V_ESQUEMA||'.DD_TJ_TIPO_JUICIO WHERE DD_TJ_CODIGO = '''||V_TJ_CODIGO||'''),'||
-				   		'0, ''MOD_PROC'', SYSDATE, ''Ayuda de '||V_TR_DESCRIPCION||''', (SELECT BPM_DD_TAC_ID FROM '||V_ESQUEMA||'.BPM_DD_TAC_TIPO_ACCION WHERE BPM_DD_TAC_CODIGO ='''||V_TAC_CODIGO||''')'||
+				   		'0, ''MOD_PROC'', SYSDATE, 0 , ''Ayuda de '||V_TR_DESCRIPCION||''', (SELECT BPM_DD_TAC_ID FROM '||V_ESQUEMA||'.BPM_DD_TAC_TIPO_ACCION WHERE BPM_DD_TAC_CODIGO ='''||V_TAC_CODIGO||''')'||
 				   		' FROM DUAL';
 				   		
 		EXECUTE IMMEDIATE V_MSQL;
@@ -106,7 +107,6 @@ BEGIN
 					'''0'',''MOD_PROC'', SYSDATE, ''0'',NULL FROM DUAL';
 		
 		EXECUTE IMMEDIATE V_MSQL;
-		
 					
 					
 		-- Insertamos en BPM_TPI_TIPO_PROC_INPUT para crear la relación entre inputs y los nodos del procedimiento
@@ -118,8 +118,7 @@ BEGIN
 					'(SELECT BPM_DD_TIN_ID FROM '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_DD_TIN_CODIGO='''||V_TIN_CODIGO||'''),'''||V_NODO||''',''NONE'', 0, ''MOD_PROC'', '||
 					'SYSDATE, 0, (SELECT BPM_DD_TAC_ID FROM '||V_ESQUEMA||'.BPM_DD_TAC_TIPO_ACCION WHERE BPM_DD_TAC_CODIGO='''||V_TAC_CODIGO||'''), NULL, NULL)';
 		
-		EXECUTE IMMEDIATE V_MSQL
-		
+		EXECUTE IMMEDIATE V_MSQL;
 					
 					
 		--Insertamos en la Tabla BPM_IDT_INPUTS_DATOS: los campos del formulario(los de la tarea) más los obligatorios (idAsunto, d_numAutos).

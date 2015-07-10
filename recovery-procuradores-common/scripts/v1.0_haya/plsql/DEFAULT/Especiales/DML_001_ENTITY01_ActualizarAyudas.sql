@@ -4,6 +4,7 @@
 --## FECHA_CREACION=20150706
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
+--## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
 --## Finalidad: Actualizar los campos de ayuda de todas las resoluciones (Hay que ejecutar previamente todos los DML de resoluciones).

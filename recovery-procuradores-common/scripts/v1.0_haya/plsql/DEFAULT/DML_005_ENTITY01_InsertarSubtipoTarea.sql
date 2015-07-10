@@ -4,6 +4,7 @@
 --## FECHA_CREACION=20150623
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
+--## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
 --## Finalidad: Inserta el Subtipo de tarea Recordatorio en DD_STA_SUBTIPO_TAREA_BASE

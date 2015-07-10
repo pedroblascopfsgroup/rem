@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.1.0-X
 --## PRODUCTO=SI
 --##
---## Finalidad: Realiza las inserciones de la resolución Decreto acordando embargo salario para la tarea H038_SolicitarNotificacion.
+--## Finalidad: Realiza las inserciones de la resolución  Escrito solicitándose libre oficio para la tarea H038_SolicitarNotificacion.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -42,7 +42,7 @@ DECLARE
     */
     V_TR_ID VARCHAR2(16 CHAR):= 			'292';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_SOL_NOT_EMB';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Decreto acordando embargo salario';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Escrito solicitándose libre oficio';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'EMS';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     

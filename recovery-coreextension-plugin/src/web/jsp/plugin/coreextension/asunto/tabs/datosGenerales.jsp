@@ -339,8 +339,8 @@
 	       ,data : siNo
 	});
 
-	//Campo Combo Error CDD
-	var comboErrorCDD = new Ext.form.ComboBox({
+	//Campo Combo Situacion CDD
+	var comboSituacionCDD = new Ext.form.ComboBox({
 				store:optionsSINOStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
@@ -348,11 +348,33 @@
 				,editable: false
 				,emptyText:'---'
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorCDD" text="**Error CDD"/>'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.situacionCDD" text="**Situaci&oacute;n cierre de deuda"/>'
+	});
+	
+	//Campo Combo Error previo envio CDD
+	var comboErrorPreviCDD = new Ext.form.ComboBox({
+				store:optionsSINOStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'local'
+				,editable: false
+				,emptyText:'---'
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.situacionCDD" text="**Situaci&oacute;n cierre de deuda"/>'
 	});
 	
 	
-	
+	//Campo Combo Error post envio CDD
+	var comboErrorPostCDD = new Ext.form.ComboBox({
+				store:optionsSINOStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'local'
+				,editable: false
+				,emptyText:'---'
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.situacionCDD" text="**Situaci&oacute;n cierre de deuda"/>'
+	});	
 	
 	              
     var zonasRecord = Ext.data.Record.create([
@@ -519,7 +541,13 @@
 		if (comboJerarquia.getValue() != '' ){
 			return true;
 		}
-		if (comboErrorCDD.getValue() != '' ){
+		if (comboSituacionCDD.getValue() != '' ){
+			return true;
+		}
+		if (comboErrorPreviCDD.getValue() != '' ){
+			return true;
+		}
+		if (comboErrorPostCDD.getValue() != '' ){
 			return true;
 		}
 		if (comboZonas.getValue() != '' ){
@@ -574,7 +602,9 @@
 			,fechaCreacionDesde:app.format.dateRenderer(fechaCreacionDesde.getValue())
 			,fechaCreacionHasta:app.format.dateRenderer(fechaCreacionHasta.getValue())
 			,jerarquia:comboJerarquia.getValue()
-			,comboErrorCDD:comboErrorCDD.getValue()
+			,comboSituacionCDD:comboSituacionCDD.getValue()
+			,comboErrorPreviCDD:comboErrorPreviCDD.getValue()
+			,comboErrorPostCDD:comboErrorPostCDD.getValue()
 			,codigoZona:comboZonas.getValue()
 			,tipoSalida:'<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_LISTADO" />'
 			//,codigoProcedimientoEnJuzgado:codigoProcedimientoEnJuzgado.getValue()
@@ -619,7 +649,9 @@
 				,{items:[fechaCreacionHasta]}
 				,{items:[filtroNumeroAutosPanel]}
 				,{items:[comboJerarquia]}
-				,{items:[comboErrorCDD]}
+				,{items:[comboSituacionCDD]}
+				,{items:[comboErrorPreviCDD]}
+				,{items:[comboErrorPostCDD]}
 				,{items:[comboZonas]}
 				,{colspan:2,items:[comboTipoProcedimientos]}
 				,{items:[comboGestion]}
@@ -660,7 +692,9 @@
     		           ,fechaCreacionDesde
     		           ,fechaCreacionHasta
     		           ,comboJerarquia
-    		           ,comboErrorCDD
+    		           ,comboSituacionCDD
+    		           ,comboErrorPreviCDD
+    		           ,comboErrorPostCDD
     		           ,comboZonas
     		           ,codigoProcedimientoEnJuzgado
     		           ,filtroNumeroCodigoProc

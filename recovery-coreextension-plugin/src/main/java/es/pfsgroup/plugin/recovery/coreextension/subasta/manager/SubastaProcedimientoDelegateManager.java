@@ -4,6 +4,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
 
 /**
  *
@@ -170,5 +171,11 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		return null;
 	}
 
+	@Override
+	@BusinessOperation(BO_SUBASTA_GET_LOTE_BY_PRC_BIEN)
+	public LoteBien getLoteByPrcBien(Long idProcedimiento, Long idBien) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

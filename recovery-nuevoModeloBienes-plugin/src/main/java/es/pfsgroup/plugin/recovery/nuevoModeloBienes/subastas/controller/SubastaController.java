@@ -274,7 +274,7 @@ public class SubastaController {
 		if(!informe.getValidacionOK()) {
 			String motivo = informe.getResultadoValidacion().get(0);
 			DDResultadoValidacionCDD resultadoValidacion = (DDResultadoValidacionCDD) diccionarioApi.dameValorDiccionarioByCod(DDResultadoValidacionCDD.class, motivo);
-			subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO, resultadoValidacion);
+			subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO, resultadoValidacion);
 			return creaExcelValidacion(informe,model);
 		}else{
 			if(Checks.esNulo(idsBien)) {
@@ -282,7 +282,7 @@ public class SubastaController {
 				if(!Checks.estaVacio(registrosBACDD)) {
 					subastaApi.eliminarRegistroCierreDeuda(idSubasta, registrosBACDD);						
 				}else{
-					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
+					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
 				}
 			}else{
 				subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));

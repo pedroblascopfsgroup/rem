@@ -176,7 +176,7 @@ public interface SubastaApi {
 	public void guardaBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda autoCierreDeuda);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
-	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion);
+	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idProcedimientoAdj, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_BUSCAR_LOTES_SUBASTA)	
 	public Page buscarLotesSubastas(NMBDtoBuscarLotesSubastas dto);	

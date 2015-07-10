@@ -1,6 +1,7 @@
 package es.pfsgroup.procedimientos.subasta;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
@@ -12,10 +13,12 @@ import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -25,6 +28,7 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 	private static final long serialVersionUID = 1L;
     
 	private static final String BANKIA = "BANKIA";
+	private static final String PROPIEDAD_SAREB = "SAREB";
 	
 	@Autowired
 	private Executor executor;
@@ -76,8 +80,22 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 				cierreDeuda.getIdAsunto(), 
 				cierreDeuda.getEntidad()));
 		cierreDeuda.setOrigenPropuesta(BatchAcuerdoCierreDeuda.PROPIEDAD_AUTOMATICO);
-			
-		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class).generarInformeValidacionCDD(procedimiento.getId(), null, null);
+		
+		Long idProcedimiento = procedimiento.getId();
+		String idsBien = null;
+		EXTAsunto extAsunto = getExtAsunto(procedimiento);
+		if (extAsunto!=null && PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
+			idProcedimiento = procedimiento.getProcedimientoPadre().getId();
+			List<ProcedimientoBien> bienes = procedimiento.getBienes();
+			if (bienes!=null && bienes.size()>0) {
+				cierreDeuda.setIdBien(bienes.get(0).getBien().getId());
+			}
+			LoteBien lotebien = (LoteBien) proxyFactory.proxy(SubastaProcedimientoDelegateApi.class).getLoteByPrcBien(idProcedimiento, bienes.get(0).getBien().getId());
+			idsBien = bienes.get(0).getBien().getId() + ";" + lotebien.getLoteSubasta().getId();
+		}	
+		
+		InformeValidacionCDDDto informe = (InformeValidacionCDDDto) proxyFactory.proxy(SubastaProcedimientoDelegateApi.class).generarInformeValidacionCDD(idProcedimiento, null, idsBien);
+		
 		if(informe.getValidacionOK()) {
 			cierreDeuda.setResultadoValidacion(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK);
 		}else{
@@ -87,6 +105,8 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 			cierreDeuda.setResultadoValidacionCDD(resultadoValidacion);
 		}
 		
+		
+			
 		return cierreDeuda;
 	}
 	
@@ -94,7 +114,7 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 	 * Guarda el cierre de deuda.
 	 */
 	protected void guardaCierreDeuda() {
-		BatchAcuerdoCierreDeuda cierreDeuda = getCierreDeudaInstance();		
+		BatchAcuerdoCierreDeuda cierreDeuda = getCierreDeudaInstance();
 		executor.execute("es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierreDeuda", cierreDeuda);
 	}
 	

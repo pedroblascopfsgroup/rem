@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
@@ -82,6 +83,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruc
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -825,8 +827,8 @@ public class SubastaManager implements SubastaApi {
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)
-	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
-		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idBien, resultadoValidacion, motivoValidacion);
+	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idProcedimientoAdj, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
+		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idProcedimientoAdj, idBien, resultadoValidacion, motivoValidacion);
 		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 	}
 	
@@ -1191,22 +1193,25 @@ public class SubastaManager implements SubastaApi {
 			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
 				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
 			}
-			guardaBatchAcuerdoCierre(idSubasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
+			guardaBatchAcuerdoCierre(idSubasta, null, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
 		} 
 		
-		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
+		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idProcedimientoAdj, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
 			Subasta subasta = getSubasta(idSubasta);
-			EXTAsunto extAsunto = EXTAsunto.instanceOf(subasta.getAsunto()); 
-
 			Procedimiento procedimiento = subasta.getProcedimiento();
 			Auditoria auditoria = Auditoria.getNewInstance();
 			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
-			cierreDeuda.setIdProcedimiento(procedimiento.getId());
+			cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
+			if(Checks.esNulo(idBien)) {
+				cierreDeuda.setIdProcedimiento(procedimiento.getId());				
+			}else{
+				cierreDeuda.setIdProcedimiento(idProcedimientoAdj);
+				cierreDeuda.setIdBien(idBien);				
+				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);
+			}
 			cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
 			cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
 			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
-			cierreDeuda.setEntidad(extAsunto.getPropiedadAsunto().getCodigo());	
-			cierreDeuda.setIdBien(idBien);
 			cierreDeuda.setResultadoValidacion(resultadoValidacion);
 			cierreDeuda.setOrigenPropuesta(BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
 			if(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO.equals(resultadoValidacion)){
@@ -1220,9 +1225,14 @@ public class SubastaManager implements SubastaApi {
 		@BusinessOperation(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
 		public void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
 			for(Long idBien : idsBien) {
+				NMBBien bien = nmbBienDao.get(idBien);
+				Subasta subasta = getSubasta(idSubasta);
+				Map<String, String> mapaTiposProcedimiento = projectContext.getMapaTiposPrc();
+				String tipoProcedimiento = mapaTiposProcedimiento.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION);
+				Procedimiento prc = (Procedimiento) proxyFactory.proxy(SubastaApi.class).getProcedimientoBienByIdPadre(bien, subasta, tipoProcedimiento);
 				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
 				if(Checks.estaVacio(list)) {
-					guardaBatchAcuerdoCierre(idSubasta, idBien, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
+					guardaBatchAcuerdoCierre(idSubasta, prc.getId(), idBien, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
 				}
 			}
 		} 

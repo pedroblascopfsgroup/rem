@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.BienLoteDt
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
@@ -757,6 +758,17 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					}
 		}
 		return true;
+	}
+
+
+	@Override
+	@BusinessOperation(overrides = BO_SUBASTA_GET_LOTE_BY_PRC_BIEN)
+	public LoteBien getLoteByPrcBien(Long idProcedimiento, Long idBien) {
+		LoteBien loteBien = genericDao.get(LoteBien.class, 
+				genericDao.createFilter(FilterType.EQUALS, "bien.id", idBien),
+				genericDao.createFilter(FilterType.EQUALS, "loteSubasta.subasta.procedimiento.id", idProcedimiento));
+		return loteBien;
+
 	}	
 
 }

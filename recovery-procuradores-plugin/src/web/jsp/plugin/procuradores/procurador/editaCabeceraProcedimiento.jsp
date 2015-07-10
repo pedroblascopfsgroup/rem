@@ -374,7 +374,6 @@
 					}
 	});
 
-	alert(${isDespachoIntegral});
 	var camposFieldSet = new Ext.form.FieldSet({
 		border:false
 		<c:choose>

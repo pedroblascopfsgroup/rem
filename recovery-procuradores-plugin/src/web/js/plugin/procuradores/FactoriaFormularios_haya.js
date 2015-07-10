@@ -1177,7 +1177,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
 	// id: 224 : ADJUDICACIÓN : Notificacion decreto adjudicacion.
 	this.arrayCampos.push([
-		{"xtype":'datefield',"name":"d_fecha","field":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 		,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboSubsanacion","fieldLabel":"Requiere subsanación","autoload":true, mode:'local',triggerAction:'all',allowBlank:false,filtradoProcurador:true,resizable:true, 	id:'d_comboSubsanacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	]);
 	

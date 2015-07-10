@@ -967,7 +967,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         // id: 203 : TRAMITE HIPOTECARIO : Auto Despachando Ejecución Desfavorable
         this.arrayCampos.push([
                                {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de Notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-                               ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_nPlaza","hiddenName":"d_nPlaza",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
+                               ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_nPlaza","hiddenName":"d_nPlaza",sameValue:"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
                               	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
                               		,listeners:{afterRender:function(combo){
                               			 combo.mode='remote';
@@ -1012,7 +1012,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		this.arrayCampos.push([
 			{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 //			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-			,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,filtrar:true,allowBlank:false,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+			,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"d_comboResultado","fieldLabel":"Positivo / Negativo","autoload":true,filtrar:true,allowBlank:false,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
             }
 		
 		]);
@@ -1021,7 +1021,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		this.arrayCampos.push([
 			{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 //			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-			,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboResultado","fieldLabel":"Resultado notificación", filtrar:true,allowBlank:false, "autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+			,{"xtype":'combo',"store":storeSINO,"value":"02", "name":"d_comboResultado","fieldLabel":"Positivo / Negativo", filtrar:true,allowBlank:false, "autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
             }
 		
 		]);
@@ -1610,8 +1610,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	//id: 266 : PROCEDIMIENTO ORDINARIO: Confirmar si existe oposición
 	this.arrayCampos.push([
-	                       {"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaOposicion'+this.idFactoria
+	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Contestación demanda",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaOposicion","fieldLabel":"Fecha de contestación",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaOposicion'+this.idFactoria
 	                    	   ,validator : function(v) {
 	                    	   		if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_fechaOposicion' + idFactoria).getValue() == ""){
 	                    	   			return false;

@@ -10,11 +10,14 @@
 
 (function(page,entidad){
 
+<%@ include file="/WEB-INF/jsp/plugin/precontencioso/liquidacion/grids/liquidacionGrid.jsp" %>
+
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.precontencioso" text="**Precontencioso"/>'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'
+		,items :gridLiquidaciones
 	});
 
 	panel.getValue = function() {}

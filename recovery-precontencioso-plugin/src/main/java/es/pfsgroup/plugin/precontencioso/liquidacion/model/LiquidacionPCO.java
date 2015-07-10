@@ -21,6 +21,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
 @Entity
@@ -46,8 +48,9 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDEstadoLiquidacionPCO estadoLiquidacion;
 
-	@Column(name = "PCO_LIQ_CNT_ID")
-	private Long cntId;
+	@ManyToOne
+	@JoinColumn(name = "CNT_ID")
+	private Contrato contrato;
 
 	@Column(name = "PCO_LIQ_FECHA_SOLICITUD")
 	private Date fechaSolicitud;
@@ -76,8 +79,10 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_LIQ_TOTAL")
 	private Float total;
 
-	@Column(name = "PCO_LIQ_APODERADO")
-	private String apoderado;
+	@ManyToOne
+	@JoinColumn(name = "USU_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private Usuario apoderado;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -116,12 +121,12 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.estadoLiquidacion = estadoLiquidacion;
 	}
 
-	public Long getCntId() {
-		return cntId;
+	public Contrato getContrato() {
+		return contrato;
 	}
 
-	public void setCntId(Long cntId) {
-		this.cntId = cntId;
+	public void setContrato(Contrato contrato) {
+		this.contrato = contrato;
 	}
 
 	public Date getFechaSolicitud() {
@@ -196,11 +201,11 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.total = total;
 	}
 
-	public String getApoderado() {
+	public Usuario getApoderado() {
 		return apoderado;
 	}
 
-	public void setApoderado(String apoderado) {
+	public void setApoderado(Usuario apoderado) {
 		this.apoderado = apoderado;
 	}
 

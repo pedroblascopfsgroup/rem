@@ -168,7 +168,6 @@
     entidad.setLabel('gestor',cabecera.gestor);
     entidad.setLabel('supervisor',cabecera.supervisor);
 
-	debugger;
 	if (entidad.get("data").toolbar.tipoExpediente == 'REC') {
 		var cabeceraRecobro = data.cabeceraRecobro;
 		

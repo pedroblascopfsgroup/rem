@@ -537,11 +537,39 @@ var validacionCDD;
 			if (boton=='yes'){ this.reiniciar(); }
 		}
 		,reiniciar : function(){
-			var flow = '/pfs/subasta/reiniciarKOCDD';
+			<%-- var flow = '/pfs/subasta/reiniciarKOCDD';
 			var params={idAsunto:panel.getAsuntoId()};
-			app.openBrowserWindow(flow,params);
+			app.openBrowserWindow(flow,params); --%>
+			reiniciarKOCDD();
 		}
 	});
+	
+	var reiniciarKOCDD =  function() {
+		debugger;
+		Ext.Ajax.request({
+			url: page.resolveUrl('subasta/reiniciarKOCDD')
+			,method: 'POST'
+			,params:{
+     				   idAsunto:panel.getAsuntoId()
+   				}
+			,success: function (result, request){				 
+				Ext.MessageBox.show({
+		            title: 'Guardado',
+		            msg: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.resetCDD.avisoOK" text="**Las propuestas han sido reiniciadas correctamente" />',
+		            width:300,
+		            buttons: Ext.MessageBox.OK
+		        });
+			}
+			,error: function(){
+				Ext.MessageBox.show({
+		            title: 'Guardado',
+		            msg: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.resetCDD.avisoKO" text="**Ha ocurrido un error al reiniciar las propuestas. Consulte con soporte" />',
+		            width:300,
+		            buttons: Ext.MessageBox.OK
+		        });
+			} 
+		});
+	}
 	
 	
     var lotesCM = new Ext.grid.ColumnModel([

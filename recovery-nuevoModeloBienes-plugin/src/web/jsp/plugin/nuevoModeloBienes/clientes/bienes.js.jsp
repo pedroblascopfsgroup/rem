@@ -781,9 +781,9 @@
 		});
 		var referenciaCatastral = app.creaText('referenciaCatastralBien', '<s:message code="plugin.mejoras.bienesNMB.referenciaCatastral" text="**Referencia catastral" />' , referenciaCatastralBien_valor, {maxLength:20,labelStyle : labelStyle});
 		var numFinca = app.creaText('numFinca', '<s:message code="plugin.mejoras.bienesNMB.numFinca" text="**Número de finca" />' , numFinca_valor, {maxLength:50,labelStyle : labelStyle});
-		var tomo = app.creaText('tomo', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.tomo" text="**Tomo" />' , tomo_valor, {maxLength:6,labelStyle : labelStyle});
-		var libro = app.creaText('libro', '<s:message code="plugin.mejoras.bienesNMB.libro" text="**libro" />' , libro_valor, {maxLength:6,labelStyle : labelStyle});
-		var folio = app.creaText('folio', '<s:message code="plugin.mejoras.bienesNMB.folio" text="**folio" />' , folio_valor, {maxLength:6,labelStyle : labelStyle});
+		var tomo = app.creaNumber('tomo', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.tomo" text="**Tomo" />' , tomo_valor, {maxLength:6,labelStyle : labelStyle});
+		var libro = app.creaNumber('libro', '<s:message code="plugin.mejoras.bienesNMB.libro" text="**libro" />' , libro_valor, {maxLength:6,labelStyle : labelStyle});
+		var folio = app.creaNumber('folio', '<s:message code="plugin.mejoras.bienesNMB.folio" text="**folio" />' , folio_valor, {maxLength:6,labelStyle : labelStyle});
 		var inscripcion = app.creaText('inscripcion', '<s:message code="plugin.mejoras.bienesNMB.inscripcion" text="**inscripcion" />' , inscripcion_valor, {maxLength:20,labelStyle : labelStyle});
 		var fechaInscripcion = new Ext.ux.form.XDateField({
 			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.fechaInscripcion" text="**Fecha Inscripción" />'

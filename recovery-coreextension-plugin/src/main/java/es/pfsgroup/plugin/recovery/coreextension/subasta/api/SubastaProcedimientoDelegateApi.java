@@ -97,5 +97,6 @@ public interface SubastaProcedimientoDelegateApi {
 	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idProcedimiento, Long idSubasta, String idsBien);
 	
 	@BusinessOperationDefinition(BO_SUBASTA_GET_LOTE_BY_PRC_BIEN)
+	@Deprecated
 	public LoteBien getLoteByPrcBien(Long idProcedimiento, Long idBien);
 }

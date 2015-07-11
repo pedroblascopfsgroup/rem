@@ -13,12 +13,18 @@ import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -32,6 +38,9 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 	
 	@Autowired
 	private Executor executor;
+
+	@Autowired
+	private GenericABMDao genericDao;	
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -88,10 +97,28 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 			idProcedimiento = procedimiento.getProcedimientoPadre().getId();
 			List<ProcedimientoBien> bienes = procedimiento.getBienes();
 			if (bienes!=null && bienes.size()>0) {
+				//Oscar: No entiendo esta parte, pq se busca los bienes asociados al procedimiento y no a la subasta? Pq se coge el primer bien encontrado?
 				cierreDeuda.setIdBien(bienes.get(0).getBien().getId());
 			}
-			LoteBien lotebien = (LoteBien) proxyFactory.proxy(SubastaProcedimientoDelegateApi.class).getLoteByPrcBien(idProcedimiento, bienes.get(0).getBien().getId());
-			idsBien = bienes.get(0).getBien().getId() + ";" + lotebien.getLoteSubasta().getId();
+			Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			Long idLote = 0L;
+			if (!Checks.esNulo(sub)) {
+				// buscamos los lotes de la subasta
+				List<LoteSubasta> listadoLotes = sub.getLotesSubasta();				
+				for (LoteSubasta ls : listadoLotes) {
+					if (!Checks.estaVacio(ls.getBienes())) {
+						for (Bien listadoBienes : ls.getBienes()) {
+							if (cierreDeuda.getIdBien().equals(
+									listadoBienes.getId())) {
+								idLote = ls.getId();
+							}
+						}
+					}
+				}				
+			}
+			//FIXME
+			//LoteBien lotebien = (LoteBien) proxyFactory.proxy(SubastaProcedimientoDelegateApi.class).getLoteByPrcBien(idProcedimiento, bienes.get(0).getBien().getId());
+			idsBien = bienes.get(0).getBien().getId() + ";" + idLote;
 		}	
 		
 		InformeValidacionCDDDto informe = (InformeValidacionCDDDto) proxyFactory.proxy(SubastaProcedimientoDelegateApi.class).generarInformeValidacionCDD(idProcedimiento, null, idsBien);

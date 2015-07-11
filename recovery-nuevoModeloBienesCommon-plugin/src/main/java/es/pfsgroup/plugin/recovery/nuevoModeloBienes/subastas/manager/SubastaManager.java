@@ -973,6 +973,7 @@ public class SubastaManager implements SubastaApi {
 	}
 
 	//M�todo que calcula si se puede mostrar el bot�n de solicitar tasaci�n
+	//FIXME Oscar: creo que este método no funciona por culpa de la llamada getSubastasporIdBien
 	@BusinessOperation(BO_NMB_SUBASTA_PERMITE_SOLICITAR_TASACION)
 	public Integer permiteSolicitarTasacion(Long id){
 			

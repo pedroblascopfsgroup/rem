@@ -905,6 +905,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				|| (!StringUtils.emtpyString(dto.getTiposProductoEntidad()));
 	}
 	
+	//FIXME esto funciona? LoteBien no existe
 	public List<Subasta> getSubastasporIdBien (Long id){
 		List<Subasta> listaSubastas = new ArrayList<Subasta>();
 		HQLBuilder hql = new HQLBuilder("select lob.loteSubasta.subasta "

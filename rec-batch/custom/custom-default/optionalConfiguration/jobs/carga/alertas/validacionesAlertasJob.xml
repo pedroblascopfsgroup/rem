@@ -1,0 +1,163 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+    default-autowire="byName" default-merge="true">
+    <bean id="validacionesAlertasJob" parent="batch.simpleJob" scope="prototype">
+        <property name="steps">
+            <list>
+                <bean id="pasaje.alertas.valdidator" parent="batch.taskletStep" scope="prototype">
+                    <property name="tasklet">
+                        <bean parent="common.validator" scope="prototype">
+                            <property name="validaciones">
+                                <list>
+                                    <ref bean="ale-01.entityValidator" />
+                                    <ref bean="ale-02.loadDateValidator" />
+                                    <ref bean="ale-03.grupoDiferente" />
+                                    <ref bean="ale-04.codigoCliente" />
+                                    <ref bean="ale-05.codigoGrupo" />                                     
+                                    <ref bean="ale-06.codigoAlerta" />
+                                    <ref bean="ale-07.codigoGravedad" />
+                                    <ref bean="ale-08.existenAlertasPosteriores" />
+                                    <!--ref bean="ale-09.entradasDuplicadas" /-->
+                                    <ref bean="ale-10.countValidator" /> 
+   
+                                    <ref bean="ale-12.contratoValidator"/>
+                                    <ref bean="ale-13.oficinaContrato"/>
+                                    <ref bean="ale-14.oficinaAlerta"/>                          
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    <!-- valido que las entidades correspondan con la del archivo -->
+    <bean id="ale-01.entityValidator" class="es.capgemini.pfs.batch.load.EntityValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-01.entityValidator" />
+        </property>
+        <property name="bindings" value="entidad=entidad" />
+        <property name="message" value="ale-01.entityValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="ale-02.loadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-02.loadDateValidator.${entity.dialect}" />
+        </property>
+        <property name="bindings" value="fileName=csvFileAlertas" />
+        <property name="message" value="ale-02.loadDateValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="ale-03.grupoDiferente" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-03.grupoDiferente" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="bindings" value="argumento=alertasGrupoCarga" />
+        <property name="message" value="ale-03.grupoDiferente" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="ale-04.codigoCliente" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-04.codigoCliente" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-04.codigoCliente" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="ale-05.codigoGrupo" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-05.codigoGrupo" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-05.codigoGrupo" />
+        <property name="severidad" value="error" />
+    </bean>
+    
+    <bean id="ale-06.codigoAlerta" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-06.codigoAlerta" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-06.codigoAlerta" />
+        <property name="severidad" value="error" />
+    </bean>
+   
+    <bean id="ale-07.codigoGravedad" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-07.codigoGravedad" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-07.codigoGravedad" />
+        <property name="severidad" value="error" />
+    </bean>
+
+    <bean id="ale-08.existenAlertasPosteriores" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-08.existenAlertasPosteriores" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-08.existenAlertasPosteriores" />
+        <property name="severidad" value="error" />
+    </bean>
+
+    <!--bean id="ale-09.entradasDuplicadas" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-09.entradasDuplicadas" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-09.entradasDuplicadas" />
+        <property name="severidad" value="error" />
+    </bean-->    
+    
+    <bean id="ale-10.countValidator" class="es.capgemini.pfs.batch.common.RecordCountValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="tableName" value="tmp_ale_alertas" />
+        <property name="bindings" value="expectedRecords=alertasRowCount" />
+        <property name="message" value="ale-10.countValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+   
+    <bean id="ale-12.contratoValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-12.contratoValidator" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-12.contratoValidator" />
+        <property name="severidad" value="error" />
+    </bean>
+
+    <bean id="ale-13.oficinaContrato" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-13.oficinaContrato" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-13.oficinaContrato" />
+        <property name="severidad" value="error" />
+    </bean>
+
+    <bean id="ale-14.oficinaAlerta" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
+        <property name="dataSource" ref="entityDataSource" />
+        <property name="query">
+            <bean parent="sql" p:key="ale-14.oficinaAlerta" />
+        </property>
+        <property name="expectedNumber" value="0" />
+        <property name="message" value="ale-14.oficinaAlerta" />
+        <property name="severidad" value="error" />
+    </bean>    
+</beans>

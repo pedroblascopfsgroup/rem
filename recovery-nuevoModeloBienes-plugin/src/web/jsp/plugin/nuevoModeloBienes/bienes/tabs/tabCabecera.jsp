@@ -27,7 +27,7 @@
 	//var participacion		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.participacion" text="**% Propiedad"/>','${NMBbien.participacion}',{labelStyle:labelStyle});
 
 	var situacionPosesoria  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.situacionPosesoria" text="**situacionPosesoria"/>','${NMBbien.situacionPosesoria.descripcion}', {labelStyle:labelStyle});
-	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual ? 'Si' : 'No'}', {labelStyle:labelStyle});
+	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual==null ? '--':NMBbien.viviendaHabitual == '1' ? 'Sí' : 'No'}', {labelStyle:labelStyle});
 	var tipoSubasta		    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tipoSubasta" text="**Tipo Subasta"/>',app.format.moneyRenderer('${NMBbien.tipoSubasta}'),{labelStyle:labelStyle});
 	var numeroActivo        = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.numeroActivo" text="**numeroActivo"/>','${NMBbien.numeroActivo}', {labelStyle:labelStyle});
 	var licenciaPrimeraOcupacion = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.licenciaPrimeraOcupacion" text="**licenciaPrimeraOcupacion"/>','${NMBbien.licenciaPrimeraOcupacion}', {labelStyle:labelStyle});
@@ -359,7 +359,7 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosDomicilio.titulo" text="**Domicilio"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [{items:[pais, provincia, localidad, unidadPoblacional, codPostal, tipoVia]},
-				  {items:[nombreVia, numeroDomicilio, portal, escalera, piso, puerta, barrio, direccion]}
+				  {items:[nombreVia, numeroDomicilio, portal, bloque, escalera, piso, puerta, barrio, direccion]}
 				 ]
 	});
 	

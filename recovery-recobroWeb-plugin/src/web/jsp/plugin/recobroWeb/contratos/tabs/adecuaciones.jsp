@@ -55,6 +55,15 @@
             }, adecuacionesRecord)
         });
     
+   var revisionCuotaRenderer = function(value) {   
+   		var valueRendered = parseInt(value)/100;   		
+   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(2).replace(".", app.format.DECIMAL_SEPARATOR);
+   }; 
+   
+   var razonProgresionRenderer = function(value) {   
+   		var valueRendered = parseInt(value)/100;
+   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(2).replace(".", app.format.DECIMAL_SEPARATOR);
+   }; 
  
    var adecuacionesCM  = new Ext.grid.ColumnModel([
         {header:'<s:message code="contrato.tabAdecuaciones.id" text="**id" />', sortable: false, dataIndex: 'id',fixed:true,hidden:true},
@@ -69,11 +78,11 @@
         {header:'<s:message code="contrato.tabAdecuaciones.cuota" text="**cuota" />',dataIndex:'cuota',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.cuotaTrasCarencia" text="**cuotaTrasCarencia" />',dataIndex:'cuotaTrasCarencia',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.sistemaAmortizacion" text="**sistemaAmortizacion" />',dataIndex:'sistemaAmortizacion',width:120,hidden:true},
-        {header:'<s:message code="contrato.tabAdecuaciones.razonProgresion" text="**razonProgresion" />',dataIndex:'razonProgresion',width:120,hidden:true},
+        {header:'<s:message code="contrato.tabAdecuaciones.razonProgresion" text="**razonProgresion" />',dataIndex:'razonProgresion', renderer: razonProgresionRenderer, width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.periodicidadRecibos" text="**periodicidadRecibos" />',dataIndex:'periodicidadRecibos',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.periodicidadTipo" text="**periodicidadTipo" />',dataIndex:'periodicidadTipo',width:120,hidden:true},        
         {header:'<s:message code="contrato.tabAdecuaciones.proximaRevision" text="**proximaRevision" />',dataIndex:'proximaRevision',width:120,hidden:true},
-        {header:'<s:message code="contrato.tabAdecuaciones.revisionCuota" text="**revisionCuota" />',dataIndex:'revisionCuota',width:120,hidden:true},
+        {header:'<s:message code="contrato.tabAdecuaciones.revisionCuota" text="**revisionCuota" />',dataIndex:'revisionCuota', renderer: revisionCuotaRenderer, width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.fechaDato" text="**fechaDato" />',dataIndex:'fechaDato',width:120,hidden:false}
         
     ]);

@@ -2,6 +2,11 @@ package es.capgemini.pfs.util;
 
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.jamonapi.utils.Logger;
+
 import es.capgemini.pfs.asunto.dto.DtoProcedimiento;
 import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfo;
 import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfoImpl;
@@ -10,6 +15,8 @@ import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 @SuppressWarnings("rawtypes")
 public class HistoricoProcedimientoComparatorV4 implements java.util.Comparator {
 
+	private final Log logger = LogFactory.getLog(getClass());
+	
 	@Override
 	public int compare(Object o1, Object o2) {
 		
@@ -45,7 +52,7 @@ public class HistoricoProcedimientoComparatorV4 implements java.util.Comparator 
 		Long id1 = getId(arg1);
 		Long id2 = getId(arg2);
 		if ((id1 == null) && (id2 == null)) {
-			return compareByTarId(arg1,arg2);
+			return 0;
 		} else if (id1 == null) {
 			return 1;
 		} else if (id2 == null) {
@@ -57,43 +64,58 @@ public class HistoricoProcedimientoComparatorV4 implements java.util.Comparator 
 	
 
 	private Long getId(Object o) {
-		if (o instanceof HistoricoAsuntoInfoImpl) {
-			return ((HistoricoAsuntoInfoImpl) o).getProcedimiento().getId();
-		} else if(o instanceof HistoricoProcedimiento) {
-			return ((HistoricoProcedimiento) o).getIdProcedimiento();
-		} else if (o instanceof HistoricoAsuntoInfo) {
-			return ((HistoricoAsuntoInfo) o).getProcedimiento().getId();
-		} else if (o instanceof DtoProcedimiento) {
-			return ((DtoProcedimiento) o).getProcedimiento().getId();
-		} else {
+		try{
+			if (o instanceof HistoricoAsuntoInfoImpl) {
+				return ((HistoricoAsuntoInfoImpl) o).getProcedimiento().getId();
+			} else if(o instanceof HistoricoProcedimiento) {
+				return ((HistoricoProcedimiento) o).getIdProcedimiento();
+			} else if (o instanceof HistoricoAsuntoInfo) {
+				return ((HistoricoAsuntoInfo) o).getProcedimiento().getId();
+			} else if (o instanceof DtoProcedimiento) {
+				return ((DtoProcedimiento) o).getProcedimiento().getId();
+			} else {
+				return null;
+			}
+		}catch(Exception e){
+			logger.error("HistoricoProcedimientoComparatorV4 getId: " + e);
 			return null;
 		}
 	}
 	
 	private Long getTarId(Object o) {
-		if (o instanceof HistoricoAsuntoInfoImpl) {
-			return ((HistoricoAsuntoInfoImpl) o).getIdTarea();
-		} else if (o instanceof HistoricoProcedimiento) {
-			return ((HistoricoProcedimiento) o).getIdEntidad();
-		} else if (o instanceof HistoricoAsuntoInfo) {
-			return ((HistoricoAsuntoInfo) o).getIdTarea();
-		} else {
+		try{
+			if (o instanceof HistoricoAsuntoInfoImpl) {		
+				return ((HistoricoAsuntoInfoImpl) o).getIdTarea();
+			} else if (o instanceof HistoricoProcedimiento) {
+				return ((HistoricoProcedimiento) o).getIdEntidad();
+			} else if (o instanceof HistoricoAsuntoInfo) {
+				return ((HistoricoAsuntoInfo) o).getIdTarea();
+			} else {
+				return null;
+			}
+		}catch(Exception e){
+			logger.error("HistoricoProcedimientoComparatorV4 getTarId: " + e);
 			return null;
 		}
 	}
 
 	private Date getDate(Object o) {
-		if (o instanceof HistoricoAsuntoInfoImpl) {
-			return ((HistoricoAsuntoInfoImpl) o).getProcedimiento().getAuditoria().getFechaCrear();
-		} else if (o instanceof HistoricoProcedimiento) {
-			return ((HistoricoProcedimiento) o).getFechaIni();
-		} else if (o instanceof HistoricoAsuntoInfo) {
-			return ((HistoricoAsuntoInfo) o).getTarea().getFechaIni();
-		} else if (o instanceof DtoProcedimiento) {
-			return ((DtoProcedimiento) o).getProcedimiento().getAuditoria().getFechaCrear();
-		} else {
+		try{
+			if (o instanceof HistoricoAsuntoInfoImpl) {
+				return ((HistoricoAsuntoInfoImpl) o).getProcedimiento().getAuditoria().getFechaCrear();
+			} else if (o instanceof HistoricoProcedimiento) {
+				return ((HistoricoProcedimiento) o).getFechaIni();
+			} else if (o instanceof HistoricoAsuntoInfo) {
+				return ((HistoricoAsuntoInfo) o).getTarea().getFechaIni();
+			} else if (o instanceof DtoProcedimiento) {
+				return ((DtoProcedimiento) o).getProcedimiento().getAuditoria().getFechaCrear();
+			} else {
+				return null;
+			}		
+		}catch(Exception e){
+			logger.error("HistoricoProcedimientoComparatorV4 getDate: " + e);
 			return null;
-		}		
+		}
 	}
 
 }

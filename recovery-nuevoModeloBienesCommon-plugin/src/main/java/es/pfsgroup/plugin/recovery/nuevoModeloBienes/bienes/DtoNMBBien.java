@@ -1,13 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.pfs.bien.model.DDTipoBien;
 
 public class DtoNMBBien extends WebDto {
 
@@ -25,7 +18,7 @@ public class DtoNMBBien extends WebDto {
     private String fechaVerificacion;
     private Float participacionNMB;
     private String situacionPosesoria;
-	private boolean viviendaHabitual;
+	private String viviendaHabitual;
 	private Float tipoSubasta;
 	private String numeroActivo ;
 	private String licenciaPrimeraOcupacion;
@@ -194,11 +187,11 @@ public class DtoNMBBien extends WebDto {
 		this.situacionPosesoria = situacionPosesoria;
 	}
 
-	public boolean getViviendaHabitual() {
+	public String getViviendaHabitual() {
 		return viviendaHabitual;
 	}
 
-	public void setViviendaHabitual(boolean viviendaHabitual) {
+	public void setViviendaHabitual(String viviendaHabitual) {
 		this.viviendaHabitual = viviendaHabitual;
 	}
 

@@ -2031,6 +2031,60 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-integracionuvem-plugin</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-core</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-hibernate</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-bpm</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-web</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>pfs</groupId>
+							<artifactId>plugins</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>javax.validation</groupId>
+							<artifactId>validation-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>javax.ejb</groupId>
+							<artifactId>ejb-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-coreextension-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienes-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-batch</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>

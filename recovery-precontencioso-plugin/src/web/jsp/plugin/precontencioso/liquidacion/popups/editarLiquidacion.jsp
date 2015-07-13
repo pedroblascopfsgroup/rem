@@ -6,8 +6,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
-<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+<%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs" %>
+<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 
 <fwk:page>
 

@@ -23,27 +23,33 @@ public interface LiquidacionApi {
 	LiquidacionDTO getLiquidacionPorId(Long id);
 
 	/**
-	 * Confirma una liquidacion
-	 * - Cambia el estado de una liquidacion a confirmada.
+	 * Confirma una liquidacion por id
+	 * 
+	 * <ul>
+	 * <li>Cambia el estado de una liquidacion a confirmada.
+	 * </ul>
 	 * 
 	 * @param idProcedimientoPCO
 	 */
 	void confirmar(LiquidacionDTO liquidacionDto);
 
 	/**
-	 * Descarta una liquidacion
-	 * - Cambia el estado de una liquidacion a descartada.
+	 * Descarta una liquidacion por id
+	 * 
+	 * <ul>
+	 * <li>Cambia el estado de una liquidacion a descartada.
+	 * </ul>
 	 * 
 	 * @param liquidacionDTO
 	 */
 	void descartar(LiquidacionDTO liquidacionDto);
 
 	/**
-	 * Solicita una liquidacion
-	 * - Cambia el estado de una liquidacion a solicitada.
-	 * - Borra los datos antiguos de la solicitud
-	 * - Establece la fecha de cierre pasada por parametro
-	 * - Establece la fecha de solicitud
+	 * Solicita una liquidacion por id
+	 * 
+	 * <ul>
+	 * <li>Cambia el estado de una liquidacion a solicitada.
+	 * </ul>
 	 * 
 	 * @param liquidacionDTO
 	 */

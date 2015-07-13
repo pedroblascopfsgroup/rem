@@ -20,7 +20,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 public class LiquidacionManager implements LiquidacionApi {
 
 	@Autowired
-	LiquidacionDao liquidacionDao;
+	private LiquidacionDao liquidacionDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;

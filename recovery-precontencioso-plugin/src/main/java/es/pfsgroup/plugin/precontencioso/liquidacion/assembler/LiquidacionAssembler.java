@@ -7,7 +7,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 /**
- * Calse que se encarga de ensablar liquidacionPCO entity a DTO.
+ * Clase que se encarga de ensablar liquidacionPCO entity a DTO.
  * 
  * @author jmartin
  */
@@ -36,8 +36,12 @@ public class LiquidacionAssembler {
 	 * @return liquidacionDTO DTO
 	 */
 	public static LiquidacionDTO entityToDto (LiquidacionPCO liquidacion) {
-		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 
+		if (liquidacion == null) {
+			return null;
+		}
+
+		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 		liquidacionDto.setId(liquidacion.getId());
 		liquidacionDto.setFechaSolicitud(liquidacion.getFechaSolicitud());
 		liquidacionDto.setFechaRecepcion(liquidacion.getFechaRecepcion());
@@ -50,16 +54,27 @@ public class LiquidacionAssembler {
 		liquidacionDto.setTotal(liquidacion.getTotal());
 		liquidacionDto.setSysGuid(liquidacion.getSysGuid());
 
-		liquidacionDto.setIdProcedimientoPCO(liquidacion.getProcedimientoPCO().getId());
-		liquidacionDto.setIdContrato(liquidacion.getContrato().getId());
+		// ProcedimientoPCO
+		if (liquidacion.getProcedimientoPCO() != null) {
+			liquidacionDto.setIdProcedimientoPCO(liquidacion.getProcedimientoPCO().getId());
+		}
+
+		// Contrato
+		if (liquidacion.getContrato() != null) {
+			liquidacionDto.setIdContrato(liquidacion.getContrato().getId());
+		}
 
 		// Estado
-		liquidacionDto.setEstadoLiquidacion(liquidacion.getEstadoLiquidacion().getDescripcion());
-		liquidacionDto.setEstadoCod(liquidacion.getEstadoLiquidacion().getCodigo());
+		if (liquidacion.getEstadoLiquidacion() != null) {
+			liquidacionDto.setEstadoLiquidacion(liquidacion.getEstadoLiquidacion().getDescripcion());
+			liquidacionDto.setEstadoCod(liquidacion.getEstadoLiquidacion().getCodigo());
+		}
 
 		// Apoderado
-		liquidacionDto.setApoderado(liquidacion.getApoderado().getNombre());
-		liquidacionDto.setApoderadoId(liquidacion.getApoderado().getId());
+		if (liquidacion.getApoderado() != null) {
+			liquidacionDto.setApoderado(liquidacion.getApoderado().getNombre());
+			liquidacionDto.setApoderadoId(liquidacion.getApoderado().getId());
+		}
 
 		return liquidacionDto;
 	}

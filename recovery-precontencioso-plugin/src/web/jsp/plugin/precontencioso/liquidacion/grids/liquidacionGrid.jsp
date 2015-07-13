@@ -24,8 +24,8 @@ var btnSolicitar = new Ext.Button({
 		});
 
 		w.on(app.event.DONE, function() {
+			refrescarLiquidacionesGrid();
 			w.close();
-			refrescarLiquidacionesGrid()
 		});
 
 		w.on(app.event.CANCEL, function() {
@@ -48,8 +48,8 @@ var btnEditarValores = new Ext.Button({
 		});
 
 		w.on(app.event.DONE, function() {
+			refrescarLiquidacionesGrid();
 			w.close();
-			refrescarLiquidacionesGrid()
 		});
 
 		w.on(app.event.CANCEL, function() {
@@ -97,6 +97,7 @@ var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'contrato'},
 	{name: 'producto'},
 	{name: 'estadoLiquidacion'},
+	{name: 'estadoCodigo'},
 	{name: 'fechaSolicitud'},
 	{name: 'fechaRecepcion'},
 	{name: 'fechaConfirmacion'},
@@ -117,6 +118,13 @@ var storeLiquidaciones = page.getStore({
 		root: 'liquidaciones'
 	}, liquidacionesRecord)
 });
+
+storeLiquidaciones.on(
+	'load',
+	function (store, data, options) {
+		actualizarBotones();
+	}
+);
 
 var cmLiquidacion = new Ext.grid.ColumnModel([
 	{header: '<s:message code="precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato'},
@@ -140,14 +148,57 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	height: 250,
 	autoWidth: true,
 	collapsible: true,
-	style: 'padding-right:10px',
 	sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 });
+
+gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
+	actualizarBotones();
+});
+
+<%-- States --%>
+
+var actualizarBotones = function() {
+	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
+
+	var estadoCodigo = '';
+	if (liquidacion) {
+		estadoCodigo = liquidacion.get('estadoCodigo');
+	}
+
+	switch(estadoCodigo) {
+		case 'SOL':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(false);
+			btnConfirmar.setDisabled(false);
+			btnDescartar.setDisabled(false);
+			break;
+
+		case 'DES':
+			btnSolicitar.setDisabled(false);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(true);
+			break;
+
+		case 'CON':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(false);
+			break;
+
+		default:
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(true);
+	}
+}
 
 <%-- Utils --%>
 
 var idLiquidacionSeleccionada = function() {
-	return gridLiquidaciones.getSelectionModel().getSelected().get('id')
+	return gridLiquidaciones.getSelectionModel().getSelected().get('id');
 }
 
 var refrescarLiquidacionesGrid = function() {

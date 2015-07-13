@@ -39,8 +39,6 @@ public class LiquidacionAssembler {
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 
 		liquidacionDto.setId(liquidacion.getId());
-		liquidacionDto.setIdProcedimientoPCO(liquidacion.getProcedimientoPCO().getId());
-		liquidacionDto.setEstadoLiquidacion(liquidacion.getEstadoLiquidacion().getDescripcion());
 		liquidacionDto.setIdContrato(liquidacion.getContrato().getId());
 		liquidacionDto.setFechaSolicitud(liquidacion.getFechaSolicitud());
 		liquidacionDto.setFechaRecepcion(liquidacion.getFechaRecepcion());
@@ -51,9 +49,14 @@ public class LiquidacionAssembler {
 		liquidacionDto.setInteresesDemora(liquidacion.getInteresesDemora());
 		liquidacionDto.setInteresesOrdinarios(liquidacion.getInteresesOrdinarios());
 		liquidacionDto.setTotal(liquidacion.getTotal());
+		liquidacionDto.setSysGuid(liquidacion.getSysGuid());
+
+		liquidacionDto.setIdProcedimientoPCO(liquidacion.getProcedimientoPCO().getId());
+		liquidacionDto.setEstadoLiquidacion(liquidacion.getEstadoLiquidacion().getDescripcion());
+		liquidacionDto.setEstadoCod(liquidacion.getEstadoLiquidacion().getCodigo());
+
 		liquidacionDto.setApoderado(liquidacion.getApoderado().getNombre());
 		liquidacionDto.setApoderadoId(liquidacion.getApoderado().getId());
-		liquidacionDto.setSysGuid(liquidacion.getSysGuid());
 
 		return liquidacionDto;
 	}

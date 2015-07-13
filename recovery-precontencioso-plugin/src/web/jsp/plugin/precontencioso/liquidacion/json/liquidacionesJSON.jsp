@@ -9,6 +9,7 @@
  			<json:property name="contrato" value="${l.idContrato}" />
 <%-- 			<json:property name="producto" value="${l.producto}" /> --%>
 			<json:property name="estadoLiquidacion" value="${l.estadoLiquidacion}" />
+			<json:property name="estadoCodigo" value="${l.estadoCod}" />
 			<json:property name="fechaSolicitud">
 				<fwk:date value="${l.fechaSolicitud}" />
 			</json:property>

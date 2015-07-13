@@ -29,7 +29,15 @@
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'historico'
+		,listeners: {
+            activate: function( self ) {
+                if(!entidad.get("data").tieneProcurador){
+                	historicoTabPanel.hideTabStripItem(historicoResolucionesGrid);                                                                                                                      
+                }
+            }
+         }
 	});
+	
 	
 	constantes={};
 	constantes.TIPO_ENTIDAD_TAREA = '<fwk:const value="es.capgemini.pfs.registro.model.HistoricoProcedimiento.TIPO_ENTIDAD_TAREA" />';
@@ -549,6 +557,7 @@
     }
   });
   
+
   var historicoTabPanel = new Ext.TabPanel({
 	items:[
 		historicoGrid, historicoResolucionesGrid

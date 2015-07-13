@@ -225,6 +225,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	resolucionesSinAdjunto.push({idResolucion:282, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:242, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:249, validateFunction:null});
+    	resolucionesSinAdjunto.push({idResolucion:206, validateFunction:function(v){
+			if(Ext.getCmp('d_comboResultado' + idf).getValue() == "02"){
+				return true;
+			}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+					return true;
+	    		}else{
+	    			return false;
+	    	}
+    	}});
 //    	resolucionesSinAdjunto.push({idResolucion:229, validateFunction:function(v){
 //    		
 //    		if(Ext.getCmp('d_comboImpugnacion' + idf).getValue() == "02"){
@@ -1037,7 +1046,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	               	   		}
       					}
 		   			}
-		   			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaComparecencia'+this.idFactoria
+		   			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaComparecencia'+this.idFactoria
 		   				,validator : function(v) {
 	               	   		if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_fechaComparecencia' + idFactoria).getValue() == ""){
 	               	   			return false;

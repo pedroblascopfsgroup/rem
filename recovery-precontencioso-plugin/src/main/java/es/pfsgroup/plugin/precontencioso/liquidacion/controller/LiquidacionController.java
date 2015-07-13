@@ -78,7 +78,7 @@ public class LiquidacionController {
 		liquidacionDto.setId(id);
 		liquidacionDto.setFechaCierre(fechaCierreDate);
 
-		liquidacionApi.solicitarLiquidacion(liquidacionDto);
+		liquidacionApi.solicitar(liquidacionDto);
 
 		return DEFAULT;
 	}
@@ -111,7 +111,7 @@ public class LiquidacionController {
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 		liquidacionDto.setId(id);
 
-		liquidacionApi.confirmarLiquidacion(liquidacionDto);
+		liquidacionApi.confirmar(liquidacionDto);
 
 		return DEFAULT;
 	}

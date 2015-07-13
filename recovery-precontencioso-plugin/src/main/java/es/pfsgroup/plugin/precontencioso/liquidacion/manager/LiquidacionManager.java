@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class LiquidacionManager implements LiquidacionApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void confirmarLiquidacion(LiquidacionDTO liquidacionDto) {
+	public void confirmar(LiquidacionDTO liquidacionDto) {
 		DDEstadoLiquidacionPCO estadoConfirmada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CONFIRMADA);
 
 		LiquidacionPCO liquidacion = liquidacionDao.get(liquidacionDto.getId());
@@ -71,7 +70,7 @@ public class LiquidacionManager implements LiquidacionApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void solicitarLiquidacion(LiquidacionDTO liquidacionDto) {
+	public void solicitar(LiquidacionDTO liquidacionDto) {
 		DDEstadoLiquidacionPCO estadoSolicitada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.SOLICITADA);
 
 		LiquidacionPCO liquidacion = liquidacionDao.get(liquidacionDto.getId());

@@ -28,7 +28,7 @@ public interface LiquidacionApi {
 	 * 
 	 * @param idProcedimientoPCO
 	 */
-	void confirmarLiquidacion(LiquidacionDTO liquidacionDto);
+	void confirmar(LiquidacionDTO liquidacionDto);
 
 	/**
 	 * Descarta una liquidacion
@@ -47,7 +47,7 @@ public interface LiquidacionApi {
 	 * 
 	 * @param liquidacionDTO
 	 */
-	void solicitarLiquidacion(LiquidacionDTO liquidacionDto);
+	void solicitar(LiquidacionDTO liquidacionDto);
 
 	/**
 	 * Edita una liquidacion

@@ -174,7 +174,7 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 		}
 
 		genericDao.save(Subasta.class, sub);
-		bpmIntegracionService.enviarCabecera(sub);
+		bpmIntegracionService.enviarDatos(sub);
 	}
 	
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {

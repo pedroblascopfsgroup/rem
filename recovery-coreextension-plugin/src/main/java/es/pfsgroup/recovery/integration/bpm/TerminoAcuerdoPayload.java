@@ -7,6 +7,7 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 
@@ -32,6 +33,7 @@ public class TerminoAcuerdoPayload {
 	private static final String CAMPO_BORRADO = String.format("%s.borrado", KEY);
 	
 	private final DataContainerPayload data;
+	private final AcuerdoPayload acuerdo;
 
 	public DataContainerPayload getData() {
 		return data;
@@ -39,12 +41,19 @@ public class TerminoAcuerdoPayload {
 	
 	public TerminoAcuerdoPayload(DataContainerPayload data) {
 		this.data = data;
+		this.acuerdo = new AcuerdoPayload(data);
 	}
 	
 	public TerminoAcuerdoPayload(String tipo, TerminoAcuerdo termino) {
-		this.data = new DataContainerPayload(tipo);
+		this(new DataContainerPayload(tipo), termino);
+	}
+
+	public TerminoAcuerdoPayload(DataContainerPayload data, TerminoAcuerdo termino) {
+		this.data = data;
+		this.acuerdo = new AcuerdoPayload(data, termino.getAcuerdo());
 		build(termino);
 	}
+
 
 	public TerminoAcuerdoPayload build(TerminoAcuerdo terminoAcuerdo) {
 		if (Checks.esNulo(terminoAcuerdo.getGuid())) {
@@ -80,8 +89,7 @@ public class TerminoAcuerdoPayload {
 			return this;
 		}
 		for (TerminoContrato tc : terminosContrato) {
-			TerminoAcuerdoContratoPayload teaPayload = new TerminoAcuerdoContratoPayload(TerminoAcuerdoContratoPayload.KEY, tc);
-			addTerminoAcuerdoContrato(teaPayload);
+			addRelacionContrato(tc);
 		}
 		return this;
 	}
@@ -91,8 +99,7 @@ public class TerminoAcuerdoPayload {
 			return this;
 		}
 		for (TerminoBien tb : terminosBien) {
-			TerminoAcuerdoBienPayload teaPayload = new TerminoAcuerdoBienPayload(TerminoAcuerdoBienPayload.KEY, tb);
-			addTerminoAcuerdoBien(teaPayload);
+			addRelacionBien(tb);
 		}
 		return this;
 	}
@@ -112,37 +119,22 @@ public class TerminoAcuerdoPayload {
 	}
 
 	
-	private void addTerminoAcuerdoContrato(TerminoAcuerdoContratoPayload terminoContrato) {
-		this.data.addChildren(RELACION_TERMINO_ACUERDO_CONTRATO, terminoContrato.getData());
+	private void addRelacionContrato(TerminoContrato terminoContrato) {
+		this.data.addRelacion(RELACION_TERMINO_ACUERDO_CONTRATO, terminoContrato.getContrato().getNroContrato());
 	}
-	public List<TerminoAcuerdoContratoPayload> getTerminoContratos() {
-		List<TerminoAcuerdoContratoPayload> listado = new ArrayList<TerminoAcuerdoContratoPayload>();
-		if (!data.getChildren().containsKey(RELACION_TERMINO_ACUERDO_CONTRATO)) {
-			return listado;
-		}
-		List<DataContainerPayload> dataList = data.getChildren(RELACION_TERMINO_ACUERDO_CONTRATO);
-		for (DataContainerPayload child : dataList) {
-			TerminoAcuerdoContratoPayload container = new TerminoAcuerdoContratoPayload(child);
-			listado.add(container);
-		}
-		return listado;
+	public List<String> getContratosRelacionados() {
+		return this.data.getRelaciones(RELACION_TERMINO_ACUERDO_CONTRATO);
 	}
 
-	
-	private void addTerminoAcuerdoBien(TerminoAcuerdoBienPayload terminoBien) {
-		this.data.addChildren(RELACION_TERMINO_ACUERDO_BIEN, terminoBien.getData());
+	private void addRelacionBien(TerminoBien terminoBien) {
+		NMBBien nbmBien = NMBBien.instanceOf(terminoBien.getBien());
+		if (nbmBien==null) {
+			throw new IntegrationDataException(String.format("[INTEGRACION] El Bien de la relación con termino de acuerdo con ID %d no tiene referencia de sincronización GUID", terminoBien.getId()));
+		}
+		this.data.addRelacion(RELACION_TERMINO_ACUERDO_BIEN, nbmBien.getCodigoInterno());
 	}
-	public List<TerminoAcuerdoBienPayload> getTerminoBienes() {
-		List<TerminoAcuerdoBienPayload> listado = new ArrayList<TerminoAcuerdoBienPayload>();
-		if (!data.getChildren().containsKey(RELACION_TERMINO_ACUERDO_BIEN)) {
-			return listado;
-		}
-		List<DataContainerPayload> dataList = data.getChildren(RELACION_TERMINO_ACUERDO_BIEN);
-		for (DataContainerPayload child : dataList) {
-			TerminoAcuerdoBienPayload container = new TerminoAcuerdoBienPayload(child);
-			listado.add(container);
-		}
-		return listado;
+	public List<String> getBienesRelacionados() {
+		return this.data.getRelaciones(RELACION_TERMINO_ACUERDO_BIEN);
 	}
 
 	public String getTipoAcuerdo() {
@@ -234,6 +226,10 @@ public class TerminoAcuerdoPayload {
 	}
 	public boolean isBorrado() {
 		return data.getFlag(CAMPO_BORRADO);
+	}
+
+	public AcuerdoPayload getAcuerdo() {
+		return acuerdo;
 	}
 
 }

@@ -12,20 +12,28 @@ public class ActuacionesAExplorarPayload {
 	private static final String CAMPO_OBSERVACIONES = String.format("%s.observaciones", KEY);
 	private static final String CAMPO_TIPO_SOLUCION_AMISTOSA = String.format("%s.subtipoSolAmis", KEY);
 	private static final String CAMPO_VALORACION_ACT_AMISTOSA = String.format("%s.valActAmis", KEY);
+	private static final String CAMPO_BORRADO = String.format("%s.borrado", KEY);
 	
 	private final DataContainerPayload data;
-
+	private final AcuerdoPayload acuerdo;
+	
 	public DataContainerPayload getData() {
 		return data;
 	}
 
 	public ActuacionesAExplorarPayload(DataContainerPayload data) {
 		this.data = data;
+		this.acuerdo = new AcuerdoPayload(data);
+	}
+	
+	public ActuacionesAExplorarPayload(DataContainerPayload data, ActuacionesAExplorarAcuerdo actuacion) {
+		this.data = data;
+		this.acuerdo = new AcuerdoPayload(data, actuacion.getAcuerdo());
+		build(actuacion);
 	}
 	
 	public ActuacionesAExplorarPayload(String tipo, ActuacionesAExplorarAcuerdo actuacion) {
-		this.data = new DataContainerPayload(tipo);
-		build(actuacion);
+		this(new DataContainerPayload(tipo), actuacion);
 	}
 
 	public ActuacionesAExplorarPayload build(ActuacionesAExplorarAcuerdo actuacion) {
@@ -41,10 +49,17 @@ public class ActuacionesAExplorarPayload {
 		if (actuacion.getDdValoracionActuacionAmistosa()!=null) {
 			setValoracionActuacionAmistosa(actuacion.getDdValoracionActuacionAmistosa().getCodigo());
 		}
+		setBorrado(actuacion.getAuditoria().isBorrado());
 		setObservaciones(actuacion.getObservaciones());
 		return this;
 	}
 
+	private void setBorrado(boolean valor) {
+		data.addFlag(CAMPO_BORRADO, valor);
+	}
+	public Boolean getBorrado() {
+		return data.getFlag(CAMPO_BORRADO);
+	}
 
 	private void setValoracionActuacionAmistosa(String codigo) {
 		data.addCodigo(CAMPO_VALORACION_ACT_AMISTOSA, codigo);
@@ -79,6 +94,10 @@ public class ActuacionesAExplorarPayload {
 	}
 	public void addGuid(String valor) {
 		data.addGuid(KEY, valor);
+	}
+
+	public AcuerdoPayload getAcuerdo() {
+		return acuerdo;
 	}
 	
 }

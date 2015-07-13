@@ -168,7 +168,7 @@ private void avanzamosEstadoSubasta() {
 		}
 
 		genericDao.save(Subasta.class, sub);		
-		bpmIntegracionService.enviarCabecera(sub);
+		bpmIntegracionService.enviarDatos(sub);
 
 	}
 	

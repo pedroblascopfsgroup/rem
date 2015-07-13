@@ -19,6 +19,7 @@ public class ActuacionesRealizadasPayload {
 	private static final String CAMPO_BORRADO = String.format("%s.borrado", KEY);
 	
 	private final DataContainerPayload data;
+	private final AcuerdoPayload acuerdo;
 
 	public DataContainerPayload getData() {
 		return data;
@@ -26,10 +27,16 @@ public class ActuacionesRealizadasPayload {
 
 	public ActuacionesRealizadasPayload(DataContainerPayload data) {
 		this.data = data;
+		this.acuerdo = new AcuerdoPayload(data);
 	}
 	
 	public ActuacionesRealizadasPayload(String tipo, ActuacionesRealizadasAcuerdo actuacion) {
-		this.data = new DataContainerPayload(tipo);
+		this(new DataContainerPayload(tipo), actuacion);
+	}
+
+	public ActuacionesRealizadasPayload(DataContainerPayload data, ActuacionesRealizadasAcuerdo actuacion) {
+		this.data = data;
+		this.acuerdo = new AcuerdoPayload(data, actuacion.getAcuerdo());
 		build(actuacion);
 	}
 
@@ -108,6 +115,10 @@ public class ActuacionesRealizadasPayload {
 	}
 	public void setBorrado(Boolean valor) {
 		data.addFlag(CAMPO_BORRADO, valor);
+	}
+
+	public AcuerdoPayload getAcuerdo() {
+		return acuerdo;
 	}
 	
 }

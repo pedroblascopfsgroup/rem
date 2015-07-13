@@ -1,13 +1,19 @@
 package es.pfsgroup.recovery.integration.bpm;
 
+import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
+import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 
 public interface IntegracionBpmService {
 
+	public static final String TIPO_TAREA_NOTIFICACION = "BPM-TAREA-NOTIF";
+	
 	public static final String TIPO_INICIO_TAREA = "BPM-TAREA-INICIO";
 	public static final String TIPO_FINALIZACION_TAREA = "BPM-TAREA-FIN";
 	public static final String TIPO_CANCELACION_TAREA = "BPM-TAREA-CANCEL";
@@ -19,14 +25,21 @@ public interface IntegracionBpmService {
 	public static final String TIPO_PARALIZAR_BPM = "DO-PARALIZAR-BPM";
 	public static final String TIPO_ACTIVAR_BPM = "DO-ACTIVAR-BPM";
 
-	public static final String TIPO_CAB_ACUERDO_PROPUESTA = "UPD-ACUERDO-PROP";
-	public static final String TIPO_CAB_ACUERDO_CIERRE = "UPD-ACUERDO-CIERRE";
-	public static final String TIPO_CAB_ACUERDO_RECHAZAR = "UPD-ACUERDO-RECH";
-	public static final String TIPO_CAB_ACUERDO_ACEPTAR = "UPD-ACUERDO-ACEP";
-	public static final String TIPO_CAB_ACUERDO_FINALIZAR = "UPD-ACUERDO-FIN";
+	public final static String TIPO_DATOS_ACUERDO = "DATOS-ACUERDO";
 
-	public final static String TIPO_CAB_RECURSO = "CAB-UPD-RECURSO";  
-	public final static String TIPO_CAB_SUBASTA = "CAB-UPD-SUBASTA";  
+	public final static String TIPO_DATOS_ACUERDO_ACT_REALIZAR = "DATOS-ACUERDO-ACT-REALIZAR";  
+	public final static String TIPO_DATOS_ACUERDO_ACT_A_EXP = "DATOS-ACUERDO-ACT-AEXPL";  
+	public final static String TIPO_DATOS_ACUERDO_TERMINO = "DATOS-ACUERDO-TERMINO";  
+	
+	public final static String TIPO_DATOS_RECURSO = "DATOS-RECURSO";  
+	public final static String TIPO_DATOS_SUBASTA = "DATOS-SUBASTA";  
+
+	/**
+	 * Envia mensaje de notificación de tarea
+	 * 
+	 * @param tareaExterna
+	 */
+    void notificaTarea(TareaNotificacion tareaNotificacion);
 	
 	/**
 	 * Envia mensaje de inicio de tarea
@@ -137,20 +150,17 @@ public interface IntegracionBpmService {
     public void actualizar(MEJRecurso recurso);
 
     /**
-     * Enviar cabecera de subasta
+     * Enviar datos de subasta
      * 
      * @param subasta
      */
-	void enviarCabecera(Subasta subasta);
- 
-	void enviarPropuesta(Acuerdo acuerdo);
+	void enviarDatos(Subasta subasta);
 
-	void enviarRechazo(Acuerdo acuerdo);
-
-	void enviarCierre(Acuerdo acuerdo);
-
-	void enviarAceptar(Acuerdo acuerdo);
-
-	void enviarFinalizar(Acuerdo acuerdo);
+	void enviarDatos(Acuerdo acuerdo);
+	void notificaCambioEstado(Acuerdo acuerdo);
+	
+	void enviarDatos(ActuacionesRealizadasAcuerdo actuacionRealizada);
+	void enviarDatos(ActuacionesAExplorarAcuerdo actuacionAExplorar);
+	void enviarDatos(TerminoAcuerdo terminoAcuerdo);
 
 }

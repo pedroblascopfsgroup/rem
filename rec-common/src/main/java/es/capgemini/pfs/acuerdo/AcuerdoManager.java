@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +50,7 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Servicio para los acuerdos de los asuntos.
@@ -144,7 +146,9 @@ public class AcuerdoManager {
         for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
             if (SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
                 Long idBPM = acuerdo.getIdJBPM();
-                executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
+                if (idBPM!=null) {
+                	executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
+                }
             }
         }
     }
@@ -153,7 +157,9 @@ public class AcuerdoManager {
         for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
             if (SubtipoTarea.CODIGO_ACUERDO_PROPUESTO.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
                 Long idBPM = acuerdo.getIdJBPM();
-                executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
+                if (idBPM!=null) {
+                	executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
+                }
             }
         }
     }
@@ -342,27 +348,13 @@ public class AcuerdoManager {
     /**
      * Guarda o actualiza una actuaci�n realizada de un acuerdo.
      * @param actuacionesRealizadasAcuerdo DtoActuacionesRealizadasAcuerdo
-     */
+  
     @BusinessOperation(ExternaBusinessOperation.BO_ACUERDO_MGR_SAVE_ACTUACIONES_REALIZADAS_ACUERDO)
     @Transactional
     public void saveActuacionesRealizadasAcuerdo(DtoActuacionesRealizadasAcuerdo actuacionesRealizadasAcuerdo) {
-        Acuerdo acuerdo = acuerdoDao.get(actuacionesRealizadasAcuerdo.getIdAcuerdo());
-        ActuacionesRealizadasAcuerdo actuaciones;
-        if (actuacionesRealizadasAcuerdo.getActuaciones().getId() != null) {
-            actuaciones = actuacionesRealizadasAcuerdoDao.get(actuacionesRealizadasAcuerdo.getActuaciones().getId());
-        } else {
-            actuaciones = new ActuacionesRealizadasAcuerdo();
-            actuaciones.setAuditoria(Auditoria.getNewInstance());
-        }
-        actuaciones.setAcuerdo(acuerdo);
-        actuaciones.setDdResultadoAcuerdoActuacion(actuacionesRealizadasAcuerdo.getActuaciones().getDdResultadoAcuerdoActuacion());
-        actuaciones.setDdTipoActuacionAcuerdo(actuacionesRealizadasAcuerdo.getActuaciones().getDdTipoActuacionAcuerdo());
-        actuaciones.setTipoAyudaActuacion(actuacionesRealizadasAcuerdo.getActuaciones().getTipoAyudaActuacion());
-        actuaciones.setFechaActuacion(actuacionesRealizadasAcuerdo.getActuaciones().getFechaActuacion());
-        actuaciones.setObservaciones(actuacionesRealizadasAcuerdo.getActuaciones().getObservaciones());
-        actuacionesRealizadasAcuerdoDao.saveOrUpdate(actuaciones);
     }
-
+*/
+    
     /**
      * Guarda los cambios en el objeto análisis de un acuerd.
      * @param dto el dto con los datos.
@@ -460,31 +452,12 @@ public class AcuerdoManager {
     /**
      * Guarda o actualiza la actuacion a explorar modificada o nueva.
      * @param dto DtoActuacionesAExplorar
-     */
     @BusinessOperation(ExternaBusinessOperation.BO_ACUERDO_MGR_SAVE_ACTUACIONES_A_EXPLORAR_ACUERDO)
     @Transactional(readOnly = false)
     public void saveActuacionAExplorarAcuerdo(DtoActuacionesAExplorar dto) {
-
-        ActuacionesAExplorarAcuerdo actuacion;
-        if (dto.getIdActuacion() != null) {
-            actuacion = actuacionesAExplorarAcuerdoDao.get(dto.getIdActuacion());
-        } else {
-            actuacion = new ActuacionesAExplorarAcuerdo();
-            actuacion.setGuid(dto.getGuid());
-            actuacion.setAuditoria(Auditoria.getNewInstance());
-            actuacion.setAcuerdo(acuerdoDao.get(dto.getIdAcuerdo()));
-        }
-        DDSubtipoSolucionAmistosaAcuerdo subtipoSolucionAmistosa = (DDSubtipoSolucionAmistosaAcuerdo) executor.execute(
-                ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDSubtipoSolucionAmistosaAcuerdo.class, dto.getDdSubtipoSolucionAmistosaAcuerdo());
-        actuacion.setDdSubtipoSolucionAmistosaAcuerdo(subtipoSolucionAmistosa);
-
-        DDValoracionActuacionAmistosa valoracionActuacionAmistosa = (DDValoracionActuacionAmistosa) executor.execute(
-                ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDValoracionActuacionAmistosa.class, dto.getDdValoracionActuacionAmistosa());
-        actuacion.setDdValoracionActuacionAmistosa(valoracionActuacionAmistosa);
-        actuacion.setObservaciones(dto.getObservaciones());
-        actuacionesAExplorarAcuerdoDao.save(actuacion);
     }
-
+*/
+    
     /**
      * Indica si el usuario que está conectado puede editar el acuerdo.
      * @param idAcuerdo el acuerdo que se va a mostrar
@@ -514,4 +487,22 @@ public class AcuerdoManager {
         //SI LLEGO HASTA ACA NO PUEDE EDITAR
         return Boolean.FALSE;
     }
+    
+	@Transactional(readOnly = false)
+	public void prepareGuid(ActuacionesRealizadasAcuerdo actuacion) {
+		if (Checks.esNulo(actuacion.getGuid())) {
+			actuacion.setGuid(UUID.randomUUID().toString());
+			actuacionesRealizadasAcuerdoDao.saveOrUpdate(actuacion);
+		}
+	}
+
+	@Transactional(readOnly = false)
+	public void prepareGuid(ActuacionesAExplorarAcuerdo actuacion) {
+		if (Checks.esNulo(actuacion.getGuid())) {
+			actuacion.setGuid(UUID.randomUUID().toString());
+			actuacionesAExplorarAcuerdoDao.saveOrUpdate(actuacion);
+		}
+	}
+
+    
 }

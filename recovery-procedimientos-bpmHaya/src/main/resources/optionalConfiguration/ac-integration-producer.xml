@@ -40,10 +40,10 @@
 
 	<integration:publish-subscribe-channel id="syncOutgoingChannel" />
 	<file:outbound-channel-adapter id="outgoingFolder"
-		channel="syncOutgoingChannel" directory="file:/Documentos/borrar/mensajes/output"
+		channel="syncOutgoingChannel" directory="${integracion.output}"
 		filename-generator="filenameGenerator" />
 	<file:outbound-channel-adapter id="syncBackupFolder"
-		channel="syncOutgoingChannel" directory="file:/Documentos/borrar/mensajes/backup"
+		channel="syncOutgoingChannel" directory="${integracion.backup}"
 		filename-generator="filenameGenerator" />
 	<!-- jms:outbound-channel-adapter id="jmsout" channel="syncOutgoingChannel" destination="requestQueue"  / -->
 

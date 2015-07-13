@@ -2637,20 +2637,27 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                      ]);  
 		
 	
-	//id: 366 : PROCEDIMIENTO MONITORIO: Decreto de fin de Monitorio
+	//id: 367 : PROCEDIMIENTO MONITORIO: Diligencia que cita a las partes para vista
 	this.arrayCampos.push([
-	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                      ]);
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de señalamiento vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+                      ]);
 	
-		//id: 367 : PROCEDIMIENTO MONITORIO: Diligencia que cita a las partes para vista
-		this.arrayCampos.push([
-		                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de señalamiento vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                      ]);
-		
-		//id: 368 : PROCEDIMIENTO MONITORIO: Requerimiento interponer demanda ordinario
-		this.arrayCampos.push([
-		                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vencimiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-		                       ]);
+	//id: 368 : PROCEDIMIENTO MONITORIO: Requerimiento interponer demanda ordinario
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vencimiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ]);
+	
+	
+	//id: 369 : VIGILANCIA CADUCIDAD DE EMBARGO: Mandamiento cumplimentado de anotación de embargo en el registro
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vencimiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+		   	   				,{"xtype":'combo',"store":storeSINO, "name":"d_comboAlerta","fieldLabel":"Activar alerta periódica",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, 	id:'d_comboAlerta'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	]);
+	
+	//id: 370 : TRÁMITE DE BIENES INMUBBELES: Decreto de firmeza
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vencimiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ]);
 		
 		
 		var lengthArrayCampos = this.arrayCampos.length;

@@ -1792,6 +1792,16 @@
 						</bean>
 					</list>
 				</entry>
+				<entry key="R_DEC_FIRM">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_DEC_FIRM</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>

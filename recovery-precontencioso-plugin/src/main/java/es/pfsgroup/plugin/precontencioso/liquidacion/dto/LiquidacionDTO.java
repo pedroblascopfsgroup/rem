@@ -11,6 +11,7 @@ public class LiquidacionDTO extends WebDto {
 	private Long id;
 	private Long idProcedimientoPCO;
 	private Long idContrato;
+	private String producto;
 	private Date fechaSolicitud;
 	private Date fechaRecepcion;
 	private Date fechaConfirmacion;
@@ -22,9 +23,11 @@ public class LiquidacionDTO extends WebDto {
 	private Float total;
 	private String sysGuid;
 
+	// Estado
 	private String estadoCod;
 	private String estadoLiquidacion;
 
+	// Apoderado
 	private String apoderado;
 	private Long apoderadoId;
 
@@ -133,5 +136,11 @@ public class LiquidacionDTO extends WebDto {
 	}
 	public void setApoderado(String apoderado) {
 		this.apoderado = apoderado;
+	}
+	public String getProducto() {
+		return producto;
+	}
+	public void setProducto(String producto) {
+		this.producto = producto;
 	}
 }

@@ -8,21 +8,24 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
+
 (function(page,entidad){
+<%@ include file="/WEB-INF/jsp/plugin/precontencioso/burofax/grids/burofax.jsp" %>
 
-	var panel = new Ext.Panel({
-		title:'<s:message code="procedimiento.precontencioso" text="**Precontencioso"/>'
-		,autoHeight:true
-		,bodyStyle:'padding: 10px'
-		,nombreTab : 'precontencioso'
-	});
+        var panel = new Ext.Panel({
+                title:'<s:message code="procedimiento.precontencioso" text="**Precontencioso"/>'
+                ,autoHeight:true
+                ,bodyStyle:'padding: 10px'
+                ,nombreTab : 'precontencioso'
+                ,items:[gridBurofax]
+        });
 
-	panel.getValue = function() {}
+        panel.getValue = function() {}
 
-	panel.setValue = function(){
-		var data = entidad.get("data");
-	}
+        panel.setValue = function(){
+                var data = entidad.get("data");
+        }
 
-	return panel;
+        return panel;
 })
-	
+

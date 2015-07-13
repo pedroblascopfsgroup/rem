@@ -46,6 +46,7 @@ import es.capgemini.pfs.persona.model.EXTPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.DDPostores2;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.FuncionManager;
@@ -64,6 +65,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoImposicion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoInmueble;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoProdBancario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoTributacion;
@@ -317,6 +319,27 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			DDTipoTributacion tipoTributacion = genericDao.get(DDTipoTributacion.class, filtroTributacion);
 			bien.setTributacion(tipoTributacion);
 		}
+		if (dtoBien.getTributacionVenta() != null) {
+			Filter filtroTributacionVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTributacionVenta());
+			DDTipoTributacion tipoTributacionVenta = genericDao.get(DDTipoTributacion.class, filtroTributacionVenta);
+			bien.setTributacionVenta(tipoTributacionVenta);
+		}
+		if (dtoBien.getTipoImposicionCompra() != null) {
+			Filter filtroImposicion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionCompra());
+			DDTipoImposicion tipoImposicion = genericDao.get(DDTipoImposicion.class, filtroImposicion);
+			bien.setTipoImposicionCompra(tipoImposicion);
+		}
+		if (dtoBien.getTipoImposicionVenta() != null) {
+			Filter filtroImposicionVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionVenta());
+			DDTipoImposicion tipoImposicionVenta = genericDao.get(DDTipoImposicion.class, filtroImposicionVenta);
+			bien.setTipoImposicionVenta(tipoImposicionVenta);
+		}
+		if (dtoBien.getInversionPorRenuncia() != null) {
+			Filter filtroInversion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getInversionPorRenuncia());
+			DDSiNo tipoImposicion = genericDao.get(DDSiNo.class, filtroInversion);
+			bien.setInversionPorRenuncia(tipoImposicion);
+		}
+		
 
 		if (funcionManager.tieneFuncion(usuarioLogado, "ESTRUCTURA_COMPLETA_BIENES")) {
 			// cargar valores del nuevo formulario
@@ -344,6 +367,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			DDimpuestoCompra impuestoCompra = genericDao.get(DDimpuestoCompra.class, filterImpuesto);
 			bien.setImpuestoCompra(impuestoCompra);
 		}
+		
 		
 
 		genericDao.update(NMBBien.class, bien);

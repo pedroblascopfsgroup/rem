@@ -16,7 +16,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 
 @Entity
-@Table(name = "DD_TPI_TIPO_IMPOSICION", schema = "${entity.schema}")
+@Table(name = "DD_TPI_TIPO_IMPOSICION", schema = "${master.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class DDTipoImposicion implements  Serializable, Auditable {

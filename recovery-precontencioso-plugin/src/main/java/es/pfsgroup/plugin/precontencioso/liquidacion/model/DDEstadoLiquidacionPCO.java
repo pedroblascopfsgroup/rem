@@ -18,6 +18,13 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_PCO_LIQ_ESTADO", schema = "${entity.schema}")
 public class DDEstadoLiquidacionPCO implements Dictionary, Auditable {
 
+	public static final String PENDIENTE = "PEN";
+	public static final String SOLICITADA = "SOL";
+	public static final String DESCARTADA = "DES";
+	public static final String CONFIRMADA = "CON";
+	public static final String CALCULADA = "CAL";
+	public static final String INCIDENTADA = "INC";
+
 	private static final long serialVersionUID = 9071990312229316324L;
 
 	@Id

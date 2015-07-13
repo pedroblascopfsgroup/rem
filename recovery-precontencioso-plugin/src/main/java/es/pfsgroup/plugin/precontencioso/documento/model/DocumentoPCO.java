@@ -64,17 +64,47 @@ public class DocumentoPCO implements Serializable, Auditable {
 	@Column(name = "PCO_DOC_PDD_ADJUNTO")
 	private Boolean adjuntado;
 	
+	@Column(name = "PCO_DOC_PDD_UG_ID")
+	private Long unidadGestionId;	
+	
+	@Column(name = "PCO_DOC_PDD_UG_DESC")
+	private String ugDescripcion;	
+
 	@Column(name = "PCO_DOC_PDD_PROTOCOLO")
 	private String protocolo;
 	
 	@Column(name = "PCO_DOC_PDD_NOTARIO")
 	private String notario;
 
+	@Column(name = "PCO_DOC_PDD_FECHA_ESCRIT")
+	private Date fechaEscritura;
+
 	@Column(name = "PCO_DOC_PDD_FINCA")
 	private String finca;
 	
-	@Column(name = "PCO_DOC_PDD_FECHA_ESCRIT")
-	private Date fechaEscritura;
+	@Column(name = "PCO_DOC_PDD_ASIENTO")
+	private Date asiento;
+		
+	@Column(name = "PCO_DOC_PDD_TOMO")
+	private Date tomo;
+		
+	@Column(name = "PCO_DOC_PDD_LIBRO")
+	private Date libro;
+		
+	@Column(name = "PCO_DOC_PDD_FOLIO")
+	private Date folio;
+		
+	@Column(name = "PCO_DOC_PDD_NRO_FINCA")
+	private Date nroFinca;
+		
+	@Column(name = "PCO_DOC_PDD_NRO_REGIS")
+	private Date nroRegistro;
+		
+	@Column(name = "PCO_DOC_PDD_PLAZA")
+	private Date plaza;
+		
+	@Column(name = "PCO_DOC_PDD_IDUFIR")
+	private Date idufir;
 		
 	@Column(name = "PCO_DOC_PDD_OBSERVACIONES")
 	private String observaciones;
@@ -136,6 +166,22 @@ public class DocumentoPCO implements Serializable, Auditable {
 		this.adjuntado = adjuntado;
 	}
 
+	public Long getUnidadGestionId() {
+		return unidadGestionId;
+	}
+
+	public void setUnidadGestionId(Long unidadGestionId) {
+		this.unidadGestionId = unidadGestionId;
+	}
+
+	public String getUgDescripcion() {
+		return ugDescripcion;
+	}
+
+	public void setUgDescripcion(String ugDescripcion) {
+		this.ugDescripcion = ugDescripcion;
+	}
+
 	public String getProtocolo() {
 		return protocolo;
 	}
@@ -166,6 +212,70 @@ public class DocumentoPCO implements Serializable, Auditable {
 
 	public void setFechaEscritura(Date fechaEscritura) {
 		this.fechaEscritura = fechaEscritura;
+	}
+
+	public Date getAsiento() {
+		return asiento;
+	}
+
+	public void setAsiento(Date asiento) {
+		this.asiento = asiento;
+	}
+
+	public Date getTomo() {
+		return tomo;
+	}
+
+	public void setTomo(Date tomo) {
+		this.tomo = tomo;
+	}
+
+	public Date getLibro() {
+		return libro;
+	}
+
+	public void setLibro(Date libro) {
+		this.libro = libro;
+	}
+
+	public Date getFolio() {
+		return folio;
+	}
+
+	public void setFolio(Date folio) {
+		this.folio = folio;
+	}
+
+	public Date getNroFinca() {
+		return nroFinca;
+	}
+
+	public void setNroFinca(Date nroFinca) {
+		this.nroFinca = nroFinca;
+	}
+
+	public Date getNroRegistro() {
+		return nroRegistro;
+	}
+
+	public void setNroRegistro(Date nroRegistro) {
+		this.nroRegistro = nroRegistro;
+	}
+
+	public Date getPlaza() {
+		return plaza;
+	}
+
+	public void setPlaza(Date plaza) {
+		this.plaza = plaza;
+	}
+
+	public Date getIdufir() {
+		return idufir;
+	}
+
+	public void setIdufir(Date idufir) {
+		this.idufir = idufir;
 	}
 
 	public String getObservaciones() {

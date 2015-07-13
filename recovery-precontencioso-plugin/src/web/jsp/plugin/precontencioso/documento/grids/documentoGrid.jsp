@@ -193,12 +193,55 @@ var descartarDocButton = new Ext.Button({
 	    }
 	});	
 
-var solicitarDoc = {
-		text : '<s:message code="precontencioso.grid.documento.solicitarDocumento" text="**Solicitar Documento" />'
+var validacionEditar=false;	
+var solicitarDocButton = new Ext.Button({
+		text : '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear Solicitudes" />'
+		,iconCls : 'icon_edit'
+		,disabled : false
+		,cls: 'x-btn-text-icon'
+        ,handler:function() {
+		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+		if (rowsSelected == '') {
+			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.crearSolicitudes.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+		}
+		else {
+			if (rowsSelected.length > 1){
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.crearSolicitudes.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
+			}
+			else {
+	        	if(validacionEditar) {
+		        	Ext.Msg.show({
+					   title:'Aviso',
+					   msg: '<s:message code="precontencioso.grid.documento.crearSolicitudes.aviso" text="**No se puede crear solicitud" />',
+					   buttons: Ext.Msg.OK
+					});
+	        	}
+	        	else {
+			        var w = app.openWindow({
+							flow: 'documentopco/crearSolicitudes'
+							,params: {idSolicitud:idSolicitud}
+							,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
+							,width: 300
+						});
+					w.on(app.event.DONE, function() {
+						storeDocumentos.webflow();					
+						w.close(); 
+						
+					});
+					w.on(app.event.CANCEL, function(){ w.close(); });
+					}
+				}
+			}
+		}				
+	});	
+
+
+var anularSolicitudes = {
+		text : '<s:message code="precontencioso.grid.documento.anularSolicitudes" text="**Anular Solicitudes" />'
 		,iconCls : 'icon_comunicacion'
 		,cls: 'x-btn-text-icon'
 	};	
-var solicitarDocButton = new Ext.Button(solicitarDoc);
+var anularSolicitudesButton = new Ext.Button(anularSolicitudes);
 
 var validacionEstado=false;
 var informarDocButton = new Ext.Button({
@@ -349,7 +392,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
 		,height:175
-		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, solicitarDocButton, editarDocButton, informarDocButton ]
+		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, anularSolicitudesButton, editarDocButton, solicitarDocButton, informarDocButton ]
 	});
 
 storeDocumentos.webflow();

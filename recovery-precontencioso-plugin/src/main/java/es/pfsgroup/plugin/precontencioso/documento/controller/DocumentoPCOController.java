@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.documento.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +45,7 @@ public class DocumentoPCOController {
 	private static final String INFORMAR_DOC = "plugin/precontencioso/documento/popups/informarDocumento";
 	private static final String INCLUIR_DOC = "plugin/precontencioso/documento/popups/incluirDocumento";
 	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
+	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	List<DocumentoPCODto> documentos = null;
@@ -248,6 +251,40 @@ public class DocumentoPCOController {
 		
 		return EDITAR_DOC;
 	}
+	
+	/**
+	 * Crear Solicitudes
+	 * 
+	 * @param idSolicitud
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String crearSolicitudes(@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+			ModelMap model) {
+		
+		logger.error(".............idSolicitud: "+idSolicitud);
+		
+		SolicitudPCODto solDto = new SolicitudPCODto();
+		DocumentoPCODto docDto = new DocumentoPCODto();
+		
+		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
+		for (SolicitudPCODto sol : solicitudes) {
+			if (sol.getId().equals(idSolicitud))
+				solDto = sol;
+			
+				// Averiguamos el documento a editar
+				for (DocumentoPCODto doc : documentos) {
+					if (doc.getId().equals(solDto.getIdDoc()))
+						docDto = doc;
+				}
+		}
+		
+		model.put("dtoDoc", docDto);
+		
+		return CREAR_SOLICITUDES;
+	}	
 	
 	/**
 	 * Excluir Documentos
@@ -512,7 +549,51 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 		model.put("solicitudesDocumento", solicitudesDoc);
 			
 		return SOLICITUDES_DOC_PCO_JSON;
-	}	
+	}
+	
+	/**
+	 * Salvar la creacion de solicitudes
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping	
+	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
+		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		String idDoc = request.getParameter("id");
+		logger.error("Antes crear solicitud");
+		
+		String fechaSolicitud = request.getParameter("fechaSolicitud");
+		Date fechaSolicitudDate = null;
+
+		try {
+			fechaSolicitudDate = webDateFormat.parse(fechaSolicitud);
+		} catch (ParseException e) {
+			logger.error(e.getLocalizedMessage());
+			return DEFAULT;
+		}
+		
+		// CREAR SOLICITUD
+		SolicitudPCODto sol;
+			
+		sol = new SolicitudPCODto();		
+		sol.setId(new Long(lastKeySolicitudes));
+		sol.setIdDoc(new Long(idDoc));
+		sol.setActor(request.getParameter("actor"));
+		sol.setFechaSolicitud(fechaSolicitudDate);
+		sol.setResultado("Pendiente Resultado");
+			
+		solicitudes.add(sol);
+		lastKeySolicitudes++;
+		
+		logger.error("ya creado la solicitud ");
+		// Construimos el DTO del grid principal con los nuevos datos
+		crearSolicitudDocumentosDto();
+		
+		model.put("solicitudesDocumento", solicitudesDoc);
+			
+		return SOLICITUDES_DOC_PCO_JSON;
+	}		
 	
 	/**
 	 * Tipos de Documento

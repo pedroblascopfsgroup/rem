@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionTitulo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoImposicion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoInmueble;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoProdBancario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoTributacion;
@@ -363,6 +364,14 @@ public class EditBienController {
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
 		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+		
 		map.put("tabs", mapaTabs);
 		map.put("operacion", "editar");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
@@ -436,6 +445,15 @@ public class EditBienController {
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
+		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+
 		map.put("operacion", "editar");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
 	}
@@ -476,6 +494,15 @@ public class EditBienController {
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
+		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+		
 		map.put("operacion", "nuevo");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
 	}
@@ -522,6 +549,15 @@ public class EditBienController {
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
+		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+		
 		map.put("operacion", "nuevo");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
 	}
@@ -766,6 +802,18 @@ public class EditBienController {
 
 		if (!Checks.esNulo(request.getParameter("tributacion")))
 			dto.setTributacion(request.getParameter("tributacion"));
+		
+		if (!Checks.esNulo(request.getParameter("tributacionVenta")))
+			dto.setTributacionVenta(request.getParameter("tributacionVenta"));
+		
+		if (!Checks.esNulo(request.getParameter("imposicionCompra")))
+			dto.setTipoImposicionCompra(request.getParameter("imposicionCompra"));
+		
+		if (!Checks.esNulo(request.getParameter("imposicionVenta")))
+			dto.setTipoImposicionVenta(request.getParameter("imposicionVenta"));
+		
+		if (!Checks.esNulo(request.getParameter("inversionRenuncia")))
+			dto.setInversionPorRenuncia(request.getParameter("inversionRenuncia"));
 
 		if (!Checks.esNulo(request.getParameter("fechaSolicitudDueD")))
 			dto.setFechaSolicitudDueD(request

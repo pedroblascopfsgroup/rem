@@ -1132,6 +1132,36 @@
 						</bean>
 					</list>
 				</entry>
+				<entry key="R_DECR_FIN_MON">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_DECR_FIN_MON</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_DIL_CITA_PART">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_DIL_CITA_PART</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_REQUE_INTER_DEM_OR">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_REQUE_INTER_DEM_OR</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>
@@ -1239,7 +1269,7 @@
 		<bean id="mapaProcedimientoPrecinto"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
-			<map>				
+			<map>		
 				<entry key="R_ESC_SOL_PRE">
 					<list>
 						<bean

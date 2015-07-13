@@ -1311,7 +1311,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	 * 
 	 * return gestoresAsunto; }
 	 */
-
+	
 	@BusinessOperation(EXT_MGR_ASUNTO_GET_TIPOS_GESTOR_USU_LOGADO)
 	@Override
 	public List<EXTDDTipoGestor> getListTiposGestorAsuntoUsuarioLogado(Long idAsunto) {
@@ -1436,6 +1436,50 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 					if (!Checks.esNulo(listaGruposUsuario) && !Checks.estaVacio(listaGruposUsuario)){
 						if (listaGruposUsuario.contains(gestor.getUsuario().getId())){
 							if (gestor.getTipoGestor().getCodigo().equals(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean buscaMultiGestorMultiEntidad(Usuario usuario, Asunto asunto, List<String> listaCodigoGestores) {
+		
+		//Si algún argumento es nulo, devolvemos false
+		if (Checks.esNulo(usuario) || Checks.esNulo(asunto) || Checks.esNulo(listaCodigoGestores)) {
+			return false;
+		}
+		
+		// Si la lista de gestores está vacía, añadimos el Gestor Externo
+		if(listaCodigoGestores.isEmpty()){
+			listaCodigoGestores.add(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+		}
+		
+		//Obtenemos los gestores del asunto
+		//List<EXTGestorInfo> gestores = getMultiGestoresMultiEntidad(asunto);
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(asunto.getId());
+		
+		if (!Checks.estaVacio(gestores)) {
+			for (EXTGestorAdicionalAsunto gestor : gestores) {
+				List<Long> listaGruposUsuario = proxyFactory.proxy(EXTGrupoUsuariosApi.class).buscaIdsGrupos(usuario);
+				
+				//Miramos si el usuario es el gestor del asunto
+				if (usuario.getId().equals(gestor.getGestor().getUsuario().getId())) {
+					// FIXME Hay que hacer esto bas�ndonos en propiedades del
+					// tipo de gestor
+						//Comprobamos si es de los tipos permitidos
+						if (listaCodigoGestores.contains(gestor.getTipoGestor().getCodigo())) {
+							return true;
+						}
+				//Miramos si el usuario pertenece a algún grupo que sea gestor del asunto
+				} else {
+					if (!Checks.esNulo(listaGruposUsuario) && !Checks.estaVacio(listaGruposUsuario)){
+						if (listaGruposUsuario.contains(gestor.getGestor().getUsuario().getId())){
+							//Comprobamos si es de los tipos permitidos
+							if (listaCodigoGestores.contains(gestor.getTipoGestor().getCodigo())) {
 								return true;
 							}
 						}
@@ -1877,12 +1921,13 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	 */
 	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
 	@Override
-	public Boolean esGestorDecision() {
-		Usuario usuario =  proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+	public Boolean esGestorDecision(Long id) {
 		try {
-			return esUsuarioGestorDecision(usuario);
+			
+			return esUsuarioGestorDecision(id);
+			
 		} catch (Exception e) {
-			logger.fatal("No se ha podido averiguar si el usuario con Id " + usuario.getId() + " es gestor de Decisión del asunto");
+			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
 			return false;
 			//throw new BusinessOperationException(e);
 		}
@@ -1898,46 +1943,39 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	 * @param usu Usuario
 	 * @return true / false
 	 */
-	private Boolean esUsuarioGestorDecision(Usuario u){
-		Boolean res = false;
+	private Boolean esUsuarioGestorDecision(Long id){
 		
-		List<DespachoExterno> deList = gestorAdicionalAsuntoDao.getTipoDespachoExternoList(u.getId());
-		List<String> ctdList = new ArrayList<String>();
-		for (DespachoExterno de : deList){
-			ctdList.add(de.getTipoDespacho().getCodigo());
-		}
+		Asunto asunto = procedimientoDao.get(id).getAsunto();
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		
 		Set<String> staC = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
 		
-		Set<String> hm = new HashSet<String>();
-		String v = "";
-		StringTokenizer vS = null;
-		List<EXTTipoGestorPropiedad> tgpL = new ArrayList<EXTTipoGestorPropiedad>();
+		List<String> listaCodigosGestor = new ArrayList<String>();
 		
-		for (Object st : staC.toArray()) {
-		
-			tgpL = gestorAdicionalAsuntoDao.getTipoGestorPropiedadList(st.toString());
-						
-			// Como en el campo "valor" nos pueden venir datos separados por ","
-			// los trocearemos y guardaremos cada valor individual en un Set
-			// para la comprobación final
-			for (EXTTipoGestorPropiedad tgp : tgpL){
-				v = tgp.getValor();
-				vS = new StringTokenizer(v,",");
-				
-				while (vS.hasMoreElements()){
-					hm.add(vS.nextToken());
-				}
-			}
+		//Obtenemos los TGE de las subtareas indicadas en el XML
+		for (String st : staC) {
+			
+			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(st)));
+			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
+			
 		}
 		
-		// Comprobacion final
-		for (String ctd : ctdList) {
-			if (hm.contains(ctd))		
-				res = true;
-		}
 		
-		return res;
+		
+		boolean gestor = false;
+
+		// Buscamos entre los Multi Gestores Multi Entidad
+		gestor = buscaMultiGestorMultiEntidad(usuario, asunto, listaCodigosGestor);
+
+		/**
+		// Buscamos entre los gestores adicionales del asunto
+		if (!gestor) {
+			gestor = buscaUsuario(usuario, proxyFactory.proxy(EXTAsuntoApi.class).getGestoresAsunto(asunto.getId()));
+		}*/
+
+		return gestor;
+		
+		
 	}
 
 	@Override

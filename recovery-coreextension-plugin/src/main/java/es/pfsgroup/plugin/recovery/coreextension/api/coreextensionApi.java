@@ -118,7 +118,7 @@ public interface coreextensionApi {
 	 * 
 	 */
 	@BusinessOperationDefinition(SAVE_GESTOR_ADICIONAL_ASUNTO)
-	void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho);
+	void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) throws Exception;
 	
 	@BusinessOperationDefinition(REMOVE_GESTOR)
 	void removeGestor(Long idAsunto, Long idUsuario, String codTipoGestor);

@@ -550,22 +550,37 @@
 		
 		porcentajeImpuestoCompra.setMaxValue(100);
 		
-		var viviendaHabitual =  new Ext.form.Checkbox({
-			//id:'solvenciaNoEncontrada'
-			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>'
-			,labelStyle : labelStyle
+		var diccionarioRecord = Ext.data.Record.create([
+			{name : 'id'}
+			,{name : 'codigo'}
+			,{name : 'descripcion'}
+		]);
+
+		var sinoStore = page.getStore({
+			flow : 'editbien/getDiccionario'
+			,storeId : 'sinoStore'
+			,reader : new Ext.data.JsonReader({
+				root : 'diccionario'
+			},diccionarioRecord)
+		});	
+	
+		sinoStore.webflow({diccionario: 'es.capgemini.pfs.procesosJudiciales.model.DDSiNo' });
+		
+		var viviendaHabitual = app.creaCombo({
+			store:sinoStore
+			,value:  '${NMBbien.viviendaHabitual}' == '1' ? 'Sí' : '${NMBbien.viviendaHabitual}' == '2' ? 'No' : ''
+			,displayField:'descripcion'
+			,valueField:'codigo'
+			,mode: 'local'
+			,width: 100
+			,resizable: false
+			,emptyText:'--'
+			,triggerAction: 'all'
 			,name:'viviendaHabitual'
-			,style:'margin:0px'		
-		
+			,fieldLabel: '<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>'
+			,labelStyle:labelStyle
 		});
-		
-		if('${NMBbien.viviendaHabitual}' == 'true'){
-			viviendaHabitual.checked = true;
-		}
-		else{
-			viviendaHabitual.checked = false;
-		}
-		
+						
 		var tipoSubasta = app.creaNumber(
 			'tipoSubasta'
 			, '<s:message code="plugin.mejoras.bienesNMB.tipoSubasta" text="**Tipo Subasta" />' 
@@ -1593,7 +1608,7 @@
 				parametros.fechaMatricula=fechaMatriculacion.getValue().format('d/m/Y');
 			}
 			parametros.situacionPosesoria = situacionPosesoria.getValue();
-			parametros.viviendaHabitual = viviendaHabitual.getValue();
+			parametros.viviendaHabitual = viviendaHabitual.getValue() == '' ? null : viviendaHabitual.getValue() == '01' ? '1' : '2';
 			parametros.tipoSubasta = tipoSubasta.getValue();
 			parametros.numeroActivo  = numeroActivo.getValue();
 			parametros.licenciaPrimeraOcupacion = licenciaPrimeraOcupacion.getValue();

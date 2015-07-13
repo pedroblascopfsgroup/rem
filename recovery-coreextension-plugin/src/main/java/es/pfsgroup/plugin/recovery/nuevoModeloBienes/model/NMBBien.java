@@ -136,7 +136,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	private DDSituacionPosesoria  situacionPosesoria;
 	
 	@Column(name= "BIE_VIVIENDA_HABITUAL") 
-	private Boolean viviendaHabitual;
+	private String viviendaHabitual;
 	
 	@Column(name= "BIE_NUMERO_ACTIVO")  
 	private String numeroActivo;
@@ -461,11 +461,11 @@ public class NMBBien extends Bien implements NMBBienInfo{
 		this.situacionPosesoria = situacionPosesoria;
 	}
 
-	public Boolean getViviendaHabitual() {
+	public String getViviendaHabitual() {
 		return viviendaHabitual;
 	}
 
-	public void setViviendaHabitual(Boolean viviendaHabitual) {
+	public void setViviendaHabitual(String viviendaHabitual) {
 		this.viviendaHabitual = viviendaHabitual;
 	}
 

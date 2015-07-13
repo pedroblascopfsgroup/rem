@@ -1144,6 +1144,8 @@ public class PCDProcesadoResolucionesController {
 		dtoResolucion.setCamposDinamicos(camposDinamicos);
 		dtoResolucion.setAsunto(msvResolucion.getAsunto().getNombre());
 		dtoResolucion.setPlaza(msvResolucion.getPlaza());
+		dtoResolucion.setIdAsunto(msvResolucion.getAsunto().getId());
+		dtoResolucion.setIdProcedimiento(msvResolucion.getProcedimiento().getId());
 
 		dtoResolucion.setEstadoResolucion(ESTADO_RECHAZADO);
 		
@@ -1152,6 +1154,8 @@ public class PCDProcesadoResolucionesController {
 		
 		if(!Checks.esNulo(msvResolucion.getNombreFichero()))
 				apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
+		
+		apiProxyFactory.proxy(PCDProcesadoResolucionesApi.class).generarTarea(dtoResolucion);
 		
 		model.put("resolucion", msvResolucion);
 		

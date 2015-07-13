@@ -16,6 +16,7 @@ import org.springframework.web.util.HtmlUtils;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
@@ -36,6 +37,7 @@ import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.tareaNotificacion.MEJTareaNoficacionApi;
 import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoResolucionesApi;
 //import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
@@ -151,9 +153,9 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		List<DtoCrearAnotacionUsuario> listaUsuarios = new ArrayList<DtoCrearAnotacionUsuario>();
 		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dtoResolucion.getIdAsunto());
 		DtoCrearAnotacionUsuario du = new DtoCrearAnotacionUsuario();
-		if (dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_TAREA ||
+		if (dtoResolucion.getComboTipoResolucionNew()!=null && (dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_TAREA ||
 				dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_NOTIFICACION ||
-				dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_SUBIDA){ //Tarea
+				dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_SUBIDA)){ //Tarea
 			List<Usuario> usuarios = (List<Usuario>) proxyFactory.proxy(GestorAdicionalAsuntoApi.class).findGestoresByAsunto(asu.getId(), CODIGO_TIPO_LETRADO);
 			if(usuarios.size()>0){
 				///Asignamos el letrado de momento para HAYA, se creara una configuración donde se sleccione el destinatario
@@ -179,10 +181,13 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		serviceDto.setIdUg(dtoResolucion.getIdAsunto());
 		serviceDto.setCodUg(PCDProcesadoResolucionesManager.COD_ENTIDAD);
 		serviceDto.setTipoAnotacion(PCDProcesadoResolucionesManager.TIPO_ANOTACION_TAREA);
-		if(dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_SUBIDA)
+		if(dtoResolucion.getComboTipoResolucionNew()!=null && dtoResolucion.getComboTipoResolucionNew() == PCDProcesadoResolucionesManager.CODIGO_TIPO_RESOLUCION_SUBIDA)
 		{
 			serviceDto.setCuerpoEmail("Se ha realizado la subida del fichero "+resolucion.getAdjuntoFinal().getNombre()+"["+resolucion.getAdjuntoFinal().getTipoFichero().getDescripcion()+"]"+ " al asunto "+dtoResolucion.getAsunto());
 			serviceDto.setAsuntoMail("Subida de fichero");
+		}else if(dtoResolucion.getEstadoResolucion().equals(MSVDDEstadoProceso.CODIGO_RECHAZADO)){
+			serviceDto.setCuerpoEmail("Su resolución "+ proxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion()).getTarea().getTareaPadre().getDescripcionTarea()+" del procedimiento "+proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(dtoResolucion.getIdProcedimiento()).getNombreProcedimiento() +" de "+asu.getNombre() +" ha sido rechazada por el letrado del asunto ");
+			serviceDto.setAsuntoMail("Resolución rechazada");
 		}else{
 			serviceDto.setCuerpoEmail(dtoResolucion.getCamposDinamicos().get("d_mensaje"));
 			serviceDto.setAsuntoMail(dtoResolucion.getCamposDinamicos().get("d_asunto"));

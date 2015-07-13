@@ -10,6 +10,7 @@
 
 (function(page,entidad){
 
+<%@ include file="/WEB-INF/jsp/plugin/precontencioso/documento/grids/documentoGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/liquidacion/grids/liquidacionGrid.jsp" %>
 
 	var panel = new Ext.Panel({
@@ -17,7 +18,7 @@
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'
-		,items :gridLiquidaciones
+		,items: [gridDocumentos, gridLiquidaciones]
 	});
 
 	panel.getValue = function() {}

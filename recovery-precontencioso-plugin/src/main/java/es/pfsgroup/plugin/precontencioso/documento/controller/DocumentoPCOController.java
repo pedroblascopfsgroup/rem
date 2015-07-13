@@ -38,11 +38,12 @@ public class DocumentoPCOController {
 	private DocumentoPCOApi documentoPCOApi;
 
 	private static final String DEFAULT = "default";
-	private static final String SOLICITUDES_DOC_PCO_JSON = "plugin/precontencioso/grids/documento/solicitudesDocumentoJSON";
-	private static final String AGREGAR_UGESTION_DOC_PCO_JSON = "plugin/precontencioso/grids/documento/agregarDocsUGestionJSON";
-	private static final String INFORMAR_DOC = "plugin/precontencioso/grids/documento/informarDocumento";
-	private static final String INCLUIR_DOC = "plugin/precontencioso/grids/documento/incluirDocumento";
-	private static final String EDITAR_DOC = "plugin/precontencioso/grids/documento/editarDocumento";
+	private static final String SOLICITUDES_DOC_PCO_JSON = "plugin/precontencioso/documento/json/solicitudesDocumentoJSON";
+	private static final String AGREGAR_UGESTION_DOC_PCO_JSON = "plugin/precontencioso/documento/json/agregarDocsUGestionJSON";
+	private static final String INFORMAR_DOC = "plugin/precontencioso/documento/popups/informarDocumento";
+	private static final String INCLUIR_DOC = "plugin/precontencioso/documento/popups/incluirDocumento";
+	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
+
 	protected final Log logger = LogFactory.getLog(getClass());
 	List<DocumentoPCODto> documentos = null;
 	List<SolicitudPCODto> solicitudes = null;
@@ -348,10 +349,8 @@ public class DocumentoPCOController {
 		
 		// Construimos el DTO del grid principal con los nuevos datos
 		crearSolicitudDocumentosDto();
-		
-		model.put("solicitudesDocumento", solicitudesDoc);
-			
-		return SOLICITUDES_DOC_PCO_JSON;
+
+		return DEFAULT;
 	}	
 	
 	/**

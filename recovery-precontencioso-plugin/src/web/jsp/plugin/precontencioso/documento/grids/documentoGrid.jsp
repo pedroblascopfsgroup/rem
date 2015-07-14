@@ -27,7 +27,7 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
   		},
   		singleSelect: false
 	});
-
+	
 var documentosRecord = Ext.data.Record.create([
 	{name:'id'},
 	{name:'idDoc'},	
@@ -55,10 +55,10 @@ var storeDocumentos = page.getStore({
 });
 
 
-var cmDocumento = [
-	myCboxSelModel,
-	{header: 'id',dataIndex:'id',hidden:'true'},
-	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
+var cmDocumento = [ 
+ 	myCboxSelModel, 
+ 	{header: 'id',dataIndex:'id',hidden:'true'},
+ 	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
 	{header : '<s:message code="precontencioso.grid.documento.descripcion" text="**Descripción" />', dataIndex : 'descripcionUG'},
 	{header : '<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />', dataIndex : 'tipoDocumento'},
@@ -71,7 +71,7 @@ var cmDocumento = [
 	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion'},	
 	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado'},
 	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario'}	
-];
+]; 
 
 var validacion=false;
 var incluirDocButton = new Ext.Button({
@@ -388,12 +388,13 @@ var gridDocumentos = new Ext.grid.GridPanel({
         ,clicksToEdit: 1
         ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
-       	,style:'padding:10px'
 		,cls:'cursor_pointer'
-		,iconCls : 'icon_asuntos'
-		,height:175
+		,height: 250
+		,autoWidth: true			
 		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, anularSolicitudesButton, editarDocButton, solicitarDocButton, informarDocButton ]
 	});
+	
+
 
 storeDocumentos.webflow();
 

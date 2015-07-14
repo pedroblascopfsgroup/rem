@@ -10,6 +10,8 @@ public class DtoAgregarConvenio extends WebDto{
 
 	private Long id;
 	
+	private String guid; 
+	
 	@NotNull
 	private Long idProcedimiento;
 	
@@ -67,6 +69,14 @@ public class DtoAgregarConvenio extends WebDto{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public String getGuid() {
+		return guid;
+	}
+	
+	public void setGuid(String guid) {
+		this.guid = guid;
 	}
 
 	public Long getIdProcedimiento() {

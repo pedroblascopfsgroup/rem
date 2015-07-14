@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSu
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
@@ -64,6 +65,9 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
 	public static final String BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarBatchCierreDeuda";
 	public static final String BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.parametrizarLimite";
+	public static final String BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastasManager.getListErrorPreviCDDData";
+	public static final String BO_NMB_GET_LIST_ERROR_POST_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getListErrorPostCDDData";
+	
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -228,5 +232,11 @@ public interface SubastaApi {
 
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
 	Parametrizacion parametrizarLimite(String nombreParametro);
+
+	@BusinessOperationDefinition(BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA)
+	List<DDResultadoValidacionCDD> getListErrorPreviCDDData();
+	
+	@BusinessOperationDefinition(BO_NMB_GET_LIST_ERROR_POST_CDD_DATA)
+	List<DDResultadoValidacionNuse> getListErrorPostCDDData();
 
 }

@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubasta
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoLoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -758,6 +759,22 @@ public class SubastaController {
 	    
         model.put("fileItem",excelFileItem);
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
+	}
+	
+	@RequestMapping
+	public String getListErrorPreviCDDData(ModelMap model){
+		List<DDResultadoValidacionCDD> list = proxyFactory.proxy(SubastaApi.class).getListErrorPreviCDDData();
+		model.put("data", list);
+		return DICCIONARIO_JSON;
+	}
+	
+	
+		
+	@RequestMapping
+	public String getListErrorPostCDDData(ModelMap model){
+		List<DDResultadoValidacionNuse> list = proxyFactory.proxy(SubastaApi.class).getListErrorPostCDDData();
+		model.put("data", list);
+		return DICCIONARIO_JSON;
 	}
 	
 }

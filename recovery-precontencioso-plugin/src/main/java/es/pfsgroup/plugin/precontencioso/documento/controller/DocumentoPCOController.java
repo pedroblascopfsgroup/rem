@@ -60,7 +60,6 @@ public class DocumentoPCOController {
 	@RequestMapping
 	//public String getSolicitudesDocumentos(@RequestParam(value = "idProcPCO", required = true) Long idProcPCO, ModelMap map) {
 	public String getSolicitudesDocumentos(ModelMap map) {
-		//logger.error(".....................Inicio getSolicitudesDocumentos");
 		if (documentos == null){
 			documentos = datosDocumentos();
 			lastKeyDocumentos = documentos.size()+1;
@@ -87,11 +86,7 @@ public class DocumentoPCOController {
 	 */
 	private void crearSolicitudDocumentosDto() {
 		solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
-				
-		
-		logger.error("..............CREACION DATOS");
-		logger.error("..............documentos.size: "+documentos.size());
-		logger.error("..............solicitudes.size: "+solicitudes.size());
+						
 		Long antIdDoc = new Long(0);
 		String antTipoUG = "";
 		String actTipoUG = "";
@@ -264,7 +259,6 @@ public class DocumentoPCOController {
 	public String crearSolicitudes(@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
 			ModelMap model) {
 		
-		logger.error(".............idSolicitud: "+idSolicitud);
 		
 		SolicitudPCODto solDto = new SolicitudPCODto();
 		DocumentoPCODto docDto = new DocumentoPCODto();
@@ -453,8 +447,6 @@ public class DocumentoPCOController {
 		String idDoc = request.getParameter("id");
 		// La cadena viene con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadena.
 		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);
-		logger.error("arrayIdDocumentos: "+arrayIdDocumentos);
-		logger.error("idDoc: "+idDoc);
 			
 		StringTokenizer st;
 		DocumentoPCODto doc;
@@ -465,7 +457,6 @@ public class DocumentoPCOController {
 		Long idDocUG;
 		while (st.hasMoreElements()){
 			idDocUG = new Long(st.nextToken());			
-			logger.error("idDocUG: "+idDocUG);
 			
 			doc = new DocumentoPCODto();
 			
@@ -474,20 +465,14 @@ public class DocumentoPCOController {
 			
 			// TODO - Temporal - Averiguar los valores de varios objetos
 			// Descripcion de la UG - Nos llegan los codigos de los documento UG - A partir de ahí averiguar
-			// la UG y su descripcion	
-			logger.error(".............documentosUG: "+documentosUG);
-			logger.error(".............listaUG: "+listaUG);
-			logger.error(".............listaTipoDocumentos: "+listaTipoDocumentos);
-			
+			// la UG y su descripcion			
 			for (DocumentosUGPCODto docUG : documentosUG) {		
-				logger.error(".............docUG.getId(): "+docUG.getId());				
 				if (docUG.getId().equals(new Long(idDocUG))) {
 					doc.setContrato(docUG.getContrato());
 					doc.setDescripcionUG(docUG.getDescripcionUG());
 					
 					// A partir del id de la unidad de gestion, sacar la descripcion
 					for (DDTipoEntidad tipoUG : listaUG) {	
-						logger.error(".............tipoUG.getId(): "+tipoUG.getId());
 						if (tipoUG.getId().equals(docUG.getUnidadGestionId())){							
 							doc.setTipoUG(tipoUG.getDescripcion());
 						}
@@ -496,7 +481,6 @@ public class DocumentoPCOController {
 				}
 			}
 			
-			logger.error(".......................comboTipoDocumento: "+request.getParameter("comboTipoDocumento"));
 			// Obtener la descripcion del Tio de Documento
 			for (DDTipoDocumento tipoDoc : listaTipoDocumentos) {
 				if (tipoDoc.getId().equals(new Long(request.getParameter("comboTipoDocumento")))){
@@ -506,7 +490,6 @@ public class DocumentoPCOController {
 				
 			
 			doc.setId(new Long(lastKeyDocumentos+""));
-logger.error("lastKeyDocumentos: "+lastKeyDocumentos);				
 			doc.setIdProc(new Long(1));
 			doc.setEstado("Disponible");
 			doc.setAdjunto("No");
@@ -524,7 +507,6 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 			
 			documentos.add(doc);
 			lastKeyDocumentos++;
-	logger.error("Antes crear solicitud");			
 			// CREAR SOLICITUD
 			SolicitudPCODto sol;
 			
@@ -542,7 +524,6 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 			lastKeySolicitudes++;
 		}
 
-		logger.error("ya creado doc y sol ");
 		// Construimos el DTO del grid principal con los nuevos datos
 		crearSolicitudDocumentosDto();
 		
@@ -561,8 +542,6 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
 		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		String idDoc = request.getParameter("id");
-		logger.error("Antes crear solicitud");
-		
 		String fechaSolicitud = request.getParameter("fechaSolicitud");
 		Date fechaSolicitudDate = null;
 
@@ -586,7 +565,6 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 		solicitudes.add(sol);
 		lastKeySolicitudes++;
 		
-		logger.error("ya creado la solicitud ");
 		// Construimos el DTO del grid principal con los nuevos datos
 		crearSolicitudDocumentosDto();
 		

@@ -81,11 +81,11 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setFechaSolicitud(new Date());
 
 		// Se eliminan los datos antiguos de la liquidacion
-		liquidacion.setCapitalVencido(Float.valueOf(0));
-		liquidacion.setCapitalNoVencido(Float.valueOf(0));
-		liquidacion.setInteresesOrdinarios(Float.valueOf(0));
-		liquidacion.setInteresesDemora(Float.valueOf(0));
-		liquidacion.setTotal(Float.valueOf(0));
+		liquidacion.setCapitalVencido(null);
+		liquidacion.setCapitalNoVencido(null);
+		liquidacion.setInteresesOrdinarios(null);
+		liquidacion.setInteresesDemora(null);
+		liquidacion.setTotal(null);
 
 		liquidacionDao.saveOrUpdate(liquidacion);
 	}

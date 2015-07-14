@@ -84,7 +84,7 @@ public class AcuerdoPayload {
 		setEsSupervisor(false);
 		setEsGestor(false);
 		setGuid(extAcuerdo.getGuid());
-		setIdOrigen(acuerdo.getId());
+		setId(acuerdo.getId());
 		
 		if (acuerdo.getTipoAcuerdo()!=null) {
 			setTipoAcuerdo(acuerdo.getTipoAcuerdo().getCodigo());
@@ -208,10 +208,10 @@ public class AcuerdoPayload {
 		return data.getCodigo(CAMPO_ANALISIS_CAPACIDAD_PAGO);
 	}
 	
-	public Long getIdOrigen() {
+	public Long getId() {
 		return data.getIdOrigen(KEY);
 	}
-	private void setIdOrigen(Long valor) {
+	private void setId(Long valor) {
 		data.addSourceId(KEY, valor);
 	}
 

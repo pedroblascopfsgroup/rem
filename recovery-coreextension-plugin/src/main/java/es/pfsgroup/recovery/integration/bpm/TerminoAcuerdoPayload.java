@@ -60,7 +60,7 @@ public class TerminoAcuerdoPayload {
 			throw new IntegrationDataException(String.format("[INTEGRACION] El Termino con ID %d del Acuerdo no tiene referencia de sincronización GUID", terminoAcuerdo.getId()));
 		}
 		this.setGuid(terminoAcuerdo.getGuid());
-		this.setIdOrigen(terminoAcuerdo.getId());
+		this.setId(terminoAcuerdo.getId());
 		
 		if (terminoAcuerdo.getTipoAcuerdo()!=null) {
 			this.setTipoAcuerdo(terminoAcuerdo.getTipoAcuerdo().getCodigo());	
@@ -104,10 +104,10 @@ public class TerminoAcuerdoPayload {
 		return this;
 	}
 
-	public Long getIdOrigen() {
+	public Long getId() {
 		return data.getIdOrigen(KEY);
 	}
-	private void setIdOrigen(Long valor) {
+	private void setId(Long valor) {
 		data.addSourceId(KEY, valor);
 	}
 

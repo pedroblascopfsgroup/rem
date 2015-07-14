@@ -45,7 +45,7 @@ public class ActuacionesRealizadasPayload {
 			throw new IntegrationDataException(String.format("[INTEGRACION] La Actuación Realizada con ID %d del Acuerdo no tiene referencia de sincronización GUID", actuacion.getId()));
 		}
 		this.addGuid(actuacion.getGuid());
-		this.addIdOrigen(actuacion.getId());
+		this.addId(actuacion.getId());
 		if (actuacion.getDdResultadoAcuerdoActuacion()!=null) {
 			setResultado(actuacion.getDdResultadoAcuerdoActuacion().getCodigo());
 		}
@@ -97,10 +97,10 @@ public class ActuacionesRealizadasPayload {
 		return data.getCodigo(CAMPO_RESULTADO);
 	}
 
-	public Long getIdOrigen() {
+	public Long getId() {
 		return data.getIdOrigen(KEY);
 	}
-	public void addIdOrigen(Long valor) {
+	public void addId(Long valor) {
 		data.addSourceId(KEY, valor);
 	}
 

@@ -1,11 +1,8 @@
 package es.pfsgroup.recovery.integration.bpm.consumer;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,29 +18,19 @@ import es.capgemini.pfs.acuerdo.dto.DtoAnalisisAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
-import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDResultadoAcuerdoActuacion;
-import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoActuacionAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAyudaAcuerdo;
-import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.tareaNotificacion.TareaNotificacionManager;
-import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
-import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
-import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
@@ -119,10 +106,21 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	}
 
 	private String getAcuerdoGuid(AcuerdoPayload acuerdo) {
-		return String.format("%d-EXT", acuerdo.getIdOrigen());
-		
+		return String.format("%d-EXT", acuerdo.getId());
 	}
 
+	private String getActuacionRealizadaGuid(ActuacionesRealizadasPayload payload) {
+		return String.format("%d-EXT", payload.getId());
+	}
+
+	private String getActuacionAExplorarGuid(ActuacionesAExplorarPayload payload) {
+		return String.format("%d-EXT", payload.getId());
+	}
+
+	private String getTerminoGuid(TerminoAcuerdoPayload payload) {
+		return String.format("%d-EXT", payload.getId());
+	}
+	
 	private void actualizaAnalisis(AcuerdoPayload acuerdoPayload, Long idAcuerdo) {
 		DtoAnalisisAcuerdo dtoAnalisis = new DtoAnalisisAcuerdo();
 		dtoAnalisis.setIdAcuerdo(idAcuerdo);
@@ -140,7 +138,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	
 	// Guarda las actuaciones...
 	private void mergeActuacionesRealizadas(ActuacionesRealizadasPayload actuacionPayload) {
-		String guid = actuacionPayload.getGuid();
+		String guid = getActuacionRealizadaGuid(actuacionPayload);
 		ActuacionesRealizadasAcuerdo actuacion = mejAcuerdoManager.getActuacionesRealizadasAcuerdoByGuid(guid);
 		DtoActuacionesRealizadasAcuerdo dto = new DtoActuacionesRealizadasAcuerdo();
 		if (actuacion==null) {
@@ -182,7 +180,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	}
 	
 	private void mergeActuacionesAExplorar(ActuacionesAExplorarPayload actuacionPayload) {
-		String guid = actuacionPayload.getGuid();
+		String guid = getActuacionAExplorarGuid(actuacionPayload);
 		ActuacionesAExplorarAcuerdo actuacion = mejAcuerdoManager.getActuacionesAExplorarAcuerdoByGuid(guid);
 		
 		DtoActuacionesAExplorar dto = new DtoActuacionesAExplorar();
@@ -208,7 +206,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	// Merge términos...
 	private void actualizaTerminosAcuerdo(TerminoAcuerdoPayload terminoPayload) {
 		String valor;
-		String guid = terminoPayload.getGuid();
+		String guid = getTerminoGuid(terminoPayload);
 		TerminoAcuerdo termino = mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
 		if (termino==null) {
 			String acuerdoGuid = getAcuerdoGuid(terminoPayload.getAcuerdo());
@@ -218,7 +216,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 			}
 			termino = new TerminoAcuerdo();
 			termino.setAcuerdo(acuerdo);
-			termino.setGuid(guid);
+			termino.setGuid(guid);;
 		}
 		
 		if (terminoPayload.isBorrado()) {
@@ -264,6 +262,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		}
 		
 		mejAcuerdoManager.saveTerminoAcuerdo(termino);
+		termino = mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
 		
 		mergeTerminosContrato(terminoPayload.getContratosRelacionados(), termino);
 		mergeTerminosBien(terminoPayload.getBienesRelacionados(), termino);
@@ -365,9 +364,6 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		return acuerdo;
 	}
 	
-    @Autowired
-    private TareaNotificacionManager notificacionManager;
-	
 /*	
 	private void proponerAcuerdo(Acuerdo acuerdo) {
         Long idEntidad = acuerdo.getAsunto().getId();
@@ -399,10 +395,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 */
 	
 	protected void doAction(DataContainerPayload payload) {
-		if (payload.getTipo().startsWith(IntegracionBpmService.TIPO_DATOS_ACUERDO)) {
-			AcuerdoPayload acuerdoPayload = new AcuerdoPayload(payload);
-			actualiza(acuerdoPayload);
-		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_ACUERDO_TERMINO)) {
+		if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_ACUERDO_TERMINO)) {
 			TerminoAcuerdoPayload terminoPayload = new TerminoAcuerdoPayload(payload);
 			actualizaTerminosAcuerdo(terminoPayload);
 		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_ACUERDO_ACT_A_EXP)) {
@@ -411,6 +404,9 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_ACUERDO_ACT_REALIZAR)) {
 			ActuacionesRealizadasPayload actRealizadas = new ActuacionesRealizadasPayload(payload);
 			mergeActuacionesRealizadas(actRealizadas);
+		} else {
+			AcuerdoPayload acuerdoPayload = new AcuerdoPayload(payload);
+			actualiza(acuerdoPayload);
 		}
 		
 

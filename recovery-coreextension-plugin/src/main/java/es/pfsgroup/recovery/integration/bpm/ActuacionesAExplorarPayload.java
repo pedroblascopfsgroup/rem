@@ -41,7 +41,7 @@ public class ActuacionesAExplorarPayload {
 			throw new IntegrationDataException(String.format("[INTEGRACION] La Actuación Realizada con ID %d del Acuerdo no tiene referencia de sincronización GUID", actuacion.getId()));
 		}
 		this.addGuid(actuacion.getGuid());
-		this.addIdOrigen(actuacion.getId());
+		this.addId(actuacion.getId());
 		
 		if (actuacion.getDdSubtipoSolucionAmistosaAcuerdo()!=null) {
 			setSubtipoSolucionAmistosa(actuacion.getDdSubtipoSolucionAmistosaAcuerdo().getCodigo());
@@ -82,10 +82,10 @@ public class ActuacionesAExplorarPayload {
 		return data.getExtraInfo(CAMPO_OBSERVACIONES);
 	}
 
-	public Long getIdOrigen() {
+	public Long getId() {
 		return data.getIdOrigen(KEY);
 	}
-	public void addIdOrigen(Long valor) {
+	public void addId(Long valor) {
 		data.addSourceId(KEY, valor);
 	}
 

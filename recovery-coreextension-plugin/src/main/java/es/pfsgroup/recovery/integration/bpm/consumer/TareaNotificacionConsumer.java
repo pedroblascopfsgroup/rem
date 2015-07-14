@@ -148,7 +148,8 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 			DtoGenerarTarea dto = new DtoGenerarTarea(idEntidad, codigoTipoEntidad, sta, enEspera, false, plazo, descripcion);
 			tareaPayload.getCodigoSTA();
 			Long idTarea = proxyFactory.proxy(TareaNotificacionApi.class).crearTarea(dto);
-			tarNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(guid);
+			TareaNotificacion tareaN = extTareaNotifificacionManager.get(idTarea); 
+			tarNotif = EXTTareaNotificacion.instanceOf(tareaN);
 		}
 		postCrearTarea(tareaPayload, tarNotif);
 	}

@@ -27,7 +27,7 @@
  	
 	<!-- FLOW -->
 	<file:inbound-channel-adapter id="inputFolderChannel"
-		directory="file:/Documentos/borrar/mensajes/input" filename-pattern=".+.msg">
+		directory="${integracion.input}" filename-pattern=".+.msg">
 		<integration:poller id="poller">
 			<integration:interval-trigger interval="10000" />
 		</integration:poller>
@@ -59,8 +59,8 @@
 		<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
 			<constructor-arg index="0" ref="bpmConsumerActionMgr" />
 			<constructor-arg index="1" value="2038"/>
-			<constructor-arg index="2" value="file:/Documentos/borrar/mensajes/input/log" />
-			<constructor-arg index="3" value="file:/Documentos/borrar/mensajes/input/error" />
+			<constructor-arg index="2" value="${integracion.input}" />
+			<constructor-arg index="3" value="${integracion.error}" />
 		</bean>
 	</integration:service-activator>
 
@@ -97,7 +97,7 @@
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.AcuerdoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="UPD-ACUERDO-.+"/>
+							<property name="tipo" value="DATOS-ACUERDO-.+"/>
 						</bean>
 					</constructor-arg>
 					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
@@ -177,7 +177,7 @@
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.RecursoConsumer">
 					<constructor-arg>
 						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="CAB-UPD-RECURSO"/>
+							<property name="tipo" value="DATOS-RECURSO"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Actualización de un recurso"/>
@@ -187,7 +187,7 @@
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.SubastaConsumer">
 					<constructor-arg>
 						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="CAB-UPD-SUBASTA"/>
+							<property name="tipo" value="DATOS-SUBASTA"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Actualización de una subasta"/>
@@ -200,6 +200,17 @@
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Actualización de un convenio"/>
+				</bean>
+
+				<!-- NOTIFICACIONES DE TAREA ... -->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaNotificacionConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="BPM-TAREA-NOTIF-.+"/>
+						</bean>
+					</constructor-arg>
+					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
+					<property name="description" value="Gestión de tarea notificaciones"/>
 				</bean>
 
 			</list>

@@ -168,7 +168,7 @@ public class SubastaCalculoManager {
 				// genericDao.save(LoteBien.class, loteBienDuplicado);
 
 			}
-			bpmIntegracionService.enviarCabecera(subastaDuplicada);
+			bpmIntegracionService.enviarDatos(subastaDuplicada);
 		}
 		
 		//CONDICION 3
@@ -223,7 +223,7 @@ public class SubastaCalculoManager {
 			genericDao.save(Subasta.class, subastaDuplicada);
 			
 			actualizarTipoSubasta(procedimiento);
-			bpmIntegracionService.enviarCabecera(subastaDuplicada);
+			bpmIntegracionService.enviarDatos(subastaDuplicada);
 			
 		}
 

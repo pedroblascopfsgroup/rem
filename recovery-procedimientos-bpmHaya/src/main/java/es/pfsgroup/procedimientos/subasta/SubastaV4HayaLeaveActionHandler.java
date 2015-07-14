@@ -230,7 +230,7 @@ public class SubastaV4HayaLeaveActionHandler extends
 		}
 
 		genericDao.save(Subasta.class, sub);
-		bpmIntegracionService.enviarCabecera(sub);
+		bpmIntegracionService.enviarDatos(sub);
 	}
 
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {

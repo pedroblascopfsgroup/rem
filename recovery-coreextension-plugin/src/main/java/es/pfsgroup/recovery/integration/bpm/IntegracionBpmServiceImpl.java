@@ -3,12 +3,15 @@ package es.pfsgroup.recovery.integration.bpm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
+import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 @Service
 public class IntegracionBpmServiceImpl implements IntegracionBpmService {
@@ -18,6 +21,15 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 
 	//private SyncFramework syncFramework;
 
+	@Override
+	public void notificaTarea(TareaNotificacion tareaNotificacion) {
+    	if (notificacionGateway==null) {
+			return;
+		}
+    	notificacionGateway.inicioTarea(tareaNotificacion, TIPO_TAREA_NOTIFICACION);
+	}
+
+	
     public void notificaInicioTarea(TareaExterna tareaExterna) {
     	if (notificacionGateway==null) {
 			return;
@@ -93,47 +105,55 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (notificacionGateway==null) {
 			return;
 		}
-    	notificacionGateway.enviar(recurso, TIPO_CAB_RECURSO);
+    	notificacionGateway.enviar(recurso, TIPO_DATOS_RECURSO);
     }
-	
-	@Override
-	public void enviarPropuesta(Acuerdo acuerdo) {
-		enviar(acuerdo, TIPO_CAB_ACUERDO_PROPUESTA);
-	}
 
 	@Override
-	public void enviarRechazo(Acuerdo acuerdo) {
-		enviar(acuerdo, TIPO_CAB_ACUERDO_RECHAZAR);
-	}
-
-	@Override
-	public void enviarCierre(Acuerdo acuerdo) {
-		enviar(acuerdo, TIPO_CAB_ACUERDO_CIERRE);
-	}
-
-	@Override
-	public void enviarAceptar(Acuerdo acuerdo) {
-		enviar(acuerdo, TIPO_CAB_ACUERDO_ACEPTAR);
-	}
-
-	@Override
-	public void enviarFinalizar(Acuerdo acuerdo) {
-		enviar(acuerdo, TIPO_CAB_ACUERDO_FINALIZAR);
-	}
-	
-	private void enviar(Acuerdo acuerdo, String tipo) {
+	public void enviarDatos(Subasta subasta) {
     	if (notificacionGateway==null) {
 			return;
 		}
-    	notificacionGateway.enviar(acuerdo, tipo);
+    	notificacionGateway.enviar(subasta, TIPO_DATOS_SUBASTA);
 	}
-
+	
 	@Override
-	public void enviarCabecera(Subasta subasta) {
+	public void enviarDatos(Acuerdo acuerdo) {
     	if (notificacionGateway==null) {
 			return;
 		}
-    	notificacionGateway.enviar(subasta, TIPO_CAB_SUBASTA);
+    	notificacionGateway.enviar(acuerdo, TIPO_DATOS_ACUERDO);
+	}
+
+	@Override
+	public void notificaCambioEstado(Acuerdo acuerdo) {
+    	if (notificacionGateway==null) {
+			return;
+		}
+    	notificacionGateway.enviar(acuerdo, String.format("%s-%s", TIPO_DATOS_ACUERDO, acuerdo.getEstadoAcuerdo().getCodigo()));
 	}
 	
+	@Override
+	public void enviarDatos(ActuacionesRealizadasAcuerdo actuacionRealizada) {
+    	if (notificacionGateway==null) {
+			return;
+		}
+    	notificacionGateway.enviar(actuacionRealizada, TIPO_DATOS_ACUERDO_ACT_REALIZAR);
+	}
+
+	@Override
+	public void enviarDatos(ActuacionesAExplorarAcuerdo actuacionAExplorar) {
+    	if (notificacionGateway==null) {
+			return;
+		}
+    	notificacionGateway.enviar(actuacionAExplorar, TIPO_DATOS_ACUERDO_ACT_A_EXP);
+	}
+
+	@Override
+	public void enviarDatos(TerminoAcuerdo terminoAcuerdo) {
+    	if (notificacionGateway==null) {
+			return;
+		}
+    	notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO);
+	}
+
 }

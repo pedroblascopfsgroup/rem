@@ -10,6 +10,10 @@ import org.springframework.integration.message.MessageBuilder;
 
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.acuerdo.AcuerdoManager;
+import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
+import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -33,7 +37,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.MEJRecursoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
@@ -48,6 +51,9 @@ public class EntityToPayloadTransformer {
 
 	@Autowired
 	private EXTTareaNotificacionManager extTareaNotificacionManager;
+
+	@Autowired
+	private AcuerdoManager acuerdoManager;
 	
 	@Autowired
 	private MEJAcuerdoManager mejAcuerdoManager;
@@ -136,6 +142,25 @@ public class EntityToPayloadTransformer {
 			}
 		}
 	}
+
+	public Message<DataContainerPayload> transformTAR(Message<TareaNotificacion> message) {
+		TareaNotificacion tar = message.getPayload();
+
+		// Persistencia de IDs de sincronización
+		setup4sync(tar);
+		
+		// Carga los valores
+		DataContainerPayload data = getNewPayload(message);
+		TareaNotificacionPayload tareaPayload = new TareaNotificacionPayload(data, tar);
+ 
+		//translateValues(message);
+		Message<DataContainerPayload> newMessage = MessageBuilder
+				.withPayload(data)
+				.copyHeaders(message.getHeaders())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, tareaPayload.getAsunto().getGuid())
+				.build();
+		return newMessage;
+	}	
 	
 	public Message<DataContainerPayload> transformTEX(Message<TareaExterna> message) {
 		TareaExterna tex = message.getPayload();
@@ -215,170 +240,6 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}
 	
-	/*		
-	
-	private RecursoPayload loadFromRecurso(Message<MEJRecurso> message) {
-		String msgType = (String)message.getHeaders().get(TypePayload.HEADER_MSG_TYPE);
-		MEJRecurso recurso = message.getPayload();
-
-		MEJProcedimiento mejPrc = (MEJProcedimiento)recurso.getProcedimiento(); 
-
-		
-		AsuntoPayload payload = new AsuntoPayload(msgType, extAsunto);
-		payload.build(mejPrc, null);
-
-
-		
-		
-		
-		
-		
-		
-		payload.addSourceId("rec", recurso.getId());
-		payload.addGuid("rec", recurso.getGuid());
-		
-		// Información de usuario registrado:
-		if (SecurityUtils.getCurrentUser() != null) {
-			boolean esGestor = proxyFactory.proxy(AsuntoApi.class).esGestor(mejPrc.getAsunto().getId()); 
-			boolean esSupervisor = proxyFactory.proxy(AsuntoApi.class).esSupervisor(mejPrc.getAsunto().getId()); 
-			payload.addFlag("esGestor", esGestor);
-			payload.addFlag("esSupervisor", esSupervisor);
-		}
-		
-		if (recurso.getActor()!=null) {
-			payload.addCodigo("actor", recurso.getActor().getCodigo());
-		}
-		if (recurso.getTipoRecurso()!=null) {
-			payload.addCodigo("tipoRecurso", recurso.getTipoRecurso().getCodigo());
-		}
-		if (recurso.getCausaRecurso()!=null) {
-			payload.addCodigo("causaRecurso", recurso.getCausaRecurso().getCodigo());
-		}
-		if (recurso.getResultadoResolucion()!=null) {
-			payload.addCodigo("resultadoResolucion", recurso.getResultadoResolucion().getCodigo());
-		}
-		if (recurso.getTareaNotificacion()!=null) {
-			EXTTareaNotificacion tarNotif = (EXTTareaNotificacion)recurso.getTareaNotificacion();
-			payload.addGuid(AsuntoPayload.KEY_TAR_TAREA, tarNotif.getGuid());
-		}
-
-		payload.addFecha("fechaRecurso", recurso.getFechaRecurso());
-		payload.addFecha("fechaImpugnacion", recurso.getFechaImpugnacion());
-		payload.addFecha("fechaVista", recurso.getFechaVista());
-		payload.addFecha("fechaResolucion", recurso.getFechaResolucion());
-		payload.addExtraInfo("observaciones", recurso.getObservaciones());
-		
-		payload.addFlag("confirmarImpugnacion", recurso.getConfirmarImpugnacion());
-		payload.addFlag("confirmarVista", recurso.getConfirmarVista());
-		payload.addFlag("suspensivo", recurso.getSuspensivo());
-
-		return payload;
-	}
-*/			
-	
-	
-/*	
-	public Message<AsuntoPayload> transformACU(Message<EXTAcuerdo> message) {
-		EXTAcuerdo acuerdo = message.getPayload();
-		EXTAsunto asunto = setup4sync(acuerdo.getAsunto());
-
-		AsuntoPayload newPayload = getNewPayload(message, asunto);
-		EXTAcuerdo extAcuerdo = mejAcuerdoManager.prepareGuid(acuerdo);
-		
-		Message<AsuntoPayload> newMessage = MessageBuilder
-				.withPayload(newPayload)
-				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, asunto.getGuid())
-				.build();
-		
-		newPayload.addGuid("acu", extAcuerdo.getGuid());
-		newPayload.addSourceId("acu", extAcuerdo.getId());
-		
-		if (extAcuerdo.getTipoAcuerdo()!=null) {
-			newPayload.addCodigo("tipoAcuerdo", extAcuerdo.getTipoAcuerdo().getCodigo());
-		}
-		if (extAcuerdo.getSolicitante()!=null) {
-		newPayload.addCodigo("solicitante", extAcuerdo.getSolicitante().getCodigo());
-		}
-		if (extAcuerdo.getEstadoAcuerdo()!=null) {
-		newPayload.addCodigo("estadoAcuerdo", extAcuerdo.getEstadoAcuerdo().getCodigo());
-		}
-		if (extAcuerdo.getTipoPagoAcuerdo()!=null) {
-		newPayload.addCodigo("tipoPagoAcuerdo", extAcuerdo.getTipoPagoAcuerdo().getCodigo());
-		}
-		if (extAcuerdo.getPeriodicidadAcuerdo()!=null) {
-			newPayload.addCodigo("periodicidadAcuerdo", extAcuerdo.getPeriodicidadAcuerdo().getCodigo());
-		}
-		if (extAcuerdo.getSubTipoPalanca()!=null) {
-			newPayload.addCodigo("subTipoPalanca", extAcuerdo.getSubTipoPalanca().getCodigo());
-		}
-		if (extAcuerdo.getTipoPalanca()!=null) {
-			newPayload.addCodigo("tipoPalanca", extAcuerdo.getTipoPalanca().getCodigo());
-		}
-		//if (extAcuerdo.getDespacho()!=null) {
-		//	newPayload.addCodigo("despacho", extAcuerdo.getDespacho().getCodigo());
-		//}
-		
-		newPayload.addExtraInfo("observaciones", extAcuerdo.getObservaciones());
-		newPayload.addExtraInfo("motivo", extAcuerdo.getMotivo());
-
-		newPayload.addFecha("fechaPropuesta", extAcuerdo.getFechaPropuesta());
-		newPayload.addFecha("fechaEstado", extAcuerdo.getFechaEstado());
-		newPayload.addFecha("fechaCierre", extAcuerdo.getFechaCierre());
-		newPayload.addFecha("fechaResolucionPropuesta", extAcuerdo.getFechaResolucionPropuesta());
-		newPayload.addFecha("fechaLimite", extAcuerdo.getFechaLimite());
-
-		newPayload.addNumber("importePago", extAcuerdo.getImportePago());
-		newPayload.addNumber("periodo", extAcuerdo.getPeriodo());
-		newPayload.addNumber("porcentajeQuita", extAcuerdo.getPorcentajeQuita());
-		
-		return newMessage;
-	}
-*/
-	
-	public Message<DataContainerPayload> transformACU(Message<EXTAcuerdo> message) {
-		EXTAcuerdo acuerdo = message.getPayload();
-		mejAcuerdoManager.prepareGuid(acuerdo);
-		
-		List<TerminoAcuerdo> listadoTerminos = mejAcuerdoManager.getTerminosAcuerdo(acuerdo.getId());
-			
-		String accion = message.getHeaders().containsKey(AcuerdoPayload.HEADER_ACCION) 
-				? (String)message.getHeaders().get(AcuerdoPayload.HEADER_ACCION)
-				: null;
-				
-		DataContainerPayload data = getNewPayload(message);
-		AcuerdoPayload acuerdoPayload = new AcuerdoPayload(data, accion, acuerdo)
-				.buildTerminoAcuerdo(listadoTerminos);
-
-		// Información de usuario registrado:
-		if (SecurityUtils.getCurrentUser() != null) {
-			Asunto asunto = acuerdo.getAsunto();
-			boolean esGestor = proxyFactory.proxy(AsuntoApi.class).esGestor(asunto.getId()); 
-			boolean esSupervisor = proxyFactory.proxy(AsuntoApi.class).esSupervisor(asunto.getId()); 
-			acuerdoPayload.setEsGestor(esGestor);
-			acuerdoPayload.setEsSupervisor(esSupervisor);
-		}
-		
-		// Completa los términos
-		List<TerminoAcuerdoPayload> terminosPayload = acuerdoPayload.getTerminosAcuerdo();
-		for (TerminoAcuerdoPayload terminoPayload : terminosPayload) {
-			Long idTermino = terminoPayload.getIdOrigen();
-			List<TerminoContrato> listadoTerminoContratos = mejAcuerdoManager.getTerminoAcuerdoContratos(idTermino);
-			List<TerminoBien> listadoTerminoBienes = mejAcuerdoManager.getTerminoAcuerdoBienes(idTermino);
-			terminoPayload
-				.buildTerminoContrato(listadoTerminoContratos)
-				.buildTerminoBien(listadoTerminoBienes);
-		}
-		
-		Message<DataContainerPayload> newMessage = MessageBuilder
-				.withPayload(data)
-				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAsunto().getGuid())
-				.build();
-		
-		return newMessage;
-	}
-
 	public Message<DataContainerPayload> transformSUB(Message<Subasta> message) {
 		
 		Subasta subasta = message.getPayload();
@@ -397,6 +258,98 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}
 	
+	public Message<DataContainerPayload> transformACU(Message<Acuerdo> message) {
+		Acuerdo acuerdo = message.getPayload();
+		mejAcuerdoManager.prepareGuid(acuerdo);
+		
+		List<TerminoAcuerdo> listadoTerminos = mejAcuerdoManager.getTerminosAcuerdo(acuerdo.getId());
+		for (TerminoAcuerdo terminoAcuerdo : listadoTerminos) {
+			mejAcuerdoManager.prepareGuid(terminoAcuerdo);
+		}
+			
+		DataContainerPayload data = getNewPayload(message);
+		AcuerdoPayload acuerdoPayload = new AcuerdoPayload(data, acuerdo);
+
+		// Información de usuario registrado:
+		if (SecurityUtils.getCurrentUser() != null) {
+			Asunto asunto = acuerdo.getAsunto();
+			boolean esGestor = proxyFactory.proxy(AsuntoApi.class).esGestor(asunto.getId()); 
+			boolean esSupervisor = proxyFactory.proxy(AsuntoApi.class).esSupervisor(asunto.getId()); 
+			acuerdoPayload.setEsGestor(esGestor);
+			acuerdoPayload.setEsSupervisor(esSupervisor);
+		}
+		
+		Message<DataContainerPayload> newMessage = MessageBuilder
+				.withPayload(data)
+				.copyHeaders(message.getHeaders())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAsunto().getGuid())
+				.build();
+		
+		return newMessage;
+	}
+
+	public Message<DataContainerPayload> transformActuacionesRealizadas(Message<ActuacionesRealizadasAcuerdo> message) {
+		ActuacionesRealizadasAcuerdo actRealizada = message.getPayload();
+		acuerdoManager.prepareGuid(actRealizada);
+		
+		DataContainerPayload data = getNewPayload(message);
+		ActuacionesRealizadasPayload acuerdoPayload = new ActuacionesRealizadasPayload(data, actRealizada);
+
+		Message<DataContainerPayload> newMessage = MessageBuilder
+				.withPayload(data)
+				.copyHeaders(message.getHeaders())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAcuerdo().getAsunto().getGuid())
+				.build();
+		
+		return newMessage;
+	}
+	
+	public Message<DataContainerPayload> transformActuacionesAExplorar(Message<ActuacionesAExplorarAcuerdo> message) {
+		ActuacionesAExplorarAcuerdo actAExplorar = message.getPayload();
+		acuerdoManager.prepareGuid(actAExplorar);
+		
+		DataContainerPayload data = getNewPayload(message);
+		ActuacionesAExplorarPayload acuerdoPayload = new ActuacionesAExplorarPayload(data, actAExplorar);
+
+		Message<DataContainerPayload> newMessage = MessageBuilder
+				.withPayload(data)
+				.copyHeaders(message.getHeaders())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAcuerdo().getAsunto().getGuid())
+				.build();
+		
+		return newMessage;
+	}
+	
+	public Message<DataContainerPayload> transformAcuerdoTermino(Message<TerminoAcuerdo> message) {
+		TerminoAcuerdo termino = message.getPayload();
+		mejAcuerdoManager.prepareGuid(termino);
+		
+		DataContainerPayload data = getNewPayload(message);
+		TerminoAcuerdoPayload payload = new TerminoAcuerdoPayload(data, termino);
+
+		Long idTermino = termino.getId();
+		List<TerminoContrato> listadoTerminoContratos = mejAcuerdoManager.getTerminoAcuerdoContratos(idTermino);
+		List<TerminoBien> listadoTerminoBienes = mejAcuerdoManager.getTerminoAcuerdoBienes(idTermino);
+		
+		for (TerminoContrato tc : listadoTerminoContratos) {
+			mejAcuerdoManager.prepareGuid(tc);
+		}
+		for (TerminoBien tb : listadoTerminoBienes) {
+			mejAcuerdoManager.prepareGuid(tb);
+		}
+		
+		payload
+			.buildTerminoContrato(listadoTerminoContratos)
+			.buildTerminoBien(listadoTerminoBienes);
+		
+		Message<DataContainerPayload> newMessage = MessageBuilder
+				.withPayload(data)
+				.copyHeaders(message.getHeaders())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, payload.getAcuerdo().getAsunto().getGuid())
+				.build();
+		
+		return newMessage;
+	}
 	
 	
 }

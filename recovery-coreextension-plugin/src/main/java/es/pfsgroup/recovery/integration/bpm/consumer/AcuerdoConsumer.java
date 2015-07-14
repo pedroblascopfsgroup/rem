@@ -11,18 +11,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.capgemini.devon.bo.BusinessOperationException;
-import es.capgemini.pfs.actitudAptitudActuacion.model.DDTipoAyudaActuacion;
 import es.capgemini.pfs.acuerdo.AcuerdoManager;
 import es.capgemini.pfs.acuerdo.EXTAcuerdoManager;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DtoActuacionesAExplorar;
+import es.capgemini.pfs.acuerdo.dto.DtoActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DtoAnalisisAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
-import es.capgemini.pfs.acuerdo.model.AnalisisAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDResultadoAcuerdoActuacion;
 import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
@@ -32,11 +30,10 @@ import es.capgemini.pfs.acuerdo.model.DDTipoAyudaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.bien.model.Bien;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.tareaNotificacion.TareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
@@ -44,10 +41,11 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -55,14 +53,13 @@ import es.pfsgroup.recovery.ext.impl.bienes.EXTBienesManager;
 import es.pfsgroup.recovery.ext.impl.contrato.EXTContratoManager;
 import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
+import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.ActuacionesAExplorarPayload;
 import es.pfsgroup.recovery.integration.bpm.ActuacionesRealizadasPayload;
 import es.pfsgroup.recovery.integration.bpm.AcuerdoPayload;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.pfsgroup.recovery.integration.bpm.TerminoAcuerdoBienPayload;
-import es.pfsgroup.recovery.integration.bpm.TerminoAcuerdoContratoPayload;
 import es.pfsgroup.recovery.integration.bpm.TerminoAcuerdoPayload;
 
 /**
@@ -142,248 +139,162 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 
 	
 	// Guarda las actuaciones...
-	private void mergeActuacionesRealizadas(List<ActuacionesRealizadasPayload> actuaciones, Acuerdo acuerdo) {
-		String valor;
-		List<ActuacionesRealizadasAcuerdo> finales = new ArrayList<ActuacionesRealizadasAcuerdo>();
-		
-		// Almacena IDs
-		Map<String, ActuacionesRealizadasAcuerdo> guidActuales = new HashMap<String, ActuacionesRealizadasAcuerdo>();
-		if (acuerdo.getActuacionesRealizadas()!=null) {
-			for (ActuacionesRealizadasAcuerdo actuacion : acuerdo.getActuacionesRealizadas()) {
-				guidActuales.put(actuacion.getGuid(), actuacion);
+	private void mergeActuacionesRealizadas(ActuacionesRealizadasPayload actuacionPayload) {
+		String guid = actuacionPayload.getGuid();
+		ActuacionesRealizadasAcuerdo actuacion = mejAcuerdoManager.getActuacionesRealizadasAcuerdoByGuid(guid);
+		DtoActuacionesRealizadasAcuerdo dto = new DtoActuacionesRealizadasAcuerdo();
+		if (actuacion==null) {
+			String acuerdoGuid = getAcuerdoGuid(actuacionPayload.getAcuerdo());
+			EXTAcuerdo acuerdo = mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
+			if (acuerdo==null) {
+				throw new IntegrationDataException(String.format("[INTEGRACION] Acuerdo con guid %s no existe, no se puede crear la actuación a explorar", acuerdoGuid));
 			}
-		}
-
-		if (actuaciones!=null) {
-			for (ActuacionesRealizadasPayload actuacionPayload : actuaciones) {
-				String guid = actuacionPayload.getGuid();
-				ActuacionesRealizadasAcuerdo actuacion;
-				if (guidActuales.containsKey(guid)) {
-					actuacion = guidActuales.get(guid);
-					guidActuales.remove(guid);
-				} else {
-					actuacion = new ActuacionesRealizadasAcuerdo();
-					actuacion.setAcuerdo(acuerdo);
-					actuacion.setGuid(guid);
-				}
-				valor = actuacionPayload.getResultado();
-				if (!Checks.esNulo(valor)) {
-					DDResultadoAcuerdoActuacion resultado = (DDResultadoAcuerdoActuacion)diccionarioApi.dameValorDiccionarioByCod(DDResultadoAcuerdoActuacion.class, valor);
-					actuacion.setDdResultadoAcuerdoActuacion(resultado);
-				}
-				valor = actuacionPayload.getTipo();
-				if (!Checks.esNulo(valor)) {
-					DDTipoActuacionAcuerdo ddTipoActuacionAcuerdo = (DDTipoActuacionAcuerdo)diccionarioApi.dameValorDiccionarioByCod(DDTipoActuacionAcuerdo.class, valor);
-					actuacion.setDdTipoActuacionAcuerdo(ddTipoActuacionAcuerdo);
-				}
-				valor = actuacionPayload.getTipoAyudas();
-				if (!Checks.esNulo(valor)) {
-					DDTipoAyudaAcuerdo tipoAyudaActuacion = (DDTipoAyudaAcuerdo)diccionarioApi.dameValorDiccionarioByCod(DDTipoAyudaAcuerdo.class, valor);
-					actuacion.setTipoAyudaActuacion(tipoAyudaActuacion);
-				}
-				actuacion.setFechaActuacion(actuacionPayload.getFecha());
-				actuacion.setObservaciones(actuacionPayload.getObservaciones());
-				if (actuacion.getAuditoria()!=null) {
-					actuacion.getAuditoria().setBorrado(actuacionPayload.isBorrado());
-				}
-				finales.add(actuacion);
-			}
+			dto.setIdAcuerdo(acuerdo.getId());
+			actuacion = new ActuacionesRealizadasAcuerdo();
+			actuacion.setAcuerdo(acuerdo);
+			actuacion.setGuid(guid);
+		} else {
+			dto.setIdAcuerdo(actuacion.getAcuerdo().getId());
 		}
 		
-		// Marcar como borradas el resto????
-		
-		acuerdo.setActuacionesRealizadas(finales);
+		dto.setActuaciones(actuacion);
+		String valor = actuacionPayload.getResultado();
+		if (!Checks.esNulo(valor)) {
+			DDResultadoAcuerdoActuacion resultado = (DDResultadoAcuerdoActuacion)diccionarioApi.dameValorDiccionarioByCod(DDResultadoAcuerdoActuacion.class, valor);
+			actuacion.setDdResultadoAcuerdoActuacion(resultado);
+		}
+		valor = actuacionPayload.getTipo();
+		if (!Checks.esNulo(valor)) {
+			DDTipoActuacionAcuerdo ddTipoActuacionAcuerdo = (DDTipoActuacionAcuerdo)diccionarioApi.dameValorDiccionarioByCod(DDTipoActuacionAcuerdo.class, valor);
+			actuacion.setDdTipoActuacionAcuerdo(ddTipoActuacionAcuerdo);
+		}
+		valor = actuacionPayload.getTipoAyudas();
+		if (!Checks.esNulo(valor)) {
+			DDTipoAyudaAcuerdo tipoAyudaActuacion = (DDTipoAyudaAcuerdo)diccionarioApi.dameValorDiccionarioByCod(DDTipoAyudaAcuerdo.class, valor);
+			actuacion.setTipoAyudaActuacion(tipoAyudaActuacion);
+		}
+		actuacion.setFechaActuacion(actuacionPayload.getFecha());
+		actuacion.setObservaciones(actuacionPayload.getObservaciones());
+		if (actuacion.getAuditoria()!=null) {
+			actuacion.getAuditoria().setBorrado(actuacionPayload.isBorrado());
+		}
+		extAcuerdoManager.saveActuacionesRealizadasAcuerdo(dto);
 	}
 	
-	private void mergeActuacionesAExplorar(List<ActuacionesAExplorarPayload> actuaciones, Acuerdo acuerdo) {
-		String valor;
-		List<ActuacionesAExplorarAcuerdo> finales = new ArrayList<ActuacionesAExplorarAcuerdo>();
+	private void mergeActuacionesAExplorar(ActuacionesAExplorarPayload actuacionPayload) {
+		String guid = actuacionPayload.getGuid();
+		ActuacionesAExplorarAcuerdo actuacion = mejAcuerdoManager.getActuacionesAExplorarAcuerdoByGuid(guid);
 		
-		// Almacena IDs
-		Map<String, ActuacionesAExplorarAcuerdo> guidActuales = new HashMap<String, ActuacionesAExplorarAcuerdo>();
-		if (acuerdo.getActuacionesAExplorar()!=null) {
-			for (ActuacionesAExplorarAcuerdo actuacion : acuerdo.getActuacionesAExplorar()) {
-				guidActuales.put(actuacion.getGuid(), actuacion);
+		DtoActuacionesAExplorar dto = new DtoActuacionesAExplorar();
+		if (actuacion==null) {
+			String acuerdoGuid = getAcuerdoGuid(actuacionPayload.getAcuerdo());
+			EXTAcuerdo acuerdo = mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
+			if (acuerdo==null) {
+				throw new IntegrationDataException(String.format("[INTEGRACION] Acuerdo con guid %s no existe, no se puede crear la actuación a explorar", acuerdoGuid));
 			}
+			actuacion = new ActuacionesAExplorarAcuerdo();
+			dto.setIdAcuerdo(acuerdo.getId());
+			dto.setGuid(guid);
+		} else {
+			dto.setIdActuacion(actuacion.getId());
 		}
-
-		if (actuaciones!=null) {
-			for (ActuacionesAExplorarPayload actuacionPayload : actuaciones) {
-				String guid = actuacionPayload.getGuid();
-				ActuacionesAExplorarAcuerdo actuacion;
-				if (guidActuales.containsKey(guid)) {
-					actuacion = guidActuales.get(guid);
-					guidActuales.remove(guid);
-				} else {
-					actuacion = new ActuacionesAExplorarAcuerdo();
-					actuacion.setAcuerdo(acuerdo);
-					actuacion.setGuid(guid);
-				}
-				valor = actuacionPayload.getSubtipoSolucionAmistosa();
-				if (!Checks.esNulo(valor)) {
-					DDSubtipoSolucionAmistosaAcuerdo subtipo = (DDSubtipoSolucionAmistosaAcuerdo)diccionarioApi.dameValorDiccionarioByCod(DDSubtipoSolucionAmistosaAcuerdo.class, valor);
-					actuacion.setDdSubtipoSolucionAmistosaAcuerdo(subtipo);
-				}
-				valor = actuacionPayload.getValoracionActuacionAmistosa();
-				if (!Checks.esNulo(valor)) {
-					DDValoracionActuacionAmistosa valoracion = (DDValoracionActuacionAmistosa)diccionarioApi.dameValorDiccionarioByCod(DDValoracionActuacionAmistosa.class, valor);
-					actuacion.setDdValoracionActuacionAmistosa(valoracion);
-				}
-				actuacion.setObservaciones(actuacionPayload.getObservaciones());
-				finales.add(actuacion);
-			}
-		}
+		dto.setDdSubtipoSolucionAmistosaAcuerdo(actuacionPayload.getSubtipoSolucionAmistosa());
+		dto.setDdValoracionActuacionAmistosa(actuacionPayload.getValoracionActuacionAmistosa());
+		dto.setObservaciones(actuacionPayload.getObservaciones());
 		
-		// Marcar como borradas el resto????
-				
-		acuerdo.setActuacionesAExplorar(finales);
+		extAcuerdoManager.saveActuacionAExplorarAcuerdo(dto);
 	}
 
 	// Merge términos...
-	private void mergeTerminosAcuerdo(List<TerminoAcuerdoPayload> terminos, Acuerdo acuerdo) {
+	private void actualizaTerminosAcuerdo(TerminoAcuerdoPayload terminoPayload) {
 		String valor;
-		Map<String, TerminoAcuerdo> guidActuales = new HashMap<String, TerminoAcuerdo>();
-		
-		// Almacena IDs
-		if (acuerdo!=null && acuerdo.getId()!=null) {
-			List<TerminoAcuerdo> actuales = mejAcuerdoManager.getTerminosAcuerdo(acuerdo.getId());
-			for (TerminoAcuerdo termino : actuales) {
-				guidActuales.put(termino.getGuid(), termino);
+		String guid = terminoPayload.getGuid();
+		TerminoAcuerdo termino = mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
+		if (termino==null) {
+			String acuerdoGuid = getAcuerdoGuid(terminoPayload.getAcuerdo());
+			EXTAcuerdo acuerdo = mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
+			if (acuerdo==null) {
+				throw new IntegrationDataException(String.format("[INTEGRACION] Acuerdo con guid %s no existe, no se puede crear el término", acuerdoGuid));
 			}
+			termino = new TerminoAcuerdo();
+			termino.setAcuerdo(acuerdo);
+			termino.setGuid(guid);
 		}
+		
+		if (terminoPayload.isBorrado()) {
+			// Elimina los bienes
+			List<TerminoBien> tbList = mejAcuerdoManager.getTerminoAcuerdoBienes(termino.getId());
+			for (TerminoBien tb : tbList){
+				proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoBien(tb);
+			}		
+			// Elimina los contratos
+			List<TerminoContrato> tcList = mejAcuerdoManager.getTerminoAcuerdoContratos(termino.getId());
+			for (TerminoContrato tc : tcList){
+				proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoContrato(tc);
+			}		
+			// Elimina el término
+			mejAcuerdoManager.deleteTerminoAcuerdo(termino);
+			return;
+		}
+		
+		termino.setComisiones(terminoPayload.getComisiones());
+		termino.setFormalizacion(terminoPayload.getCampoFormalizacion());
+		termino.setImporte(terminoPayload.getImporte());
+		termino.setInformeLetrado(terminoPayload.getInformeLetrado());
+		termino.setInteres(terminoPayload.getInteres());
+		termino.setModoDesembolso(terminoPayload.getModoDesembolso());
+		termino.setPeriodicidad(terminoPayload.getPeriodicidad());
+		termino.setPeriodoFijo(terminoPayload.getPerioFijo());
+		termino.setPeriodoVariable(terminoPayload.getPeridoVariable());
+		termino.setSistemaAmortizacion(terminoPayload.getSistemaAmortizacion());
 
-		for (TerminoAcuerdoPayload terminoPayload : terminos) {
-			String guid = terminoPayload.getGuid();
-			TerminoAcuerdo termino;
-			if (guidActuales.containsKey(guid)) {
-				termino = guidActuales.get(guid);
-				guidActuales.remove(guid);
-			} else {
-				termino = mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
-				if (termino==null) {
-					termino = new TerminoAcuerdo();
-					termino.setAcuerdo(acuerdo);
-					termino.setGuid(guid);
-				} 
-			}
-			if (terminoPayload.isBorrado()) {
-				mejAcuerdoManager.deleteTerminoAcuerdo(termino);
-				continue;
-			}
-			
-			termino.setComisiones(terminoPayload.getComisiones());
-			termino.setFormalizacion(terminoPayload.getCampoFormalizacion());
-			termino.setImporte(terminoPayload.getImporte());
-			termino.setInformeLetrado(terminoPayload.getInformeLetrado());
-			termino.setInteres(terminoPayload.getInteres());
-			termino.setModoDesembolso(terminoPayload.getModoDesembolso());
-			termino.setPeriodicidad(terminoPayload.getPeriodicidad());
-			termino.setPeriodoFijo(terminoPayload.getPerioFijo());
-			termino.setPeriodoVariable(terminoPayload.getPeridoVariable());
-			termino.setSistemaAmortizacion(terminoPayload.getSistemaAmortizacion());
+		if (termino.getAuditoria()!=null) {
+			termino.getAuditoria().setBorrado(terminoPayload.isBorrado());
+		}
+		
+		valor = terminoPayload.getTipoAcuerdo();
+		if (!Checks.esNulo(valor)){
+			DDTipoAcuerdo tipoAcuerdo = (DDTipoAcuerdo)diccionarioApi.dameValorDiccionarioByCod(DDTipoAcuerdo.class, valor);
+			termino.setTipoAcuerdo(tipoAcuerdo);
+		}
+		valor = terminoPayload.getTipoProducto();
+		if (!Checks.esNulo(valor)){
+			DDTipoProducto tipoProducto = (DDTipoProducto)diccionarioApi.dameValorDiccionarioByCod(DDTipoProducto.class, valor);
+			termino.setTipoProducto(tipoProducto);
+		}
+		
+		mejAcuerdoManager.saveTerminoAcuerdo(termino);
+		
+		mergeTerminosContrato(terminoPayload.getContratosRelacionados(), termino);
+		mergeTerminosBien(terminoPayload.getBienesRelacionados(), termino);
+	}
 
-			if (termino.getAuditoria()!=null) {
-				termino.getAuditoria().setBorrado(terminoPayload.isBorrado());
-			}
-			
-			valor = terminoPayload.getTipoAcuerdo();
-			if (!Checks.esNulo(valor)){
-				DDTipoAcuerdo tipoAcuerdo = (DDTipoAcuerdo)diccionarioApi.dameValorDiccionarioByCod(DDTipoAcuerdo.class, valor);
-				termino.setTipoAcuerdo(tipoAcuerdo);
-			}
-			valor = terminoPayload.getTipoProducto();
-			if (!Checks.esNulo(valor)){
-				DDTipoProducto tipoProducto = (DDTipoProducto)diccionarioApi.dameValorDiccionarioByCod(DDTipoProducto.class, valor);
-				termino.setTipoProducto(tipoProducto);
-			}
-			
-			mejAcuerdoManager.saveTerminoAcuerdo(termino);
-			
-			mergeTerminosContrato(terminoPayload.getTerminoContratos(), termino);
-			mergeTerminosBien(terminoPayload.getTerminoBienes(), termino);
+	private void mergeTerminosContrato(List<String> cntGuids, TerminoAcuerdo termAcuerdo) {
+		if (cntGuids==null) {
+			return;
+		}
+		// El resto
+		for (String guid : cntGuids) {
+			Contrato cnt = extContratoManager.getContraoByNroContrato(guid);
+			TerminoContrato tc = new TerminoContrato();
+			tc.setContrato(cnt);
+			tc.setTermino(termAcuerdo);
+			proxyFactory.proxy(MEJAcuerdoApi.class).saveTerminoContrato(tc);
 		}
 	}
 	
 	
-	private void mergeTerminosContrato(List<TerminoAcuerdoContratoPayload> listadoTerminosContrato, TerminoAcuerdo termino) {
-		Map<String, TerminoContrato> guidActuales = new HashMap<String, TerminoContrato>();
-		
-		// Almacena IDs
-		if (termino!=null && termino.getId()!=null) {
-			List<TerminoContrato> actuales = mejAcuerdoManager.getTerminoAcuerdoContratos(termino.getId());
-			for (TerminoContrato terminoContrato : actuales) {
-				guidActuales.put(terminoContrato.getGuid(), terminoContrato);
-			}
+	private void mergeTerminosBien(List<String> bieGuids, TerminoAcuerdo termAcuerdo) {
+		if (bieGuids==null) {
+			return;
 		}
-
-		for (TerminoAcuerdoContratoPayload terminoPayload : listadoTerminosContrato) {
-			String guid = terminoPayload.getGuid();
-			TerminoContrato terminoContrato;
-			if (guidActuales.containsKey(guid)) {
-				terminoContrato = guidActuales.get(guid);
-				guidActuales.remove(guid);
-			} else {
-				terminoContrato = mejAcuerdoManager.getTerminoAcuerdoContratoByGuid(guid);
-				if (terminoContrato==null) {
-					terminoContrato = new TerminoContrato();
-					terminoContrato.setTermino(termino);
-					terminoContrato.setGuid(guid);
-				} 
-			}
-			if (terminoPayload.isBorrado()) {
-				mejAcuerdoManager.deleteTerminoContrato(terminoContrato);
-				continue;
-			}
-			
-			Contrato contrato = extContratoManager.getContraoByNroContrato(terminoPayload.getContratoGuid());
-			terminoContrato.setContrato(contrato);
-			
-			if (terminoContrato.getAuditoria()!=null) {
-				terminoContrato.getAuditoria().setBorrado(terminoPayload.isBorrado());
-			}
-			
-			mejAcuerdoManager.saveTerminoContrato(terminoContrato);
-		}
-	}
-
-	
-	private void mergeTerminosBien(List<TerminoAcuerdoBienPayload> listadoTerminosBien, TerminoAcuerdo termino) {
-		Map<String, TerminoBien> guidActuales = new HashMap<String, TerminoBien>();
-		
-		// Almacena IDs
-		if (termino!=null && termino.getId()!=null) {
-			List<TerminoBien> actuales = mejAcuerdoManager.getTerminoAcuerdoBienes(termino.getId());
-			for (TerminoBien terminoBien : actuales) {
-				guidActuales.put(terminoBien.getGuid(), terminoBien);
-			}
-		}
-
-		for (TerminoAcuerdoBienPayload terminoPayload : listadoTerminosBien) {
-			String guid = terminoPayload.getGuid();
-			TerminoBien terminoBien;
-			if (guidActuales.containsKey(guid)) {
-				terminoBien = guidActuales.get(guid);
-				guidActuales.remove(guid);
-			} else {
-				terminoBien = mejAcuerdoManager.getTerminoAcuerdoBienByGuid(guid);
-				if (terminoBien == null) {
-					terminoBien = new TerminoBien();
-					terminoBien.setTermino(termino);
-					terminoBien.setGuid(guid);
-				} 
-			}
-			if (terminoPayload.isBorrado()) {
-				mejAcuerdoManager.deleteTerminoBien(terminoBien);
-				continue;
-			}
-			
-			Bien bien = extBienesManager.getBienByCodigoInterno(terminoPayload.getBienGuid());
-			terminoBien.setBien(bien);
-			
-			if (terminoBien.getAuditoria()!=null) {
-				terminoBien.getAuditoria().setBorrado(terminoPayload.isBorrado());
-			}
-			mejAcuerdoManager.saveTerminoBien(terminoBien);
+		// El resto
+		for (String guid : bieGuids) {
+			Bien bien = extBienesManager.getBienByCodigoInterno(guid);
+			TerminoBien tb = new TerminoBien();
+			tb.setBien(bien);
+			tb.setTermino(termAcuerdo);
+			proxyFactory.proxy(MEJAcuerdoApi.class).saveTerminoBien(tb);
 		}
 	}
 	
@@ -443,17 +354,21 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		acuerdo.setPeriodo(acuerdoPayload.getPeriodo());
 		acuerdo.setPorcentajeQuita(acuerdoPayload.getPorcentajeQuita());
 		
-		mergeActuacionesAExplorar(acuerdoPayload.getActuacionesAExplorar(), acuerdo);
-		mergeActuacionesRealizadas(acuerdoPayload.getActuacionesRealizadas(), acuerdo);
+		//mergeActuacionesAExplorar(acuerdoPayload.getActuacionesAExplorar(), acuerdo);
+		//mergeActuacionesRealizadas(acuerdoPayload.getActuacionesRealizadas(), acuerdo);
 		actualizaAnalisis(acuerdoPayload, idAcuerdo);
 		
 		acuerdoDao.saveOrUpdate(acuerdo);
 		
-		mergeTerminosAcuerdo(acuerdoPayload.getTerminosAcuerdo(), acuerdo);
+		//mergeTerminosAcuerdo(acuerdoPayload.getTerminosAcuerdo(), acuerdo);
 		
 		return acuerdo;
 	}
 	
+    @Autowired
+    private TareaNotificacionManager notificacionManager;
+	
+/*	
 	private void proponerAcuerdo(Acuerdo acuerdo) {
         Long idEntidad = acuerdo.getAsunto().getId();
         String tipoEntidad = DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO;
@@ -464,27 +379,15 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
         DtoGenerarTarea dto = new DtoGenerarTarea(idEntidad, tipoEntidad, codigoSubtipoTarea, espera, false, plazo, descripcion);
         proxyFactory.proxy(TareaNotificacionApi.class).crearTarea(dto);		
 	}
-/*
+	
 	private void aceptarAcuerdo(Acuerdo acuerdo) {
-		Acuerdo acuerdo = acuerdoDao.get(idAcuerdo);
-		// NO PUEDE HABER OTROS ACUERDOS VIGENTES.
-		if (acuerdoDao.hayAcuerdosVigentes(acuerdo.getAsunto().getId(),
-				idAcuerdo)) {
-			throw new BusinessOperationException("acuerdos.hayOtrosVigentes");
-		}
-		DDEstadoAcuerdo estadoAcuerdoVigente = (DDEstadoAcuerdo) executor
-				.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-						DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_VIGENTE);
+		
+		notificacionManager.getListByProcedimientoSubtipo(idProcedimiento, subtipoTarea)		
+    	notificacionManager.borrarNotificacionTarea(idTarea);
 
-		acuerdo.setEstadoAcuerdo(estadoAcuerdoVigente);
-		acuerdo.setFechaEstado(new Date());
+    	
 		// Cancelo las tareas del supervisor
 		cancelarTareasAcuerdoPropuesto(acuerdo);
-		// Genero tareas al gestor para el cierre del acuerdo.
-		String codigoPlazoTarea = buscaCodigoPorPeriodo(acuerdo
-				.getPeriodicidadAcuerdo());
-
-		acuerdoDao.save(acuerdo);
 		
         Long idEntidad = acuerdo.getAsunto().getId();
         String tipoEntidad = DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO;
@@ -493,19 +396,21 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
         DtoGenerarTarea dto = new DtoGenerarTarea(idEntidad, tipoEntidad, codigoSubtipoTarea, espera, false, plazo, descripcion);
         proxyFactory.proxy(TareaNotificacionApi.class).crearTarea(dto);		
 	}
-	*/
+*/
 	
 	protected void doAction(DataContainerPayload payload) {
-		AcuerdoPayload acuerdoPayload = new AcuerdoPayload(payload);
-		Acuerdo acuerdo = actualiza(acuerdoPayload);
-		
-		if (payload.getTipo().equals(IntegracionBpmService.TIPO_CAB_ACUERDO_ACEPTAR)) {
-			
-		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_CAB_ACUERDO_CIERRE)) {
-		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_CAB_ACUERDO_FINALIZAR)) {
-		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_CAB_ACUERDO_PROPUESTA)) {
-			proponerAcuerdo(acuerdo);
-		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_CAB_ACUERDO_RECHAZAR)) {
+		if (payload.getTipo().startsWith(IntegracionBpmService.TIPO_DATOS_ACUERDO)) {
+			AcuerdoPayload acuerdoPayload = new AcuerdoPayload(payload);
+			actualiza(acuerdoPayload);
+		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_ACUERDO_TERMINO)) {
+			TerminoAcuerdoPayload terminoPayload = new TerminoAcuerdoPayload(payload);
+			actualizaTerminosAcuerdo(terminoPayload);
+		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_ACUERDO_ACT_A_EXP)) {
+			ActuacionesAExplorarPayload actAExplPayload = new ActuacionesAExplorarPayload(payload);
+			mergeActuacionesAExplorar(actAExplPayload);
+		} else if (payload.getTipo().equals(IntegracionBpmService.TIPO_DATOS_ACUERDO_ACT_REALIZAR)) {
+			ActuacionesRealizadasPayload actRealizadas = new ActuacionesRealizadasPayload(payload);
+			mergeActuacionesRealizadas(actRealizadas);
 		}
 		
 

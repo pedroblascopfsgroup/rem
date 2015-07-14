@@ -122,6 +122,9 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 		acuerdo.setFechaEstado(new Date());
 		acuerdo.setMotivo(motivo);
 		acuerdoDao.save(acuerdo);
+		
+		bpmIntegracionService.notificaCambioEstado(acuerdo);
+		
 		// Cancelo las tareas del supervisor
 		cancelarTareasAcuerdoPropuesto(acuerdo);
 		cancelarTareasCerrarAcuerdo(acuerdo);
@@ -132,7 +135,6 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION, acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, SubtipoTarea.CODIGO_ACUERDO_RECHAZADO,
 				observaciones.toString());
 
-		bpmIntegracionService.enviarRechazo(acuerdo);
 	}
 
 	private void cancelarTareasCerrarAcuerdo(Acuerdo acuerdo) {
@@ -196,13 +198,15 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 
 		// Fecha limite
 		try {
-			acuerdo.setFechaLimite(sdf.parse(dto.getFechaLimite()));
+			Date fecha = (!Checks.esNulo(dto.getFechaLimite())) ? sdf.parse(dto.getFechaLimite()) : null;
+			acuerdo.setFechaLimite(fecha);
 		} catch (ParseException e) {
 			logger.error("Error parseando la fecha", e);
 		}		
 		
 		try {
-			acuerdo.setFechaCierre(sdf.parse(dto.getFechaCierre()));
+			Date fecha = (!Checks.esNulo(dto.getFechaCierre())) ? sdf.parse(dto.getFechaCierre()) : null;
+			acuerdo.setFechaCierre(fecha);
 		} catch (ParseException e) {
 			logger.error("Error parseando la fecha", e);
 		}		
@@ -261,6 +265,10 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 		}
 			
 		Long id = guardar(dto);
+
+		Acuerdo acuerdo = acuerdoDao.get(id);
+		bpmIntegracionService.enviarDatos(acuerdo);
+		
 		return id;
 	}
 	
@@ -538,28 +546,58 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 	}
 
 	@Transactional(readOnly = false)
+	public void prepareGuid(TerminoBien terminoBien) {
+		if (Checks.esNulo(terminoBien.getGuid())) {
+			terminoBien.setGuid(UUID.randomUUID().toString());
+			saveTerminoBien(terminoBien);
+		}
+	}
+	
+	@Transactional(readOnly = false)
+	public void prepareGuid(TerminoContrato terminoContrato) {
+		if (Checks.esNulo(terminoContrato.getGuid())) {
+			terminoContrato.setGuid(UUID.randomUUID().toString());
+			saveTerminoContrato(terminoContrato);
+		}
+	}
+	
+	@Transactional(readOnly = false)
+	public void prepareGuid(TerminoAcuerdo terminoacuerdo) {
+		if (Checks.esNulo(terminoacuerdo.getGuid())) {
+			terminoacuerdo.setGuid(UUID.randomUUID().toString());
+			saveTerminoAcuerdo(terminoacuerdo);
+		}
+	}
+	
+	@Transactional(readOnly = false)
 	public EXTAcuerdo prepareGuid(Acuerdo acuerdo) {
 		EXTAcuerdo extAcuerdo = getAcuerdoById(acuerdo.getId());
+		//boolean modificado = false;
 		if (Checks.esNulo(extAcuerdo.getGuid())) {
 			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
 			extAcuerdo.setGuid(UUID.randomUUID().toString());
-			acuerdoDao.saveOrUpdate(extAcuerdo);
+			//modificado = true;
 		}
+		/*
+		// Prepara GUID de tablas relacionadas.
+		List<ActuacionesAExplorarAcuerdo> actuacionesExplorar = extAcuerdo.getActuacionesAExplorar();
+		List<ActuacionesRealizadasAcuerdo> actuacionesRealizadas = extAcuerdo.getActuacionesRealizadas();
+		for (ActuacionesAExplorarAcuerdo actuacion : actuacionesExplorar) {
+			if (Checks.esNulo(actuacion.getGuid())) {
+				actuacion.setGuid(UUID.randomUUID().toString());
+				modificado = true;
+			}
+		}
+		for (ActuacionesRealizadasAcuerdo actuacion: actuacionesRealizadas) {
+			if (Checks.esNulo(actuacion.getGuid())) {
+				actuacion.setGuid(UUID.randomUUID().toString());
+				modificado = true;
+			}
+		}
+		if (modificado) {
+			acuerdoDao.saveOrUpdate(extAcuerdo);
+		}*/
 		return extAcuerdo;
 	}
-
-    /**
-     * Pasa un Acuerdo en estado En Conformaci�n a Propuesto.
-     * @param idAcuerdo el id del acuerdo
-     */
-    @BusinessOperation(overrides = ExternaBusinessOperation.BO_ACUERDO_MGR_PROPONER_ACUERDO)
-    @Transactional(readOnly = false)
-    public void proponerAcuerdo(Long idAcuerdo) {
-    	parent().proponerAcuerdo(idAcuerdo);
-        
-    	// Genera un mensaje de propuesta de acuerdo
-		Acuerdo acuerdo = (Acuerdo)executor.execute(ExternaBusinessOperation.BO_ACUERDO_MGR_GET_ACUERDO_BY_ID, idAcuerdo);
-    	bpmIntegracionService.enviarPropuesta(acuerdo);
-    }
 
 }

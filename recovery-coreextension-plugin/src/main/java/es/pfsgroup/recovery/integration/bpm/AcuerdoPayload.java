@@ -1,15 +1,10 @@
 package es.pfsgroup.recovery.integration.bpm;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
-import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.AnalisisAcuerdo;
 import es.capgemini.pfs.integration.IntegrationClassCastException;
-import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
@@ -22,7 +17,6 @@ public class AcuerdoPayload {
 	public final static String KEY = "@acu";
 	public final static String KEY_ANALISIS = "@acu@ana";
 
-	private static final String CAMPO_ACCION = String.format("%s.accion", KEY);
 	private static final String CAMPO_SOLICITANTE = String.format("%s.solicitante", KEY);
 	private static final String CAMPO_TIPO_ACUERDO = String.format("%s.tipo", KEY);
 	private static final String CAMPO_ESTADO_ACUERDO = String.format("%s.estado", KEY);
@@ -40,11 +34,9 @@ public class AcuerdoPayload {
 	private static final String CAMPO_IMPORTE_PAGO = String.format("%s.importePago", KEY);
 	private static final String CAMPO_PERIODO = String.format("%s.periodo", KEY);
 	private static final String CAMPO_PORCENTAJE_QUITA = String.format("%s.porcentajeQuita", KEY);
+	private static final String CAMPO_ES_GESTOR = String.format("%s@esGestor", KEY);
+	private static final String CAMPO_ES_SUPERVISOR = String.format("%s@esSupervisor", KEY);
 
-	private static final String RELACION_TERMINO_ACUERDO = String.format("%s@tea", KEY);
-	private static final String RELACION_ACTUACIONES_REALIZADAS = String.format("%s@aar", KEY);
-	private static final String RELACION_ACTUACIONES_EXPLOR = String.format("%s@aea", KEY);
-	
 	private static final String CAMPO_ANALISIS_OBSERVACIONES_TITULOS = String.format("%s@observacionesTit", KEY_ANALISIS);
 	private static final String CAMPO_ANALISIS_OBSERVACIONES_SOLVENCIA = String.format("%s@observacionesSolv", KEY_ANALISIS);
 	private static final String CAMPO_ANALISIS_OBSERVACIONES_PAGO = String.format("%s@observacionesPag", KEY_ANALISIS);
@@ -53,8 +45,6 @@ public class AcuerdoPayload {
 	private static final String CAMPO_ANALISIS_CONCLUSION_TIPO_ACUERDO = String.format("%s@conclusionTipoAcu", KEY_ANALISIS);
 	private static final String CAMPO_ANALISIS_CAMBIO_SOLVENCIA = String.format("%s@cambioSolvencia", KEY_ANALISIS);
 	private static final String CAMPO_ANALISIS_CAPACIDAD_PAGO = String.format("%s@capacidadPago", KEY_ANALISIS);
-	private static final String CAMPO_ES_GESTOR = null;
-	private static final String CAMPO_ES_SUPERVISOR = null;
 	
 	private final DataContainerPayload data;
 	private final AsuntoPayload asunto;
@@ -64,55 +54,24 @@ public class AcuerdoPayload {
 		this.asunto = new AsuntoPayload(data);
 	}
 
-	public AcuerdoPayload(String tipo, String accion, Acuerdo acuerdo) {
-		this(new DataContainerPayload(tipo), accion, acuerdo);
+	public AcuerdoPayload(String tipo, Acuerdo acuerdo) {
+		this(new DataContainerPayload(tipo), acuerdo);
 	}
 	
-	public AcuerdoPayload(DataContainerPayload data, String accion, Acuerdo acuerdo) {
+	public AcuerdoPayload(DataContainerPayload data, Acuerdo acuerdo) {
 		this.data = data;
 		this.asunto = new AsuntoPayload(data, acuerdo.getAsunto());
-		setAccion(accion);
 		build(acuerdo);
 	}
 	
-
 	public AsuntoPayload getAsunto() {
 		return asunto;
 	}
 
-	public AcuerdoPayload buildTerminoAcuerdo(List<TerminoAcuerdo> terminosAcuerdo) {
-		if (terminosAcuerdo==null) {
-			return this;
-		}
-		for (TerminoAcuerdo termino : terminosAcuerdo) {
-			TerminoAcuerdoPayload teaPayload = new TerminoAcuerdoPayload(TerminoAcuerdoPayload.KEY, termino);
-			addTerminoAcuerdo(teaPayload);
-		}
-		return this;
+	public DataContainerPayload getData() {
+		return data;
 	}
 
-	private AcuerdoPayload buildActuacionesRealizadas(List<ActuacionesRealizadasAcuerdo> actuaciones) {
-		if (actuaciones==null) {
-			return this;
-		}
-		for (ActuacionesRealizadasAcuerdo actuacion: actuaciones) {
-			ActuacionesRealizadasPayload aarPayload = new ActuacionesRealizadasPayload(ActuacionesRealizadasPayload.KEY, actuacion);
-			addActuacion(aarPayload);
-		}
-		return this;
-	}
-
-	private AcuerdoPayload buildActuacionesAExplorar(List<ActuacionesAExplorarAcuerdo> actuaciones) {
-		if (actuaciones==null) {
-			return this;
-		}
-		for (ActuacionesAExplorarAcuerdo actuacion: actuaciones) {
-			ActuacionesAExplorarPayload aarPayload = new ActuacionesAExplorarPayload(ActuacionesAExplorarPayload.KEY, actuacion);
-			addActuacion(aarPayload);
-		}
-		return this;
-	}
-	
 	public AcuerdoPayload build(Acuerdo acuerdo) {
 		EXTAcuerdo extAcuerdo = EXTAcuerdo.instanceOf(acuerdo);
 		if (extAcuerdo==null) {
@@ -166,11 +125,6 @@ public class AcuerdoPayload {
 		setPeriodo(acuerdo.getPeriodo());
 		setPorcentajeQuita(acuerdo.getPorcentajeQuita());
 		
-		// Relaciones...
-		buildActuacionesRealizadas(acuerdo.getActuacionesRealizadas());
-		buildActuacionesAExplorar(acuerdo.getActuacionesAExplorar());
-		build(extAcuerdo.getAnalisisAcuerdo());
-
 		return this;
 	}
 
@@ -252,13 +206,6 @@ public class AcuerdoPayload {
 	}
 	public String getAnalisisCapacidadPago() {
 		return data.getCodigo(CAMPO_ANALISIS_CAPACIDAD_PAGO);
-	}
-
-	public String getAccion() {
-		return data.getCodigo(CAMPO_ACCION);
-	}
-	private void setAccion(String valor) {
-		data.addCodigo(CAMPO_ACCION, valor);
 	}
 	
 	public Long getIdOrigen() {
@@ -407,54 +354,4 @@ public class AcuerdoPayload {
 		data.addFlag(CAMPO_ES_SUPERVISOR, valor);
 	}
 
-	
-	private void addTerminoAcuerdo(TerminoAcuerdoPayload terminoAcuerdo) {
-		this.data.addChildren(RELACION_TERMINO_ACUERDO, terminoAcuerdo.getData());
-	}
-	public List<TerminoAcuerdoPayload> getTerminosAcuerdo() {
-		List<TerminoAcuerdoPayload> listado = new ArrayList<TerminoAcuerdoPayload>();
-		if (!data.getChildren().containsKey(RELACION_TERMINO_ACUERDO)) {
-			return listado;
-		}
-		List<DataContainerPayload> dataList = data.getChildren(RELACION_TERMINO_ACUERDO);
-		for (DataContainerPayload child : dataList) {
-			TerminoAcuerdoPayload container = new TerminoAcuerdoPayload(child);
-			listado.add(container);
-		}
-		return listado;
-	}
-
-	private void addActuacion(ActuacionesRealizadasPayload actuacion) {
-		this.data.addChildren(RELACION_ACTUACIONES_REALIZADAS, actuacion.getData());
-	}
-	public List<ActuacionesRealizadasPayload> getActuacionesRealizadas() {
-		List<ActuacionesRealizadasPayload> listado = new ArrayList<ActuacionesRealizadasPayload>();
-		if (!data.getChildren().containsKey(RELACION_ACTUACIONES_REALIZADAS)) {
-			return listado;
-		}
-		List<DataContainerPayload> dataList = data.getChildren(RELACION_ACTUACIONES_REALIZADAS);
-		for (DataContainerPayload child : dataList) {
-			ActuacionesRealizadasPayload container = new ActuacionesRealizadasPayload(child);
-			listado.add(container);
-		}
-		return listado;
-	}
-
-	private void addActuacion(ActuacionesAExplorarPayload actuacion) {
-		this.data.addChildren(RELACION_ACTUACIONES_EXPLOR, actuacion.getData());
-	}
-	public List<ActuacionesAExplorarPayload> getActuacionesAExplorar() {
-		List<ActuacionesAExplorarPayload> listado = new ArrayList<ActuacionesAExplorarPayload>();
-		if (!data.getChildren().containsKey(RELACION_ACTUACIONES_EXPLOR)) {
-			return listado;
-		}
-		List<DataContainerPayload> dataList = data.getChildren(RELACION_ACTUACIONES_EXPLOR);
-		for (DataContainerPayload child : dataList) {
-			ActuacionesAExplorarPayload container = new ActuacionesAExplorarPayload(child);
-			listado.add(container);
-		}
-		return listado;
-	}
-
-	
 }

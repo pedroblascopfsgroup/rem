@@ -641,7 +641,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		hql.append(" (select distinct asu.id from Asunto asu");
 
 		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
-			hql.append(", Procedimiento prc");
+			hql.append(", Procedimiento prc ");
 		}
 		if (requiereContrato(dto)) {
 			hql.append(", ProcedimientoContratoExpediente pce, ExpedienteContrato cex, Contrato cnt ");
@@ -649,6 +649,15 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (dto.getIdSesionComite() != null || dto.getIdComite() != null) {
 			hql.append(", DecisionComite dco , DDEstadoItinerario estIti ");
 		}
+
+		if (requierePrevioCDD(dto)) {
+			hql.append(", BatchAcuerdoCierreDeuda cdd ");
+		}
+
+		if (requierePostCDD(dto)) {
+			hql.append(", BatchCDDResultadoNuse crn ");
+		}
+		
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
 
 		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
@@ -659,6 +668,15 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereContrato(dto)) {
 			hql.append(" and prc.id = pce.procedimiento and cex.id = pce.expedienteContrato and cex.contrato.id = cnt.id ");
 			hql.append(" and cex.auditoria." + Auditoria.UNDELETED_RESTICTION);
+		}
+
+
+		if (requierePrevioCDD(dto)) {
+			hql.append("and asu.id = cdd.idAsunto ");
+		}
+
+		if (requierePostCDD(dto)) {
+			hql.append("and asu.codigoExterno = crn.codigoExterno ");
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
@@ -783,9 +801,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 		
 		//FILTRO ERROR CDD
-		if (dto.getComboErrorCDD()!=null && !"".equals(dto.getComboErrorCDD())) {
-			hql.append(" and asu.errorEnvioCDD = :errorCDD");
-			params.put("errorCDD", (dto.getComboErrorCDD().equals(DDSiNo.SI) ? 1 : 0));
+		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
+			hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
+			params.put("errorPrevio", dto.getComboErrorPreviCDD());
+		}
+		
+		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
+			hql.append(" and asu.errorEnvioCDD = :errorPost");
+			params.put("errorPost", (dto.getComboErrorPostCDD()));
 		}
 		
 		// FILTRO GESTION
@@ -970,6 +993,22 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		params.put("hql", hql);
 
 		return params;
+	}
+
+	private boolean requierePrevioCDD(EXTDtoBusquedaAsunto dto) {
+		
+		if(!Checks.esNulo(dto.getComboErrorPreviCDD())){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean requierePostCDD(EXTDtoBusquedaAsunto dto) {
+		
+		if(!Checks.esNulo(dto.getComboErrorPostCDD())){
+			return true;
+		}
+		return false;
 	}
 
 	private Set<String> getCodigosDeZona(DtoBusquedaAsunto dtoBusquedaAsuntos) {

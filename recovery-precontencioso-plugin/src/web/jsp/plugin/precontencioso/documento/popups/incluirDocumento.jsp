@@ -67,7 +67,7 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	});
 	
 	var btnAgregarUnidadGestion = new Ext.Button({
-		text : '<s:message code="app.agregar" text="**Agregar" />'
+		text : '<s:message code="precontencioso.grid.documento.incluirDocumento.refrescar" text="**Refrescar" />'
 		,iconCls : 'icon_mas'
 		,handler : function(){
 			agregarUnidadesGestion();

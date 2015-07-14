@@ -1056,7 +1056,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
       					}
 		   			}
 		   			,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"d_comboResultado","fieldLabel":"Oposición","autoload":true,allowBlank:false,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		   			,{"xtype":'textarea',"name":"d_motivoOposicion","fieldLabel":"Motivo oposición",allowBlank:true,filtrar:true,width:285}
+		   			,{"xtype":'textarea',"name":"d_motivoOposicion","fieldLabel":"Motivo oposición",allowBlank:true,filtrar:true,width:285, id:'d_motivoOposicion'+this.idFactoria
+		   				,validator : function(v) {
+	               	   		if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_motivoOposicion' + idFactoria).isVisible() && Ext.getCmp('d_motivoOposicion' + idFactoria).getValue() == ""){
+	               	   			return false;
+	               	   		}else{
+	               	   			return true;
+	               	   		}
+      					}
+		   			}
 		   		
 		   		]);
 		
@@ -1069,15 +1077,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
         // id: 208 : TRAMITE HIPOTECARIO : Auto Estimando Opsición.
 		this.arrayCampos.push([
-			   			{"xtype":'combo',"store":storeSINO,"value":"01",allowBlank:false,filtrar:true, "name":"d_resultado","fieldLabel":"Oposición","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-			   			,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha Resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }			   		
+			   			{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha Resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+			   			,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"value":"01",allowBlank:false,filtrar:true, "name":"d_resultado","fieldLabel":"Resultado","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 			   		]);
 		
 		
         // id: 209 : TRAMITE HIPOTECARIO : Auto Desestimando Opsición.     
 		this.arrayCampos.push([
-					   			{"xtype":'combo',"store":storeSINO,"value":"02",allowBlank:false,filtrar:true, "name":"d_resultado","fieldLabel":"Oposición","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-					   			,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha Resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }			   		
+					   			{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha Resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+					   			,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"value":"02",allowBlank:false,filtrar:true, "name":"d_resultado","fieldLabel":"Resultado","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_resultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 					   		]);
 
 

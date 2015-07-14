@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150706
+--## FECHA_CREACION=20150713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=MITCDD-2068
@@ -70,8 +70,9 @@ DECLARE
       T_TIPO_JUICIO('INJ', 'T. Investigación judicial - HAYA', 'T. Investigación judicial - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H044'),
       T_TIPO_JUICIO('CON', 'T. Consignación - HAYA', 'T. Consignación', 0, 'MOD_PROC', SYSDATE, 0, 'H064'),
       T_TIPO_JUICIO('TCE', 'T. de Costas contra Entidad - HAYA', 'T. de Costas contra Entidad - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H032'),
-      T_TIPO_JUICIO('NOT', 'T. Notificación - HAYA', 'T. Notificación - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'P400')
-    );   
+      T_TIPO_JUICIO('NOT', 'T. Notificación - HAYA', 'T. Notificación - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'P400'),
+      T_TIPO_JUICIO('VCA', 'T. Vigilancia y Caducidad Embargos - HAYA', 'T. Vigilancia y Caducidad Embargos -HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H062')	
+     );   
     V_TMP_TIPO_JUICIO T_TIPO_JUICIO;
 
 BEGIN	

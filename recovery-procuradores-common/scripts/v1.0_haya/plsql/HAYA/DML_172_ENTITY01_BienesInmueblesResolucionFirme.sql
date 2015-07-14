@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20150706
+--## FECHA_CREACION=20150713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=MITCDD-2068
 --## PRODUCTO=SI
 --##
---## Finalidad: Realiza las inserciones de la resolución Confirmar notificacion requerimiento de pago para la tarea H020_ConfirmarNotifiReqPago.
+--## Finalidad: Realiza las inserciones de la resolución Decreto de firmeza para la tarea H058_ResolucionFirme.
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -41,23 +41,22 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'324';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REQ_POS_PNJ';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Diligencia de notificación';
-    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'PNJ';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'370';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_DEC_FIRM';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Decreto de firmeza';
+    V_TJ_CODIGO VARCHAR2(20 CHAR):=			'VBI';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REQ_POS_PNJ';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_DEC_FIRM';
     
-    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H020';
-    V_NODO VARCHAR2(50 CHAR):=				'H020_ConfirmarNotifiReqPago';
+    V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H058';
+    V_NODO VARCHAR2(50 CHAR):=				'H058_ResolucionFirme';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;
     V_INPUT T_ARRAY_INPUT := T_ARRAY_INPUT(
     	T_INPUT('idAsunto','idAsunto'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
-    	T_INPUT('d_comboConfirmacionReqPago','comboConfirmacionReqPago'),
     	T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );

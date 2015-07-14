@@ -32,12 +32,12 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	});
 
 
-	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
-	var modoConsulta = false;
+	var config = {width: 150, labelStyle:"width:100px"};
 	
 	//unidades Gestion
 	var unidadesGestion=<app:dict value="${unidadesGestion}" />;
-	var comboUnidadesGestion = app.creaDblSelect(unidadesGestion,'<s:message code="precontencioso.grid.documento.incluirDocumento.unidadGestion" text="**Unidad de Gestión" />',config); 
+	var comboUnidadesGestion = app.creaDblSelect(unidadesGestion,
+		'<s:message code="precontencioso.grid.documento.incluirDocumento.unidadGestion" text="**Unidad de Gestión" />',config); 
 	
 		
 	var btnCancelar= new Ext.Button({
@@ -67,8 +67,8 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	});
 	
 	var btnAgregarUnidadGestion = new Ext.Button({
-		text : '<s:message code="precontencioso.grid.documento.incluirDocumento.refrescar" text="**Refrescar" />'
-		,iconCls : 'icon_mas'
+		text : '<s:message code="precontencioso.grid.documento.incluirDocumento.buscar" text="**Buscar" />'
+		,iconCls : 'icon_busquedas'
 		,handler : function(){
 			agregarUnidadesGestion();
 		}
@@ -230,16 +230,14 @@ var gridDocs = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
 		,columns: cmDoc
 		,store: storeDocs
-		,height: 170
 		,loadMask: true
         ,sm: myCboxSelModel
         ,clicksToEdit: 1
         ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
-       	,style:'padding:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-		,height:175
+		,height:150
 	});
 
    var tipoDocRecord = Ext.data.Record.create([
@@ -253,13 +251,14 @@ var gridDocs = new Ext.grid.GridPanel({
     }); 
     
     var style='margin-bottom:1px;margin-top:1px';
-    var labelStyle='font-weight:bolder;width:150';
+    var labelStyle='width:100';
     
 <pfsforms:ddCombo name="comboTipoDocumento"
 		labelKey="precontencioso.grid.documento.incluirDocumento.tipodocumento" 
  		label="**Tipo Documento" value="" dd="${tiposDocumento}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
-		       
+	comboTipoDocumento.labelStyle=labelStyle;
+	    
 	var protocolo = new Ext.form.TextField({
 		name : 'protocolo'
 		,value : '<s:message text="${dtoDoc.protocolo}" javaScriptEscape="true" />'
@@ -276,7 +275,6 @@ var gridDocs = new Ext.grid.GridPanel({
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.fechaEscritura" text="**Fecha escritura" />'
 		,value : '<fwk:date value="${fechaEscritura}" />'
-		,allowBlank : false
 		,style:'margin:0px'
 	});
 	
@@ -335,60 +333,62 @@ var gridDocs = new Ext.grid.GridPanel({
 	});  	
 
 	
-	var panelSuperior = new Ext.form.FormPanel({
-		bodyStyle : 'padding:10px'
-		,autoHeight : true
-		,items : [{
+	var panelSuperior={
+			layout:'table'
+			,autoHeight : true
+    	    ,autoWidth : true
+			,layoutConfig:{
+				columns:3
+			}
+			,defaults:{xtype:'fieldset',cellCls : 'vtop'}
+			,style:'padding:1px;cellspacing:2px'
+			,items:[
+				{
 					colspan:2
-					,autoHeight:true
+					,height:80
 					,width:450
-					,hidden:modoConsulta
 					,border:false
-					,items:[comboUnidadesGestion, btnAgregarUnidadGestion, gridDocs]
-				}							
-		]
-	});
-	
-	
-	var panelEdicion = new Ext.form.FormPanel({
-		autoHeight:true
-		, border : false
-				,layout : 'column'
-				,height: 255
-				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:200}
-				,items:[{
-					title:'<s:message code="precontencioso.grid.documento.incluirDocumento.infoDocumentos" text="**Información Documentos" />'
-					,layout:'table'
-					,layoutConfig:{
-						columns:2							
-					}
-					,defaults:{layout : 'form',border:false,height:175}
-					,items:[
-						{
-						items:[{
-							border:false
-							,style:'font-size:11px; margin:4px; top:5px'
-							, bodyStyle:'padding:5px'
-							,items:[comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza]
-								}]
-						, width: 280
-						}
-						,{
-							items:[protocolo, fechaEscritura, tomo, libro, folio, idufir]
-							,width:280
-						}
-					]
-				}]
-	});
+					,items:comboUnidadesGestion
+				},
+				{
+					items:btnAgregarUnidadGestion
+					,height:80
+					,width:100
+					,border:false
+				},				
+				{
+					colspan:3
+					,width:580
+					,autoHeight:true
+					,border:false
+					,items: gridDocs
+				}
 
+				
+			]
+	};
+	
+	var panelEdicion = new Ext.form.FieldSet({
+		title:'<s:message code="precontencioso.grid.documento.incluirDocumento.infoDocumentos" text="**Información Documentos" />'
+		,layout:'table'
+		,layoutConfig:{columns:2}
+		,border:true
+		,autoHeight : true
+   	    ,autoWidth : true
+		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+		,items:[{items: [ comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza]}
+				,{items: [ protocolo, fechaEscritura, tomo, libro, folio, idufir]}
+		]
+	});	
+	
 	var panel=new Ext.Panel({
 		border:false
 		,bodyStyle : 'padding:5px'
 		,autoHeight:true
 		,autoScroll:true
-		,width:840
-		,height:600
-		,defaults:{xtype:'fieldset',cellCls : 'vtop',width:840,autoHeight:true}
+		,width:600
+		,height:620
+		,defaults:{xtype:'fieldset',cellCls : 'vtop',width:600,autoHeight:true}
 		,items:[panelSuperior,panelEdicion]
 		,bbar:[btnGuardar, btnCancelar]
 	});	

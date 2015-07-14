@@ -47,7 +47,7 @@ public class EntityToPayloadTransformer {
     private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
-	private EXTProcedimientoManager extProcedimientoManager;
+	protected EXTProcedimientoManager extProcedimientoManager;
 
 	@Autowired
 	private EXTTareaNotificacionManager extTareaNotificacionManager;
@@ -95,7 +95,7 @@ public class EntityToPayloadTransformer {
 		return extTareaNotif;
 	}
 
-	private DataContainerPayload getNewPayload(Message<?> message) {
+	protected DataContainerPayload getNewPayload(Message<?> message) {
 		if (!message.getHeaders().containsKey(TypePayload.HEADER_MSG_TYPE)) {
 			throw new IntegrationDataException(String.format("[INTEGRACION] El mensaje no tiene asignado tipo de mensaje en la cabecera, por favor asigne el valor %s a la cabecera.", TypePayload.HEADER_MSG_TYPE));
 		}

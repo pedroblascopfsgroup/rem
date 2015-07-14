@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteReaperturaConcurso" width="1413" height="677">
+  <node name="Inicio" x="13" y="20" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_SolicitudConcursal" x="291" y="18" width="182" height="36">
+    <edge>
+      <label x="-18" y="-14"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="4"/>
+      <bendpoint w1="-299" h1="52" w2="-1" h2="-103"/>
+    </edge>
+  </node>
+  <node name="H043_ConfirmarAdmision" x="638" y="17" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-28" y="-24"/>
+      <bendpoint w1="-183" h1="52" w2="176" h2="51"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="439" h1="7" w2="-80" h2="-196"/>
+    </edge>
+  </node>
+  <node name="H043_ConfirmarNotificacionDemandado" x="593" y="117" width="294" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-348" h1="-2" w2="0" h2="-59"/>
+    </edge>
+    <edge>
+      <label x="4" y="-10"/>
+      <bendpoint w1="155" h1="-48" w2="154" h2="52"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="419" h1="0" w2="-187" h2="-91"/>
+    </edge>
+  </node>
+  <node name="H043_registrarOposicion" x="254" y="174" width="277" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-66" y="-18"/>
+      <bendpoint w1="346" h1="0" w2="-2" h2="57"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_RegistrarVista" x="97" y="375" width="223" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="2" y="-54"/>
+      <bendpoint w1="-125" h1="2" w2="-1" h2="204"/>
+    </edge>
+    <edge>
+      <label x="-62" y="43"/>
+      <bendpoint w1="2" h1="-154" w2="-182" h2="47"/>
+    </edge>
+  </node>
+  <node name="H043_RegistrarOposicionDecision" x="245" y="253" width="293" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-9"/>
+      <bendpoint w1="15" h1="82" w2="-132" h2="-42"/>
+    </edge>
+  </node>
+  <node name="H043_RegistrarResolucion" x="113" y="558" width="191" height="36">
+    <edge>
+      <label x="-36" y="-14"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-103" h1="-90" w2="-103" h2="93"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="4" y="-37"/>
+      <bendpoint w1="-101" h1="-1" w2="-27" h2="293"/>
+      <bendpoint w1="-165" h1="0" w2="-63" h2="333"/>
+      <bendpoint w1="-163" h1="-289" w2="-39" h2="96"/>
+    </edge>
+  </node>
+  <node name="H043_ResolucionFirme" x="389" y="558" width="173" height="36">
+    <edge>
+      <label x="-37" y="-16"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-13"/>
+      <bendpoint w1="-83" h1="63" w2="124" h2="67"/>
+      <bendpoint w1="-214" h1="61" w2="69" h2="60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-2" h1="49" w2="-801" h2="314"/>
+      <bendpoint w1="889" h1="43" w2="18" h2="393"/>
+    </edge>
+  </node>
+  <node name="H043_AutoDeclarandoConcurso" x="421" y="377" width="234" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="154" h1="-172" w2="-695" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="-36" y="-14"/>
+    </edge>
+  </node>
+  <node name="H043_InformarSareb" x="717" y="288" width="155" height="36">
+    <edge>
+      <label x="-15" y="-17"/>
+      <bendpoint w1="274" h1="-44" w2="-278" h2="36"/>
+    </edge>
+    <edge>
+      <label x="12" y="9"/>
+      <bendpoint w1="2" h1="60" w2="-295" h2="7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H043_ResolucionFirmeDecision" x="734" y="557" width="211" height="36">
+    <edge>
+      <label x="-8" y="-19"/>
+    </edge>
+    <edge>
+      <label x="-37" y="-15"/>
+    </edge>
+  </node>
+  <node name="Decision" x="1092" y="568" width="132" height="36">
+    <edge>
+      <label x="-20" y="-18"/>
+      <bendpoint w1="159" h1="1" w2="-29" h2="361"/>
+    </edge>
+  </node>
+  <node name="H043_BPMtramiteFaseComunOrdinario" x="956" y="341" width="271" height="36">
+    <edge>
+      <label x="-176" y="0"/>
+      <bendpoint w1="130" h1="-78" w2="-143" h2="-80"/>
+    </edge>
+  </node>
+  <node name="Fin2" x="18" y="173" width="132" height="36"/>
+  <node name="Fin" x="1280" y="208" width="132" height="36"/>
+</root-container>

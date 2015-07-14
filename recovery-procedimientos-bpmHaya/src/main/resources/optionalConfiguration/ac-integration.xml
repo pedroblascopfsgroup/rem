@@ -28,5 +28,4 @@
 	<bean id="requestQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="queue.demo"/>
 	</bean>
-	
 </beans>

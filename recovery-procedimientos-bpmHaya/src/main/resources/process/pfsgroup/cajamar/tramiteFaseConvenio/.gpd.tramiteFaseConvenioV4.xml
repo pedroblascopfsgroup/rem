@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteFaseConvenioV4" width="1548" height="1133">
+  <node name="Inicio" x="-61" y="-206" width="132" height="36">
+    <edge>
+      <label x="-48" y="-12"/>
+    </edge>
+  </node>
+  <node name="fork0" x="178" y="-189" width="115" height="24">
+    <edge>
+      <label x="-78" y="-12"/>
+    </edge>
+    <edge>
+      <label x="-32" y="-15"/>
+    </edge>
+  </node>
+  <node name="H017_autoApertura" x="381" y="-133" width="159" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-222" h1="2" w2="-222" h2="2"/>
+      <bendpoint w1="-202" h1="26" w2="-202" h2="26"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="403" y="-64" width="111" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-25" y="-9"/>
+    </edge>
+  </node>
+  <node name="H017_revisarEjecucionesParalizadas" x="370" y="-188" width="258" height="36">
+    <edge>
+      <label x="-18" y="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-31" y="-18"/>
+      <bendpoint w1="167" h1="-17" w2="-107" h2="-29"/>
+    </edge>
+  </node>
+  <node name="H017_decidirSobreFaseConvenio" x="638" y="-70" width="221" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H017_decidirSobreFaseConvenioDecision" x="610" y="9" width="262" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="155" h1="-1" w2="-52" h2="-133"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-30"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="206" h1="-54" w2="182" h2="130"/>
+    </edge>
+  </node>
+  <node name="H017_actPropuestaConvenio" x="926" y="176" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-3" h1="-263" w2="203" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H017_aceptarFinSeguimiento" x="917" y="303" width="231" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="82" y="-62"/>
+    </edge>
+  </node>
+  <node name="H017_actPropuestaConvenioDecision" x="895" y="241" width="265" height="36">
+    <edge>
+      <label x="-3" y="-12"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="151" h1="1" w2="-41" h2="152"/>
+    </edge>
+  </node>
+  <node name="H017_lecturaAceptacionInstrucciones" x="-107" y="174" width="280" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="164" h1="0" w2="-184" h2="84"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H017_registrarResultado" x="-79" y="286" width="193" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-4" y="-7"/>
+    </edge>
+    <edge>
+      <label x="-16" y="-9"/>
+      <bendpoint w1="140" h1="1" w2="-154" h2="200"/>
+    </edge>
+    <edge>
+      <label x="-24" y="-10"/>
+      <bendpoint w1="-49" h1="-63" w2="-89" h2="53"/>
+    </edge>
+  </node>
+  <node name="H017_registrarResultadoDecision" x="-99" y="374" width="235" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="142" h1="1" w2="-231" h2="-96"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H017_BPMTramiteFaseLiquidacion" x="266" y="471" width="251" height="36">
+    <edge>
+      <label x="-37" y="-8"/>
+      <bendpoint w1="38" h1="59" w2="-306" h2="22"/>
+    </edge>
+  </node>
+  <node name="H017_RegistrarOposicionAdmon" x="-97" y="467" width="230" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-23" y="-19"/>
+      <bendpoint w1="-256" h1="-48" w2="-250" h2="98"/>
+      <bendpoint w1="-255" h1="-111" w2="-249" h2="35"/>
+    </edge>
+    <edge>
+      <label x="-21" y="-9"/>
+      <bendpoint w1="167" h1="-3" w2="95" h2="-422"/>
+    </edge>
+  </node>
+  <node name="H017_RegistrarOposicionAdmonDecision" x="-119" y="545" width="264" height="36">
+    <edge>
+      <label x="-103" y="-26"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-23"/>
+    </edge>
+    <edge>
+      <label x="-50" y="-77"/>
+    </edge>
+  </node>
+  <node name="H017_registrarResolucionOposicion" x="-284" y="643" width="243" height="36">
+    <edge>
+      <label x="-34" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-12"/>
+    </edge>
+    <edge>
+      <label x="-17" y="4"/>
+      <bendpoint w1="-40" h1="-127" w2="-198" h2="48"/>
+    </edge>
+    <edge>
+      <label x="-3" y="-17"/>
+      <bendpoint w1="-139" h1="1" w2="-391" h2="-243"/>
+      <bendpoint w1="-132" h1="223" w2="-384" h2="-21"/>
+    </edge>
+  </node>
+  <node name="H017_registrarResultadoSubsana" x="329" y="626" width="244" height="36">
+    <edge>
+      <label x="-3" y="-18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-25" y="-11"/>
+      <bendpoint w1="-18" h1="-43" w2="415" h2="116"/>
+    </edge>
+    <edge>
+      <label x="-81" y="39"/>
+    </edge>
+  </node>
+  <node name="H017_registrarResultadoSubsanaDecision" x="279" y="805" width="280" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="97" y="33"/>
+      <bendpoint w1="-203" h1="-71" w2="-175" h2="263"/>
+    </edge>
+  </node>
+  <node name="fork4" x="764" y="100" width="119" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H017_aceptarFinSeguimientoDecision" x="905" y="424" width="265" height="36">
+    <edge>
+      <label x="85" y="-27"/>
+      <bendpoint w1="-198" h1="54" w2="139" h2="9"/>
+    </edge>
+    <edge>
+      <label x="-24" y="114"/>
+      <bendpoint w1="201" h1="0" w2="237" h2="244"/>
+      <bendpoint w1="197" h1="-244" w2="233" h2="0"/>
+    </edge>
+  </node>
+  <node name="H017_BPMtramitePresentacionPropConvenio" x="596" y="333" width="285" height="36">
+    <edge>
+      <label x="-116" y="-59"/>
+    </edge>
+  </node>
+  <node name="H017_realizarValoracionConcurso" x="-103" y="-98" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-23" y="-8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="151" h1="28" w2="-138" h2="-198"/>
+    </edge>
+  </node>
+  <node name="H017_BPMElevarPropuestaSAREB2" x="-134" y="67" width="316" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="190" h1="2" w2="-205" h2="-140"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-8"/>
+      <bendpoint w1="145" h1="48" w2="-262" h2="-204"/>
+    </edge>
+    <edge>
+      <label x="-4" y="-23"/>
+    </edge>
+    <edge>
+      <label x="-31" y="-8"/>
+      <bendpoint w1="-39" h1="38" w2="-39" h2="-44"/>
+    </edge>
+  </node>
+  <node name="Espera" x="1113" y="86" width="132" height="36">
+    <edge>
+      <label x="-3" y="-21"/>
+    </edge>
+  </node>
+  <node name="H017_BPMElevarPropuestaSAREB1" x="501" y="159" width="239" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-136" h1="6" w2="1" h2="-217"/>
+    </edge>
+    <edge>
+      <label x="-17" y="-8"/>
+      <bendpoint w1="108" h1="35" w2="-10" h2="-139"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="48" w2="-118" h2="-126"/>
+    </edge>
+    <edge>
+      <label x="-6" y="-13"/>
+      <bendpoint w1="-87" h1="45" w2="102" h2="-115"/>
+    </edge>
+  </node>
+  <node name="H017_ElevarDecision" x="365" y="319" width="169" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H017_PreparaPropInstSareb" x="-67" y="-7" width="211" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-132" h1="-46" w2="-135" h2="48"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="132" h1="3" w2="-130" h2="-132"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-9"/>
+    </edge>
+  </node>
+  <node name="H017_BPMTramiteSegCumplConvenio" x="-51" y="789" width="272" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H017_registrarResolucionOposicionDecision" x="-270" y="722" width="258" height="36">
+    <edge>
+      <label x="-134" y="-6"/>
+      <bendpoint w1="291" h1="-2" w2="-251" h2="243"/>
+    </edge>
+    <edge>
+      <label x="-25" y="-14"/>
+    </edge>
+  </node>
+  <node name="Fin1" x="669" y="508" width="132" height="36"/>
+  <node name="Fin2" x="30" y="889" width="132" height="36"/>
+  <node name="Fin3" x="234" y="128" width="132" height="36"/>
+  <node name="Fin4" x="707" y="-176" width="132" height="36"/>
+</root-container>

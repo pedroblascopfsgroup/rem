@@ -91,7 +91,7 @@ var incluirDocButton = new Ext.Button({
 						flow: 'documentopco/incluirDocumento'
 						,params: {idSolicitud:idSolicitud}
 						,title: '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
-						,width: 300
+						,width: 640
 					});
 					w.on(app.event.DONE, function() {
 						storeDocumentos.webflow();

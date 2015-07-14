@@ -73,7 +73,7 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 	}
 
 	public void almacenar(Asunto asunto, EXTAdjuntoAsunto adjuntoAsunto) {
-		System.out.println("Almacenar en IPLUS: " + asunto.getId() + "---" + adjuntoAsunto.getTipoFichero().getCodigo());
+		//System.out.println("Almacenar en IPLUS: " + asunto.getId() + "---" + adjuntoAsunto.getTipoFichero().getCodigo());
 		
 		//Poner el campo correcto como "id_procedi" (ID_ASUNTO_EXTERNO : codigoExterno)
 		String idProcedi = obtenerIdAsuntoExterno(asunto.getId());
@@ -84,7 +84,7 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 	}
 	
 	public Set<AdjuntoAsunto> listarAdjuntosIplus(String idProcedi) {
-		System.out.println("Lista de documentos almacenados en IPLUS: " + idProcedi);
+//		System.out.println("Lista de documentos almacenados en IPLUS: " + idProcedi);
 		
 		Set<AdjuntoAsunto> adjuntos = new HashSet<AdjuntoAsunto>();
 		List<IplusDocDto> listaDocs = iplusFacade.listaDocumentos(idProcedi);
@@ -252,9 +252,9 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 		String aIplusNombre = aIplus.getNombre().toUpperCase();
 		String aIplusDesc = aIplus.getDescripcion().toUpperCase();
 		
-		System.out.println("[IPLUSUtilsImpl.compararAdjuntos]: aRecovery.getNombre(): " + aRecoveryNombre);
-		System.out.println("[IPLUSUtilsImpl.compararAdjuntos]: aIplus.getNombre(): " + aIplus.getNombre() +
-					" - aIplus.getNombre(): " + aIplus.getDescripcion() );
+//		System.out.println("[IPLUSUtilsImpl.compararAdjuntos]: aRecovery.getNombre(): " + aRecoveryNombre);
+//		System.out.println("[IPLUSUtilsImpl.compararAdjuntos]: aIplus.getNombre(): " + aIplus.getNombre() +
+//					" - aIplus.getNombre(): " + aIplus.getDescripcion() );
 		
 		if (Checks.esNulo(aRecoveryNombre) || Checks.esNulo(aIplusDesc) || Checks.esNulo(aIplusNombre) ) {
 			return iguales;

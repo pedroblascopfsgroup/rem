@@ -1,17 +1,13 @@
-<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %> 
 <%@ page import="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
-<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %> 
 
 <%-- Buttons --%>
 
 var btnSolicitar = new Ext.Button({
-	text: '<s:message code="" text="**Solicitar liquidación" />',
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.solicitar" text="**Solicitar" />',
 	iconCls: 'icon_mas',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -19,7 +15,7 @@ var btnSolicitar = new Ext.Button({
 			flow: 'liquidacion/abrirSolicitarLiquidacion',
 			autoWidth: true,
 			closable: true,
-			title: '<s:message code="" text="**Solicitar liquidación" />',
+			title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.solicitarliq" text="**Solicitar liquidación" />',
 			params: {idLiquidacion: idLiquidacionSeleccionada()}
 		});
 
@@ -35,7 +31,7 @@ var btnSolicitar = new Ext.Button({
 });
 
 var btnEditarValores = new Ext.Button({
-	text: '<s:message code="" text="**Editar valores" />',
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.editar" text="**Editar valores" />',
 	iconCls: 'icon_edit',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -43,7 +39,7 @@ var btnEditarValores = new Ext.Button({
 			flow: 'liquidacion/abrirEditarLiquidacion',
 			autoWidth: true,
 			closable: true,
-			title: '<s:message code="" text="**Editar Liquidacion" />',
+			title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.editarliq" text="**Editar Liquidacion" />',
 			params: {idLiquidacion: idLiquidacionSeleccionada()}
 		});
 
@@ -59,7 +55,7 @@ var btnEditarValores = new Ext.Button({
 });
 
 var btnConfirmar = new Ext.Button({
-	text: '<s:message code="" text="**Confirmar liquidación" />',
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.confimar" text="**Confirmar" />',
 	iconCls: 'x-tbar-page-next',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -75,7 +71,7 @@ var btnConfirmar = new Ext.Button({
 });
 
 var btnDescartar = new Ext.Button({
-	text: '<s:message code="" text="**Descartar" />',
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.descartar" text="**Descartar" />',
 	iconCls: 'icon_menos',
 	cls: 'x-btn-text-icon',
 	handler: function() {
@@ -127,23 +123,23 @@ storeLiquidaciones.on(
 );
 
 var cmLiquidacion = new Ext.grid.ColumnModel([
-	{header: '<s:message code="precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.producto" text="**Producto" />', dataIndex: 'producto'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.estadoLiquidacion" text="**Estado Liquidacion" />', dataIndex: 'estadoLiquidacion'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex: 'fechaSolicitud'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex: 'fechaRecepcion'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.fechaConfirmacion" text="**Fecha Confirmacion" />', dataIndex: 'fechaConfirmacion'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.fechaCierre" text="**Fecha Cierre" />', dataIndex: 'fechaCierre'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.capitalVencido" text="**Capital Vencido" />', dataIndex: 'capitalVencido'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.capitalNoVencido" text="**Capital No Vencido" />', dataIndex: 'capitalNoVencido'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.interesesOrdinarios" text="**Intereses Ordinarios" />', dataIndex: 'interesesOrdinarios'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.interesesDemora" text="**Intereses Demora" />', dataIndex: 'interesesDemora'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.total" text="**Total" />', dataIndex: 'total'},
-	{header: '<s:message code="precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado'}
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.producto" text="**Producto" />', dataIndex: 'producto'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.estadoLiquidacion" text="**Estado Liquidacion" />', dataIndex: 'estadoLiquidacion'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex: 'fechaSolicitud'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex: 'fechaRecepcion'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.fechaConfirmacion" text="**Fecha Confirmacion" />', dataIndex: 'fechaConfirmacion'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.fechaCierre" text="**Fecha Cierre" />', dataIndex: 'fechaCierre'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.capitalVencido" text="**Capital Vencido" />', dataIndex: 'capitalVencido'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.capitalNoVencido" text="**Capital No Vencido" />', dataIndex: 'capitalNoVencido'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" text="**Intereses Ordinarios" />', dataIndex: 'interesesOrdinarios'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesDemora" text="**Intereses Demora" />', dataIndex: 'interesesDemora'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.total" text="**Total" />', dataIndex: 'total'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado'}
 ]);
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
-	title: '<s:message code="precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
+	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
 	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar],
 	height: 250,
 	autoWidth: true,

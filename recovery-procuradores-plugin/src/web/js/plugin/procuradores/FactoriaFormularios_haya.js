@@ -1860,11 +1860,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	//id: 282 : PROCEDIMIENTO VERBAL: RESOLUCIÓN FIRME
 	this.arrayCampos.push([
-	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha firmeza",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de firmeza",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
-	
-	
 	
 	
 	
@@ -2121,15 +2118,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 312 : P. CAMBIARIO: Registrar resolución desfavorable
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"value":	//id: 283 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR JUICIO VERBAL
-	                    		this.arrayCampos.push([
-	                    		                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha celebración",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                    		                       ,{"xtype":'textfield',"name":"d_numProcedimiento","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_numProcedimiento'+this.idFactoria
-	                    			           				,validator : function(v) {
-	                    			           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
-	                    			           				}
-	                    		                       	}
-	                    		                      ]);"02","name":"d_comboResultado","fieldLabel":"Resultado",readOnly: true, allowBlank:false,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"value":"02","name":"d_comboResultado","fieldLabel":"Resultado",readOnly: true, allowBlank:false,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 313 : P. CAMBIARIO: Registrar resolución favorable
@@ -2307,7 +2296,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 326 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Confirmar presentación de impugnación
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       ,{"xtype":'textfield',"R_REQUE_INTER_DEM_ORname":"d_motivo","fieldLabel":"Indicar motivo oposición",allowBlank:false,filtrar:true,id:'d_motivo'+this.idFactoria}
+	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Indicar motivo oposición",allowBlank:false,filtrar:true,id:'d_motivo'+this.idFactoria}
 	                      ]);
 	
 	//id: 327 : T. EJECUCIÓN TÍTULO NO JUDICIAL:Confirmar si hay vista
@@ -2331,7 +2320,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	//id: 329 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Registrar resolucion desfavorable
 	this.arrayCampos.push([
-	                       {"xtype":'datefield',"nR_REQUE_INTER_DEM_ORame":"d_fechaResolucion","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       {"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_combo","fieldLabel":"Resultado",allowBlank:false,filtrar:true, "value":"02",filtrar:true, "autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_combo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
@@ -2407,7 +2396,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		           				}
 	                        }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"stoR_REQUE_INTER_DEM_ORre":storeSINO,"name":"d_comboBienesRegistrables","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienesRegistrables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienesRegistrables","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienesRegistrables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 335 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar anotacion en registro
@@ -2679,8 +2668,6 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
                                   ,{"xtype":'combo',"store":storeSINO, "name":"d_cargasPrevias","fieldLabel":"Tiene cargas Previas",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true,     id:'d_cargasPrevias'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
                                   ,{"xtype":'numberfield',"name":"d_cuantiaCargasPrevias","fieldLabel":"Cuantía cargas previas",allowBlank:false}
                                ]);
-	
-		
 		
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

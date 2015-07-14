@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteCesionRemateV4" width="1170" height="756">
+  <node name="Inicio" x="216" y="31" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H006_AperturaPlazo" x="181" y="108" width="208" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="217" h1="59" w2="217" h2="59"/>
+      <bendpoint w1="138" h1="24" w2="138" h2="24"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="444" h1="36" w2="-15" h2="-251"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H006_AperturaPlazoDecision" x="184" y="187" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H006_NoCesionRemateDecision" x="931" y="296" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H006_ResenyarFechaComparecencia" x="171" y="268" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-81" y="-9"/>
+      <bendpoint w1="-138" h1="-77" w2="-136" h2="83"/>
+    </edge>
+  </node>
+  <node name="H006_RealizacionCesionRemate" x="165" y="366" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-44" h1="43" w2="-43" h2="-41"/>
+      <bendpoint w1="-52" h1="31" w2="-52" h2="31"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-100" h1="-47" w2="-101" h2="51"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H006_BPMTramiteAdjudicacion" x="399" y="510" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H006_RealizacionCesionRemateDecision" x="43" y="508" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="347" y="597" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork2" x="119" y="731" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="816" h1="-21" w2="-8" h2="408"/>
+    </edge>
+  </node>
+  <node name="H006_ConfirmarContabilidad" x="520" y="662" width="202" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="678" y="395" width="132" height="36"/>
+</root-container>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteDePosesionV4" width="1488" height="966">
+  <node name="inicio" x="394" y="30" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarSolicitudPosesion" x="373" y="121" width="292" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="11" h1="60" w2="-38" h2="-49"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarSolicitudPosesionDecision" x="426" y="230" width="322" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_BPMTramiteMoratoriaLanzamiento" x="846" y="127" width="323" height="36">
+    <edge>
+      <label x="-55" y="-16"/>
+    </edge>
+  </node>
+  <node name="H015_BPMTramiteOcupantes" x="837" y="287" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarSenyalamientoPosesion" x="400" y="352" width="266" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="88" h1="64" w2="75" h2="-68"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarPosesionYLanzamiento" x="403" y="484" width="286" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarPosesionYLanzamientoDecision" x="356" y="605" width="326" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="11" y="-11"/>
+      <bendpoint w1="300" h1="145" w2="288" h2="-179"/>
+    </edge>
+    <edge>
+      <label x="-30" y="1"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarSenyalamientoLanzamiento" x="336" y="717" width="357" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="78" h1="40" w2="68" h2="-43"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-362" h1="-104" w2="90" h2="307"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-236" h1="-128" w2="-268" h2="105"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarLanzamientoEfectuado" x="382" y="800" width="284" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-400" h1="-125" w2="62" h2="369"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-35" h1="-43" w2="-25" h2="40"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarDecisionLlaves" x="384" y="930" width="294" height="35">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-432" h1="-221" w2="37" h2="402"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarSolicitudDecision" x="102" y="282" width="224" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_LlavesDecision" x="1080" y="718" width="221" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_BPMTramiteGestionLlaves" x="1029" y="822" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_RegistrarDecisionLlavesDecision" x="790" y="909" width="290" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="49" h1="-132" w2="-162" h2="59"/>
+    </edge>
+  </node>
+  <node name="H015_BPMTramiteOcupantes2" x="848" y="562" width="237" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_BPMTramiteOcupantesDecision" x="828" y="385" width="276" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-40" y="-10"/>
+      <bendpoint w1="252" h1="4" w2="65" h2="-238"/>
+    </edge>
+  </node>
+  <node name="H015_BPMTramiteOcupantesDecision2" x="832" y="471" width="270" height="36">
+    <edge>
+      <label x="-15" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-42" y="6"/>
+      <bendpoint w1="183" h1="7" w2="-8" h2="-156"/>
+    </edge>
+  </node>
+  <node name="Fin" x="-97" y="305" width="132" height="36"/>
+  <node name="Fin2" x="1082" y="639" width="132" height="36"/>
+</root-container>

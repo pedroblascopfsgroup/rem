@@ -18,13 +18,13 @@
 
 	<!-- ******** Flow BPM ******* -->
 	<integration:gateway 
-		id="notificarEventosBpmGW" 
+		id="notificarEventosHayaBpmGW" 
 		default-request-channel="syncEventosBpmRequest" 
-		service-interface="es.pfsgroup.recovery.integration.bpm.NotificarEventosBPMGateway"/>
+		service-interface="es.pfsgroup.recovery.haya.integration.bpm.NotificarEventosBPMGateway"/>
 		
 	<integration:chain input-channel="syncEventosBpmRequest" output-channel="dataPayloadOutputChannel">
 		<integration:transformer>
-			<bean class="es.pfsgroup.recovery.integration.bpm.EntityToPayloadTransformer">
+			<bean class="es.pfsgroup.recovery.haya.integration.bpm.EntityToPayloadTransformer">
 				<constructor-arg ref="diccionarioCodigosProducer"/>
 			</bean>
 		</integration:transformer>

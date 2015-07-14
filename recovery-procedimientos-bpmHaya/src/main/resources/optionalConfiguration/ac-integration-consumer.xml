@@ -192,6 +192,15 @@
 					</constructor-arg>
 					<property name="description" value="Actualización de una subasta"/>
 				</bean>
+				
+				<bean class="es.pfsgroup.recovery.haya.integration.bpm.consumer.ConvenioConsumer">
+					<constructor-arg>
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="DATOS-CONVENIO"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Actualización de un convenio"/>
+				</bean>
 
 			</list>
 		</constructor-arg>

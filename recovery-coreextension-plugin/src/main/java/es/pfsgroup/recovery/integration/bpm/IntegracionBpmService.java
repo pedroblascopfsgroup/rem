@@ -12,7 +12,7 @@ import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 
 public interface IntegracionBpmService {
 
-	public static final String TIPO_TAREA_NOTIFICACION = "BPM-TAREA-NOTIF";
+	public static final String TIPO_TAREA_NOTIFICACION = "TAREA-NOTIF";
 	
 	public static final String TIPO_INICIO_TAREA = "BPM-TAREA-INICIO";
 	public static final String TIPO_FINALIZACION_TAREA = "BPM-TAREA-FIN";

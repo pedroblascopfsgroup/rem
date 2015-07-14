@@ -57,9 +57,6 @@ public class TerminoBien implements Serializable, Auditable{
 
     @Embedded
     private Auditoria auditoria;
-
-	@Column(name = "SYS_GUID")
-	private String guid;
     
 	public Long getId() {
 		return id;
@@ -100,14 +97,6 @@ public class TerminoBien implements Serializable, Auditable{
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public String getGuid() {
-		return guid;
-	}
-
-	public void setGuid(String guid) {
-		this.guid = guid;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.concursal.convenio.dao.ConvenioCreditoDao;
 import es.pfsgroup.concursal.convenio.dao.ConvenioDao;
 import es.pfsgroup.concursal.convenio.dao.DDEstadoConvenioDao;
@@ -43,6 +46,7 @@ import es.pfsgroup.concursal.convenio.model.DDTipoConvenio;
 import es.pfsgroup.concursal.credito.dao.CreditoDao;
 import es.pfsgroup.concursal.credito.model.Credito;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.haya.integration.bpm.IntegracionBpmService;
 
 @Service("convenioManager")
 public class ConvenioManager {
@@ -81,10 +85,15 @@ public class ConvenioManager {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+    private IntegracionBpmService bpmIntegracionService;
+		
     @BusinessOperation("convenioManager.borrarConvenio")
     @Transactional(readOnly = false)
     public void borrarConvenio(Long idConvenio) {
     	convenioDao.deleteById(idConvenio);
+    	
+    	bpmIntegracionService.enviarDatos(dameConvenio(idConvenio));
     }
 
 	@BusinessOperation("convenioManager.dameConvenioCredito")
@@ -309,6 +318,7 @@ public class ConvenioManager {
 		
 		// agregar los creditos con categoria definitiva en caso de que el convenio sea ordinario
 		//if(convenio.getTipoConvenio().getCodigo().equals("2")){
+			List<ConvenioCredito> convenioCreditos = new ArrayList<ConvenioCredito>();
 			Procedimiento p = convenio.getProcedimiento();
 			for (ExpedienteContrato ec : p.getExpedienteContratos()) {
 				List<Credito> listaCreditosDifinitivos = new ArrayList<Credito>();
@@ -318,30 +328,39 @@ public class ConvenioManager {
 					convenioCredito.setConvenio(convenio);
 					convenioCredito.setCredito(creditoInsertar);
 					convenioCreditoDao.save(convenioCredito);
+					
+					convenioCreditos.add(convenioCredito);
 				}
 			}
+			
+			convenio.setConvenioCreditos(convenioCreditos);
 		//}
 		// ---------------------------------------------------------------------------------------
-		
+			
+		bpmIntegracionService.enviarDatos(convenio);
 	}
 	
 	@BusinessOperation("convenioManager.editarConvenioCredito")
 	@Transactional(readOnly = false)
 	public void editarConvenioCredito(DtoEditarConvenioCredito dto){
 		ConvenioCredito convenioCredito = convenioCreditoDao.get(dto.getIdConvenioCredito());
+		convenioCredito.setGuid(dto.getGuid());
 		convenioCredito.setQuita(dto.getQuita());
 		convenioCredito.setEspera(dto.getEspera());
 		convenioCredito.setComentario(dto.getComentario());
 		convenioCredito.setCarencia(dto.getCarencia());		
 		convenioCreditoDao.save(convenioCredito);
+		
+		bpmIntegracionService.enviarDatos(convenioCredito.getConvenio());
 	}
 	
 	@BusinessOperation("convenioManager.editarConvenio")
 	@Transactional(readOnly = false)
 	public void editarConvenio(DtoAgregarConvenio dto){
 		Convenio convenio = convenioDao.get(dto.getIdConvenio());
-		Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO,dto.getIdProcedimiento());
+		convenio.setGuid(dto.getGuid());
 		
+		Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO,dto.getIdProcedimiento());
 		convenio.setProcedimiento(proc);
 		
 		try {
@@ -381,6 +400,83 @@ public class ConvenioManager {
 			convenio.setTipoAdhesion(tipoAdhesion);
 		}
 		convenioDao.save(convenio);
+		
+		bpmIntegracionService.enviarDatos(convenio);
+	}
+	
+	public void guardarConvenio(DtoAgregarConvenio convenioDto, List<DtoEditarConvenioCredito> convenioCreditosDto) 
+	{
+		Convenio convenio = new Convenio();
+		Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, convenioDto.getIdProcedimiento());
+		
+		convenio.setProcedimiento(proc);
+		
+		if (convenioDto.getEstado()!=null) {
+			convenio.setEstadoConvenio(estadoConvenioDao.get(convenioDto.getEstado()));
+		}
+		
+		if (convenioDto.getPostura()!=null) {
+			convenio.setPosturaConvenio(posturaConvenioDao.get(convenioDto.getPostura()));
+		}
+		
+		if (convenioDto.getInicio()!=null) {
+			convenio.setInicioConvenio(inicioConvenioDao.get(convenioDto.getInicio()));
+		}
+		
+		if (convenioDto.getTipo()!=null) {
+			convenio.setTipoConvenio(tipoConvenioDao.get(convenioDto.getTipo()));
+		}
+		
+		if (convenioDto.getAdherirse()!=null) {
+			convenio.setAdherirse(siNoDao.get(convenioDto.getAdherirse()));
+		}
+		
+		if (!Checks.esNulo(convenioDto.getAlternativa())) {
+			DDTipoAlternativa tipoAlternativa = (DDTipoAlternativa) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoAlternativa.class, convenioDto.getAlternativa());
+			convenio.setTipoAlternativa(tipoAlternativa);
+		}
+		
+		if (!Checks.esNulo(convenioDto.getTipoAdhesion())) {
+			DDTipoAdhesion tipoAdhesion= (DDTipoAdhesion) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoAdhesion.class, convenioDto.getTipoAdhesion());
+			convenio.setTipoAdhesion(tipoAdhesion);
+		}
+		
+		convenio.setNumProponentes(convenioDto.getNumeroProponentes());
+		convenio.setTotalMasa(convenioDto.getTotalMasa());
+		convenio.setTotalMasaOrd(convenioDto.getTotalMasaOrd());
+		convenio.setPorcentaje(convenioDto.getPorcentaje());
+		convenio.setPorcentajeOrd(convenioDto.getPorcentajeOrd());
+		
+		try {
+			convenio.setFecha(DateFormat.toDate(convenioDto.getFecha()));
+		} 
+		catch (ParseException e) {
+			throw new BusinessOperationException(convenioDto.getFecha().concat(": no es un formato de fecha valido"),e);
+		}
+		
+		convenio.setDescripcion(convenioDto.getDescripcion());
+		convenio.setDescripcionAdhesiones(convenioDto.getDescripcionAdhesiones());
+		convenio.setDescripcionAnticipado(convenioDto.getDescripcionAnticipado());
+		convenio.setDescripcionTerceros(convenioDto.getDescripcionTerceros());
+		convenio.setDescripcionConvenio(convenioDto.getDescripcionConvenio());
+		
+		if(convenioCreditosDto != null) {
+			for(DtoEditarConvenioCredito convenioCreditoDto : convenioCreditosDto) {
+				
+				ConvenioCredito convenioCredito = new ConvenioCredito();
+				convenioCredito.setConvenio(convenio);
+				convenioCredito.setCredito(convenioCreditoDto.getCredito());
+				convenioCredito.setGuid(convenioCreditoDto.getGuid());
+				convenioCredito.setQuita(convenioCreditoDto.getQuita());
+				convenioCredito.setEspera(convenioCreditoDto.getEspera());
+				convenioCredito.setComentario(convenioCreditoDto.getComentario());
+				convenioCredito.setCarencia(convenioCreditoDto.getCarencia());		
+				
+				convenioCreditoDao.save(convenioCredito);
+			}
+		}
+		
+		convenioDao.save(convenio);
 	}
 	
 	@BusinessOperation("convenioManager.dameEstadoPorDefecto")
@@ -411,5 +507,41 @@ public class ConvenioManager {
 		if(numeroAuto != null && numeroAuto.contains("/"))
 			resultado = true;
 		return resultado;
+	}
+	
+	public Convenio getConvenioByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		Convenio convenio = genericDao.get(Convenio.class, filtro);
+		return convenio;
+	}
+
+	public ConvenioCredito getConvenioCreditoByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		ConvenioCredito convenioCredito = genericDao.get(ConvenioCredito.class, filtro);
+		return convenioCredito;
+	}
+	
+	public Convenio prepareGuid(Convenio convenio) {
+		if (Checks.esNulo(convenio.getGuid())) {
+			convenio.setGuid(UUID.randomUUID().toString());
+			convenioDao.saveOrUpdate(convenio);
+		}
+
+		if (convenio.getConvenioCreditos() != null) {
+			for (ConvenioCredito convenioCreditos : convenio.getConvenioCreditos()) {
+				prepareGuid(convenioCreditos);
+			}
+		}
+		
+		return convenio;
+	}
+	
+	private ConvenioCredito prepareGuid(ConvenioCredito convenioCredito) {
+		if (Checks.esNulo(convenioCredito.getGuid())) {
+			convenioCredito.setGuid(UUID.randomUUID().toString());
+			genericDao.save(ConvenioCredito.class, convenioCredito);
+		}
+		
+		return convenioCredito;
 	}
 }

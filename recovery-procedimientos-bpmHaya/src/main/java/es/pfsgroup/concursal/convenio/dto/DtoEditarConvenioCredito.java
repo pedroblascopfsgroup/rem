@@ -1,7 +1,9 @@
 package es.pfsgroup.concursal.convenio.dto;
 
 import javax.validation.constraints.NotNull;
+
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.concursal.credito.model.Credito;
 
 public class DtoEditarConvenioCredito extends WebDto{
 	
@@ -9,6 +11,10 @@ public class DtoEditarConvenioCredito extends WebDto{
 
 	@NotNull
 	private Long idConvenioCredito;
+	
+	private Credito credito;
+	
+	private String guid;
 	
 	private Float quita;
 	
@@ -25,7 +31,23 @@ public class DtoEditarConvenioCredito extends WebDto{
 	public Long getIdConvenioCredito() {
 		return idConvenioCredito;
 	}
+	
+	public String getGuid() {
+		return guid;
+	}
 
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
+	public void setCredito(Credito credito) {
+		this.credito = credito;
+	}
+
+	public Credito getCredito() {
+		return credito;
+	}
+	
 	public void setQuita(Float quita) {
 		this.quita = quita;
 	}

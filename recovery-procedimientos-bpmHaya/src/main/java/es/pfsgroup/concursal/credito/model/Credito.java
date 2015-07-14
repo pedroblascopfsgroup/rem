@@ -1,7 +1,6 @@
 package es.pfsgroup.concursal.credito.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -73,15 +72,16 @@ public class Credito implements Serializable, Auditable{
 	@Column(name = "CRE_PRINCIPAL_FINAL")
 	private Double principalDefinitivo;
 	
+	@Column(name="SYS_GUID")
+	private String guid;
+		
 	@Embedded
     private Auditoria auditoria;
 
     @Version
     private Integer version;
     
-    
-
-	public Long getId() {
+    public Long getId() {
 		return id;
 	}
 
@@ -186,6 +186,11 @@ public class Credito implements Serializable, Auditable{
 		return estadoCredito;
 	}
 	
-	
+	public String getGuid() {
+		return guid;
+	}
 
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 }

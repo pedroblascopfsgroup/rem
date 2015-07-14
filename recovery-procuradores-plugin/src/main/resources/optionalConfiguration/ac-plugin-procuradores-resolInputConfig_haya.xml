@@ -51,6 +51,9 @@
 				
 				<!-- Trámite de Notificación -->
 				<entry key="P400" value-ref="mapaTramiteNotificacion"/>
+				
+				<!-- Vigilancia de caducidad de embargo -->
+				<entry key="H062" value-ref="mapaVigilanciaCaducidad" />
 			</map>
 		</property>
 	</bean>
@@ -86,6 +89,16 @@
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
 								<value>I_PR_HIP_AUTO_DESP_DESF</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_PR_HIP_REG_CERTI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_PR_HIP_REG_CERTI</value>
 							</property>
 						</bean>
 					</list>
@@ -2007,4 +2020,23 @@
 		</property>
 	</bean>
 	
+	
+	<!-- H062 mapaVigilanciaCaducidad -->
+		<bean id="mapaVigilanciaCaducidad"
+		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
+		<property name="mapaTiposResoluciones">
+			<map>				
+				<entry key="R_MANDA_CUM_ANO">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_MANDA_CUM_ANO</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
 </beans>	

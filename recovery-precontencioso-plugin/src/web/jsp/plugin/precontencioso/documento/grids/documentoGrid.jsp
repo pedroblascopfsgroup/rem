@@ -298,7 +298,7 @@ var editarDocButton = new Ext.Button({
 							flow: 'documentopco/editarDocumento'
 							,params: {idSolicitud:idSolicitud}
 							,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
-							,width: 300
+							,width: 640
 						});
 					w.on(app.event.DONE, function() {
 						w.close(); });

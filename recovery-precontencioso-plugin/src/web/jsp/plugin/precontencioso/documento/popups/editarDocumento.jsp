@@ -93,7 +93,6 @@
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.fechaEscritura" text="**Fecha escritura" />'
 		,value : '<fwk:date value="${fechaEscritura}" />'
-		,allowBlank : false
 		,style:'margin:0px'
 	});
 	
@@ -151,46 +150,28 @@
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.idufir" text="**IDUFIR" />'
 	});  	
 
-		
-	var panelEdicion = new Ext.form.FormPanel({
-		autoHeight:true
-		, border : false
-				,layout : 'column'
-				,height: 255
-				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:200}
-				,items:[{
-					title:'<s:message code="precontencioso.grid.documento.editarDocumento.infoDocumentos" text="**Información Documentos" />'
-					,layout:'table'
-					,layoutConfig:{
-						columns:2							
-					}
-					,defaults:{layout : 'form',border:false,height:175}
-					,items:[
-						{
-						items:[{
-							border:false
-							,style:'font-size:11px; margin:4px; top:5px'
-							, bodyStyle:'padding:5px'
-							,items:[notario, asiento, finca, numFinca, numRegistro, plaza]
-								}]
-						, width: 280
-						}
-						,{
-							items:[protocolo, fechaEscritura, tomo, libro, folio, idufir]
-							,width:280
-						}
-					]
-				}]
-	});
 
+	var panelEdicion = new Ext.form.FieldSet({
+		title:'<s:message code="precontencioso.grid.documento.editarDocumento.infoDocumentos" text="**Información Documentos" />'
+		,layout:'table'
+		,layoutConfig:{columns:2}
+		,border:true
+		,autoHeight : true
+   	    ,autoWidth : true
+		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza]}
+				,{items: [ protocolo, fechaEscritura, tomo, libro, folio, idufir]}
+		]
+	});	
+	
 	var panel=new Ext.Panel({
 		border:false
 		,bodyStyle : 'padding:5px'
 		,autoHeight:true
 		,autoScroll:true
-		,width:840
-		,height:600
-		,defaults:{xtype:'fieldset',cellCls : 'vtop',width:840,autoHeight:true}
+		,width:600
+		,height:620
+		,defaults:{xtype:'fieldset',cellCls : 'vtop',width:600,autoHeight:true}
 		,items:panelEdicion
 		,bbar:[btnGuardar, btnCancelar]
 	});	

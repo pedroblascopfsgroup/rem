@@ -351,29 +351,49 @@
 				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.situacionCDD" text="**Situaci&oacute;n cierre de deuda"/>'
 	});
 	
+	var generico = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	var optionsErrorPrevioStore = page.getStore({
+	       flow: 'subasta/getListErrorPreviCDDData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	    }, generico)	       
+	});
+
 	//Campo Combo Error previo envio CDD
 	var comboErrorPreviCDD = new Ext.form.ComboBox({
-				store:optionsSINOStore
+				store:optionsErrorPrevioStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,mode: 'local'
+				,mode: 'remote'
+				,width:300
 				,editable: false
 				,emptyText:'---'
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.situacionCDD" text="**Situaci&oacute;n cierre de deuda"/>'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPrevioEnvio" text="**Error previo env&iacute;o a cierre"/>'
 	});
 	
+	var optionsErrorPostStore = page.getStore({
+	       flow: 'subasta/getListErrorPostCDDData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	    }, generico)	       
+	});
 	
 	//Campo Combo Error post envio CDD
 	var comboErrorPostCDD = new Ext.form.ComboBox({
-				store:optionsSINOStore
+				store:optionsErrorPostStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,mode: 'local'
+				,mode: 'remote'
+				,width:300
 				,editable: false
 				,emptyText:'---'
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.situacionCDD" text="**Situaci&oacute;n cierre de deuda"/>'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Error post env&iacute;o a cierre"/>'
 	});	
 	
 	              
@@ -649,10 +669,9 @@
 				,{items:[fechaCreacionHasta]}
 				,{items:[filtroNumeroAutosPanel]}
 				,{items:[comboJerarquia]}
-				,{items:[comboSituacionCDD]}
 				,{items:[comboErrorPreviCDD]}
-				,{items:[comboErrorPostCDD]}
 				,{items:[comboZonas]}
+				,{items:[comboErrorPostCDD]}
 				,{colspan:2,items:[comboTipoProcedimientos]}
 				,{items:[comboGestion]}
 				,{items:[comboPropiedades]}

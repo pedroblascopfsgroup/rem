@@ -86,6 +86,8 @@ public class DocumentoPCOController {
 	 */
 	private void crearSolicitudDocumentosDto() {
 		solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
+		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 						
 		Long antIdDoc = new Long(0);
 		String antTipoUG = "";
@@ -111,10 +113,22 @@ public class DocumentoPCOController {
 						antTipoDoc = doc.getTipoDocumento();
 					}
 					solDocDto.setActor(sol.getActor());
-					solDocDto.setFechaSolicitud(sol.getFechaSolicitud());
-					solDocDto.setFechaResultado(sol.getFechaResultado());
-					solDocDto.setFechaEnvio(sol.getFechaEnvio());
-					solDocDto.setFechaRecepcion(sol.getFechaRecepcion());
+					if (sol.getFechaSolicitud()!=null)
+						solDocDto.setFechaSolicitud(webDateFormat.format(sol.getFechaSolicitud()));
+					else
+						solDocDto.setFechaSolicitud("");
+					if (sol.getFechaResultado()!=null)
+						solDocDto.setFechaResultado(webDateFormat.format(sol.getFechaResultado()));
+					else 
+						solDocDto.setFechaResultado("");
+					if (sol.getFechaEnvio()!=null)
+						solDocDto.setFechaEnvio(webDateFormat.format(sol.getFechaEnvio()));
+					else
+						solDocDto.setFechaEnvio("");
+					if (sol.getFechaRecepcion()!=null)
+						solDocDto.setFechaRecepcion(webDateFormat.format(sol.getFechaRecepcion()));
+					else
+						solDocDto.setFechaRecepcion("");
 					solDocDto.setResultado(sol.getResultado());
 					
 					solicitudesDoc.add(solDocDto);

@@ -88,6 +88,10 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubsanacionEscritura/haya_tramiteSubsanacionEscritura.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteInscripcionDelTitulo/haya_tramiteInscripcionDelTitulo.xml" p:version="-1"/>
 	
+	<!-- HRE-BCC -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondos/hcj_provisionFondos.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoHipotecario/hcj_procedimientoHipotecario.xml" p:version="-1"/>	
+	
 	<!-- Groovy's -->
 	<bean id="jbpmUtilHaya" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
@@ -733,6 +737,11 @@
 					def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoDelegateManager");
                 	return subastaProcedimientoManager.comprobarAdjudicacionDocBienesCelebracionSubasta(idProcedimiento);
 	            }		    		                       
+
+				def comprobarExisteDocumentoPRVFND = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PRVFND");
+				}
         	            
   			 ]]>
   			</value>

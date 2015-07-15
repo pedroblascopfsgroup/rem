@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoHipotecario" width="1900" height="1100">
+<root-container name="haya_procedimientoHipotecario" width="1896" height="1098">
   <node name="Inicio" x="27" y="22" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H001_DemandaCertificacionCargas" x="189" y="22" width="260" height="36">
+  <node name="H001_DemandaCertificacionCargas" x="216" y="13" width="260" height="36">
     <edge>
       <label x="-10" y="2"/>
       <bendpoint w1="-136" h1="49" w2="-136" h2="49"/>
@@ -109,7 +109,7 @@
   </node>
   <node name="H001_BPMTramiteSubasta" x="768" y="696" width="262" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-35" y="-33"/>
       <bendpoint w1="178" h1="-73" w2="-166" h2="315"/>
     </edge>
     <edge>

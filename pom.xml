@@ -358,6 +358,11 @@
 				<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-hre-bcc-comunes</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<!-- 	CAJAMAR LIBRARIES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -515,6 +520,7 @@
 			</activation>
 			<modules>
 				<module>recovery-integracionuvem-plugin</module>
+				<module>proyecto-hre-bcc-comunes</module>
 				<module>recovery-procedimientos-bpmHaya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
 
@@ -529,6 +535,7 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
+				<module>proyecto-hre-bcc-comunes</module>
 				<module>recovery-procedimientos-bpmHaya</module>
 				<module>proyecto-cajamar-online</module>
 

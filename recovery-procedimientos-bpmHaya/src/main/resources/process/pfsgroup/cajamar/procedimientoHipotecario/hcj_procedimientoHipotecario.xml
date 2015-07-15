@@ -109,7 +109,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="H001_ConfirmarSiExisteOposicion" name="tramiteNotificacionV4"></transition>
+		<transition to="H001_ConfirmarSiExisteOposicion" name="P400_tramiteNotificacionV4"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -158,7 +158,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="haya_tramiteSubastaSAREBV4"></transition>
+		<transition to="Fin" name="hcj_tramiteSubasta"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 

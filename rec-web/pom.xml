@@ -1964,6 +1964,21 @@
 			<dependencies>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-hre-bcc-comunes</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
 					<exclusions>
 						<exclusion>
@@ -2024,5 +2039,49 @@
 				</resources>
 			</build>
 		</profile>
+		<profile>
+			<id>cajamar</id>
+			<dependencies>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-hre-bcc-comunes</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-online</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/haya/resources</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+
 	</profiles>
 </project>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteSubastaSareb" width="2914" height="1931">
+<root-container name="hcj_tramiteSubasta" width="2914" height="1931">
   <node name="Inicio" x="34" y="133" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

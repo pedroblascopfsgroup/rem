@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteSubastaSareb">
+<process-definition xmlns="" name="hcj_tramiteSubasta">
 
 	<start-state name="Inicio">
 		<transition to="H002_SolicitudSubasta" name="iniciarProceso"></transition>

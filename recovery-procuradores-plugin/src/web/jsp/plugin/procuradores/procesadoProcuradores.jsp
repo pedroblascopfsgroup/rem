@@ -89,12 +89,12 @@ onViewClick : function(doFocus){
 	}
 	
 	var fnBeforeSelectCombo = function(combo, record, index){
-						
-		if(parseInt(record.data.id) < 1000){ 
-			Ext.MessageBox.alert("Tarea pendiente","No se puede crear esta tarea. Existen tareas pendientes de validar en la resolución.");
-				return false; 
+
+		if(parseInt(record.data.id) > 999 || record.data.accion == "INFO"){ 
+ 			return true;
 		}else{
-			return true;
+			Ext.MessageBox.alert("Tarea pendiente","No se puede crear esta tarea. Existen tareas pendientes de validar en la resolución.");
+			return false;
 		}
 							
 	}

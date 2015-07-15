@@ -14,52 +14,52 @@
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolucionesProc">
 		<property name="mapaConfigResoluciones">
 			<map>
-				<entry key="H001" value-ref="mapaProcedimientoHipotecario"/>
-				<entry key="H002" value-ref="mapaTramiteSubastaSAREB"/>
-				<entry key="H004" value-ref="mapaTramiteSubastaTerceros"/>
-				<entry key="H006" value-ref="mapaTramiteCesionRemate"/>
-				<entry key="H005" value-ref="mapaTramiteAdjudicacion"/>
-				<entry key="H007" value-ref="mapaTramiteCostas"/>
-				<entry key="H030" value-ref="mapaTramiteCertificacion"/>
-				<entry key="H042" value-ref="mapaTramiteIntereses"/>
-				<entry key="H040" value-ref="mapaTramiteGestionLlaves"/>
-				<entry key="H048" value-ref="mapaTramiteOcupantes"/>
-				<entry key="H011" value-ref="mapaTramiteMoratoria"/>
-				<entry key="H015" value-ref="mapaTramitePosesion"/>
-				<entry key="H052" value-ref="mapaTramiteSubsanacionDecreto"/>
+				<entry key="H001" value-ref="mapaProcedimientoHipotecario_haya"/>
+				<entry key="H002" value-ref="mapaTramiteSubastaSAREB_haya"/>
+				<entry key="H004" value-ref="mapaTramiteSubastaTerceros_haya"/>
+				<entry key="H006" value-ref="mapaTramiteCesionRemate_haya"/>
+				<entry key="H005" value-ref="mapaTramiteAdjudicacion_haya"/>
+				<entry key="H007" value-ref="mapaTramiteCostas_haya"/>
+				<entry key="H030" value-ref="mapaTramiteCertificacion_haya"/>
+				<entry key="H042" value-ref="mapaTramiteIntereses_haya"/>
+				<entry key="H040" value-ref="mapaTramiteGestionLlaves_haya"/>
+				<entry key="H048" value-ref="mapaTramiteOcupantes_haya"/>
+				<entry key="H011" value-ref="mapaTramiteMoratoria_haya"/>
+				<entry key="H015" value-ref="mapaTramitePosesion_haya"/>
+				<entry key="H052" value-ref="mapaTramiteSubsanacionDecreto_haya"/>
 				
 				<!-- Resto de procedimientos -->
-				<entry key="H016" value-ref="mapaProcedimientoCambiario"/>
-				<entry key="H034" value-ref="mapaProcedimientoDeposito"/>
-				<entry key="H020" value-ref="mapaProcedimientoETNJ"/>
-				<entry key="H022" value-ref="mapaProcedimientoMonitorio"/>
-				<entry key="H024" value-ref="mapaProcedimientoOrdinario"/>
-				<entry key="H050" value-ref="mapaProcedimientoPrecinto"/>
-				<entry key="H018" value-ref="mapaProcedimientoETJ"/>
-				<entry key="H026" value-ref="mapaProcedimientoVerbal"/>
-				<entry key="H028" value-ref="mapaProcedimientoVerbalMonitorio"/>
-				<entry key="H030" value-ref="mapaTramiteCertificadoCargas"/>
-				<entry key="H038" value-ref="mapaEmbargoSalarios"/>
-				<entry key="H044" value-ref="mapaInvestigacionJudicial"/>
-				<entry key="H046" value-ref="mapaMejoraEmbargo"/>
-				<entry key="H058" value-ref="mapaValoracionBienes"/>
-				<entry key="H060" value-ref="mapaValoracionMuebles"/>
+				<entry key="H016" value-ref="mapaProcedimientoCambiario_haya"/>
+				<entry key="H034" value-ref="mapaProcedimientoDeposito_haya"/>
+				<entry key="H020" value-ref="mapaProcedimientoETNJ_haya"/>
+				<entry key="H022" value-ref="mapaProcedimientoMonitorio_haya"/>
+				<entry key="H024" value-ref="mapaProcedimientoOrdinario_haya"/>
+				<entry key="H050" value-ref="mapaProcedimientoPrecinto_haya"/>
+				<entry key="H018" value-ref="mapaProcedimientoETJ_haya"/>
+				<entry key="H026" value-ref="mapaProcedimientoVerbal_haya"/>
+				<entry key="H028" value-ref="mapaProcedimientoVerbalMonitorio_haya"/>
+				<entry key="H030" value-ref="mapaTramiteCertificadoCargas_haya"/>
+				<entry key="H038" value-ref="mapaEmbargoSalarios_haya"/>
+				<entry key="H044" value-ref="mapaInvestigacionJudicial_haya"/>
+				<entry key="H046" value-ref="mapaMejoraEmbargo_haya"/>
+				<entry key="H058" value-ref="mapaValoracionBienes_haya"/>
+				<entry key="H060" value-ref="mapaValoracionMuebles_haya"/>
 				
 				<!-- Procedimientos hipotecarios NUEVOS -->
-				<entry key="H064" value-ref="mapaTramiteConsigacion"/>
-				<entry key="H032" value-ref="mapaTramiteCostasEntidad"/>
+				<entry key="H064" value-ref="mapaTramiteConsigacion_haya"/>
+				<entry key="H032" value-ref="mapaTramiteCostasEntidad_haya"/>
 				
 				<!-- Trámite de Notificación -->
-				<entry key="P400" value-ref="mapaTramiteNotificacion"/>
+				<entry key="P400" value-ref="mapaTramiteNotificacion_haya"/>
 				
 				<!-- Vigilancia de caducidad de embargo -->
-				<entry key="H062" value-ref="mapaVigilanciaCaducidad" />
+				<entry key="H062" value-ref="mapaVigilanciaCaducidad_haya" />
 			</map>
 		</property>
 	</bean>
 
-<!-- H001 mapaProcedimientoHipotecario -->
-	<bean id="mapaProcedimientoHipotecario"
+<!-- H001 mapaProcedimientoHipotecario_haya -->
+	<bean id="mapaProcedimientoHipotecario_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -157,8 +157,8 @@
 		</property>
 	</bean>
 	
-<!-- H002 mapaTramiteSubastaSAREB -->
-	<bean id="mapaTramiteSubastaSAREB"
+<!-- H002 mapaTramiteSubastaSAREB_haya -->
+	<bean id="mapaTramiteSubastaSAREB_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -227,8 +227,8 @@
 	</bean>
 	
 	
-<!-- H004 mapaTramiteSubastaTerceros -->
-	<bean id="mapaTramiteSubastaTerceros"
+<!-- H004 mapaTramiteSubastaTerceros_haya -->
+	<bean id="mapaTramiteSubastaTerceros_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -286,8 +286,8 @@
 		</property>
 	</bean>
 	
-<!-- H006 mapaTramiteCesionRemate -->
-	<bean id="mapaTramiteCesionRemate"
+<!-- H006 mapaTramiteCesionRemate_haya -->
+	<bean id="mapaTramiteCesionRemate_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>
@@ -325,8 +325,8 @@
 		</property>
 	</bean>
 	
-<!-- H005 mapaTramiteAdjudicacion -->
-	<bean id="mapaTramiteAdjudicacion"
+<!-- H005 mapaTramiteAdjudicacion_haya -->
+	<bean id="mapaTramiteAdjudicacion_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -374,8 +374,8 @@
 		</property>
 	</bean>
 	
-<!-- H007 mapaTramiteCostas -->
-	<bean id="mapaTramiteCostas"
+<!-- H007 mapaTramiteCostas_haya -->
+	<bean id="mapaTramiteCostas_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -433,8 +433,8 @@
 		</property>
 	</bean>
 	
-<!-- H030 mapaTramiteCertificacion -->
-	<bean id="mapaTramiteCertificacion"
+<!-- H030 mapaTramiteCertificacion_haya -->
+	<bean id="mapaTramiteCertificacion_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -492,8 +492,8 @@
 		</property>
 	</bean>
 	
-<!-- H042 mapaTramiteIntereses -->
-	<bean id="mapaTramiteIntereses"
+<!-- H042 mapaTramiteIntereses_haya -->
+	<bean id="mapaTramiteIntereses_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -551,8 +551,8 @@
 		</property>
 	</bean>
 	
-<!-- H040 mapaTramiteGestionLlaves --> 
-	<bean id="mapaTramiteGestionLlaves"
+<!-- H040 mapaTramiteGestionLlaves_haya --> 
+	<bean id="mapaTramiteGestionLlaves_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -580,8 +580,8 @@
 		</property>
 	</bean>
 	
-<!-- H048 mapaTramiteOcupantes -->
-	<bean id="mapaTramiteOcupantes"
+<!-- H048 mapaTramiteOcupantes_haya -->
+	<bean id="mapaTramiteOcupantes_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -669,8 +669,8 @@
 		</property>
 	</bean>
 	
-<!-- H011 mapaTramiteMoratoria -->
-	<bean id="mapaTramiteMoratoria"
+<!-- H011 mapaTramiteMoratoria_haya -->
+	<bean id="mapaTramiteMoratoria_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -718,8 +718,8 @@
 		</property>
 	</bean>
 	
-<!-- H015 mapaTramitePosesion -->
-	<bean id="mapaTramitePosesion"
+<!-- H015 mapaTramitePosesion_haya -->
+	<bean id="mapaTramitePosesion_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -777,8 +777,8 @@
 		</property>
 	</bean>
 	
-<!-- H052 mapaTramiteSubsanacionDecreto -->
-	<bean id="mapaTramiteSubsanacionDecreto"
+<!-- H052 mapaTramiteSubsanacionDecreto_haya -->
+	<bean id="mapaTramiteSubsanacionDecreto_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -823,8 +823,8 @@
 	
 	<!--  TRÁMITES NUEVOS -->
 	
-	<!-- H016 mapaProcedimientoCambiario -->
-		<bean id="mapaProcedimientoCambiario"
+	<!-- H016 mapaProcedimientoCambiario_haya -->
+		<bean id="mapaProcedimientoCambiario_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -922,8 +922,8 @@
 		</property>
 	</bean>
 	
-	<!-- H034 mapaProcedimientoDeposito -->
-		<bean id="mapaProcedimientoDeposito"
+	<!-- H034 mapaProcedimientoDeposito_haya -->
+		<bean id="mapaProcedimientoDeposito_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -981,8 +981,8 @@
 		</property>
 	</bean>
 	
-	<!-- H020 mapaProcedimientoETNJ -->
-		<bean id="mapaProcedimientoETNJ"
+	<!-- H020 mapaProcedimientoETNJ_haya -->
+		<bean id="mapaProcedimientoETNJ_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1100,8 +1100,8 @@
 		</property>
 	</bean>
 	
-	<!-- H022 mapaProcedimientoMonitorio -->
-		<bean id="mapaProcedimientoMonitorio"
+	<!-- H022 mapaProcedimientoMonitorio_haya -->
+		<bean id="mapaProcedimientoMonitorio_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1179,8 +1179,8 @@
 		</property>
 	</bean>
 	
-	<!-- H024 mapaProcedimientoOrdinario -->
-		<bean id="mapaProcedimientoOrdinario"
+	<!-- H024 mapaProcedimientoOrdinario_haya -->
+		<bean id="mapaProcedimientoOrdinario_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1278,8 +1278,8 @@
 		</property>
 	</bean>
 	
-	<!-- H050 mapaProcedimientoPrecinto -->
-		<bean id="mapaProcedimientoPrecinto"
+	<!-- H050 mapaProcedimientoPrecinto_haya -->
+		<bean id="mapaProcedimientoPrecinto_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>		
@@ -1317,8 +1317,8 @@
 		</property>
 	</bean>
 	
-	<!-- H018 mapaProcedimientoETJ -->
-		<bean id="mapaProcedimientoETJ"
+	<!-- H018 mapaProcedimientoETJ_haya -->
+		<bean id="mapaProcedimientoETJ_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1446,8 +1446,8 @@
 		</property>
 	</bean>
 	
-	<!-- H026 mapaProcedimientoVerbal -->
-		<bean id="mapaProcedimientoVerbal"
+	<!-- H026 mapaProcedimientoVerbal_haya -->
+		<bean id="mapaProcedimientoVerbal_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>
@@ -1525,8 +1525,8 @@
 		</property>
 	</bean>
 	
-	<!-- H028 mapaProcedimientoVerbalMonitorio -->
-		<bean id="mapaProcedimientoVerbalMonitorio"
+	<!-- H028 mapaProcedimientoVerbalMonitorio_haya -->
+		<bean id="mapaProcedimientoVerbalMonitorio_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1574,8 +1574,8 @@
 		</property>
 	</bean>
 	
-	<!-- H030 mapaTramiteCertificadoCargas -->
-		<bean id="mapaTramiteCertificadoCargas"
+	<!-- H030 mapaTramiteCertificadoCargas_haya -->
+		<bean id="mapaTramiteCertificadoCargas_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1633,8 +1633,8 @@
 		</property>
 	</bean>
 	
-	<!-- H038 mapaEmbargoSalarios -->
-		<bean id="mapaEmbargoSalarios"
+	<!-- H038 mapaEmbargoSalarios_haya -->
+		<bean id="mapaEmbargoSalarios_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1682,8 +1682,8 @@
 		</property>
 	</bean>
 	
-	<!-- H044 mapaInvestigacionJudicial -->
-		<bean id="mapaInvestigacionJudicial"
+	<!-- H044 mapaInvestigacionJudicial_haya -->
+		<bean id="mapaInvestigacionJudicial_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1721,8 +1721,8 @@
 		</property>
 	</bean>
 	
-	<!-- H046 mapaMejoraEmbargo -->
-		<bean id="mapaMejoraEmbargo"
+	<!-- H046 mapaMejoraEmbargo_haya -->
+		<bean id="mapaMejoraEmbargo_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1760,8 +1760,8 @@
 		</property>
 	</bean>
 	
-	<!-- H058 mapaValoracionBienes -->
-		<bean id="mapaValoracionBienes"
+	<!-- H058 mapaValoracionBienes_haya -->
+		<bean id="mapaValoracionBienes_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1819,8 +1819,8 @@
 		</property>
 	</bean>
 	
-	<!-- H060 mapaValoracionMuebles -->
-		<bean id="mapaValoracionMuebles"
+	<!-- H060 mapaValoracionMuebles_haya -->
+		<bean id="mapaValoracionMuebles_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1852,8 +1852,8 @@
 	
 	
 	<!-- PROCEDIMIENTOS HIPOTECARIOS NUEVOS -->
-	<!-- H064 mapaTramiteConsigacion -->
-		<bean id="mapaTramiteConsigacion"
+	<!-- H064 mapaTramiteConsigacion_haya -->
+		<bean id="mapaTramiteConsigacion_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1871,8 +1871,8 @@
 		</property>
 	</bean>
 	
-	<!-- H032 mapaTramiteCostasEntidad -->
-		<bean id="mapaTramiteCostasEntidad"
+	<!-- H032 mapaTramiteCostasEntidad_haya -->
+		<bean id="mapaTramiteCostasEntidad_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -1941,8 +1941,8 @@
 	</bean>
 	
 	
-	<!-- P400 mapaTramiteNotificacion -->
-		<bean id="mapaTramiteNotificacion"
+	<!-- P400 mapaTramiteNotificacion_haya -->
+		<bean id="mapaTramiteNotificacion_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
@@ -2021,8 +2021,8 @@
 	</bean>
 	
 	
-	<!-- H062 mapaVigilanciaCaducidad -->
-		<bean id="mapaVigilanciaCaducidad"
+	<!-- H062 mapaVigilanciaCaducidad_haya -->
+		<bean id="mapaVigilanciaCaducidad_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				

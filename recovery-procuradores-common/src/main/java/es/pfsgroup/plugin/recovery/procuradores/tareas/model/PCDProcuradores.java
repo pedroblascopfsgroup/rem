@@ -23,7 +23,6 @@ public class PCDProcuradores implements Serializable{
 
 	private static final long serialVersionUID = 2981071737733535390L;
 
-	 	@Id
 	    @Column(name = "TAR_ID", insertable = false, updatable = false)
 	    private Long id;
 
@@ -179,6 +178,7 @@ public class PCDProcuradores implements Serializable{
 		@Column(name = "CATEG_ID", insertable = false, updatable = false)
 		private Long idcategorizacion;
 		
+		@Id
 		@Column(name = "RES_ID", insertable = false, updatable = false)
 		private Long idResolucion;
 		

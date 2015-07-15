@@ -1103,7 +1103,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		,{"xtype":'numberfield',"name":"d_costasLetrado","fieldLabel":"Costas de letrado",allowBlank:false, filtrar:true}
 		,{"xtype":'datefield',"name":"d_fechaAnuncio","fieldLabel":"Fecha anuncio",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 		,{"xtype":'numberfield',"name":"d_costasProcurador","fieldLabel":"Costas del procurador",allowBlank:false}
-		,{"xtype":'datefield',"name":"d_fechaSenyalamiento","fieldLabel":"Fecha del señalamiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar:true }
+		,{"xtype":'datefield',"name":"d_fechaSenyalamiento","fieldLabel":"Fecha de celebración",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 		
 
 	]);

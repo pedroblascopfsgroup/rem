@@ -149,9 +149,19 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		if (idTareaExterna == null)
 			return null;
 		List<MSVResolucion> resoluciones = msvResolucionDao.dameResolucionByTarea(idTareaExterna);
-		if (resoluciones.isEmpty())
+		if (resoluciones.isEmpty()){
 			return null;
-		else return resoluciones.get(0);
+		}else{
+			///Nos quedamos con la resolucion que sea de tipo ADVANCE
+			MSVResolucion resolucion = null;
+			for(MSVResolucion resol : resoluciones){
+				if(resol.getTipoResolucion().getTipoAccion().getCodigo().equals("ADVANCE")){
+					resolucion = resol;
+					break;
+				}
+			}
+			return resolucion;
+		}
 	}
 	
 	@Override

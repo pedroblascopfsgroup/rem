@@ -58,11 +58,11 @@ public class BatchCDDResultadoNuse implements Serializable {
 	@Column(name = "CRN_RESULTADO")
 	private String resultado;
 
-	@Column(name = "CRN_DS_ERROR")
-	private Long dsError;
+	@Column(name = "CRN_DESC_RESULT")
+	private Long descripcionResultado;
 
-	@Column(name = "CRN_FECHA_ERROR")
-	private Date fechaError;
+	@Column(name = "CRN_FECHA_RESULT")
+	private Date fechaResultado;
 
 	@Embedded
 	private Auditoria auditoria;
@@ -102,12 +102,12 @@ public class BatchCDDResultadoNuse implements Serializable {
 		return resultado;
 	}
 
-	public Long getDsError() {
-		return dsError;
+	public Long getDescripcionResultado() {
+		return descripcionResultado;
 	}
 
-	public Date getFechaError() {
-		return fechaError;
+	public Date getFechaResultado() {
+		return fechaResultado;
 	}
 
 	public Auditoria getAuditoria() {
@@ -151,12 +151,12 @@ public class BatchCDDResultadoNuse implements Serializable {
 		this.resultado = resultado;
 	}
 
-	public void setDsError(Long dsError) {
-		this.dsError = dsError;
+	public void setDescripcionResultado(Long descripcionResultado) {
+		this.descripcionResultado = descripcionResultado;
 	}
 
-	public void setFechaError(Date fechaError) {
-		this.fechaError = fechaError;
+	public void setFechaResultado(Date fechaResultado) {
+		this.fechaResultado = fechaResultado;
 	}
 
 	public void setAuditoria(Auditoria auditoria) {

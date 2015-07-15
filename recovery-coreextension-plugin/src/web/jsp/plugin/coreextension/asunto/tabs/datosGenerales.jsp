@@ -354,6 +354,7 @@
 	var generico = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
+		,{name:'codigoDescripcion'}
 	]);
 	
 	var optionsErrorPrevioStore = page.getStore({
@@ -386,14 +387,14 @@
 	//Campo Combo Error post envio CDD
 	var comboErrorPostCDD = new Ext.form.ComboBox({
 				store:optionsErrorPostStore
-				,displayField:'descripcion'
+				,displayField:'codigoDescripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
 				,width:300
 				,editable: false
 				,emptyText:'---'
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Error post env&iacute;o a cierre"/>'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Resultado propuestas enviadas a cierre"/>'
 	});	
 	
 	              

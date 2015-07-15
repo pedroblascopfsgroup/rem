@@ -37,15 +37,15 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-execute immediate 'UPDATE tev_tarea_externa_valor
+execute immediate 'UPDATE '||V_ESQUEMA||'.tev_tarea_externa_valor
    SET tev_valor = ''2015-06-17'',
        usuariomodificar = ''BKNVDS2966'',
        fechamodificar = SYSDATE
  WHERE tev_nombre = ''fecha'' AND tex_id = (SELECT tex_id
-                                            FROM bank01.tex_tarea_externa tex
-                                            JOIN bank01.TAR_TAREAS_NOTIFICACIONES TAR ON TEX.TAR_ID = TAR.TAR_ID  AND TAR.PRC_ID = 100119748
+                                            FROM '||V_ESQUEMA||'.tex_tarea_externa tex
+                                            JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TEX.TAR_ID = TAR.TAR_ID  AND TAR.PRC_ID = 100119748
                                            WHERE tap_id = (SELECT tap_id
-                                                             FROM bank01.TAP_TAREA_PROCEDIMIENTO TAP 
+                                                             FROM '||V_ESQUEMA||'..TAP_TAREA_PROCEDIMIENTO TAP 
                                                              WHERE TAP_CODIGO = ''P401_ContabilizarCierreDeuda''))';
 
 COMMIT;

@@ -331,13 +331,6 @@ public class EntityToPayloadTransformer {
 		List<TerminoContrato> listadoTerminoContratos = mejAcuerdoManager.getTerminoAcuerdoContratos(idTermino);
 		List<TerminoBien> listadoTerminoBienes = mejAcuerdoManager.getTerminoAcuerdoBienes(idTermino);
 		
-		for (TerminoContrato tc : listadoTerminoContratos) {
-			mejAcuerdoManager.prepareGuid(tc);
-		}
-		for (TerminoBien tb : listadoTerminoBienes) {
-			mejAcuerdoManager.prepareGuid(tb);
-		}
-		
 		payload
 			.buildTerminoContrato(listadoTerminoContratos)
 			.buildTerminoBien(listadoTerminoBienes);

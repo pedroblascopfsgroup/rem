@@ -546,22 +546,6 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 	}
 
 	@Transactional(readOnly = false)
-	public void prepareGuid(TerminoBien terminoBien) {
-		if (Checks.esNulo(terminoBien.getGuid())) {
-			terminoBien.setGuid(UUID.randomUUID().toString());
-			saveTerminoBien(terminoBien);
-		}
-	}
-	
-	@Transactional(readOnly = false)
-	public void prepareGuid(TerminoContrato terminoContrato) {
-		if (Checks.esNulo(terminoContrato.getGuid())) {
-			terminoContrato.setGuid(UUID.randomUUID().toString());
-			saveTerminoContrato(terminoContrato);
-		}
-	}
-	
-	@Transactional(readOnly = false)
 	public void prepareGuid(TerminoAcuerdo terminoacuerdo) {
 		if (Checks.esNulo(terminoacuerdo.getGuid())) {
 			terminoacuerdo.setGuid(UUID.randomUUID().toString());

@@ -261,7 +261,7 @@ var informarDocButton = new Ext.Button({
 						flow: 'documentopco/informarSolicitud'
 						,params: {idSolicitud:idSolicitud}
 						,title: '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
-						,width: 300
+						,width: 640
 					});
 					w.on(app.event.DONE, function() {
 						w.close(); });

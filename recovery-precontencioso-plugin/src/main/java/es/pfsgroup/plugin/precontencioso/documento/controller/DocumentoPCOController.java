@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
@@ -26,8 +27,11 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.IncluirDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.InformarDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 
 @Controller
@@ -166,9 +170,24 @@ public class DocumentoPCOController {
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
-		dto.setEstado("test_estado");
+		dto.setEstado("DISP");
+		dto.setAdjuntado("NO");
+		dto.setFechaEnvio(new Date());
+		dto.setRespuesta("OK");
+		dto.setFechaRecepcion(new Date());
+		dto.setFechaResultado(new Date());
+		dto.setComentario("comentario");
 		
-		model.put("documento", dto);
+		List<DDEstadoDocumentoPCO> estadosDocumento = listaEstadosDocumento();
+		List<DDResultadoSolicitudPCO> respuestasSolicitud = listaRespuestasSolicitud();
+		
+		model.put("solicitud", dto);
+		model.put("estadosDocumento", estadosDocumento);
+		model.put("respuestasSolicitud", respuestasSolicitud);
+		
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		model.put("ddSiNo", ddsino);
+		
 		return INFORMAR_DOC;
 	}	
 	
@@ -866,6 +885,54 @@ public class DocumentoPCOController {
 	}
 
 	
+	public List<DDEstadoDocumentoPCO> listaEstadosDocumento() {
+		
+		List<DDEstadoDocumentoPCO> resultado = new ArrayList<DDEstadoDocumentoPCO>();
+		
+		DDEstadoDocumentoPCO disponible = new DDEstadoDocumentoPCO();
+		disponible.setCodigo("DISP");
+		disponible.setDescripcion("Disponible");
+		disponible.setDescripcionLarga("Disponible");
+		
+		DDEstadoDocumentoPCO recibido = new DDEstadoDocumentoPCO();
+		recibido.setCodigo("REC");
+		recibido.setDescripcion("Recibido");
+		recibido.setDescripcionLarga("Recibido");
+		
+		resultado.add(disponible);
+		resultado.add(recibido);
+		return resultado;
+		
+	}
+	
+	public List<DDResultadoSolicitudPCO> listaRespuestasSolicitud() {
+		
+		List<DDResultadoSolicitudPCO> resultado = new ArrayList<DDResultadoSolicitudPCO>();
+		
+		DDResultadoSolicitudPCO respOK = new DDResultadoSolicitudPCO();
+		respOK.setCodigo("OK");
+		respOK.setDescripcion("OK");
+		respOK.setDescripcionLarga("OK");
+		respOK.setResultadoOK(true);
+		
+		DDResultadoSolicitudPCO respNoEncontrado = new DDResultadoSolicitudPCO();
+		respNoEncontrado.setCodigo("NOENC");
+		respNoEncontrado.setDescripcion("Documento no encontrado");
+		respNoEncontrado.setDescripcionLarga("Documento no encontrado");
+		respOK.setResultadoOK(false);
+		
+		DDResultadoSolicitudPCO respFaltaInfo = new DDResultadoSolicitudPCO();
+		respFaltaInfo.setCodigo("FALTA");
+		respFaltaInfo.setDescripcion("Falta Información");
+		respFaltaInfo.setDescripcionLarga("Falta Información");
+		respOK.setResultadoOK(false);
+		
+		resultado.add(respOK);
+		resultado.add(respNoEncontrado);
+		resultado.add(respFaltaInfo);
+		return resultado;
+		
+	}
 	
 
  }

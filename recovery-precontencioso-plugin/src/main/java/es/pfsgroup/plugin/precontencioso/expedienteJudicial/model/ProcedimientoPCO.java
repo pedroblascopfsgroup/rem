@@ -72,9 +72,6 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@Column(name = "PCO_PRC_CNT_PRINCIPAL")
 	private String cntPrincipal;
 	
-	@Column(name = "PCO_PRC_NUM_EXP_INT")
-	private String nroExpInterno;
-
 	@Column(name = "PCO_PRC_FECHA_INICIO")
 	private Date fechaInicio;
 
@@ -195,14 +192,6 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setCntPrincipal(String cntPrincipal) {
 		this.cntPrincipal = cntPrincipal;
-	}
-
-	public String getNroExpInterno() {
-		return nroExpInterno;
-	}
-
-	public void setNroExpInterno(String nroExpInterno) {
-		this.nroExpInterno = nroExpInterno;
 	}
 
 	public Date getFechaInicio() {

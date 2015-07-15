@@ -115,11 +115,22 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		if(!Checks.esNulo(idsBien)) {
 			String[] arrLoteBien = idsBien.split(",");
 			
+						
 			for (String loteBien : arrLoteBien) {
-				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
-				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
+				BienLoteDto dto;
+				
+				if(loteBien.contains(";")) {
+					String bien = loteBien.substring(0,loteBien.indexOf(";")); 
+					String lote = loteBien.substring(loteBien.indexOf(";")+1); 
+					dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
+					listBienLote.add(dto);					
+				} else {					
+					String bien = loteBien;
+					String lote = "";
+					dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
+				}
 				listBienLote.add(dto);
+
 			}
 			informe.setBienesLote(listBienLote);
 		}

@@ -476,14 +476,14 @@
 		    
 		    var params = "";
 		            	
-		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0 || allBienesSelected()){
+		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
         		params = {idSubasta:idSubasta};				
 			} else {
 				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
 			} 
 
-			//app.openBrowserWindow(flow,params);
-		    //page.fireEvent(app.event.DONE);
+			app.openBrowserWindow(flow,params);
+		    page.fireEvent(app.event.DONE);
 		}
 	});
 	
@@ -495,15 +495,15 @@
         ,handler:function() {
         	var texto;
         	
-        	if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0 || allBienesSelected()){
-        		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.sinBien" text="**¿Esta seguro de enviar la operación a cierre de deudas?" />';				
-			} else {			
-				if(bienesSeleccionados.length > 1) {
+        	if (isAsuntoPropiedadBankia()){
+        		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.sinBien" text="**¿Esta seguro de enviar la operación a cierre de deudas?" />';	
+        	} else if(Ext.isEmpty(bienesSeleccionados)) {
+        		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.sinBien.agrupamiento" text="**¿Esta seguro de enviar la operación a cierre de deudas en modo agrupamiento?" />';			
+			} else if(bienesSeleccionados.length > 1) {
 	        		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien2" text="**¿Esta seguro de enviar los bienes a cierre de deudas?" />';
-		    	}else{	    	
-		    		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien a cierre de deudas?" />';
-		    	}
-			}
+		    }else {	    	
+		    	texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien1" text="**¿Está seguro de enviar el bien a cierre de deudas?" />';
+		    }			
 			
 			Ext.Msg.confirm(fwk.constant.confirmar, texto, this.decide, this);  	
         	
@@ -517,7 +517,7 @@
 		    var flow='/pfs/subasta/generarInformeCierre';
 		    var params;
 		    
-		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0 || allBienesSelected()){
+		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
         		params = {idSubasta:idSubasta};				
 			} else {
 				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};

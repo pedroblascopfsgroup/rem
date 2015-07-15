@@ -295,10 +295,10 @@ public class SubastaController {
 	private List<Long> obtenerBienEnviarCierre(String idsBien) {
 		List<Long> listIdsBien = new ArrayList<Long>();
 		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");			
-			for (String loteBien : arrLoteBien) {
-				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				listIdsBien.add(Long.valueOf(bien));
+			String[] ids = idsBien.split(",");			
+			for (String id : ids) {
+				//String bien = loteBien.substring(0,loteBien.indexOf(";")); 
+				listIdsBien.add(Long.valueOf(id));
 			}
 		}
 		return listIdsBien;

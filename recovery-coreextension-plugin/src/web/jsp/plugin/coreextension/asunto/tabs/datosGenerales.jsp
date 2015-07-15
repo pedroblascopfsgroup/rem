@@ -394,7 +394,7 @@
 				,editable: false
 				,emptyText:'---'
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Error post env&iacute;o a cierre"/>'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Resultado propuestas enviadas a cierre"/>'
 	});	
 	
 	              

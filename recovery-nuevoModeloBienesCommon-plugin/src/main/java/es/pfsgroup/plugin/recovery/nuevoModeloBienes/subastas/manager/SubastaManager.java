@@ -53,8 +53,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
@@ -1310,13 +1312,15 @@ public class SubastaManager implements SubastaApi {
 		@BusinessOperation(BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA)
 		public List<DDResultadoValidacionCDD> getListErrorPreviCDDData() {
 			Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			return (ArrayList<DDResultadoValidacionCDD>) genericDao.getList(DDResultadoValidacionCDD.class, fBorrado);
+			Order orderDescripcion = new Order(OrderType.ASC, "descripcion");
+			return (ArrayList<DDResultadoValidacionCDD>) genericDao.getListOrdered(DDResultadoValidacionCDD.class, orderDescripcion, fBorrado);
 		}
 
 		@Override
 		@BusinessOperation(BO_NMB_GET_LIST_ERROR_POST_CDD_DATA)
 		public List<DDResultadoValidacionNuse> getListErrorPostCDDData() {
 			Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			return (ArrayList<DDResultadoValidacionNuse>) genericDao.getList(DDResultadoValidacionNuse.class, fBorrado);
+			Order orderDescripcion = new Order(OrderType.ASC, "descripcion");
+			return (ArrayList<DDResultadoValidacionNuse>) genericDao.getListOrdered(DDResultadoValidacionNuse.class, orderDescripcion, fBorrado);
 		}
 }

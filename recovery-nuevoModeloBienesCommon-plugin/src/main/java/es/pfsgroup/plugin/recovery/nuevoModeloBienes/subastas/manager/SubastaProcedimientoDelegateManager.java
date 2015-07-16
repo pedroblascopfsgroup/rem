@@ -126,8 +126,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					listBienLote.add(dto);					
 				} else {					
 					String bien = loteBien;
-					String lote = "";
-					dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
+					dto = new BienLoteDto(Long.valueOf(bien), "", null);
 				}
 				listBienLote.add(dto);
 

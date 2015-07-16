@@ -186,41 +186,7 @@
 			}
 		}				
 	});
-	 
-	var editarDescripcionAdjuntoExpediente = new  Ext.Button({
-		text:'<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcion" text="**Editar descripcion"/>'
-		,iconCls : 'icon_edit'
-		,handler : function() {
-			if (grid.getSelectionModel().getCount()>0){
-				if (grid.getSelectionModel().getSelected().get('id')!=''){
-    			var idAdjunto = grid.getSelectionModel().getSelected().get('id');
-    			var parametros = {
-								idAdjunto : idAdjunto
-					};
-    			var w= app.openWindow({
-                                         flow: '/pfs/subasta/editarInformacionCierre'
-                                         ,closable: true
-                                         ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />'
-                                         ,params: parametros
-                        });
-           	 		w.on(app.event.DONE, function(){
-								w.close();
-								recargarAdjuntos() ;
-								
-					});
-					w.on(app.event.CANCEL, function(){
-								 w.close(); 
-					});
-			
-			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
-			}
-		}
-		}	
-		
-	});
-	
+	 	
 	var gridSubastas = app.crearGrid(storeSubastas, cmSubasta, {
 		title : '<s:message code="plugin.nuevoModeloBienes.subastas.grid" text="**Subastas" />'
 		,height: 180
@@ -472,13 +438,14 @@
         	var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
         	//la plantilla se elije en el controller
 			var plantilla='';
-		    var flow='/pfs/subasta/generarInformeValidacionCDD';
+		    var flow='/pfs/subasta/generarInformeCierreDeuda';
 		    
 		    var params = "";
-		            	
+		    	
 		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
         		params = {idSubasta:idSubasta};				
 			} else {
+				// Sino enviamos los bienes seleccionados
 				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
 			} 
 
@@ -497,7 +464,7 @@
         	
         	if (isAsuntoPropiedadBankia()){
         		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.sinBien" text="**¿Esta seguro de enviar la operación a cierre de deudas?" />';	
-        	} else if(Ext.isEmpty(bienesSeleccionados)) {
+        	} else if(Ext.isEmpty(bienesSeleccionados)) { // Sino es bankia y no tenemos bienes, es agrupación sareb
         		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.sinBien.agrupamiento" text="**¿Esta seguro de enviar la operación a cierre de deudas en modo agrupamiento?" />';			
 			} else if(bienesSeleccionados.length > 1) {
 	        		texto = '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnEnviarCierre.conBien2" text="**¿Esta seguro de enviar los bienes a cierre de deudas?" />';
@@ -514,7 +481,7 @@
 		}
 		,enviar : function(){
 			var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
-		    var flow='/pfs/subasta/generarInformeCierre';
+		    var flow='/pfs/subasta/enviarCierreDeuda';
 		    var params;
 		    
 		    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
@@ -609,42 +576,14 @@
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);
 	
-	/* FIXME No hace nada		
-	gridLotes.on('rowdblclick', function(grid, rowIndex, e) {
-    	var rec = grid.getStore().getAt(rowIndex);
-    	var idLote = rec.get('idLote');
-	});*/
-	
+	// Se habilita el botón Proponer Instrucciones sólamente cuando se ha seleccionado un lote.
 	gridLotes.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		btnInstrucLotes.setDisabled(false);
 	});
 	
-	/**
-	* Función que recorre todos los grids de lotes y devuelve true si todos los bienes se encuentran
-	* en la variable bienesSeleccionados
-	*/	
-	function allBienesSelected() {
-
-		var isAllSelected = true;
-		Ext.each(gridLotes.getStore().data.items, function(lote, index) {
-			
-			Ext.each(lote.data.bienes, function(bien, index) {
-				var pos = bienesSeleccionados.indexOf(bien.idBien);
-		  		if (pos==-1) {
-		  			isAllSelected = false;
-		  		}
-			});
-				
-		});		
-		return isAllSelected;
-			
-		
-	};	
-		
 	
-    function expandedRowLote(obj, record, body, rowIndex){    	
+    function expandedRowLote(obj, record, body, rowIndex){ 
     	
-   	
 	    var absId = record.get('id');
 	
 	 	var row = "myrow-bien-" + record.get("idLote");
@@ -681,7 +620,9 @@
        	        	,sortable: false
        	        	,singleSelect: isAsuntoPropiedadBankia() 
        	        	,hidden: isAsuntoPropiedadBankia()       	        	   
-       	        	,listeners: {  				
+       	        	,listeners: { 
+       	        	
+       	        		// Al seleccionar un bien, sino estamos en Sareb lo añadimos al saco de bienes, comprobando que no esté ya.			
 			            rowselect: function( sel, rowIndex, record ) {
 
 			            	if(!isAsuntoPropiedadBankia()) {
@@ -691,7 +632,7 @@
 			            			bienesSeleccionados.push(record.get("idBien"));
 			            		}
 				            }
-			            	
+			            // Al deseleccionar un bien	lo quitamos del saco de bienes
 			            }, rowdeselect: function( sel, rowIndex, record ) {  
 			            	if(!isAsuntoPropiedadBankia()) {   	
 				            	var idBien = record.get("idBien");
@@ -703,7 +644,7 @@
 
 			            }
 					}
-				});
+			});
 	
 		  	var bienesCM = new Ext.grid.ColumnModel(
 		  			  				    			  	
@@ -726,7 +667,7 @@
 					]
 			);
 		   		   
-		   var gridXLote = new Ext.grid.EditorGridPanel({
+		    var gridXLote = new Ext.grid.EditorGridPanel({
 		   		store: dynamicStoreBienes,
 		        stripeRows: true,
 		        autoHeight: true,
@@ -751,7 +692,8 @@
 	expanderLote.on('expand', expandedRowLote);
 	
 	expanderLote.on('collapse', function(obj, record, body, rowIndex){
-
+		// Al colapsar un lote, quitamos todos sus bienes seleccionados del saco de bienes,
+		// porque al expandirlo apareceran todos sin seleccionar.
 		Ext.each(record.get("bienes"), function(bien, index) {
 
 	  		var pos = bienesSeleccionados.indexOf(bien.idBien);

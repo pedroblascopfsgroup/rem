@@ -253,7 +253,7 @@ public class SubastaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String generarInformeValidacionCDD(
+	public String generarInformeCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
@@ -265,7 +265,7 @@ public class SubastaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String generarInformeCierre(
+	public String enviarCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {

@@ -44,7 +44,7 @@
 
 	var validateForm = function(){	
 	if(protocolo.getValue() == '') {
-		Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinProtocolo" text="**No se ha informado el campo PROTOCOLO ¿Desea continuar?" />', function(btn){
+		Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.editarDocumento.sinProtocolo" text="**No se ha informado el campo PROTOCOLO ¿Desea continuar?" />', function(btn){
 			if (btn == 'yes'){
 				return true;
 			}
@@ -80,117 +80,98 @@
 	var protocolo = new Ext.form.TextField({
 		name : 'protocolo'
 		,value : '<s:message text="${dtoDoc.protocolo}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.protocolo" text="**Protocolo" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.protocolo" text="**Protocolo" />'
 	});    
 	
 	var notario = new Ext.form.TextField({
 		name : 'notario'
 		,value : '<s:message text="${dtoDoc.notario}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.notario" text="**Notario" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.notario" text="**Notario" />'
 	});  
 	
 	var fechaEscritura = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.fechaEscritura" text="**Fecha escritura" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.fechaEscritura" text="**Fecha escritura" />'
 		,value : '<fwk:date value="${fechaEscritura}" />'
-		,allowBlank : false
 		,style:'margin:0px'
 	});
 	
 	var asiento = new Ext.form.TextField({
 		name : 'asiento'
 		,value : '<s:message text="${dtoDoc.asiento}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.asiento" text="**Asiento" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.asiento" text="**Asiento" />'
 	});  
 	
 	var finca = new Ext.form.TextField({
 		name : 'finca'
 		,value : '<s:message text="${dtoDoc.finca}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.finca" text="**Finca" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.finca" text="**Finca" />'
 	});  
 	
 	var tomo = new Ext.form.TextField({
 		name : 'tomo'
 		,value : '<s:message text="${dtoDoc.tomo}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.tomo" text="**Tomo" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.tomo" text="**Tomo" />'
 	});  
 	
 	var libro = new Ext.form.TextField({
 		name : 'libro'
 		,value : '<s:message text="${dtoDoc.libro}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.libro" text="**Libro" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.libro" text="**Libro" />'
 	}); 
 	
 	var folio = new Ext.form.TextField({
 		name : 'folio'
 		,value : '<s:message text="${dtoDoc.folio}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.folio" text="**Folio" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.folio" text="**Folio" />'
 	});  
 	
 	var numFinca = new Ext.form.TextField({
 		name : 'documento.numFinca'
 		,value : '<s:message text="${dtoDoc.numFinca}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.numFinca" text="**Número Finca" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.numFinca" text="**Número Finca" />'
 	});  
 	
 	var numRegistro = new Ext.form.TextField({
 		name : 'numRegistro'
 		,value : '<s:message text="${dtoDoc.numRegistro}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.numRegistro" text="**Número Registro" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.numRegistro" text="**Número Registro" />'
 	});  
 	
 	var plaza = new Ext.form.TextField({
 		name : 'plaza'
 		,value : '<s:message text="${plaza}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.plaza" text="**Plaza" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.plaza" text="**Plaza" />'
 	});  	
 	
 	var idufir = new Ext.form.TextField({
 		name : 'idufir'
 		,value : '<s:message text="${dtoDoc.idufir}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.idufir" text="**IDUFIR" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.idufir" text="**IDUFIR" />'
 	});  	
 
-		
-	var panelEdicion = new Ext.form.FormPanel({
-		autoHeight:true
-		, border : false
-				,layout : 'column'
-				,height: 255
-				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:200}
-				,items:[{
-					title:'<s:message code="precontencioso.grid.documento.incluirDocumento.infoDocumentos" text="**Información Documentos" />'
-					,layout:'table'
-					,layoutConfig:{
-						columns:2							
-					}
-					,defaults:{layout : 'form',border:false,height:175}
-					,items:[
-						{
-						items:[{
-							border:false
-							,style:'font-size:11px; margin:4px; top:5px'
-							, bodyStyle:'padding:5px'
-							,items:[notario, asiento, finca, numFinca, numRegistro, plaza]
-								}]
-						, width: 280
-						}
-						,{
-							items:[protocolo, fechaEscritura, tomo, libro, folio, idufir]
-							,width:280
-						}
-					]
-				}]
-	});
 
+	var panelEdicion = new Ext.form.FieldSet({
+		title:'<s:message code="precontencioso.grid.documento.editarDocumento.infoDocumentos" text="**Información Documentos" />'
+		,layout:'table'
+		,layoutConfig:{columns:2}
+		,border:true
+		,autoHeight : true
+   	    ,autoWidth : true
+		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza]}
+				,{items: [ protocolo, fechaEscritura, tomo, libro, folio, idufir]}
+		]
+	});	
+	
 	var panel=new Ext.Panel({
 		border:false
 		,bodyStyle : 'padding:5px'
 		,autoHeight:true
 		,autoScroll:true
-		,width:840
-		,height:600
-		,defaults:{xtype:'fieldset',cellCls : 'vtop',width:840,autoHeight:true}
+		,width:600
+		,height:620
+		,defaults:{xtype:'fieldset',cellCls : 'vtop',width:600,autoHeight:true}
 		,items:panelEdicion
 		,bbar:[btnGuardar, btnCancelar]
 	});	

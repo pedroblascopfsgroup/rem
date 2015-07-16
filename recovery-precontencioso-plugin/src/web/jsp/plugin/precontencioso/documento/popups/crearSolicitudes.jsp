@@ -62,7 +62,7 @@
 	});    
 	
 	
-	<pfsforms:datefield labelKey="asd" label="**Fecha de Solicitud" name="fechaSolicitud" obligatory="true"/>
+	<pfsforms:datefield labelKey="precontencioso.grid.documento.crearSolicitudes.fechaSolicitud" label="**Fecha de Solicitud" name="fechaSolicitud" obligatory="true"/>
 		
 	var panelEdicion = new Ext.form.FormPanel({
 		autoHeight:true

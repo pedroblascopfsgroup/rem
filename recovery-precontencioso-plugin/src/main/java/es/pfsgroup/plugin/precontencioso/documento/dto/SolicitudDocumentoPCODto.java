@@ -11,10 +11,10 @@ public class SolicitudDocumentoPCODto {
 	private String estado;
 	private String adjunto;
 	private String actor;
-	private Date fechaSolicitud;
-	private Date fechaResultado;
-	private Date fechaEnvio;
-	private Date fechaRecepcion;
+	private String fechaSolicitud;
+	private String fechaResultado;
+	private String fechaEnvio;
+	private String fechaRecepcion;
 	private String resultado;
 	private String comentario;
 
@@ -67,28 +67,28 @@ public class SolicitudDocumentoPCODto {
 	public void setActor(String actor) {
 		this.actor = actor;
 	}
-	public Date getFechaSolicitud() {
+	public String getFechaSolicitud() {
 		return fechaSolicitud;
 	}
-	public void setFechaSolicitud(Date fechaSolicitud) {
+	public void setFechaSolicitud(String fechaSolicitud) {
 		this.fechaSolicitud = fechaSolicitud;
 	}
-	public Date getFechaResultado() {
+	public String getFechaResultado() {
 		return fechaResultado;
 	}
-	public void setFechaResultado(Date fechaResultado) {
+	public void setFechaResultado(String fechaResultado) {
 		this.fechaResultado = fechaResultado;
 	}
-	public Date getFechaEnvio() {
+	public String getFechaEnvio() {
 		return fechaEnvio;
 	}
-	public void setFechaEnvio(Date fechaEnvio) {
+	public void setFechaEnvio(String fechaEnvio) {
 		this.fechaEnvio = fechaEnvio;
 	}
-	public Date getFechaRecepcion() {
+	public String getFechaRecepcion() {
 		return fechaRecepcion;
 	}
-	public void setFechaRecepcion(Date fechaRecepcion) {
+	public void setFechaRecepcion(String fechaRecepcion) {
 		this.fechaRecepcion = fechaRecepcion;
 	}
 	public String getResultado() {

@@ -27,7 +27,7 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
   		},
   		singleSelect: false
 	});
-
+	
 var documentosRecord = Ext.data.Record.create([
 	{name:'id'},
 	{name:'idDoc'},	
@@ -55,35 +55,35 @@ var storeDocumentos = page.getStore({
 });
 
 
-var cmDocumento = [
-	myCboxSelModel,
-	{header: 'id',dataIndex:'id',hidden:'true'},
-	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
+var cmDocumento = [ 
+ 	myCboxSelModel, 
+ 	{header: 'id',dataIndex:'id',hidden:'true'},
+ 	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
 	{header : '<s:message code="precontencioso.grid.documento.descripcion" text="**Descripción" />', dataIndex : 'descripcionUG'},
 	{header : '<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />', dataIndex : 'tipoDocumento'},
 	{header : '<s:message code="precontencioso.grid.documento.estado" text="**Estado" />', dataIndex : 'estado'},
 	{header : '<s:message code="precontencioso.grid.documento.adjunto" text="**Adjunto" />', dataIndex : 'adjunto'},
-	{header : '<s:message code="precontencioso.grid.documento.acto" text="**Actor" />', dataIndex : 'actor'},
+	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor'},
 	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud'},	
 	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado'},	
 	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio'},	
 	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion'},	
 	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado'},
 	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario'}	
-];
+]; 
 
 var validacion=false;
 var incluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
-		,iconCls : 'icon_edit'
+		,iconCls : 'icon_mas'
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
         	if(validacion) {
 	        	Ext.Msg.show({
 				   title:'Aviso',
-				   msg: '<s:message code="precontencioso.grid.documento.incluirDocumento.aviso" text="**No se puede Informar" />',
+				   msg: '<s:message code="precontencioso.grid.documento.incluirDocumento.aviso" text="**No se puede incluir" />',
 				   buttons: Ext.Msg.OK
 				});
         	}else{
@@ -91,7 +91,7 @@ var incluirDocButton = new Ext.Button({
 						flow: 'documentopco/incluirDocumento'
 						,params: {idSolicitud:idSolicitud}
 						,title: '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
-						,width: 300
+						,width: 640
 					});
 					w.on(app.event.DONE, function() {
 						storeDocumentos.webflow();
@@ -105,17 +105,17 @@ var incluirDocButton = new Ext.Button({
 
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
-		,iconCls : 'icon_edit'
+		,iconCls : 'icon_menos'
 		,disabled : false
 		,cls: 'x-btn-text-icon'
 		,handler:function(){
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
 			if (rowsSelected == '') {
-				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
 			}
 			else {
 				if (rowsSelected.length > 1){
-					Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.incluirDocumento.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
+					Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
 				}
 				else {		
 						Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.excluirDocumento.confirmacion" text="**Va a exlcuir documentos y las solicitudes asociadas ¿Desea continuar?" />', function(btn){
@@ -163,17 +163,17 @@ var excluirDocButton = new Ext.Button({
 
 var descartarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.descartarDocumentos" text="**Descartar Documentos" />'
-		,iconCls : 'icon_edit'
+		,iconCls : 'icon_cancel'
 		,disabled : false
 		,cls: 'x-btn-text-icon'
 		,handler:function(){
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
 			if (rowsSelected == '') {
-				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.descartarDocumento.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
 			}
 			else {
 				if (rowsSelected.length > 1){
-					Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.descaratarDocumento.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
+					Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
 				}
 				else {	
 						Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.descartarDocumento.confirmacion" text="**Va a descartar documentos ¿Desea continuar?" />', function(btn){
@@ -196,17 +196,17 @@ var descartarDocButton = new Ext.Button({
 var validacionEditar=false;	
 var solicitarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear Solicitudes" />'
-		,iconCls : 'icon_edit'
+		,iconCls : 'icon_mas'
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
 		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
 		if (rowsSelected == '') {
-			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.crearSolicitudes.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
 		}
 		else {
 			if (rowsSelected.length > 1){
-				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.crearSolicitudes.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
 			}
 			else {
 	        	if(validacionEditar) {
@@ -238,7 +238,7 @@ var solicitarDocButton = new Ext.Button({
 
 var anularSolicitudes = {
 		text : '<s:message code="precontencioso.grid.documento.anularSolicitudes" text="**Anular Solicitudes" />'
-		,iconCls : 'icon_comunicacion'
+		,iconCls : 'icon_menos'
 		,cls: 'x-btn-text-icon'
 	};	
 var anularSolicitudesButton = new Ext.Button(anularSolicitudes);
@@ -250,18 +250,26 @@ var informarDocButton = new Ext.Button({
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-        	if(validacionEstado) {
-	        	Ext.Msg.show({
-				   title:'Aviso',
-				   msg: '<s:message code="precontencioso.grid.documento.informarDocumento.aviso" text="**No se puede Informar" />',
-				   buttons: Ext.Msg.OK
-				});
-        	}else{
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinSolSeleccionada" text="**Debe seleccionar alguna solicitud de documento." />');
+			}
+			else if (rowsSelected.length > 1){
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleSolSeleccionada" text="**No se puede seleccionar más de una solicitud de documento." />');
+			}
+			else if(validacionEstado) {
+	        	Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.informarDocumento.aviso" text="**No se puede Informar" />',buttons: Ext.Msg.OK});
+        	} 
+        	else {
 		        var w = app.openWindow({
 						flow: 'documentopco/informarSolicitud'
-						,params: {idSolicitud:idSolicitud}
+						,params: {idSolicitud:rowsSelected[0].get('id'), actor:rowsSelected[0].get('actor'), idDoc:rowsSelected[0].get('idDoc'), 
+							estado:rowsSelected[0].get('estado'),adjuntado:rowsSelected[0].get('adjunto'),
+							fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
+							fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion'),
+							comentario:rowsSelected[0].get('comentario')}
 						,title: '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
-						,width: 300
+						,width: 640
 					});
 					w.on(app.event.DONE, function() {
 						w.close(); });
@@ -277,36 +285,31 @@ var editarDocButton = new Ext.Button({
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
-		if (rowsSelected == '') {
-			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
-		}
-		else {
-			if (rowsSelected.length > 1){
-				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.incluirDocumento.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
 			}
+			else if (rowsSelected.length > 1){
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
+			}
+			else if(validacionEditar) {
+			    Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.editarDocumento.aviso" text="**No se puede Editar" />',buttons: Ext.Msg.OK});
+			} 
 			else {
-	        	if(validacionEditar) {
-		        	Ext.Msg.show({
-					   title:'Aviso',
-					   msg: '<s:message code="precontencioso.grid.documento.editarDocumento.aviso" text="**No se puede Editar" />',
-					   buttons: Ext.Msg.OK
+		        var w = app.openWindow({
+						flow: 'documentopco/editarDocumento'
+						,params: {idSolicitud:idSolicitud}
+						,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
+						,width: 640
 					});
-	        	}
-	        	else {
-			        var w = app.openWindow({
-							flow: 'documentopco/editarDocumento'
-							,params: {idSolicitud:idSolicitud}
-							,title: '<s:message code="precontencioso.grid.documento.EditarDocumento" text="**Editar Documento" />'
-							,width: 300
-						});
-					w.on(app.event.DONE, function() {
-						w.close(); });
-						w.on(app.event.CANCEL, function(){ w.close(); });
-					}
-				}
+				w.on(app.event.DONE, function() {
+					w.close(); 
+				});
+				w.on(app.event.CANCEL, function(){ 
+					w.close(); 
+				});
 			}
-		}				
+		}
 	});	
 	
 
@@ -376,7 +379,8 @@ Ext.namespace('Ext.ux.plugins');
    	   }	
 	});
 	
-	var columMemoryPlugin = new Ext.ux.plugins.CheckBoxMemory();	
+	var columMemoryPlugin = new Ext.ux.plugins.CheckBoxMemory();
+	var separadorButtons = new Ext.Toolbar.Fill();	
 
 var gridDocumentos = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
@@ -388,12 +392,13 @@ var gridDocumentos = new Ext.grid.GridPanel({
         ,clicksToEdit: 1
         ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
-       	,style:'padding:10px'
 		,cls:'cursor_pointer'
-		,iconCls : 'icon_asuntos'
-		,height:175
-		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, anularSolicitudesButton, editarDocButton, solicitarDocButton, informarDocButton ]
+		,height: 250
+		,autoWidth: true			
+		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, anularSolicitudesButton, editarDocButton, separadorButtons, solicitarDocButton, informarDocButton ]
 	});
+	
+
 
 storeDocumentos.webflow();
 

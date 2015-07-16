@@ -20,14 +20,18 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
+import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.IncluirDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.InformarDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
 @Controller
@@ -46,97 +50,125 @@ public class DocumentoPCOController {
 	private static final String INCLUIR_DOC = "plugin/precontencioso/documento/popups/incluirDocumento";
 	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
+	private static final String PENDIENTE_SOLICITAR = "PS";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	List<DocumentoPCODto> documentos = null;
 	List<SolicitudPCODto> solicitudes = null;
 	List<DocumentosUGPCODto> documentosUG = null;
-	List<DDTipoDocumento> listaTipoDocumentos = null;
-	List<DDTipoEntidad> listaUG = null;
+
 	int lastKeyDocumentos; 
 	int lastKeySolicitudes;
 	List<SolicitudDocumentoPCODto> solicitudesDoc;
 	
+	Long idProcPCO;
+	
 	@RequestMapping
-	//public String getSolicitudesDocumentos(@RequestParam(value = "idProcPCO", required = true) Long idProcPCO, ModelMap map) {
-	public String getSolicitudesDocumentos(ModelMap map) {
-		if (documentos == null){
-			documentos = datosDocumentos();
-			lastKeyDocumentos = documentos.size()+1;
-			solicitudes = datosSolicitudes();
-			lastKeySolicitudes = solicitudes.size()+1;
+	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
+
+		idProcPCO = new Long(idProcedimientoPCO);
+		
+		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
+		
+		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+		List<SolicitudDocumentoPCO> solicitudes; 
+		for (DocumentoPCO doc : documentos) {
+			solicitudes = doc.getSolicitudes();
+			for (SolicitudDocumentoPCO sol : solicitudes) {
+				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol));				
+			}			
 		}
 		
-		//solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
-		
-		//List<SolicitudDocumentoPCO> solicitudesDoc = documentoPCOApi.getSolicitudesDocProcPCO(idProcPCO);
-		//List<SolicitudDocumentoPCO> solicitudesDoc = proxyFactory.proxy(DocumentoPCOApi.class).getSolicitudesDocProcPCO(idProcPCO);
-						
-		// Construimos el DTO
-		crearSolicitudDocumentosDto();
-		
-		map.put("solicitudesDocumento", solicitudesDoc);
+		model.put("solicitudesDocumento", solicitudesDoc);
 		
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
-
-	/**
-	 * crearSolicitudDocumentosDto
-	 * 
-	 */
-	private void crearSolicitudDocumentosDto() {
-		solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
-		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-						
-		Long antIdDoc = new Long(0);
-		String antTipoUG = "";
-		String actTipoUG = "";
-		String antTipoDoc = "";
-		SolicitudDocumentoPCODto solDocDto;
-		for (DocumentoPCODto doc : documentos) {
-			for (SolicitudPCODto sol : solicitudes){
-				if (sol.getIdDoc().equals(doc.getId())){
-					solDocDto = new SolicitudDocumentoPCODto();
-					solDocDto.setId(sol.getId());
-					solDocDto.setIdDoc(doc.getId());
-					if (!antIdDoc.equals(doc.getId()) || antTipoUG != doc.getTipoUG() || antTipoDoc != doc.getTipoDocumento()){
-						solDocDto.setContrato(doc.getContrato());
-						solDocDto.setDescripcionUG(doc.getDescripcionUG());
-						solDocDto.setTipoDocumento(doc.getTipoDocumento());
-						solDocDto.setEstado(doc.getEstado());
-						solDocDto.setAdjunto(doc.getAdjunto());
-						solDocDto.setComentario(doc.getComentario());
-						
-						antIdDoc = doc.getId();
-						antTipoUG = doc.getTipoUG();
-						antTipoDoc = doc.getTipoDocumento();
-					}
-					solDocDto.setActor(sol.getActor());
-					if (sol.getFechaSolicitud()!=null)
-						solDocDto.setFechaSolicitud(webDateFormat.format(sol.getFechaSolicitud()));
-					else
-						solDocDto.setFechaSolicitud("");
-					if (sol.getFechaResultado()!=null)
-						solDocDto.setFechaResultado(webDateFormat.format(sol.getFechaResultado()));
-					else 
-						solDocDto.setFechaResultado("");
-					if (sol.getFechaEnvio()!=null)
-						solDocDto.setFechaEnvio(webDateFormat.format(sol.getFechaEnvio()));
-					else
-						solDocDto.setFechaEnvio("");
-					if (sol.getFechaRecepcion()!=null)
-						solDocDto.setFechaRecepcion(webDateFormat.format(sol.getFechaRecepcion()));
-					else
-						solDocDto.setFechaRecepcion("");
-					solDocDto.setResultado(sol.getResultado());
-					
-					solicitudesDoc.add(solDocDto);
-				}
-			}
-		}
-	}
 	
+	
+//	// METODO PROVISIONAL
+//	@RequestMapping
+//	//public String getSolicitudesDocumentos(@RequestParam(value = "idProcPCO", required = true) Long idProcPCO, ModelMap map) {
+//	public String getSolicitudesDocumentos(ModelMap map) {
+//		if (documentos == null){
+//			documentos = datosDocumentos();
+//			lastKeyDocumentos = documentos.size()+1;
+//			solicitudes = datosSolicitudes();
+//			lastKeySolicitudes = solicitudes.size()+1;
+//		}
+//		
+//		//solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
+//		
+//		//List<SolicitudDocumentoPCO> solicitudesDoc = documentoPCOApi.getSolicitudesDocProcPCO(idProcPCO);
+//		//List<SolicitudDocumentoPCO> solicitudesDoc = proxyFactory.proxy(DocumentoPCOApi.class).getSolicitudesDocProcPCO(idProcPCO);
+//						
+//		// Construimos el DTO
+//		crearSolicitudDocumentosDto();
+//		
+//		map.put("solicitudesDocumento", solicitudesDoc);
+//		
+//		return SOLICITUDES_DOC_PCO_JSON;
+//	}
+
+//	// METODO PROVISIONAL
+//	/**
+//	 * crearSolicitudDocumentosDto
+//	 * 
+//	 */
+//	private void crearSolicitudDocumentosDto() {
+//		solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
+//		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//
+//						
+//		Long antIdDoc = new Long(0);
+//		String antTipoUG = "";
+//		String actTipoUG = "";
+//		String antTipoDoc = "";
+//		SolicitudDocumentoPCODto solDocDto;
+//		for (DocumentoPCODto doc : documentos) {
+//			for (SolicitudPCODto sol : solicitudes){
+//				if (sol.getIdDoc().equals(doc.getId())){
+//					solDocDto = new SolicitudDocumentoPCODto();
+//					solDocDto.setId(sol.getId());
+//					solDocDto.setIdDoc(doc.getId());
+//					if (!antIdDoc.equals(doc.getId()) || antTipoUG != doc.getTipoUG() || antTipoDoc != doc.getTipoDocumento()){
+//						solDocDto.setContrato(doc.getContrato());
+//						solDocDto.setDescripcionUG(doc.getDescripcionUG());
+//						solDocDto.setTipoDocumento(doc.getTipoDocumento());
+//						solDocDto.setEstado(doc.getEstado());
+//						solDocDto.setAdjunto(doc.getAdjunto());
+//						solDocDto.setComentario(doc.getComentario());
+//						
+//						antIdDoc = doc.getId();
+//						antTipoUG = doc.getTipoUG();
+//						antTipoDoc = doc.getTipoDocumento();
+//					}
+//					solDocDto.setActor(sol.getActor());
+//					if (sol.getFechaSolicitud()!=null)
+//						solDocDto.setFechaSolicitud(webDateFormat.format(sol.getFechaSolicitud()));
+//					else
+//						solDocDto.setFechaSolicitud("");
+//					if (sol.getFechaResultado()!=null)
+//						solDocDto.setFechaResultado(webDateFormat.format(sol.getFechaResultado()));
+//					else 
+//						solDocDto.setFechaResultado("");
+//					if (sol.getFechaEnvio()!=null)
+//						solDocDto.setFechaEnvio(webDateFormat.format(sol.getFechaEnvio()));
+//					else
+//						solDocDto.setFechaEnvio("");
+//					if (sol.getFechaRecepcion()!=null)
+//						solDocDto.setFechaRecepcion(webDateFormat.format(sol.getFechaRecepcion()));
+//					else
+//						solDocDto.setFechaRecepcion("");
+//					solDocDto.setResultado(sol.getResultado());
+//					
+//					solicitudesDoc.add(solDocDto);
+//				}
+//			}
+//		}
+//	}
+	
+	
+	// METODO PROVISIONAL
 	/**
 	 * Agreaar documentos de las unidades de gestion seleccionadas
 	 * 
@@ -165,6 +197,7 @@ public class DocumentoPCOController {
 		
 		return AGREGAR_UGESTION_DOC_PCO_JSON;
 	}
+	
 
 	/**
 	 * Informar Documento
@@ -184,8 +217,10 @@ public class DocumentoPCOController {
 		
 		model.put("documento", dto);
 		return INFORMAR_DOC;
-	}	
+	}
 	
+	
+	// METODO PROVISIONAL
 	/**
 	 * Incluir Documento
 	 * 
@@ -195,10 +230,13 @@ public class DocumentoPCOController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String incluirDocumento(
+	public String abrirIncluirDocumento(
 			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
 			ModelMap model) {
 
+		List<DDTipoFicheroAdjunto> listaTipoDocumentos = null;
+		List<DDUnidadGestionPCO> listaUG = null;
+		
 		IncluirDocumentoDto dto = new IncluirDocumentoDto();
 		
 		dto.setAsiento("test_asiento");
@@ -213,10 +251,15 @@ public class DocumentoPCOController {
 		dto.setTomo("test_tomo");
 		
 		// Lista tipo documentos
-		listaTipoDocumentos = getTiposDocumento();
+		//listaTipoDocumentos = getTiposDocumento();
+		
+		
+		listaTipoDocumentos = documentoPCOApi.getTiposDocumento();
 		
 		// Lista Unidades Gestion
-		listaUG = getUnidadesGestion();
+		//listaUG = getUnidadesGestion();
+		
+		listaUG = documentoPCOApi.getUnidadesGestion();
 		
 		model.put("tiposDocumento", listaTipoDocumentos);
 		model.put("unidadesGestion", listaUG);
@@ -226,206 +269,323 @@ public class DocumentoPCOController {
 		return INCLUIR_DOC;
 	}
 	
+//	// METODO PROVISIONAL
+//	/**
+//	 * Editar Documento
+//	 * 
+//	 * @param idSolicitud
+//	 * @param model
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping
+//	public String abrirEditarDocumento(
+//			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+//			ModelMap model) {
+//
+//		SolicitudPCODto solDto = new SolicitudPCODto();
+//		DocumentoPCODto docDto = new DocumentoPCODto();
+//		
+//		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
+//		for (SolicitudPCODto sol : solicitudes) {
+//			if (sol.getId().equals(idSolicitud))
+//				solDto = sol;
+//			
+//				// Averiguamos el documento a editar
+//				for (DocumentoPCODto doc : documentos) {
+//					if (doc.getId().equals(solDto.getIdDoc()))
+//						docDto = doc;
+//				}
+//		}
+//		
+//		model.put("dtoDoc", docDto);
+//			
+//		return EDITAR_DOC;
+//	}
+	
 	/**
-	 * Editar Documento
+	 * Abrir Editar Documento
 	 * 
-	 * @param idSolicitud
+	 * @param idDocumento
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String editarDocumento(
-			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
-			ModelMap model) {
-
-		SolicitudPCODto solDto = new SolicitudPCODto();
+	public String abrirEditarDocumento(
+			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
 		DocumentoPCODto docDto = new DocumentoPCODto();
-		
-		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
-		for (SolicitudPCODto sol : solicitudes) {
-			if (sol.getId().equals(idSolicitud))
-				solDto = sol;
-			
-				// Averiguamos el documento a editar
-				for (DocumentoPCODto doc : documentos) {
-					if (doc.getId().equals(solDto.getIdDoc()))
-						docDto = doc;
-				}
-		}
+		docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
 		
 		model.put("dtoDoc", docDto);
-		
-	
 		
 		return EDITAR_DOC;
 	}
 	
+//	// METODO PROVISIONAL
+//	/**
+//	 * Crear Solicitudes
+//	 * 
+//	 * @param idSolicitud
+//	 * @param model
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping
+//	public String crearSolicitudes(@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+//			ModelMap model) {
+//		
+//		
+//		SolicitudPCODto solDto = new SolicitudPCODto();
+//		DocumentoPCODto docDto = new DocumentoPCODto();
+//		
+//		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
+//		for (SolicitudPCODto sol : solicitudes) {
+//			if (sol.getId().equals(idSolicitud))
+//				solDto = sol;
+//			
+//				// Averiguamos el documento a editar
+//				for (DocumentoPCODto doc : documentos) {
+//					if (doc.getId().equals(solDto.getIdDoc()))
+//						docDto = doc;
+//				}
+//		}
+//		
+//		model.put("dtoDoc", docDto);
+//		
+//		return CREAR_SOLICITUDES;
+//	}
+	
 	/**
-	 * Crear Solicitudes
+	 * Abrir Crear Solicitudes
 	 * 
-	 * @param idSolicitud
+	 * @param idDocumento
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String crearSolicitudes(@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
-			ModelMap model) {
-		
-		
-		SolicitudPCODto solDto = new SolicitudPCODto();
+	public String abrirCrearSolicitudes(
+			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
 		DocumentoPCODto docDto = new DocumentoPCODto();
-		
-		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
-		for (SolicitudPCODto sol : solicitudes) {
-			if (sol.getId().equals(idSolicitud))
-				solDto = sol;
-			
-				// Averiguamos el documento a editar
-				for (DocumentoPCODto doc : documentos) {
-					if (doc.getId().equals(solDto.getIdDoc()))
-						docDto = doc;
-				}
-		}
+		docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
 		
 		model.put("dtoDoc", docDto);
 		
 		return CREAR_SOLICITUDES;
-	}	
+	}
+	
+	
+//	// METODO PROVISIONAL
+//	/**
+//	 * Excluir Documentos
+//	 * 
+//	 * @param idSolicitud
+//	 * @param model
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping
+//	public String excluirDocumentos(
+//			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+//			ModelMap model) {
+//		Long idDoc = new Long(0);
+//		SolicitudPCODto solDto = new SolicitudPCODto();
+//		DocumentoPCODto docDto = new DocumentoPCODto();
+//		
+//		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
+//		for (SolicitudPCODto sol : solicitudes) {
+//			if (sol.getId().equals(idSolicitud))
+//				solDto = sol;
+//			
+//				// Averiguamos el documento a excluir
+//				for (DocumentoPCODto doc : documentos) {
+//					if (doc.getId().equals(solDto.getIdDoc()))
+//						docDto = doc;
+//				}
+//		}
+//		
+//		// Aqui ya tenemos los datos del documento a exlcuir
+//		// Hay que borrar el documento --> antes guardamos el id
+//		idDoc = docDto.getId();
+//		documentos.remove(docDto);
+//		 
+//		// Hay borrar las solicitudes de ese documento
+////		logger.error("............solicitudes.size-antes for: "+solicitudes.size());
+////		int indexSol = 0;
+////		int indexSolOK;
+////		for (SolicitudPCODto sol : solicitudes) {
+////			logger.error("............idSolicitud-2-2-sol.getIdDoc(): "+sol.getIdDoc());
+////			if (sol.getIdDoc().equals(idDoc)) {
+////				logger.error("............idSolicitud-2-3: "+idSolicitud);
+////				solDto = sol;
+////				indexSolOK = indexSol;
+////				logger.error("............indexSolOK: "+indexSolOK);
+////				solicitudes.remove(indexSolOK);
+////
+////				logger.error("............solicitudes.size-despues remove: "+solicitudes.size());
+////				logger.error("............idSolicitud-2-4: "+idSolicitud);				
+////			}
+////			indexSol++;
+////		}
+//		
+//		// Construimos el DTO
+//		crearSolicitudDocumentosDto();
+//		
+//		model.put("solicitudesDocumento", solicitudesDoc);
+//		
+//		return SOLICITUDES_DOC_PCO_JSON;
+//	}
 	
 	/**
 	 * Excluir Documentos
 	 * 
-	 * @param idSolicitud
+	 * @param idDocumento
+	 * @param solicitudes
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String excluirDocumentos(
-			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
-			ModelMap model) {
-		Long idDoc = new Long(0);
-		SolicitudPCODto solDto = new SolicitudPCODto();
-		DocumentoPCODto docDto = new DocumentoPCODto();
+			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {	
+		documentoPCOApi.excluirDocumentosPorIdDocumentoPCO(idDocumento);
 		
-		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
-		for (SolicitudPCODto sol : solicitudes) {
-			if (sol.getId().equals(idSolicitud))
-				solDto = sol;
-			
-				// Averiguamos el documento a excluir
-				for (DocumentoPCODto doc : documentos) {
-					if (doc.getId().equals(solDto.getIdDoc()))
-						docDto = doc;
-				}
-		}
+		// TODO - FALTA EL BORRADO
 		
-		// Aqui ya tenemos los datos del documento a exlcuir
-		// Hay que borrar el documento --> antes guardamos el id
-		idDoc = docDto.getId();
-		documentos.remove(docDto);
-		 
-		// Hay borrar las solicitudes de ese documento
-//		logger.error("............solicitudes.size-antes for: "+solicitudes.size());
-//		int indexSol = 0;
-//		int indexSolOK;
-//		for (SolicitudPCODto sol : solicitudes) {
-//			logger.error("............idSolicitud-2-2-sol.getIdDoc(): "+sol.getIdDoc());
-//			if (sol.getIdDoc().equals(idDoc)) {
-//				logger.error("............idSolicitud-2-3: "+idSolicitud);
-//				solDto = sol;
-//				indexSolOK = indexSol;
-//				logger.error("............indexSolOK: "+indexSolOK);
-//				solicitudes.remove(indexSolOK);
-//
-//				logger.error("............solicitudes.size-despues remove: "+solicitudes.size());
-//				logger.error("............idSolicitud-2-4: "+idSolicitud);				
-//			}
-//			indexSol++;
-//		}
-		
-		// Construimos el DTO
-		crearSolicitudDocumentosDto();
-		
-		model.put("solicitudesDocumento", solicitudesDoc);
-		
-		return SOLICITUDES_DOC_PCO_JSON;
+		//model.put("solicitudesDocumento", solicitudesDoc);
+		//return SOLICITUDES_DOC_PCO_JSON;
+		return DEFAULT;
 	}
 	
+//	/**
+//	 * Descartar Documentos
+//	 * 
+//	 * @param idSolicitud
+//	 * @param model
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping
+//	public String descartarDocumentos(
+//			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+//			ModelMap model) {
+//		Long idDoc = new Long(0);
+//		SolicitudPCODto solDto = new SolicitudPCODto();
+//		DocumentoPCODto docDto = new DocumentoPCODto();
+//		
+//		// Averiguamos el documento a editar
+//		int indexOK = 0;
+//		int index;
+//		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
+//		for (SolicitudPCODto sol : solicitudes) {
+//			if (sol.getId().equals(idSolicitud))
+//				solDto = sol;
+//			
+//				// Averiguamos el documento a excluir
+//				index = 0;			
+//				for (DocumentoPCODto doc : documentos) {
+//					if (doc.getId().equals(solDto.getIdDoc())){
+//						docDto = doc;
+//						indexOK = index;
+//					}
+//					index++;
+//				}
+//		}
+//
+//		docDto.setEstado("Descartado");
+//		documentos.set(indexOK, docDto);
+//		
+//		// Construimos el DTO del grid principal con los nuevos datos
+//		crearSolicitudDocumentosDto();
+//
+//		return DEFAULT;
+//	}	
+	
 	/**
-	 * Descartar Documentos
+	 * Descartar Documento
 	 * 
-	 * @param idSolicitud
+	 * @param idDocumento
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String descartarDocumentos(
-			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
-			ModelMap model) {
-		Long idDoc = new Long(0);
-		SolicitudPCODto solDto = new SolicitudPCODto();
-		DocumentoPCODto docDto = new DocumentoPCODto();
+			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
 		
-		// Averiguamos el documento a editar
-		int indexOK = 0;
-		int index;
-		// Averiguamos el dto de solicitud para de ahi sacar el id del documento
-		for (SolicitudPCODto sol : solicitudes) {
-			if (sol.getId().equals(idSolicitud))
-				solDto = sol;
-			
-				// Averiguamos el documento a excluir
-				index = 0;			
-				for (DocumentoPCODto doc : documentos) {
-					if (doc.getId().equals(solDto.getIdDoc())){
-						docDto = doc;
-						indexOK = index;
-					}
-					index++;
-				}
-		}
-
-		docDto.setEstado("Descartado");
-		documentos.set(indexOK, docDto);
+		documentoPCOApi.descartarDocumentos(idDocumento);
 		
-		// Construimos el DTO del grid principal con los nuevos datos
-		crearSolicitudDocumentosDto();
-
-		return DEFAULT;
-	}	
+		return "DEFAULT";
+	}
+	
+//	// METODO PROVISIONAL
+//	/**
+//	 * Actualizar Documento
+//	 * 
+//	 * @param idSolicitud
+//	 * @param model
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping
+//	public String editarDocumento(WebRequest webRequest,ModelMap model) {
+//
+//		Long idDoc = new Long(webRequest.getParameter("id"));
+//		SolicitudPCODto solDto = new SolicitudPCODto();
+//		DocumentoPCODto docDto = new DocumentoPCODto();
+//		
+//		// Averiguamos el documento a editar
+//		int index = 0;
+//		int indexOK = 0;
+//		for (DocumentoPCODto doc : documentos) {
+//			
+//			if (doc.getId().equals(idDoc)) {
+//				docDto = doc;
+//				indexOK = index;
+//			}
+//			index++;
+//		}
+//		
+//		// Actualizamos el docDto con los valores de la edicion
+//		docDto.setProtocolo(webRequest.getParameter("protocolo"));
+//		docDto.setNotario(webRequest.getParameter("notario"));
+//		//docDto.setFechaEscritura(webRequest.getParameter("fechaEscritura"));
+//		docDto.setAsiento(webRequest.getParameter("asiento"));
+//		docDto.setFinca(webRequest.getParameter("finca"));
+//		docDto.setTomo(webRequest.getParameter("tomo"));
+//		docDto.setLibro(webRequest.getParameter("libro"));
+//		docDto.setFolio(webRequest.getParameter("folio"));
+//		docDto.setNumFinca(webRequest.getParameter("numFinca"));
+//		docDto.setNumRegistro(webRequest.getParameter("numRegistro"));
+//		//docDto.setPlaza(webRequest.getParameter("plaza"));
+//		docDto.setIdufir(webRequest.getParameter("idufir"));
+//		
+//		documentos.set(indexOK, docDto);
+//				
+//		// Construimos el DTO del grid principal con los nuevos datos
+//		crearSolicitudDocumentosDto();
+//		
+//		model.put("solicitudesDocumento", solicitudesDoc);
+//			
+//		return SOLICITUDES_DOC_PCO_JSON;
+//	}	
 	
 	/**
-	 * Actualizar Documento
+	 * Actualizar Documento Editado
 	 * 
-	 * @param idSolicitud
+	 * @param idDocumento
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String updateDocumentos(WebRequest webRequest,ModelMap model) {
+	public String editarDocumento(WebRequest webRequest,ModelMap model) {
 
 		Long idDoc = new Long(webRequest.getParameter("id"));
-		SolicitudPCODto solDto = new SolicitudPCODto();
 		DocumentoPCODto docDto = new DocumentoPCODto();
 		
-		// Averiguamos el documento a editar
-		int index = 0;
-		int indexOK = 0;
-		for (DocumentoPCODto doc : documentos) {
-			
-			if (doc.getId().equals(idDoc)) {
-				docDto = doc;
-				indexOK = index;
-			}
-			index++;
-		}
-		
-		// Actualizamos el docDto con los valores de la edicion
+		docDto.setId(idDoc);
 		docDto.setProtocolo(webRequest.getParameter("protocolo"));
 		docDto.setNotario(webRequest.getParameter("notario"));
 		//docDto.setFechaEscritura(webRequest.getParameter("fechaEscritura"));
@@ -439,15 +599,111 @@ public class DocumentoPCOController {
 		//docDto.setPlaza(webRequest.getParameter("plaza"));
 		docDto.setIdufir(webRequest.getParameter("idufir"));
 		
-		documentos.set(indexOK, docDto);
-				
-		// Construimos el DTO del grid principal con los nuevos datos
-		crearSolicitudDocumentosDto();
+		documentoPCOApi.editarDocumento(docDto);
 		
-		model.put("solicitudesDocumento", solicitudesDoc);
-			
-		return SOLICITUDES_DOC_PCO_JSON;
-	}		
+		return "DEFAULT";
+	}
+	
+//	// METODO PROVISIONAL
+//	/**
+//	 * Salvar los documentos incluidos
+//	 * 
+//	 * @param request
+//	 * @return
+//	 */
+//	@RequestMapping	
+//	private String saveIncluirDocumentos(WebRequest request ,ModelMap model) {
+//		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");
+//		String idDoc = request.getParameter("id");
+//		// La cadena viene con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadena.
+//		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);
+//			
+//		StringTokenizer st;
+//		DocumentoPCODto doc;
+//		List<DDUnidadGestionPCO> listaUG = documentoPCOApi.getUnidadesGestion();
+//		List<DDTipoFicheroAdjunto>listaTipoDocumentos = documentoPCOApi.getTiposDocumento();
+//			
+//		// Tratamos los documentos a incluir
+//		// TODO - Recorrer las unidades de gestion para sacar los documentos asociados	
+//		st = new StringTokenizer(arrayIdDocumentos,",");
+//		Long idDocUG;
+//		while (st.hasMoreElements()){
+//			idDocUG = new Long(st.nextToken());			
+//			
+//			doc = new DocumentoPCODto();
+//			
+//			// Por cada documento de UG elegido tenemos que crear un documento y una solicitud (vacia)	
+//			// CREAR DOCUMENTO
+//			
+//			// TODO - Temporal - Averiguar los valores de varios objetos
+//			// Descripcion de la UG - Nos llegan los codigos de los documento UG - A partir de ahí averiguar
+//			// la UG y su descripcion			
+//			for (DocumentosUGPCODto docUG : documentosUG) {		
+//				if (docUG.getId().equals(new Long(idDocUG))) {
+//					doc.setContrato(docUG.getContrato());
+//					doc.setDescripcionUG(docUG.getDescripcionUG());
+//					
+//					// A partir del id de la unidad de gestion, sacar la descripcion
+//					for (DDUnidadGestionPCO tipoUG : listaUG) {	
+//						if (tipoUG.getId().equals(docUG.getUnidadGestionId())){							
+//							doc.setTipoUG(tipoUG.getDescripcion());
+//						}
+//							
+//					}
+//					
+//				}
+//			}
+//			
+//			// Obtener la descripcion del Tio de Documento
+//			for (DDTipoFicheroAdjunto tipoDoc : listaTipoDocumentos) {
+//				if (tipoDoc.getId().equals(new Long(request.getParameter("comboTipoDocumento")))){
+//					doc.setTipoDocumento(tipoDoc.getDescripcion());
+//				}
+//			}
+//						
+//			
+//			doc.setId(new Long(lastKeyDocumentos+""));
+//			doc.setIdProc(new Long(1));
+//			doc.setEstado("Disponible");
+//			doc.setAdjunto("No");
+//			doc.setComentario("");
+//			doc.setAsiento(request.getParameter("asiento"));
+//			doc.setFinca(request.getParameter("finca"));
+//			doc.setFolio(request.getParameter("folio"));
+//			doc.setIdufir(request.getParameter("idufir"));
+//			doc.setLibro(request.getParameter("libro"));
+//			doc.setNotario(request.getParameter("notario"));
+//			doc.setNumFinca(request.getParameter("numFinca"));
+//			doc.setNumRegistro(request.getParameter("numRegistro"));
+//			doc.setProtocolo(request.getParameter("protocolo"));
+//			doc.setTomo(request.getParameter("tomo"));
+//			
+//			documentos.add(doc);
+//			lastKeyDocumentos++;
+//			// CREAR SOLICITUD
+//			SolicitudPCODto sol;
+//			
+//			sol = new SolicitudPCODto();		
+//			sol.setId(new Long(lastKeySolicitudes));
+//			sol.setIdDoc(new Long(doc.getId()));
+//			//sol.setActor("Archivo");
+//			//sol.setFechaSolicitud(new Date());
+//			//sol.setFechaResultado(new Date());
+//			//sol.setFechaEnvio(new Date());
+//			//sol.setFechaRecepcion(new Date());
+//			sol.setResultado("");
+//			
+//			solicitudes.add(sol);
+//			lastKeySolicitudes++;
+//		}
+//
+//		// Construimos el DTO del grid principal con los nuevos datos
+//		crearSolicitudDocumentosDto();
+//		
+//		model.put("solicitudesDocumento", solicitudesDoc);
+//			
+//		return SOLICITUDES_DOC_PCO_JSON;
+//	}
 	
 	/**
 	 * Salvar los documentos incluidos
@@ -459,92 +715,121 @@ public class DocumentoPCOController {
 	private String saveIncluirDocumentos(WebRequest request ,ModelMap model) {
 		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");
 		String idDoc = request.getParameter("id");
-		// La cadena viene con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadena.
-		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);
-			
-		StringTokenizer st;
-		DocumentoPCODto doc;
 		
-		// Tratamos los documentos a incluir
-		// TODO - Recorrer las unidades de gestion para sacar los documentos asociados	
+		// La cadena viene con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadena.
+		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);		
+		StringTokenizer st;
+		DocumentoPCO documento;
+		SolicitudDocumentoPCO solicitud;
+		DDUnidadGestionPCO unidadGestion = null;
+		DDTipoFicheroAdjunto tipoDocumento;
+		
+		//TODO - PROVISIONAL
+		String contrato;
+		String descripcionUG;
+		
+		// Tratamos los documentos a incluir	
 		st = new StringTokenizer(arrayIdDocumentos,",");
 		Long idDocUG;
 		while (st.hasMoreElements()){
-			idDocUG = new Long(st.nextToken());			
-			
-			doc = new DocumentoPCODto();
-			
-			// Por cada documento de UG elegido tenemos que crear un documento y una solicitud (vacia)	
-			// CREAR DOCUMENTO
+			idDocUG = new Long(st.nextToken());						
 			
 			// TODO - Temporal - Averiguar los valores de varios objetos
 			// Descripcion de la UG - Nos llegan los codigos de los documento UG - A partir de ahí averiguar
 			// la UG y su descripcion			
 			for (DocumentosUGPCODto docUG : documentosUG) {		
 				if (docUG.getId().equals(new Long(idDocUG))) {
-					doc.setContrato(docUG.getContrato());
-					doc.setDescripcionUG(docUG.getDescripcionUG());
-					
-					// A partir del id de la unidad de gestion, sacar la descripcion
-					for (DDTipoEntidad tipoUG : listaUG) {	
-						if (tipoUG.getId().equals(docUG.getUnidadGestionId())){							
-							doc.setTipoUG(tipoUG.getDescripcion());
-						}
-							
-					}
+					contrato = docUG.getContrato();
+					descripcionUG = docUG.getDescripcionUG();									
+					unidadGestion = documentoPCOApi.getUnidadGestionPorIdUG(docUG.getUnidadGestionId());
 				}
 			}
 			
-			// Obtener la descripcion del Tio de Documento
-			for (DDTipoDocumento tipoDoc : listaTipoDocumentos) {
-				if (tipoDoc.getId().equals(new Long(request.getParameter("comboTipoDocumento")))){
-					doc.setTipoDocumento(tipoDoc.getDescripcion());
-				}
-			}
-				
+			tipoDocumento = documentoPCOApi.getTipoDocumentoPorIdTipo(new Long(request.getParameter("comboTipoDocumento")));
+
+			// Por cada documento de UG elegido tenemos que crear un documento y una solicitud (vacia)				
+			// Crear DOCUMENTO
+			documento = new DocumentoPCO();
+			documento.setAdjuntado(false);
+			documento.setAsiento(request.getParameter("asiento"));
+			documento.setFinca(request.getParameter("finca"));
+			documento.setFolio(request.getParameter("folio"));
+			documento.setIdufir(request.getParameter("idufir"));
+			documento.setLibro(request.getParameter("libro"));
+			documento.setNotario(request.getParameter("notario"));
+			documento.setNroFinca(request.getParameter("numFinca"));
+			documento.setNroRegistro(request.getParameter("numRegistro"));
+			documento.setProtocolo(request.getParameter("protocolo"));
+			documento.setTomo(request.getParameter("tomo"));
+			documento.setTipoDocumento(tipoDocumento);
+			documento.setUnidadGestion(unidadGestion);
+			documento.setEstadoDocumento(documentoPCOApi.getEstadoDocumentoPorCodigo(PENDIENTE_SOLICITAR));
+			// TODO - FALTA asociar el id del contrato / bien o persona
+			//documento.setUnidadGestionId(unidadGestionId);
+			// TODO - Falta indicar la Plaza
+			//documento.setPlaza(plaza);
+			// TODO - Falta indicar la Fecha Escritura
+			//documento.setFechaEscritura(fechaEscritura);
 			
-			doc.setId(new Long(lastKeyDocumentos+""));
-			doc.setIdProc(new Long(1));
-			doc.setEstado("Disponible");
-			doc.setAdjunto("No");
-			doc.setComentario("");
-			doc.setAsiento(request.getParameter("asiento"));
-			doc.setFinca(request.getParameter("finca"));
-			doc.setFolio(request.getParameter("folio"));
-			doc.setIdufir(request.getParameter("idufir"));
-			doc.setLibro(request.getParameter("libro"));
-			doc.setNotario(request.getParameter("notario"));
-			doc.setNumFinca(request.getParameter("numFinca"));
-			doc.setNumRegistro(request.getParameter("numRegistro"));
-			doc.setProtocolo(request.getParameter("protocolo"));
-			doc.setTomo(request.getParameter("tomo"));
-			
-			documentos.add(doc);
-			lastKeyDocumentos++;
 			// CREAR SOLICITUD
-			SolicitudPCODto sol;
+			solicitud = new SolicitudDocumentoPCO();
+			solicitud.setDocumento(documento);
+			// TODO - Falta asignar el Resultado de la solicitud
 			
-			sol = new SolicitudPCODto();		
-			sol.setId(new Long(lastKeySolicitudes));
-			sol.setIdDoc(new Long(doc.getId()));
-			//sol.setActor("Archivo");
-			//sol.setFechaSolicitud(new Date());
-			//sol.setFechaResultado(new Date());
-			//sol.setFechaEnvio(new Date());
-			//sol.setFechaRecepcion(new Date());
-			sol.setResultado("");
+			List<SolicitudDocumentoPCO> solList = new ArrayList<SolicitudDocumentoPCO>();
+			solList.add(solicitud);
 			
-			solicitudes.add(sol);
-			lastKeySolicitudes++;
+			documento.setSolicitudes(solList);
+			
+			documentoPCOApi.saveCrearDocumento(documento);
+			
 		}
 
-		// Construimos el DTO del grid principal con los nuevos datos
-		crearSolicitudDocumentosDto();
-		
-		model.put("solicitudesDocumento", solicitudesDoc);
-			
-		return SOLICITUDES_DOC_PCO_JSON;
+		return "DEFAULT";
 	}
+	
+	
+//	// METODO PROVISIONAL
+//	/**
+//	 * Salvar la creacion de solicitudes
+//	 * 
+//	 * @param request
+//	 * @return
+//	 */
+//	@RequestMapping	
+//	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
+//		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//		String idDoc = request.getParameter("id");
+//		String fechaSolicitud = request.getParameter("fechaSolicitud");
+//		Date fechaSolicitudDate = null;
+//
+//		try {
+//			fechaSolicitudDate = webDateFormat.parse(fechaSolicitud);
+//		} catch (ParseException e) {
+//			logger.error(e.getLocalizedMessage());
+//			return DEFAULT;
+//		}
+//		
+//		// CREAR SOLICITUD
+//		SolicitudPCODto sol;
+//			
+//		sol = new SolicitudPCODto();		
+//		sol.setId(new Long(lastKeySolicitudes));
+//		sol.setIdDoc(new Long(idDoc));
+//		sol.setActor(request.getParameter("actor"));
+//		sol.setFechaSolicitud(fechaSolicitudDate);
+//		sol.setResultado("Pendiente Resultado");
+//			
+//		solicitudes.add(sol);
+//		lastKeySolicitudes++;
+//		
+//		// Construimos el DTO del grid principal con los nuevos datos
+//		crearSolicitudDocumentosDto();
+//		
+//		model.put("solicitudesDocumento", solicitudesDoc);
+//			
+//		return SOLICITUDES_DOC_PCO_JSON;
+//	}	
 	
 	/**
 	 * Salvar la creacion de solicitudes
@@ -566,26 +851,16 @@ public class DocumentoPCOController {
 			return DEFAULT;
 		}
 		
-		// CREAR SOLICITUD
-		SolicitudPCODto sol;
+		SolicitudPCODto solDto;	
+		solDto = new SolicitudPCODto();		
+		solDto.setIdDoc(new Long(idDoc));
+		solDto.setActor(request.getParameter("actor"));
+		solDto.setFechaSolicitud(fechaSolicitudDate);
+
+		documentoPCOApi.saveCrearSolicitudes(solDto);
 			
-		sol = new SolicitudPCODto();		
-		sol.setId(new Long(lastKeySolicitudes));
-		sol.setIdDoc(new Long(idDoc));
-		sol.setActor(request.getParameter("actor"));
-		sol.setFechaSolicitud(fechaSolicitudDate);
-		sol.setResultado("Pendiente Resultado");
-			
-		solicitudes.add(sol);
-		lastKeySolicitudes++;
-		
-		// Construimos el DTO del grid principal con los nuevos datos
-		crearSolicitudDocumentosDto();
-		
-		model.put("solicitudesDocumento", solicitudesDoc);
-			
-		return SOLICITUDES_DOC_PCO_JSON;
-	}		
+		return DEFAULT;
+	}			
 	
 	/**
 	 * Tipos de Documento
@@ -593,16 +868,16 @@ public class DocumentoPCOController {
 	 * @return
 	 */
 	@RequestMapping
-	private List<DDTipoDocumento> getTiposDocumento() {
+	private List<DDTipoFicheroAdjunto> getTiposDocumento() {
 		
-		List<DDTipoDocumento> listaTipoDoc = new ArrayList<DDTipoDocumento>();
-		DDTipoDocumento tipoDoc =new DDTipoDocumento();
+		List<DDTipoFicheroAdjunto> listaTipoDoc = new ArrayList<DDTipoFicheroAdjunto>();
+		DDTipoFicheroAdjunto tipoDoc =new DDTipoFicheroAdjunto();
 		tipoDoc.setId(new Long(1));
 		tipoDoc.setCodigo("1");
 		tipoDoc.setDescripcion("Tipo doc 1");
 		listaTipoDoc.add(tipoDoc);
 		
-		tipoDoc = new DDTipoDocumento();
+		tipoDoc = new DDTipoFicheroAdjunto();
 		tipoDoc.setId(new Long(2));
 		tipoDoc.setCodigo("2");
 		tipoDoc.setDescripcion("Tipo doc 2");

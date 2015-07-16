@@ -88,7 +88,7 @@ var incluirDocButton = new Ext.Button({
 				});
         	}else{
 		        var w = app.openWindow({
-						flow: 'documentopco/incluirDocumento'
+						flow: 'documentopco/abrirIncluirDocumento'
 						,params: {idSolicitud:idSolicitud}
 						,title: '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
 						,width: 640
@@ -218,7 +218,7 @@ var solicitarDocButton = new Ext.Button({
 	        	}
 	        	else {
 			        var w = app.openWindow({
-							flow: 'documentopco/crearSolicitudes'
+							flow: 'documentopco/abirCrearSolicitudes'
 							,params: {idSolicitud:idSolicitud}
 							,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
 							,width: 300
@@ -295,7 +295,7 @@ var editarDocButton = new Ext.Button({
 	        	}
 	        	else {
 			        var w = app.openWindow({
-							flow: 'documentopco/editarDocumento'
+							flow: 'documentopco/abrirEditarDocumento'
 							,params: {idSolicitud:idSolicitud}
 							,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
 							,width: 640

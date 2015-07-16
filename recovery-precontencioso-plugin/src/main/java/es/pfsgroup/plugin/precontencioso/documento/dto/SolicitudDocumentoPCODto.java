@@ -17,6 +17,7 @@ public class SolicitudDocumentoPCODto {
 	private String fechaRecepcion;
 	private String resultado;
 	private String comentario;
+	private boolean esDocumento;
 
 	
 	public Long getId() {
@@ -102,6 +103,12 @@ public class SolicitudDocumentoPCODto {
 	}
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
+	}
+	public boolean isEsDocumento() {
+		return esDocumento;
+	}
+	public void setEsDocumento(boolean esDocumento) {
+		this.esDocumento = esDocumento;
 	}
 	
 }

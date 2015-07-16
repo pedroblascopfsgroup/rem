@@ -83,28 +83,28 @@ public class DocumentoPCO implements Serializable, Auditable {
 	private String finca;
 	
 	@Column(name = "PCO_DOC_PDD_ASIENTO")
-	private Date asiento;
+	private String asiento;
 		
 	@Column(name = "PCO_DOC_PDD_TOMO")
-	private Date tomo;
+	private String tomo;
 		
 	@Column(name = "PCO_DOC_PDD_LIBRO")
-	private Date libro;
+	private String libro;
 		
 	@Column(name = "PCO_DOC_PDD_FOLIO")
-	private Date folio;
+	private String folio;
 		
 	@Column(name = "PCO_DOC_PDD_NRO_FINCA")
-	private Date nroFinca;
+	private String nroFinca;
 		
 	@Column(name = "PCO_DOC_PDD_NRO_REGIS")
-	private Date nroRegistro;
+	private String nroRegistro;
 		
 	@Column(name = "PCO_DOC_PDD_PLAZA")
-	private Date plaza;
+	private String plaza;
 		
 	@Column(name = "PCO_DOC_PDD_IDUFIR")
-	private Date idufir;
+	private String idufir;
 		
 	@Column(name = "PCO_DOC_PDD_OBSERVACIONES")
 	private String observaciones;
@@ -126,6 +126,14 @@ public class DocumentoPCO implements Serializable, Auditable {
 	 * GETTERS & SETTERS
 	 */
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getId() {
+		return id;
+	}
+	
 	public ProcedimientoPCO getProcedimientoPCO() {
 		return procedimientoPCO;
 	}
@@ -214,67 +222,67 @@ public class DocumentoPCO implements Serializable, Auditable {
 		this.fechaEscritura = fechaEscritura;
 	}
 
-	public Date getAsiento() {
+	public String getAsiento() {
 		return asiento;
 	}
 
-	public void setAsiento(Date asiento) {
+	public void setAsiento(String asiento) {
 		this.asiento = asiento;
 	}
 
-	public Date getTomo() {
+	public String getTomo() {
 		return tomo;
 	}
 
-	public void setTomo(Date tomo) {
+	public void setTomo(String tomo) {
 		this.tomo = tomo;
 	}
 
-	public Date getLibro() {
+	public String getLibro() {
 		return libro;
 	}
 
-	public void setLibro(Date libro) {
+	public void setLibro(String libro) {
 		this.libro = libro;
 	}
 
-	public Date getFolio() {
+	public String getFolio() {
 		return folio;
 	}
 
-	public void setFolio(Date folio) {
+	public void setFolio(String folio) {
 		this.folio = folio;
 	}
 
-	public Date getNroFinca() {
+	public String getNroFinca() {
 		return nroFinca;
 	}
 
-	public void setNroFinca(Date nroFinca) {
+	public void setNroFinca(String nroFinca) {
 		this.nroFinca = nroFinca;
 	}
 
-	public Date getNroRegistro() {
+	public String getNroRegistro() {
 		return nroRegistro;
 	}
 
-	public void setNroRegistro(Date nroRegistro) {
+	public void setNroRegistro(String nroRegistro) {
 		this.nroRegistro = nroRegistro;
 	}
 
-	public Date getPlaza() {
+	public String getPlaza() {
 		return plaza;
 	}
 
-	public void setPlaza(Date plaza) {
+	public void setPlaza(String plaza) {
 		this.plaza = plaza;
 	}
 
-	public Date getIdufir() {
+	public String getIdufir() {
 		return idufir;
 	}
 
-	public void setIdufir(Date idufir) {
+	public void setIdufir(String idufir) {
 		this.idufir = idufir;
 	}
 
@@ -300,10 +308,6 @@ public class DocumentoPCO implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public List<SolicitudDocumentoPCO> getSolicitudes() {

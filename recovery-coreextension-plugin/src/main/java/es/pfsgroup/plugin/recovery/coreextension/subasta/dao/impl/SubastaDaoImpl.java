@@ -1421,4 +1421,52 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		query.executeUpdate();
 	}
 	
+	@Override
+	public BatchAcuerdoCierreDeuda findBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdo){
+		Query query = getSession().createQuery(
+				generarHQLBuscarBatchAcuerdoCierreDeuda(acuerdo));
+		return (BatchAcuerdoCierreDeuda) query.uniqueResult();
+	}
+
+	/**
+	 * Función que buscará un registro en BatchAcuerdoCierreDeuda que coincida con los filtros
+	 * añadidos a la consulta en función de los valores recibidos. El asunto es obligatorio.
+	 * @param acuerdo
+	 * @return BatchAcuerdoCierreDeuda acuerdo
+	 */
+	private String generarHQLBuscarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdo) {
+
+	
+		StringBuilder hql = new StringBuilder();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		// Consulta inicial b�sica	
+		hql.append(" select baccd ");
+		hql.append(" from BatchAcuerdoCierreDeuda baccd ");
+		// Siempre tendremos el asunto
+		hql.append(" where baccd.idAsunto = ").append(acuerdo.getIdAsunto());
+		
+		// Añadimos filtros en función de los valores recibidos
+		if(!Checks.esNulo(acuerdo.getId())) {
+			hql.append(" and baccd.id = ").append(acuerdo.getId());
+		}		
+		
+		if(!Checks.esNulo(acuerdo.getIdProcedimiento())) {
+			hql.append(" and baccd.idProcedimiento = ").append(acuerdo.getIdProcedimiento());
+		}
+		
+		if(!Checks.esNulo(acuerdo.getIdBien())) {
+			hql.append(" and baccd.idBien = ").append(acuerdo.getIdBien());
+		}
+		
+		if(Checks.esNulo(acuerdo.getFechaEntrega())) {
+			hql.append(" and baccd.fechaEntrega is null ");
+		} else {
+			String fechaEntrega = dateFormat.format(acuerdo.getFechaEntrega());
+			hql.append(" and baccd.fechaEntrega = to_date('").append(fechaEntrega).append("', 'DD/MM/YYYY')");
+		}
+
+		return hql.toString();
+
+	}
+	
 }

@@ -28,5 +28,6 @@ public interface SubastaDao extends AbstractDao<Subasta, Long>{
 	List<BatchAcuerdoCierreDeuda> findBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien);	
 	void guardarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda);
 	void eliminarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda);
+	BatchAcuerdoCierreDeuda findBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdo);
 
 }

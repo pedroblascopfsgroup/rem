@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -268,63 +269,98 @@ public class SubastaController {
 	public String enviarCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
-			ModelMap model) {
-
-		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
-				.generarInformeValidacionCDD(null,idSubasta, idsBien);
-		if(!informe.getValidacionOK()) {
-			String motivo = informe.getResultadoValidacion().get(0);
-			DDResultadoValidacionCDD resultadoValidacion = (DDResultadoValidacionCDD) diccionarioApi.dameValorDiccionarioByCod(DDResultadoValidacionCDD.class, motivo);
-			subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO, resultadoValidacion);
-			return creaExcelValidacion(informe,model);
-		}else{
-			if(Checks.esNulo(idsBien)) {
-				List<BatchAcuerdoCierreDeuda> registrosBACDD = subastaApi.findRegistroCierreDeuda(idSubasta, null);
-				if(!Checks.estaVacio(registrosBACDD)) {
-					subastaApi.eliminarRegistroCierreDeuda(idSubasta, registrosBACDD);						
-				}else{
-					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
+			ModelMap model) {		
+	
+		// En caso de tener bienes informados (SAREB) validamos por bien, y finalmente generamos un informe
+		// global que será el que creará el excel		
+		
+		Subasta subasta = subastaApi.getSubasta(idSubasta);		
+		InformeValidacionCDDDto informe = null;
+		boolean resultadoGlobalOK = true;
+		
+		if(!Checks.esNulo(idsBien)) { // Si tenemos bienes informados (SAREB)
+			
+			String[] arrBienes = idsBien.split(",");
+			
+			for (String idBien:arrBienes) {				
+			
+				informe = generarEnvioCierreDeuda(subasta, idBien);
+				if(!informe.getValidacionOK()) {
+					resultadoGlobalOK = false;					
 				}
-			}else{
-				subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
+			}			
+			if(!resultadoGlobalOK) { // Si hay algún bien con KO generamos el informe global que creará el excel
+				informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+						.generarInformeValidacionCDD(null,idSubasta, idsBien);				
+			}
+			
+		} else { // Si no tenemos bienes, se trata como un único envio
+			
+			informe = generarEnvioCierreDeuda(subasta, idsBien);
+			if(!informe.getValidacionOK()) {
+				resultadoGlobalOK = false;					
 			}
 		}
-		return DEFAULT;
-	}
-	
-	private List<Long> obtenerBienEnviarCierre(String idsBien) {
-		List<Long> listIdsBien = new ArrayList<Long>();
-		if(!Checks.esNulo(idsBien)) {
-			String[] ids = idsBien.split(",");			
-			for (String id : ids) {
-				//String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				listIdsBien.add(Long.valueOf(id));
-			}
+		
+		// Si alguna validación es KO, generamos el excel		
+		if(!resultadoGlobalOK) {
+
+			return creaExcelValidacion(informe,model);
+			
+		} else {	
+			
+			return DEFAULT;
 		}
-		return listIdsBien;
 	}
-	
-//	private InformeValidacionCDDBean rellenarInformeValidacionCDD(Long idSubasta, String idsBien) {
-//		InformeValidacionCDDBean informe = new InformeValidacionCDDBean();
-//		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
-//		if(!Checks.esNulo(idsBien)) {
-//			String[] arrLoteBien = idsBien.split(",");
-//			
-//			for (String loteBien : arrLoteBien) {
-//				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-//				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
-//				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
-//				listBienLote.add(dto);
-//			}
-//			informe.setBienesLote(listBienLote);
-//		}
-//		informe.setProxyFactory(proxyFactory);
-//		informe.setSubastaApi(subastaApi);
-//		informe.setNmbProjectContext(nmbProjectContext);
-//		informe.setIdSubasta(idSubasta);
-//		informe.create();
-//		return informe;
-//	}
+
+	/**
+	 * Método que genera un informe de validación por bien o por operación e función si recibe idBien a null o no,
+	 * y actualiza o modifica un registro en BatchAcuerdoCierreDeuda.
+	 * @param subasta
+	 * @param idBien
+	 * @return InformeValidacionCDDDto informe
+	 */
+	private InformeValidacionCDDDto generarEnvioCierreDeuda(Subasta subasta, String idBien) {
+		
+		InformeValidacionCDDDto informe;	
+		
+		informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+				.generarInformeValidacionCDD(null,subasta.getId(), idBien);
+		String motivo;
+		Long resultado;
+		DDResultadoValidacionCDD resultadoValidacion = new DDResultadoValidacionCDD();
+		if(!informe.getValidacionOK()) { // Si Validacion KO
+			motivo = informe.getResultadoValidacion().get(0);
+			resultado = BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO;
+			resultadoValidacion = (DDResultadoValidacionCDD) diccionarioApi.dameValorDiccionarioByCod(DDResultadoValidacionCDD.class, motivo);
+		
+		} else { // Si validación OK
+			resultado =  BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK;					
+		}
+		
+		// Buscamos si existe un cierre de deuda para mismo ASU,PRO,BIEN que no se haya enviado.
+		BatchAcuerdoCierreDeuda filtro = new BatchAcuerdoCierreDeuda();
+		filtro.setIdAsunto(subasta.getAsunto().getId());
+		filtro.setIdProcedimiento(subasta.getProcedimiento().getId());
+		if(!Checks.esNulo(idBien)) {
+			filtro.setIdBien(Long.valueOf(idBien));
+		}
+		BatchAcuerdoCierreDeuda acuerdoCierreDeuda = subastaApi.findRegistroCierreDeuda(filtro);
+		// Si no existe, o existe pero ya está OK y enviado
+		if(Checks.esNulo(acuerdoCierreDeuda) || 
+				(!Checks.esNulo(acuerdoCierreDeuda.getFechaEntrega()) && BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK.equals(acuerdoCierreDeuda.getResultadoValidacion()))) {
+			subastaApi.guardaBatchAcuerdoCierre(subasta.getId(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion);
+
+		} else {// Sino, existe sin enviar y modificamos		
+			acuerdoCierreDeuda.setResultadoValidacion(resultado);
+			acuerdoCierreDeuda.setResultadoValidacionCDD(resultadoValidacion);
+			acuerdoCierreDeuda.setFechaAlta(new Date());
+			subastaApi.guardaBatchAcuerdoCierreDeuda(acuerdoCierreDeuda);				
+		}
+		
+		return informe;
+	}
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping

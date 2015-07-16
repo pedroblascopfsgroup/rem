@@ -113,8 +113,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		InformeValidacionCDDDto informe = new InformeValidacionCDDDto();
 		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
 		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");
-			
+			String[] arrLoteBien = idsBien.split(",");			
 						
 			for (String loteBien : arrLoteBien) {
 				BienLoteDto dto;

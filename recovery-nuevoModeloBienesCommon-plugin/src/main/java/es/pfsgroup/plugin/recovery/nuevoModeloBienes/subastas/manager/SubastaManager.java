@@ -1188,6 +1188,13 @@ public class SubastaManager implements SubastaApi {
 			Subasta subasta = subastaDao.get(idSubasta);
 			return subastaDao.findBatchAcuerdoCierreDeuda(subasta.getAsunto().getId(), subasta.getProcedimiento().getId(), idBien);
 		}
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA)
+		public BatchAcuerdoCierreDeuda findRegistroCierreDeuda(BatchAcuerdoCierreDeuda acuerdo) {
+			return subastaDao.findBatchAcuerdoCierreDeuda(acuerdo);
+		}
 
 		@Override
 		@Transactional(readOnly = false)
@@ -1319,4 +1326,5 @@ public class SubastaManager implements SubastaApi {
 			Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			return (ArrayList<DDResultadoValidacionNuse>) genericDao.getList(DDResultadoValidacionNuse.class, fBorrado);
 		}
+
 }

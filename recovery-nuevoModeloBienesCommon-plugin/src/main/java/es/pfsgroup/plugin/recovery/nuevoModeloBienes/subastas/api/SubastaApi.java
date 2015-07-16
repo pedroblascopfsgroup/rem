@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
@@ -57,6 +58,7 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.obtenValorNodoPrc";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExisteYFinalizada";
 	public static final String BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.existeRegistroCierreDeuda";
+	public static final String BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.findRegistroCierreDeuda";
 	public static final String BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarRegistroCierreDeuda";
 	public static final String BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarBienesCierreDeuda";
 	public static final String BO_NMB_SUBASTA_RELLENAR_INFORME_CDD = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.rellenarInformeValidacionCDD";	
@@ -214,6 +216,9 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
 	List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien);
+	
+	@BusinessOperation(BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA)
+	BatchAcuerdoCierreDeuda findRegistroCierreDeuda(BatchAcuerdoCierreDeuda acuerdo);
 
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
 	void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBatchAcuerdoCierreDeuda);

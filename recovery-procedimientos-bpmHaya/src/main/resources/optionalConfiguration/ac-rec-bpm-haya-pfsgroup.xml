@@ -738,9 +738,17 @@
                 	return subastaProcedimientoManager.comprobarAdjudicacionDocBienesCelebracionSubasta(idProcedimiento);
 	            }		    		                       
 
+			
+				/* ------------- HRE- BCC -------------------- */ 
+
 				def comprobarExisteDocumentoPRVFND = {
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PRVFND");
+				}
+
+				def comprobarExisteDocumentoHCSDM = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "HCSDM");
 				}
         	            
   			 ]]>

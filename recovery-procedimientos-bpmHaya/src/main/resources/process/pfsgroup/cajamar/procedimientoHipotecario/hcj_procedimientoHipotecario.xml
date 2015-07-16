@@ -24,7 +24,7 @@
 			</action>
 		</event>
 		<transition to="H001_DemandaCertificacionCargas" name="activarAlerta"></transition>
-		<transition to="H001_AutoDespachandoEjecucion" name="avanzaBPM"></transition>
+		<transition to="H001_DemandaCertificacionCargasDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -286,6 +286,13 @@
 		<transition to="H001_RegistrarCertificadoCargas" name="activarAlerta"></transition>
 		<transition to="Fin2" name="avanzaBPM"></transition>
 	</state>
+
+	<state name="H001_BPMProvisionFondos"></state>
+
+	<decision name="H001_DemandaCertificacionCargasDecision" expression="#{H001_DemandaCertificacionCargasDecision}">
+		<transition to="H001_AutoDespachandoEjecucion" name="NO"></transition>
+		<transition to="H001_BPMProvisionFondos" name="SI"></transition>
+	</decision>
 
 	<end-state name="Fin">
 		<event type="node-enter">

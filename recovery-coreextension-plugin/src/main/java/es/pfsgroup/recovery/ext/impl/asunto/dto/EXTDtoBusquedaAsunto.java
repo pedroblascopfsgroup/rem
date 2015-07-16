@@ -17,6 +17,8 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	private String comboPropiedades;
 	private String comboErrorPreviCDD;
 	private String comboErrorPostCDD;
+    private String fechaEntregaDesde;
+    private String fechaEntregaHasta;
 		
 	
 	private List<Long> idsUsuariosGrupos;
@@ -86,4 +88,21 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 		this.comboErrorPostCDD = comboErrorPostCDD;
 	}
 
+	public String getFechaEntregaHasta() {
+		return fechaEntregaHasta;
+	}
+
+	public void setFechaEntregaHasta(String fechaEntregaHasta) {
+		this.fechaEntregaHasta = fechaEntregaHasta;
+	}
+
+	public String getFechaEntregaDesde() {
+		return fechaEntregaDesde;
+	}
+
+	public void setFechaEntregaDesde(String fechaEntregaDesde) {
+		this.fechaEntregaDesde = fechaEntregaDesde;
+	}
+
+	
 }

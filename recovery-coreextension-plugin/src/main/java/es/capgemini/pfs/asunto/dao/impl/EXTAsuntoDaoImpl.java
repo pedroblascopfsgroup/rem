@@ -821,6 +821,31 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}			
 		}
 		
+		// FECHA DESDE ENVIO PIVOTE
+		if (!Checks.esNulo(dto.getFechaEntregaDesde())) {
+			hql.append(" and cdd.fechaEntrega >= :fechaEntregaDesde");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				params.put("fechaEntregaDesde",
+						sdf1.parse(dto.getFechaEntregaDesde()));
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha entrega desde", e);
+			}
+		}
+		// FECHA HASTA ENVIO PIVOTE
+		if (!Checks.esNulo(dto.getFechaEntregaHasta())) {
+			hql.append(" and cdd.fechaEntrega <= :fechaEntregaHasta");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				Calendar c = new GregorianCalendar();
+				c.setTime(sdf1.parse(dto.getFechaEntregaHasta()));
+				c.add(Calendar.DAY_OF_YEAR, 1);
+				params.put("fechaEntregaHasta", c.getTime());
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha hasta", e);
+			}
+		}
+		
 		// FILTRO GESTION
 		if (dto.getComboGestion() != null && !"".equals(dto.getComboGestion())) {
 			hql.append(" and asu.gestionAsunto.codigo = :gestionAsunto");
@@ -1007,7 +1032,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 	private boolean requierePrevioCDD(EXTDtoBusquedaAsunto dto) {
 		
-		if(!Checks.esNulo(dto.getComboErrorPreviCDD())){
+		if(!Checks.esNulo(dto.getComboErrorPreviCDD()) || !Checks.esNulo(dto.getFechaEntregaDesde()) || !Checks.esNulo(dto.getFechaEntregaHasta())){
 			return true;
 		}
 		return false;

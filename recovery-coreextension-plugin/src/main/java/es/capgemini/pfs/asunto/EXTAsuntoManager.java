@@ -1955,7 +1955,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		//Obtenemos los TGE de las subtareas indicadas en el XML
 		for (String st : staC) {
 			
-			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(st)));
+			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", Long.parseLong(st)));
 			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
 			
 		}

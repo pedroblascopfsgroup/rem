@@ -802,13 +802,23 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		//FILTRO ERROR CDD
 		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
-			hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
-			params.put("errorPrevio", dto.getComboErrorPreviCDD());
+			if("Todos".equals(dto.getComboErrorPreviCDD())){
+				hql.append(" and cdd.resultadoValidacionCDD is not null");
+			}
+			else{
+				hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
+				params.put("errorPrevio", dto.getComboErrorPreviCDD());
+			}
 		}
 		
 		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
-			hql.append(" and asu.errorEnvioCDD = :errorPost");
-			params.put("errorPost", (dto.getComboErrorPostCDD()));
+			if("Todos".equals(dto.getComboErrorPostCDD())){
+				hql.append(" and asu.errorEnvioCDD is not null");
+			}
+			else{
+				hql.append(" and asu.errorEnvioCDD.codigo = :errorPost");
+				params.put("errorPost", (dto.getComboErrorPostCDD()));
+			}			
 		}
 		
 		// FILTRO GESTION

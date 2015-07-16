@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
@@ -42,7 +43,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     private DocumentoPCODao documentoPCODao;
     
     @Autowired
-    private SolicitudDocumentoPCODao solicitudDocumentoPCODao;
+    private GenericABMDao genericDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -180,7 +181,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		//solicitud.setActor(actor);
 		solicitud.setFechaSolicitud(solDto.getFechaSolicitud());
 		
-		solicitudDocumentoPCODao.saveOrUpdate(solicitud);
+		genericDao.save(SolicitudDocumentoPCO.class,solicitud);
 	}
 	
 	/** 

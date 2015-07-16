@@ -41,7 +41,7 @@ public class DocumentoPCODaoImpl extends AbstractEntityDao<DocumentoPCO, Long> i
 	 */
     @SuppressWarnings("unchecked")    
     public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO){
-        String hql = "from DocumentoPCO d where s.procedimientoPCO.id = ? and d.auditoria.borrado = 0";
+        String hql = "from DocumentoPCO d where d.procedimientoPCO.id = ? and d.auditoria.borrado = 0";
         List<DocumentoPCO> documentosProc = getHibernateTemplate().find(hql, idProcedimientoPCO);
         
         return documentosProc;    	

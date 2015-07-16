@@ -45,7 +45,7 @@ execute immediate 'UPDATE '||V_ESQUEMA||'.tev_tarea_externa_valor
                                             FROM '||V_ESQUEMA||'.tex_tarea_externa tex
                                             JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TEX.TAR_ID = TAR.TAR_ID  AND TAR.PRC_ID = 100119748
                                            WHERE tap_id = (SELECT tap_id
-                                                             FROM '||V_ESQUEMA||'..TAP_TAREA_PROCEDIMIENTO TAP 
+                                                             FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP 
                                                              WHERE TAP_CODIGO = ''P401_ContabilizarCierreDeuda''))';
 
 COMMIT;

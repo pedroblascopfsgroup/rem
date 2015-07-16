@@ -2,6 +2,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<jsp:useBean id="now" class="java.util.Date"/>
 <fwk:json>
 	<json:property name="total" value="${pagina.totalCount}" />
 	<json:array name="listadoTareas" items="${pagina.results}" var="tar">
@@ -17,6 +18,7 @@
 <%-- 			<json:property name="idResolucion" value="${tar.idResolucion}" /> --%>
 <%-- 			<json:property name="idTipoResolucion" value="${tar.idTipoResolucion}" /> --%>
 			<json:property name="codigoSubtipoTarea" value="${tar.subtipoTarea.codigoSubtarea}" />
+			<json:property name="esVencido" value="${tar.fechaVenc lt now}" />
 		</json:object>
 	</json:array>
 </fwk:json>

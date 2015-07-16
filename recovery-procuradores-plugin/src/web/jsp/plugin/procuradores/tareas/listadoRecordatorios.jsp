@@ -20,6 +20,37 @@
 	
 	var dateRenderer = Ext.util.Format.dateRenderer('d/m/Y');
 	
+<!-- 	Ext.grid.CheckColumn = function(config){  -->
+<!--         Ext.apply(this, config);  -->
+<!--         if(!this.id){  -->
+<!--             this.id = Ext.id();  -->
+<!--         }  -->
+<!--         this.renderer = this.renderer.createDelegate(this);  -->
+<!--     };  -->
+   
+<!--     Ext.grid.CheckColumn.prototype = {  -->
+<!--         init : function(grid){  -->
+<!--             this.grid = grid;  -->
+<!--             this.grid.on('render', function(){  -->
+<!--                 var view = this.grid.getView();  -->
+<!--                 view.mainBody.on('mousedown', this.onMouseDown, this);  -->
+<!--             }, this);  -->
+<!--         },  -->
+<!--         onMouseDown : function(e, t){  -->
+<!--             if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){  -->
+<!--                 e.stopEvent();  -->
+<!--                 var index = this.grid.getView().findRowIndex(t);  -->
+<!--                 var record = this.grid.store.getAt(index);  -->
+<!--                 var value = !record.data[this.dataIndex]; -->
+<!--                 record.set(this.dataIndex, value);  -->
+<!--             }  -->
+<!--         },  -->
+<!--         renderer : function(v, p, record){  -->
+<!--             p.css += ' x-grid3-check-col-td';   -->
+<!--             return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';  -->
+<!--         }  -->
+<!--     }; -->
+	
 	var recordatoriosRecord = Ext.data.Record.create([
 		{name:'id'}
 		,{name:'titulo'}
@@ -37,6 +68,7 @@
 		,{name:'codigoSubtipoTarea'}
 		,{name:'descripcionTarea'}
 		,{name:'fechaVenc', type:'date', dateFormat:'c'}
+		,{name:'esVencido'}
 	]);
 	
 	
@@ -51,16 +83,36 @@
 		,reader: new Ext.data.JsonReader({root:'recordatorios',totalProperty:'total',idProperty: 'id'},recordatoriosRecord)
 	});
 	
-	var tareasStore = page.getStore({
+	var tareasStore = page.getGroupingStore({
 		id:'tareasStore'
 		,remoteSort:true
 		,event:'listado'
 		,storeId:'tareasStore'
+		,sortInfo:{field: 'fechaVenc', direction: "ASC"}
+		,groupField:'esVencido'
+		,groupOnSort:'true'
 		,limit:limit
 		,baseParams:paramsBusquedaInicial
 		,flow:'recrecordatorio/getListaTareasRecordatorios'
 		,reader: new Ext.data.JsonReader({root:'listadoTareas',totalProperty:'total',idProperty: 'tarea'},tareasRecord)
 	});
+<!-- 	tareasStore.groupBy('esVencido', true); -->
+<!-- 	tareasStore.addListener('load', agrupa); -->
+<!-- 	tareasStore.setDefaultSort('fechaVenc', 'ASC'); -->
+<!-- 	function agrupa(store, meta) { -->
+<!-- 		store.groupBy('group', true);		 -->
+<!-- 		tareasStore.removeListener('load', agrupa); -->
+<!--     }; -->
+	
+	var groupRenderer=function(val){
+
+		if(val){
+			return '<s:message code="plugin.procuradores.recordatorio.gridorder.vencidas" text="**Vencidas" />';
+		}else{
+			return '<s:message code="plugin.procuradores.recordatorio.gridorder.novencidas" text="**No vencidas" />';
+		}
+			
+	}
 	
 	var tareasCm = new Ext.grid.ColumnModel([
 		{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.id" text="**Id" />', dataIndex: 'id', sortable:true, hidden:true}
@@ -80,6 +132,7 @@
 		,{header: '<s:message code="plugin.procuradores.recordatorio.gridcolumn.codigoSubtipoTarea" text="**codigoSubtipoTarea" />', dataIndex: 'codigoSubtipoTarea', sortable:true, hidden:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.tareaDescripcion" text="**TareaDescripcion" />',width: 180, dataIndex: 'descripcionTarea', sortable:true}
 		,{header: '<s:message code="plugin.procuradores.tareas.gridcolumn.fechaVencimiento" text="**FechaVencimiento" />', width: 40, dataIndex: 'fechaVenc', sortable:true, renderer:dateRenderer}
+		,{header: '<s:message code="plugin.procuradores.recordatorio.gridorder.estaVencida" text="**Vencimiento" />',sortable: false ,dataIndex: 'esVencido', hidden:true, renderer:groupRenderer}
 	]);
 	
 	var pagingBarTarea=fwk.ux.getPaging(tareasStore);
@@ -179,6 +232,11 @@
         ,autoWidth: true
         ,height:350
         ,bbar : [ pagingBarTarea,btnCrearRecTar ]
+		,view: new Ext.grid.GroupingView({
+			forceFit:true
+			,groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+			//,enableNoGroups:true
+		})
 	});
 	
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e){
@@ -397,6 +455,7 @@
    	Ext.onReady(function(){
 		tareasStore.webflow({idCategoria: '${idCategoria}'});
 		recordatorioStore.webflow({idCategoria: '${idCategoria}'});
+		tareasStore.groupBy('esVencido', true);
 	});
 	
 </fwk:page>

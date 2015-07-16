@@ -48,7 +48,6 @@
 		<transition to="H016_confAdmiDecretoEmbargo" name="activarAlerta"></transition>
 		<transition to="H016_confAdmiDecretoEmbargoDecision" name="avanzaBPM"></transition>
 		<transition to="Fin1" name="Fin"></transition>
-		<transition to="H016_interposicionDemandaMasBienes" name="vueltaAtras"></transition>
 	</state>
 
 	<decision name="H016_confAdmiDecretoEmbargoDecision" expression="#{H016_confAdmiDecretoEmbargoDecision}">
@@ -74,7 +73,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="haya_tramiteVigilanciaCaducidadEmbargos"></transition>
+		<transition to="Fin" name="hcj_tramiteVigilanciaCaducidadEmbargos"></transition>
 	</state>
 
 	<fork name="fork1">
@@ -258,10 +257,10 @@
 
 	<fork name="fork2">
 		<transition to="H016_confAdmiDecretoEmbargo" name="decreto"></transition>
-		<transition to="H016_BPMProvisonFondos" name="provision"></transition>
+		<transition to="H016_BPMProvisionFondos" name="provision"></transition>
 	</fork>
 
-	<state name="H016_BPMProvisonFondos">
+	<state name="H016_BPMProvisionFondos">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -278,7 +277,9 @@
 				</targetBean>
 			</action>
 		</event>
+		<transition to="Fin" name="hcj_provisionFondos"></transition>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="H016_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
 
 	<decision name="H016_interposicionDemandaMasBienesDecision" expression="#{H016_interposicionDemandaMasBienesDecision}">

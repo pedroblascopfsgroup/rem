@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteCertificacionCargasRevision" width="1283" height="851">
+<root-container name="hcj_tramiteCertificacionCargasRevision" width="1486" height="877">
   <node name="Inicio" x="435" y="6" width="150" height="36">
     <edge>
       <label x="5" y="-10"/>

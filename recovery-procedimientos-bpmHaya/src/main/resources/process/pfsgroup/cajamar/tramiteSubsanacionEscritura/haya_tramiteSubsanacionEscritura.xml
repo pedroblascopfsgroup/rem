@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteSubsanacionEscritura">
+<process-definition xmlns="" name="hcj_tramiteSubsanacionEscritura">
 
 	<start-state name="Inicio">
 		<transition to="H065_registrarPresentacionEscrituraSub" name="iniciarProceso"></transition>

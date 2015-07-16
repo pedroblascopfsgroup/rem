@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_ejecucionTituloNoJudicial">
+<process-definition xmlns="" name="hcj_ejecucionTituloNoJudicial">
 
 	<start-state name="Inicio">
 		<transition to="H020_InterposicionDemandaMasBienes" name="iniciarProceso"></transition>
@@ -24,7 +24,7 @@
 			</action>
 		</event>
 		<transition to="H020_InterposicionDemandaMasBienes" name="activarAlerta"></transition>
-		<transition to="H020_AutoDespaEjecMasDecretoEmbargo" name="avanzaBPM"></transition>
+		<transition to="H020_InterposicionDemandaMasBienesDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -285,6 +285,38 @@
 		<transition to="H020_ConfirmarVista" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H020_ConfirmarSiExisteOposicion" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="H020_InterposicionDemandaMasBienesDecision" expression="#{H020_InterposicionDemandaMasBienesDecision}">
+		<transition to="H020_AutoDespaEjecMasDecretoEmbargo" name="sinProvision"></transition>
+		<transition to="ForkInterposicionDemandaMasBienes" name="conProvision"></transition>
+	</decision>
+
+	<fork name="ForkInterposicionDemandaMasBienes">
+		<transition to="H020_AutoDespaEjecMasDecretoEmbargo" name="decreto"></transition>
+		<transition to="H020_BPMProvisionFondos" name="provision"></transition>
+	</fork>
+
+	<state name=H020_BPMProvisionFondos>
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="hcj_provisionFondos"></transition>
+		<transition to="H020_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteInvestigacionJudicial">
+<process-definition xmlns="" name="hcj_tramiteInvestigacionJudicial">
 
 	<start-state name="Inicio">
 		<transition to="H044_SolicitudInvestigacionJudicial" name="iniciarProceso"></transition>

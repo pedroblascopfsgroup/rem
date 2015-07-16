@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteMejoraEmbargo" width="870" height="563">
+<root-container name="hcj_tramiteMejoraEmbargo" width="1487" height="878">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-45" y="-14"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteEmbargoSalarios" width="882" height="624">
+<root-container name="hcj_tramiteEmbargoSalarios" width="1486" height="877">
   <node name="Inicio" x="6" y="18" width="132" height="36">
     <edge>
       <label x="-32" y="-14"/>

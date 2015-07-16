@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteCostas" width="1027" height="752">
+<root-container name="hcj_tramiteCostas" width="1486" height="877">
   <node name="Inicio" x="50" y="46" width="132" height="36">
     <edge>
       <label x="-29" y="-21"/>

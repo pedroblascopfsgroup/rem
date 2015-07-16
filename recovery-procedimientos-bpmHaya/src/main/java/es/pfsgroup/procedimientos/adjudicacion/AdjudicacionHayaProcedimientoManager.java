@@ -21,6 +21,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
@@ -34,6 +35,8 @@ public class AdjudicacionHayaProcedimientoManager {
 
 	private static final String BO_ADJUDICACION_VALIDAR_ADJUNTO_SAREB = "es.pfsgroup.recovery.adjudicacion.validarAdjuntoSareb";
 	private static final String BO_ADJUDICACION_OBTENER_TIPO_CARGA = "es.pfsgroup.recovery.adjudicacion.obtenerTipoCarga";
+
+	private static final Object TIPO_CARGA_ANTERIOR_HIPOTECA = "ANT";
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -204,4 +207,30 @@ public class AdjudicacionHayaProcedimientoManager {
 		return false;
 	}
 
+	public Boolean existenCargasPreviasActivas(Long prcId) {
+		@SuppressWarnings("unchecked")
+		List<Bien> listaBienes = (List<Bien>) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_BIENES_DE_UN_PROCEDIMIENTO, prcId);
+		Boolean verificadasCargas = false;
+		if (listaBienes != null && listaBienes.size() > 0) {
+			for (Bien bien : listaBienes) {
+				if (bien instanceof NMBBien) {
+					NMBBien nmbBien = (NMBBien) bien;
+					List<NMBBienCargas> cargas = nmbBien.getBienCargas();
+					for (NMBBienCargas carga : cargas) {
+						if (carga.getTipoCarga().getCodigo().equals(TIPO_CARGA_ANTERIOR_HIPOTECA)
+								&& carga.getSituacionCarga() == null 
+								&& carga.getSituacionCarga().equals(DDSituacionCarga.ACEPTADA)) {
+							verificadasCargas=true;
+							break;
+						}
+					}
+				}
+				if (verificadasCargas) {
+					break;
+				}
+			}
+		}
+		return verificadasCargas;
+	}
+	
 }

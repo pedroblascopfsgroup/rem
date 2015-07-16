@@ -22,7 +22,7 @@ DECLARE
     * CONFIGURACION: ESQUEMAS
     *---------------------------------------------------------------------
     */
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_CJ#'; -- Configuracion Esquema
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     
 BEGIN

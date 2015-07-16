@@ -22,7 +22,7 @@ DECLARE
     * CONFIGURACION: ESQUEMAS
     *---------------------------------------------------------------------
     */
-    PAR_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_CJ#';               -- [PARAMETRO] Configuracion Esquemas
+    PAR_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';               -- [PARAMETRO] Configuracion Esquemas
     PAR_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';    -- [PARAMETRO] Configuracion Esquemas
 
     /*

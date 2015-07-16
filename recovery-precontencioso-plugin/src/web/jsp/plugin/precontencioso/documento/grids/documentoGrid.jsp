@@ -47,7 +47,7 @@ var documentosRecord = Ext.data.Record.create([
 
 var storeDocumentos = page.getStore({
       eventName : 'listado'
-      ,flow:'documentopco/getSolicitudesDocumentos'
+      ,flow:'documentopco/getSolicitudesDocumentosPorProcedimientoId'
       ,reader: new Ext.data.JsonReader({
               root: 'solicitudesDocumento'
       }, documentosRecord)
@@ -298,14 +298,6 @@ var editarDocButton = new Ext.Button({
 			    Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.editarDocumento.aviso" text="**No se puede Editar" />',buttons: Ext.Msg.OK});
 			} 
 			else {
-		        var w = app.openWindow({
-						flow: 'documentopco/editarDocumento'
-						,params: {idSolicitud:idSolicitud}
-						,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
-						,width: 640
-					});
-	        	}
-	        	else {
 			        var w = app.openWindow({
 							flow: 'documentopco/abrirEditarDocumento'
 							,params: {idSolicitud:idSolicitud}
@@ -316,9 +308,7 @@ var editarDocButton = new Ext.Button({
 						w.close(); });
 						w.on(app.event.CANCEL, function(){ w.close(); });
 					}
-				}
 			}
-		}
 	});	
 	
 
@@ -409,7 +399,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 	
 
 
-storeDocumentos.webflow();
+storeDocumentos.webflow({idProcedimientoPCO: '1'});
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);

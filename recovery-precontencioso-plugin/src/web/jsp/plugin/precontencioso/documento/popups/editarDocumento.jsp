@@ -30,7 +30,7 @@
 				if (validateForm()) {		    
 			    	var p = getParametros();
 			    	Ext.Ajax.request({
-							url : page.resolveUrl('documentopco/updateDocumentos'), 
+							url : page.resolveUrl('documentopco/editarDocumento'), 
 							params : p ,
 							method: 'POST',
 							success: function ( result, request ) {

@@ -23,7 +23,129 @@
 
 	<pfsforms:numberfield name="totalField" labelKey="plugin.precontencioso.grid.liquidacion.total" 
 	label="**Total" value="${liquidacion.total}" />
-	<!-- Apoderado (Según valores de diccionario) -->
+
+<%-- Apoderado --%>
+
+	<%-- Combo Tipo Gestor --%>
+
+	var tipoGestorRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigo'},
+		{name: 'descripcion'}
+	]);
+
+	var tipoGestorStore = page.getStore({
+		flow: 'coreextension/getListTipoGestorAdicionalData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoGestores'
+		}, tipoGestorRecord)
+	});
+
+	var comboTipoGestor = new Ext.form.ComboBox({
+		store: tipoGestorStore,
+		displayField: 'descripcion',
+		valueField: 'id',
+		mode: 'remote',
+		forceSelection: true,
+		emptyText: 'Seleccionar',
+		triggerAction: 'all',
+		disabled: true,
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoGestor" text="**Tipo gestor" />'
+	});
+
+	<%-- Combo Tipo Despacho --%>
+
+	var tipoDespachoRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'cod'},
+		{name: 'descripcion'}
+	]);
+
+	var tipoDespachoStore = page.getStore({
+		flow: 'coreextension/getListTipoDespachoData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoDespachos'
+		}, tipoDespachoRecord)
+	});
+
+	var comboTipoDespacho = new Ext.form.ComboBox({
+		store: tipoDespachoStore,
+		displayField: 'descripcion',
+		valueField:'cod',
+		mode: 'remote',
+		disabled: true,
+		forceSelection: true,
+		emptyText: 'Seleccionar',
+		triggerAction: 'all',
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoDespacho" text="**Tipo despacho" />'
+	});
+
+	<%-- Combo Usuario --%>
+
+	var usuarioRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'username'}
+	]);
+
+	var usuarioStore = page.getStore({
+		flow: 'coreextension/getListUsuariosPaginatedData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoUsuarios'
+		}, usuarioRecord)
+	});
+
+	var comboUsuario = new Ext.form.ComboBox({
+		store: usuarioStore,
+		allowBlank: true,
+		blankElementText: '---',
+		emptyText: '---',
+		disabled: true,
+		displayField: 'username',
+		valueField: 'id',
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbUsuario" text="**Usuario" />',
+		loadingText: 'Buscando...',
+		labelStyle: 'width:100px',
+		width: 250,
+		resizable: true,
+		pageSize: 10,
+		triggerAction: 'all',
+		mode: 'local'
+	});
+
+	comboUsuario.on('afterrender', function(combo) {
+		combo.mode = 'remote';
+	});
+
+	<%-- Events --%>
+
+	comboTipoGestor.on('afterrender', function(combo) {
+		tipoGestorStore.webflow();
+	});
+
+	tipoGestorStore.on('load', function(combo) {
+		// Se filtra por tipo de gestor apoderado.
+		var numRecord = tipoGestorStore.findExact('descripcion', 'Apoderado', 0);
+		var value = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.valueField];
+		var rawValue = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.displayField];
+
+		comboTipoGestor.setValue(value);
+		comboTipoGestor.setRawValue(rawValue);
+		comboTipoGestor.selectedIndex = numRecord;
+
+		comboTipoDespacho.reset();
+		comboUsuario.reset();
+		comboTipoDespacho.setDisabled(false);
+		comboUsuario.setDisabled(true);
+
+		tipoDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()});
+	});
+
+	comboTipoDespacho.on('select', function() {
+		usuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()});
+
+		comboUsuario.reset();
+		comboUsuario.setDisabled(false);
+	});
 
 	<%-- Buttons --%>
 
@@ -58,7 +180,7 @@
 		autoHeight: true,
 		bodyStyle:'padding:10px;cellspacing:20px',
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
-		items: [capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField],
+		items: [capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField, comboTipoGestor, comboTipoDespacho, comboUsuario],
 		bbar: new Ext.Toolbar()
 	});
 
@@ -70,13 +192,17 @@
 
 	var getParametros = function() {
 		var parametros = {};
-		
+
 		parametros.id = '${liquidacion.id}';
 		parametros.capitalVencido = capitalVencidoField.getValue();
 		parametros.capitalNoVencido = capitalNoVencidoField.getValue();
 		parametros.interesesOrdinarios= interesesOrdinariosField.getValue();
 		parametros.interesesDemora = interesesDemoraField.getValue();
 		parametros.total = totalField.getValue();
+
+		if (comboUsuario.getValue() != "") {
+			parametros.apoderadoId = comboUsuario.getValue();
+		}
 
 		return parametros;
 	}

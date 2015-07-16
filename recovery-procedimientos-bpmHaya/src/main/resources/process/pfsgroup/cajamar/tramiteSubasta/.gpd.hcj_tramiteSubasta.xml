@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteSubasta" width="2914" height="1947">
+<root-container name="hcj_tramiteSubasta" width="2858" height="2001">
   <node name="Inicio" x="-121" y="134" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -306,11 +306,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="343" y="1885" width="132" height="36"/>
-  <node name="Fin2" x="307" y="44" width="132" height="36"/>
-  <node name="Fin3" x="2069" y="228" width="132" height="36"/>
-  <node name="Fin4" x="1215" y="1046" width="132" height="36"/>
-  <node name="Fin5" x="-587" y="998" width="132" height="36"/>
   <node name="H002_BPMTramiteSolSolvenciaPatrimonial" x="164" y="1676" width="290" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -378,7 +373,15 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_LecturaConfirmacionInstrucciones" x="1370" y="927" width="272" height="36">
+  <node name="H002_DictarInstruccionesSubastaDecision" x="1325" y="846" width="276" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H002_LecturaConfirmacionInstrucciones" x="1451" y="1002" width="272" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -389,43 +392,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="NS" x="539" y="167" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="10" y="27"/>
-    </edge>
-  </node>
-  <node name="TA" x="726" y="166" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="7" y="22"/>
-    </edge>
-  </node>
-  <node name="IF" x="905" y="167" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="162" h1="-49" w2="-1002" h2="-110"/>
-      <bendpoint w1="1177" h1="-19" w2="13" h2="-80"/>
-    </edge>
-    <edge>
-      <label x="-134" y="24"/>
-    </edge>
-  </node>
-  <node name="IS" x="1077" y="166" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-671" y="-19"/>
-      <bendpoint w1="500" h1="-3" w2="-492" h2="-65"/>
-      <bendpoint w1="992" h1="1" w2="0" h2="-61"/>
-    </edge>
-  </node>
-  <node name="H002_AdjuntarNotasSimples" x="486" y="38" width="201" height="36">
+  <node name="NS" x="1031" y="222" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -433,24 +400,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="fork3" x="703" y="304" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_AdjuntarTasaciones" x="704" y="36" width="183" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="TA" x="890" y="119" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -458,7 +408,31 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_SolicitarInformeFiscal" x="1243" y="36" width="196" height="36">
+  <node name="IF" x="1097" y="133" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="IS" x="606" y="111" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H002_AdjuntarNotasSimples" x="301" y="15" width="301" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork3" x="706" y="243" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -472,7 +446,18 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_AdjuntarInformeFiscal" x="1546" y="39" width="201" height="36">
+  <node name="H002_AdjuntarTasaciones" x="708" y="-7" width="277" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H002_SolicitarInformeFiscal" x="1331" y="-46" width="253" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -486,68 +471,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_AdjuntarTasacionesDecision" x="942" y="34" width="235" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="308" y="33"/>
-      <bendpoint w1="2" h1="-77" w2="666" h2="-87"/>
-      <bendpoint w1="-667" h1="-75" w2="-3" h2="-85"/>
-    </edge>
-  </node>
-  <node name="H002_LecturaConfirmacionInstrucciones" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="NS" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="TA" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="IF" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="IS" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_AdjuntarNotasSimples" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="fork3" x="0" y="0" width="252" height="24">
+  <node name="H002_AdjuntarInformeFiscal" x="1717" y="-9" width="208" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -561,24 +485,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_AdjuntarTasaciones" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_SolicitarInformeFiscal" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="H002_AdjuntarTasacionesDecision" x="977" y="-50" width="259" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -586,39 +493,9 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_AdjuntarInformeFiscal" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_AdjuntarTasacionesDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="Fin" x="0" y="0" width="132" height="36"/>
-  <node name="Fin2" x="0" y="0" width="132" height="36"/>
-  <node name="Fin3" x="0" y="0" width="132" height="36"/>
-  <node name="Fin4" x="0" y="0" width="132" height="36"/>
-  <node name="Fin5" x="0" y="0" width="132" height="36"/>
-  <node name="H002_DictarInstruccionesSubastaDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
+  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
+  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
+  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
+  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
+  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
 </root-container>

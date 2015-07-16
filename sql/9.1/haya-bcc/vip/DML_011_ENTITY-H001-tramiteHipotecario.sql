@@ -44,9 +44,9 @@ DECLARE
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'H001_DemandaCertificacionCargas',
         /*TAP_VIEW.....................:*/ 'plugin/procedimientos/genericFormOverSize',
-        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoEDH() ? (comprobarExisteDocumentoHCSDM() ? null : ''Es necesario adjuntar la copia sellada de la demanda'' ) : ''Es necesario adjuntar el Escrito de la demanda.''',
+        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoEDH() ? null : ''Es necesario adjuntar el Escrito de demanda completo + copia sellada de la demanda.''',
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_DemandaCertificacionCargas''][''provisionFondos'']==DDSiNo.SI ? ''SI'' : ''NO''',
+        /*TAP_SCRIPT_DECISION..........:*/ null,
         /*DD_TPO_ID_BPM(FK)............:*/ null,
         /*TAP_SUPERVISOR,..............:*/ '0',
         /*TAP_DESCRIPCION,.............:*/ 'Interposición demanda + Certificación de cargas',
@@ -56,29 +56,176 @@ DECLARE
         /*TAP_ALERT_NO_RETORNO.........:*/ null,
         /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
         /*DD_FAP_ID(FK)................:*/ null,
-        /*TAP_AUTOPRORROGA.............:*/ '1',
+        /*TAP_AUTOPRORROGA.............:*/ '0',
         /*DTYPE........................:*/ 'EXTTareaProcedimiento',
         /*TAP_MAX_AUTOP................:*/ '3',
         /*DD_TGE_ID(FK)................:*/ null,
-        /*DD_STA_ID(FK)................:*/ '814',
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
         /*TAP_EVITAR_REORG.............:*/ null,
-        /*DD_TSUP_ID(FK)...............:*/ 'GULI',
+        /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
         /*TAP_BUCLE_BPM................:*/ null        
         ), 
-    
-    
-      T_TIPO_TAP('H001','H001_AutoDespachandoEjecucion','plugin/procedimientos-bpmHaya-plugin/procedimientoHipotecario/autoDespachandoEjecucion','comprobarExisteDocumentoADEH() ? null : ''Es necesario adjuntar el documento Auto despachando ejecuci&oacute;n.''',null,'valores[''H001_AutoDespachandoEjecucion''][''comboResultado''] == DDSiNo.SI ? ''SI'' : ''NO''',null,'0','Auto despachando ejecución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_RegistrarCertificadoCargas',null,'comprobarExisteDocumentoCCH() ? null : ''Es necesario adjuntar el Certificado de cargas.''','(valores[''H001_RegistrarCertificadoCargas''][''cargasPrevias''] == DDSiNo.SI && valores[''H001_RegistrarCertificadoCargas''][''cuantiaCargasPrevias''] == null) ? ''Si indica que existen cargas previas, debe informar el campo "Cuant&iacute;a de cargas previas"'':null',null,null,'0','Registrar certificado de cargas','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_ConfirmarNotificacionReqPago',null,null,'(valores[''H001_ConfirmarNotificacionReqPago''][''comboResultado''] == DDPositivoNegativo.POSITIVO && valores[''H001_ConfirmarNotificacionReqPago''][''fecha''] == null) ? ''Si indica como resultado de notificacion "Positivo", debe informar la "Fecha de Notificaci&oacute;n"'':null','valores[''H001_ConfirmarNotificacionReqPago''][''comboResultado''] == DDPositivoNegativo.POSITIVO ? ''SI'' : ''NO''',null,'0','Confirmar notificación del auto despachando ejecución','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_ContactarConDeudor',null,null,null,null,null,'0','Contactar con el deudor','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'803',null,'SDEU',null),
-      T_TIPO_TAP('H001','H001_ConfirmarSiExisteOposicion','plugin/procedimientos/procedimientoHipotecario/confirmarSiExisteOposicion',null,'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (!comprobarExisteDocumentoEOH() ? ''Es necesario adjuntar el Escrito de oposici&oacute;n.'' : ((valores[''H001_ConfirmarSiExisteOposicion''][''fechaOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''motivoOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''] == null) ? ''Si indica que hay oposici&oacute;n, debe registrar tambi&eacute;n "Fecha Oposici&oacute;n", "Motivo Oposici&oacute;n" y "Fecha Comparecencia"'' : null)) : null ','valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? ''SI'' : ''NO''',null,'0','Confirmar si existe oposición','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_RegistrarComparecencia',null,null,null,null,null,'0','Registrar comparecencia','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_RegistrarResolucion',null,null,null,null,null,'0','Registrar resolución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_ResolucionFirme',null,null,null,null,null,'0','Resolución firme','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_BPMTramiteSubasta',null,null,null,null,'H002','0','Ejecución del trámite de Subasta','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,null,null),
-      T_TIPO_TAP('H001','H001_BPMTramiteNotificacion',null,null,null,null,'P400','0','Ejecución del trámite de notificación','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,null,null),
-      T_TIPO_TAP('H001','H001_AutoDespachandoDecision',null,null,null,null,null,'0','Tarea toma de decisión','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'819',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_ResolucionFirmeDecision',null,null,null,null,null,'0','Tarea toma de decisión','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'819',null,'GULI',null)
+      --T_TIPO_TAP('H001','H001_AutoDespachandoEjecucion','plugin/procedimientos-bpmHaya-plugin/procedimientoHipotecario/autoDespachandoEjecucion','comprobarExisteDocumentoADEH() ? null : ''Es necesario adjuntar el documento Auto despachando ejecuci&oacute;n.''',null,'valores[''H001_AutoDespachandoEjecucion''][''comboResultado''] == DDSiNo.SI ? ''SI'' : ''NO''',null,'0','Auto despachando ejecución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H001_RegistrarCertificadoCargas',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarBienAsociadoPrc() ? (comprobarExisteDocumentoCCH() ? null : ''Es necesario adjuntar el Certificado de cargas.'') : ''Tiene que asociar un bien al procedimiento''',
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_RegistrarCertificadoCargas''][''cargasPrevias'']==DDSiNo.SI ? ''SI'' : ''NO''',
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Cumplimentar mandamiento de certificación de cargas',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ), 
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H001_SolicitudOficioJuzgado',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Solicitud oficio en el juzgado',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ 'tareaExterna.cancelarTarea',
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ), 
+      --'(valores[''H001_RegistrarCertificadoCargas''][''cargasPrevias''] == DDSiNo.SI && valores[''H001_RegistrarCertificadoCargas''][''cuantiaCargasPrevias''] == null) ? ''Si indica que existen cargas previas, debe informar el campo "Cuant&iacute;a de cargas previas"'':null',
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H001_RegResolucionJuzgado',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_RegResolucionJuzgado''][''resultado'']==DDPositivoNegativo.POSITIVO ? ''positivo'' : ''negativo''',
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Registrar resolución Juzgado',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ 'tareaExterna.cancelarTarea',
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ), 
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H001_ContactarAcreedorPref',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Contactar con el acreedor preferente',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ 'tareaExterna.cancelarTarea',
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'TGCONPR',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'SUCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ), 
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_ConfirmarNotificacionReqPago',null,null,'(valores[''H001_ConfirmarNotificacionReqPago''][''comboResultado''] == DDPositivoNegativo.POSITIVO && valores[''H001_ConfirmarNotificacionReqPago''][''fecha''] == null) ? ''Si indica como resultado de notificacion "Positivo", debe informar la "Fecha de Notificaci&oacute;n"'':null','valores[''H001_ConfirmarNotificacionReqPago''][''comboResultado''] == DDPositivoNegativo.POSITIVO ? ''SI'' : ''NO''',null,'0','Confirmar notificación del auto despachando ejecución','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H001_ConfirmarSiExisteOposicion',
+        /*TAP_VIEW.....................:*/ 'plugin/procedimientos/procedimientoHipotecario/confirmarSiExisteOposicion',
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ 'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (!comprobarExisteDocumentoEOH() ? ''Es necesario adjuntar el Escrito de oposici&oacute;n.'' : ((valores[''H001_ConfirmarSiExisteOposicion''][''fechaOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''motivoOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''] == null) ? ''Si indica que hay oposici&oacute;n, debe registrar tambi&eacute;n "Fecha Oposici&oacute;n", "Motivo Oposici&oacute;n" y "Fecha Comparecencia"'' : (valores[''H001_ConfirmarSiExisteOposicion''][''alegaciones''] == DDSiNo.SI && valores[''H001_ConfirmarSiExisteOposicion''][''fechaFinAlegaciones''] == null ? ''Debe indicar la fecha de alegaciones'' : null))) : null',
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (valores[''H001_ConfirmarSiExisteOposicion''][''alegaciones''] == DDSiNo.SI ? : ''SI_ALEGACIONES'' : ''NO_ALEGACIONES'') : ''NO''',
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Confirmar si existe oposición',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ 'tareaExterna.cancelarTarea',
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ), 
+        TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H001_PresentarAlegaciones',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoHEDIMP() ? null : ''Es necesario adjuntar el Escrito de impugnaci&acute;n.''',
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ 'valores[''H001_PresentarAlegaciones''][''comparecencia''] == DDSiNo.SI && valores[''H001_PresentarAlegaciones''][''fechaComparecencia''] == null ? ''Debe indicar la fecha de comparecencia'' : null',
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_PresentarAlegaciones''][''comparecencia''] == DDSiNo.SI ? ''hayComparecencia'' : ''noHayComparecencia''',
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Presentar alegaciones',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ 'tareaExterna.cancelarTarea',
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ), 
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_RegistrarComparecencia',null,null,null,null,null,'0','Registrar comparecencia','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_RegistrarResolucion',null,null,null,null,null,'0','Registrar resolución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_ResolucionFirme',null,null,null,null,null,'0','Resolución firme','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
+      
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_BPMTramiteSubasta',null,null,null,null,'H002','0','Ejecución del trámite de Subasta','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,null,null),
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_BPMTramiteNotificacion',null,null,null,null,'P400','0','Ejecución del trámite de notificación','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,null,null),
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_AutoDespachandoDecision',null,null,null,null,null,'0','Tarea toma de decisión','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'819',null,'GULI',null),
+      --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_ResolucionFirmeDecision',null,null,null,null,null,'0','Tarea toma de decisión','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'819',null,'GULI',null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -87,19 +234,20 @@ DECLARE
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
       T_TIPO_PLAZAS(null,null,'H001_DemandaCertificacionCargas','10*24*60*60*1000L','0','0','DD'),
-      
-      
-      
-      T_TIPO_PLAZAS(null,null,'H001_AutoDespachandoEjecucion','damePlazo(valores[''H001_DemandaCertificacionCargas''][''fechaPresentacionDemanda'']) + 60*24*60*60*1000L','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_AutoDespachandoEjecucion','damePlazo(valores[''H001_DemandaCertificacionCargas''][''fechaPresentacionDemanda'']) + 60*24*60*60*1000L','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'H001_RegistrarCertificadoCargas','7*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_ConfirmarNotificacionReqPago','60*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_ContactarConDeudor','2*24*60*60*1000L','0','0','DD'),
+      T_TIPO_PLAZAS(null,null,'H001_SolicitudOficioJuzgado','5*24*60*60*1000L','0','0','DD'),
+      T_TIPO_PLAZAS(null,null,'H001_RegResolucionJuzgado','40*24*60*60*1000L','0','0','DD'),
+      T_TIPO_PLAZAS(null,null,'H001_ContactarAcreedorPref','10*24*60*60*1000L','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_ConfirmarNotificacionReqPago','60*24*60*60*1000L','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_ContactarConDeudor','2*24*60*60*1000L','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'H001_ConfirmarSiExisteOposicion','valores[''H001_ConfirmarNotificacionReqPago''][''fecha''] != null ? damePlazo(valores[''H001_ConfirmarNotificacionReqPago''][''fecha'']) + 10*24*60*60*1000L : 10*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_RegistrarComparecencia','damePlazo(valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''])','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_RegistrarResolucion','damePlazo(valores[''H001_RegistrarComparecencia''][''fecha'']) + 15*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_ResolucionFirme','damePlazo(valores[''H001_RegistrarResolucion''][''fecha'']) + 20*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_BPMTramiteSubasta','300*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_BPMTramiteNotificacion','300*24*60*60*1000L','0','0','DD')       
+      T_TIPO_PLAZAS(null,null,'H001_PresentarAlegaciones','damePlazo(valores[''H001_ConfirmarSiExisteOposicion''][''fechaFinAlegaciones''])','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_RegistrarComparecencia','damePlazo(valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''])','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_RegistrarResolucion','damePlazo(valores[''H001_RegistrarComparecencia''][''fecha'']) + 15*24*60*60*1000L','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_ResolucionFirme','damePlazo(valores[''H001_RegistrarResolucion''][''fecha'']) + 20*24*60*60*1000L','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_BPMTramiteSubasta','300*24*60*60*1000L','0','0','DD'),
+      --T_TIPO_PLAZAS(null,null,'H001_BPMTramiteNotificacion','300*24*60*60*1000L','0','0','DD')       
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -124,50 +272,62 @@ DECLARE
         T_TIPO_TFI('H001_DemandaCertificacionCargas','14','currency','creditoSupl','Crédito supletorio','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','15','combo','provisionFondos','Provisión Fondos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','16','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-
-
-        
-        
-        
-        
-        
-        T_TIPO_TFI('H001_AutoDespachandoEjecucion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ind&iacute;quese la fecha en la que se nos notifica auto por el que se despacha ejecuci&oacute;n, el juzgado en el que ha reca&iacute;do la demanda y el n&uacute;mero de procedimiento.</p><p style="margin-bottom: 10px">Se ha de indicar si la demanda interpuesta ha sido admitida o no, lo que supondr&aacute;, seg&uacute;n su contestaci&oacute;n, que la tarea siguiente sea una u otra de las que se le indica con posterioridad.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute;:<br>- Si ha sido admitida a tr&aacute;mite la demanda "Confirmar notificaci&oacute;n del auto despachando ejecuci&oacute;n" al ejecutado.<br>- Si no ha sido admitida la demanda se le abrir&aacute; tarea en la que propondr&aacute;, seg&uacute;n su criterio, la siguiente actuaci&oacute;n al responsable de la entidad.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_AutoDespachandoEjecucion','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_AutoDespachandoEjecucion','2','combo','nPlaza','Plaza del juzgado',null,null,'damePlaza()','TipoPlaza','0','DD'),
-        T_TIPO_TFI('H001_AutoDespachandoEjecucion','3','combo','numJuzgado','Número de juzgado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','dameNumJuzgado()','TipoJuzgado','0','DD'),
-        T_TIPO_TFI('H001_AutoDespachandoEjecucion','4','textproc','numProcedimiento','Número de procedimiento','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','dameNumAuto()',null,'0','DD'),
-        T_TIPO_TFI('H001_AutoDespachandoEjecucion','5','combo','comboResultado','Admisión','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
-        T_TIPO_TFI('H001_AutoDespachandoEjecucion','6','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarCertificadoCargas','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Paralelamente antes de confirmar la notificaci&oacute;n del autodespachando ejecuci&oacute;n, se debe revisar el certificado de cargas informando si existen cargas previas y su cuant&iacute;a.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarCertificadoCargas','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarCertificadoCargas','2','combo','cargasPrevias','Tiene cargas Previas','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
-        T_TIPO_TFI('H001_RegistrarCertificadoCargas','3','currency','cuantiaCargasPrevias','Cuantía cargas previas',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarCertificadoCargas','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Debe indicar si la notificaci&oacute;n del auto a los deudores (y en su caso el requerimiento de pago) se ha realizado satisfactoriamente.</p><p style="margin-bottom: 10px">Deber&aacute; informar la fecha de notificaci&oacute;n &uacute;nicamente en el supuesto de que &eacute;sta se hubiese efectuado.</p><p style="margin-bottom: 10px">Si no se hubiera requerido en la persona del ejecutado, deber&aacute; notificar dicha circunstancia al supervisor v&iacute;a notificaci&oacute;n interna por si hubiera lugar a iniciar el Tr&aacute;mite de Ocupantes.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute;:<br>- Notificaci&oacute;n positiva: "Confirmar si existe oposici&oacute;n"<br>- Notificaci&oacute;n negativa: en este caso se iniciar&aacute; el tr&aacute;mite de notificaci&oacute;n.</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','1','combo','comboResultado','Resultado notificación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDPositivoNegativo','0','DD'),
-        T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','2','date','fecha','Fecha notificación',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ContactarConDeudor','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Para dar por terminada esta tarea, el gestor de deuda deber&aacute; informar de la fecha en la que se ha puesto en contacto con el deudor y el resultado del acuerdo se lo comunicar&aacute; a su supervisor.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ContactarConDeudor','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_ContactarConDeudor','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Una vez notificado al demandado el auto de despacho de ejecuci&oacute;n, en esta pantalla ha de indicar si el mismo se ha opuesto o no a la demanda.</p><p style="margin-bottom: 10px">En el supuesto de que exista oposici&oacute;n, deberá informar su fecha de notificaci&oacute;n e indicar la fecha que el juzgado ha designado para la comparecencia.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute;:<br>- Si no hay oposici&oacute;n: se iniciar&aacute; el tr&aacute;mite de subasta, con lo que le aparecer&aacute; la primera tarea de dicho tr&aacute;mite.<br>- Si hay oposici&oacute;n: "Registrar comparecencia".</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_AutoDespachandoEjecucion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ind&iacute;quese la fecha en la que se nos notifica auto por el que se despacha ejecuci&oacute;n, el juzgado en el que ha reca&iacute;do la demanda y el n&uacute;mero de procedimiento.</p><p style="margin-bottom: 10px">Se ha de indicar si la demanda interpuesta ha sido admitida o no, lo que supondr&aacute;, seg&uacute;n su contestaci&oacute;n, que la tarea siguiente sea una u otra de las que se le indica con posterioridad.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute;:<br>- Si ha sido admitida a tr&aacute;mite la demanda "Confirmar notificaci&oacute;n del auto despachando ejecuci&oacute;n" al ejecutado.<br>- Si no ha sido admitida la demanda se le abrir&aacute; tarea en la que propondr&aacute;, seg&uacute;n su criterio, la siguiente actuaci&oacute;n al responsable de la entidad.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_AutoDespachandoEjecucion','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        --T_TIPO_TFI('H001_AutoDespachandoEjecucion','2','combo','nPlaza','Plaza del juzgado',null,null,'damePlaza()','TipoPlaza','0','DD'),
+        --T_TIPO_TFI('H001_AutoDespachandoEjecucion','3','combo','numJuzgado','Número de juzgado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','dameNumJuzgado()','TipoJuzgado','0','DD'),
+        --T_TIPO_TFI('H001_AutoDespachandoEjecucion','4','textproc','numProcedimiento','Número de procedimiento','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','dameNumAuto()',null,'0','DD'),
+        --T_TIPO_TFI('H001_AutoDespachandoEjecucion','5','combo','comboResultado','Admisión','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        --T_TIPO_TFI('H001_AutoDespachandoEjecucion','6','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegistrarCertificadoCargas','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Paralelamente antes de confirmar la notificación del autodespachando ejecución, deberá de revisar las cargas anteriores y posteriores registradas en el bien vinculado al procedimiento. En caso de no haber un bien ya vinculado al procedimiento, antes de dar por completada esta tarea el sistema le obligará a asociarlo a través de la pestaña bienes del procedimiento. Para cada carga deberá indicar si es de tipo Registral y/o si es de tipo Económico y en caso de no existir cargas indicarlo expresamente en el campo destinado a tal efecto. En cualquier caso deberá indicar en la ficha de cargas del bien la fecha en que haya realizado la revisión de las mismas.</p><p style="margin-bottom: 10px">En el supuesto de que existan cargas previas deberá presentar escrito en el juzgado para averiguar el estado de las cargas</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">En caso de que hubiera indicado que existen cargas ajenas previas, se lanzará la tarea "Solicitar oficio en el juzgado".</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegistrarCertificadoCargas','1','date','fecha','Fecha de la certificación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegistrarCertificadoCargas','2','combo','cargasPrevias','Cargas ajenas previas','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        --T_TIPO_TFI('H001_RegistrarCertificadoCargas','3','currency','cuantiaCargasPrevias','Cuantía cargas previas',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegistrarCertificadoCargas','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_SolicitudOficioJuzgado','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Antes de dar por finalizada esta tarea deberá solicitar en el juzgado para que se personen los titulares de las cargas.</p><p style="margin-bottom: 10px">En el campo "Fecha solicitud" deberá informar de la fecha en la realiza la solicitud.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Un vez rellene esta pantalla, la siguiente tarea será "Registrar resolución juzgado".</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_SolicitudOficioJuzgado','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_SolicitudOficioJuzgado','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegResolucionJuzgado','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea, y en el supuesto de que la resolución del juzgado fuere positivo, deberá ir a la pestaña de "Bienes" del asunto y actualizar las cargas según la notificación del juzgado una vez personados los titulares de dichas cargas.</p><p style="margin-bottom: 10px">En el campo "Fecha resolución" deberá informar la fecha en la que el juzgado resuelve la solicitud.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Un vez rellene esta pantalla, en caso de que el resultado fuere negativo, se lanzará la tarea "Contactar con acreedor preferente" al gestor de contencioso gestión.</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegResolucionJuzgado','1','date','fecha','Fecha Resolución','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegResolucionJuzgado','2','combo','resultado','Resultado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDPositivoNegativo','0','DD'),
+        T_TIPO_TFI('H001_RegResolucionJuzgado','3','currency','cuantiaCargasPrevias','Cuantía cargas previas',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_RegResolucionJuzgado','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_ContactarAcreedorPref','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Puesto que la resolución del juzgado a la solicitud de oficio ha sido negativa, el gestor de esta tarea deberá ponerse en contacto con el acreedor preferente titular de las cargas previas para averiguar el estado de las mismas.</p><p style="margin-bottom: 10px">Para dar por finalizada esta tarea, deberá ir a la pestaña de "Bienes" del asunto y actualizar el estado de las cargas de acuerdo a sus averiguaciones.</p><p style="margin-bottom: 10px">En el campo Fecha deberá informar de la fecha que realiza esta tarea.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_ContactarAcreedorPref','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_ContactarAcreedorPref','2','currency','cuantiaCargasPrevias','Cuantía cargas previas',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_ContactarAcreedorPref','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Debe indicar si la notificaci&oacute;n del auto a los deudores (y en su caso el requerimiento de pago) se ha realizado satisfactoriamente.</p><p style="margin-bottom: 10px">Deber&aacute; informar la fecha de notificaci&oacute;n &uacute;nicamente en el supuesto de que &eacute;sta se hubiese efectuado.</p><p style="margin-bottom: 10px">Si no se hubiera requerido en la persona del ejecutado, deber&aacute; notificar dicha circunstancia al supervisor v&iacute;a notificaci&oacute;n interna por si hubiera lugar a iniciar el Tr&aacute;mite de Ocupantes.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute;:<br>- Notificaci&oacute;n positiva: "Confirmar si existe oposici&oacute;n"<br>- Notificaci&oacute;n negativa: en este caso se iniciar&aacute; el tr&aacute;mite de notificaci&oacute;n.</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','1','combo','comboResultado','Resultado notificación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDPositivoNegativo','0','DD'),
+        --T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','2','date','fecha','Fecha notificación',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ConfirmarNotificacionReqPago','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ContactarConDeudor','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Para dar por terminada esta tarea, el gestor de deuda deber&aacute; informar de la fecha en la que se ha puesto en contacto con el deudor y el resultado del acuerdo se lo comunicar&aacute; a su supervisor.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ContactarConDeudor','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ContactarConDeudor','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Una vez notificado al demandado el auto de despacho de ejecución, en esta pantalla ha de indicar si el mismo se ha opuesto o no a la demanda.</p><p style="margin-bottom: 10px">En el supuesto de que exista oposición, deberá informar su fecha de notificación e indicar la fecha que el juzgado ha designado para la comparecencia.</p><p style="margin-bottom: 10px">En caso de que se decida presentar alegaciones deberá señalarlo en el campo "Presentar alegaciones" e indicar la fecha de fin de alegaciones</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será:</p><p style="margin-bottom: 10px">-Si no hay oposición: se iniciará el trámite de subasta, con lo que le aparecerá la primera tarea de dicho trámite.</p><p style="margin-bottom: 10px">-Si hay oposición y no presenta alegaciones: "Registrar comparecencia".</p><p style="margin-bottom: 10px">-Si hay oposición y presenta alegaciones: "Presentar alegaciones".</p></div>',null,null,null,null,'0','DD'),
         T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','1','combo','comboResultado','Existe oposición','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
         T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','2','date','fechaOposicion','Fecha oposición',null,null,null,null,'0','DD'),
         T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','3','textarea','motivoOposicion','Motivo oposición',null,null,null,null,'0','DD'),
         T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','4','date','fechaComparecencia','Fecha comparecencia',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','5','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarComparecencia','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Dado que en éste proceso ha habido oposici&oacute;n, en esta pantalla debemos de informar la fecha de celebraci&oacute;n de la comparecencia en el supuesto de que la misma se hubiere celebrado. En caso contrario se deber&aacute; solicitar pr&oacute;rroga para &eacute;sta tarea, en la que deber&aacute; indicar la nueva fecha de celebraci&oacute;n de la comparecencia.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute; "Registrar resoluci&oacute;n"</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarComparecencia','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarComparecencia','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarResolucion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">En &eacute;sta pantalla se deber&aacute; de informar la fecha de notificaci&oacute;n de la Resoluci&oacute;n que hubiere reca&iacute;do como consecuencia de la comparecencia celebrada.</p><p style="margin-bottom: 10px">Se indicar&aacute; si el resultado de dicha resoluci&oacute;n ha sido favorable para los intereses de la entidad o no.</p><p style="margin-bottom: 10px">Para el supuesto de que la resoluci&oacute;n no fuere favorable para la entidad, deber&aacute; comunicar dicha circunstancia al responsable interno de la misma a trav&eacute;s del bot&oacute;n "Comunicaci&oacute;n". Una vez reciba la aceptaci&oacute;n del supervisor deber&aacute; gestionar el recurso por medio de la pestaña "Recursos".</p><p style="margin-bottom: 10px">Para el supuesto de anuncio del recurso por la parte contraria se deber&aacute; gestionar directamente a trav&eacute;s de la pestaña "Recursos".</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute; "Resoluci&oacute;n firme"</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarResolucion','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_RegistrarResolucion','2','combo','resultado','Resultado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDFavorable','0','DD'),
-        T_TIPO_TFI('H001_RegistrarResolucion','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ResolucionFirme','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Se deber&aacute; informar la fecha en la que la Resoluci&oacute;n adquiere firmeza.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla se le abrir&aacute; una tarea en la que propondr&aacute;, seg&uacute;n su criterio, la siguiente actuaci&oacute;n al responsable de la entidad.</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ResolucionFirme','1','date','fechaFirmeza','Fecha firmeza','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_ResolucionFirme','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_BPMTramiteSubasta','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ejecuci&oacute;n del tr&aacute;mite de subasta</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_BPMTramiteNotificacion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ejecuci&oacute;n del tr&aacute;mite de notificaci&oacute;n</p></div>',null,null,null,null,'0','DD')
+        T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','5','combo','alegaciones','Presentar alegaciones','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','6','date','fechaFinAlegaciones','Fecha fin alegaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','7','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_PresentarAlegaciones','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Puesto que se ha decidido presentar alegaciones, en esta pantalla deberá dejar reflejada la fecha en que éstas se presentan en el juzgado y adjuntar el "Escrito de Impugnación" para dar por finalizada esta tarea.</p><p style="margin-bottom: 10px">En el campo Comparecencia deberá indicar si habrá o no habrá comparecencia. En caso de que la haya, deberá informar de la fecha de comparecencia.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Registrar comparecencia" en caso de que indique que habrá comparecencia o "Registrar resolución" en caso de que no haya comparecencia.</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_ContactarAcreedorPref','1','date','fecha','Fecha presentación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_PresentarAlegaciones','2','combo','comparecencia','Comparecencia','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        T_TIPO_TFI('H001_PresentarAlegaciones','3','date','fechaComparecencia','Fecha comparecencia',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_PresentarAlegaciones','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_RegistrarComparecencia','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Dado que en éste proceso ha habido oposici&oacute;n, en esta pantalla debemos de informar la fecha de celebraci&oacute;n de la comparecencia en el supuesto de que la misma se hubiere celebrado. En caso contrario se deber&aacute; solicitar pr&oacute;rroga para &eacute;sta tarea, en la que deber&aacute; indicar la nueva fecha de celebraci&oacute;n de la comparecencia.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute; "Registrar resoluci&oacute;n"</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_RegistrarComparecencia','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        --T_TIPO_TFI('H001_RegistrarComparecencia','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_RegistrarResolucion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">En &eacute;sta pantalla se deber&aacute; de informar la fecha de notificaci&oacute;n de la Resoluci&oacute;n que hubiere reca&iacute;do como consecuencia de la comparecencia celebrada.</p><p style="margin-bottom: 10px">Se indicar&aacute; si el resultado de dicha resoluci&oacute;n ha sido favorable para los intereses de la entidad o no.</p><p style="margin-bottom: 10px">Para el supuesto de que la resoluci&oacute;n no fuere favorable para la entidad, deber&aacute; comunicar dicha circunstancia al responsable interno de la misma a trav&eacute;s del bot&oacute;n "Comunicaci&oacute;n". Una vez reciba la aceptaci&oacute;n del supervisor deber&aacute; gestionar el recurso por medio de la pestaña "Recursos".</p><p style="margin-bottom: 10px">Para el supuesto de anuncio del recurso por la parte contraria se deber&aacute; gestionar directamente a trav&eacute;s de la pestaña "Recursos".</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute; "Resoluci&oacute;n firme"</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_RegistrarResolucion','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        --T_TIPO_TFI('H001_RegistrarResolucion','2','combo','resultado','Resultado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDFavorable','0','DD'),
+        --T_TIPO_TFI('H001_RegistrarResolucion','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ResolucionFirme','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Se deber&aacute; informar la fecha en la que la Resoluci&oacute;n adquiere firmeza.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla se le abrir&aacute; una tarea en la que propondr&aacute;, seg&uacute;n su criterio, la siguiente actuaci&oacute;n al responsable de la entidad.</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ResolucionFirme','1','date','fechaFirmeza','Fecha firmeza','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        --T_TIPO_TFI('H001_ResolucionFirme','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_BPMTramiteSubasta','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ejecuci&oacute;n del tr&aacute;mite de subasta</p></div>',null,null,null,null,'0','DD'),
+        --T_TIPO_TFI('H001_BPMTramiteNotificacion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ejecuci&oacute;n del tr&aacute;mite de notificaci&oacute;n</p></div>',null,null,null,null,'0','DD')
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
@@ -185,8 +345,33 @@ BEGIN
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 	
-	 	
-	
+	-- UPDATE
+	V_TAREA:='H001_AutoDespachandoEjecucion';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items SET ' ||
+	  ' tfi_label=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Indíquese la fecha en la que se nos notifica auto por el que se despacha ejecución, el juzgado en el que ha recaído la demanda y el número de procedimiento.</p><p style="margin-bottom: 10px">Se ha de indicar si la demanda interpuesta ha sido admitida o no, lo que supondrá, según su contestación, que la tarea siguiente sea una u otra de las que se le indica con posterioridad.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será:</p><p style="margin-bottom: 10px">-Si ha sido admitida a trámite la demanda, se lanzarán las tareas "Confirmar notificación del auto despachando ejecución" y "Cumplimentar mandamiento de certificación de cargas".</p><p style="margin-bottom: 10px">-Si no ha sido admitida la demanda se le abrirá tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</p></div>''' ||
+	  ' WHERE tfi_nombre=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+
+	-- BORRADO DE TAREA (lógico)
+	V_TAREA:='H001_RegistrarCertificadoCargas';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+
+	-- BORRADO DE TAREA (lógico)
+	V_TAREA:='H001_ContactarConDeudor';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+
+	-- BORRADO DE TAREA (lógico)
+	V_TAREA:='H001_ConfirmarSiExisteOposicion';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+
+	-- BORRADO DE TAREA (lógico)
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=null, TAP_SCRIPT_VALIDACION=''comprobarExisteDocumentoHRESOL() ? null : ''''Es necesario adjuntar el Escrito de impugnaci&oacute;n.'''' WHERE TAP_CODIGO=''H001_RegistrarResolucion''';
+
 	
 	/* ------------------- -------------------------- */
 	/* ------------------- -------------------------- */

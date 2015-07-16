@@ -28,8 +28,11 @@ DECLARE
     TYPE T_TIPO_TFA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TFA IS TABLE OF T_TIPO_TFA;
     V_TIPO_TFA T_ARRAY_TFA := T_ARRAY_TFA(
-      T_TIPO_TFA('HCSDM', 'Copia sellada de demanda', 'Copia sellada de demanda', 'EJ'), -- T. Hipotecario
-      T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
+      T_TIPO_TFA('EDH', 'Escrito de demanda completo + copia sellada de la demanda', 'Escrito de demanda completo + copia sellada de la demanda', 'EJ') -- T. Hipotecario (modificado)
+      ,T_TIPO_TFA('HEDIMP', 'Escrito de impugnación', 'Escrito de impugnación', 'EJ') -- T. Hipotecario
+      ,T_TIPO_TFA('HRESOL', 'Resolución (Hipotecario)', 'Resolución (Hipotecario)', 'EJ') -- T. Hipotecario
+      ,T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
+      
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     
@@ -46,7 +49,7 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
             V_TMP_TIPO_TFA := V_TIPO_TFA(I);
 			
-			V_SQL := 'SELECT COUNT(1) FROM dd_tfa_fichero_adjunto WHERE dd_tfa_codigo = '''||TRIM(V_TMP_TIPO_TFA(1))||''' and dd_tac_id = (select DD_TAC_ID FROM DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''' || TRIM(V_TMP_TIPO_TFA(4)) || ''')';
+			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.dd_tfa_fichero_adjunto WHERE dd_tfa_codigo = '''||TRIM(V_TMP_TIPO_TFA(1))||''' and dd_tac_id = (select DD_TAC_ID FROM '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''' || TRIM(V_TMP_TIPO_TFA(4)) || ''')';
 
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
@@ -60,7 +63,7 @@ BEGIN
                          '  , USUARIOMODIFICAR = ''DML' || 
                          ''', FECHAMODIFICAR = '''|| SYSDATE ||
                          ''', BORRADO = 0 ' ||
-                         ', DD_TAC_ID = (select DD_TAC_ID FROM DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''' || TRIM(V_TMP_TIPO_TFA(4)) || ''')' ||
+                         ', DD_TAC_ID = (select DD_TAC_ID FROM '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''' || TRIM(V_TMP_TIPO_TFA(4)) || ''')' ||
                          ' where dd_tfa_codigo = ''' || V_TMP_TIPO_TFA(1)|| '''';
               DBMS_OUTPUT.PUT_LINE(V_MSQL);
               EXECUTE IMMEDIATE V_MSQL;
@@ -68,7 +71,7 @@ BEGIN
 				V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.dd_tfa_fichero_adjunto (' ||
 						'dd_tfa_id, dd_tfa_codigo, dd_tfa_descripcion, dd_tfa_descripcion_larga, VERSION, usuariocrear, fechacrear, borrado, dd_tac_id) ' ||
 						'SELECT '|| V_ENTIDAD_ID || ','''||V_TMP_TIPO_TFA(1)||''','''||V_TMP_TIPO_TFA(2)||''','''||TRIM(V_TMP_TIPO_TFA(3))||''','||
-						'0, ''DML'',SYSDATE,0, (select DD_TAC_ID FROM DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''' || TRIM(V_TMP_TIPO_TFA(4)) || ''') FROM DUAL';
+						'0, ''DML'',SYSDATE,0, (select DD_TAC_ID FROM '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''' || TRIM(V_TMP_TIPO_TFA(4)) || ''') FROM DUAL';
 				
         DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_TIPO_TFA(1)||''','''||TRIM(V_TMP_TIPO_TFA(2))||''','''||TRIM(V_TMP_TIPO_TFA(3))||''','''||TRIM(V_TMP_TIPO_TFA(4))||'''');
 				EXECUTE IMMEDIATE V_MSQL;

@@ -750,6 +750,17 @@
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "HCSDM");
 				}
+				
+				def comprobarExisteDocumentoHEDIMP = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "HEDIMP");
+				}
+				
+				def comprobarExisteDocumentoHRESOL = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "HRESOL");
+				}
+				
         	            
   			 ]]>
   			</value>

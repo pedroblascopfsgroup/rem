@@ -30,6 +30,7 @@ DECLARE
     V_TIPO_TFA T_ARRAY_TFA := T_ARRAY_TFA(
       T_TIPO_TFA('HCSDM', 'Copia sellada de demanda', 'Copia sellada de demanda', 'EJ'), -- T. Hipotecario
       T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
+      T_TIPO_TFA('INFLIQ', 'Informe de liquidación', 'Informe de liquidación', 'TR') -- T. Calculo de deuda a fecha
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

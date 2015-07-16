@@ -89,11 +89,11 @@ public class LiquidacionManagerTest {
 		assertEquals(DDEstadoLiquidacionPCO.SOLICITADA, liquidacionYaSolicitada.getEstadoLiquidacion().getCodigo());
 		assertNotNull(liquidacionYaSolicitada.getFechaSolicitud());
 		assertEquals(fechaCierre, liquidacionYaSolicitada.getFechaCierre());
-		assertEquals(Float.valueOf(0), liquidacionYaSolicitada.getCapitalVencido());
-		assertEquals(Float.valueOf(0), liquidacionYaSolicitada.getCapitalNoVencido());
-		assertEquals(Float.valueOf(0), liquidacionYaSolicitada.getInteresesOrdinarios());
-		assertEquals(Float.valueOf(0), liquidacionYaSolicitada.getInteresesDemora());
-		assertEquals(Float.valueOf(0), liquidacionYaSolicitada.getTotal());
+		assertEquals(null, liquidacionYaSolicitada.getCapitalVencido());
+		assertEquals(null, liquidacionYaSolicitada.getCapitalNoVencido());
+		assertEquals(null, liquidacionYaSolicitada.getInteresesOrdinarios());
+		assertEquals(null, liquidacionYaSolicitada.getInteresesDemora());
+		assertEquals(null, liquidacionYaSolicitada.getTotal());
 	}
 
 	@Test

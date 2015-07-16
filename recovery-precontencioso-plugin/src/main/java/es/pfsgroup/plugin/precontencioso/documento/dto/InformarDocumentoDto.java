@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.documento.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 public class InformarDocumentoDto implements Serializable {
 
@@ -13,10 +11,10 @@ public class InformarDocumentoDto implements Serializable {
 
 	private String estado;
 	private String adjuntado;
-	private Date fechaResultado;
+	private String fechaResultado;
 	private String respuesta;
-	private Date fechaEnvio;
-	private Date fechaRecepcion;
+	private String fechaEnvio;
+	private String fechaRecepcion;
 	private String comentario;
 	
 	public String getEstado() {
@@ -35,11 +33,11 @@ public class InformarDocumentoDto implements Serializable {
 		this.adjuntado = adjuntado;
 	}
 
-	public Date getFechaResultado() {
+	public String getFechaResultado() {
 		return fechaResultado;
 	}
 
-	public void setFechaResultado(Date fechaResultado) {
+	public void setFechaResultado(String fechaResultado) {
 		this.fechaResultado = fechaResultado;
 	}
 
@@ -51,19 +49,19 @@ public class InformarDocumentoDto implements Serializable {
 		this.respuesta = respuesta;
 	}
 
-	public Date getFechaEnvio() {
+	public String getFechaEnvio() {
 		return fechaEnvio;
 	}
 
-	public void setFechaEnvio(Date fechaEnvio) {
-		this.fechaEnvio = fechaEnvio;
+	public void setFechaEnvio(String fechaAux) {
+		this.fechaEnvio = fechaAux;
 	}
 
-	public Date getFechaRecepcion() {
+	public String getFechaRecepcion() {
 		return fechaRecepcion;
 	}
 
-	public void setFechaRecepcion(Date fechaRecepcion) {
+	public void setFechaRecepcion(String fechaRecepcion) {
 		this.fechaRecepcion = fechaRecepcion;
 	}
 

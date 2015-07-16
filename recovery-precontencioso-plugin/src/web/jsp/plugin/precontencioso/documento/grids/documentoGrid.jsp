@@ -250,16 +250,24 @@ var informarDocButton = new Ext.Button({
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-        	if(validacionEstado) {
-	        	Ext.Msg.show({
-				   title:'Aviso',
-				   msg: '<s:message code="precontencioso.grid.documento.informarDocumento.aviso" text="**No se puede Informar" />',
-				   buttons: Ext.Msg.OK
-				});
-        	}else{
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinSolSeleccionada" text="**Debe seleccionar alguna solicitud de documento." />');
+			}
+			else if (rowsSelected.length > 1){
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleSolSeleccionada" text="**No se puede seleccionar más de una solicitud de documento." />');
+			}
+			else if(validacionEstado) {
+	        	Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.informarDocumento.aviso" text="**No se puede Informar" />',buttons: Ext.Msg.OK});
+        	} 
+        	else {
 		        var w = app.openWindow({
 						flow: 'documentopco/informarSolicitud'
-						,params: {idSolicitud:idSolicitud}
+						,params: {idSolicitud:rowsSelected[0].get('id'), actor:rowsSelected[0].get('actor'), idDoc:rowsSelected[0].get('idDoc'), 
+							estado:rowsSelected[0].get('estado'),adjuntado:rowsSelected[0].get('adjunto'),
+							fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
+							fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion'),
+							comentario:rowsSelected[0].get('comentario')}
 						,title: '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
 						,width: 640
 					});
@@ -277,36 +285,31 @@ var editarDocButton = new Ext.Button({
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
-		if (rowsSelected == '') {
-			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
-		}
-		else {
-			if (rowsSelected.length > 1){
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+			}
+			else if (rowsSelected.length > 1){
 				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
 			}
+			else if(validacionEditar) {
+			    Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.editarDocumento.aviso" text="**No se puede Editar" />',buttons: Ext.Msg.OK});
+			} 
 			else {
-	        	if(validacionEditar) {
-		        	Ext.Msg.show({
-					   title:'Aviso',
-					   msg: '<s:message code="precontencioso.grid.documento.editarDocumento.aviso" text="**No se puede Editar" />',
-					   buttons: Ext.Msg.OK
+		        var w = app.openWindow({
+						flow: 'documentopco/editarDocumento'
+						,params: {idSolicitud:idSolicitud}
+						,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
+						,width: 640
 					});
-	        	}
-	        	else {
-			        var w = app.openWindow({
-							flow: 'documentopco/editarDocumento'
-							,params: {idSolicitud:idSolicitud}
-							,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
-							,width: 640
-						});
-					w.on(app.event.DONE, function() {
-						w.close(); });
-						w.on(app.event.CANCEL, function(){ w.close(); });
-					}
-				}
+				w.on(app.event.DONE, function() {
+					w.close(); 
+				});
+				w.on(app.event.CANCEL, function(){ 
+					w.close(); 
+				});
 			}
-		}				
+		}
 	});	
 	
 

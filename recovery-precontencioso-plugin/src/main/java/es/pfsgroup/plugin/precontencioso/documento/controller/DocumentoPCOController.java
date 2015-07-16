@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
@@ -60,7 +62,9 @@ public class DocumentoPCOController {
 	int lastKeyDocumentos; 
 	int lastKeySolicitudes;
 	List<SolicitudDocumentoPCODto> solicitudesDoc;
-	
+
+	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 	@RequestMapping
 	//public String getSolicitudesDocumentos(@RequestParam(value = "idProcPCO", required = true) Long idProcPCO, ModelMap map) {
 	public String getSolicitudesDocumentos(ModelMap map) {
@@ -90,7 +94,7 @@ public class DocumentoPCOController {
 	 */
 	private void crearSolicitudDocumentosDto() {
 		solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
-		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 						
 		Long antIdDoc = new Long(0);
@@ -181,25 +185,34 @@ public class DocumentoPCOController {
 	@RequestMapping
 	public String informarSolicitud(
 			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+			@RequestParam(value = "actor", required = true) String actor, 
+			@RequestParam(value = "idDoc", required = true) Long idDoc, 
+			@RequestParam(value = "estado", required = true) String estado, 
+			@RequestParam(value = "adjuntado", required = true) String adjuntado, 
+			@RequestParam(value = "fechaResultado", required = true) String fechaResultado, 
+			@RequestParam(value = "resultado", required = true) String resultado, 
+			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
+			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
+			@RequestParam(value = "comentario", required = true) String comentario, 
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
-		dto.setEstado("DISP");
-		dto.setAdjuntado("NO");
-		dto.setFechaEnvio(new Date());
-		dto.setRespuesta("OK");
-		dto.setFechaRecepcion(new Date());
-		dto.setFechaResultado(new Date());
-		dto.setComentario("comentario");
 		
-		List<DDEstadoDocumentoPCO> estadosDocumento = listaEstadosDocumento();
-		List<DDResultadoSolicitudPCO> respuestasSolicitud = listaRespuestasSolicitud();
+		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, estado));
+		dto.setAdjuntado(obtenerCodigoDiccionario(DDSiNo.class, adjuntado));
+		dto.setFechaResultado(fechaResultado);
+		dto.setRespuesta(obtenerCodigoDiccionario(DDResultadoSolicitudPCO.class, resultado));
+		dto.setFechaEnvio(fechaEnvio);
+		dto.setFechaRecepcion(fechaRecepcion);
+		dto.setComentario(comentario);
+		
+		List<DDEstadoDocumentoPCO> estadosDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoDocumentoPCO.class);
+		List<DDResultadoSolicitudPCO> respuestasSolicitud = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class);
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
 		
 		model.put("solicitud", dto);
 		model.put("estadosDocumento", estadosDocumento);
-		model.put("respuestasSolicitud", respuestasSolicitud);
-		
-		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		model.put("respuestasSolicitud", respuestasSolicitud);		
 		model.put("ddSiNo", ddsino);
 		
 		return INFORMAR_DOC;
@@ -573,7 +586,7 @@ public class DocumentoPCOController {
 	 */
 	@RequestMapping	
 	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
-		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		String idDoc = request.getParameter("id");
 		String fechaSolicitud = request.getParameter("fechaSolicitud");
 		Date fechaSolicitudDate = null;
@@ -719,8 +732,8 @@ public class DocumentoPCOController {
 		doc.setContrato("1234 4667 1234567890");
 		doc.setDescripcionUG("PRESTECS");
 		doc.setTipoDocumento("Estructura Hipotecaria");
-		doc.setEstado("Disponible");
-		doc.setAdjunto("Si");
+		doc.setEstado("Disponible/Recibido");
+		doc.setAdjunto("Sí");
 		doc.setComentario("test1_coment1");
 		doc.setAsiento("test1_asiento");
 		doc.setFinca("test1_finca");
@@ -742,8 +755,8 @@ public class DocumentoPCOController {
 		doc.setContrato("1234 4667 1234567890");
 		doc.setDescripcionUG("PRESTECS");
 		doc.setTipoDocumento("Garantia Pignorable");
-		doc.setEstado("Disponible");
-		doc.setAdjunto("Si");
+		doc.setEstado("Disponible/Recibido");
+		doc.setAdjunto("Sí");
 		doc.setComentario("test2_coment1");
 		doc.setAsiento("test2_asiento");
 		doc.setFinca("test2_finca");
@@ -855,7 +868,7 @@ public class DocumentoPCOController {
 		sol.setFechaResultado(new Date());
 		//sol.setFechaEnvio(new Date());
 		//sol.setFechaRecepcion(new Date());
-		sol.setResultado("Falta informacion");
+		sol.setResultado("Falta información");
 		
 		sols.add(sol);	
 		
@@ -899,54 +912,16 @@ public class DocumentoPCOController {
 	}
 
 	
-	public List<DDEstadoDocumentoPCO> listaEstadosDocumento() {
+	private String obtenerCodigoDiccionario(Class claseDiccionario, String descripcion) {
 		
-		List<DDEstadoDocumentoPCO> resultado = new ArrayList<DDEstadoDocumentoPCO>();
-		
-		DDEstadoDocumentoPCO disponible = new DDEstadoDocumentoPCO();
-		disponible.setCodigo("DISP");
-		disponible.setDescripcion("Disponible");
-		disponible.setDescripcionLarga("Disponible");
-		
-		DDEstadoDocumentoPCO recibido = new DDEstadoDocumentoPCO();
-		recibido.setCodigo("REC");
-		recibido.setDescripcion("Recibido");
-		recibido.setDescripcionLarga("Recibido");
-		
-		resultado.add(disponible);
-		resultado.add(recibido);
-		return resultado;
-		
-	}
-	
-	public List<DDResultadoSolicitudPCO> listaRespuestasSolicitud() {
-		
-		List<DDResultadoSolicitudPCO> resultado = new ArrayList<DDResultadoSolicitudPCO>();
-		
-		DDResultadoSolicitudPCO respOK = new DDResultadoSolicitudPCO();
-		respOK.setCodigo("OK");
-		respOK.setDescripcion("OK");
-		respOK.setDescripcionLarga("OK");
-		respOK.setResultadoOK(true);
-		
-		DDResultadoSolicitudPCO respNoEncontrado = new DDResultadoSolicitudPCO();
-		respNoEncontrado.setCodigo("NOENC");
-		respNoEncontrado.setDescripcion("Documento no encontrado");
-		respNoEncontrado.setDescripcionLarga("Documento no encontrado");
-		respOK.setResultadoOK(false);
-		
-		DDResultadoSolicitudPCO respFaltaInfo = new DDResultadoSolicitudPCO();
-		respFaltaInfo.setCodigo("FALTA");
-		respFaltaInfo.setDescripcion("Falta Información");
-		respFaltaInfo.setDescripcionLarga("Falta Información");
-		respOK.setResultadoOK(false);
-		
-		resultado.add(respOK);
-		resultado.add(respNoEncontrado);
-		resultado.add(respFaltaInfo);
-		return resultado;
-		
-	}
-	
+		String respuesta = "";
+		if (!Checks.esNulo(descripcion)) {
+			Dictionary diccionario = (Dictionary) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByDes(claseDiccionario, descripcion);
+			if (!Checks.esNulo(diccionario)) {
+				respuesta = diccionario.getCodigo();
+			}
+		}
+		return respuesta;
 
+	}
  }

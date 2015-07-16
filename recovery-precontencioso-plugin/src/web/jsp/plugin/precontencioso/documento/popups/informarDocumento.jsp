@@ -1,5 +1,4 @@
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
-<%@page import="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
@@ -7,6 +6,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 
@@ -24,7 +24,7 @@
 	var fechaResultado = new Ext.ux.form.XDateField({
 		name : 'fechaResultado'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.informarDocumento.fechaResultado" text="**Fecha resultado" />'
-		,value : '<fwk:date value="${solicitud.fechaResultado}" />'
+		,value : '${solicitud.fechaResultado}'
 		,style:'margin:0px'
 	});
 	
@@ -37,20 +37,20 @@
 	var fechaEnvio = new Ext.ux.form.XDateField({
 		name : 'fechaEnvio'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.informarDocumento.fechaEnvio" text="**Fecha envío" />'
-		,value : '<fwk:date value="${solicitud.fechaEnvio}" />'
+		,value : '${solicitud.fechaEnvio}'
 		,style:'margin:0px'
 	});
 	
 	var fechaRecepcion = new Ext.ux.form.XDateField({
 		name : 'fechaRecepcion'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.informarDocumento.fechaRecepcion" text="**Fecha recepción" />'
-		,value : '<fwk:date value="${solicitud.fechaRecepcion}" />'
+		,value : '${solicitud.fechaRecepcion}'
 		,style:'margin:0px'
 	});
 	
     var comentario = new Ext.form.TextArea({
 			name : 'comentario'
-            ,fieldLabel: '<s:message code="precontencioso.grid.documento.editarDocumento.comentario" text="**Comentario" />'
+            ,fieldLabel: '<s:message code="precontencioso.grid.documento.informarDocumento.comentario" text="**Comentario" />'
             ,height : 60
             ,width : 450
             ,value : '${solicitud.comentario}'

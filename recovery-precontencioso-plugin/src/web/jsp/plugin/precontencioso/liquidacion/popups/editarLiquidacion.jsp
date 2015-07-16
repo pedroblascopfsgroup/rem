@@ -2,23 +2,150 @@
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 
 <fwk:page>
 
 	<%-- Fields --%>
 
-	<pfsforms:numberfield name="capitalVencidoField" labelKey="asd" label="**Capital vencido" value="${liquidacion.capitalVencido}" />
-	<pfsforms:numberfield name="capitalNoVencidoField" labelKey="asd" label="**Capital no vencido" value="${liquidacion.capitalNoVencido}" />
-	<pfsforms:numberfield name="interesesOrdinariosField" labelKey="asd" label="**Intereses ordinarios" value="${liquidacion.interesesOrdinarios}" />
-	<pfsforms:numberfield name="interesesDemoraField" labelKey="asd" label="**Intereses demora" value="${liquidacion.interesesDemora}" />
-	<pfsforms:numberfield name="totalField" labelKey="asd" label="**Total" value="${liquidacion.total}" />
-	<!-- Apoderado (Según valores de diccionario) -->
+	<pfsforms:numberfield name="capitalVencidoField" labelKey="plugin.precontencioso.grid.liquidacion.capitalVencido" 
+	label="**Capital vencido" value="${liquidacion.capitalVencido}" />
+
+	<pfsforms:numberfield name="capitalNoVencidoField" labelKey="plugin.precontencioso.grid.liquidacion.capitalNoVencido" 
+	label="**Capital no vencido" value="${liquidacion.capitalNoVencido}" />
+
+	<pfsforms:numberfield name="interesesOrdinariosField" labelKey="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" 
+	label="**Intereses ordinarios" value="${liquidacion.interesesOrdinarios}" />
+
+	<pfsforms:numberfield name="interesesDemoraField" labelKey="plugin.precontencioso.grid.liquidacion.interesesDemora" 
+	label="**Intereses demora" value="${liquidacion.interesesDemora}" />
+
+	<pfsforms:numberfield name="totalField" labelKey="plugin.precontencioso.grid.liquidacion.total" 
+	label="**Total" value="${liquidacion.total}" />
+
+<%-- Apoderado --%>
+
+	<%-- Combo Tipo Gestor --%>
+
+	var tipoGestorRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigo'},
+		{name: 'descripcion'}
+	]);
+
+	var tipoGestorStore = page.getStore({
+		flow: 'coreextension/getListTipoGestorAdicionalData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoGestores'
+		}, tipoGestorRecord)
+	});
+
+	var comboTipoGestor = new Ext.form.ComboBox({
+		store: tipoGestorStore,
+		displayField: 'descripcion',
+		valueField: 'id',
+		mode: 'remote',
+		forceSelection: true,
+		emptyText: 'Seleccionar',
+		triggerAction: 'all',
+		disabled: true,
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoGestor" text="**Tipo gestor" />'
+	});
+
+	<%-- Combo Tipo Despacho --%>
+
+	var tipoDespachoRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'cod'},
+		{name: 'descripcion'}
+	]);
+
+	var tipoDespachoStore = page.getStore({
+		flow: 'coreextension/getListTipoDespachoData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoDespachos'
+		}, tipoDespachoRecord)
+	});
+
+	var comboTipoDespacho = new Ext.form.ComboBox({
+		store: tipoDespachoStore,
+		displayField: 'descripcion',
+		valueField:'cod',
+		mode: 'remote',
+		disabled: true,
+		forceSelection: true,
+		emptyText: 'Seleccionar',
+		triggerAction: 'all',
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoDespacho" text="**Tipo despacho" />'
+	});
+
+	<%-- Combo Usuario --%>
+
+	var usuarioRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'username'}
+	]);
+
+	var usuarioStore = page.getStore({
+		flow: 'coreextension/getListUsuariosPaginatedData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoUsuarios'
+		}, usuarioRecord)
+	});
+
+	var comboUsuario = new Ext.form.ComboBox({
+		store: usuarioStore,
+		allowBlank: true,
+		blankElementText: '---',
+		emptyText: '---',
+		disabled: true,
+		displayField: 'username',
+		valueField: 'id',
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbUsuario" text="**Usuario" />',
+		loadingText: 'Buscando...',
+		labelStyle: 'width:100px',
+		width: 250,
+		resizable: true,
+		pageSize: 10,
+		triggerAction: 'all',
+		mode: 'local'
+	});
+
+	comboUsuario.on('afterrender', function(combo) {
+		combo.mode = 'remote';
+	});
+
+	<%-- Events --%>
+
+	comboTipoGestor.on('afterrender', function(combo) {
+		tipoGestorStore.webflow();
+	});
+
+	tipoGestorStore.on('load', function(combo) {
+		// Se filtra por tipo de gestor apoderado.
+		var numRecord = tipoGestorStore.findExact('descripcion', 'Apoderado', 0);
+		var value = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.valueField];
+		var rawValue = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.displayField];
+
+		comboTipoGestor.setValue(value);
+		comboTipoGestor.setRawValue(rawValue);
+		comboTipoGestor.selectedIndex = numRecord;
+
+		comboTipoDespacho.reset();
+		comboUsuario.reset();
+		comboTipoDespacho.setDisabled(false);
+		comboUsuario.setDisabled(true);
+
+		tipoDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()});
+	});
+
+	comboTipoDespacho.on('select', function() {
+		usuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()});
+
+		comboUsuario.reset();
+		comboUsuario.setDisabled(false);
+	});
 
 	<%-- Buttons --%>
 
@@ -53,7 +180,7 @@
 		autoHeight: true,
 		bodyStyle:'padding:10px;cellspacing:20px',
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
-		items: [capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField],
+		items: [capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField, comboTipoGestor, comboTipoDespacho, comboUsuario],
 		bbar: new Ext.Toolbar()
 	});
 
@@ -65,13 +192,17 @@
 
 	var getParametros = function() {
 		var parametros = {};
-		
+
 		parametros.id = '${liquidacion.id}';
 		parametros.capitalVencido = capitalVencidoField.getValue();
 		parametros.capitalNoVencido = capitalNoVencidoField.getValue();
 		parametros.interesesOrdinarios= interesesOrdinariosField.getValue();
 		parametros.interesesDemora = interesesDemoraField.getValue();
 		parametros.total = totalField.getValue();
+
+		if (comboUsuario.getValue() != "") {
+			parametros.apoderadoId = comboUsuario.getValue();
+		}
 
 		return parametros;
 	}

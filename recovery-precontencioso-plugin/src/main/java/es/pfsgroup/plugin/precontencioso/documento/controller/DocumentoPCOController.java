@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
@@ -26,8 +29,11 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.IncluirDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.InformarDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 
 @Controller
@@ -56,11 +62,12 @@ public class DocumentoPCOController {
 	int lastKeyDocumentos; 
 	int lastKeySolicitudes;
 	List<SolicitudDocumentoPCODto> solicitudesDoc;
-	
+
+	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 	@RequestMapping
 	//public String getSolicitudesDocumentos(@RequestParam(value = "idProcPCO", required = true) Long idProcPCO, ModelMap map) {
 	public String getSolicitudesDocumentos(ModelMap map) {
-		//logger.error(".....................Inicio getSolicitudesDocumentos");
 		if (documentos == null){
 			documentos = datosDocumentos();
 			lastKeyDocumentos = documentos.size()+1;
@@ -87,11 +94,9 @@ public class DocumentoPCOController {
 	 */
 	private void crearSolicitudDocumentosDto() {
 		solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
-				
-		
-		logger.error("..............CREACION DATOS");
-		logger.error("..............documentos.size: "+documentos.size());
-		logger.error("..............solicitudes.size: "+solicitudes.size());
+		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+						
 		Long antIdDoc = new Long(0);
 		String antTipoUG = "";
 		String actTipoUG = "";
@@ -116,10 +121,22 @@ public class DocumentoPCOController {
 						antTipoDoc = doc.getTipoDocumento();
 					}
 					solDocDto.setActor(sol.getActor());
-					solDocDto.setFechaSolicitud(sol.getFechaSolicitud());
-					solDocDto.setFechaResultado(sol.getFechaResultado());
-					solDocDto.setFechaEnvio(sol.getFechaEnvio());
-					solDocDto.setFechaRecepcion(sol.getFechaRecepcion());
+					if (sol.getFechaSolicitud()!=null)
+						solDocDto.setFechaSolicitud(webDateFormat.format(sol.getFechaSolicitud()));
+					else
+						solDocDto.setFechaSolicitud("");
+					if (sol.getFechaResultado()!=null)
+						solDocDto.setFechaResultado(webDateFormat.format(sol.getFechaResultado()));
+					else 
+						solDocDto.setFechaResultado("");
+					if (sol.getFechaEnvio()!=null)
+						solDocDto.setFechaEnvio(webDateFormat.format(sol.getFechaEnvio()));
+					else
+						solDocDto.setFechaEnvio("");
+					if (sol.getFechaRecepcion()!=null)
+						solDocDto.setFechaRecepcion(webDateFormat.format(sol.getFechaRecepcion()));
+					else
+						solDocDto.setFechaRecepcion("");
 					solDocDto.setResultado(sol.getResultado());
 					
 					solicitudesDoc.add(solDocDto);
@@ -168,12 +185,36 @@ public class DocumentoPCOController {
 	@RequestMapping
 	public String informarSolicitud(
 			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+			@RequestParam(value = "actor", required = true) String actor, 
+			@RequestParam(value = "idDoc", required = true) Long idDoc, 
+			@RequestParam(value = "estado", required = true) String estado, 
+			@RequestParam(value = "adjuntado", required = true) String adjuntado, 
+			@RequestParam(value = "fechaResultado", required = true) String fechaResultado, 
+			@RequestParam(value = "resultado", required = true) String resultado, 
+			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
+			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
+			@RequestParam(value = "comentario", required = true) String comentario, 
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
-		dto.setEstado("test_estado");
 		
-		model.put("documento", dto);
+		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, estado));
+		dto.setAdjuntado(obtenerCodigoDiccionario(DDSiNo.class, adjuntado));
+		dto.setFechaResultado(fechaResultado);
+		dto.setRespuesta(obtenerCodigoDiccionario(DDResultadoSolicitudPCO.class, resultado));
+		dto.setFechaEnvio(fechaEnvio);
+		dto.setFechaRecepcion(fechaRecepcion);
+		dto.setComentario(comentario);
+		
+		List<DDEstadoDocumentoPCO> estadosDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoDocumentoPCO.class);
+		List<DDResultadoSolicitudPCO> respuestasSolicitud = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class);
+		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		
+		model.put("solicitud", dto);
+		model.put("estadosDocumento", estadosDocumento);
+		model.put("respuestasSolicitud", respuestasSolicitud);		
+		model.put("ddSiNo", ddsino);
+		
 		return INFORMAR_DOC;
 	}	
 	
@@ -264,7 +305,6 @@ public class DocumentoPCOController {
 	public String crearSolicitudes(@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
 			ModelMap model) {
 		
-		logger.error(".............idSolicitud: "+idSolicitud);
 		
 		SolicitudPCODto solDto = new SolicitudPCODto();
 		DocumentoPCODto docDto = new DocumentoPCODto();
@@ -453,8 +493,6 @@ public class DocumentoPCOController {
 		String idDoc = request.getParameter("id");
 		// La cadena viene con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadena.
 		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);
-		logger.error("arrayIdDocumentos: "+arrayIdDocumentos);
-		logger.error("idDoc: "+idDoc);
 			
 		StringTokenizer st;
 		DocumentoPCODto doc;
@@ -465,7 +503,6 @@ public class DocumentoPCOController {
 		Long idDocUG;
 		while (st.hasMoreElements()){
 			idDocUG = new Long(st.nextToken());			
-			logger.error("idDocUG: "+idDocUG);
 			
 			doc = new DocumentoPCODto();
 			
@@ -474,20 +511,14 @@ public class DocumentoPCOController {
 			
 			// TODO - Temporal - Averiguar los valores de varios objetos
 			// Descripcion de la UG - Nos llegan los codigos de los documento UG - A partir de ahí averiguar
-			// la UG y su descripcion	
-			logger.error(".............documentosUG: "+documentosUG);
-			logger.error(".............listaUG: "+listaUG);
-			logger.error(".............listaTipoDocumentos: "+listaTipoDocumentos);
-			
+			// la UG y su descripcion			
 			for (DocumentosUGPCODto docUG : documentosUG) {		
-				logger.error(".............docUG.getId(): "+docUG.getId());				
 				if (docUG.getId().equals(new Long(idDocUG))) {
 					doc.setContrato(docUG.getContrato());
 					doc.setDescripcionUG(docUG.getDescripcionUG());
 					
 					// A partir del id de la unidad de gestion, sacar la descripcion
 					for (DDTipoEntidad tipoUG : listaUG) {	
-						logger.error(".............tipoUG.getId(): "+tipoUG.getId());
 						if (tipoUG.getId().equals(docUG.getUnidadGestionId())){							
 							doc.setTipoUG(tipoUG.getDescripcion());
 						}
@@ -496,7 +527,6 @@ public class DocumentoPCOController {
 				}
 			}
 			
-			logger.error(".......................comboTipoDocumento: "+request.getParameter("comboTipoDocumento"));
 			// Obtener la descripcion del Tio de Documento
 			for (DDTipoDocumento tipoDoc : listaTipoDocumentos) {
 				if (tipoDoc.getId().equals(new Long(request.getParameter("comboTipoDocumento")))){
@@ -506,7 +536,6 @@ public class DocumentoPCOController {
 				
 			
 			doc.setId(new Long(lastKeyDocumentos+""));
-logger.error("lastKeyDocumentos: "+lastKeyDocumentos);				
 			doc.setIdProc(new Long(1));
 			doc.setEstado("Disponible");
 			doc.setAdjunto("No");
@@ -524,7 +553,6 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 			
 			documentos.add(doc);
 			lastKeyDocumentos++;
-	logger.error("Antes crear solicitud");			
 			// CREAR SOLICITUD
 			SolicitudPCODto sol;
 			
@@ -542,7 +570,6 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 			lastKeySolicitudes++;
 		}
 
-		logger.error("ya creado doc y sol ");
 		// Construimos el DTO del grid principal con los nuevos datos
 		crearSolicitudDocumentosDto();
 		
@@ -559,10 +586,8 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 	 */
 	@RequestMapping	
 	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
-		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		String idDoc = request.getParameter("id");
-		logger.error("Antes crear solicitud");
-		
 		String fechaSolicitud = request.getParameter("fechaSolicitud");
 		Date fechaSolicitudDate = null;
 
@@ -586,7 +611,6 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 		solicitudes.add(sol);
 		lastKeySolicitudes++;
 		
-		logger.error("ya creado la solicitud ");
 		// Construimos el DTO del grid principal con los nuevos datos
 		crearSolicitudDocumentosDto();
 		
@@ -708,8 +732,8 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 		doc.setContrato("1234 4667 1234567890");
 		doc.setDescripcionUG("PRESTECS");
 		doc.setTipoDocumento("Estructura Hipotecaria");
-		doc.setEstado("Disponible");
-		doc.setAdjunto("Si");
+		doc.setEstado("Disponible/Recibido");
+		doc.setAdjunto("Sí");
 		doc.setComentario("test1_coment1");
 		doc.setAsiento("test1_asiento");
 		doc.setFinca("test1_finca");
@@ -731,8 +755,8 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 		doc.setContrato("1234 4667 1234567890");
 		doc.setDescripcionUG("PRESTECS");
 		doc.setTipoDocumento("Garantia Pignorable");
-		doc.setEstado("Disponible");
-		doc.setAdjunto("Si");
+		doc.setEstado("Disponible/Recibido");
+		doc.setAdjunto("Sí");
 		doc.setComentario("test2_coment1");
 		doc.setAsiento("test2_asiento");
 		doc.setFinca("test2_finca");
@@ -844,7 +868,7 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 		sol.setFechaResultado(new Date());
 		//sol.setFechaEnvio(new Date());
 		//sol.setFechaRecepcion(new Date());
-		sol.setResultado("Falta informacion");
+		sol.setResultado("Falta información");
 		
 		sols.add(sol);	
 		
@@ -888,6 +912,16 @@ logger.error("lastKeyDocumentos: "+lastKeyDocumentos);
 	}
 
 	
-	
+	private String obtenerCodigoDiccionario(Class claseDiccionario, String descripcion) {
+		
+		String respuesta = "";
+		if (!Checks.esNulo(descripcion)) {
+			Dictionary diccionario = (Dictionary) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByDes(claseDiccionario, descripcion);
+			if (!Checks.esNulo(diccionario)) {
+				respuesta = diccionario.getCodigo();
+			}
+		}
+		return respuesta;
 
+	}
  }

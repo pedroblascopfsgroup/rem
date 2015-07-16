@@ -2,18 +2,14 @@
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 
 <fwk:page>
 
 	<%-- Fields --%>
 
-	<pfsforms:datefield labelKey="asd" label="**Fecha de cierre" name="fechaCierreField" obligatory="true"/>
+	<pfsforms:datefield labelKey="plugin.precontencioso.grid.liquidacion.fechaCierre" label="**Fecha de cierre" name="fechaCierreField" obligatory="true"/>
 
 	<%-- Buttons --%>
 
@@ -33,7 +29,7 @@
 					}
 				});
 			} else {
-				Ext.Msg.alert('<s:message code="asd" text="**Error" />', validarForm());
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', validarForm());
 			}
 		}
 	});

@@ -71,7 +71,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	@Column(name = "PCO_PRC_CNT_PRINCIPAL")
 	private String cntPrincipal;
-
+	
 	@Column(name = "PCO_PRC_FECHA_INICIO")
 	private Date fechaInicio;
 

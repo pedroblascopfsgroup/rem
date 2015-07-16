@@ -18,6 +18,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_PCO_DOC_SOLICIT_RESULTADO", schema = "${entity.schema}")
 public class DDResultadoSolicitudPCO implements Dictionary, Auditable {
 
+	final static public String RESPUESTA_OK = "OK";
+	final static public String RESPUESTA_DOC_NO_ENCONTRADO = "NE";
+	final static public String RESPUESTA_FALTA_INFO = "FI";
+	
 	private static final long serialVersionUID = 4401728773211770895L;
 
 	@Id

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 
@@ -93,6 +94,13 @@ public class LiquidacionController {
 		Float interesesDemora = Float.valueOf(request.getParameter("interesesDemora"));
 		Float total = Float.valueOf(request.getParameter("total"));
 
+		String apoderado = request.getParameter("apoderadoId");
+
+		Long apoderadoId = null;
+		if (!Checks.esNulo(apoderado)) {
+			apoderadoId = Long.valueOf(apoderado);
+		}
+
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 		liquidacionDto.setId(id);
 		liquidacionDto.setCapitalVencido(capitalVencido);
@@ -100,6 +108,7 @@ public class LiquidacionController {
 		liquidacionDto.setInteresesOrdinarios(interesesOrdinarios);
 		liquidacionDto.setInteresesDemora(interesesDemora);
 		liquidacionDto.setTotal(total);
+		liquidacionDto.setApoderadoId(apoderadoId);
 
 		liquidacionApi.editar(liquidacionDto);
 

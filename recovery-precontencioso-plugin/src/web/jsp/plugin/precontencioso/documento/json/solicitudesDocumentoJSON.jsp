@@ -15,18 +15,10 @@
             <json:property name="estado" value="${s.estado}" />
             <json:property name="adjunto" value="${s.adjunto}" />
             <json:property name="actor" value="${s.actor}" />
-            <json:property name="fechaSolicitud" >
-            	<fwk:date value="${s.fechaSolicitud}" />
-            </json:property>
-            <json:property name="fechaResultado" >
-            	<fwk:date value="${s.fechaResultado}" />
-            </json:property>                                    
-            <json:property name="fechaEnvio" >
-            	<fwk:date value="${s.fechaEnvio}" />
-            </json:property>                                    
-            <json:property name="fechaRecepcion" >
-            	<fwk:date value="${s.fechaRecepcion}" />
-            </json:property>                                    
+            <json:property name="fechaSolicitud" value="${s.fechaSolicitud}" />
+            <json:property name="fechaResultado" value="${s.fechaResultado}" />
+            <json:property name="fechaEnvio" value="${s.fechaEnvio}" />
+            <json:property name="fechaRecepcion" value="${s.fechaEnvio}" />
             <json:property name="resultado" value="${s.resultado}" />
             <json:property name="comentario" value="${s.comentario}" />
         </json:object>

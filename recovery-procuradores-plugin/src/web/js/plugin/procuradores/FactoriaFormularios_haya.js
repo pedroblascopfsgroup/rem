@@ -1047,13 +1047,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
       					}
 		   			}
 		   			,{"xtype":'datefield',"name":"d_fechaComparecencia","fieldLabel":"Fecha comparecencia",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaComparecencia'+this.idFactoria
-		   				,validator : function(v) {
-	               	   		if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_fechaComparecencia' + idFactoria).getValue() == ""){
-	               	   			return false;
-	               	   		}else{
-	               	   			return true;
-	               	   		}
-      					}
+//		   				,validator : function(v) {
+//	               	   		if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_fechaComparecencia' + idFactoria).getValue() == ""){
+//	               	   			return false;
+//	               	   		}else{
+//	               	   			return true;
+//	               	   		}
+//      					}
 		   			}
 		   			,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"d_comboResultado","fieldLabel":"Oposición","autoload":true,allowBlank:false,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 		   			,{"xtype":'textarea',"name":"d_motivoOposicion","fieldLabel":"Motivo oposición",allowBlank:true,filtrar:true,width:285, id:'d_motivoOposicion'+this.idFactoria

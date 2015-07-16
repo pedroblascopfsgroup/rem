@@ -65,12 +65,42 @@
 					}
 	});
 	
+	
+	var getParametros = function() {
+	
+	 	var parametros = {};
+	 	parametros.idSolicitud = '${solicitud.idSolicitud}';
+	 	parametros.actor = '${solicitud.actor}';
+	 	parametros.idDoc = '${solicitud.idDoc}';
+		
+		parametros.estado = comboEstadosDocumento.getValue();	 	
+ 		parametros.adjuntado = adjuntado.getValue();
+	 	parametros.fechaResultado = fechaResultado.getValue();
+	 	parametros.resultado = comboRespuestasSolicitud.getValue();
+	 	parametros.fechaEnvio = fechaEnvio.getValue();
+	 	parametros.fechaRecepcion = fechaRecepcion.getValue();
+	 	parametros.comentario = fechaResultado.comentario();
+	 	
+	 	return parametros;
+	 }	
+	
+	
 	var btnGuardar= new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-						page.fireEvent(app.event.CANCEL);  	
+			if (validateForm()) {               
+				var p = getParametros();
+				Ext.Ajax.request({
+					url : page.resolveUrl('documentopco/saveInformarSolicitud'), 
+					params : p ,
+					method: 'POST',
+					success: function ( result, request ) {
+						page.fireEvent(app.event.DONE);
 					}
+				});
+			}
+		}
 	});
 	
 	var panelEdicion = new Ext.form.FieldSet({

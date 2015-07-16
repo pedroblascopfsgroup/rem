@@ -41,8 +41,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     @Autowired
     private DocumentoPCODao documentoPCODao;
     
-    @Autowired
-    private SolicitudDocumentoPCODao solicitudDocumentoPCODao;
+//    @Autowired
+//    private SolicitudDocumentoPCODao solicitudDocumentoPCODao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -180,7 +180,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		//solicitud.setActor(actor);
 		solicitud.setFechaSolicitud(solDto.getFechaSolicitud());
 		
-		solicitudDocumentoPCODao.saveOrUpdate(solicitud);
+//		solicitudDocumentoPCODao.saveOrUpdate(solicitud);
 	}
 	
 	/** 

@@ -17,29 +17,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
-import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.IncluirDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.InformarDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
-import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
 @Controller
@@ -58,7 +53,7 @@ public class DocumentoPCOController {
 	private static final String INCLUIR_DOC = "plugin/precontencioso/documento/popups/incluirDocumento";
 	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
-	private static final String PENDIENTE_SOLICITAR = "PS";
+	private static final String PENDIENTE_SOLICITAR = DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR;
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	List<DocumentoPCODto> documentos = null;
@@ -231,7 +226,10 @@ public class DocumentoPCOController {
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
-		
+
+		dto.setIdSolicitud(idSolicitud);
+		dto.setActor(actor);
+		dto.setIdDoc(idDoc);
 		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, estado));
 		dto.setAdjuntado(obtenerCodigoDiccionario(DDSiNo.class, adjuntado));
 		dto.setFechaResultado(fechaResultado);
@@ -1200,4 +1198,33 @@ public class DocumentoPCOController {
 		return respuesta;
 
 	}
+	
+	/**
+	 * Informarlas solicitudes de los documentos
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping 
+	private String informarSolicitud(WebRequest request, ModelMap model) {
+        
+        
+        String idDoc = request.getParameter("idDoc");
+        String actor = request.getParameter("actor");
+        String idSolicitud = request.getParameter("idSolicitud");
+        
+        String estado =  request.getParameter("estado");
+        String adjuntado =  request.getParameter("adjuntado");
+        String fechaResultado =  request.getParameter("fechaResultado");
+        String resultado =  request.getParameter("resultado");
+        String fechaEnvio =  request.getParameter("fechaEnvio");
+        String fechaRecepcion =  request.getParameter("fechaRecepcion");
+        String comentario = request.getParameter("comentario");
+        
+        
+        
+        return SOLICITUDES_DOC_PCO_JSON;
+        
+	}
+
  }

@@ -272,7 +272,9 @@ var informarDocButton = new Ext.Button({
 						,width: 640
 					});
 					w.on(app.event.DONE, function() {
-						w.close(); });
+						storeDocumentos.webflow(); 
+						w.close(); 
+					});
 					w.on(app.event.CANCEL, function(){ w.close(); });
 			}
 		}				

@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.controller;
+package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
 import java.util.ArrayList;
 import java.util.List;

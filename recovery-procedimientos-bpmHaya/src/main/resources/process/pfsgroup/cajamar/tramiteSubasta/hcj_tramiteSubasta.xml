@@ -122,7 +122,7 @@
 		<transition to="H002_RegistrarResSuspSubastaDecision" name="avanzaBPM"></transition>
 		<transition to="H002_RegistrarResSuspSubasta" name="activarAlerta"></transition>
 		<transition to="Fin3" name="Fin"></transition>
-		<transition to="H002_DictarInstruccionesSubastaDecision" name="vueltaAtras"></transition>
+		<transition to="H002_SolicitarSuspenderSubasta" name="vueltaAtras"></transition>
 	</state>
 
 	<decision name="H002_ValidarInformeDeSubastaDecision" expression="#{H002_ValidarInformeDeSubastaDecision}">
@@ -217,7 +217,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin5" name="haya_tramiteSubastaSareb"></transition>
+		<transition to="Fin5" name="hcj_tramiteSubasta"></transition>
 	</state>
 
 	<node name="H002_CelebracionDecision">
@@ -246,7 +246,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin4" name="haya_tramiteCesionRemateV4"></transition>
+		<transition to="Fin4" name="hcj_tramiteCesionRemate"></transition>
 	</state>
 
 	<state name="H002_BPMTramiteAdjudicacion">
@@ -266,7 +266,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin5" name="haya_tramiteAdjudicacionV4"></transition>
+		<transition to="Fin5" name="hcj_tramiteAdjudicacion"></transition>
 		<transition to="Fin5" name="Fin"></transition>
 	</state>
 
@@ -414,7 +414,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="hcj_solicitudSolvenciaPatrimonial"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H002_BPMTramiteSolSolvenciaPatrimonial" name="activarAlerta"></transition>
 	</state>
@@ -496,7 +496,7 @@
 	</state>
 
 	<decision name="H002_DictarInstruccionesSubastaDecision" expression="#{H002_DictarInstruccionesSubastaDecision}">
-		<transition to="H002_RegistrarResSuspSubasta" name="Suspender"></transition>
+		<transition to="H002_SolicitarSuspenderSubasta" name="Suspender"></transition>
 		<transition to="H002_LecturaConfirmacionInstrucciones" name="NoSuspender"></transition>
 	</decision>
 
@@ -642,6 +642,29 @@
 		<transition to="H002_SolicitarInformeFiscal" name="SI"></transition>
 		<transition to="Fin2" name="NO"></transition>
 	</decision>
+
+	<state name="H002_SolicitarSuspenderSubasta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>subastaV4HayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H002_SolicitarSuspenderSubasta" name="activarAlerta"></transition>
+		<transition to="H002_DictarInstruccionesSubastaDecision" name="vueltaAtras"></transition>
+		<transition to="H002_RegistrarResSuspSubasta" name="avanzaBPM"></transition>
+		<transition to="Fin3" name="Fin"></transition>
+	</state>
 
 
 	<end-state name="Fin">

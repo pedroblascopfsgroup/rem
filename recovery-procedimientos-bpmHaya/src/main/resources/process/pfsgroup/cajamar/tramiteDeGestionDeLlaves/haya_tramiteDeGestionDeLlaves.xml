@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteDeGestionDeLlaves">
+<process-definition xmlns="" name="hcj_tramiteDeGestionDeLlaves">
 
 	<start-state name="Inicio">
 		<transition to="H040_RegistrarCambioCerradura" name="iniciarProceso"></transition>

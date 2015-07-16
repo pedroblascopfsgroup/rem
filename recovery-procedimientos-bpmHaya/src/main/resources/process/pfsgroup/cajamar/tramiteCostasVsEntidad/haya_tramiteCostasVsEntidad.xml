@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteCostasVsEntidad">
+<process-definition xmlns="" name="hcj_tramiteCostasVsEntidad">
 
 	<start-state name="Inicio">
 		<transition to="H032_RegistrarSolCostasContrario" name="avanzaBPM"></transition>

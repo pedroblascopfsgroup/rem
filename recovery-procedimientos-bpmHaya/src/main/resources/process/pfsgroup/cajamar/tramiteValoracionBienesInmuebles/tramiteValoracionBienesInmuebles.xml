@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<process-definition name="haya_tramiteValoracionBienesInmuebles" xmlns="urn:jbpm.org:jpdl-3.2">
+<process-definition name="hcj_tramiteValoracionBienes" xmlns="urn:jbpm.org:jpdl-3.2">
 
 	<start-state name="Inicio">
 		<transition to="fork1" name="iniciarProceso"></transition>
@@ -33,7 +33,7 @@
 			</action>
 		</event>
 		<transition to="H058_SolicitarAvaluo" name="activarAlerta"></transition>
-		<transition to="H058_ObtencionAvaluo" name="avanzaBPM"></transition>
+		<transition to="H058_SolicitarAvaluoDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -84,7 +84,6 @@
 		<transition to="H058_ObtencionAvaluo" name="activarAlerta"></transition>
 		<transition to="join1" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="H058_SolicitarAvaluo" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H058_ObtencionTasacionInterna">
@@ -211,6 +210,38 @@
 		<transition to="H058_ResolucionFirme" name="activarAlerta"></transition>
 		<transition to="H058_RegistrarResultado" name="vueltaAtras"></transition>
 		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="H058_SolicitarAvaluoDecision">
+		<transition to="ForkSolicitarAvaluo" name="conProvision"></transition>
+		<transition to="H058_ObtencionAvaluo" name="sinProvision"></transition>
+	</decision>
+
+	<fork name="ForkSolicitarAvaluo">
+		<transition to="H058_ObtencionAvaluo" name="avaluo"></transition>
+		<transition to="H058_BPMProvisionFondos" name="provision"></transition>
+	</fork>
+
+	<state name="H058_BPMProvisionFondos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="hcj_provisionFondos"></transition>
+		<transition to="H058_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
 
 	<end-state name="Fin">

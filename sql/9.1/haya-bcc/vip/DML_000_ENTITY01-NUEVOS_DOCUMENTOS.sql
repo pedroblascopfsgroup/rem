@@ -32,7 +32,7 @@ DECLARE
       ,T_TIPO_TFA('HEDIMP', 'Escrito de impugnación', 'Escrito de impugnación', 'EJ') -- T. Hipotecario
       ,T_TIPO_TFA('HRESOL', 'Resolución (Hipotecario)', 'Resolución (Hipotecario)', 'EJ') -- T. Hipotecario
       ,T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
-      
+      T_TIPO_TFA('INFLIQ', 'Informe de liquidación', 'Informe de liquidación', 'TR') -- T. Calculo de deuda a fecha
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramitePrecinto" width="852" height="562">
+<root-container name="hcj_tramitePrecinto" width="1013" height="877">
   <node name="Inicio" x="63" y="9" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

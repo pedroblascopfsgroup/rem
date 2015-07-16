@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoVerbalDesdeMonitorio" width="1256" height="654">
+<root-container name="hcj_procedimientoVerbalDesdeMonitorio" width="1486" height="877">
   <node name="Inicio" x="145" y="37" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

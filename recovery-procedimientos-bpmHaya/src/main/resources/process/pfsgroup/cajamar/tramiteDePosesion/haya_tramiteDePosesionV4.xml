@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2"
-	name="haya_tramiteDePosesionV4">
+	name="hcj_tramiteDePosesionV4">
 
 	<start-state name="inicio">
 		<transition to="H015_RegistrarSolicitudPosesion"></transition>

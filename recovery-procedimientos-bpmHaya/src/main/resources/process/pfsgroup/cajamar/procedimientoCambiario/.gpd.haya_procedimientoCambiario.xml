@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_procedimientoCambiario" width="1238" height="879">
+<root-container name="hcj_procedimientoCambiario" width="1266" height="879">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-66" y="-14"/>
@@ -26,10 +26,6 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-197" h1="-43" w2="-52" h2="58"/>
     </edge>
   </node>
   <node name="H016_confAdmiDecretoEmbargoDecision" x="414" y="189" width="288" height="36">
@@ -176,8 +172,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="1047" y="712" width="132" height="36"/>
-  <node name="Fin1" x="104" y="116" width="132" height="36"/>
   <node name="fork2" x="946" y="84" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>
@@ -186,11 +180,18 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H016_BPMProvisonFondos" x="1005" y="154" width="203" height="36">
+  <node name="H016_BPMProvisionFondos" x="1005" y="143" width="203" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-86" y="-254"/>
       <bendpoint w1="112" h1="1" w2="105" h2="-557"/>
       <bendpoint w1="101" h1="557" w2="94" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-58" y="-165"/>
+      <bendpoint w1="79" h1="266" w2="72" h2="-303"/>
+    </edge>
+    <edge>
+      <label x="6" y="-8"/>
     </edge>
   </node>
   <node name="H016_interposicionDemandaMasBienesDecision" x="668" y="0" width="358" height="36">
@@ -201,4 +202,6 @@
       <label x="-53" y="-9"/>
     </edge>
   </node>
+  <node name="Fin" x="1047" y="712" width="132" height="36"/>
+  <node name="Fin1" x="104" y="116" width="132" height="36"/>
 </root-container>

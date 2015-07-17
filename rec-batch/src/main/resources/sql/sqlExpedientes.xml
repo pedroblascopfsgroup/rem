@@ -35,37 +35,41 @@
   		<![CDATA[
 		WITH fechasEstados AS (
 			  SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha, --Sumamos los días
-			    ARQ_ID
+			    ARQ_ID, arq_prioridad
 			  FROM arq_arquetipos arq
 			  INNER JOIN iti_itinerarios iti
 			    ON arq.iti_id = iti.iti_id
 			  INNER JOIN est_estados est
 			    ON iti.iti_id = est.iti_id
-			  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est
+			  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
 			    ON est.dd_est_id = dd_est.dd_est_id
 			    and DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de GestiónVencidos
 			    (SELECT DD_EST_ORDEN
-			    FROM HAYAMASTER.DD_EST_ESTADOS_ITINERARIOS
-			    WHERE DD_EST_CODIGO = 'GV'
+			    FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
+			    WHERE DD_EST_CODIGO = ${ddEstadoItinerario.gestionVencidos.codigo}
 			    )
-			  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+			  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
 			    ON DD_EST.DD_EIN_ID        = DD_EIN.DD_EIN_ID
-			    AND DD_EIN_CODIGO          = '1'
-			  GROUP BY ARQ.ARQ_ID --Agrupamos por arquetipo para poder calcular el plazo del itinerario de los clientes
-		 )
+			    AND DD_EIN_CODIGO          = ${ddEntidadInformacion.Cliente.codigo}        
+        where arq.borrado = 0
+        GROUP BY ARQ.ARQ_ID, arq.arq_prioridad --Agrupamos por arquetipo para poder calcular el plazo del itinerario de los clientes        
+         )
 		 SELECT cli.cli_id
-		    FROM cli_clientes cli
-		    INNER JOIN fechasEstados vFechas
-		      ON cli.arq_id = vFechas.arq_id
-		    INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est --Solo los que estén en gestionVencidos
+		    FROM fechasEstados vFechas
+		    INNER JOIN cli_clientes cli
+		      ON vFechas.arq_id = cli.arq_id 
+		    INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Solo los que estén en gestionVencidos
 		      ON cli.dd_est_id  = dd_est.dd_est_id
-		      AND dd_est_codigo = 'GV'
-		    INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+		      AND dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
+		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
 		      ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
-		      AND DD_EIN_CODIGO   = '1'
+		      AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		    WHERE 
 		      CLI.BORRADO   = 0
 		      AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/YY') <= vFechas.fecha  --Que estén fuera de plazo del itinerario
+		      /* Ordenamos por prioridad del arquetipo para crear primero expedientes a los clientes con arq. más prioritarios 
+		      	 y desechar a las personas relacionadas menos prioritarias*/
+		  ORDER BY arq_prioridad 		
   		]]>
   	</entry>
 </properties>

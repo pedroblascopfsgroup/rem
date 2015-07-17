@@ -114,7 +114,7 @@ public class CreacionExpedientesRecuperacionTasklet implements Tasklet, StepExec
         Date fechaExtraccion = (Date) cli.getPersona().getFechaExtraccion(); //executionContext.getVariable(FECHA_EXTRACCION);
         
         if (Checks.esNulo(cli.getContratoPrincipal())) {
-        	logger.error("El cliente " + idCliente + " no tiene contrato principal");
+        	logger.error("El cliente " + idCliente + " no tiene contrato principal o ya está borrado");
         	return;
         }
         Long idContrato = cli.getContratoPrincipal().getId();

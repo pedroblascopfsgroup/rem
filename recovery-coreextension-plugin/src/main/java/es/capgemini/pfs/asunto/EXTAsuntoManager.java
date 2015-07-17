@@ -2036,7 +2036,11 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO)
 	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
 	
-            return asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto);
+            if (Checks.esNulo(asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto))){
+                return "";
+            }else{
+                return asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto);
+            }
 
 	}
 }

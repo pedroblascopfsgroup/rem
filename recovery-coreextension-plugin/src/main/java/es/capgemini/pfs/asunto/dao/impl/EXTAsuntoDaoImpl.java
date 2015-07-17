@@ -1160,8 +1160,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
             SQLQuery q = getSession().createSQLQuery(sql);
 
-            if (!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
-                msgErrorEnvioCDD = "Error validación CDD: " + q.list().get(0).toString();
+            if (!q.list().isEmpty()){
+                if(!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                    msgErrorEnvioCDD = "Error validación CDD: " + q.list().get(0).toString();
+                }
             }
 
             return msgErrorEnvioCDD;
@@ -1192,8 +1194,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
             SQLQuery q = getSession().createSQLQuery(sql);
             
-            if (!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
-                msgErrorEnvioCDD = "Error NUSE CDD: " + q.list().get(0).toString();
+            if (!q.list().isEmpty()){
+                if (!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                    msgErrorEnvioCDD = "Error NUSE CDD: " + q.list().get(0).toString();
+                }
             }
 
             return msgErrorEnvioCDD;

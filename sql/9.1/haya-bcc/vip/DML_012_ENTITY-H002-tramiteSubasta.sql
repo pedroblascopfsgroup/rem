@@ -66,10 +66,10 @@ DECLARE
         /*TAP_BUCLE_BPM................:*/ null        
         ),     
       T_TIPO_TAP('H002','H002_AdjuntarNotasSimples',null,null,null,null,null,'0','Adjuntar notas simples','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null),
-      T_TIPO_TAP('H002','H002_AdjuntarTasaciones',null,null,null,'valores[''H002_AdjuntarTasaciones''][''comboInforme''] == DDSiNo.SI ?  ''SI'' : ''NO''',null,'0','Adjuntar tasaciones','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null),
+      T_TIPO_TAP('H002','H002_AdjuntarTasaciones',null,null,null,'valores[''H002_AdjuntarTasaciones''][''comboInforme''] == DDSiNo.SI ?  ''SI'' : ''NO''',null,'0','Adjuntar tasaciones','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null),      
+      T_TIPO_TAP('H002','H002_SolicitarInformeFiscal',null,null,null,null,null,'0','Solicitar informe fiscal','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null),
+      T_TIPO_TAP('H002','H002_AdjuntarInformeFiscal',null,'comprobarExisteDocumentoIFISCAL() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar el Informe Fiscal.</div>''',null,null,null,'0','Adjuntar informe fiscal','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'803',null,'SDEU',null),
       
-      T_TIPO_TAP('H001','H001_ConfirmarNotificacionReqPago',null,null,'(valores[''H001_ConfirmarNotificacionReqPago''][''comboResultado''] == DDPositivoNegativo.POSITIVO && valores[''H001_ConfirmarNotificacionReqPago''][''fecha''] == null) ? ''Si indica como resultado de notificacion "Positivo", debe informar la "Fecha de Notificaci&oacute;n"'':null','valores[''H001_ConfirmarNotificacionReqPago''][''comboResultado''] == DDPositivoNegativo.POSITIVO ? ''SI'' : ''NO''',null,'0','Confirmar notificación del auto despachando ejecución','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
-      T_TIPO_TAP('H001','H001_ContactarConDeudor',null,null,null,null,null,'0','Contactar con el deudor','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'803',null,'SDEU',null),
       T_TIPO_TAP('H001','H001_ConfirmarSiExisteOposicion','plugin/procedimientos/procedimientoHipotecario/confirmarSiExisteOposicion',null,'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (!comprobarExisteDocumentoEOH() ? ''Es necesario adjuntar el Escrito de oposici&oacute;n.'' : ((valores[''H001_ConfirmarSiExisteOposicion''][''fechaOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''motivoOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''] == null) ? ''Si indica que hay oposici&oacute;n, debe registrar tambi&eacute;n "Fecha Oposici&oacute;n", "Motivo Oposici&oacute;n" y "Fecha Comparecencia"'' : null)) : null ','valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? ''SI'' : ''NO''',null,'0','Confirmar si existe oposición','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
       T_TIPO_TAP('H001','H001_RegistrarComparecencia',null,null,null,null,null,'0','Registrar comparecencia','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
       T_TIPO_TAP('H001','H001_RegistrarResolucion',null,null,null,null,null,'0','Registrar resolución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
@@ -87,10 +87,10 @@ DECLARE
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
       T_TIPO_PLAZAS(null,null,'H002_RevisarDocumentacion','2*24*60*60*1000L','0','0','DD'),   
       T_TIPO_PLAZAS(null,null,'H002_AdjuntarNotasSimples','damePlazo(valores[''H002_SenyalamientoSubasta''][''fechaSenyalamiento'']) - 20*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H002_AdjuntarTasaciones','damePlazo(valores[''H002_SenyalamientoSubasta''][''fechaSenyalamiento'']) - 30*24*60*60*1000L','0','0','DD'),
+      T_TIPO_PLAZAS(null,null,'H002_AdjuntarTasaciones','damePlazo(valores[''H002_SenyalamientoSubasta''][''fechaSenyalamiento'']) - 30*24*60*60*1000L','0','0','DD'),      
+      T_TIPO_PLAZAS(null,null,'H002_SolicitarInformeFiscal','damePlazo(valores[''H002_SenyalamientoSubasta''][''fechaSenyalamiento'']) - 25*24*60*60*1000L','0','0','DD'),
+      T_TIPO_PLAZAS(null,null,'H002_AdjuntarInformeFiscal','damePlazo(valores[''H002_SenyalamientoSubasta''][''fechaSenyalamiento'']) - 20*24*60*60*1000L','0','0','DD'),
       
-      T_TIPO_PLAZAS(null,null,'H001_ConfirmarNotificacionReqPago','60*24*60*60*1000L','0','0','DD'),
-      T_TIPO_PLAZAS(null,null,'H001_ContactarConDeudor','2*24*60*60*1000L','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'H001_ConfirmarSiExisteOposicion','valores[''H001_ConfirmarNotificacionReqPago''][''fecha''] != null ? damePlazo(valores[''H001_ConfirmarNotificacionReqPago''][''fecha'']) + 10*24*60*60*1000L : 10*24*60*60*1000L','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'H001_RegistrarComparecencia','damePlazo(valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''])','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'H001_RegistrarResolucion','damePlazo(valores[''H001_RegistrarComparecencia''][''fecha'']) + 15*24*60*60*1000L','0','0','DD'),
@@ -121,6 +121,13 @@ DECLARE
         T_TIPO_TFI('H002_AdjuntarTasaciones','2','combo','comboInforme','Solicita informe fiscal','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','valores[''H002_RevisarDocumentacion''][''comboInforme'']','DDSiNo','0','DD'),
         T_TIPO_TFI('H002_AdjuntarTasaciones','3','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
         
+        T_TIPO_TFI('H002_SolicitarInformeFiscal','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea deber&aacute; solicitar el informe fiscal a la entidad y dejar constancia en la herramieenta de la fecha en la que ha realizado dicha solicitud.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla, la siguiente tarea ser&aacute; "adjuntar informe fiscal".</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H002_SolicitarInformeFiscal','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H002_SolicitarInformeFiscal','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        
+        T_TIPO_TFI('H002_AdjuntarInformeFiscal','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea deber&aacute; actualizar la informaci&oacute;n en la ficha del "Bien"  de cada uno de los bienes de la subasta y adjuntar el informe fiscal al procedimiento.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H002_AdjuntarInformeFiscal','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H002_AdjuntarInformeFiscal','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
         
         T_TIPO_TFI('H001_DemandaCertificacionCargas','7','currency','interesesOrdinariosEnElCierre','Intereses ordinarios (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','8','currency','interesesDeDemoraEnElCierre','Intereses de demora (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
@@ -183,7 +190,6 @@ BEGIN
 			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-814'')' ||
 	          ' ,DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GCONPR'')' ||
 			  ' WHERE TAP_CODIGO = ''H002_SolicitudSubasta''';
-    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando gestor tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_SolicitudSubasta actualizada.');
@@ -192,22 +198,61 @@ BEGIN
 			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-814'')' ||
 	          ' ,DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GCONGE'')' ||
 			  ' WHERE TAP_CODIGO = ''H002_SenyalamientoSubasta''';
-    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando gestor tarea.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_SenyalamientoSubasta actualizada.');
-	
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''TGCONGE'')' ||
+	          ' ,DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SUCONGE'')' ||
+	          ' ,TAP_CODIGO = ''H002_PrepararInformeSubasta'' ' ||
+	          ' ,TAP_DESCRIPCION = ''Preparar propuesta subasta'' ' ||
+	          ' TAP_SCRIPT_VALIDACION = ''comprobarInformacionCompletaInstrucciones() ? (comprobarExisteDocumentoINS()? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el informe de subasta</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">La informaci&oacute;n de las instrucciones de los lotes no est&aacute; completa.</div>'''' ''' ||
+			  ' WHERE TAP_CODIGO = ''H002_PrepararPropuestaSubasta''';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_PrepararInformeSubasta actualizada.');
+    
+    /* ------------------- --------------------------------- */
+	/* --------------  ACTUALIZACIONES PLAZOS--------------- */
+	/* ------------------- --------------------------------- */
+	 V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS' ||
+			  ' SET DD_PTP_PLAZO_SCRIPT = ''damePlazo(valores[''''H002_SenyalamientoSubasta''''][''''fechaSenyalamiento''''])-15*24*60*60*1000L'' ' ||
+			  ' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_PrepararInformeSubasta'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Plazo de H002_PrepararInformeSubasta actualizada.');
     
     /* ------------------- --------------------------------- */
 	/* --------------  ACTUALIZACIONES CAMPOS--------------- */
 	/* ------------------- --------------------------------- */
+     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea, deber&aacute; acceder a la pesta&ntilde;a Subastas del asunto correspondiente y asociar uno o m&aacute;s bienes a la subasta que corresponda. Una vez agregados los bienes a la subasta deber&aacute; indicar a trav&eacute;s de la ficha de cada bien las cargas anteriores y posteriores, si es vivienda habitual o no y la situaci&oacute;n posesoria.</p><p style="margin-bottom: 10px">En el campo Fecha solicitud deber&aacute; informar la fecha en la que haya realizado la solicitud de subasta.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla se lanzar&aacute; la tarea “Se&ntilde;alamiento de subasta”.</p></div>'' ' ||
+			  ' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_SolicitudSubasta'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_SolicitudSubasta actualizada.');
+    
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
-			  ' SET TFI_ORDEN = 5' ||
-			  ' WHERE TFI_NOMBRE = ''observaciones'' AND TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_SenyalamientoSubasta'')';
-    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando gestor tarea.......');
+			  ' SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Una vez solicitada la subasta, en esta pantalla, debe informar las fechas de anuncio y celebraci&oacute;n de la misma as&iacute; como las costas del letrado y procurador.</p><p style="margin-bottom: 10px">Una vez conozca la fecha de celebraci&oacute;n de la subasta deber&aacute;n enviar una anotaci&oacute;n a trav&eacute;s de la herramienta al supervisor de contencioso gesti&oacute;n.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla se lanzar&aacute;n las tareas "Celebraci&oacute;n subasta" y "Revisar documentaci&oacute;n" al gestor de contencioso gesti&oacute;n.</p></div>'' ' ||
+			  ' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_SenyalamientoSubasta'')';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_SenyalamientoSubasta actualizada.');
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_ORDEN = 5' ||
+			  ' WHERE TFI_NOMBRE = ''observaciones'' AND TAP_ID IN (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_SenyalamientoSubasta'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_SenyalamientoSubasta actualizada.');
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por completada esta tarea deber&aacute; acceder desde la pesta&ntilde;a Subastas del asunto correspondiente a cada uno de los bienes afectos a la subasta e indicar los importes para la puja sin postores  y puja con postores.</p><p style="margin-bottom: 10px">Adem&aacute;s, deber&aacute; adjuntar el informe de subasta, preparar el cuadro de pujas y obtener la tasaci&oacute;n, notas simple e informe fiscal, en caso de que las solicitara en la tarea anterior, as&iacute; como actualizar dicha informaci&oacute;n en la herramienta.</p><p style="margin-bottom: 10px">Una vez hecho esto podr&aacute; generar desde la pesta&ntilde;a Subastas el informe con la propuesta de instrucciones para la subasta en formato Word, de forma que en caso de ser necesario pueda modificarlo.</p><p style="margin-bottom: 10px">En el campo Fecha deber&aacute; informar la fecha en la que haya adjuntado el informe con las instrucciones para la subasta.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla se lanzar&aacute; la tarea “Validar informe de subasta”.</p></div>'' ' ||
+			  ' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H002_PrepararInformeSubasta'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_PrepararInformeSubasta actualizada.');
     
     /* ------------------- --------------------------------- */
 	/* --------------  BORRADO CAMPOS--------------- */

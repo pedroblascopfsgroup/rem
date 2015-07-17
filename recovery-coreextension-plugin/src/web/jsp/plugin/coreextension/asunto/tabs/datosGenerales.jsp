@@ -4,11 +4,12 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 
 (function(){
 	var limit=25;
 	var labelStyle2 = 'font-size:12px;';
-	
+	debugger;
 	//Campo Código Asunto
 	var codigoAsunto=app.creaNumber('codigo',
 			'<s:message code="asuntos.busqueda.filtro.codigo" text="**Codigo Asunto" />','',{autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"},listeners:{ specialkey: function(f,e){ if(e.getKey() == e.ENTER) { buscarFunc(); } } }<app:test id="idAsunto" addComa="true"/>});
@@ -397,6 +398,25 @@
 				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Resultado propuestas enviadas a cierre"/>'
 	});	
 	
+<%-- 	var nombreFechaEntrega = new Ext.form.Label({
+		text:'<s:message code="" text="**Fecha de envío a cierre" />'
+		,style:labelStyle2
+		,name:'nombre'
+	}); --%>
+	
+	var nombreFechaEntrega = app.creaLabel('<s:message code="" text="**Fecha de envío a cierre"/>','Fecha de envío a cierre');
+	
+	var fechaEntregaDesde = new Ext.ux.form.XDateField({
+		fieldLabel:'<s:message code="" text="**Fecha de envío desde" />'
+		,name : 'fechaEntregaDesde'
+	});
+	
+	var fechaEntregaHasta = new Ext.ux.form.XDateField({
+		fieldLabel:'<s:message code="" text="**Fecha de envío hasta" />'
+		,name : 'fechaEntregaHasta'
+	});
+	
+	
 	              
     var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -571,6 +591,12 @@
 		if (comboErrorPostCDD.getValue() != '' ){
 			return true;
 		}
+		if (fechaEntregaDesde.getValue() != '' ){
+			return true;
+		}
+		if (fechaEntregaHasta.getValue() != '' ){
+			return true;
+		}
 		if (comboZonas.getValue() != '' ){
 			return true;
 		}			
@@ -626,6 +652,8 @@
 			,comboSituacionCDD:comboSituacionCDD.getValue()
 			,comboErrorPreviCDD:comboErrorPreviCDD.getValue()
 			,comboErrorPostCDD:comboErrorPostCDD.getValue()
+			,fechaEntregaDesde:app.format.dateRenderer(fechaEntregaDesde.getValue())
+			,fechaEntregaHasta:app.format.dateRenderer(fechaEntregaHasta.getValue())
 			,codigoZona:comboZonas.getValue()
 			,tipoSalida:'<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_LISTADO" />'
 			//,codigoProcedimientoEnJuzgado:codigoProcedimientoEnJuzgado.getValue()
@@ -669,10 +697,11 @@
 				,{items:[filtroContrato]}
 				,{items:[fechaCreacionHasta]}
 				,{items:[filtroNumeroAutosPanel]}
-				,{items:[comboJerarquia]}
 				,{items:[comboErrorPreviCDD]}
-				,{items:[comboZonas]}
+				,{items:[comboJerarquia]}
 				,{items:[comboErrorPostCDD]}
+				,{layout:'table', colspan:3, items:[nombreFechaEntrega,fechaEntregaDesde, fechaEntregaHasta]}
+				,{items:[comboZonas]}
 				,{colspan:2,items:[comboTipoProcedimientos]}
 				,{items:[comboGestion]}
 				,{items:[comboPropiedades]}
@@ -715,6 +744,8 @@
     		           ,comboSituacionCDD
     		           ,comboErrorPreviCDD
     		           ,comboErrorPostCDD
+    		           ,fechaEntregaDesde
+    		           ,fechaEntregaHasta
     		           ,comboZonas
     		           ,codigoProcedimientoEnJuzgado
     		           ,filtroNumeroCodigoProc

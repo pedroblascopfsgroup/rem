@@ -109,12 +109,11 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	
 	@Override
 	@BusinessOperation(overrides = BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
-	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idProcedimiento, Long idSubasta, String idsBien) {
+	public InformeValidacionCDDDto generarInformeValidacionCDD( Long idSubasta, String idsBien) {
 		InformeValidacionCDDDto informe = new InformeValidacionCDDDto();
 		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
 		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");
-			
+			String[] arrLoteBien = idsBien.split(",");			
 						
 			for (String loteBien : arrLoteBien) {
 				BienLoteDto dto;
@@ -133,11 +132,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 			}
 			informe.setBienesLote(listBienLote);
 		}
-		if(!Checks.esNulo(idProcedimiento)) {
-			Subasta subasta = genericDao.get(Subasta.class, 
-					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
-			idSubasta = subasta.getId();
-		}
+
 		informe.setIdSubasta(idSubasta);
 		InformeValidacionCDDBean informeBean = new InformeValidacionCDDBean();
 		informeBean.setProxyFactory(proxyFactory);

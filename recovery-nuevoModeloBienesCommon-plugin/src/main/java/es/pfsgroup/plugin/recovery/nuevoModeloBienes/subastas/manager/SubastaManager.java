@@ -53,9 +53,13 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
@@ -70,7 +74,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
@@ -829,8 +832,8 @@ public class SubastaManager implements SubastaApi {
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)
-	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idProcedimientoAdj, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
-		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idProcedimientoAdj, idBien, resultadoValidacion, motivoValidacion);
+	public void guardaBatchAcuerdoCierre(Long asuId, Long prcId, Long bienId, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion, String origen) {
+		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(asuId, prcId, bienId, resultadoValidacion, motivoValidacion, origen);
 		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 	}
 	
@@ -1188,57 +1191,103 @@ public class SubastaManager implements SubastaApi {
 			Subasta subasta = subastaDao.get(idSubasta);
 			return subastaDao.findBatchAcuerdoCierreDeuda(subasta.getAsunto().getId(), subasta.getProcedimiento().getId(), idBien);
 		}
-
+		
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
-		public void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBACDD) {
-			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
-				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
-			}
-			guardaBatchAcuerdoCierre(idSubasta, null, null, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
-		} 
+		@BusinessOperation(BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA)
+		public BatchAcuerdoCierreDeuda findRegistroCierreDeuda(BatchAcuerdoCierreDeuda acuerdo) {
+			return subastaDao.findBatchAcuerdoCierreDeuda(acuerdo);
+		}
+
 		
-		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idProcedimientoAdj, Long idBien, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion) {
-			Subasta subasta = getSubasta(idSubasta);
-			Procedimiento procedimiento = subasta.getProcedimiento();
+		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long asuId, Long prcId, Long bienId, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion, String origen) {
+
+	
 			Auditoria auditoria = Auditoria.getNewInstance();
 			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
-			cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
-			if(Checks.esNulo(idBien)) {
-				cierreDeuda.setIdProcedimiento(procedimiento.getId());				
+			
+			cierreDeuda.setIdAsunto(asuId);
+			cierreDeuda.setIdProcedimiento(prcId);
+			
+			if(Checks.esNulo(bienId)) {
+				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
+		
 			}else{
-				cierreDeuda.setIdProcedimiento(idProcedimientoAdj);
-				cierreDeuda.setIdBien(idBien);				
+				cierreDeuda.setIdBien(bienId);				
 				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);
 			}
-			cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
+
 			cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
 			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
 			cierreDeuda.setResultadoValidacion(resultadoValidacion);
-			cierreDeuda.setOrigenPropuesta(BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
+			cierreDeuda.setOrigenPropuesta(origen);
 			if(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO.equals(resultadoValidacion)){
 				cierreDeuda.setResultadoValidacionCDD(motivoValidacion);
 			}
 			return cierreDeuda;
-		};
+		}
 		
+
+		/**
+		 * Método que genera un informe de validación por bien o por operación e función si recibe idBien a null o no,
+		 * y actualiza o modifica un registro en BatchAcuerdoCierreDeuda.
+		 * @param subasta
+		 * @param idBien
+		 * @return InformeValidacionCDDDto informe
+		 */
 		@Override
 		@Transactional(readOnly = false)
-		@BusinessOperation(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
-		public void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
-			for(Long idBien : idsBien) {
-				NMBBien bien = nmbBienDao.get(idBien);
-				Subasta subasta = getSubasta(idSubasta);
-				Map<String, String> mapaTiposProcedimiento = projectContext.getMapaTiposPrc();
-				String tipoProcedimiento = mapaTiposProcedimiento.get(NMBProjectContextImpl.CONST_TIPO_PROCEDIMIENTO_ADJUDICACION);
-				Procedimiento prc = (Procedimiento) proxyFactory.proxy(SubastaApi.class).getProcedimientoBienByIdPadre(bien, subasta, tipoProcedimiento);
-				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
-				if(Checks.estaVacio(list)) {
-					guardaBatchAcuerdoCierre(idSubasta, prc.getId(), idBien, BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK, null);
-				}
+		@BusinessOperation(BO_NMB_SUBASTA_GENERAR_ENVIO_CIERRE_DEUDA)
+		public InformeValidacionCDDDto generarEnvioCierreDeuda(Subasta subasta, Long idBien, String origen) {
+			
+			InformeValidacionCDDDto informe;	
+			
+			if(Checks.esNulo(idBien)) {
+				informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+						.generarInformeValidacionCDD(subasta.getId(), null);
+				
+			} else {
+				informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+						.generarInformeValidacionCDD(subasta.getId(), String.valueOf(idBien));
+				
 			}
-		} 
+
+			String motivo;
+			Long resultado;
+			DDResultadoValidacionCDD resultadoValidacion = new DDResultadoValidacionCDD();
+			if(!informe.getValidacionOK()) { // Si Validacion KO
+				motivo = informe.getResultadoValidacion().get(0);
+				resultado = BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO;
+				resultadoValidacion = (DDResultadoValidacionCDD) diccionarioApi.dameValorDiccionarioByCod(DDResultadoValidacionCDD.class, motivo);
+			
+			} else { // Si validación OK
+				resultado =  BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK;					
+			}
+			
+			// Buscamos si existe un cierre de deuda para mismo ASU,PRO,BIEN que no se haya enviado.
+			BatchAcuerdoCierreDeuda filtro = new BatchAcuerdoCierreDeuda();
+			filtro.setIdAsunto(subasta.getAsunto().getId());
+			filtro.setIdProcedimiento(subasta.getProcedimiento().getId());
+			if(!Checks.esNulo(idBien)) {
+				filtro.setIdBien(Long.valueOf(idBien));
+			}
+			BatchAcuerdoCierreDeuda acuerdoCierreDeuda = findRegistroCierreDeuda(filtro);
+			// Si no existe, o existe pero ya está OK y enviado
+			if(Checks.esNulo(acuerdoCierreDeuda) || 
+					(!Checks.esNulo(acuerdoCierreDeuda.getFechaEntrega()) && BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK.equals(acuerdoCierreDeuda.getResultadoValidacion()))) {
+				guardaBatchAcuerdoCierre(filtro.getIdAsunto(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion, origen);
+
+			} else {// Si existe sin enviar modificamos		
+				acuerdoCierreDeuda.setResultadoValidacion(resultado);
+				acuerdoCierreDeuda.setResultadoValidacionCDD(resultadoValidacion);
+				acuerdoCierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
+				acuerdoCierreDeuda.setOrigenPropuesta(origen);
+				guardaBatchAcuerdoCierreDeuda(acuerdoCierreDeuda);				
+			}
+			
+			return informe;
+		}
+		
 		
 		public class ValorNodoTarea {
 			private Long idTareaNodoValor;
@@ -1310,13 +1359,17 @@ public class SubastaManager implements SubastaApi {
 		@BusinessOperation(BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA)
 		public List<DDResultadoValidacionCDD> getListErrorPreviCDDData() {
 			Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			return (ArrayList<DDResultadoValidacionCDD>) genericDao.getList(DDResultadoValidacionCDD.class, fBorrado);
+			Order orderDescripcion = new Order(OrderType.ASC, "descripcion");
+			return (ArrayList<DDResultadoValidacionCDD>) genericDao.getListOrdered(DDResultadoValidacionCDD.class, orderDescripcion, fBorrado);
 		}
 
 		@Override
 		@BusinessOperation(BO_NMB_GET_LIST_ERROR_POST_CDD_DATA)
 		public List<DDResultadoValidacionNuse> getListErrorPostCDDData() {
 			Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			return (ArrayList<DDResultadoValidacionNuse>) genericDao.getList(DDResultadoValidacionNuse.class, fBorrado);
+			Order orderDescripcion = new Order(OrderType.ASC, "descripcion");
+			return (ArrayList<DDResultadoValidacionNuse>) genericDao.getListOrdered(DDResultadoValidacionNuse.class, orderDescripcion, fBorrado);
 		}
+
+
 }

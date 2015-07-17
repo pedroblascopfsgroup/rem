@@ -166,7 +166,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 
 	@Override
 	@BusinessOperation(BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
-	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idProcedimiento, Long idSubasta, String idsBien) {
+	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idSubasta, String idsBien) {
 		// TODO Auto-generated method stub
 		return null;
 	}

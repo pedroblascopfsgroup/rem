@@ -35,6 +35,31 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
+	V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD WHERE DD_RVC_CODIGO = ''Todos''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....'); 
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE        
+      V_SQL := 'Insert into '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD
+   			(DD_RVC_ID, DD_RVC_CODIGO, DD_RVC_DESCRIPCION, DD_RVC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO)
+ 			Values (
+				'||V_ESQUEMA||'.S_DD_RVC_RES_VALIDACION_CDD.NEXTVAL, 
+				''Todos'', 
+				''Todos'', 
+				''Todos'', 
+				0, 
+				''DD'', 
+				sysdate, 
+				null,
+				null,
+				null,
+				null,
+				0)';
+      EXECUTE IMMEDIATE V_SQL ;      
+      DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+    END IF ;
+	
 	V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD WHERE DD_RVC_CODIGO = ''REQUIRED''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;    
     DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....'); 

@@ -118,13 +118,16 @@ public class InformeValidacionCDDBean {
 		List<DatosLoteCDD> datosLoteCDD = new ArrayList<DatosLoteCDD>();
 		for (LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
 			if(!Checks.estaVacio(this.informeDTO.getBienesLote())){
-				List<Long> lotes = new ArrayList<Long>();
+				
 				for(BienLoteDto bienLote : this.informeDTO.getBienesLote()) {
-					if(!lotes.contains(bienLote.getLote()) && loteSubasta.getId().equals(bienLote.getLote())) {
-						lotes.add(bienLote.getLote());
-						datosLoteCDD.add(completaDatosLote(loteSubasta));
+					
+					for(Bien bien: loteSubasta.getBienes()) {
+						if (Checks.esNulo(bienLote.getLote()) && bien.getId().equals(bienLote.getIdBien())) {
+							bienLote.setLote(loteSubasta.getId());							
+							datosLoteCDD.add(completaDatosLote(loteSubasta));							
+						}
 					}
-				}
+				}				
 			}else {
 				datosLoteCDD.add(completaDatosLote(loteSubasta));
 			}

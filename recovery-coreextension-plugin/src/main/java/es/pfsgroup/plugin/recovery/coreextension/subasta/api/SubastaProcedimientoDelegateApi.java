@@ -4,6 +4,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
 
+
 public interface SubastaProcedimientoDelegateApi {
 	
 	public static final String BO_SUBASTA_COMPROBAR_OBRA_EN_CURSO = "es.pfsgroup.recovery.subasta.comprobarObraEncurso";
@@ -94,7 +95,7 @@ public interface SubastaProcedimientoDelegateApi {
 	public boolean comprobarNumeroActivo(Long prcId);
 
 	@BusinessOperationDefinition(BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
-	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idProcedimiento, Long idSubasta, String idsBien);
+	public InformeValidacionCDDDto generarInformeValidacionCDD( Long idSubasta, String idsBien);
 	
 	@BusinessOperationDefinition(BO_SUBASTA_GET_LOTE_BY_PRC_BIEN)
 	@Deprecated

@@ -1456,6 +1456,8 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		
 		if(!Checks.esNulo(acuerdo.getIdBien())) {
 			hql.append(" and baccd.idBien = ").append(acuerdo.getIdBien());
+		}else {
+			hql.append(" and baccd.idBien is null ");
 		}
 		
 		if(Checks.esNulo(acuerdo.getFechaEntrega())) {

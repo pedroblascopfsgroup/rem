@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE "CREACION_CLIENTES" IS
   V_SQL VARCHAR2(4000);
   
 BEGIN
-
+	
         DBMS_OUTPUT.PUT_LINE('[START] CREACION CLIENTES');
         
         
@@ -72,16 +72,20 @@ BEGIN
          El cliente es de seguimiento (riesgo mayor)
         **************************************************/
         
+        V_SQL := 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI';
+        EXECUTE IMMEDIATE V_SQL;
+        
         V_SQL := 'INSERT INTO ' || V_ESQUEMA || '.TMP_CNT_NUEVOS_CLI
         with vcpe as (select cpe_.per_id, cpe_.cnt_id --Obtengo solo los contratos con los titulares
               from ' || V_ESQUEMA || '.cpe_contratos_personas cpe_ 
               inner join ' || V_ESQUEMA || '.dd_tin_tipo_intervencion tin on cpe_.dd_tin_id = tin.dd_tin_id
-              where tin.dd_tin_titular = 1)
+              where tin.dd_tin_titular = 1
+              AND NOT EXISTS (SELECT CEX.CEX_ID FROM ' || V_ESQUEMA || '.cex_contratos_expediente CEX WHERE CEX.CNT_ID = CPE_.CNT_ID)
+              AND NOT EXISTS (SELECT CCL.CCL_ID FROM ' || V_ESQUEMA || '.CCL_CONTRATOS_CLIENTE CCL WHERE CCL.CNT_ID = CPE_.CNT_ID))
         , mov as (  --De los anteriores personas y titulares, ordenados por fecha pos vencida ó riesgo
-            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_fecha_pos_vencida, 
-				(NVL(row_mov.mov_pos_viva_no_vencida,0) + NVL(row_mov.mov_pos_viva_vencida,0)) riesgo
+            select vcpe.per_id, row_mov.cnt_id, row_mov.mov_fecha_extraccion, row_mov.mov_fecha_pos_vencida, row_mov.mov_riesgo
               , row_number () over (partition by per_id order by row_mov.mov_fecha_pos_vencida) n_fecha_pos_vencida
-              , row_number () over (partition by per_id order by (NVL(row_mov.mov_pos_viva_no_vencida,0) + NVL(row_mov.mov_pos_viva_vencida,0)) desc) n_mov_riesgo
+              , row_number () over (partition by per_id order by row_mov.mov_riesgo desc) n_mov_riesgo
             from vcpe inner join ' || V_ESQUEMA || '.mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id    
         )
         select distinct tmp.per_id, cpe.cnt_id, cnt.ofi_id, mov.mov_fecha_pos_vencida

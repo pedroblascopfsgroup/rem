@@ -191,7 +191,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	public Expediente crearExpedienteAutomatico(Long idContrato,
 			Long idPersona, Long idArquetipo, Long idBPMExpediente,
 			Long idBPMCliente) {
-		validarContratoPase(idContrato);
+			validarContratoPase(idContrato);
 
 		Expediente expediente = new Expediente();
 		expediente.setExpProcessBpm(idBPMExpediente);
@@ -346,6 +346,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		Expediente exp = expedienteDao
 				.buscarExpedientesParaContrato(idContrato);
 		if (exp != null) {
+			logger.error("expediente.contrato.invalido.otroExpediente: "+idContrato);
 			throw new NonRollbackException(
 					"expediente.contrato.invalido.otroExpediente", idContrato);
 		}
@@ -462,26 +463,21 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		// Borramos clientes por contrato
 		for (ExpedienteContrato expContrato : expediente.getContratos()) {
 			Long idContrato = expContrato.getContrato().getId();
-			List<Cliente> clientes = (List<Cliente>) executor
-					.execute(
-							PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO,
-							idContrato);
+			List<Cliente> clientes = (List<Cliente>) executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO, idContrato);
 			for (Cliente cliente : clientes) {
-				if (cliente.getProcessBPM() != null
+				// AHORA EN NINGÚN CASO SE CREA BPM PARA EL CLIENTE
+				/*
+				if (!Checks.esNulo(idInvocacion) && !Checks.esNulo(cliente.getProcessBPM())
 						&& !cliente.getProcessBPM().equals(idInvocacion)) {
-					executor.execute(
-							ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,
-							cliente.getProcessBPM());
+					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,cliente.getProcessBPM());
 				} else if (cliente.getProcessBPM() == null) {
-					// AHORA EN NINGÚN CASO SE CREA BPM PARA EL CLIENTE
+				
 //						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
 //								.getEstadoCliente().getCodigo())) {
 					// En caso de que se hayan generado manualmente
-					executor
-							.execute(
-									PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,
-									cliente.getId());
-				}
+					executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+				}*/
+				executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
 			}
 		}
 
@@ -490,11 +486,11 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 			Cliente cliente = expPersona.getPersona().getClienteActivo();
 
 			if (cliente != null) {
-				if (cliente.getProcessBPM() != null
+				// AHORA EN NINGÚN CASO SE CREA BPM PARA EL CLIENTE
+				/*
+				if (!Checks.esNulo(idInvocacion) && !Checks.esNulo(cliente.getProcessBPM())
 						&& !cliente.getProcessBPM().equals(idInvocacion)) {
-					executor.execute(
-							ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,
-							cliente.getProcessBPM());
+					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, cliente.getProcessBPM());
 				} else if (cliente.getProcessBPM() == null
 						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
 								.getEstadoCliente().getCodigo())) {
@@ -504,6 +500,8 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 									PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,
 									cliente.getId());
 				}
+				*/
+				executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,cliente.getId());
 			}
 		}
 	}

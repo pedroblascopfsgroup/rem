@@ -9,13 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.bien.dao.BienDao;
+import es.capgemini.pfs.contrato.dao.ContratoDao;
+import es.capgemini.pfs.persona.dao.PersonaDao;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
-import es.pfsgroup.plugin.precontencioso.documento.dao.SolicitudDocumentoPCODao;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
@@ -23,11 +25,6 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.assembler.LiquidacionAssembler;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -41,6 +38,15 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 
     @Autowired
     private DocumentoPCODao documentoPCODao;
+    
+    @Autowired
+    private ContratoDao contratoDao;    
+    
+    @Autowired
+    private PersonaDao personaDao;  
+    
+    @Autowired
+    private BienDao bienDao;  
     
     @Autowired
     private GenericABMDao genericDao;
@@ -74,7 +80,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			solicitudesPCO = documentoPCODao.getSolicitudesDoc(doc.getId());
 			solicitudes.addAll(solicitudesPCO);
 		}
-	
+		
         return solicitudes;
     }
     
@@ -99,10 +105,32 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @param solicitud
 	 * @return
 	 */
-	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud){
+	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, boolean esDocumento){
 		SolicitudDocumentoPCODto solDto=null;
+		DDSiNo siNo;
+		String descripcionUG = null;
+		String ugIdDto = null;
+		// Dependiendo del tipo unidad gestion (Contrato, Persona o Bien) hay que obtener los datos de forma diferente
+		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.CONTRATOS)){
+			ugIdDto = documento.getUnidadGestionId()+"";
+			descripcionUG = contratoDao.get(documento.getUnidadGestionId()).getTipoProductoEntidad().getDescripcion();			
+		}
+		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.PERSONAS)){
+			ugIdDto = personaDao.get(documento.getUnidadGestionId()).getDocId();
+			descripcionUG = personaDao.get(documento.getUnidadGestionId()).getNom50();
+			
+		}
+		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.BIENES)){
+			ugIdDto = documento.getUnidadGestionId()+"";
+			descripcionUG = bienDao.get(documento.getUnidadGestionId()).getDescripcionBien();
+		}
 		
-		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud);
+		if (documento.getAdjuntado())
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.SI);
+		else
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
+				
+		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, esDocumento, siNo);
 		
 		return solDto;
 	};

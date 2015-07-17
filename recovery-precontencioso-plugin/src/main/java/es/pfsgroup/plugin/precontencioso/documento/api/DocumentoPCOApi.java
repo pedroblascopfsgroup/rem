@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.precontencioso.documento.api;
 
 import java.util.List;
 
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
@@ -35,9 +34,11 @@ public interface DocumentoPCOApi {
 	 * Crea un DTO de la solicitud a partir del documento y de la solicitud
 	 * @param documento
 	 * @param solicitud
+	 * @param esDocumento
+	 * 
 	 * @return
 	 */
-	SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud);
+	SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, boolean esDocumento);
 	
 	/**
 	 * Obtiene el DTO de un documentoPCO

@@ -18,6 +18,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_PCO_DOC_SOLICIT_TIPOACTOR", schema = "${entity.schema}")
 public class DDTipoActorPCO implements Dictionary, Auditable {
 
+	public static final String PREPARADOR = "PD";
+	public static final String GESTORIA = "GE";
+	public static final String NOTARIA = "NO";
+	
 	private static final long serialVersionUID = 3136933085857841623L;
 
 	@Id
@@ -35,7 +39,7 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 	@Column(name = "DD_PCO_DSA_DESCRIPCION_LARGA")
 	private String descripcionLarga;
 	
-	@Column(name = "PRETURNADO")
+	@Column(name = "DD_PCO_DSA_TRAT_EXP")
 	private Boolean tratamientoExpediente;	
 
 	@Version

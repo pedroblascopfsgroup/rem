@@ -17,29 +17,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
-import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.IncluirDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.InformarDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
-import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
 @Controller
@@ -77,14 +72,18 @@ public class DocumentoPCOController {
 
 		idProcPCO = new Long(idProcedimientoPCO);
 		
+		boolean esDocumento;	// marca para la primera solicitud de cada documento
+		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
 		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
 		List<SolicitudDocumentoPCO> solicitudes; 
 		for (DocumentoPCO doc : documentos) {
 			solicitudes = doc.getSolicitudes();
+			esDocumento = true;
 			for (SolicitudDocumentoPCO sol : solicitudes) {
-				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol));				
+				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento));
+				if (esDocumento) esDocumento = false;
 			}			
 		}
 		

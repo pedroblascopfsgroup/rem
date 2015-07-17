@@ -1,15 +1,12 @@
 package es.pfsgroup.plugin.precontencioso.documento.assembler;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 /**
  * Clase que se encarga de ensablar las entidades de documentosPCO y solicitudesPCO a 
@@ -18,7 +15,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
  * @author jmartin
  */
 public class DocumentoAssembler {
-
+	
 	/**
 	 * Convierte en una SolicitudDocumentoDTO a partir de un documentoPCO y 
 	 * una solicitudPCO
@@ -27,35 +24,24 @@ public class DocumentoAssembler {
 	 * @return List<liquidacionDTO> DTO
 	 */
 	public static SolicitudDocumentoPCODto docAndSolEntityToSolicitudDto(DocumentoPCO documento,
-			SolicitudDocumentoPCO solicitud) {
+			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, DDSiNo siNo) {
 		SolicitudDocumentoPCODto solicitudDto = new SolicitudDocumentoPCODto();
 		
 		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		
-		Long antIdDoc = new Long(0);
-		Long antTipoUG = new Long(0);
-		Long antTipoDoc = new Long(0);
-		
+			
 		solicitudDto.setId(solicitud.getId());
 		solicitudDto.setIdDoc(documento.getId());
-		solicitudDto.setEsDocumento(false);
-		if (!antIdDoc.equals(documento.getId()) || antTipoUG != documento.getUnidadGestion().getId() || antTipoDoc != documento.getTipoDocumento().getId()){
-			solicitudDto.setContrato(documento.getProcedimientoPCO().getCntPrincipal());
-			solicitudDto.setDescripcionUG(documento.getUgDescripcion());
+		if (esDocumento){			
+			solicitudDto.setContrato(ugIdDto);
+			solicitudDto.setDescripcionUG(descripcionUG);
 			solicitudDto.setTipoDocumento(documento.getTipoDocumento().getDescripcion());
 			solicitudDto.setEstado(documento.getEstadoDocumento().getDescripcion());
-			solicitudDto.setAdjunto("NO");
-			if (documento.getAdjuntado())
-				solicitudDto.setAdjunto("SI");
-		
+			solicitudDto.setAdjunto(siNo.getDescripcion());	
 			solicitudDto.setComentario(documento.getObservaciones());
-			solicitudDto.setEsDocumento(true);
-			
-			antIdDoc = documento.getId();
-			antTipoUG = documento.getUnidadGestion().getId();
-			antTipoDoc = documento.getTipoDocumento().getId();
 		}
-		//solicitudDto.setActor(sol.getActor());
+		
+		solicitudDto.setEsDocumento(esDocumento);
+		solicitudDto.setActor(solicitud.getTipoActor().getDescripcion());
 		if (solicitud.getFechaSolicitud()!=null)
 			solicitudDto.setFechaSolicitud(webDateFormat.format(solicitud.getFechaSolicitud()));
 		if (solicitud.getFechaResultado()!=null)

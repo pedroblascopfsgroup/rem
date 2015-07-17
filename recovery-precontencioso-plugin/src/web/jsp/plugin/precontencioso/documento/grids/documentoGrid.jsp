@@ -397,7 +397,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 	
 
 
-storeDocumentos.webflow({idProcedimientoPCO: '1'});
+storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);

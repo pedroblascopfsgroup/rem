@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="hcj_ejecucionTituloNoJudicial">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="hcj_ejecucionTituloNoJudicial">
 
 	<start-state name="Inicio">
 		<transition to="H020_InterposicionDemandaMasBienes" name="iniciarProceso"></transition>
@@ -196,7 +196,7 @@
       	<transition to="Fin" name="Fin"></transition>
 	</node>
 
-	<state name="H020_RegistrarCelebracionVista" expression="ConfirmarNotifiReqPagoDecision">
+	<state name="H020_RegistrarCelebracionVista">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -297,7 +297,7 @@
 		<transition to="H020_BPMProvisionFondos" name="provision"></transition>
 	</fork>
 
-	<state name=H020_BPMProvisionFondos>
+	<state name="H020_BPMProvisionFondos">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"

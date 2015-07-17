@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_ejecucionTituloNoJudicial" width="1216" height="729">
+<root-container name="hcj_ejecucionTituloNoJudicial" width="1164" height="734">
   <node name="Inicio" x="29" y="21" width="132" height="36">
     <edge>
       <label x="-36" y="21"/>
@@ -211,7 +211,6 @@
       <bendpoint w1="-190" h1="-61" w2="-187" h2="60"/>
     </edge>
   </node>
-  <node name="Fin" x="1003" y="251" width="132" height="36"/>
   <node name="H020_InterposicionDemandaMasBienesDecision" x="569" y="20" width="324" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -228,12 +227,13 @@
       <label x="-41" y="-12"/>
     </edge>
   </node>
-  <node name="H020_BPMProvisionFondos" x="998" y="28" width="188" height="36">
+  <node name="Fin" x="1003" y="251" width="132" height="36"/>
+  <node name="H020_BPMProvisionFondos" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="-74" y="-74"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>

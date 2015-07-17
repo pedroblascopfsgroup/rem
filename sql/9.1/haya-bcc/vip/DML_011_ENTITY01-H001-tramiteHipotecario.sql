@@ -17,8 +17,8 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF; 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'BANK01'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'BANKMASTER'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ENTITY#'; -- Configuracion Esquemas
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ENTITY_MASTER#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -32,7 +32,13 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO(V_COD_PROCEDIMIENTO,'P. hipotecario - HAYA','Procedimiento hipotecario','<div align="justify" style="font-size:8pt;font-family:Arial;margin-bottom:30px;margin-top:1em;"><ul style="list-style-type:square;margin-left:35px;"><li>Original de la escritura de pr&eacute;stamo con garantía hipotecaria.</li><li>Acta de requerimiento efectuada al demandado por el Notario.</li><li>Acta mercantil de Liquidaci&oacute;n de saldo.</li><li>Certificado expedido por la Entidad acreedora intervenido por Notario.</li><li>Certificado de la variaci&oacute;n del tipo de inter&eacute;s del Pr&eacute;stamo (cuando sea a tipo variable)</li><li>Extracto de certificaci&oacute;n de deuda de Pr&eacute;stamo intervenido por Notario.</li></ul></div>','hcj_procedimientoHipotecario','0','dd','0','EJ',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO(V_COD_PROCEDIMIENTO,
+        'P. hipotecario - HAYA',
+        'Procedimiento hipotecario',
+        '<div align="justify" style="font-size:8pt;font-family:Arial;margin-bottom:30px;margin-top:1em;"><ul style="list-style-type:square;margin-left:35px;"><li>Original de la escritura de pr&eacute;stamo con garantía hipotecaria.</li><li>Acta de requerimiento efectuada al demandado por el Notario.</li><li>Acta mercantil de Liquidaci&oacute;n de saldo.</li><li>Certificado expedido por la Entidad acreedora intervenido por Notario.</li><li>Certificado de la variaci&oacute;n del tipo de inter&eacute;s del Pr&eacute;stamo (cuando sea a tipo variable)</li><li>Extracto de certificaci&oacute;n de deuda de Pr&eacute;stamo intervenido por Notario.</li></ul></div>',
+        'hcj_procedimientoHipotecario',
+        '0','dd','0','EJ',null,null,'1',
+        'MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -50,6 +56,31 @@ DECLARE
         /*DD_TPO_ID_BPM(FK)............:*/ null,
         /*TAP_SUPERVISOR,..............:*/ '0',
         /*TAP_DESCRIPCION,.............:*/ 'Interposición demanda + Certificación de cargas',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ), 
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H001_BPMProvisionFondos',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*DD_TPO_ID_BPM(FK)............:*/ 'HC103',
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Trámite Provisión de Fondos',
         /*VERSION......................:*/ '0',
         /*USUARIOCREAR.................:*/ 'DD',
         /*BORRADO......................:*/ '0',
@@ -193,7 +224,7 @@ DECLARE
         /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
         /*TAP_BUCLE_BPM................:*/ null        
         ), 
-        TIPO_TAP(
+        T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'H001_PresentarAlegaciones',
         /*TAP_VIEW.....................:*/ null,
@@ -217,7 +248,7 @@ DECLARE
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'TGCONPR',
         /*TAP_BUCLE_BPM................:*/ null        
-        ), 
+        )
       --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_RegistrarComparecencia',null,null,null,null,null,'0','Registrar comparecencia','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
       --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_RegistrarResolucion',null,null,null,null,null,'0','Registrar resolución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
       --T_TIPO_TAP(V_COD_PROCEDIMIENTO,'H001_ResolucionFirme',null,null,null,null,null,'0','Resolución firme','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
@@ -243,6 +274,9 @@ DECLARE
       --T_TIPO_PLAZAS(null,null,'H001_ContactarConDeudor','2*24*60*60*1000L','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'H001_ConfirmarSiExisteOposicion','valores[''H001_ConfirmarNotificacionReqPago''][''fecha''] != null ? damePlazo(valores[''H001_ConfirmarNotificacionReqPago''][''fecha'']) + 10*24*60*60*1000L : 10*24*60*60*1000L','0','0','DD'),
       T_TIPO_PLAZAS(null,null,'H001_PresentarAlegaciones','damePlazo(valores[''H001_ConfirmarSiExisteOposicion''][''fechaFinAlegaciones''])','0','0','DD'),
+      T_TIPO_PLAZAS(null,null,'H001_BPMProvisionFondos','300*24*60*60*1000L','0','0','DD')
+      
+      
       --T_TIPO_PLAZAS(null,null,'H001_RegistrarComparecencia','damePlazo(valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''])','0','0','DD'),
       --T_TIPO_PLAZAS(null,null,'H001_RegistrarResolucion','damePlazo(valores[''H001_RegistrarComparecencia''][''fecha'']) + 15*24*60*60*1000L','0','0','DD'),
       --T_TIPO_PLAZAS(null,null,'H001_ResolucionFirme','damePlazo(valores[''H001_RegistrarResolucion''][''fecha'']) + 20*24*60*60*1000L','0','0','DD'),
@@ -328,10 +362,12 @@ DECLARE
         --T_TIPO_TFI('H001_ResolucionFirme','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
         --T_TIPO_TFI('H001_BPMTramiteSubasta','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ejecuci&oacute;n del tr&aacute;mite de subasta</p></div>',null,null,null,null,'0','DD'),
         --T_TIPO_TFI('H001_BPMTramiteNotificacion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ejecuci&oacute;n del tr&aacute;mite de notificaci&oacute;n</p></div>',null,null,null,null,'0','DD')
+        T_TIPO_TFI('H001_BPMProvisionFondos','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Se inicia el tr&aacute;mite de provisión de fondos</p></div>',null,null,null,null,'0','DD')
+
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
-    V_TAREA VARCHAR(30 CHAR);
+    V_TAREA VARCHAR(50 CHAR);
     
 BEGIN	
 	
@@ -343,40 +379,38 @@ BEGIN
 	V_TAREA:='H001_DemandaCertificacionCargas';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
-	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+
 	-- UPDATE
 	V_TAREA:='H001_AutoDespachandoEjecucion';
 	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items SET ' ||
 	  ' tfi_label=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Indíquese la fecha en la que se nos notifica auto por el que se despacha ejecución, el juzgado en el que ha recaído la demanda y el número de procedimiento.</p><p style="margin-bottom: 10px">Se ha de indicar si la demanda interpuesta ha sido admitida o no, lo que supondrá, según su contestación, que la tarea siguiente sea una u otra de las que se le indica con posterioridad.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será:</p><p style="margin-bottom: 10px">-Si ha sido admitida a trámite la demanda, se lanzarán las tareas "Confirmar notificación del auto despachando ejecución" y "Cumplimentar mandamiento de certificación de cargas".</p><p style="margin-bottom: 10px">-Si no ha sido admitida la demanda se le abrirá tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</p></div>''' ||
-	  ' WHERE tfi_nombre=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	  ' WHERE tfi_nombre=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 
 	-- BORRADO DE TAREA (lógico)
 	V_TAREA:='H001_RegistrarCertificadoCargas';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 
 	-- BORRADO DE TAREA (lógico)
 	V_TAREA:='H001_ContactarConDeudor';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 
 	-- BORRADO DE TAREA (lógico)
 	V_TAREA:='H001_ConfirmarSiExisteOposicion';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 
 	-- BORRADO DE TAREA (lógico)
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=null, TAP_SCRIPT_VALIDACION=''comprobarExisteDocumentoHRESOL() ? null : ''''Es necesario adjuntar el Escrito de impugnaci&oacute;n.'''' WHERE TAP_CODIGO=''H001_RegistrarResolucion''';
-
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=null, TAP_SCRIPT_VALIDACION=''comprobarExisteDocumentoHRESOL() ? null : ''''Es necesario adjuntar el Escrito de impugnaci&oacute;n.'''''' WHERE TAP_CODIGO=''H001_RegistrarResolucion''';
 	
 	/* ------------------- -------------------------- */
 	/* ------------------- -------------------------- */
 
-	
 	-- LOOP Insertando valores en TAP_TAREA_PROCEDIMIENTO
     VAR_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar TAREAS');
@@ -387,28 +421,12 @@ BEGIN
         		' DD_TPO_CODIGO='''||REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') ||''''|| 
         		' ,DD_TPO_XML_JBPM='''||REPLACE(TRIM(V_TMP_TIPO_TPO(5)),'''','''''')||''''||
 				' WHERE DD_TPO_CODIGO='''||REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') ||'''';
-        /*V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || VAR_TABLENAME || ' (' ||
-                    'DD_TPO_ID,DD_TPO_CODIGO,DD_TPO_DESCRIPCION,DD_TPO_DESCRIPCION_LARGA,' ||
-                    'DD_TPO_HTML,DD_TPO_XML_JBPM,VERSION,USUARIOCREAR,' ||
-                    'FECHACREAR,BORRADO,DD_TAC_ID,DD_TPO_SALDO_MIN,'||
-                    'DD_TPO_SALDO_MAX,FLAG_PRORROGA,DTYPE,FLAG_DERIVABLE,FLAG_UNICO_BIEN) ' ||
-                    'SELECT ' ||
-                    'S_DD_TPO_TIPO_PROCEDIMIENTO.NEXTVAL, ' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TPO(2)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(3)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TPO(4)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(5)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TPO(6)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(7)),'''','''''') || ''',sysdate,' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(8)),'''','''''') || ''',' ||
-                    '(SELECT DD_TAC_ID FROM '|| V_ESQUEMA ||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO=''' || TRIM(V_TMP_TIPO_TPO(9)) || '''),' ||
-                    '''' || TRIM(V_TMP_TIPO_TPO(10)) || ''',''' || TRIM(V_TMP_TIPO_TPO(11)) || ''',''' || TRIM(V_TMP_TIPO_TPO(12)) || ''',' ||
-                    '''' || TRIM(V_TMP_TIPO_TPO(13)) || ''',''' || TRIM(V_TMP_TIPO_TPO(14)) || ''',''' || TRIM(V_TMP_TIPO_TPO(15)) || ''' FROM DUAL'; 
-			*/
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
             DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TPO(1) ||''','''||TRIM(V_TMP_TIPO_TPO(2))||'''');
             EXECUTE IMMEDIATE V_MSQL;
     END LOOP;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Procedimiento');
-    
+
     -- LOOP Insertando valores en TAP_TAREA_PROCEDIMIENTO
     VAR_TABLENAME := 'TAP_TAREA_PROCEDIMIENTO';
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar TAREAS');
@@ -432,7 +450,7 @@ BEGIN
                     '(SELECT DD_STA_ID FROM ' || V_ESQUEMA_MASTER || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || '''),' || 
                     '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(21)),'''','''''')
 										|| ''',' ||'(SELECT DD_TGE_ID FROM ' || V_ESQUEMA_MASTER || '.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO='''|| REPLACE(TRIM(V_TMP_TIPO_TAP(22)),'''','''''') || ''')'
-										|| ''',''' || REPLACE(TRIM(V_TMP_TIPO_TAP(23)),'''','''''') || ''' FROM DUAL';
+										|| ',''' || REPLACE(TRIM(V_TMP_TIPO_TAP(23)),'''','''''') || ''' FROM DUAL';
           
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
             DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_TIPO_TAP(2)||''','''||TRIM(V_TMP_TIPO_TAP(9))||'''');
@@ -483,10 +501,9 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TFI(1) ||''','''||TRIM(V_TMP_TIPO_TFI(4))||'''');
             EXECUTE IMMEDIATE V_MSQL;
       END LOOP;
-    COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');
 
-COMMIT;
+	COMMIT;
  
 EXCEPTION
      WHEN OTHERS THEN

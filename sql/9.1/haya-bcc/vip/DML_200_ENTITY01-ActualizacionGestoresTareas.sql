@@ -17,7 +17,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_CJ#'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   

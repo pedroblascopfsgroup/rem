@@ -82,6 +82,10 @@
   		<list>
   			<value><![CDATA[ 	
 
+	            def existenCargasPreviasActivas = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionHayaProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.existenCargasPreviasActivas(idProcedimiento);
+	            }
 
 				def comprobarExisteDocumentoPRVFND = {
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");

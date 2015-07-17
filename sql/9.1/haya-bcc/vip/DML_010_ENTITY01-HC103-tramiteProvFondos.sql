@@ -63,7 +63,7 @@ DECLARE
     V_CODIGO_PLAZAS VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Plazos
     V_CODIGO1_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo1 FK con codigo de TFI Items
     V_CODIGO2_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo2 FK con codigo de TFI Items
-    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'H001'; -- Código de procedimiento para reemplazar
+    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'HC103'; -- Código de procedimiento para reemplazar
 
 
     /*
@@ -987,7 +987,6 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
 
 
-
     /*
     * LOOP ARRAY BLOCK-CODE: DD_PTP_PLAZOS_TAREAS_PLAZAS
     *---------------------------------------------------------------------
@@ -1036,7 +1035,6 @@ BEGIN
         END IF;
     END LOOP;
     DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
-
 
 
     /*
@@ -1094,23 +1092,10 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
 
     /*
-     * Desactivamos trámites antiguos si existen
-     */
-    V_SQL := 'SELECT COUNT(1) FROM '||PAR_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' WHERE '||V_CODIGO_TPO||' = ''P07'' AND BORRADO=0 ';
-        
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-
-	IF V_NUM_TABLAS > 0 THEN
-	    V_SQL := 'UPDATE '||PAR_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' SET BORRADO=1 WHERE '||V_CODIGO_TPO||' = ''P07'' AND BORRADO=0 ';
-        DBMS_OUTPUT.PUT_LINE('Trámite antiguo desactivado.');
-        EXECUTE IMMEDIATE V_SQL;        
-	END IF;    
-
-    /*
     * COMMIT ALL BLOCK-CODE
     *---------------------------------------------------------------------
     */
-    COMMIT;
+    ROLLBACK;
     DBMS_OUTPUT.PUT_LINE('[COMMIT ALL]...............................................');
     DBMS_OUTPUT.PUT_LINE('[FIN-SCRIPT]-----------------------------------------------------------');
     /*

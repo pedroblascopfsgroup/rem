@@ -24,7 +24,7 @@ DECLARE
     *---------------------------------------------------------------------
     */
     PAR_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';               -- [PARAMETRO] Configuracion Esquemas
-    PAR_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMAMASTER#';    -- [PARAMETRO] Configuracion Esquemas
+    PAR_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';    -- [PARAMETRO] Configuracion Esquemas
 
     /*
     * CONFIGURACION: TABLAS

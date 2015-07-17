@@ -16,7 +16,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'HAYA01'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -127,28 +127,6 @@ BEGIN
     END IF;
 	EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX ' || V_ESQUEMA || '.UK_ACU_SYS_GUID  ON ' || V_ESQUEMA || '.'||VAR_TABLENAME||' (SYS_GUID)';
 
-/*	
-    VAR_TABLENAME := 'BIE_BIEN';
-    DBMS_OUTPUT.PUT_LINE('******** ' || VAR_TABLENAME || ' ********'); 
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Comprobaciones previas'); 
-    V_SQL := 'SELECT COUNT(1) FROM SYS.ALL_TAB_COLUMNS WHERE COLUMN_NAME=''SYS_GUID'' AND TABLE_NAME=''' || VAR_TABLENAME || ''' AND OWNER=''' || V_ESQUEMA || '''';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-
-    -- Si NO existe la COLUMNA la crea
-    IF V_NUM_TABLAS = 0 THEN	
-      V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.' || VAR_TABLENAME || ' ADD (SYS_GUID VARCHAR(36 CHAR) NULL)';		
-			EXECUTE IMMEDIATE V_MSQL;  
-			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campo ' || VAR_TABLENAME || '.SYS_GUID creado');	
-    END IF;
-
-    V_SQL := 'SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME=''UK_BIE_SYS_GUID'' AND TABLE_NAME='''||VAR_TABLENAME||''' AND TABLE_OWNER='''|| V_ESQUEMA ||'''';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    IF V_NUM_TABLAS > 0 THEN
-    	EXECUTE IMMEDIATE 'DROP INDEX ' || V_ESQUEMA || '.UK_BIE_SYS_GUID';
-    END IF;
-	EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX ' || V_ESQUEMA || '.UK_BIE_SYS_GUID  ON ' || V_ESQUEMA || '.'||VAR_TABLENAME||' (SYS_GUID)';
-*/
-	
     VAR_TABLENAME := 'PRB_PRC_BIE';
     DBMS_OUTPUT.PUT_LINE('******** ' || VAR_TABLENAME || ' ********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Comprobaciones previas'); 
@@ -394,6 +372,7 @@ BEGIN
     END IF;
 	EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX ' || V_ESQUEMA || '.UK_CRE_SYS_GUID  ON ' || V_ESQUEMA || '.'||VAR_TABLENAME||' (SYS_GUID)';
 
+
 /*
 DECLARE
   CURSOR crs_contratos_expediente
@@ -454,7 +433,6 @@ BEGIN
     COMMIT;
   END LOOP;
 END;
-/
 
 */
     

@@ -32,6 +32,7 @@ public interface coreextensionApi {
 	String SAVE_GESTOR_ADICIONAL_ASUNTO = "plugin.recovery.coreextension.api.insertarGestorAdicionalAsunto";
 	String REMOVE_GESTOR = "plugin.recovery.coreextension.api.removeGestor";
 	String GET_LIST_TIPO_PROCEDIMIENTO_POR_TIPO_ACTUACION = "plugin.recovery.coreextension.api.getListTipoProcedimientoPorTipoActuacion";
+	String GET_LIST_TIPO_PROCEDIMIENTO_MENOS_TIPO_ACTUACION = "plugin.recovery.coreextension.api.getListTipoProcedimientoMenosTipoActuacion";
 	
 	String GET_LIST_TIPO_DESPACHO_DE_USUARIO = "plugin.recovery.coreextension.api.getListDespachosDeUsuario";
 	String GET_LIST_TIPO_GESTOR_DE_USUARIO = "plugin.recovery.coreextension.api.getLisTipoGestorDeUsuario";
@@ -117,13 +118,16 @@ public interface coreextensionApi {
 	 * 
 	 */
 	@BusinessOperationDefinition(SAVE_GESTOR_ADICIONAL_ASUNTO)
-	void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho);
+	void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) throws Exception;
 	
 	@BusinessOperationDefinition(REMOVE_GESTOR)
 	void removeGestor(Long idAsunto, Long idUsuario, String codTipoGestor);
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_PROCEDIMIENTO_POR_TIPO_ACTUACION)
 	List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacion(String codigoActuacion);
+	
+	@BusinessOperationDefinition(GET_LIST_TIPO_PROCEDIMIENTO_MENOS_TIPO_ACTUACION)
+	public List<TipoProcedimiento> getListTipoProcedimientosMenosTipoActuacion(String codigoActuacion);
 
 	/**
 	 * Funci�n de negocio que devuelve el listado de gestores de un asunto, as� como el hist�rico de cambios.

@@ -20,6 +20,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.movimiento.model.Movimiento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -366,10 +367,10 @@ public class SubastaCalculoManager {
 			float tipoSubasta = nmbBien.getTipoSubasta();
 			tipoSubasta = (float) (tipoSubasta * 0.6);
 			float diferenciaDeuda = (deudaTotal - tipoSubasta);
-			if (nmbBien.getViviendaHabitual() && diferenciaDeuda<procedimientosProjectContext.getLimiteDeudaBien()) {
+			if ("1".equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda<procedimientosProjectContext.getLimiteDeudaBien()) {
 				return -1;
 			}
-			if (nmbBien.getViviendaHabitual() && diferenciaDeuda>=procedimientosProjectContext.getLimiteDeudaBien()) {
+			if ("1".equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda>=procedimientosProjectContext.getLimiteDeudaBien()) {
 				return 1;
 			}
 		}

@@ -243,7 +243,7 @@ public class Subasta implements Serializable, Auditable {
     
     @Formula( value = " (select case when ( "
            + " CASE when count(bie.bie_id) = 0 then -1 else count(bie.bie_id)*3 end = ( "
-           + "  sum(case when bie.BIE_VIVIENDA_HABITUAL is null or bie.BIE_VIVIENDA_HABITUAL = 0 then 0 else 1 end) + "
+           + "  sum(case when bie.BIE_VIVIENDA_HABITUAL is null then 0 else 1 end) + "
            + "  sum(case when bie.DD_SPO_ID is null or bie.DD_SPO_ID = 0 then 0 else 1 end) + "
            + "  sum(case when adi.BIE_ADI_FFIN_REV_CARGA is null then 0 else 1 end))) then 1 else 0 end "  
            + " FROM los_lote_subasta los  "

@@ -235,17 +235,29 @@
 	var SI_NO_Render = function (value, meta, record) {
 		if (value=='Sí' ) {
 			return '<s:message code="label.si" text="**S&iacute;" />';
-		} if (value=='NO' ) {
+		} 
+		if (value=='NO' ) {
 			return '<s:message code="label.no" text="**No;" />';
-		}if (value=='01' ) {
+		}
+		if (value=='1' ) {
+			return '<s:message code="label.si" text="**S&iacute;" />';
+		} if (value=='2' ) {
+			return '<s:message code="label.no" text="**No;" />';
+		}
+		if (value=='01' ) {
 			return '<s:message code="label.si" text="**S&iacute;" />';
 		} if (value=='02' ) {
 			return '<s:message code="label.no" text="**No;" />';
 		}if (value==true ) {
 			return '<s:message code="label.si" text="**S&iacute;" />';
-		}else {
+		}
+		if (Ext.isEmpty(value)){
+			return '<s:message code="" text="--" />';
+		}
+		else {
 			return '<s:message code="label.no" text="**No" />';
 		}
+		
 	};
 
 	var marcadoBienesRecord = Ext.data.Record.create([

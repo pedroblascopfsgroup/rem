@@ -8,8 +8,10 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
@@ -37,6 +39,7 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_GET_BIENES_LOTE_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getBienesLoteSubasta";
 	public static final String BO_NMB_SUBASTA_GET_DATOS_ACTA_COMITE = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getDatosActaComite";
 	public static final String BO_NMB_SUBASTA_GET_SUBASTA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getSubasta";
+	public static final String BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE_DEUDA = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierreDeuda";
 	public static final String BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE = "es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierre";
 	public static final String BO_NMB_SUBASTA_INFORME_SUBASTA_LETRADO ="es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getInformeSubastasLetrado";
 	public static final String CODIGO_TIPO_PROCEDIMIENTO_SUBASTA_BANKIA = "P401";
@@ -56,9 +59,9 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarBienesCierreDeuda";
 	public static final String BO_NMB_SUBASTA_RELLENAR_INFORME_CDD = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.rellenarInformeValidacionCDD";	
 	public static final String BO_NMB_SUBASTA_ENVIAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarCierreDeuda";
-	public static final String BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.validacionCierreDeuda";
+	public static final String BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getProcedimientoBienByIdPadre";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
-	
+	public static final String BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.parametrizarLimite";
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -166,6 +169,9 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GET_SUBASTA)
 	public Subasta getSubasta(Long idSubasta);
+
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE_DEUDA)
+	public void guardaBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda autoCierreDeuda);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien);
@@ -208,11 +214,13 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
 	void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien);
+		
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
+	Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento);
 	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_VALIDAR_CIERRE_DEUDA)
-	boolean validacionCierreDeuda(Subasta subasta, List<Long> idsBien, String nombreNodo);
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE)
+	HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo);
 	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA)
-	boolean tareaExiste(Procedimiento procedimiento, String nombreNodo);
-	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
+	Parametrizacion parametrizarLimite(String nombreParametro);
 }

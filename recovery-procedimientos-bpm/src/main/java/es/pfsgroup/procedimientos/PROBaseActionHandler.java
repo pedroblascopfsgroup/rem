@@ -776,7 +776,7 @@ public class PROBaseActionHandler implements ActionHandler {
         }
     }
 
-    private Procedimiento creaProcedimientoHijo(final ExecutionContext executionContext, final TipoProcedimiento tipoProcedimientoHijo, Procedimiento procPadre, final String iterationProperty, final Object item) {
+    protected Procedimiento creaProcedimientoHijo(final ExecutionContext executionContext, final TipoProcedimiento tipoProcedimientoHijo, Procedimiento procPadre, final String iterationProperty, final Object item) {
         Procedimiento procHijo = proxyFactory.proxy(JBPMProcessApi.class).creaProcedimientoHijo(tipoProcedimientoHijo, procPadre);
         
         if ((iterationProperty != null) && (item != null)){

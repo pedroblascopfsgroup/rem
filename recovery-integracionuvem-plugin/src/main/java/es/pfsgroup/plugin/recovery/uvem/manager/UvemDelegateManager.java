@@ -45,6 +45,7 @@ import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
 import es.cm.arq.tda.tiposdedatosbase.Fecha;
 import es.cm.arq.tda.tiposdedatosbase.ImporteMonetario;
@@ -111,6 +112,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	public void UVEMUtils() {
 		if (appProperties == null) {
 			this.appProperties = cargarProperties(DEVON_PROPERTIES);
+		} else {
+			if(appProperties.contains(UVEM_URL) && appProperties.getProperty(UVEM_URL) != null){
+				URL = appProperties.getProperty(UVEM_URL);
+			}else{
+				System.out.println("UVEM no instalado");
+			}
 		}
 		
 		if (appProperties == null) {
@@ -163,6 +170,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	}
 
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_TASACION)
+	@Transactional(readOnly = false)
 	public void solicitarTasacion(Long idBien) {
 		
 		solicitarTasacion(idBien, null);
@@ -170,7 +178,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
 	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
-	public Integer solicitarNumeroActivoConRespuesta(Long bienId){
+	public String solicitarNumeroActivoConRespuesta(Long bienId){
 		return solicitarNumeroActivoRespuesta(bienId, null);
 	}
 
@@ -203,7 +211,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
     	
 	};
 	
-	private Integer solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
+	private String solicitarNumeroActivoRespuesta(Long bienId, Long prcId){
 		
 		try {
 			
@@ -290,6 +298,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			}
 			
 			System.out.println("Inicialización del endpoint de MidTR. Se realiza una única vez para todos los servicios. La url de MidTR debe estar parametrizada pues varía en cada entorno");
+			System.out.println("URL: " + URL);
 			Hashtable htInitParams = new Hashtable();
 			htInitParams.put(WIService.WORFLOW_PARAM, URL);
 			htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
@@ -417,7 +426,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				copaw3 = locActual.getPais() != null ? locActual.getPais().getDescripcion() : "";
 				
 				novias = locActual.getNombreVia() != null ? locActual.getNombreVia() : "";
-				novias += locActual.getNumeroDomicilio() != null ? locActual.getNumeroDomicilio() : "";
+				novias += locActual.getNumeroDomicilio() != null ? " " + locActual.getNumeroDomicilio() : "";
 				
 			}
 
@@ -456,7 +465,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			servicioGMP5JD20.setCodigoDeEntradaDelActivocoenax((short) 1);
 			System.out.println(" ***REQUERIDO*** COPRAC"); // 	longitud="1"	 Procedencia del activo	siempre S
 			servicioGMP5JD20.setProcedenciaDelActivocoprac('S');
-			if("SAREB".compareTo(asunto.getPropiedadAsunto().getCodigo()) == 0){
+			if(asunto.getPropiedadAsunto() != null && "SAREB".compareTo(asunto.getPropiedadAsunto().getCodigo()) == 0){
 				System.out.println(" ***REQUERIDO*** COENGW"); // 	"NUMERICO_4" longitud="5"	 Código de Entidad	
 				//FUNCIONAL, char_extra1 segun DR -> vease appconstants
 				short codigoEntidad = 5074;
@@ -496,7 +505,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			int identificadorExpediente = asunto.getId().intValue();
 			servicioGMP5JD20.setIdentificadorExpedienteEnSedasidexsw(identificadorExpediente);
 			System.out.println(" ***REQUERIDO*** NOCURA"); // 	longitud="40"	 Nombre del Procurador	
-			String nombreProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getApellidoNombre(), 40,' ').substring(0, 40);
+			String nombreProcurador = null;
+			if(procuradorAsunto != null){
+				nombreProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getApellidoNombre(), 40,' ').substring(0, 40);
+			}else{
+				nombreProcurador = StringUtils.rightPad("null", 40,' ').substring(0, 40);
+			}
 			servicioGMP5JD20.setNombreProcuradornocura(nombreProcurador);
 			System.out.println(" ***REQUERIDO*** OBRECO"); // 	longitud="6"	 Referencia del Procurador
 			String referenciaProcurador = StringUtils.rightPad(procuradorAsunto.getGestor().getUsuario().getUsername(), 6,' ');
@@ -586,12 +600,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			if(tipoInmueble.contains("VI"))			 
 			{
 				//tipoInmueble = "VI01";
-				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : bien.getViviendaHabitual()  ? '1' : '2' );
+				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : "1".equals(bien.getViviendaHabitual())  ? '1' : '2' );
 			}
 			else if(tipoInmueble.contains("UN"))
 			{	
 			    //tipoInmueble = "VI04";
-				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : bien.getViviendaHabitual()  ? '1' : '2' );
+				servicioGMP5JD20.setIndicadorResidenciaHabitualapresh(bien.getViviendaHabitual() == null ? '3' : "1".equals(bien.getViviendaHabitual())  ? '1' : '2' );
 			}
 			else if(tipoInmueble.contains("CO"))
 			{
@@ -681,10 +695,10 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			if( numeroActivo!=null && numeroActivo!=0 ){
 				bien.setNumeroActivo(String.valueOf(numeroActivo));
 				genericDao.update(NMBBien.class, bien);
-				return 1;
+				return "1";
 			}
 			else{
-				return -1;
+				return "-1";
 			}
 		
 		} catch (Exception e) {
@@ -709,9 +723,10 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				System.out.println("STACKTRACE: " + wi.getStackTrace());
 				System.out.println("SUBSYSTEM: " + wi.getSubsystem());
 				System.out.println("URL: " + wi.getUrl());
+				return wi.getMessage();
 			}
 			e.printStackTrace();
-			return -1;
+			return "-1";
 		}
 		
 	}
@@ -729,8 +744,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	//@ManagedOperation(description ="Método que solicita la tasacion de un bien a UVEM")
 	//@ManagedOperationParameter(name="bienId", description= "id del bien.") 
-	@Transactional(readOnly = false)
-	public void solicitarTasacion(Long bienId, Long prcId){
+	private void solicitarTasacion(Long bienId, Long prcId){
 		
 		try {
 			

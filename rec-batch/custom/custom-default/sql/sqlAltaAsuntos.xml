@@ -1,0 +1,825 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<!-- Pasaje a produccion asuntos -->
+<!-- <entry key="linAltaAsuntos.pasaje.borrarAsuntosRepetidos.sql">
+<![CDATA[
+DELETE FROM LIN_ASUNTOS_NUEVOS
+ WHERE ROWID NOT IN
+            (SELECT MIN(ROWID)
+               FROM LIN_ASUNTOS_NUEVOS
+              GROUP BY 
+              N_CASO
+              )
+]]>
+</entry> -->
+
+<entry key="linAltaAsuntos.pasaje.actualizaLinAsuntos.sql">
+<![CDATA[
+UPDATE lin_asuntos_nuevos
+   SET creado = 'S'
+ WHERE creado = 'N'
+   AND n_caso IN (
+          SELECT DISTINCT lin.n_caso
+                     FROM cnt_contratos cnt JOIN lin_asuntos_nuevos lin
+                          ON cnt.cnt_contrato = lin.n_caso
+                          JOIN cex_contratos_expediente cex
+                          ON cex.cnt_id = cnt.cnt_id
+                          JOIN prc_cex ON prc_cex.cex_id = cex.cex_id
+                          JOIN prc_procedimientos prc
+                          ON prc.prc_id = prc_cex.prc_id
+                          JOIN asu_asuntos asu ON asu.asu_id = prc.asu_id
+                    WHERE prc.borrado = 0
+                      AND cex.borrado = 0
+                      AND asu.dd_eas_id NOT IN (
+                                     SELECT eas6.dd_eas_id
+                                       FROM ${master.schema}.dd_eas_estado_asuntos eas6
+                                      WHERE eas6.dd_eas_codigo IN
+                                                                 ('05', '06')))
+]]>
+</entry>
+
+<entry key="linAltaAsuntos.pasaje.dropTableAsuntosCrear.sql">
+<![CDATA[
+DROP TABLE LIN_ASUNTOS_PARA_CREAR
+]]>
+</entry>
+
+<entry key="linAltaAsuntos.pasaje.crearTableAsuntosCrear.sql">
+<![CDATA[
+CREATE TABLE LIN_ASUNTOS_PARA_CREAR AS
+SELECT TABLA.*, 
+S_CLI_CLIENTES.NEXTVAL AS CLI_ID,
+S_EXP_EXPEDIENTES.NEXTVAL AS EXP_ID, 
+S_PRC_PROCEDIMIENTOS.NEXTVAL AS PRC_ID,
+S_ASU_ASUNTOS.NEXTVAL AS ASU_ID 
+FROM 
+(SELECT DISTINCT LIN.N_CASO, CNT.CNT_ID, CPE.PER_ID, CNT.OFI_ID
+FROM LIN_ASUNTOS_NUEVOS LIN
+JOIN CNT_CONTRATOS CNT ON LIN.N_CASO=CNT.CNT_CONTRATO
+JOIN CPE_CONTRATOS_PERSONAS CPE ON CPE.CNT_ID=CNT.CNT_ID AND DD_TIN_ID=(SELECT DD_TIN_ID FROM DD_TIN_TIPO_INTERVENCION WHERE DD_TIN_DESCRIPCION='DEUDOR PRINCIPAL')
+WHERE LIN.CREADO='N') TABLA
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertCliClientes.sql">
+<![CDATA[
+INSERT INTO CLI_CLIENTES (CLI_ID
+                                  ,PER_ID
+                                  ,ARQ_ID   
+                                  ,DD_EST_ID
+                                  ,DD_ECL_ID
+                                  ,CLI_FECHA_EST_ID
+                                  ,VERSION
+                                  ,USUARIOCREAR
+                                  ,FECHACREAR
+                                  ,BORRADO
+                                  ,CLI_FECHA_CREACION
+                                  ,CLI_TELECOBRO
+                                  ,OFI_ID
+                                 )           
+       (SELECT
+       APC.CLI_ID   
+      ,APC.PER_ID               
+      ,(select arq_id from arq_arquetipos where arq_nombre='Generico') AS ARQ_ID                                                             
+      ,1 AS DD_EST_ID
+      ,3 AS DD_ECL_ID                                                                           
+      ,SYSDATE
+      ,0 AS VERSION                                                                          
+      ,'ETLCREAASU' AS USUARIOCREAR                                                                       
+      ,SYSDATE  AS FECHACREAR                                                                    
+      ,1 AS BORRADO                                                                          
+      ,SYSDATE AS CLI_FECHA_CREACION                                                                   
+      ,0 AS CLI_TELECOBRO                                                                           
+      ,APC.OFI_ID
+FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertCclContratosClientes.sql">
+<![CDATA[
+INSERT INTO CCL_CONTRATOS_CLIENTE ( CCL_ID 
+                                           ,CNT_ID
+                                           ,CLI_ID
+                                           ,CCL_PASE
+                                           ,VERSION
+                                           ,USUARIOCREAR
+                                           ,FECHACREAR
+                                           ,BORRADO
+                                          )                                         
+(SELECT 
+        S_CCL_CONTRATOS_CLIENTE.NEXTVAL AS CCL_ID 
+       ,APC.CNT_ID AS CNT_ID                        
+       ,APC.CLI_ID AS CLI_ID                       
+       ,1 AS CCL_PASE                              
+       ,0 AS VERSION                              
+       ,'ETLCREAASU' AS USUARIOCREAR                           
+       ,SYSDATE AS FECHACREAR                        
+       ,0 AS BORRADO
+       from LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertExpExpedientes.sql">
+<![CDATA[
+INSERT INTO EXP_EXPEDIENTES (EXP_ID
+                                    ,DD_EST_ID
+                                    ,EXP_FECHA_EST_ID
+                                    ,OFI_ID
+                                    ,ARQ_ID
+                                    ,VERSION
+                                    ,USUARIOCREAR
+                                    ,FECHACREAR
+                                    ,BORRADO
+                                    ,DD_EEX_ID
+                                    ,EXP_DESCRIPCION
+                                    )                                                           
+(SELECT APC.EXP_ID 
+        ,5  AS DD_EST_ID                      
+        ,SYSDATE AS EXP_FECHA_EST_ID     
+        ,APC.OFI_ID AS OFI_ID    
+         ,(select arq_id from arq_arquetipos where arq_nombre='Generico') AS ARQ_ID         
+        ,0 AS VERSION                       
+        ,'ETLCREAASU' AS USUARIOCREAR                       
+        ,SYSDATE AS FECHACREAR                 
+        ,0  AS BORRADO                      
+        ,4  AS DD_EEX_ID
+        ,APC.N_CASO||'-'||(SELECT MAX(PER_NOM50) FROM PER_PERSONAS WHERE PER_ID=APC.PER_ID) AS EXP_DESCRIPCION                          
+FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertCexContratosExpedientes.sql">
+<![CDATA[
+INSERT INTO CEX_CONTRATOS_EXPEDIENTE (CEX_ID             
+                                             ,CNT_ID             
+                                             ,EXP_ID             
+                                             ,CEX_PASE   
+                                             ,CEX_SIN_ACTUACION        
+                                             ,VERSION            
+                                             ,USUARIOCREAR       
+                                             ,FECHACREAR         
+                                             ,BORRADO            
+                                             ,DD_AEX_ID  
+                                             )
+(select S_CEX_CONTRATOS_EXPEDIENTE.NEXTVAL  AS CEX_ID     
+       ,APC.CNT_ID AS CNT_ID      
+       ,APC.EXP_ID AS EXP_ID           
+       ,1  AS CEX_PASE      
+       ,0  AS CEX_SIN_ACTUACION                         
+       ,0  AS VERSION                                  
+       ,'ETLCREAASU' AS USUARIOCREAR                       
+       ,SYSDATE AS FECHACREAR                 
+       ,0  AS BORRADO                                   
+       ,9 AS DD_AEX_ID
+FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertPexPersonasExpedientes.sql">
+<![CDATA[
+INSERT INTO PEX_PERSONAS_EXPEDIENTE (PEX_ID
+                                            ,PER_ID
+                                            ,EXP_ID
+                                            ,DD_AEX_ID
+                                            ,PEX_PASE
+                                            ,VERSION
+                                            ,USUARIOCREAR
+                                            ,FECHACREAR
+                                            ,BORRADO
+                                            )
+(SELECT 
+       S_PEX_PERSONAS_EXPEDIENTE.NEXTVAL AS PEX_ID       
+       ,APC.PER_ID AS PER_ID                       
+       ,APC.EXP_ID AS EXP_ID                    
+       ,9 AS DD_AEX_ID
+       ,1 AS PEX_PASE                                
+       ,0  AS VERSION                                  
+       ,'ETLCREAASU' AS USUARIOCREAR                       
+       ,SYSDATE AS FECHACREAR                 
+       ,0  AS BORRADO                                
+FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertAsuAsuntos.sql">
+<![CDATA[
+INSERT INTO ASU_ASUNTOS  (ASU_ID
+                                ,DD_EST_ID
+                                ,ASU_FECHA_EST_ID 
+                                ,ASU_NOMBRE
+                                ,EXP_ID
+                                ,VERSION
+                                ,USUARIOCREAR
+                                ,FECHACREAR
+                                ,BORRADO
+                                ,DD_EAS_ID 
+                                ,DTYPE
+                                ,LOTE        
+                                )    
+(SELECT 
+       APC.ASU_ID AS ASU_ID
+       ,6 AS DD_EST_ID                      
+       ,SYSDATE AS ASU_FECHA_EST_ID 
+       ,SUBSTR(APC.N_CASO||'-'||(SELECT MAX(PER_NOM50) FROM PER_PERSONAS WHERE PER_ID=APC.PER_ID),0,50) AS ASU_NOMBRE
+       ,APC.EXP_ID AS EXP_ID
+       ,0  AS VERSION                                  
+       ,'ETLCREAASU' AS USUARIOCREAR                       
+       ,SYSDATE AS FECHACREAR                 
+       ,0  AS BORRADO                        
+       ,3  AS DD_EAS_ID                                                                                 
+       ,'EXTAsunto' AS DTYPE
+       ,(SELECT MAX(N_LOTE) FROM LIN_ASUNTOS_NUEVOS WHERE N_CASO=APC.N_CASO AND CREADO='N') AS LOTE
+FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertPrcProcedimientos.sql">
+<![CDATA[
+Insert into PRC_PROCEDIMIENTOS (PRC_ID, 
+                                        ASU_ID, 
+                                        DD_TAC_ID, 
+                                        DD_TRE_ID, 
+                                        DD_TPO_ID, 
+                                        PRC_PORCENTAJE_RECUPERACION, 
+                                        PRC_PLAZO_RECUPERACION,                                        
+                                        PRC_SALDO_ORIGINAL_VENCIDO, 
+                                        PRC_SALDO_ORIGINAL_NO_VENCIDO, 
+                                        PRC_SALDO_RECUPERACION,
+                                        DD_JUZ_ID, 
+                                        VERSION, 
+                                        USUARIOCREAR, 
+                                        FECHACREAR,
+                                        BORRADO,  
+                                        DD_EPR_ID, 
+                                        DTYPE
+                                        )                                           
+(SELECT                      APC.PRC_ID AS PRC_ID
+                            ,APC.ASU_ID  AS ASU_ID        
+                            ,(SELECT DD_TAC_ID FROM DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_ID = (SELECT TIPO_PROC FROM LIN_ASUNTOS_NUEVOS WHERE N_CASO=APC.N_CASO AND CREADO='N')) AS DD_TAC_ID
+                            ,1 AS DD_TRE_ID
+                            ,(SELECT TIPO_PROC FROM LIN_ASUNTOS_NUEVOS WHERE N_CASO=APC.N_CASO AND CREADO='N') as DD_TPO_ID
+                            ,100 as PRC_PORCENTAJE_RECUPERACION
+                            ,30 as PRC_PLAZO_RECUPERACION
+                            ,(SELECT SUM(MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) FROM CPE_CONTRATOS_PERSONAS CPE JOIN MOV_MOVIMIENTOS MOV ON MOV.CNT_ID=CPE.CNT_ID WHERE mov_fichero_carga=(select * from (select distinct(mov_fichero_carga) from mov_movimientos order by mov_fichero_carga desc) where rownum <=1) AND PER_ID=APC.PER_ID) as PRC_SALDO_ORIGINAL_VENCIDO
+                            ,0 as PRC_SALDO_ORIGINAL_NO_VENCIDO 
+                            ,(SELECT PRINCIPAL FROM LIN_ASUNTOS_NUEVOS WHERE N_CASO=APC.N_CASO AND CREADO='N')  as PRC_SALDO_RECUPERACION
+                            ,(SELECT JUZGADO FROM LIN_ASUNTOS_NUEVOS WHERE N_CASO=APC.N_CASO AND CREADO='N')  as DD_JUZ_ID
+                            ,0  AS VERSION                                  
+                            ,'ETLCREAASU' AS USUARIOCREAR                       
+                            ,SYSDATE AS FECHACREAR                 
+                            ,0  AS BORRADO 
+                            ,3  as DD_EPR_ID
+                            ,'MEJProcedimiento' as DTYPE
+FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertPrcPer.sql">
+<![CDATA[
+INSERT INTO PRC_PER (PRC_ID, PER_ID, VERSION)
+(SELECT APC.PRC_ID, APC.PER_ID, 0 AS VERSION FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertPrcCex.sql">
+<![CDATA[
+INSERT INTO PRC_CEX (PRC_ID, CEX_ID, VERSION)
+(SELECT APC.PRC_ID, 
+(SELECT CEX_ID FROM CEX_CONTRATOS_EXPEDIENTE WHERE FECHACREAR > SYSDATE -1 AND CNT_ID=APC.CNT_ID) AS CEX_ID,
+0 AS VERSION FROM LIN_ASUNTOS_PARA_CREAR APC)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertPrcPerExtra.sql">
+<![CDATA[
+INSERT INTO PRC_PER (PRC_ID, PER_ID, VERSION)
+select distinct (select MAX(prc_id) from prc_cex join cex_contratos_expediente cex on prc_Cex.cex_id=cex.cex_id where cnt_id=a.cnt_id) as prc_id, a.per_id, 0 AS VERSION
+from 
+(select distinct per_id, cnt_id from cpe_contratos_personas where cnt_id in (select cnt_id from cex_contratos_expediente)
+minus
+select prc_per.per_id, cnt.cnt_id from prc_per 
+join prc_cex on prc_per.prc_id=prc_cex.prc_id
+join cex_contratos_Expediente cex on cex.cex_id=prc_cex.cex_id
+join cnt_contratos cnt on cex.cnt_id=cnt.cnt_id) a
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.dropTmpUgasPfs.sql">
+<![CDATA[
+drop table tmp_ugaspfs_bpm_input_con1
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.createTmpUgasPfs.sql">
+<![CDATA[
+create table tmp_ugaspfs_bpm_input_con1 as
+SELECT PRC_ID, 
+(select MAX(tap.tap_id)
+from dd_tpo_tipo_procedimiento tpo
+    join (select name_, max(id_) maxid from ${master.schema}.jbpm_processdefinition group by name_) pdm on tpo.dd_tpo_xml_jbpm = pdm.name_
+    join ${master.schema}.jbpm_node node on pdm.maxid = node.processdefinition_ and node.name_ = 'Inicio'
+    join ${master.schema}.jbpm_transition tr on node.id_ = tr.from_
+    join ${master.schema}.jbpm_node dest on tr.to_ = dest.id_
+    join tap_tarea_procedimiento tap on dest.name_ = tap.tap_codigo
+where tap.borrado=0 and tpo.borrado=0
+AND TPO.DD_TPO_ID=(SELECT TIPO_PROC FROM LIN_ASUNTOS_NUEVOS WHERE N_CASO=APC.N_CASO AND CREADO='N')) AS TAP_ID 
+FROM LIN_ASUNTOS_PARA_CREAR APC
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.gestorPorDefecto.sql">
+<![CDATA[
+Insert into GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+(SELECT S_GAA_GESTOR_ADICIONAL_ASUNTO.NEXTVAL,
+ASU_ID AS ASU_ID,
+(SELECT 
+CASE
+WHEN LIN.LETRADO IS NULL AND LIN.GRUPO IS NULL THEN 
+(select MAX(USD_ID) AS USD_ID from lin_asuntos_nuevos lin 
+join usd_usuarios_despachos usd on lin.despacho=usd.des_id
+join ${master.schema}.usu_usuarios usu on usu.usu_id=usd.USU_ID
+where lin.creado='N' AND lin.N_CASO=A.N_CASO and usd.USD_SUPERVISOR=0 and usu.USU_GRUPO=1) 
+WHEN LIN.LETRADO IS NOT NULL THEN (select MAX(USD_ID) AS USD_ID from lin_asuntos_nuevos lin 
+join ${master.schema}.usu_usuarios usu on usu.usu_USERNAME=LIN.LETRADO
+join usd_usuarios_despachos usd on USU.USU_ID=usd.USU_ID
+where lin.creado='N' AND lin.N_CASO=A.N_CASO and usd.USD_SUPERVISOR=0 and usu.USU_GRUPO=0)
+WHEN LIN.GRUPO IS NOT NULL THEN
+(select MAX(USD_ID) AS USD_ID from lin_asuntos_nuevos lin 
+join ${master.schema}.usu_usuarios usu on usu.usu_USERNAME=LIN.GRUPO
+join usd_usuarios_despachos usd on USU.USU_ID=usd.USU_ID
+where lin.creado='N' AND lin.N_CASO=A.N_CASO and usd.USD_SUPERVISOR=0 and usu.USU_GRUPO=1)
+ELSE NULL END AS USD_ID
+FROM lin_asuntos_nuevos lin where lin.creado='N' AND lin.N_CASO=A.N_CASO) AS USD_ID,
+2 AS DD_TGE_ID, --Gestor
+0 AS VERSION,
+'ETL-ALTA' AS USUARIOCREAR,
+SYSDATE AS FECHACREAR,
+0 AS BORRADO 
+FROM
+(SELECT N_CASO, ASU_ID FROM lin_asuntos_nuevos LIN 
+JOIN CNT_CONTRATOS CNT ON CNT.CNT_CONTRATO=LIN.N_CASO
+JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON CEX.CNT_ID=CNT.CNT_ID
+JOIN ASU_ASUNTOS ASU ON ASU.EXP_ID=CEX.EXP_ID
+WHERE LIN.CREADO='N' 
+AND ASU_ID NOT IN (SELECT ASU_ID FROM GAA_GESTOR_ADICIONAL_ASUNTO WHERE DD_TGE_ID=2)) A )
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.supervisorPorDefecto.sql">
+<![CDATA[
+Insert into GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+(SELECT S_GAA_GESTOR_ADICIONAL_ASUNTO.NEXTVAL,
+A.ASU_ID AS ASU_ID,
+A.SUP_ID AS USD_ID,
+3 AS DD_TGE_ID,
+0 AS VERSION,
+'ETL-ALTA' AS USUARIOCREAR,
+SYSDATE AS FECHACREAR,
+0 AS BORRADO 
+FROM
+(SELECT N_CASO, ASU_ID, 
+(SELECT MAX(USD2.USD_ID) FROM GAA_GESTOR_ADICIONAL_ASUNTO GAA
+JOIN USD_USUARIOS_DESPACHOS USD ON USD.USD_ID=GAA.USD_ID
+JOIN USD_USUARIOS_DESPACHOS USD2 ON USD2.DES_ID=USD.DES_ID
+WHERE GAA.ASU_ID=ASU.ASU_ID AND GAA.DD_TGE_ID=2 AND USD2.USD_SUPERVISOR=1 ) SUP_ID
+FROM lin_asuntos_nuevos LIN 
+JOIN CNT_CONTRATOS CNT ON CNT.CNT_CONTRATO=LIN.N_CASO
+JOIN CEX_CONTRATOS_EXPEDIENTE CEX ON CEX.CNT_ID=CNT.CNT_ID
+JOIN ASU_ASUNTOS ASU ON ASU.EXP_ID=CEX.EXP_ID
+WHERE LIN.CREADO='N' 
+AND ASU_ID NOT IN (SELECT ASU_ID FROM GAA_GESTOR_ADICIONAL_ASUNTO WHERE DD_TGE_ID=3)) A )
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.gestorBackOfficeDefecto.sql">
+<![CDATA[
+INSERT INTO gaa_gestor_adicional_asunto
+            (gaa_id, asu_id, usd_id, dd_tge_id, VERSION, usuariocrear, fechacrear, borrado)
+   (SELECT s_gaa_gestor_adicional_asunto.NEXTVAL AS gaa_id, asubo.asu_id AS asu_id,
+           (SELECT MAX (usd_id)
+              FROM linmaster.usu_usuarios usu JOIN usd_usuarios_despachos usd ON usu.usu_id = usd.usu_id
+             WHERE usu_username = 'GR_GES_BO') AS usd_id, 81 AS dd_tge_id, 0 AS VERSION,
+           'ETL-ALTA' AS usuariocrear, SYSDATE AS fechacrear, 0 AS borrado
+      FROM (SELECT asu_id
+              FROM prc_procedimientos
+             WHERE dd_tpo_id = 1248
+            MINUS
+            SELECT asu_id
+              FROM gaa_gestor_adicional_asunto
+             WHERE dd_tge_id = 81) asubo)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertaHistoricoGestores.sql">
+<![CDATA[
+INSERT INTO gah_gestor_adicional_historico
+   SELECT s_gah_gestor_adic_historico.NEXTVAL, g.usd_id, g.asu_id, g.dd_tge_id,
+          NVL2 (g.fechamodificar, g.fechamodificar, g.fechacrear), NULL, 0, 'ETLCREAASU', SYSDATE, NULL, NULL, NULL,
+          NULL, 0
+     FROM gaa_gestor_adicional_asunto g INNER JOIN lin_asuntos_para_crear lin ON g.asu_id = lin.asu_id
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.actualizaEstadoAsuntos.sql">
+<![CDATA[
+UPDATE LIN_ASUNTOS_NUEVOS set creado='S' where creado='N' and n_caso in
+(select distinct lin.N_CASO from cnt_contratos cnt
+join LIN_ASUNTOS_NUEVOS lin on cnt.CNT_CONTRATO=lin.N_CASO
+join cex_contratos_expediente cex on cex.cnt_id=cnt.cnt_id
+join prc_cex on prc_cex.cex_id=cex.cex_id
+join prc_procedimientos prc on prc.prc_id=prc_cex.prc_id
+join asu_asuntos asu on asu.asu_id=prc.asu_id
+where prc.borrado=0 and cex.BORRADO=0 and asu.dd_eas_id NOT IN
+(SELECT eas6.dd_eas_id FROM ${master.schema}.dd_eas_estado_asuntos eas6 WHERE eas6.dd_eas_codigo in ('05','06')))
+]]>
+</entry>
+
+
+
+<!-- Proceso de bpms -->
+<entry key="linAltaAsuntos.pasaje.alterTmpUgasPfs.sql">
+<![CDATA[
+alter table tmp_ugaspfs_bpm_input_con1 add  t_referencia number(16)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterTareasNotificaciones.sql">
+<![CDATA[
+update tar_tareas_notificaciones set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterTareaExterna.sql">
+<![CDATA[
+update tex_tarea_externa set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterJbpmToken.sql">
+<![CDATA[
+update ${master.schema}.jbpm_token set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterJbpmProcessInstance.sql">
+<![CDATA[
+update ${master.schema}.jbpm_processinstance set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateTmpUgasPfs.sql">
+<![CDATA[
+update tmp_ugaspfs_bpm_input_con1 set t_referencia = rownum
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertTareasNotificaciones.sql">
+<![CDATA[
+Insert into TAR_TAREAS_NOTIFICACIONES
+   (TAR_ID, ASU_ID, DD_EST_ID, DD_EIN_ID, DD_STA_ID, TAR_CODIGO, TAR_TAREA, TAR_DESCRIPCION, TAR_FECHA_FIN, TAR_FECHA_INI, TAR_EN_ESPERA, TAR_ALERTA, TAR_TAREA_FINALIZADA, TAR_EMISOR, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, PRC_ID, DTYPE, NFA_TAR_REVISADA, t_referencia)
+   select s_tar_tareas_notificaciones.nextval tar_id 
+    ,prc.asu_id
+    ,6 dd_est_id
+    ,5 dd_ein_id
+    ,tap.dd_sta_id dd_sta_id
+    ,1 tar_codigo
+    ,tap.tap_descripcion tar_tarea
+    ,tap.tap_descripcion tar_descripcion
+    , CASE tap.TAP_CODIGO
+                   WHEN 'P71_nodoInicioSql'
+                      THEN sysdate
+                   ELSE null
+                END tar_fecha_fin
+    , sysdate tar_fecha_ini
+    , 0 tar_en_espera
+    , 0 tar_alerta
+    , CASE tap.TAP_CODIGO
+                   WHEN 'P71_nodoInicioSql'
+                      THEN 1
+                   ELSE null
+                END 
+     tar_tarea_finalizada
+    , 'AUTOMATICA' tar_emisor
+    , 0, 'AUTOMATICA', sysdate, 0
+    , prc.prc_id
+    ,'EXTTareaNotificacion' DTYPE
+    , 0 nfa_tar_revisada
+    ,tmp.t_referencia
+from tmp_ugaspfs_bpm_input_con1 tmp
+    join tap_tarea_procedimiento tap on tmp.tap_id = tap.tap_id
+    --join cex_contratos_expediente cex on tmp.cnt_id = cex.cnt_id
+    --join prc_cex on cex.cex_id = prc_cex. cex_id
+    join prc_procedimientos prc on tmp.prc_id = prc.prc_id
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertTexTareaExterna.sql">
+<![CDATA[
+Insert into TEX_TAREA_EXTERNA
+   (TEX_ID, TAR_ID, TAP_ID, TEX_TOKEN_ID_BPM, TEX_DETENIDA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DTYPE, t_referencia)
+select s_TEX_TAREA_EXTERNA.nextval
+, tar.tar_id
+, tmp.tap_id
+, null
+, 0
+, 0, 'AUTOMATICA', sysdate, 0, 'EXTTareaExterna'
+, tmp.t_referencia
+from tmp_ugaspfs_bpm_input_con1 tmp
+    join tar_tareas_notificaciones tar on tmp.t_referencia = tar.t_referencia
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmProcessInstance.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_PROCESSINSTANCE
+   (ID_, VERSION_, START_, END_, ISSUSPENDED_, PROCESSDEFINITION_,t_referencia)
+select ${master.schema}.HIBERNATE_SEQUENCE.nextval
+,1 VERSION_
+, SYSDATE START_
+,NULL END_
+, 0 issuspended_
+, maxpd.id_ PROCESSDEFINITION_
+, tmp.t_referencia
+from tmp_ugaspfs_bpm_input_con1 tmp
+    --join prc_procedimientos prc on tmp.prc_id = prc.prc_id
+    join tap_tarea_procedimiento tap on tmp.tap_id = tap.tap_id
+    join dd_tpo_tipo_procedimiento tpo on tap.dd_tpo_id = tpo.dd_tpo_id
+    join tar_tareas_notificaciones tar on tmp.t_referencia = tar.t_referencia
+    join (select name_, max(id_) id_ from ${master.schema}.jbpm_processdefinition group by name_) maxpd on tpo.dd_tpo_xml_jbpm = maxpd.name_
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updatePrcProcedimiento.sql">
+<![CDATA[
+update /*+BYPASS_UJVC*/
+(select prc.prc_process_bpm viejo, pi.id_ nuevo
+from prc_procedimientos prc
+    --join prc_cex on prc.prc_id = prc_cex.prc_id
+    --join cex_contratos_expediente cex on prc_cex.cex_id = cex.cex_id
+    join tmp_ugaspfs_bpm_input_con1 tmp on prc.prc_id = tmp.prc_id
+    join ${master.schema}.jbpm_processinstance pi on tmp.t_referencia = pi.t_referencia 
+)set viejo = nuevo
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updatePrcProcedimiento_2.sql">
+<![CDATA[
+update /*+BYPASS_UJVC*/
+(select prc.dd_tpo_id viejo, tap.dd_tpo_id nuevo
+from prc_procedimientos prc
+    --join prc_cex on prc.prc_id = prc_cex.prc_id
+    --join cex_contratos_expediente cex on prc_cex.cex_id = cex.cex_id
+    join tmp_ugaspfs_bpm_input_con1 tmp on prc.prc_id = tmp.prc_id
+    join tap_tarea_procedimiento tap on tmp.tap_id = tap.tap_id 
+)set viejo = nuevo
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmToken.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_TOKEN
+   (ID_, VERSION_, START_, END_, NODEENTER_, ISSUSPENDED_, NODE_, PROCESSINSTANCE_, t_referencia)
+select ${master.schema}.hibernate_sequence.nextval
+, 1 VERSION_
+, SYSDATE START_
+, null end_
+, sysdate nodeenter_
+, 0 issuspended_
+, node.id_ node_
+, pi.id_ processinstance_
+, tmp.t_referencia
+from tmp_ugaspfs_bpm_input_con1 tmp
+    join tar_tareas_notificaciones tar on tmp.t_referencia = tar.t_referencia
+    join tap_tarea_procedimiento tap on tmp.tap_id = tap.tap_id
+    join prc_procedimientos prc on tmp.prc_id = prc.prc_id
+    join dd_tpo_tipo_procedimiento tpo on prc.dd_tpo_id = tpo.dd_tpo_id
+    join (select name_, max(id_) id_ from ${master.schema}.jbpm_processdefinition group by name_) maxpd on tpo.dd_tpo_xml_jbpm = maxpd.name_
+    join ${master.schema}.jbpm_node node on maxpd.id_ = node.processdefinition_ and tap.tap_codigo = node.name_
+    join ${master.schema}.jbpm_processinstance pi on tmp.t_referencia = pi.t_referencia
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateJbpmToken.sql">
+<![CDATA[
+update /*+BYPASS_UJVC*/(    
+select pi.roottoken_ viejo, tk.id_ nuevo
+from ${master.schema}.jbpm_processinstance pi
+    join ${master.schema}.jbpm_token tk on pi.t_referencia = tk.t_referencia
+) set viejo = nuevo
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateTexTareaExterna.sql">
+<![CDATA[
+update /*+BYPASS_UJVC*/(    
+select tex.tex_token_id_bpm viejo, tk.id_ nuevo
+from tex_tarea_externa tex
+    join ${master.schema}.jbpm_token tk on tex.t_referencia = tk.t_referencia
+) set viejo = nuevo
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmModuleInstance.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_MODULEINSTANCE
+   (ID_, CLASS_, VERSION_, PROCESSINSTANCE_, NAME_)
+select ${master.schema}.hibernate_sequence.nextval
+, 'C' class_
+, 0 version_
+, prc.prc_process_bpm processinstance_
+, 'org.jbpm.context.exe.ContextInstance' name_
+from prc_procedimientos prc
+    join ${master.schema}.jbpm_processinstance pi on prc.prc_process_bpm = pi.id_
+    join ${master.schema}.jbpm_token tk on pi.roottoken_ = tk.id_
+    join ${master.schema}.jbpm_node nd on tk.node_ = nd.id_
+    join tex_tarea_externa tex on tk.id_ = tex.tex_token_id_bpm and tex.borrado = 0
+    join tmp_ugaspfs_bpm_input_con1 ug on ug.prc_id=prc.prc_id
+where not exists (
+    select * from ${master.schema}.JBPM_MODULEINSTANCE where processinstance_ = prc.prc_process_bpm
+)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmTokenVariableMap.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_TOKENVARIABLEMAP 
+   (ID_, VERSION_, TOKEN_, CONTEXTINSTANCE_)
+select ${master.schema}.hibernate_sequence.nextval
+, 0 version_
+, pi.roottoken_
+, mi.id_  contextinstance_
+from prc_procedimientos prc
+    join ${master.schema}.jbpm_processinstance pi on prc.prc_process_bpm = pi.id_
+    join ${master.schema}.JBPM_MODULEINSTANCE mi on pi.id_ = mi.processinstance_
+    join ${master.schema}.jbpm_token tk on pi.roottoken_ = tk.id_
+    join ${master.schema}.jbpm_node nd on tk.node_ = nd.id_
+    join tex_tarea_externa tex on tk.id_ = tex.tex_token_id_bpm and tex.borrado = 0
+where not exists (select * from ${master.schema}.JBPM_TOKENVARIABLEMAP where token_ = pi.roottoken_)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmTokenVariableInstance_1.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_VARIABLEINSTANCE
+   (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+select ${master.schema}.hibernate_sequence.nextval
+,'L' class_
+, 0 version_ 
+, 'DB_ID' name_
+, pi.roottoken_ tokem_
+, vm.id_ tokenvariablemap_
+, pi.id_ processinstance_
+, 1 longvlaue_
+from prc_procedimientos prc
+    join ${master.schema}.jbpm_processinstance pi on prc.prc_process_bpm = pi.id_
+    join ${master.schema}.JBPM_TOKENVARIABLEMAP vm on pi.roottoken_ = vm.token_
+    join ${master.schema}.jbpm_token tk on pi.roottoken_ = tk.id_
+    join ${master.schema}.jbpm_node nd on tk.node_ = nd.id_
+    join tex_tarea_externa tex on tk.id_ = tex.tex_token_id_bpm and tex.borrado = 0
+where not exists (select * from ${master.schema}.JBPM_VARIABLEINSTANCE where processinstance_ = pi.id_ and name_ = 'DB_ID')
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmTokenVariableInstance_2.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_VARIABLEINSTANCE
+   (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+select ${master.schema}.hibernate_sequence.nextval
+,'L' class_
+, 0 version_ 
+, 'procedimientoTareaExterna' name_
+, pi.roottoken_ tokem_
+, vm.id_ tokenvariablemap_
+, pi.id_ processinstance_
+, prc.prc_id longvlaue_
+from prc_procedimientos prc
+    join ${master.schema}.jbpm_processinstance pi on prc.prc_process_bpm = pi.id_
+    join ${master.schema}.JBPM_TOKENVARIABLEMAP vm on pi.roottoken_ = vm.token_
+    join ${master.schema}.jbpm_token tk on pi.roottoken_ = tk.id_
+    join ${master.schema}.jbpm_node nd on tk.node_ = nd.id_
+    join tex_tarea_externa tex on tk.id_ = tex.tex_token_id_bpm and tex.borrado = 0
+where not exists (select * from ${master.schema}.JBPM_VARIABLEINSTANCE where processinstance_ = pi.id_ and name_ = 'procedimientoTareaExterna')
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmTokenVariableInstance_3.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_VARIABLEINSTANCE
+   (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+select ${master.schema}.hibernate_sequence.nextval
+,'L' class_
+, 0 version_ 
+, 'bpmParalizado' name_
+, pi.roottoken_ tokem_
+, vm.id_ tokenvariablemap_
+, pi.id_ processinstance_
+, 0 longvlaue_
+from prc_procedimientos prc
+    join ${master.schema}.jbpm_processinstance pi on prc.prc_process_bpm = pi.id_
+    join ${master.schema}.JBPM_TOKENVARIABLEMAP vm on pi.roottoken_ = vm.token_
+    join ${master.schema}.jbpm_token tk on pi.roottoken_ = tk.id_
+    join ${master.schema}.jbpm_node nd on tk.node_ = nd.id_
+    join tex_tarea_externa tex on tk.id_ = tex.tex_token_id_bpm and tex.borrado = 0
+where not exists (select * from ${master.schema}.JBPM_VARIABLEINSTANCE where processinstance_ = pi.id_ and name_ = 'bpmParalizado')
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmTokenVariableInstance_4.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_VARIABLEINSTANCE
+   (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+select ${master.schema}.hibernate_sequence.nextval
+,'L' class_
+, 0 version_ 
+, 'id'||nd.name_ name_
+, pi.roottoken_ tokem_
+, vm.id_ tokenvariablemap_
+, pi.id_ processinstance_
+, tex.tex_id longvlaue_
+from prc_procedimientos prc
+    join tmp_ugaspfs_bpm_input_con1 tmp on prc.prc_id = tmp.prc_id
+    join ${master.schema}.jbpm_processinstance pi on prc.prc_process_bpm = pi.id_
+    join ${master.schema}.jbpm_token tk on pi.roottoken_ = tk.id_
+    join ${master.schema}.jbpm_node nd on tk.node_ = nd.id_
+    join ${master.schema}.JBPM_TOKENVARIABLEMAP vm on pi.roottoken_ = vm.token_
+    join tex_tarea_externa tex on tk.id_ = tex.tex_token_id_bpm and tex.borrado = 0
+where not exists (select * from ${master.schema}.JBPM_VARIABLEINSTANCE where processinstance_ = pi.id_ and name_ = 'id'||nd.name_)
+    and tex.usuariocrear = 'AUTOMATICA'
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateJbpmToken_2.sql">
+<![CDATA[
+update ${master.schema}.jbpm_token set nextlogindex_ = 0 where nextlogindex_ is null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateJbpmToken_3.sql">
+<![CDATA[
+update ${master.schema}.jbpm_token set isabletoreactivateparent_ = 0 where isabletoreactivateparent_ is null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateJbpmToken_4.sql">
+<![CDATA[
+update ${master.schema}.jbpm_token set isterminationimplicit_ = 0 where isterminationimplicit_ is null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmJob.sql">
+<![CDATA[
+Insert into ${master.schema}.JBPM_JOB
+   (ID_, CLASS_, VERSION_, DUEDATE_, PROCESSINSTANCE_, TOKEN_, ISSUSPENDED_, ISEXCLUSIVE_, LOCKTIME_, RETRIES_, NAME_, TRANSITIONNAME_, GRAPHELEMENTTYPE_, GRAPHELEMENT_)
+select ${master.schema}.HIBERNATE_SEQUENCE.nextval, 'T', 0, trunc(sysdate)-2 ,pi.id_  , tk.id_ , 0, 1, sysdate, 1, 'Timer espera-bo', 'avanzaBPM', null, null
+from tmp_ugaspfs_bpm_input_con1 tmp 
+    join prc_procedimientos prc on prc.prc_id=tmp.prc_id
+    join ${master.schema}.jbpm_processinstance pi on tmp.t_referencia = pi.t_referencia
+    join tar_tareas_notificaciones tar on tmp.t_referencia = tar.t_referencia
+    join tex_tarea_externa tex on tex.TAR_ID=tar.tar_id
+    join tap_tarea_procedimiento tap on tmp.tap_id = tap.tap_id
+    join dd_tpo_tipo_procedimiento tpo on prc.dd_tpo_id = tpo.dd_tpo_id
+    join (select name_, max(id_) id_max from ${master.schema}.jbpm_processdefinition group by name_) maxpd on tpo.dd_tpo_xml_jbpm = maxpd.name_
+    join ${master.schema}.jbpm_token tk on tex.t_referencia = tk.t_referencia
+    join ${master.schema}.jbpm_node node on maxpd.id_max = node.processdefinition_ and tap.tap_codigo = node.name_
+    where tpo.DD_TPO_CODIGO='P71'
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.insertJbpmTransition.sql">
+<![CDATA[
+insert into ${master.schema}.jbpm_transition (id_, name_, processdefinition_, from_, to_, fromindex_)
+select ${master.schema}.hibernate_sequence.nextval id_, 'activarProrroga' name_, pd processdefinition_, nd from_, nd to_, (max_fromindex + 1) fromindex_
+from (
+select nd.id_ nd, nd.processdefinition_ pd, max(aux.fromindex_) max_fromindex
+from tar_tareas_notificaciones tar
+    join tex_tarea_externa tex on tar.tar_id = tex.tar_id
+    join tap_tarea_procedimiento tap on tex.tap_id = tap.tap_id
+    join prc_procedimientos prc on tar.prc_id = prc.prc_id
+    join ${master.schema}.jbpm_processinstance pi on prc.prc_process_bpm = pi.id_ 
+    join ${master.schema}.jbpm_token tk on pi.roottoken_ = tk.id_
+    join ${master.schema}.jbpm_node nd on tk.node_ = nd.id_
+    join tmp_ugaspfs_bpm_input_con1 ug on prc.prc_id = ug.prc_id
+    left join ${master.schema}.jbpm_transition aux on nd.id_ = aux.from_
+    left join ${master.schema}.jbpm_transition tr on nd.id_ = tr.from_ and tr.name_ = 'activarProrroga'
+where tar.borrado = 0 and (tar.tar_tarea_finalizada is null or tar.tar_tarea_finalizada = 0) and tar.prc_id is not null
+    and tap.tap_autoprorroga = 1 and tr.id_ is null
+group by nd.id_,nd.processdefinition_)
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterTable_1.sql">
+<![CDATA[
+alter table tmp_ugaspfs_bpm_input_con1 drop column  t_referencia
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterTable_2.sql">
+<![CDATA[
+update tar_tareas_notificaciones set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterTable_3.sql">
+<![CDATA[
+update tex_tarea_externa set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterTable_4.sql">
+<![CDATA[
+update ${master.schema}.jbpm_token set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.alterTable_5.sql">
+<![CDATA[
+update ${master.schema}.jbpm_processinstance set t_referencia = null where t_referencia is not null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateTareasNotificacion_1.sql">
+<![CDATA[
+update tar_tareas_notificaciones set tar_fecha_venc=SYSDATE + (dbms_random.value(1,5)) where fechacrear > sysdate - 0.1 
+and tar_fecha_venc is null and prc_id is not null and tar_tarea_finalizada is null and tar_tar_id is null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateTareasNotificacion_2.sql">
+<![CDATA[
+update tar_tareas_notificaciones set tar_fecha_venc_real=tar_fecha_venc where tar_fecha_venc is not null and tar_fecha_venc_real is null
+]]>
+</entry>
+<entry key="linAltaAsuntos.pasaje.updateEstadoProcesoMasivo.sql">
+<![CDATA[
+UPDATE prm_proceso_masivo p
+   SET p.dd_epf_id = (SELECT ef.dd_epf_id
+                        FROM dd_epf_estado_proces_fich ef
+                       WHERE ef.dd_epf_codigo = 'PRC')
+ WHERE p.dd_epf_id = (SELECT ef.dd_epf_id
+                        FROM dd_epf_estado_proces_fich ef
+                       WHERE ef.dd_epf_codigo = 'PTP')
+   AND p.dd_opm_id = (SELECT opm.dd_opm_id
+                        FROM dd_opm_operacion_masiva opm
+                       WHERE opm.dd_opm_codigo = 'AAS')
+   AND p.prm_id NOT IN (SELECT DISTINCT lln.prm_id
+                                   FROM lin_asuntos_nuevos lln
+                                  WHERE lln.creado = 'N')
+   AND p.prm_id IN (SELECT DISTINCT lln.prm_id
+                               FROM lin_asuntos_nuevos lln
+                              WHERE lln.creado = 'S')
+]]>
+</entry>
+</properties>

@@ -813,7 +813,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
 			if("Todos".equals(dto.getComboErrorPostCDD())){
-				hql.append(" and asu.errorEnvioCDD is not null");
+				hql.append(" and asu.errorEnvioCDD.codigo <> '0'");
 			}
 			else{
 				hql.append(" and asu.errorEnvioCDD.codigo = :errorPost");

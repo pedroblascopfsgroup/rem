@@ -398,6 +398,14 @@
 				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Resultado propuestas enviadas a cierre"/>'
 	});	
 	
+<%-- 	var nombreFechaEntrega = new Ext.form.Label({
+		text:'<s:message code="" text="**Fecha de envío a cierre" />'
+		,style:labelStyle2
+		,name:'nombre'
+	}); --%>
+	
+	var nombreFechaEntrega = app.creaLabel('<s:message code="" text="**Fecha de envío a cierre"/>','Fecha de envío a cierre');
+	
 	var fechaEntregaDesde = new Ext.ux.form.XDateField({
 		fieldLabel:'<s:message code="" text="**Fecha de envío desde" />'
 		,name : 'fechaEntregaDesde'
@@ -692,7 +700,7 @@
 				,{items:[comboErrorPreviCDD]}
 				,{items:[comboJerarquia]}
 				,{items:[comboErrorPostCDD]}
-				,{colspan:2, items:[fechaEntregaDesde, fechaEntregaHasta]}
+				,{layout:'table', colspan:3, items:[nombreFechaEntrega,fechaEntregaDesde, fechaEntregaHasta]}
 				,{items:[comboZonas]}
 				,{colspan:2,items:[comboTipoProcedimientos]}
 				,{items:[comboGestion]}

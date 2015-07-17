@@ -22,7 +22,7 @@ DECLARE
     * CONFIGURACION: ESQUEMAS
     *---------------------------------------------------------------------
     */
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_CJ#'; -- Configuracion Esquema
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     
     /*
@@ -112,9 +112,10 @@ BEGIN
 	 * UPDATES
 	 * -------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap SET tap.TAP_SCRIPT_DECISION = ''valores[''''H018_InterposicionDemanda''''][''''provisionFondos''''] == DDSiNo.SI ? ''''conProvision'''' : ''''sinProvision'''''' WHERE tap.TAP_CODIGO = ''H018_InterposicionDemanda''';
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO tpo SET tpo.DD_TPO_DESCRIPCION = ''P. Ej. de Título Judicial - HCJ'', tpo.DD_TPO_XML_JBPM      = ''hcj_ejecucionTituloJudicial'' WHERE tpo.DD_TPO_CODIGO = ''H018''';
-    EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS tfi SET tfi.TFI_ORDEN = 5 WHERE tfi.TFI_ID  = (SELECT tfi_id FROM '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS tfi_i, '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap WHERE tfi_i.TFI_NOMBRE = ''observaciones'' AND tfi_i.TAP_ID = tap.TAP_ID AND tap.TAP_CODIGO = ''H018_InterposicionDemanda'')';
+    EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap SET tap.TAP_SCRIPT_DECISION = ''valores[''''H018_InterposicionDemanda''''][''''provisionFondos''''] == DDSiNo.SI ? ''''conProvision'''' : ''''sinProvision'''''' WHERE tap.TAP_CODIGO = ''H018_InterposicionDemanda''';
+    EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap SET tap.TAP_SCRIPT_VALIDACION = ''!asuntoConProcurador() ? ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe registrar el procurador que representa a la entidad en la ficha del asunto correspondiente.</p></div>'''' : (tieneBienes() && !isBienesConFechaSolicitud() ? ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><div id="permiteGuardar"><p>&iexcl;Atenci&oacute;n! En  caso de que haya bienes a embargar, deber&iacute;a de marcarlos a trav&eacute;s de la pesta&ntilde;a Bienes dentro de la ficha de la propia actuaci&oacute;n.</p></div></div>'''' : comprobarExisteDocumentoEDH() ? null : ''''Es necesario adjuntar el Escrito de la demanda completo + copiar sellada de la demanda.'''')'' WHERE tap.TAP_CODIGO = ''H018_InterposicionDemanda''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS tfi SET tfi.TFI_ORDEN = 5 WHERE tfi.TFI_ID  = (SELECT tfi_id FROM '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS tfi_i, '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap WHERE tfi_i.TFI_NOMBRE = ''observaciones'' AND tfi_i.TAP_ID = tap.TAP_ID AND tap.TAP_CODIGO = ''H018_InterposicionDemanda'')';
     
     /*
     * LOOP ARRAY BLOCK-CODE: TAP_TAREA_PROCEDIMIENTO

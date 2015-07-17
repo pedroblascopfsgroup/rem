@@ -22,7 +22,7 @@ DECLARE
     * CONFIGURACION: ESQUEMAS
     *---------------------------------------------------------------------
     */
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_CJ#'; -- Configuracion Esquema
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     
     /*
@@ -30,7 +30,8 @@ DECLARE
     *---------------------------------------------------------------------
     */    
     PAR_TABLENAME_TPROC VARCHAR2(50 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO';   -- [PARAMETRO] TABLA para tipo de procedimiento. Por defecto DD_TPO_TIPO_PROCEDIMIENTO
-
+	PAR_TABLENAME_TARPR VARCHAR2(50 CHAR) := 'TAP_TAREA_PROCEDIMIENTO';     -- [PARAMETRO] TABLA para tareas del procedimiento. Por defecto TAP_TAREA_PROCEDIMIENTO
+    
 BEGIN
 	
 	/* 
@@ -38,7 +39,7 @@ BEGIN
 	 * -------
 	 */
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''P. Verbal desde Monitorio - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_procedimientoVerbalDesdeMonitorio'' WHERE tpo.DD_TPO_CODIGO = ''H028''';
-    
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TARPR||' tap SET tap.TAP_SCRIPT_VALIDACION = ''!asuntoConProcurador() ? ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe registrar el procurador que representa a la entidad en la ficha del asunto correspondiente.</p></div>'''' : (comprobarExisteDocumentoEDO() ? null : ''''Es necesario adjuntar el documento Escrito de demanda completo + copia sellada de la demanda'''')'' WHERE tap.TAP_CODIGO = ''H024_InterposicionDemanda''';
     	
    COMMIT;
     DBMS_OUTPUT.PUT_LINE('[COMMIT ALL]...............................................');

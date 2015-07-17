@@ -1161,6 +1161,62 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
+        ),
+	
+	        
+      -- TOMAS DE DECISION ---
+      
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'DGCONGE',
+        /*dd_sta_descripcion,........:*/ 'Toma decisión gestor contencioso gestión',
+        /*dd_sta_descripcion_larga...:*/ 'Toma decisión gestor contencioso gestión',
+        /*dd_tge_id..................:*/ 'GCONGE',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'DGCONPR',
+        /*dd_sta_descripcion,........:*/ 'Toma decisión gestor contencioso procesal',
+        /*dd_sta_descripcion_larga...:*/ 'Toma decisión gestor contencioso procesal',
+        /*dd_tge_id..................:*/ 'GCONPR',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'CJ-DECGLL',
+        /*dd_sta_descripcion,........:*/ 'Toma de decision gestor llaves',
+        /*dd_sta_descripcion_larga...:*/ 'Toma de decision gestor llaves',
+        /*dd_tge_id..................:*/ 'CJ-GESTLLA',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'CJ-819',
+        /*dd_sta_descripcion,........:*/ 'Toma de decisión del Letrado',
+        /*dd_sta_descripcion_larga...:*/ 'Toma de decisión del Letrado',
+        /*dd_tge_id..................:*/ 'CJ-LETR',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
         )
         
     ); 
@@ -1343,8 +1399,8 @@ BEGIN
         V_TMP_TIPO_TGP := V_TIPO_TGP(I);     
                         
         V_SQL := 'SELECT COUNT(1) FROM '||PAR_ESQUEMA||'.'||VAR_CURR_TABLE
-			||' WHERE DD_TGE_ID=(select dd_tge_id from '||PAR_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''' || REPLACE(TRIM(V_TMP_TIPO_TGP(2)),'''''','''''''') ||''')'
-			||'       and TGP_VALOR='''|| REPLACE(TRIM(V_TMP_TIPO_TGP(4)),'''''','''''''') || '''';
+			||' WHERE DD_TGE_ID=(select dd_tge_id from '||PAR_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''' || REPLACE(TRIM(V_TMP_TIPO_TGP(2)),'''''','''''''') ||''')';
+			--||'       and TGP_VALOR='''|| REPLACE(TRIM(V_TMP_TIPO_TGP(4)),'''''','''''''') || '''';
 
         DBMS_OUTPUT.PUT_LINE(V_SQL);
 

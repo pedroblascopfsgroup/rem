@@ -111,6 +111,11 @@
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFLIQ");
 				}
+				
+				def comprobarExisteDocumentoIFISCAL = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "IFISCAL");
+				}
         	            
   			 ]]>
   			</value>

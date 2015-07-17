@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteSubasta" width="2858" height="2001">
+<root-container name="hcj_tramiteSubasta" width="2890" height="2001">
   <node name="Inicio" x="-121" y="134" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -12,6 +12,8 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-111" h1="2" w2="-542" h2="418"/>
+      <bendpoint w1="-97" h1="-415" w2="-528" h2="1"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -23,6 +25,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-275" h1="-177" w2="-265" h2="240"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -78,9 +81,7 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="9" y="-66"/>
-      <bendpoint w1="-169" h1="78" w2="270" h2="-129"/>
-      <bendpoint w1="-220" h1="206" w2="219" h2="-1"/>
+      <label x="-32" y="-8"/>
     </edge>
   </node>
   <node name="H002_ValidarInformeDeSubastaDecision" x="1250" y="497" width="415" height="36">
@@ -162,7 +163,7 @@
   </node>
   <node name="H002_BPMTramiteAdjudicacion" x="-364" y="1288" width="312" height="36">
     <edge>
-      <label x="-118" y="23"/>
+      <label x="-66" y="43"/>
     </edge>
     <edge>
       <label x="24" y="-24"/>
@@ -230,7 +231,7 @@
       <label x="-34" y="138"/>
       <bendpoint w1="-168" h1="2" w2="-473" h2="570"/>
       <bendpoint w1="-161" h1="-187" w2="-466" h2="381"/>
-      <bendpoint w1="14" h1="-577" w2="-291" h2="-9"/>
+      <bendpoint w1="64" h1="-545" w2="-241" h2="23"/>
     </edge>
   </node>
   <node name="forkCelebracion" x="143" y="956" width="252" height="24">
@@ -308,10 +309,11 @@
   </node>
   <node name="H002_BPMTramiteSolSolvenciaPatrimonial" x="164" y="1676" width="290" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-99" y="-17"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-347" h1="-49" w2="5" h2="106"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -323,6 +325,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="221" h1="-219" w2="33" h2="325"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -348,6 +351,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-595" h1="-317" w2="-163" h2="228"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -368,14 +372,18 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="323" h1="-16" w2="325" h2="682"/>
+      <bendpoint w1="329" h1="-667" w2="331" h2="31"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-242" h1="-119" w2="-178" h2="158"/>
     </edge>
   </node>
   <node name="H002_DictarInstruccionesSubastaDecision" x="1325" y="846" width="276" height="36">
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="144" h1="-59" w2="-236" h2="316"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -392,7 +400,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="NS" x="1031" y="222" width="132" height="36">
+  <node name="NS" x="653" y="78" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -403,20 +411,13 @@
   <node name="TA" x="890" y="119" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-295" h1="-119" w2="284" h2="146"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="IF" x="1097" y="133" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="IS" x="606" y="111" width="132" height="36">
+  <node name="IF" x="1072" y="95" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -424,7 +425,15 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_AdjuntarNotasSimples" x="301" y="15" width="301" height="36">
+  <node name="IS" x="1224" y="147" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H002_AdjuntarNotasSimples" x="275" y="51" width="301" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -469,6 +478,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-289" h1="58" w2="322" h2="19"/>
     </edge>
   </node>
   <node name="H002_AdjuntarInformeFiscal" x="1717" y="-9" width="208" height="36">
@@ -477,15 +487,17 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="163" h1="74" w2="-21" h2="-118"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-162" h1="-61" w2="202" h2="-24"/>
     </edge>
   </node>
-  <node name="H002_AdjuntarTasacionesDecision" x="977" y="-50" width="259" height="36">
+  <node name="H002_AdjuntarTasacionesDecision" x="983" y="-90" width="259" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -498,4 +510,20 @@
   <node name="Fin3" x="1939" y="183" width="132" height="36"/>
   <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
   <node name="Fin5" x="-500" y="879" width="132" height="36"/>
+  <node name="H002_SolicitarSuspenderSubasta" x="1734" y="471" width="219" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-153" h1="328" w2="227" h2="-47"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-37" h1="92" w2="-137" h2="-41"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

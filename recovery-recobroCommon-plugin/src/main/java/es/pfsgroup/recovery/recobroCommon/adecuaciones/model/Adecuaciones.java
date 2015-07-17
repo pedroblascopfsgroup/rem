@@ -74,14 +74,14 @@ public class Adecuaciones implements Auditable, Serializable{
 	@Column(name="ADC_GASTOS_INCLUIDOS") // FLOAT(126),
 	private Float gastosIncluidos;
 
-	@Column(name="ADC_TIPO") // VARCHAR2(5 CHAR), 
-	private String  tipo;
+	@Column(name="ADC_TIPO") // NUMBER(1+2,3), 
+	private Float  tipo;
 
-	@Column(name="ADC_DIFERENCIAL") // VARCHAR2(5 CHAR), 
-	private String  diferencial;
+	@Column(name="ADC_DIFERENCIAL") // NUMBER(1+2,3), 
+	private Float  diferencial;
 
-	@Column(name="ADC_PLAZO") // VARCHAR2(3 CHAR), 
-	private String  plazo;
+	@Column(name="ADC_PLAZO") // NUMBER(1+3), 
+	private Float  plazo;
 
 	@Column(name="ADC_CUOTA") // FLOAT(126),
 	private Float cuota;
@@ -214,6 +214,10 @@ public class Adecuaciones implements Auditable, Serializable{
 
 	@Column(name="ADC_NUM_EXTRA10" ) //NUMBER(16,2),
 	private Float numExtra10;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_REA_ID")
+	private RecomAdecuacion recomAdecuacion; 
 
 	@Embedded
 	private Auditoria auditoria;
@@ -301,27 +305,27 @@ public class Adecuaciones implements Auditable, Serializable{
 		this.gastosIncluidos = gastosIncluidos;
 	}
 
-	public String getTipo() {
+	public Float getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(String tipo) {
+	public void setTipo(Float tipo) {
 		this.tipo = tipo;
 	}
 
-	public String getDiferencial() {
+	public Float getDiferencial() {
 		return diferencial;
 	}
 
-	public void setDiferencial(String diferencial) {
+	public void setDiferencial(Float diferencial) {
 		this.diferencial = diferencial;
 	}
 
-	public String getPlazo() {
+	public Float getPlazo() {
 		return plazo;
 	}
 
-	public void setPlazo(String plazo) {
+	public void setPlazo(Float plazo) {
 		this.plazo = plazo;
 	}
 
@@ -691,6 +695,15 @@ public class Adecuaciones implements Auditable, Serializable{
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+	
+	public RecomAdecuacion getRecomAdecuacion() {
+		return recomAdecuacion;
+	}
+
+	public void setRecomAdecuacion(
+			RecomAdecuacion recomAdecuacion) {
+		this.recomAdecuacion = recomAdecuacion;
 	}
 
 }

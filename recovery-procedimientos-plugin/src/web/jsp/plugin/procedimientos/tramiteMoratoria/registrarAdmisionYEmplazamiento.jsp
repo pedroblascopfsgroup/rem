@@ -48,7 +48,6 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 </c:if>
 var bottomBar = [];
 
-debugger;
 var cb_admision = items[2 + muestraBotonGuardar];
 var cb_vista = items[3 + muestraBotonGuardar];
 

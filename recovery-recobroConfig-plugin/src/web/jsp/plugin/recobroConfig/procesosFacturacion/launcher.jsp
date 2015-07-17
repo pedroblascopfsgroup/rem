@@ -114,7 +114,6 @@ var btn_2 = new Ext.Button({
 	
 	
 	var loadPanelProcesosFact = function(title, flow, params){
-		//debugger;
 		contenido.removeAll();
 		var url = '/${appProperties.appName}/'+flow+'.htm';
 		contenido.setTitle(title);

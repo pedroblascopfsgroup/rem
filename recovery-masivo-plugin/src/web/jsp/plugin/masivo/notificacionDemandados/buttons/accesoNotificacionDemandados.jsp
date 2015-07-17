@@ -5,7 +5,6 @@ new Ext.Button({
 	text : '<s:message code="plugin.masivo.accesoNotificacionDemandados.title" text="**Acceso Notificacion Demandados" />'
 	,iconCls : 'icon_busquedas'
 			,handler : function(){
-				debugger;
 				app.openTab("Notificacion Demandados", 'procedimientos/consultaProcedimiento', {id:data.id, nombreTab:'notificacionDemandados'} , {id:'procedimiento'+id,iconCls:'icon_procedimiento'});
 //				var w = app.openWindow({
 //					text:'Notificación Demandados'

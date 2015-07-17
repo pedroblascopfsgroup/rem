@@ -9,7 +9,7 @@ public class BienProcedimientoDTO {
 	private String origen;
 	private String descripcion;
 	private String tipo;
-	private Boolean viviendaHabitual;
+	private String viviendaHabitual;
 	private String sitPosesoria;
 	private Date revCargas;
 	private Date fSolTasacion;
@@ -53,10 +53,10 @@ public class BienProcedimientoDTO {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	public Boolean getViviendaHabitual() {
+	public String getViviendaHabitual() {
 		return viviendaHabitual;
 	}
-	public void setViviendaHabitual(Boolean viviendaHabitual) {
+	public void setViviendaHabitual(String viviendaHabitual) {
 		this.viviendaHabitual = viviendaHabitual;
 	}
 	public String getSitPosesoria() {

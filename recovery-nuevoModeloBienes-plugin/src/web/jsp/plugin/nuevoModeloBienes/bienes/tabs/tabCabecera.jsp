@@ -27,7 +27,7 @@
 	//var participacion		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.participacion" text="**% Propiedad"/>','${NMBbien.participacion}',{labelStyle:labelStyle});
 
 	var situacionPosesoria  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.situacionPosesoria" text="**situacionPosesoria"/>','${NMBbien.situacionPosesoria.descripcion}', {labelStyle:labelStyle});
-	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual ? 'Si' : 'No'}', {labelStyle:labelStyle});
+	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual==null ? '--':NMBbien.viviendaHabitual == '1' ? 'Sí' : 'No'}', {labelStyle:labelStyle});
 	var tipoSubasta		    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tipoSubasta" text="**Tipo Subasta"/>',app.format.moneyRenderer('${NMBbien.tipoSubasta}'),{labelStyle:labelStyle});
 	var numeroActivo        = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.numeroActivo" text="**numeroActivo"/>','${NMBbien.numeroActivo}', {labelStyle:labelStyle});
 	var licenciaPrimeraOcupacion = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.licenciaPrimeraOcupacion" text="**licenciaPrimeraOcupacion"/>','${NMBbien.licenciaPrimeraOcupacion}', {labelStyle:labelStyle});
@@ -76,7 +76,16 @@
     var fechaSolicitudTasacion = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaSolicitudTasacion" text="**fechaSolicitudTasacion"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaSolicitudTasacion}"/>',{labelStyle:labelStyle});
 	var fechaDueD 			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaDueD" text="**fechaDueD"/>','<fwk:date value="${NMBbien.fechaDueD}"/>', {labelStyle:labelStyle});
 	var fechaSolicitudDueD	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaSolicitudDueD" text="**fechaSolicitudDueD"/>','<fwk:date value="${NMBbien.fechaSolicitudDueD}"/>', {labelStyle:labelStyle});
+	<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">
+	var tributacion  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tributacionCompra" text="**tributacionCompra"/>','${NMBbien.tributacion.descripcion}', {labelStyle:labelStyle});
+	</sec:authorize>
+	<sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">
 	var tributacion  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tributacion" text="**tributacion"/>','${NMBbien.tributacion.descripcion}', {labelStyle:labelStyle});
+	</sec:authorize>
+	var tributacionVenta  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tributacionVenta" text="**tributacionVenta"/>','${NMBbien.tributacionVenta.descripcion}', {labelStyle:labelStyle});
+	var imposicionCompra  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.imposicionCompra" text="**imposicionCompra"/>','${NMBbien.tipoImposicionCompra.descripcion}', {labelStyle:labelStyle});
+	var imposicionVenta  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.imposicionVenta" text="**imposicionVenta"/>','${NMBbien.tipoImposicionVenta.descripcion}', {labelStyle:labelStyle});
+	var inversionRenuncia  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.inversionRenuncia" text="**inversionRenuncia"/>','${NMBbien.inversionPorRenuncia.descripcion}', {labelStyle:labelStyle});
 	var porcentajeImpuestoCompra  = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.porcentajeImpuestoCompra" text="**porcentajeImpuestoCompra"/>','${NMBbien.porcentajeImpuestoCompra}', {labelStyle:labelStyle});
 	var impuestoCompra  = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.impuestoCompra" text="**impuestoCompra"/>','${NMBbien.impuestoCompra.descripcion}', {labelStyle:labelStyleDescripcion});
 	
@@ -249,8 +258,8 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosEconomicos.titulo" text="**Datos económicos"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[fechaVerificacion, valorActual, ValorTotalCargas, fechaValSubjetivo, valorSubjetivo,tributacion,respuestaConsulta]},
-				  {items:[valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion,fechaValApreciacion, valorApreciacion, fechaValTasacion, valorTasacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">, fechaSolicitudDueD, fechaDueD</sec:authorize>, porcentajeImpuestoCompra, impuestoCompra]}
+	    ,items : [{items:[fechaVerificacion, valorActual, ValorTotalCargas, fechaValSubjetivo, valorSubjetivo,tributacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,imposicionCompra,tributacionVenta,imposicionVenta,inversionRenuncia</sec:authorize>,respuestaConsulta]},
+				  {items:[valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion,fechaValApreciacion, valorApreciacion, fechaValTasacion, valorTasacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">, fechaSolicitudDueD, fechaDueD</sec:authorize> <sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">, porcentajeImpuestoCompra, impuestoCompra</sec:authorize>]}
 				 ]
 	});
 	
@@ -359,7 +368,7 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosDomicilio.titulo" text="**Domicilio"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [{items:[pais, provincia, localidad, unidadPoblacional, codPostal, tipoVia]},
-				  {items:[nombreVia, numeroDomicilio, portal, escalera, piso, puerta, barrio, direccion]}
+				  {items:[nombreVia, numeroDomicilio, portal, bloque, escalera, piso, puerta, barrio, direccion]}
 				 ]
 	});
 	
@@ -434,7 +443,6 @@
 			      			flow:'editbien/solicitarNumActivo'
 			      			,params:{id:${NMBbien.id}}
 			      			,success: function(result,request){
-			      			   debugger;		   
 			      			   if(result.msgError=='1'){
 			      			   		Ext.Msg.show({
 									title:'Operación realizada',
@@ -447,7 +455,7 @@
 			      			   	
 				      			   	Ext.Msg.show({
 									title:'Advertencia',
-									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ko"/>',
+									msg: 'No se ha podido obtener el n\u00BA de activo. \n' + result.msgError,
 									buttons: Ext.Msg.OK,
 									icon:Ext.MessageBox.WARNING});
 				      			   	

@@ -22,9 +22,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.utils.StringUtils;
 import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.asunto.dao.EXTAsuntoDao;
 import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
@@ -387,7 +387,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
 		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto
-				.getFiltroContrato() > 0L));
+				.getFiltroContrato() > 0L) || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
 	}
 
 	private String filtroGestorSupervisorAsuntoMonoGestor(
@@ -605,6 +605,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		final int bufferSize = 1024;
+		if(dto != null && !Checks.esNulo(dto.getSort())){
+			if("fechaCrear".equals(dto.getSort())){
+				dto.setSort("a.auditoria." + dto.getSort());
+			} else {
+				dto.setSort("a." + dto.getSort());
+			}
+		}
 		StringBuffer hql = new StringBuffer(bufferSize);
 
 		hql.append("from Asunto a ");
@@ -824,8 +831,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		// FILTRO DE ZONAS
 		if (dto.getJerarquia() != null && dto.getJerarquia().length() > 0) {
-			hql.append(" and cnt.zona.nivel.id >= :nivelId");
-			params.put("nivelId", new Long(dto.getJerarquia()));
+			hql.append(" and cnt.zona.nivel.codigo <= :nivelId");
+			params.put("nivelId", Integer.valueOf(dto.getJerarquia()));
 
 			if (dto.getCodigoZonas().size() > 0) {
 				hql.append(" and ( ");

@@ -400,17 +400,4 @@ public class EXTAsunto extends Asunto {
 		}
 		return extAsunto;
 	}
-	
-	@Transient
-	public static EXTAsunto instanceOf(Asunto asunto) {
-		EXTAsunto extAsunto = null;
-		if (asunto==null) return null;
-	    if (asunto instanceof HibernateProxy) {
-	    	extAsunto = (EXTAsunto) ((HibernateProxy) asunto).getHibernateLazyInitializer()
-	                .getImplementation();
-	    } else if (asunto instanceof EXTAsunto){
-	    	extAsunto = (EXTAsunto) asunto;
-		}
-		return extAsunto;
-	}
 }

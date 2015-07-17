@@ -265,6 +265,29 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		       }
 		       return null;
 		   }
+	
+	@BusinessOperation(PCD_MSV_BO_DAME_VALIDACION_RESOLUCION_JBPM)
+	public String dameValidacionJBPM(Long idTarea){
+		TareaExterna tareaExterna = proxyFactory.proxy(TareaExternaApi.class).get(idTarea);
+		
+		       String script = tareaExterna.getTareaProcedimiento().getScriptValidacionJBPM();
+
+		       if (!StringUtils.isBlank(script)) {
+		           Long idTareaExterna = tareaExterna.getId();
+		           Long idProcedimiento = tareaExterna.getTareaPadre().getProcedimiento().getId();
+
+		           String result = null;
+		           try {
+		               result = (String) jbpmManager.evaluaScript(idProcedimiento, idTareaExterna, tareaExterna.getTareaProcedimiento().getId(), null,
+		                       script);
+		           } catch (Exception e) {
+		               throw new UserException("Error en el script de decisión [" + script + "] para la tarea: " + idTareaExterna + " del procedimiento: "
+		                       + idProcedimiento);
+		           }
+		           return result;
+		       }
+		       return null;
+		   }
 
 	@BusinessOperation(PCD_MSV_GUARDAR_DATOS_HISTORICO)
 	public void guardarDatosHistorico(MSVResolucionesDto dtoResolucion, MSVResolucion msvResolucion)

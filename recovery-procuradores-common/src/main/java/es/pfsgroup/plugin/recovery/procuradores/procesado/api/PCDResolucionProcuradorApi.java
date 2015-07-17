@@ -46,6 +46,7 @@ public interface PCDResolucionProcuradorApi {
 	public static final String PCD_MSV_BO_OBTENER_RESOLUCIONES = "es.plugin.recovery.procuradores.procesado.api.obtenerTiposResoluciones";
 	public static final String PCD_MSV_BO_BORRAR_ADJUNTO = "es.plugin.recovery.procuradores.procesado.api.borrarAdjunto";
 	public static final String PCD_MSV_BO_DAME_VALIDACION_RESOLUCION = "es.plugin.recovery.procuradores.procesado.api.dameResolucion";
+	public static final String PCD_MSV_BO_DAME_VALIDACION_RESOLUCION_JBPM = "es.plugin.recovery.procuradores.procesado.api.dameResolucionJBPM";
 	public static final String PCD_MSV_GUARDAR_DATOS_HISTORICO = "es.plugin.recovery.procuradores.procesado.api.guardarDatosHistorico";
 	
 	public static final String PCD_MSV_GET_RESOLUCIONES_PENDIENTES_VALIDAR = "es.pfsgroup.plugin.recovery.procuradores.procesado.api.getResolucionesPendientesValidar";
@@ -165,6 +166,9 @@ public interface PCDResolucionProcuradorApi {
 	
 	@BusinessOperationDefinition(PCD_MSV_BO_DAME_VALIDACION_RESOLUCION)
 	public String dameValidacion(Long idTarea);
+	
+	@BusinessOperationDefinition(PCD_MSV_BO_DAME_VALIDACION_RESOLUCION_JBPM)
+	public String dameValidacionJBPM(Long idTarea);
 	
 	@BusinessOperationDefinition(PCD_MSV_GUARDAR_DATOS_HISTORICO)
 	public void guardarDatosHistorico(MSVResolucionesDto dtoResolucion, MSVResolucion msvResolucion);

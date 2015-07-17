@@ -355,6 +355,31 @@ public class PCDProcesadoResolucionesController {
 		return JSON_VALIDACION;
 	}
 	
+	
+	
+	/**
+	 * devuelve la validacion JBPM.
+	 * @param model
+	 * @return String validacion JBPM
+	 */
+	@RequestMapping
+	public String dameValidacionJBPM(Long idResolucion, ModelMap model) throws Exception{
+		
+		MSVResolucion msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).getResolucion(idResolucion);
+		
+		Long idTarea = msvResolucion.getTarea().getId();
+		
+		String validacion = null;
+		
+		if(!msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO")){
+			validacion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).dameValidacionJBPM(idTarea);	
+		}
+		
+		model.put("validacion", validacion);
+		
+		return JSON_VALIDACION;
+	}
+	
 	/**
 	 * adjunta un fichero.
 	 * @param model

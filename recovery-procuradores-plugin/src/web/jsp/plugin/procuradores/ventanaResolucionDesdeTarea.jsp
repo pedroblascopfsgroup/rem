@@ -17,7 +17,7 @@
 
 	
 	var muestraBotonGuardar = 0;
-	var validacion= {html:'<div style="font-size:12px;">${validacion}</div>', border:false, bodyStyle:'color:red;margin-bottom:5px'};
+	var validacion= {html:'<div id="validacionCMPS" style="font-size:12px;"> ${validacion}</div>', border:false, bodyStyle:'color:red;margin-bottom:5px'};
 	
 	 
 	<c:if test="${validacion==null}">
@@ -146,20 +146,36 @@
 		Ext.getCmp('file_upload_ok').setValue('ok');
 		
 		if (formulario.isValid()){
-		
 			panelEdicion.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
 			Ext.Ajax.request({
-				url: '/pfs/pcdprocesadoresoluciones/procesar.htm'
-				,params: valores
+				url: '/pfs/pcdprocesadoresoluciones/dameValidacionJBPM.htm'
+				,params: {idResolucion: ${idResolucion}}
 				,method: 'POST'
 				,success: function (result, request){
-					panelEdicion.container.unmask();
-					//btnCancelar.fireEvent('click',btnCancelar);
-					page.fireEvent(app.event.DONE);
+					var r = Ext.util.JSON.decode(result.responseText);
+					if (r.resultadoDatosvalidacion.validacion == "" ){
+							Ext.Ajax.request({
+								url: '/pfs/pcdprocesadoresoluciones/procesar.htm'
+								,params: valores
+								,method: 'POST'
+								,success: function (result, request){
+									panelEdicion.container.unmask();
+									//btnCancelar.fireEvent('click',btnCancelar);
+									page.fireEvent(app.event.DONE);
+								}
+								,error: function(result, request){
+									panelEdicion.container.unmask();
+									alert("Error procesar");
+								}
+							});
+					}else{
+						Ext.fly('validacionCMPS').dom.innerHTML = Ext.util.Format.htmlDecode(r.resultadoDatosvalidacion.validacion);
+						panelEdicion.container.unmask();
+					}
+					
 				}
 				,error: function(result, request){
 					panelEdicion.container.unmask();
-					alert("Error procesar");
 				}
 			});
 		
@@ -451,6 +467,7 @@ var updateBotonGuardar  = function(){
 					if (r.resultadoDatosvalidacion.validacion == "" ){
 						btnGuardar.setDisabled(false);
 					}else{
+						Ext.fly('validacionCMPS').dom.innerHTML = Ext.util.Format.htmlDecode(r.resultadoDatosvalidacion.validacion);
 						btnGuardar.setDisabled(true);
 					}
 					

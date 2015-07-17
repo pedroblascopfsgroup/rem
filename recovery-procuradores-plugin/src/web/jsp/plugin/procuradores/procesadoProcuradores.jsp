@@ -460,13 +460,13 @@ onViewClick : function(doFocus){
 		
     });
     
+   
     asuntosComboStore.on('load', function(store, records, options){
     	//debugger;
     	//filtroAsunto.setDisabled(false);
     	//filtroAsunto.focus();
     	//return false;
-    	busquedaActiva = false;
-		
+    	busquedaActiva = false;		
     });
 
     //Combo de asuntos

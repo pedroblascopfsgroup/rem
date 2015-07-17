@@ -1102,5 +1102,86 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		return listResultado;
 	}
+        
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getMsgErrorEnvioCDD(Long idAsunto) {
 
+            String msgErrorEnvioCDD = new String();
+            String sql = new String();
+            sql =  " SELECT rvc.dd_rvc_descripcion ";
+            sql += " FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv ";
+            sql += " INNER JOIN DD_RVC_RES_VALIDACION_CDD rvc ";
+            sql += " ON cnv.dd_rvc_id               = rvc.dd_rvc_id ";
+            sql += " INNER JOIN ( ";
+            sql += "   SELECT cnv1.asu_id, max(cnv1.id_acuerdo_cierre) max_id_acuerdo_cierre ";
+            sql += "   FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1 ";
+            sql += "   GROUP BY cnv1.asu_id  ";
+            sql += " ) mcnv ON cnv.id_acuerdo_cierre = mcnv.max_id_acuerdo_cierre ";
+            sql += " WHERE cnv.resultado_validacion = 0 ";
+            sql += " AND cnv.fecha_entrega is null ";
+            sql += " AND cnv.asu_id = " + idAsunto;
+            sql += " AND ROWNUM = 1 ";
+
+            SQLQuery q = getSession().createSQLQuery(sql);
+
+            if (!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                msgErrorEnvioCDD = "Error validación CDD: " + q.list().get(0).toString();
+            }
+
+            return msgErrorEnvioCDD;
+                
+        }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getMsgErrorEnvioCDDNuse(Long idAsunto) {
+
+            String msgErrorEnvioCDD = new String();
+            String sql = new String();
+            sql =  " SELECT rvn.dd_rvn_descripcion ";
+            sql += " FROM CDD_CRN_RESULTADO_NUSE crn ";
+            sql += " INNER JOIN CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv ";
+            sql += " ON crn.id_acuerdo_cierre = cnv.id_acuerdo_cierre ";
+            sql += " INNER JOIN DD_RVN_RES_VALIDACION_NUSE rvn ";
+            sql += " ON crn.crn_resultado   = rvn.dd_rvn_codigo ";
+            sql += " INNER JOIN ( ";
+            sql += "   SELECT cnv1.asu_id, max(cnv1.id_acuerdo_cierre) max_id_acuerdo_cierre ";
+            sql += "   FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1 ";
+            sql += "   GROUP BY cnv1.asu_id  ";
+            sql += " ) mcnv ON cnv.id_acuerdo_cierre = mcnv.max_id_acuerdo_cierre ";
+            sql += " WHERE cnv.fecha_alta  <= cnv.fecha_entrega ";
+            sql += " AND rvn.dd_rvn_codigo <> 0 ";
+            sql += " AND cnv.asu_id = " + idAsunto;
+            sql += " AND ROWNUM = 1 ";            
+
+            SQLQuery q = getSession().createSQLQuery(sql);
+            
+            if (!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                msgErrorEnvioCDD = "Error NUSE CDD: " + q.list().get(0).toString();
+            }
+
+            return msgErrorEnvioCDD;
+                
+        }
+        
+	@SuppressWarnings("unchecked")
+	@Override
+	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
+
+            if (!Checks.esNulo(this.getMsgErrorEnvioCDD(idAsunto))){
+                
+                return this.getMsgErrorEnvioCDD(idAsunto);
+                        
+            }else{
+                if (!Checks.esNulo(this.getMsgErrorEnvioCDDNuse(idAsunto))){
+                    
+                    return this.getMsgErrorEnvioCDDNuse(idAsunto);
+                    
+                }
+            }
+            
+            return null;
+        }
+        
 }

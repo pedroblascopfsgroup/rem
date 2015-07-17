@@ -77,7 +77,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteConclusion/haya_tramiteConclusion.xml" p:version="-1"/>
 	 -->
 	<!-- Groovy's -->
-	<bean id="jbpmUtilHaya" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
+	<bean id="jbpmUtilCajamar" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
   		<list>
   			<value><![CDATA[ 	

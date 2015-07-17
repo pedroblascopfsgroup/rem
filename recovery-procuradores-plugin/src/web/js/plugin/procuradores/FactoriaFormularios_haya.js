@@ -923,7 +923,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
          ,{"xtype":'numberfield',"name":"d_principalDeLaDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
          ,{"xtype":'numberfield',"name":"d_capitalVencidoEnElCierre","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false, filtrar:true}
          ,{"xtype":'numberfield',"name":"d_capitalNoVencidoEnElCierre","fieldLabel":"Capital no vencido (en el cierre)",allowBlank:false, filtrar:true}
-         ,{"xtype":'numberfield',"name":"d_interesessEnElCierre","fieldLabel":"Intereses ordinarios (en el cierre)",allowBlank:false, filtrar:true}
+         ,{"xtype":'numberfield',"name":"d_interesesOrdinariosEnElCierre","fieldLabel":"Intereses ordinarios (en el cierre)",allowBlank:false, filtrar:true}
          ,{"xtype":'numberfield',"name":"d_interesesDeDemoraEnElCierre","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false, filtrar:true}
          ,{"xtype":'numberfield',"name":"d_plazoInteresesOrdinarios","fieldLabel":"Plazo intereses ordinarios",allowBlank:false, filtrar:true}         
          ,{"xtype":'numberfield',"name":"d_tipoMaximoInteresesOrdinarios","fieldLabel":"Tipo máximo intereses ordinarios",allowBlank:false, filtrar:true}

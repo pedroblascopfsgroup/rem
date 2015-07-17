@@ -158,20 +158,20 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		String observacionesComite = null;
 		String fechaDecision = null;
 		for (EXTTareaExternaValor tareaExternaValor : listadoTareaValor) {
-			if (tareaExternaValor.getNombre().equals("observaciones")) {
+			if ("observaciones".equals(tareaExternaValor.getNombre())) {
 				observacionesComite = tareaExternaValor.getValor();
 			}
-			if (tareaExternaValor.getNombre().equals("fechaDecision")) {
+			if ("fechaDecision".equals(tareaExternaValor.getNombre())) {
 				fechaDecision = tareaExternaValor.getValor();
 			}
 		}
 		
 		Date fecha = new Date();
 		try {
-		if (!Checks.esNulo(fechaDecision)) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			fecha = sdf.parse(fechaDecision);
-		}
+			if (!Checks.esNulo(fechaDecision)) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				fecha = sdf.parse(fechaDecision);
+			}
 		} catch (ParseException parseEx) {
 			// No hace nada, coge la fecha de hoy
 		}
@@ -186,7 +186,7 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		
 		DDEstadoLoteSubasta estadoLote = (DDEstadoLoteSubasta)diccionarioApi.dameValorDiccionarioByCod(DDEstadoLoteSubasta.class, codEstado);
 		lote.setObservacionesComite(observacionesComite);
-		lote.setEstado(estadoLote);;
+		lote.setEstado(estadoLote);
 		lote.setFechaEstado(fecha);
 	}
 	

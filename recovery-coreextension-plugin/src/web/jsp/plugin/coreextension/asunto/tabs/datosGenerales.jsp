@@ -353,7 +353,8 @@
 	});
 	
 	var generico = Ext.data.Record.create([
-		 {name:'codigo'}
+		{name:'id'}
+		,{name:'codigo'}
 		,{name:'descripcion'}
 		,{name:'codigoDescripcion'}
 	]);
@@ -389,7 +390,7 @@
 	var comboErrorPostCDD = new Ext.form.ComboBox({
 				store:optionsErrorPostStore
 				,displayField:'codigoDescripcion'
-				,valueField:'codigo'
+				,valueField:'id'
 				,mode: 'remote'
 				,width:300
 				,editable: false
@@ -398,23 +399,54 @@
 				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Resultado propuestas enviadas a cierre"/>'
 	});	
 	
-<%-- 	var nombreFechaEntrega = new Ext.form.Label({
-		text:'<s:message code="" text="**Fecha de envío a cierre" />'
-		,style:labelStyle2
-		,name:'nombre'
-	}); --%>
-	
-	var nombreFechaEntrega = app.creaLabel('<s:message code="" text="**Fecha de envío a cierre"/>','Fecha de envío a cierre');
-	
+		
 	var fechaEntregaDesde = new Ext.ux.form.XDateField({
-		fieldLabel:'<s:message code="" text="**Fecha de envío desde" />'
+		fieldLabel:'<s:message code="asuntos.busqueda.filtro.fechaDeEnvioCierre" text="**Fecha de envío" />'
 		,name : 'fechaEntregaDesde'
 	});
 	
 	var fechaEntregaHasta = new Ext.ux.form.XDateField({
-		fieldLabel:'<s:message code="" text="**Fecha de envío hasta" />'
+		 hideLabel:true
 		,name : 'fechaEntregaHasta'
+		,style: 'margin-bottom: 7px'
 	});
+
+
+
+	var filtrosCDD = new Ext.Panel({
+		layout:'table'
+		,title : ''
+		,collapsible : false
+		,titleCollapse : false
+		,layoutConfig : {
+			columns: 1
+		}
+		,style:'margin-right:20px;margin-left:0px'
+		,border:false
+		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop'}
+		,items:[
+			
+			{items:[
+				{border: false,layout:'form', items:[comboErrorPreviCDD]}
+				]
+			},
+			{items:[
+				{border: false,layout:'form', items:[comboErrorPostCDD]}
+				]
+			},
+
+			{
+			layout:'table'			
+			,layoutConfig : {
+				columns: 2
+			},
+			items:[
+				{border: false,layout:'form', items:[fechaEntregaDesde]}
+				,{border: false,layout:'form',items:[fechaEntregaHasta]}
+				]
+			}
+		]
+	}); 
 	
 	
 	              
@@ -697,10 +729,8 @@
 				,{items:[filtroContrato]}
 				,{items:[fechaCreacionHasta]}
 				,{items:[filtroNumeroAutosPanel]}
-				,{items:[comboErrorPreviCDD]}
 				,{items:[comboJerarquia]}
-				,{items:[comboErrorPostCDD]}
-				,{layout:'table', colspan:3, items:[nombreFechaEntrega,fechaEntregaDesde, fechaEntregaHasta]}
+				,{items:[filtrosCDD]}
 				,{items:[comboZonas]}
 				,{colspan:2,items:[comboTipoProcedimientos]}
 				,{items:[comboGestion]}

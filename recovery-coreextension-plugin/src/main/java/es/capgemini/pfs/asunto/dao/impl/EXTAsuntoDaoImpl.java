@@ -22,9 +22,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.utils.StringUtils;
 import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.asunto.dao.EXTAsuntoDao;
 import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
@@ -40,7 +40,6 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -813,10 +812,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
 			if("Todos".equals(dto.getComboErrorPostCDD())){
-				hql.append(" and asu.errorEnvioCDD.codigo <> '0'");
+				hql.append(" and crn.codigo <> '0'");
 			}
 			else{
-				hql.append(" and asu.errorEnvioCDD.codigo = :errorPost");
+				hql.append(" and crn.id = :errorPost");
 				params.put("errorPost", (dto.getComboErrorPostCDD()));
 			}			
 		}
@@ -1046,6 +1045,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	private Set<String> getCodigosDeZona(DtoBusquedaAsunto dtoBusquedaAsuntos) {
 		Set<String> zonas;
 		if (dtoBusquedaAsuntos.getCodigoZona() != null
@@ -1060,6 +1060,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return zonas;
 	}
 
+	@SuppressWarnings("unused")
 	private Set<String> getTiposProcedimiento(
 			DtoBusquedaAsunto dtoBusquedaAsuntos) {
 		Set<String> tiposProcedimiento = null;
@@ -1078,6 +1079,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	 * @param asuId
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoReportAnotacionAgenda> getListaTareasPendientes(Long asuId) {
 		String queryString = " select tar_tarea, usu_nombre || ' ' || usu_apellido1 || ' ' || usu_apellido2 nombre, tar.dd_tar_descripcion, tar_fecha_ini, tar_fecha_venc, tar_id, dd_tpo_descripcion "
@@ -1138,7 +1140,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return listResultado;
 	}
         
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getMsgErrorEnvioCDD(Long idAsunto) {
 
@@ -1170,7 +1171,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
                 
         }
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getMsgErrorEnvioCDDNuse(Long idAsunto) {
 
@@ -1204,7 +1204,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
                 
         }
         
-	@SuppressWarnings("unchecked")
 	@Override
 	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
 

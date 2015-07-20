@@ -548,7 +548,7 @@ public class DocumentoPCOController {
 		
 		documentoPCOApi.descartarDocumentos(idDocumento);
 		
-		return "DEFAULT";
+		return DEFAULT;
 	}
 	
 //	// METODO PROVISIONAL
@@ -620,7 +620,7 @@ public class DocumentoPCOController {
 		docDto.setId(idDoc);
 		docDto.setProtocolo(webRequest.getParameter("protocolo"));
 		docDto.setNotario(webRequest.getParameter("notario"));
-		//docDto.setFechaEscritura(webRequest.getParameter("fechaEscritura"));
+		docDto.setFechaEscritura(webRequest.getParameter("fechaEscritura"));
 		docDto.setAsiento(webRequest.getParameter("asiento"));
 		docDto.setFinca(webRequest.getParameter("finca"));
 		docDto.setTomo(webRequest.getParameter("tomo"));
@@ -628,12 +628,12 @@ public class DocumentoPCOController {
 		docDto.setFolio(webRequest.getParameter("folio"));
 		docDto.setNumFinca(webRequest.getParameter("numFinca"));
 		docDto.setNumRegistro(webRequest.getParameter("numRegistro"));
-		//docDto.setPlaza(webRequest.getParameter("plaza"));
+		docDto.setPlaza(webRequest.getParameter("plaza"));
 		docDto.setIdufir(webRequest.getParameter("idufir"));
 		
 		documentoPCOApi.editarDocumento(docDto);
 		
-		return "DEFAULT";
+		return DEFAULT;
 	}
 	
 //	// METODO PROVISIONAL
@@ -817,7 +817,7 @@ public class DocumentoPCOController {
 			
 		}
 
-		return "DEFAULT";
+		return DEFAULT;
 	}
 	
 	

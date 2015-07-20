@@ -92,7 +92,7 @@
 	var fechaEscritura = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.fechaEscritura" text="**Fecha escritura" />'
-		,value : '<fwk:date value="${fechaEscritura}" />'
+		,value : '<s:message text="${dtoDoc.fechaEscritura}" />'
 		,style:'margin:0px'
 	});
 	
@@ -140,7 +140,7 @@
 	
 	var plaza = new Ext.form.TextField({
 		name : 'plaza'
-		,value : '<s:message text="${plaza}" javaScriptEscape="true" />'
+		,value : '<s:message text="${dtoDoc.plaza}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.plaza" text="**Plaza" />'
 	});  	
 	

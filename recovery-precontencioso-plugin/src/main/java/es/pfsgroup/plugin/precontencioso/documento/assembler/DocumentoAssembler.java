@@ -16,6 +16,9 @@ import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
  */
 public class DocumentoAssembler {
 	
+	
+	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	/**
 	 * Convierte en una SolicitudDocumentoDTO a partir de un documentoPCO y 
 	 * una solicitudPCO
@@ -26,9 +29,7 @@ public class DocumentoAssembler {
 	public static SolicitudDocumentoPCODto docAndSolEntityToSolicitudDto(DocumentoPCO documento,
 			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, DDSiNo siNo) {
 		SolicitudDocumentoPCODto solicitudDto = new SolicitudDocumentoPCODto();
-		
-		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			
+				
 		solicitudDto.setId(solicitud.getId());
 		solicitudDto.setIdDoc(documento.getId());
 		if (esDocumento){			
@@ -55,7 +56,7 @@ public class DocumentoAssembler {
 		return solicitudDto;
 	}
 	
-	public static DocumentoPCODto docEntityToDocumentoDto(DocumentoPCO documento) {
+	public static DocumentoPCODto docEntityToDocumentoDto(DocumentoPCO documento, DDSiNo siNo) {
 		DocumentoPCODto doc = new DocumentoPCODto();
 		doc.setId(documento.getId());
 		doc.setIdProc(documento.getProcedimientoPCO().getId());
@@ -64,9 +65,7 @@ public class DocumentoAssembler {
 		doc.setDescripcionUG(documento.getUgDescripcion());
 		doc.setTipoDocumento(documento.getTipoDocumento().getDescripcion());
 		doc.setEstado(documento.getEstadoDocumento().getDescripcion());
-		doc.setAdjunto("NO");
-		if (documento.getAdjuntado())
-			doc.setAdjunto("SI");
+		doc.setAdjunto(siNo.getDescripcion());
 		doc.setComentario(documento.getObservaciones());
 		doc.setAsiento(documento.getAsiento());
 		doc.setFinca(documento.getFinca());
@@ -78,6 +77,9 @@ public class DocumentoAssembler {
 		doc.setNumRegistro(documento.getNroRegistro());
 		doc.setProtocolo(documento.getProtocolo());
 		doc.setTomo(documento.getTomo());
+		doc.setPlaza(documento.getPlaza());
+		if (documento.getFechaEscritura()!=null)
+			doc.setFechaEscritura(webDateFormat.format(documento.getFechaEscritura()));		
 		
 		return doc;
 	}

@@ -23,6 +23,8 @@ public class DocumentoPCODto {
 	private String notario;
 	private String numFinca;
 	private String numRegistro;
+	private String fechaEscritura;
+	private String plaza;
 	
 	public Long getId() {
 		return id;
@@ -144,6 +146,18 @@ public class DocumentoPCODto {
 	}
 	public void setNumRegistro(String numRegistro) {
 		this.numRegistro = numRegistro;
+	}
+	public String getFechaEscritura() {
+		return fechaEscritura;
+	}
+	public void setFechaEscritura(String fechaEscritura) {
+		this.fechaEscritura = fechaEscritura;
+	}
+	public String getPlaza() {
+		return plaza;
+	}
+	public void setPlaza(String plaza) {
+		this.plaza = plaza;
 	}
 	
 }

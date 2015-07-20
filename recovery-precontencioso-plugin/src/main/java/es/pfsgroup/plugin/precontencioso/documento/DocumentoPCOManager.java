@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.precontencioso.documento;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -55,6 +58,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	private ApiProxyFactory proxyFactory;
 	
     private final Log logger = LogFactory.getLog(getClass());
+    private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 
 
@@ -143,8 +147,14 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 */
 	public DocumentoPCODto getDocumentoPorIdDocumentoPCO(Long idDocPCO){
 		DocumentoPCO documento = documentoPCODao.get(idDocPCO);
-		
-		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento);
+
+		DDSiNo siNo;
+		if (documento.getAdjuntado())
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.SI);
+		else
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
+
+		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento, siNo);
 		
 		return docDto;		
 	};	
@@ -161,6 +171,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	/**
 	 * Descartar documentos (cambiar a estado Descartado)
 	 */
+	@Override
+	@Transactional(readOnly = false)	
 	public void descartarDocumentos(Long idDocumentoPCO){
 		DocumentoPCO documento = documentoPCODao.get(idDocumentoPCO);
 		DDEstadoDocumentoPCO estadoDocumento = (DDEstadoDocumentoPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoDocumentoPCO.class, DDEstadoDocumentoPCO.DESCARTADO);
@@ -183,7 +195,12 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setId(docDto.getId());
 		documento.setProtocolo(docDto.getProtocolo());
 		documento.setNotario(docDto.getNotario());
-		//docDto.setFechaEscritura(webRequest.getParameter("fechaEscritura"));
+//		try {
+//			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		documento.setAsiento(docDto.getAsiento());
 		documento.setFinca(docDto.getFinca());
 		documento.setTomo(docDto.getTomo());
@@ -191,7 +208,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setFolio(docDto.getFolio());
 		documento.setNroFinca(docDto.getNumFinca());
 		documento.setNroRegistro(docDto.getNumRegistro());
-		//docDto.setPlaza(webRequest.getParameter("plaza"));
+		documento.setPlaza(docDto.getPlaza());
 		documento.setIdufir(docDto.getIdufir());
 
 		documentoPCODao.saveOrUpdate(documento);

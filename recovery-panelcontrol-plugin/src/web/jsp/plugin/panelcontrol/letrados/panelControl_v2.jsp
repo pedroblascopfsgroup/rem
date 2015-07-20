@@ -552,7 +552,6 @@ columnaStore.on('load', function(store, data, options){
 			if (validaMinMax()){
 				//flitrosPlegables.collapse(true);
 				panelControlStore.webflow(getParametrosBusqueda());
-				//debugger;
 			}else{
 				Ext.Msg.alert('<s:message code="plugin.panelControl.letrados.buscar" text="**Buscar" />','<s:message code="plugin.panelControl.letrados.buscar.importe" text="**Importe no correcto" />');
 			}

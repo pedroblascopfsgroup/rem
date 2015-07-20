@@ -5,18 +5,24 @@ if [ "$ORACLE_HOME" == "" ] ; then
 fi
 
 function uso_correcto() {
-    nombre=$1
     echo -e "-----------------------------------------------------------------------------"
-    echo -e "Uso incorrecto de $1. Estos son los posibles usos correctos"
-    echo -e "Uso 1: $1 password_esquema_principal@sid"
-    echo -e "Uso 2: $1 -p"
+    echo -e "Uso incorrecto de $0. Estos son los posibles usos correctos"
+    echo -e "Uso 0: $0 password_esquema_principal@sid -v"
+    echo -e "Uso 1: $0 password_esquema_principal@sid"
+    echo -e "Uso 2: $0 -p"
     echo -e "-----------------------------------------------------------------------------"
 }
 
 
-if [[ $# -gt 1 ]] || [[ $# -lt 1 ]] ; then
-    uso_correcto $0
+if [[ $# -gt 2 ]] || [[ $# -lt 1 ]] ; then
+    uso_correcto
     exit
+fi
+
+if [[ "$#" -eq 2 ]] && [[ "$2" == "-v" ]] ; then
+    export VERBOSE=1
+else
+    export VERBOSE=0
 fi
 
 export NLS_LANG=.AL32UTF8
@@ -106,26 +112,44 @@ fi
 #Invocar PASO1
 export PASO1=reg1.sql
 sed -e s/#ESQUEMA#/${ESQUEMA_EJECUCION}/g "$BASEDIR/${PASO1}" > $BASEDIR/${FECHA_CREACION}-${PASO1}
-echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO1}  >> $BASEDIR/$nombreLog"
+if [[ $VERBOSE == 1 ]]; then
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO1}  >> $BASEDIR/$nombreLog"
+fi
 $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO1}  >> $BASEDIR/$nombreLog
-if [ $? != 0 ] ; then echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO1} >> $BASEDIR/$nombreLog ; exit 1 ; fi
+if [ $? != 0 ] ; then 
+    echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO1} >> $BASEDIR/$nombreLog
+    echo " #KO# :  $BASEDIR/$nombreLog"
+    exit 1
+fi
 
 #Invocar PASO2
 export PASO2=reg2.sql
 sed -e s/#ESQUEMA#/${ESQUEMA_EJECUCION}/g "$BASEDIR/${PASO2}" > $BASEDIR/${FECHA_CREACION}-${PASO2}
-echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION > /dev/null"
+if [[ $VERBOSE == 1 ]]; then
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION > /dev/null"
+fi
 exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION > /dev/null
 export RESULTADO=$?
 if [ $RESULTADO == 33 ] ; then 
-    echo -e "\n\n======>>> "Script $BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} ya ejecutado previamente > /dev/tty
-    echo -e "\n\n======>>> "Script $BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} ya ejecutado >> $nombreLog
-    echo -e "\n#####    Fichero log generado: $BASEDIR/$nombreLog" > /dev/tty
+    if [[ $VERBOSE == 1 ]]; then
+        echo -e "\n\n======>>> "Script $BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} ya ejecutado previamente > /dev/tty
+    fi
+    echo -e "\n\n======>>> "Script $BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} ya ejecutado >> $BASEDIR/$nombreLog
+    if [[ $VERBOSE == 1 ]]; then
+        echo -e "\n#####    Fichero log generado: $BASEDIR/$nombreLog" > /dev/tty
+    fi
+    echo "  YE  :  $BASEDIR/$nombreLog"
     exit 0
 fi
 if [ $RESULTADO != 0 ] ; then 
-    echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO2} > /dev/tty
-    echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO2} >> $nombreLog
-    echo -e "\n#####    Fichero log generado: $BASEDIR/$nombreLog" > /dev/tty
+    if [[ $VERBOSE == 1 ]]; then
+        echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO2} > /dev/tty
+    fi
+    echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO2} >> $BASEDIR/$nombreLog
+    if [[ $VERBOSE == 1 ]]; then
+        echo -e "\n#####    Fichero log generado: $BASEDIR/$nombreLog" > /dev/tty
+    fi
+    echo " #KO# :  $BASEDIR/$nombreLog"
     exit 1
 fi
 echo "##### SCRIPT ${NOMBRE_SCRIPT} ${FECHA_CREACION} NO EJECUTADO PREVIAMENTE"  >> $BASEDIR/$nombreLog
@@ -134,13 +158,17 @@ echo "##### SCRIPT ${NOMBRE_SCRIPT} ${FECHA_CREACION} NO EJECUTADO PREVIAMENTE" 
 export PASO3=reg3.sql
 sed -e s/#ESQUEMA#/${ESQUEMA_EJECUCION}/g "$BASEDIR/${PASO3}" > $BASEDIR/${FECHA_CREACION}-${PASO3}
 echo "#####    Inserción inicial de datos en tabla de registro"  >> $BASEDIR/$nombreLog
-echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR""
+if [[ $VERBOSE == 1 ]]; then
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR""
+fi
 exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO" >> $BASEDIR/$nombreLog
 
 #Ejecución del script en sí mismo
 sed $CADENAS_SUSTITUCION "$BASEDIR/${NOMBRE_SCRIPT}" > $BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT}
 echo "#####    Ejecución del script ${FECHA_CREACION}-${NOMBRE_SCRIPT}"  >> $BASEDIR/$nombreLog
-echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} >> $BASEDIR/$nombreLog"
+if [[ $VERBOSE == 1 ]]; then
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} >> $BASEDIR/$nombreLog"
+fi
 exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} >> $BASEDIR/$nombreLog
 export RESULTADO=$?
 
@@ -149,23 +177,43 @@ sed -e s/#ESQUEMA#/${ESQUEMA_EJECUCION}/g "$BASEDIR/${PASO4}" > $BASEDIR/${FECHA
 
 #Si ERROR, guardar respuesta y ejecución fallida
 if [ $RESULTADO != 0 ] ; then
-   echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} > /dev/tty
-   echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} >> $BASEDIR/$nombreLog
-   echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
-   echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog"
-   exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog
-   if [ $? != 0 ] ; then echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO4} >> $BASEDIR/$nombreLog ; exit 1 ; fi
+    echo " #KO# :  $BASEDIR/$nombreLog"
+    if [[ $VERBOSE == 1 ]]; then
+        echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} > /dev/tty
+    fi
+    echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} >> $BASEDIR/$nombreLog
+    echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
+    if [[ $VERBOSE == 1 ]]; then
+        echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog"
+    fi
+    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog
+    if [ $? != 0 ] ; then 
+        echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO4} >> $BASEDIR/$nombreLog
+        echo " #KO# :  $BASEDIR/$nombreLog"
+        exit 1
+    fi
 fi
 
 #Si OK, guardar respuesta
 if [ $RESULTADO == 0 ] ; then
-   echo -e "\n\n======>>> "$BASEDIR/${NOMBRE_SCRIPT} FINALIZADO CORRECTAMENTE > /dev/tty
-   echo -e "\n\nSCRIPT @${FECHA_CREACION}-${NOMBRE_SCRIPT} FINALIZADO CORRECTAMENTE" >> $BASEDIR/$nombreLog
-   echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
-   echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog"
-   exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog
-   if [ $? != 0 ] ; then echo -e "\n\n======>>> "Error en @${FECHA_CREACION}-${PASO4} >> $BASEDIR/$nombreLog ; exit 1 ; fi
+    if [[ $VERBOSE == 1 ]]; then
+        echo -e "\n\n======>>> "$BASEDIR/${NOMBRE_SCRIPT} FINALIZADO CORRECTAMENTE > /dev/tty
+    fi
+    echo -e "\n\nSCRIPT @${FECHA_CREACION}-${NOMBRE_SCRIPT} FINALIZADO CORRECTAMENTE" >> $BASEDIR/$nombreLog
+    echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
+    if [[ $VERBOSE == 1 ]]; then
+        echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog"
+    fi
+    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog
+    if [ $? != 0 ] ; then 
+        echo -e "\n\n======>>> "Error en @${FECHA_CREACION}-${PASO4} >> $BASEDIR/$nombreLog
+        echo " #KO# :  $BASEDIR/$nombreLog"
+        exit 1
+    fi
+    echo "  OK  :  $BASEDIR/$nombreLog"
 fi
 
-echo -e "\n#####    Fichero log generado: $BASEDIR/$nombreLog" > /dev/tty
+if [[ $VERBOSE == 1 ]]; then
+    echo -e "\n#####    Fichero log generado: $BASEDIR/$nombreLog" > /dev/tty
+fi
 exit $RESULTADO

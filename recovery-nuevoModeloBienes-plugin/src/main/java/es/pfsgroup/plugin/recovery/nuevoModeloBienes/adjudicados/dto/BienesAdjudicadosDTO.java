@@ -14,7 +14,7 @@ public class BienesAdjudicadosDTO  {
 	String numeroActivo;
 	NMBDDOrigenBien origen;
 	String descripcion;
-	Boolean habitual;
+	String habitual;
 	Boolean adjudicacionOK;
 	Boolean saneamientoOK;
 	Boolean posesionOK;
@@ -54,10 +54,10 @@ public class BienesAdjudicadosDTO  {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public Boolean getHabitual() {
+	public String getHabitual() {
 		return habitual;
 	}
-	public void setHabitual(Boolean habitual) {
+	public void setHabitual(String habitual) {
 		this.habitual = habitual;
 	}
 	public Boolean getAdjudicacionOK() {

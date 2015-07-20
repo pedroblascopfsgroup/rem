@@ -20,6 +20,7 @@
 				<fwk:date value="${tp.fechaFin}"/>
 			</json:property>
 			<json:property name="nombreUsuario" value="${tp.nombreUsuario}"/>
+			<json:property name="usuarioResponsable" value="${tp.usuarioResponsable}"/>
 		</json:object>
 	</json:array>
 </fwk:json>

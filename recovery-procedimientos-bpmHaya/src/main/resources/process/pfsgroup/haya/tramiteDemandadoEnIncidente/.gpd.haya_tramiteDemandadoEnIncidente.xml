@@ -161,10 +161,7 @@
       <bendpoint w1="-72" h1="73" w2="65" h2="-31"/>
     </edge>
     <edge>
-      <label x="-239" y="-211"/>
-      <bendpoint w1="27" h1="312" w2="-802" h2="-218"/>
-      <bendpoint w1="207" h1="314" w2="-622" h2="-216"/>
-      <bendpoint w1="824" h1="467" w2="-5" h2="-63"/>
+      <label x="9" y="-7"/>
     </edge>
   </node>
   <node name="H025_registrarResolucion" x="453" y="589" width="314" height="47">
@@ -241,16 +238,21 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="-160" y="-20"/>
+      <label x="-38" y="11"/>
     </edge>
   </node>
   <node name="H025_ContabilizarDecision" x="1102" y="794" width="180" height="36">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="17" h1="-718" w2="92" h2="59"/>
     </edge>
   </node>
   <node name="Fin" x="45" y="252" width="132" height="36"/>
   <node name="Fin2" x="1051" y="17" width="132" height="36"/>
   <node name="Fin3" x="188" y="894" width="132" height="36"/>
+  <node name="H025_SarebDecision" x="52" y="65" width="247" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-138" h1="128" w2="-74" h2="-59"/>
+    </edge>
+  </node>
 </root-container>

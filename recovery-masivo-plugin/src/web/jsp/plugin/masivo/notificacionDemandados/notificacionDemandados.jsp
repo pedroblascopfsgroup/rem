@@ -417,14 +417,12 @@ var historicoDetalleNotificacionGrid = new Ext.grid.EditorGridPanel({
 	        
 	        historicoDetalleNotificacionGrid.stopEditing();
 	        recordHistoricoDetalleStore.insert(0, f);
-	        //debugger;
 	        historicoDetalleNotificacionGrid.startEditing(0, 0);
 		}
 	}]
 });
 
 detalleNotificacionGrid.on('cellclick', function(grid, rowIndex, columnIndex, e){
-	//debugger;
 	var cm = grid.getColumnModel();
     if (cm) {
 		var columnName = cm.getColumnAt(columnIndex).dataIndex;

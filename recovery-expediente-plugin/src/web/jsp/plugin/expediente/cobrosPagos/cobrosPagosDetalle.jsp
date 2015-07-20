@@ -8,7 +8,7 @@
 
 <fwk:page>
 		
-	var labelStyle='font-weight:bolder;width:150px'	
+	var labelStyle='font-weight:bolder;width:150px';
 
 	var booleanRenderer = function(value){
 		if(value=='true'){
@@ -21,7 +21,7 @@
 
 	var fechaDato = new Ext.form.DateField({
 		fieldLabel:'<s:message code="plugin.expediente.cobrosPagos.tab.fechaDato" text="**Fecha dato" />'
-		,value:app.format.dateRenderer('${cop.fechaDato}'.substring(0, 10))
+		,value:'${cop.fechaDato}'.substring(0, 10)
 		,id:'fechaDato'
 		,name:'cobroPago.fechaDato'
 		,labelStyle:labelStyle
@@ -30,7 +30,7 @@
 
 	var fecha = new Ext.form.DateField({
 		fieldLabel:'<s:message code="plugin.expediente.cobrosPagos.detalle.fecha" text="**Fecha" />'
-		,value:app.format.dateRenderer('${cop.fecha}'.substring(0, 10))
+		,value:'${cop.fecha}'.substring(0, 10)
 		,id:'fecha'
 		,name:'cobroPago.fecha'
 		,labelStyle:labelStyle
@@ -109,7 +109,7 @@
 	
 	var fechaValor = new Ext.form.DateField({
 		fieldLabel:'<s:message code="plugin.expediente.cobrosPagos.detalle.fechaValor" text="**Fecha valor" />'
-		,value:app.format.dateRenderer('${cop.fechaValor}'.substring(0, 10))
+		,value:'${cop.fechaValor}'.substring(0, 10)
 		,name:'cobroPago.fechaValor'
 		,labelStyle:labelStyle
 		,readOnly: true
@@ -118,7 +118,7 @@
 	
 	var fechaMovimiento = new Ext.form.DateField({
 		fieldLabel:'<s:message code="plugin.expediente.cobrosPagos.detalle.fechaMovimiento" text="**Fecha movimiento" />'
-		,value:app.format.dateRenderer('${cop.fechaMovimiento}'.substring(0, 10))
+		,value:'${cop.fechaMovimiento}'.substring(0, 10)
 		,name:'cobroPago.fechaMovimiento'
 		,labelStyle:labelStyle
 		,readOnly: true

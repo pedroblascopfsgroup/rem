@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.documento;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;

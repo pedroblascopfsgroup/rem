@@ -1,8 +1,13 @@
 package es.pfsgroup.recovery.bpmframework.test.batch.RecoveryBPMfwkBatchManager;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import java.util.List;
 
 import es.capgemini.devon.bo.Executor;
@@ -60,12 +65,12 @@ public class VerificadorRecoveryBPMfwkBatchManagerTests {
         try {
             verify(mockInputManager).saveInput(input);
         } catch (RecoveryBPMfwkError e) {
-            // No se va a producir ningún error aquí
+            // No se va a producir ningï¿½n error aquï¿½
         }
     }
 
     /**
-     * Verifica que se ha guardado correctamente la petición para procesar un
+     * Verifica que se ha guardado correctamente la peticiï¿½n para procesar un
      * input
      * 
      * @param idProcess
@@ -112,19 +117,19 @@ public class VerificadorRecoveryBPMfwkBatchManagerTests {
 
     public void noSeEjecutaNingunCallback(List<RecoveryBPMfwkPeticionBatch> listaPeticionesBatch) {
 
-        // Número de bloques de peticiones con el mismo token
+        // Nï¿½mero de bloques de peticiones con el mismo token
         int diferentesTokens = 1;
 
         // Comprobamos que se buscan las funciones de callback:
         // (diferentesTokens) veces las de inicio y fin
-        // (numElementos) veces las de éxito
+        // (numElementos) veces las de ï¿½xito
         int numElementos = listaPeticionesBatch.size();
 
         verify(listaPeticionesBatch.get(any(Integer.class)), times(diferentesTokens)).getOnStartBo();
         verify(listaPeticionesBatch.get(any(Integer.class)), times(numElementos)).getOnSuccessBo();
         verify(listaPeticionesBatch.get(any(Integer.class)), times(diferentesTokens)).getOnEndBo();
 
-        // Comprobamos que no se ha invocado ningún callback
+        // Comprobamos que no se ha invocado ningï¿½n callback
         verify(mockExecutor, never()).execute(any(String.class), any(Long.class));
         verify(mockExecutor, never()).execute(any(String.class), any(Long.class), any(RecoveryBPMfwkInput.class));
         verify(mockExecutor, never()).execute(any(String.class), any(Long.class), any(RecoveryBPMfwkInput.class), any(String.class));
@@ -134,31 +139,31 @@ public class VerificadorRecoveryBPMfwkBatchManagerTests {
     public void seHaEjecutadoRunDePeticionesPendientes(List<RecoveryBPMfwkPeticionBatch> listaPeticionesBatch, RecoveryBPMfwkInput mockInput) {
 
         // Comprobamos que se buscan las funciones de callback:
-        // (numElementos) veces las de éxito
+        // (numElementos) veces las de ï¿½xito
         int numElementos = listaPeticionesBatch.size();
 
-        // Verificar que se invoca el número correcto de veces el runner
+        // Verificar que se invoca el nï¿½mero correcto de veces el runner
         try {
             verify(mockRecoveryBPMRunApi, times(numElementos)).procesaInput(mockInput);
         } catch (RecoveryBPMfwkError e) {
-            // No se va a producir nunca un error aquí
+            // No se va a producir nunca un error aquï¿½
         }
 
     }
 
     public void seEjecutaCallbackOnStartYOnEndDeCadaToken(List<RecoveryBPMfwkPeticionBatch> listaPeticionesBatch) {
 
-        // Número de bloques de peticiones con el mismo token
+        // Nï¿½mero de bloques de peticiones con el mismo token
         int diferentesTokens = 2;
 
         // Comprobamos que se buscan las funciones de callback:
-        // (numElementos) veces las de éxito
+        // (numElementos) veces las de ï¿½xito
         int numElementos = listaPeticionesBatch.size();
 
-        // Número de veces que se invoca a getIdToken (como mínimo, numElementos)
+        // Nï¿½mero de veces que se invoca a getIdToken (como mï¿½nimo, numElementos)
         verify(listaPeticionesBatch.get(any(Integer.class)), atLeast(numElementos)).getIdToken();
 
-        // Comprobar el número de veces que se invoca a executor.execute
+        // Comprobar el nï¿½mero de veces que se invoca a executor.execute
         // con las correspondientes operaciones de negocio
         verify(mockExecutor, times(diferentesTokens)).execute(eq(ProcesaPeticionesPendientesTest.BO_ON_START_PROCESS), any(Long.class));
         verify(mockExecutor, never()).execute(any(String.class), any(Long.class), any(RecoveryBPMfwkInput.class));
@@ -168,7 +173,7 @@ public class VerificadorRecoveryBPMfwkBatchManagerTests {
     public void seEjecutaCallbackOnErrorDeCadaToken(List<RecoveryBPMfwkPeticionBatch> listaPeticionesBatch) {
 
         // Comprobamos que se buscan las funciones de callback:
-        // (numElementos) veces las de éxito
+        // (numElementos) veces las de ï¿½xito
         int numElementos = listaPeticionesBatch.size();
 
         verify(mockExecutor, times(numElementos)).execute(eq(ProcesaPeticionesPendientesTest.BO_ON_ERROR), any(Long.class), any(RecoveryBPMfwkInput.class),
@@ -179,7 +184,7 @@ public class VerificadorRecoveryBPMfwkBatchManagerTests {
     public void seEjecutaCallbackOnSuccessDeCadaToken(List<RecoveryBPMfwkPeticionBatch> listaPeticionesBatch) {
 
         // Comprobamos que se buscan las funciones de callback:
-        // (numElementos) veces las de éxito
+        // (numElementos) veces las de ï¿½xito
         int numElementos = listaPeticionesBatch.size();
 
         verify(mockExecutor, times(numElementos)).execute(eq(ProcesaPeticionesPendientesTest.BO_ON_SUCCESS), any(Long.class), any(RecoveryBPMfwkInput.class));

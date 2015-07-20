@@ -75,14 +75,14 @@
         {header:'<s:message code="contrato.tabAdecuaciones.tipo" text="**tipo" />',dataIndex:'tipo',width:120},
         {header:'<s:message code="contrato.tabAdecuaciones.diferencial" text="diferencial" />',dataIndex:'diferencial',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.plazo" text="**plazo" />',dataIndex:'plazo',width:120,hidden:true},        
-        {header:'<s:message code="contrato.tabAdecuaciones.cuota" text="**cuota" />',dataIndex:'cuota',width:120,hidden:true},
+        {header:'<s:message code="contrato.tabAdecuaciones.cuota" text="**cuota actual" />',dataIndex:'cuota',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.cuotaTrasCarencia" text="**cuotaTrasCarencia" />',dataIndex:'cuotaTrasCarencia',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.sistemaAmortizacion" text="**sistemaAmortizacion" />',dataIndex:'sistemaAmortizacion',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.razonProgresion" text="**razonProgresion" />',dataIndex:'razonProgresion', renderer: razonProgresionRenderer, width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.periodicidadRecibos" text="**periodicidadRecibos" />',dataIndex:'periodicidadRecibos',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.periodicidadTipo" text="**periodicidadTipo" />',dataIndex:'periodicidadTipo',width:120,hidden:true},        
         {header:'<s:message code="contrato.tabAdecuaciones.proximaRevision" text="**proximaRevision" />',dataIndex:'proximaRevision',width:120,hidden:true},
-        {header:'<s:message code="contrato.tabAdecuaciones.revisionCuota" text="**revisionCuota" />',dataIndex:'revisionCuota', renderer: revisionCuotaRenderer, width:120,hidden:true},
+        {header:'<s:message code="contrato.tabAdecuaciones.revisionCuota" text="**reduccionCuota" />',dataIndex:'revisionCuota', renderer: revisionCuotaRenderer, width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.fechaDato" text="**fechaDato" />',dataIndex:'fechaDato',width:120,hidden:false}
         
     ]);

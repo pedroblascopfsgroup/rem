@@ -182,7 +182,7 @@ DECLARE
             /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
             /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
             /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ 'TipoProcedimiento',
             /*VERSION................:*/ '0',
             /*USUARIOCREAR...........:*/ 'DD'
         ), --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila

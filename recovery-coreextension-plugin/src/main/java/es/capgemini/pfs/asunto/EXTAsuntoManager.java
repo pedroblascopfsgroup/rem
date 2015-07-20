@@ -2037,7 +2037,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
 	
             if (Checks.esNulo(asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto))){
-                return "";
+                return "NoCDDError";
             }else{
                 return asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto);
             }

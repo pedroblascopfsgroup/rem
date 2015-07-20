@@ -252,7 +252,7 @@
 		entidad.setLabel("titulizada", cabecera.titulizada);
 		entidad.setLabel("fondo", cabecera.fondo);
 		entidad.setLabel("cdd", (cabecera.errorEnvioCDD != '' ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDDValidacionesPre" text="**Este asunto tiene un error de envío a CDD" /> '+cabecera.errorEnvioCDD : ''));
-                entidad.setLabel("msgErrorEnvioCDD", cabecera.msgErrorEnvioCDD);
+                entidad.setLabel("msgErrorEnvioCDD", cabecera.msgErrorEnvioCDD == 'NoCDDError' ? '': cabecera.msgErrorEnvioCDD);
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;

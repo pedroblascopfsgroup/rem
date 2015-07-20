@@ -552,7 +552,7 @@
 		});
 		
 		
-		var numeroActivo = app.creaText('numeroActivo', '<s:message code="plugin.mejoras.bienesNMB.numeroActivo" text="**numeroActivo" />' , numeroActivo, {maxLength:50,labelStyle:labelStyle<c:if test="${operacion == 'editar'}">,disabled: true</c:if>});
+		var numeroActivo = app.creaText('numeroActivo', '<s:message code="plugin.mejoras.bienesNMB.numeroActivo" text="**numeroActivo" />' , numeroActivo, {maxLength:50,labelStyle:labelStyle,disabled: true});
 		var licenciaPrimeraOcupacion = app.creaText('licenciaPrimeraOcupacion', '<s:message code="plugin.mejoras.bienesNMB.licenciaPrimeraOcupacion" text="**licenciaPrimeraOcupacion" />' , licenciaPrimeraOcupacion, {maxLength:50,labelStyle:labelStyle});
 		var primeraTransmision = app.creaText('primeraTransmision', '<s:message code="plugin.mejoras.bienesNMB.primeraTransmision" text="**primeraTransmision" />' , primeraTransmision, {maxLength:50,labelStyle:labelStyle});
 		var contratoAlquiler = app.creaText('contratoAlquiler', '<s:message code="plugin.mejoras.bienesNMB.contratoAlquiler" text="**contratoAlquiler" />' , contratoAlquiler, {maxLength:50,labelStyle:labelStyle});

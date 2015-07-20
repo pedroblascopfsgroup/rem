@@ -63,7 +63,7 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_RELLENAR_INFORME_CDD = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.rellenarInformeValidacionCDD";	
 	public static final String BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getProcedimientoBienByIdPadre";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
-	public static final String BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarBatchCierreDeuda";
+	public static final String BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarBatchCierreDeudaAsunto";
 	public static final String BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.parametrizarLimite";
 	public static final String BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastasManager.getListErrorPreviCDDData";
 	public static final String BO_NMB_GET_LIST_ERROR_POST_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getListErrorPostCDDData";
@@ -226,7 +226,7 @@ public interface SubastaApi {
 	HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
-	void eliminarBatchCierreDeuda(Long idAsunto, Long resultadoValidacion);
+	void eliminarBatchCierreDeudaAsunto(Long idAsunto);
 
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
 	Parametrizacion parametrizarLimite(String nombreParametro);

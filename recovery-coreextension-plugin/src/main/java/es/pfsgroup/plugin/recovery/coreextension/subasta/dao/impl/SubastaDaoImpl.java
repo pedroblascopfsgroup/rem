@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchCDDResultadoNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
@@ -1413,9 +1414,23 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	
 	@Override
 	public void eliminarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
-		StringBuilder sb = new StringBuilder();
-		sb.append(" delete from BatchAcuerdoCierreDeuda ");
-		sb.append(" where id = ").append(acuerdoCierreDeuda.getId());
+		//Se eliminan todos los registros KO por id de BACD
+                StringBuilder sb = new StringBuilder();
+		sb.append(" delete from BatchAcuerdoCierreDeuda bacd");
+		sb.append(" where bacd.resultadoValidacion = ").append(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO);
+                sb.append(" and bacd.id = ").append(acuerdoCierreDeuda.getId());
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
+        
+	@Override
+	public void BatchCDDResultadoNuse(BatchCDDResultadoNuse acuerdoCierreDeudaNuse){
+		//Se eliminan todos los registros KO por ide BCDDNuse
+                StringBuilder sb = new StringBuilder();
+		sb.append(" delete from BatchCDDResultadoNuse BCDDRNuse");
+		sb.append(" where resultado <> 0 ");
+                sb.append(" and id = ").append(acuerdoCierreDeudaNuse.getId());
 		
 		Query query = getSession().createQuery(sb.toString());
 		query.executeUpdate();

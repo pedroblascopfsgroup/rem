@@ -64,6 +64,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchCDDResultadoNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoLoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionNuse;
@@ -1345,14 +1346,22 @@ public class SubastaManager implements SubastaApi {
 		
 		@Override
 		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
-		public void eliminarBatchCierreDeuda(Long idAsunto, Long resultadoValidacion) {
-			List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
-					genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto), 
-					genericDao.createFilter(FilterType.EQUALS, "resultadoValidacion", resultadoValidacion));
+		public void eliminarBatchCierreDeudaAsunto(Long idAsunto) {
+
+                        //Se recorren todos los registros de Acuerdo Cierre Deuda (pivote) que hay en el asunto
+                        List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
+                        genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto));
 			
 			for(BatchAcuerdoCierreDeuda baCDD : listBatchCDD) {
 				subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);
 			}
+                        
+                        List<BatchCDDResultadoNuse> listBatchCDDNuse = (List<BatchCDDResultadoNuse>) genericDao.getList(BatchCDDResultadoNuse.class, 
+                                        genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto));
+
+                        for(BatchCDDResultadoNuse baCDDNuse : listBatchCDDNuse) {
+                                subastaDao.BatchCDDResultadoNuse(baCDDNuse);
+                        }
 		}
 
 		@Override

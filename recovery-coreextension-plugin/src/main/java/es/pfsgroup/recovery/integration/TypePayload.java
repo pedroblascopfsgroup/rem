@@ -2,6 +2,8 @@ package es.pfsgroup.recovery.integration;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import es.capgemini.devon.utils.DbIdContextHolder;
+
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public class TypePayload {
 
@@ -12,10 +14,12 @@ public class TypePayload {
 	 * Campo más importante, tipo de mensaje
 	 */
 	private final String tipo;
+	private final Long entidad;
 	private String descripcion;
 
 	public TypePayload(String tipo) {
 		this.tipo = tipo;
+		this.entidad = DbIdContextHolder.getDbId();
 	}
 	
 	public String getTipo() {
@@ -28,6 +32,10 @@ public class TypePayload {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public Long getEntidad() {
+		return entidad;
 	}
 
 }

@@ -65,6 +65,7 @@
 		<constructor-arg>
 			<list>
 				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+					<property name="entidad" value="1" />	<!-- DEJAMOS PASAR sólo la entidad 1 -->
 					<property name="tipo" value=".+" />	<!-- DEJAMOS PASAR TODO -->
 				</bean>
 				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />

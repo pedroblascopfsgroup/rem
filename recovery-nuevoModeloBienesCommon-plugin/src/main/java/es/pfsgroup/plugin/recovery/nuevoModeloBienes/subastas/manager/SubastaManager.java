@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.manager;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,6 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -28,18 +30,27 @@ import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -65,8 +76,11 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
+import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
+import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -104,8 +118,7 @@ public class SubastaManager implements SubastaApi {
 	NMBProjectContext projectContext;
 
 	@Resource
-    private MessageService messageService;
-	
+    private MessageService messageService;	
 	
 	@Override
 	public List<Subasta> getSubastasAsunto(Long idAsunto) {
@@ -411,6 +424,13 @@ public class SubastaManager implements SubastaApi {
 		return bienes;
 	}
 	
+	@BusinessOperation(BO_NMB_SUBASTA_GET_BIENES_LOTE_SUBASTA)
+	public List<Bien> getBienesLoteSubasta(Long idLote){
+		LoteSubasta loteSubasta = genericDao.get(LoteSubasta.class, genericDao.createFilter(FilterType.EQUALS, "id", idLote), 
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		return loteSubasta.getBienes();
+	}
+	
 	@BusinessOperation(BO_NMB_SUBASTA_GET_DATOS_ACTA_COMITE)
 	public List<DatosActaComiteBean> getDatosActaComite(NMBDtoBuscarLotesSubastas dto){
 		
@@ -529,6 +549,13 @@ public class SubastaManager implements SubastaApi {
 		}
 		return page;
 	}	
+	
+	@Override
+	@BusinessOperation(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
+	public Parametrizacion parametrizarLimite(String nombreParametro) {
+		return (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+				nombreParametro);
+	}
 
 	/**
 	 * Metodo optimizado de busqueda de subastas para exportar a excel 
@@ -788,11 +815,17 @@ public class SubastaManager implements SubastaApi {
 	public Subasta getSubasta(Long idSubasta) {		
 		return subastaDao.get(idSubasta);
 	}
-
+	
+	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE_DEUDA)
+	@Transactional(readOnly = false)
+	public void guardaBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda autoCierreDeuda) {
+		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
+	}
 
 	@BusinessOperation(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
 	@Transactional(readOnly = false)
-	public void guardaBatchAcuerdoCierre(BatchAcuerdoCierreDeuda autoCierreDeuda) {
+	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien) {
+		BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(idSubasta, idBien);
 		genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 	}
 	
@@ -1039,4 +1072,207 @@ public class SubastaManager implements SubastaApi {
 			if (gc1.get(Calendar.DATE)==gc2.get(Calendar.DATE) && gc1.get(Calendar.MONTH)==gc2.get(Calendar.MONTH) && gc1.get(Calendar.YEAR)==gc2.get(Calendar.YEAR)) elapsed++; // si es el mismo dia cuenta para la suma de meses
 			return elapsed;
 		}
+
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_EXPORTAR_BUSCADOR_SUBASTAS_EXCEL_COUNT)
+		public Integer buscarSubastasXLSCount(NMBDtoBuscarSubastas dto) {
+			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			return  subastaDao.buscarSubastasExcel(dto, usuarioLogado,true).size();	
+		}
+		
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_TAREAS_CIERRE_DEUDA)
+		public Map<String, String> obtenerTareasCierreDeuda() {
+			 return projectContext.getTareasCierreDeuda();
+		}
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_ACTUALIZAR_INFORMACION_CIERRE_DEUDA)
+		public void actualizarInformacionCierreDeuda(EditarInformacionCierreDto dto) {
+			Subasta subasta = subastaDao.get(Long.valueOf(dto.getIdSubasta()));
+			TipoJuzgado tipoJuzgado = (TipoJuzgado) genericDao.get(TipoJuzgado.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTipoJuzgado()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			tipoJuzgado.setPlaza(tipoJuzgado.getPlaza());
+			subasta.getProcedimiento().setJuzgado(tipoJuzgado);
+			subasta.getProcedimiento().setSaldoRecuperacion(dto.getPrincipalDemanda());
+			subasta.setDeudaJudicial(dto.getDeudaJudicial());
+			try {
+				subasta.setFechaSenyalamiento(DateFormat.toDate(dto.getFechaSenyalamiento()));
+			} catch (ParseException e) {
+			}
+			actualizarTareaExternaValor(dto.getIdValorCostasLetrado(), dto.getCostasLetrado());
+			actualizarTareaExternaValor(dto.getIdValorCostasProcurador(), dto.getCostasProcurador());
+			actualizarTareaExternaValor(dto.getIdValorConPostores(), dto.getConPostores());
+			subastaDao.save(subasta);
+		}
+		
+		private void actualizarTareaExternaValor(Long idValorNodoTarea, String valor) {
+			TareaExternaValor tareaExtValor = (TareaExternaValor) genericDao.get(TareaExternaValor.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", idValorNodoTarea),						
+					genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			tareaExtValor.setValor(valor);
+			genericDao.update(TareaExternaValor.class, tareaExtValor);
+		}
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA)
+		public boolean tareaExisteYFinalizada(Procedimiento procedimiento, String nombreNodo) {
+			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
+			return (!Checks.esNulo(historicoPrc) && !Checks.esNulo(historicoPrc.getFechaFin()));
+		}
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_TAREA_EXISTE)
+		public HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo) {
+			return getNodo(procedimiento, nombreNodo);
+		}
+		
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC)
+		public ValorNodoTarea obtenValorNodoPrc(Procedimiento procedimiento, String nombreNodo, String valor) {
+			HistoricoProcedimiento historicoPrc = getNodo(procedimiento, nombreNodo);
+			return getValorNodoPrc(historicoPrc, valor);
+		}
+		
+		private HistoricoProcedimiento getNodo(Procedimiento procedimiento, String nombreNodo) {
+			HistoricoProcedimiento hPrc = null;
+			if ((!Checks.esNulo(procedimiento)) && (!Checks.esNulo(nombreNodo))) {
+				List<EXTHistoricoProcedimiento> listadoTareasProc = proxyFactory.proxy(EXTHistoricoProcedimientoApi.class).getListByProcedimientoEXT(procedimiento.getId());			
+				if (!Checks.esNulo(listadoTareasProc)) {
+					for (EXTHistoricoProcedimiento hp : listadoTareasProc) {
+						// Filtramos por el código de la tarea donde están los campos que
+						// necesitamos y nos quedamos con el último
+						if (!Checks.esNulo(hp.getCodigoTarea()) &&  nombreNodo.equals(hp.getCodigoTarea())) {
+							hPrc = hp;
+							break;
+						}
+					}
+				}
+			}
+			return hPrc;
+		}
+		
+		private ValorNodoTarea getValorNodoPrc(HistoricoProcedimiento hPrc, String valor) {
+			// Si hemos encontrado una tarea del tipo especificado
+			if (!Checks.esNulo(hPrc) && !Checks.esNulo(valor)) {
+				if (!Checks.esNulo(hPrc.getIdEntidad())) {
+					TareaNotificacion tareaSS = proxyFactory.proxy(TareaNotificacionApi.class).get(hPrc.getIdEntidad());
+					if (!Checks.esNulo(tareaSS)) {
+						if (!Checks.esNulo(tareaSS.getTareaExterna())) {
+							List<TareaExternaValor> listadoValores = tareaSS.getTareaExterna().getValores();
+							if (!Checks.esNulo(listadoValores)) {
+								for (TareaExternaValor val : listadoValores) {
+									if (valor.equals(val.getNombre())) {
+										return new ValorNodoTarea(val.getId(), val.getValor());
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
+		public List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien) {
+			Subasta subasta = subastaDao.get(idSubasta);
+			return subastaDao.findBatchAcuerdoCierreDeuda(subasta.getAsunto().getId(), subasta.getProcedimiento().getId(), idBien);
+		}
+
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
+		public void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBACDD) {
+			for(BatchAcuerdoCierreDeuda bACDD : listBACDD) {
+				genericDao.deleteById(BatchAcuerdoCierreDeuda.class, bACDD.getId());				
+			}
+			guardaBatchAcuerdoCierre(idSubasta, null);
+		} 
+		
+		private BatchAcuerdoCierreDeuda getCierreDeudaInstance(Long idSubasta, Long idBien) {
+			Subasta subasta = getSubasta(idSubasta);
+			EXTAsunto extAsunto = EXTAsunto.instanceOf(subasta.getAsunto()); 
+
+			Procedimiento procedimiento = subasta.getProcedimiento();
+			Auditoria auditoria = Auditoria.getNewInstance();
+			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
+			cierreDeuda.setIdProcedimiento(procedimiento.getId());
+			cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
+			cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
+			cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
+			cierreDeuda.setEntidad(extAsunto.getPropiedadAsunto().getCodigo());	
+			cierreDeuda.setIdBien(idBien);
+			return cierreDeuda;
+		};
+		
+		@Override
+		@Transactional(readOnly = false)
+		@BusinessOperation(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
+		public void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien) {
+			for(Long idBien : idsBien) {
+				List<BatchAcuerdoCierreDeuda> list = findRegistroCierreDeuda(idSubasta, idBien);
+				if(Checks.estaVacio(list)) {
+					guardaBatchAcuerdoCierre(idSubasta, idBien);
+				}
+			}
+		} 
+		
+		public class ValorNodoTarea {
+			private Long idTareaNodoValor;
+			private String valor;
+			
+			public ValorNodoTarea() {
+			}
+			
+			public ValorNodoTarea(Long idTareaNodoValor, String valor) {
+				this.idTareaNodoValor = idTareaNodoValor;
+				this.valor = valor;
+			}
+			
+			/**
+			 * @return the idTareaNodoValor
+			 */
+			public Long getIdTareaNodoValor() {
+				return idTareaNodoValor;
+			}
+			/**
+			 * @param idTareaNodoValor the idTareaNodoValor to set
+			 */
+			public void setIdTareaNodoValor(Long idTareaNodoValor) {
+				this.idTareaNodoValor = idTareaNodoValor;
+			}
+			/**
+			 * @return the valor
+			 */
+			public String getValor() {
+				return valor;
+			}
+			/**
+			 * @param valor the valor to set
+			 */
+			public void setValor(String valor) {
+				this.valor = valor;
+			}
+			
+		}
+		
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
+		public Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento) {
+			Procedimiento prc = null;
+			List<ProcedimientoBien> listProcedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
+					genericDao.createFilter(FilterType.EQUALS, "bien.id", nmbBien.getId()), 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", tipoProcedimiento));
+			
+			if(!Checks.estaVacio(listProcedimientoBien)) {
+				prc = listProcedimientoBien.get(0).getProcedimiento();
+			}
+			return prc;
+		}
+		
 }

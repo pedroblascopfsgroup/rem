@@ -18,6 +18,7 @@
 	var errores="";
 
 	var modoConsulta=false;
+	var faltaPermisos=false;
 	var esSolicitud=true;
 	<c:if test="${decisionProcedimiento!=null}" >
 		if('${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_ACEPTADO" />'
@@ -44,7 +45,12 @@
 		estadoSegunPerfil= '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
 	if(esSupervisor)
 		estadoSegunPerfil= '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_ACEPTADO" />'
-		
+
+	if(!esGestor && !esSupervisor) {
+		modoConsulta = true;
+		faltaPermisos = true;
+	}
+	
 	var estadoDecision=new Ext.form.Hidden({
 		name:'strEstadoDecision'
 		,value: estadoSegunPerfil
@@ -1045,13 +1051,19 @@
 						new Ext.form.Label({
 							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar" text="**La decisión está aceptada/cancelada y no se puede editar" />'
 							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
-							,hidden: !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
+							,hidden: faltaPermisos || !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
 							})
 						,
 						new Ext.form.Label({
 							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar.propuesto" text="**La decisión está propuesta y no se puede editar" />'
 							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
-							,hidden: !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' != '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
+							,hidden: faltaPermisos || !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' != '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
+							})
+						,
+						new Ext.form.Label({
+							text:'<s:message code="decisionProcedimiento.msg.actuaciones.no.permisos" text="**No tiene permisos de usuario" />'
+							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
+							,hidden: !faltaPermisos
 							})
 						, procedimientoGrid
 					]

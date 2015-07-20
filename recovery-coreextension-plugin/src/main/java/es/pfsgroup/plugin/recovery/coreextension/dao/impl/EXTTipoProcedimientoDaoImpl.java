@@ -17,5 +17,12 @@ public class EXTTipoProcedimientoDaoImpl extends AbstractEntityDao<TipoProcedimi
         List<TipoProcedimiento> lista = (List<TipoProcedimiento>) getHibernateTemplate().find(hql, new Object[] { codigoActuacion });
         return lista;
     }	
+	
+	@Override
+	public List<TipoProcedimiento> getListTipoProcedimientosMenosTipoActuacion(String codigoActuacion) {
+        String hql = "from TipoProcedimiento where tipoActuacion.codigo != ? and auditoria.borrado=false";
+        List<TipoProcedimiento> lista = (List<TipoProcedimiento>) getHibernateTemplate().find(hql, new Object[] { codigoActuacion });
+        return lista;
+    }	
 
 }

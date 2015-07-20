@@ -44,7 +44,6 @@
 	}
 	
 	var validarPorcentaje = function() {
-		debugger;
 		if (eval(NMBparticipacion.getValue()) + eval(tPorce.getValue()-porce.getValue()) > 100) {
 			return false;
 		}

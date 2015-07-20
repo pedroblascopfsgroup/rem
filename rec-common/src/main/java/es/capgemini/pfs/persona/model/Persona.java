@@ -531,6 +531,11 @@ public class Persona implements Serializable, Auditable, Describible {
 			+ DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO
 			+ "') and cpe.per_id = PER_ID)")
 	private Integer numAsuntosActivos;
+	
+	@Formula(value = "(SELECT COUNT (DISTINCT asu.asu_id) FROM ASU_ASUNTOS asu JOIN PRC_PROCEDIMIENTOS prc ON prc.asu_id = asu.asu_id "
+			+ " JOIN PRC_PER PRCPER ON PRC.PRC_ID = PRCPER.PRC_ID "
+			+ " WHERE asu.borrado = 0 and prc.borrado = 0 and PRCPER.PER_ID = PER_ID)")
+	private Integer numAsuntosActivosPorPrc;
 
 	/**
 	 * Situaci�n de gesti�n: Cliente (todos los que no son ni expediente, ni
@@ -1857,6 +1862,10 @@ public class Persona implements Serializable, Auditable, Describible {
 	public Integer getNumAsuntosActivos() {
 		return numAsuntosActivos;
 	}
+	
+	public Integer getNumAsuntosActivosPorPrc() {
+		return numAsuntosActivosPorPrc;
+	}	
 
 	/**
 	 * @return the diasVencido
@@ -2711,6 +2720,14 @@ public class Persona implements Serializable, Auditable, Describible {
 	 */
 	public void setNumAsuntosActivos(Integer numAsuntosActivos) {
 		this.numAsuntosActivos = numAsuntosActivos;
+	}
+	
+	/**
+	 * @param numAsuntosActivosPorPrc
+	 *            the numAsuntosActivosPorPrc to set
+	 */
+	public void setNumAsuntosActivosPorPrc(Integer numAsuntosActivosPorPrc) {
+		this.numAsuntosActivosPorPrc = numAsuntosActivosPorPrc;
 	}
 
 	/**

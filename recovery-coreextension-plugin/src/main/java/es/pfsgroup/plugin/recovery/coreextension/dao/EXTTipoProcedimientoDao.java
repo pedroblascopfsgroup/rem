@@ -8,4 +8,5 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 public interface EXTTipoProcedimientoDao extends AbstractDao<TipoProcedimiento, Long> {
 
 	public List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacion(String codigoActuacion);
+	public List<TipoProcedimiento> getListTipoProcedimientosMenosTipoActuacion(String codigoActuacion);
 }

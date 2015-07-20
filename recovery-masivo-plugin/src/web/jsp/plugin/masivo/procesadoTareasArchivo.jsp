@@ -54,7 +54,6 @@
 		
 		//Pruebas. Luego descomentar. var idField = upload.getForm().findField('id');
 		//idField.setValue(comboTiposOperacion.getValue());
-		//debugger;
 		//var obj = upload.getForm().findField('path');
 		creaVentanaUpload();
 		upload.getForm().reset();
@@ -185,7 +184,6 @@
 		]);
 	
 var actualizarBotones = function(){
-		//debugger;
 		var registro = listaArchivosGrid.getSelectionModel().getSelected();
 		var estado = '';
 		if (registro){
@@ -329,7 +327,6 @@ var actualizarBotones = function(){
 	       			var id = listaArchivosGrid.getSelectionModel().getSelected().get('id');
     				var params = {idProceso : id};
     				var flow='/pfs/msvprocesadotareasarchivo/descargarFicheroErrores';
-    				//debugger;
 					app.openBrowserWindow(flow,params);
 				}
 				else{
@@ -433,7 +430,6 @@ var creaVentanaUpload = function(){
 			            ,bodyStyle: 'width:50px;'
 			            ,listeners: {
 				            'fileselected': function(fb, v){
-				            	//debugger;
 				            	var node = Ext.DomQuery.selectNode('input[id='+fb.id+']');
 					        	node.value = v.replace("C:\\fakepath\\","");
 				            }
@@ -442,7 +438,6 @@ var creaVentanaUpload = function(){
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
-		            //debugger;
 		            controlador.nuevoProceso(comboTiposOperacion.getValue(),upload.getForm(), fn_nuevoProcesoOk);
 		            win.hide();
 		            }
@@ -470,7 +465,6 @@ var creaVentanaUpload = function(){
 }
 		
 var fn_nuevoProcesoOk = function(r){
-	//debugger;
 	var idProceso = r.resultadoNuevoProceso.idProceso;
 	var idTipoOperacion = r.resultadoNuevoProceso.idTipoOperacion;
 	//alert(idProceso + "/" + idTipoOperacion);
@@ -495,21 +489,18 @@ var fn_subirExcelError = function(r){
 
 var fn_validaFicheroOk = function(r){
 	recargarGrid();
-	//debugger;
 	//var id = r.resultadoCambioEstado.idProceso;
 	//alert("fn_validaFicheroOk. id:" + id);	
 }
 
 var fn_liberarFicheroOk = function(r){
 	recargarGrid();
-	//debugger;
 	//var id = r.resultadoIdProceso.idProceso;
 	//alert("fn_liberarFicheroOk. id:" + id);	
 }
 
 var fn_eliminarFicheroOk = function(r){
 	recargarGrid();
-	//debugger;
 	//var id = r.resultadoIdProceso.idProceso;
 	//alert("fn_eliminarFicheroOk. id:" + id);
 }

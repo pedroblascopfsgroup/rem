@@ -4,14 +4,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -515,7 +518,14 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 			
 			NMBBien nmbBien = (NMBBien) bien;
 			
-			if (Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia()) || Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad()) || Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumFinca())) {
+			if (Checks.esNulo(nmbBien.getLocalizacionActual())
+					|| Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia()) 
+                    || Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad())
+                    || Checks.esNulo(nmbBien.getDatosRegistralesActivo())
+                    || Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumFinca())
+                    || Checks.esNulo(nmbBien.getAdicional())
+                    || Checks.esNulo(nmbBien.getAdicional().getTipoInmueble())
+                    || Checks.esNulo(nmbBien.getAdicional().getTipoInmueble().getCodigo())) {
 				return false;
 			}
 
@@ -554,7 +564,7 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 			
 			NMBBien nmbBien = (NMBBien) bien;
 			
-			if (nmbBien.getViviendaHabitual()) {
+			if ("1".equals(nmbBien.getViviendaHabitual())) {
 				isViviendaHabitual=true;
 			}
 		}

@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.precontencioso.documento.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -26,6 +28,7 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.IncluirDocumentoDto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.InformarDocumentoDto;
+import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
@@ -53,7 +56,7 @@ public class DocumentoPCOController {
 	private static final String INCLUIR_DOC = "plugin/precontencioso/documento/popups/incluirDocumento";
 	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
-	private static final String PENDIENTE_SOLICITAR = "PS";
+	private static final String PENDIENTE_SOLICITAR = DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR;
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	List<DocumentoPCODto> documentos = null;
@@ -217,11 +220,11 @@ public class DocumentoPCOController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String informarSolicitud(
-			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
+			@RequestParam(value = "idSolicitud", required = true) String idSolicitud, 
 			@RequestParam(value = "actor", required = true) String actor, 
-			@RequestParam(value = "idDoc", required = true) Long idDoc, 
+			@RequestParam(value = "idDoc", required = true) String idDoc, 
 			@RequestParam(value = "estado", required = true) String estado, 
-			@RequestParam(value = "adjuntado", required = true) String adjuntado, 
+			@RequestParam(value = "adjunto", required = true) String adjuntado, 
 			@RequestParam(value = "fechaResultado", required = true) String fechaResultado, 
 			@RequestParam(value = "resultado", required = true) String resultado, 
 			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
@@ -230,9 +233,19 @@ public class DocumentoPCOController {
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
-		
+
+		dto.setIdSolicitud(Long.parseLong(idSolicitud));
+		dto.setActor(actor);
+		dto.setIdDoc(Long.parseLong(idDoc));
 		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, estado));
 		dto.setAdjuntado(obtenerCodigoDiccionario(DDSiNo.class, adjuntado));
+		if ("".equals(dto.getAdjuntado()) && !"".equals(adjuntado)) {
+			if ("NO".equalsIgnoreCase(adjuntado) || DDSiNo.NO.equals(adjuntado)) {
+				dto.setAdjuntado(DDSiNo.NO);
+			} else if ("Sí".equalsIgnoreCase(adjuntado) || DDSiNo.SI.equals(adjuntado)) {
+				dto.setAdjuntado(DDSiNo.SI);
+			}
+		}
 		dto.setFechaResultado(fechaResultado);
 		dto.setRespuesta(obtenerCodigoDiccionario(DDResultadoSolicitudPCO.class, resultado));
 		dto.setFechaEnvio(fechaEnvio);
@@ -1196,4 +1209,48 @@ public class DocumentoPCOController {
 		return respuesta;
 
 	}
+	
+	/**
+	 * Informarlas solicitudes de los documentos
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping 
+	private String saveInformarSolicitud(WebRequest request, ModelMap model) {
+        
+		SaveInfoSolicitudDTO dto = new SaveInfoSolicitudDTO();
+        
+        dto.setIdDoc(request.getParameter("idDoc"));
+        dto.setActor(request.getParameter("actor"));
+        dto.setIdSolicitud(request.getParameter("idSolicitud"));
+        dto.setEstado(request.getParameter("estado"));
+        dto.setAdjuntado(request.getParameter("adjuntado"));
+        dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
+        dto.setResultado(request.getParameter("resultado"));
+        dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
+        dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
+        dto.setComentario(request.getParameter("comentario"));
+        
+        documentoPCOApi.saveInformarSolicitud(dto);
+        
+        return SOLICITUDES_DOC_PCO_JSON;
+        
+	}
+	
+	private Date parseaFecha(String fecha) {
+
+		Date fechaSalida = null;
+		
+		if (!Checks.esNulo(fecha)) {
+			try {
+				fechaSalida = webDateFormat.parse(fecha);
+			} catch (ParseException e) {
+				logger.error(e.getLocalizedMessage());
+			}
+		}
+		return fechaSalida;
+
+	}
+
  }

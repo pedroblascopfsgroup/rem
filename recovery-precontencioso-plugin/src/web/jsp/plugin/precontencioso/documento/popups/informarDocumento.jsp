@@ -65,12 +65,59 @@
 					}
 	});
 	
+	var validateForm = function(){	
+	
+		return true;
+		
+	}
+	
+	var getParametros = function() {
+	
+	 	var parametros = {};
+	 	parametros.idSolicitud = '${solicitud.idSolicitud}';
+	 	parametros.actor = '${solicitud.actor}';
+	 	parametros.idDoc = '${solicitud.idDoc}';
+		
+		parametros.estado = comboEstadosDocumento.getValue();	 	
+ 		parametros.adjuntado = adjuntado.getValue();
+ 		if (fechaResultado.getValue() != "") {
+		 	parametros.fechaResultado = fechaResultado.getValue().format('d/m/Y');
+		} else {
+		 	parametros.fechaResultado = "";
+		}
+	 	parametros.resultado = comboRespuestasSolicitud.getValue();
+ 		if (fechaEnvio.getValue() != "") {
+		 	parametros.fechaEnvio = fechaEnvio.getValue().format('d/m/Y');
+		} else {
+		 	parametros.fechaEnvio = "";
+		}
+ 		if (fechaRecepcion.getValue() != "") {
+		 	parametros.fechaRecepcion = fechaRecepcion.getValue().format('d/m/Y');
+		} else {
+		 	parametros.fechaRecepcion = "";
+		}
+	 	parametros.comentario = comentario.getValue();
+	 	
+	 	return parametros;
+	 }	
+	
+	
 	var btnGuardar= new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-						page.fireEvent(app.event.CANCEL);  	
+			if (validateForm()) {               
+				var p = getParametros();
+				Ext.Ajax.request({
+					url : page.resolveUrl('documentopco/saveInformarSolicitud'), 
+					params : p ,
+					method: 'POST',
+					success: function ( result, request ) {
+						page.fireEvent(app.event.DONE);
 					}
+				});
+			}
+		}
 	});
 	
 	var panelEdicion = new Ext.form.FieldSet({

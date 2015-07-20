@@ -265,7 +265,7 @@ var informarDocButton = new Ext.Button({
 		        var w = app.openWindow({
 						flow: 'documentopco/informarSolicitud'
 						,params: {idSolicitud:rowsSelected[0].get('id'), actor:rowsSelected[0].get('actor'), idDoc:rowsSelected[0].get('idDoc'), 
-							estado:rowsSelected[0].get('estado'),adjuntado:rowsSelected[0].get('adjunto'),
+							estado:rowsSelected[0].get('estado'),adjunto:rowsSelected[0].get('adjunto'),
 							fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
 							fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion'),
 							comentario:rowsSelected[0].get('comentario')}
@@ -273,7 +273,9 @@ var informarDocButton = new Ext.Button({
 						,width: 640
 					});
 					w.on(app.event.DONE, function() {
-						w.close(); });
+						//storeDocumentos.webflow(); 
+						w.close(); 
+					});
 					w.on(app.event.CANCEL, function(){ w.close(); });
 			}
 		}				

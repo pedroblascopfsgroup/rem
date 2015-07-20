@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.precontencioso.documento.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
@@ -13,6 +16,7 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 public interface DocumentoPCOApi {
 	
+	static final String PCO_DOCUMENTO_SOLICITUD_INFORMAR = "es.pfsgroup.plugin.precontencioso.documento.saveInformarSolicitud";
 		
 	/**
 	 * Obtiene las solicitudes de los documentos de precontencioso de un procedimiento
@@ -118,4 +122,12 @@ public interface DocumentoPCOApi {
 	 * @param documento
 	 */
 	void saveCrearDocumento(DocumentoPCO documento);
+
+	/**
+	 * Guarda la información de una solicitud (después de Informar Solicitud)
+	 * 
+	 * @param dto
+	 */
+	@BusinessOperationDefinition(PCO_DOCUMENTO_SOLICITUD_INFORMAR)
+	void saveInformarSolicitud(SaveInfoSolicitudDTO dto);
 }

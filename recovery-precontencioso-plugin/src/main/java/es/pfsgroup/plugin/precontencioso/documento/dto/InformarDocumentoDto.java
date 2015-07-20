@@ -9,6 +9,10 @@ public class InformarDocumentoDto implements Serializable {
 	 */
 	private static final long serialVersionUID = -1042740703163518903L;
 
+	private Long idSolicitud;
+	private String actor;
+	private Long idDoc;
+	
 	private String estado;
 	private String adjuntado;
 	private String fechaResultado;
@@ -71,5 +75,29 @@ public class InformarDocumentoDto implements Serializable {
 
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
+	}
+
+	public Long getIdSolicitud() {
+		return idSolicitud;
+	}
+
+	public void setIdSolicitud(Long idSolicitud) {
+		this.idSolicitud = idSolicitud;
+	}
+
+	public String getActor() {
+		return actor;
+	}
+
+	public void setActor(String actor) {
+		this.actor = actor;
+	}
+
+	public Long getIdDoc() {
+		return idDoc;
+	}
+
+	public void setIdDoc(Long idDoc) {
+		this.idDoc = idDoc;
 	}
 }

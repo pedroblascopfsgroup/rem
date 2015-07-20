@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.documento;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -9,17 +10,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
 import es.pfsgroup.plugin.precontencioso.documento.dao.SolicitudDocumentoPCODao;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
@@ -251,6 +261,48 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 */
 	public void saveCrearDocumento(DocumentoPCO documento){
 		documentoPCODao.save(documento);
+	}
+
+	@Override
+	@BusinessOperation(PCO_DOCUMENTO_SOLICITUD_INFORMAR)
+	@Transactional(readOnly = false)
+	public void saveInformarSolicitud(SaveInfoSolicitudDTO dto) {
+
+		DocumentoPCO documento = documentoPCODao.get(Long.valueOf(dto.getIdDoc()));
+		
+		DDEstadoDocumentoPCO estadoDocumento = genericDao.get(
+				DDEstadoDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstado()));
+		documento.setEstadoDocumento(estadoDocumento);
+		documento.setAdjuntado(DDSiNo.SI.equals(dto.getAdjuntado()));
+		documento.setObservaciones(dto.getComentario());
+		genericDao.save(DocumentoPCO.class, documento);
+
+		SolicitudDocumentoPCO solicitud = null;
+		for (SolicitudDocumentoPCO sol : documento.getSolicitudes()) {
+			if (sol.getId().equals(Long.valueOf(dto.getIdSolicitud()))) {
+				solicitud = sol;
+				break;
+			}
+		}
+		
+		if (!Checks.esNulo(dto.getActor())) {
+			Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
+			solicitud.setActor(usuario);
+		}
+		
+		
+		solicitud.setFechaResultado(dto.getFechaResultado());
+		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
+				DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getResultado()));;
+		
+		solicitud.setResultadoSolicitud(resultadoSolicitud);
+		
+	    solicitud.setFechaEnvio(dto.getFechaEnvio());
+	    
+	    solicitud.setFechaRecepcion(dto.getFechaRecepcion());
+		genericDao.save(SolicitudDocumentoPCO.class, solicitud);
+
+		
 	};
 
  }

@@ -65,6 +65,11 @@
 					}
 	});
 	
+	var validateForm = function(){	
+	
+		return true;
+		
+	}
 	
 	var getParametros = function() {
 	
@@ -75,11 +80,23 @@
 		
 		parametros.estado = comboEstadosDocumento.getValue();	 	
  		parametros.adjuntado = adjuntado.getValue();
-	 	parametros.fechaResultado = fechaResultado.getValue();
+ 		if (fechaResultado.getValue() != "") {
+		 	parametros.fechaResultado = fechaResultado.getValue().format('d/m/Y');
+		} else {
+		 	parametros.fechaResultado = "";
+		}
 	 	parametros.resultado = comboRespuestasSolicitud.getValue();
-	 	parametros.fechaEnvio = fechaEnvio.getValue();
-	 	parametros.fechaRecepcion = fechaRecepcion.getValue();
-	 	parametros.comentario = fechaResultado.comentario();
+ 		if (fechaEnvio.getValue() != "") {
+		 	parametros.fechaEnvio = fechaEnvio.getValue().format('d/m/Y');
+		} else {
+		 	parametros.fechaEnvio = "";
+		}
+ 		if (fechaRecepcion.getValue() != "") {
+		 	parametros.fechaRecepcion = fechaRecepcion.getValue().format('d/m/Y');
+		} else {
+		 	parametros.fechaRecepcion = "";
+		}
+	 	parametros.comentario = comentario.getValue();
 	 	
 	 	return parametros;
 	 }	

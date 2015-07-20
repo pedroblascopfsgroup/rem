@@ -35,7 +35,6 @@ DECLARE
     TYPE T_TIPO_RVC IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_RVC IS TABLE OF T_TIPO_RVC;
     V_TIPO_RVC T_ARRAY_RVC := T_ARRAY_RVC(
-        T_TIPO_RVC('Todos',' '),
         T_TIPO_RVC('0'	,'PROPUESTA GENERADA CORRECTAMENTE'),
 		T_TIPO_RVC('20'	,'IDENTIFICADOR PROCEDIMIENTO NO EXISTE'),
 		T_TIPO_RVC('20'	,'BUSCA EXPEDIENTE'),
@@ -109,10 +108,29 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 	
-	
+	V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE WHERE DD_RVN_CODIGO = ''Todos''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....'); 
+    IF V_NUM_TABLAS > 0 THEN            
+      DBMS_OUTPUT.put_line('[INFO] Ya existe el registro');
+    ELSE        
+      V_SQL := 'Insert into '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE
+   			(DD_RVN_ID, DD_RVN_CODIGO, DD_RVN_DESCRIPCION, DD_RVN_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+ 			Values (
+				''0'', 
+				''Todos'', 
+				''Todos los errores'', 
+				''Todos los errores'', 
+				0, 
+				''DD'', 
+				sysdate, 
+				0)';
+      EXECUTE IMMEDIATE V_SQL ;      
+      DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
+    END IF ;
 	
 	 
-    -- LOOP para insertar/modificar los valores en DD_TVI_TIPO_VIA -----------------------------------------------------------------
+    -- LOOP para insertar/modificar los valores en DD_RVN_RES_VALIDACION_NUSE -----------------------------------------------------------------
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION/MODIFICACION EN DD_RVN_RES_VALIDACION_NUSE] ');
     FOR I IN V_TIPO_RVC.FIRST .. V_TIPO_RVC.LAST
       LOOP

@@ -353,7 +353,8 @@
 	});
 	
 	var generico = Ext.data.Record.create([
-		 {name:'codigo'}
+		{name:'id'}
+		,{name:'codigo'}
 		,{name:'descripcion'}
 		,{name:'codigoDescripcion'}
 	]);
@@ -389,7 +390,7 @@
 	var comboErrorPostCDD = new Ext.form.ComboBox({
 				store:optionsErrorPostStore
 				,displayField:'codigoDescripcion'
-				,valueField:'codigo'
+				,valueField:'id'
 				,mode: 'remote'
 				,width:300
 				,editable: false

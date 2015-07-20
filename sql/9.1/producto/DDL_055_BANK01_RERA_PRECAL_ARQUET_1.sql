@@ -3,14 +3,14 @@
 --## AUTOR=LUIS RUIZ
 --## FECHA_CREACION=20150717
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.1.13
+--## VERSION_ARTEFACTO=9.1.12-bk
 --## INCIDENCIA_LINK=FASE-1062
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versiï¿½n inicial
 --##########################################
 --*/
 CREATE OR REPLACE PROCEDURE RERA_PRECAL_ARQUET_1 AS

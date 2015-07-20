@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
+package es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda;
 
 public class ProcedimientoSubastaCDD {
  

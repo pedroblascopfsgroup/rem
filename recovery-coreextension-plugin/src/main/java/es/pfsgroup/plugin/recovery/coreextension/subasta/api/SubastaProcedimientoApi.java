@@ -28,7 +28,8 @@ public interface SubastaProcedimientoApi {
 	public static final String BO_SUBASTA_BPM_DAME_TIPO_SUBASTA = "es.pfsgroup.recovery.subasta.bpmDameTipoSubasta";
 	public static final String BO_SUBASTA_BPM_PREPARAR_DECIDIR_PROPUESTA_SUBASTA = "es.pfsgroup.recovery.subasta.bpmDecidirPropuestaSubasta";
 	public static final String BO_SUBASTA_COMPROBAR_PROV_LOC_FIN_BIEN = "es.pfsgroup.recovery.subasta.comprobarProvLocFinBien";
-	public static final String BO_SUBASTA_COMPROBAR_COSTAS_LETRADO_VIVIENDA_HABITUAL = "es.pfsgroup.recovery.subasta.comprobarCostasLetradoViviendaHabitual";
+	public static final String BO_SUBASTA_COMPROBAR_COSTAS_LETRADO_VIVIENDA_HABITUAL = "es.pfsgroup.recovery.subasta.comprobarCostasLetradoViviendaHabitual";	
+
 	
 	@BusinessOperationDefinition(BO_SUBASTA_CAMBIA_ESTADO_SUBASTA)
 	public void cambiaEstadoSubasta(Long subId, String estado);

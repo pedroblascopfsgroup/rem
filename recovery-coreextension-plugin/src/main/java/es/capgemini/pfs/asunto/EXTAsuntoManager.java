@@ -2014,5 +2014,33 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		return false;
 	}
+        
+        
+	@Override
+	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD)
+	public String getMsgErrorEnvioCDD(Long idAsunto) {
+		
+            return asuntoDao.getMsgErrorEnvioCDD(idAsunto);
+		
+	}
+        
+	@Override
+	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD_NUSE)
+	public String getMsgErrorEnvioCDDNuse(Long idAsunto) {
+		
+            return asuntoDao.getMsgErrorEnvioCDDNuse(idAsunto);
+		
+	}
 	
+        @Override
+	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO)
+	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
+	
+            if (Checks.esNulo(asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto))){
+                return "NoCDDError";
+            }else{
+                return asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto);
+            }
+
+	}
 }

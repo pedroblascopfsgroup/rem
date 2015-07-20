@@ -1,9 +1,9 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchCDDResultadoNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
@@ -905,6 +906,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				|| (!StringUtils.emtpyString(dto.getTiposProductoEntidad()));
 	}
 	
+	//FIXME esto funciona? LoteBien no existe
 	public List<Subasta> getSubastasporIdBien (Long id){
 		List<Subasta> listaSubastas = new ArrayList<Subasta>();
 		HQLBuilder hql = new HQLBuilder("select lob.loteSubasta.subasta "
@@ -1408,6 +1410,80 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		
 		Query query = getSession().createQuery(sb.toString());
 		query.executeUpdate();
+	}
+	
+	@Override
+	public void eliminarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
+		//Se eliminan todos los registros KO por id de BACD
+                StringBuilder sb = new StringBuilder();
+		sb.append(" delete from BatchAcuerdoCierreDeuda bacd");
+		sb.append(" where bacd.resultadoValidacion = ").append(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO);
+                sb.append(" and bacd.id = ").append(acuerdoCierreDeuda.getId());
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
+        
+	@Override
+	public void BatchCDDResultadoNuse(BatchCDDResultadoNuse acuerdoCierreDeudaNuse){
+		//Se eliminan todos los registros KO por ide BCDDNuse
+                StringBuilder sb = new StringBuilder();
+		sb.append(" delete from BatchCDDResultadoNuse BCDDRNuse");
+		sb.append(" where resultado <> 0 ");
+                sb.append(" and id = ").append(acuerdoCierreDeudaNuse.getId());
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
+	
+	@Override
+	public BatchAcuerdoCierreDeuda findBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdo){
+		Query query = getSession().createQuery(
+				generarHQLBuscarBatchAcuerdoCierreDeuda(acuerdo));
+		return (BatchAcuerdoCierreDeuda) query.uniqueResult();
+	}
+
+	/**
+	 * Función que buscará un registro en BatchAcuerdoCierreDeuda que coincida con los filtros
+	 * añadidos a la consulta en función de los valores recibidos. El asunto es obligatorio.
+	 * @param acuerdo
+	 * @return BatchAcuerdoCierreDeuda acuerdo
+	 */
+	private String generarHQLBuscarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdo) {
+
+	
+		StringBuilder hql = new StringBuilder();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		// Consulta inicial b�sica	
+		hql.append(" select baccd ");
+		hql.append(" from BatchAcuerdoCierreDeuda baccd ");
+		// Siempre tendremos el asunto
+		hql.append(" where baccd.idAsunto = ").append(acuerdo.getIdAsunto());
+		
+		// Añadimos filtros en función de los valores recibidos
+		if(!Checks.esNulo(acuerdo.getId())) {
+			hql.append(" and baccd.id = ").append(acuerdo.getId());
+		}		
+		
+		if(!Checks.esNulo(acuerdo.getIdProcedimiento())) {
+			hql.append(" and baccd.idProcedimiento = ").append(acuerdo.getIdProcedimiento());
+		}
+		
+		if(!Checks.esNulo(acuerdo.getIdBien())) {
+			hql.append(" and baccd.idBien = ").append(acuerdo.getIdBien());
+		}else {
+			hql.append(" and baccd.idBien is null ");
+		}
+		
+		if(Checks.esNulo(acuerdo.getFechaEntrega())) {
+			hql.append(" and baccd.fechaEntrega is null ");
+		} else {
+			String fechaEntrega = dateFormat.format(acuerdo.getFechaEntrega());
+			hql.append(" and baccd.fechaEntrega = to_date('").append(fechaEntrega).append("', 'DD/MM/YYYY')");
+		}
+
+		return hql.toString();
+
 	}
 	
 }

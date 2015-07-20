@@ -17,8 +17,8 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF; 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ENTITY#'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ENTITY_MASTER#'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -43,16 +43,16 @@ DECLARE
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
     --Insertando valores en TAP_TAREA_PROCEDIMIENTO
-    TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
+    TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(2000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
       T_TIPO_TAP(
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'H001_DemandaCertificacionCargas',
         /*TAP_VIEW.....................:*/ 'plugin/procedimientos/genericFormOverSize',
-        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoEDH() ? null : ''Es necesario adjuntar el Escrito de demanda completo + copia sellada de la demanda.''',
+        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoEDH() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el Escrito de demanda completo + copia sellada de la demanda.</div>''',
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_DemandaCertificacionCargas''][''provisionFondos'']==DDSiNo.SI ? ''SI'' : ''NO''',
         /*DD_TPO_ID_BPM(FK)............:*/ null,
         /*TAP_SUPERVISOR,..............:*/ '0',
         /*TAP_DESCRIPCION,.............:*/ 'Interposición demanda + Certificación de cargas',
@@ -101,7 +101,7 @@ DECLARE
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'H001_RegistrarCertificadoCargas',
         /*TAP_VIEW.....................:*/ null,
-        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarBienAsociadoPrc() ? (comprobarTipoCargaBienInscrito() ? (comprobarExisteDocumentoCCH() ? null : ''Es necesario adjuntar el Certificado de cargas.'') : ''Tiene que completar la información en la pesta&ntilde;a de cargas en la ficha del bien.'') : ''Tiene que asociar un bien al procedimiento''',
+        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarBienAsociadoPrc() ? (comprobarTipoCargaBienInscrito() ? (comprobarExisteDocumentoCCH() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el Certificado de cargas.</div>'') : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Tiene que completar la información en la pesta&ntilde;a de cargas en la ficha del bien.</div>'') : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Tiene que asociar un bien al procedimiento.</div>''',
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
         /*TAP_SCRIPT_DECISION..........:*/ 'existenCargasPreviasActivas() ? ''conCargas'': ''sinCargas''',
         /*DD_TPO_ID_BPM(FK)............:*/ null,
@@ -204,8 +204,8 @@ DECLARE
         /*TAP_CODIGO...................:*/ 'H001_ConfirmarSiExisteOposicion',
         /*TAP_VIEW.....................:*/ 'plugin/procedimientos/procedimientoHipotecario/confirmarSiExisteOposicion',
         /*TAP_SCRIPT_VALIDACION........:*/ null,
-        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ 'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (!comprobarExisteDocumentoEOH() ? ''Es necesario adjuntar el Escrito de oposici&oacute;n.'' : ((valores[''H001_ConfirmarSiExisteOposicion''][''fechaOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''motivoOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''] == null) ? ''Si indica que hay oposici&oacute;n, debe registrar tambi&eacute;n "Fecha Oposici&oacute;n", "Motivo Oposici&oacute;n" y "Fecha Comparecencia"'' : (valores[''H001_ConfirmarSiExisteOposicion''][''alegaciones''] == DDSiNo.SI && valores[''H001_ConfirmarSiExisteOposicion''][''fechaFinAlegaciones''] == null ? ''Debe indicar la fecha de alegaciones'' : null))) : null',
-        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (valores[''H001_ConfirmarSiExisteOposicion''][''alegaciones''] == DDSiNo.SI ? : ''SI_ALEGACIONES'' : ''NO_ALEGACIONES'') : ''NO''',
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ 'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (!comprobarExisteDocumentoEOH() ? ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el Escrito de oposici&oacute;n.</div>'' : ((valores[''H001_ConfirmarSiExisteOposicion''][''fechaOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''motivoOposicion''] == null || valores[''H001_ConfirmarSiExisteOposicion''][''fechaComparecencia''] == null) ? ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Si indica que hay oposici&oacute;n, debe registrar tambi&eacute;n "Fecha Oposici&oacute;n", "Motivo Oposici&oacute;n" y "Fecha Comparecencia"</div>'' : (valores[''H001_ConfirmarSiExisteOposicion''][''alegaciones''] == DDSiNo.SI && valores[''H001_ConfirmarSiExisteOposicion''][''fechaFinAlegaciones''] == null ? ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe indicar la fecha de alegaciones</div>'' : null))) : null',
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_ConfirmarSiExisteOposicion''][''comboResultado''] == DDSiNo.SI ? (valores[''H001_ConfirmarSiExisteOposicion''][''alegaciones''] == DDSiNo.SI ? ''SI_ALEGACIONES'' : ''NO_ALEGACIONES'') : ''NO''',
         /*DD_TPO_ID_BPM(FK)............:*/ null,
         /*TAP_SUPERVISOR,..............:*/ '0',
         /*TAP_DESCRIPCION,.............:*/ 'Confirmar si existe oposición',
@@ -228,8 +228,8 @@ DECLARE
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'H001_PresentarAlegaciones',
         /*TAP_VIEW.....................:*/ null,
-        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoHEDIMP() ? null : ''Es necesario adjuntar el Escrito de impugnaci&acute;n.''',
-        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ 'valores[''H001_PresentarAlegaciones''][''comparecencia''] == DDSiNo.SI && valores[''H001_PresentarAlegaciones''][''fechaComparecencia''] == null ? ''Debe indicar la fecha de comparecencia'' : null',
+        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoHEDIMP() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el Escrito de impugnaci&oacute;n.</div>''',
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ 'valores[''H001_PresentarAlegaciones''][''comparecencia''] == DDSiNo.SI && valores[''H001_PresentarAlegaciones''][''fechaComparecencia''] == null ? ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe indicar la fecha de comparecencia</div>'' : null',
         /*TAP_SCRIPT_DECISION..........:*/ 'valores[''H001_PresentarAlegaciones''][''comparecencia''] == DDSiNo.SI ? ''hayComparecencia'' : ''noHayComparecencia''',
         /*DD_TPO_ID_BPM(FK)............:*/ null,
         /*TAP_SUPERVISOR,..............:*/ '0',
@@ -299,13 +299,13 @@ DECLARE
         T_TIPO_TFI('H001_DemandaCertificacionCargas','6','currency','capitalNoVencidoEnElCierre','Capital no vencido (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','7','currency','interesesOrdinariosEnElCierre','Intereses ordinarios (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','8','currency','interesesDeDemoraEnElCierre','Intereses de demora (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','10','currency','respHipCap','Responsabilidad hipotecaria máxima por capital','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','11','currency','respHipIntRem','Responsabilidad hipotecaria máxima por intereses remuneratorios','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','12','currency','respHipDem','Responsabilidad hipotecaria máxima por demora','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','13','currency','respHipCosGas','Responsabilidad hipotecaria máxima por costas y gastos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','14','currency','creditoSupl','Crédito supletorio','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','15','combo','provisionFondos','Provisión Fondos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','16','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','9','currency','respHipCap','Responsabilidad hipotecaria máxima por capital','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','10','currency','respHipIntRem','Responsabilidad hipotecaria máxima por intereses remuneratorios','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','11','currency','respHipDem','Responsabilidad hipotecaria máxima por demora','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','12','currency','respHipCosGas','Responsabilidad hipotecaria máxima por costas y gastos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','13','currency','creditoSupl','Crédito supletorio','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','14','combo','provisionFondos','Provisión Fondos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','15','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
         --T_TIPO_TFI('H001_AutoDespachandoEjecucion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Ind&iacute;quese la fecha en la que se nos notifica auto por el que se despacha ejecuci&oacute;n, el juzgado en el que ha reca&iacute;do la demanda y el n&uacute;mero de procedimiento.</p><p style="margin-bottom: 10px">Se ha de indicar si la demanda interpuesta ha sido admitida o no, lo que supondr&aacute;, seg&uacute;n su contestaci&oacute;n, que la tarea siguiente sea una u otra de las que se le indica con posterioridad.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute;:<br>- Si ha sido admitida a tr&aacute;mite la demanda "Confirmar notificaci&oacute;n del auto despachando ejecuci&oacute;n" al ejecutado.<br>- Si no ha sido admitida la demanda se le abrir&aacute; tarea en la que propondr&aacute;, seg&uacute;n su criterio, la siguiente actuaci&oacute;n al responsable de la entidad.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
         --T_TIPO_TFI('H001_AutoDespachandoEjecucion','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         --T_TIPO_TFI('H001_AutoDespachandoEjecucion','2','combo','nPlaza','Plaza del juzgado',null,null,'damePlaza()','TipoPlaza','0','DD'),
@@ -346,7 +346,7 @@ DECLARE
         T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','6','date','fechaFinAlegaciones','Fecha fin alegaciones',null,null,null,null,'0','DD'),
         T_TIPO_TFI('H001_ConfirmarSiExisteOposicion','7','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
         T_TIPO_TFI('H001_PresentarAlegaciones','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Puesto que se ha decidido presentar alegaciones, en esta pantalla deberá dejar reflejada la fecha en que éstas se presentan en el juzgado y adjuntar el "Escrito de Impugnación" para dar por finalizada esta tarea.</p><p style="margin-bottom: 10px">En el campo Comparecencia deberá indicar si habrá o no habrá comparecencia. En caso de que la haya, deberá informar de la fecha de comparecencia.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Registrar comparecencia" en caso de que indique que habrá comparecencia o "Registrar resolución" en caso de que no haya comparecencia.</p></div>',null,null,null,null,'0','DD'),
-        T_TIPO_TFI('H001_ContactarAcreedorPref','1','date','fecha','Fecha presentación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_PresentarAlegaciones','1','date','fecha','Fecha presentación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         T_TIPO_TFI('H001_PresentarAlegaciones','2','combo','comparecencia','Comparecencia','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
         T_TIPO_TFI('H001_PresentarAlegaciones','3','date','fechaComparecencia','Fecha comparecencia',null,null,null,null,'0','DD'),
         T_TIPO_TFI('H001_PresentarAlegaciones','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
@@ -406,7 +406,14 @@ BEGIN
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 
 	-- BORRADO DE TAREA (lógico)
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=null, TAP_SCRIPT_VALIDACION=''comprobarExisteDocumentoHRESOL() ? null : ''''Es necesario adjuntar el Escrito de impugnaci&oacute;n.'''''' WHERE TAP_CODIGO=''H001_RegistrarResolucion''';
+	V_TAREA:='H001_RegistrarResolucion';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=null, TAP_SCRIPT_VALIDACION=''comprobarExisteDocumentoHRESOL() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;">Es necesario adjuntar el documento de resoluci&oacute;n.</div>'''''' WHERE TAP_CODIGO='''||V_TAREA||'''';
+
+	V_TAREA:='H001_RegistrarComparecencia';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas SET DD_PTP_PLAZO_SCRIPT=''damePlazo(valores[''''H001_PresentarAlegaciones'''']!=null ? valores[''''H001_PresentarAlegaciones''''][''''fechaComparecencia''''] : valores[''''H001_ConfirmarSiExisteOposicion''''][''''fechaComparecencia''''])'' WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+		
+	V_TAREA:='H001_RegistrarResolucion';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas SET DD_PTP_PLAZO_SCRIPT=''damePlazo(valores[''''H001_PresentarAlegaciones'''']!=null ? valores[''''H001_PresentarAlegaciones''''][''''fechaComparecencia''''] : valores[''''H001_ConfirmarSiExisteOposicion''''][''''fechaComparecencia'''']) + 15*24*60*60*1000L'' WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	
 	/* ------------------- -------------------------- */
 	/* ------------------- -------------------------- */

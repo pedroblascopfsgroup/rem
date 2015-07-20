@@ -82,7 +82,7 @@ DECLARE
         /*VERSION....................:*/ '0',
         /*USUARIOCREAR...............:*/ 'dd',
         /*BORRADO....................:*/ '0',
-        /*DD_TAC_ID..................:*/ 'LI',
+        /*DD_TAC_ID..................:*/ 'TR',
         /*DD_TPO_SALDO_MIN...........:*/ null,
         /*DD_TPO_SALDO_MAX...........:*/ null,
         /*FLAG_PRORROGA..............:*/ '1',
@@ -105,7 +105,7 @@ DECLARE
         /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
         /*TAP_CODIGO...................:*/ 'HC103_SolicitarProvision',
         /*TAP_VIEW.....................:*/ null,
-        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoPRVFND() ? null : ''Es necesario adjuntar el documento de Provisi&oacute;n de Fondos'' ',
+        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoPRVFND() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Es necesario adjuntar el documento de Provisi&oacute;n de Fondos</p></div>'' ',
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
         /*TAP_SCRIPT_DECISION..........:*/ 'valoresBPMPadre[''H005''] != null ? ''SI'' : ''NO''',
         /*DD_TPO_ID_BPM(FK)............:*/ null,
@@ -132,7 +132,7 @@ DECLARE
         /*TAP_VIEW.....................:*/ null,
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''HC103_RevisarSolicitud''][''resultado'']==DDProvisionFondosResultado.SUBSANAR ? ''subsanar'' : (valores[''HC103_RevisarSolicitud''][''cesion'']==DDSiNo.SI) : ? ''aprobar'' : ''otro'')',
+        /*TAP_SCRIPT_DECISION..........:*/ 'valores[''HC103_RevisarSolicitud''][''resultado'']==''SUB'' ? ''subsanar'' : (valores[''HC103_RevisarSolicitud''][''cesion'']==DDSiNo.SI ? ''cesion'' : ''otro'')',
         /*DD_TPO_ID_BPM(FK)............:*/ null,
         /*TAP_SUPERVISOR,..............:*/ '0',
         /*TAP_DESCRIPCION,.............:*/ 'Revisar solicitud',
@@ -275,10 +275,61 @@ DECLARE
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'GCONPR',
         /*TAP_BUCLE_BPM................:*/ null        
-        ) 
+        ),
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'HC103_DecisionAprobFondos',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Decisión aprobar fondos',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '1',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'TGCON',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'GCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        ),
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'HC103_DecisionAprobarSolcIns',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Decisión aprobar solicitud inscripción',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '1',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'TGCON',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'GCONPR',
+        /*TAP_BUCLE_BPM................:*/ null        
+        )
         
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
+
 
 
     /*

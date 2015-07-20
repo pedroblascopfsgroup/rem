@@ -33,7 +33,7 @@ DECLARE
       ,T_TIPO_TFA('HRESOL', 'Resolución (Hipotecario)', 'Resolución (Hipotecario)', 'EJ') -- T. Hipotecario
       ,T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
       ,T_TIPO_TFA('INFLIQ', 'Informe de liquidación', 'Informe de liquidación', 'TR') -- T. Calculo de deuda a fecha
-      T_TIPO_TFA('IFISCAL', 'Informe fiscal (T. Subasta)', 'Informe fiscal (T. Subasta)', 'AP') -- T. Calculo de deuda a fecha
+      ,T_TIPO_TFA('IFISCAL', 'Informe fiscal (T. Subasta)', 'Informe fiscal (T. Subasta)', 'AP') -- T. Calculo de deuda a fecha
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

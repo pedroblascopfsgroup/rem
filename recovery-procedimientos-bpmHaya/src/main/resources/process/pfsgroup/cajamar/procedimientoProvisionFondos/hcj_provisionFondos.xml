@@ -57,7 +57,7 @@
 		<transition to="HC103_SolicitarProvision" name="vueltraAtras"></transition>
 	</state>
 
-	<decision name="HC103_RevisarSolicitudDecision" expression="#{H103_RevisarSolicitudDecision}">
+	<decision name="HC103_RevisarSolicitudDecision" expression="#{HC103_RevisarSolicitudDecision}">
 		<transition to="HC103_SolicitarProvision" name="subsanar"></transition>
 		<transition to="HC103_AprobarSolicitudFondos" name="cesion"></transition>
 		<transition to="HC103_AprobarSolicitudInsc" name="otro"></transition>
@@ -170,15 +170,15 @@
 	</state>
 
 	<decision name="HC103_AprobarSolicitudInscDecision" expression="#{HC103_AprobarSolicitudInscDecision}">
-		<transition to="HC103_AprobarSolcInsc" name="RECHAZADO"></transition>
+		<transition to="HC103_DecisionAprobarSolcIns" name="RECHAZADO"></transition>
 		<transition to="HC103_RealizarTransferencia" name="ACEPTADO"></transition>
 	</decision>
 
-	<node name="HC103_AprobarSolcInsc">
+	<node name="HC103_DecisionAprobarSolcIns">
 		<transition to="Fin" name="Fin"></transition>
 	</node>
 
-	<decision name="HC103_ConfirmarSolicitudDecision">
+	<decision name="HC103_ConfirmarSolicitudDecision" expression="#{HC103_ConfirmarSolicitudDecision}">
 		<transition to="HC103_DecisionAprobFondos" name="RECHAZADO"></transition>
 		<transition to="HC103_RealizarTransferencia" name="ACEPTADO"></transition>
 	</decision>

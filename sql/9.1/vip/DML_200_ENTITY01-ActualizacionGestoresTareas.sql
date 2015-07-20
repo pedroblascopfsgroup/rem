@@ -30,13 +30,15 @@ DECLARE
     TYPE T_TIPO_VALOR IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TFA IS TABLE OF T_TIPO_VALOR;
     V_TIPO_VALOR T_ARRAY_TFA := T_ARRAY_TFA(
-		T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPTR')
+		T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 		,T_TIPO_VALOR('HC103','HC103_RevisarSolicitud','CJ-811','CJ-SAREO')
-		,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudFondos','TGON','GCONPR')
-		,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudInsc','TGON','GCONPR')
-		,T_TIPO_VALOR('HC103','HC103_ConfirmarSolicitud','TGON','GCONPR')
-		,T_TIPO_VALOR('HC103','HC103_RealizarTransferencia','TGON','GCONPR')
-		,T_TIPO_VALOR('HC103','HC103_ConfirmarTransferencia','TGON','GCONPR')
+		,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudFondos','TGCON','GCONPR')
+		,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudInsc','TGCON','GCONPR')
+		,T_TIPO_VALOR('HC103','HC103_ConfirmarSolicitud','TGCON','GCONPR')
+		,T_TIPO_VALOR('HC103','HC103_RealizarTransferencia','TGCON','GCONPR')
+		,T_TIPO_VALOR('HC103','HC103_ConfirmarTransferencia','TGCON','GCONPR')
+		,T_TIPO_VALOR('HC103','HC103_DecisionAprobFondos','TGCON','GCONPR')
+		,T_TIPO_VALOR('HC103','HC103_DecisionAprobarSolcIns','TGCON','GCONPR')
 		,T_TIPO_VALOR('H001','H001_DemandaCertificacionCargas','CJ-814','TGCONPR')
 		,T_TIPO_VALOR('H001','H001_AutoDespachandoEjecucion','CJ-814','TGCONPR')
 		,T_TIPO_VALOR('H001','H001_RegistrarCertificadoCargas','CJ-814','TGCONPR')
@@ -251,13 +253,13 @@ DECLARE
 		,T_TIPO_VALOR('H002','H002_SolicitarMandamientoPago','CJ-814','GCONGE')
 		,T_TIPO_VALOR('H002','H002_ConfirmarRecepcionMandamientoDePago','CJ-814','GCONGE')
 		,T_TIPO_VALOR('H002','H002_RecepcionMandamientoPago','TGCONGE','SUCONGE')
-		,T_TIPO_VALOR('H002','H002_ConfirmarContabilidad','TGON','SUCONT')
+		,T_TIPO_VALOR('H002','H002_ConfirmarContabilidad','TGCON','SUCONT')
 		,T_TIPO_VALOR('H002','H002_BPMTramiteSolSolvenciaPatrimonial','CJ-814','GCONGE')
 		,T_TIPO_VALOR('H002','H002_BPMTramiteSubasta','CJ-814','GCONGE')
 		,T_TIPO_VALOR('H002','H002_BPMTramiteCesionRemate','CJ-814','GCONGE')
 		,T_TIPO_VALOR('H002','H002_BPMTramiteAdjudicacion','CJ-814','GCONGE')
 		,T_TIPO_VALOR('H002','H002_SuspenderDecision','CJ-814','GCONGE')
-		,T_TIPO_VALOR('H002','H002_CelebracionDecision','CJ-814','GCONGE')    
+		,T_TIPO_VALOR('H002','H002_CelebracionDecision','CJ-814','GCONGE')
 	); 
     V_TMP_TIPO T_TIPO_VALOR;
     

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_procedimientoHipotecario">
+<process-definition xmlns="" name="hcj_procedimientoHipotecario">
 
 	<start-state name="Inicio">
 		<transition to="H001_DemandaCertificacionCargas"></transition>
@@ -24,7 +24,7 @@
 			</action>
 		</event>
 		<transition to="H001_DemandaCertificacionCargas" name="activarAlerta"></transition>
-		<transition to="fork2" name="avanzaBPM"></transition>
+		<transition to="H001_DemandaCertificacionCargasDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -131,14 +131,15 @@
 			</action>
 		</event>
 		<transition to="H001_ConfirmarSiExisteOposicion" name="activarAlerta"></transition>
-		<transition to="H001_ConfirmarSiExisteOpoDecision" name="avanzaBPM"></transition>
+		<transition to="H001_ConfirmarSiExisteOposicionDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H001_ConfirmarNotificacionReqPago" name="vueltaAtras"></transition>
 	</state>
 	
-	<decision name="H001_ConfirmarSiExisteOpoDecision" expression="#{H001_ConfirmarSiExisteOposicionDecision}">
+	<decision name="H001_ConfirmarSiExisteOposicionDecision" expression="#{H001_ConfirmarSiExisteOposicionDecision}">
 		<transition to="H001_BPMTramiteSubasta" name="NO"></transition>
-		<transition to="H001_RegistrarComparecencia" name="SI_ALEGACIONES"></transition>
+		<transition to="H001_RegistrarComparecencia" name="NO_ALEGACIONES"></transition>
+		<transition to="H001_PresentarAlegaciones" name="SI_ALEGACIONES"></transition>
 	</decision>
 
 	<state name="H001_BPMTramiteSubasta">
@@ -393,9 +394,14 @@
 		<transition to="H001_RegistrarResolucion" name="noHayComparecencia"></transition>
 	</decision>
 
-	<decision name="H001_RegistrarCertificadoCargasDecision">
+	<decision name="H001_RegistrarCertificadoCargasDecision" expression="#{H001_RegistrarCertificadoCargasDecision}">
 		<transition to="Fin2" name="sinCargas"></transition>
 		<transition to="H001_SolicitudOficioJuzgado" name="conCargas"></transition>
+	</decision>
+
+	<decision name="H001_DemandaCertificacionCargasDecision" expression="#{H001_DemandaCertificacionCargasDecision}">
+		<transition to="fork2" name="SI"></transition>
+		<transition to="H001_AutoDespachandoEjecucion" name="NO"></transition>
 	</decision>
 
 	<end-state name="Fin">
@@ -417,7 +423,5 @@
 			</action>
 		</event>	
 	</end-state>
-
-	<end-state name="end-state1"></end-state>
 
 </process-definition>

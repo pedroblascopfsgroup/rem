@@ -63,7 +63,7 @@
 	 	parametros.id = ${dtoDoc.id};
 	 	parametros.protocolo = protocolo.getValue();
 	 	parametros.notario = notario.getValue();
-	 	parametros.fechaEscritura = fechaEscritura.getValue();
+	 	parametros.fechaEscritura = fechaEscritura.getValue().format('d/m/Y');
 	 	parametros.asiento = asiento.getValue();
 	 	parametros.finca = finca.getValue();
 	 	parametros.tomo = tomo.getValue();

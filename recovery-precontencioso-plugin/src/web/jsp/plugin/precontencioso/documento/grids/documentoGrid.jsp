@@ -123,7 +123,7 @@ var excluirDocButton = new Ext.Button({
 		    				if (btn == 'yes'){
 								Ext.Ajax.request({
 										url : page.resolveUrl('documentopco/excluirDocumentos'), 
-										params : {idSolicitud:idSolicitud} ,
+										params : {idDocumento:idDocumento} ,
 										method: 'POST',
 										success: function ( result, request ) {
 											refrescarDocumentosGrid();

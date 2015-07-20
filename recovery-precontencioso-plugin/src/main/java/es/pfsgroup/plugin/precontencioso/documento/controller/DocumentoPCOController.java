@@ -480,13 +480,10 @@ public class DocumentoPCOController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String excluirDocumentos(
-			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {	
+			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
+		
 		documentoPCOApi.excluirDocumentosPorIdDocumentoPCO(idDocumento);
-		
-		// TODO - FALTA EL BORRADO
-		
-		//model.put("solicitudesDocumento", solicitudesDoc);
-		//return SOLICITUDES_DOC_PCO_JSON;
+
 		return DEFAULT;
 	}
 	

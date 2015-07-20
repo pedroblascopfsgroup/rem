@@ -164,8 +164,19 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * 
 	 * @param idDocumentoPCO
 	 */
+	@Override
+	@Transactional(readOnly = false)	
 	public void excluirDocumentosPorIdDocumentoPCO(Long idDocumentoPCO){
-		//documentoPCODao.removeDocumentoPCOPorId(idDocumentoPCO);	
+		DocumentoPCO documento = documentoPCODao.get(idDocumentoPCO);
+		List<SolicitudDocumentoPCO> solicitudes = documento.getSolicitudes();
+		
+		// Primero borramos las solicitudes del documento
+		for (SolicitudDocumentoPCO sol : solicitudes) {
+			genericDao.deleteById(SolicitudDocumentoPCO.class, sol.getId());
+		}
+			
+		// Borramos el documento
+		genericDao.deleteById(DocumentoPCO.class, idDocumentoPCO);
 	}
 	
 	/**
@@ -195,12 +206,12 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setId(docDto.getId());
 		documento.setProtocolo(docDto.getProtocolo());
 		documento.setNotario(docDto.getNotario());
-//		try {
-//			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		documento.setAsiento(docDto.getAsiento());
 		documento.setFinca(docDto.getFinca());
 		documento.setTomo(docDto.getTomo());

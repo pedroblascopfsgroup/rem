@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_procedimientoOrdinario" width="1486" height="938">
+<root-container name="hcj_procedimientoOrdinario" width="1144" height="938">
   <node name="Inicio" x="61" y="19" width="132" height="36">
     <edge>
       <label x="-39" y="-20"/>
@@ -155,7 +155,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="1011" y="482" width="132" height="36"/>
   <node name="H024_InterposicionDemandaDecision" x="268" y="90" width="267" height="36">
     <edge>
       <label x="-36" y="-21"/>
@@ -185,4 +184,5 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="Fin" x="1011" y="482" width="132" height="36"/>
 </root-container>

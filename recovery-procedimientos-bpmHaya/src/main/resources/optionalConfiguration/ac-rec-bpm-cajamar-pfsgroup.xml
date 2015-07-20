@@ -126,6 +126,11 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "EDTJ");
 	            }
+	            
+	            def comprobarExisteDocumentoEDCSDE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "EDCSDE");
+	            }
         	            
   			 ]]>
   			</value>

@@ -230,7 +230,7 @@
 		<transition to="H024_RegistrarJuicio" name="NO"></transition>
 	</decision>
 
-	<decision name="H024_InterposicionDemandaDecision">
+	<decision name="H024_InterposicionDemandaDecision" expression="#{H024_InterposicionDemandaDecision}">
 		<transition to="H024_ConfirmarAdmision" name="sinProvision"></transition>
 		<transition to="ForkInterposicionDemanda" name="conProvision"></transition>
 	</decision>

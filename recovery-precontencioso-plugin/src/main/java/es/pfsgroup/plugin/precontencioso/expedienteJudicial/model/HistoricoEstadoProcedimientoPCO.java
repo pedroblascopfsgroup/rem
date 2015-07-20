@@ -45,11 +45,6 @@ public class HistoricoEstadoProcedimientoPCO implements Serializable, Auditable 
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDEstadoPreparacionPCO estadoPreparacion;
 
-	@ManyToOne
-	@JoinColumn(name = "DD_PCO_PTP_ID")
-	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private DDTipoPreparacionPCO tipoPreparacion;
-
 	@Column(name = "PCO_PRC_HEP_FECHA_INCIO")
 	private Date fechaInicio;
 
@@ -83,14 +78,6 @@ public class HistoricoEstadoProcedimientoPCO implements Serializable, Auditable 
 
 	public void setEstadoPreparacion(DDEstadoPreparacionPCO estadoPreparacion) {
 		this.estadoPreparacion = estadoPreparacion;
-	}
-
-	public DDTipoPreparacionPCO getTipoPreparacion() {
-		return tipoPreparacion;
-	}
-
-	public void setTipoPreparacion(DDTipoPreparacionPCO tipoPreparacion) {
-		this.tipoPreparacion = tipoPreparacion;
 	}
 
 	public Date getFechaInicio() {

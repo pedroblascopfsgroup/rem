@@ -698,7 +698,7 @@
   
   <entry key="clientes.revisionClientes.limpiarTMPCliACancelar.Oracle9iDialect">
   <![CDATA[       
-	  TRUNCATE TABLE TMP_CLI_A_CANCELAR'
+	  TRUNCATE TABLE TMP_CLI_A_CANCELAR
   ]]>
   </entry>
   

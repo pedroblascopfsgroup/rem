@@ -32,6 +32,8 @@ BEGIN
 	 * -------
 	 */
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO tpo SET tpo.DD_TPO_DESCRIPCION = ''T. de depósito - HCJ'', tpo.DD_TPO_XML_JBPM      = ''hcj_tramiteDeposito'' WHERE tpo.DD_TPO_CODIGO = ''H034''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap SET tap.TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoAAEEE() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><div id="permiteGuardar"><p>Es necesario adjuntar el documento Documento que acredite el acuerdo de la entrega y la entrega efectiva</p></div></div>'''''' WHERE tap.TAP_CODIGO = ''H034_AcuerdoEntrega''';
+	
 	EXECUTE IMMEDIATE 'DELETE FROM  '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS where tap_id = (SELECT tap_id from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where tap_codigo = ''H034_ContactarDeudor'')';
     EXECUTE IMMEDIATE 'DELETE FROM  '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS where tap_id = (SELECT tap_id from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where tap_codigo = ''H034_ContactarDeudor'')';
     EXECUTE IMMEDIATE 'DELETE FROM  '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where tap_codigo = ''H034_ContactarDeudor''';

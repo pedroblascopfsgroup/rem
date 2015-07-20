@@ -65,10 +65,6 @@
 			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/external</url>
 		</repository>
-		<repository>
-			<id>pfsNexusFramework</id>
-			<url>http://nexus.pfsgroup.es/nexus/content/repositories/framework</url>
-		</repository>
 	</repositories>
 
 	<dependencyManagement>

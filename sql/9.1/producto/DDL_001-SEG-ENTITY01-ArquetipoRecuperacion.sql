@@ -21,9 +21,9 @@ SET SERVEROUTPUT ON;
 DECLARE
 v_seq_count number(3);
 v_table_count number(3);
-V_ESQUEMA   VARCHAR(25) := 'HAYA01'; --'#ESQUEMA_ENTIDAD#';
+V_ESQUEMA   VARCHAR(25) := '#ESQUEMA_ENTIDAD#';
 V_ESQUEMA_MASTER VARCHAR(25) := '#ESQUEMA_MASTER#';
-v_table_space VARCHAR(25) := 'HAYA_IDX'; --'#TABLESPACE_INDEX#';
+v_table_space VARCHAR(25) := '#TABLESPACE_INDEX#';
 V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 v_constraint_count number(3);
 V_SQL varchar2(4000);

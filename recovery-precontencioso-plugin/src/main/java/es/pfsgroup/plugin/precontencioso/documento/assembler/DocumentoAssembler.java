@@ -1,15 +1,12 @@
 package es.pfsgroup.plugin.precontencioso.documento.assembler;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 /**
  * Clase que se encarga de ensablar las entidades de documentosPCO y solicitudesPCO a 
@@ -18,7 +15,10 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
  * @author jmartin
  */
 public class DocumentoAssembler {
-
+	
+	
+	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	/**
 	 * Convierte en una SolicitudDocumentoDTO a partir de un documentoPCO y 
 	 * una solicitudPCO
@@ -27,35 +27,22 @@ public class DocumentoAssembler {
 	 * @return List<liquidacionDTO> DTO
 	 */
 	public static SolicitudDocumentoPCODto docAndSolEntityToSolicitudDto(DocumentoPCO documento,
-			SolicitudDocumentoPCO solicitud) {
+			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, DDSiNo siNo) {
 		SolicitudDocumentoPCODto solicitudDto = new SolicitudDocumentoPCODto();
-		
-		SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		
-		Long antIdDoc = new Long(0);
-		Long antTipoUG = new Long(0);
-		Long antTipoDoc = new Long(0);
-		
+				
 		solicitudDto.setId(solicitud.getId());
 		solicitudDto.setIdDoc(documento.getId());
-		solicitudDto.setEsDocumento(false);
-		if (!antIdDoc.equals(documento.getId()) || antTipoUG != documento.getUnidadGestion().getId() || antTipoDoc != documento.getTipoDocumento().getId()){
-			solicitudDto.setContrato(documento.getProcedimientoPCO().getCntPrincipal());
-			solicitudDto.setDescripcionUG(documento.getUgDescripcion());
+		if (esDocumento){			
+			solicitudDto.setContrato(ugIdDto);
+			solicitudDto.setDescripcionUG(descripcionUG);
 			solicitudDto.setTipoDocumento(documento.getTipoDocumento().getDescripcion());
 			solicitudDto.setEstado(documento.getEstadoDocumento().getDescripcion());
-			solicitudDto.setAdjunto("NO");
-			if (documento.getAdjuntado())
-				solicitudDto.setAdjunto("SI");
-		
+			solicitudDto.setAdjunto(siNo.getDescripcion());	
 			solicitudDto.setComentario(documento.getObservaciones());
-			solicitudDto.setEsDocumento(true);
-			
-			antIdDoc = documento.getId();
-			antTipoUG = documento.getUnidadGestion().getId();
-			antTipoDoc = documento.getTipoDocumento().getId();
 		}
-		//solicitudDto.setActor(sol.getActor());
+		
+		solicitudDto.setEsDocumento(esDocumento);
+		solicitudDto.setActor(solicitud.getTipoActor().getDescripcion());
 		if (solicitud.getFechaSolicitud()!=null)
 			solicitudDto.setFechaSolicitud(webDateFormat.format(solicitud.getFechaSolicitud()));
 		if (solicitud.getFechaResultado()!=null)
@@ -69,7 +56,7 @@ public class DocumentoAssembler {
 		return solicitudDto;
 	}
 	
-	public static DocumentoPCODto docEntityToDocumentoDto(DocumentoPCO documento) {
+	public static DocumentoPCODto docEntityToDocumentoDto(DocumentoPCO documento, DDSiNo siNo) {
 		DocumentoPCODto doc = new DocumentoPCODto();
 		doc.setId(documento.getId());
 		doc.setIdProc(documento.getProcedimientoPCO().getId());
@@ -78,9 +65,7 @@ public class DocumentoAssembler {
 		doc.setDescripcionUG(documento.getUgDescripcion());
 		doc.setTipoDocumento(documento.getTipoDocumento().getDescripcion());
 		doc.setEstado(documento.getEstadoDocumento().getDescripcion());
-		doc.setAdjunto("NO");
-		if (documento.getAdjuntado())
-			doc.setAdjunto("SI");
+		doc.setAdjunto(siNo.getDescripcion());
 		doc.setComentario(documento.getObservaciones());
 		doc.setAsiento(documento.getAsiento());
 		doc.setFinca(documento.getFinca());
@@ -92,6 +77,9 @@ public class DocumentoAssembler {
 		doc.setNumRegistro(documento.getNroRegistro());
 		doc.setProtocolo(documento.getProtocolo());
 		doc.setTomo(documento.getTomo());
+		doc.setPlaza(documento.getPlaza());
+		if (documento.getFechaEscritura()!=null)
+			doc.setFechaEscritura(webDateFormat.format(documento.getFechaEscritura()));		
 		
 		return doc;
 	}

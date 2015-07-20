@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.documento;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -11,19 +11,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.bien.dao.BienDao;
+import es.capgemini.pfs.contrato.dao.ContratoDao;
+import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
-import es.pfsgroup.plugin.precontencioso.documento.dao.SolicitudDocumentoPCODao;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
@@ -33,11 +32,6 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.assembler.LiquidacionAssembler;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -53,12 +47,22 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     private DocumentoPCODao documentoPCODao;
     
     @Autowired
+    private ContratoDao contratoDao;    
+    
+    @Autowired
+    private PersonaDao personaDao;  
+    
+    @Autowired
+    private BienDao bienDao;  
+    
+    @Autowired
     private GenericABMDao genericDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
     private final Log logger = LogFactory.getLog(getClass());
+    private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 
 
@@ -84,7 +88,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			solicitudesPCO = documentoPCODao.getSolicitudesDoc(doc.getId());
 			solicitudes.addAll(solicitudesPCO);
 		}
-	
+		
         return solicitudes;
     }
     
@@ -109,10 +113,32 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @param solicitud
 	 * @return
 	 */
-	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud){
+	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, boolean esDocumento){
 		SolicitudDocumentoPCODto solDto=null;
+		DDSiNo siNo;
+		String descripcionUG = null;
+		String ugIdDto = null;
+		// Dependiendo del tipo unidad gestion (Contrato, Persona o Bien) hay que obtener los datos de forma diferente
+		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.CONTRATOS)){
+			ugIdDto = documento.getUnidadGestionId()+"";
+			descripcionUG = contratoDao.get(documento.getUnidadGestionId()).getTipoProductoEntidad().getDescripcion();			
+		}
+		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.PERSONAS)){
+			ugIdDto = personaDao.get(documento.getUnidadGestionId()).getDocId();
+			descripcionUG = personaDao.get(documento.getUnidadGestionId()).getNom50();
+			
+		}
+		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.BIENES)){
+			ugIdDto = documento.getUnidadGestionId()+"";
+			descripcionUG = bienDao.get(documento.getUnidadGestionId()).getDescripcionBien();
+		}
 		
-		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud);
+		if (documento.getAdjuntado())
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.SI);
+		else
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
+				
+		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, esDocumento, siNo);
 		
 		return solDto;
 	};
@@ -125,8 +151,14 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 */
 	public DocumentoPCODto getDocumentoPorIdDocumentoPCO(Long idDocPCO){
 		DocumentoPCO documento = documentoPCODao.get(idDocPCO);
-		
-		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento);
+
+		DDSiNo siNo;
+		if (documento.getAdjuntado())
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.SI);
+		else
+			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
+
+		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento, siNo);
 		
 		return docDto;		
 	};	
@@ -143,6 +175,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	/**
 	 * Descartar documentos (cambiar a estado Descartado)
 	 */
+	@Override
+	@Transactional(readOnly = false)	
 	public void descartarDocumentos(Long idDocumentoPCO){
 		DocumentoPCO documento = documentoPCODao.get(idDocumentoPCO);
 		DDEstadoDocumentoPCO estadoDocumento = (DDEstadoDocumentoPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoDocumentoPCO.class, DDEstadoDocumentoPCO.DESCARTADO);
@@ -165,7 +199,12 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setId(docDto.getId());
 		documento.setProtocolo(docDto.getProtocolo());
 		documento.setNotario(docDto.getNotario());
-		//docDto.setFechaEscritura(webRequest.getParameter("fechaEscritura"));
+//		try {
+//			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		documento.setAsiento(docDto.getAsiento());
 		documento.setFinca(docDto.getFinca());
 		documento.setTomo(docDto.getTomo());
@@ -173,7 +212,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setFolio(docDto.getFolio());
 		documento.setNroFinca(docDto.getNumFinca());
 		documento.setNroRegistro(docDto.getNumRegistro());
-		//docDto.setPlaza(webRequest.getParameter("plaza"));
+		documento.setPlaza(docDto.getPlaza());
 		documento.setIdufir(docDto.getIdufir());
 
 		documentoPCODao.saveOrUpdate(documento);

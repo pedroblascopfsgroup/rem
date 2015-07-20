@@ -18,6 +18,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_PCO_DOC_UNIDADGESTION", schema = "${entity.schema}")
 public class DDUnidadGestionPCO implements Dictionary, Auditable {
 
+	public static final String CONTRATOS = "CO";
+	public static final String PERSONAS = "PE";
+	public static final String BIENES = "BI";
+	
 	private static final long serialVersionUID = 6789832127563313901L;
 
 	@Id

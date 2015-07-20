@@ -9,6 +9,7 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 var idSolicitud;
+var idDocumento;
 var rowsSelected=new Array(); 
 var arrayIdDocumentos=new Array();
 
@@ -94,7 +95,7 @@ var incluirDocButton = new Ext.Button({
 						,width: 640
 					});
 					w.on(app.event.DONE, function() {
-						storeDocumentos.webflow();
+						refrescarDocumentosGrid();
 						w.close();
 					});
 					w.on(app.event.CANCEL, function(){ w.close(); });
@@ -125,7 +126,7 @@ var excluirDocButton = new Ext.Button({
 										params : {idSolicitud:idSolicitud} ,
 										method: 'POST',
 										success: function ( result, request ) {
-											storeDocumentos.webflow();
+											refrescarDocumentosGrid();
 										}
 								});
 		    				}
@@ -180,10 +181,10 @@ var descartarDocButton = new Ext.Button({
 		    				if (btn == 'yes'){
 								Ext.Ajax.request({
 										url : page.resolveUrl('documentopco/descartarDocumentos'), 
-										params : {idSolicitud:idSolicitud} ,
+										params: {idDocumento:idDocumento} ,
 										method: 'POST',
 										success: function ( result, request ) {
-											storeDocumentos.webflow();
+											refrescarDocumentosGrid();
 										}
 								});
 		    				}
@@ -224,7 +225,7 @@ var solicitarDocButton = new Ext.Button({
 							,width: 300
 						});
 					w.on(app.event.DONE, function() {
-						storeDocumentos.webflow();					
+						refrescarDocumentosGrid();					
 						w.close(); 
 						
 					});
@@ -300,7 +301,7 @@ var editarDocButton = new Ext.Button({
 			else {
 			        var w = app.openWindow({
 							flow: 'documentopco/abrirEditarDocumento'
-							,params: {idSolicitud:idSolicitud}
+							,params: {idDocumento:idDocumento}
 							,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
 							,width: 640
 						});
@@ -398,13 +399,17 @@ var gridDocumentos = new Ext.grid.GridPanel({
 	});
 	
 
-
-storeDocumentos.webflow({idProcedimientoPCO: '1'});
-
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);
 		idSolicitud = rec.get('id');
-});	
+		idDocumento = rec.get('idDoc');
+});
+
+var refrescarDocumentosGrid = function() {
+	storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
+}
+
+refrescarDocumentosGrid();	
 
 
 

@@ -954,6 +954,19 @@ DECLARE
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
         ),   
+        T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'TGCONGE',
+        /*dd_sta_descripcion,........:*/ 'Tarea del Gestor contencioso gestión',
+        /*dd_sta_descripcion_larga...:*/ 'Tarea del Gestor contencioso gestión',
+        /*dd_tge_id..................:*/ 'GCONGE',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),
       T_TIPO_STB(
         /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
         /*dd_tar_id..................:*/ '1',

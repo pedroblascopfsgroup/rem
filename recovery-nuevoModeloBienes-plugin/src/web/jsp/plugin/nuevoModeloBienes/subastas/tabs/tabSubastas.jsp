@@ -502,27 +502,6 @@
 			} else {
 				params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
 			}   				
-			
-			<!-- Ext.Ajax.request({
-				url: page.resolveUrl('subasta/enviarCierreDeuda')
-				,method: 'POST'
-				,params:params   			
-				,success: function (result, request){
-					var flow='/pfs/subasta/generarInformeCierreDeuda';
-		    
-				    var params = "";
-				    	
-				    if(Ext.isEmpty(bienesSeleccionados) || bienesSeleccionados.length == 0){
-		        		params = {idSubasta:idSubasta};				
-					} else {
-						// Sino enviamos los bienes seleccionados
-						params = {idSubasta:idSubasta, idBien:bienesSeleccionados};
-					} 
-
-					app.openBrowserWindow(flow,params);
-				    page.fireEvent(app.event.DONE);
-				}
-			}); -->
 		}
 	});
 	

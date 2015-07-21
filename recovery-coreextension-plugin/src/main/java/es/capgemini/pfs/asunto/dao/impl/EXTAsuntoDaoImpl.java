@@ -609,7 +609,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		hql.append("from Asunto a ");
 		hql.append(" JOIN FETCH a.estadoAsunto ");
 		hql.append(" LEFT JOIN FETCH a.fichaAceptacion ");
-		hql.append("where a.id in ");
+		hql.append(" where a.id in ");
 
 		/***
 		 * La lista de los par�metros din�nmicos debe venir de la siguiente
@@ -671,11 +671,11 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 
 		if (requierePrevioCDD(dto)) {
-			hql.append("and asu.id = cdd.idAsunto ");
+			hql.append(" and asu.id = cdd.asunto.id ");
 		}
 
 		if (requierePostCDD(dto)) {
-			hql.append("and asu.codigoExterno = crn.codigoExterno ");
+			hql.append(" and asu.codigoExterno = crn.codigoExterno ");
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)

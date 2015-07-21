@@ -12,29 +12,25 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_PFR_PROV_FONDOS_RESULTADO", schema = "${entity.schema}")
-public class DDProvisionFondosResultado implements Auditable, Dictionary{
+@Table(name = "DD_ATE_ADJ_TPO_ENTREGA", schema = "${entity.schema}")
+public class DDAdjContableTipoEntrega implements Auditable, Dictionary{
     
-	public static final String ACEPTAR = "APR";
-	public static final String RECHAZAR = "REC";
-	public static final String SUBSANAR = "SUB";
-	
 	/**
 	 *  
 	 */
 	private static final long serialVersionUID = 6488409119873054777L;
 
 	@Id
-    @Column(name = "DD_PFR_ID")
+    @Column(name = "DD_ATE_ID")
     private Long id;
 
-    @Column(name = "DD_PFR_CODIGO")
+    @Column(name = "DD_ATE_CODIGO")
     private String codigo;
 
-    @Column(name = "DD_PFR_DESCRIPCION")
+    @Column(name = "DD_ATE_DESCRIPCION")
     private String descripcion;
 
-    @Column(name = "DD_PFR_DESCRIPCION_LARGA")
+    @Column(name = "DD_ATE_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
     @Embedded

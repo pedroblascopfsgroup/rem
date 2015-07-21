@@ -12,7 +12,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_CALC_DEUDA_ORIGEN", schema = "${entity.schema}")
+@Table(name = "DD_CDO_CALC_DEUDA_ORIGEN", schema = "${entity.schema}")
 public class DDCalculoDeudaOrigen implements Auditable, Dictionary{
     
 	/**

@@ -1,11 +1,8 @@
 package es.pfsgroup.procedimientos.adjudicacion;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
-import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -21,7 +18,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
@@ -34,7 +30,6 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 public class AdjudicacionHayaProcedimientoManager {
 
 	private static final String BO_ADJUDICACION_VALIDAR_ADJUNTO_SAREB = "es.pfsgroup.recovery.adjudicacion.validarAdjuntoSareb";
-	private static final String BO_ADJUDICACION_OBTENER_TIPO_CARGA = "es.pfsgroup.recovery.adjudicacion.obtenerTipoCarga";
 
 	private static final String TIPO_CARGA_ANTERIOR_HIPOTECA = "ANT";
 
@@ -47,12 +42,8 @@ public class AdjudicacionHayaProcedimientoManager {
 	@Autowired
 	private ProcessManager processManager;
 	
-	private ExecutionContext ec;
-	
 	@Autowired
 	private GenericABMDao genericDao;
-
-	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 
  	

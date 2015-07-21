@@ -41,9 +41,7 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 		if (!transicion.equals(BPMContants.TRANSICION_VUELTA_ATRAS)) {
 			if (debeDestruirTareaProcedimiento(executionContext)) {
 				if (isDecisionNode(executionContext)) {
-					String nombreDecision = getNombreNodo(executionContext) + "Decision";
-					setVariable(nombreDecision, getDecision(executionContext), executionContext);
-					logger.debug("\tDecisi�n de la tarea: " + getVariable(nombreDecision, executionContext));
+					setDecisionVariable(executionContext);
 				}
 
 				proxyFactory.proxy(EXTJBPMProcessApi.class).borraTimersTarea(getTareaExterna(executionContext).getId());
@@ -64,6 +62,12 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 
 	}
 
+	protected void setDecisionVariable(ExecutionContext executionContext) {
+		String nombreDecision = getNombreNodo(executionContext) + "Decision";
+		setVariable(nombreDecision, getDecision(executionContext), executionContext);
+		logger.debug("\tDecisi�n de la tarea: " + getVariable(nombreDecision, executionContext));
+	}
+	
 	protected void vueltaAtras(ExecutionContext executionContext) {
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
 		bpmIntegrationService.notificaCancelarTarea(tareaExterna);

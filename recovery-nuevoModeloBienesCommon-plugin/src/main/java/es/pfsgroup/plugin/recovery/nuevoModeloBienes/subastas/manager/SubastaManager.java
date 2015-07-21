@@ -1363,12 +1363,11 @@ public class SubastaManager implements SubastaApi {
 
             //Se recorren todos los registros KO de Acuerdo Cierre Deuda (pivote) que hay en el asunto
             List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
-            genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+            genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
 			
 			for(BatchAcuerdoCierreDeuda baCDD : listBatchCDD) {
 				if(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO.equals(baCDD.getResultadoValidacion())){
-					genericDao.deleteById(BatchAcuerdoCierreDeuda.class, baCDD.getId());
-					//subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);
+					subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);
 				}
 				else{
 	                //Se recorren todos los registros de NUSE que hay relacionados con pivote

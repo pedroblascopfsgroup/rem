@@ -63,7 +63,7 @@ public class BatchCDDResultadoNuse implements Serializable {
 	private String resultado;
 
 	@Column(name = "CRN_DESC_RESULT")
-	private Long descripcionResultado;
+	private String descripcionResultado;
 
 	@Column(name = "CRN_FECHA_RESULT")
 	private Date fechaResultado;
@@ -106,7 +106,7 @@ public class BatchCDDResultadoNuse implements Serializable {
 		return resultado;
 	}
 
-	public Long getDescripcionResultado() {
+	public String getDescripcionResultado() {
 		return descripcionResultado;
 	}
 
@@ -155,7 +155,7 @@ public class BatchCDDResultadoNuse implements Serializable {
 		this.resultado = resultado;
 	}
 
-	public void setDescripcionResultado(Long descripcionResultado) {
+	public void setDescripcionResultado(String descripcionResultado) {
 		this.descripcionResultado = descripcionResultado;
 	}
 

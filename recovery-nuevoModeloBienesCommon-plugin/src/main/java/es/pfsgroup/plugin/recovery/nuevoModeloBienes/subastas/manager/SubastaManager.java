@@ -1361,22 +1361,27 @@ public class SubastaManager implements SubastaApi {
 		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
 		public void eliminarBatchCierreDeudaAsunto(Long idAsunto) {
 
-                        //Se recorren todos los registros KO de Acuerdo Cierre Deuda (pivote) que hay en el asunto
-                        List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
-                        genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+            //Se recorren todos los registros KO de Acuerdo Cierre Deuda (pivote) que hay en el asunto
+            List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
+            genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			
 			for(BatchAcuerdoCierreDeuda baCDD : listBatchCDD) {
-				subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);
-                                
-                            //Se recorren todos los registros KO de NUSE que hay relacionados con pivote
-                            List<BatchCDDResultadoNuse> listBatchCDDNuse = (List<BatchCDDResultadoNuse>) genericDao.getList(BatchCDDResultadoNuse.class, 
-                                            genericDao.createFilter(FilterType.EQUALS, "batchAcuerdoCierreDeuda.id", baCDD.getId()));
+				if(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO.equals(baCDD.getResultadoValidacion())){
+					genericDao.deleteById(BatchAcuerdoCierreDeuda.class, baCDD.getId());
+					//subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);
+				}
+				else{
+	                //Se recorren todos los registros de NUSE que hay relacionados con pivote
+	                List<BatchCDDResultadoNuse> listBatchCDDNuse = (List<BatchCDDResultadoNuse>) genericDao.getList(BatchCDDResultadoNuse.class, 
+	                                genericDao.createFilter(FilterType.EQUALS, "batchAcuerdoCierreDeuda.id", baCDD.getId()), 
+	                                genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	
+	                for(BatchCDDResultadoNuse baCDDNuse : listBatchCDDNuse) {
+	                        subastaDao.eliminarBatchCDDResultadoNuse(baCDDNuse);
+	                }
+				}
 
-                            for(BatchCDDResultadoNuse baCDDNuse : listBatchCDDNuse) {
-                                    subastaDao.eliminarBatchCDDResultadoNuse(baCDDNuse);
-                            }
-
-                        }
+            }
 		}
 
 		@Override

@@ -30,7 +30,6 @@
 
 	var tipoGestorRecord = Ext.data.Record.create([
 		{name: 'id'},
-		{name: 'codigo'},
 		{name: 'descripcion'}
 	]);
 
@@ -56,7 +55,6 @@
 	<%-- Combo Tipo Despacho --%>
 
 	var tipoDespachoRecord = Ext.data.Record.create([
-		{name: 'id'},
 		{name: 'cod'},
 		{name: 'descripcion'}
 	]);
@@ -123,7 +121,6 @@
 	});
 
 	tipoGestorStore.on('load', function(combo) {
-		// Se filtra por tipo de gestor apoderado.
 		var numRecord = tipoGestorStore.findExact('descripcion', 'Apoderado', 0);
 		var value = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.valueField];
 		var rawValue = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.displayField];
@@ -145,6 +142,37 @@
 
 		comboUsuario.reset();
 		comboUsuario.setDisabled(false);
+	});
+
+	tipoDespachoStore.on('load', function(combo) {
+		var numRecord = tipoDespachoStore.findExact('cod', ${liquidacion.apoderadoDespachoId}, 0);
+
+		if (numRecord != -1) {
+			var value = tipoDespachoStore.getAt(numRecord).data[comboTipoDespacho.valueField];
+			var rawValue = tipoDespachoStore.getAt(numRecord).data[comboTipoDespacho.displayField];
+
+			comboTipoDespacho.setValue(value);
+			comboTipoDespacho.setRawValue(rawValue);
+			comboTipoDespacho.selectedIndex = numRecord;
+
+			comboUsuario.reset();
+			comboUsuario.setDisabled(false);
+
+			usuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()});
+		}
+	});
+
+	usuarioStore.on('load', function(combo) {
+		var numRecord = usuarioStore.findExact('id', ${liquidacion.apoderadoUsuarioId}, 0);
+
+		if (numRecord != -1) {
+			var value = usuarioStore.getAt(numRecord).data[comboUsuario.valueField];
+			var rawValue = usuarioStore.getAt(numRecord).data[comboUsuario.displayField];
+
+			comboUsuario.setValue(value);
+			comboUsuario.setRawValue(rawValue);
+			comboUsuario.selectedIndex = numRecord;
+		}
 	});
 
 	<%-- Buttons --%>
@@ -201,7 +229,8 @@
 		parametros.total = totalField.getValue();
 
 		if (comboUsuario.getValue() != "") {
-			parametros.apoderadoId = comboUsuario.getValue();
+			parametros.apoderadoDespachoId = comboTipoDespacho.getValue();
+			parametros.apoderadoUsuarioId = comboUsuario.getValue();
 		}
 
 		return parametros;

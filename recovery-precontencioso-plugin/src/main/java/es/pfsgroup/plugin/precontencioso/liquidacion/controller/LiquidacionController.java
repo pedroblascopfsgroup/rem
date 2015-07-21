@@ -93,12 +93,20 @@ public class LiquidacionController {
 		Float interesesOrdinarios = Float.valueOf(request.getParameter("interesesOrdinarios"));
 		Float interesesDemora = Float.valueOf(request.getParameter("interesesDemora"));
 		Float total = Float.valueOf(request.getParameter("total"));
+		String apoderadoNombre = request.getParameter("apoderadoNombre");
 
-		String apoderado = request.getParameter("apoderadoId");
+		String usuario = request.getParameter("apoderadoUsuarioId");
 
-		Long apoderadoId = null;
-		if (!Checks.esNulo(apoderado)) {
-			apoderadoId = Long.valueOf(apoderado);
+		Long usuarioId = null;
+		if (!Checks.esNulo(usuario)) {
+			usuarioId = Long.valueOf(usuario);
+		}
+
+		String despacho = request.getParameter("apoderadoDespachoId");
+
+		Long despachoId = null;
+		if (!Checks.esNulo(despacho)) {
+			despachoId = Long.valueOf(despacho);
 		}
 
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
@@ -108,7 +116,9 @@ public class LiquidacionController {
 		liquidacionDto.setInteresesOrdinarios(interesesOrdinarios);
 		liquidacionDto.setInteresesDemora(interesesDemora);
 		liquidacionDto.setTotal(total);
-		liquidacionDto.setApoderadoId(apoderadoId);
+		liquidacionDto.setApoderadoNombre(apoderadoNombre);
+		liquidacionDto.setApoderadoUsuarioId(usuarioId);
+		liquidacionDto.setApoderadoDespachoId(despachoId);
 
 		liquidacionApi.editar(liquidacionDto);
 

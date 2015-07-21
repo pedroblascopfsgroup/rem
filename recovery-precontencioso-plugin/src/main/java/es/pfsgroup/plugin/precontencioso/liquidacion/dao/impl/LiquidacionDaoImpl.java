@@ -17,7 +17,7 @@ public class LiquidacionDaoImpl extends AbstractEntityDao<LiquidacionPCO, Long> 
 	public List<LiquidacionPCO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
 
 		Criteria query = getSession().createCriteria(LiquidacionPCO.class);
-		query.createCriteria("procedimientoPCO", "procedimientoPCO");
+		query.createAlias("procedimientoPCO", "procedimientoPCO");
 		query.add(Restrictions.eq("procedimientoPCO.id", idProcedimientoPCO));
 
 		List<LiquidacionPCO> liquidaciones = query.list();

@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeVal
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
@@ -1197,7 +1198,7 @@ public class SubastaManager implements SubastaApi {
 		@Override
 		@Transactional(readOnly = false)
 		@BusinessOperation(BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA)
-		public BatchAcuerdoCierreDeuda findRegistroCierreDeuda(BatchAcuerdoCierreDeuda acuerdo) {
+		public BatchAcuerdoCierreDeuda findRegistroCierreDeuda(AcuerdoCierreDeudaDto acuerdo) {
 			return subastaDao.findBatchAcuerdoCierreDeuda(acuerdo);
 		}
 
@@ -1271,19 +1272,21 @@ public class SubastaManager implements SubastaApi {
 			
 			// Buscamos si existe un cierre de deuda para mismo ASU,PRO,BIEN que no se haya enviado.
 			BatchAcuerdoCierreDeuda filtro = new BatchAcuerdoCierreDeuda();
-			filtro.setAsunto(subasta.getAsunto());
-			filtro.setProcedimiento(subasta.getProcedimiento());
+			AcuerdoCierreDeudaDto filtroDto = new AcuerdoCierreDeudaDto();
+			
+			filtroDto.setAsunto(subasta.getAsunto());
+			filtroDto.setProcedimiento(subasta.getProcedimiento());
 			if(!Checks.esNulo(idBien)) {
 				Bien bie = genericDao.get(Bien.class, genericDao.createFilter(FilterType.EQUALS, "id", idBien), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-				filtro.setBien(bie);
+				filtroDto.setBien(bie);
 			}
-			BatchAcuerdoCierreDeuda acuerdoCierreDeuda = findRegistroCierreDeuda(filtro);
+			BatchAcuerdoCierreDeuda acuerdoCierreDeuda = findRegistroCierreDeuda(filtroDto);
 			// Si no existe, o existe pero ya está OK y enviado
 			if(Checks.esNulo(acuerdoCierreDeuda) || 
 					(!Checks.esNulo(acuerdoCierreDeuda.getFechaEntrega()) && BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK.equals(acuerdoCierreDeuda.getResultadoValidacion()))) {
-				BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(filtro.getAsunto().getId(), filtro.getProcedimiento().getId(), filtro.getBien().getId(), resultado, resultadoValidacion, origen);
+				BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(filtroDto.getAsunto().getId(), filtroDto.getProcedimiento().getId(), filtroDto.getBien().getId(), resultado, resultadoValidacion, origen);
 				genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
-				//guardaBatchAcuerdoCierre(filtro.getIdAsunto(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion, origen);
+				//guardaBatchAcuerdoCierre(filtroDto.getAsunto().getId(), filtroDto.getProcedimiento().getId(), filtroDto.getBien().getId(), resultado, resultadoValidacion, origen);
 
 			} else {// Si existe sin enviar modificamos		
 				acuerdoCierreDeuda.setResultadoValidacion(resultado);

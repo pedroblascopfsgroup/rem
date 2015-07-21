@@ -20,6 +20,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
@@ -31,6 +32,7 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
@@ -39,7 +41,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 import es.pfsgroup.recovery.ext.impl.utils.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository("SubastaDao")
 public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
@@ -1440,7 +1441,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 	
 	@Override
-	public BatchAcuerdoCierreDeuda findBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdo){
+	public BatchAcuerdoCierreDeuda findBatchAcuerdoCierreDeuda(AcuerdoCierreDeudaDto acuerdo){
 		Query query = getSession().createQuery(
 				generarHQLBuscarBatchAcuerdoCierreDeuda(acuerdo));
 		return (BatchAcuerdoCierreDeuda) query.uniqueResult();
@@ -1452,7 +1453,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	 * @param acuerdo
 	 * @return BatchAcuerdoCierreDeuda acuerdo
 	 */
-	private String generarHQLBuscarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdo) {
+	private String generarHQLBuscarBatchAcuerdoCierreDeuda(AcuerdoCierreDeudaDto acuerdo) {
 
 	
 		StringBuilder hql = new StringBuilder();
@@ -1464,9 +1465,9 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		hql.append(" where baccd.asunto.id = ").append(acuerdo.getAsunto().getId());
 		
 		// Añadimos filtros en función de los valores recibidos
-		if(!Checks.esNulo(acuerdo.getId())) {
-			hql.append(" and baccd.id = ").append(acuerdo.getId());
-		}		
+//		if(!Checks.esNulo(acuerdo.getId())) {
+//			hql.append(" and baccd.id = ").append(acuerdo.getId());
+//		}		
 		
 		if(!Checks.esNulo(acuerdo.getProcedimiento().getId())) {
 			hql.append(" and baccd.procedimiento.id = ").append(acuerdo.getProcedimiento().getId());

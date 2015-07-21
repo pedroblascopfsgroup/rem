@@ -15,6 +15,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
@@ -217,7 +218,7 @@ public interface SubastaApi {
 	List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien);
 	
 	@BusinessOperation(BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA)
-	BatchAcuerdoCierreDeuda findRegistroCierreDeuda(BatchAcuerdoCierreDeuda acuerdo);
+	BatchAcuerdoCierreDeuda findRegistroCierreDeuda(AcuerdoCierreDeudaDto acuerdo);
 		
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
 	Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento);

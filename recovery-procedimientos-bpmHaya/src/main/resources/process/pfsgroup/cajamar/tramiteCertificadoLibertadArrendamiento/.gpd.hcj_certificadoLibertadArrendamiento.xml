@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_certificadoLibertadArrendamiento" width="1044" height="887">
+  <node name="Inicio" x="220" y="45" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC101_EmitirCertificado" x="177" y="146" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC101_LegitimacionNotarialFirma" x="154" y="258" width="261" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-212" h1="-116" w2="-216" h2="1"/>
+    </edge>
+  </node>
+  <node name="HC101_RecepcionCertificacionNotarial" x="144" y="368" width="280" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-249" h1="-115" w2="-241" h2="-4"/>
+    </edge>
+  </node>
+  <node name="HC101_RemitirCertificadoLetrado" x="166" y="476" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-241" h1="-106" w2="-240" h2="2"/>
+    </edge>
+  </node>
+  <node name="HC101_ConfirmarRecepcionCertificado" x="132" y="575" width="302" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-21" y="17"/>
+      <bendpoint w1="329" h1="-125" w2="-188" h2="200"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="521" h1="-10" w2="4" h2="315"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-228" h1="-102" w2="-230" h2="-3"/>
+    </edge>
+  </node>
+  <node name="Fin" x="734" y="250" width="132" height="36"/>
+</root-container>

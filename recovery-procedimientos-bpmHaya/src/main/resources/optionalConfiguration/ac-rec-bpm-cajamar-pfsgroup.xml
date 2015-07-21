@@ -44,6 +44,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalculoDeudaAFecha/hcj_calculoDeudaAFecha.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificadoLibertadArrendamiento/hcj_certificadoLibertadArrendamiento.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgrup/haya/tramiteAdjudicacion/haya_tramiteAdjudicacionV4.xml" p:version="-1"/>
@@ -135,6 +136,11 @@
 	            def comprobarExisteDocumentoAAEEE = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AAEEE");
+	            }
+	            
+	            def comprobarExisteDocumentoLIBARR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LIBARR");
 	            }
         	            
   			 ]]>

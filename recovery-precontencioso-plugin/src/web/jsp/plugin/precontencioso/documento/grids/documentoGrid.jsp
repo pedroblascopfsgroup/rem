@@ -219,8 +219,8 @@ var solicitarDocButton = new Ext.Button({
 	        	}
 	        	else {
 			        var w = app.openWindow({
-							flow: 'documentopco/abirCrearSolicitudes'
-							,params: {idSolicitud:idSolicitud}
+							flow: 'documentopco/abrirCrearSolicitudes'
+							,params: {idDocumento:idDocumento}
 							,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
 							,width: 300
 						});

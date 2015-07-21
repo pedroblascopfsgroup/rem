@@ -1341,6 +1341,7 @@ public class SubastaManager implements SubastaApi {
 		}
 		
 		@Override
+                @Transactional(readOnly = false)
 		@BusinessOperation(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
 		public Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento) {
 			Procedimiento prc = null;
@@ -1356,6 +1357,7 @@ public class SubastaManager implements SubastaApi {
 		}
 		
 		@Override
+                @Transactional(readOnly = false)
 		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
 		public void eliminarBatchCierreDeudaAsunto(Long idAsunto) {
 

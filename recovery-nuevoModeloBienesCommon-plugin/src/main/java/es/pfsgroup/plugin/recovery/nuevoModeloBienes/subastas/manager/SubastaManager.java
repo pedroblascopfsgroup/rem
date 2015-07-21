@@ -36,6 +36,7 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
@@ -87,6 +88,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
+import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
@@ -1351,19 +1353,21 @@ public class SubastaManager implements SubastaApi {
 		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
 		public void eliminarBatchCierreDeudaAsunto(Long idAsunto) {
 
-                        //Se recorren todos los registros de Acuerdo Cierre Deuda (pivote) que hay en el asunto
+                        //Se recorren todos los registros KO de Acuerdo Cierre Deuda (pivote) que hay en el asunto
                         List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
                         genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto));
 			
 			for(BatchAcuerdoCierreDeuda baCDD : listBatchCDD) {
 				subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);
-			}
-                        
-                        List<BatchCDDResultadoNuse> listBatchCDDNuse = (List<BatchCDDResultadoNuse>) genericDao.getList(BatchCDDResultadoNuse.class, 
-                                        genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto));
+                                
+                            //Se recorren todos los registros KO de NUSE que hay relacionados con pivote
+                            List<BatchCDDResultadoNuse> listBatchCDDNuse = (List<BatchCDDResultadoNuse>) genericDao.getList(BatchCDDResultadoNuse.class, 
+                                            genericDao.createFilter(FilterType.EQUALS, "batchAcuerdoCierreDeuda.id", baCDD.getId()));
 
-                        for(BatchCDDResultadoNuse baCDDNuse : listBatchCDDNuse) {
-                                subastaDao.eliminarBatchCDDResultadoNuse(baCDDNuse);
+                            for(BatchCDDResultadoNuse baCDDNuse : listBatchCDDNuse) {
+                                    subastaDao.eliminarBatchCDDResultadoNuse(baCDDNuse);
+                            }
+
                         }
 		}
 

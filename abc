@@ -1,0 +1,1000 @@
+  746  cd class/
+  747  ls
+  748  scp class_user.php cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomais/conexp_desa/class
+  749  scp class_user.php cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa/class
+  750  exit
+  751  ls
+  752  nano settings.xml.backup 
+  753  cd
+  754  cd /Documentos/git/
+  755  cd recovery/
+  756  ls
+  757  nano pom.xml 
+  758  ls
+  759  history
+  760  exit
+  761  cd workspace
+  762  ls
+  763  cd conexp_inte/
+  764  ls
+  765  cd class/
+  766  ls
+  767  nano class_connect.php 
+  768  cd
+  769  ls
+  770  gitk
+  771  git pull
+  772  cd /Documentos/git/recovery/
+  773  ls
+  774  git pull
+  775  git branch -a
+  776  git merge master
+  777  gitk
+  778  git status
+  779  git merge master
+  780  git status
+  781  gitk
+  782  git merge haya
+  783  gitk
+  784  git status
+  785  git branch
+  786  gitk
+  787  git merge haya
+  788  git branch -a
+  789  git merge   remotes/origin/haya
+  790  git status
+  791  git add .
+  792  git status
+  793  git commit -m "Resolviendo conflictos POST-MERGE"
+  794  git status
+  795  git push
+  796  gitk
+  797  gitk -a
+  798  gitk -all
+  799  gitk
+  800  mvn clean install -Dmaven.test.skip=true -P haya
+  801  mvn -version
+  802  mvn clean install -Dmaven.test.skip=true -P haya
+  803  rm -rf ~/.m2/repository
+  804  mvn -Dmaven.test.skip=true clean install 
+  805  mvn -Dmaven.test.skip=true clean install -e
+  806  mvn clean install -Dmaven.test.skip=true -P haya -e
+  807  mvn clean install -Dmaven.test.skip=true -P haya
+  808  git status
+  809  ls
+  810  nano pom.xml 
+  811  gitk
+  812  git pull
+  813  gitk
+  814  mvn clean install -Dmaven.test.skip=true -P haya
+  815  cd
+  816  ls
+  817  cd .m2
+  818  ls
+  819  nano settings.xml
+  820  su desacdd
+  821  cd
+  822  ls
+  823  cd /Documentos/
+  824  ls
+  825  cd git/
+  826  ls
+  827  cd recovery/
+  828  ls
+  829  mvn clean install -Dmaven.test.skip=true -P haya
+  830  cd
+  831  ls
+  832  cd .m2
+  833  ls
+  834  nano settings.xml
+  835  cd
+  836  cd /Documentos/git/recovery/
+  837  ls
+  838  mvn clean install -Dmaven.test.skip=true -P haya
+  839  cd .m2
+  840  cd
+  841  ls
+  842  cd .m2
+  843  ls
+  844  cp settings.xml settings.xml.backup
+  845  nano settings.xml
+  846  rm settings.xml
+  847  nano settings.xml
+  848  nano settings.xml.backup 
+  849  nano settings.xml
+  850  cd
+  851  ls
+  852  cd /Documentos/git/recovery/
+  853  ls
+  854  mvn clean install -Dmaven.test.skip=true -P haya
+  855  exit
+  856  ssh desahaya@192.168.0.116
+  857  exit
+  858  cd etl
+  859  ssh recoverycdd@192.168.120.13
+  860  cd /Documentos/
+  861  cd git/
+  862  cd recovery/
+  863  ls
+  864  git pull
+  865  cd /var/tomcat/desalindorff/
+  866  ls
+  867  cd webapps/
+  868  ls
+  869  rm -rf pfs/
+  870  su desalindorff 
+  871  cd
+  872  ls
+  873  ssh desarecoverycdd@192.168.0.152
+  874  ssh recoverycdd@192.168.0.152
+  875  ssh recoverycdd@192.168.0.143
+  876  ssh recoverycdd@192.168.120.13
+  877  ssh desahaya@192.168.0.116
+  878  su desahaya
+  879  su desalindorff 
+  880  cd
+  881  ls
+  882  cd /Documentos/git/recovery/
+  883  ls
+  884  mvn clean install -Dmaven.test.skip=true -P haya
+  885  su desalindorff 
+  886  git pull
+  887  su desalindorff
+  888  ls
+  889  cd
+  890  ls
+  891  mvn clean install -Dmaven.test.skip=true -P haya
+  892  cd /Documentos/git/recovery/
+  893  ls
+  894  mvn clean install -Dmaven.test.skip=true -P haya
+  895  ls
+  896  nano pom.xml 
+  897  cd
+  898  cd .m2
+  899  ls
+  900  nano settings.xml
+  901  cd
+  902  ls
+  903  cd /Documentos/git/recovery/
+  904  ls
+  905  mvn clean install -Dmaven.test.skip=true -P haya
+  906  mvn clean install -Dmaven.test.skip=true -P haya -e
+  907  cd
+  908  cd .m2
+  909  ls
+  910  nano settings.xml
+  911  mvn clean install -Dmaven.test.skip=true -P haya
+  912  cd
+  913  cd /Documentos/git/recovery/
+  914  mvn clean install -Dmaven.test.skip=true -P haya
+  915  cd
+  916  cd .m2
+  917  ls
+  918  nano settings.xml
+  919  su desacdd
+  920  ssh desahaya@192.168.0.116
+  921  exit
+  922  ssh desahaya@192.168.0.116
+  923  exit
+  924  ssh desarecoverycdd@192.168.0.143
+  925  ssh recoverycdd@192.168.120.13
+  926  sqldeveloper&
+  927  free
+  928  exit
+  929  cd .m2
+  930  ls
+  931  nano settings.xml
+  932  exit
+  933  git pull
+  934  cd /Documentos/git/recovery/
+  935  ls
+  936  git pull
+  937  free
+  938  cd
+  939  ls
+  940  ssh desahaya@192.168.0.116
+  941  exit
+  942  ssh desahaya@192.168.0.116
+  943  sudo update-alternatives --config java
+  944  exit
+  945  java -version
+  946  exit
+  947  ssh desarecoverycdd@192.168.120.13
+  948  ssh recoverycdd@192.168.120.13
+  949  exit
+  950  cd /Documentos/git/recovery/
+  951  ls
+  952  git pull
+  953  git push
+  954  git add .
+  955  git commit -m "Resoluciones nuevas (PLSQL)"
+  956  git push
+  957  gitk
+  958  git pull
+  959  exit
+  960  nano .bashrc 
+  961  echo $JAVA_HOME
+  962  java -version
+  963  exit
+  964  sqldeveloper&
+  965  exit
+  966  cd /Documentos/git/recovery/
+  967  ls
+  968  cd sql
+  969  cd tool/
+  970  ls
+  971  nano README.txt 
+  972  cd 
+  973  ls
+  974  ssh desarecoverycdd@192.168.0.143
+  975  ssh cmp_conexp@192.168.0.143
+  976  exit
+  977  cd workspace
+  978  ls
+  979  cd conexp_inte/
+  980  ls
+  981  cd class/
+  982  ls
+  983  scp class_expediente cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa/class
+  984  scp class_expediente.php cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa/class
+  985  ssh recoverycdd@192.168.120.13
+  986  ls
+  987  cd ..
+  988  ls
+  989  cd ..
+  990  ls
+  991  cd /var/
+  992  ls
+  993  cd www
+  994  ls
+  995  cd ..
+  996  cd log/
+  997  ls
+  998  cd apache2/
+  999  ls
+ 1000  tail -f error.log
+ 1001  cd
+ 1002  ls
+ 1003  cd workspace
+ 1004  ls
+ 1005  cd conexp_inte/
+ 1006  ls
+ 1007  cd class/
+ 1008  ls
+ 1009  scp class_expediente.php cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa
+ 1010  scp class_generic_class.php cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa
+ 1011  cd ..
+ 1012  cd download/
+ 1013  ls
+ 1014  scp cuadro_de_mando_template.xlsx cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa/download
+ 1015  cd ..
+ 1016  cd class/
+ 1017  scp class_generic_class.php cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa/class
+ 1018  scp class_expediente.php cmp_conexp@192.168.0.143:/var/www/vhosts/pfsgroup.es/subdomains/conexp_desa/class
+ 1019  cd
+ 1020  ls
+ 1021  ssh desahaya@192.168.0.116
+ 1022  ssh desabankia@192.168.0.116
+ 1023  exit
+ 1024  ssh cmp_conexp@192.168.0.143
+ 1025  exit
+ 1026  ssh oracle@192.168.0.116
+ 1027  ls
+ 1028  sqldeveloper&
+ 1029  su desalindorff
+ 1030  exit
+ 1031  ssh desahaya@192.168.0.116
+ 1032  ssh oracle@192.168.0.116
+ 1033  exit
+ 1034  cd /opt/app/oracle/product/
+ 1035  ls
+ 1036  cd 11.2.0/
+ 1037  ls
+ 1038  cd dbhome_1/
+ 1039  ls
+ 1040  cd bin/
+ 1041  s
+ 1042  ls
+ 1043  echo $JAVA_HOME
+ 1044  cd
+ 1045  ls
+ 1046  echo $ORACLE_HOME
+ 1047  cd /var/tomcat/desalindorff/
+ 1048  ls
+ 1049  su desalindorff
+ 1050  exit
+ 1051  sqldeveloper&
+ 1052  cd /Documentos/git/recovery/
+ 1053  ls
+ 1054  git pull
+ 1055  git status
+ 1056  git pull
+ 1057  diff recovery-procuradores-plugin/src/web/js/plugin/procuradores/FactoriaFormularios_haya.js
+ 1058  git status
+ 1059  diff haya_procuradores
+ 1060  diff origin/haya_procuradores
+ 1061  diff origin/haya_procuradores origin/haya_procuradores
+ 1062  git diff haya_procuradores
+ 1063  git status
+ 1064  git checkout -- recovery-procuradores-plugin/src/web/js/plugin/procuradores/FactoriaFormularios_haya.js
+ 1065  git status
+ 1066  git pull
+ 1067  git status
+ 1068  git add .
+ 1069  git commit -m "Nueva resolucion"
+ 1070  git push
+ 1071  gitk
+ 1072  exit
+ 1073  /Documentos/git/recovery/sql/tool/
+ 1074  cd /Documentos/git/recovery/sql/tool/
+ 1075  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_ETJDecretoFinMonitorio.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1076  export ORACLE_HOME = /opt/app/oracle11/product/11.2.0/dbhome_1
+ 1077  export ORACLE_HOME=/opt/app/oracle11/product/11.2.0/dbhome_1
+ 1078  echo ORACLE_HOME
+ 1079  echo $ORACLE_HOME
+ 1080  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_ETJDecretoFinMonitorio.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1081  nano  ./tmp/DML_168_ENTITY01_ETJDecretoFinMonitorio-20150713-102351.log
+ 1082  nano ./tmp/20150713-reg1.sql
+ 1083  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_ETJDecretoFinMonitorio.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1084  nano ./tmp/DML_168_ENTITY01_ETJDecretoFinMonitorio-20150713-102443.log
+ 1085  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_ETJDecretoFinMonitorio.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1086  history
+ 1087  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_ETJDecretoFinMonitorio.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1088  nano ./tmp/DML_168_ENTITY01_ETJDecretoFinMonitorio-20150713-102639.log
+ 1089  export ORACLE_HOME=/opt/app/oracle/product/11.2.0/dbhome_1
+ 1090  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_ETJDecretoFinMonitorio.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1091  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_ETJDecretoFinMonitorio.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1092  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_169_ENTITY01_VerbalDesdeMonitorioDiligenciaCita.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1093  nano ./tmp/DML_169_ENTITY01_VerbalDesdeMonitorioDiligenciaCita-20150713-104408.log
+ 1094  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_169_ENTITY01_VerbalDesdeMonitorioDiligenciaCita.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1095  ./tmp/DML_169_ENTITY01_VerbalDesdeMonitorioDiligenciaCita-20150713-104503.lo
+ 1096  nano ./tmp/DML_169_ENTITY01_VerbalDesdeMonitorioDiligenciaCita-20150713-104503.log
+ 1097  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_169_ENTITY01_VerbalDesdeMonitorioDiligenciaCita.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1098  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_169_ENTITY01_VerbalDesdeMonitorioDiligenciaCita.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1099  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_171_ENTITY01_VigilanciaMandamientoCumplimentado.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1100  nano ./tmp/DML_171_ENTITY01_VigilanciaMandamientoCumplimentado-20150713-123526.log
+ 1101  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_012_ENTITY01_InsertarTiposJuicio.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1102  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/DEFAULT/DML_012_ENTITY01_InsertarTiposJuicio.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1103  nano ./tmp/DML_012_ENTITY01_InsertarTiposJuicio-20150713-123611.log
+ 1104  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/DEFAULT/DML_012_ENTITY01_InsertarTiposJuicio.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1105  nano ./tmp/DML_012_ENTITY01_InsertarTiposJuicio-20150713-123804.log
+ 1106  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_171_ENTITY01_VigilanciaMandamientoCumplimentado.sql admin@192.168.0.116:1522/orcl11g HAYA
+ 1107  nano ./tmp/DML_171_ENTITY01_VigilanciaMandamientoCumplimentado-20150713-124257.log
+ 1108  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_171_ENTITY01_VigilanciaMandamientoCumplimentado.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1109  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_172_ENTITY01_PrecintoConfirmarFecha.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1110  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_166_ENTITY01_NotificacionEscritoSelladoNotificacion.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1111  nano ./tmp/DML_166_ENTITY01_NotificacionEscritoSelladoNotificacion-20150713-171026.log
+ 1112  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_168_ENTITY01_MonitorioDecretoFinMonitorio.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1113  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_169_ENTITY01_MonitorioDiligenciaCita.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1114  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_170_ENTITY01_MonitorioDiligenciaCita.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1115  ç
+ 1116  nano ./tmp/DML_170_ENTITY01_MonitorioDiligenciaCita-20150713-171134.log
+ 1117  cd ..
+ 1118  ls
+ 1119  cd ..
+ 1120  ls
+ 1121  git status
+ 1122  git add .
+ 1123  git commit -m "MITCDD-2203"
+ 1124  git status
+ 1125  git checkout -- recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_100_ENTITY01_BienesInmueblesRegistrarResultado.sql
+ 1126  git status
+ 1127  cd sql/tool/
+ 1128  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_172_ENTITY01_BienesInmueblesResolucionFirme.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1129  ssh desahaya@192.168.0.116
+ 1130  exit
+ 1131  ssh desahaya@192.168.0.116
+ 1132  exit
+ 1133  ssh recoverycdd@192.168.120.13
+ 1134  ssh etl@192.168.120.13
+ 1135  exit
+ 1136  cd
+ 1137  cd /Documentos/git/recovery/
+ 1138  ls
+ 1139  cd recovery-procuradores-common/
+ 1140  ls
+ 1141  cd ..
+ 1142  cd recovery-procuradores-plugin/
+ 1143  ls
+ 1144  mvn package
+ 1145  sudo sh copy.sh desalindorff
+ 1146  su desalindorff
+ 1147  mvn package
+ 1148  git status
+ 1149  git checkout -- src/main/java/es/pfsgroup/plugin/recovery/procuradores/controller/PCDProcesadoResolucionesController.java
+ 1150  mvn package
+ 1151  su desalindorff
+ 1152  sh copy.sh desalindorff
+ 1153  cd ..
+ 1154  mvn clean install -Dmaven.test.skip=true -P haya
+ 1155  ls
+ 1156  cd /var/tomcat/desalindorff/
+ 1157  ls
+ 1158  cd webapps/
+ 1159  ls
+ 1160  cd pfs/
+ 1161  ls
+ 1162  find -name "*resolInputConfig*"
+ 1163  nano ./WEB-INF/classes/optionalConfiguration/ac-plugin-procuradores-resolInputConfig.xml
+ 1164  cd ..
+ 1165  rm -rf pfs/
+ 1166  su desalindorff
+ 1167  cd /Documentos/git/recovery/
+ 1168  ls
+ 1169  mvn clean install -Dmaven.test.skip=true -P haya
+ 1170  ls
+ 1171  cd recovery-procuradores-plugin/
+ 1172  ls
+ 1173  mvn package
+ 1174  sudo sh copy.sh desalindorff
+ 1175  mvn package
+ 1176  sudo sh copy.sh desalindorff
+ 1177  cd ..
+ 1178  ls
+ 1179  git status
+ 1180  git add .
+ 1181  git commit -m "resolInputConfig solucionada la duplucidad de Beans"
+ 1182  git push
+ 1183  mvn clean install -Dmaven.test.skip=true -P haya
+ 1184  git pull
+ 1185  git status
+ 1186  free
+ 1187  exit
+ 1188  cd /var/tomcat/desalindorff/
+ 1189  ls
+ 1190  cd webapps/
+ 1191  ls
+ 1192  cd pfs/
+ 1193  ls
+ 1194  cd WEB-INF/
+ 1195  ls
+ 1196  cd lib/
+ 1197  ls
+ 1198  cd ..
+ 1199  ls
+ 1200  find -name "*resolInput*"
+ 1201  ./classes/optionalConfiguration/ac-plugin-procuradores-resolInputConfig_haya.xml
+ 1202  su desalindorff
+ 1203  exit
+ 1204  /Documentos/git/recovery/sql/tool/
+ 1205  cd /Documentos/git/recovery/sql/
+ 1206  cd tool/
+ 1207  ls
+ 1208  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_173_ENTITY01_HipotecarioCertificacionCargas.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1209  export ORACLE_HOME=/opt/app/oracle/product/11.2.0/dbhome_1
+ 1210  sh run-single-script.sh /Documentos/git/recovery/recovery-procuradores-common/scripts/v1.0_haya/plsql/HAYA/DML_173_ENTITY01_HipotecarioCertificacionCargas.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1211  cd ..
+ 1212  ls
+ 1213  cd ..
+ 1214  ls
+ 1215  nano ./tmp/DML_173_ENTITY01_HipotecarioCertificacionCargas-20150714-105451.log
+ 1216  mvn clean install -Dmaven.test.skip=true -P haya
+ 1217  cd /var/tomcat/
+ 1218  ls
+ 1219  cd desalindorff/
+ 1220  ls
+ 1221  cd webapps/
+ 1222  ls
+ 1223  cd pfs/
+ 1224  ls
+ 1225  c d..
+ 1226  ls
+ 1227  cd WEB-INF/
+ 1228  ls
+ 1229  cd flows/
+ 1230  ls
+ 1231  cd plugin/
+ 1232  ls
+ 1233  cd procuradores/
+ 1234  ls
+ 1235  cd ..
+ 1236  ls
+ 1237  cd ..
+ 1238  ls
+ 1239  cd plugin/
+ 1240  ls
+ 1241  cd procuradores/
+ 1242  ls
+ 1243  cd ..
+ 1244  ls
+ 1245  cd config/
+ 1246  ls
+ 1247  cd ..
+ 1248  ls
+ 1249  find -name "resolInput*"
+ 1250  cd ..
+ 1251  find -name "resolInput*"
+ 1252  find -name "*resolInput*"
+ 1253  nano ./WEB-INF/classes/optionalConfiguration/ac-plugin-procuradores-resolInputConfig_haya.xml
+ 1254  cd /Documentos/git/recovery/
+ 1255  ls
+ 1256  git pull
+ 1257  gitk
+ 1258  git status
+ 1259  git checkout --recovery-procuradores-plugin/src/web/js/plugin/procuradores/FactoriaFormularios_haya.js
+ 1260  git checkout -- recovery-procuradores-plugin/src/web/js/plugin/procuradores/FactoriaFormularios_haya.js
+ 1261  git status
+ 1262  gitk
+ 1263  git pull
+ 1264  gitk
+ 1265  cd /Documentos/git/recovery/
+ 1266  ls
+ 1267  git status
+ 1268  git add .
+ 1269  git commit -m "Añadiendo resoluciones"
+ 1270  git push
+ 1271  ssh desahaya@192.168.0.116
+ 1272  ls
+ 1273  cd
+ 1274  ls
+ 1275  su desalindorff
+ 1276  exit
+ 1277  cd
+ 1278  free
+ 1279  exit
+ 1280  ls
+ 1281  ssh desahaya@192.168.0.116
+ 1282  exit
+ 1283  su desahaya
+ 1284  su desalindorff
+ 1285  cd /Documentos/git/recovery/
+ 1286  ls
+ 1287  git pull
+ 1288  mvn clean install -Dmaven.test.skip=true -P haya
+ 1289  su desalindorff
+ 1290  ls
+ 1291  mvn clean install -Dmaven.test.skip=true -P haya
+ 1292  cd rec-web/target/
+ 1293  ls
+ 1294  scp pfs-9.1-SNAPSHOT.war desahaya@192.168.0.116:/home/desahaya
+ 1295  ll
+ 1296  cd
+ 1297  ls
+ 1298  sqldeveloper&
+ 1299  ssh desahaya@192.168.0.116
+ 1300  ssh recoverycdd@192.168.120.13
+ 1301  ls
+ 1302  history
+ 1303  ls
+ 1304  cd /Documentos/git/recovery/
+ 1305  ls
+ 1306  cd sql/l
+ 1307  cd sql/
+ 1308  ls
+ 1309  cd tool/
+ 1310  ls
+ 1311  sh run-single-script.sh /Documentos/git/recovery/sql/9.1/haya/DML_027_HAYA01_Actualiza_Mensaje_Validacion.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1312  export ORACLE_HOME=/opt/app/oracle/product/11.2.0/dbhome_1
+ 1313  sh run-single-script.sh /Documentos/git/recovery/sql/9.1/haya/DML_027_HAYA01_Actualiza_Mensaje_Validacion.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1314  cd /var/tomcat/desalindorff/
+ 1315  ls
+ 1316  cd logs/
+ 1317  tail -f catalina.out 
+ 1318  cd /Documentos/git/recovery/
+ 1319  ls
+ 1320  cd sql/tool/
+ 1321  ls
+ 1322  sh run-single-script.sh /Documentos/git/recovery/recovery-procedimientos-bpmHaya/src/main/sql/1.3.12_rc02/DML_005_HAYA01_CrearNuevosPerfiles.sql admin@192.168.0.152:1522/IBD012 HAYA
+ 1323  sqldeveloper&
+ 1324  ssh desahaya@192.168.0.116
+ 1325  exit
+ 1326  ls
+ 1327  cd /Documentos/git/recovery/
+ 1328  ls
+ 1329  cd recovery-mejoras-plugin/
+ 1330  ls
+ 1331  sudo sh copyJSP.sh desalindorff
+ 1332  mvn package
+ 1333  sudo sh copy.sh desalindorff
+ 1334  sudo sh copyJSP.sh desalindorff
+ 1335  cd ..
+ 1336  cd recovery-procuradores-common/
+ 1337  ls
+ 1338  mvn package
+ 1339  sudo sh copy.sh desalindorff
+ 1340  mvn package
+ 1341  cd ..
+ 1342  cd recovery-mejoras-plugin/
+ 1343  mvn package
+ 1344  sudo sh copy.sh desalindorff
+ 1345  CD
+ 1346  cd
+ 1347  ls
+ 1348  cd /Documentos/git/recovery/
+ 1349  ls
+ 1350  git status
+ 1351  git checkout -- recovery-mejoras-plugin/src/web/jsp/plugin/mejoras/tareas/listadoTareas.jsp
+ 1352  git checkout -- recovery-mejoras-plugin/src/web/jsp/plugin/mejoras/tareas/listadoTareasOptimizadoJSON.jsp
+ 1353  git status
+ 1354  cd recovery-mejoras-plugin/
+ 1355  ls
+ 1356  mvn package
+ 1357  sudo sh copy.sh desalindorff
+ 1358  git add .
+ 1359  cd ..
+ 1360  ls
+ 1361  git status
+ 1362  git add .
+ 1363  git pull
+ 1364  git add .
+ 1365  git commit -m "Corrección ventana tareas pendientes"
+ 1366  git push
+ 1367  exit
+ 1368  su desalindorff
+ 1369  exit
+ 1370  ssh desahaya@192.168.0.116
+ 1371  exit
+ 1372  ssh desahaya@192.168.0.116
+ 1373  exit
+ 1374  ssh recoverycdd@192.168.0.143
+ 1375  ssh recoverycdd@192.168.120.13
+ 1376  cd /Documentos/
+ 1377  cd git/
+ 1378  cd recovery/
+ 1379  ls
+ 1380  git pull
+ 1381  git status
+ 1382  tail -f /var/tomcat/desalindorff/logs/catalina.out 
+ 1383  cd
+ 1384  su desalindorff
+ 1385  cd /Documentos/git/recovery/
+ 1386  ls
+ 1387  cd recovery-procuradores-plugin/
+ 1388  ls
+ 1389  mvn package
+ 1390  sh copy.sh desalindorff
+ 1391  sh copyJSP.sh desalindorff
+ 1392  sudo sh copyJSP.sh desalindorff
+ 1393  cd /var/tomcat/desalindorff/webapps/
+ 1394  find -name "*Formulario*"
+ 1395  ./pfs/js/plugin/procuradores/FactoriaFormularios_haya.js
+ 1396  rm ./pfs/js/plugin/procuradores/FactoriaFormularios_haya.js
+ 1397  cd /Documentos/git/recovery/
+ 1398  ls
+ 1399  cd recovery-procuradores-plugin/
+ 1400  ls
+ 1401  sudo sh copyJSP.sh desalindorff
+ 1402  ls
+ 1403  git status
+ 1404  cd ..
+ 1405  ls
+ 1406  git status
+ 1407  git push
+ 1408  git add .
+ 1409  git status
+ 1410  git commit -m "FactoriaFormulario corregido"
+ 1411  git push
+ 1412  git pull
+ 1413  cd /
+ 1414  ls
+ 1415  cd dev/
+ 1416  ls
+ 1417  cd ..
+ 1418  ls
+ 1419  cd media/
+ 1420  ls
+ 1421  cd daniel/
+ 1422  ls
+ 1423  cd
+ 1424  ls
+ 1425  cd /
+ 1426  ls
+ 1427  cd dev
+ 1428  ls
+ 1429  cd sda
+ 1430  cd
+ 1431  l
+ 1432  ls
+ 1433  exit
+ 1434  su desalindorff
+ 1435  exit
+ 1436  ssh recoverycdd@192.168.120.13
+ 1437  git pull
+ 1438  cd /Documentos/git/recovery/
+ 1439  ls
+ 1440  git pull
+ 1441  history
+ 1442  vn clean install -Dmaven.test.skip=true -P haya
+ 1443  mvn clean install -Dmaven.test.skip=true -P haya
+ 1444  cd
+ 1445  ls
+ 1446  ssh recoverycdd@192.168.120.13
+ 1447  ls
+ 1448  ssh desahaya@192.168.0.116
+ 1449  su desalindorff 
+ 1450  git pull
+ 1451  history
+ 1452  mvn clean install -Dmaven.test.skip=true -P haya
+ 1453  cd /Documentos/git/recovery/
+ 1454  mvn clean install -Dmaven.test.skip=true -P haya
+ 1455  cd rec-web/
+ 1456  ls
+ 1457  cd src/
+ 1458  ls
+ 1459  cd ..
+ 1460  ls
+ 1461  cd target/
+ 1462  ls
+ 1463  ls -l
+ 1464  scp pfs-9.1-SNAPSHOT.war desahaya@192.168.0.116:/home/desahaya
+ 1465  cd
+ 1466  ls
+ 1467  ssh recoverycdd@192.168.120.13
+ 1468  ssh etl@192.168.120.13
+ 1469  exit
+ 1470  git status
+ 1471  git pull
+ 1472  cd /Documentos/git/recovery/
+ 1473  ls
+ 1474  ls -l
+ 1475  git status
+ 1476  git branch haya
+ 1477  git status
+ 1478  git branch haya
+ 1479  git checkout haya
+ 1480  git status
+ 1481  ll
+ 1482  git checkout haya_procuradores
+ 1483  ls
+ 1484  git status
+ 1485  ll
+ 1486  drwxr-xr-x  7 daniel daniel  4096 jul 17 14:02 recovery-procuradores-plugin/
+ 1487  drwxr-xr-x  5 daniel daniel  4096 jul 17 14:02 recovery-recobroBatch-plugin/
+ 1488  sqldeveloper&
+ 1489  cd
+ 1490  ls
+ 1491  cd workspace
+ 1492  ls
+ 1493  cd CDD_EXTRACCION_TAREAS_NUEVO/
+ 1494  ls
+ 1495  cd config/
+ 1496  ls
+ 1497  nano extraccion_tareas_bbva.ini 
+ 1498  CD
+ 1499  LS
+ 1500  exit
+ 1501  ls
+ 1502  ps -ef | grep apache2
+ 1503  kill -9 14949
+ 1504  sudo kill -9 14949
+ 1505  sudo kill -9 14948
+ 1506  sudo kill -9 14947
+ 1507  sudo kill -9 14946
+ 1508  sudo kill -9 14944
+ 1509  sudo kill -9 14925
+ 1510  ps -ef | grep apache2
+ 1511  kill -9 15053
+ 1512  sudo kill -9 14924
+ 1513  sudo kill -9 14923
+ 1514  sudo kill -9 14748
+ 1515  sudo kill -9 14747
+ 1516  sudo kill -9 14746
+ 1517  sudo kill -9 14681
+ 1518  sudo kill -9 14680
+ 1519  sudo kill -9 14678
+ 1520  sudo kill -9 14665
+ 1521  ps -ef | grep apache2
+ 1522  sudo kill -9 12191
+ 1523  sudo kill -9 12687
+ 1524  sudo kill -9 
+ 1525  sudo kill -9 13946
+ 1526  ps -ef | grep apache2
+ 1527  sudo kill -9 15053
+ 1528  sudo kill -9 15065
+ 1529  sudo kill -9 15070
+ 1530  sudo kill -9 15076
+ 1531  sudo kill -9 15079
+ 1532  ps -ef | grep apache2
+ 1533  sudo kill -9 17339
+ 1534  sudo kill -9 17338
+ 1535  sudo kill -9 17337
+ 1536  sudo kill -9 17265
+ 1537  ps -ef | grep apache2
+ 1538  kill -9 16865
+ 1539  sudo kill -9 16865
+ 1540  sudo kill -9 17348
+ 1541  sudo kill -9 17351
+ 1542  ps -ef | grep apache2
+ 1543  sudo kill -9 17377
+ 1544  sudo kill -9 17374
+ 1545  sudo kill -9 15732
+ 1546  sudo kill -9 15184
+ 1547  sudo kill -9 15183
+ 1548  sudo kill -9 15182
+ 1549  ls
+ 1550  tail -f /var/tomcat/desalindorff/logs/catalina.out 
+ 1551  exit
+ 1552  service apache stop
+ 1553  service apache2 stop
+ 1554  service apache2 start
+ 1555  ps -ef | grep apache2
+ 1556  kill -9 5960
+ 1557  sudo kill -9 5960
+ 1558  sudo kill -9 6012
+ 1559  sudo kill -9 6014
+ 1560  sudo kill -9 6015
+ 1561  sudo kill -9 12173
+ 1562  sudo kill -9 12180
+ 1563  sudo kill -9 12181
+ 1564  service apache stop
+ 1565  service apache2 stop
+ 1566  service apache2 start
+ 1567  cd /var/log/apache2/
+ 1568  ls
+ 1569  tail -f error.log
+ 1570  cd
+ 1571  ls
+ 1572  su desalindorff
+ 1573  exit
+ 1574  ssh recoverycdd@192.168.120.13
+ 1575  cd
+ 1576  ls
+ 1577  exit
+ 1578  cd Escritorio/
+ 1579  ls
+ 1580  scp extraccion_tareas_BBVA_1.4.zip etl@192.168.120.13:/etl
+ 1581  exit
+ 1582  ssh desahaya@192.168.0.116
+ 1583  exit
+ 1584  su desalindorff
+ 1585  exit
+ 1586  sh recoverycdd@192.168.0.116
+ 1587  cd /Documentos/git/recovery/
+ 1588  ls
+ 1589  cd recovery-procuradores-plugin
+ 1590  ls
+ 1591  sudo sh copyJSP.sh desalindorff
+ 1592  ls
+ 1593  git status
+ 1594  git add .
+ 1595  git commit -m "Nueva versión Factoría"
+ 1596  sudo sh copyJSP.sh desalindorff
+ 1597  cd ..
+ 1598  mvn clean install -Dmaven.test.skip=true -P haya
+ 1599  scp desahaya@192.168.0.116:/home/desahaya
+ 1600  ls
+ 1601  cd rec-web/
+ 1602  ls
+ 1603  cd target/
+ 1604  ls
+ 1605  scp pfs-9.1-SNAPSHOT.war desahaya@192.168.0.116:/home/desahaya
+ 1606  ls
+ 1607  cd ..
+ 1608  ls
+ 1609  cd ..
+ 1610  ls
+ 1611  exit
+ 1612  cd /var/tomcat/desahay
+ 1613  cd /var/tomcat/
+ 1614  ls
+ 1615  cd ..
+ 1616  ls
+ 1617  cd www/
+ 1618  ls
+ 1619  cd log
+ 1620  ls
+ 1621  cd ..
+ 1622  ls
+ 1623  cd log/
+ 1624  ls
+ 1625  ls -l
+ 1626  cd apache2
+ 1627  ls
+ 1628  tail -f error.log
+ 1629  service apache2 stop
+ 1630  service apache2 start
+ 1631  tail -f error.log
+ 1632  service apache2 stop
+ 1633  service apache2 start
+ 1634  tail -f error.log
+ 1635  cd
+ 1636  ls
+ 1637  cd /var/tomcat/desahaya
+ 1638  cd /var/tomcat/desalindorff/
+ 1639  ls
+ 1640  cd webapps/
+ 1641  ls
+ 1642  cd pfs/
+ 1643  ls
+ 1644  cd WEB-INF/
+ 1645  ls
+ 1646  cd jsp/
+ 1647  ls
+ 1648  cd tareas/
+ 1649  ls
+ 1650  ll
+ 1651  ls
+ 1652  cd ..
+ 1653  ls
+ 1654  cd ..
+ 1655  ls
+ 1656  find -name "*Factoria*"
+ 1657  find -name "*Formulario*"
+ 1658  cd ..
+ 1659  ls
+ 1660  cd js/
+ 1661  ls
+ 1662  cd plugin/
+ 1663  ls
+ 1664  cd procuradores/
+ 1665  ls
+ 1666  ls -l
+ 1667  nano FactoriaFormularios_haya.js
+ 1668  cd /Documentos/git/recovery/
+ 1669  ls
+ 1670  cd recovery-procuradores-plugin/
+ 1671  ls
+ 1672  sudo sh copyJSP.sh desalindorff
+ 1673  cd
+ 1674  ls
+ 1675  ssh desahaya@192.168.0.116
+ 1676  exit
+ 1677  cd /Documentos/git/recovery/
+ 1678  ls
+ 1679  cd recovery-procuradores-plugin/
+ 1680  ls
+ 1681  sudo sh copyJSP.sh desalindorff
+ 1682  cd
+ 1683  ls
+ 1684  cd /Documentos/git/recovery/
+ 1685  gitk
+ 1686  git push
+ 1687  git status
+ 1688  git add .
+ 1689  git status
+ 1690  git add .
+ 1691  git status
+ 1692  git commit -m "Factoria"
+ 1693  git push
+ 1694  git status
+ 1695  git push
+ 1696  git status
+ 1697  git push
+ 1698  git push haya_procuradores
+ 1699  git status
+ 1700  git push haya_procuradores haya_procuradores
+ 1701  git branch
+ 1702  git branch -a
+ 1703  git push remotes/origin/haya_procuradores haya_procuradores
+ 1704  git push
+ 1705  push.default=simple
+ 1706  git push origin haya_procuradores
+ 1707  git pull
+ 1708  git status
+ 1709  git add .
+ 1710  git commit -m "Resolucion de conflictos"
+ 1711  ls
+ 1712  mvn clean install -Dmaven.test.skip=true -P haya
+ 1713  cd rec-web/
+ 1714  ls
+ 1715  cd target/
+ 1716  ls
+ 1717  scp pfs-9.1-SNAPSHOT.war desahaya@192.168.0.116:/home/desahaya
+ 1718  cd
+ 1719  ls
+ 1720  su desalindorff 
+ 1721  ls
+ 1722  cd /Documentos/git/recovery/recovery-procuradores-plugin/
+ 1723  sudo sh copyJSP.sh desalindorff
+ 1724  gitk
+ 1725  sudo sh copyJSP.sh desalindorff
+ 1726  gitk
+ 1727  mvn clean install -Dmaven.test.skip=true -P haya
+ 1728  scp pfs-9.1-SNAPSHOT.war desahaya@192.168.0.116:/home/desahaya
+ 1729  cd ..
+ 1730  cd rec-web/
+ 1731  cd target/
+ 1732  scp pfs-9.1-SNAPSHOT.war desahaya@192.168.0.116:/home/desahaya
+ 1733  cd
+ 1734  ls
+ 1735  cd /Documentos/git/recovery/
+ 1736  ls
+ 1737  git status
+ 1738  git add .
+ 1739  git commit -m "Factoria error solucionado"
+ 1740  git merge haya
+ 1741  git status
+ 1742  git push
+ 1743  git merge haya
+ 1744  history
+ 1745  history > abc

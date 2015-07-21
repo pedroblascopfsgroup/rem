@@ -1,0 +1,371 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="pcr.unnim-procesado.step1.Oracle9iDialect">
+    <![CDATA[
+		update per_personas set per_extra_1 = null
+	]]>
+    </entry>	
+    <entry key="pcr.unnim-procesado.step2.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 3 
+	where pper.per_extra_1 is null
+	  and pper.dd_tpe_id = 21
+	  and pper.per_id in (
+		SELECT PER_ID 
+		FROM PER_PERSONAS PER JOIN
+			(select case
+					when tmp_prr_cod_entidad='2107' then to_char(tmp_prr_cod_cliente_entidad)
+					when tmp_prr_cod_entidad='2059' then '2059'||LPAD(to_char(tmp_prr_cod_cliente_entidad), 10, '0')
+					else null
+					end as PER_COD_CLIENTE_ENTIDAD
+			from TMP_PER_PERSONAS_RESERVADAS) PER_RESER ON PER.PER_COD_CLIENTE_ENTIDAD=PER_RESER.PER_COD_CLIENTE_ENTIDAD
+		where per.dd_tpe_id = 21 
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step3.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 1 
+	where pper.per_extra_1 is null
+	  and pper.dd_tpe_id = 21
+	  and pper.per_id in
+		 (SELECT DISTINCT(PER.PER_ID) 
+		  FROM CNT_CONTRATOS CNT
+			JOIN TMP_CNT_CONTRATOS tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA
+			JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211) 
+			JOIN PER_PERSONAS PER ON PER.PER_ID=CPE.PER_ID
+			LEFT JOIN DD_GCN_GARANTIA_CONTRATO gcn on gcn.DD_GCN_ID = cnt.DD_GC1_ID 
+					 and gcn.DD_GCN_DESCRIPCION in ('Hipotecaria', 'HIPOTECARIA APARCAMIENTO', 'HIPOTECARIA VIVIENDA ACABADA', 'HIPOTECARIA VIVIENDAS EN CONSTRUCCION',
+													'HIPOTECARIA OTROS BIENES', 'HIPOTECARIA SOLAR O ACTIVO EN EXPLOTACIONCION', 'HIPOTECARIA LOCALES EN CONSTRUCCION', 'HIPOTECARIA NAVES INDUSTRIALES EN CONSTRUCCION',
+													'HIPOTECARIA NAVE INDUSTRIAL', 'HIPOTECARIA VIVENDA CON PARKING Y TRASTERO', 'PROMOTOR HIPOTECARIO VIVIENDA ACABADA', 'HIPOTECARIA FINCA RUSTICA, HIPOTECARIA LOCAL',
+													'HIPOTECARIA APARCAMIENTOS EN CONSTRUCCION', 'HIPOTECARIA ACTIU EXPLOTACIO < 50%', 'HIPOTECARIA INMOBILIARIA > 50%', 'HIPOTECARIA IMMOBILIARIA < 50%')
+			LEFT JOIN DD_CT2_CATALOGO_2 ct2 on ct2.DD_CT2_CODIGO = tcnt.TMP_CNT_CATALOGO_2  and ct2.DD_CT2_HIPOTECARIO = 1 
+		  WHERE dd_esc_id in (21,22)			
+			AND (select sum(mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) > 50 
+			AND PER.dd_tpe_id = 21
+			AND ((ct2.DD_CT2_CODIGO is not null or gcn.DD_GCN_ID is not null))                                    
+		MINUS                
+		(SELECT DISTINCT(PER_ID) 
+		 FROM CNT_CONTRATOS CNT
+			JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+			JOIN (SELECT * from TMP_CNT_CONTRATOS 
+				  WHERE tmp_cnt_cod_extra4 in (9515, 9514) 
+				  UNION 
+				  SELECT tcnt2.* 
+				  from TMP_CNT_CONTRATOS tcnt2 
+				  WHERE tcnt2.TMP_CNT_INF_EXTRA2 = 'L') tcnt
+		on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA)
+		MINUS               
+		(SELECT DISTINCT(PER_ID) 
+		 FROM CNT_CONTRATOS CNT
+			JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+			JOIN DD_EFC_ESTADO_FINAN_CNT efc on cnt.DD_EFC_ID = efc.DD_EFC_ID 
+		 WHERE efc.DD_EFC_DESCRIPCION = 'INSOLVENTE DEFINITIVO (Sbd)' or efc.DD_EFC_DESCRIPCION = 'SUSPENSO (Sbd)')
+		MINUS 
+		   (select distinct per.per_id
+			from per_personas per inner join
+				 cpe_contratos_personas cpe on cpe.per_id = per.per_id and cpe.DD_TIN_ID in (210,206,208, 211) inner join
+				 cnt_contratos cnt on cnt.cnt_id = cpe.cnt_id inner join
+				 tMP_CNT_CONTRATOS tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA inner join
+				 tmp_tca_approach tca on substr(tca.tca_contrato,-10) = lpad(cnt.cnt_contrato,10,'0'))   
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step4.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 15 
+	where pper.per_extra_1 is null
+	  and pper.dd_tpe_id = 21
+	  and pper.per_id in(
+		SELECT PER_ID 
+		FROM PER_PERSONAS per
+		WHERE   dd_tpe_id = 21 
+			AND (select sum(mov.MOV_POS_VIVA_NO_VENCIDA + mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) < 1000 
+			AND (select sum(mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) > 50 
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN (SELECT * 
+					  FROM TMP_CNT_CONTRATOS 
+					  WHERE tmp_cnt_cod_extra4 in (9515, 9514) 
+					  UNION 
+					  SELECT * 
+					  FROM TMP_CNT_CONTRATOS 
+					  WHERE TMP_CNT_INF_EXTRA2 = 'L') tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA)
+		MINUS 
+		   (SELECT DISTINCT per.PER_ID 
+			FROM PER_PERSONAS PER 
+				JOIN PRC_PER prcp on prcp.PER_ID = per.per_id
+				JOIN PRC_PROCEDIMIENTOS prc on prc.prc_id = prcp.prc_id 
+				JOIN ASU_ASUNTOS asu on asu.asu_id = prc.ASU_ID and asu.DD_EAS_ID NOT IN (5,6))
+		MINUS 
+		   (SELECT DISTINCT per.PER_ID 
+			FROM PER_PERSONAS PER 
+				JOIN PEX_PERSONAS_EXPEDIENTE PEX on PEX.PER_ID = per.per_id
+				JOIN EXP_EXPEDIENTES EXP on EXP.exp_id = pex.EXP_ID and exp.DD_EEX_ID = 2) 
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN DD_EFC_ESTADO_FINAN_CNT efc on cnt.DD_EFC_ID = efc.DD_EFC_ID 
+			WHERE efc.DD_EFC_DESCRIPCION = 'INSOLVENTE DEFINITIVO (Sbd)' or efc.DD_EFC_DESCRIPCION = 'SUSPENSO (Sbd)')
+		MINUS 
+		   (select distinct per.per_id
+			from per_personas per inner join
+				 cpe_contratos_personas cpe on cpe.per_id = per.per_id and cpe.DD_TIN_ID in (210,206,208, 211) inner join
+				 cnt_contratos cnt on cnt.cnt_id = cpe.cnt_id inner join
+				 tMP_CNT_CONTRATOS tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA inner join
+				 tmp_tca_approach tca on substr(tca.tca_contrato,-10) = lpad(cnt.cnt_contrato,10,'0'))   
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step5.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 16 
+	where pper.per_extra_1 is null 
+	  and pper.dd_tpe_id = 21
+	  and pper.per_id in
+	(   SELECT per.PER_ID 
+		FROM PER_PERSONAS per
+		WHERE  dd_tpe_id = 21
+			AND (select sum(mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) > 50 
+			AND (select sum(mov.MOV_POS_VIVA_NO_VENCIDA + mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) < 50000 
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN (SELECT * from TMP_CNT_CONTRATOS where tmp_cnt_cod_extra4 in (9515, 9514) UNION SELECT * from TMP_CNT_CONTRATOS WHERE TMP_CNT_INF_EXTRA2 = 'L') tcnt
+						on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA)
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN DD_EFC_ESTADO_FINAN_CNT efc on cnt.DD_EFC_ID = efc.DD_EFC_ID 
+			WHERE efc.DD_EFC_DESCRIPCION = 'INSOLVENTE DEFINITIVO (Sbd)' or efc.DD_EFC_DESCRIPCION = 'SUSPENSO (Sbd)')
+		MINUS 
+		   (select distinct per.per_id
+			from per_personas per inner join
+				 cpe_contratos_personas cpe on cpe.per_id = per.per_id and cpe.DD_TIN_ID in (210,206,208, 211) inner join
+				 cnt_contratos cnt on cnt.cnt_id = cpe.cnt_id inner join
+				 tMP_CNT_CONTRATOS tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA inner join
+				 tmp_tca_approach tca on substr(tca.tca_contrato,-10) = lpad(cnt.cnt_contrato,10,'0'))   
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step6.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 2 
+	where pper.per_extra_1 is null  
+	  and pper.dd_tpe_id = 21
+	  and pper.per_id in
+	(   SELECT per.PER_ID 
+		FROM PER_PERSONAS per
+		WHERE  dd_tpe_id = 21
+			AND (select sum(mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) > 50 
+			AND (select sum(mov.MOV_POS_VIVA_NO_VENCIDA + mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) > 50000 
+		MINUS
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN (SELECT * from TMP_CNT_CONTRATOS where tmp_cnt_cod_extra4 in (9515, 9514) UNION SELECT * from TMP_CNT_CONTRATOS WHERE TMP_CNT_INF_EXTRA2 = 'L') tcnt
+						on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA)
+		MINUS
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN DD_EFC_ESTADO_FINAN_CNT efc on cnt.DD_EFC_ID = efc.DD_EFC_ID 
+			WHERE efc.DD_EFC_DESCRIPCION = 'INSOLVENTE DEFINITIVO (Sbd)' or efc.DD_EFC_DESCRIPCION = 'SUSPENSO (Sbd)')
+		MINUS
+		   (select distinct per.per_id
+			from per_personas per inner join
+				 cpe_contratos_personas cpe on cpe.per_id = per.per_id and cpe.DD_TIN_ID in (210,206,208, 211) inner join
+				 cnt_contratos cnt on cnt.cnt_id = cpe.cnt_id inner join
+				 tMP_CNT_CONTRATOS tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA inner join
+				 tmp_tca_approach tca on substr(tca.tca_contrato,-10) = lpad(cnt.cnt_contrato,10,'0'))   
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step7.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 18 
+	where pper.per_extra_1 is null
+	  and pper.dd_tpe_id = 1
+	  and pper.per_id in
+	(   SELECT per.PER_ID 
+		FROM PER_PERSONAS per
+		WHERE  dd_tpe_id = 1
+			AND (select sum(mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				 ) > 50 
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step8.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 19
+	where pper.per_extra_1 is null
+	  and pper.per_id in
+	  ( select distinct per.per_id
+		from TMP_GESTORES_EMPRESA_CLIENTE2 tmp inner join
+			 per_personas per on ltrim(REGEXP_REPLACE(per.PER_DOC_ID , '[^0-9]', ''),'0') = ltrim(REGEXP_REPLACE(tmp.IDENTIF, '[^0-9]', ''),'0') 
+		where (select sum(mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+			  ) > 50 
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN (SELECT * from TMP_CNT_CONTRATOS where tmp_cnt_cod_extra4 in (9515, 9514) UNION SELECT * from TMP_CNT_CONTRATOS WHERE TMP_CNT_INF_EXTRA2 = 'L') tcnt
+						on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA)
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN DD_EFC_ESTADO_FINAN_CNT efc on cnt.DD_EFC_ID = efc.DD_EFC_ID 
+			WHERE efc.DD_EFC_DESCRIPCION = 'INSOLVENTE DEFINITIVO (Sbd)' or efc.DD_EFC_DESCRIPCION = 'SUSPENSO (Sbd)')
+		MINUS 
+		   (select distinct per.per_id
+			from per_personas per inner join
+				 cpe_contratos_personas cpe on cpe.per_id = per.per_id and cpe.DD_TIN_ID in (210,206,208, 211) inner join
+				 cnt_contratos cnt on cnt.cnt_id = cpe.cnt_id inner join
+				 tMP_CNT_CONTRATOS tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA inner join
+				 tmp_tca_approach tca on substr(tca.tca_contrato,-10) = lpad(cnt.cnt_contrato,10,'0'))   
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step9.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pper set pper.PER_EXTRA_1 = 21 
+	where pper.per_extra_1 is null
+	  and pper.dd_tpe_id = 2
+	  and pper.per_id in
+	(   SELECT per.PER_ID 
+		FROM PER_PERSONAS per left join
+			 TMP_PER_PERSONAS tper on tper.TMP_PER_NIF_CIF = per.PER_DOC_ID
+		WHERE  dd_tpe_id = 2
+		   and (per.dd_sce_id = 112 or tper.TMP_DD_PER_EXTRA_3_CODIGO = 'S')
+		   and (select sum(mov.MOV_POS_VIVA_VENCIDA) 
+				 from MOV_MOVIMIENTOS mov inner join
+					  CNT_CONTRATOS ccnt on ccnt.cnt_id = mov.cnt_id inner join
+					  CPE_CONTRATOS_PERSONAS ccpe on ccpe.cnt_id = ccnt.cnt_id inner join
+					  DD_TIN_TIPO_INTERVENCION tin on tin.DD_TIN_ID = ccpe.DD_TIN_ID and tin.DD_TIN_TITULAR = 1 
+				 where  ccpe.PER_ID = per.per_id 
+					and mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+			   ) > 50 
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN (SELECT * from TMP_CNT_CONTRATOS where tmp_cnt_cod_extra4 in (9515, 9514) UNION SELECT * from TMP_CNT_CONTRATOS WHERE TMP_CNT_INF_EXTRA2 = 'L') tcnt
+						on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA)
+		MINUS 
+		   (SELECT DISTINCT(PER_ID) 
+			FROM CNT_CONTRATOS CNT
+				JOIN CPE_CONTRATOS_PERSONAS CPE on CNT.CNT_id = CPE.CNT_id and cpe.DD_TIN_ID in (210,206,208, 211)
+				JOIN DD_EFC_ESTADO_FINAN_CNT efc on cnt.DD_EFC_ID = efc.DD_EFC_ID 
+			WHERE efc.DD_EFC_DESCRIPCION = 'INSOLVENTE DEFINITIVO (Sbd)' or efc.DD_EFC_DESCRIPCION = 'SUSPENSO (Sbd)')
+		MINUS 
+		   (select distinct per.per_id
+			from per_personas per inner join
+				 cpe_contratos_personas cpe on cpe.per_id = per.per_id and cpe.DD_TIN_ID in (210,206,208, 211) inner join
+				 cnt_contratos cnt on cnt.cnt_id = cpe.cnt_id inner join
+				 tMP_CNT_CONTRATOS tcnt on tcnt.TMP_CNT_CONTRATO = cnt.CNT_CONTRATO and tcnt.TMP_CNT_COD_OFICINA = cnt.CNT_COD_OFICINA inner join
+				 tmp_tca_approach tca on substr(tca.tca_contrato,-10) = lpad(cnt.cnt_contrato,10,'0'))
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step11.Oracle9iDialect">
+    <![CDATA[
+	update per_personas pp set pp.PER_DOC_ID = lpad('*',10,'*'), pp.PER_TELEFONO_1 = lpad('*',10,'*'), 
+							   pp.PER_TELEFONO_2 =lpad('*',10,'*'), pp.PER_EMAIL = lpad('*',10,'*'),
+							   pp.PER_NOMBRE =lpad('*',10,'*'), pp.PER_APELLIDO1 = lpad('*',10,'*'),
+							   pp.PER_APELLIDO2 = lpad('*',10,'*')
+	where pp.per_id in (
+		SELECT distinct cpec.per_id
+		FROM PER_PERSONAS PER JOIN
+				(select case when tmp_prr_cod_entidad='2107' then to_char(tmp_prr_cod_cliente_entidad)
+							 when tmp_prr_cod_entidad='2059' then '2059'||LPAD(to_char(tmp_prr_cod_cliente_entidad), 10, '0')
+						else null
+						end as PER_COD_CLIENTE_ENTIDAD
+				from TMP_PER_PERSONAS_RESERVADAS) PER_RESER ON PER.PER_COD_CLIENTE_ENTIDAD=PER_RESER.PER_COD_CLIENTE_ENTIDAD left join
+			 cpe_contratos_personas cpe on cpe.PER_ID = per.per_id left join 
+			 cnt_contratos cnt on cnt.cnt_id = cpe.cnt_id left join
+			 cpe_contratos_personas cpec on cpec.cnt_id = cnt.cnt_id left join
+			 prc_per prp on prp.per_id = cpec.per_id
+		where prp.PRC_ID is null 
+	)
+    ]]>
+    </entry>
+    <entry key="pcr.unnim-procesado.step12.Oracle9iDialect">
+    <![CDATA[
+	update mov_movimientos mov 
+	set mov.MOV_FECHA_POS_VENCIDA = null, mov.USUARIOMODIFICAR = 'SAG', mov.FECHAMODIFICAR = sysdate
+	where mov.MOV_ID in (
+		select distinct mov.mov_id 
+		from mov_movimientos mov 
+		where mov.MOV_FECHA_EXTRACCION = (select max(movv.mov_fecha_extraccion) from mov_movimientos movv)
+				and mov.MOV_POS_VIVA_VENCIDA + mov.MOV_COMISIONES + mov.MOV_INT_MORATORIOS + mov.MOV_INT_REMUNERATORIOS + mov.MOV_GASTOS = 0
+				and extract(year from mov.MOV_FECHA_POS_VENCIDA) = 2 )
+    ]]>
+    </entry>
+</properties>

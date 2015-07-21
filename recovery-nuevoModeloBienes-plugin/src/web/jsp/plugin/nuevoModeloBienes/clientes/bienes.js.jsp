@@ -90,6 +90,10 @@
 	var fechaRecepcionDue = '${NMBbien.fechaDueD}';
 	var porcentajeImpuestoCompra_valor = '${NMBbien.porcentajeImpuestoCompra}';
 	var impuestoCompra = '${NMBbien.impuestoCompra.codigo}';
+	var tributacionVenta = '${NMBbien.tributacionVenta.descripcion}';
+	var imposicionCompra = '${NMBbien.tipoImposicionCompra.descripcion}';
+	var imposicionVenta = '${NMBbien.tipoImposicionVenta.descripcion}';
+	var inversionRenuncia = '${NMBbien.inversionPorRenuncia.descripcion}';
 	
 	
 	<c:if test="${NMBbien.datosRegistralesActivo!=null}">
@@ -315,6 +319,10 @@
 			tributacion.setValue('');
 			porcentajeImpuestoCompra.setValue('');
 			impuestoCompra.setValue('');
+			tributacionVenta.setValue('');
+			imposicionCompra.setValue('');
+			imposicionVenta.setValue('');
+			inversionRenuncia.setValue('');
 			
 			fechaSolicitudDue.setValue('');
 			fechaRecepcionDue.setValue('');
@@ -456,8 +464,57 @@
 			data : <app:dict value="${tributacion}" />
 			<app:test id="tributacionCombo" addComa="true" />
 			,name : 'bien.tributacion'
+			<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">
+			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.tributacionCompra" text="**tributacionCompra" />'
+			</sec:authorize>
+			<sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">
 			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.tributacion" text="**tributacion" />'
+			</sec:authorize>
 			,value : '${NMBbien.tributacion.codigo}'
+			,labelStyle: labelStyle
+			,width: 150
+			
+		});
+		
+		var tributacionVenta = app.creaCombo({
+			data : <app:dict value="${tributacion}" />
+			<app:test id="tributacionVentaCombo" addComa="true" />
+			,name : 'bien.tributacionVenta'
+			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.tributacionVenta" text="**tributacionVenta" />'
+			,value : '${NMBbien.tributacionVenta.codigo}'
+			,labelStyle: labelStyle
+			,width: 150
+			
+		});
+		
+		var imposicionCompra = app.creaCombo({
+			data : <app:dict value="${imposicion}" />
+			<app:test id="imposicionCompraCombo" addComa="true" />
+			,name : 'bien.imposicionCompra'
+			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.imposicionCompra" text="**imposicionCompra" />'
+			,value : '${NMBbien.tipoImposicionCompra.codigo}'
+			,labelStyle: labelStyle
+			,width: 150
+			
+		});
+		
+		var imposicionVenta = app.creaCombo({
+			data : <app:dict value="${imposicion}" />
+			<app:test id="imposicionVentaCombo" addComa="true" />
+			,name : 'bien.imposicionVenta'
+			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.imposicionVenta" text="**imposicionVenta" />'
+			,value : '${NMBbien.tipoImposicionVenta.codigo}'
+			,labelStyle: labelStyle
+			,width: 150
+			
+		});
+		
+		var inversionRenuncia = app.creaCombo({
+			data : <app:dict value="${sino}" />
+			<app:test id="inversionRenunciaCombo" addComa="true" />
+			,name : 'bien.inversionRenuncia'
+			,fieldLabel : '<s:message code="plugin.mejoras.bienesNMB.inversionRenuncia" text="**inversionRenuncia" />'
+			,value : '${NMBbien.inversionPorRenuncia.codigo}'
 			,labelStyle: labelStyle
 			,width: 150
 			
@@ -493,22 +550,37 @@
 		
 		porcentajeImpuestoCompra.setMaxValue(100);
 		
-		var viviendaHabitual =  new Ext.form.Checkbox({
-			//id:'solvenciaNoEncontrada'
-			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>'
-			,labelStyle : labelStyle
+		var diccionarioRecord = Ext.data.Record.create([
+			{name : 'id'}
+			,{name : 'codigo'}
+			,{name : 'descripcion'}
+		]);
+
+		var sinoStore = page.getStore({
+			flow : 'editbien/getDiccionario'
+			,storeId : 'sinoStore'
+			,reader : new Ext.data.JsonReader({
+				root : 'diccionario'
+			},diccionarioRecord)
+		});	
+	
+		sinoStore.webflow({diccionario: 'es.capgemini.pfs.procesosJudiciales.model.DDSiNo' });
+		
+		var viviendaHabitual = app.creaCombo({
+			store:sinoStore
+			,value:  '${NMBbien.viviendaHabitual}' == '1' ? 'Sí' : '${NMBbien.viviendaHabitual}' == '2' ? 'No' : ''
+			,displayField:'descripcion'
+			,valueField:'codigo'
+			,mode: 'local'
+			,width: 100
+			,resizable: false
+			,emptyText:'--'
+			,triggerAction: 'all'
 			,name:'viviendaHabitual'
-			,style:'margin:0px'		
-		
+			,fieldLabel: '<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>'
+			,labelStyle:labelStyle
 		});
-		
-		if('${NMBbien.viviendaHabitual}' == 'true'){
-			viviendaHabitual.checked = true;
-		}
-		else{
-			viviendaHabitual.checked = false;
-		}
-		
+						
 		var tipoSubasta = app.creaNumber(
 			'tipoSubasta'
 			, '<s:message code="plugin.mejoras.bienesNMB.tipoSubasta" text="**Tipo Subasta" />' 
@@ -1536,7 +1608,7 @@
 				parametros.fechaMatricula=fechaMatriculacion.getValue().format('d/m/Y');
 			}
 			parametros.situacionPosesoria = situacionPosesoria.getValue();
-			parametros.viviendaHabitual = viviendaHabitual.getValue();
+			parametros.viviendaHabitual = viviendaHabitual.getValue() == '' ? null : viviendaHabitual.getValue() == '01' ? '1' : '2';
 			parametros.tipoSubasta = tipoSubasta.getValue();
 			parametros.numeroActivo  = numeroActivo.getValue();
 			parametros.licenciaPrimeraOcupacion = licenciaPrimeraOcupacion.getValue();
@@ -1546,6 +1618,10 @@
 			parametros.arrendadoSinOpcCompra = arrendadoSinOpcCompra.getValue();
 			parametros.usoPromotorMayorDosAnyos = usoPromotorMayorDosAnyos.getValue();
 			parametros.tributacion = tributacion.getValue();
+			parametros.tributacionVenta = tributacionVenta.getValue();
+			parametros.imposicionCompra = imposicionCompra.getValue();
+			parametros.imposicionVenta = imposicionVenta.getValue();
+			parametros.inversionRenuncia = inversionRenuncia.getValue();
 			
 			if(fechaRecepcionDue.getValue()){
 				parametros.fechaDueD = fechaRecepcionDue.getValue().format('d/m/Y');
@@ -1705,8 +1781,8 @@
 			,layout:'table'
 			,layoutConfig:{columns:2}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:350'}
-			,items:[ {items: [fechaVerifNMB, valorNMB, cargasNMB, fechaValorSubjetivo, importeValorSubjetivo,fechaValorApreciacion,importeValorApreciacion,tributacion,porcentajeImpuestoCompra,impuestoCompra <sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,fechaSolicitudDue,fechaRecepcionDue</sec:authorize>]}
-					,{items: [valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion, fechaValorTasacion, importeValorTasacion,respuestaConsulta]}
+			,items:[ {items: [fechaVerifNMB, valorNMB, cargasNMB, fechaValorSubjetivo, importeValorSubjetivo,fechaValorApreciacion,importeValorApreciacion,tributacion <sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">,porcentajeImpuestoCompra,impuestoCompra</sec:authorize> <sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,imposicionCompra,tributacionVenta,imposicionVenta,inversionRenuncia</sec:authorize>]}
+					,{items: [valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion, fechaValorTasacion <sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,fechaSolicitudDue,fechaRecepcionDue</sec:authorize>, importeValorTasacion,respuestaConsulta]}
 				   ]
 		});
 		

@@ -57,6 +57,7 @@ import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfoImpl;
 import es.capgemini.pfs.core.api.registro.HistoricoProcedimientoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
@@ -69,6 +70,7 @@ import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -87,17 +89,17 @@ import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
@@ -115,8 +117,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
-import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
+import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 
 
 
@@ -162,6 +163,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
 	private CoreProjectContext coreProjectContext;
+	
+	@Autowired
+    private EXTZonaDao extZonaDao;
 	
 	@Override
 	public String managerName() {
@@ -1307,7 +1311,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	 * 
 	 * return gestoresAsunto; }
 	 */
-
+	
 	@BusinessOperation(EXT_MGR_ASUNTO_GET_TIPOS_GESTOR_USU_LOGADO)
 	@Override
 	public List<EXTDDTipoGestor> getListTiposGestorAsuntoUsuarioLogado(Long idAsunto) {
@@ -1432,6 +1436,50 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 					if (!Checks.esNulo(listaGruposUsuario) && !Checks.estaVacio(listaGruposUsuario)){
 						if (listaGruposUsuario.contains(gestor.getUsuario().getId())){
 							if (gestor.getTipoGestor().getCodigo().equals(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean buscaMultiGestorMultiEntidad(Usuario usuario, Asunto asunto, List<String> listaCodigoGestores) {
+		
+		//Si algún argumento es nulo, devolvemos false
+		if (Checks.esNulo(usuario) || Checks.esNulo(asunto) || Checks.esNulo(listaCodigoGestores)) {
+			return false;
+		}
+		
+		// Si la lista de gestores está vacía, añadimos el Gestor Externo
+		if(listaCodigoGestores.isEmpty()){
+			listaCodigoGestores.add(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+		}
+		
+		//Obtenemos los gestores del asunto
+		//List<EXTGestorInfo> gestores = getMultiGestoresMultiEntidad(asunto);
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(asunto.getId());
+		
+		if (!Checks.estaVacio(gestores)) {
+			for (EXTGestorAdicionalAsunto gestor : gestores) {
+				List<Long> listaGruposUsuario = proxyFactory.proxy(EXTGrupoUsuariosApi.class).buscaIdsGrupos(usuario);
+				
+				//Miramos si el usuario es el gestor del asunto
+				if (usuario.getId().equals(gestor.getGestor().getUsuario().getId())) {
+					// FIXME Hay que hacer esto bas�ndonos en propiedades del
+					// tipo de gestor
+						//Comprobamos si es de los tipos permitidos
+						if (listaCodigoGestores.contains(gestor.getTipoGestor().getCodigo())) {
+							return true;
+						}
+				//Miramos si el usuario pertenece a algún grupo que sea gestor del asunto
+				} else {
+					if (!Checks.esNulo(listaGruposUsuario) && !Checks.estaVacio(listaGruposUsuario)){
+						if (listaGruposUsuario.contains(gestor.getGestor().getUsuario().getId())){
+							//Comprobamos si es de los tipos permitidos
+							if (listaCodigoGestores.contains(gestor.getTipoGestor().getCodigo())) {
 								return true;
 							}
 						}
@@ -1865,6 +1913,71 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		
 		return results;
+
+	}
+	
+	/**
+	 * Indica si el Usuario Logado es el gestor de Decision del asunto.
+	 * 
+	 * @return true si es el gestor de Decision
+	 */
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
+	@Override
+	public Boolean esGestorDecision(Long id) {
+		try {
+			
+			return esUsuarioGestorDecision(id);
+			
+		} catch (Exception e) {
+			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
+			return false;
+			//throw new BusinessOperationException(e);
+		}
+	}		
+
+
+	
+	/**
+	 * esUsuarioGestorDecision
+	 * 
+	 * Nos devuelve si este usuario tiene algún gestor de tipo Decisión
+	 * 
+	 * @param usu Usuario
+	 * @return true / false
+	 */
+	private Boolean esUsuarioGestorDecision(Long id){
+		
+		Asunto asunto = procedimientoDao.get(id).getAsunto();
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		Set<String> staC = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		
+		List<String> listaCodigosGestor = new ArrayList<String>();
+		
+		//Obtenemos los TGE de las subtareas indicadas en el XML
+		for (String st : staC) {
+			
+			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
+			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
+			
+		}
+		
+		
+		
+		boolean gestor = false;
+
+		// Buscamos entre los Multi Gestores Multi Entidad
+		gestor = buscaMultiGestorMultiEntidad(usuario, asunto, listaCodigosGestor);
+
+		/**
+		// Buscamos entre los gestores adicionales del asunto
+		if (!gestor) {
+			gestor = buscaUsuario(usuario, proxyFactory.proxy(EXTAsuntoApi.class).getGestoresAsunto(asunto.getId()));
+		}*/
+
+		return gestor;
+		
+		
 	}
 
 	
@@ -1982,6 +2095,21 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		return false;
 	}
+
+
+    /**
+     * Obtiene las zonas del nivel.
+     * @param idNivel id nivel
+     * @return zonas
+     */
+	@Override
+    @BusinessOperation(BO_ZONA_MGR_GET_ZONAS_POR_NIVEL_BY_CODIGO)
+    public List<DDZona> getZonasPorNivel(Integer codigoNivel) {
+        if (codigoNivel == null || codigoNivel.longValue() == 0) { return new ArrayList<DDZona>(); }
+        Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO))
+                .getCodigoZonas();
+        return extZonaDao.buscarZonasPorCodigoNivel(codigoNivel, codigoZonasUsuario);
+    }
 	
 }
 

@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.12-bk
 --## INCIDENCIA_LINK=FASE-1453
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -41,7 +41,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 -- * Modificacion de tap_tarea_procedimiento.tap_script_validacion_jbpm para la tarea P413_RegistrarInscripcionDelTitulo
 -- * Valores anteriores: 	valores['P413_RegistrarInscripcionDelTitulo']['comboSituacionTitulo'] == 'PEN' ? null : (comprobarAdjuntoDocumentoTestimonioInscritoEnRegistro() ? ((valores['P413_RegistrarInscripcionDelTitulo']['fechaInscripcion'] == null || valores['P413_RegistrarInscripcionDelTitulo']['fechaEnvioDecretoAdicion'] == null) ? 'Las fechas son obligatorias' : null) : 'Debe adjuntar el Documento de Testimonio inscrito en el Registro.')
 -- **/           
-execute immediate ('update '||V_ESQUEMA||'.tap_tarea_procedimiento set tap_script_validacion_jbpm = ''valores[''''P413_RegistrarInscripcionDelTitulo''''][''''comboSituacionTitulo''''] == ''''PEN'''' ? (valores[''''P413_RegistrarInscripcionDelTitulo''''][''''fechaEnvioDecretoAdicion''''] == null ? ''''La fecha de decreto es obligatoria'''' : null) : (valores[''''P413_RegistrarInscripcionDelTitulo''''][''''fechaInscripcion''''] == null ? ''''La fecha de inscripcion es obligatoria'''' : existeAdjuntoUG(''''TIRNR'''',''''PRC'''') ? null : existeAdjuntoUGMensaje(''''TIRNR'''',''''PRC'''')''   where tap_id = (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo = ''P413_RegistrarInscripcionDelTitulo'')');
+execute immediate ('update '||V_ESQUEMA||'.tap_tarea_procedimiento set tap_script_validacion_jbpm = ''valores[''''P413_RegistrarInscripcionDelTitulo''''][''''comboSituacionTitulo''''] == ''''PEN'''' ? (valores[''''P413_RegistrarInscripcionDelTitulo''''][''''fechaEnvioDecretoAdicion''''] == null ?  ''''La fecha de decreto es obligatoria''''  : null) : ((valores[''''P413_RegistrarInscripcionDelTitulo''''][''''comboSituacionTitulo''''] == ''''INS'''' || valores[''''P413_RegistrarInscripcionDelTitulo''''][''''comboSituacionTitulo''''] == ''''2'''')	? (valores[''''P413_RegistrarInscripcionDelTitulo''''][''''fechaInscripcion''''] == null ? ''''La fecha de inscripcion es obligatoria'''' : existeAdjuntoUG(''''TIRNR'''',''''PRC'''') ? null : existeAdjuntoUGMensaje(''''TIRNR'''',''''PRC'''')) : null)''   where tap_id = (select tap_id from '||V_ESQUEMA||'.tap_tarea_procedimiento where tap_codigo = ''P413_RegistrarInscripcionDelTitulo'')');
 
 COMMIT;
 

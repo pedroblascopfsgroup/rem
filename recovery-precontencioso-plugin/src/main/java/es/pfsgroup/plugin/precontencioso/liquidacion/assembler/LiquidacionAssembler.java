@@ -73,8 +73,10 @@ public class LiquidacionAssembler {
 
 		// Apoderado
 		if (liquidacion.getApoderado() != null) {
-			liquidacionDto.setApoderado(liquidacion.getApoderado().getNombre());
-			liquidacionDto.setApoderadoId(liquidacion.getApoderado().getId());
+			liquidacionDto.setApoderadoNombre(liquidacion.getApoderado().getUsuario().getApellidoNombre());
+			liquidacionDto.setApoderadoUsdId(liquidacion.getApoderado().getId());
+			liquidacionDto.setApoderadoUsuarioId(liquidacion.getApoderado().getUsuario().getId());
+			liquidacionDto.setApoderadoDespachoId(liquidacion.getApoderado().getDespachoExterno().getId());
 		}
 
 		return liquidacionDto;

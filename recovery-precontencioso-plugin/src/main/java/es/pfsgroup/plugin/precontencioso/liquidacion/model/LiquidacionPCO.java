@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
@@ -80,9 +81,9 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	private Float total;
 
 	@ManyToOne
-	@JoinColumn(name = "USU_ID")
+	@JoinColumn(name = "USD_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private Usuario apoderado;
+	private GestorDespacho apoderado;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -201,11 +202,11 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.total = total;
 	}
 
-	public Usuario getApoderado() {
+	public GestorDespacho getApoderado() {
 		return apoderado;
 	}
 
-	public void setApoderado(Usuario apoderado) {
+	public void setApoderado(GestorDespacho apoderado) {
 		this.apoderado = apoderado;
 	}
 

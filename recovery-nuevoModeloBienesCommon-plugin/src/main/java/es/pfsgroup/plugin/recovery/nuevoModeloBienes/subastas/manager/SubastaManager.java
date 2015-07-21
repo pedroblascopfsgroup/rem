@@ -1284,7 +1284,7 @@ public class SubastaManager implements SubastaApi {
 			// Si no existe, o existe pero ya está OK y enviado
 			if(Checks.esNulo(acuerdoCierreDeuda) || 
 					(!Checks.esNulo(acuerdoCierreDeuda.getFechaEntrega()) && BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK.equals(acuerdoCierreDeuda.getResultadoValidacion()))) {
-				BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(filtroDto.getAsunto().getId(), filtroDto.getProcedimiento().getId(), filtroDto.getBien().getId(), resultado, resultadoValidacion, origen);
+				BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(filtroDto.getAsunto().getId(), filtroDto.getProcedimiento().getId(), idBien, resultado, resultadoValidacion, origen);
 				genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 				//guardaBatchAcuerdoCierre(filtroDto.getAsunto().getId(), filtroDto.getProcedimiento().getId(), filtroDto.getBien().getId(), resultado, resultadoValidacion, origen);
 

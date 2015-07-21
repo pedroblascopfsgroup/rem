@@ -1414,7 +1414,6 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 	
 	@Override
-        @Transactional(readOnly = false)
 	public void eliminarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
 		//Se eliminan todos los registros KO por id de BACD
                 StringBuilder sb = new StringBuilder();
@@ -1427,7 +1426,6 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
         
 	@Override
-        @Transactional(readOnly = false)
 	public void eliminarBatchCDDResultadoNuse(BatchCDDResultadoNuse acuerdoCierreDeudaNuse){
 		//Se eliminan todos los registros KO por ide BCDDNuse
                 StringBuilder sb = new StringBuilder();

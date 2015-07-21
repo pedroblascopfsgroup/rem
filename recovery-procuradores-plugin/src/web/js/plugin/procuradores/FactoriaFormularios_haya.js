@@ -240,6 +240,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 				return true;
 			}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
 					return true;
+		}});
+    	resolucionesSinAdjunto.push({idResolucion:229, validateFunction:function(v){
+    		
+    		if(Ext.getCmp('d_comboImpugnacion' + idf).getValue() == "02"){
+    			return true;
+    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+    				return true;
 	    		}else{
 	    			return false;
 	    	}
@@ -254,6 +261,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 //	    			return false;
 //	    	}
 //    	}});
+=======
+>>>>>>> d59649f26799e8affce760f63c914cf797a9213d
 //    	
 //    	resolucionesSinAdjunto.push({idResolucion:253, validateFunction:function(v){
 //    		
@@ -1253,22 +1262,22 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	   				}
 //	   				,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"con_vista_si_no","fieldLabel":"Vista",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'con_vista_si_no'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				,{"xtype":'datefield',"name":"d_vistaImpugnacion","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:"d_vistaImpugnacion"+this.idFactoria 
-//	                 	   ,validator : function(v) {
-//		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" && Ext.getCmp('con_vista_si_no' + idFactoria).getValue() == "01" && Ext.getCmp('d_vistaImpugnacion' + idFactoria).getValue() == ""){
-//		               	   			return false;
-//		               	   		}else{
-//		               	   			return true;
-//		               	   		}
-//	      					}	
+	                 	   ,validator : function(v) {
+		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" /*&& Ext.getCmp('con_vista_si_no' + idFactoria).getValue() == "01"*/ && Ext.getCmp('d_vistaImpugnacion' + idFactoria).getValue() == ""){
+		               	   			return false;
+		               	   		}else{
+		               	   			return true;
+		               	   		}
+	      					}	
 	   				}
-	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
-//	                 	   ,validator : function(v) {
-//		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboResultado' + idFactoria).getValue() == ""){
-//		               	   			return false;
-//		               	   		}else{
-//		               	   			return true;
-//		               	   		}
-//	      					}	
+	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:false,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                 	   ,validator : function(v) {
+		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboResultado' + idFactoria).getValue() == ""){
+		               	   			return false;
+		               	   		}else{
+		               	   			return true;
+		               	   		}
+	      					}	
 	   				}
 	   				]);
 	   				

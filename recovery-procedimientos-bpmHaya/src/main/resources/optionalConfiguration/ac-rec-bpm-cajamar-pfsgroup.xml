@@ -43,6 +43,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteTributacionBienesSareb/haya_tramiteTributacionBienesSareb.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalculoDeudaAFecha/hcj_calculoDeudaAFecha.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgrup/haya/tramiteAdjudicacion/haya_tramiteAdjudicacionV4.xml" p:version="-1"/>
@@ -71,7 +72,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePropuestaAnticipadaConvenio/tramitePropuestaAnticipadaConvenio.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSolicitudActuacionesPronunciamientos/haya_tramiteSolicitudActuacionesPronunciamientos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandadoEnIncidente/haya_tramiteDemandadoEnIncidente.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandaIncidental/haya_tramiteDemandaIncidental.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteRegistrarResolucionInteres/haya_tramiteRegistrarResolucionInteres.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteConclusion/haya_tramiteConclusion.xml" p:version="-1"/>

@@ -8,24 +8,24 @@ function set_diag(){
 
 reinicio=NO
 
-# Comprobar si rera_gen_simulacion est√° en ejecuci√≥n
+# Comprobar si rera_gen_simulacion est· en ejecuciÛn
 if [ "`pgrep -f rera_gen_simulacion`" != "" ] 
 then 
 	reinicio=SI
 	pkill -f rera_gen_simulacion
 	echo "*** Proceso rera_gen_simulacion finalizado."
 else 
-	echo "--- Proceso rera_gen_simulacion NO estaba en ejecuci√≥n."
+	echo "--- Proceso rera_gen_simulacion NO estaba en ejecuciÛn."
 fi
 
-# Comprobar si rera_gen_factdiario est√° en ejecuci√≥n
+# Comprobar si rera_gen_factdiario est· en ejecuciÛn
 if [ "`pgrep -f rera_gen_factdiario`" != "" ] 
 then 
 	reinicio=SI
 	pkill -f rera_gen_factdiario
 	echo "*** Proceso rera_gen_factdiario finalizado."
 else 
-	echo "--- Proceso rera_gen_factdiario NO estaba en ejecuci√≥n."
+	echo "--- Proceso rera_gen_factdiario NO estaba en ejecuciÛn."
 fi
 
 reinicio=SI

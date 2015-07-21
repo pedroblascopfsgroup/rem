@@ -1,5 +1,4 @@
-﻿CONNECT SOURCE "Recovery_BI" USER "administrator" PASSWORD "";
-PURGE REPORT CACHING IN PROJECT "Recovery BI (Bankia)";
+﻿CONNECT SOURCE "Recovery_BI" USER "administrator" PASSWORD "1pfsgroup";
 TRIGGER EVENT "Actualizar";
 
 DISCONNECT SERVER;

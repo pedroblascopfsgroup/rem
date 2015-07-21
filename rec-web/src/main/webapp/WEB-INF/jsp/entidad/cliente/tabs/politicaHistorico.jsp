@@ -78,8 +78,7 @@ var cancelarPropuesta = function(texto,idPolitica) {
 					            	mask.hide();
 							        histPoliticaStore.webflow({id:panel.getPersonaId()});
 							        reloadEstados(0);
-							        //histPoliticaGrid.getSelectionModel().selectRow(0);
-							        //histPoliticaGrid.fireEvent('rowclick',histPoliticaGrid, histPoliticaGrid.getSelectionModel().getLastSelected());
+							        
 							    }
 					            ,error: function(){
 					            	mask.hide();

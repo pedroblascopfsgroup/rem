@@ -1276,14 +1276,17 @@ public class SubastaManager implements SubastaApi {
 			// Si no existe, o existe pero ya está OK y enviado
 			if(Checks.esNulo(acuerdoCierreDeuda) || 
 					(!Checks.esNulo(acuerdoCierreDeuda.getFechaEntrega()) && BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK.equals(acuerdoCierreDeuda.getResultadoValidacion()))) {
-				guardaBatchAcuerdoCierre(filtro.getIdAsunto(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion, origen);
+				BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(filtro.getIdAsunto(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion, origen);
+				genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
+				//guardaBatchAcuerdoCierre(filtro.getIdAsunto(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion, origen);
 
 			} else {// Si existe sin enviar modificamos		
 				acuerdoCierreDeuda.setResultadoValidacion(resultado);
 				acuerdoCierreDeuda.setResultadoValidacionCDD(resultadoValidacion);
 				acuerdoCierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
 				acuerdoCierreDeuda.setOrigenPropuesta(origen);
-				guardaBatchAcuerdoCierreDeuda(acuerdoCierreDeuda);				
+				genericDao.save(BatchAcuerdoCierreDeuda.class, acuerdoCierreDeuda);
+				//guardaBatchAcuerdoCierreDeuda(acuerdoCierreDeuda);				
 			}
 			
 			return informe;

@@ -12,6 +12,7 @@ public class DocumentoPCODto {
 	private String estado;
 	private String adjunto;
 	private String actor;
+	private String tipoActor;
 	private String comentario;
 	private String protocolo;
 	private String tomo;
@@ -81,6 +82,12 @@ public class DocumentoPCODto {
 		this.actor = actor;
 	}
 
+	public String getTipoActor() {
+		return tipoActor;
+	}
+	public void setTipoActor(String tipoActor) {
+		this.tipoActor = tipoActor;
+	}
 	public String getComentario() {
 		return comentario;
 	}

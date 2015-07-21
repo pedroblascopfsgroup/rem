@@ -120,7 +120,7 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 		parametros.comboTipoDocumento = comboTipoDocumento.getValue();	 	
  		parametros.protocolo = protocolo.getValue();
 	 	parametros.notario = notario.getValue();
-	 	parametros.fechaEscritura = fechaEscritura.getValue();
+	 	parametros.fechaEscritura = fechaEscritura.getValue().format('d/m/Y');
 	 	parametros.asiento = asiento.getValue();
 	 	parametros.finca = finca.getValue();
 	 	parametros.tomo = tomo.getValue();
@@ -274,7 +274,7 @@ var gridDocs = new Ext.grid.GridPanel({
 	var fechaEscritura = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.fechaEscritura" text="**Fecha escritura" />'
-		,value : '<fwk:date value="${fechaEscritura}" />'
+		,value : '<s:message code="${fechaEscritura}" />'
 		,style:'margin:0px'
 	});
 	

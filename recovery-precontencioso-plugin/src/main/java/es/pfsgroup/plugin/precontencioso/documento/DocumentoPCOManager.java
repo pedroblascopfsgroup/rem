@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.documento;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.dao.BienDao;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.persona.dao.PersonaDao;
@@ -29,9 +31,11 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -54,7 +58,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     
     @Autowired
     private BienDao bienDao;  
-    
+   
     @Autowired
     private GenericABMDao genericDao;
 
@@ -63,6 +67,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	
     private final Log logger = LogFactory.getLog(getClass());
     private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private static String ZERO_VALUE = "0";
 
 
 
@@ -272,8 +277,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * 
 	 * @return UnidadGestion
 	 */	
-	public DDUnidadGestionPCO getUnidadGestionPorIdUG(Long idUnidadGestion){
-		DDUnidadGestionPCO tipoUG = (DDUnidadGestionPCO)proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDUnidadGestionPCO.class, idUnidadGestion);
+	public DDUnidadGestionPCO getUnidadGestionPorCodUG(String codUnidadGestion){
+		DDUnidadGestionPCO tipoUG = (DDUnidadGestionPCO)proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDUnidadGestionPCO.class, codUnidadGestion);
 		
 		return tipoUG;
 	}
@@ -281,12 +286,12 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	/**
 	 * Obtiene un Tipo de Documento
 	 * 
-	 * @param idTipoDocumento
+	 * @param codTipoDocumento
 	 * 
 	 * @return TipoDocumento
 	 */	
-	public DDTipoFicheroAdjunto getTipoDocumentoPorIdTipo(Long idTipoDocumento){
-		DDTipoFicheroAdjunto tipoDocumento = (DDTipoFicheroAdjunto)proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoFicheroAdjunto.class, idTipoDocumento);
+	public DDTipoFicheroAdjunto getTipoDocumentoPorCodTipo(String codTipoDocumento){
+		DDTipoFicheroAdjunto tipoDocumento = (DDTipoFicheroAdjunto)proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDTipoFicheroAdjunto.class, codTipoDocumento);
 		
 		return tipoDocumento;
 	}	
@@ -309,8 +314,85 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * 
 	 * @param documento
 	 */
-	public void saveCrearDocumento(DocumentoPCO documento){
-		documentoPCODao.save(documento);
+	@Override
+	@Transactional(readOnly = false)
+	public void saveCrearDocumento(DocumentoPCODto docDto){
+			
+		DocumentoPCO documento = new DocumentoPCO();
+		documento.setAdjuntado(false);
+		documento.setAsiento(docDto.getAsiento());
+		documento.setFinca(docDto.getFinca());
+		documento.setFolio(docDto.getFolio());
+		documento.setIdufir(docDto.getIdufir());
+		documento.setLibro(docDto.getLibro());
+		documento.setNotario(docDto.getNotario());
+		documento.setNroFinca(docDto.getNumFinca());
+		documento.setNroRegistro(docDto.getNumRegistro());
+		documento.setProtocolo(docDto.getProtocolo());
+		documento.setTomo(docDto.getTomo());
+		documento.setPlaza(docDto.getPlaza());
+		try {
+			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		DDTipoFicheroAdjunto tipoDocumento = genericDao.get(
+				DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoDocumento()));
+		documento.setTipoDocumento(tipoDocumento);
+		
+		
+		DDUnidadGestionPCO unidadGestion = genericDao.get(
+				DDUnidadGestionPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoUG())); 
+		documento.setUnidadGestion(unidadGestion);
+		
+		documento.setUnidadGestionId(new Long(docDto.getContrato()));
+		
+		DDEstadoDocumentoPCO estadoDocumento = genericDao.get(
+				DDEstadoDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR)); 
+		documento.setEstadoDocumento(estadoDocumento);
+		
+		// Crear la solicitud primera
+		SolicitudDocumentoPCO solicitud =new SolicitudDocumentoPCO();
+		
+		///////////////////////////////////////////////
+		// TODO - DATOS PROVISIONALES
+		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
+		solicitud.setActor(usuario);
+		
+		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
+				DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "OK"));
+		
+		solicitud.setResultadoSolicitud(resultadoSolicitud);
+		
+		DDTipoActorPCO tipoActor = genericDao.get(
+				DDTipoActorPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoActor()));
+		solicitud.setTipoActor(tipoActor);
+		
+		Auditoria.save(solicitud);
+		
+		solicitud.setDocumento(documento);
+		
+		List<SolicitudDocumentoPCO> solicitudes = new ArrayList<SolicitudDocumentoPCO>();
+		
+		solicitudes.add(solicitud);
+		
+		documento.setSolicitudes(solicitudes);
+		
+		ProcedimientoPCO procPCO = genericDao.get(
+				ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
+		
+		documento.setProcedimientoPCO(procPCO);
+		///////////////////// FIN DATOS PROVISIONALES //////////////
+	
+			
+		try {
+			genericDao.save(DocumentoPCO.class, documento);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("Error: "+e);
+		}
 	}
 
 	@Override

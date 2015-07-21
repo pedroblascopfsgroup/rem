@@ -57,19 +57,19 @@
     
    var revisionCuotaRenderer = function(value) {   
    		var valueRendered = parseInt(value)/100;   		
-   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(2).replace(".", app.format.DECIMAL_SEPARATOR);
+   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
    
    var tipoRenderer = function(value) {   
    		debugger;
    		var valueRendered = parseInt(value);
    		
-   		return Ext.isEmpty(value) ? "0,00" : value.toFixed(2).replace(".", app.format.DECIMAL_SEPARATOR);
+   		return Ext.isEmpty(value) ? "0,00" : value.replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
    
    var razonProgresionRenderer = function(value) {   
    		var valueRendered = parseInt(value)/100;
-   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(2).replace(".", app.format.DECIMAL_SEPARATOR);
+   		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
  
    var adecuacionesCM  = new Ext.grid.ColumnModel([
@@ -80,7 +80,7 @@
         {header:'<s:message code="contrato.tabAdecuaciones.importeFinanciar" text="**importeFinanciar" />',dataIndex:'importeFinanciar',width:120,renderer:app.format.moneyRenderer,align:'right'},
         {header:'<s:message code="contrato.tabAdecuaciones.gastosIncluidos" text="**gastosIncluidos" />',dataIndex:'gastosIncluidos',width:120,renderer:app.format.moneyRenderer,align:'right'},
         {header:'<s:message code="contrato.tabAdecuaciones.tipo" text="**tipo" />',dataIndex:'tipo',width:120, renderer:tipoRenderer},
-        {header:'<s:message code="contrato.tabAdecuaciones.diferencial" text="diferencial" />',dataIndex:'diferencial',width:120,hidden:true},
+        {header:'<s:message code="contrato.tabAdecuaciones.diferencial" text="diferencial" />',dataIndex:'diferencial',width:120,hidden:true, renderer:tipoRenderer},
         {header:'<s:message code="contrato.tabAdecuaciones.plazo" text="**plazo" />',dataIndex:'plazo',width:120,hidden:true},        
         {header:'<s:message code="contrato.tabAdecuaciones.cuota" text="**cuota actual" />',dataIndex:'cuota',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.cuotaTrasCarencia" text="**cuotaTrasCarencia" />',dataIndex:'cuotaTrasCarencia',width:120,hidden:true},

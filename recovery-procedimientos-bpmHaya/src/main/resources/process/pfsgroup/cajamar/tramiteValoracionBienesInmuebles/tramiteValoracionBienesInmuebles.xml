@@ -212,7 +212,7 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
-	<decision name="H058_SolicitarAvaluoDecision">
+	<decision name="H058_SolicitarAvaluoDecision" expression="#{H058_SolicitarAvaluoDecision}">
 		<transition to="ForkSolicitarAvaluo" name="conProvision"></transition>
 		<transition to="H058_ObtencionAvaluo" name="sinProvision"></transition>
 	</decision>

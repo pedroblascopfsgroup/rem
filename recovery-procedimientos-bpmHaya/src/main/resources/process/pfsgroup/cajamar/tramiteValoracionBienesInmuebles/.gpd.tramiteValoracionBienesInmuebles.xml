@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteValoracionBienes" width="1486" height="877">
+<root-container name="hcj_tramiteValoracionBienes" width="1414" height="868">
   <node name="Inicio" x="284" y="22" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

@@ -68,16 +68,16 @@
 
 	var storeHistoricoEstados = page.getStore({
 		eventName: 'resultado',
-		flow: 'liquidacion/getLiquidacionesPorProcedimientoId',
+		flow: 'expedientejudicial/getHistoricoEstadosPorProcedimientoId',
 		reader: new Ext.data.JsonReader({
-			root: 'liquidaciones'
+			root: 'historicoEstados'
 		}, historicoEstadosRecord)
 	});
 
 	var historicoEstadosGrid = new Ext.grid.GridPanel({
 		title: '<s:message code="plugin.precontencioso.cabecera.estadosPreparacion" text="**Estados de la preparación" />',
 		columns: [
-			{ header: 'Estado',  dataIndex: 'name' },
+			{ header: 'Estado',  dataIndex: 'estado' },
 			{ header: 'Fecha Inicio', dataIndex: 'fechaInicio' },
 			{ header: 'Fecha Fin', dataIndex: 'fechaFin' }
 		],
@@ -93,7 +93,6 @@
 		[{items:[nExpedienteExterno, estadoProcedimiento, procedimientoPropuesto, procedimientoIniciado, tipoPreparacion]},
 		{items:[historicoEstadosGrid]}]
 	);
-
 
 	var procedimiento = label('procedimiento', '<s:message code="procedimiento.tabcabecera.procedimiento" text="**Procedimiento"/>');
 	var procedimientoInterno = label('procedimientoInterno', '<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
@@ -307,6 +306,7 @@
 		
 		clientesIncluirStore.removeAll();
 		clientesIncluirStore.loadData( d.clientes );
+		storeHistoricoEstados.webflow({idProcedimiento: panel.getProcedimientoId()});
    	}
 	
 	return panel;

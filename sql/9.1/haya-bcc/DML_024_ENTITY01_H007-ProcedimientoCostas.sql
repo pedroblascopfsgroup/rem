@@ -30,16 +30,15 @@ DECLARE
     *---------------------------------------------------------------------
     */    
     PAR_TABLENAME_TPROC VARCHAR2(50 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO';   -- [PARAMETRO] TABLA para tipo de procedimiento. Por defecto DD_TPO_TIPO_PROCEDIMIENTO
-	PAR_TABLENAME_TARPR VARCHAR2(50 CHAR) := 'TAP_TAREA_PROCEDIMIENTO';     -- [PARAMETRO] TABLA para tareas del procedimiento. Por defecto TAP_TAREA_PROCEDIMIENTO
-    
+
 BEGIN
 	
 	/* 
 	 * UPDATES
 	 * -------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''P. Verbal desde Monitorio - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_procedimientoVerbalDesdeMonitorio'' WHERE tpo.DD_TPO_CODIGO = ''H028''';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TARPR||' tap SET tap.TAP_SCRIPT_VALIDACION = ''!asuntoConProcurador() ? ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe registrar el procurador que representa a la entidad en la ficha del asunto correspondiente.</p></div>'''' : (comprobarExisteDocumentoEDO() ? null : ''''Es necesario adjuntar el documento Escrito de demanda completo + copia sellada de la demanda'''')'' WHERE tap.TAP_CODIGO = ''H024_InterposicionDemanda''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. de costas - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteCostas'' WHERE tpo.DD_TPO_CODIGO = ''H007''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''((valores[''''H007_Impugnacion''''][''''comboImpugnacion''''] == DDSiNo.SI) && ((valores[''''H007_Impugnacion''''][''''fechaImpugnacion''''] == ''''''''))) ? ''''tareaExterna.error.H007_Impugnacion.fechasOblgatorias'''' : ((valores[''''H007_Impugnacion''''][''''comboImpugnacion''''] == DDSiNo.SI) && (!comprobarExisteDocumentoEIC())) ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el escrito de impugnaci&#243;n (Costas)</div>'''' : null'' WHERE TAP_CODIGO = ''H007_Impugnacion''';
     	
    COMMIT;
     DBMS_OUTPUT.PUT_LINE('[COMMIT ALL]...............................................');

@@ -37,7 +37,7 @@ BEGIN
 	 * UPDATES
 	 * -------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. de costas - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteCostas'' WHERE tpo.DD_TPO_CODIGO = ''H007''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. Tributacion de Bienes - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteTributacionBienesSareb'' WHERE tpo.DD_TPO_CODIGO = ''H054''';
     
     	
    COMMIT;

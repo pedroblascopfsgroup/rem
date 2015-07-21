@@ -6,9 +6,12 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -43,7 +46,8 @@ public class BatchCDDResultadoNuse implements Serializable {
 	@Column(name = "ASU_ID_EXTERNO")
 	private String codigoExterno;
 
-	@Column(name = "ID_ACUERDO_CIERRE")
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_ACUERDO_CIERRE")
 	private BatchAcuerdoCierreDeuda batchAcuerdoCierreDeuda;
 
 	@Column(name = "CRN_FECHA_EXTRACCION")

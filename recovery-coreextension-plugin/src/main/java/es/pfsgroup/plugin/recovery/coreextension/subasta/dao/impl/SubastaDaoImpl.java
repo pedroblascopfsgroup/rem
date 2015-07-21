@@ -1400,12 +1400,12 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		sb.append(" (idProcedimiento, fechaAlta, idAsunto, fechaEntrega, usuarioCrear, idBien, entidad) ");
 		sb.append(" values ");
 		sb.append(" (");
-		sb.append(acuerdoCierreDeuda.getIdProcedimiento()).append(",");
+		sb.append(acuerdoCierreDeuda.getProcedimiento().getId()).append(",");
 		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaAlta())).append(",");
-		sb.append(acuerdoCierreDeuda.getIdAsunto()).append(",");
+		sb.append(acuerdoCierreDeuda.getAsunto().getId()).append(",");
 		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaEntrega())).append(",");
 		sb.append(acuerdoCierreDeuda.getUsuarioCrear()).append(",");
-		sb.append(acuerdoCierreDeuda.getIdBien()).append(",");
+		sb.append(!Checks.esNulo(acuerdoCierreDeuda.getBien()) ? acuerdoCierreDeuda.getBien().getId() : "").append(",");
 		sb.append(acuerdoCierreDeuda.getEntidad());
 		sb.append(")");
 		
@@ -1461,21 +1461,21 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		hql.append(" select baccd ");
 		hql.append(" from BatchAcuerdoCierreDeuda baccd ");
 		// Siempre tendremos el asunto
-		hql.append(" where baccd.idAsunto = ").append(acuerdo.getIdAsunto());
+		hql.append(" where baccd.asunto.id = ").append(acuerdo.getAsunto().getId());
 		
 		// Añadimos filtros en función de los valores recibidos
 		if(!Checks.esNulo(acuerdo.getId())) {
 			hql.append(" and baccd.id = ").append(acuerdo.getId());
 		}		
 		
-		if(!Checks.esNulo(acuerdo.getIdProcedimiento())) {
-			hql.append(" and baccd.idProcedimiento = ").append(acuerdo.getIdProcedimiento());
+		if(!Checks.esNulo(acuerdo.getProcedimiento().getId())) {
+			hql.append(" and baccd.procedimiento.id = ").append(acuerdo.getProcedimiento().getId());
 		}
 		
-		if(!Checks.esNulo(acuerdo.getIdBien())) {
-			hql.append(" and baccd.idBien = ").append(acuerdo.getIdBien());
+		if(!Checks.esNulo(acuerdo.getBien()) && !Checks.esNulo(acuerdo.getBien().getId())) {
+			hql.append(" and baccd.bien.id = ").append(acuerdo.getBien().getId());
 		}else {
-			hql.append(" and baccd.idBien is null ");
+			hql.append(" and baccd.bien is null ");
 		}
 		
 		if(Checks.esNulo(acuerdo.getFechaEntrega())) {

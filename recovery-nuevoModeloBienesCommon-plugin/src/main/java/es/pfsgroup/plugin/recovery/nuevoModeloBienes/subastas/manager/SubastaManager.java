@@ -30,13 +30,13 @@ import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
-import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
@@ -54,10 +54,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
@@ -88,7 +88,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
-import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
@@ -1209,14 +1208,17 @@ public class SubastaManager implements SubastaApi {
 			Auditoria auditoria = Auditoria.getNewInstance();
 			BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
 			
-			cierreDeuda.setIdAsunto(asuId);
-			cierreDeuda.setIdProcedimiento(prcId);
+			Asunto asu = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", asuId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			cierreDeuda.setAsunto(asu);
+			Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			cierreDeuda.setProcedimiento(prc);
 			
 			if(Checks.esNulo(bienId)) {
 				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_BANKIA);
 		
 			}else{
-				cierreDeuda.setIdBien(bienId);				
+				Bien bie = genericDao.get(Bien.class, genericDao.createFilter(FilterType.EQUALS, "id", bienId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				cierreDeuda.setBien(bie);				
 				cierreDeuda.setEntidad(DDPropiedadAsunto.PROPIEDAD_SAREB);
 			}
 
@@ -1269,16 +1271,17 @@ public class SubastaManager implements SubastaApi {
 			
 			// Buscamos si existe un cierre de deuda para mismo ASU,PRO,BIEN que no se haya enviado.
 			BatchAcuerdoCierreDeuda filtro = new BatchAcuerdoCierreDeuda();
-			filtro.setIdAsunto(subasta.getAsunto().getId());
-			filtro.setIdProcedimiento(subasta.getProcedimiento().getId());
+			filtro.setAsunto(subasta.getAsunto());
+			filtro.setProcedimiento(subasta.getProcedimiento());
 			if(!Checks.esNulo(idBien)) {
-				filtro.setIdBien(Long.valueOf(idBien));
+				Bien bie = genericDao.get(Bien.class, genericDao.createFilter(FilterType.EQUALS, "id", idBien), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				filtro.setBien(bie);
 			}
 			BatchAcuerdoCierreDeuda acuerdoCierreDeuda = findRegistroCierreDeuda(filtro);
 			// Si no existe, o existe pero ya está OK y enviado
 			if(Checks.esNulo(acuerdoCierreDeuda) || 
 					(!Checks.esNulo(acuerdoCierreDeuda.getFechaEntrega()) && BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_OK.equals(acuerdoCierreDeuda.getResultadoValidacion()))) {
-				BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(filtro.getIdAsunto(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion, origen);
+				BatchAcuerdoCierreDeuda autoCierreDeuda = getCierreDeudaInstance(filtro.getAsunto().getId(), filtro.getProcedimiento().getId(), filtro.getBien().getId(), resultado, resultadoValidacion, origen);
 				genericDao.save(BatchAcuerdoCierreDeuda.class, autoCierreDeuda);
 				//guardaBatchAcuerdoCierre(filtro.getIdAsunto(), filtro.getIdProcedimiento(), filtro.getIdBien(), resultado, resultadoValidacion, origen);
 
@@ -1355,7 +1358,7 @@ public class SubastaManager implements SubastaApi {
 
                         //Se recorren todos los registros KO de Acuerdo Cierre Deuda (pivote) que hay en el asunto
                         List<BatchAcuerdoCierreDeuda> listBatchCDD = (List<BatchAcuerdoCierreDeuda>) genericDao.getList(BatchAcuerdoCierreDeuda.class, 
-                        genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto));
+                        genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
 			
 			for(BatchAcuerdoCierreDeuda baCDD : listBatchCDD) {
 				subastaDao.eliminarBatchAcuerdoCierreDeuda(baCDD);

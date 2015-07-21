@@ -240,29 +240,18 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 				return true;
 			}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
 					return true;
-		}});
+		}}});
     	resolucionesSinAdjunto.push({idResolucion:229, validateFunction:function(v){
     		
     		if(Ext.getCmp('d_comboImpugnacion' + idf).getValue() == "02"){
     			return true;
     		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
     				return true;
-	    		}else{
-	    			return false;
-	    	}
-    	}});
-//    	resolucionesSinAdjunto.push({idResolucion:229, validateFunction:function(v){
-//    		
-//    		if(Ext.getCmp('d_comboImpugnacion' + idf).getValue() == "02"){
-//    			return true;
-//    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
-//    				return true;
-//	    		}else{
-//	    			return false;
-//	    	}
-//    	}});
-=======
->>>>>>> d59649f26799e8affce760f63c914cf797a9213d
+    			}else{
+    				return false;
+    			}
+    		}});
+
 //    	
 //    	resolucionesSinAdjunto.push({idResolucion:253, validateFunction:function(v){
 //    		

@@ -15,6 +15,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.dao.BienDao;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -358,7 +359,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 		///////////////////////////////////////////////
 		// TODO - DATOS PROVISIONALES
-		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
+		GestorDespacho usuario = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
 		solicitud.setActor(usuario);
 		
 		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
@@ -418,7 +419,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 		
 		if (!Checks.esNulo(dto.getActor())) {
-			Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
+			GestorDespacho usuario = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
 			solicitud.setActor(usuario);
 		}
 		

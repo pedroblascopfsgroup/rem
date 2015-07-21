@@ -1360,7 +1360,7 @@ public class SubastaManager implements SubastaApi {
                                         genericDao.createFilter(FilterType.EQUALS, "idAsunto", idAsunto));
 
                         for(BatchCDDResultadoNuse baCDDNuse : listBatchCDDNuse) {
-                                subastaDao.BatchCDDResultadoNuse(baCDDNuse);
+                                subastaDao.eliminarBatchCDDResultadoNuse(baCDDNuse);
                         }
 		}
 

@@ -1425,12 +1425,12 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
         
 	@Override
-	public void BatchCDDResultadoNuse(BatchCDDResultadoNuse acuerdoCierreDeudaNuse){
+	public void eliminarBatchCDDResultadoNuse(BatchCDDResultadoNuse acuerdoCierreDeudaNuse){
 		//Se eliminan todos los registros KO por ide BCDDNuse
                 StringBuilder sb = new StringBuilder();
-		sb.append(" delete from BatchCDDResultadoNuse BCDDRNuse");
-		sb.append(" where resultado <> 0 ");
-                sb.append(" and id = ").append(acuerdoCierreDeudaNuse.getId());
+		sb.append(" delete from BatchCDDResultadoNuse bnus");
+		sb.append(" where bnus.resultado <> 0 ");
+                sb.append(" and bnus.id = ").append(acuerdoCierreDeudaNuse.getId());
 		
 		Query query = getSession().createQuery(sb.toString());
 		query.executeUpdate();

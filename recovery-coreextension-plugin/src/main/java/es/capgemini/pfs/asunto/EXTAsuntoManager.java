@@ -1921,19 +1921,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	 * 
 	 * @return true si es el gestor de Decision
 	 */
-	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
-	@Override
-	public Boolean esGestorDecision(Long id) {
-		try {
-			
-			return esUsuarioGestorDecision(id);
-			
-		} catch (Exception e) {
-			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
-			return false;
-			//throw new BusinessOperationException(e);
-		}
-	}		
+//	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_ES_GESTOR_DECISION)
+//	@Override
+//	public Boolean esGestorDecision(Long id) {
+//		try {
+//			
+//			return esUsuarioGestorDecision(id);
+//			
+//		} catch (Exception e) {
+//			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
+//			return false;
+//			//throw new BusinessOperationException(e);
+//		}
+//	}		
 
 
 	

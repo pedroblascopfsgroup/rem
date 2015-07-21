@@ -3,9 +3,7 @@ package es.pfsgroup.plugin.precontencioso.documento.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -59,14 +57,8 @@ public class DocumentoPCOController {
 	private static final String PENDIENTE_SOLICITAR = DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR;
 
 	protected final Log logger = LogFactory.getLog(getClass());
-	List<DocumentoPCODto> documentos = null;
-	List<SolicitudPCODto> solicitudes = null;
+
 	List<DocumentosUGPCODto> documentosUG = null;
-
-	int lastKeyDocumentos; 
-	int lastKeySolicitudes;
-	List<SolicitudDocumentoPCODto> solicitudesDoc;
-
 	Long idProcPCO;
 	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -197,10 +189,10 @@ public class DocumentoPCOController {
 		// TODO - Recorrer las unidades de gestion para sacar los documentos asociados
 		
 		st = new StringTokenizer(uniGestionIds,",");
-		Long idUG;
+		String codUG;
 		while (st.hasMoreElements()){
-			idUG = new Long(st.nextToken());
-			ugsDto.addAll(datosPrueba2(idUG));
+			codUG = st.nextToken();
+			ugsDto.addAll(datosPrueba2(codUG));
 		}
 		
 		// Devolvemos los documentos asociados
@@ -275,9 +267,7 @@ public class DocumentoPCOController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String abrirIncluirDocumento(
-			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, 
-			ModelMap model) {
+	public String abrirIncluirDocumento(ModelMap model) {
 
 		List<DDTipoFicheroAdjunto> listaTipoDocumentos = null;
 		List<DDUnidadGestionPCO> listaUG = null;
@@ -296,14 +286,9 @@ public class DocumentoPCOController {
 		dto.setTomo("test_tomo");
 		
 		// Lista tipo documentos
-		//listaTipoDocumentos = getTiposDocumento();
-		
-		
 		listaTipoDocumentos = documentoPCOApi.getTiposDocumento();
 		
 		// Lista Unidades Gestion
-		//listaUG = getUnidadesGestion();
-		
 		listaUG = documentoPCOApi.getUnidadesGestion();
 		
 		model.put("tiposDocumento", listaTipoDocumentos);
@@ -756,19 +741,16 @@ public class DocumentoPCOController {
 	@RequestMapping	
 	private String saveIncluirDocumentos(WebRequest request ,ModelMap model) {
 		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");
-		String idDoc = request.getParameter("id");
 		
 		// La cadena viene con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadena.
 		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);		
 		StringTokenizer st;
-		DocumentoPCO documento;
-		SolicitudDocumentoPCO solicitud;
 		DDUnidadGestionPCO unidadGestion = null;
-		DDTipoFicheroAdjunto tipoDocumento;
-		
 		//TODO - PROVISIONAL
-		String contrato;
+		String contrato = "";
 		String descripcionUG;
+		Long uniUGId = new Long(0);
+		String tipoUG = ""; 
 		
 		// Tratamos los documentos a incluir	
 		st = new StringTokenizer(arrayIdDocumentos,",");
@@ -780,50 +762,85 @@ public class DocumentoPCOController {
 			// Descripcion de la UG - Nos llegan los codigos de los documento UG - A partir de ahí averiguar
 			// la UG y su descripcion			
 			for (DocumentosUGPCODto docUG : documentosUG) {		
-				if (docUG.getId().equals(new Long(idDocUG))) {
+				if (docUG.getId().equals(idDocUG)) {
 					contrato = docUG.getContrato();
-					descripcionUG = docUG.getDescripcionUG();									
-					unidadGestion = documentoPCOApi.getUnidadGestionPorIdUG(docUG.getUnidadGestionId());
+					descripcionUG = docUG.getDescripcionUG();	
+					tipoUG = docUG.getUnidadGestionId();
+					unidadGestion = documentoPCOApi.getUnidadGestionPorCodUG(tipoUG);
+					uniUGId = idDocUG;
 				}
-			}
+			}			
 			
-			tipoDocumento = documentoPCOApi.getTipoDocumentoPorIdTipo(new Long(request.getParameter("comboTipoDocumento")));
+			//tipoDocumento = documentoPCOApi.getTipoDocumentoPorCodTipo(request.getParameter("comboTipoDocumento"));
 
 			// Por cada documento de UG elegido tenemos que crear un documento y una solicitud (vacia)				
 			// Crear DOCUMENTO
-			documento = new DocumentoPCO();
-			documento.setAdjuntado(false);
-			documento.setAsiento(request.getParameter("asiento"));
-			documento.setFinca(request.getParameter("finca"));
-			documento.setFolio(request.getParameter("folio"));
-			documento.setIdufir(request.getParameter("idufir"));
-			documento.setLibro(request.getParameter("libro"));
-			documento.setNotario(request.getParameter("notario"));
-			documento.setNroFinca(request.getParameter("numFinca"));
-			documento.setNroRegistro(request.getParameter("numRegistro"));
-			documento.setProtocolo(request.getParameter("protocolo"));
-			documento.setTomo(request.getParameter("tomo"));
-			documento.setTipoDocumento(tipoDocumento);
-			documento.setUnidadGestion(unidadGestion);
-			documento.setEstadoDocumento(documentoPCOApi.getEstadoDocumentoPorCodigo(PENDIENTE_SOLICITAR));
-			// TODO - FALTA asociar el id del contrato / bien o persona
-			//documento.setUnidadGestionId(unidadGestionId);
-			// TODO - Falta indicar la Plaza
-			//documento.setPlaza(plaza);
-			// TODO - Falta indicar la Fecha Escritura
-			//documento.setFechaEscritura(fechaEscritura);
 			
-			// CREAR SOLICITUD
-			solicitud = new SolicitudDocumentoPCO();
-			solicitud.setDocumento(documento);
-			// TODO - Falta asignar el Resultado de la solicitud
+			DocumentoPCODto docDto = new DocumentoPCODto();
+			SolicitudDocumentoPCODto solDto = new SolicitudDocumentoPCODto();
 			
-			List<SolicitudDocumentoPCO> solList = new ArrayList<SolicitudDocumentoPCO>();
-			solList.add(solicitud);
+			docDto.setAdjunto("0");
+			docDto.setAsiento(request.getParameter("asiento"));
+			docDto.setFinca(request.getParameter("finca"));
+			docDto.setFolio(request.getParameter("folio"));
+			docDto.setIdufir(request.getParameter("idufir"));
+			docDto.setLibro(request.getParameter("libro"));
+			docDto.setNotario(request.getParameter("notario"));
+			docDto.setNumFinca(request.getParameter("numFinca"));
+			docDto.setNumRegistro(request.getParameter("numRegistro"));
+			docDto.setProtocolo(request.getParameter("protocolo"));
+			docDto.setTomo(request.getParameter("tomo"));	
+			docDto.setTipoDocumento(request.getParameter("comboTipoDocumento"));
+			docDto.setPlaza(request.getParameter("plaza"));
+			docDto.setFechaEscritura(request.getParameter("fechaEscritura"));
 			
-			documento.setSolicitudes(solList);
+			// TODO - DATOS PROVISIONALES - REVISAR
+			docDto.setTipoUG(tipoUG);
+			docDto.setActor("1");
+			docDto.setIdProc(idProcPCO);
+			docDto.setTipoActor("PD");
+			docDto.setEstado(DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);
+			docDto.setContrato(contrato);
 			
-			documentoPCOApi.saveCrearDocumento(documento);
+			
+			
+//			documento = new DocumentoPCO();
+//			documento.setAdjuntado(false);
+//			documento.setAsiento(request.getParameter("asiento"));
+//			documento.setFinca(request.getParameter("finca"));
+//			documento.setFolio(request.getParameter("folio"));
+//			documento.setIdufir(request.getParameter("idufir"));
+//			documento.setLibro(request.getParameter("libro"));
+//			documento.setNotario(request.getParameter("notario"));
+//			documento.setNroFinca(request.getParameter("numFinca"));
+//			documento.setNroRegistro(request.getParameter("numRegistro"));
+//			documento.setProtocolo(request.getParameter("protocolo"));
+//			documento.setTomo(request.getParameter("tomo"));
+//			documento.setTipoDocumento(tipoDocumento);
+//			documento.setUnidadGestion(unidadGestion);
+//			documento.setUnidadGestionId(uniUGId);
+//			documento.setEstadoDocumento(documentoPCOApi.getEstadoDocumentoPorCodigo(PENDIENTE_SOLICITAR));
+//			// TODO - FALTA asociar el id del contrato / bien o persona
+//			//documento.setUnidadGestionId(unidadGestionId);
+//			documento.setPlaza(request.getParameter("plaza"));
+//			try {
+//				documento.setFechaEscritura(webDateFormat.parse(request.getParameter("fechaEscritura")));
+//			} catch (ParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			// CREAR SOLICITUD
+//			solicitud = new SolicitudDocumentoPCO();
+//			solicitud.setDocumento(documento);
+//			// TODO - Falta asignar el Resultado de la solicitud
+//			
+//			List<SolicitudDocumentoPCO> solList = new ArrayList<SolicitudDocumentoPCO>();
+//			solList.add(solicitud);
+//			
+//			documento.setSolicitudes(solList);
+			
+			documentoPCOApi.saveCrearDocumento(docDto);
 			
 		}
 
@@ -960,18 +977,18 @@ public class DocumentoPCOController {
 		
 	
 	
-	public List<DocumentosUGPCODto> datosPrueba2 (Long idUG){
+	public List<DocumentosUGPCODto> datosPrueba2 (String codUG){
 		
 		List<DocumentosUGPCODto> datos = new ArrayList<DocumentosUGPCODto>();
 		List<DocumentosUGPCODto> datosSinFiltrar = new ArrayList<DocumentosUGPCODto>();
 		DocumentosUGPCODto dato = new DocumentosUGPCODto();
 		
 		dato.setId(new Long(1));
-		dato.setUnidadGestionId(new Long(1));
-		dato.setContrato("1234 56789 012345");
+		dato.setUnidadGestionId("CO");
+		dato.setContrato("3327961");
 		dato.setDescripcionUG("PRESTECS");
 		
-		if (dato.getUnidadGestionId().equals(idUG))
+		if (dato.getUnidadGestionId().equals(codUG))
 			datos.add(dato);
 		
 		datosSinFiltrar.add(dato);
@@ -979,11 +996,11 @@ public class DocumentoPCOController {
 		dato = new DocumentosUGPCODto();
 		
 		dato.setId(new Long(2));
-		dato.setUnidadGestionId(new Long(2));
-		dato.setContrato("2438457R");
+		dato.setUnidadGestionId("PE");
+		dato.setContrato("2078069");
 		dato.setDescripcionUG("AMALIO LAZARO NOCEDO");
 		
-		if (dato.getUnidadGestionId().equals(idUG))
+		if (dato.getUnidadGestionId().equals(codUG))
 			datos.add(dato);
 		
 		datosSinFiltrar.add(dato);
@@ -992,11 +1009,11 @@ public class DocumentoPCOController {
 		
 		
 		dato.setId(new Long(3));
-		dato.setUnidadGestionId(new Long(3));
-		dato.setContrato("Finca 223254");
+		dato.setUnidadGestionId("BI");
+		dato.setContrato("100284896");
 		dato.setDescripcionUG("Madrid - Madrid- C/Denia 50 6");
 		
-		if (dato.getUnidadGestionId().equals(idUG))
+		if (dato.getUnidadGestionId().equals(codUG))
 			datos.add(dato);
 		
 		datosSinFiltrar.add(dato);

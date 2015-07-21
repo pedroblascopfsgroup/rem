@@ -41,6 +41,9 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 	
 	@Column(name = "DD_PCO_DSA_TRAT_EXP")
 	private Boolean tratamientoExpediente;	
+	
+	@Column(name = "DD_PCO_DSA_ACCESO_RECOVERY")
+	private Boolean accesoRecovery;	
 
 	@Version
 	private Integer version;
@@ -86,6 +89,14 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 
 	public void setTratamientoExpediente(Boolean tratamientoExpediente) {
 		this.tratamientoExpediente = tratamientoExpediente;
+	}
+
+	public Boolean getAccesoRecovery() {
+		return accesoRecovery;
+	}
+
+	public void setAccesoRecovery(Boolean accesoRecovery) {
+		this.accesoRecovery = accesoRecovery;
 	}
 
 	public Integer getVersion() {

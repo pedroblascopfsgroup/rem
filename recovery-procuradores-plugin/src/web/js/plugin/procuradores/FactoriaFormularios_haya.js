@@ -182,6 +182,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     		for (var i=0;i<campos.length;i++){
     			if(campos[i].filtradoProcurador){
     				campos[i].allowBlank=true;
+    				campos[i].esProcurador=true;
     			}
     		}
     	}
@@ -2674,8 +2675,22 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     //id: 371 : PROCEDIMIENTO HIPOTECARIO : Registrar certificación de cargas
     this.arrayCampos.push([
                                {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-                                  ,{"xtype":'combo',"store":storeSINO, "name":"d_cargasPrevias","fieldLabel":"Tiene cargas Previas",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true,     id:'d_cargasPrevias'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-                                  ,{"xtype":'numberfield',"name":"d_cuantiaCargasPrevias","fieldLabel":"Cuantía cargas previas",allowBlank:false}
+                                  ,{"xtype":'combo',"store":storeSINO, "name":"d_cargasPrevias","fieldLabel":"Tiene cargas Previas",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true,id:'d_cargasPrevias'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+                                  ,{"xtype":'numberfield',"name":"d_cuantiaCargasPrevias","fieldLabel":"Cuantía cargas previas",allowBlank:true,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima , id:'d_cuantiaCargasPrevias'+this.idFactoria
+       	                     	   ,validator : function(v) {
+       	                     		   	if(this.esProcurador)
+       	                     			   return true;
+	       	                     		   	else{
+	       		   	               	   		if(Ext.getCmp('d_cargasPrevias' + idFactoria).getValue() == "01" && Ext.getCmp('d_cuantiaCargasPrevias' + idFactoria).getValue() == ""){
+	       		   	               	   			return false;
+	       		   	               	   		}else{
+	       		   	               	   			return true;
+	       		   	               	   		}
+       		   	               	   		}
+       	         					}
+       	                       }
+                                  
+                                  
                                ]);
 		
 		var lengthArrayCampos = this.arrayCampos.length;

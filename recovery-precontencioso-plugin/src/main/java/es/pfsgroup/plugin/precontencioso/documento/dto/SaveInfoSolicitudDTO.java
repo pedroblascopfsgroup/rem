@@ -20,6 +20,7 @@ public class SaveInfoSolicitudDTO implements Serializable {
     private Date fechaEnvio;
     private Date fechaRecepcion;
     private String comentario;
+    private Long ejecutivo;
     
 	public String getIdDoc() {
 		return idDoc;
@@ -80,6 +81,12 @@ public class SaveInfoSolicitudDTO implements Serializable {
 	}
 	public void setComentario(String comentario) {
 		this.comentario = comentario;
+	}
+	public Long getEjecutivo() {
+		return ejecutivo;
+	}
+	public void setEjecutivo(Long ejecutivo) {
+		this.ejecutivo = ejecutivo;
 	}
 
 }

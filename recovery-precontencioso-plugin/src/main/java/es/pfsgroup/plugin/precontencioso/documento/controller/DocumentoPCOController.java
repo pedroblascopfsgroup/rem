@@ -33,6 +33,8 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDSiNoNoAplica;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
@@ -223,21 +225,23 @@ public class DocumentoPCOController {
 			@RequestParam(value = "idSolicitud", required = true) String idSolicitud, 
 			@RequestParam(value = "actor", required = true) String actor, 
 			@RequestParam(value = "idDoc", required = true) String idDoc, 
-			@RequestParam(value = "estado", required = true) String estado, 
-			@RequestParam(value = "adjunto", required = true) String adjuntado, 
 			@RequestParam(value = "fechaResultado", required = true) String fechaResultado, 
 			@RequestParam(value = "resultado", required = true) String resultado, 
 			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
 			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
-			@RequestParam(value = "comentario", required = true) String comentario, 
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
 
+		Long idDocumento = Long.valueOf(idDoc);
+		
+		DocumentoPCODto doc = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
+		
 		dto.setIdSolicitud(Long.parseLong(idSolicitud));
-		dto.setActor(actor);
-		dto.setIdDoc(Long.parseLong(idDoc));
-		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, estado));
+		dto.setActor(obtenerCodigoDiccionario(DDTipoActorPCO.class, actor));
+		dto.setIdDoc(idDocumento);
+		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, doc.getEstado()));
+		String adjuntado = doc.getAdjunto();
 		dto.setAdjuntado(obtenerCodigoDiccionario(DDSiNo.class, adjuntado));
 		if ("".equals(dto.getAdjuntado()) && !"".equals(adjuntado)) {
 			if ("NO".equalsIgnoreCase(adjuntado) || DDSiNo.NO.equals(adjuntado)) {
@@ -246,20 +250,33 @@ public class DocumentoPCOController {
 				dto.setAdjuntado(DDSiNo.SI);
 			}
 		}
+
+		String ejecutivo = doc.getEjecutivo();
+		dto.setEjecutivo(obtenerCodigoDiccionario(DDSiNoNoAplica.class, ejecutivo));
+		if ("".equals(dto.getEjecutivo()) && !"".equals(ejecutivo)) {
+			if ("NO".equalsIgnoreCase(ejecutivo) || DDSiNoNoAplica.NO.equals(ejecutivo)) {
+				dto.setEjecutivo(DDSiNoNoAplica.NO);
+			} else if ("Sí".equalsIgnoreCase(ejecutivo) || DDSiNoNoAplica.SI.equals(ejecutivo)) {
+				dto.setEjecutivo(DDSiNoNoAplica.SI);
+			}
+		}
+
 		dto.setFechaResultado(fechaResultado);
 		dto.setRespuesta(obtenerCodigoDiccionario(DDResultadoSolicitudPCO.class, resultado));
 		dto.setFechaEnvio(fechaEnvio);
 		dto.setFechaRecepcion(fechaRecepcion);
-		dto.setComentario(comentario);
+		dto.setComentario(doc.getComentario());
 		
 		List<DDEstadoDocumentoPCO> estadosDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoDocumentoPCO.class);
 		List<DDResultadoSolicitudPCO> respuestasSolicitud = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class);
 		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		List<DDSiNoNoAplica> ddsinonoaplica = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNoNoAplica.class);
 		
 		model.put("solicitud", dto);
 		model.put("estadosDocumento", estadosDocumento);
 		model.put("respuestasSolicitud", respuestasSolicitud);		
 		model.put("ddSiNo", ddsino);
+		model.put("ddSiNoNoAplica", ddsinonoaplica);
 		
 		return INFORMAR_DOC;
 	}
@@ -1210,6 +1227,19 @@ public class DocumentoPCOController {
 
 	}
 	
+	private Long obtenerIdDiccionario(Class claseDiccionario, String descripcion) {
+		
+		Long respuesta = null;
+		if (!Checks.esNulo(descripcion)) {
+			Dictionary diccionario = (Dictionary) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByDes(claseDiccionario, descripcion);
+			if (!Checks.esNulo(diccionario)) {
+				respuesta = diccionario.getId();
+			}
+		}
+		return respuesta;
+
+	}
+	
 	/**
 	 * Informarlas solicitudes de los documentos
 	 * 
@@ -1226,6 +1256,7 @@ public class DocumentoPCOController {
         dto.setIdSolicitud(request.getParameter("idSolicitud"));
         dto.setEstado(request.getParameter("estado"));
         dto.setAdjuntado(request.getParameter("adjuntado"));
+        dto.setEjecutivo(obtenerIdDiccionario(DDSiNoNoAplica.class, request.getParameter("ejecutivo")));
         dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
         dto.setResultado(request.getParameter("resultado"));
         dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
@@ -1234,7 +1265,7 @@ public class DocumentoPCOController {
         
         documentoPCOApi.saveInformarSolicitud(dto);
         
-        return SOLICITUDES_DOC_PCO_JSON;
+        return DEFAULT;
         
 	}
 	

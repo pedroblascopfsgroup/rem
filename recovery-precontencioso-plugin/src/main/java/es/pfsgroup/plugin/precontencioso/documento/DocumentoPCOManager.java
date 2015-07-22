@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDSiNoNoAplica;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
@@ -139,7 +140,13 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		else
 			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
 				
-		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, esDocumento, siNo);
+		Long codigoEjecutivo = documento.getEjecutivo();
+		DDSiNoNoAplica siNoNoAplica = null;
+		if (!Checks.esNulo(codigoEjecutivo)) {
+			siNoNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDSiNoNoAplica.class, codigoEjecutivo);
+		}
+				
+		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, esDocumento, siNo, siNoNoAplica);
 		
 		return solDto;
 	};
@@ -159,7 +166,13 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		else
 			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
 
-		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento, siNo);
+		Long codigoEjecutivo = documento.getEjecutivo();
+		DDSiNoNoAplica siNoNoAplica = null;
+		if (!Checks.esNulo(codigoEjecutivo)) {
+			siNoNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDSiNoNoAplica.class, codigoEjecutivo);
+		}
+
+		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento, siNo, siNoNoAplica);
 		
 		return docDto;		
 	};	
@@ -325,6 +338,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 				DDEstadoDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstado()));
 		documento.setEstadoDocumento(estadoDocumento);
 		documento.setAdjuntado(DDSiNo.SI.equals(dto.getAdjuntado()));
+		documento.setEjecutivo(dto.getEjecutivo());
 		documento.setObservaciones(dto.getComentario());
 		genericDao.save(DocumentoPCO.class, documento);
 
@@ -336,10 +350,18 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			}
 		}
 		
-		if (!Checks.esNulo(dto.getActor())) {
-			Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
-			solicitud.setActor(usuario);
-		}
+//		if (!Checks.esNulo(dto.getActor())) {
+//			Long idActor = null;
+//			try {
+//				idActor = Long.valueOf(dto.getActor());
+//			} catch (NumberFormatException e) {
+//				e.printStackTrace();
+//			}
+//			if (idActor != null) {
+//				Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
+//				solicitud.setActor(usuario);
+//			}
+//		}
 		
 		
 		solicitud.setFechaResultado(dto.getFechaResultado());

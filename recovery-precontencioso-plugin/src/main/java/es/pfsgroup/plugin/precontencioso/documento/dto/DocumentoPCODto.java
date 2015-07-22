@@ -25,6 +25,7 @@ public class DocumentoPCODto {
 	private String numRegistro;
 	private String fechaEscritura;
 	private String plaza;
+	private String ejecutivo;
 	
 	public Long getId() {
 		return id;
@@ -158,6 +159,12 @@ public class DocumentoPCODto {
 	}
 	public void setPlaza(String plaza) {
 		this.plaza = plaza;
+	}
+	public String getEjecutivo() {
+		return ejecutivo;
+	}
+	public void setEjecutivo(String ejecutivo) {
+		this.ejecutivo = ejecutivo;
 	}
 	
 }

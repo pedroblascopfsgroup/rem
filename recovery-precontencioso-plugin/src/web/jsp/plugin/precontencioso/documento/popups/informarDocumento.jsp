@@ -18,8 +18,12 @@
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
 
 	<pfsforms:ddCombo name="adjuntado"
-		labelKey="precontencioso.grid.documento.informarDocumento.estadoDocumento"
+		labelKey="precontencioso.grid.documento.informarDocumento.adjuntado"
 		label="**Adjuntado" value="${solicitud.adjuntado}" dd="${ddSiNo}" width="50"  propertyCodigo="codigo"/>	
+		
+	<pfsforms:ddCombo name="ejecutivo" 
+		labelKey="precontencioso.grid.documento.informarDocumento.ejecutivo"
+		label="**Ejecutivo" value="${solicitud.ejecutivo}" dd="${ddSiNoNoAplica}" width="100"  propertyCodigo="codigo"/>	
 		
 	var fechaResultado = new Ext.ux.form.XDateField({
 		name : 'fechaResultado'
@@ -67,6 +71,38 @@
 	
 	var validateForm = function(){	
 	
+		if ('${solicitud.actor}'=='GEST') {
+			if (fechaResultado.getValue() == "" || comboRespuestasSolicitud.getValue() == "") {
+				Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.informarDocumento.resultadoObligatorio" text="**Son obligatorios los campos Fecha Resultado y Resultado." />');
+				fechaResultado.focus();
+				return false;
+			}
+			if ("OK" == comboRespuestasSolicitud.getValue()) {
+				comboEstadosDocumento.setValue("EN");
+			} else {
+				comboEstadosDocumento.setValue("PS");
+			}
+		} else {
+			if (fechaResultado.getValue() != "") {
+				if (comboRespuestasSolicitud.getValue() == "") {
+					Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.informarDocumento.resultadoObligatorio2" text="**Es obligatorio el campo Resultado, si se informa la Fecha Resultado." />');
+					comboRespuestasSolicitud.focus();
+					return false;
+				}
+			}
+			if (fechaResultado.getValue() != "" && "OK" == comboRespuestasSolicitud.getValue()) {
+				comboEstadosDocumento.setValue("EN");
+			} 
+			if (fechaResultado.getValue() != "" && "OK" != comboRespuestasSolicitud.getValue()) {
+				comboEstadosDocumento.setValue("PS");
+			}
+			if (fechaEnvio.getValue()) {
+				comboEstadosDocumento.setValue("EN");
+			} 
+			if (fechaRecepcion.getValue() != "" && "01"==adjuntado.getValue()) {
+				comboEstadosDocumento.setValue("DI");
+			}
+		}
 		return true;
 		
 	}
@@ -80,6 +116,7 @@
 		
 		parametros.estado = comboEstadosDocumento.getValue();	 	
  		parametros.adjuntado = adjuntado.getValue();
+ 		parametros.ejecutivo = ejecutivo.getValue();
  		if (fechaResultado.getValue() != "") {
 		 	parametros.fechaResultado = fechaResultado.getValue().format('d/m/Y');
 		} else {
@@ -128,7 +165,7 @@
 		,autoHeight : true
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ comboEstadosDocumento, adjuntado, fechaResultado, comboRespuestasSolicitud, fechaEnvio, fechaRecepcion, comentario ]}]
+		,items:[{items: [ comboEstadosDocumento, adjuntado, ejecutivo, fechaResultado, comboRespuestasSolicitud, fechaEnvio, fechaRecepcion, comentario ]}]
 	});	
 	
 	var panel=new Ext.Panel({
@@ -144,5 +181,16 @@
 	});	
 	
 	page.add(panel);
+	
+	function estadoInicial() {
+		comboEstadosDocumento.setDisabled(true);
+		if ('${solicitud.actor}'=='GEST') {
+			adjuntado.setDisabled(true);
+			ejecutivo.setDisabled(true);
+			fechaEnvio.setDisabled(true);
+			fechaRecepcion.setDisabled(true);
+		}
+	}
+	estadoInicial();
 	
 </fwk:page>

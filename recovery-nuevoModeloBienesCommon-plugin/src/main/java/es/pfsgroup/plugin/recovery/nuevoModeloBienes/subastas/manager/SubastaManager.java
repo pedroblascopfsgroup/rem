@@ -1260,7 +1260,7 @@ public class SubastaManager implements SubastaApi {
 
 			String motivo;
 			Long resultado;
-			DDResultadoValidacionCDD resultadoValidacion = new DDResultadoValidacionCDD();
+			DDResultadoValidacionCDD resultadoValidacion = null;
 			if(!informe.getValidacionOK()) { // Si Validacion KO
 				motivo = informe.getResultadoValidacion().get(0);
 				resultado = BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO;
@@ -1271,7 +1271,6 @@ public class SubastaManager implements SubastaApi {
 			}
 			
 			// Buscamos si existe un cierre de deuda para mismo ASU,PRO,BIEN que no se haya enviado.
-			BatchAcuerdoCierreDeuda filtro = new BatchAcuerdoCierreDeuda();
 			AcuerdoCierreDeudaDto filtroDto = new AcuerdoCierreDeudaDto();
 			
 			filtroDto.setAsunto(subasta.getAsunto());
@@ -1357,7 +1356,7 @@ public class SubastaManager implements SubastaApi {
 		}
 		
 		@Override
-                @Transactional(readOnly = false)
+        @Transactional(readOnly = false)
 		@BusinessOperation(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
 		public void eliminarBatchCierreDeudaAsunto(Long idAsunto) {
 

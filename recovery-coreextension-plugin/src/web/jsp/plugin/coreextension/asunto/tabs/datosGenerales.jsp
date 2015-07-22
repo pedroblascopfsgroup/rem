@@ -9,7 +9,6 @@
 (function(){
 	var limit=25;
 	var labelStyle2 = 'font-size:12px;';
-	debugger;
 	//Campo Código Asunto
 	var codigoAsunto=app.creaNumber('codigo',
 			'<s:message code="asuntos.busqueda.filtro.codigo" text="**Codigo Asunto" />','',{autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"},listeners:{ specialkey: function(f,e){ if(e.getKey() == e.ENTER) { buscarFunc(); } } }<app:test id="idAsunto" addComa="true"/>});

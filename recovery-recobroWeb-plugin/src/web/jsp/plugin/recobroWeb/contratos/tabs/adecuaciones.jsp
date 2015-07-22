@@ -61,7 +61,6 @@
    }; 
    
    var tipoRenderer = function(value) {   
-   		debugger;
    		var valueRendered = parseInt(value);
    		
    		return Ext.isEmpty(value) ? "0,00" : value.replace(".", app.format.DECIMAL_SEPARATOR);

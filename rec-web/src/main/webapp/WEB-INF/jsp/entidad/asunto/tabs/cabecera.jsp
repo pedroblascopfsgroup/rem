@@ -212,6 +212,24 @@
     		app.abreProcedimiento(id, nombre_procedimiento);
     	}
     });
+    
+    var reiniciarKOCDD =  function() {
+		Ext.Ajax.request({
+			url: page.resolveUrl('extasunto/getMsgErrorEnvioCDDCabecera')
+			,method: 'POST'
+			,params:{
+     				   idAsunto:panel.getAsuntoId()
+   				}
+			,success: function (result, request){
+				debugger;
+				msgErrorEnvioCDD.setValue('');
+				var r = Ext.util.JSON.decode(result.responseText);
+				var h = r.okko == 'NoCDDError' ? '': r.okko;
+				msgErrorEnvioCDD.setValue(r.okko);
+			}
+		});
+	}
+	
 	
 	var panel = new Ext.Panel({
 		title:'<s:message code="asunto.tabcabecera.titulo" text="**Cabecera"/>'

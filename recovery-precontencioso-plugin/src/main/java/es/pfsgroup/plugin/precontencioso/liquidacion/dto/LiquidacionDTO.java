@@ -21,6 +21,11 @@ public class LiquidacionDTO extends WebDto {
 	private Float interesesDemora;
 	private Float interesesOrdinarios;
 	private Float total;
+	private Float capitalVencidoOriginal;
+	private Float capitalNoVencidoOriginal;
+	private Float interesesDemoraOriginal;
+	private Float interesesOrdinariosOriginal;
+	private Float totalOriginal;
 	private String sysGuid;
 
 	// Estado
@@ -28,8 +33,12 @@ public class LiquidacionDTO extends WebDto {
 	private String estadoLiquidacion;
 
 	// Apoderado
-	private String apoderado;
-	private Long apoderadoId;
+	private String apoderadoNombre;
+	private Long apoderadoUsdId; // USD_ID
+
+	// Apoderado usuario/despacho
+	private Long apoderadoUsuarioId;
+	private Long apoderadoDespachoId;
 
 	/*
 	 * GETTERS & SETTERS
@@ -52,6 +61,12 @@ public class LiquidacionDTO extends WebDto {
 	}
 	public void setIdContrato(Long idContrato) {
 		this.idContrato = idContrato;
+	}
+	public String getProducto() {
+		return producto;
+	}
+	public void setProducto(String producto) {
+		this.producto = producto;
 	}
 	public Date getFechaSolicitud() {
 		return fechaSolicitud;
@@ -107,6 +122,36 @@ public class LiquidacionDTO extends WebDto {
 	public void setTotal(Float total) {
 		this.total = total;
 	}
+	public Float getCapitalVencidoOriginal() {
+		return capitalVencidoOriginal;
+	}
+	public void setCapitalVencidoOriginal(Float capitalVencidoOriginal) {
+		this.capitalVencidoOriginal = capitalVencidoOriginal;
+	}
+	public Float getCapitalNoVencidoOriginal() {
+		return capitalNoVencidoOriginal;
+	}
+	public void setCapitalNoVencidoOriginal(Float capitalNoVencidoOriginal) {
+		this.capitalNoVencidoOriginal = capitalNoVencidoOriginal;
+	}
+	public Float getInteresesDemoraOriginal() {
+		return interesesDemoraOriginal;
+	}
+	public void setInteresesDemoraOriginal(Float interesesDemoraOriginal) {
+		this.interesesDemoraOriginal = interesesDemoraOriginal;
+	}
+	public Float getInteresesOrdinariosOriginal() {
+		return interesesOrdinariosOriginal;
+	}
+	public void setInteresesOrdinariosOriginal(Float interesesOrdinariosOriginal) {
+		this.interesesOrdinariosOriginal = interesesOrdinariosOriginal;
+	}
+	public Float getTotalOriginal() {
+		return totalOriginal;
+	}
+	public void setTotalOriginal(Float totalOriginal) {
+		this.totalOriginal = totalOriginal;
+	}
 	public String getSysGuid() {
 		return sysGuid;
 	}
@@ -119,28 +164,34 @@ public class LiquidacionDTO extends WebDto {
 	public void setEstadoCod(String estadoCod) {
 		this.estadoCod = estadoCod;
 	}
-	public Long getApoderadoId() {
-		return apoderadoId;
-	}
-	public void setApoderadoId(Long apoderadoId) {
-		this.apoderadoId = apoderadoId;
-	}
 	public String getEstadoLiquidacion() {
 		return estadoLiquidacion;
 	}
 	public void setEstadoLiquidacion(String estadoLiquidacion) {
 		this.estadoLiquidacion = estadoLiquidacion;
 	}
-	public String getApoderado() {
-		return apoderado;
+	public String getApoderadoNombre() {
+		return apoderadoNombre;
 	}
-	public void setApoderado(String apoderado) {
-		this.apoderado = apoderado;
+	public void setApoderadoNombre(String apoderadoNombre) {
+		this.apoderadoNombre = apoderadoNombre;
 	}
-	public String getProducto() {
-		return producto;
+	public Long getApoderadoUsdId() {
+		return apoderadoUsdId;
 	}
-	public void setProducto(String producto) {
-		this.producto = producto;
+	public void setApoderadoUsdId(Long apoderadoUsdId) {
+		this.apoderadoUsdId = apoderadoUsdId;
+	}
+	public Long getApoderadoUsuarioId() {
+		return apoderadoUsuarioId;
+	}
+	public void setApoderadoUsuarioId(Long apoderadoUsuarioId) {
+		this.apoderadoUsuarioId = apoderadoUsuarioId;
+	}
+	public Long getApoderadoDespachoId() {
+		return apoderadoDespachoId;
+	}
+	public void setApoderadoDespachoId(Long apoderadoDespachoId) {
+		this.apoderadoDespachoId = apoderadoDespachoId;
 	}
 }

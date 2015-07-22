@@ -9,20 +9,65 @@
 
 	<%-- Fields --%>
 
-	<pfsforms:numberfield name="capitalVencidoField" labelKey="plugin.precontencioso.grid.liquidacion.capitalVencido" 
-	label="**Capital vencido" value="${liquidacion.capitalVencido}" />
+	<pfsforms:numberfield name="capitalVencidoField" labelKey="plugin.precontencioso.grid.liquidacion.capitalVencido" label="**Capital vencido" 
+	value="${liquidacion.capitalVencido}" 
+	obligatory="true" 
+	allowDecimals="true" />
 
-	<pfsforms:numberfield name="capitalNoVencidoField" labelKey="plugin.precontencioso.grid.liquidacion.capitalNoVencido" 
-	label="**Capital no vencido" value="${liquidacion.capitalNoVencido}" />
+	<pfsforms:numberfield name="capitalNoVencidoField" labelKey="plugin.precontencioso.grid.liquidacion.capitalNoVencido" label="**Capital no vencido" 
+	value="${liquidacion.capitalNoVencido}" 
+	obligatory="true" 
+	allowDecimals="true" />
 
-	<pfsforms:numberfield name="interesesOrdinariosField" labelKey="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" 
-	label="**Intereses ordinarios" value="${liquidacion.interesesOrdinarios}" />
+	<pfsforms:numberfield name="interesesOrdinariosField" labelKey="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" label="**Intereses ordinarios" 
+	value="${liquidacion.interesesOrdinarios}" 
+	obligatory="true" 
+	allowDecimals="true" />
 
-	<pfsforms:numberfield name="interesesDemoraField" labelKey="plugin.precontencioso.grid.liquidacion.interesesDemora" 
-	label="**Intereses demora" value="${liquidacion.interesesDemora}" />
+	<pfsforms:numberfield name="interesesDemoraField" labelKey="plugin.precontencioso.grid.liquidacion.interesesDemora" label="**Intereses demora" 
+	value="${liquidacion.interesesDemora}" 
+	obligatory="true" 
+	allowDecimals="true" />
 
-	<pfsforms:numberfield name="totalField" labelKey="plugin.precontencioso.grid.liquidacion.total" 
-	label="**Total" value="${liquidacion.total}" />
+	<pfsforms:numberfield name="totalField" labelKey="plugin.precontencioso.grid.liquidacion.total" label="**Total" 
+	value="${liquidacion.total}" 
+	obligatory="true" 
+	allowDecimals="true" />
+
+	var capitalVencidoOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.capitalVencidoOriginal" text="**Capital Vencido Original" />',
+		value: ${liquidacion.capitalVencidoOriginal},
+		disabled: true,
+		allowDecimals: true
+	});
+
+	var capitalNoVencidoOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.capitalNoVencidoOriginal" text="**Capital No Vencido Original" />',
+		value: ${liquidacion.capitalNoVencidoOriginal},
+		disabled: true,
+		allowDecimals: true
+	});
+
+	var interesesOrdinariosOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinariosOriginal" text="**Intereses Ordinarios Original" />',
+		value: ${liquidacion.interesesOrdinariosOriginal},
+		disabled: true,
+		allowDecimals: true
+	});
+
+	var interesesDemoraOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesDemoraOriginal" text="**Intereses Demora Original" />',
+		value: ${liquidacion.interesesDemoraOriginal},
+		disabled: true,
+		allowDecimals: true
+	});
+
+	var totalOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.totalOriginal" text="**Total Original" />',
+		value: ${liquidacion.totalOriginal},
+		disabled: true,
+		allowDecimals: true
+	});
 
 <%-- Apoderado --%>
 
@@ -30,7 +75,6 @@
 
 	var tipoGestorRecord = Ext.data.Record.create([
 		{name: 'id'},
-		{name: 'codigo'},
 		{name: 'descripcion'}
 	]);
 
@@ -56,7 +100,6 @@
 	<%-- Combo Tipo Despacho --%>
 
 	var tipoDespachoRecord = Ext.data.Record.create([
-		{name: 'id'},
 		{name: 'cod'},
 		{name: 'descripcion'}
 	]);
@@ -123,8 +166,7 @@
 	});
 
 	tipoGestorStore.on('load', function(combo) {
-		// Se filtra por tipo de gestor apoderado.
-		var numRecord = tipoGestorStore.findExact('descripcion', 'Apoderado', 0);
+		var numRecord = tipoGestorStore.findExact('descripcion', '${tipoGestorApoderado.descripcion}', 0);
 		var value = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.valueField];
 		var rawValue = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.displayField];
 
@@ -147,6 +189,37 @@
 		comboUsuario.setDisabled(false);
 	});
 
+	tipoDespachoStore.on('load', function(combo) {
+		var numRecord = tipoDespachoStore.findExact('cod', ${liquidacion.apoderadoDespachoId}, 0);
+
+		if (numRecord != -1) {
+			var value = tipoDespachoStore.getAt(numRecord).data[comboTipoDespacho.valueField];
+			var rawValue = tipoDespachoStore.getAt(numRecord).data[comboTipoDespacho.displayField];
+
+			comboTipoDespacho.setValue(value);
+			comboTipoDespacho.setRawValue(rawValue);
+			comboTipoDespacho.selectedIndex = numRecord;
+
+			comboUsuario.reset();
+			comboUsuario.setDisabled(false);
+
+			usuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()});
+		}
+	});
+
+	usuarioStore.on('load', function(combo) {
+		var numRecord = usuarioStore.findExact('id', ${liquidacion.apoderadoUsuarioId}, 0);
+
+		if (numRecord != -1) {
+			var value = usuarioStore.getAt(numRecord).data[comboUsuario.valueField];
+			var rawValue = usuarioStore.getAt(numRecord).data[comboUsuario.displayField];
+
+			comboUsuario.setValue(value);
+			comboUsuario.setRawValue(rawValue);
+			comboUsuario.selectedIndex = numRecord;
+		}
+	});
+
 	<%-- Buttons --%>
 
 	var btnGuardar = new Ext.Button({
@@ -155,14 +228,18 @@
 		cls: 'x-btn-text-icon',
 		style: 'padding-top:0px',
 		handler: function() {
-			Ext.Ajax.request({
-				url: page.resolveUrl('liquidacion/editar'),
-				params: getParametros(),
-				method: 'POST',
-				success: function ( result, request ) {
-					page.fireEvent(app.event.DONE);
-				}
-			});
+			if (validarForm() == '') {
+				Ext.Ajax.request({
+					url: page.resolveUrl('liquidacion/editar'),
+					params: getParametros(),
+					method: 'POST',
+					success: function ( result, request ) {
+						page.fireEvent(app.event.DONE);
+					}
+				});
+			} else {
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', validarForm());
+			}
 		}
 	});
 
@@ -176,19 +253,52 @@
 
 	<%-- Panel --%>
 
-	var panelEdicion = new Ext.form.FormPanel({
+	var panelEdicion = new Ext.Panel({
+		layout: 'table',
+		layoutConfig: { columns: 2 },
 		autoHeight: true,
-		bodyStyle:'padding:10px;cellspacing:20px',
-		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
-		items: [capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField, comboTipoGestor, comboTipoDespacho, comboUsuario],
-		bbar: new Ext.Toolbar()
+		autoWidth: true,
+		bodyStyle: 'padding:10px; cellspacing:20px',
+		defaults: {xtype: 'fieldset', cellCls: 'vtop', border: false},
+		bbar: [btnGuardar, btnCancelar],
+		items: [
+			{
+				items: [ capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField, comboTipoGestor, comboTipoDespacho, comboUsuario ]
+			}, {
+				items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField ]
+			}
+		]
 	});
 
-	panelEdicion.getBottomToolbar().addButton([btnGuardar]);
-	panelEdicion.getBottomToolbar().addButton([btnCancelar]);
 	page.add(panelEdicion);
 
-	<%-- Utils --%>
+	<%-- Utils   --%>
+
+	var validarForm = function() {
+		var mensaje = '';
+
+		if (capitalVencidoField.getActiveError() != '') {
+			mensaje = mensaje + capitalVencidoField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.capitalVencido" /> \n'
+		}
+
+		if (capitalNoVencidoField.getActiveError() != '') {
+			mensaje = mensaje + capitalNoVencidoField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.capitalNoVencido" /> \n'
+		}
+
+		if (interesesOrdinariosField.getActiveError() != '') {
+			mensaje = mensaje + interesesOrdinariosField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" /> \n'
+		}
+
+		if (interesesDemoraField.getActiveError() != '') {
+			mensaje = mensaje + interesesDemoraField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.interesesDemora" /> \n'
+		}
+
+		if (totalField.getActiveError() != '') {
+			mensaje = mensaje + totalField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.total" /> \n'
+		}
+
+		return mensaje;
+	}
 
 	var getParametros = function() {
 		var parametros = {};
@@ -201,7 +311,8 @@
 		parametros.total = totalField.getValue();
 
 		if (comboUsuario.getValue() != "") {
-			parametros.apoderadoId = comboUsuario.getValue();
+			parametros.apoderadoDespachoId = comboTipoDespacho.getValue();
+			parametros.apoderadoUsuarioId = comboUsuario.getValue();
 		}
 
 		return parametros;

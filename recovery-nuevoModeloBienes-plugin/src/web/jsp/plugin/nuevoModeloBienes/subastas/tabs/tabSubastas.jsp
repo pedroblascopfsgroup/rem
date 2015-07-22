@@ -194,7 +194,7 @@
 		,autoWidth: true
 		,style:'padding-right:10px'
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-		,bbar: [btnInfSubasta, btnInstrucSubasta <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnEditarInfoCierre</sec:authorize>]
+		,bbar: [btnInfSubasta, btnInstrucSubasta <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnEditarInfoCierre, btnResetKOCDD</sec:authorize>]
 	});
 
 	gridSubastas.on('expand', function(){
@@ -581,7 +581,7 @@
 			,enableNoGroups:true
 			,selectedRowClass : 'x-grid-row-selected'	
 		})
-		,bbar:[ btnExpandAll, btnCollapseAll, btnAgregarBien, btnExcluirBien, btnInstrucLotes <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre, btnResetKOCDD</sec:authorize>]
+		,bbar:[ btnExpandAll, btnCollapseAll, btnAgregarBien, btnExcluirBien, btnInstrucLotes <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>]
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);

@@ -56,7 +56,7 @@ var createPanelOperaciones = function() {
 						,title: '<s:message code="analisisOperacion.editar" text="**Editar Análisis" />'
 						,closable:true
 						,params:{idPersona:${persona.id},idContrato:idContrato, idAppSeleccionado:idAppSeleccionado}
-						,width: 680
+						,width: 800
 					});
 					win.on(app.event.CANCEL,function(){win.close();});
 					win.on(app.event.DONE,

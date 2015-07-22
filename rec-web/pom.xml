@@ -2229,7 +2229,7 @@
 						<directory>src/main/resources</directory>
 					</resource>
 					<resource>
-						<directory>src/custom/haya/resources</directory>
+						<directory>src/custom/cajamar/resources</directory>
 					</resource>
 				</resources>
 			</build>

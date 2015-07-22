@@ -354,8 +354,32 @@ DECLARE
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0',
         /*dd_tge_editable_web........:*/ '1'
-        )
+        ),
+
+      T_TIPO_TGE(
+        /*dd_tge_id..................:*/ 's_dd_tge_tipo_gestor.nextval',
+        /*dd_tge_codigo,.............:*/ 'CJ-GESEXT',
+        /*dd_tge_descripcion,........:*/ 'CJ - Gestor Externo',
+        /*dd_tge_descripcion_larga,..:*/ 'CJ - Gestor Externo',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0',
+        /*dd_tge_editable_web........:*/ '1'
+        ),
         
+      T_TIPO_TGE(
+        /*dd_tge_id..................:*/ 's_dd_tge_tipo_gestor.nextval',
+        /*dd_tge_codigo,.............:*/ 'CJ-SUEXT',
+        /*dd_tge_descripcion,........:*/ 'CJ - Supervisor Externo',
+        /*dd_tge_descripcion_larga,..:*/ 'CJ - Supervisor Externo',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0',
+        /*dd_tge_editable_web........:*/ '1'
+        )
+	
     ); 
     V_TMP_TIPO_TGE T_TIPO_TGE;
 
@@ -618,8 +642,29 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0'
-        )
+        ),
 
+      T_TIPO_TDE(
+        /*dd_tde_id..................:*/ 's_dd_tde_tipo_despacho.nextval',
+        /*dd_tde_codigo,.............:*/ 'D-CJ-GESEXT',
+        /*dd_tde_descripcion,........:*/ 'Despacho Gestor Externo',
+        /*dd_tde_descripcion_larga,..:*/ 'Despacho Gestor Externo',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0'
+        ),
+      T_TIPO_TDE(
+        /*dd_tde_id..................:*/ 's_dd_tde_tipo_despacho.nextval',
+        /*dd_tde_codigo,.............:*/ 'D-CJ-SUEXT',
+        /*dd_tde_descripcion,........:*/ 'Despacho Supervisor Externo',
+        /*dd_tde_descripcion_larga,..:*/ 'Despacho Supervisor Externo',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0'
+        )
+        
     ); 
     V_TMP_TIPO_TDE T_TIPO_TDE;
 
@@ -861,12 +906,30 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
+        ),
+      T_TIPO_TGP(
+        /*tgp_id.....................:*/ 's_tgp_tipo_gestor_propiedad.nextval',
+        /*dd_tge_id..................:*/ 'CJ-GESEXT',
+        /*tgp_clave,.................:*/ 'DES_VALIDOS',
+        /*tgp_valor,.................:*/ 'D-CJ-GESEXT',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),
+      T_TIPO_TGP(
+        /*tgp_id.....................:*/ 's_tgp_tipo_gestor_propiedad.nextval',
+        /*dd_tge_id..................:*/ 'CJ-SUEXT',
+        /*tgp_clave,.................:*/ 'DES_VALIDOS',
+        /*tgp_valor,.................:*/ 'D-CJ-SUEXT',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
         )
 
     ); 
     V_TMP_TIPO_TGP T_TIPO_TGP;
-
-
 
     /*
     * ARRAY TABLA4: DD_STA_SUBTIPO_TAREA_BASE
@@ -1175,9 +1238,37 @@ DECLARE
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
         ),
-	
-	        
-      -- TOMAS DE DECISION ---
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'CJ-TGESEXT',
+        /*dd_sta_descripcion,........:*/ 'Tarea del Gestor Externo',
+        /*dd_sta_descripcion_larga...:*/ 'Tarea del Gestor Externo',
+        /*dd_tge_id..................:*/ 'CJ-GESEXT',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'CJ-TSUEXT',
+        /*dd_sta_descripcion,........:*/ 'Tarea del Supervisor Externo',
+        /*dd_sta_descripcion_larga...:*/ 'Tarea del Supervisor Externo',
+        /*dd_tge_id..................:*/ 'CJ-SUEXT',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),
+        
+        
+	  ----------------------        
+      -- **** TOMAS DE DECISION ****
+	  ----------------------        
       
       T_TIPO_STB(
         /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
@@ -1232,6 +1323,10 @@ DECLARE
         /*borrado,...................:*/ '0' 
         )
         
+	  ----------------------        
+      -- **** FIN TOMAS DE DECISION ***
+	  ----------------------        
+
     ); 
     V_TMP_TIPO_STB T_TIPO_STB;
 

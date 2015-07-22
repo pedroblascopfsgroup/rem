@@ -12,7 +12,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_PROV_FONDOS_TIPOIMP", schema = "${entity.schema}")
+@Table(name = "DD_PFI_PROV_FONDOS_TIPOIMP", schema = "${entity.schema}")
 public class DDProvisionFondosTipoImpuesto implements Auditable, Dictionary{
     
 	/**

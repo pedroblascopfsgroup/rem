@@ -35,157 +35,24 @@ DECLARE
     TYPE T_ARRAY_TFA IS TABLE OF T_TIPO_TFA;
     V_TIPO_TFA T_ARRAY_TFA := T_ARRAY_TFA(  
       T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-DRECU',
-      	/*username.........*/ 'CJ_DRECU',
+      	/*codigo tde.......*/ 'D-GESCHRE',
+      	/*username.........*/ 'CJ_GESCHRE',
       	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_DRECU',
-      	/*nombre-despacho..*/ 'Despacho Dirección recuperaciones CJ'),
+      	/*nombre usuario ..*/ 'CJ_GESCHRE',
+      	/*nombre-despacho..*/ 'Despacho Gestor control de gestión HRE'),
       T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-GAREO',
-      	/*username.........*/ 'CJ_GAREO',
+      	/*codigo tde.......*/ 'D-SUCHRE',
+      	/*username.........*/ 'CJ_SUCHRE',
       	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GAREO',
-      	/*nombre-despacho..*/ 'Despacho Gestor admisión CJ'),
+      	/*nombre usuario ..*/ 'CJ_SUCHRE',
+      	/*nombre-despacho..*/ 'Despacho Supervisor control gestión HRE'),
       T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GAEST',
-      	/*username.........*/ 'CJ_GAEST',
+      	/*codigo tde.......*/ 'D-DIRREC',
+      	/*username.........*/ 'CJ_DIRREC',
       	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GAEST',
-      	/*nombre-despacho..*/ 'Despacho Gestor análisis estudio CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GAFIS',
-      	/*username.........*/ 'CJ_GAFIS',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GAFIS',
-      	/*nombre-despacho..*/ 'Despacho Gestor Aseoría Fiscal CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GAJUR',
-      	/*username.........*/ 'CJ_GAJUR',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GAJUR',
-      	/*nombre-despacho..*/ 'Despacho Gestor Asesoría jurídica CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GCON',
-      	/*username.........*/ 'CJ_GCON',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GCON',
-      	/*nombre-despacho..*/ 'Despacho Gestor contabilidad CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GCONGE',
-      	/*username.........*/ 'CJ_GCONGE',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GCONGE',
-      	/*nombre-despacho..*/ 'Despacho Gestor contencioso gestión CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GCONPR',
-      	/*username.........*/ 'CJ_GCONPR',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GCONPR',
-      	/*nombre-despacho..*/ 'Despacho Gestor contencioso procesal CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GCTRGE',
-      	/*username.........*/ 'CJ_GCTRGE',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GCTRGE',
-      	/*nombre-despacho..*/ 'Despacho Gestor control gestión HRE CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GGESDOC',
-      	/*username.........*/ 'CJ_GGESDOC',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GGESDOC',
-      	/*nombre-despacho..*/ 'Despacho Gestor de gestión documentario CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-GESTLLA',
-      	/*username.........*/ 'CJ_GESTILL',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GESTILLA',
-      	/*nombre-despacho..*/ 'Despacho Gestor HRE gestión llaves CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-LETR',
-      	/*username.........*/ 'CJ_LETRADO',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_LETRADO',
-      	/*nombre-despacho..*/ 'Despacho Letrado CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-SAREO',
-      	/*username.........*/ 'CJ_SAREO',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SAREO',
-      	/*nombre-despacho..*/ 'Despacho Supervisor admisión CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SAEST',
-      	/*username.........*/ 'CJ_SAEST',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SAEST',
-      	/*nombre-despacho..*/ 'Despacho Supervisor análisis estudio CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-SFIS',
-      	/*username.........*/ 'CJ_SFIS',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SFIS',
-      	/*nombre-despacho..*/ 'Despacho Supervisor Asesoría Fiscal CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SAJUR',
-      	/*username.........*/ 'CJ_SAJUR',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SAJUR',
-      	/*nombre-despacho..*/ 'Despacho Supervisor Asesoría jurídica CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-SCON',
-      	/*username.........*/ 'CJ_SCON',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SCON',
-      	/*nombre-despacho..*/ 'Despacho Supervisor contabilidad CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SUCONT',
-      	/*username.........*/ 'CJ_SUCONT',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SUCONT',
-      	/*nombre-despacho..*/ 'Despacho Supervisor contencioso CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SUCONGE',
-      	/*username.........*/ 'CJ_SUCONGE',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SUCONGE',
-      	/*nombre-despacho..*/ 'Despacho Supervisor contencioso gestión CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SUCONPR',
-      	/*username.........*/ 'CJ_SUCONPR',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SUCONPR',
-      	/*nombre-despacho..*/ 'Despacho Supervisor contencioso procesal CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SCTRGE',
-      	/*username.........*/ 'CJ_SCTRGE',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SCTRGE',
-      	/*nombre-despacho..*/ 'Despacho Supervisor control gestión HRE CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SGESDOC',
-      	/*username.........*/ 'CJ_SGESDOC',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SGESDOC',
-      	/*nombre-despacho..*/ 'Despacho Supervisor de gestión documentario CJ'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SPGL',
-      	/*username.........*/ 'CJ_SPGL',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SPGL',
-      	/*nombre-despacho..*/ 'Despacho Supervisor HRE gestión llaves CJ'),
+      	/*nombre usuario ..*/ 'CJ_DIRREC',
+      	/*nombre-despacho..*/ 'Despacho Dirección recuperaciones')
       	
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-GESEXT',
-      	/*username.........*/ 'CJ_GESEXT',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_GESEXT',
-      	/*nombre-despacho..*/ 'Despacho Gestor Externo'),
-      T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-CJ-SUEXT',
-      	/*username.........*/ 'CJ_SUEXT',
-      	/*password.........*/ '1234',
-      	/*nombre usuario ..*/ 'CJ_SUEXT',
-      	/*nombre-despacho..*/ 'Despacho Supervisor Externo')
-
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

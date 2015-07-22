@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.1-hy-rc02
---## INCIDENCIA_LINK=CMREC-391
+--## INCIDENCIA_LINK=CMREC-373
 --## PRODUCTO=NO
 --##
 --## Finalidad: Adaptar BPM's Haya-Cajamar
@@ -25,21 +25,14 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     
-    /*
-    * CONFIGURACION: TABLAS
-    *---------------------------------------------------------------------
-    */    
-    PAR_TABLENAME_TPROC VARCHAR2(50 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO';   -- [PARAMETRO] TABLA para tipo de procedimiento. Por defecto DD_TPO_TIPO_PROCEDIMIENTO
-
 BEGIN
 	
 	/* 
 	 * UPDATES
 	 * -------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. Tributacion de Bienes Sareb - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteTributacionBienesSareb'' WHERE tpo.DD_TPO_CODIGO = ''H054''';
-    
-    	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO tpo SET tpo.DD_TPO_DESCRIPCION = ''T. de Intereses - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteIntereses'' WHERE tpo.DD_TPO_CODIGO = ''H042''';
+	
    COMMIT;
     DBMS_OUTPUT.PUT_LINE('[COMMIT ALL]...............................................');
     DBMS_OUTPUT.PUT_LINE('[FIN-SCRIPT]-----------------------------------------------------------');

@@ -364,15 +364,15 @@
 		<transition to="adjudicadoAEntidad" name="opcionC"></transition>
 	</fork>
 
-	<decision name="conIVAoIGIC" expression="#{op.ivaigic}">
+	<decision name="conIVAoIGIC" expression="#{op_ivaigic}">
 		<transition name="NO" to="Fin2"></transition>
 		<transition name="SI" to="H005_declararIVAeIGIC"></transition>
 	</decision>
-	<decision name="cargasPrevias" expression="#{op.cargasPrevias}">
+	<decision name="cargasPrevias" expression="#{op_cargasPrevias}">
 		<transition name="NO" to="H005_RevisarInfoContable"></transition>
 		<transition name="SI" to="H005_BPMTramiteSaneamientoCargas"></transition>
 	</decision>
-	<decision name="requiereComAdicional" expression="#{op.requieComAdicional}">
+	<decision name="requiereComAdicional" expression="#{op_requieComAdicional}">
 		<transition name="NO" to="Fin3"></transition>
 		<transition name="SI" to="H005_RevisionComAdicional"></transition>
 	</decision>
@@ -380,7 +380,7 @@
 		<transition name="NO" to="fork4"></transition>
 		<transition name="SI" to="H005_BPMTramiteSubsanacionEmbargo1"></transition>
 	</decision>
-	<decision name="adjudicadoAEntidad"  expression="#{op.adjudicadoAEntidad}">
+	<decision name="adjudicadoAEntidad"  expression="#{op_adjudicadoAEntidad}">
 		<transition name="NO" to="Fin3"></transition>
 		<transition name="SI" to="cargasPrevias"></transition>
 	</decision>
@@ -556,12 +556,12 @@
 		<transition to="fork1" name="NO"></transition>
 	</decision>
 
-	<decision name="conOcupantes" expression="#{op2.conOcupantes}">
+	<decision name="conOcupantes" expression="#{op2_conOcupantes}">
 		<transition to="H005_BPMNotifNotarialOcupante" name="SI"></transition>
 		<transition to="H005_BPMCertfLibertadArrendamiento" name="NO"></transition>
 	</decision>
 
-	<decision name="requiereComAdicional2" expression="#{op2.requieComAdicional}">
+	<decision name="requiereComAdicional2" expression="#{op2_requieComAdicional}">
 		<transition to="H005_RevisionComAdicional" name="SI"></transition>
 		<transition to="Fin" name="NO"></transition>
 	</decision>

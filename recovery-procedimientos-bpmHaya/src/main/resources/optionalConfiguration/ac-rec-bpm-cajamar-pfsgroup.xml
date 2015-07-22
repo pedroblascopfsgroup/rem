@@ -18,7 +18,7 @@
 	<!-- Gonzalo -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondos/hcj_provisionFondos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoHipotecario/hcj_procedimientoHipotecario.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgrup/cajamar/tramiteAdjudicacion/hcj_tramiteAdjudicacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/hcj_tramiteAdjudicacion.xml" p:version="-1"/>
 	
 	<!-- Alberto -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
@@ -45,6 +45,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteTributacionBienesSareb/haya_tramiteTributacionBienesSareb.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalculoDeudaAFecha/hcj_calculoDeudaAFecha.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCesionRemate/haya_tramiteCesionRemateV4.xml" p:version="-1"/>		
@@ -72,7 +73,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePropuestaAnticipadaConvenio/tramitePropuestaAnticipadaConvenio.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSolicitudActuacionesPronunciamientos/haya_tramiteSolicitudActuacionesPronunciamientos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandadoEnIncidente/haya_tramiteDemandadoEnIncidente.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandaIncidental/haya_tramiteDemandaIncidental.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteRegistrarResolucionInteres/haya_tramiteRegistrarResolucionInteres.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteConclusion/haya_tramiteConclusion.xml" p:version="-1"/>
@@ -83,6 +83,35 @@
   		<list>
   			<value><![CDATA[ 	
 
+				def comprobarComboComunicacionAdicionalNOTIFENT() {
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboSubsanacion']==DDSiNo.SI) {
+						return true;
+					}
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboAdicional']==null) {
+					 	return false;
+					 }
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboAdicional']==DDSiNo.SI && 
+						valores['H005_notificacionDecretoAdjudicacionAEntidad']['fechaLimite']==null) {
+						return false;
+					}
+					return true;
+				}
+
+				def comprobarComboComunicacionAdicionalCONFTESTI() {
+					if (valores['H005_ConfirmarTestimonio']['comboSubsanacion']==DDSiNo.SI) {
+						return true;
+					}
+					if (valores['H005_ConfirmarTestimonio']['comboAdicional']==null ||
+						valores['H005_ConfirmarTestimonio']['comboOcupantes']==null) {
+					 	return false;
+					}
+					if (valores['H005_ConfirmarTestimonio']['comboAdicional']==DDSiNo.SI && 
+						valores['H005_ConfirmarTestimonio']['fechaLimite']==null) {
+						return false;
+					}
+					return true;
+				}
+				
 	            def existenCargasPreviasActivas = {
 	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionHayaProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.existenCargasPreviasActivas(idProcedimiento);
@@ -136,6 +165,11 @@
 	            def comprobarExisteDocumentoCOMAD = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "COMAD");
+	            }
+	            
+	            def comprobarExisteDocumentoAAEEE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AAEEE");
 	            }
         	            
   			 ]]>

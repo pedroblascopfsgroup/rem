@@ -37,9 +37,8 @@ BEGIN
 	 * UPDATES
 	 * -------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. de costas - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteCostas'' WHERE tpo.DD_TPO_CODIGO = ''H007''';
-    
-    	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. Vigilancia y Caducidad Embargos - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteVigilanciaCaducidadEmbargos'' WHERE tpo.DD_TPO_CODIGO = ''H062''';
+	  	
    COMMIT;
     DBMS_OUTPUT.PUT_LINE('[COMMIT ALL]...............................................');
     DBMS_OUTPUT.PUT_LINE('[FIN-SCRIPT]-----------------------------------------------------------');

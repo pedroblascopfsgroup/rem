@@ -38,6 +38,7 @@ BEGIN
 	 * -------
 	 */
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. de Embargo de Salarios - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteEmbargoSalarios'' WHERE tpo.DD_TPO_CODIGO = ''H038''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''((valores[''''H038_ConfirmarRequerimientoResultado''''][''''comboRequerido''''] == DDSiNo.SI) && ((valores[''''H038_ConfirmarRequerimientoResultado''''][''''comboResultado''''] == '''''''')||(valores[''''H038_ConfirmarRequerimientoResultado''''][''''comboResultado''''] == null)||(valores[''''H038_ConfirmarRequerimientoResultado''''][''''importeNom''''] == '''''''')||(valores[''''H038_ConfirmarRequerimientoResultado''''][''''importeRet''''] == '''''''')) )?''''tareaExterna.error.H038_ConfirmarRequerimientoResultado.importesYresultado'''':null''  WHERE TAP_CODIGO = ''H038_ConfirmarRequerimientoResultado''';
     
     	
    COMMIT;

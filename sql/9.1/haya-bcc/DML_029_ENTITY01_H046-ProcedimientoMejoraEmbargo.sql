@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150715
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.1-hy-rc02
---## INCIDENCIA_LINK=CMREC-373
+--## INCIDENCIA_LINK=CMREC-391
 --## PRODUCTO=NO
 --##
 --## Finalidad: Adaptar BPM's Haya-Cajamar
@@ -25,17 +25,20 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     
+    /*
+    * CONFIGURACION: TABLAS
+    *---------------------------------------------------------------------
+    */    
+    PAR_TABLENAME_TPROC VARCHAR2(50 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO';   -- [PARAMETRO] TABLA para tipo de procedimiento. Por defecto DD_TPO_TIPO_PROCEDIMIENTO
+
 BEGIN
 	
 	/* 
 	 * UPDATES
 	 * -------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO tpo SET tpo.DD_TPO_DESCRIPCION = ''T. de depósito - HCJ'', tpo.DD_TPO_XML_JBPM      = ''hcj_tramiteDeposito'' WHERE tpo.DD_TPO_CODIGO = ''H034''';
-	EXECUTE IMMEDIATE 'DELETE FROM  '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS where tap_id = (SELECT tap_id from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where tap_codigo = ''H034_ContactarDeudor'')';
-    EXECUTE IMMEDIATE 'DELETE FROM  '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS where tap_id = (SELECT tap_id from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where tap_codigo = ''H034_ContactarDeudor'')';
-    EXECUTE IMMEDIATE 'DELETE FROM  '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where tap_codigo = ''H034_ContactarDeudor''';
-    
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' tpo SET tpo.DD_TPO_DESCRIPCION = ''T. Mejora Embargo - HCJ'', tpo.DD_TPO_XML_JBPM = ''hcj_tramiteMejoraEmbargo'' WHERE tpo.DD_TPO_CODIGO = ''H046''';
+	  	
    COMMIT;
     DBMS_OUTPUT.PUT_LINE('[COMMIT ALL]...............................................');
     DBMS_OUTPUT.PUT_LINE('[FIN-SCRIPT]-----------------------------------------------------------');

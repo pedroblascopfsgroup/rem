@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -28,6 +29,7 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
+	@Qualifier("adjudicacionProcedimientoManagerDelegated")
 	AdjudicacionProcedimientoDelegateApi adjProcedimientoManager;
 
 	@Autowired
@@ -37,7 +39,7 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
-	AdjudicacionHayaProcedimientoManager hayaProcManager;
+	private AdjudicacionHayaProcedimientoManager hayaProcManager;
 
 	private List<EXTTareaExternaValor> camposTarea(TareaExterna tex) {
 		return ((SubastaProcedimientoApi) proxyFactory
@@ -61,8 +63,8 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
 			// opción A - IVA/IGIC
 			String tributacion = adjProcedimientoManager.comprobarBienSujetoIVA(prc.getId());
         	boolean opA = (tributacion != null && !tributacion.equals("ITP"));
-        	
-			// opción E - Requiere doc Adicional
+			
+        	// opción E - Requiere doc Adicional
         	String docAdicional = dameValorTarea(campos, "comboAdicional");
         	boolean opE = (!Checks.esNulo(docAdicional) && docAdicional.equals(DDSiNo.SI));
         	
@@ -73,14 +75,16 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
         			&& bien.getAdjudicacion().getEntidadAdjudicataria().equals(DDEntidadAdjudicataria.ENTIDAD));
         	boolean cargasPrevias = false;
         	if (adjudicadoEntidad) {
-        		cargasPrevias = hayaProcManager.existenCargasPreviasActivas(prc.getId());
+        		cargasPrevias = false; //hayaProcManager.existenCargasPreviasActivas(prc.getId());
         	}
-        	
-			this.setVariable("op.ivaigic", (opA ? "SI" : "NO"), executionContext);
-			this.setVariable("op.adjudicadoAEntidad", (adjudicadoEntidad ? "SI" : "NO"), executionContext);
-			this.setVariable("op.cargasPrevias", (cargasPrevias ? "SI" : "NO"), executionContext);
-			this.setVariable("op.requieComAdicional", (opE ? "SI" : "NO"), executionContext);
-        	
+        	adjudicadoEntidad = opA = true;
+        	cargasPrevias = false;
+        			
+			this.setVariable("op_ivaigic", (opA ? "SI" : "NO"), executionContext);
+			this.setVariable("op_adjudicadoAEntidad", (adjudicadoEntidad ? "SI" : "NO"), executionContext);
+			this.setVariable("op_cargasPrevias", (cargasPrevias ? "SI" : "NO"), executionContext);
+			this.setVariable("op_requieComAdicional", (opE ? "SI" : "NO"), executionContext);
+
 		} else if (executionContext
 				.getNode()
 				.getName()
@@ -96,13 +100,11 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
         	String ocupantes = dameValorTarea(campos, "comboOcupantes");
         	boolean opC = (!Checks.esNulo(ocupantes) && ocupantes.equals(DDSiNo.SI));
         	
-			this.setVariable("op2.requieComAdicional", (opB ? "SI" : "NO"), executionContext);
-			this.setVariable("op2.conOcupantes", (opC ? "SI" : "NO"), executionContext);
-			
-		} else {
-			super.setDecisionVariable(executionContext);
+			this.setVariable("op2_requieComAdicional", (opB ? "SI" : "NO"), executionContext);
+			this.setVariable("op2_conOcupantes", (opC ? "SI" : "NO"), executionContext);
 		}
 		
+		super.setDecisionVariable(executionContext);
 	}
 
 	private NMBBien getBien(Procedimiento prc) {

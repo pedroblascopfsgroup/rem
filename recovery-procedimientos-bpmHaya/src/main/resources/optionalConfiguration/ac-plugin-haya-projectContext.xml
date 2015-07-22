@@ -61,6 +61,60 @@
 						<value>CJ-819</value>
 					</set>
 				</entry>
+				<entry key="ABRIR_TAREA_PROCEDIMIENTO">
+					<set>
+						<!-- HRE -->
+						<value>800</value>
+						<value>801</value>
+						<value>802</value>
+						<value>803</value>
+						<value>804</value>
+						<value>805</value>
+						<value>806</value>
+						<value>807</value>
+						<value>808</value>
+						<value>809</value>
+						<value>810</value>
+						<value>811</value>
+						<value>812</value>
+						<value>813</value>
+						<value>814</value>
+						<value>815</value>
+						<value>816</value>
+						<value>817</value>
+						<value>818</value>
+						<value>1001</value>
+						<value>1011</value>
+						<value>1021</value>
+						<value>1031</value>
+						<value>1041</value>
+						
+						<!-- HRE-BCC -->
+						<value>TDRECU</value>
+						<value>CJ-811</value>
+						<value>TGAEST</value>
+						<value>TGAFIS</value>
+						<value>TGAJUR</value>
+						<value>TGCON</value>
+						<value>TGCONGE</value>
+						<value>TGCONPR</value>
+						<value>TGCTRGE</value>
+						<value>TGGESDOC</value>
+						<value>CJ-104</value>
+						<value>CJ-814</value>
+						<value>CJ-812</value>
+						<value>TSAEST</value>
+						<value>CJ-810</value>
+						<value>TSAJUR</value>
+						<value>CJ-808</value>
+						<value>TSUCONT</value>
+						<value>TSUCONGE</value>
+						<value>TSUCONPR</value>
+						<value>TSCTRGE</value>
+						<value>TSGESDOC</value>
+						<value>TSPGL</value>
+					</set>
+				</entry>
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">

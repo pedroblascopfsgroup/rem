@@ -3,8 +3,10 @@ package es.pfsgroup.plugin.precontencioso.documento.assembler;
 import java.text.SimpleDateFormat;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDSiNoNoAplica;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 
@@ -27,7 +29,7 @@ public class DocumentoAssembler {
 	 * @return List<liquidacionDTO> DTO
 	 */
 	public static SolicitudDocumentoPCODto docAndSolEntityToSolicitudDto(DocumentoPCO documento,
-			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, DDSiNo siNo) {
+			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, DDSiNo siNo, DDSiNoNoAplica siNoAplica) {
 		SolicitudDocumentoPCODto solicitudDto = new SolicitudDocumentoPCODto();
 				
 		solicitudDto.setId(solicitud.getId());
@@ -38,6 +40,9 @@ public class DocumentoAssembler {
 			solicitudDto.setTipoDocumento(documento.getTipoDocumento().getDescripcion());
 			solicitudDto.setEstado(documento.getEstadoDocumento().getDescripcion());
 			solicitudDto.setAdjunto(siNo.getDescripcion());	
+			if (!Checks.esNulo(siNoAplica)) {
+				solicitudDto.setEjecutivo(siNoAplica.getDescripcion());
+			}
 			solicitudDto.setComentario(documento.getObservaciones());
 		}
 		
@@ -56,7 +61,7 @@ public class DocumentoAssembler {
 		return solicitudDto;
 	}
 	
-	public static DocumentoPCODto docEntityToDocumentoDto(DocumentoPCO documento, DDSiNo siNo) {
+	public static DocumentoPCODto docEntityToDocumentoDto(DocumentoPCO documento, DDSiNo siNo, DDSiNoNoAplica siNoAplica) {
 		DocumentoPCODto doc = new DocumentoPCODto();
 		doc.setId(documento.getId());
 		doc.setIdProc(documento.getProcedimientoPCO().getId());
@@ -66,6 +71,9 @@ public class DocumentoAssembler {
 		doc.setTipoDocumento(documento.getTipoDocumento().getDescripcion());
 		doc.setEstado(documento.getEstadoDocumento().getDescripcion());
 		doc.setAdjunto(siNo.getDescripcion());
+		if (!Checks.esNulo(siNoAplica)) {
+			doc.setEjecutivo(siNoAplica.getDescripcion());
+		}
 		doc.setComentario(documento.getObservaciones());
 		doc.setAsiento(documento.getAsiento());
 		doc.setFinca(documento.getFinca());

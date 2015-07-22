@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
@@ -31,9 +34,12 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDSiNoNoAplica;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -54,6 +60,7 @@ public class DocumentoPCOController {
 	private static final String INCLUIR_DOC = "plugin/precontencioso/documento/popups/incluirDocumento";
 	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
+	private static final String TIPO_GESTOR_JSON = "plugin/coreextension/asunto/tipoGestorJSON";
 	private static final String PENDIENTE_SOLICITAR = DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR;
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -215,21 +222,23 @@ public class DocumentoPCOController {
 			@RequestParam(value = "idSolicitud", required = true) String idSolicitud, 
 			@RequestParam(value = "actor", required = true) String actor, 
 			@RequestParam(value = "idDoc", required = true) String idDoc, 
-			@RequestParam(value = "estado", required = true) String estado, 
-			@RequestParam(value = "adjunto", required = true) String adjuntado, 
 			@RequestParam(value = "fechaResultado", required = true) String fechaResultado, 
 			@RequestParam(value = "resultado", required = true) String resultado, 
 			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
 			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
-			@RequestParam(value = "comentario", required = true) String comentario, 
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
 
+		Long idDocumento = Long.valueOf(idDoc);
+		
+		DocumentoPCODto doc = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
+		
 		dto.setIdSolicitud(Long.parseLong(idSolicitud));
-		dto.setActor(actor);
-		dto.setIdDoc(Long.parseLong(idDoc));
-		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, estado));
+		dto.setActor(obtenerCodigoDiccionario(DDTipoActorPCO.class, actor));
+		dto.setIdDoc(idDocumento);
+		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, doc.getEstado()));
+		String adjuntado = doc.getAdjunto();
 		dto.setAdjuntado(obtenerCodigoDiccionario(DDSiNo.class, adjuntado));
 		if ("".equals(dto.getAdjuntado()) && !"".equals(adjuntado)) {
 			if ("NO".equalsIgnoreCase(adjuntado) || DDSiNo.NO.equals(adjuntado)) {
@@ -238,20 +247,33 @@ public class DocumentoPCOController {
 				dto.setAdjuntado(DDSiNo.SI);
 			}
 		}
+
+		String ejecutivo = doc.getEjecutivo();
+		dto.setEjecutivo(obtenerCodigoDiccionario(DDSiNoNoAplica.class, ejecutivo));
+		if ("".equals(dto.getEjecutivo()) && !"".equals(ejecutivo)) {
+			if ("NO".equalsIgnoreCase(ejecutivo) || DDSiNoNoAplica.NO.equals(ejecutivo)) {
+				dto.setEjecutivo(DDSiNoNoAplica.NO);
+			} else if ("Sí".equalsIgnoreCase(ejecutivo) || DDSiNoNoAplica.SI.equals(ejecutivo)) {
+				dto.setEjecutivo(DDSiNoNoAplica.SI);
+			}
+		}
+
 		dto.setFechaResultado(fechaResultado);
 		dto.setRespuesta(obtenerCodigoDiccionario(DDResultadoSolicitudPCO.class, resultado));
 		dto.setFechaEnvio(fechaEnvio);
 		dto.setFechaRecepcion(fechaRecepcion);
-		dto.setComentario(comentario);
+		dto.setComentario(doc.getComentario());
 		
 		List<DDEstadoDocumentoPCO> estadosDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoDocumentoPCO.class);
 		List<DDResultadoSolicitudPCO> respuestasSolicitud = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class);
 		List<DDSiNo> ddsino = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNo.class);
+		List<DDSiNoNoAplica> ddsinonoaplica = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDSiNoNoAplica.class);
 		
 		model.put("solicitud", dto);
 		model.put("estadosDocumento", estadosDocumento);
 		model.put("respuestasSolicitud", respuestasSolicitud);		
 		model.put("ddSiNo", ddsino);
+		model.put("ddSiNoNoAplica", ddsinonoaplica);
 		
 		return INFORMAR_DOC;
 	}
@@ -401,6 +423,7 @@ public class DocumentoPCOController {
 		docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
 		
 		model.put("dtoDoc", docDto);
+		model.put("DDResultado", proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class));
 		
 		return CREAR_SOLICITUDES;
 	}
@@ -890,6 +913,38 @@ public class DocumentoPCOController {
 //		return SOLICITUDES_DOC_PCO_JSON;
 //	}	
 	
+//	/**
+//	 * Salvar la creacion de solicitudes
+//	 * 
+//	 * @param request
+//	 * @return
+//	 */
+//	@RequestMapping	
+//	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
+//		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//		String idDoc = request.getParameter("id");
+//		String fechaSolicitud = request.getParameter("fechaSolicitud");
+//		Date fechaSolicitudDate = null;
+//
+//		try {
+//			fechaSolicitudDate = webDateFormat.parse(fechaSolicitud);
+//		} catch (ParseException e) {
+//			logger.error(e.getLocalizedMessage());
+//			return DEFAULT;
+//		}
+//		
+//		SolicitudPCODto solDto;	
+//		solDto = new SolicitudPCODto();		
+//		solDto.setIdDoc(new Long(idDoc));
+//		solDto.setActor(request.getParameter("actor"));
+//		solDto.setFechaSolicitud(fechaSolicitudDate);
+//
+//		documentoPCOApi.saveCrearSolicitudes(solDto);
+//			
+//		return DEFAULT;
+//	}		
+	
+	
 	/**
 	 * Salvar la creacion de solicitudes
 	 * 
@@ -897,14 +952,26 @@ public class DocumentoPCOController {
 	 * @return
 	 */
 	@RequestMapping	
-	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
+	public String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
 		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		
 		String idDoc = request.getParameter("id");
 		String fechaSolicitud = request.getParameter("fechaSolicitud");
+		String fechaResultado = request.getParameter("fechaResultado");
+		String fechaEnvio = request.getParameter("fechaEnvio");
+		String fechaRecepcion = request.getParameter("fecharecepcion");
+		String idTipoGestor = request.getParameter("tipogestor");
+		
 		Date fechaSolicitudDate = null;
+		Date fechaResultadoDate = null;
+		Date fechaEnvioDate = null;
+		Date fechaRecepcionDate = null;
 
 		try {
 			fechaSolicitudDate = webDateFormat.parse(fechaSolicitud);
+			fechaResultadoDate = webDateFormat.parse(fechaResultado);
+			fechaEnvioDate = webDateFormat.parse(fechaEnvio);
+			fechaRecepcionDate = webDateFormat.parse(fechaRecepcion);
 		} catch (ParseException e) {
 			logger.error(e.getLocalizedMessage());
 			return DEFAULT;
@@ -915,11 +982,16 @@ public class DocumentoPCOController {
 		solDto.setIdDoc(new Long(idDoc));
 		solDto.setActor(request.getParameter("actor"));
 		solDto.setFechaSolicitud(fechaSolicitudDate);
+		solDto.setFechaResultado(fechaResultadoDate);
+		solDto.setFechaEnvio(fechaEnvioDate);
+		solDto.setFechaRecepcion(fechaRecepcionDate);
+		solDto.setResultado(request.getParameter("resultado"));
+		solDto.setIdTipoGestor(new Long(idTipoGestor));
 
 		documentoPCOApi.saveCrearSolicitudes(solDto);
 			
 		return DEFAULT;
-	}			
+	}
 	
 	/**
 	 * Tipos de Documento
@@ -1227,6 +1299,19 @@ public class DocumentoPCOController {
 
 	}
 	
+	private Long obtenerIdDiccionario(Class claseDiccionario, String descripcion) {
+		
+		Long respuesta = null;
+		if (!Checks.esNulo(descripcion)) {
+			Dictionary diccionario = (Dictionary) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByDes(claseDiccionario, descripcion);
+			if (!Checks.esNulo(diccionario)) {
+				respuesta = diccionario.getId();
+			}
+		}
+		return respuesta;
+
+	}
+	
 	/**
 	 * Informarlas solicitudes de los documentos
 	 * 
@@ -1243,6 +1328,7 @@ public class DocumentoPCOController {
         dto.setIdSolicitud(request.getParameter("idSolicitud"));
         dto.setEstado(request.getParameter("estado"));
         dto.setAdjuntado(request.getParameter("adjuntado"));
+        dto.setEjecutivo(obtenerIdDiccionario(DDSiNoNoAplica.class, request.getParameter("ejecutivo")));
         dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
         dto.setResultado(request.getParameter("resultado"));
         dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
@@ -1251,7 +1337,7 @@ public class DocumentoPCOController {
         
         documentoPCOApi.saveInformarSolicitud(dto);
         
-        return SOLICITUDES_DOC_PCO_JSON;
+        return DEFAULT;
         
 	}
 	
@@ -1268,6 +1354,14 @@ public class DocumentoPCOController {
 		}
 		return fechaSalida;
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getTiposGestorActores(ModelMap model){
+		
+		model.put("listadoGestores", documentoPCOApi.getTiposGestorActores());
+		return TIPO_GESTOR_JSON;
 	}
 
  }

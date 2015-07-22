@@ -10,6 +10,7 @@ public class SolicitudDocumentoPCODto {
 	private String tipoDocumento;
 	private String estado;
 	private String adjunto;
+	private String ejecutivo;
 	private String actor;
 	private String fechaSolicitud;
 	private String fechaResultado;
@@ -109,6 +110,12 @@ public class SolicitudDocumentoPCODto {
 	}
 	public void setEsDocumento(boolean esDocumento) {
 		this.esDocumento = esDocumento;
+	}
+	public String getEjecutivo() {
+		return ejecutivo;
+	}
+	public void setEjecutivo(String ejecutivo) {
+		this.ejecutivo = ejecutivo;
 	}
 	
 }

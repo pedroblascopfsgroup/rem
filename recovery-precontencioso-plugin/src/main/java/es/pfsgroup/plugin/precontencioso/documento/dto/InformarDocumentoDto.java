@@ -20,6 +20,8 @@ public class InformarDocumentoDto implements Serializable {
 	private String fechaEnvio;
 	private String fechaRecepcion;
 	private String comentario;
+
+	private String ejecutivo;
 	
 	public String getEstado() {
 		return estado;
@@ -100,4 +102,13 @@ public class InformarDocumentoDto implements Serializable {
 	public void setIdDoc(Long idDoc) {
 		this.idDoc = idDoc;
 	}
+
+	public String getEjecutivo() {
+		return ejecutivo;
+	}
+
+	public void setEjecutivo(String ejecutivo) {
+		this.ejecutivo = ejecutivo;
+	}
+
 }

@@ -34,12 +34,37 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
 
 BEGIN
+	
 
-SELECT COUNT(1) INTO V_NUM_TABLAS FROM all_tab_cols  
-         WHERE UPPER(table_name) = 'DD_RVN_RES_VALIDACION_NUSE' and (UPPER(column_name) = 'DD_RVN_ID') 
-         AND OWNER = V_ESQUEMA; 
-          
-     if V_NUM_TABLAS = 0 then 
+--##COMPROBACION EXISTENCIA SECUENCIA, BORRAR PRIMERO
+V_NUM_SEQ := 0;
+select count(1) INTO V_NUM_SEQ from all_sequences
+where sequence_owner = V_ESQUEMA
+and sequence_name = 'S_CDD_CRN_RESULTADO_NUSE';
+
+if V_NUM_SEQ > 0 then 
+--YA existe una versión de la secuencia , se elimina primero
+  DBMS_OUTPUT.PUT('[INFO] Ya existe una versión de la secuencia S_DD_RVN_RES_VALIDACION_NUSE: se ELIMINA...');
+  EXECUTE IMMEDIATE 'drop sequence '||V_ESQUEMA||'.S_DD_RVN_RES_VALIDACION_NUSE';
+  DBMS_OUTPUT.PUT_LINE('OK');
+END IF;
+
+
+--##COMPROBACION EXISTENCIA TABLA, BORRAR PRIMERO
+V_NUM_TABLAS := 0;
+select count(1) INTO V_NUM_TABLAS from all_tables 
+where table_name = 'DD_RVN_RES_VALIDACION_NUSE' and OWNER = V_ESQUEMA;
+
+if V_NUM_TABLAS > 0 then 
+--YA existe una versión de la tabla , se elimina primero
+
+  DBMS_OUTPUT.PUT('[INFO] Ya existe una versión de la tabla DD_RVN_RES_VALIDACION_NUSE: se ELIMINA...');
+	EXECUTE IMMEDIATE 'drop table '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE';
+  DBMS_OUTPUT.PUT_LINE('OK');
+
+END IF;
+	
+
 	 
 EXECUTE IMMEDIATE 'CREATE SEQUENCE '||V_ESQUEMA||'.S_DD_RVN_RES_VALIDACION_NUSE'; 	 
 	 

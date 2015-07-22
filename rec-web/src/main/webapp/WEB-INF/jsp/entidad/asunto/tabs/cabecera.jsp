@@ -277,7 +277,9 @@
 		}
 		entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
 		procedimientosStore.webflow({id:data.id});
-
+		
+		reiniciarKOCDD();
+		
 		// Muestra botones de ficha global o no
 		var buttonInformeFGConcurso = Ext.getCmp('btn-exportar-informes-asunto-fg-concurso');
 		var buttonInformeFGLitigio = Ext.getCmp('btn-exportar-informes-asunto-fg-litigio');

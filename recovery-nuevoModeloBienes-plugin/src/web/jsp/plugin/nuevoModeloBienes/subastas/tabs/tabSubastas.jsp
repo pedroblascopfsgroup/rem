@@ -186,6 +186,24 @@
 			}
 		}				
 	});
+	
+	var btnResetKOCDD = new Ext.Button({
+		 text : '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.resetCDD" text="**Reiniciar Cierre Deuda" />'
+		,iconCls : 'icon_menos'
+		,cls: 'x-btn-text-icon'
+		,handler : function(){
+			Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.resetCDD.aviso" text="**¿Esta seguro de reiniciar las propuestas del asunto pendientes de enviar?" />', this.decide, this);
+		}
+		,decide : function(boton){
+			if (boton=='yes'){ this.reiniciar(); }
+		}
+		,reiniciar : function(){
+			<%-- var flow = '/pfs/subasta/reiniciarKOCDD';
+			var params={idAsunto:panel.getAsuntoId()};
+			app.openBrowserWindow(flow,params); --%>
+			reiniciarKOCDD();
+		}
+	});
 	 	
 	var gridSubastas = app.crearGrid(storeSubastas, cmSubasta, {
 		title : '<s:message code="plugin.nuevoModeloBienes.subastas.grid" text="**Subastas" />'
@@ -505,23 +523,7 @@
 		}
 	});
 	
-	var btnResetKOCDD = new Ext.Button({
-		 text : '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.resetCDD" text="**Reiniciar Cierre Deuda" />'
-		,iconCls : 'icon_menos'
-		,cls: 'x-btn-text-icon'
-		,handler : function(){
-			Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.resetCDD.aviso" text="**¿Esta seguro de reiniciar las propuestas del asunto pendientes de enviar?" />', this.decide, this);
-		}
-		,decide : function(boton){
-			if (boton=='yes'){ this.reiniciar(); }
-		}
-		,reiniciar : function(){
-			<%-- var flow = '/pfs/subasta/reiniciarKOCDD';
-			var params={idAsunto:panel.getAsuntoId()};
-			app.openBrowserWindow(flow,params); --%>
-			reiniciarKOCDD();
-		}
-	});
+	
 	
 	var reiniciarKOCDD =  function() {
 		panel.el.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />','x-mask-loading');

@@ -113,6 +113,8 @@
 						<value>TSCTRGE</value>
 						<value>TSGESDOC</value>
 						<value>TSPGL</value>
+						<value>CJ-TGESEXT</value>
+						<value>CJ-TSUEXT</value>
 					</set>
 				</entry>
 			</map>

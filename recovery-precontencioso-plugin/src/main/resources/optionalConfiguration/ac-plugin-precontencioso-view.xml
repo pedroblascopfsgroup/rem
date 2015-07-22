@@ -10,6 +10,11 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 
+	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="exportar"
+		p:order="1"
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/button/btnAccionesPrecontencioso.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"	/>
+
 	<bean p:entity="tabs.procedimiento.fast" p:name="cabeceraProcedimiento"  p:order="100" 
 		p:fileName="/WEB-INF/jsp/plugin/precontencioso/tabs/cabecera.jsp" 
 		p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />

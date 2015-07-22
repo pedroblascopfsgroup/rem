@@ -12,6 +12,7 @@ public class DocumentoPCODto {
 	private String estado;
 	private String adjunto;
 	private String actor;
+	private String tipoActor;
 	private String comentario;
 	private String protocolo;
 	private String tomo;
@@ -25,6 +26,7 @@ public class DocumentoPCODto {
 	private String numRegistro;
 	private String fechaEscritura;
 	private String plaza;
+	private String ejecutivo;
 	
 	public Long getId() {
 		return id;
@@ -81,6 +83,12 @@ public class DocumentoPCODto {
 		this.actor = actor;
 	}
 
+	public String getTipoActor() {
+		return tipoActor;
+	}
+	public void setTipoActor(String tipoActor) {
+		this.tipoActor = tipoActor;
+	}
 	public String getComentario() {
 		return comentario;
 	}
@@ -158,6 +166,12 @@ public class DocumentoPCODto {
 	}
 	public void setPlaza(String plaza) {
 		this.plaza = plaza;
+	}
+	public String getEjecutivo() {
+		return ejecutivo;
+	}
+	public void setEjecutivo(String ejecutivo) {
+		this.ejecutivo = ejecutivo;
 	}
 	
 }

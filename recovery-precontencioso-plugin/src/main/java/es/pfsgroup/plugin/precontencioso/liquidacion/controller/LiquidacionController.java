@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
 public class LiquidacionController {
@@ -25,11 +27,16 @@ public class LiquidacionController {
 	private static final String JSON_LIQUIDACIONES = "plugin/precontencioso/liquidacion/json/liquidacionesJSON";
 	private static final String JSP_EDITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/editarLiquidacion";
 	private static final String JSP_SOLICITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/solicitarLiquidacion";
+	
+	private static final String CODIGO_TIPO_GESTOR_APODERADO = "APOD";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	LiquidacionApi liquidacionApi;
+
+	@Autowired
+	UtilDiccionarioApi diccionarioApi;
 
 	@RequestMapping
 	public String getLiquidacionesPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
@@ -44,7 +51,10 @@ public class LiquidacionController {
 	public String abrirEditarLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 
 		LiquidacionDTO liquidacionDto = liquidacionApi.getLiquidacionPorId(id);
+		EXTDDTipoGestor tipoGestorApoderado = (EXTDDTipoGestor) diccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, CODIGO_TIPO_GESTOR_APODERADO);
+
 		model.put("liquidacion", liquidacionDto);
+		model.put("tipoGestorApoderado", tipoGestorApoderado);
 
 		return JSP_EDITAR_LIQUIDACION;
 	}
@@ -93,12 +103,20 @@ public class LiquidacionController {
 		Float interesesOrdinarios = Float.valueOf(request.getParameter("interesesOrdinarios"));
 		Float interesesDemora = Float.valueOf(request.getParameter("interesesDemora"));
 		Float total = Float.valueOf(request.getParameter("total"));
+		String apoderadoNombre = request.getParameter("apoderadoNombre");
 
-		String apoderado = request.getParameter("apoderadoId");
+		String usuario = request.getParameter("apoderadoUsuarioId");
 
-		Long apoderadoId = null;
-		if (!Checks.esNulo(apoderado)) {
-			apoderadoId = Long.valueOf(apoderado);
+		Long usuarioId = null;
+		if (!Checks.esNulo(usuario)) {
+			usuarioId = Long.valueOf(usuario);
+		}
+
+		String despacho = request.getParameter("apoderadoDespachoId");
+
+		Long despachoId = null;
+		if (!Checks.esNulo(despacho)) {
+			despachoId = Long.valueOf(despacho);
 		}
 
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
@@ -108,7 +126,9 @@ public class LiquidacionController {
 		liquidacionDto.setInteresesOrdinarios(interesesOrdinarios);
 		liquidacionDto.setInteresesDemora(interesesDemora);
 		liquidacionDto.setTotal(total);
-		liquidacionDto.setApoderadoId(apoderadoId);
+		liquidacionDto.setApoderadoNombre(apoderadoNombre);
+		liquidacionDto.setApoderadoUsuarioId(usuarioId);
+		liquidacionDto.setApoderadoDespachoId(despachoId);
 
 		liquidacionApi.editar(liquidacionDto);
 

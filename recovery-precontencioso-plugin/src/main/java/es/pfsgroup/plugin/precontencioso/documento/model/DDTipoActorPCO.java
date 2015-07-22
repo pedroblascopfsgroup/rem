@@ -18,9 +18,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_PCO_DOC_SOLICIT_TIPOACTOR", schema = "${entity.schema}")
 public class DDTipoActorPCO implements Dictionary, Auditable {
 
-	public static final String PREPARADOR = "PD";
-	public static final String GESTORIA = "GE";
-	public static final String NOTARIA = "NO";
+	public static final String PREPARADOR = "PREDOC";
+	public static final String GESTORIA = "GEST";
+	public static final String NOTARIA = "NOTARI";
 	
 	private static final long serialVersionUID = 3136933085857841623L;
 
@@ -41,6 +41,9 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 	
 	@Column(name = "DD_PCO_DSA_TRAT_EXP")
 	private Boolean tratamientoExpediente;	
+	
+	@Column(name = "DD_PCO_DSA_ACCESO_RECOVERY")
+	private Boolean accesoRecovery;	
 
 	@Version
 	private Integer version;
@@ -86,6 +89,14 @@ public class DDTipoActorPCO implements Dictionary, Auditable {
 
 	public void setTratamientoExpediente(Boolean tratamientoExpediente) {
 		this.tratamientoExpediente = tratamientoExpediente;
+	}
+
+	public Boolean getAccesoRecovery() {
+		return accesoRecovery;
+	}
+
+	public void setAccesoRecovery(Boolean accesoRecovery) {
+		this.accesoRecovery = accesoRecovery;
 	}
 
 	public Integer getVersion() {

@@ -21,6 +21,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.users.domain.Usuario;
 
 @Entity
@@ -52,9 +53,9 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 	private DDTipoActorPCO tipoActor;
 
 	@ManyToOne
-	@JoinColumn(name = "USU_ID")
+	@JoinColumn(name = "USD_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private Usuario actor;
+	private GestorDespacho actor;
 
 	@Column(name = "PCO_DOC_DSO_FECHA_SOLICITUD")
 	private Date fechaSolicitud;
@@ -105,11 +106,11 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 		this.tipoActor = tipoActor;
 	}
 
-	public Usuario getActor() {
+	public GestorDespacho getActor() {
 		return actor;
 	}
 
-	public void setActor(Usuario actor) {
+	public void setActor(GestorDespacho actor) {
 		this.actor = actor;
 	}
 

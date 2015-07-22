@@ -20,6 +20,7 @@ public interface DocumentoPCOApi {
 	static final String PCO_DOCUMENTO_SOLICITUD_INFORMAR = "es.pfsgroup.plugin.precontencioso.documento.saveInformarSolicitud";
 	static final String PCO_DOCUMENTO_CREAR_SOLICITUDES = "es.pfsgroup.plugin.precontencioso.documento.saveCrearSolicitudes";
 	static final String PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES = "es.pfsgroup.plugin.precontencioso.documento.getTiposGestorActores";
+	static final String PCO_DOCUMENTO_CREAR = "es.pfsgroup.plugin.precontencioso.documento.saveCrearDocumento";
 		
 	/**
 	 * Obtiene las solicitudes de los documentos de precontencioso de un procedimiento
@@ -99,10 +100,10 @@ public interface DocumentoPCOApi {
 	
 	/**
 	 * Devuelve una unidad de gestión
-	 * @param idUnidadGestion
+	 * @param codUnidadGestion
 	 * @return
 	 */
-	DDUnidadGestionPCO getUnidadGestionPorIdUG(Long idUnidadGestion);	
+	DDUnidadGestionPCO getUnidadGestionPorCodUG(String codUnidadGestion);	
 	
 	/**
 	 * Devuelve una unidad de gestión
@@ -110,7 +111,7 @@ public interface DocumentoPCOApi {
 	 * @param idUnidadGestion
 	 * @return
 	 */
-	DDTipoFicheroAdjunto getTipoDocumentoPorIdTipo(Long idTipoDocumento);	
+	DDTipoFicheroAdjunto getTipoDocumentoPorCodTipo(String codTipoDocumento);	
 	
 	/**
 	 * Obtener el estado a partir del código
@@ -125,7 +126,7 @@ public interface DocumentoPCOApi {
 	 * 
 	 * @param documento
 	 */
-	void saveCrearDocumento(DocumentoPCO documento);
+	void saveCrearDocumento(DocumentoPCODto docDTO);
 
 	/**
 	 * Guarda la información de una solicitud (después de Informar Solicitud)

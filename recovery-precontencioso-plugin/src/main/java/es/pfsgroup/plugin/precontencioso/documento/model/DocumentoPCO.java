@@ -115,7 +115,10 @@ public class DocumentoPCO implements Serializable, Auditable {
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
-
+	
+	@Column(name = "PCO_DOC_PDD_EJECUTIVO")
+	private Long ejecutivo;
+	
 	@Version
 	private Integer version;
 
@@ -324,6 +327,14 @@ public class DocumentoPCO implements Serializable, Auditable {
 
 	public void setSysGuid(String sysGuid) {
 		this.sysGuid = sysGuid;
+	}
+
+	public Long getEjecutivo() {
+		return ejecutivo;
+	}
+
+	public void setEjecutivo(Long ejecutivo) {
+		this.ejecutivo = ejecutivo;
 	}
 
 }

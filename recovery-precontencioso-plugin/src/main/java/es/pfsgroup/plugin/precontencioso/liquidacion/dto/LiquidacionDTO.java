@@ -21,6 +21,11 @@ public class LiquidacionDTO extends WebDto {
 	private Float interesesDemora;
 	private Float interesesOrdinarios;
 	private Float total;
+	private Float capitalVencidoOriginal;
+	private Float capitalNoVencidoOriginal;
+	private Float interesesDemoraOriginal;
+	private Float interesesOrdinariosOriginal;
+	private Float totalOriginal;
 	private String sysGuid;
 
 	// Estado
@@ -116,6 +121,36 @@ public class LiquidacionDTO extends WebDto {
 	}
 	public void setTotal(Float total) {
 		this.total = total;
+	}
+	public Float getCapitalVencidoOriginal() {
+		return capitalVencidoOriginal;
+	}
+	public void setCapitalVencidoOriginal(Float capitalVencidoOriginal) {
+		this.capitalVencidoOriginal = capitalVencidoOriginal;
+	}
+	public Float getCapitalNoVencidoOriginal() {
+		return capitalNoVencidoOriginal;
+	}
+	public void setCapitalNoVencidoOriginal(Float capitalNoVencidoOriginal) {
+		this.capitalNoVencidoOriginal = capitalNoVencidoOriginal;
+	}
+	public Float getInteresesDemoraOriginal() {
+		return interesesDemoraOriginal;
+	}
+	public void setInteresesDemoraOriginal(Float interesesDemoraOriginal) {
+		this.interesesDemoraOriginal = interesesDemoraOriginal;
+	}
+	public Float getInteresesOrdinariosOriginal() {
+		return interesesOrdinariosOriginal;
+	}
+	public void setInteresesOrdinariosOriginal(Float interesesOrdinariosOriginal) {
+		this.interesesOrdinariosOriginal = interesesOrdinariosOriginal;
+	}
+	public Float getTotalOriginal() {
+		return totalOriginal;
+	}
+	public void setTotalOriginal(Float totalOriginal) {
+		this.totalOriginal = totalOriginal;
 	}
 	public String getSysGuid() {
 		return sysGuid;

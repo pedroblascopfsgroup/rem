@@ -52,6 +52,11 @@ public class LiquidacionAssembler {
 		liquidacionDto.setInteresesDemora(liquidacion.getInteresesDemora());
 		liquidacionDto.setInteresesOrdinarios(liquidacion.getInteresesOrdinarios());
 		liquidacionDto.setTotal(liquidacion.getTotal());
+		liquidacionDto.setCapitalVencidoOriginal(liquidacion.getCapitalVencidoOriginal());
+		liquidacionDto.setCapitalNoVencidoOriginal(liquidacion.getCapitalNoVencidoOriginal());
+		liquidacionDto.setInteresesDemoraOriginal(liquidacion.getInteresesDemoraOriginal());
+		liquidacionDto.setInteresesOrdinariosOriginal(liquidacion.getInteresesOrdinariosOriginal());
+		liquidacionDto.setTotalOriginal(liquidacion.getTotalOriginal());
 		liquidacionDto.setSysGuid(liquidacion.getSysGuid());
 
 		// ProcedimientoPCO

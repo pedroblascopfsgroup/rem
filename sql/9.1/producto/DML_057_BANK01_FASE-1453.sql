@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=OSCAR DORADO
---## FECHA_CREACION=20150721
+--## FECHA_CREACION=20150722
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.12-bk
 --## INCIDENCIA_LINK=FASE-1453

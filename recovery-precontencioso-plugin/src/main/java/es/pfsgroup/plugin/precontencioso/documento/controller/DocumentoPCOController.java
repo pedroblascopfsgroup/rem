@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
@@ -36,6 +39,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -56,6 +60,7 @@ public class DocumentoPCOController {
 	private static final String INCLUIR_DOC = "plugin/precontencioso/documento/popups/incluirDocumento";
 	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
+	private static final String TIPO_GESTOR_JSON = "plugin/coreextension/asunto/tipoGestorJSON";
 	private static final String PENDIENTE_SOLICITAR = DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR;
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -416,6 +421,7 @@ public class DocumentoPCOController {
 		docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
 		
 		model.put("dtoDoc", docDto);
+		model.put("DDResultado", proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class));
 		
 		return CREAR_SOLICITUDES;
 	}
@@ -873,6 +879,38 @@ public class DocumentoPCOController {
 //		return SOLICITUDES_DOC_PCO_JSON;
 //	}	
 	
+//	/**
+//	 * Salvar la creacion de solicitudes
+//	 * 
+//	 * @param request
+//	 * @return
+//	 */
+//	@RequestMapping	
+//	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
+//		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//		String idDoc = request.getParameter("id");
+//		String fechaSolicitud = request.getParameter("fechaSolicitud");
+//		Date fechaSolicitudDate = null;
+//
+//		try {
+//			fechaSolicitudDate = webDateFormat.parse(fechaSolicitud);
+//		} catch (ParseException e) {
+//			logger.error(e.getLocalizedMessage());
+//			return DEFAULT;
+//		}
+//		
+//		SolicitudPCODto solDto;	
+//		solDto = new SolicitudPCODto();		
+//		solDto.setIdDoc(new Long(idDoc));
+//		solDto.setActor(request.getParameter("actor"));
+//		solDto.setFechaSolicitud(fechaSolicitudDate);
+//
+//		documentoPCOApi.saveCrearSolicitudes(solDto);
+//			
+//		return DEFAULT;
+//	}		
+	
+	
 	/**
 	 * Salvar la creacion de solicitudes
 	 * 
@@ -880,14 +918,26 @@ public class DocumentoPCOController {
 	 * @return
 	 */
 	@RequestMapping	
-	private String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
+	public String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
 		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		
 		String idDoc = request.getParameter("id");
 		String fechaSolicitud = request.getParameter("fechaSolicitud");
+		String fechaResultado = request.getParameter("fechaResultado");
+		String fechaEnvio = request.getParameter("fechaEnvio");
+		String fechaRecepcion = request.getParameter("fecharecepcion");
+		String idTipoGestor = request.getParameter("tipogestor");
+		
 		Date fechaSolicitudDate = null;
+		Date fechaResultadoDate = null;
+		Date fechaEnvioDate = null;
+		Date fechaRecepcionDate = null;
 
 		try {
 			fechaSolicitudDate = webDateFormat.parse(fechaSolicitud);
+			fechaResultadoDate = webDateFormat.parse(fechaResultado);
+			fechaEnvioDate = webDateFormat.parse(fechaEnvio);
+			fechaRecepcionDate = webDateFormat.parse(fechaRecepcion);
 		} catch (ParseException e) {
 			logger.error(e.getLocalizedMessage());
 			return DEFAULT;
@@ -898,11 +948,16 @@ public class DocumentoPCOController {
 		solDto.setIdDoc(new Long(idDoc));
 		solDto.setActor(request.getParameter("actor"));
 		solDto.setFechaSolicitud(fechaSolicitudDate);
+		solDto.setFechaResultado(fechaResultadoDate);
+		solDto.setFechaEnvio(fechaEnvioDate);
+		solDto.setFechaRecepcion(fechaRecepcionDate);
+		solDto.setResultado(request.getParameter("resultado"));
+		solDto.setIdTipoGestor(new Long(idTipoGestor));
 
 		documentoPCOApi.saveCrearSolicitudes(solDto);
 			
 		return DEFAULT;
-	}			
+	}
 	
 	/**
 	 * Tipos de Documento
@@ -1251,6 +1306,14 @@ public class DocumentoPCOController {
 		}
 		return fechaSalida;
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getTiposGestorActores(ModelMap model){
+		
+		model.put("listadoGestores", documentoPCOApi.getTiposGestorActores());
+		return TIPO_GESTOR_JSON;
 	}
 
  }

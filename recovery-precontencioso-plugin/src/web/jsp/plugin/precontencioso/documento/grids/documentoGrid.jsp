@@ -222,7 +222,7 @@ var solicitarDocButton = new Ext.Button({
 							flow: 'documentopco/abrirCrearSolicitudes'
 							,params: {idDocumento:idDocumento}
 							,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
-							,width: 300
+							,width: 430
 						});
 					w.on(app.event.DONE, function() {
 						refrescarDocumentosGrid();					
@@ -407,6 +407,7 @@ gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 
 var refrescarDocumentosGrid = function() {
 	storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
+	//storeDocumentos.webflow({idProcedimientoPCO: entidad.get("data").id});
 }
 
 refrescarDocumentosGrid();	

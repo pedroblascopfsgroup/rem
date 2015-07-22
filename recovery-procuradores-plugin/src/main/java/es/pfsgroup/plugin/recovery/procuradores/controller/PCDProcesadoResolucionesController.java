@@ -70,7 +70,8 @@ import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.bpmframework.config.model.RecoveryBPMfwkDDTipoAccion;
 import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.model.RecoveryBPMfwkDatosProcedimiento;
-
+import es.capgemini.devon.exception.FrameworkException;
+import es.pfsgroup.procedimientos.model.DDIndebidaExcesiva;
 
 /**
  * @author manuel
@@ -98,7 +99,7 @@ public class PCDProcesadoResolucionesController {
 
 	public static final String JSON_ADJUNTAR_FICHERO = "";
 
-	public static final String JSON_GRABAR_PROCESAR = "plugin/masivo/datosResolucionJSON";
+	public static final String JSON_GRABAR_PROCESAR = "plugin/procuradores/datosResolucionJSON";
 
 	public static final String JSON_LISTA_ASUNTOS = "plugin/masivo/listaAsuntosJSON";
 
@@ -489,15 +490,6 @@ public class PCDProcesadoResolucionesController {
 			}
 			
 			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(msvResolucion.getId());
-				
-			if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA) && !msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO"))
-			{
-				DtoGenericForm dto = this.rellenaDTO(msvResolucion);
-				executor.execute("genericFormManager.saveValues",dto);
-			}
-			
-			model.put("resolucion", msvResolucion);
-			
 		}catch(Exception e){
 			e.printStackTrace();
 			String resultadoProceso = MSVDDEstadoProceso.CODIGO_ERROR;
@@ -505,7 +497,24 @@ public class PCDProcesadoResolucionesController {
 			pcdResolucionProcuradorApi.guardarResolucion(dtoResolucion);
 		}
 		
-		
+		try{		
+			if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA) && !msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO"))
+			{
+				DtoGenericForm dto = this.rellenaDTO(msvResolucion);
+				executor.execute("genericFormManager.saveValues",dto);
+			}
+			//model.put("resolucion", msvResolucion);
+		}catch(FrameworkException e){
+			model.put("validacion", e.getMessage().substring(e.getMessage().indexOf(':')+1));
+			String resultadoProceso = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
+			dtoResolucion.setEstadoResolucion(resultadoProceso);
+			pcdResolucionProcuradorApi.guardarResolucion(dtoResolucion);
+		}catch(Exception e){
+			model.put("validacion", e.getMessage().substring(e.getMessage().indexOf(':')+1));
+			String resultadoProceso = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
+			dtoResolucion.setEstadoResolucion(resultadoProceso);
+			pcdResolucionProcuradorApi.guardarResolucion(dtoResolucion);
+		}
 		return JSON_GRABAR_PROCESAR;
 	}
 	
@@ -954,6 +963,24 @@ public class PCDProcesadoResolucionesController {
     	model.put("motivosProrroga", motivosProrroga);
     	
     	return JSON_LISTA_MOTIVOS_PRORROGA;
+    }
+    
+    
+    /**
+     * Metodo que devuelve los posibles DDCorrectoCobro
+     * @param query
+     * @param model
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping
+    public String getIndebidaExcesiva(ModelMap model){
+    	
+    	List<DDIndebidaExcesiva> ddIndebidaExcesiva = apiProxyFactory.proxy(MSVDiccionarioApi.class).dameValoresDiccionario(DDIndebidaExcesiva.class);
+    	
+    	model.put("ddIndebidaExcesiva", ddIndebidaExcesiva);
+    	
+    	return JSON_LISTA_DICCIONARIO_GENERICO_PAGE;
     }
     
     

@@ -707,7 +707,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
 
   this.storeDDIndebidaExcesiva= new Ext.data.Store({
-	url:'/pfs/pcdprocesadoresoluciones/getDDIndebidaExcesiva.htm'
+	url:'/pfs/pcdprocesadoresoluciones/getIndebidaExcesiva.htm'
 		,reader: new Ext.data.JsonReader({
 			root : 'diccionario'
 		} , DDIndebidaExcesiva)
@@ -836,6 +836,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     			motivosFavorable.setValue(motivosFavorable.getValue());
     		}
     	});
+    	
     	
 //    	this.storeDemandados.on('load', function(store, records, options){
 //    		var nombreDemandado=Ext.getCmp('d_nombreDemandado_id' + options.params.idFactoria);
@@ -1259,7 +1260,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		               	   		}
 	      					}	
 	   				}
-	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:false,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:true,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
 	                 	   ,validator : function(v) {
 		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboResultado' + idFactoria).getValue() == ""){
 		               	   			return false;

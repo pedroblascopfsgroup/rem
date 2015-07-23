@@ -75,10 +75,8 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
         			&& bien.getAdjudicacion().getEntidadAdjudicataria().equals(DDEntidadAdjudicataria.ENTIDAD));
         	boolean cargasPrevias = false;
         	if (adjudicadoEntidad) {
-        		cargasPrevias = false; //hayaProcManager.existenCargasPreviasActivas(prc.getId());
+        		cargasPrevias = hayaProcManager.existenCargasPreviasActivas(prc.getId());
         	}
-        	adjudicadoEntidad = opA = true;
-        	cargasPrevias = false;
         			
 			this.setVariable("op_ivaigic", (opA ? "SI" : "NO"), executionContext);
 			this.setVariable("op_adjudicadoAEntidad", (adjudicadoEntidad ? "SI" : "NO"), executionContext);

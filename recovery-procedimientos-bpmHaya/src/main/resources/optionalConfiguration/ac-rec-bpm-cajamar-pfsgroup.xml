@@ -10,6 +10,7 @@
 
 	<!-- Beans,handlers,Managers ... --> 
 	<bean id="bccAdjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionBccLeaveActionHandler" />
+	<bean id="bccCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateBccLeaveActionHandler" />
 	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
  	    
 	<!-- BPM activos -->
@@ -19,6 +20,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondos/hcj_provisionFondos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoHipotecario/hcj_procedimientoHipotecario.xml" p:version="-1"/>	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/hcj_tramiteAdjudicacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/hcj_tramiteCesionRemate.xml" p:version="-1"/>		
 	
 	<!-- Alberto -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
@@ -51,7 +53,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="-1"/>
 	
 	<!-- 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCesionRemate/haya_tramiteCesionRemateV4.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSarebConcursal/haya_tramiteSubastaConcursal.xml" p:version="-1"/>
@@ -188,6 +189,22 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
 	            }
+	            
+	            def comprobarExisteDocumentoCRSOLADJ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRSOLADJ");
+	            }
+
+	            def comprobarExisteDocumentoCRRESTRA = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRRESTRA");
+	            }
+
+	            def comprobarExisteDocumentoCRACCES = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRACCES");
+	            }
+	            
   			 ]]>
   			</value>
   		</list>

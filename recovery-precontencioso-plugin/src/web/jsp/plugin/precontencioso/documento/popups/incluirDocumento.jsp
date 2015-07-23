@@ -123,7 +123,10 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 		parametros.comboTipoDocumento = comboTipoDocumento.getValue();	 	
  		parametros.protocolo = protocolo.getValue();
 	 	parametros.notario = notario.getValue();
-	 	parametros.fechaEscritura = fechaEscritura.getValue().format('d/m/Y');
+	 	if (fechaEscritura.getValue()=='')
+	 		parametros.fechaEscritura = '';
+	 	else
+	 		parametros.fechaEscritura = fechaEscritura.getValue().format('d/m/Y');
 	 	parametros.asiento = asiento.getValue();
 	 	parametros.finca = finca.getValue();
 	 	parametros.tomo = tomo.getValue();
@@ -276,12 +279,12 @@ var gridDocs = new Ext.grid.GridPanel({
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.notario" text="**Notario" />'
 	});  
 	
+	
 	var fechaEscritura = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.fechaEscritura" text="**Fecha escritura" />'
-		,value : '<s:message code="${fechaEscritura}" />'
 		,style:'margin:0px'
-	});
+	});	
 	
 	var asiento = new Ext.form.TextField({
 		name : 'asiento'

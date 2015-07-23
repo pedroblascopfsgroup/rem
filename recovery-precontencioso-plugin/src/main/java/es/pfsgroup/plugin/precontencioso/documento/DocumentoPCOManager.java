@@ -284,7 +284,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		DocumentoPCO documento = documentoPCODao.get(solDto.getIdDoc());
 		
 		solicitud.setDocumento(documento);
-		solicitud.setActor(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(solDto.getActor()))));
+		//solicitud.setActor(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(solDto.getActor()))));
 		solicitud.setFechaSolicitud(solDto.getFechaSolicitud());
 		solicitud.setFechaResultado(solDto.getFechaResultado());
 		solicitud.setFechaEnvio(solDto.getFechaEnvio());
@@ -487,7 +487,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 		if (!Checks.esNulo(dto.getActor())) {
 			Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
-			solicitud.setActor(usuario);
+			//solicitud.setActor(usuario);
 		}
 		
 		

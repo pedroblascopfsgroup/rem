@@ -401,7 +401,7 @@ public class DocumentoPCOController {
 			
 			// TODO - DATOS PROVISIONALES - REVISAR
 			docDto.setActor("1");
-			docDto.setTipoActor("PD");
+			docDto.setTipoActor(DDTipoActorPCO.PREPARADOR);
 
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}

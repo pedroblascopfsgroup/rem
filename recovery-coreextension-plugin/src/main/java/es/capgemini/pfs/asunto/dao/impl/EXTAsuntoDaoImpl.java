@@ -812,10 +812,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
 			if("0".equals(dto.getComboErrorPostCDD())){
-				hql.append(" and rvn.codigo <> '0' and cdd.fechaAlta <= crn.fechaResultado");
+				hql.append(" and rvn.codigo <> '0' and cdd2.fechaAlta <= crn.fechaResultado");
 			}
 			else{
-				hql.append(" and rvn.id = :errorPost and cdd.fechaAlta <= crn.fechaResultado");
+				hql.append(" and rvn.id = :errorPost and cdd2.fechaAlta <= crn.fechaResultado");
 				params.put("errorPost", (dto.getComboErrorPostCDD()));
 			}			
 		}

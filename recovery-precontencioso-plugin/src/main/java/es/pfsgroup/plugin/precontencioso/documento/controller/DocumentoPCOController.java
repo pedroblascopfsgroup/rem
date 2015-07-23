@@ -961,6 +961,7 @@ public class DocumentoPCOController {
 		String fechaEnvio = request.getParameter("fechaEnvio");
 		String fechaRecepcion = request.getParameter("fecharecepcion");
 		String idTipoGestor = request.getParameter("tipogestor");
+		String idDespacho = request.getParameter("idDespacho");
 		
 		Date fechaSolicitudDate = null;
 		Date fechaResultadoDate = null;
@@ -987,6 +988,7 @@ public class DocumentoPCOController {
 		solDto.setFechaRecepcion(fechaRecepcionDate);
 		solDto.setResultado(request.getParameter("resultado"));
 		solDto.setIdTipoGestor(new Long(idTipoGestor));
+		solDto.setIdDespachoExterno(new Long(idDespacho)); 
 
 		documentoPCOApi.saveCrearSolicitudes(solDto);
 			

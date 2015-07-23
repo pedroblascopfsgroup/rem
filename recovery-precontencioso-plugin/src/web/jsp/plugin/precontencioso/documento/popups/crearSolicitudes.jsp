@@ -58,6 +58,7 @@
 	 	if(fecharecepcion.getValue()!=null && fecharecepcion.getValue()!= '') parametros.fecharecepcion = fecharecepcion.getValue().format('d/m/Y');
 	 	parametros.resultado = comboResultado.getValue();
 	 	parametros.tipogestor = comboTipoGestor.getValue();
+	 	parametros.idDespacho = comboTipoDespacho.getValue();
 	 	
 	 	
 	 	return parametros;

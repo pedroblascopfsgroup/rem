@@ -16,6 +16,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.dao.BienDao;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -40,6 +41,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -68,6 +70,9 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     
     @Autowired
     private SolicitudDocumentoPCODao solicituddocumentopcodao;
+    
+    @Autowired
+	private GestorDespachoDao gestorDespachoDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -264,7 +269,12 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		DocumentoPCO documento = documentoPCODao.get(solDto.getIdDoc());
 		
 		solicitud.setDocumento(documento);
-		solicitud.setActor(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(solDto.getActor()))));
+		
+		GestorDespacho gestDespActor = obtenerGestorDespacho(solDto);
+		if (gestDespActor != null) {
+			solicitud.setActor(gestDespActor);
+		}
+		
 		solicitud.setFechaSolicitud(solDto.getFechaSolicitud());
 		solicitud.setFechaResultado(solDto.getFechaResultado());
 		solicitud.setFechaEnvio(solDto.getFechaEnvio());
@@ -457,11 +467,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			}
 		}
 		
-		if (!Checks.esNulo(dto.getActor())) {
-			Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
-			solicitud.setActor(usuario);
-		}
-		
 		
 		solicitud.setFechaResultado(dto.getFechaResultado());
 		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
@@ -481,6 +486,25 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	@BusinessOperation(PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES)
 	public List<EXTDDTipoGestor> getTiposGestorActores() {
 		return solicituddocumentopcodao.getTiposGestorActores();
+	}
+	
+	/**
+	 * Helper Method - editar
+	 * Recupera el GestorDespacho 
+	 *
+	 * @param liquidacionDto contiene los datos usu_id y des_id para realizar la busqueda del gestordespacho
+	 * @return
+	 */
+	private GestorDespacho obtenerGestorDespacho(final SolicitudPCODto solDto) {
+		Long usuarioId = Long.parseLong(solDto.getActor());
+		Long despachoId = solDto.getIdDespachoExterno();
+
+		GestorDespacho gestorDespacho = null;
+		if (usuarioId != null && despachoId != null) {
+			gestorDespacho = gestorDespachoDao.getGestorDespachoPorUsuarioyDespacho(usuarioId, despachoId);
+		}
+
+		return gestorDespacho;
 	}
 
  }

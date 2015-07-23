@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteInscripcionDelTitulo" width="1015" height="997">
+<root-container name="hcj_tramiteInscripcionDelTitulo" width="861" height="997">
   <node name="Inicio" x="-1" y="1" width="132" height="36">
     <edge>
       <label x="-38" y="4"/>

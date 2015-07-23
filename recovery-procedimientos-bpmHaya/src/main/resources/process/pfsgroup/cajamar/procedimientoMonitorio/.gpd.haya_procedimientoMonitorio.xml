@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoMonitorio" width="1294" height="728">
+<root-container name="hcj_procedimientoMonitorio" width="1240" height="598">
   <node name="Inicio" x="-2" y="-44" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

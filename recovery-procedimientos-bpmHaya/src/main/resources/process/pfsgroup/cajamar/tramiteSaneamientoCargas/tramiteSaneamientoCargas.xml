@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteSaneamientoCargas">
+<process-definition xmlns="" name="hcj_tramiteSaneamientoCargas">
 
 	<start-state name="Inicio">
 		<transition to="H008_RevisarEstadoCargas" name="iniciarProceso"></transition>

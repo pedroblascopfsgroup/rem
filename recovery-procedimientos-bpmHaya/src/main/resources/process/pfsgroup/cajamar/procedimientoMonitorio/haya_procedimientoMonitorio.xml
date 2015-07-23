@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2"
-	name="haya_procedimientoMonitorio">
+	name="hcj_procedimientoMonitorio">
 
 
 
@@ -137,7 +137,7 @@
 			</action>
 		</event>
 		<transition to="H022_BPMProcedimientoETJ" name="activarAlerta"></transition>
-		<transition to="H022_MonitorioDecision" name="haya_ejecucionTituloJudicial"></transition>
+		<transition to="H022_MonitorioDecision" name="hcj_ejecucionTituloJudicial"></transition>
 	</state>
 
 	<node name="H022_MonitorioDecision">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteSubastaTerceros">
+<process-definition xmlns="" name="hcj_tramiteSubastaTerceros">
 
 	<start-state name="Inicio">
 		<transition to="H004_SenyalamientoSubasta" name="iniciarProceso"></transition>
@@ -213,7 +213,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin2" name="haya_tramiteTributacionEnBienesV4Sareb"></transition>
+		<transition to="Fin2" name="hcj_tramiteTributacionBienesSareb"></transition>
 	</state>
 
 	<state name="H004_ContactarConDeudorYPrepararInformeSubastaFisc">
@@ -416,7 +416,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin4" name="haya_tramiteCesionRemateV4"></transition>
+		<transition to="Fin4" name="hcj_tramiteCesionRemate"></transition>
 	</state>
 
 	<state name="H004_BPMTramiteAdjudicacion">
@@ -436,7 +436,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin5" name="haya_tramiteAdjudicacionV4"></transition>
+		<transition to="Fin5" name="hcj_tramiteAdjudicacion"></transition>
 	</state>
 	
 	<state name="H004_BPMInscripcionDelTitulo">
@@ -456,7 +456,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin5" name="haya_tramiteInscripcionDelTitulo"></transition>
+		<transition to="Fin5" name="hcj_tramiteInscripcionDelTitulo"></transition>
 	</state>
 
 	<state name="H004_SolicitarMandamientoPago">
@@ -684,7 +684,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin3" name="haya_tramiteConsignacion"></transition>
+		<transition to="Fin3" name="hcj_tramiteConsignacion"></transition>
 	</state>
 
 	<fork name="fork2">

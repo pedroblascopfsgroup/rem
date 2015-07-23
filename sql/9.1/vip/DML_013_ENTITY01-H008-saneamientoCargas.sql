@@ -93,8 +93,7 @@ DECLARE
 		--DEL T_TIPO_PLAZAS(null,null,'H008_BPMTramiteElevarPropSarebAdjudicados','300*24*60*60*1000L','0','0','DD'),
 		T_TIPO_PLAZAS(null,null,'H008_ObtenerAprobPropuesta','5*24*60*60*1000L','0','0','DD')
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RevisarPropuestaCancelacionCargas','damePlazo(valores[''H008_PropuestaCancelacionCargas''][''fechaPropuesta''])+5*24*60*60*1000L','0','0','DD'),
-		--??????? T_TIPO_PLAZAS(null,null,'H008_LiquidarCargas','damePlazo(valores[''H008_RevisarPropuestaCancelacionCargas''][''fechaRevisar''])+10*24*60*60*1000L','0','0','DD'),
-		T_TIPO_PLAZAS(null,null,'H008_LiquidarCargas','valores[''H008_RevisarPropuestaCancelacionCargas'']!=null ? damePlazo(valores[''H008_RevisarPropuestaCancelacionCargas''][''fechaRevisar''])+10*24*60*60*1000L : 10*24*60*60*1000L','0','0','DD'),
+		T_TIPO_PLAZAS(null,null,'H008_LiquidarCargas','damePlazo(valores[''H008_PropuestaCancelacionCargas''][''fechaPropuesta''])+10*24*60*60*1000L','0','0','DD'),
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RegInsCancelacionCargasEconomicas','damePlazo(valores[''H008_LiquidarCargas''][''fechaCancelacion''])+10*24*60*60*1000L','0','0','DD'),
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RegistrarPresentacionInscripcionEco','damePlazo(valores[''H008_RegInsCancelacionCargasEconomicas''][''fechaInsEco''])+10*24*60*60*1000L','0','0','DD'),
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RegInsCancelacionCargasRegEco','damePlazo(valores[''H008_RegistrarPresentacionInscripcionEco''][''fechaPresentacion''])+30*24*60*60*1000L','0','0','DD'),

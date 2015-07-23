@@ -654,7 +654,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 
 		if (requierePostCDD(dto)) {
-			hql.append(", BatchCDDResultadoNuse crn ");
+			hql.append(", DDResultadoValidacionNuse rvn ,BatchCDDResultadoNuse crn ");
 		}
 		
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
@@ -675,7 +675,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 
 		if (requierePostCDD(dto)) {
-			hql.append(" and asu.codigoExterno = crn.codigoExterno ");
+			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion and asu.codigoExterno = crn.codigoExterno ");
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
@@ -812,10 +812,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
 			if("Todos".equals(dto.getComboErrorPostCDD())){
-				hql.append(" and crn.codigo <> '0'");
+				hql.append(" and rvn.codigo <> '0'");
 			}
 			else{
-				hql.append(" and crn.id = :errorPost");
+				hql.append(" and rvn.id = :errorPost");
 				params.put("errorPost", (dto.getComboErrorPostCDD()));
 			}			
 		}

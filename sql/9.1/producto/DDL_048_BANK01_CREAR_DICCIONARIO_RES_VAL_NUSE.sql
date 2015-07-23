@@ -32,7 +32,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-
+    V_NUM_SEQ NUMBER(16);
+    
 BEGIN
 	
 

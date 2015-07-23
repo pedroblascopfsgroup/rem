@@ -47,7 +47,7 @@ execute immediate 'DELETE FROM '||V_ESQUEMA||'.prb_prc_bie
                                                               WHERE borrado = 0
                                                            GROUP BY prc_id, bie_id
                                                              HAVING COUNT (1) > 1) AND usuariocrear <> ''MIGRABNKF2'')
-                        WHERE ranking = 2);';
+                        WHERE ranking = 2)';
 
 COMMIT;
 

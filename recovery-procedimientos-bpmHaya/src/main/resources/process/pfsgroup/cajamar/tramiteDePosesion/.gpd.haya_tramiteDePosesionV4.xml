@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteDePosesionV4" width="1488" height="966">
-  <node name="inicio" x="394" y="30" width="132" height="36">
+<root-container name="hcj_tramiteDePosesion" width="1394" height="1242">
+  <node name="inicio" x="494" y="21" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H015_RegistrarSolicitudPosesion" x="373" y="121" width="292" height="36">
+  <node name="H015_RegistrarSolicitudPosesion" x="413" y="117" width="292" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-255" h1="-128" w2="296" h2="-432"/>
+      <bendpoint w1="-612" h1="-129" w2="-61" h2="-433"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -31,10 +33,13 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="H015_BPMTramiteMoratoriaLanzamiento" x="846" y="127" width="323" height="36">
     <edge>
-      <label x="-55" y="-16"/>
+      <label x="82" y="55"/>
+    </edge>
+  </node>
+  <node name="H015_BPMTramiteMoratoriaLanzamiento" x="971" y="123" width="323" height="36">
+    <edge>
+      <label x="-116" y="-9"/>
     </edge>
   </node>
   <node name="H015_BPMTramiteOcupantes" x="837" y="287" width="255" height="36">
@@ -51,10 +56,9 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="88" h1="64" w2="75" h2="-68"/>
     </edge>
   </node>
-  <node name="H015_RegistrarPosesionYLanzamiento" x="403" y="484" width="286" height="36">
+  <node name="H015_RegistrarPosesionYLanzamiento" x="378" y="472" width="286" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -65,19 +69,21 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H015_RegistrarPosesionYLanzamientoDecision" x="356" y="605" width="326" height="36">
+  <node name="H015_RegistrarPosesionYLanzamientoDecision" x="190" y="667" width="326" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-54" y="-13"/>
     </edge>
     <edge>
-      <label x="11" y="-11"/>
-      <bendpoint w1="300" h1="145" w2="288" h2="-179"/>
+      <label x="-172" y="-51"/>
+      <bendpoint w1="188" h1="55" w2="176" h2="-269"/>
+      <bendpoint w1="356" h1="110" w2="175" h2="-245"/>
+      <bendpoint w1="341" h1="267" w2="160" h2="-88"/>
     </edge>
     <edge>
-      <label x="-30" y="1"/>
+      <label x="-201" y="15"/>
     </edge>
   </node>
-  <node name="H015_RegistrarSenyalamientoLanzamiento" x="336" y="717" width="357" height="36">
+  <node name="H015_RegistrarSenyalamientoLanzamiento" x="339" y="810" width="357" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="78" h1="40" w2="68" h2="-43"/>
@@ -89,12 +95,8 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-236" h1="-128" w2="-268" h2="105"/>
-    </edge>
   </node>
-  <node name="H015_RegistrarLanzamientoEfectuado" x="382" y="800" width="284" height="36">
+  <node name="H015_RegistrarLanzamientoEfectuado" x="385" y="893" width="284" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="-400" h1="-125" w2="62" h2="369"/>
@@ -110,9 +112,9 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H015_RegistrarDecisionLlaves" x="384" y="930" width="294" height="35">
+  <node name="H015_RegistrarDecisionLlaves" x="387" y="1023" width="294" height="35">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-26" y="-11"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -122,28 +124,28 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H015_RegistrarSolicitudDecision" x="102" y="282" width="224" height="36">
+  <node name="H015_RegistrarSolicitudDecision" x="107" y="331" width="224" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H015_LlavesDecision" x="1080" y="718" width="221" height="36">
+  <node name="H015_LlavesDecision" x="950" y="1192" width="221" height="36">
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="193" h1="-57" w2="102" h2="403"/>
     </edge>
   </node>
-  <node name="H015_BPMTramiteGestionLlaves" x="1029" y="822" width="229" height="36">
+  <node name="H015_BPMTramiteGestionLlaves" x="444" y="1201" width="229" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-122" y="-8"/>
     </edge>
   </node>
-  <node name="H015_RegistrarDecisionLlavesDecision" x="790" y="909" width="290" height="36">
+  <node name="H015_RegistrarDecisionLlavesDecision" x="440" y="1099" width="290" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="49" h1="-132" w2="-162" h2="59"/>
+      <label x="-87" y="-11"/>
     </edge>
   </node>
   <node name="H015_BPMTramiteOcupantes2" x="848" y="562" width="237" height="36">
@@ -169,6 +171,124 @@
       <bendpoint w1="183" h1="7" w2="-8" h2="-156"/>
     </edge>
   </node>
-  <node name="Fin" x="-97" y="305" width="132" height="36"/>
+  <node name="H015_ConfirmarNotificacionDeudor" x="-7" y="21" width="257" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-156" h1="-1" w2="-3" h2="-405"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_ConfirmarNotificacionDeudorDecision" x="-21" y="146" width="290" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-141" h1="30" w2="15" h2="-249"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_PresentarSolicitudSenyalamientoPosesion" x="-1" y="234" width="309" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="175" h1="-72" w2="207" h2="141"/>
+    </edge>
+    <edge>
+      <label x="-108" y="-33"/>
+    </edge>
+  </node>
+  <node name="H015_SolicitarAlquilerSocial" x="825" y="781" width="228" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_SolicitarAlquilerSocialDecision" x="812" y="890" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_FormalizacionAlquilerSocial" x="816" y="979" width="256" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="153" h1="-4" w2="-54" h2="243"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-46" y="-80"/>
+      <bendpoint w1="-129" h1="-51" w2="-124" h2="147"/>
+      <bendpoint w1="-208" h1="-202" w2="-203" h2="-4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_FormalizacionAlquilerSocialDecision" x="795" y="1056" width="296" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="203" h1="1" w2="-5" h2="325"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H015_SuspensionLanzamiento" x="836" y="1121" width="236" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="244" h1="-10" w2="47" h2="379"/>
+    </edge>
+    <edge>
+      <label x="-128" y="-4"/>
+      <bendpoint w1="282" h1="2" w2="85" h2="391"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-41" y="-63"/>
+      <bendpoint w1="-168" h1="-34" w2="-158" h2="108"/>
+      <bendpoint w1="-214" h1="-146" w2="-204" h2="-4"/>
+    </edge>
+  </node>
+  <node name="ForkRegistrarPosesionLanzamiento" x="395" y="575" width="252" height="26">
+    <edge>
+      <label x="-65" y="-26"/>
+    </edge>
+    <edge>
+      <label x="-108" y="-27"/>
+    </edge>
+  </node>
+  <node name="esViviendaHabitualDecision" x="651" y="667" width="248" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="-98" y="425" width="132" height="36"/>
   <node name="Fin2" x="1082" y="639" width="132" height="36"/>
 </root-container>

@@ -10,7 +10,7 @@
 
 	<!-- Beans,handlers,Managers ... --> 
 	<bean id="bccAdjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionBccLeaveActionHandler" />
-
+	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
  	    
 	<!-- BPM activos -->
 	<!-- Nacho -->
@@ -182,6 +182,11 @@
 	            def comprobarExisteDocumentoASP = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ASP");
+	            }
+	            
+	            def comprobarExisteDocumentoCAS = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
 	            }
   			 ]]>
   			</value>

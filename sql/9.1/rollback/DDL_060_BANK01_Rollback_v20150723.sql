@@ -32,6 +32,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+V_NUM_SEQ NUMBER(16);
+V_NUM_COLS NUMBER(16);
 
 BEGIN
 
@@ -48,6 +50,8 @@ V_NUM_SEQ := 0;
 select count(1) INTO V_NUM_SEQ from all_sequences
 where sequence_owner = V_ESQUEMA
 and sequence_name = 'S_DD_RVC_RES_VALIDACION_CDD';
+
+end if;
 
 if V_NUM_SEQ > 0 then 
 --YA existe una versión de la secuencia , se elimina primero
@@ -67,7 +71,7 @@ if V_NUM_TABLAS > 0 then
 --YA existe una versión de la tabla , se elimina primero
 
   DBMS_OUTPUT.PUT('[INFO] Ya existe una versión de la tabla DD_RVC_RES_VALIDACION_CDD: se ELIMINA...');
-	EXECUTE IMMEDIATE 'drop table '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD';
+	EXECUTE IMMEDIATE 'drop table '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD cascade constraints';
   DBMS_OUTPUT.PUT_LINE('OK');
 
 END IF;
@@ -80,7 +84,7 @@ V_SQL := 'select COUNT(1) from all_tab_cols where UPPER(OWNER)='''||V_ESQUEMA||'
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_COLS;
 
 IF V_NUM_COLS > 0 THEN 
-	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...no se modifica nada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...se modifica.');
 	V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD DROP COLUMN ORIGEN_PROPUESTA'; 
 	
 END IF;
@@ -94,7 +98,7 @@ V_SQL := 'select COUNT(1) from all_tab_cols where UPPER(OWNER)='''||V_ESQUEMA||'
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_COLS;
 
 IF V_NUM_COLS > 0 THEN 
-	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...no se modifica nada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...se modifica.');
 	V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD DROP COLUMN RESULTADO_VALIDACION'; 
 	
 END IF;
@@ -109,7 +113,7 @@ V_SQL := 'select COUNT(1) from all_tab_cols where UPPER(OWNER)='''||V_ESQUEMA||'
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_COLS; 
 
 IF V_NUM_COLS > 0 THEN 
-	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...no se modifica nada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD...se modifica.');
 	V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD DROP COLUMN DD_RVC_ID'; 
 
 END IF;
@@ -143,7 +147,7 @@ if V_NUM_TABLAS > 0 then
 --YA existe una versión de la tabla , se elimina primero
 
   DBMS_OUTPUT.PUT('[INFO] Ya existe una versión de la tabla CDD_CRN_RESULTADO_NUSE: se ELIMINA...');
-	EXECUTE IMMEDIATE 'drop table '||V_ESQUEMA||'.CDD_CRN_RESULTADO_NUSE';
+	EXECUTE IMMEDIATE 'drop table '||V_ESQUEMA||'.CDD_CRN_RESULTADO_NUSE cascade constraints';
   DBMS_OUTPUT.PUT_LINE('OK');
 
 END IF;
@@ -174,7 +178,7 @@ if V_NUM_TABLAS > 0 then
 --YA existe una versión de la tabla , se elimina primero
 
   DBMS_OUTPUT.PUT('[INFO] Ya existe una versión de la tabla DD_RVN_RES_VALIDACION_NUSE: se ELIMINA...');
-	EXECUTE IMMEDIATE 'drop table '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE';
+	EXECUTE IMMEDIATE 'drop table '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE cascade constraints';
   DBMS_OUTPUT.PUT_LINE('OK');
 
 END IF;

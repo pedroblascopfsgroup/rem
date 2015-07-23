@@ -654,7 +654,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 
 		if (requierePostCDD(dto)) {
-			hql.append(", BatchAcuerdoCierreDeuda cdd, DDResultadoValidacionNuse rvn ,BatchCDDResultadoNuse crn ");
+			hql.append(", BatchAcuerdoCierreDeuda cdd2, DDResultadoValidacionNuse rvn ,BatchCDDResultadoNuse crn ");
 		}
 		
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
@@ -675,7 +675,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 
 		if (requierePostCDD(dto)) {
-			hql.append(" and cdd.id = crn.batchAcuerdoCierreDeuda.id and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion and asu.codigoExterno = crn.codigoExterno ");
+			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion and asu.codigoExterno = crn.codigoExterno ");
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)

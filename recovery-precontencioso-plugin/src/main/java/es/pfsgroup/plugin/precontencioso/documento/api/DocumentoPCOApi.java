@@ -152,4 +152,12 @@ public interface DocumentoPCOApi {
 	 */
 	@BusinessOperationDefinition(PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES)
 	List<EXTDDTipoGestor> getTiposGestorActores();
+	
+	/**
+	 * Anular solicitudes (borrar)
+	 * 
+	 * @param idSolicitud
+	 * 
+	 */
+	void anularSolicitudes(Long idSolicitud);	
 }

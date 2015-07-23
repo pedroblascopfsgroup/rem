@@ -305,6 +305,23 @@ public class DocumentoPCOController {
 		
 		return DEFAULT;
 	}
+	
+	/**
+	 * Anular Solicitudes
+	 * 
+	 * @param idSolicitud
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String anularSolicitudes(
+			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, ModelMap model) {
+		
+		documentoPCOApi.anularSolicitudes(idSolicitud);
+		
+		return DEFAULT;
+	}
 		
 	/**
 	 * Actualizar Documento Editado

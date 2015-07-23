@@ -242,6 +242,17 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	}
 	
 	/**
+	 * Anular solicitudes asociadas
+	 * 
+	 * @param idSolicitud
+	 */
+	@Override
+	@Transactional(readOnly = false)	
+	public void anularSolicitudes(Long idSolicitud){
+			genericDao.deleteById(SolicitudDocumentoPCO.class, idSolicitud);
+	}
+	
+	/**
 	 * Editar un documento
 	 * 
 	 * @param docDto

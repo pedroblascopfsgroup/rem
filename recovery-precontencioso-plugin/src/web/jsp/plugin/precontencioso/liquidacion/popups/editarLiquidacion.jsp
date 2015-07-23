@@ -36,35 +36,35 @@
 
 	var capitalVencidoOriginalField = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.capitalVencidoOriginal" text="**Capital Vencido Original" />',
-		value: ${liquidacion.capitalVencidoOriginal},
+		value: '${liquidacion.capitalVencidoOriginal}',
 		disabled: true,
 		allowDecimals: true
 	});
 
 	var capitalNoVencidoOriginalField = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.capitalNoVencidoOriginal" text="**Capital No Vencido Original" />',
-		value: ${liquidacion.capitalNoVencidoOriginal},
+		value: '${liquidacion.capitalNoVencidoOriginal}',
 		disabled: true,
 		allowDecimals: true
 	});
 
 	var interesesOrdinariosOriginalField = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinariosOriginal" text="**Intereses Ordinarios Original" />',
-		value: ${liquidacion.interesesOrdinariosOriginal},
+		value: '${liquidacion.interesesOrdinariosOriginal}',
 		disabled: true,
 		allowDecimals: true
 	});
 
 	var interesesDemoraOriginalField = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesDemoraOriginal" text="**Intereses Demora Original" />',
-		value: ${liquidacion.interesesDemoraOriginal},
+		value: '${liquidacion.interesesDemoraOriginal}',
 		disabled: true,
 		allowDecimals: true
 	});
 
 	var totalOriginalField = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.totalOriginal" text="**Total Original" />',
-		value: ${liquidacion.totalOriginal},
+		value: '${liquidacion.totalOriginal}',
 		disabled: true,
 		allowDecimals: true
 	});

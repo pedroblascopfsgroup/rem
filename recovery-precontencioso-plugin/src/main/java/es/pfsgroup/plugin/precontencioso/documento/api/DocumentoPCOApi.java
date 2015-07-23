@@ -6,6 +6,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
@@ -137,9 +138,26 @@ public interface DocumentoPCOApi {
 	void saveInformarSolicitud(SaveInfoSolicitudDTO dto);
 	
 	/**
+	 * Obtener los contratos, personsas y bienes asocidado al procedimiento
+	 * 
+	 * @param idProcedimiento
+	 * @param codUG
+	 * 
+	 */
+	List<DocumentosUGPCODto> getDocumentosUG(Long idProcedimiento, String codUG);
+
+	/**
 	 * Recupera la lista de tipos de gestores que son actores
 	 * 
 	 */
 	@BusinessOperationDefinition(PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES)
 	List<EXTDDTipoGestor> getTiposGestorActores();
+	
+	/**
+	 * Anular solicitudes (borrar)
+	 * 
+	 * @param idSolicitud
+	 * 
+	 */
+	void anularSolicitudes(Long idSolicitud);	
 }

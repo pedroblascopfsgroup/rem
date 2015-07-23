@@ -8,6 +8,7 @@
     <json:array name="documentosUG" items="${documentosUG}" var="s">
         <json:object>
             <json:property name="id" value="${s.id}" />
+            <json:property name="unidadGestionId" value="${s.unidadGestionId}" />
             <json:property name="contrato" value="${s.contrato}" />    
             <json:property name="descripcionUG" value="${s.descripcionUG}" />
         </json:object>

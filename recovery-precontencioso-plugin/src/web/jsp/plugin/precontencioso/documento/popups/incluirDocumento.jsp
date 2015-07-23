@@ -13,7 +13,6 @@
 <fwk:page>	
 
 var rowsSelected=new Array(); 
-var arrayIdDocumentos=new Array();
 
 var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
  		handleMouseDown : function(g, rowIndex, e){
@@ -108,19 +107,26 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	var getParametros = function() {
 		var rowsSelected=new Array(); 
 		var arrayIdDocumentos=new Array();	
+		var arrayIdUG=new Array();
 		rowsSelected = gridDocs.getSelectionModel().getSelections(); 
 		for (var i=0; i < rowsSelected.length; i++){
-		  	arrayIdDocumentos.push(rowsSelected[i].get('id'));		 
+		  	arrayIdDocumentos.push(rowsSelected[i].get('id'));		
+		  	arrayIdUG.push(rowsSelected[i].get('unidadGestionId'));	
 		}
 		
 		var arrayIdDocumentos = Ext.encode(arrayIdDocumentos);
+		var arrayIdUG = Ext.encode(arrayIdUG);
 		
 	 	var parametros = {};
 	 	parametros.arrayIdDocumentos = arrayIdDocumentos;
+	 	parametros.arrayIdUG = arrayIdUG;
 		parametros.comboTipoDocumento = comboTipoDocumento.getValue();	 	
  		parametros.protocolo = protocolo.getValue();
 	 	parametros.notario = notario.getValue();
-	 	parametros.fechaEscritura = fechaEscritura.getValue().format('d/m/Y');
+	 	if (fechaEscritura.getValue()=='')
+	 		parametros.fechaEscritura = '';
+	 	else
+	 		parametros.fechaEscritura = fechaEscritura.getValue().format('d/m/Y');
 	 	parametros.asiento = asiento.getValue();
 	 	parametros.finca = finca.getValue();
 	 	parametros.tomo = tomo.getValue();
@@ -137,6 +143,7 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	
 var docsRecord = Ext.data.Record.create([
 	{name:'id'},
+	{name:'unidadGestionId'},	
 	{name:'contrato'},
 	{name:'descripcionUG'}
 ]);
@@ -154,6 +161,7 @@ var storeDocs = page.getStore({
 var cmDoc = [
 	myCboxSelModel,
 	{header: 'id',dataIndex:'id',hidden:'true'},
+	{header: 'unidadGestionId',dataIndex:'unidadGestionId',hidden:'true'},
 	{header : '<s:message code="precontencioso.grid.documento.incluirDocumento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
 	{header : '<s:message code="precontencioso.grid.documento.incluirDocumento.descripcion" text="**Descripción" />', dataIndex : 'descripcionUG'}
 ];
@@ -271,12 +279,12 @@ var gridDocs = new Ext.grid.GridPanel({
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.notario" text="**Notario" />'
 	});  
 	
+	
 	var fechaEscritura = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.fechaEscritura" text="**Fecha escritura" />'
-		,value : '<s:message code="${fechaEscritura}" />'
 		,style:'margin:0px'
-	});
+	});	
 	
 	var asiento = new Ext.form.TextField({
 		name : 'asiento'

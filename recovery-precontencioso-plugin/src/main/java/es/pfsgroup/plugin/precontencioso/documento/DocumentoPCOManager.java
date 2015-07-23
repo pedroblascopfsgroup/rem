@@ -3,7 +3,10 @@ package es.pfsgroup.plugin.precontencioso.documento;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,13 +15,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
+import es.capgemini.pfs.asunto.dto.PersonasProcedimientoDto;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.dao.BienDao;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.dao.PersonaDao;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -30,6 +43,7 @@ import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
 import es.pfsgroup.plugin.precontencioso.documento.dao.SolicitudDocumentoPCODao;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
@@ -63,7 +77,13 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     private PersonaDao personaDao;  
     
     @Autowired
-    private BienDao bienDao;  
+    private BienDao bienDao; 
+    
+    @Autowired
+    private ProcedimientoDao procedimientoDao;
+    
+	@Autowired
+	ProcedimientoManager procedimientoManager;
   
     @Autowired
     private GenericABMDao genericDao;
@@ -224,6 +244,17 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setEstadoDocumento(estadoDocumento);
 		
 		documentoPCODao.saveOrUpdate(documento);
+	}
+	
+	/**
+	 * Anular solicitudes asociadas
+	 * 
+	 * @param idSolicitud
+	 */
+	@Override
+	@Transactional(readOnly = false)	
+	public void anularSolicitudes(Long idSolicitud){
+			genericDao.deleteById(SolicitudDocumentoPCO.class, idSolicitud);
 	}
 	
 	/**
@@ -396,7 +427,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 				DDUnidadGestionPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoUG())); 
 		documento.setUnidadGestion(unidadGestion);
 		
-		documento.setUnidadGestionId(new Long(docDto.getContrato()));
+		//documento.setUnidadGestionId(new Long(docDto.getContrato()));
+		documento.setUnidadGestionId(docDto.getId());
 		
 		DDEstadoDocumentoPCO estadoDocumento = genericDao.get(
 				DDEstadoDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR)); 
@@ -443,7 +475,14 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			System.out.println("Error: "+e);
 		}
 	}
+	
 
+	/**
+	 * Guardar los datos informados en la solicitud
+	 * 
+	 * @param dto
+	 * 
+	 */
 	@Override
 	@BusinessOperation(PCO_DOCUMENTO_SOLICITUD_INFORMAR)
 	@Transactional(readOnly = false)
@@ -467,6 +506,11 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			}
 		}
 		
+
+//		if (!Checks.esNulo(dto.getActor())) {
+//			Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
+//			//solicitud.setActor(usuario);
+//		}
 		
 		solicitud.setFechaResultado(dto.getFechaResultado());
 		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
@@ -505,6 +549,100 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 
 		return gestorDespacho;
+	}
+
+	/**
+	 * Obtiene la lista de contratos, personas o bienes a mostrar en la
+	 * pantalla de Incluir documentos
+	 * 
+	 * @param idProcedimiento
+	 * @param codUG
+	 * 
+	 * @return Lista de documentos a mostrar en el doble combo
+	 * 
+	 */
+	public List<DocumentosUGPCODto> getDocumentosUG(Long idProcedimiento,String codUG) {
+		List<DocumentosUGPCODto> documentosUG = new ArrayList<DocumentosUGPCODto>(); 
+		DocumentosUGPCODto docUG;
+		Iterator it;
+		Map.Entry e;
+		
+		// CONTRATOS y PERSONAS
+		if (codUG.equals(DDUnidadGestionPCO.CONTRATOS) || codUG.equals(DDUnidadGestionPCO.PERSONAS)){
+			Procedimiento procedimiento = procedimientoDao.get(new Long(idProcedimiento));
+			List<ExpedienteContrato> procedimientos = procedimiento.getExpedienteContratos();
+			Contrato contrato;
+			Persona persona;
+			HashMap<Long, Contrato> contratoH = new HashMap<Long, Contrato>();
+			HashMap<Long, Persona> personaH = new HashMap<Long, Persona>();
+			List<ContratoPersona> contratoPersonas;
+			
+			// Procesamos para no tener contratosy personas	 repetidos
+			for (ExpedienteContrato expCnt : procedimientos){
+				contratoH.put(expCnt.getContrato().getId(), expCnt.getContrato());
+				
+				// Por cada contrato averiguamos las personas
+				contratoPersonas = expCnt.getContrato().getContratoPersona();
+				for (ContratoPersona cntPer : contratoPersonas){
+					personaH.put(cntPer.getPersona().getId(), cntPer.getPersona());
+				}
+			}
+			
+			// Procesar CONTRATOS
+			if (codUG.equals(DDUnidadGestionPCO.CONTRATOS)){
+				it = contratoH.entrySet().iterator();
+				while (it.hasNext()) {
+					e = (Map.Entry)it.next();
+					contrato = (Contrato)e.getValue();
+					docUG = new DocumentosUGPCODto();
+					docUG.setId(contrato.getId());
+					docUG.setContrato(contrato.getNroContrato());
+					docUG.setUnidadGestionId(DDUnidadGestionPCO.CONTRATOS);
+					docUG.setDescripcionUG(contrato.getTipoProducto().getDescripcion());			
+					documentosUG.add(docUG);
+				}
+			}
+						
+			// Procesar PERSONAS
+			if (codUG.equals(DDUnidadGestionPCO.PERSONAS)){
+				it = personaH.entrySet().iterator();
+				while (it.hasNext()) {
+					e = (Map.Entry)it.next();
+					persona = (Persona)e.getValue();
+					docUG = new DocumentosUGPCODto();
+					docUG.setId(persona.getId());
+					docUG.setContrato(persona.getDocId());
+					docUG.setUnidadGestionId(DDUnidadGestionPCO.PERSONAS);
+					docUG.setDescripcionUG(persona.getNom50());			
+					documentosUG.add(docUG);
+				}		
+			}
+		}
+			
+		// BIENES
+		if (codUG.equals(DDUnidadGestionPCO.BIENES)){
+			List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento);
+			HashMap<Long, Bien> bienH = new HashMap<Long, Bien>();
+			
+			// Procesamos los bienes para no obtenerlos repetidos
+			for (Bien bien: bienes){
+				bienH.put(bien.getId(), bien);			
+			}		
+			Bien bienf;
+			it = bienH.entrySet().iterator();
+			while (it.hasNext()) {
+				e = (Map.Entry)it.next();
+				bienf = (Bien)e.getValue();
+				docUG = new DocumentosUGPCODto();
+				docUG.setId(bienf.getId());
+				docUG.setContrato(bienf.getReferenciaCatastral());
+				docUG.setUnidadGestionId(DDUnidadGestionPCO.BIENES);
+				docUG.setDescripcionUG(bienf.getDescripcionBien());			
+				documentosUG.add(docUG);
+			}
+		}
+	
+		return documentosUG;
 	}
 
  }

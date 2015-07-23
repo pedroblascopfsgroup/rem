@@ -237,13 +237,39 @@ var solicitarDocButton = new Ext.Button({
 		}				
 	});	
 
-
-var anularSolicitudes = {
+var anularSolicitudesButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.anularSolicitudes" text="**Anular Solicitudes" />'
 		,iconCls : 'icon_menos'
+		,disabled : false
 		,cls: 'x-btn-text-icon'
-	};	
-var anularSolicitudesButton = new Ext.Button(anularSolicitudes);
+		,handler:function(){
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinSolSeleccionada" text="**Debe seleccionar algún documento." />');
+			}
+			else {
+				if (rowsSelected.length > 1){
+					Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleSolSeleccionada" text="**Solo debe seleccionar un documento." />');
+				}
+				else {	
+						Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.anularSolicitudes.confirmacion" text="**Va a anular solicitudes ¿Desea continuar?" />', function(btn){
+		    				if (btn == 'yes'){
+								Ext.Ajax.request({
+										url : page.resolveUrl('documentopco/anularSolicitudes'), 
+										params: {idSolicitud:idSolicitud} ,
+										method: 'POST',
+										success: function ( result, request ) {
+											refrescarDocumentosGrid();
+										}
+								});
+		    				}
+						});						
+				}
+			}
+	    }
+	});
+
+
 
 var validacionEstado=false;
 var informarDocButton = new Ext.Button({
@@ -394,7 +420,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,cls:'cursor_pointer'
 		,height: 250
 		,autoWidth: true			
-		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, anularSolicitudesButton, editarDocButton, separadorButtons, solicitarDocButton, informarDocButton ]
+		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton ]
 	});
 	
 

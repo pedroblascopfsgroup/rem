@@ -40,28 +40,28 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO] Poblar diccionario: ' || V_DDNAME || '...');
 
-V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''PD''';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''PREDOC''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor PREPARADOR DOCUMENTAL');
-    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''PD'', ''Preparador Documental'', ''Preparador Documental'', 0, ''INICIAL'', sysdate) ';
+    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''PREDOC'', ''Preparador Documental'', ''Preparador Documental'', 0, ''INICIAL'', sysdate) ';
 END IF;
 
-V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''GE''';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''GEST''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor GESTORIA');
-    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''GE'', ''Gestoria'', ''Gestoria'', 0, ''INICIAL'', sysdate) ';
+    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''GEST'', ''Gestoria'', ''Gestoria'', 0, ''INICIAL'', sysdate) ';
 END IF;
 
-V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''NO''';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''NOTARI''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor NOTARIA');
-    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''NO'', ''Notaria'', ''Notaria'', 0, ''INICIAL'', sysdate) ';
+    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''NOTARI'', ''Notaria'', ''Notaria'', 0, ''INICIAL'', sysdate) ';
 END IF;
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
+import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
@@ -131,4 +132,13 @@ public interface DocumentoPCOApi {
 	 */
 	@BusinessOperationDefinition(PCO_DOCUMENTO_SOLICITUD_INFORMAR)
 	void saveInformarSolicitud(SaveInfoSolicitudDTO dto);
+	
+	/**
+	 * Obtener los contratos, personsas y bienes asocidado al procedimiento
+	 * 
+	 * @param idProcedimiento
+	 * @param codUG
+	 * 
+	 */
+	List<DocumentosUGPCODto> getDocumentosUG(Long idProcedimiento, String codUG);
 }

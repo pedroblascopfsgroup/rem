@@ -486,42 +486,6 @@ BEGIN
 	--EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW=''plugin/cajamar/tramiteAdjudicacion/notifDecAdjuContrario'',TAP_SCRIPT_VALIDACION_JBPM=''valores['''''||V_TAREA||'''''][''''comboNotificacion'''']==DDSiNo.SI && valores['''''||V_TAREA||'''''][''''fecha'''']==null ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe indicar la fecha de notificaci&oacute;n.</div>'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 	--EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items SET TFI_ERROR_VALIDACION=NULL,TFI_VALIDACION=NULL WHERE TFI_NOMBRE=''fecha'' TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	
-	
-/*	
-	-- UPDATE
-	V_TAREA:='H001_AutoDespachandoEjecucion';
-	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items SET ' ||
-	  ' tfi_label=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Indíquese la fecha en la que se nos notifica auto por el que se despacha ejecución, el juzgado en el que ha recaído la demanda y el número de procedimiento.</p><p style="margin-bottom: 10px">Se ha de indicar si la demanda interpuesta ha sido admitida o no, lo que supondrá, según su contestación, que la tarea siguiente sea una u otra de las que se le indica con posterioridad.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será:</p><p style="margin-bottom: 10px">-Si ha sido admitida a trámite la demanda, se lanzarán las tareas "Confirmar notificación del auto despachando ejecución" y "Cumplimentar mandamiento de certificación de cargas".</p><p style="margin-bottom: 10px">-Si no ha sido admitida la demanda se le abrirá tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</p></div>''' ||
-	  ' WHERE tfi_nombre=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-
-	-- BORRADO DE TAREA (lógico)
-	V_TAREA:='H001_RegistrarCertificadoCargas';
-	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
-
-	-- BORRADO DE TAREA (lógico)
-	V_TAREA:='H001_ContactarConDeudor';
-	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
-
-	-- BORRADO DE TAREA (lógico)
-	V_TAREA:='H001_ConfirmarSiExisteOposicion';
-	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate,USUARIOBORRAR=''GONZALO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
-
-	-- BORRADO DE TAREA (lógico)
-	V_TAREA:='H001_RegistrarResolucion';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=null, TAP_SCRIPT_VALIDACION=''comprobarExisteDocumentoHRESOL() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;">Es necesario adjuntar el documento de resoluci&oacute;n.</div>'''''' WHERE TAP_CODIGO='''||V_TAREA||'''';
-
-	V_TAREA:='H001_RegistrarComparecencia';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas SET DD_PTP_PLAZO_SCRIPT=''damePlazo(valores[''''H001_PresentarAlegaciones'''']!=null ? valores[''''H001_PresentarAlegaciones''''][''''fechaComparecencia''''] : valores[''''H001_ConfirmarSiExisteOposicion''''][''''fechaComparecencia''''])'' WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-		
-	V_TAREA:='H001_RegistrarResolucion';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas SET DD_PTP_PLAZO_SCRIPT=''damePlazo(valores[''''H001_PresentarAlegaciones'''']!=null ? valores[''''H001_PresentarAlegaciones''''][''''fechaComparecencia''''] : valores[''''H001_ConfirmarSiExisteOposicion''''][''''fechaComparecencia'''']) + 15*24*60*60*1000L'' WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	*/
 	/* ------------------- -------------------------- */
 	/* ------------------- -------------------------- */
 

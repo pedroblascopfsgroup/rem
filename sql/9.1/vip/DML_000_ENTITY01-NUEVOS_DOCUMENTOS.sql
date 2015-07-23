@@ -38,6 +38,9 @@ DECLARE
       ,T_TIPO_TFA('COMAD', 'Comunicación adicional', 'Comunicación adicional', 'AP') -- Trámites de Adjudicación 
       ,T_TIPO_TFA('LIBARR', 'Certificado de Libertad de arrendamientos', 'Certificado de Libertad de arrendamientos', 'TR') -- Trámite de certificado de libertad de arrendamiento
       ,T_TIPO_TFA('ASP', 'Resultado averiguación solvencia patrimonial', 'Resultado averiguación solvencia patrimonial', 'TR') -- Trámite de solicitud de solvencia patrimonial
+      ,T_TIPO_TFA('CRSOLADJ', 'Sol. de adj. con reserva de facultad de cesión de remate', 'Solicitud de adjudicación con reserva de facultad de cesión de remate', 'AP') -- Trámite de Cesión Remate
+      ,T_TIPO_TFA('CRRESTRA', 'Resguardo trasferencia', 'Resguardo trasferencia', 'AP') -- Trámite de Cesión Remate
+      ,T_TIPO_TFA('CRACCES', 'Acta de cesión', 'Acta de cesión', 'AP') -- Trámite de Cesión Remate
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

@@ -24,6 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.dao.BienDao;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -39,6 +40,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.assembler.DocumentoAssembler;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
+import es.pfsgroup.plugin.precontencioso.documento.dao.SolicitudDocumentoPCODao;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SaveInfoSolicitudDTO;
@@ -46,6 +48,7 @@ import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudDocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.SolicitudPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDSiNoNoAplica;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
@@ -79,9 +82,12 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     
 	@Autowired
 	ProcedimientoManager procedimientoManager;
-   
+  
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+    private SolicitudDocumentoPCODao solicituddocumentopcodao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -164,7 +170,13 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		else
 			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
 				
-		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, esDocumento, siNo);
+		Long codigoEjecutivo = documento.getEjecutivo();
+		DDSiNoNoAplica siNoNoAplica = null;
+		if (!Checks.esNulo(codigoEjecutivo)) {
+			siNoNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDSiNoNoAplica.class, codigoEjecutivo);
+		}
+				
+		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, esDocumento, siNo, siNoNoAplica);
 		
 		return solDto;
 	};
@@ -184,7 +196,13 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		else
 			siNo = (DDSiNo) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNo.class, DDSiNo.NO);
 
-		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento, siNo);
+		Long codigoEjecutivo = documento.getEjecutivo();
+		DDSiNoNoAplica siNoNoAplica = null;
+		if (!Checks.esNulo(codigoEjecutivo)) {
+			siNoNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDSiNoNoAplica.class, codigoEjecutivo);
+		}
+
+		DocumentoPCODto docDto = DocumentoAssembler.docEntityToDocumentoDto(documento, siNo, siNoNoAplica);
 		
 		return docDto;		
 	};	
@@ -259,15 +277,35 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * crearSolicitudesDocumento
 	 * 
 	 */
-	public void saveCrearSolicitudes(SolicitudPCODto solDto){
+	@BusinessOperation(PCO_DOCUMENTO_CREAR_SOLICITUDES)
+	@Transactional(readOnly = false)
+	public SolicitudDocumentoPCO saveCrearSolicitudes(SolicitudPCODto solDto){
 		SolicitudDocumentoPCO solicitud = new SolicitudDocumentoPCO();
 		DocumentoPCO documento = documentoPCODao.get(solDto.getIdDoc());
 		
 		solicitud.setDocumento(documento);
-		//solicitud.setActor(actor);
+		solicitud.setActor(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(solDto.getActor()))));
 		solicitud.setFechaSolicitud(solDto.getFechaSolicitud());
+		solicitud.setFechaResultado(solDto.getFechaResultado());
+		solicitud.setFechaEnvio(solDto.getFechaEnvio());
+		solicitud.setFechaRecepcion(solDto.getFechaRecepcion());
+		solicitud.setResultadoSolicitud(genericDao.get(DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", solDto.getResultado())));
 		
-		genericDao.save(SolicitudDocumentoPCO.class,solicitud);
+		///Obtenemos el tipo de gestor para setear el codigo de actor que corresponde a ese gestor
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", solDto.getIdTipoGestor()));
+		solicitud.setTipoActor(genericDao.get(DDTipoActorPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestor.getCodigo())));
+		
+		Auditoria.save(solicitud);
+		
+		//genericDao.save(SolicitudDocumentoPCO.class,solicitud);
+		try{
+			solicituddocumentopcodao.save(solicitud);	
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		
+		
+		return solicitud;
 
 	}
 	
@@ -435,6 +473,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 				DDEstadoDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstado()));
 		documento.setEstadoDocumento(estadoDocumento);
 		documento.setAdjuntado(DDSiNo.SI.equals(dto.getAdjuntado()));
+		documento.setEjecutivo(dto.getEjecutivo());
 		documento.setObservaciones(dto.getComentario());
 		genericDao.save(DocumentoPCO.class, documento);
 
@@ -447,7 +486,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 		
 		if (!Checks.esNulo(dto.getActor())) {
-			GestorDespacho usuario = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
+			Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActor()));
 			solicitud.setActor(usuario);
 		}
 		
@@ -464,7 +503,13 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		genericDao.save(SolicitudDocumentoPCO.class, solicitud);
 
 		
-	};
+	}
+
+	@Override
+	@BusinessOperation(PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES)
+	public List<EXTDDTipoGestor> getTiposGestorActores() {
+		return solicituddocumentopcodao.getTiposGestorActores();
+	}
 
 	/**
 	 * Obtiene la lista de contratos, personas o bienes a mostrar en la

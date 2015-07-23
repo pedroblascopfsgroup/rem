@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.precontencioso.documento.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
@@ -18,6 +19,8 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 public interface DocumentoPCOApi {
 	
 	static final String PCO_DOCUMENTO_SOLICITUD_INFORMAR = "es.pfsgroup.plugin.precontencioso.documento.saveInformarSolicitud";
+	static final String PCO_DOCUMENTO_CREAR_SOLICITUDES = "es.pfsgroup.plugin.precontencioso.documento.saveCrearSolicitudes";
+	static final String PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES = "es.pfsgroup.plugin.precontencioso.documento.getTiposGestorActores";
 	static final String PCO_DOCUMENTO_CREAR = "es.pfsgroup.plugin.precontencioso.documento.saveCrearDocumento";
 		
 	/**
@@ -81,7 +84,8 @@ public interface DocumentoPCOApi {
 	 * 
 	 * @param DTO documento
 	 */
-	void saveCrearSolicitudes(SolicitudPCODto solDto);	
+	@BusinessOperationDefinition(PCO_DOCUMENTO_CREAR_SOLICITUDES)
+	SolicitudDocumentoPCO saveCrearSolicitudes(SolicitudPCODto solDto);	
 	
 	/**
 	 * Devuelve los tipos de documentos
@@ -141,4 +145,11 @@ public interface DocumentoPCOApi {
 	 * 
 	 */
 	List<DocumentosUGPCODto> getDocumentosUG(Long idProcedimiento, String codUG);
+
+	/**
+	 * Recupera la lista de tipos de gestores que son actores
+	 * 
+	 */
+	@BusinessOperationDefinition(PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES)
+	List<EXTDDTipoGestor> getTiposGestorActores();
 }

@@ -21,8 +21,7 @@
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'
 		,items: [gridDocumentos, gridLiquidaciones,gridBurofax]
-	});
-
+	}); 
 
         panel.getValue = function() {}
 

@@ -11,6 +11,7 @@ public class SolicitudPCODto {
 	private Date fechaEnvio;
 	private Date fechaRecepcion;
 	private String resultado;
+	private Long idTipoGestor;
 	
 	public Long getId() {
 		return id;
@@ -61,6 +62,11 @@ public class SolicitudPCODto {
 	public void setResultado(String resultado) {
 		this.resultado = resultado;
 	}
-	
+	public Long getIdTipoGestor() {
+		return idTipoGestor;
+	}
+	public void setIdTipoGestor(Long idTipoGestor) {
+		this.idTipoGestor = idTipoGestor;
+	}
 	
 }

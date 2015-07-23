@@ -37,7 +37,7 @@ var btnEditarValores = new Ext.Button({
 	handler: function() {
 		var w = app.openWindow({
 			flow: 'liquidacion/abrirEditarLiquidacion',
-			autoWidth: true,
+			width: 670,
 			closable: true,
 			title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.editarliq" text="**Editar Liquidacion" />',
 			params: {idLiquidacion: idLiquidacionSeleccionada()}
@@ -135,7 +135,7 @@ var cmLiquidacion = new Ext.grid.ColumnModel([
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" text="**Intereses Ordinarios" />', dataIndex: 'interesesOrdinarios'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesDemora" text="**Intereses Demora" />', dataIndex: 'interesesDemora'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.total" text="**Total" />', dataIndex: 'total'},
-	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado'}
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado', width: 200}
 ]);
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
@@ -190,6 +190,17 @@ var actualizarBotones = function() {
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 	}
+
+	if (liquidacion) {
+		var faltanDatosDeCalculo = liquidacion.get('capitalVencido') == "" 
+			|| liquidacion.get('capitalNoVencido') == ""
+			|| liquidacion.get('interesesOrdinarios') == ""
+			|| liquidacion.get('interesesDemora') == ""
+			|| liquidacion.get('total') == "" ;
+
+		btnConfirmar.setDisabled(btnConfirmar.disabled || faltanDatosDeCalculo);
+	}
+
 }
 
 <%-- Utils --%>

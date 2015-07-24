@@ -30,7 +30,6 @@
 		<transition to="H022_ConfirmarAdmisionDemanda" name="activarAlerta"></transition>
 		<transition to="H022_ConfirmarAdmisionDemandaDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="H022_InterposicionDemanda" name="vueltaAtras"></transition>
 	</state>
 
 	<decision name="H022_ConfirmarAdmisionDemandaDecision"
@@ -116,7 +115,8 @@
 	<decision name="H022_ConfirmarOposicionCuantiaDecision"
 		expression="#{H022_ConfirmarOposicionCuantiaDecision}">
 		<transition to="H022_BPMProcedimientoETJ" name="NO"></transition>
-		<transition to="H022_MonitorioDecision" name="SI"></transition>
+		<transition to="H022_BPMOrdinario" name="mas6000"></transition>
+		<transition to="H022_BPMVerbalDesdeMonitorio" name="menos6000"></transition>
 	</decision>
 
 	<state name="H022_BPMProcedimientoETJ">
@@ -137,7 +137,7 @@
 			</action>
 		</event>
 		<transition to="H022_BPMProcedimientoETJ" name="activarAlerta"></transition>
-		<transition to="H022_MonitorioDecision" name="hcj_ejecucionTituloJudicial"></transition>
+		<transition to="Fin" name="hcj_ejecucionTituloJudicial"></transition>
 	</state>
 
 	<node name="H022_MonitorioDecision">
@@ -167,10 +167,85 @@
 			</action>
 		</event>
 		<transition to="H022_InterposicionDemanda" name="activarAlerta"></transition>
-		<transition to="H022_ConfirmarAdmisionDemanda" name="avanzaBPM"></transition>
+		<transition to="ForkInterposicionDemanda" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
+	<fork name="ForkInterposicionDemanda">
+		<transition to="H022_ConfirmarAdmisionDemanda" name="admision"></transition>
+		<transition to="H022_InterposicionDemandaDecision" name="provisionFondos"></transition>
+	</fork>
+
+	<decision name="H022_InterposicionDemandaDecision" expression="#{H022_InterposicionDemandaDecision}">
+		<transition to="Fin" name="No"></transition>
+		<transition to="H022_BPMProvisionFondos" name="Si"></transition>
+	</decision>
+
+	<state name="H022_BPMProvisionFondos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="hcj_provisionFondos"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H022_BPMProvisionFondos" name="activarAlerta"></transition>
+	</state>
+
+	<state name="H022_BPMOrdinario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="hcj_procedimientoOrdinario"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H022_BPMOrdinario" name="activarAlerta"></transition>
+	</state>
+
+	<state name="H022_BPMVerbalDesdeMonitorio">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="hcj_procedimientoVerbalDesdeMonitorio"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H022_BPMVerbalDesdeMonitorio" name="activarAlerta"></transition>
+	</state>
 
 	<end-state name="Fin">
 		<event type="node-enter">

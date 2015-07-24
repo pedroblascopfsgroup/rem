@@ -54,6 +54,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMandamientoCancelacionCargas/hcj_mandamientoCancelacionCargas.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
@@ -67,7 +68,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="-1"/>	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseLiquidacion/haya_tramiteFaseLiquidacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbalDesdeMonitorio/haya_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCalificacion/haya_tramiteCalificacion.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseConvenio/tramiteFaseConvenioV4.xml" p:version="-1"/>		

@@ -38,7 +38,7 @@ fi
 if [ "$#" -lt 1 ]; then
     print_banner
     echo ""
-    echo "   Uso: $0 [haya|bankia]"
+    echo "   Uso: $0 [haya|bankia|cajamar]"
     echo ""
     echo ""
     echo "******************************************************************************************"

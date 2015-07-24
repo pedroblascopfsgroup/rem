@@ -334,6 +334,16 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H048','H048_ResolucionFirme','CJ-814','CJ-GAREO')
 ,T_TIPO_VALOR('H048','H048_SolicitudRequerimientoDocOcupantes','CJ-814','CJ-GAREO')
 ,T_TIPO_VALOR('H048','H048_TrasladoDocuDeteccionOcupantes','CJ-814','CJ-GAREO')
+,T_TIPO_VALOR('H022','H022_BPMOrdinario','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_BPMProcedimientoETJ','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_BPMProvisionFondos','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_BPMVerbalDesdeMonitorio','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_ConfirmarAdmisionDemanda','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_ConfirmarNotificacionReqPago','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_ConfirmarOposicionCuantia','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_InterposicionDemanda','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_JBPMTramiteNotificacion','CJ-814','GCONPR')
+,T_TIPO_VALOR('H022','H022_MonitorioDecision','CJ-814','GCONPR')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

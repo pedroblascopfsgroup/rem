@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoMonitorio" width="1294" height="728">
-  <node name="Inicio" x="-2" y="-44" width="132" height="36">
+<root-container name="haya_procedimientoMonitorio" width="1258" height="938">
+  <node name="Inicio" x="-3" y="-48" width="132" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-40" y="-10"/>
     </edge>
   </node>
-  <node name="H022_ConfirmarAdmisionDemanda" x="233" y="44" width="375" height="36">
+  <node name="H022_ConfirmarAdmisionDemanda" x="239" y="276" width="375" height="36">
     <edge>
       <label x="-73" y="17"/>
     </edge>
@@ -17,12 +17,8 @@
       <label x="5" y="-10"/>
       <bendpoint w1="613" h1="-1" w2="-59" h2="-450"/>
     </edge>
-    <edge>
-      <label x="83" y="-4"/>
-      <bendpoint w1="-268" h1="-50" w2="-271" h2="44"/>
-    </edge>
   </node>
-  <node name="H022_ConfirmarAdmisionDemandaDecision" x="431" y="114" width="298" height="36">
+  <node name="H022_ConfirmarAdmisionDemandaDecision" x="437" y="346" width="298" height="36">
     <edge>
       <label x="-7" y="-16"/>
       <bendpoint w1="233" h1="-1" w2="-8" h2="-315"/>
@@ -31,7 +27,7 @@
       <label x="7" y="-14"/>
     </edge>
   </node>
-  <node name="H022_ConfirmarNotificacionReqPago" x="57" y="115" width="235" height="36">
+  <node name="H022_ConfirmarNotificacionReqPago" x="63" y="347" width="235" height="36">
     <edge>
       <label x="-79" y="18"/>
     </edge>
@@ -48,12 +44,12 @@
       <bendpoint w1="-1" h1="-75" w2="-307" h2="-1"/>
     </edge>
   </node>
-  <node name="H022_JBPMTramiteNotificacion" x="469" y="212" width="254" height="36">
+  <node name="H022_JBPMTramiteNotificacion" x="475" y="444" width="254" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H022_ConfirmarNotificacionReqPagoDecision" x="29" y="212" width="289" height="36">
+  <node name="H022_ConfirmarNotificacionReqPagoDecision" x="35" y="444" width="289" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -61,7 +57,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H022_ConfirmarOposicionCuantia" x="3" y="296" width="347" height="36">
+  <node name="H022_ConfirmarOposicionCuantia" x="9" y="528" width="347" height="36">
     <edge>
       <label x="-80" y="2"/>
     </edge>
@@ -77,7 +73,7 @@
       <bendpoint w1="-256" h1="-80" w2="-254" h2="101"/>
     </edge>
   </node>
-  <node name="H022_ConfirmarOposicionCuantiaDecision" x="2" y="382" width="351" height="36">
+  <node name="H022_ConfirmarOposicionCuantiaDecision" x="8" y="614" width="351" height="36">
     <edge>
       <label x="8" y="-25"/>
     </edge>
@@ -85,7 +81,7 @@
       <label x="-48" y="-19"/>
     </edge>
   </node>
-  <node name="H022_BPMProcedimientoETJ" x="-5" y="490" width="372" height="36">
+  <node name="H022_BPMProcedimientoETJ" x="1" y="722" width="372" height="36">
     <edge>
       <label x="0" y="4"/>
     </edge>
@@ -93,7 +89,7 @@
       <label x="-121" y="6"/>
     </edge>
   </node>
-  <node name="H022_MonitorioDecision" x="730" y="428" width="182" height="36">
+  <node name="H022_MonitorioDecision" x="736" y="660" width="182" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -107,8 +103,38 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="669" h1="2" w2="0" h2="-541"/>
+      <bendpoint w1="736" h1="17" w2="60" h2="-748"/>
     </edge>
   </node>
-  <node name="Fin" x="1027" y="483" width="132" height="36"/>
+  <node name="Fin" x="1033" y="715" width="132" height="36"/>
+  <node name="fork1" x="297" y="61" width="252" height="24">
+    <edge>
+      <label x="-27" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H022_InterposicionDemandaDecision" x="477" y="154" width="282" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="458" h1="103" w2="-23" h2="-458"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H022_BPMProvisionFondos" x="779" y="60" width="211" height="36">
+    <edge>
+      <label x="-138" y="-15"/>
+      <bendpoint w1="247" h1="19" w2="32" h2="-636"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="198" h1="130" w2="-17" h2="-525"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

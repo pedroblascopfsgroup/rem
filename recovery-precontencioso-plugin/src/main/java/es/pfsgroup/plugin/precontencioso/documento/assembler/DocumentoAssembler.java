@@ -67,6 +67,7 @@ public class DocumentoAssembler {
 				solicitudDto.setResultado(solicitud.getResultadoSolicitud().getDescripcion());
 		}
 
+
 		return solicitudDto;
 	}
 	

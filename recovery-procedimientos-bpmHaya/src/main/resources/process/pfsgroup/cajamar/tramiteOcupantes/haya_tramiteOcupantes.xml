@@ -32,7 +32,7 @@
 	
 	<decision name="H048_TrasladoDocuDeteccionOcupantesDecision" expression="#{H048_TrasladoDocuDeteccionOcupantesDecision}">
 		<transition to="H048_SolicitudRequerimientoDocOcupantes" name="sinDocumentacion"></transition>
-		<transition to="H048_RegistrarInformeSituacion" name="conDocumentacion"></transition>
+		<transition to="H048_ObtenerAprobacionAlquiler" name="conDocumentacion"></transition>
 	</decision>
 	
 	<state name="H048_SolicitudRequerimientoDocOcupantes">		
@@ -75,13 +75,13 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="H048_RegistrarInformeSituacion" name="avanzaBPM"></transition>
+		<transition to="H048_ObtenerAprobacionAlquiler" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H048_RegistrarRecepcionDoc" name="activarAlerta"></transition>
 		<transition to="H048_SolicitudRequerimientoDocOcupantes" name="vueltaAtras"></transition>
 	</state>
 	
-	<state name="H048_RegistrarInformeSituacion">		
+	<state name="H048_ObtenerAprobacionAlquiler">		
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -98,38 +98,14 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="H048_RevisarInformeLetrado" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="H048_RegistrarInformeSituacion" name="activarAlerta"></transition>
+		<transition to="H048_ObtenerAprobacionAlquiler" name="activarAlerta"></transition>
+		<transition to="H048_ObtenerAprobacionAlquilerDecision" name="avanzaBPM"></transition>
 	</state>	
 	
-	<state name="H048_RevisarInformeLetrado">		
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="H048_RevisarInformeLetradoDecision" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
-		<transition to="H048_RevisarInformeLetrado" name="activarAlerta"></transition>
-		<transition to="H048_RegistrarInformeSituacion" name="vueltaAtras"></transition>
-	</state>
-	
-	<decision name="H048_RevisarInformeLetradoDecision" expression="#{H048_RevisarInformeLetradoDecision}">
-		<transition to="H048_RegistrarInformeSituacion" name="requiereModificacion"></transition>
+	<decision name="H048_ObtenerAprobacionAlquilerDecision" expression="#{H048_ObtenerAprobacionAlquilerDecision}">
 		<transition to="H048_PresentarEscritoAlegaciones" name="siHayAleg"></transition>
-		<transition to="H048_ConfirmarVista" name="noHayAlegNoHayVista"></transition>
+		<transition to="H048_RegistrarResolucion" name="noHayAlegNoHayVista"></transition>
 		<transition to="H048_RegistrarCelebracionVista" name="noHayAlegSiHayVista"></transition>
 	</decision>
 	
@@ -153,7 +129,7 @@
 		<transition to="H048_ConfirmarVista" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H048_PresentarEscritoAlegaciones" name="activarAlerta"></transition>		
-		<transition to="H048_RevisarInformeLetrado" name="vueltaAtras"></transition>
+		<transition to="H048_ObtenerAprobacionAlquiler" name="vueltaAtras"></transition>
 	</state>
 	
 	<state name="H048_ConfirmarVista">		
@@ -175,7 +151,8 @@
 		</event>
 		<transition to="H048_ConfirmarVistaDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="H048_ConfirmarVista" name="activarAlerta"></transition>		
+		<transition to="H048_ConfirmarVista" name="activarAlerta"></transition>
+		<transition to="H048_PresentarEscritoAlegaciones" name="vueltaAtras"></transition>		
 	</state>
 	
 	<decision name="H048_ConfirmarVistaDecision" expression="#{H048_ConfirmarVistaDecision}">

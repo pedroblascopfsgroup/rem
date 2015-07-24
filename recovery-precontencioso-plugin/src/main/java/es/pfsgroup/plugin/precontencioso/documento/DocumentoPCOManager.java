@@ -150,7 +150,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @param solicitud
 	 * @return
 	 */
-	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, boolean esDocumento){
+	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, 
+																	boolean esDocumento, boolean tieneSolicitud){
 		SolicitudDocumentoPCODto solDto=null;
 		DDSiNo siNo;
 		String descripcionUG = null;
@@ -181,7 +182,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			siNoNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDSiNoNoAplica.class, codigoEjecutivo);
 		}
 				
-		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, esDocumento, siNo, siNoNoAplica);
+		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, 
+																	esDocumento, tieneSolicitud, siNo, siNoNoAplica);
 		
 		return solDto;
 	};
@@ -390,7 +392,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	}
 	
 	/**
-	 * Crea un documento con sus solicitudes
+	 * Crea un documento
 	 * 
 	 * @param documento
 	 */
@@ -427,7 +429,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 				DDUnidadGestionPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoUG())); 
 		documento.setUnidadGestion(unidadGestion);
 		
-		//documento.setUnidadGestionId(new Long(docDto.getContrato()));
 		documento.setUnidadGestionId(docDto.getId());
 		
 		DDEstadoDocumentoPCO estadoDocumento = genericDao.get(
@@ -435,31 +436,31 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setEstadoDocumento(estadoDocumento);
 		
 		// Crear la solicitud primera
-		SolicitudDocumentoPCO solicitud =new SolicitudDocumentoPCO();
+//		SolicitudDocumentoPCO solicitud =new SolicitudDocumentoPCO();
 		
 		///////////////////////////////////////////////
 		// TODO - DATOS PROVISIONALES
-		GestorDespacho usuario = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
-		solicitud.setActor(usuario);
-		
-		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
-				DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "OK"));
-		
-		solicitud.setResultadoSolicitud(resultadoSolicitud);
-		
-		DDTipoActorPCO tipoActor = genericDao.get(
-				DDTipoActorPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoActor()));
-		solicitud.setTipoActor(tipoActor);
-		
-		Auditoria.save(solicitud);
-		
-		solicitud.setDocumento(documento);
-		
-		List<SolicitudDocumentoPCO> solicitudes = new ArrayList<SolicitudDocumentoPCO>();
-		
-		solicitudes.add(solicitud);
-		
-		documento.setSolicitudes(solicitudes);
+//		GestorDespacho usuario = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
+//		solicitud.setActor(usuario);
+//		
+//		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
+//				DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "OK"));
+//		
+//		solicitud.setResultadoSolicitud(resultadoSolicitud);
+//		
+//		DDTipoActorPCO tipoActor = genericDao.get(
+//				DDTipoActorPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoActor()));
+//		solicitud.setTipoActor(tipoActor);
+//		
+//		Auditoria.save(solicitud);
+//		
+//		solicitud.setDocumento(documento);
+//		
+//		List<SolicitudDocumentoPCO> solicitudes = new ArrayList<SolicitudDocumentoPCO>();
+//		
+//		solicitudes.add(solicitud);
+//		
+//		documento.setSolicitudes(solicitudes);
 		
 		ProcedimientoPCO procPCO = genericDao.get(
 				ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));

@@ -15,6 +15,7 @@
             <json:property name="estado" value="${s.estado}" />
             <json:property name="adjunto" value="${s.adjunto}" />
             <json:property name="ejecutivo" value="${s.ejecutivo}" />
+            <json:property name="tipoActor" value="${s.tipoActor}" />
             <json:property name="actor" value="${s.actor}" />
             <json:property name="fechaSolicitud" value="${s.fechaSolicitud}" />
             <json:property name="fechaResultado" value="${s.fechaResultado}" />

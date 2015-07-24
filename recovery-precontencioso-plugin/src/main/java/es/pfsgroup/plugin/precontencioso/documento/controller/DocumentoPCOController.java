@@ -72,7 +72,8 @@ public class DocumentoPCOController {
 
 		idProcPCO = new Long(idProcedimientoPCO);
 		
-		boolean esDocumento;	// marca para la primera solicitud de cada documento
+		boolean esDocumento;	
+		boolean tieneSolicitud;
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
@@ -81,10 +82,19 @@ public class DocumentoPCOController {
 		for (DocumentoPCO doc : documentos) {
 			solicitudes = doc.getSolicitudes();
 			esDocumento = true;
-			for (SolicitudDocumentoPCO sol : solicitudes) {
-				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento));
-				if (esDocumento) esDocumento = false;
-			}			
+			
+			// Si hay solicitudes
+			if (solicitudes != null && solicitudes.size()>0){
+				for (SolicitudDocumentoPCO sol : solicitudes) {
+					tieneSolicitud = true;
+					solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud));
+					if (esDocumento) esDocumento = false;
+				}
+			}
+			else {
+				tieneSolicitud = false;
+				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud));				
+			}
 		}
 		
 		model.put("solicitudesDocumento", solicitudesDoc);
@@ -390,7 +400,7 @@ public class DocumentoPCOController {
 			tipoUG = stIdUG.nextToken();
 			tipoUG = tipoUG.substring(1, tipoUG.length()-1);
 
-			// Por cada documento de UG elegido tenemos que crear un documento y una solicitud (vacia)				
+			// Por cada documento de UG elegido tenemos que crear un documento 				
 			// Crear DOCUMENTO
 			
 			DocumentoPCODto docDto = new DocumentoPCODto();

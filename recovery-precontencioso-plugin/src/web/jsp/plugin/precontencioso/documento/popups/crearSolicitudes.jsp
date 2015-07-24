@@ -27,7 +27,8 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler:function(){
-				if (validateForm) {		    
+				var formulario = panelEdicion.getForm();
+				if (formulario.isValid()) {		    
 			    	var p = getParametros();
 			    	Ext.Ajax.request({
 							url : page.resolveUrl('documentopco/saveCrearSolicitudes'), 
@@ -37,14 +38,13 @@
 								page.fireEvent(app.event.DONE);
 							}
 					});
+				}else{
+						Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios.');
 				}
 	     }
 	});
 	
 
-	var validateForm = function(){		              
-		return true;
-	};
 
 	var getParametros = function() {
 		
@@ -53,10 +53,6 @@
 	 	parametros.id = ${dtoDoc.id};
 	 	parametros.actor = comboUsuario.getValue();
 	 	if(fechaSolicitud.getValue()!=null && fechaSolicitud.getValue()!= '') parametros.fechaSolicitud = fechaSolicitud.getValue().format('d/m/Y');
-	 	if(fechaResultado.getValue()!=null && fechaResultado.getValue()!= '') parametros.fechaResultado = fechaResultado.getValue().format('d/m/Y');
-	 	if(fechaEnvio.getValue()!=null && fechaEnvio.getValue()!= '') parametros.fechaEnvio = fechaEnvio.getValue().format('d/m/Y');
-	 	if(fecharecepcion.getValue()!=null && fecharecepcion.getValue()!= '') parametros.fecharecepcion = fecharecepcion.getValue().format('d/m/Y');
-	 	parametros.resultado = comboResultado.getValue();
 	 	parametros.tipogestor = comboTipoGestor.getValue();
 	 	parametros.idDespacho = comboTipoDespacho.getValue();
 	 	
@@ -83,6 +79,7 @@
 		store: tipoGestorStore,
 		displayField: 'descripcion',
 		valueField: 'id',
+		allowBlank: false,
 		mode: 'remote',
 		forceSelection: true,
 		emptyText: 'Seleccionar',
@@ -110,6 +107,7 @@
 		store: tipoDespachoStore,
 		displayField: 'descripcion',
 		valueField:'cod',
+		allowBlank: false,
 		mode: 'remote',
 		disabled: true,
 		forceSelection: true,
@@ -134,7 +132,7 @@
 
 	var comboUsuario = new Ext.form.ComboBox({
 		store: usuarioStore,
-		allowBlank: true,
+		allowBlank: false,
 		blankElementText: '---',
 		emptyText: '---',
 		disabled: true,
@@ -160,24 +158,6 @@
 	comboTipoGestor.on('afterrender', function(combo) {
 		tipoGestorStore.webflow();
 	});
-
-<!-- 	tipoGestorStore.on('load', function(combo) { -->
-<!-- 		// Se filtra por tipo de gestor apoderado. -->
-<!-- 		var numRecord = tipoGestorStore.findExact('descripcion', 'Apoderado', 0); -->
-<!-- 		var value = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.valueField]; -->
-<!-- 		var rawValue = tipoGestorStore.getAt(numRecord).data[comboTipoGestor.displayField]; -->
-
-<!-- 		comboTipoGestor.setValue(value); -->
-<!-- 		comboTipoGestor.setRawValue(rawValue); -->
-<!-- 		comboTipoGestor.selectedIndex = numRecord; -->
-
-<!-- 		comboTipoDespacho.reset(); -->
-<!-- 		comboUsuario.reset(); -->
-<!-- 		comboTipoDespacho.setDisabled(false); -->
-<!-- 		comboUsuario.setDisabled(true); -->
-
-<!-- 		tipoDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()}); -->
-<!-- 	}); -->
 	
 	comboTipoGestor.on('select', function() {
 		
@@ -196,57 +176,31 @@
 		comboUsuario.setDisabled(false);
 	});
 	   
-	
 	var fechaSolicitud = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
+		,allowBlank: false
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.crearSolicitudes.fechaSolicitud" text="**Fecha solicitud" />'
-<%-- 		,value : '<fwk:date value="${fechaEscritura}" />' --%>
+		,value : new Date() 
 		,style:'margin:0px'
 	});
 	
-	var fechaResultado = new Ext.ux.form.XDateField({
-		name : 'fechaResultado'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.crearSolicitudes.fechaResultado" text="**Fecha resultado" />'
-<%-- 		,value : '<fwk:date value="${fechaEscritura}" />' --%>
-		,style:'margin:0px'
-	});
-	
-	var fechaEnvio = new Ext.ux.form.XDateField({
-		name : 'fechaEnvio'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.crearSolicitudes.fechaEnvio" text="**Fecha envio" />'
-<%-- 		,value : '<fwk:date value="${fechaEscritura}" />' --%>
-		,style:'margin:0px'
-	});
-	
-	var fecharecepcion = new Ext.ux.form.XDateField({
-		name : 'fecharecepcion'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.crearSolicitudes.fechaRecpecion" text="**Fecha recepción" />'
-<%-- 		,value : '<fwk:date value="${fechaEscritura}" />' --%>
-		,style:'margin:0px'
-	});
-	
-	<pfsforms:ddCombo name="comboResultado"
-		labelKey="precontencioso.grid.documento.crearSolicitudes.resultado" 
- 		label="**Resultado" value="" dd="${DDResultado}" 
-		propertyCodigo="codigo" propertyDescripcion="descripcion" />
 
 
-	var panelEdicion = new Ext.form.FieldSet({
-		title:'<s:message code="precontencioso.grid.documento.incluirDocumento.infoDocumentos" text="**Información Documentos" />'
-		,layout:'table'
+
+	var panelEdicion = new Ext.FormPanel({
+		layout:'table'
 		,layoutConfig:{columns:2}
-		,border:true
+		,border:false
    	    ,width: 400
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ comboTipoGestor, comboTipoDespacho, comboUsuario, fechaSolicitud, fechaResultado, fechaEnvio, fecharecepcion, comboResultado]}
+		,items:[{items: [ comboTipoGestor, comboTipoDespacho, comboUsuario, fechaSolicitud]}
 		]
 	});	
 
 	var panel=new Ext.Panel({
 		border:false
 		,bodyStyle : 'padding:5px'
-		,height: 380
-<!-- 		,autoHeight:true -->
+		,height: 180
 		,autoWidth:true
 		,autoScroll:true
 		,defaults:{xtype:'fieldset',cellCls : 'vtop'}

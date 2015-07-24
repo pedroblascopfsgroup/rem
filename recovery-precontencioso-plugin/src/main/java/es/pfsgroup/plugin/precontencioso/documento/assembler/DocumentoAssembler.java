@@ -56,7 +56,8 @@ public class DocumentoAssembler {
 			solicitudDto.setFechaEnvio(webDateFormat.format(solicitud.getFechaEnvio()));
 		if (solicitud.getFechaRecepcion()!=null)
 			solicitudDto.setFechaRecepcion(webDateFormat.format(solicitud.getFechaRecepcion()));
-		solicitudDto.setResultado(solicitud.getResultadoSolicitud().getDescripcion());
+		if (solicitud.getResultadoSolicitud()!=null)
+			solicitudDto.setResultado(solicitud.getResultadoSolicitud().getDescripcion());
 
 		return solicitudDto;
 	}

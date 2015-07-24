@@ -310,7 +310,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		solicitud.setFechaResultado(solDto.getFechaResultado());
 		solicitud.setFechaEnvio(solDto.getFechaEnvio());
 		solicitud.setFechaRecepcion(solDto.getFechaRecepcion());
-		solicitud.setResultadoSolicitud(genericDao.get(DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", solDto.getResultado())));
+		if(!Checks.esNulo(solDto.getResultado())){ solicitud.setResultadoSolicitud(genericDao.get(DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", solDto.getResultado())));}
 		
 		///Obtenemos el tipo de gestor para setear el codigo de actor que corresponde a ese gestor
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", solDto.getIdTipoGestor()));

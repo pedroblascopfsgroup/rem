@@ -55,7 +55,7 @@ public class AcuerdoPayload {
 	}
 
 	public AcuerdoPayload(String tipo, Acuerdo acuerdo) {
-		this(new DataContainerPayload(tipo), acuerdo);
+		this(new DataContainerPayload(null, null), acuerdo);
 	}
 	
 	public AcuerdoPayload(DataContainerPayload data, Acuerdo acuerdo) {

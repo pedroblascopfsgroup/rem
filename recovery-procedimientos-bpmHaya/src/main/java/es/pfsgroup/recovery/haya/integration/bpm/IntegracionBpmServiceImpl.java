@@ -10,6 +10,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.utils.DbIdContextHolder;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.concursal.convenio.model.Convenio;
 
@@ -47,11 +48,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(convenio, TIPO_CAB_CONVENIO);
+	    			notificacionGateway.enviar(convenio, TIPO_CAB_CONVENIO, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(convenio, TIPO_CAB_CONVENIO);
+    		notificacionGateway.enviar(convenio, TIPO_CAB_CONVENIO, DbIdContextHolder.getDbId());
     	}
 	}	
 }

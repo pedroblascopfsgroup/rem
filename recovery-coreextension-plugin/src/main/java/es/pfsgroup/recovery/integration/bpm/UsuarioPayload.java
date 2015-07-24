@@ -13,7 +13,7 @@ public class UsuarioPayload {
 	private final DataContainerPayload data;
 
 	public UsuarioPayload(String tipo, Auditable auditable) {
-		this(new DataContainerPayload(tipo), auditable);
+		this(new DataContainerPayload(null, null), auditable);
 	}
 	
 	public UsuarioPayload(DataContainerPayload data, Auditable auditable) {

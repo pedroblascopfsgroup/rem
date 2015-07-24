@@ -12,7 +12,7 @@ public class AsuntoPayload {
 	private final DataContainerPayload data;
 
 	public AsuntoPayload(String tipo, Asunto asunto) {
-		this(new DataContainerPayload(tipo), asunto);
+		this(new DataContainerPayload(null, null), asunto);
 	}
 	
 	public AsuntoPayload(DataContainerPayload data, Asunto asunto) {

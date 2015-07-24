@@ -31,7 +31,7 @@ public class TareaNotificacionPayload {
 	}
 	
 	public TareaNotificacionPayload(String tipo, TareaNotificacion tarea) {
-		this(new DataContainerPayload(tipo), tarea);
+		this(new DataContainerPayload(null, null), tarea);
 	}
 
 	public TareaNotificacionPayload(DataContainerPayload data, TareaNotificacion tarea) {

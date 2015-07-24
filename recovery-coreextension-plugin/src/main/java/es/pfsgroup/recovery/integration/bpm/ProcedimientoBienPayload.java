@@ -16,7 +16,7 @@ public class ProcedimientoBienPayload {
 	}
 	
 	public ProcedimientoBienPayload(String tipo) {
-		this(new DataContainerPayload(tipo));
+		this(new DataContainerPayload(null, null));
 	}
 
 	public DataContainerPayload getData() {

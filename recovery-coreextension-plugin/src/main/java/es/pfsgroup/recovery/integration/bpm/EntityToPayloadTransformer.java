@@ -100,8 +100,8 @@ public class EntityToPayloadTransformer {
 			throw new IntegrationDataException(String.format("[INTEGRACION] El mensaje no tiene asignado tipo de mensaje en la cabecera, por favor asigne el valor %s a la cabecera.", TypePayload.HEADER_MSG_TYPE));
 		}
 		String tipoMensaje = (String)message.getHeaders().get(TypePayload.HEADER_MSG_TYPE);
-
-		DataContainerPayload payload = new DataContainerPayload(tipoMensaje);
+		Long entidad = (Long)message.getHeaders().get(TypePayload.HEADER_MSG_ENTIDAD);
+		DataContainerPayload payload = new DataContainerPayload(tipoMensaje, entidad);
 		if (message.getHeaders().containsKey(ProcedimientoPayload.JBPM_TRANSICION)) {
 			payload.addExtraInfo(ProcedimientoPayload.JBPM_TRANSICION, (String)message.getHeaders().get(ProcedimientoPayload.JBPM_TRANSICION));
 		}

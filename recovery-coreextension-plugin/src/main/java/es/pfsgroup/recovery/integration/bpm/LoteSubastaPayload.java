@@ -41,7 +41,7 @@ public class LoteSubastaPayload {
 	}
 	
 	public LoteSubastaPayload(String tipo, LoteSubasta loteSubasta) {
-		this(new DataContainerPayload(tipo), loteSubasta);
+		this(new DataContainerPayload(null, null), loteSubasta);
 	}
 
 	public LoteSubastaPayload(DataContainerPayload data, LoteSubasta loteSubasta) {

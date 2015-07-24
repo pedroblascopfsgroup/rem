@@ -35,7 +35,7 @@ public class RecursoPayload {
 	}
 	
 	public RecursoPayload(String tipo, MEJRecurso recurso) {
-		this(new DataContainerPayload(tipo), recurso);
+		this(new DataContainerPayload(null, null), recurso);
 	}
 	
 	public RecursoPayload(DataContainerPayload data, MEJRecurso recurso) {

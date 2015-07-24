@@ -10,6 +10,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -57,11 +58,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.inicioTarea(tareaNotificacion, TIPO_TAREA_NOTIFICACION);		
+	    			notificacionGateway.inicioTarea(tareaNotificacion, TIPO_TAREA_NOTIFICACION, DbIdContextHolder.getDbId());		
 	    		}
 			});
     	} else {
-			notificacionGateway.inicioTarea(tareaNotificacion, TIPO_TAREA_NOTIFICACION);		
+			notificacionGateway.inicioTarea(tareaNotificacion, TIPO_TAREA_NOTIFICACION, DbIdContextHolder.getDbId());		
     	}
 	}
 
@@ -75,11 +76,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.inicioTarea(tareaExterna, TIPO_INICIO_TAREA);		
+	    			notificacionGateway.inicioTarea(tareaExterna, TIPO_INICIO_TAREA, DbIdContextHolder.getDbId());		
 	    		}    		
 			});
     	} else {
-    		notificacionGateway.inicioTarea(tareaExterna, TIPO_INICIO_TAREA);
+    		notificacionGateway.inicioTarea(tareaExterna, TIPO_INICIO_TAREA, DbIdContextHolder.getDbId());
     	}
     }
     
@@ -92,12 +93,12 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finTarea(tareaExterna, TIPO_FINALIZACION_TAREA, transicion);		
+	    			notificacionGateway.finTarea(tareaExterna, TIPO_FINALIZACION_TAREA, DbIdContextHolder.getDbId(), transicion);		
 	    		}
 	    		
 			});
     	} else {
-    		notificacionGateway.finTarea(tareaExterna, TIPO_FINALIZACION_TAREA, transicion);
+    		notificacionGateway.finTarea(tareaExterna, TIPO_FINALIZACION_TAREA, DbIdContextHolder.getDbId(), transicion);
     	}
     }
 
@@ -111,11 +112,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.cancelacionTarea(tareaExterna, TIPO_CANCELACION_TAREA);		
+	    			notificacionGateway.cancelacionTarea(tareaExterna, TIPO_CANCELACION_TAREA, DbIdContextHolder.getDbId());		
 	    		}
 			});
     	} else {
-    		notificacionGateway.cancelacionTarea(tareaExterna, TIPO_CANCELACION_TAREA);
+    		notificacionGateway.cancelacionTarea(tareaExterna, TIPO_CANCELACION_TAREA, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -129,11 +130,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finBPM(procedimiento, TIPO_FIN_BPM, tarGuidOrigen, transicion);
+	    			notificacionGateway.finBPM(procedimiento, TIPO_FIN_BPM, DbIdContextHolder.getDbId(), tarGuidOrigen, transicion);
 	    		}
 			});
     	} else {
-    		notificacionGateway.finBPM(procedimiento, TIPO_FIN_BPM, tarGuidOrigen, transicion);
+    		notificacionGateway.finBPM(procedimiento, TIPO_FIN_BPM, DbIdContextHolder.getDbId(), tarGuidOrigen, transicion);
     	}
 	}
 
@@ -147,11 +148,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.paralizarTarea(tareaExterna, TIPO_PARALIZAR_TAREA);
+	    			notificacionGateway.paralizarTarea(tareaExterna, TIPO_PARALIZAR_TAREA, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.paralizarTarea(tareaExterna, TIPO_PARALIZAR_TAREA);
+    		notificacionGateway.paralizarTarea(tareaExterna, TIPO_PARALIZAR_TAREA, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -165,11 +166,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.activarTarea(tareaExterna, TIPO_ACTIVAR_TAREA);
+	    			notificacionGateway.activarTarea(tareaExterna, TIPO_ACTIVAR_TAREA, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.activarTarea(tareaExterna, TIPO_ACTIVAR_TAREA);
+    		notificacionGateway.activarTarea(tareaExterna, TIPO_ACTIVAR_TAREA, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -183,11 +184,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM);
+	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM);
+    		notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -201,11 +202,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM);
+	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM);
+    		notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbId());
     	}
     	
 	}
@@ -220,11 +221,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM);
+	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM);
+    		notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -238,11 +239,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	        		notificacionGateway.enviar(recurso, TIPO_DATOS_RECURSO);
+	        		notificacionGateway.enviar(recurso, TIPO_DATOS_RECURSO, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(recurso, TIPO_DATOS_RECURSO);
+    		notificacionGateway.enviar(recurso, TIPO_DATOS_RECURSO, DbIdContextHolder.getDbId());
     	}
     }
 
@@ -256,11 +257,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(subasta, TIPO_DATOS_SUBASTA);
+	    			notificacionGateway.enviar(subasta, TIPO_DATOS_SUBASTA, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(subasta, TIPO_DATOS_SUBASTA);
+    		notificacionGateway.enviar(subasta, TIPO_DATOS_SUBASTA, DbIdContextHolder.getDbId());
     	}
 	}
 	
@@ -274,11 +275,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(acuerdo, TIPO_DATOS_ACUERDO);
+	    			notificacionGateway.enviar(acuerdo, TIPO_DATOS_ACUERDO, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(acuerdo, TIPO_DATOS_ACUERDO);
+    		notificacionGateway.enviar(acuerdo, TIPO_DATOS_ACUERDO, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -292,11 +293,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(acuerdo, String.format("%s-%s", TIPO_DATOS_ACUERDO, acuerdo.getEstadoAcuerdo().getCodigo()));
+	    			notificacionGateway.enviar(acuerdo, String.format("%s-%s", TIPO_DATOS_ACUERDO, acuerdo.getEstadoAcuerdo().getCodigo()), DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(acuerdo, String.format("%s-%s", TIPO_DATOS_ACUERDO, acuerdo.getEstadoAcuerdo().getCodigo()));
+    		notificacionGateway.enviar(acuerdo, String.format("%s-%s", TIPO_DATOS_ACUERDO, acuerdo.getEstadoAcuerdo().getCodigo()), DbIdContextHolder.getDbId());
     	}
 	}
 	
@@ -310,11 +311,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(actuacionRealizada, TIPO_DATOS_ACUERDO_ACT_REALIZAR);
+	    			notificacionGateway.enviar(actuacionRealizada, TIPO_DATOS_ACUERDO_ACT_REALIZAR, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(actuacionRealizada, TIPO_DATOS_ACUERDO_ACT_REALIZAR);
+    		notificacionGateway.enviar(actuacionRealizada, TIPO_DATOS_ACUERDO_ACT_REALIZAR, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -328,11 +329,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(actuacionAExplorar, TIPO_DATOS_ACUERDO_ACT_A_EXP);
+	    			notificacionGateway.enviar(actuacionAExplorar, TIPO_DATOS_ACUERDO_ACT_A_EXP, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(actuacionAExplorar, TIPO_DATOS_ACUERDO_ACT_A_EXP);
+    		notificacionGateway.enviar(actuacionAExplorar, TIPO_DATOS_ACUERDO_ACT_A_EXP, DbIdContextHolder.getDbId());
     	}
 	}
 
@@ -346,11 +347,11 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO);
+	    			notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO, DbIdContextHolder.getDbId());
 	    		}
 			});
     	} else {
-    		notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO);
+    		notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO, DbIdContextHolder.getDbId());
     	}
 	}
 

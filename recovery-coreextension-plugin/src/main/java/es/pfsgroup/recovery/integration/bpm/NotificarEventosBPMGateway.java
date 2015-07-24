@@ -20,78 +20,113 @@ public interface NotificarEventosBPMGateway {
 
 	@Gateway
     void inicioTarea(TareaExterna tareaExterna
-    		, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+    		, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+    		);
 
 	@Gateway
     void inicioTarea(TareaNotificacion tareaNotificacion
-    		, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+    		, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+    		);
 	
 	@Gateway
     void finTarea(TareaExterna tareaExterna
     		, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
-			, @Header(ProcedimientoPayload.JBPM_TRANSICION) String transicion);
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			, @Header(ProcedimientoPayload.JBPM_TRANSICION) String transicion
+			);
     		
 
 	@Gateway
 	void cancelacionTarea(TareaExterna tareaExterna
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
 	void paralizarTarea(TareaExterna tareaExterna
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
 	void activarTarea(TareaExterna tareaExterna
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
 	void finBPM(Procedimiento procedimiento
 			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
 			, @Header(ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN) String tarGuidOrigen
 			, @Header(ProcedimientoPayload.JBPM_TRANSICION) String transicion);
 
 	@Gateway
 	void finalizarBPM(Procedimiento procedimiento
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
 	void paralizarBPM(Procedimiento procedimiento
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
 	void activarBPM(Procedimiento procedimiento
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
-	void enviar(MEJRecurso recurso,
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);
+	void enviar(MEJRecurso recurso
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
-	void enviar(Subasta subasta,
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);
+	void enviar(Subasta subasta
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
 	void enviar(Acuerdo acuerdo
-			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo);
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
-	void enviar(ActuacionesRealizadasAcuerdo actuacionRealizada, 
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);
+	void enviar(ActuacionesRealizadasAcuerdo actuacionRealizada
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
-	void enviar(ActuacionesAExplorarAcuerdo actuacionAExplorar, 
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);
+	void enviar(ActuacionesAExplorarAcuerdo actuacionAExplorar 
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
-	void enviar(TerminoAcuerdo terminoAcuerdo, 
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);
+	void enviar(TerminoAcuerdo terminoAcuerdo 
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
-	void enviar(TerminoContrato terminoContrato, 
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);
+	void enviar(TerminoContrato terminoContrato 
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 
 	@Gateway
-	void enviar(TerminoBien terminoBien, 
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);
+	void enviar(TerminoBien terminoBien
+			, @Header(TypePayload.HEADER_MSG_TYPE) String type
+    		, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);
 	
 }

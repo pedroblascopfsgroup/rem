@@ -9,7 +9,9 @@
     default-autowire="byName">
 
 	<!-- Beans,handlers,Managers ... --> 
-
+	<bean id="bccAdjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionBccLeaveActionHandler" />
+	<bean id="bccCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateBccLeaveActionHandler" />
+	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
  	    
 	<!-- BPM activos -->
 	<!-- Nacho -->
@@ -17,6 +19,9 @@
 	<!-- Gonzalo -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondos/hcj_provisionFondos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoHipotecario/hcj_procedimientoHipotecario.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/hcj_tramiteAdjudicacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/hcj_tramiteCesionRemate.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/hcj_tramiteSaneamientoCargas.xml" p:version="-1"/>
 	
 	<!-- Alberto -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
@@ -45,17 +50,17 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalculoDeudaAFecha/hcj_calculoDeudaAFecha.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificadoLibertadArrendamiento/hcj_certificadoLibertadArrendamiento.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSolicitudSolvenciaPatrimonial/hcj_solicitudSolvenciaPatrimonial.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMandamientoCancelacionCargas/hcj_mandamientoCancelacionCargas.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
 	
 	<!-- 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgrup/haya/tramiteAdjudicacion/haya_tramiteAdjudicacionV4.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCesionRemate/haya_tramiteCesionRemateV4.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSarebConcursal/haya_tramiteSubastaConcursal.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaTerceros/haya_tramiteSubastaTerceros.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteEjecucionNotarial/haya_tramiteEjecucionNotarialV4.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSaneamientoCargas/tramiteSaneamientoCargas.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebLitigios/tramiteElevacionPropSarebLitigios.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebAdjudicados/tramiteElevacionPropSarebAdjudicados.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseComunAbreviado/tramiteFaseComunAbreviadoV4.xml" p:version="-1"/>
@@ -63,7 +68,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="-1"/>	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseLiquidacion/haya_tramiteFaseLiquidacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbalDesdeMonitorio/haya_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCalificacion/haya_tramiteCalificacion.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseConvenio/tramiteFaseConvenioV4.xml" p:version="-1"/>		
@@ -83,6 +87,41 @@
   		<list>
   			<value><![CDATA[ 	
 
+				def comprobarComboComunicacionAdicionalNOTIFENT = {
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboSubsanacion']==DDSiNo.SI) {
+						return true;
+					}
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboAdicional']==null) {
+					 	return false;
+					 }
+					if (valores['H005_notificacionDecretoAdjudicacionAEntidad']['comboAdicional']==DDSiNo.SI && 
+						valores['H005_notificacionDecretoAdjudicacionAEntidad']['fechaLimite']==null) {
+						return false;
+					}
+					return true;
+				}
+
+				def comprobarComboComunicacionAdicionalCONFTESTI = {
+					if (valores['H005_ConfirmarTestimonio']['comboSubsanacion']==DDSiNo.SI) {
+						return true;
+					}
+					if (valores['H005_ConfirmarTestimonio']['comboAdicional']==null ||
+						valores['H005_ConfirmarTestimonio']['comboOcupantes']==null) {
+					 	return false;
+					}
+					if (valores['H005_ConfirmarTestimonio']['comboAdicional']==DDSiNo.SI && 
+						valores['H005_ConfirmarTestimonio']['fechaLimite']==null) {
+						return false;
+					}
+					return true;
+				}
+				
+				def vieneDeTCesionRemateTAdjudicacion = {
+					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
+						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005' || 
+						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H006'));
+				}
+				
 	            def existenCargasPreviasActivas = {
 	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionHayaProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.existenCargasPreviasActivas(idProcedimiento);
@@ -132,6 +171,11 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "EDCSDE");
 	            }
+
+	            def comprobarExisteDocumentoCOMAD = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "COMAD");
+	            }
 	            
 	            def comprobarExisteDocumentoAAEEE = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
@@ -142,7 +186,62 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LIBARR");
 	            }
-        	            
+
+	            def comprobarExisteDocumentoASP = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ASP");
+	            }
+	            
+	            def comprobarExisteDocumentoCAS = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
+	            }
+	            
+	            def comprobarExisteDocumentoCRSOLADJ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRSOLADJ");
+	            }
+
+	            def comprobarExisteDocumentoCRRESTRA = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRRESTRA");
+	            }
+
+	            def comprobarExisteDocumentoCRACCES = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRACCES");
+	            }
+
+	            def comprobarExisteDocumentoSCBCCR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCCR");
+	            }
+	            
+	            def comprobarExisteDocumentoSCBCPC = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCPC");
+	            }
+	            
+	            def comprobarExisteDocumentoPCCSC = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PCCSC");
+	            }
+	            
+	            
+	            def comprobarExisteDocumentoDSPJ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DSPJ");
+	            }
+	            
+	            def comprobarExisteDocumentoMCC = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "MCC");
+	            }
+	            
+	            def comprobarExisteDocumentoSAP = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SAP");
+	            }	            
   			 ]]>
   			</value>
   		</list>

@@ -29,7 +29,7 @@ public class ConvenioCreditoPayload {
 	
 	public ConvenioCreditoPayload(String tipo, ConvenioCredito convenioCredito) 
 	{
-		this(new DataContainerPayload(tipo), convenioCredito);
+		this(new DataContainerPayload(null, null), convenioCredito);
 	}
 
 	public ConvenioCreditoPayload(DataContainerPayload data, ConvenioCredito convenioCredito) 

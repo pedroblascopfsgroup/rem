@@ -10,5 +10,7 @@ public interface NotificarEventosBPMGateway {
 
 	@Gateway
 	void enviar(Convenio convenio,
-			@Header(TypePayload.HEADER_MSG_TYPE) String type);	
+			@Header(TypePayload.HEADER_MSG_TYPE) String type
+			, @Header(TypePayload.HEADER_MSG_ENTIDAD) Long entidad
+			);	
 }

@@ -36,7 +36,7 @@ public class ProcedimientoPayload {
 	}
 	
 	public ProcedimientoPayload(String tipo, Procedimiento procedimiento) {
-		this(new DataContainerPayload(tipo), procedimiento);
+		this(new DataContainerPayload(null, null), procedimiento);
 	}
 
 	public ProcedimientoPayload(DataContainerPayload data, Procedimiento procedimiento) {

@@ -33,7 +33,7 @@ public class ActuacionesAExplorarPayload {
 	}
 	
 	public ActuacionesAExplorarPayload(String tipo, ActuacionesAExplorarAcuerdo actuacion) {
-		this(new DataContainerPayload(tipo), actuacion);
+		this(new DataContainerPayload(null, null), actuacion);
 	}
 
 	public ActuacionesAExplorarPayload build(ActuacionesAExplorarAcuerdo actuacion) {

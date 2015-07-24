@@ -50,7 +50,7 @@ public class ConvenioPayload {
 	
 	public ConvenioPayload(String tipo, Convenio convenio) 
 	{
-		this(new DataContainerPayload(tipo), convenio);
+		this(new DataContainerPayload(null, null), convenio);
 	}
 
 	public ConvenioPayload(DataContainerPayload data, Convenio convenio) 

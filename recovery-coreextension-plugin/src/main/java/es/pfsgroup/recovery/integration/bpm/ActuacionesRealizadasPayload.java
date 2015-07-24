@@ -31,7 +31,7 @@ public class ActuacionesRealizadasPayload {
 	}
 	
 	public ActuacionesRealizadasPayload(String tipo, ActuacionesRealizadasAcuerdo actuacion) {
-		this(new DataContainerPayload(tipo), actuacion);
+		this(new DataContainerPayload(null, null), actuacion);
 	}
 
 	public ActuacionesRealizadasPayload(DataContainerPayload data, ActuacionesRealizadasAcuerdo actuacion) {

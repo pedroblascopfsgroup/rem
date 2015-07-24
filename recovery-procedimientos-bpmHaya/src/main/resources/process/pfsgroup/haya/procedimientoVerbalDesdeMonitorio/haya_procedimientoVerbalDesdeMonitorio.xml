@@ -72,6 +72,7 @@
 		</event>
 		<transition to="H028_ResolucionFirme" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 		<transition to="H028_RegistrarResolucion" name="vueltaAtras"></transition>
 	</state>
 

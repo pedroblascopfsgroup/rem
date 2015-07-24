@@ -34,6 +34,7 @@ public class JsonDataContainerPayloadTransformer {
 				.withPayload(translated)
 				.copyHeaders(message.getHeaders())
 				.setHeaderIfAbsent(TypePayload.HEADER_MSG_TYPE, translated.getTipo())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_ENTIDAD, translated.getEntidad())
 				.build();
 		return newMessage;
 	}	

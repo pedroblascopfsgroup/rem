@@ -42,6 +42,14 @@ public class TypePayloadRegexRule<T extends TypePayload> implements Rule<T> {
 				return false;
 			}
 		}
+		
+		if (!Checks.esNulo(tipo)) { // comprueba este campo.
+			boolean matches = match(tipo, payload.getTipo());
+			if (!matches) {
+				return false;
+			}
+		}
+		
 		if (!Checks.esNulo(entidad)) { // comprueba este campo.
 			boolean matches = match(entidad, payload.getEntidad().toString());
 			if (!matches) {

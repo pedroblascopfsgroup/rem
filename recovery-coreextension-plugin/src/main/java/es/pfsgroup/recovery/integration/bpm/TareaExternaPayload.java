@@ -32,7 +32,7 @@ public class TareaExternaPayload {
 	}
 	
 	public TareaExternaPayload(String tipo, TareaExterna tareaExterna) {
-		this(new DataContainerPayload(tipo), tareaExterna);
+		this(new DataContainerPayload(null, null), tareaExterna);
 	}
 
 	public TareaExternaPayload(DataContainerPayload data, TareaExterna tareaExterna) {

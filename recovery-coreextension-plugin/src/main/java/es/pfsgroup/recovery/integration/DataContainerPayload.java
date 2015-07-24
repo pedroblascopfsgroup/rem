@@ -31,6 +31,7 @@ public class DataContainerPayload extends TypePayload {
 	
 	@JsonCreator
 	public DataContainerPayload(@JsonProperty("tipo") String tipo,
+			@JsonProperty("entidad") Long entidad,
 			@JsonProperty("codigo") Map<String, String> codigo,
 			@JsonProperty("guid") Map<String, String> guid,
 			@JsonProperty("extraInfo") Map<String, String> extraInfo,
@@ -45,7 +46,7 @@ public class DataContainerPayload extends TypePayload {
 			@JsonProperty("relaciones") Map<String, List<String>> relaciones,
 			@JsonProperty("children") Map<String, List<DataContainerPayload>> children
 			) {
-		super(tipo);
+		super(tipo, entidad);
 		this.guid = guid;
 		this.codigo = codigo;
 		this.idOrigen = idOrigen;
@@ -61,8 +62,9 @@ public class DataContainerPayload extends TypePayload {
 		this.children = children;
 	}
 	
-	public DataContainerPayload(String tipo) {
+	public DataContainerPayload(String tipo, Long entidad) {
 		this(tipo
+				, entidad
 				, null
 				, null
 				, null
@@ -78,7 +80,7 @@ public class DataContainerPayload extends TypePayload {
 				, null
 				);
 	}
-	
+
 	@JsonIgnore
 	public void addSourceId(String key, Long valor) {
 		if (idOrigen==null) {

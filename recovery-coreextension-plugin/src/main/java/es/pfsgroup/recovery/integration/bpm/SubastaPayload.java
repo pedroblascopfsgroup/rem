@@ -36,7 +36,7 @@ public class SubastaPayload {
 	}
 	
 	public SubastaPayload(String tipo, Subasta subasta) {
-		this(new DataContainerPayload(tipo), subasta);
+		this(new DataContainerPayload(null, null), subasta);
 	}
 
 	public SubastaPayload(DataContainerPayload data, Subasta subasta) {

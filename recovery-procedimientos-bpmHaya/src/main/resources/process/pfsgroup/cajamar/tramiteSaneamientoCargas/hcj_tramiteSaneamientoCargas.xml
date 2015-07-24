@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteSaneamientoCargas">
+<process-definition xmlns="" name="hcj_tramiteSaneamientoCargas">
 
 	<start-state name="Inicio">
 		<transition to="H008_RevisarEstadoCargas" name="iniciarProceso"></transition>
@@ -55,6 +55,7 @@
 		<transition to="H008_RegInsCancelacionCargasReg" name="avanzaBPM"></transition>
 		<transition to="H008_RegistrarPresentacionInscripcion" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="H008_RevisarEstadoCargas" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H008_PropuestaCancelacionCargas">
@@ -74,9 +75,10 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="H008_BPMTramiteElevarPropSarebAdjudicados" name="avanzaBPM"></transition>
+		<transition to="H008_PropuestaCancelacionCargasDecision" name="avanzaBPM"></transition>
 		<transition to="H008_PropuestaCancelacionCargas" name="activarAlerta"></transition>
 		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H008_RevisarEstadoCargas" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H008_RegInsCancelacionCargasReg"> 
@@ -98,7 +100,7 @@
 		</event>	
 		<transition to="H008_RegistrarPresentacionInscripcion" name="vueltaAtras"></transition>
 		<transition to="H008_RegInsCancelacionCargasReg" name="activarAlerta"></transition>
-		<transition to="H008_SaneamientoDecision" name="avanzaBPM"></transition>
+		<transition to="H008_RegInsCancelacionCargasRegDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -122,6 +124,7 @@
 		<transition to="H008_LiquidarCargas" name="avanzaBPM"></transition>
 		<transition to="H008_RevisarPropuestaCancelacionCargas" name="activarAlerta"></transition>
 		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H008_ObtenerAprobPropuesta" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H008_LiquidarCargas">
@@ -142,7 +145,6 @@
 			</action>
 		</event>	
 		<transition to="H008_RegInsCancelacionCargasEconomicas" name="avanzaBPM"></transition>
-		<transition to="H008_RevisarPropuestaCancelacionCargas" name="vueltaAtras"></transition>
 		<transition to="H008_LiquidarCargas" name="activarAlerta"></transition>
 		<transition to="Fin2" name="Fin"></transition>
 	</state>
@@ -173,6 +175,7 @@
 	<decision name="H008_RegInsCancelacionCargasEconomicasDecision" expression="#{H008_RegInsCancelacionCargasEconomicasDecision}">
 		<transition to="H008_RegistrarPresentacionInscripcionEco" name="conRegistrales"></transition>
 		<transition to="H008_SaneamientoDecision" name="soloEconomicas"></transition>
+		<transition to="Fin2" name="fin"></transition>
 	</decision>
 
 	<state name="H008_RegistrarPresentacionInscripcionEco">
@@ -217,7 +220,7 @@
 		</event>	
 		<transition to="H008_RegistrarPresentacionInscripcionEco" name="vueltaAtras"></transition>
 		<transition to="H008_RegInsCancelacionCargasRegEco" name="activarAlerta"></transition>
-		<transition to="H008_SaneamientoDecision" name="avanzaBPM"></transition>
+		<transition to="H008_RegInsCancelacionCargasRegEcoDecision" name="avanzaBPM"></transition>
 		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
@@ -230,7 +233,17 @@
 		<transition to="Fin2" name="Fin"></transition>
 	</node>
 
-	<state name="H008_BPMTramiteElevarPropSarebAdjudicados">
+	<decision name="H008_RegInsCancelacionCargasRegDecision" expression="#{H008_RegInsCancelacionCargasRegDecision}">
+		<transition to="H008_SaneamientoDecision" name="Decidir"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</decision>
+
+	<decision name="H008_PropuestaCancelacionCargasDecision" expression="#{H008_PropuestaCancelacionCargasDecision}">
+		<transition to="H008_LiquidarCargas" name="sinAprobacion"></transition>
+		<transition to="H008_ObtenerAprobPropuesta" name="reqAprobacion"></transition>
+	</decision>
+
+	<state name="H008_ObtenerAprobPropuesta">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -246,25 +259,38 @@
 				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
-		</event>
-		<transition to="H008_RevisarPropuestaCancelacionCargas" name="ACEPTADA"></transition>
-		<transition to="H008_SarebDecision" name="DENEGADA"></transition>
-		<transition to="H008_RevisarPropuestaCancelacionCargas" name="ACCONCAM"></transition>
+		</event>	
+		<transition to="H008_PropuestaCancelacionCargas" name="vueltaAtras"></transition>
+		<transition to="H008_ObtenerAprobPropuesta" name="activarAlerta"></transition>
+		<transition to="H008_RevisarPropuestaCancelacionCargas" name="avanzaBPM"></transition>
+		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
-	<node name="H008_SarebDecision">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler
-			</targetBean>
-		</action>	
+	<decision name="H008_RegInsCancelacionCargasRegEcoDecision" expression="#{H008_RegInsCancelacionCargasRegEcoDecision}">
+		<transition to="H008_SaneamientoDecision" name="Decidir"></transition>
 		<transition to="Fin2" name="Fin"></transition>
-	</node>
+	</decision>
 
 
-	<end-state name="Fin"></end-state>
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
 
-	<end-state name="Fin2"></end-state>
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
 	
 	
 </process-definition>

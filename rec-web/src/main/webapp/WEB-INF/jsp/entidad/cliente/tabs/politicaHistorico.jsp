@@ -1,4 +1,9 @@
 var histPoliticaStore;
+var btnPolNuevo;
+var btnPolModificar;
+var btnPolVerAnalisis;	
+var btnPolMarcarVigente;
+var btnPolCancelarPropuesta;
 
 var editarPolitica = function(texto, idPolitica, visibilidadSuperusuario) {
     var w = app.openWindow({
@@ -93,7 +98,7 @@ var cancelarPropuesta = function(texto,idPolitica) {
 
 var createHistorialPoliticasPanel = function() {
 
-    var btnPolNuevo = new Ext.Button({
+    btnPolNuevo = new Ext.Button({
         text : '<s:message code="app.nuevo" text="**Nuevo" />'
         ,iconCls : 'icon_mas'
         ,handler: function() {
@@ -103,7 +108,7 @@ var createHistorialPoliticasPanel = function() {
         }
     });
 
-    var btnPolModificar = new Ext.Button({
+    btnPolModificar = new Ext.Button({
         text : '<s:message code="app.editar" text="**Modificar" />'
         ,iconCls : 'icon_edit'
         ,handler: function() 
@@ -116,20 +121,20 @@ var createHistorialPoliticasPanel = function() {
         	editarPolitica('<s:message code="politica.editar" text="**Editar Política" />' , idUltimaPolitica, superUsuario);}
     });
 
-	var btnPolVerAnalisis = new Ext.Button({
+	btnPolVerAnalisis = new Ext.Button({
         text : '<s:message code="politica.verAnalisis" text="**Ver Análisis" />'
         ,iconCls : 'icon_edit'
         ,handler: function() {verAnalisis('<s:message code="politica.analisis" text="**Análisis Política" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
     });
 
 
-	var btnPolMarcarVigente = new Ext.Button({
+	btnPolMarcarVigente = new Ext.Button({
         text : '<s:message code="politica.marcarVigente" text="**Marcar vigente" />'
         ,iconCls : 'icon_ok'
         ,handler: function() {marcarVigente('<s:message code="politica.analisis" text="**Análisis Política" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
     });
 
-	var btnPolCancelarPropuesta = new Ext.Button({
+	btnPolCancelarPropuesta = new Ext.Button({
         text : '<s:message code="politica.cancelarPropuesta" text="**Cancelar propuesta" />'
         ,iconCls : 'icon_menos'
         ,handler: function() {cancelarPropuesta('<s:message code="politica.analisis" text="**Análisis Política" />' , histPoliticaGrid.getSelectionModel().getSelections()[0].data.id);}
@@ -158,6 +163,7 @@ var createHistorialPoliticasPanel = function() {
         ,{name : 'propuesta'}
         ,{name : 'propuestaSuperusuario'}
 		,{name : 'idAnalisis'}
+		,{name: 'idExpediente'}
     ]);
 
     histPoliticaStore = page.getStore({
@@ -213,6 +219,7 @@ var createHistorialPoliticasPanel = function() {
         ,{header : '<s:message code="politica.objetivos" text="**Objetivos" />', dataIndex : 'objetivos'}
         ,{header : '<s:message code="politica.objetivosCumplidos" text="**O. Cumplidos" />', dataIndex : 'objCumplidos'}
         ,{header : '<s:message code="politica.objetivosIncumplidos" text="**O. Incumplidos" />', dataIndex : 'objIncumplidos'}
+        ,{header : '<s:message code="politica.expediente" text="**Expediente" />', dataIndex : 'idExpediente'}
     ]);
                 
     var configHistPolit = {

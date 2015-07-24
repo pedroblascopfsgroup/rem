@@ -184,6 +184,13 @@ var actualizarBotones = function() {
 			btnDescartar.setDisabled(false);
 			break;
 
+		case 'CAL':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(false);
+			btnConfirmar.setDisabled(false);
+			btnDescartar.setDisabled(false);
+			break;
+
 		default:
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);

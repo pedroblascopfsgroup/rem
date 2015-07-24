@@ -75,6 +75,12 @@ public class LiquidacionManager implements LiquidacionApi {
 			liquidacion.setApoderado(apoderado);
 		}
 
+		DDEstadoLiquidacionPCO estado = liquidacion.getEstadoLiquidacion();
+		if (estado != null && !DDEstadoLiquidacionPCO.CALCULADA.equals(estado.getCodigo())) {
+			DDEstadoLiquidacionPCO estadoCalculado = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CALCULADA);
+			liquidacion.setEstadoLiquidacion(estadoCalculado);
+		}
+
 		liquidacionDao.saveOrUpdate(liquidacion);
 	}
 

@@ -23,6 +23,15 @@ function print_banner() {
     echo "******************************************************************************************"
 }
 
+function registerSQLScript() {
+    git log $1 >> /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        HASH=`git rev-list HEAD $1 | tail -n 1`
+        DATE=`git show -s --format="%ct" $HASH --`
+        printf "%s#%s \n" "$DATE" $1 >> $2
+    fi
+}
+
 clear
 
 if [ "$0" != "./sql/tool/$(basename $0)" ]; then
@@ -40,13 +49,21 @@ if [ "$#" -lt 3 ]; then
     echo ""
     echo "Para simular antes de ejecutar:"
     echo ""
-    echo "   Uso: $0 <tag> CLIENTE password_esquemas"
+    if [ "$ORACLE_SID" == "" ] ; then
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas@sid"
+    else
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas"
+    fi
     echo ""
     echo "Para ejecutarlo:"
     echo ""
-    echo "   Uso: $0 <tag> CLIENTE password_esquemas go!"
-    echo ""
-    echo "   Uso: $0 <tag> CLIENTE password_esquemas go! -v"
+    if [ "$ORACLE_SID" == "" ] ; then
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas@sid go!"
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas@sid go! -v"
+    else
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas go!"
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas go! -v"
+    fi
     echo ""
     echo "       -v: verbose"
     echo ""
@@ -72,19 +89,18 @@ BASEDIR=$(dirname $0)
 
 rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql
 
-for file in `git diff $1 --name-only sql/ | grep "\.sql"`
+for file in `git diff $1 --name-only sql/**/producto/*.sql`
 do
-        git log $file >> /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            HASH=`git rev-list HEAD $file | tail -n 1`    
-            DATE=`git show -s --format="%ct" $HASH --`   
-            printf "%s#%s \n" "$DATE" $file >> $BASEDIR/tmp/from-date-list-1.txt
-        fi
+    registerSQLScript $file $BASEDIR/tmp/product-list-from-tag.txt 
 done
 
-#cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto\|$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
-cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
-cat $BASEDIR/tmp/from-date-list-1.txt | grep "$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 >> $BASEDIR/tmp/from-date-list-2.txt
+for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/*.sql`
+do
+    registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt
+done
+
+cat $BASEDIR/tmp/product-list-from-tag.txt | sort | cut -d# -f2 > $BASEDIR/tmp/list-from-tag.txt
+cat $BASEDIR/tmp/customer-list-from-tag.txt | sort | cut -d# -f2 >> $BASEDIR/tmp/list-from-tag.txt
 
 
 if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
@@ -98,7 +114,7 @@ if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
         else
             $BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE
         fi
-    done < $BASEDIR/tmp/from-date-list-2.txt
+    done < $BASEDIR/tmp/list-from-tag.txt
 else
     echo ""
     echo "Lo que pretendo ejecutar es:"
@@ -106,7 +122,7 @@ else
     while read -r line
     do
         echo "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE"
-    done < $BASEDIR/tmp/from-date-list-2.txt
+    done < $BASEDIR/tmp/list-from-tag.txt
     echo ""
     echo "Si estás de acuerdo, añade go! al final de la línea de comandos"
     echo ""

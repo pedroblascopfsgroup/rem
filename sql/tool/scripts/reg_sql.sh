@@ -71,6 +71,7 @@ echo ""  >> $BASEDIR/$nombreLog
 
 ESQUEMA_MASTER=''
 ESQUEMA_ENTIDAD=''
+ESQUEMA_ENTIDAD_02=''
 CADENAS_SUSTITUCION=""
 IFS=',' read -a array <<< "$VARIABLES_SUSTITUCION"
 for index in "${!array[@]}"
@@ -84,6 +85,9 @@ do
     fi
     if [[ $KEY == '#ESQUEMA_ENTIDAD#' ]]; then
        ESQUEMA_ENTIDAD=$VALUE
+    fi
+    if [[ $KEY == '#ESQUEMA_ENTIDAD_02#' ]]; then
+       ESQUEMA_ENTIDAD_02=$VALUE
     fi
 
     IFS=';' read -a array2 <<< "${array[index]}"
@@ -104,6 +108,9 @@ done
 ESQUEMA_EJECUCION=`echo $nombreFichero | cut -d_ -f3`
 if [[ $ESQUEMA_EJECUCION == "BANK01" ]] || [[ $ESQUEMA_EJECUCION == "ENTITY01" ]] || [[ $ESQUEMA_EJECUCION == "HAYA01" ]]; then
     ESQUEMA_EJECUCION=$ESQUEMA_ENTIDAD 
+fi
+if [[ $ESQUEMA_EJECUCION == "ENTITY02" ]] || [[ $ESQUEMA_EJECUCION == "HAYA02" ]]; then
+    ESQUEMA_EJECUCION=$ESQUEMA_ENTIDAD_02
 fi
 if [[ $ESQUEMA_EJECUCION == "BANKMASTER" ]] || [[ $ESQUEMA_EJECUCION == "MASTER" ]] || [[ $ESQUEMA_EJECUCION == "HAYAMASTER" ]]; then
     ESQUEMA_EJECUCION=$ESQUEMA_MASTER

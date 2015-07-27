@@ -226,7 +226,7 @@ var panel = new Ext.Panel({
 			,btnModificar
 		</c:if>
 	]
-	<c:if test="${!readOnly}">,bbar:[btnGuardar,btnCancelar]</c:if>
+	<c:if test="false">,bbar:[btnGuardar,btnCancelar]</c:if>
    });
 
 	gestionesStore.webflow({id:${analisisPolitica.cicloMarcadoPolitica.persona.id}});

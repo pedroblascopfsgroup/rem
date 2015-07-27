@@ -403,7 +403,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						 StringUtils.collectionToCommaDelimitedString(mailsCC), dto.getAsuntoMail(), ug, nombre, HtmlUtils.htmlUnescape(dto.getCuerpoEmail()),
 						dto);
 				
-				AgendaMultifuncionCorreoUtils.dameInstancia().enviarCorreoConAdjuntos( textoFrom, mailsPara, mailsCC,
+				AgendaMultifuncionCorreoUtils.dameInstancia().enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
 						asuntoMail, cuerpoEmail, dto.getAdjuntosList());
 				
 				/*DIANA: Nuevo m�todo para a�adir adjuntos al email

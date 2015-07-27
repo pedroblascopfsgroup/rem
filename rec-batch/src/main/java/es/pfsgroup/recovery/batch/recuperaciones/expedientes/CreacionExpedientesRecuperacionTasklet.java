@@ -84,15 +84,12 @@ public class CreacionExpedientesRecuperacionTasklet implements Tasklet, StepExec
 			Long idCliente = null;
 			int i = 0;
 			for (Map record : result) {
-				//TODO - quitar el limite de 5 expedientes que se ha puesto para las pruebas
-				if (i==5) break;
-				i++;
 				if (!Checks.esNulo(record)) {
 					idCliente =  Long.valueOf(record.get("CLI_ID").toString());
 					try {
 						crearExpediente(idCliente);
 					} catch (Exception e) {
-						logger.error(e.getMessage(),e);
+						logger.error("Error creando el expediente al cliente: "+ idCliente + "\n" +e.getMessage(),e);
 						if (severidad != null && "error".equalsIgnoreCase(severidad)) {
 							ExitStatus exit = new ExitStatus(false, ExitStatus.FAILED.getExitCode(), getMessage());
 							return exit;
@@ -109,10 +106,17 @@ public class CreacionExpedientesRecuperacionTasklet implements Tasklet, StepExec
     public void crearExpediente(Long idCliente) throws Exception {
 
         Cliente cli = clienteMgr.getWithContratos(idCliente);
-        
+        if (Checks.esNulo(cli)) {        	
+        	logger.error("Cliente " + idCliente + " se ha borrado previamente");
+        	return;
+        }
         
         Date fechaExtraccion = (Date) cli.getPersona().getFechaExtraccion(); //executionContext.getVariable(FECHA_EXTRACCION);
-
+        
+        if (Checks.esNulo(cli.getContratoPrincipal())) {
+        	logger.error("El cliente " + idCliente + " no tiene contrato principal o ya está borrado");
+        	return;
+        }
         Long idContrato = cli.getContratoPrincipal().getId();
         Long idPersona = cli.getPersona().getId();
         Date fechaUmbral = cli.getPersona().getFechaUmbral();

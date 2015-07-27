@@ -653,7 +653,6 @@ var formBusquedaSubastas=function(){
 			}
 			
 			/*if (comboEntidad.selectedIndex>0){
-				debugger;
 				var entidadSeleccionada = '';
 				if (comboEntidad.value==3){
 					entidadSeleccionada = 'BANKIA';

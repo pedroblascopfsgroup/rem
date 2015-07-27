@@ -29,6 +29,14 @@
    function label(id,text){
 		  return app.creaLabel(text,"",  {id:'entidad-expediente-'+id});
 	 }
+	 
+	 var mensajeExceptuacionLabel = new Ext.form.Label({
+	   	text:'<s:message code="expedientes.consulta.tabcabecera.warning" text="**Faltan datos cartera/subcartera. Contactar Sistemas."/>'
+		,style:'font-weight:bold;font-size:13px;color:red;',id:'entidad-cliente-mensajeLabel'
+	});
+	
+	mensajeExceptuacionLabel.setVisible(false);
+	
 
    function fieldSet(title,items){
 	return new Ext.form.FieldSet({
@@ -76,7 +84,7 @@
 	var itinerarioMV		= label('itinerarioMV',	'<s:message code="expedientes.consulta.tabcabecera.itinerarioMV" text="**Iti. Metas Volantes"/>',cfg);
 	var fechaMaxEnAgencia	= label('fechaMaxEnAgencia',	'<s:message code="expedientes.consulta.tabcabecera.fechaMaxEnAgencia" text="**F. Max. en Agencia"/>',cfg);
 	var fechaMaxCobroParcial= label('fechaMaxCobroParcial',	'<s:message code="expedientes.consulta.tabcabecera.fechaMaxCobroParcial" text="**F. Max. Cobro Parcial"/>',cfg);
-
+		
 
 	var datosPrincipalesFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosPrincipales" text="**Datos Principales"/>'
 		,[
@@ -109,6 +117,7 @@
 		
 //Panel propiamente dicho...
 
+  panel.add({items:[mensajeExceptuacionLabel],border:false});
   panel.add(datosPrincipalesFieldSet);
   panel.add(datosGestionFieldSet);
   panel.add(datosRecobroFieldSet); 
@@ -179,6 +188,15 @@
 		entidad.setLabel('fechaMaxEnAgencia',cabeceraRecobro.fechaMaxEnAgencia);
 		entidad.setLabel('fechaMaxCobroParcial',cabeceraRecobro.fechaMaxCobroParcial);
 		
+		<sec:authorize ifAllGranted="PUEDE_VER_INFO_ADICIONAL_EXP">
+		if (cabeceraRecobro.cartera == "" || cabeceraRecobro.subcartera == ""){
+			mensajeExceptuacionLabel.setVisible(true);			
+		}
+		else{
+			mensajeExceptuacionLabel.setVisible(false);	
+		}
+		</sec:authorize>
+		
 		gestor.setVisible(false);
 		situacion.setVisible(false);
 		supervisor.setVisible(false);
@@ -190,7 +208,6 @@
 	}
 	
   };
-  
   
 	return panel;
 

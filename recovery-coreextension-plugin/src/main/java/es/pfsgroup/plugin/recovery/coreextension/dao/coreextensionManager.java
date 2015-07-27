@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +38,6 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -52,6 +53,8 @@ import es.pfsgroup.recovery.ext.impl.multigestor.comparator.EXTUsuarioComparator
 //No a�adir nueva funcionalidad
 @Component
 public class coreextensionManager implements coreextensionApi {
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	GenericABMDao genericDao;
@@ -136,12 +139,23 @@ public class coreextensionManager implements coreextensionApi {
 		return listado;
 	}
 
+
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListDespachos(java.lang.Long)
 	 */
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_DESPACHO)
 	public List<DespachoExterno> getListDespachos(Long idTipoGestor) {
+		
+		return getListAllDespachos(idTipoGestor, false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListDespachos(java.lang.Long)
+	 */
+	@Override
+	@BusinessOperation(GET_LIST_ALL_TIPO_DESPACHO)
+	public List<DespachoExterno> getListAllDespachos(Long idTipoGestor, Boolean incluirBorrados) {
 
 		List<DespachoExterno> listadoTotal = new ArrayList<DespachoExterno>();
 		List<EXTTipoGestorPropiedad> listaTGP = tipoGestorPropiedadDao.getByClave(EXTTipoGestorPropiedad.TGP_CLAVE_DESPACHOS_VALIDOS);
@@ -157,9 +171,19 @@ public class coreextensionManager implements coreextensionApi {
 								genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 						
 						if(ddTiposDespacho != null){
-							List<DespachoExterno> listaDespachos = genericDao.getList(DespachoExterno.class, 
-									genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
-									genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+							
+							List<DespachoExterno> listaDespachos;
+							
+							if(incluirBorrados) {
+								listaDespachos = genericDao.getList(DespachoExterno.class, 
+										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho));
+								
+							} else {
+								listaDespachos = genericDao.getList(DespachoExterno.class, 
+										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+								
+							}							
 							
 							if(listaDespachos != null)
 								listadoTotal.addAll(listaDespachos);
@@ -181,15 +205,7 @@ public class coreextensionManager implements coreextensionApi {
 	@Override
 	@BusinessOperation(GET_LIST_USUARIOS)
 	public List<Usuario> getListUsuariosData(long idTipoDespacho) {
-
-		List<Usuario> listaUsuarios = gestoresDao.getGestoresByDespacho(idTipoDespacho);
-		if (listaUsuarios.size() > 0 ){
-			Locale locale = new Locale("es_ES");
-			Collator c = Collator.getInstance();
-			c.setStrength(Collator.PRIMARY);
-			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
-		}
-		return listaUsuarios;
+		return getListAllUsuariosData(idTipoDespacho, false);
 	}
 	
 	/* (non-Javadoc)
@@ -225,32 +241,41 @@ public class coreextensionManager implements coreextensionApi {
 	 */
 	@BusinessOperation(SAVE_GESTOR_ADICIONAL_ASUNTO)
 	@Transactional(readOnly = false)
-	public void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) {
-		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
-		if (asu instanceof EXTAsunto) {
-			if (!Checks.esNulo(idAsunto) && !Checks.esNulo(idUsuario) && !Checks.esNulo(idTipoDespacho)) {
-				GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
-						genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho));
-				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoGestor));
-				Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
-				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);
-				EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
-				if (Checks.esNulo(gaa)) {
-					gaa = new EXTGestorAdicionalAsunto();
-					gaa.setAsunto(asu);
-					gaa.setTipoGestor(tipoGestor);
-					gaa.setGestor(gestor);
-					gestorAdicionalAsuntoDao.save(gaa);
-					this.guardarHistoricoGestorAdicional(gaa);					
-				}else{
-					gaa.setGestor(gestor);
-					if(idUsuario != gaa.getGestor().getUsuario().getId()){
-						this.actualizaFechaHastaHistoricoGestorAdicional(idAsunto , idTipoGestor);
-						this.guardarHistoricoGestorAdicional(gaa);
+	public void insertarGestorAdicionalAsunto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) throws Exception {
+		
+		try {
+		
+			Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
+			if (asu instanceof EXTAsunto) {
+				if (!Checks.esNulo(idAsunto) && !Checks.esNulo(idUsuario) && !Checks.esNulo(idTipoDespacho)) {
+					GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario),
+							genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idTipoDespacho),
+							genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoGestor));
+					Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
+					Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor);
+					EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
+					if (Checks.esNulo(gaa)) {
+						gaa = new EXTGestorAdicionalAsunto();
+						gaa.setAsunto(asu);
+						gaa.setTipoGestor(tipoGestor);
+						gaa.setGestor(gestor);
+						gestorAdicionalAsuntoDao.save(gaa);
+						this.guardarHistoricoGestorAdicional(gaa);					
+					}else{
+						gaa.setGestor(gestor);
+						if(idUsuario != gaa.getGestor().getUsuario().getId()){
+							this.actualizaFechaHastaHistoricoGestorAdicional(idAsunto , idTipoGestor);
+							this.guardarHistoricoGestorAdicional(gaa);
+						}
+						gestorAdicionalAsuntoDao.saveOrUpdate(gaa);
 					}
-					gestorAdicionalAsuntoDao.saveOrUpdate(gaa);
 				}
 			}
+		}
+		catch(Exception e) {
+			logger.error("insertarGestorAdicionalAsunto: " + e.getMessage());
+			throw e;
 		}
 		
 	}
@@ -345,6 +370,12 @@ public class coreextensionManager implements coreextensionApi {
 	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_POR_TIPO_ACTUACION)
 	public List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacion(String codigoActuacion) {
 		return tipoProcedimientoDao.getListTipoProcedimientosPorTipoActuacion(codigoActuacion);		
+	}
+	
+	@Override
+	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_MENOS_TIPO_ACTUACION)
+	public List<TipoProcedimiento> getListTipoProcedimientosMenosTipoActuacion(String codigoActuacion) {
+		return tipoProcedimientoDao.getListTipoProcedimientosMenosTipoActuacion(codigoActuacion);		
 	}
 
 
@@ -471,6 +502,23 @@ public class coreextensionManager implements coreextensionApi {
 
 		// Con esto tenemos los tipo gestor.
 		return listaTipoGestor;
+	}
+
+	
+	@Override
+	@BusinessOperation(GET_LIST_ALL_USUARIOS)
+	public List<Usuario> getListAllUsuariosData(long idTipoDespacho, boolean incluirBorrados) {
+		
+		List<Usuario> listaUsuarios = gestoresDao.getGestoresByDespacho(idTipoDespacho, incluirBorrados);
+		if (listaUsuarios.size() > 0 ){
+			Locale locale = new Locale("es_ES");
+			Collator c = Collator.getInstance();
+			c.setStrength(Collator.PRIMARY);
+			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
+		}
+		return listaUsuarios;
+		
+		
 	}
 
 }

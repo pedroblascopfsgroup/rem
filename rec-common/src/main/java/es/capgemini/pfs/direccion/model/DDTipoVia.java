@@ -39,7 +39,10 @@ public class DDTipoVia implements Auditable, Dictionary  {
     @Column(name = "DD_TVI_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
-    @Version
+    @Column(name = "DD_TVI_CODIGO_UVEM")
+    private String codigoUvem;
+
+	@Version
     private Integer version;
 
     private Auditoria auditoria;
@@ -100,6 +103,14 @@ public class DDTipoVia implements Auditable, Dictionary  {
         this.descripcionLarga = descripcionLarga;
     }
 
+    public String getCodigoUvem() {
+		return codigoUvem;
+	}
+
+	public void setCodigoUvem(String codigoUvem) {
+		this.codigoUvem = codigoUvem;
+	}
+	
     /**
      * @return the version
      */

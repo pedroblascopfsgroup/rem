@@ -31,7 +31,8 @@ fi
 
 function usoCorrecto() {
     print_banner
-    echo "Uso 1: $0 fichero_sql password_esquema_principal@sid [BANKIA|HAYA|-]"
+    echo "Uso 0: $0 fichero_sql password_esquema_principal@sid [BANKIA|HAYA|-]"
+    echo "Uso 1: $0 fichero_sql password_esquema_principal@sid [BANKIA|HAYA|-] -v"
     echo "Uso 2: $0 -p fichero_sql [BANKIA|HAYA|-]"
     echo -e "   El tercer parámetro (proyecto) sólo acepta estos posibles valores:"
     echo -e "      BANKIA (para que se use ~/setEnvGlobalBANKIA.sh)"
@@ -43,12 +44,18 @@ function usoCorrecto() {
     echo -e "      (se usará ~/setEnvGlobal.sh)"
 }
 
+if [[ "$#" -eq 4 ]] && [[ "$4" == "-v" ]] ; then
+    export VERBOSE=1
+else
+    export VERBOSE=0
+fi
+
 export SETENVGLOBAL=~/setEnvGlobal.sh
-if [[ "$#" -ne 3 ]] && [[ "$#" -ne 2 ]] ; then
+if [[ "$#" -lt 2 ]] ; then
     usoCorrecto
     exit 1
 else 
-  if [ "$#" -eq 3 ] ; then
+  if [ "$#" -gt 2 ] ; then
     if [[ "$3" != "BANKIA" ]] && [[ "$3" != "HAYA" ]] && [[ "$3" != "-" ]] ; then
       usoCorrecto
       exit 1
@@ -85,8 +92,9 @@ function obtenerSetEnv() {
   export nombreSinExt=${nombreFichero%%.*}
 
   export nombreSetEnv=setEnv_${nombreSinExt}.sh
-
-  echo "### Iniciando generación del fichero" $nombreSetEnv
+  if [[ $VERBOSE == 1 ]]; then
+    echo "### Iniciando generación del fichero" $nombreSetEnv
+  fi
 
   export AUTOR=`cat $1 | grep ' AUTOR=' | cut -d'=' -f2`
   if [ "$AUTOR" == "" ] ; then
@@ -142,7 +150,9 @@ function obtenerSetEnv() {
   echo "export INCIDENCIA_LINK=$INCIDENCIA_LINK" >> $BASEDIR/tmp/$nombreSetEnv
   echo "export PRODUCTO=$PRODUCTO" >> $BASEDIR/tmp/$nombreSetEnv
 
-  echo "=== Fichero $BASEDIR/tmp/$nombreSetEnv generado"
+  if [[ $VERBOSE == 1 ]]; then
+    echo "=== Fichero $BASEDIR/tmp/$nombreSetEnv generado"
+  fi
 
 }
 
@@ -155,13 +165,19 @@ function transformaDosFile() {
     echo "Fichero $1 es DOS"
     dos2unix -q $1
     if [ "$?" == 0 ] ; then
-      echo "Fichero $1 transformado a Linux por dos2unix"
+      if [[ $VERBOSE == 1 ]]; then
+        echo "Fichero $1 transformado a Linux por dos2unix"
+      fi
     else
       sed 's/\r$//' "$1" > $1.bak ; mv $1.bak $1
-      echo "Fichero $1 transformado a Linux por sed (dos2unix no instalado)"
+      if [[ $VERBOSE == 1 ]]; then
+        echo "Fichero $1 transformado a Linux por sed (dos2unix no instalado)"
+      fi
     fi
   else
-    echo "Fichero $1 es Linux"
+    if [[ $VERBOSE == 1 ]]; then
+      echo "Fichero $1 es Linux"
+    fi
   fi
 }
 
@@ -190,17 +206,27 @@ cp -f $BASEDIR/scripts/reg_sql.sh $BASEDIR/tmp/$nombreSinDirSinExt.sh
 cp -f $BASEDIR/scripts/reg?.sql $BASEDIR/tmp/
 chmod u+x $BASEDIR/tmp/$nombreSinDirSinExt.sh
 
+echo ""
+echo "         $1"
 cp $1 $BASEDIR/tmp/
 
-echo "Ejecutando:"
-echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
+if [[ $VERBOSE == 1 ]]; then
+    echo "Ejecutando:"
+fi
 if [ $PRINT = "SI" ] ; then
     $BASEDIR/tmp/$nombreSinDirSinExt.sh -p
 else
-    $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
+    if [[ $VERBOSE == 1 ]]; then
+        echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
+        $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
+    else
+        $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
+    fi
 fi
 
-echo "Ejecutado! Revise el fichero de log"
+if [[ $VERBOSE == 1 ]]; then
+    echo "Ejecutado! Revise el fichero de log"
+fi
 
 #rm -f `date +%Y`*.sql
 #rm -f reg*

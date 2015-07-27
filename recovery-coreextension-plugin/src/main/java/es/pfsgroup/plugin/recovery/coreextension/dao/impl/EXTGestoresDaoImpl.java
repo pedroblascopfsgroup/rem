@@ -23,14 +23,27 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 	 */
 	@Override
 	public List<Usuario> getGestoresByDespacho(long idTipoDespacho) {
+				
+		return getGestoresByDespacho(idTipoDespacho, true);		
+	}
+	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao#getGestoresByDespacho(long)
+	 */
+	@Override
+	public List<Usuario> getGestoresByDespacho(long idTipoDespacho, boolean incluirBorrados) {
 		HQLBuilder hb = new HQLBuilder(" select gd.usuario from GestorDespacho gd");
 		
 		HQLBuilder.addFiltroIgualQue(hb, "gd.despachoExterno.id", idTipoDespacho);
-		HQLBuilder.addFiltroIgualQue(hb, "gd.usuario.auditoria.borrado", false);
+		
+		if(!incluirBorrados) {
+			HQLBuilder.addFiltroIgualQue(hb, "gd.usuario.auditoria.borrado", false);
+		}
 		
 		return HibernateQueryUtils.list(this, hb);
 		
 	}
+	
 
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao#getGestoresByDespacho(es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto)

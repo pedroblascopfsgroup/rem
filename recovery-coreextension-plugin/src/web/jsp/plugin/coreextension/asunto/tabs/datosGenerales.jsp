@@ -327,6 +327,33 @@
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
 	
 	var comboJerarquia = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name : 'jerarquia', fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'});
+	
+	
+	//Listado de Estados, viene del flow
+	var siNo = <app:dict value="${sino}" blankElement="true" blankElementValue="" blankElementText="---"/>;
+	
+	//store generico de combo diccionario
+	var optionsSINOStore = new Ext.data.JsonStore({
+	       fields: ['codigo', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : siNo
+	});
+
+	//Campo Combo Error CDD
+	var comboErrorCDD = new Ext.form.ComboBox({
+				store:optionsSINOStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'local'
+				,editable: false
+				,emptyText:'---'
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorCDD" text="**Error CDD"/>'
+	});
+	
+	
+	
+	
 	              
     var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -492,6 +519,9 @@
 		if (comboJerarquia.getValue() != '' ){
 			return true;
 		}
+		if (comboErrorCDD.getValue() != '' ){
+			return true;
+		}
 		if (comboZonas.getValue() != '' ){
 			return true;
 		}			
@@ -544,6 +574,7 @@
 			,fechaCreacionDesde:app.format.dateRenderer(fechaCreacionDesde.getValue())
 			,fechaCreacionHasta:app.format.dateRenderer(fechaCreacionHasta.getValue())
 			,jerarquia:comboJerarquia.getValue()
+			,comboErrorCDD:comboErrorCDD.getValue()
 			,codigoZona:comboZonas.getValue()
 			,tipoSalida:'<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_LISTADO" />'
 			//,codigoProcedimientoEnJuzgado:codigoProcedimientoEnJuzgado.getValue()
@@ -588,9 +619,8 @@
 				,{items:[fechaCreacionHasta]}
 				,{items:[filtroNumeroAutosPanel]}
 				,{items:[comboJerarquia]}
-				,{items:[{border:false,html:'&nbsp;'}]}
+				,{items:[comboErrorCDD]}
 				,{items:[comboZonas]}
-				
 				,{colspan:2,items:[comboTipoProcedimientos]}
 				,{items:[comboGestion]}
 				,{items:[comboPropiedades]}
@@ -630,6 +660,7 @@
     		           ,fechaCreacionDesde
     		           ,fechaCreacionHasta
     		           ,comboJerarquia
+    		           ,comboErrorCDD
     		           ,comboZonas
     		           ,codigoProcedimientoEnJuzgado
     		           ,filtroNumeroCodigoProc

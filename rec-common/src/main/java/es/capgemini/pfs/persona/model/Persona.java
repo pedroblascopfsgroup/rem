@@ -333,9 +333,36 @@ public class Persona implements Serializable, Auditable, Describible {
 	@Column(name = "PER_EXTRA_6")
 	private Date extra6;
 
+	/**
+	 * Ahora se utiliza la tabla ARR_ARQ_RECUPERACION_PERSONA<BR><BR>
+	 *  <i>SELECT DISTINCT PER_ID, ARQ_ID FROM (<br>
+          SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD<br>
+          FROM ARR_ARQ_RECUPERACION_PERSONA<br>
+        ) WHERE ORD = 1</i>
+	 */
+	@Deprecated
 	@Column(name = "ARQ_ID")
 	private Long arquetipo;
 
+	/**
+	 * Ahora se utiliza la tabla ARR_ARQ_RECUPERACION_PERSONA<br><br>
+	 * 
+	 * <i>WITH ARR_TMP AS (<br>
+		  SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (<br>
+		              SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD<br>
+		              FROM ARR_ARQ_RECUPERACION_PERSONA<br>
+		            ) WHERE ORD <=2<br>
+		)<br>
+		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)<br>
+		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)<br>
+		, VARR AS (<br>
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID<br>
+				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID<br>
+				inner join per_personas p on a1.per_id = p.per_id<br>
+		)</i>
+	 * 
+	 */
+	@Deprecated
 	@Column(name = "ARQ_ID_CALCULADO")
 	private Long arquetipoCalculado;
 
@@ -504,6 +531,11 @@ public class Persona implements Serializable, Auditable, Describible {
 			+ DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO
 			+ "') and cpe.per_id = PER_ID)")
 	private Integer numAsuntosActivos;
+	
+	@Formula(value = "(SELECT COUNT (DISTINCT asu.asu_id) FROM ASU_ASUNTOS asu JOIN PRC_PROCEDIMIENTOS prc ON prc.asu_id = asu.asu_id "
+			+ " JOIN PRC_PER PRCPER ON PRC.PRC_ID = PRCPER.PRC_ID "
+			+ " WHERE asu.borrado = 0 and prc.borrado = 0 and PRCPER.PER_ID = PER_ID)")
+	private Integer numAsuntosActivosPorPrc;
 
 	/**
 	 * Situaci�n de gesti�n: Cliente (todos los que no son ni expediente, ni
@@ -1830,6 +1862,10 @@ public class Persona implements Serializable, Auditable, Describible {
 	public Integer getNumAsuntosActivos() {
 		return numAsuntosActivos;
 	}
+	
+	public Integer getNumAsuntosActivosPorPrc() {
+		return numAsuntosActivosPorPrc;
+	}	
 
 	/**
 	 * @return the diasVencido
@@ -2684,6 +2720,14 @@ public class Persona implements Serializable, Auditable, Describible {
 	 */
 	public void setNumAsuntosActivos(Integer numAsuntosActivos) {
 		this.numAsuntosActivos = numAsuntosActivos;
+	}
+	
+	/**
+	 * @param numAsuntosActivosPorPrc
+	 *            the numAsuntosActivosPorPrc to set
+	 */
+	public void setNumAsuntosActivosPorPrc(Integer numAsuntosActivosPorPrc) {
+		this.numAsuntosActivosPorPrc = numAsuntosActivosPorPrc;
 	}
 
 	/**

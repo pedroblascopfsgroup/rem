@@ -390,7 +390,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		if (mailsPara.size() > 0) {
 			try {
 				Usuario usuarioLogueado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				String textoFrom =  usuarioLogueado.getUsername();
+				String textoFrom =  usuarioLogueado.getApellidoNombre();
 				
 				//Añadimos SOLO en el asunto del email, el nombre del asunto
 				Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dto.getIdUg());

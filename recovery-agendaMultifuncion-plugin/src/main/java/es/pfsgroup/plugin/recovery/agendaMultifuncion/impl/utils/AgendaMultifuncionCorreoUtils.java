@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -17,7 +18,11 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.recovery.Encriptador;
@@ -50,6 +55,8 @@ public class AgendaMultifuncionCorreoUtils {
 
 	private static AgendaMultifuncionCorreoUtils agendaMultifuncionCorreo;
 	
+	@Autowired
+    private Executor executor;	
 	
 	public static AgendaMultifuncionCorreoUtils dameInstancia() {
 		if (agendaMultifuncionCorreo == null) {
@@ -148,29 +155,60 @@ public class AgendaMultifuncionCorreoUtils {
 			Transport t = session.getTransport(TRANSPORT_SMTP);
 
 			// validacion de usuario que envia
-			String usuario = props.getProperty(MAIL_SMTP_USER);
+			String usuario = null;
+			String passValueProp = null;
 			String pass = null;
-			String passValueProp = appProperties.getProperty(PWD_CORREO);
+
+			// Obtenemos desde BBDD en primera instancia
+			Parametrizacion usuarioBBDD = (Parametrizacion) executor
+					.execute(
+							ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+							Parametrizacion.ANOTACIONES_MAIL_SMTP_USER);
+			Parametrizacion passValuePropBBDD = (Parametrizacion) executor
+					.execute(
+							ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+							Parametrizacion.ANOTACIONES_PWD_CORREO);
+
+			//Variables desde BBDD
+			String usuarioBD = usuarioBBDD.getValor();
+			String passValuePropBD = passValuePropBBDD.getValor().trim();
+			String passBB = null;
+
+			//Variables desde el DEVON
+			usuario = props.getProperty(MAIL_SMTP_USER);
+			passValueProp = appProperties.getProperty(PWD_CORREO);
+			
 			try {
 				String passValueParsed = passValueProp.replaceAll("\\\\", "");
 				pass = Encriptador.desencriptarPw(passValueParsed);
 			} catch (Exception ee) {
-				// Si da error la desencriptación o el parseo lo intentaremos con el valor obtenido del properties directamente.
+				// Si da error la desencriptación o el parseo lo intentaremos
+				// con el valor obtenido del properties directamente.
 				pass = passValueProp;
-				logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee=" + ee.getMessage());
+				logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
 			}
-			
-			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Usuario: "+usuario+" , Pwd: "+pass+" ]");
-			
-			//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] usuario=" + usuario + ", pass= " + pass);
-			t.connect(usuario, pass);
-			//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] Autenticado");
-			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Usuario Autentificado]");
-			t.sendMessage(message, message.getAllRecipients());
-			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Correo enviado]");
-			// Cierre.
-			t.close();
-			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Conexión cerrada]");
+
+			if (!Checks.esNulo(usuarioBD)) {
+				try {
+					String passValueParsed = passValuePropBD.replaceAll("\\\\", "");
+					passBB = Encriptador.desencriptarPw(passValueParsed);
+				} catch (Exception ee) {
+					// Si da error la desencriptación o el parseo lo
+					// intentaremos con el valor obtenido del properties
+					// directamente.
+					passBB = passValueProp;
+					logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
+				}
+				try {
+					envioCorreoGenerico(message, t, usuarioBD, passBB);
+				} catch (Exception e) {
+					System.out.println("[AgendaMultifuncionCorreoUtils] envio desde BBDD ha dado error al conectar e="+ e.getMessage());
+					System.out.println("[AgendaMultifuncionCorreoUtils] Enviamos por el sistema antiguo de devon properties");
+					envioCorreoGenerico(message, t, usuario, pass);
+				}
+			} else {
+				envioCorreoGenerico(message, t, usuario, pass);
+			}
 		}
 
 		catch (Exception e) {
@@ -179,7 +217,20 @@ public class AgendaMultifuncionCorreoUtils {
 		}
 	}
 
-
+	private void envioCorreoGenerico(MimeMessage message, Transport t,
+		String usuario, String pass) throws MessagingException {
+		System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Usuario: "+usuario+" , Pwd: "+pass+" ]");
+		//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] usuario=" + usuario + ", pass= " + pass);
+		t.connect(usuario, pass);
+		//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] Autenticado");
+		System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Usuario Autentificado]");
+		t.sendMessage(message, message.getAllRecipients());
+		System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Correo enviado]");
+		// Cierre.
+		t.close();
+		System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Conexión cerrada]");
+	}
+	
 	
 	private Properties getPropiedades() {	
 					

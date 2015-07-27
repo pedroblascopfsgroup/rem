@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI
---## FECHA_CREACION=20150807
+--## FECHA_CREACION=20150723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.12
 --## INCIDENCIA_LINK=FASE-1470

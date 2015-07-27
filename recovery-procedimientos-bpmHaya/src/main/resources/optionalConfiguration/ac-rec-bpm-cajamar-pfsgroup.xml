@@ -12,6 +12,7 @@
 	<bean id="bccAdjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionBccLeaveActionHandler" />
 	<bean id="bccCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateBccLeaveActionHandler" />
 	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
+	<bean id="endElevacionCajamarActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PROEndElevacionCajamarActionHandler" />
  	    
 	<!-- BPM activos -->
 	<!-- Nacho -->
@@ -55,6 +56,8 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMandamientoCancelacionCargas/hcj_mandamientoCancelacionCargas.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				

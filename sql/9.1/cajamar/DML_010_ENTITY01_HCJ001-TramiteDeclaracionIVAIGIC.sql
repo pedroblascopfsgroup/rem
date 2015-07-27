@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.1-hy-rc02
---## INCIDENCIA_LINK=CMREC-369
+--## INCIDENCIA_LINK=CMREC-398
 --## PRODUCTO=NO
 --##
 --## Finalidad: Adaptar BPM's Haya-Cajamar
@@ -38,7 +38,7 @@ DECLARE
     * CONFIGURACION: IDENTIDAD SCRIPT
     *---------------------------------------------------------------------
     */
-    PAR_TIT_TRAMITE VARCHAR2(50 CHAR)   := 'Trámite de cálculo de deuda a fecha';   -- [PARAMETRO] Título del trámite
+    PAR_TIT_TRAMITE VARCHAR2(50 CHAR)   := 'Trámite de declaración IVA/IGIC';   -- [PARAMETRO] Título del trámite
     PAR_AUTHOR VARCHAR2(20 CHAR)        := 'Alberto';                            -- [PARAMETRO] Nick del autor
     PAR_AUTHOR_EMAIL VARCHAR2(50 CHAR)  := 'alberto.campos@pfsgroup.es';   -- [PARAMETRO] Email del autor
     PAR_AUTHOR_TELF VARCHAR2(10 CHAR)   := '2034';                              -- [PARAMETRO] Teléfono del autor
@@ -62,7 +62,7 @@ DECLARE
     V_CODIGO_PLAZAS VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Plazos
     V_CODIGO1_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo1 FK con codigo de TFI Items
     V_CODIGO2_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo2 FK con codigo de TFI Items
-    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'HC100'; -- Código de procedimiento para reemplazar
+    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'HCJ001'; -- Código de procedimiento para reemplazar
 
 	/*
     * ARRAY TABLA1: DD_TPO_TIPO_PROCEDIMIENTO
@@ -73,10 +73,10 @@ DECLARE
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
     	T_TIPO_TPO(
     		/*DD_TPO_CODIGO................:*/ V_COD_PROCEDIMIENTO,
-    		/*DD_TPO_DESCRIPCION...........:*/ 'T. Cálc. deuda a fecha - HCJ',
-    		/*DD_TPO_DESCRIPCION_LARGA.....:*/ 'Trámite de Cálculo de Deuda a Fecha',
+    		/*DD_TPO_DESCRIPCION...........:*/ 'T. declaración IVA/IGIC - HCJ',
+    		/*DD_TPO_DESCRIPCION_LARGA.....:*/ 'Trámite de declaración IVA/IGIC',
     		/*DD_TPO_HTML..................:*/ null,
-    		/*DD_TPO_XML_JBPM..............:*/ 'hcj_calculoDeudaAFecha',
+    		/*DD_TPO_XML_JBPM..............:*/ 'hcj_declaracionIVAIGIC',
     		/*VERSION......................:*/ '0',
     		/*USUARIOCREAR.................:*/ 'DD',
     		/*BORRADO......................:*/ '0',
@@ -99,14 +99,14 @@ DECLARE
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
 	      T_TIPO_TAP(
 	        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
-	        /*TAP_CODIGO...................:*/ 'HC100_RegistrarPeticionCalculoDeuda',
+	        /*TAP_CODIGO...................:*/ 'HCJ001_DeclararIVAIGIC',
 	        /*TAP_VIEW.....................:*/ null,
 	        /*TAP_SCRIPT_VALIDACION........:*/ null,
 	        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
 	        /*TAP_SCRIPT_DECISION..........:*/ null,
 	        /*DD_TPO_ID_BPM(FK)............:*/ null,
 	        /*TAP_SUPERVISOR,..............:*/ '0',
-	        /*TAP_DESCRIPCION,.............:*/ 'Registrar petición de cálculo de deuda',
+	        /*TAP_DESCRIPCION,.............:*/ 'Declarar IVA/IGIC',
 	        /*VERSION......................:*/ '0',
 	        /*USUARIOCREAR.................:*/ 'DD',
 	        /*BORRADO......................:*/ '0',
@@ -117,59 +117,9 @@ DECLARE
 	        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
 	        /*TAP_MAX_AUTOP................:*/ '3',
 	        /*DD_TGE_ID(FK)................:*/ null,
-	        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+	        /*DD_STA_ID(FK)................:*/ 'TGCTRGE',
 	        /*TAP_EVITAR_REORG.............:*/ null,
-	        /*DD_TSUP_ID(FK)...............:*/ 'GCONGE',
-	        /*TAP_BUCLE_BPM................:*/ null        
-	        ),
-	        T_TIPO_TAP(
-	        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
-	        /*TAP_CODIGO...................:*/ 'HC100_RealizarCalculoDeuda',
-	        /*TAP_VIEW.....................:*/ null,
-	        /*TAP_SCRIPT_VALIDACION........:*/ null,
-	        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-	        /*TAP_SCRIPT_DECISION..........:*/ null,
-	        /*DD_TPO_ID_BPM(FK)............:*/ null,
-	        /*TAP_SUPERVISOR,..............:*/ '0',
-	        /*TAP_DESCRIPCION,.............:*/ 'Realizar cálculo de deuda',
-	        /*VERSION......................:*/ '0',
-	        /*USUARIOCREAR.................:*/ 'DD',
-	        /*BORRADO......................:*/ '0',
-	        /*TAP_ALERT_NO_RETORNO.........:*/ null,
-	        /*TAP_ALERT_VUELTA_ATRAS.......:*/ 'tareaExterna.cancelarTarea',
-	        /*DD_FAP_ID(FK)................:*/ null,
-	        /*TAP_AUTOPRORROGA.............:*/ '0',
-	        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
-	        /*TAP_MAX_AUTOP................:*/ '3',
-	        /*DD_TGE_ID(FK)................:*/ null,
-	        /*DD_STA_ID(FK)................:*/ 'CJ-814',
-	        /*TAP_EVITAR_REORG.............:*/ null,
-	        /*DD_TSUP_ID(FK)...............:*/ 'GCONGE',
-	        /*TAP_BUCLE_BPM................:*/ null        
-	        ),
-	        T_TIPO_TAP(
-	        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
-	        /*TAP_CODIGO...................:*/ 'HC100_ComunicarCalculoDeudaAFecha',
-	        /*TAP_VIEW.....................:*/ null,
-	        /*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoINFLIQ() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><div id="permiteGuardar"><p>Debe adjuntar el documento "Informe de liquidaci&oacute;n".</p></div></div>''',
-	        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-	        /*TAP_SCRIPT_DECISION..........:*/ null,
-	        /*DD_TPO_ID_BPM(FK)............:*/ null,
-	        /*TAP_SUPERVISOR,..............:*/ '0',
-	        /*TAP_DESCRIPCION,.............:*/ 'Comunicar cálculo de la deuda a la fecha',
-	        /*VERSION......................:*/ '0',
-	        /*USUARIOCREAR.................:*/ 'DD',
-	        /*BORRADO......................:*/ '0',
-	        /*TAP_ALERT_NO_RETORNO.........:*/ null,
-	        /*TAP_ALERT_VUELTA_ATRAS.......:*/ 'tareaExterna.cancelarTarea',
-	        /*DD_FAP_ID(FK)................:*/ null,
-	        /*TAP_AUTOPRORROGA.............:*/ '0',
-	        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
-	        /*TAP_MAX_AUTOP................:*/ '3',
-	        /*DD_TGE_ID(FK)................:*/ null,
-	        /*DD_STA_ID(FK)................:*/ 'CJ-814',
-	        /*TAP_EVITAR_REORG.............:*/ null,
-	        /*DD_TSUP_ID(FK)...............:*/ 'GCONGE',
+	        /*DD_TSUP_ID(FK)...............:*/ 'SCTRGE',
 	        /*TAP_BUCLE_BPM................:*/ null        
 	        )
        );
@@ -186,26 +136,8 @@ DECLARE
        T_TIPO_PLAZAS(
           /*DD_JUZ_ID(FK)............:*/ null,
           /*DD_PLA_ID(FK)............:*/ null,
-          /*TAP_ID(FK)...............:*/ 'HC100_RegistrarPeticionCalculoDeuda',
-          /*DD_PTP_PLAZO_SCRIPT......:*/ '1*24*60*60*1000L',
-          /*VERSION..................:*/ '0',
-          /*BORRADO..................:*/ '0',
-          /*USUARIOCREAR.............:*/ 'DD'
-        ),
-        T_TIPO_PLAZAS(
-          /*DD_JUZ_ID(FK)............:*/ null,
-          /*DD_PLA_ID(FK)............:*/ null,
-          /*TAP_ID(FK)...............:*/ 'HC100_RealizarCalculoDeuda',
-          /*DD_PTP_PLAZO_SCRIPT......:*/ '2*24*60*60*1000L',
-          /*VERSION..................:*/ '0',
-          /*BORRADO..................:*/ '0',
-          /*USUARIOCREAR.............:*/ 'DD'
-        ),
-        T_TIPO_PLAZAS(
-          /*DD_JUZ_ID(FK)............:*/ null,
-          /*DD_PLA_ID(FK)............:*/ null,
-          /*TAP_ID(FK)...............:*/ 'HC100_ComunicarCalculoDeudaAFecha',
-          /*DD_PTP_PLAZO_SCRIPT......:*/ '1*24*60*60*1000L',
+          /*TAP_ID(FK)...............:*/ 'HCJ001_DeclararIVAIGIC',
+          /*DD_PTP_PLAZO_SCRIPT......:*/ '3*24*60*60*1000L',
           /*VERSION..................:*/ '0',
           /*BORRADO..................:*/ '0',
           /*USUARIOCREAR.............:*/ 'DD'
@@ -222,11 +154,11 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RegistrarPeticionCalculoDeuda',
+            /*DD_TAP_ID..............:*/ 'HCJ001_DeclararIVAIGIC',
             /*TFI_ORDEN..............:*/ '0',
             /*TFI_TIPO...............:*/ 'label',
             /*TFI_NOMBRE.............:*/ 'titulo',
-            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A trav&eacute;s de esta pantalla deber&aacute; introducir la fecha en la que se solicita el c&aacute;lculo de la deuda as&iacute; como el origen de la solicitud.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">La siguiente tarea ser&aacute; "Realizar c&aacute;lculo de la deuda".</p></div>',
+            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Puesto que ya dispone del auto decreto de adjudicaci&oacute;n, deber&aacute; realizar la declaraci&oacute;n del bien en funci&oacute;n del tipo de tributaci&oacute;n definido en el informe fiscal. Para ello, deber&aacute; ir a la ficha del bien y comprobar el campo "Tributaci&oacute;n compra" en el &aacute;rea de Datos econ&oacute;micos de la pestaña Cabecera. En el caso de el tipo de tributaci&oacute;n sea IVA sujeto y deducible, adem&aacute;s de la declaraci&oacute;n se deber&aacute; auto emitir una factura.</p><p style="margin-bottom: 10px">Se indicar&aacute; la fecha en la que se ha declarado el IVA/IGIC de la operaci&oacute;n.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',
             /*TFI_ERROR_VALIDACION...:*/ null,
             /*TFI_VALIDACION.........:*/ null,
             /*TFI_VALOR_INICIAL......:*/ null,
@@ -235,11 +167,11 @@ DECLARE
             /*USUARIOCREAR...........:*/ 'DD'
         ),
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RegistrarPeticionCalculoDeuda',
+            /*DD_TAP_ID..............:*/ 'HCJ001_DeclararIVAIGIC',
             /*TFI_ORDEN..............:*/ '1',
             /*TFI_TIPO...............:*/ 'date',
-            /*TFI_NOMBRE.............:*/ 'fechaSolicitud',
-            /*TFI_LABEL..............:*/ 'Fecha solicitud',
+            /*TFI_NOMBRE.............:*/ 'fechaDeclaracion',
+            /*TFI_LABEL..............:*/ 'Fecha declaración IVA/IGIC',
             /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
             /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
             /*TFI_VALOR_INICIAL......:*/ null,
@@ -248,152 +180,7 @@ DECLARE
             /*USUARIOCREAR...........:*/ 'DD'
         ),
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RegistrarPeticionCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '2',
-            /*TFI_TIPO...............:*/ 'combo',
-            /*TFI_NOMBRE.............:*/ 'origenSolicitud',
-            /*TFI_LABEL..............:*/ 'Origen solicitud',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ 'DDCalculoDeudaOrigen',
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RegistrarPeticionCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '3',
-            /*TFI_TIPO...............:*/ 'textarea',
-            /*TFI_NOMBRE.............:*/ 'observaciones',
-            /*TFI_LABEL..............:*/ 'Observaciones',
-            /*TFI_ERROR_VALIDACION...:*/ null,
-            /*TFI_VALIDACION.........:*/ null,
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RealizarCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '0',
-            /*TFI_TIPO...............:*/ 'label',
-            /*TFI_NOMBRE.............:*/ 'titulo',
-            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta pantalla deber&aacute; rellenar la siguiente informaci&oacute;n:<ul style="list-style-type:square;margin-left:35px;"><li>Fecha a la que se realiza el c&aacute;lculo de la deuda</li><li>El capital de la deuda</li><li>La cuant&iacute;a de los intereses a la fecha de c&aacute;lculo</li><li>La cuant&iacute;a de las costas, derechos y suplidos tanto del letrado como del procurador</li></ul></p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea ser&aacute; "Comunicar c&aacute;lculo de la fecha de deuda a la fecha".</p></div>',
-            /*TFI_ERROR_VALIDACION...:*/ null,
-            /*TFI_VALIDACION.........:*/ null,
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RealizarCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '1',
-            /*TFI_TIPO...............:*/ 'date',
-            /*TFI_NOMBRE.............:*/ 'fechaCalculo',
-            /*TFI_LABEL..............:*/ 'Fecha de c&aacute;lculo',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RealizarCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '2',
-            /*TFI_TIPO...............:*/ 'currency',
-            /*TFI_NOMBRE.............:*/ 'capitalDeuda',
-            /*TFI_LABEL..............:*/ 'Capital deuda',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RealizarCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '3',
-            /*TFI_TIPO...............:*/ 'currency',
-            /*TFI_NOMBRE.............:*/ 'interesesFecha',
-            /*TFI_LABEL..............:*/ 'Intereses a la fecha',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RealizarCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '4',
-            /*TFI_TIPO...............:*/ 'currency',
-            /*TFI_NOMBRE.............:*/ 'costasLetrado',
-            /*TFI_LABEL..............:*/ 'Costas letrado',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RealizarCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '5',
-            /*TFI_TIPO...............:*/ 'currency',
-            /*TFI_NOMBRE.............:*/ 'derechosProcurador',
-            /*TFI_LABEL..............:*/ 'Derechos y suplidos procurador',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_RealizarCalculoDeuda',
-            /*TFI_ORDEN..............:*/ '6',
-            /*TFI_TIPO...............:*/ 'textarea',
-            /*TFI_NOMBRE.............:*/ 'observaciones',
-            /*TFI_LABEL..............:*/ 'Observaciones',
-            /*TFI_ERROR_VALIDACION...:*/ null,
-            /*TFI_VALIDACION.........:*/ null,
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_ComunicarCalculoDeudaAFecha',
-            /*TFI_ORDEN..............:*/ '0',
-            /*TFI_TIPO...............:*/ 'label',
-            /*TFI_NOMBRE.............:*/ 'titulo',
-            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea deber&aacute; generar, mediante el bot&oacute;n "Generar liquidaci&oacute;n" en la ficha del asunto, la liquidaci&oacute;n solicitada.</p><p style="margin-bottom: 10px">Una vez generado, deber&aacute; adjuntar y enviar el informe de liquidaci&oacute;n a la oficina o a quien solicit&oacute; este c&aacute;lculo.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla finalizar&aacute; el tr&aacute;mite.</p></div>',
-            /*TFI_ERROR_VALIDACION...:*/ null,
-            /*TFI_VALIDACION.........:*/ null,
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_ComunicarCalculoDeudaAFecha',
-            /*TFI_ORDEN..............:*/ '1',
-            /*TFI_TIPO...............:*/ 'date',
-            /*TFI_NOMBRE.............:*/ 'fechaComunicacion',
-            /*TFI_LABEL..............:*/ 'Fecha comunicación',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HC100_ComunicarCalculoDeudaAFecha',
+            /*DD_TAP_ID..............:*/ 'HCJ001_DeclararIVAIGIC',
             /*TFI_ORDEN..............:*/ '2',
             /*TFI_TIPO...............:*/ 'textarea',
             /*TFI_NOMBRE.............:*/ 'observaciones',
@@ -652,19 +439,6 @@ BEGIN
         END IF;
     END LOOP;
     DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
-
-    /*
-     * Desactivamos trámites antiguos si existen
-     */
-    V_SQL := 'SELECT COUNT(1) FROM '||PAR_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' WHERE '||V_CODIGO_TPO||' = ''P07'' AND BORRADO=0 ';
-        
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-
-	IF V_NUM_TABLAS > 0 THEN
-	    V_SQL := 'UPDATE '||PAR_ESQUEMA||'.'||PAR_TABLENAME_TPROC||' SET BORRADO=1 WHERE '||V_CODIGO_TPO||' = ''P07'' AND BORRADO=0 ';
-        DBMS_OUTPUT.PUT_LINE('Trámite antiguo desactivado.');
-        EXECUTE IMMEDIATE V_SQL;        
-	END IF;    
 
     /*
     * COMMIT ALL BLOCK-CODE

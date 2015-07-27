@@ -275,8 +275,15 @@
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;
 		}
-		entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
-		procedimientosStore.webflow({id:data.id});
+                var btnCargaListaPrc=new Ext.Button({
+                    text:'<s:message code="plugin.mejoras.asuntos.cabecera.button.cargaPrc" text="**Cargar actuaciones" />'
+                    ,iconCls:'icon_exportar_csv'
+                    ,handler: function() {
+                            entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
+                            procedimientosStore.webflow({id:data.id});
+                            }
+                    }
+                );
 		
 		reiniciarKOCDD();
 		

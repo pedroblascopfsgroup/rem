@@ -1,6 +1,12 @@
 #!/bin/bash
 # Generado manualmente
- 
+
+SERVER=10.64.132.59
+USER=ftpsocpart
+PASSW=tempo.99
+PORT=2153
+DIR_LOCAL=/mnt/fs_servicios/recovecb/datos/usuarios/recovecb/etl/output/haya/troncal/
+DIR_DESTINO=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/out/aprovisionamiento/troncal/ 
 DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
 
 	filename=$(basename $0)
@@ -24,8 +30,38 @@ DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
         CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
 	    CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
 	    java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE  -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
-	    exit $?
+
+           if [ $? = 0 ] ; then
+
+
+                 > $DIR_LOCAL/apr_env_grupos_haya.txt
+
+                 rm -f $DIR_LOCAL/backup/GCL-*
+
+                 ftp -vn $SERVER <<END_OF_SESSION
+                       user $USER $PASSW
+                       lcd $DIR_LOCAL
+                       cd $DIR_DESTINO
+                       bin
+                       put GCL-*.zip
+                       put GCL-*.sem
+                       put apr_env_grupos_haya.txt
+                 
+                       bye
+END_OF_SESSION
+
+                 mv -f $DIR_LOCAL/GCL-*     $DIR_LOCAL/backup/
+                 rm -f $DIR_LOCAL/apr_env_grupos_haya.txt
+
+	   else
+	      echo "$(basename $0) Error en $filename: error en el ETL"
+	      exit 1
+	   fi
 	else
 	    echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
 	    exit 1
 	fi
+
+
+
+

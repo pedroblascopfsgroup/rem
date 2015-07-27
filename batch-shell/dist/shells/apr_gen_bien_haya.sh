@@ -1,6 +1,12 @@
 #!/bin/bash
 # Generado manualmente
- 
+
+SERVER=10.64.132.59
+USER=ftpsocpart
+PASSW=tempo.99
+PORT=2153
+DIR_LOCAL=/mnt/fs_servicios/recovecb/datos/usuarios/recovecb/etl/output/haya/auxiliar/
+DIR_DESTINO=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/out/aprovisionamiento/auxiliar/ 
 DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
 
 	filename=$(basename $0)
@@ -24,8 +30,46 @@ DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
         CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
 	    CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
 	    java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE  -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
-	    exit $?
+
+           if [ $? = 0 ] ; then
+
+
+                 > $DIR_LOCAL/apr_env_bien_haya.txt
+
+                 rm -f $DIR_LOCAL/backup/BIENPER*
+                 rm -f $DIR_LOCAL/backup/BIENES*
+                 rm -f $DIR_LOCAL/backup/BIENCNT*
+
+                 ftp -vn $SERVER <<END_OF_SESSION
+                       user $USER $PASSW
+                 	lcd $DIR_LOCAL
+                         cd $DIR_DESTINO
+                         bin
+                         put BIENPER*.zip
+                         put BIENPER*.sem
+                         put BIENES*.zip
+                         put BIENES*.sem
+                         put BIENCNT*.zip
+                         put BIENCNT*.sem
+                         put apr_env_bien_haya.txt
+                 
+                 	bye
+END_OF_SESSION
+
+                 mv -f $DIR_LOCAL/BIENPER*  $DIR_LOCAL/backup/
+                 mv -f $DIR_LOCAL/BIENES*   $DIR_LOCAL/backup/
+                 mv -f $DIR_LOCAL/BIENCNT*  $DIR_LOCAL/backup/
+                 rm -f $DIR_LOCAL/apr_env_bien_haya.txt
+
+	   else
+	      echo "$(basename $0) Error en $filename: error en el ETL"
+	      exit 1
+	   fi
 	else
 	    echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
 	    exit 1
 	fi
+
+
+
+

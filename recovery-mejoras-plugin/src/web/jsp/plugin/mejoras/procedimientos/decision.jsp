@@ -86,7 +86,7 @@
 	
 	tipoActuacion.on('select',function(){
 		var codigo=tipoActuacion.getValue();
-		optionsTipoProcedimientoStore.webflow({codigo:codigo})
+		optionsTipoProcedimientoStore.webflow({idTipoAct:codigo, prcId: idProcedimiento})
 		comboTipoProcedimiento.reset();
 	});
 		
@@ -100,7 +100,7 @@
 	]);
 
 	var optionsTipoProcedimientoStore =	page.getStore({
-	       flow: 'plugin/coreextension/procedimientos/buscarTiposProcedimiento'
+	       flow: 'coreextension/getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'tiposProcedimiento'
 	    }, tipoProcedimientoRecord)

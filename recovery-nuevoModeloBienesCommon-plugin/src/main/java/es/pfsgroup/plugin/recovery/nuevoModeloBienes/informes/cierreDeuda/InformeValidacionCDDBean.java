@@ -285,9 +285,12 @@ public class InformeValidacionCDDBean {
 			}
 			if(Checks.esNulo(nmbBien.getAdjudicacion()) || (!Checks.esNulo(nmbBien.getAdjudicacion()) && Checks.esNulo(nmbBien.getAdjudicacion().getEntidadAdjudicataria()))) {
 				infobien.setResultadoAdjudicacion(null);
+			}else{
+				infobien.setResultadoAdjudicacion(nmbBien.getAdjudicacion().getEntidadAdjudicataria().getDescripcion());								
+			}
+			if(Checks.esNulo(nmbBien.getAdjudicacion()) || (!Checks.esNulo(nmbBien.getAdjudicacion()) && Checks.esNulo(nmbBien.getAdjudicacion().getImporteAdjudicacion()))) {
 				infobien.setImporteAdjudicacion(null);
 			}else{
-				infobien.setResultadoAdjudicacion(nmbBien.getAdjudicacion().getEntidadAdjudicataria().getDescripcion());
 				infobien.setImporteAdjudicacion(convertObjectString(nmbBien.getAdjudicacion().getImporteAdjudicacion()));				
 			}
 			if (Checks.esNulo(infobien.getResultadoAdjudicacion())) {

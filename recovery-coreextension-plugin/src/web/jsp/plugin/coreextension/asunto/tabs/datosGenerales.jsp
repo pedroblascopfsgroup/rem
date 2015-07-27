@@ -9,7 +9,6 @@
 (function(){
 	var limit=25;
 	var labelStyle2 = 'font-size:12px;';
-	debugger;
 	//Campo Código Asunto
 	var codigoAsunto=app.creaNumber('codigo',
 			'<s:message code="asuntos.busqueda.filtro.codigo" text="**Codigo Asunto" />','',{autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"},listeners:{ specialkey: function(f,e){ if(e.getKey() == e.ENTER) { buscarFunc(); } } }<app:test id="idAsunto" addComa="true"/>});
@@ -552,7 +551,6 @@
 
 	
 	var validarEmptyForm = function(){
-
 		if (codigoAsunto.getValue() != '' && app.validate.validateInteger(codigoAsunto.getValue())){
 			return true;
 		}
@@ -617,10 +615,10 @@
 		if (comboSituacionCDD.getValue() != '' ){
 			return true;
 		}
-		if (comboErrorPreviCDD.getValue() != '' ){
+		if (!Ext.isEmpty(comboErrorPreviCDD.getValue())){
 			return true;
 		}
-		if (comboErrorPostCDD.getValue() != '' ){
+		if (!Ext.isEmpty(comboErrorPostCDD.getValue())){
 			return true;
 		}
 		if (fechaEntregaDesde.getValue() != '' ){
@@ -772,8 +770,6 @@
     		           ,fechaCreacionHasta
     		           ,comboJerarquia
     		           ,comboSituacionCDD
-    		           ,comboErrorPreviCDD
-    		           ,comboErrorPostCDD
     		           ,fechaEntregaDesde
     		           ,fechaEntregaHasta
     		           ,comboZonas
@@ -783,6 +779,8 @@
     		           ,comboTipoProcedimientos // Incidencia UGAS-524
 	           ]); 
 	           optionsZonasStore.webflow({id:0}); // Incidencia UGAS-524
+	           comboErrorPreviCDD.clearValue();
+    		   comboErrorPostCDD.clearValue();
     		}
     		,exportar: function() {
     		    var flow='asuntos/exportAsuntos';

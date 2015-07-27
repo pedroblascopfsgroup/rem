@@ -17,6 +17,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.model.Bien;
+
 /**
  * Esta clase se utiliza para almacenar el cierre de deuda desde el BPM para que la recoja el Batch
  * 
@@ -44,14 +48,16 @@ public class BatchAcuerdoCierreDeuda implements Serializable{
     @SequenceGenerator(name = "BatchAcuerdoCierreDeuda", sequenceName = "${entity.schema}.S_CCDD_PR_CONV_CIERR_DD_PK")
 	private Long id;
 
-	@Column(name = "PRC_ID")
-	private Long idProcedimiento;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRC_ID")
+	private Procedimiento procedimiento;
 	
 	@Column(name = "FECHA_ALTA")
 	private Date fechaAlta;
 	
-	@Column(name = "ASU_ID")
-	private Long idAsunto;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ASU_ID")
+	private Asunto asunto;
 	
 	@Column(name = "FECHA_ENTREGA")
 	private Date fechaEntrega;
@@ -59,8 +65,9 @@ public class BatchAcuerdoCierreDeuda implements Serializable{
 	@Column(name = "USUARIOCREAR")
 	private String usuarioCrear;
 
-	@Column(name = "BIE_ID")
-	private Long idBien;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BIE_ID")
+	private Bien bien;
 	
 	@Column(name = "ENTIDAD")
 	private String entidad;
@@ -81,22 +88,6 @@ public class BatchAcuerdoCierreDeuda implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getIdProcedimiento() {
-		return idProcedimiento;
-	}
-
-	public void setIdProcedimiento(Long idProcedimiento) {
-		this.idProcedimiento = idProcedimiento;
-	}
-
-	public Long getIdAsunto() {
-		return idAsunto;
-	}
-
-	public void setIdAsunto(Long idAsunto) {
-		this.idAsunto = idAsunto;
 	}
 
 	public Date getFechaAlta() {
@@ -121,14 +112,6 @@ public class BatchAcuerdoCierreDeuda implements Serializable{
 
 	public void setUsuarioCrear(String usuarioCrear) {
 		this.usuarioCrear = usuarioCrear;
-	}
-
-	public Long getIdBien() {
-		return idBien;
-	}
-
-	public void setIdBien(Long idBien) {
-		this.idBien = idBien;
 	}
 
 	public String getEntidad() {
@@ -162,5 +145,31 @@ public class BatchAcuerdoCierreDeuda implements Serializable{
 	public void setResultadoValidacionCDD(DDResultadoValidacionCDD resultadoValidacionCDD) {
 		this.resultadoValidacionCDD = resultadoValidacionCDD;
 	}
+
+	public Procedimiento getProcedimiento() {
+		return procedimiento;
+	}
+
+	public void setProcedimiento(Procedimiento procedimiento) {
+		this.procedimiento = procedimiento;
+	}
+
+	public Asunto getAsunto() {
+		return asunto;
+	}
+
+	public void setAsunto(Asunto asunto) {
+		this.asunto = asunto;
+	}
+
+	public Bien getBien() {
+		return bien;
+	}
+
+	public void setBien(Bien bien) {
+		this.bien = bien;
+	}
+	
+	
 
 }

@@ -284,7 +284,7 @@ public class SubastaController {
 			
 			for (String idBien:arrBienes) {				
 			
-				informe = subastaApi.generarEnvioCierreDeuda(subasta, Long.valueOf(idBien), BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
+				informe = proxyFactory.proxy(SubastaApi.class).generarEnvioCierreDeuda(subasta, Long.valueOf(idBien), BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
 				if(!informe.getValidacionOK()) {
 					resultadoGlobalOK = false;					
 				}

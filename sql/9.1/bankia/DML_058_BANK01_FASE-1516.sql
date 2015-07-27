@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=ALBERTO RAMÍREZ
---## FECHA_CREACION=20150708
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20150723
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=SININCIDENCIA
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.1.12-bk
+--## INCIDENCIA_LINK=FASE-1516
+--## PRODUCTO=NO
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -35,19 +35,23 @@ DECLARE
 BEGIN
 
 
-DBMS_OUTPUT.PUT_LINE('[INICIO]: ');
+DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-DBMS_OUTPUT.PUT_LINE('[INFO]: Actualizar P413_RegistrarInscripcionDelTitulo');
+          
+execute immediate 'DELETE FROM '||V_ESQUEMA||'.prb_prc_bie
+      WHERE prb_id IN (SELECT prb_id
+                         FROM (SELECT prb_id, prc_id, bie_id, usuariocrear, fechacrear, RANK () OVER (PARTITION BY prc_id, bie_id ORDER BY fechacrear) AS ranking
+                                 FROM '||V_ESQUEMA||'.prb_prc_bie
+                                WHERE (prc_id, bie_id) IN (SELECT   prc_id, bie_id                                                                                                          --, count(1)
+                                                               FROM '||V_ESQUEMA||'.prb_prc_bie
+                                                              WHERE borrado = 0
+                                                           GROUP BY prc_id, bie_id
+                                                             HAVING COUNT (1) > 1) AND usuariocrear <> ''MIGRABNKF2'')
+                        WHERE ranking = 2)';
 
-
-execute immediate 'update '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO set TAP_SCRIPT_VALIDACION = ''comprobarGestoriaAsignadaPrc() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe asignar la Gestor&iacute;a encargada de tramitar el saneamiento de las cargas.</div>''''''
-where tap_codigo = ''P413_RegistrarInscripcionDelTitulo''';
-
-DBMS_OUTPUT.PUT_LINE('[INFO]: Actualización realizada correctamente');
-    
 COMMIT;
 
-DBMS_OUTPUT.PUT_LINE('[FIN]: Script ejecutado correctamente');
+DBMS_OUTPUT.PUT_LINE('[FIN]');
 
 
 
@@ -56,7 +60,7 @@ EXCEPTION
           err_num := SQLCODE;
           err_msg := SQLERRM;
 
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuciÃ³n:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);
 
@@ -68,3 +72,4 @@ END;
 /
 
 EXIT
+

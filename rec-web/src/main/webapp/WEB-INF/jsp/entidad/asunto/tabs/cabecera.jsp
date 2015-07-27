@@ -212,6 +212,24 @@
     		app.abreProcedimiento(id, nombre_procedimiento);
     	}
     });
+    
+    var reiniciarKOCDD =  function() {
+           Ext.Ajax.request({
+                   url: page.resolveUrl('extasunto/getMsgErrorEnvioCDDCabecera')
+                   ,method: 'POST'
+                   ,params:{
+                              idAsunto:panel.getAsuntoId()
+                           }
+                   ,success: function (result, request){
+                          msgErrorEnvioCDD.setText(''); 
+                           var r = Ext.util.JSON.decode(result.responseText);
+                           var h = r.okko == 'NoCDDError' ? '': r.okko;
+                           msgErrorEnvioCDD.setText(h);
+                   }
+           });
+   }
+
+	
 	
 	var panel = new Ext.Panel({
 		title:'<s:message code="asunto.tabcabecera.titulo" text="**Cabecera"/>'
@@ -259,7 +277,9 @@
 		}
 		entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
 		procedimientosStore.webflow({id:data.id});
-
+		
+		reiniciarKOCDD();
+		
 		// Muestra botones de ficha global o no
 		var buttonInformeFGConcurso = Ext.getCmp('btn-exportar-informes-asunto-fg-concurso');
 		var buttonInformeFGLitigio = Ext.getCmp('btn-exportar-informes-asunto-fg-litigio');

@@ -192,7 +192,7 @@ public class SubastaController {
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta, 
 			ModelMap model) {
 		
-		String plantilla ="reportInformeSubastaLetrado.jrxml";
+		String plantilla ="reportInformeSubastaLetrado.jasper";
 		
 		InformeSubastaLetradoBean informe = proxyFactory.proxy(SubastaApi.class).getInformeSubastasLetrado(idSubasta);
 		
@@ -520,19 +520,19 @@ public class SubastaController {
 			fila.add("******;Red;Text");
 		}
 		
-		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getDeudaJudicial()) && !informe.getProcedimientoSubastaCDD().getDeudaJudicial().equals("0")){
+		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getDeudaJudicial())){
 			fila.add(informe.getProcedimientoSubastaCDD().getDeudaJudicial().concat(";White;Number"));
 		} else {
 			fila.add("******;Red;Text");
 		}
 		
-		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasLetrado()) && !informe.getProcedimientoSubastaCDD().getCostasLetrado().equals("0")){
+		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasLetrado())){
 			fila.add(informe.getProcedimientoSubastaCDD().getCostasLetrado().concat(";White;Number"));
 		} else {
 			fila.add("******;Red;Text");
 		}
 		
-		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasProcurador()) && !informe.getProcedimientoSubastaCDD().getCostasProcurador().equals("0")){
+		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasProcurador())){
 			fila.add(informe.getProcedimientoSubastaCDD().getCostasProcurador().concat(";White;Number"));
 		} else {
 			fila.add("******;Red;Text");

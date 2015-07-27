@@ -230,13 +230,23 @@
    }
 
 	
-	
+        var btnCargaListaPrc=new Ext.Button({
+            text:'<s:message code="plugin.mejoras.asuntos.cabecera.button.cargaPrc" text="**Cargar actuaciones" />'
+            ,iconCls:'icon_procedimiento'
+            ,handler: function() {
+                    entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
+                    procedimientosStore.webflow({id:data.id});
+                    }
+            }
+        );
+                
 	var panel = new Ext.Panel({
 		title:'<s:message code="asunto.tabcabecera.titulo" text="**Cabecera"/>'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,items:[
 				DatosFieldSet
+                                ,btnCargaListaPrc
 				,procedimientosGrid
 			]
 		,nombreTab : 'cabeceraAsunto'
@@ -275,15 +285,6 @@
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;
 		}
-                var btnCargaListaPrc=new Ext.Button({
-                    text:'<s:message code="plugin.mejoras.asuntos.cabecera.button.cargaPrc" text="**Cargar actuaciones" />'
-                    ,iconCls:'icon_exportar_csv'
-                    ,handler: function() {
-                            entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
-                            procedimientosStore.webflow({id:data.id});
-                            }
-                    }
-                );
 		
 		reiniciarKOCDD();
 		

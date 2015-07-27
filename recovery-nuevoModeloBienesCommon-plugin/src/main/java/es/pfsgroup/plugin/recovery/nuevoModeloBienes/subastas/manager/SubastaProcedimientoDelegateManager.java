@@ -23,18 +23,20 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.BienLoteDto;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InformeValidacionCDDBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDEstadoBienContrato;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 
 /**
@@ -103,6 +105,40 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 				return false;
 		}
 		return true;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
+	public InformeValidacionCDDDto generarInformeValidacionCDD( Long idSubasta, String idsBien) {
+		InformeValidacionCDDDto informe = new InformeValidacionCDDDto();
+		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
+		if(!Checks.esNulo(idsBien)) {
+			String[] arrLoteBien = idsBien.split(",");			
+						
+			for (String loteBien : arrLoteBien) {
+				BienLoteDto dto;
+				
+				if(loteBien.contains(";")) {
+					String bien = loteBien.substring(0,loteBien.indexOf(";")); 
+					String lote = loteBien.substring(loteBien.indexOf(";")+1); 
+					dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
+					listBienLote.add(dto);					
+				} else {					
+					String bien = loteBien;
+					dto = new BienLoteDto(Long.valueOf(bien), "", null);
+				}
+				listBienLote.add(dto);
+
+			}
+			informe.setBienesLote(listBienLote);
+		}
+
+		informe.setIdSubasta(idSubasta);
+		InformeValidacionCDDBean informeBean = new InformeValidacionCDDBean();
+		informeBean.setProxyFactory(proxyFactory);
+		informeBean.setNmbProjectContext(nmbProjectContext);
+		informeBean.create(informe);
+		return informeBean.getInformeDTO();
 	}
 
 	@Override
@@ -727,6 +763,17 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 					}
 		}
 		return true;
+	}
+
+
+	@Override
+	@BusinessOperation(overrides = BO_SUBASTA_GET_LOTE_BY_PRC_BIEN)
+	public LoteBien getLoteByPrcBien(Long idProcedimiento, Long idBien) {
+		LoteBien loteBien = genericDao.get(LoteBien.class, 
+				genericDao.createFilter(FilterType.EQUALS, "bien.id", idBien),
+				genericDao.createFilter(FilterType.EQUALS, "loteSubasta.subasta.procedimiento.id", idProcedimiento));
+		return loteBien;
+
 	}	
 
 }

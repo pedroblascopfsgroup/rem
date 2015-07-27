@@ -18,7 +18,6 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
@@ -55,17 +54,16 @@ public class AgendaMultifuncionCorreoUtils {
 
 	private static AgendaMultifuncionCorreoUtils agendaMultifuncionCorreo;
 	
-	@Autowired
-    private Executor executor;	
+	private Executor executor;	
 	
-	public static AgendaMultifuncionCorreoUtils dameInstancia() {
+	public static AgendaMultifuncionCorreoUtils dameInstancia(Executor executor) {
 		if (agendaMultifuncionCorreo == null) {
-			agendaMultifuncionCorreo = new AgendaMultifuncionCorreoUtils();
+			agendaMultifuncionCorreo = new AgendaMultifuncionCorreoUtils(executor);
 		}
 		return agendaMultifuncionCorreo;
 	}
 	
-	public AgendaMultifuncionCorreoUtils() {
+	public AgendaMultifuncionCorreoUtils(Executor executor) {
 		
 		this.appProperties = cargarProperties(DEVON_PROPERTIES);
 		
@@ -77,6 +75,7 @@ public class AgendaMultifuncionCorreoUtils {
 		System.out.println(this.getClass() + " [LOG WARN: "+ logger.isWarnEnabled() +"]");
 		
 		System.out.println(this.getClass() + " [Cargar properties de: " + DEVON_PROPERTIES + " ]"); 
+		this.executor = executor;
 	}
 	
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara
@@ -158,27 +157,27 @@ public class AgendaMultifuncionCorreoUtils {
 			String usuario = null;
 			String passValueProp = null;
 			String pass = null;
-
-			// Obtenemos desde BBDD en primera instancia
-			Parametrizacion usuarioBBDD = (Parametrizacion) executor
-					.execute(
-							ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-							Parametrizacion.ANOTACIONES_MAIL_SMTP_USER);
-			Parametrizacion passValuePropBBDD = (Parametrizacion) executor
-					.execute(
-							ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-							Parametrizacion.ANOTACIONES_PWD_CORREO);
-
-			//Variables desde BBDD
-			String usuarioBD = usuarioBBDD.getValor();
-			String passValuePropBD = passValuePropBBDD.getValor().trim();
+			
+			String usuarioBD = null;
+			String passValuePropBD = null;
 			String passBB = null;
-
+			
 			//Variables desde el DEVON
 			usuario = props.getProperty(MAIL_SMTP_USER);
 			passValueProp = appProperties.getProperty(PWD_CORREO);
 			
 			try {
+				
+				// Obtenemos desde BBDD en primera instancia
+				Parametrizacion usuarioBBDD = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+						Parametrizacion.ANOTACIONES_MAIL_SMTP_USER);
+				Parametrizacion passValuePropBBDD = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+						Parametrizacion.ANOTACIONES_PWD_CORREO);
+	
+				//Variables desde BBDD
+				usuarioBD = usuarioBBDD.getValor();
+				passValuePropBD = passValuePropBBDD.getValor().trim();
+			
 				String passValueParsed = passValueProp.replaceAll("\\\\", "");
 				pass = Encriptador.desencriptarPw(passValueParsed);
 			} catch (Exception ee) {
@@ -196,7 +195,7 @@ public class AgendaMultifuncionCorreoUtils {
 					// Si da error la desencriptación o el parseo lo
 					// intentaremos con el valor obtenido del properties
 					// directamente.
-					passBB = passValueProp;
+					passBB = passValuePropBD;
 					logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
 				}
 				try {

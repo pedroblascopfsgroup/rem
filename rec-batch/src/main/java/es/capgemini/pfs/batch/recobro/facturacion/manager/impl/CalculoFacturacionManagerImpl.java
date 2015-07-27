@@ -99,10 +99,10 @@ public class CalculoFacturacionManagerImpl implements CalculoFacturacionManager 
 						// Actualiza los totales de la tabla PFS_PROC_FAC_SUBCARTERA
 						actualizarProcesoFacturacion(recobroProcesoFacturacion);
 
-						recobroProcesosFacturacionManager.cambiaEstadoProcesoFacturacion(recobroProcesoFacturacion.getId(), RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_PROCESADO);
-						
 						//Generamos la excel de facturación para que sea inmediato cuando le dén descargar
 						recobroProcesosFacturacionManager.generarExcelProcesosFacturacion(recobroProcesoFacturacion.getId());
+						
+						recobroProcesosFacturacionManager.cambiaEstadoProcesoFacturacion(recobroProcesoFacturacion.getId(), RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_PROCESADO);						
 					} catch (Exception e) {
 						recobroProcesosFacturacionManager
 								.cambiaEstadoProcesoFacturacion(recobroProcesoFacturacion.getId(), 

@@ -1379,7 +1379,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         for (Comite comite : zona.getComitesPriorizados()) {
             if (validarAtribucionComite(comite, expediente.getVolumenRiesgo()) && validarItinerarioComiteExpediente(comite, expediente)) { return comite; }
         }
-        if (zona.getZonaPadre() == null) {
+        
+        //Evitamos los bucles infinitos si se ha configurado incorrectamente las zonas --> zona.getZonaPadre() == zona
+        if (zona.getZonaPadre() == null || zona.getZonaPadre() == zona ) {
             logger.error("NO EXISTE COMITE ASOCIADO AL EXPEDIENTE");
             throw new GenericRollbackException("expediente.comiteInexistente");
         }

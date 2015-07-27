@@ -1,0 +1,1243 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="pcr.preDropIndex.personas.Oracle9iDialect">
+    <![CDATA[
+    	BEGIN
+			EXECUTE IMMEDIATE('ALTER TABLE PER_PERSONAS ENABLE ROW MOVEMENT');
+			EXECUTE IMMEDIATE('alter table PER_PERSONAS shrink space CASCADE');
+			
+			EXECUTE IMMEDIATE('ALTER TABLE TMP_PER_PERSONAS ENABLE ROW MOVEMENT');
+			EXECUTE IMMEDIATE('alter table TMP_PER_PERSONAS shrink space CASCADE');
+		END;
+    ]]>
+	</entry> 
+	
+	<entry key="pcr.dropIndex.personas.Oracle9iDialect">
+    <![CDATA[
+    	BEGIN
+		
+		   FOR c2 IN
+		   ( 
+			select 
+			    c_list.INDEX_NAME as NAME, 
+			    c_list.table_name as SRC_TABLE
+			from USER_indexes c_list
+			where c_list.table_name = 'PER_PERSONAS'
+			      AND c_list.INDEX_NAME NOT LIKE '%K_PER%'
+		   )
+		   LOOP
+		    EXECUTE IMMEDIATE('DROP INDEX ' || c2.NAME); 
+		   END LOOP;     	
+
+		END;
+    ]]>
+	</entry> 
+	
+	<entry key="pcr.postDropIndex.personas.Oracle9iDialect">
+    <![CDATA[
+    	BEGIN
+		   EXECUTE IMMEDIATE('ANALYZE TABLE PER_PERSONAS COMPUTE STATISTICS');
+		   EXECUTE IMMEDIATE('ANALYZE TABLE TMP_PER_PERSONAS COMPUTE STATISTICS');
+		END;
+    ]]>
+	</entry> 		
+
+	<entry key="pcr.insert.personas.Oracle9iDialect">
+        <![CDATA[
+		INSERT /*+ APPEND PARALLEL(PER_PERSONAS, 16) PQ_DISTRIBUTE(PER_PERSONAS, NONE) */ INTO PER_PERSONAS(
+		   PER_ID,
+		   PER_FECHA_EXTRACCION,
+		   PER_COD_ENTIDAD,
+		   PER_COD_CLIENTE_ENTIDAD,
+		   DD_TPE_ID,
+		   DD_TDI_ID,
+		   PER_DOC_ID,
+		   PER_NOMBRE,
+		   DD_SCE_ID,
+		   DD_SCL_ID,
+		   PER_APELLIDO1,
+		   PER_APELLIDO2,
+		   PER_FECHA_CREACION,
+		   --PER_ECV,
+		   PER_NOM50,
+		   PER_TELEFONO_1,
+		   PER_EMAIL,
+		   PER_FECHA_CARGA,
+		   PER_FICHERO_CARGA,
+		   USUARIOCREAR,
+		   FECHACREAR,
+		   PER_RIESGO,
+		   PER_RIESGO_IND,
+		   PER_NRO_EMPLEADOS,
+		   PER_VR_OTRAS_ENT,
+		   PER_VR_DANIADO_OTRAS_ENT,
+		   PER_EXTRA_1,
+		   PER_EXTRA_2,
+		   PER_NACIONALIDAD,
+		   PER_PAIS_NACIMIENTO,
+		   PER_SEXO,
+		   DD_TIPO_TELEFONO_1,
+		   PEF_ID,
+		   USU_ID,
+		   ZON_ID,
+		   DD_POL_ID,
+		   OFI_ID,
+		   DD_GGE_ID,
+		   DD_REX_ID,
+		   --PER_FECHA_CONSTITUCION,
+		   PER_EXTRA_5,
+		   PER_EXTRA_6,
+		   PER_FECHA_DATO,
+		   DD_PRO_ID,
+		   PER_FECHA_ECV,
+		   DD_OTE_ID,
+		   PER_CONSENT_TELEFONO_1,
+		   PER_FECHA_VIG_TELEFONO_1,
+		   PER_FECHA_NACIMIENTO,
+		   PER_REX_FECHA,
+		   DD_PNV_ID,
+		   PER_RIESGO_AUTORIZADO,
+		   PER_RIESGO_DISPUESTO,
+		   PER_PASIVO_VISTA,
+		   PER_PASIVO_PLAZO,
+		   PER_EMPLEADO,
+		   DD_COS_ID,
+		   PER_INGRESOS_DOMICILIADOS,
+		   PER_VOL_FACTURACION,
+		   PER_VOL_FACTURACION_FECHA,
+		   DD_TPG_ID,
+		   DD_ARG_ID
+		   )
+		   SELECT
+			S_PER_PERSONAS.nextVal,
+			tp.TMP_PER_FECHA_EXTRACCION,
+			tp.TMP_PER_COD_ENTIDAD,
+			tp.TMP_PER_COD_PERSONA,
+		   (SELECT distinct TPE.DD_TPE_ID FROM ${master.schema}.DD_TPE_TIPO_PERSONA TPE WHERE TPE.DD_TPE_CODIGO = tp.TMP_PER_TIPO_PERSONA) as DD_TPE_ID,
+		   (SELECT distinct TDI.dd_TDI_id FROM DD_TDI_TIPO_DOCUMENTO_ID TDI WHERE TDI.DD_TDI_CODIGO = tp.TMP_PER_TIPO_DOCUMENTO) as DD_TDI_ID,
+			tp.TMP_PER_NIF_CIF_PASAP_NIE,
+			tp.TMP_PER_NOMBRE,
+		   (SELECT distinct SCE.dd_SCE_id FROM DD_SCE_SEGTO_CLI_ENTIDAD SCE WHERE SCE.DD_SCE_CODIGO = tp.TMP_PER_SEGMENTO_CLIENTE_1) as DD_SCE_ID,
+		   (SELECT distinct SCL.dd_scl_id FROM DD_SCL_SEGTO_CLI SCL WHERE SCL.DD_SCL_CODIGO = tp.TMP_PER_SEGMENTO_CLIENTE_2) as DD_SCL_ID,
+			tp.TMP_PER_APELLIDO1,
+			tp.TMP_PER_APELLIDO2,
+			tp.TMP_PER_FECHA_CONSTITUCION,
+			--tp.TMP_PER_COD_ESTADO_CICLO_VIDA,
+			tp.TMP_PER_NOM50,
+			tp.TMP_PER_TELEFONO1,
+			tp.TMP_PER_CORREO_ELECTRONICO,
+			tp.TMP_PER_FECHA_CARGA,
+			tp.TMP_PER_FICHERO_CARGA,
+			'${PasajeAProducciónUser}',
+			systimestamp,
+			tp.TMP_PER_RIESGO,
+			tp.TMP_PER_RIESGO_INDIRECTO,
+			tp.TMP_PER_NUMERO_EMPLEADOS,
+			tp.TMP_PER_VR_OTRAS_ENTIDADES,
+			tp.TMP_PER_VR_DANYADO_OTRAS_ENTS,
+			tp.TMP_NUM_EXTRA1,
+			tp.TMP_NUM_EXTRA2,
+			(select CIC.DD_CIC_ID from ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC where tp.TMP_PER_NACIONALIDAD is not null and CIC.DD_CIC_CODIGO = TRIM(tp.TMP_PER_NACIONALIDAD)),
+			(select CIC.DD_CIC_ID from ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC where tp.TMP_PER_PAIS_NACIMIENTO is not null and CIC.DD_CIC_CODIGO = TRIM(tp.TMP_PER_PAIS_NACIMIENTO)),
+			(select SEX.DD_SEX_ID from ${master.schema}.DD_SEX_SEXOS SEX where SEX.DD_SEX_CODIGO = NVL(TRIM(tp.TMP_PER_SEXO),'0')),
+			(select TTE.DD_TTE_ID from DD_TTE_TIPO_TELEFONO TTE where TTE.DD_TTE_CODIGO = NVL(TRIM(tp.TMP_PER_TIPO_TELEFONO1),'000000')),
+			(select pef.PEF_ID FROM PEF_PERFILES pef WHERE to_char(''||tp.TMP_PER_PERFIL_GESTOR) = pef.PEF_CODIGO),
+			(select usu.usu_id from ${master.schema}.USU_USUARIOS USU where tp.TMP_PER_USUARIO_GESTOR is not null and USU.USU_USERNAME = TRIM(tp.TMP_PER_USUARIO_GESTOR)),
+			(select zon.zon_id from zon_zonificacion zon where tp.TMP_PER_COD_CENTRO_GESTOR is not null and zon.ZON_NUM_CENTRO = TRIM(tp.TMP_PER_COD_CENTRO_GESTOR)),
+			(select POL.DD_POL_ID from DD_POL_POLITICAS POL where POL.DD_POL_CODIGO = NVL(TRIM( tp.TMP_PER_POLITICA_ENTIDAD),'000')),
+			(select ofi.ofi_id from OFI_OFICINAS OFI where ofi.ofi_codigo_entidad_oficina = tp.TMP_PER_COD_ENT_OFI_GESTORA and ofi.ofi_codigo_oficina = tp.TMP_PER_COD_OFICINA_GESTORA and ofi.OFI_CODIGO_SUBSECCION_OFICINA = tp.TMP_PER_COD_SUBSEC_OFI_GESTORA) ,
+			(select GGE.DD_GGE_ID from DD_GGE_GRUPO_GESTOR GGE where GGE.DD_GGE_CODIGO = NVL(TRIM(tp.TMP_PER_COD_GRUPO_GESTOR),'000')),
+			(select REX.DD_REX_ID from DD_REX_RATING_EXTERNO REX where tp.TMP_PER_RATING_REFERENCIA is not null and REX.DD_REX_CODIGO=TRIM(tp.TMP_PER_RATING_REFERENCIA)),
+			 tp.TMP_PER_DATE_EXTRA1,
+			 tp.TMP_PER_DATE_EXTRA2,
+			TP.TMP_PER_FECHA_DATO,
+			(SELECT PRO1.DD_PRO_ID FROM DD_PRO_PROPIETARIOS PRO1 WHERE PRO1.DD_PRO_CODIGO = TP.TMP_PER_COD_PROPIETARIO) AS DD_PRO_ID ,
+			TP.TMP_PER_FECHA_INICIO_ECV,
+			(SELECT DD_OTE_ID FROM DD_OTE_ORIGEN_TELEFONO OTE WHERE OTE.DD_OTE_CODIGO = NVL(TP.TMP_PER_ORIGEN_TELEFONO1,'000000')) AS DD_OTE_ID,
+			TP.TMP_PER_CONSENT_TELEFONO1,
+			TP.TMP_PER_FECHA_EXP_VIGEN_TEL1,
+			TP.TMP_PER_FECHA_NACIMIENTO,
+			TP.TMP_PER_RATING_FECHA,
+			(SELECT DISTINCT DD_PNV_ID FROM DD_PNV_PERSONA_NIVEL PNV WHERE PNV.DD_PNV_CODIGO IS NOT NULL AND PNV.DD_PNV_CODIGO = TP.TMP_PER_NIVEL) AS DD_PNV_ID,
+			TP.TMP_PER_RIESGO_AUTORIZADO,
+			TP.TMP_PER_RIESGO_DISPUESTO,
+			TP.TMP_PER_PASIVO_VISTA,
+			TP.TMP_PER_PASIVO_PLAZO,
+			TP.TMP_PER_EMPLEADO,
+			(SELECT DD_COS_ID FROM DD_COS_COLECTIVO_SINGULAR COS WHERE COS.DD_COS_CODIGO IS NOT NULL AND COS.DD_COS_CODIGO = TP.TMP_PER_COLECTIVO_SINGULAR ) AS DD_COS_ID,
+			TP.TMP_PER_INGRESOS_DOMICILIADOS,
+			TP.TMP_PER_VOLUMEN_FACTURACION,
+			TP.TMP_PER_VOLUMEN_FACTURAC_FECHA,
+			(SELECT DD_TPG_ID FROM DD_TPG_TIPO_GESTOR TPG WHERE TPG.DD_TPG_CODIGO IS NOT NULL AND TPG.DD_TPG_CODIGO = TP.TMP_PER_TIPO_GESTOR ) AS DD_TPG_ID,
+			(SELECT DD_ARG_ID FROM DD_ARG_AREA_GESTION ARG WHERE ARG.DD_ARG_CODIGO = NVL(TP.TMP_PER_COD_AREA,'0000000000')) AS DD_ARG_ID
+		 FROM TMP_PER_PERSONAS tp
+		 WHERE NOT EXISTS  (SELECT 1
+		                  FROM PER_PERSONAS p, DD_PRO_PROPIETARIOS PRO
+		                  WHERE TP.TMP_PER_COD_PROPIETARIO = PRO.DD_PRO_CODIGO
+		                  AND TP.TMP_PER_COD_PERSONA = P.PER_COD_CLIENTE_ENTIDAD
+		                  AND p.BORRADO = 0
+		                 )
+		]]>
+	</entry>
+	<entry key="pcr.createIndex.personas.Oracle9iDialect">
+    <![CDATA[
+		DECLARE
+		    -- Vble. para validar la existencia de las Tablas.
+		    table_count number(3);
+		    -- Esquema hijo
+		    schema_name varchar(50);   
+		    -- Querys
+		    query_body varchar (30048);    
+    	BEGIN
+    	   schema_name := 'BANK01';    	
+    	
+		   EXECUTE IMMEDIATE('CREATE INDEX "BANK01"."PER_PERSONAS_INDEX_1" ON "BANK01"."PER_PERSONAS" ("ANT_ID") 
+					  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+					  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+					  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+					  TABLESPACE "BANK01"');
+					 
+					
+			EXECUTE IMMEDIATE('CREATE INDEX "BANK01"."PER_PERSONAS_INDEX_2" ON "BANK01"."PER_PERSONAS" ("PER_DOC_ID", "PER_NOM50") 
+					  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+					  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+					  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+					  TABLESPACE "BANK01"');  
+					  
+			select count(1) into table_count from all_indexes WHERE index_name='IDX_PER_PER_COD_CLIENTE_ENT';
+			    if table_count = 0 then      
+					query_body :='CREATE INDEX '||schema_name||'.IDX_PER_PER_COD_CLIENTE_ENT ON '||schema_name||'.PER_PERSONAS (PER_COD_CLIENTE_ENTIDAD)'; EXECUTE IMMEDIATE query_body;
+		   	end if;	     
+		  
+		  	select count(1) into table_count from all_indexes WHERE index_name='IDX_PER_PER_NACIONALIDAD';
+			    if table_count = 0 then      
+					query_body :='CREATE INDEX '||schema_name||'.IDX_PER_PER_NACIONALIDAD ON '||schema_name||'.PER_PERSONAS (PER_NACIONALIDAD)'; EXECUTE IMMEDIATE query_body;
+		   	end if;	      
+		   
+		   	select count(1) into table_count from all_indexes WHERE index_name='IDX_PER_DD_PRO_ID';
+			    if table_count = 0 then      
+					query_body :='CREATE INDEX '||schema_name||'.IDX_PER_DD_PRO_ID ON '||schema_name||'.PER_PERSONAS (DD_PRO_ID)'; EXECUTE IMMEDIATE query_body;
+		   	end if;	 		
+		   	  	
+		END;			
+        ]]>
+	</entry>  	
+	<entry key="pcr.update.personas.Oracle9iDialect">
+        <![CDATA[
+			UPDATE per_personas p 
+				SET (
+					PER_FECHA_EXTRACCION,
+					DD_TPE_ID, 
+					DD_TDI_ID, 
+					PER_DOC_ID, 
+					PER_NOMBRE, 
+					DD_SCE_ID, 
+					DD_SCL_ID, 
+					PER_APELLIDO1, 
+					PER_APELLIDO2, 
+					PER_ECV, 
+					PER_NOM50, 
+					PER_TELEFONO_1, 
+					PER_EMAIL, 
+					PER_FECHA_CARGA, 
+					PER_FICHERO_CARGA, 
+					USUARIOMODIFICAR, 
+					FECHAMODIFICAR,
+					BORRADO,                                      
+					PER_RIESGO,
+					PER_RIESGO_IND,
+					PER_NRO_EMPLEADOS,                                                                               
+					PER_VR_OTRAS_ENT,                                   
+					PER_VR_DANIADO_OTRAS_ENT,                          
+					PER_EXTRA_1,                                       
+					PER_EXTRA_2,                                       
+					PER_NACIONALIDAD,
+					PER_PAIS_NACIMIENTO,
+					PER_SEXO,                           
+					DD_TIPO_TELEFONO_1,
+					PEF_ID,
+					USU_ID,
+					ZON_ID,
+					DD_POL_ID,
+					OFI_ID,
+					DD_GGE_ID,
+					DD_REX_ID,
+					PER_FECHA_CONSTITUCION,
+					PER_EXTRA_5,
+					PER_EXTRA_6,
+					PER_FECHA_DATO,            
+					DD_PRO_ID,                 
+					PER_FECHA_ECV,             
+					DD_OTE_ID,                 
+					PER_CONSENT_TELEFONO_1,    
+					PER_FECHA_VIG_TELEFONO_1,  
+					PER_FECHA_NACIMIENTO,      
+					PER_REX_FECHA,             
+					DD_PNV_ID,                 
+					PER_RIESGO_AUTORIZADO,     
+					PER_RIESGO_DISPUESTO,      
+					PER_PASIVO_VISTA,          
+					PER_PASIVO_PLAZO,          
+					PER_EMPLEADO,              
+					DD_COS_ID,                 
+					PER_INGRESOS_DOMICILIADOS, 
+					PER_VOL_FACTURACION,       
+					PER_VOL_FACTURACION_FECHA, 
+					DD_TPG_ID,                 
+					DD_ARG_ID
+				)=(
+					SELECT 
+						TP.TMP_PER_FECHA_EXTRACCION,
+						(SELECT DD_TPE_ID FROM ${master.schema}.DD_TPE_TIPO_PERSONA WHERE trim(DD_TPE_CODIGO) = trim(  tp.TMP_PER_TIPO_PERSONA)) as DD_TPE_ID,
+						(SELECT DD_TDI_ID FROM DD_TDI_TIPO_DOCUMENTO_ID WHERE trim(DD_TDI_CODIGO) = trim(tp.TMP_PER_TIPO_DOCUMENTO)) as DD_TDI_ID,
+						tp.TMP_PER_NIF_CIF_PASAP_NIE,
+						tp.TMP_PER_NOMBRE,
+						(SELECT DD_SCE_ID FROM DD_SCE_SEGTO_CLI_ENTIDAD WHERE trim(DD_SCE_CODIGO) = trim(tp.TMP_PER_SEGMENTO_CLIENTE_1)) as DD_SCE_ID,
+						(SELECT DD_SCL_ID FROM DD_SCL_SEGTO_CLI WHERE trim(DD_SCL_CODIGO) = NVL(trim(tp.TMP_PER_SEGMENTO_CLIENTE_2),'000')) as DD_SCL_ID,
+						tp.TMP_PER_APELLIDO1,
+						tp.TMP_PER_APELLIDO2,
+						tp.TMP_PER_COD_ESTADO_CICLO_VIDA,
+						tp.TMP_PER_NOM50,
+						tp.TMP_PER_TELEFONO1,
+						tp.TMP_PER_CORREO_ELECTRONICO,
+						tp.TMP_PER_FECHA_CARGA,
+						tp.TMP_PER_FICHERO_CARGA,
+						'${PasajeAProducciónUser}',
+						systimestamp,
+						0,
+						tp.TMP_PER_RIESGO,
+						tp.TMP_PER_RIESGO_INDIRECTO,
+						tp.TMP_PER_NUMERO_EMPLEADOS,
+						tp.TMP_PER_VR_OTRAS_ENTIDADES,
+						tp.TMP_PER_VR_DANYADO_OTRAS_ENTS,
+						tp.TMP_NUM_EXTRA1,
+						tp.TMP_NUM_EXTRA2,
+						(select CIC.DD_CIC_ID from ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC where tp.TMP_PER_NACIONALIDAD is not null and CIC.DD_CIC_CODIGO = TRIM(tp.TMP_PER_NACIONALIDAD)),
+						(select CIC.DD_CIC_ID from ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC where tp.TMP_PER_PAIS_NACIMIENTO is not null and CIC.DD_CIC_CODIGO = TRIM(tp.TMP_PER_PAIS_NACIMIENTO)),
+						(select SEX.DD_SEX_ID from ${master.schema}.DD_SEX_SEXOS SEX where SEX.DD_SEX_CODIGO = NVL(TRIM(tp.TMP_PER_SEXO),'0')),
+						(select TTE.DD_TTE_ID from DD_TTE_TIPO_TELEFONO TTE where TTE.DD_TTE_CODIGO = NVL(TRIM(tp.TMP_PER_TIPO_TELEFONO1),'000000')),
+						(select pef.PEF_ID FROM PEF_PERFILES pef WHERE UPPER(''||tp.TMP_PER_PERFIL_GESTOR) = UPPER(pef.PEF_CODIGO)) AS PEF_ID,
+						(select usu.usu_id from ${master.schema}.USU_USUARIOS USU where tp.TMP_PER_USUARIO_GESTOR is not null and USU.USU_USERNAME = TRIM(tp.TMP_PER_USUARIO_GESTOR)),
+						(select zon.zon_id from zon_zonificacion zon where tp.TMP_PER_COD_CENTRO_GESTOR is not null and zon.ZON_NUM_CENTRO = TRIM(tp.TMP_PER_COD_CENTRO_GESTOR)),
+						(select POL.DD_POL_ID from DD_POL_POLITICAS POL where POL.DD_POL_CODIGO = NVL(TRIM( tp.TMP_PER_POLITICA_ENTIDAD),'000')),
+						(select ofi.ofi_id from OFI_OFICINAS OFI where ofi.OFI_CODIGO_ENTIDAD_OFICINA = tp.TMP_PER_COD_ENT_OFI_GESTORA and ofi.OFI_CODIGO_OFICINA = tp.TMP_PER_COD_OFICINA_GESTORA and ofi.OFI_CODIGO_SUBSECCION_OFICINA = tp.TMP_PER_COD_SUBSEC_OFI_GESTORA) ,
+						(select GGE.DD_GGE_ID from DD_GGE_GRUPO_GESTOR GGE where GGE.DD_GGE_CODIGO = NVL(TRIM(tp.TMP_PER_COD_GRUPO_GESTOR),'000')),
+						(select REX.DD_REX_ID from DD_REX_RATING_EXTERNO REX where tp.TMP_PER_RATING_REFERENCIA is not null and REX.DD_REX_CODIGO=TRIM(tp.TMP_PER_RATING_REFERENCIA)),
+						tp.TMP_PER_FECHA_CONSTITUCION,
+						tp.TMP_PER_DATE_EXTRA1,
+						tp.TMP_PER_DATE_EXTRA2,
+						TP.TMP_PER_FECHA_DATO,
+						(SELECT DD_PRO_ID FROM DD_PRO_PROPIETARIOS PRO WHERE PRO.DD_PRO_CODIGO IS NOT NULL AND PRO.DD_PRO_CODIGO = TP.TMP_PER_COD_PROPIETARIO) AS DD_PRO_ID,
+						TP.TMP_PER_FECHA_INICIO_ECV,
+						(SELECT DD_OTE_ID FROM DD_OTE_ORIGEN_TELEFONO OTE WHERE OTE.DD_OTE_CODIGO = NVL(TP.TMP_PER_ORIGEN_TELEFONO1,'000000')) AS DD_OTE_ID,
+						TP.TMP_PER_CONSENT_TELEFONO1,
+						TP.TMP_PER_FECHA_EXP_VIGEN_TEL1,
+						TP.TMP_PER_FECHA_NACIMIENTO,
+						TP.TMP_PER_RATING_FECHA,
+						(SELECT DD_PNV_ID FROM DD_PNV_PERSONA_NIVEL PNV WHERE PNV.DD_PNV_CODIGO IS NOT NULL AND PNV.DD_PNV_CODIGO = TP.TMP_PER_NIVEL) AS DD_PNV_ID,
+						TP.TMP_PER_RIESGO_AUTORIZADO,
+						TP.TMP_PER_RIESGO_DISPUESTO,
+						TP.TMP_PER_PASIVO_VISTA,
+						TP.TMP_PER_PASIVO_PLAZO,
+						TP.TMP_PER_EMPLEADO,
+						(SELECT DD_COS_ID FROM DD_COS_COLECTIVO_SINGULAR COS WHERE COS.DD_COS_CODIGO IS NOT NULL AND COS.DD_COS_CODIGO = TP.TMP_PER_COLECTIVO_SINGULAR ) AS DD_COS_ID,
+						TP.TMP_PER_INGRESOS_DOMICILIADOS,
+						TP.TMP_PER_VOLUMEN_FACTURACION,
+						TP.TMP_PER_VOLUMEN_FACTURAC_FECHA,
+						(SELECT DD_TPG_ID FROM DD_TPG_TIPO_GESTOR TPG WHERE TPG.DD_TPG_CODIGO IS NOT NULL AND TPG.DD_TPG_CODIGO = TP.TMP_PER_TIPO_GESTOR ) AS DD_TPG_ID,
+						(SELECT DD_ARG_ID FROM DD_ARG_AREA_GESTION ARG WHERE ARG.DD_ARG_CODIGO = NVL(TP.TMP_PER_COD_AREA,'0000000000')) AS DD_ARG_ID
+					FROM tmp_per_personas TP, DD_PRO_PROPIETARIOS PRO 
+					WHERE  PRO.DD_PRO_CODIGO = TP.TMP_PER_COD_PROPIETARIO
+					  AND p.PER_COD_CLIENTE_ENTIDAD = tp.TMP_PER_COD_PERSONA
+				)
+				where EXISTS(SELECT 1 
+							 from tmp_per_personas Z, DD_PRO_PROPIETARIOS X
+							 where X.DD_PRO_CODIGO= Z.TMP_PER_COD_PROPIETARIO
+							 AND Z.TMP_PER_COD_PERSONA = p.PER_COD_CLIENTE_ENTIDAD
+							 AND p.BORRADO = 0
+							 )
+        ]]>
+	</entry>
+
+	<entry key="pcr.insert.telTelefonosDePersonas.Oracle9iDialect">
+        <![CDATA[
+		INSERT /*+ APPEND PARALLEL(TEL_TELEFONOS, 16) PQ_DISTRIBUTE(TEL_TELEFONOS, NONE) */ INTO TEL_TELEFONOS (TEL_ID,
+								   TEL_TELEFONO,
+								   TEL_CONSENTIMIENTO,
+								   DD_OTE_ID,
+								   DD_TTE_ID,
+								   USUARIOCREAR,
+								   FECHACREAR)
+		SELECT S_TEL_TELEFONOS.NextVal,
+               Z.TMP_PER_TELEFONO1,
+               NVL(Z.TMP_PER_CONSENT_TELEFONO1,0), -- 0 NO CONSIENTE, 1 SI CONSIENTE
+               NVL(Z.DD_OTE_ID, (SELECT DD_OTE_ID FROM DD_OTE_ORIGEN_TELEFONO WHERE DD_OTE_CODIGO ='000000')) AS DD_OTE_ID,
+               Z.DD_TTE_ID,
+               Z.USUARIOCREAR,
+               Z.FECHACREAR FROM
+            (SELECT DISTINCT
+			   tp.TMP_PER_TELEFONO1,
+			   tp.TMP_PER_CONSENT_TELEFONO1,
+			   (SELECT DD_OTE_ID FROM DD_OTE_ORIGEN_TELEFONO WHERE UPPER(TRIM(DD_OTE_CODIGO)) = UPPER(TRIM(tp.TMP_PER_ORIGEN_TELEFONO1))) AS DD_OTE_ID,
+			   (SELECT DD_TTE_ID FROM DD_TTE_TIPO_TELEFONO WHERE UPPER(TRIM(DD_TTE_DESCRIPCION)) = 'TELÉFONO DE LA PERSONA') AS DD_TTE_ID,
+               'BATCH PER' AS USUARIOCREAR,
+               SYSDATE AS FECHACREAR
+        FROM TMP_PER_PERSONAS tp, TEL_TELEFONOS tt
+        WHERE tp.TMP_PER_TELEFONO1 = tt.TEL_TELEFONO (+)
+        AND tt.TEL_TELEFONO IS NULL) Z
+		]]>
+	</entry>
+
+	<entry key="pcr.insert.telPer.Oracle9iDialect">
+        <![CDATA[
+			INSERT /*+ APPEND PARALLEL(TEL_PER, 16) PQ_DISTRIBUTE(TEL_PER, NONE) */ INTO TEL_PER(TEL_ID,
+								PER_ID,
+								USUARIOCREAR,
+								FECHACREAR,
+								TEL_PER_ID)
+			SELECT tt.TEL_ID,
+				   p.PER_ID,
+				   'BATCH PER' AS USUARIOCREAR,
+				   SYSDATE AS FECHACREAR,
+				   S_TEL_PER.NextVal
+			FROM TMP_PER_PERSONAS tp, TEL_TELEFONOS tt, PER_PERSONAS p, DD_TTE_TIPO_TELEFONO tte, DD_PRO_PROPIETARIOS pro
+			WHERE tp.TMP_PER_TELEFONO1 = tt.TEL_TELEFONO
+			AND tt.DD_TTE_ID = tte.DD_TTE_ID
+			AND tte.DD_TTE_CODIGO = 'TELÉFONO DE LA PERSONA'
+			AND tp.TMP_PER_COD_PERSONA = p.PER_COD_CLIENTE_ENTIDAD
+			AND p.DD_PRO_ID = pro.DD_PRO_ID
+
+		]]>
+	</entry>
+
+	<entry key="pcr.update.telTelefonosDePersonas.Oracle9iDialect">
+        <![CDATA[
+			UPDATE TEL_TELEFONOS tt
+			   SET (TEL_CONSENTIMIENTO,
+					DD_OTE_ID,
+					DD_TTE_ID,
+					USUARIOMODIFICAR,
+					FECHAMODIFICAR)
+			=(SELECT DISTINCT
+                     NVL(tp.TMP_PER_CONSENT_TELEFONO1,0), -- 0 NO CONSIENTE, 1 SI CONSIENTE,
+					 NVL(ote.DD_OTE_ID, (SELECT DD_OTE_ID FROM DD_OTE_ORIGEN_TELEFONO WHERE DD_OTE_CODIGO ='000000')) AS DD_OTE_ID,
+					(SELECT DD_TTE_ID FROM DD_TTE_TIPO_TELEFONO WHERE UPPER(TRIM(DD_TTE_DESCRIPCION)) = 'TELÉFONO DE LA PERSONA') AS DD_TTE_ID,
+					'BATCH PER' AS USUARIOMODIFICAR,
+				    SYSDATE AS FECHAMODIFICAR
+			  FROM TMP_PER_PERSONAS tp, DD_OTE_ORIGEN_TELEFONO ote
+			  WHERE tp.TMP_PER_TELEFONO1 = tt.TEL_TELEFONO
+			    AND tt.DD_OTE_ID = ote.DD_OTE_ID
+			  )
+            WHERE EXISTS (SELECT 1
+                          FROM TMP_PER_PERSONAS z
+                          WHERE z.TMP_PER_TELEFONO1 = tt.TEL_TELEFONO)
+         ]]>
+	</entry>
+
+	<entry key="pcr.insert.telPer.Oracle9iDialect">
+        <![CDATA[
+			UPDATE TEL_PER tp
+				SET (TEL_ID,
+				     USUARIOMODIFICAR,
+					 FECHAMODIFICAR)
+				= (SELECT tt.TEL_ID,
+						  'BATCH PER' AS USUARIOMODIFICAR,
+				          SYSDATE AS FECHAMODIFICAR
+                   FROM TEL_TELEFONOS tt, TMP_PER_PERSONAS tmp
+                   WHERE tt.TEL_TELEFONO = tmp.TMP_PER_TELEFONO1
+                     AND tt.DD_TTE_ID = (SELECT DD_TTE_ID FROM DD_TTE_TIPO_TELEFONO WHERE UPPER(TRIM(DD_TTE_DESCRIPCION)) = 'TELÉFONO DE LA PERSONA')
+                   )
+            WHERE EXISTS (SELECT 1
+                          FROM TMP_PER_PERSONAS z, PER_PERSONAS p, DD_PRO_PROPIETARIOS pro
+                          WHERE z.TMP_PER_COD_PERSONA = p.PER_COD_CLIENTE_ENTIDAD
+                            AND TRIM(UPPER(z.TMP_PER_COD_PROPIETARIO)) = TRIM(UPPER(pro.DD_PRO_CODIGO))
+                            AND p.PER_ID = tp.PER_ID)
+		
+         ]]>
+	</entry>
+	<entry key="pcr.analize.telefonos">
+      <![CDATA[ ANALYZE TABLE tel_telefonos ${sql.analyze} ]]>
+	</entry>
+	<entry key="pcr.analize.telper">
+      <![CDATA[ ANALYZE TABLE tel_per ${sql.analyze} ]]>
+	</entry>
+	<entry key="pcr.analize.personas">
+      <![CDATA[
+        ANALYZE TABLE per_personas ${sql.analyze}
+         ]]>
+	</entry>
+	<entry key="per-01.entityValidator">
+	  <![CDATA[
+				SELECT (''||tp.TMP_PER_COD_ENTIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp WHERE tmp_per_cod_entidad <> ?
+		]]>
+	</entry>
+	<entry key="per-02.loadDateValidator.Oracle9iDialect"><![CDATA[SELECT (''||tp.TMP_PER_FECHA_EXTRACCION) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE TMP_PER_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')]]></entry>
+	<entry key="per-03.personTypeValidator"><![CDATA[SELECT (''||tp.TMP_PER_TIPO_PERSONA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT 1 FROM ${master.schema}.DD_TPE_TIPO_PERSONA tpe WHERE trim(tp.TMP_PER_TIPO_PERSONA) = trim(tpe.DD_TPE_CODIGO))]]></entry>
+	
+	<entry key="per-04.insertDocumentTypeValidator">
+		<![CDATA[
+			INSERT INTO DD_TDI_TIPO_DOCUMENTO_ID (DD_TDI_ID, DD_TDI_CODIGO, DD_TDI_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			      S_DD_TDI_TIPO_DOCUMENTO_ID.NEXTVAL
+			      ,TDIX.DD_TDI_CODIGO
+			      ,TDIX.DD_TDI_DESCRIPCION
+						,'${PasajeAProducciónUser}' 
+						,SYSTIMESTAMP 
+						,0
+			FROM (
+				SELECT DISTINCT ERROR_FIELD as DD_TDI_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_TDI_DESCRIPCION 
+				from (
+			        SELECT (''||tp.TMP_PER_TIPO_DOCUMENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE NOT EXISTS (SELECT 1 FROM DD_TDI_TIPO_DOCUMENTO_ID tdi WHERE trim(tp.TMP_PER_TIPO_DOCUMENTO) = trim(tdi.DD_TDI_CODIGO))
+			      )
+			  ) TDIX  
+  		]]>
+	</entry>	
+	<entry key="per-04.documentTypeValidator"><![CDATA[SELECT (''||tp.TMP_PER_TIPO_DOCUMENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT 1 FROM DD_TDI_TIPO_DOCUMENTO_ID tdi WHERE trim(tp.TMP_PER_TIPO_DOCUMENTO) = trim(tdi.DD_TDI_CODIGO))]]></entry>
+	
+	<entry key="per-05.insertSegmentValidator">
+		<![CDATA[
+			INSERT INTO DD_SCE_SEGTO_CLI_ENTIDAD  (DD_SCE_ID, DD_SCE_CODIGO, DD_SCE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_SCE_SEGTO_CLI_ENTIDAD.NEXTVAL
+			  ,SCEX.DD_SCE_CODIGO
+			  ,SCEX.DD_SCE_DESCRIPCION
+			  ,'${PasajeAProducciónUser}'         
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_SCE_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_SCE_DESCRIPCION 
+			    from ( 
+            SELECT (''||trim(tp.TMP_PER_SEGMENTO_CLIENTE_1)) as ERROR_FIELD, 
+                   (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+            FROM TMP_PER_PERSONAS tp 
+            WHERE NOT EXISTS (SELECT 1 FROM DD_SCE_SEGTO_CLI_ENTIDAD s WHERE s.DD_SCE_CODIGO = trim(tp.TMP_PER_SEGMENTO_CLIENTE_1))
+			    )
+			) SCEX     
+		]]>
+	</entry>	
+	<entry key="per-05.segmentValidator"><![CDATA[SELECT (''||trim(tp.TMP_PER_SEGMENTO_CLIENTE_1)) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT 1 FROM DD_SCE_SEGTO_CLI_ENTIDAD s WHERE s.DD_SCE_CODIGO = trim(tp.TMP_PER_SEGMENTO_CLIENTE_1))]]></entry>
+	<entry key="per-06.personaRelacionValidator"><![CDATA[SELECT (''||tp.TMP_PER_COD_PERSONA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS ( SELECT 1 FROM TMP_CNT_PER tcp WHERE tp.TMP_PER_COD_PERSONA = tcp.TMP_CNT_PER_COD_PERSONA )]]></entry>
+	<entry key="per-07.oficina"><![CDATA[
+      SELECT (''||tp.TMP_PER_COD_ENT_OFI_GESTORA||tp.TMP_PER_COD_OFICINA_GESTORA||tp.TMP_PER_COD_SUBSEC_OFI_GESTORA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+            FROM TMP_PER_PERSONAS tp 
+            WHERE (tp.TMP_PER_COD_ENT_OFI_GESTORA||tp.TMP_PER_COD_OFICINA_GESTORA||tp.TMP_PER_COD_SUBSEC_OFI_GESTORA) is not null 
+            AND NOT EXISTS (SELECT 1 
+                            FROM OFI_OFICINAS ofi 
+                            WHERE tp.TMP_PER_COD_ENT_OFI_GESTORA||tp.TMP_PER_COD_OFICINA_GESTORA||tp.TMP_PER_COD_SUBSEC_OFI_GESTORA = ofi.OFI_CODIGO_ENTIDAD_OFICINA||ofi.OFI_CODIGO_OFICINA||ofi.OFI_CODIGO_SUBSECCION_OFICINA) ]]>
+	</entry>
+	<entry key="per-08.zona"><![CDATA[
+    	SELECT (''||tp.TMP_PER_COD_CENTRO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			FROM TMP_PER_PERSONAS tp 
+			WHERE tp.TMP_PER_COD_CENTRO_GESTOR is not null
+            AND NOT EXISTS (SELECT 1 FROM ZON_ZONIFICACION zon 
+				            WHERE tp.TMP_PER_COD_CENTRO_GESTOR = zon.ZON_NUM_CENTRO) ]]>
+	</entry>
+	
+	<entry key="per-09.insertTipoTelefono1">
+		<![CDATA[
+			INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_TTE_TIPO_TELEFONO.NEXTVAL
+			  ,TTEX.DD_TTE_CODIGO
+			  ,TTEX.DD_TTE_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_TTE_DESCRIPCION 
+			    from (    
+			        SELECT (''||tp.TMP_PER_TIPO_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE tp.TMP_PER_TIPO_TELEFONO1 is not null
+			          AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE 
+			                          WHERE tp.TMP_PER_TIPO_TELEFONO1 = TTE.DD_TTE_CODIGO)
+			    )
+			) TTEX 
+	    ]]>
+	</entry>		
+	<entry key="per-09.tipoTelefono1">
+		<![CDATA[
+		    SELECT (''||tp.TMP_PER_TIPO_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		        FROM TMP_PER_PERSONAS tp 
+		        WHERE tp.TMP_PER_TIPO_TELEFONO1 is not null
+		        AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE 
+		                        WHERE tp.TMP_PER_TIPO_TELEFONO1 = TTE.DD_TTE_CODIGO)
+	    ]]>
+	</entry>
+	
+	<entry key="per-10.insertTipoTelefono2">
+		<![CDATA[
+			INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_TTE_TIPO_TELEFONO.NEXTVAL
+			  ,TTEX.DD_TTE_CODIGO
+			  ,TTEX.DD_TTE_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_TTE_DESCRIPCION 
+			    from (    
+			        SELECT (''||tp.TMP_DD_TIPO_TELEFONO_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE tp.TMP_DD_TIPO_TELEFONO_2 is not null
+			          AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE 
+			                          WHERE tp.TMP_DD_TIPO_TELEFONO_2 = TTE.DD_TTE_CODIGO)
+			    )
+			) TTEX 
+	    ]]>
+	</entry>		
+	<entry key="per-10.tipoTelefono2">
+		<![CDATA[
+	 		SELECT (''||tp.TMP_DD_TIPO_TELEFONO_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			FROM TMP_PER_PERSONAS tp 
+			WHERE tp.TMP_DD_TIPO_TELEFONO_2 is not null and 
+			NOT EXISTS (
+				SELECT * FROM DD_TTE_TIPO_TELEFONO TTE 
+				WHERE tp.TMP_DD_TIPO_TELEFONO_2 = TTE.DD_TTE_CODIGO)     
+	    ]]>
+	</entry>
+	
+	<entry key="per-11.insertTipoTelefono3">
+		<![CDATA[
+			INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_TTE_TIPO_TELEFONO.NEXTVAL
+			  ,TTEX.DD_TTE_CODIGO
+			  ,TTEX.DD_TTE_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_TTE_DESCRIPCION 
+			    from (    
+			        SELECT (''||tp.TMP_DD_TIPO_TELEFONO_3) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE tp.TMP_DD_TIPO_TELEFONO_3 is not null
+			          AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE 
+			                          WHERE tp.TMP_DD_TIPO_TELEFONO_3 = TTE.DD_TTE_CODIGO)
+			    )
+			) TTEX 
+	    ]]>
+	</entry>	
+	<entry key="per-11.tipoTelefono3"><![CDATA[
+		SELECT (''||tp.TMP_DD_TIPO_TELEFONO_3) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE tp.TMP_DD_TIPO_TELEFONO_3 is not null and 
+		NOT EXISTS (
+			SELECT * FROM DD_TTE_TIPO_TELEFONO TTE 
+			WHERE tp.TMP_DD_TIPO_TELEFONO_3 = TTE.DD_TTE_CODIGO)      
+    ]]>
+	</entry>
+	
+	<entry key="per-12.insertTipoTelefono4">
+		<![CDATA[
+			INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_TTE_TIPO_TELEFONO.NEXTVAL
+			  ,TTEX.DD_TTE_CODIGO
+			  ,TTEX.DD_TTE_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_TTE_DESCRIPCION 
+			    from (    
+			        SELECT (''||tp.TMP_DD_TIPO_TELEFONO_4) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE tp.TMP_DD_TIPO_TELEFONO_4 is not null
+			          AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE 
+			                          WHERE tp.TMP_DD_TIPO_TELEFONO_4 = TTE.DD_TTE_CODIGO)
+			    )
+			) TTEX 
+	    ]]>
+	</entry>		
+	<entry key="per-12.tipoTelefono4"><![CDATA[
+		 SELECT (''||tp.TMP_DD_TIPO_TELEFONO_4) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE  tp.TMP_DD_TIPO_TELEFONO_4 is not null and 
+		NOT EXISTS (
+			SELECT * FROM DD_TTE_TIPO_TELEFONO TTE 
+			WHERE tp.TMP_DD_TIPO_TELEFONO_4 = TTE.DD_TTE_CODIGO)     
+    ]]>
+	</entry>
+	
+	<entry key="per-13.insertTipoTelefono5">
+		<![CDATA[
+			INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_TTE_TIPO_TELEFONO.NEXTVAL
+			  ,TTEX.DD_TTE_CODIGO
+			  ,TTEX.DD_TTE_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_TTE_DESCRIPCION 
+			    from (    
+			        SELECT (''||tp.TMP_DD_TIPO_TELEFONO_5) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE tp.TMP_DD_TIPO_TELEFONO_5 is not null
+			          AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE 
+			                          WHERE tp.TMP_DD_TIPO_TELEFONO_5 = TTE.DD_TTE_CODIGO)
+			    )
+			) TTEX 
+	    ]]>
+	</entry>		
+	<entry key="per-13.tipoTelefono5">
+		<![CDATA[
+		 SELECT (''||tp.TMP_DD_TIPO_TELEFONO_5) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE  tp.TMP_DD_TIPO_TELEFONO_5 is not null and 
+		NOT EXISTS (
+			SELECT * FROM DD_TTE_TIPO_TELEFONO TTE 
+			WHERE tp.TMP_DD_TIPO_TELEFONO_5 = TTE.DD_TTE_CODIGO)     
+   		]]>
+	</entry>
+	
+	
+	<entry key="per-14.insertTipoTelefono6">
+		<![CDATA[
+			INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_TTE_TIPO_TELEFONO.NEXTVAL
+			  ,TTEX.DD_TTE_CODIGO
+			  ,TTEX.DD_TTE_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, 'Finalidad CNT pendiente de definir ('||ERROR_FIELD||')' as DD_TTE_DESCRIPCION 
+			    from (    
+			        SELECT (''||tp.TMP_DD_TIPO_TELEFONO_6) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE tp.TMP_DD_TIPO_TELEFONO_6 is not null
+			          AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE 
+			                          WHERE tp.TMP_DD_TIPO_TELEFONO_6 = TTE.DD_TTE_CODIGO)
+			    )
+			) TTEX 
+	    ]]>
+	</entry>	
+	<entry key="per-14.tipoTelefono6">
+		<![CDATA[
+	      SELECT (''||tp.TMP_DD_TIPO_TELEFONO_6) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp 
+				WHERE  tp.TMP_DD_TIPO_TELEFONO_6 is not null and 
+				NOT EXISTS (
+					SELECT * FROM DD_TTE_TIPO_TELEFONO TTE 
+					WHERE tp.TMP_DD_TIPO_TELEFONO_6 = TTE.DD_TTE_CODIGO)
+	    ]]>
+	</entry>
+	<entry key="per-15.insertPerfilGestor">
+		<![CDATA[
+		INSERT INTO PEF_PERFILES
+			(PEF_ID, PEF_CODIGO, PEF_DESCRIPCION,
+			VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT S_PEF_PERFILES.NEXTVAL, PEFX.PEF_CODIGO, PEFX.PEF_DESCRIPCION,
+			0, '${PasajeAProducciónUser}',SYSTIMESTAMP, 0
+		FROM (
+			SELECT DISTINCT ERROR_FIELD as PEF_CODIGO, 'Perfil pendiente de definir ('||ERROR_FIELD||')' as PEF_DESCRIPCION 
+			from (
+				SELECT (''||tp.TMP_PER_PERFIL_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp 
+				WHERE tp.TMP_PER_PERFIL_GESTOR is not null
+					AND NOT EXISTS (SELECT 1 
+				        		FROM PEF_PERFILES PEF 
+                    					WHERE TO_CHAR(TP.TMP_PER_PERFIL_GESTOR) = PEF.PEF_CODIGO)
+			)
+		) PEFX
+		]]>
+	</entry>
+	<entry key="per-15.perfilGestor"><![CDATA[
+		 SELECT (''||tp.TMP_PER_PERFIL_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+        FROM TMP_PER_PERSONAS tp 
+        WHERE tp.TMP_PER_PERFIL_GESTOR is not null
+        AND NOT EXISTS (SELECT 1 
+                        FROM PEF_PERFILES pef 
+                        WHERE TO_CHAR(TP.TMP_PER_PERFIL_GESTOR) = PEF.PEF_CODIGO)
+	    ]]>
+	</entry>
+	<entry key="per-16.usuarioGestor"><![CDATA[
+		SELECT (''||tp.TMP_PER_USUARIO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+        FROM TMP_PER_PERSONAS tp 
+        WHERE tp.TMP_PER_USUARIO_GESTOR is not null
+        AND NOT EXISTS (SELECT 1 
+                        FROM ${master.schema}.USU_USUARIOS USU 
+                        WHERE tp.TMP_PER_USUARIO_GESTOR like USU.USU_USERNAME)     
+    ]]>
+	</entry>
+	<entry key="per-17.insertGrupoGestor">
+	<![CDATA[
+		INSERT INTO DD_GGE_GRUPO_GESTOR
+		  (DD_GGE_ID, DD_GGE_CODIGO, DD_GGE_DESCRIPCION,
+		   VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT 
+		  S_DD_GGE_GRUPO_GESTOR.NEXTVAL, GGEX.DD_GGE_CODIGO, GGEX.DD_GGE_DESCRIPCION,
+		  0,'${PasajeAProducciónUser}',SYSTIMESTAMP,0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_GGE_CODIGO, 'Grupo gestor pendiente de definir ('||ERROR_FIELD||')' as DD_GGE_DESCRIPCION 
+		    from (
+			SELECT (''||tp.TMP_PER_COD_GRUPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			FROM TMP_PER_PERSONAS tp 
+			WHERE tp.TMP_PER_COD_GRUPO_GESTOR is not null
+				AND NOT EXISTS (SELECT 1 
+			                FROM DD_GGE_GRUPO_GESTOR GGE 
+			                WHERE tp.TMP_PER_COD_GRUPO_GESTOR = GGE.DD_GGE_CODIGO)
+		    )
+		) GGEX
+	]]>
+	</entry>
+	<entry key="per-17.grupoGestor"><![CDATA[
+		SELECT (''||tp.TMP_PER_COD_GRUPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+        FROM TMP_PER_PERSONAS tp 
+        WHERE tp.TMP_PER_COD_GRUPO_GESTOR is not null
+        AND NOT EXISTS (SELECT 1 
+                        FROM DD_GGE_GRUPO_GESTOR GGE 
+                        WHERE tp.TMP_PER_COD_GRUPO_GESTOR = GGE.DD_GGE_CODIGO)           
+    ]]>
+	</entry>
+	
+	<entry key="per-18.insertPolitica">
+		<![CDATA[
+			INSERT INTO DD_POL_POLITICAS  (DD_POL_ID, DD_POL_CODIGO, DD_POL_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_POL_POLITICAS.NEXTVAL
+			  ,POLX.DD_POL_CODIGO
+			  ,POLX.DD_POL_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_POL_CODIGO, 'Politica pendiente de definir ('||ERROR_FIELD||')' as DD_POL_DESCRIPCION 
+			    from (  
+			      SELECT (''||tp.TMP_PER_POLITICA_ENTIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			      FROM TMP_PER_PERSONAS tp 
+			      WHERE   tp.TMP_PER_POLITICA_ENTIDAD is not null
+			          AND NOT EXISTS (SELECT 1 
+			                          FROM DD_POL_POLITICAS POL 
+			                    WHERE tp.TMP_PER_POLITICA_ENTIDAD = POL.DD_POL_CODIGO)
+			    )              
+			) POLX 	
+	    ]]>
+	</entry>	
+	<entry key="per-18.politica"><![CDATA[
+		SELECT (''||tp.TMP_PER_POLITICA_ENTIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_POLITICA_ENTIDAD is not null
+        AND NOT EXISTS (SELECT 1 
+                        FROM DD_POL_POLITICAS POL 
+			            WHERE tp.TMP_PER_POLITICA_ENTIDAD = POL.DD_POL_CODIGO)      
+    ]]>
+	</entry>
+	
+	<entry key="per-19.insertRatingExterno">
+		<![CDATA[
+			INSERT INTO DD_REX_RATING_EXTERNO  (DD_REX_ID, DD_REX_CODIGO, DD_REX_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_REX_RATING_EXTERNO.NEXTVAL
+			  ,REXX.DD_REX_CODIGO
+			  ,REXX.DD_REX_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_REX_CODIGO, 'Rating Externo pendiente de definir ('||ERROR_FIELD||')' as DD_REX_DESCRIPCION 
+			    from (  
+			      SELECT (''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			      FROM TMP_PER_PERSONAS tp 
+			      WHERE   tp.TMP_PER_RATING_REFERENCIA is not null
+			            and NOT EXISTS (SELECT 1 
+			                            FROM DD_REX_RATING_EXTERNO REX 
+			                            WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO)     
+			    )              
+			) REXX 	
+	    ]]>
+	</entry>		
+	<entry key="per-19.ratingExterno">
+		<![CDATA[
+			SELECT (''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			FROM TMP_PER_PERSONAS tp 
+			WHERE   tp.TMP_PER_RATING_REFERENCIA is not null
+            AND NOT EXISTS (SELECT 1 
+                            FROM DD_REX_RATING_EXTERNO REX 
+                            WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO)      
+   		]]>
+	</entry>
+	<!-- 
+	<entry key="per-20.insertRatingAuxiliar">
+	<![CDATA[
+	  SELECT DISTINCT (''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+	  FROM TMP_PER_PERSONAS tp 
+	  WHERE tp.TMP_PER_RATING_REFERENCIA is not null and
+	  	NOT EXISTS (
+	   	 SELECT * FROM DD_REX_RATING_EXTERNO REX WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO
+	    )     
+    ]]>	
+	<entry key="per-20.ratingAuxiliar"><![CDATA[
+	  SELECT DISTINCT (''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+	  FROM TMP_PER_PERSONAS tp 
+	  WHERE tp.TMP_PER_RATING_REFERENCIA is not null and
+	  	NOT EXISTS (
+	   	 SELECT * FROM DD_REX_RATING_EXTERNO REX WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO
+	    )     
+    ]]>
+	</entry>-->
+	<entry key="per-21.insertNacionalidad">
+		<![CDATA[
+		INSERT INTO ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE
+			(DD_CIC_ID, DD_CIC_CODIGO, DD_CIC_DESCRIPCION,
+			VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT ${master.schema}.S_DD_CIC_CODIGO_ISO_CIRBE.NEXTVAL, CICX.DD_CIC_CODIGO, CICX.DD_CIC_DESCRIPCION,
+			0, '${PasajeAProducciónUser}',SYSTIMESTAMP, 0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_CIC_CODIGO, 'Nacionalidad pendiente de definir ('||ERROR_FIELD||')' as DD_CIC_DESCRIPCION 
+		    from (
+		    	SELECT (''||tp.TMP_PER_NACIONALIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp 
+				WHERE   tp.TMP_PER_NACIONALIDAD is not null and
+				NOT EXISTS (
+					SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC 
+					WHERE tp.TMP_PER_NACIONALIDAD = CIC.DD_CIC_CODIGO)     
+		    )
+		) CICX
+		]]>
+	</entry>
+	<entry key="per-21.nacionalidad"><![CDATA[
+    	SELECT (''||tp.TMP_PER_NACIONALIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_NACIONALIDAD is not null and
+		NOT EXISTS (
+			SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC 
+			WHERE tp.TMP_PER_NACIONALIDAD = CIC.DD_CIC_CODIGO)     
+    ]]>
+	</entry>
+	<entry key="per-22.insertPaisNacimiento">
+		<![CDATA[
+		INSERT INTO ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE
+			(DD_CIC_ID, DD_CIC_CODIGO, DD_CIC_DESCRIPCION,
+			VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT ${master.schema}.S_DD_CIC_CODIGO_ISO_CIRBE.NEXTVAL, CICX.DD_CIC_CODIGO, CICX.DD_CIC_DESCRIPCION,
+			0, '${PasajeAProducciónUser}',SYSTIMESTAMP, 0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_CIC_CODIGO, 'Nacionalidad pendiente de definir ('||ERROR_FIELD||')' as DD_CIC_DESCRIPCION 
+		    from (
+			    SELECT (''||tp.TMP_PER_PAIS_NACIMIENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp 
+				WHERE tp.TMP_PER_PAIS_NACIMIENTO is not null and
+				NOT EXISTS (
+					SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC 
+					WHERE tp.TMP_PER_PAIS_NACIMIENTO = CIC.DD_CIC_CODIGO)     
+		    )
+		) CICX
+		]]>
+	</entry>
+	<entry key="per-22.paisNacimiento"><![CDATA[
+    SELECT (''||tp.TMP_PER_PAIS_NACIMIENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+	FROM TMP_PER_PERSONAS tp 
+	WHERE tp.TMP_PER_PAIS_NACIMIENTO is not null and
+	NOT EXISTS (
+		SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC 
+		WHERE tp.TMP_PER_PAIS_NACIMIENTO = CIC.DD_CIC_CODIGO)     
+    ]]>
+	</entry>
+		
+	<entry key="per-23.insertSexo">
+		<![CDATA[	
+			INSERT INTO ${master.schema}.DD_SEX_SEXOS  (DD_SEX_ID, DD_SEX_CODIGO, DD_SEX_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  ${master.schema}.S_DD_SEX_SEXOS.NEXTVAL
+			  ,SEXX.DD_SEX_CODIGO
+			  ,SEXX.DD_SEX_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_SEX_CODIGO, 'Sexo pendiente de definir ('||ERROR_FIELD||')' as DD_SEX_DESCRIPCION 
+			    from (  
+			        SELECT (''||tp.TMP_PER_SEXO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE   tp.TMP_PER_SEXO is not null AND
+			        NOT EXISTS (SELECT * FROM ${master.schema}.DD_SEX_SEXOS SEX WHERE tp.TMP_PER_SEXO = SEX.DD_SEX_CODIGO)    
+			        )                
+			) SEXX 	 	
+    	]]>
+	</entry>	
+	<entry key="per-23.sexo">
+		<![CDATA[
+		    SELECT (''||tp.TMP_PER_SEXO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			FROM TMP_PER_PERSONAS tp 
+			WHERE   tp.TMP_PER_SEXO is not null and
+				NOT EXISTS (SELECT * FROM ${master.schema}.DD_SEX_SEXOS SEX WHERE tp.TMP_PER_SEXO = SEX.DD_SEX_CODIGO)    
+	    ]]>
+	</entry>
+
+	<entry key="per-24.insertSegment2Validator"><![CDATA[
+		INSERT INTO DD_SCL_SEGTO_CLI  (DD_SCL_ID, DD_SCL_CODIGO, DD_SCL_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT 
+		  S_DD_SCL_SEGTO_CLI.NEXTVAL
+		  ,SSCL.DD_SCL_CODIGO
+		  ,SSCL.DD_SCL_DESCRIPCION
+		  ,'${PasajeAProducciónUser}'  
+		  ,SYSTIMESTAMP 
+		  ,0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_SCL_CODIGO, 'Segmento Cliente pendiente de definir ('||ERROR_FIELD||')' as DD_SCL_DESCRIPCION
+		    from ( 
+		        SELECT (''||tp.TMP_PER_SEGMENTO_CLIENTE_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		        FROM TMP_PER_PERSONAS tp 
+		        WHERE   
+		        not exists( SELECT 1 FROM DD_SCL_SEGTO_CLI WHERE trim(DD_SCL_CODIGO) = trim(tp.TMP_PER_SEGMENTO_CLIENTE_2))
+		        )                
+		) SSCL
+    ]]>
+	</entry>	
+	<entry key="per-24.segment2Validator">
+	<![CDATA[
+	SELECT (''||tp.TMP_PER_SEGMENTO_CLIENTE_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+	  FROM TMP_PER_PERSONAS tp 
+	  WHERE   
+	  not exists( SELECT 1 
+	        FROM DD_SCL_SEGTO_CLI 
+	        WHERE trim(DD_SCL_CODIGO) = trim(tp.TMP_PER_SEGMENTO_CLIENTE_2))	
+    ]]>
+	</entry>
+	<entry key="per-25.insertCodPropietarioValidator">
+		<![CDATA[
+		INSERT INTO DD_PRO_PROPIETARIOS
+			(DD_PRO_ID, DD_PRO_CODIGO, DD_PRO_DESCRIPCION,
+			VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT S_DD_PRO_PROPIETARIOS.NEXTVAL, PROX.DD_PRO_CODIGO, PROX.DD_PRO_DESCRIPCION,
+			0, '${PasajeAProducciónUser}',SYSTIMESTAMP, 0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_PRO_CODIGO, 'Propietario pendiente de definir ('||ERROR_FIELD||')' as DD_PRO_DESCRIPCION 
+		    from (
+			SELECT (''||tp.TMP_PER_COD_PROPIETARIO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp 
+				WHERE   tp.TMP_PER_COD_PROPIETARIO is not null and
+				not exists( SELECT 1 
+							FROM DD_PRO_PROPIETARIOS 
+				    WHERE DD_PRO_CODIGO = trim(tp.TMP_PER_COD_PROPIETARIO))
+		    )
+		) PROX
+		]]>
+	</entry>
+	<entry key="per-25.codPropietarioValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_COD_PROPIETARIO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_COD_PROPIETARIO is not null and
+		not exists( SELECT 1 
+					FROM DD_PRO_PROPIETARIOS 
+                    WHERE DD_PRO_CODIGO = trim(tp.TMP_PER_COD_PROPIETARIO))
+	]]>
+	</entry>
+	<entry key="per-26.insertOrigenTelefono1Validator">
+		<![CDATA[
+		INSERT INTO DD_OTE_ORIGEN_TELEFONO
+			(DD_OTE_ID, DD_OTE_CODIGO, DD_OTE_DESCRIPCION,
+			VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT 
+		  S_DD_OTE_ORIGEN_TELEFONO.NEXTVAL, OTEX.DD_OTE_CODIGO, OTEX.DD_OTE_DESCRIPCION,
+		  0,'${PasajeAProducciónUser}',SYSTIMESTAMP,0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_OTE_CODIGO, 'Origen telefono pendiente de definir ('||ERROR_FIELD||')' as DD_OTE_DESCRIPCION 
+		    from (
+			SELECT (''||tp.TMP_PER_ORIGEN_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp 
+				WHERE   tp.TMP_PER_ORIGEN_TELEFONO1 is not null and
+				not exists( SELECT 1 
+							FROM DD_OTE_ORIGEN_TELEFONO 
+				    WHERE DD_OTE_CODIGO = trim(tp.TMP_PER_ORIGEN_TELEFONO1))
+			)
+		) OTEX
+
+		]]>
+	</entry>
+	<entry key="per-26.origenTelefono1Validator"><![CDATA[
+	SELECT (''||tp.TMP_PER_ORIGEN_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_ORIGEN_TELEFONO1 is not null and
+		not exists( SELECT 1 
+					FROM DD_OTE_ORIGEN_TELEFONO 
+                    WHERE DD_OTE_CODIGO = trim(tp.TMP_PER_ORIGEN_TELEFONO1))
+	]]>
+	</entry>
+	
+	<entry key="per-27.insertPersonaNivelValidator">
+		<![CDATA[	
+			INSERT INTO DD_PNV_PERSONA_NIVEL  (DD_PNV_ID, DD_PNV_CODIGO, DD_PNV_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+			SELECT 
+			  S_DD_PNV_PERSONA_NIVEL.NEXTVAL
+			  ,PNVX.DD_PNV_CODIGO
+			  ,PNVX.DD_PNV_DESCRIPCION
+			  ,'${PasajeAProducciónUser}' 
+			  ,SYSTIMESTAMP 
+			  ,0
+			FROM (
+			    SELECT DISTINCT ERROR_FIELD as DD_PNV_CODIGO, 'Persona Nivel pendiente de definir ('||ERROR_FIELD||')' as DD_PNV_DESCRIPCION 
+			    from (  
+			        SELECT (''||tp.TMP_PER_NIVEL) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			        FROM TMP_PER_PERSONAS tp 
+			        WHERE   tp.TMP_PER_NIVEL is not null and
+			        not exists( SELECT 1 
+			              FROM DD_PNV_PERSONA_NIVEL
+			                        WHERE DD_PNV_CODIGO = trim(tp.TMP_PER_NIVEL))
+			  )   
+			) PNVX 	  		
+	]]>
+	</entry>		
+	<entry key="per-27.personaNivelValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_NIVEL) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_NIVEL is not null and
+		not exists( SELECT 1 
+					FROM DD_PNV_PERSONA_NIVEL
+                    WHERE DD_PNV_CODIGO = trim(tp.TMP_PER_NIVEL))	
+	]]>
+	</entry>
+	
+	<entry key="per-28.insertColectivoSingularValidator">
+	<![CDATA[	
+		INSERT INTO DD_COS_COLECTIVO_SINGULAR  (DD_COS_ID, DD_COS_CODIGO, DD_COS_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT 
+		  S_DD_COS_COLECTIVO_SINGULAR.NEXTVAL
+		  ,COSX.DD_COS_CODIGO
+		  ,COSX.DD_COS_DESCRIPCION
+		  ,'${PasajeAProducciónUser}' 
+		  ,SYSTIMESTAMP 
+		  ,0
+		FROM (   
+		    SELECT DISTINCT ERROR_FIELD as DD_COS_CODIGO, 'Colectivo Singular pendiente de definir ('||ERROR_FIELD||')' as DD_COS_DESCRIPCION 
+		    from (  
+		      SELECT (''||tp.TMP_PER_COLECTIVO_SINGULAR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		      FROM TMP_PER_PERSONAS tp 
+		      WHERE   tp.TMP_PER_COLECTIVO_SINGULAR is not null and
+		        not exists( SELECT 1 FROM DD_COS_COLECTIVO_SINGULAR  WHERE DD_COS_CODIGO = trim(tp.TMP_PER_COLECTIVO_SINGULAR))
+		  )   
+		) COSX 	
+	]]>
+	</entry>	
+	
+	<entry key="per-28.colectivoSingularValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_COLECTIVO_SINGULAR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_COLECTIVO_SINGULAR is not null and
+		not exists( SELECT 1 
+					FROM DD_COS_COLECTIVO_SINGULAR
+                    WHERE DD_COS_CODIGO = trim(tp.TMP_PER_COLECTIVO_SINGULAR))
+	]]>
+	</entry>
+	<entry key="per-29.insertTipoGestorValidator">
+		<![CDATA[
+		INSERT INTO DD_TPG_TIPO_GESTOR
+			(DD_TPG_ID, DD_TPG_CODIGO, DD_TPG_DESCRIPCION,
+			VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT S_DD_TPG_TIPO_GESTOR.NEXTVAL, TPGX.DD_TPG_CODIGO, TPGX.DD_TPG_DESCRIPCION,
+			0, '${PasajeAProducciónUser}',SYSTIMESTAMP, 0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_TPG_CODIGO, 'Tipo Gestor pendiente de definir ('||ERROR_FIELD||')' as DD_TPG_DESCRIPCION 
+		    from (  
+			SELECT (''||tp.TMP_PER_TIPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+			FROM TMP_PER_PERSONAS tp 
+			WHERE   tp.TMP_PER_TIPO_GESTOR is not null and
+				not exists( SELECT 1 
+					FROM DD_TPG_TIPO_GESTOR
+					    WHERE DD_TPG_CODIGO = trim(tp.TMP_PER_TIPO_GESTOR))
+			)
+		) TPGX
+		]]>
+	</entry>
+	<entry key="per-29.tipoGestorValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_TIPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_TIPO_GESTOR is not null and
+		not exists( SELECT 1 
+					FROM DD_TPG_TIPO_GESTOR
+                    WHERE DD_TPG_CODIGO = trim(tp.TMP_PER_TIPO_GESTOR))
+	]]>
+	</entry>
+	<entry key="per-30.insertAreaGestionValidator">
+	<![CDATA[
+		INSERT INTO DD_ARG_AREA_GESTION
+  			(DD_ARG_ID, DD_ARG_CODIGO, DD_ARG_DESCRIPCION,
+			VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT 
+		  S_DD_ARG_AREA_GESTION.NEXTVAL, ARGX.DD_ARG_CODIGO, ARGX.DD_ARG_DESCRIPCION,
+		  0,'${PasajeAProducciónUser}',SYSTIMESTAMP,0
+		FROM (
+		    SELECT DISTINCT ERROR_FIELD as DD_ARG_CODIGO, 'Area Gestion pendiente de definir ('||ERROR_FIELD||')' as DD_ARG_DESCRIPCION 
+		    from (
+			SELECT (''||tp.TMP_PER_COD_AREA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+				FROM TMP_PER_PERSONAS tp 
+				WHERE   tp.TMP_PER_COD_AREA is not null and
+				not exists( SELECT 1 
+							FROM DD_ARG_AREA_GESTION
+				    WHERE DD_ARG_CODIGO = trim(tp.TMP_PER_COD_AREA))	
+			)
+		) ARGX
+	]]>
+	</entry>
+	<entry key="per-30.areaGestionValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_COD_AREA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_COD_AREA is not null and
+		not exists( SELECT 1 
+					FROM DD_ARG_AREA_GESTION
+                    WHERE DD_ARG_CODIGO = trim(tp.TMP_PER_COD_AREA))	
+	]]>
+	</entry>
+	<entry key="per-31.vrOtrasEntidadesValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_VR_OTRAS_ENTIDADES) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_VR_OTRAS_ENTIDADES is not null
+		AND tp.TMP_PER_VR_OTRAS_ENTIDADES < 0	
+	]]>
+	</entry>
+	<entry key="per-32.vrOtrasEntidadesValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_VR_DANYADO_OTRAS_ENTS) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_VR_DANYADO_OTRAS_ENTS is not null
+		AND tp.TMP_PER_VR_DANYADO_OTRAS_ENTS < 0	
+	]]>
+	</entry>
+	<entry key="per-33.tipoGestorPersonaValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_COD_ENT_OFI_GESTORA||TMP_PER_COD_OFICINA_GESTORA||TMP_PER_COD_SUBSEC_OFI_GESTORA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_TIPO_GESTOR = 'EL DD_TPG_CODIGO QUE CORRESPONADA A "Persona"'
+		AND (tp.TMP_PER_COD_ENT_OFI_GESTORA||TMP_PER_COD_OFICINA_GESTORA||TMP_PER_COD_SUBSEC_OFI_GESTORA) IS NOT NULL
+	]]>
+	</entry>
+	<entry key="per-34.tipoGestorOficinaValidator"><![CDATA[
+	SELECT (''||tp.TMP_PER_COD_ENT_OFI_GESTORA||TMP_PER_COD_OFICINA_GESTORA||TMP_PER_COD_SUBSEC_OFI_GESTORA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE 
+		FROM TMP_PER_PERSONAS tp 
+		WHERE   tp.TMP_PER_TIPO_GESTOR = 'EL DD_TPG_CODIGO QUE CORRESPONADA A "Oficina"'
+		AND tp.TMP_PER_USUARIO_GESTOR IS NOT NULL	
+	]]>
+	</entry>
+	<entry key="per-35.insertTipoPolitica">
+		<![CDATA[
+		]]>
+	</entry>
+	<entry key="per-35.tipoPolitica">
+		<![CDATA[
+		SELECT TP.TMP_PER_POLITICA_ENTIDAD as ERROR_FIELD, (TP.TMP_PER_COD_ENTIDAD || TP.TMP_PER_COD_PERSONA) AS ENTITY_CODE
+		FROM TMP_PER_PERSONAS TP
+		WHERE NOT EXISTS (SELECT 1 FROM TPL_TIPO_POLITICA TPL
+				  WHERE TP.TMP_PER_POLITICA_ENTIDAD = TPL.TPL_CODIGO)
+		]]>
+	</entry>
+	<entry key="per-36.codigoClienteEntidadValidation">
+		<![CDATA[
+		select TMP.TMP_PER_COD_PERSONA AS ERROR_FIELD, 
+			TMP.TMP_PER_COD_PERSONA AS ENTITY_CODE,
+			count(1)
+		from BANK01.TMP_PER_PERSONAS TMP
+		group by TMP.TMP_PER_COD_PERSONA
+		having count(1) > 1
+		]]>
+	</entry>	
+	
+</properties>

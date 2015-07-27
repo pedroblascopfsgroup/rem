@@ -142,7 +142,6 @@
 		    clientValidation: true,
 			url: '/'+app.getAppName()+'/msvconfimpulsoautomatico/guardaConfImpulso.htm',
 			 success: function(form, action) {
-			 	debugger;
 			<c:if test="${modificar}">
 				Ext.Msg.alert('<s:message code="plugin.masivo.confImpulso.busqueda.ok" text="**¡Guay!" />',
 					'<s:message code="plugin.masivo.confImpulso.busqueda.resultadoOK" text="**Guardado correctamente" />');

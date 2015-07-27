@@ -11,6 +11,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.devon.web.DynamicElementManager;
+import es.capgemini.pfs.arquetipo.dao.ArquetipoDao;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.cliente.model.Cliente;
@@ -55,6 +56,9 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
 
     @Autowired
     private ExpedienteDao expedienteDao;
+    
+    @Autowired
+    private ArquetipoDao arquetipoDao;
 
     @Autowired
     private GenericABMDao genericDao;
@@ -138,7 +142,7 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
 
             // Si el contrato es pase de algun cliente, marcamos al cliente como
             // cancelado
-            // para que en la prÛxima carga del batch vuelva a generar el
+            // para que en la pr√≥xima carga del batch vuelva a generar el
             // cliente con el contrato
             // de pase que corresponda.
             cliente = (Cliente) executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_FIND_CLIENTE_POR_CONTRATO_PASE_ID, contrato.getId());
@@ -175,14 +179,15 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
      * @param idExpediente
      * @param idPersona
      *            Incluye en ExpedientePersona los clientes asociados a los
-     *            contratos aÒadidos
+     *            contratos a√±adidos
      */
     private void incluirEnExpedientePersona(Expediente expediente, Persona persona) {
 
         ExpedientePersona expedientePersona = new ExpedientePersona();
         expedientePersona.setExpediente(expediente);
         expedientePersona.setPersona(persona);
-        Arquetipo arq = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, persona.getArquetipo());
+        // Nuevo m√©todo para obtener el arquetipo de una persona
+        Arquetipo arq = arquetipoDao.getArquetipoPorPersona(persona.getId());
         DDAmbitoExpediente ambitoExpediente = arq.getItinerario().getAmbitoExpediente();
         expedientePersona.setAmbitoExpediente(ambitoExpediente);
         expedientePersona.setAuditoria(Auditoria.getNewInstance());

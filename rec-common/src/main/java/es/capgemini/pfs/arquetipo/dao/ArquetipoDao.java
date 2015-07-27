@@ -38,4 +38,11 @@ public interface ArquetipoDao extends AbstractDao<Arquetipo, Long> {
      * @return
      */
     Arquetipo getArquetipoPorNombre(String nombre);
+    
+    /**
+     * Devuelve el Arquetipo más actualizado de la persona con el id pasado como parámetro
+     * @param idPersona ID de la persona
+     * @return Devuelve el Arquetipo asociado a la persona 
+     */
+    Arquetipo getArquetipoPorPersona(Long idPersona);
 }

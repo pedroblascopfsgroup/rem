@@ -453,7 +453,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                 new Object[] { idContrato, DDEstadoExpediente.ESTADO_EXPEDIENTE_ACTIVO, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO,
                         DDEstadoExpediente.ESTADO_EXPEDIENTE_BLOQUEADO });
         
-       	if (expedientes.size() > 1) { throw new BusinessOperationException("expediente.contrato.invalido.masDeUnExpediente", idContrato); }        
+       	if (expedientes.size() > 1) {
+       		logger.error("expediente.contrato.invalido.masDeUnExpediente: " + idContrato);
+       		throw new BusinessOperationException("expediente.contrato.invalido.masDeUnExpediente", idContrato); }        
         if (expedientes.size() == 1) { return expedientes.get(0); }
         return null;
     }

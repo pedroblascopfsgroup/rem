@@ -96,7 +96,7 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 								if(!bienesInsertados.contains(b.getId())){
 									if(b instanceof NMBBien){
 										NMBBien bi = (NMBBien) b;
-										if(bi.getAdjudicacion()!= null && bi.getAdjudicacion().getCesionRemate() == false){ //No=false, Si=true
+										if(bi.getAdjudicacion()!= null && (bi.getAdjudicacion().getCesionRemate() == null || bi.getAdjudicacion().getCesionRemate() == false)){ //No=false, Si=true
 											Boolean creoProcedimiento = (Boolean) executor.execute(AdjudicacionProcedimientoDelegateApi.BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA, b.getId());
 											if (creoProcedimiento) {
 													creaProcedimientoAdjudicacion(prc, b);

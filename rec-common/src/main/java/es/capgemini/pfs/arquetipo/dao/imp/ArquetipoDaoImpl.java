@@ -63,4 +63,27 @@ public class ArquetipoDaoImpl extends AbstractEntityDao<Arquetipo, Long> impleme
         Query query = session.createQuery(hql);	        
         return (Arquetipo) query.list().get(0);
 	}
+	
+    public Arquetipo getArquetipoPorPersona(Long idPersona){
+    	
+    	try{
+    		
+    		Arquetipo arquetipo = null;
+    		
+            Session session = getHibernateTemplate().getSessionFactory().getCurrentSession();
+            String hql = "select arr.arquetipo "
+            		+ "from ArquetipoRecuperacionPersona arr "
+            		+ "where arr.persona.id = :id and rownum = 1 order by arr.arquetipoFecha desc";
+            Query query = session.createQuery(hql);
+            query.setParameter("id", idPersona);
+            arquetipo = (Arquetipo) query.uniqueResult();
+    		
+    		return arquetipo;
+    		
+    	}catch(Exception e){
+    		return null;
+    	}
+    	
+    }
+
 }

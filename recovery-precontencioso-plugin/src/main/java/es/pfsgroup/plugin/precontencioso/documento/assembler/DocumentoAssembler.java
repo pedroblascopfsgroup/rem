@@ -29,11 +29,14 @@ public class DocumentoAssembler {
 	 * @return List<liquidacionDTO> DTO
 	 */
 	public static SolicitudDocumentoPCODto docAndSolEntityToSolicitudDto(DocumentoPCO documento,
-			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, DDSiNo siNo, DDSiNoNoAplica siNoAplica) {
+			SolicitudDocumentoPCO solicitud, String ugIdDto, String descripcionUG, boolean esDocumento, 
+			boolean tieneSolicitud, DDSiNo siNo, DDSiNoNoAplica siNoAplica) {
 		SolicitudDocumentoPCODto solicitudDto = new SolicitudDocumentoPCODto();
 				
-		solicitudDto.setId(solicitud.getId());
 		solicitudDto.setIdDoc(documento.getId());
+		solicitudDto.setTieneSolicitud(tieneSolicitud);
+		solicitudDto.setEsDocumento(esDocumento);		
+
 		if (esDocumento){			
 			solicitudDto.setContrato(ugIdDto);
 			solicitudDto.setDescripcionUG(descripcionUG);
@@ -46,17 +49,24 @@ public class DocumentoAssembler {
 			solicitudDto.setComentario(documento.getObservaciones());
 		}
 		
-		solicitudDto.setEsDocumento(esDocumento);
-		solicitudDto.setActor(solicitud.getTipoActor().getDescripcion());
-		if (solicitud.getFechaSolicitud()!=null)
-			solicitudDto.setFechaSolicitud(webDateFormat.format(solicitud.getFechaSolicitud()));
-		if (solicitud.getFechaResultado()!=null)
-			solicitudDto.setFechaResultado(webDateFormat.format(solicitud.getFechaResultado()));
-		if (solicitud.getFechaEnvio()!=null)
-			solicitudDto.setFechaEnvio(webDateFormat.format(solicitud.getFechaEnvio()));
-		if (solicitud.getFechaRecepcion()!=null)
-			solicitudDto.setFechaRecepcion(webDateFormat.format(solicitud.getFechaRecepcion()));
-		solicitudDto.setResultado(solicitud.getResultadoSolicitud().getDescripcion());
+		if (tieneSolicitud){
+			solicitudDto.setId(solicitud.getId());
+			if (solicitud.getActor()!=null)
+				solicitudDto.setActor(solicitud.getActor().getUsuario().getApellidoNombre());
+			if (solicitud.getTipoActor()!=null)
+				solicitudDto.setTipoActor(solicitud.getTipoActor().getDescripcion());
+			if (solicitud.getFechaSolicitud()!=null)
+				solicitudDto.setFechaSolicitud(webDateFormat.format(solicitud.getFechaSolicitud()));
+			if (solicitud.getFechaResultado()!=null)
+				solicitudDto.setFechaResultado(webDateFormat.format(solicitud.getFechaResultado()));
+			if (solicitud.getFechaEnvio()!=null)
+				solicitudDto.setFechaEnvio(webDateFormat.format(solicitud.getFechaEnvio()));
+			if (solicitud.getFechaRecepcion()!=null)
+				solicitudDto.setFechaRecepcion(webDateFormat.format(solicitud.getFechaRecepcion()));
+			if (solicitud.getResultadoSolicitud()!=null)
+				solicitudDto.setResultado(solicitud.getResultadoSolicitud().getDescripcion());
+		}
+
 
 		return solicitudDto;
 	}

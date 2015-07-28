@@ -11,6 +11,7 @@ public class SolicitudDocumentoPCODto {
 	private String estado;
 	private String adjunto;
 	private String ejecutivo;
+	private String tipoActor;
 	private String actor;
 	private String fechaSolicitud;
 	private String fechaResultado;
@@ -19,7 +20,7 @@ public class SolicitudDocumentoPCODto {
 	private String resultado;
 	private String comentario;
 	private boolean esDocumento;
-
+	private boolean tieneSolicitud;
 	
 	public Long getId() {
 		return id;
@@ -62,6 +63,12 @@ public class SolicitudDocumentoPCODto {
 	}
 	public void setAdjunto(String adjunto) {
 		this.adjunto = adjunto;
+	}
+	public String getTipoActor() {
+		return tipoActor;
+	}
+	public void setTipoActor(String tipoActor) {
+		this.tipoActor = tipoActor;
 	}
 	public String getActor() {
 		return actor;
@@ -116,6 +123,12 @@ public class SolicitudDocumentoPCODto {
 	}
 	public void setEjecutivo(String ejecutivo) {
 		this.ejecutivo = ejecutivo;
+	}
+	public boolean isTieneSolicitud() {
+		return tieneSolicitud;
+	}
+	public void setTieneSolicitud(boolean tieneSolicitud) {
+		this.tieneSolicitud = tieneSolicitud;
 	}
 	
 }

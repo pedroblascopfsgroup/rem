@@ -41,7 +41,7 @@ public class coreextensionController {
 	private static final String TIPO_USUARIO_PAGINATED_JSON = "plugin/coreextension/asunto/tipoUsuarioPaginatedJSON";
 	private static final String GESTORES_ADICIONALES_JSON = "plugin/coreextension/multigestor/multiGestorAdicionalDataJSON";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
-	private static final String JSON_LIST_TIPO_PROCEDIMIENTO = "plugin/mejoras/asuntos/revisionProcedimiento/data/tipoProcedimientoJSON";
+	private static final String JSON_LIST_TIPO_PROCEDIMIENTO = "procedimientos/listadoTiposProcedimientoJSON";
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -265,7 +265,7 @@ public class coreextensionController {
 	public String getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(ModelMap model, String codigoTipoAct, Long prcId) {
 		
 		List<TipoProcedimiento> list = proxyFactory.proxy(coreextensionApi.class).getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(codigoTipoAct, prcId);
-		model.put("data", list);
+		model.put("listado", list);
 		
 		return JSON_LIST_TIPO_PROCEDIMIENTO;
 	}

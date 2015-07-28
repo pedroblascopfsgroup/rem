@@ -92,11 +92,13 @@ import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
@@ -118,7 +120,8 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
-
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 
 
 @Component
@@ -2032,5 +2035,32 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
                 .getCodigoZonas();
         return extZonaDao.buscarZonasPorCodigoNivel(codigoNivel, codigoZonasUsuario);
     }
+        
+	@Override
+	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD)
+	public String getMsgErrorEnvioCDD(Long idAsunto) {
+		
+            return asuntoDao.getMsgErrorEnvioCDD(idAsunto);
+		
+	}
+        
+	@Override
+	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD_NUSE)
+	public String getMsgErrorEnvioCDDNuse(Long idAsunto) {
+		
+            return asuntoDao.getMsgErrorEnvioCDDNuse(idAsunto);
+		
+	}
 	
+        @Override
+	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO)
+	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
+	
+            if (Checks.esNulo(asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto))){
+                return "NoCDDError";
+            }else{
+                return asuntoDao.getMsgErrorEnvioCDDCabecera(idAsunto);
+            }
+
+	}
 }

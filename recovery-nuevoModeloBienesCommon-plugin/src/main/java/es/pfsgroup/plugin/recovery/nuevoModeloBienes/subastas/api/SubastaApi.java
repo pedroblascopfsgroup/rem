@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api;
 import java.util.List;
 import java.util.Map;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
@@ -13,9 +14,13 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
@@ -55,13 +60,16 @@ public interface SubastaApi {
 	public static final String BO_NMB_SUBASTA_OBTENER_VALOR_NODO_PRC = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.obtenValorNodoPrc";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE_Y_FINALIZADA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExisteYFinalizada";
 	public static final String BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.existeRegistroCierreDeuda";
-	public static final String BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarRegistroCierreDeuda";
-	public static final String BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarBienesCierreDeuda";
+	public static final String BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.findRegistroCierreDeuda";
 	public static final String BO_NMB_SUBASTA_RELLENAR_INFORME_CDD = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.rellenarInformeValidacionCDD";	
-	public static final String BO_NMB_SUBASTA_ENVIAR_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.enviarCierreDeuda";
 	public static final String BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getProcedimientoBienByIdPadre";
 	public static final String BO_NMB_SUBASTA_TAREA_EXISTE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.tareaExiste";
+	public static final String BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.eliminarBatchCierreDeudaAsunto";
 	public static final String BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.parametrizarLimite";
+	public static final String BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastasManager.getListErrorPreviCDDData";
+	public static final String BO_NMB_GET_LIST_ERROR_POST_CDD_DATA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getListErrorPostCDDData";
+	public static final String BO_NMB_SUBASTA_GENERAR_ENVIO_CIERRE_DEUDA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.generarEnvioCierreDeuda";
+	
 	
 	/**
 	 * Obtiene las subastas de un asunto
@@ -174,7 +182,7 @@ public interface SubastaApi {
 	public void guardaBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda autoCierreDeuda);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_GUARDA_ACUERDO_CIERRE)
-	public void guardaBatchAcuerdoCierre(Long idSubasta, Long idBien);
+	public void guardaBatchAcuerdoCierre(Long asuId, Long prcId, Long bienId, Long resultadoValidacion, DDResultadoValidacionCDD motivoValidacion, String origen);
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_BUSCAR_LOTES_SUBASTA)	
 	public Page buscarLotesSubastas(NMBDtoBuscarLotesSubastas dto);	
@@ -208,12 +216,9 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_EXISTE_REGISTRO_CIERRE_DEUDA)
 	List<BatchAcuerdoCierreDeuda> findRegistroCierreDeuda(Long idSubasta, Long idBien);
-
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_REGISTRO_CIERRE_DEUDA)
-	void eliminarRegistroCierreDeuda(Long idSubasta, List<BatchAcuerdoCierreDeuda> listBatchAcuerdoCierreDeuda);
 	
-	@BusinessOperationDefinition(BO_NMB_SUBASTA_ENVIAR_BIENES_CIERRE_DEUDA)
-	void enviarBienesCierreDeuda(Long idSubasta, List<Long> idsBien);
+	@BusinessOperation(BO_NMB_SUBASTA_FIND_REGISTRO_CIERRE_DEUDA)
+	BatchAcuerdoCierreDeuda findRegistroCierreDeuda(AcuerdoCierreDeudaDto acuerdo);
 		
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_OBTEN_PROCEDIMIENTO_BIEN_DERIVADO)
 	Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento);
@@ -221,6 +226,19 @@ public interface SubastaApi {
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_TAREA_EXISTE)
 	HistoricoProcedimiento tareaExiste(Procedimiento procedimiento, String nombreNodo);
 	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_ELIMINAR_BATCH_ACUERDO_CIERRE_DEUDA)
+	void eliminarBatchCierreDeudaAsunto(Long idAsunto);
+
 	@BusinessOperationDefinition(BO_NMB_SUBASTA_PARAMETRIZAR_LIMITE)
 	Parametrizacion parametrizarLimite(String nombreParametro);
+
+	@BusinessOperationDefinition(BO_NMB_GET_LIST_ERROR_PREVI_CDD_DATA)
+	List<DDResultadoValidacionCDD> getListErrorPreviCDDData();
+	
+	@BusinessOperationDefinition(BO_NMB_GET_LIST_ERROR_POST_CDD_DATA)
+	List<DDResultadoValidacionNuse> getListErrorPostCDDData();
+	
+	@BusinessOperationDefinition(BO_NMB_SUBASTA_GENERAR_ENVIO_CIERRE_DEUDA)
+	InformeValidacionCDDDto generarEnvioCierreDeuda(Subasta subasta, Long idBien, String origen);
+
 }

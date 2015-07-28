@@ -14,6 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -1929,8 +1930,15 @@ public class EditBienController {
 		String[] arrBien = idsBien.split(",");
 		if ("AGREGAR".equals(accion)) {
 			String[] arrCodSolvencia = codsSolvencia.split(",");
-			proxyFactory.proxy(BienApi.class).agregarBienes(idProcedimiento,
-					arrBien, arrCodSolvencia);
+			try{
+				proxyFactory.proxy(BienApi.class).agregarBienes(idProcedimiento, arrBien, arrCodSolvencia);
+			}
+			catch(DataIntegrityViolationException e){
+				logger.error(new Date() + "guardarAgregarExcluirBienPrc: " + e);
+			}
+			catch (Exception e) {
+				logger.error(new Date() + "guardarAgregarExcluirBienPrc: " + e);
+			}
 		} else {
 			proxyFactory.proxy(BienApi.class).excluirBienes(idProcedimiento,
 					arrBien);

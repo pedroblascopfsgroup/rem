@@ -43,7 +43,7 @@
 	var provision = label('provision', '<s:message code="asunto.tabcabecera.provision" text="**Provisión"/>');
 	var titulizada = label('titulizada','<s:message code="asunto.tabcabecera.titulizada" text="**Titulizada*"/>')
   	var fondo = label('fondo','<s:message code="asunto.tabcabecera.fondo" text="**Fondo"/>')
-  	var errorEnvioCDD = new Ext.form.Label({text : '', id : 'entidad-asunto-cdd', style: 'color:red; font-size:smaller' });
+        var msgErrorEnvioCDD = new Ext.form.Label({text : '', id : 'entidad-asunto-msgErrorEnvioCDD', style: 'color:red; font-size:smaller' });
   	
 	// formulario para editar el nombre del asunto.
 		
@@ -112,7 +112,7 @@
 		,items : [
 				  
 				  { items:[ panelNombreAsunto,codigoAsunto,fecha,estado,expediente,comite,tipoAsunto<sec:authorize ifAllGranted="PUEDE_VER_PROVISIONES">,provision</sec:authorize>]}
-				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador<sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">,titulizada,fondo</sec:authorize><sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,errorEnvioCDD</sec:authorize>]}
+				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador<sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">,titulizada,fondo</sec:authorize><sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,msgErrorEnvioCDD</sec:authorize>]}
 		 	 
 		]
 	});	
@@ -212,6 +212,24 @@
     		app.abreProcedimiento(id, nombre_procedimiento);
     	}
     });
+    
+    var reiniciarKOCDD =  function() {
+           Ext.Ajax.request({
+                   url: page.resolveUrl('extasunto/getMsgErrorEnvioCDDCabecera')
+                   ,method: 'POST'
+                   ,params:{
+                              idAsunto:panel.getAsuntoId()
+                           }
+                   ,success: function (result, request){
+                          msgErrorEnvioCDD.setText(''); 
+                           var r = Ext.util.JSON.decode(result.responseText);
+                           var h = r.okko == 'NoCDDError' ? '': r.okko;
+                           msgErrorEnvioCDD.setText(h);
+                   }
+           });
+   }
+
+	
 	
 	var panel = new Ext.Panel({
 		title:'<s:message code="asunto.tabcabecera.titulo" text="**Cabecera"/>'
@@ -251,14 +269,17 @@
 		entidad.setLabel("provision", sinoRender(data.toolbar.provision));
 		entidad.setLabel("titulizada", cabecera.titulizada);
 		entidad.setLabel("fondo", cabecera.fondo);
-		entidad.setLabel("cdd", (cabecera.errorEnvioCDD == 1 ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDD" text="**Este asunto tiene un error de envío a CDD" />' : ''));
+		entidad.setLabel("cdd", (cabecera.errorEnvioCDD != '' ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDDValidacionesPre" text="**Este asunto tiene un error de envío a CDD" /> '+cabecera.errorEnvioCDD : ''));
+                entidad.setLabel("msgErrorEnvioCDD", cabecera.msgErrorEnvioCDD == 'NoCDDError' ? '': cabecera.msgErrorEnvioCDD);
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;
 		}
 		entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
 		procedimientosStore.webflow({id:data.id});
-
+		
+		reiniciarKOCDD();
+		
 		// Muestra botones de ficha global o no
 		var buttonInformeFGConcurso = Ext.getCmp('btn-exportar-informes-asunto-fg-concurso');
 		var buttonInformeFGLitigio = Ext.getCmp('btn-exportar-informes-asunto-fg-litigio');

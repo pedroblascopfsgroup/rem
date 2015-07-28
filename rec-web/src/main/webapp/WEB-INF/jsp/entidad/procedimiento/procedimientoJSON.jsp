@@ -23,6 +23,7 @@
   	  <json:property name="tareaPendiente" value="${tareaPendiente!=null}" />
   	  <json:property name="descripcionTarea" value="${tareaPendiente.descripcionTarea}" />
 	  <json:property name="tareaPendienteId" value="${tareaPendiente.id}" />
+	  <json:property name="hayPrecontencioso" value="${precontencioso.id != null}" />
   </json:object>
   <json:object name="cabecera">
 	  <json:property name="asunto" value="${procedimiento.asunto.nombre}" />
@@ -87,5 +88,16 @@
   <json:object name="contratoPrincipal">
     <json:property name="codigoContrato" value="${contratoPrincipal.codigoContrato}" escapeXml="false"/>
   </json:object>
-  
+  <json:object name="precontencioso">
+  	<json:property name="id" value="${precontencioso.id}" />
+  	<json:property name="estadoActual" value="${precontencioso.estadoActual}" />
+	<json:property name="tipoPreparacionDesc" value="${precontencioso.tipoPreparacionDesc}" />
+	<json:property name="tipoProcPropuestoDesc" value="${precontencioso.tipoProcPropuestoDesc}" />
+	<json:property name="tipoProcIniciadoDesc" value="${precontencioso.tipoProcIniciadoDesc}" />
+	<json:property name="preturnado" value="${precontencioso.preturnado}" />
+	<json:property name="nombreExpJudicial" value="${precontencioso.nombreExpJudicial}" />
+	<json:property name="numExpInterno" value="${precontencioso.numExpInterno}" />
+	<json:property name="numExpExterno" value="${precontencioso.numExpExterno}" />
+	<json:property name="cntPrincipal" value="${precontencioso.cntPrincipal}" />
+  </json:object>
 </fwk:json>

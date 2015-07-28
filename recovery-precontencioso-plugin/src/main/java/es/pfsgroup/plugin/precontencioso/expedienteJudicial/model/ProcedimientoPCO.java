@@ -70,6 +70,9 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	@Column(name = "PCO_PRC_NUM_EXP_INT")
 	private String numExpInterno;
+	
+	@Column(name = "PCO_PRC_NUM_EXP_EXT")
+	private String numExpExterno;
 
 	@Column(name = "PCO_PRC_CNT_PRINCIPAL")
 	private String cntPrincipal;
@@ -169,6 +172,14 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setNumExpInterno(String numExpInterno) {
 		this.numExpInterno = numExpInterno;
+	}
+
+	public String getNumExpExterno() {
+		return numExpExterno;
+	}
+
+	public void setNumExpExterno(String numExpExterno) {
+		this.numExpExterno = numExpExterno;
 	}
 
 	public String getCntPrincipal() {

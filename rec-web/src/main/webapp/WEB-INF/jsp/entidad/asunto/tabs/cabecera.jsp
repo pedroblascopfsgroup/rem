@@ -229,6 +229,7 @@
            });
    }
 
+        
 	
         var btnCargaListaPrc=new Ext.Button({
             text:'<s:message code="plugin.mejoras.asuntos.cabecera.button.cargaPrc" text="**Cargar actuaciones" />'
@@ -236,6 +237,7 @@
             ,handler: function() {
                     entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
                     procedimientosStore.webflow({id:data.id});
+                    this.disabled = true;
                     }
             }
         );
@@ -246,12 +248,16 @@
 		,bodyStyle:'padding: 10px'
 		,items:[
 				DatosFieldSet
-                                ,btnCargaListaPrc
+				,btnCargaListaPrc
 				,procedimientosGrid
 			]
 		,nombreTab : 'cabeceraAsunto'
 	});
 
+        	panel.getValue = function(){
+	}
+        
+      
 	panel.procedimientosGrid=procedimientosGrid;
 
 	panel.getValue = function(){
@@ -301,7 +307,7 @@
 		}
 	
 	}
-
+        
 	return panel;
 })
 

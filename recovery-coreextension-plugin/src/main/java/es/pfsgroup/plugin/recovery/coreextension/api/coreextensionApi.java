@@ -181,7 +181,7 @@ public interface coreextensionApi {
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR_DE_USUARIO)
 	List<EXTDDTipoGestor> getListTipoGestorDeUsuario(Long idUsuario, boolean adicional, boolean procuradorAdicional);
 
-	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO)
-	List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(Long idTipoAct, Long prcId);
+	@BusinessOperationDefinition(GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO)
+	List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(String codigoTipoAct, Long prcId);
 	
 }

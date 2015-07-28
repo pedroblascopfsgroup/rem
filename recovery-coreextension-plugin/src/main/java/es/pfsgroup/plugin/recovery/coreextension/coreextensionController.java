@@ -262,9 +262,9 @@ public class coreextensionController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(ModelMap model, Long idTipoAct, Long prcId) {
+	public String getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(ModelMap model, String codigoTipoAct, Long prcId) {
 		
-		List<TipoProcedimiento> list = proxyFactory.proxy(coreextensionApi.class).getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(idTipoAct, prcId);
+		List<TipoProcedimiento> list = proxyFactory.proxy(coreextensionApi.class).getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(codigoTipoAct, prcId);
 		model.put("data", list);
 		
 		return JSON_LIST_TIPO_PROCEDIMIENTO;

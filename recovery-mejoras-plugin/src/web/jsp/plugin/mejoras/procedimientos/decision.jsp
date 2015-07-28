@@ -86,7 +86,7 @@
 	
 	tipoActuacion.on('select',function(){
 		var codigo=tipoActuacion.getValue();
-		optionsTipoProcedimientoStore.webflow({idTipoAct:codigo, prcId: idProcedimiento})
+		optionsTipoProcedimientoStore.webflow({codigoTipoAct:codigo, prcId: '${idProcedimiento}'})
 		comboTipoProcedimiento.reset();
 	});
 		

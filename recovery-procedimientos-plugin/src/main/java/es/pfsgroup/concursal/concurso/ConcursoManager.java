@@ -13,6 +13,7 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -517,18 +518,21 @@ public class ConcursoManager {
 				/* para cada expediente */
 				for (ExpedienteContrato ec : p.getExpedienteContratos()) {
 					/* busca creditos insinuados */
-					for (Credito c : creditoDao.findByContratoProcedimiento(
-							ec.getId(), p.getId())) {
-						//SUMAMOS TODOS LOS CREDITOS
-						if(tipoCredito.equalsIgnoreCase("0")){
-							resultado += c.getPrincipalDefinitivo();
-						}
-						else{
-							if (c.getTipoDefinitivo() != null
-									&& c.getTipoDefinitivo().getCodigo()
-									.equalsIgnoreCase(tipoCredito)) {
-								if (c.getPrincipalDefinitivo() != null)
-									resultado += c.getPrincipalDefinitivo();
+					List<Credito> listado = creditoDao.findByContratoProcedimiento(
+							ec.getId(), p.getId());
+					if(!Checks.estaVacio(listado)){
+						for (Credito c : listado) {
+							//SUMAMOS TODOS LOS CREDITOS
+							if(tipoCredito.equalsIgnoreCase("0")){
+								resultado += c.getPrincipalDefinitivo();
+							}
+							else{
+								if (c.getTipoDefinitivo() != null
+										&& c.getTipoDefinitivo().getCodigo()
+										.equalsIgnoreCase(tipoCredito)) {
+									if (c.getPrincipalDefinitivo() != null)
+										resultado += c.getPrincipalDefinitivo();
+								}
 							}
 						}
 					}

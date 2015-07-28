@@ -1,8 +1,10 @@
 package es.pfsgroup.recovery.ext.test.impl.procedimiento.EXTProcedimientoManager;
 
-import java.util.Random;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
-import static org.mockito.Mockito.*;
+import java.util.Random;
 
 import org.junit.After;
 import org.junit.Before;

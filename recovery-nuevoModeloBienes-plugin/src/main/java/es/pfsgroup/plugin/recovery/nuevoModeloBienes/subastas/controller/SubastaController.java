@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +23,16 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.DatosLoteCDD;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InfoBienesCDD;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoLoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -33,10 +40,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteBean;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.BienLoteDto;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.DatosLoteCDD;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InfoBienesCDD;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InformeValidacionCDDBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastaSareb.InformeSubastaSarebBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
@@ -95,6 +98,13 @@ public class SubastaController {
 		list.add(!habilitarEditInfoCDD(subasta));
 		map.put("disableBotonesCDD", list);
 		return DISABLED_BOTONES_CDD_JSON;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String reiniciarKOCDD(@RequestParam(value = "idAsunto", required = true) Long id, ModelMap map) {
+		subastaApi.eliminarBatchCierreDeudaAsunto(id);		
+		return DEFAULT;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -244,73 +254,65 @@ public class SubastaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String generarInformeValidacionCDD(
+	public String generarInformeCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+				.generarInformeValidacionCDD(idSubasta, idsBien);
 		return creaExcelValidacion(informe,model);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String generarInformeCierre(
+	public String enviarCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
-			ModelMap model) {
-
-		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
-		if(!informe.getValidacionOK()) {
-			return creaExcelValidacion(informe,model);
-		}else{
-			if(Checks.esNulo(idsBien)) {
-				List<BatchAcuerdoCierreDeuda> registrosBACDD = subastaApi.findRegistroCierreDeuda(idSubasta, null);
-				if(!Checks.estaVacio(registrosBACDD)) {
-					subastaApi.eliminarRegistroCierreDeuda(idSubasta, registrosBACDD);						
-				}else{
-					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null);
-				}
-			}else{
-				subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
-			}
-		}
-		return DEFAULT;
-	}
+			ModelMap model) {		
 	
-	private List<Long> obtenerBienEnviarCierre(String idsBien) {
-		List<Long> listIdsBien = new ArrayList<Long>();
-		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");			
-			for (String loteBien : arrLoteBien) {
-				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				listIdsBien.add(Long.valueOf(bien));
-			}
-		}
-		return listIdsBien;
-	}
-	
-	private InformeValidacionCDDBean rellenarInformeValidacionCDD(Long idSubasta, String idsBien) {
-		InformeValidacionCDDBean informe = new InformeValidacionCDDBean();
-		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
-		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");
+		// En caso de tener bienes informados (SAREB) validamos por bien, y finalmente generamos un informe
+		// global que será el que creará el excel		
+		
+		Subasta subasta = subastaApi.getSubasta(idSubasta);		
+		InformeValidacionCDDDto informe = null;
+		boolean resultadoGlobalOK = true;
+		
+		if(!Checks.esNulo(idsBien)) { // Si tenemos bienes informados (SAREB)
 			
-			for (String loteBien : arrLoteBien) {
-				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
-				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
-				listBienLote.add(dto);
+			String[] arrBienes = idsBien.split(",");
+			
+			for (String idBien:arrBienes) {				
+			
+				informe = proxyFactory.proxy(SubastaApi.class).generarEnvioCierreDeuda(subasta, Long.valueOf(idBien), BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
+				if(!informe.getValidacionOK()) {
+					resultadoGlobalOK = false;					
+				}
+			}			
+			if(!resultadoGlobalOK) { // Si hay algún bien con KO generamos el informe global que creará el excel
+				informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+						.generarInformeValidacionCDD(idSubasta, idsBien);				
 			}
-			informe.setBienesLote(listBienLote);
+			
+		} else { // Si no tenemos bienes, se trata como un único envio
+			
+			informe = subastaApi.generarEnvioCierreDeuda(subasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
+			if(!informe.getValidacionOK()) {
+				resultadoGlobalOK = false;					
+			}
 		}
-		informe.setProxyFactory(proxyFactory);
-		informe.setSubastaApi(subastaApi);
-		informe.setNmbProjectContext(nmbProjectContext);
-		informe.setIdSubasta(idSubasta);
-		informe.create();
-		return informe;
+		
+		// Si alguna validación es KO, generamos el excel		
+		if(!resultadoGlobalOK) {
+
+			return creaExcelValidacion(informe,model);
+			
+		} else {	
+			
+			return DEFAULT;
+		}
 	}
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -477,7 +479,7 @@ public class SubastaController {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	private String creaExcelValidacion(InformeValidacionCDDBean informe,ModelMap model){
+	private String creaExcelValidacion(InformeValidacionCDDDto informe,ModelMap model){
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		List<String> fila =new ArrayList<String>();
@@ -745,6 +747,22 @@ public class SubastaController {
 	    
         model.put("fileItem",excelFileItem);
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
+	}
+	
+	@RequestMapping
+	public String getListErrorPreviCDDData(ModelMap model){
+		List<DDResultadoValidacionCDD> list = proxyFactory.proxy(SubastaApi.class).getListErrorPreviCDDData();
+		model.put("data", list);
+		return DICCIONARIO_JSON;
+	}
+	
+	
+		
+	@RequestMapping
+	public String getListErrorPostCDDData(ModelMap model){
+		List<DDResultadoValidacionNuse> list = proxyFactory.proxy(SubastaApi.class).getListErrorPostCDDData();
+		model.put("data", list);
+		return DICCIONARIO_JSON;
 	}
 	
 }

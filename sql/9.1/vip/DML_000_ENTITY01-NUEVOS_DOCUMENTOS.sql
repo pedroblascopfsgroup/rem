@@ -47,6 +47,10 @@ DECLARE
       ,T_TIPO_TFA('DSPJ', 'Documentación con sello de presentación en el Juzgado', 'Documentación con sello de presentación en el Juzgado', 'TR') -- Trámite de mandamiento de cancelación de cargas
       ,T_TIPO_TFA('MCC', 'Mandato de cancelación de cargas', 'Mandato de cancelación de cargas', 'TR') -- Trámite de mandamiento de cancelación de cargas
       ,T_TIPO_TFA('SAP', 'Solicitud archivo procedimiento', 'Solicitud archivo procedimiento', 'TR') -- Trámite de mandamiento de cancelación de cargas
+      ,T_TIPO_TFA('PLALIQ', 'Plan de liquidación', 'Plan de liquidación', 'CO') -- Trámite de fase de liquidación
+      ,T_TIPO_TFA('AAPLIQ', 'Auto aprobando plan de liquidación', 'Auto aprobando plan de liquidación', 'CO') -- Trámite de fase de liquidación      
+      ,T_TIPO_TFA('INFRENCUE', 'Informe de rendición de cuentas', 'Informe de rendición de cuentas', 'CO') -- Trámite de fase de liquidación
+      ,T_TIPO_TFA('AUTCONCON', 'Auto de conclusión de concurso', 'Auto de conclusión de concurso', 'CO') -- Trámite de fase de liquidación
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

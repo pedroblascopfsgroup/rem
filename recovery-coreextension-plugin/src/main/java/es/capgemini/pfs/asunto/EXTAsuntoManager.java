@@ -57,6 +57,7 @@ import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfoImpl;
 import es.capgemini.pfs.core.api.registro.HistoricoProcedimientoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
@@ -69,6 +70,7 @@ import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -87,6 +89,7 @@ import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -98,6 +101,7 @@ import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
@@ -115,9 +119,9 @@ import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
+import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
-
 
 
 @Component
@@ -162,6 +166,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
 	private CoreProjectContext coreProjectContext;
+	
+	@Autowired
+    private EXTZonaDao extZonaDao;
 	
 	@Override
 	public String managerName() {
@@ -1951,7 +1958,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		//Obtenemos los TGE de las subtareas indicadas en el XML
 		for (String st : staC) {
 			
-			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(st)));
+			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
 			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
 			
 		}
@@ -2014,7 +2021,20 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		return false;
 	}
-        
+
+    /**
+     * Obtiene las zonas del nivel.
+     * @param idNivel id nivel
+     * @return zonas
+     */
+	@Override
+    @BusinessOperation(BO_ZONA_MGR_GET_ZONAS_POR_NIVEL_BY_CODIGO)
+    public List<DDZona> getZonasPorNivel(Integer codigoNivel) {
+        if (codigoNivel == null || codigoNivel.longValue() == 0) { return new ArrayList<DDZona>(); }
+        Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO))
+                .getCodigoZonas();
+        return extZonaDao.buscarZonasPorCodigoNivel(codigoNivel, codigoZonasUsuario);
+    }
         
 	@Override
 	@BusinessOperation(EXT_BO_MSG_ERROR_ENVIO_CDD)

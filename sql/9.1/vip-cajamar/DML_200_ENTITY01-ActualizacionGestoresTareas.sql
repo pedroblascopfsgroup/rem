@@ -43,6 +43,18 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGCTRGE','SCTRGE')
 ,T_TIPO_VALOR('H039','H039_registrarInformeAdmConcursal','TGESCON','SUCON')
 ,T_TIPO_VALOR('H039','H039_registrarConclusionConcurso','TGESCON','SUCON')
 ,T_TIPO_VALOR('H039','H039_ConclusionDecision','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_AutoDeclarandoConcurso','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_BPMTramiteFaseComunOrdinario','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_ConfirmarAdmision','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_ConfirmarNotificacionDemandado','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_RegistrarResolucion','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_RegistrarVista','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_ResolucionDecision','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_ResolucionFirme','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_RevisionEjecucionesParalizadas','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_SolicitudConcursal','TGESCON','SUCON')
+,T_TIPO_VALOR('H021','H021_registrarOposicion','TGESCON','SUCON')
+
 ); 
     V_TMP_TIPO T_TIPO_VALOR;
     

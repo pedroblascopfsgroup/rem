@@ -189,6 +189,17 @@
 		,{header : '<s:message code="asunto.tabcabecera.grid.demandados" text="**Demandados"/>', dataIndex : 'demandadosGrid' ,width:120}
 	]);
 	
+	var btnCargaListaPrc=new Ext.Button({
+	      text:'<s:message code="plugin.mejoras.asuntos.cabecera.button.cargaPrc" text="**Cargar actuaciones" />'
+	      ,iconCls:'icon_marcar_pte'
+	      ,handler: function() {
+	              procedimientosStore.webflow({id:data.id});
+	              this.disabled = true;
+	              }
+	      }
+	  );
+              
+	
 	var procedimientosGrid = app.crearGrid(procedimientosStore,procedimientosCm,{
 		title:'<s:message code="asunto.tabcabecera.grid.titulo" text="**Procedimientos"/>'
 		<app:test id="procedimientosGrid" addComa="true" />
@@ -197,6 +208,7 @@
 		,style:'padding-right: 5px'
 		,cls:'cursor_pointer'
 		,height : 250
+		,tbar:[btnCargaListaPrc]
 	});
 	
 	
@@ -231,16 +243,7 @@
 
         
 	
-        var btnCargaListaPrc=new Ext.Button({
-            text:'<s:message code="plugin.mejoras.asuntos.cabecera.button.cargaPrc" text="**Cargar actuaciones" />'
-            ,iconCls:'icon_marcar_pte'
-            ,handler: function() {
-                    procedimientosStore.webflow({id:data.id});
-                    this.disabled = true;
-                    }
-            }
-        );
-                
+          
 	var panel = new Ext.Panel({
 		title:'<s:message code="asunto.tabcabecera.titulo" text="**Cabecera"/>'
 		,autoHeight:true
@@ -292,6 +295,7 @@
 		}
 		
 		reiniciarKOCDD();
+		procedimientosStore.removeAll();
 		
 		// Muestra botones de ficha global o no
 		var buttonInformeFGConcurso = Ext.getCmp('btn-exportar-informes-asunto-fg-concurso');

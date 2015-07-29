@@ -49,6 +49,46 @@ DBMS_OUTPUT.PUT_LINE('[INFO] Borrado de registros para coherencia con Nuevo Func
 --
 -- Se opta por ELIMINAR todas las duplicidades por grupo ASU-PRC-BIE(NULL), dejando solo el registro
 -- más reciente por grupo
+--
+-- PRIMERO: Eliminamos las posibles relaciones NUSE de estos registros que vamos a limpiar de PIVOTE
+DBMS_OUTPUT.PUT('[INFO] COHERENCIA ASU-PRC (con BIE siempre NULO): Se eliminan los registros NUSE que relacionen con borrados de PIVOTE...');
+execute immediate
+'delete '||V_ESQUEMA||'.CDD_CRN_RESULTADO_NUSE ccnv
+where exists (
+    select dcrn.crn_id from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD dcnv
+    inner join '||V_ESQUEMA||'.CDD_CRN_RESULTADO_NUSE dcrn on dcnv.id_acuerdo_cierre = dcrn.id_acuerdo_cierre
+    where exists(
+        select 1
+        from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv
+        inner join (
+          select cnv1.asu_id, cnv1.prc_id
+          from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1
+          where cnv1.bie_id is null
+          group by cnv1.asu_id, cnv1.prc_id
+          having count(*) >1
+          )gcnv on cnv.asu_id = gcnv.asu_id and gcnv.prc_id = cnv.prc_id 
+        where cnv.bie_id is null
+        and cnv.id_acuerdo_cierre = dcnv.id_acuerdo_cierre
+    )
+    and not exists(
+        select 1
+        from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv
+        inner join (
+          select cnv1.asu_id, cnv1.prc_id, max(cnv1.id_acuerdo_cierre) miac
+          from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1
+          where cnv1.bie_id is null
+          group by cnv1.asu_id, cnv1.prc_id
+          having count(*) >1
+          )gcnv on cnv.asu_id = gcnv.asu_id and gcnv.prc_id = cnv.prc_id 
+        where cnv.bie_id is null
+        and gcnv.miac = dcnv.id_acuerdo_cierre
+    )
+and dcrn.crn_id = ccnv.crn_id
+)';
+DBMS_OUTPUT.PUT_LINE('OK'); 
+
+-- SEGUNDO: Borrado de registros de PIVOTE
+-- DEBE Borrar: --423 registros va a borrar en PRO
 DBMS_OUTPUT.PUT('[INFO] COHERENCIA ASU-PRC (con BIE siempre NULO): Se eliminan los duplicados y se deja 1 solo por grupo, el más reciente...');
 execute immediate
 'delete '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD dcnv
@@ -89,6 +129,46 @@ DBMS_OUTPUT.PUT_LINE('OK');
 --
 -- Se opta por ELIMINAR todas las duplicidades por grupo ASU-PRC-BIE(NULL), dejando solo el registro
 -- más reciente por grupo
+--
+-- PRIMERO: Eliminamos las posibles relaciones NUSE de estos registros que vamos a limpiar de PIVOTE
+DBMS_OUTPUT.PUT('[INFO] COHERENCIA ASU-PRC-BIE (con BIE siempre NO NULO): Se eliminan los registros NUSE que relacionen con borrados de PIVOTE...');
+execute immediate
+'delete '||V_ESQUEMA||'.CDD_CRN_RESULTADO_NUSE ccnv
+where exists (
+    select dcrn.crn_id from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD dcnv
+    inner join '||V_ESQUEMA||'.CDD_CRN_RESULTADO_NUSE dcrn on dcnv.id_acuerdo_cierre = dcrn.id_acuerdo_cierre
+    where exists(
+      select 1
+      from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv
+      inner join (
+        select cnv1.asu_id, cnv1.prc_id, cnv1.bie_id
+        from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1
+        where cnv1.bie_id is not null
+        group by cnv1.asu_id, cnv1.prc_id, cnv1.bie_id
+        having count(*) >1
+        )gcnv on cnv.asu_id = gcnv.asu_id and gcnv.prc_id = cnv.prc_id and cnv.bie_id = gcnv.bie_id
+      where cnv.bie_id is not null
+      and cnv.id_acuerdo_cierre = dcnv.id_acuerdo_cierre
+    )
+    and not exists(
+      select 1
+      from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv
+      inner join (
+        select cnv1.asu_id, cnv1.prc_id, cnv1.bie_id, max(id_acuerdo_cierre) miac
+        from '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1
+        where cnv1.bie_id is not null
+        group by cnv1.asu_id, cnv1.prc_id, cnv1.bie_id
+        having count(*) >1
+        )gcnv on cnv.asu_id = gcnv.asu_id and gcnv.prc_id = cnv.prc_id and cnv.bie_id = gcnv.bie_id
+      where cnv.bie_id is not null
+      and gcnv.miac = dcnv.id_acuerdo_cierre
+    )
+    and dcrn.crn_id = ccnv.crn_id
+)';
+DBMS_OUTPUT.PUT_LINE('OK'); 
+
+-- SEGUNDO: Borrado de registros de PIVOTE
+-- DEBE Borrar: -- 6884 REgistros se borrarán en PRO
 DBMS_OUTPUT.PUT('[INFO] COHERENCIA ASU-PRC-BIE (con BIE siempre NO NULO): Se eliminan los duplicados y se deja 1 solo por grupo, el más reciente...');
 execute immediate
 'delete '||V_ESQUEMA||'.CNV_AUX_CCDD_PR_CONV_CIERR_DD dcnv
@@ -119,6 +199,7 @@ and not exists(
   and gcnv.miac = dcnv.id_acuerdo_cierre
 )' ;
 DBMS_OUTPUT.PUT_LINE('OK'); 
+
 
 
 COMMIT;

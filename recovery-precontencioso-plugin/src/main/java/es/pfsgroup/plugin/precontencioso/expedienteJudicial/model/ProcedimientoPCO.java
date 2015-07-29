@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -99,12 +100,32 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
-	
+
 	@Version
 	private Integer version;
 
 	@Embedded
 	private Auditoria auditoria;
+
+	/**
+	 * Devuelve el <DDEstadoPreparacionPCO> en el que se encuentra el procedimiento
+	 */
+	public DDEstadoPreparacionPCO getEstadoActual () {
+		DDEstadoPreparacionPCO estadoActual = null;
+
+		// Recuperar estado actual por fecha inicio mas actual
+		Date fechaMasActual = null;
+		for (HistoricoEstadoProcedimientoPCO historicoEstado : estadosPreparacionProc) {
+			if (fechaMasActual == null || fechaMasActual.before(historicoEstado.getFechaInicio())) {
+				fechaMasActual = historicoEstado.getFechaInicio();
+				if (historicoEstado != null) {
+					estadoActual = historicoEstado.getEstadoPreparacion();
+				}
+			}
+		}
+
+		return estadoActual;
+	}
 
 	/*
 	 * GETTERS & SETTERS

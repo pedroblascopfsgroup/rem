@@ -37,6 +37,11 @@ public class ProcedimientoPCOAssembler {
 		procedimientoDto.setNumExpExterno(procedimiento.getNumExpExterno());
 		procedimientoDto.setCntPrincipal(procedimiento.getCntPrincipal());
 
+		// Descripcion estado actual
+		if (procedimiento.getEstadoActual() != null) {
+			procedimientoDto.setEstadoActual(procedimiento.getEstadoActual().getDescripcion());
+		}
+
 		// Tipo de preparacion
 		if (procedimiento.getTipoPreparacion() != null) {
 			procedimientoDto.setTipoPreparacionDesc(procedimiento.getTipoPreparacion().getDescripcion());
@@ -56,15 +61,6 @@ public class ProcedimientoPCOAssembler {
 		List<HistoricoEstadoProcedimientoDTO> historicoEstadosDto = historicoEstadosEntityToHistoricoEstadosDto(procedimiento.getEstadosPreparacionProc());
 
 		procedimientoDto.setEstadosPreparacionProc(historicoEstadosDto);
-
-		// Recuperar estado actual
-		Date fechaMasActual = null;
-		for (HistoricoEstadoProcedimientoDTO historicoEstadoProcedimientoDTO : historicoEstadosDto) {
-			if (fechaMasActual == null || fechaMasActual.before(historicoEstadoProcedimientoDTO.getFechaInicio())) {
-				fechaMasActual = historicoEstadoProcedimientoDTO.getFechaInicio();
-				procedimientoDto.setEstadoActual(historicoEstadoProcedimientoDTO.getEstado());
-			}
-		}
 
 		return procedimientoDto;
 	}

@@ -233,9 +233,8 @@
 	
         var btnCargaListaPrc=new Ext.Button({
             text:'<s:message code="plugin.mejoras.asuntos.cabecera.button.cargaPrc" text="**Cargar actuaciones" />'
-            ,iconCls:'icon_procedimiento'
+            ,iconCls:'icon_marcar_pte'
             ,handler: function() {
-                    entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
                     procedimientosStore.webflow({id:data.id});
                     this.disabled = true;
                     }

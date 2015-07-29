@@ -17,13 +17,13 @@
   <json:property name="puedeCrearRecurso" value="${puedeCrearRecurso}" />
   <json:property name="derivacionAceptada" value="${procedimiento.derivacionAceptada}" />
   <json:property name="nombreProcedimiento" value="${procedimiento.nombreProcedimiento}" />
+  <json:property name="hayPrecontencioso" value="${precontencioso.id != null}" />
   <json:object name="toolbar">
 	  <json:property name="fechaCreacionFormateada" value="${procedimiento.asunto.fechaCreacionFormateada}" />
 	  <json:property name="estadoItinerario" value="${procedimiento.asunto.estadoItinerario.descripcion}" />
   	  <json:property name="tareaPendiente" value="${tareaPendiente!=null}" />
   	  <json:property name="descripcionTarea" value="${tareaPendiente.descripcionTarea}" />
 	  <json:property name="tareaPendienteId" value="${tareaPendiente.id}" />
-	  <json:property name="hayPrecontencioso" value="${precontencioso.id != null}" />
   </json:object>
   <json:object name="cabecera">
 	  <json:property name="asunto" value="${procedimiento.asunto.nombre}" />

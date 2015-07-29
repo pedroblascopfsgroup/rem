@@ -47,13 +47,13 @@
 	var fechaInicio = label('fechaInicio', '<s:message code="procedimiento.tabcabecera.fechainicio" text="**Fecha Inicio"/>');
 	var contratoPase = label('contratoPase', '<s:message code="plugin.mejoras.procedimiento.tabcabecera.contratoPase" text="**Contrato pase"/>');
 	var nExpedienteInterno = label('nExpedienteInterno', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteInt" text="**Nro. expediente interno"/>');
-  
+
 	var panelAsunto = fieldset('<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>',
 		[{items:[asunto, despacho, fechaInicio, contratoPase]},
                  {items:[gestor,supervisor,procurador, nExpedienteInterno]}
 	]);
 
-	var nExpedienteExterno = label('estadoProcedimiento', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteExt" text="**Nro. expediente externo:"/>');
+	var nExpedienteExterno = label('nExpedienteExterno', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteExt" text="**Nro. expediente externo:"/>');
 	var estadoProcedimiento = label('estadoProcedimiento', '<s:message code="plugin.precontencioso.cabecera.estadoExpediente" text="**Estado del expediente"/>');
 	var procedimientoPropuesto = label('procedimientoPropuesto', '<s:message code="plugin.precontencioso.cabecera.procedimientoPropuesto" text="**Procedimiento propuesto"/>');
 	var procedimientoIniciado = label('procedimientoIniciado', '<s:message code="plugin.precontencioso.cabecera.procedimientoAiniciar" text="**Procedimiento a iniciar"/>');
@@ -310,8 +310,9 @@
 		refreshPrecontenciosoFields();
    	}
 
-	function refreshPrecontenciosoFields() {
-		if (data.toolbar.hayPrecontencioso) {
+	function refreshPrecontenciosoFields() 
+	{
+		if (data.hayPrecontencioso) {
 			storeHistoricoEstados.webflow({idProcedimiento: panel.getProcedimientoId()});
 
 			panelProcedimientoPrecontencioso.show();

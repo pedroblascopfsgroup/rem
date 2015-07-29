@@ -155,6 +155,19 @@ gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
 <%-- States --%>
 
 var actualizarBotones = function() {
+
+	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
+	if (entidad.actualId != null && entidad.get('data')) {
+		var estadoActualCodigoProcedimiento = entidad.get('data').precontencioso.estadoActualCodigo;
+		if (estadoActualCodigoProcedimiento == '') {
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(true);
+			return;
+		}
+	}
+
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
 
 	var estadoCodigo = '';
@@ -198,6 +211,7 @@ var actualizarBotones = function() {
 			btnDescartar.setDisabled(true);
 	}
 
+	// Se comprueba que la liquidacion tenga los datos contables informados.
 	if (liquidacion) {
 		var faltanDatosDeCalculo = liquidacion.get('capitalVencido') == "" 
 			|| liquidacion.get('capitalNoVencido') == ""

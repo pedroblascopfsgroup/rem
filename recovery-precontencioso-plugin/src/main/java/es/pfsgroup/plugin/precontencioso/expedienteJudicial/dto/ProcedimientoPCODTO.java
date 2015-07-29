@@ -10,6 +10,7 @@ public class ProcedimientoPCODTO extends WebDto {
 
 	private Long id;
 	private String estadoActual;
+	private String estadoActualCodigo;
 	private String tipoPreparacionDesc;
 	private String tipoProcPropuestoDesc;
 	private String tipoProcIniciadoDesc;
@@ -83,6 +84,12 @@ public class ProcedimientoPCODTO extends WebDto {
 	}
 	public void setEstadoActual(String estadoActual) {
 		this.estadoActual = estadoActual;
+	}
+	public String getEstadoActualCodigo() {
+		return estadoActualCodigo;
+	}
+	public void setEstadoActualCodigo(String estadoActualCodigo) {
+		this.estadoActualCodigo = estadoActualCodigo;
 	}
 	public String getNumExpExterno() {
 		return numExpExterno;

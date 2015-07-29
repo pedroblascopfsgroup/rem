@@ -91,6 +91,7 @@
   <json:object name="precontencioso">
   	<json:property name="id" value="${precontencioso.id}" />
   	<json:property name="estadoActual" value="${precontencioso.estadoActual}" />
+  	<json:property name="estadoActualCodigo" value="${precontencioso.estadoActualCodigo}" />
 	<json:property name="tipoPreparacionDesc" value="${precontencioso.tipoPreparacionDesc}" />
 	<json:property name="tipoProcPropuestoDesc" value="${precontencioso.tipoProcPropuestoDesc}" />
 	<json:property name="tipoProcIniciadoDesc" value="${precontencioso.tipoProcIniciadoDesc}" />

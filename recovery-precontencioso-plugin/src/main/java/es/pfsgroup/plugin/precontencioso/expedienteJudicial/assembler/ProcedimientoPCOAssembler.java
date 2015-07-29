@@ -37,9 +37,10 @@ public class ProcedimientoPCOAssembler {
 		procedimientoDto.setNumExpExterno(procedimiento.getNumExpExterno());
 		procedimientoDto.setCntPrincipal(procedimiento.getCntPrincipal());
 
-		// Descripcion estado actual
+		// Descripcion estado de preparacion actual
 		if (procedimiento.getEstadoActual() != null) {
 			procedimientoDto.setEstadoActual(procedimiento.getEstadoActual().getDescripcion());
+			procedimientoDto.setEstadoActualCodigo(procedimiento.getEstadoActual().getCodigo());
 		}
 
 		// Tipo de preparacion

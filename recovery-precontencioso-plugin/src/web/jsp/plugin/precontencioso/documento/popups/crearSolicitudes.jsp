@@ -50,7 +50,10 @@
 		
 	 	var parametros = {};
 	 	
-	 	parametros.id = ${dtoDoc.id};
+	 	var arrayIdDocumentos=new Array();	
+		arrayIdDocumentos = ${arrayIdDocumentos};		
+		var arrayIdDocumentos = Ext.encode(arrayIdDocumentos);		
+	 	parametros.arrayIdDocumentos = arrayIdDocumentos;
 	 	parametros.actor = comboUsuario.getValue();
 	 	if(fechaSolicitud.getValue()!=null && fechaSolicitud.getValue()!= '') parametros.fechaSolicitud = fechaSolicitud.getValue().format('d/m/Y');
 	 	parametros.tipogestor = comboTipoGestor.getValue();

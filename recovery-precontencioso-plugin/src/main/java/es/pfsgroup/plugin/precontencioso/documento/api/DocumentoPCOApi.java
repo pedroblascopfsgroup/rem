@@ -74,6 +74,15 @@ public interface DocumentoPCOApi {
 	void descartarDocumentos(Long idDocumento);
 	
 	/**
+	 * Cambiar estado Documento )
+	 * 
+	 * @param idDocumento
+	 * @param codigoEstado
+	 * 
+	 */
+	void cambiarEstadoDocumento(Long idDocumento, String codigoEstado);
+	
+	/**
 	 * Edita un documento 
 	 * 
 	 * @param DTO documento
@@ -158,7 +167,8 @@ public interface DocumentoPCOApi {
 	 * Anular solicitudes (borrar)
 	 * 
 	 * @param idSolicitud
+	 * @param idDocumento
 	 * 
 	 */
-	void anularSolicitudes(Long idSolicitud);	
+	void anularSolicitudes(Long idSolicitud, Long idDocumento);	
 }

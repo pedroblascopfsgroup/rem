@@ -249,14 +249,42 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	}
 	
 	/**
+	 * Cambiar estado documento
+	 * 
+	 * @param idDocumento
+	 * @param codigoEstado
+	 * 
+	 */
+	@Override
+	@Transactional(readOnly = false)	
+	public void cambiarEstadoDocumento(Long idDocumento, String codigoEstado) {
+		DocumentoPCO documento = documentoPCODao.get(idDocumento);
+		DDEstadoDocumentoPCO estadoDocumento = (DDEstadoDocumentoPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoDocumentoPCO.class, codigoEstado);
+
+		documento.setEstadoDocumento(estadoDocumento);
+		
+		documentoPCODao.saveOrUpdate(documento);
+	}
+	
+	/**
 	 * Anular solicitudes asociadas
 	 * 
 	 * @param idSolicitud
 	 */
 	@Override
 	@Transactional(readOnly = false)	
-	public void anularSolicitudes(Long idSolicitud){
-			genericDao.deleteById(SolicitudDocumentoPCO.class, idSolicitud);
+	public void anularSolicitudes(Long idSolicitud, Long idDocumento){
+		SolicitudDocumentoPCO solicitud = genericDao.get(SolicitudDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", idSolicitud));
+		
+		genericDao.deleteById(SolicitudDocumentoPCO.class, idSolicitud);
+		
+		// Si era la última solicitud del documento -> Cambiar el estado a PENDIENTE SOLICITAR		
+		DocumentoPCO documento = documentoPCODao.get(idDocumento); 
+		documento.getSolicitudes().remove(solicitud);
+		documentoPCODao.saveOrUpdate(documento);
+		if (documento.getSolicitudes().size() == 0){
+			cambiarEstadoDocumento(idDocumento, DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);			
+		}
 	}
 	
 	/**

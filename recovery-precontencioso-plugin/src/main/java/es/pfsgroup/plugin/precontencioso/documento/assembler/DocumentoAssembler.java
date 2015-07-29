@@ -35,7 +35,8 @@ public class DocumentoAssembler {
 				
 		solicitudDto.setIdDoc(documento.getId());
 		solicitudDto.setTieneSolicitud(tieneSolicitud);
-		solicitudDto.setEsDocumento(esDocumento);		
+		solicitudDto.setEsDocumento(esDocumento);	
+		solicitudDto.setCodigoEstadoDocumento(documento.getEstadoDocumento().getCodigo());
 
 		if (esDocumento){			
 			solicitudDto.setContrato(ugIdDto);

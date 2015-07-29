@@ -21,6 +21,7 @@ public class SolicitudDocumentoPCODto {
 	private String comentario;
 	private boolean esDocumento;
 	private boolean tieneSolicitud;
+	private String codigoEstadoDocumento;
 	
 	public Long getId() {
 		return id;
@@ -129,6 +130,12 @@ public class SolicitudDocumentoPCODto {
 	}
 	public void setTieneSolicitud(boolean tieneSolicitud) {
 		this.tieneSolicitud = tieneSolicitud;
+	}
+	public String getCodigoEstadoDocumento() {
+		return codigoEstadoDocumento;
+	}
+	public void setCodigoEstadoDocumento(String codigoEstadoDocumento) {
+		this.codigoEstadoDocumento = codigoEstadoDocumento;
 	}
 	
 }

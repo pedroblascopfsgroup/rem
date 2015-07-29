@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -46,6 +49,9 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 @Controller
 public class DocumentoPCOController {
 
+    @Autowired
+    private Executor executor;
+    
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
@@ -72,6 +78,9 @@ public class DocumentoPCOController {
 
 		idProcPCO = new Long(idProcedimientoPCO);
 		
+	    Procedimiento procedimiento = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idProcPCO);
+	    Long gestorAsuntoId = procedimiento.getAsunto().getGestor().getUsuario().getId();
+				
 		boolean esDocumento;	
 		boolean tieneSolicitud;
 		
@@ -99,6 +108,8 @@ public class DocumentoPCOController {
 		
 		model.put("solicitudesDocumento", solicitudesDoc);
 		
+
+
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
 
@@ -216,18 +227,7 @@ public class DocumentoPCOController {
 		List<DDUnidadGestionPCO> listaUG = null;
 		
 		IncluirDocumentoDto dto = new IncluirDocumentoDto();
-		
-//		dto.setAsiento("test_asiento");
-//		dto.setFinca("test_finca");
-//		dto.setFolio("test_folio");
-//		dto.setIdufir("test_idufir");
-//		dto.setLibro("test_libro");
-//		dto.setNotario("test_notario");
-//		dto.setNumFinca("test_numfinca");
-//		dto.setNumRegistro("test_numRegistro");
-//		dto.setProtocolo("test_protocolo");
-//		dto.setTomo("test_tomo");
-		
+	
 		// Lista tipo documentos
 		listaTipoDocumentos = documentoPCOApi.getTiposDocumento();
 		
@@ -264,18 +264,19 @@ public class DocumentoPCOController {
 	/**
 	 * Abrir Crear Solicitudes
 	 * 
-	 * @param idDocumento
+	 * @param arrayIdDocumentos
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String abrirCrearSolicitudes(
-			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
-		DocumentoPCODto docDto = new DocumentoPCODto();
-		docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
+	public String abrirCrearSolicitudes(WebRequest request, ModelMap model) {
+		//DocumentoPCODto docDto = new DocumentoPCODto();
+		//docDto = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
+		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");		
 		
-		model.put("dtoDoc", docDto);
+		//model.put("dtoDoc", docDto);
+		model.put("arrayIdDocumentos", arrayIdDocumentos);
 		model.put("DDResultado", proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class));
 		
 		return CREAR_SOLICITUDES;
@@ -284,34 +285,57 @@ public class DocumentoPCOController {
 	/**
 	 * Excluir Documentos
 	 * 
-	 * @param idDocumento
-	 * @param solicitudes
+	 * @param arrayIdDocumentos
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String excluirDocumentos(
-			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
+	public String excluirDocumentos(WebRequest request, ModelMap model) {
 		
-		documentoPCOApi.excluirDocumentosPorIdDocumentoPCO(idDocumento);
+		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");
+		
+		// Las cadenas de los arrays vienen con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadenas.
+		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);		
+		StringTokenizer stIdDoc;
+	
+		// Tratamos los documentos a excluir	
+		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");
+		Long idDocUG;
+		while (stIdDoc.hasMoreElements()){
+			idDocUG = new Long(stIdDoc.nextToken());		
+		
+			documentoPCOApi.excluirDocumentosPorIdDocumentoPCO(idDocUG);
+		}
 
 		return DEFAULT;
 	}
 		
 	/**
-	 * Descartar Documento
+	 * Descartar Documentos
 	 * 
-	 * @param idDocumento
+	 * @param arrayIdDocumentos
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String descartarDocumentos(
-			@RequestParam(value = "idDocumento", required = true) Long idDocumento, ModelMap model) {
+	public String descartarDocumentos(WebRequest request, ModelMap model) {
 		
-		documentoPCOApi.descartarDocumentos(idDocumento);
+		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");
+		
+		// Las cadenas de los arrays vienen con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadenas.
+		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);		
+		StringTokenizer stIdDoc;
+	
+		// Tratamos los documentos a descartar	
+		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");
+		Long idDocUG;
+		while (stIdDoc.hasMoreElements()){
+			idDocUG = new Long(stIdDoc.nextToken());
+			
+			documentoPCOApi.descartarDocumentos(idDocUG);
+		}
 		
 		return DEFAULT;
 	}
@@ -319,16 +343,34 @@ public class DocumentoPCOController {
 	/**
 	 * Anular Solicitudes
 	 * 
-	 * @param idSolicitud
+	 * @param arrayIdSolicitudes
 	 * @param model
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String anularSolicitudes(
-			@RequestParam(value = "idSolicitud", required = true) Long idSolicitud, ModelMap model) {
+	public String anularSolicitudes(WebRequest request, ModelMap model) {
+
+		String arrayIdSolicitudes=request.getParameter("arrayIdSolicitudes");
+		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");
 		
-		documentoPCOApi.anularSolicitudes(idSolicitud);
+		// Las cadenas de los arrays vienen con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadenas.
+		arrayIdSolicitudes = arrayIdSolicitudes.substring(1, arrayIdSolicitudes.length()-1);		
+		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);			
+		StringTokenizer stIdSol;
+		StringTokenizer stIdDoc;
+	
+		// Tratamos las solicitudes a anular	
+		stIdSol = new StringTokenizer(arrayIdSolicitudes,",");
+		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");		
+		Long idSolicitud;
+		Long idDocumento;
+		while (stIdSol.hasMoreElements()){
+			idSolicitud = new Long(stIdSol.nextToken());	
+			idDocumento = new Long(stIdDoc.nextToken());
+			
+			documentoPCOApi.anularSolicitudes(idSolicitud, idDocumento);			
+		}
 		
 		return DEFAULT;
 	}
@@ -444,44 +486,43 @@ public class DocumentoPCOController {
 	 */
 	@RequestMapping	
 	public String saveCrearSolicitudes(WebRequest request ,ModelMap model) {
-		//SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		
-		String idDoc = request.getParameter("id");
+		String arrayIdDocumentos = request.getParameter("arrayIdDocumentos");
 		String fechaSolicitud = request.getParameter("fechaSolicitud");
-		//String fechaResultado = request.getParameter("fechaResultado");
-		//String fechaEnvio = request.getParameter("fechaEnvio");
-		//String fechaRecepcion = request.getParameter("fecharecepcion");
 		String idTipoGestor = request.getParameter("tipogestor");
 		String idDespacho = request.getParameter("idDespacho");
 		
 		Date fechaSolicitudDate = null;
-//		Date fechaResultadoDate = null;
-//		Date fechaEnvioDate = null;
-//		Date fechaRecepcionDate = null;
-
 		try {
 			fechaSolicitudDate = webDateFormat.parse(fechaSolicitud);
-			//fechaResultadoDate = webDateFormat.parse(fechaResultado);
-			//fechaEnvioDate = webDateFormat.parse(fechaEnvio);
-			//fechaRecepcionDate = webDateFormat.parse(fechaRecepcion);
 		} catch (ParseException e) {
 			logger.error(e.getLocalizedMessage());
 			return DEFAULT;
 		}
 		
-		SolicitudPCODto solDto;	
-		solDto = new SolicitudPCODto();		
-		solDto.setIdDoc(new Long(idDoc));
-		solDto.setActor(request.getParameter("actor"));
-		solDto.setFechaSolicitud(fechaSolicitudDate);
-		//solDto.setFechaResultado(fechaResultadoDate);
-		//solDto.setFechaEnvio(fechaEnvioDate);
-		//solDto.setFechaRecepcion(fechaRecepcionDate);
-		solDto.setResultado(request.getParameter("resultado"));
-		solDto.setIdTipoGestor(new Long(idTipoGestor));
-		solDto.setIdDespachoExterno(new Long(idDespacho)); 
-
-		documentoPCOApi.saveCrearSolicitudes(solDto);
+		// Las cadenas de los arrays vienen con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadenas.
+		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);		
+		StringTokenizer stIdDoc;
+	
+		// Tratamos los documentos a descartar	
+		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");
+		Long idDoc;
+		while (stIdDoc.hasMoreElements()){
+			idDoc = new Long(stIdDoc.nextToken());		
+			SolicitudPCODto solDto;	
+			solDto = new SolicitudPCODto();		
+			solDto.setIdDoc(new Long(idDoc));
+			solDto.setActor(request.getParameter("actor"));
+			solDto.setFechaSolicitud(fechaSolicitudDate);
+			solDto.setResultado(request.getParameter("resultado"));
+			solDto.setIdTipoGestor(new Long(idTipoGestor));
+			solDto.setIdDespachoExterno(new Long(idDespacho)); 
+	
+			documentoPCOApi.saveCrearSolicitudes(solDto);
+		
+			// Cambiar documento a estado SOLICITADO
+			documentoPCOApi.cambiarEstadoDocumento(new Long(idDoc), DDEstadoDocumentoPCO.SOLICITADO);
+		}
 			
 		return DEFAULT;
 	}

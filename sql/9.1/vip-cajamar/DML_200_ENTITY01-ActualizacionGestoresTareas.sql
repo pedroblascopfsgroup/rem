@@ -39,6 +39,10 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGCTRGE','SCTRGE')
 ,T_TIPO_VALOR('H033','H033_decidirPresentarObs','TSUCON','DIRCON')
 ,T_TIPO_VALOR('H033','H033_presentarObs','TGESCON','SUCON')
 ,T_TIPO_VALOR('H033','H033_regInformeTrimestral1','TGESCON','SUCON')
+,T_TIPO_VALOR('H039','H039_registrarCausaConclusion','TGESCON','SUCON')
+,T_TIPO_VALOR('H039','H039_registrarInformeAdmConcursal','TGESCON','SUCON')
+,T_TIPO_VALOR('H039','H039_registrarConclusionConcurso','TGESCON','SUCON')
+,T_TIPO_VALOR('H039','H039_ConclusionDecision','TGESCON','SUCON')
 ); 
     V_TMP_TIPO T_TIPO_VALOR;
     

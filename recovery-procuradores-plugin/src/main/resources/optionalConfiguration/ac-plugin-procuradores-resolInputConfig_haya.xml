@@ -438,52 +438,52 @@
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
 			<map>				
-				<entry key="R_SOL_CER_CARG">
+				<entry key="R_CER_DOM_CAR">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_SOL_CER_CARG</value>
+								<value>I_CER_DOM_CAR</value>
 							</property>
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_REG_CERT_CARG">
+				<entry key="R_REG_CER_CAR">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_REG_CERT_CARG</value>
+								<value>I_REG_CER_CAR</value>
 							</property>
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_SOL_INF_CARG">
+				<entry key="R_INF_CAR_ANT">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_SOL_INF_CARG</value>
+								<value>I_INF_CAR_ANT</value>
 							</property>
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_REG_INF_CARG">
+				<entry key="R_CNT_CAR_ANT">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_REG_INF_CARG</value>
+								<value>I_CNT_CAR_ANT</value>
 							</property>
 						</bean>
 					</list>
 				</entry>
-				<entry key="R_REQ_MAS_INFO">
+				<entry key="R_SOL_INF_CANT">
 					<list>
 						<bean
 							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
 							<property name="codigoInput">
-								<value>I_REQ_MAS_INFO</value>
+								<value>I_SOL_INF_CANT</value>
 							</property>
 						</bean>
 					</list>

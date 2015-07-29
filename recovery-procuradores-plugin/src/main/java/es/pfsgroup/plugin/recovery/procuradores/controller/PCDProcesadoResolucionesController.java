@@ -9,8 +9,10 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
@@ -64,14 +66,15 @@ import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.MEJGenericFormManager
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoResolucionesApi;
+import es.pfsgroup.plugin.recovery.procuradores.busqueda.api.MSVAsuntoAllApi;
 import es.pfsgroup.plugin.recovery.procuradores.configuracion.api.ConfiguracionDespachoExternoApi;
 import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
+import es.pfsgroup.procedimientos.model.DDIndebidaExcesiva;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.bpmframework.config.model.RecoveryBPMfwkDDTipoAccion;
 import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.model.RecoveryBPMfwkDatosProcedimiento;
 import es.capgemini.devon.exception.FrameworkException;
-import es.pfsgroup.procedimientos.model.DDIndebidaExcesiva;
 
 /**
  * @author manuel
@@ -145,7 +148,7 @@ public class PCDProcesadoResolucionesController {
 	
 	private static final String CODIGO_AUTOTAREA = "RESOL_ESP_AUTOTAREA";
 	
-	private static final String CODIGO_AUTOPRORROGA = "RESOL_PROCU_AUTO";
+	public static final String CODIGO_AUTOPRORROGA = "RESOL_PROCU_AUTO";
 	
 	private static final String CODIGO_NOTIFICACION = "RESOL_ESP_NOTI";
 	
@@ -177,7 +180,9 @@ public class PCDProcesadoResolucionesController {
 	
 	public static final String JSON_VALIDACION = "plugin/procuradores/datosValidacionResolucionJSON";
 	
-	
+	private static final String JSON_LISTA_INDEBIDAS = "plugin/procuradores/listaIndebidasJSON";
+
+	private static final String JSON_GRABAR_PROCESAR_ERROR = "plugin/procuradores/datosResolucionErrorJSON";
 	
 	
 	@Autowired
@@ -197,6 +202,9 @@ public class PCDProcesadoResolucionesController {
 	
 	@Autowired
 	private MEJGenericFormManager mejGenericFormManager;
+
+	@Autowired
+	private PCDProcesadoResolucionesApi pcdProcesadoResolucionesApi;
 	
 	
 	/**
@@ -461,54 +469,15 @@ public class PCDProcesadoResolucionesController {
 		dtoResolucion.setCamposDinamicos(camposDinamicos);
 		dtoResolucion.setIdResolucion(this.getIdResolucion(enu));
 		
-		// MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
-		MSVResolucion msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
-		
 		try{
-			
-			//Se sobreescribe el fichero del procurador.
-			if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
-			{
-				apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
-				msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
-			}else{
-				//El gestor adjunta un fichero y no había
-				if(!Checks.esNulo(dtoResolucion.getIdFichero()))
-				{
-					msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
-				//No se adjunta ningún fichero.
-				}else{
-					  msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarResolucion(dtoResolucion);
-				}
-			}
-				
-			
-			dtoResolucion.setIdTarea(msvResolucion.getTarea().getId());
-			if(msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
-			{
-				apiProxyFactory.proxy(PCDProcesadoResolucionesApi.class).generarAutoprorroga(dtoResolucion);
-			}
-			
-			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(msvResolucion.getId());
-		}catch(Exception e){
-			e.printStackTrace();
-			String resultadoProceso = MSVDDEstadoProceso.CODIGO_ERROR;
-			dtoResolucion.setEstadoResolucion(resultadoProceso);
-			pcdResolucionProcuradorApi.guardarResolucion(dtoResolucion);
-		}
-		
-		try{		
-			if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA) && !msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO"))
-			{
-				DtoGenericForm dto = this.rellenaDTO(msvResolucion);
-				executor.execute("genericFormManager.saveValues",dto);
-			}
+			pcdProcesadoResolucionesApi.procesar(dtoResolucion);
 			//model.put("resolucion", msvResolucion);
 		}catch(FrameworkException e){
 			model.put("validacion", e.getMessage().substring(e.getMessage().indexOf(':')+1));
 			String resultadoProceso = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
 			dtoResolucion.setEstadoResolucion(resultadoProceso);
 			pcdResolucionProcuradorApi.guardarResolucion(dtoResolucion);
+			return JSON_GRABAR_PROCESAR_ERROR;
 		}catch(Exception e){
 			model.put("validacion", e.getMessage().substring(e.getMessage().indexOf(':')+1));
 			String resultadoProceso = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
@@ -595,48 +564,21 @@ public class PCDProcesadoResolucionesController {
 	 * @return
 	 * @throws Exception 
 	 */
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-	public String procesarResolucion(Long idResolucion, ModelMap model) throws Exception{
-		
+//	@SuppressWarnings("unchecked")
+//	@RequestMapping
+//	public String procesarResolucion(Long idResolucion, ModelMap model) throws Exception{
+//		
+//
+//		MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(idResolucion);
+//		
+//		DtoGenericForm dto = this.rellenaDTO(msvResolucion);
+//		executor.execute("genericFormManager.saveValues",dto);
+//
+//		model.put("resolucion", msvResolucion);
+//		return JSON_GRABAR_PROCESAR;
+//	}
 
-		MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(idResolucion);
-		
-		DtoGenericForm dto = this.rellenaDTO(msvResolucion);
-		executor.execute("genericFormManager.saveValues",dto);
 
-		model.put("resolucion", msvResolucion);
-		return JSON_GRABAR_PROCESAR;
-	}
-
-	private DtoGenericForm rellenaDTO(MSVResolucion msvResolucion) {
-		
-		GenericForm genericForm = apiProxyFactory.proxy(GenericFormManagerApi.class).get(msvResolucion.getTarea().getId());
-		Set<MSVCampoDinamico> camposDinamicos = msvResolucion.getCamposDinamicos();
-		
-		DtoGenericForm dto = new DtoGenericForm();		
-		dto.setForm(genericForm);
-		String[] valores = new String[genericForm.getItems().size()];
-		for (int i = 0; i < genericForm.getItems().size(); i++) {
-			GenericFormItem gfi = genericForm.getItems().get(i);
-			String nombreCampo = "d_"+gfi.getNombre();
-			for (Iterator<MSVCampoDinamico> iterator = camposDinamicos.iterator(); iterator.hasNext();) {
-				MSVCampoDinamico msvCampoDinamico = iterator.next();
-				if (nombreCampo.equals(msvCampoDinamico.getNombreCampo())){
-					String valorCampo = msvCampoDinamico.getValorCampo();
-					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")){
-						valorCampo = valorCampo.substring(6,10) + "-" + valorCampo.substring(3,5) + "-" + valorCampo.substring(0,2);
-					}
-					valores[i] = valorCampo;  
-					break;                      
-				}
-			}
-			
-		}
-		
-		dto.setValues(valores);
-		return dto;
-	}
 
 
 
@@ -648,13 +590,16 @@ public class PCDProcesadoResolucionesController {
      */
     @SuppressWarnings("unchecked")
     @RequestMapping
-    public String getAsuntosInstant(String query, ModelMap model) {
+    public String getAsuntosInstant(Boolean check, String query, ModelMap model) {
     	
-        model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntos(query));
-       
+    	if(check)
+    		model.put("data", apiProxyFactory.proxy(MSVAsuntoAllApi.class).getAsuntos(query));
+    	else
+    		model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntos(query));
         
         return JSON_LISTA_ASUNTOS;
     }
+    
     
 	/**
      * Metodo que devuelve los tipos de resoluci�n disponibles para una tarea dada.
@@ -978,9 +923,9 @@ public class PCDProcesadoResolucionesController {
     	
     	List<DDIndebidaExcesiva> ddIndebidaExcesiva = apiProxyFactory.proxy(MSVDiccionarioApi.class).dameValoresDiccionario(DDIndebidaExcesiva.class);
     	
-    	model.put("ddIndebidaExcesiva", ddIndebidaExcesiva);
+    	model.put("listaIndebidas", ddIndebidaExcesiva);
     	
-    	return JSON_LISTA_DICCIONARIO_GENERICO_PAGE;
+    	return JSON_LISTA_INDEBIDAS;
     }
     
     

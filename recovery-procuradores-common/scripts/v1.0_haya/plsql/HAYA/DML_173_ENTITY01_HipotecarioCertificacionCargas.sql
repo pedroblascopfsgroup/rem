@@ -59,6 +59,7 @@ DECLARE
     	T_INPUT('d_numAutos','numAutos'), -- Está siempre en el factoria, no eliminar.
     	T_INPUT('d_fecha','fecha'),
     	T_INPUT('d_cargasPrevias','cargasPrevias'),
+    	T_INPUT('d_cuantiaCargasPrevias','cuantiaCargasPrevias'),
     	T_INPUT('d_observaciones','observaciones') -- Está siempre en el factoria, no eliminar.
     );
     V_TMP_T_INPUT T_INPUT;

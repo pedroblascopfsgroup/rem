@@ -46,6 +46,37 @@ onViewClick : function(doFocus){
     
     var recordSelect;
     
+    var checkTodos=new Ext.form.Checkbox({
+		name:'checkTodos'
+		,handler:function(){
+			if(this.getValue())
+			{
+				filtroAsunto.lastQuery = '';
+			}else{
+				filtroAsunto.lastQuery = '';
+			}
+			}
+		,fieldLabel:'<s:message code="procuradores.todos" text="Todos" />'			
+	});	
+	
+	var filtroCheck = new Ext.form.FieldSet({
+    	autoHeight:'true'
+        ,style:'padding:0px'
+        ,border:false
+        ,layout : 'table'
+        ,layoutConfig:{
+            columns:3
+        }
+        ,width:950
+        ,defaults : {layout:'form',border: false,bodyStyle:'padding: 10px 5px 0px 10px'} 
+        ,items : [
+                 {	 labelWidth: 50,     
+                     items:[ checkTodos ]
+                 }
+            ]
+    });   
+	
+	
     var tipoResolucionRecord = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'codigo'}
@@ -438,8 +469,10 @@ onViewClick : function(doFocus){
             
     //Store del combo de asuntos
     var busquedaActiva = false;
+  
+	
     var asuntosComboStore = page.getStore({
-        flow:'pcdprocesadoresoluciones/getAsuntosInstant'
+    	flow: 'pcdprocesadoresoluciones/getAsuntosInstant'
         ,remoteSort:false
         ,autoLoad: false
         ,reader : new Ext.data.JsonReader({
@@ -447,6 +480,7 @@ onViewClick : function(doFocus){
             ,fields:['id','idAsunto','idProcedimiento','principal','nombre','plaza','juzgado','auto','tipoPrc','codEstadoPrc','desEstadoPrc','idTarea', 'tarTarea']
         })
     });    
+    
     
     asuntosComboStore.on('beforeload', function(store, options){
     	if (busquedaActiva){
@@ -460,7 +494,6 @@ onViewClick : function(doFocus){
 		
     });
     
-   
     asuntosComboStore.on('load', function(store, records, options){
     	//debugger;
     	//filtroAsunto.setDisabled(false);
@@ -468,7 +501,7 @@ onViewClick : function(doFocus){
     	//return false;
     	busquedaActiva = false;		
     });
-
+    
     //Combo de asuntos
     var filtroAsunto = new Ext.form.ComboBox({
         name: 'asunto' 
@@ -523,12 +556,12 @@ onViewClick : function(doFocus){
     });
     
     filtroAsunto.on('specialkey', function(field, event){
-    	
 		if (event.getKey() == event.ENTER) {
-			//debugger;
 			var query = this.getValue();
 			if (query != null && query.length > 2 && query != this.lastQuery){
+				asuntosComboStore.webflow({check: checkTodos.getValue(), query: query})
 				this.doQuery(query,true);
+				//debugger;
 			}
         }
         
@@ -654,7 +687,7 @@ onViewClick : function(doFocus){
         autoHeight:'true'
         ,style:'padding:0px'
         ,title:'Buscador del Asunto'
-         ,border:true
+        ,border:true
         ,layout : 'table'
         ,layoutConfig:{
             columns:1
@@ -662,6 +695,9 @@ onViewClick : function(doFocus){
         ,width:950
         ,defaults : {layout:'form',border: false,bodyStyle:'padding:0px'} 
         ,items : [
+                 {     
+                     items:[ filtroCheck ]
+                 },
                  {     
                      items:[ filtroPanel2 ]
                  },

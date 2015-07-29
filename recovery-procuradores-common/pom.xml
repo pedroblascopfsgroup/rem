@@ -135,7 +135,11 @@
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
- -->		
+ -->
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procedimientos-bpmHaya</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

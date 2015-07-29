@@ -226,6 +226,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	resolucionesSinAdjunto.push({idResolucion:282, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:242, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:249, validateFunction:null});
+    	resolucionesSinAdjunto.push({idResolucion:343, validateFunction:null});
     	resolucionesSinAdjunto.push({idResolucion:206, validateFunction:function(v){
 			if(Ext.getCmp('d_comboResultado' + idf).getValue() == "02"){
 				return true;
@@ -242,7 +243,6 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 					return true;
 		}}});
     	resolucionesSinAdjunto.push({idResolucion:229, validateFunction:function(v){
-    		
     		if(Ext.getCmp('d_comboImpugnacion' + idf).getValue() == "02"){
     			return true;
     		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
@@ -251,6 +251,44 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     				return false;
     			}
     		}});
+    	resolucionesSinAdjunto.push({idResolucion:309, validateFunction:function(v){
+    		if(Ext.getCmp('d_comboOposicion' + idf).getValue() == "02"){
+    			return true;
+    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+    				return true;
+    			}else{
+    				return false;
+    			}
+    		}});
+    	resolucionesSinAdjunto.push({idResolucion:337, validateFunction:function(v){
+    		if(Ext.getCmp('d_comboSiNo' + idf).getValue() == "02"){
+    			return true;
+    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+    				return true;
+    			}else{
+    				return false;
+    			}
+    		}});
+    	resolucionesSinAdjunto.push({idResolucion:339, validateFunction:function(v){
+    		if(Ext.getCmp('d_comboSiNo' + idf).getValue() == "02"){
+    			return true;
+    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+    				return true;
+    			}else{
+    				return false;
+    			}
+    		}});
+    	resolucionesSinAdjunto.push({idResolucion:289, validateFunction:function(v){
+    		if(Ext.getCmp('d_comboResultado' + idf).getValue() == "02"){
+    			return true;
+    		}else if(Ext.getCmp('file_upload_ok').getValue() != ""){
+    				return true;
+    			}else{
+    				return false;
+    			}
+    		}});
+    	
+    	
 
 //    	
 //    	resolucionesSinAdjunto.push({idResolucion:253, validateFunction:function(v){
@@ -697,19 +735,19 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		} , DDCorrectoCobro)
 	});
     
-    
     ////storeDDIndebidaExcesiva
     var DDIndebidaExcesiva = Ext.data.Record.create([
                                                 	{id:'id'}
   	                                        	,{name:'codigo'}
 													,{name:'descripcion'}
+													,{name:'descripcionLarga'}
 													 ]);
 
 
   this.storeDDIndebidaExcesiva= new Ext.data.Store({
 	url:'/pfs/pcdprocesadoresoluciones/getIndebidaExcesiva.htm'
 		,reader: new Ext.data.JsonReader({
-			root : 'diccionario'
+			root : 'listaIndebidas'
 		} , DDIndebidaExcesiva)
 	});
 
@@ -1163,8 +1201,24 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	this.arrayCampos.push([
 	                       {"xtype":'combo',"store":storeSINO, "name":"d_comboCelebrada","fieldLabel":"Celebrada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCelebrada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO, "name":"d_comboPostores","fieldLabel":"Postores",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboPostores'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDecisionSuspension, "name":"d_comboDecisionSuspension","fieldLabel":"Decisión suspensión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDecisionSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+		   		   				,validator : function(v) {
+			               	   		if(Ext.getCmp('d_comboCelebrada' + idFactoria).getValue() == "02" && Ext.getCmp('d_comboDecisionSuspension' + idFactoria).getValue() == ""){
+			               	   			return false;
+			               	   		}else{
+			               	   			return true;
+			               	   		}
+		      					}
+				   			}
+	                       ,{"xtype":'combo',"store":this.storeMotivosSuspension, "name":"d_comboMotivoSuspension","fieldLabel":"Motivo suspensión",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboMotivoSuspension'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+		   		   				,validator : function(v) {
+			               	   		if(Ext.getCmp('d_comboCelebrada' + idFactoria).getValue() == "02" && Ext.getCmp('d_comboMotivoSuspension' + idFactoria).getValue() == ""){
+			               	   			return false;
+			               	   		}else{
+			               	   			return true;
+			               	   		}
+		      					}
+				   			}
 	                      ]);
 	
 	// id: 219 : TRAMITE SUBASTA A TERCEROS: Solicitud mandamiento de pago
@@ -1251,14 +1305,18 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
       					}	
 	   				}
 //	   				,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"con_vista_si_no","fieldLabel":"Vista",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'con_vista_si_no'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	   				,{"xtype":'datefield',"name":"d_vistaImpugnacion","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:"d_vistaImpugnacion"+this.idFactoria 
-	                 	   ,validator : function(v) {
-		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" /*&& Ext.getCmp('con_vista_si_no' + idFactoria).getValue() == "01"*/ && Ext.getCmp('d_vistaImpugnacion' + idFactoria).getValue() == ""){
-		               	   			return false;
-		               	   		}else{
-		               	   			return true;
-		               	   		}
-	      					}	
+	   				,{"xtype":'datefield',"name":"d_vistaImpugnacion","fieldLabel":"Fecha vista",allowBlank:true, filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:"d_vistaImpugnacion"+this.idFactoria 
+                     	   ,validator : function(v) {
+	                     		   	if(this.esProcurador)
+	                     			   return true;
+  	                     		   	else{
+				               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" /*&& Ext.getCmp('con_vista_si_no' + idFactoria).getValue() == "01"*/ && Ext.getCmp('d_vistaImpugnacion' + idFactoria).getValue() == ""){
+				               	   			return false;
+				               	   		}else{
+				               	   			return true;
+				               	   		}
+  	                     		   	}
+                     	   }
 	   				}
 	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:true,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
 	                 	   ,validator : function(v) {
@@ -1475,14 +1533,14 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 253 : TRAMITE MORATORIA DE LANZAMIENTO: Registrar admisión y emplazamiento
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboAdminEmplaza","fieldLabel":"Admisión y emplazamiento",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdminEmplaza'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboVista","fieldLabel":"Vista",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboVista'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
-//	                    	   ,validator : function(v) {
-//	                    	   		if(Ext.getCmp('d_comboAdminEmplaza' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboVista' + idFactoria).getValue() == ""){
-//	                    	   			return false;
-//	                    	   		}else{
-//	                    	   			return true;
-//	                    	   		}
-//	           					}   
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboVista","fieldLabel":"Vista",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboVista'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                    	   ,validator : function(v) {
+	                    	   		if(Ext.getCmp('d_comboAdminEmplaza' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboVista' + idFactoria).getValue() == ""){
+	                    	   			return false;
+	                    	   		}else{
+	                    	   			return true;
+	                    	   		}
+	           					}   
 	                       }
 	                       ,{"xtype":'datefield',"name":"d_fechaNotificacion","fieldLabel":"Fecha de notificación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fechaNotificacion'+this.idFactoria
 //	                    	   ,validator : function(v) {
@@ -1923,7 +1981,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 289 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Solicitar información cargas anteriores
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboResultado","fieldLabel":"Solicitada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       	,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id : 'd_fecha' + idFactoria
+		                    	   ,validator : function(v) {
+		                    	   		if(Ext.getCmp('d_comboResultado' + idFactoria).getValue() == "01" && Ext.getCmp('d_fecha' + idFactoria).getValue() == ""){
+		                    	   			return false;
+		                    	   		}else{
+		                    	   			return true;
+		                    	   		}
+		           					}
+		                       }
 	                      ]);
 	
 	//id: 290 : T. CERTIFICADO DE CARGAS Y REVISIÓN: Registrar recepción información cargas extinguidas o minoradas
@@ -2424,7 +2490,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 337 : T. EJECUCIÓN TÍTULO JUDICIAL: Registrar oposicion vista
 	this.arrayCampos.push([
 	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha oposición",allowBlank:false,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fecha'+this.idFactoria
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha oposición",allowBlank:true,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:'d_fecha'+this.idFactoria
 	                     	   ,validator : function(v) {
 		   	               	   		if(Ext.getCmp('d_comboSiNo' + idFactoria).getValue() == "01" && Ext.getCmp('d_fecha' + idFactoria).getValue() == ""){
 		   	               	   			return false;
@@ -2433,7 +2499,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		   	               	   		}
 	         					}   
 	                       }
-	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:false,filtradoProcurador:true,id:'d_motivo'+this.idFactoria}
+	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:true,filtradoProcurador:true,id:'d_motivo'+this.idFactoria}
 	                      ]);
 	
 	//id: 338 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar presentar impugnacion
@@ -2444,7 +2510,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 339 : T. EJECUCIÓN TÍTULO JUDICIAL: Hay Vista
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Hay vista",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:false,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima , id:'d_fechaVista'+this.idFactoria
+	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima , id:'d_fechaVista'+this.idFactoria
 	                     	   ,validator : function(v) {
 		   	               	   		if(Ext.getCmp('d_comboSiNo' + idFactoria).getValue() == "01" && Ext.getCmp('d_fechaVista' + idFactoria).getValue() == ""){
 		   	               	   			return false;
@@ -2668,7 +2734,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
    
     //id: 370 : TRÁMITE DE BIENES INMUEBLES: Decreto de firmeza
     this.arrayCampos.push([
-                               {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vencimiento",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+                               {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha firmeza",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
                            ]);
        
     //id: 371 : PROCEDIMIENTO HIPOTECARIO : Registrar certificación de cargas

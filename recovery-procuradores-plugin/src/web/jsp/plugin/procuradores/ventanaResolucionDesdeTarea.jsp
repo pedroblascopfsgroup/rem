@@ -159,6 +159,7 @@
 								,params: valores
 								,method: 'POST'
 								,success: function (result, request){
+								debugger;
 									var r = Ext.util.JSON.decode(result.responseText);
 									if (r.resultadoDatosvalidacion.validacion == ""){
 										panelEdicion.container.unmask();
@@ -167,9 +168,12 @@
 										Ext.fly('validacionCMPS').dom.innerHTML = Ext.util.Format.htmlDecode(r.resultadoDatosvalidacion.validacion);
 										panelEdicion.container.unmask();
 	 								}
-								}
-								,error: function(result, request){
+								},error: function(result, request){
 									panelEdicion.container.unmask();
+									alert("Error procesar");
+								},failure: function(result, request){
+									panelEdicion.container.unmask();
+									debugger;
 									alert("Error procesar");
 								}
 							});

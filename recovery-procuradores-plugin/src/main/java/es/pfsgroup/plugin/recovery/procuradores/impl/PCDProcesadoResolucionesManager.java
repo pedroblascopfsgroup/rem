@@ -5,14 +5,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -25,6 +28,9 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.web.genericForm.DtoGenericForm;
+import es.capgemini.pfs.web.genericForm.GenericForm;
+import es.capgemini.pfs.web.genericForm.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionTipoEventoRegistro;
@@ -33,16 +39,20 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacion
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacionUsuario;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
+import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.tareaNotificacion.MEJTareaNoficacionApi;
+import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.GenericFormManagerApi;
 import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoResolucionesApi;
 //import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 //import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 //import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
+import es.pfsgroup.plugin.recovery.procuradores.controller.PCDProcesadoResolucionesController;
+import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
 
 @Service
 @Transactional(readOnly = false)
@@ -51,6 +61,9 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	private Executor executor;
 	
 	//private static final String ESTADO_GUARDAR = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
 	//private static final String ESTADO_PROCESADO = MSVDDEstadoProceso.CODIGO_PROCESADO;
@@ -202,5 +215,74 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		TareaNotificacion tarea = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		proxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion()).setTareaNotificacion(tarea);
 	}
+
+	@Override
+	@BusinessOperation(PCD_BO_PROCESAR_RESOLUCION)
+	public void procesar(MSVResolucionesDto dtoResolucion) throws Exception {
+		// MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
+				MSVResolucion msvResolucion = proxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
+				
+				//apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardaDatosResolucion(dtoResolucion);
+
+				
+					//Se sobreescribe el fichero del procurador.
+					if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
+					{
+						proxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
+						msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
+					}else{
+						//El gestor adjunta un fichero y no había
+						if(!Checks.esNulo(dtoResolucion.getIdFichero()))
+						{
+							msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
+						//No se adjunta ningún fichero.
+						}else{
+							  msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarResolucion(dtoResolucion);
+						}
+					}
+
+					dtoResolucion.setIdTarea(msvResolucion.getTarea().getId());
+					if(msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
+					{
+						proxyFactory.proxy(PCDProcesadoResolucionesApi.class).generarAutoprorroga(dtoResolucion);
+					}
+					
+					msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(msvResolucion.getId());
+			
+					if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA) && !msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO"))
+					{
+						DtoGenericForm dto = this.rellenaDTO(msvResolucion);
+						executor.execute("genericFormManager.saveValues",dto);
+					}
+	}
+	
+	private DtoGenericForm rellenaDTO(MSVResolucion msvResolucion) {
+		
+		GenericForm genericForm = proxyFactory.proxy(GenericFormManagerApi.class).get(msvResolucion.getTarea().getId());
+		Set<MSVCampoDinamico> camposDinamicos = msvResolucion.getCamposDinamicos();
+		
+		DtoGenericForm dto = new DtoGenericForm();		
+		dto.setForm(genericForm);
+		String[] valores = new String[genericForm.getItems().size()];
+		for (int i = 0; i < genericForm.getItems().size(); i++) {
+			GenericFormItem gfi = genericForm.getItems().get(i);
+			String nombreCampo = "d_"+gfi.getNombre();
+			for (Iterator<MSVCampoDinamico> iterator = camposDinamicos.iterator(); iterator.hasNext();) {
+				MSVCampoDinamico msvCampoDinamico = iterator.next();
+				if (nombreCampo.equals(msvCampoDinamico.getNombreCampo())){
+					String valorCampo = msvCampoDinamico.getValorCampo();
+					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")){
+						valorCampo = valorCampo.substring(6,10) + "-" + valorCampo.substring(3,5) + "-" + valorCampo.substring(0,2);
+					}
+					valores[i] = valorCampo;  
+					break;                      
+				}
+			}
+			
+		}
+		
+		dto.setValues(valores);
+		return dto;
+	}	
 	
 }

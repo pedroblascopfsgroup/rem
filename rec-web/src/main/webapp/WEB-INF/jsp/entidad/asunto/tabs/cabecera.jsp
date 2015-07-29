@@ -119,36 +119,22 @@
 
 	 var procedimiento = Ext.data.Record.create([
          'id'
-         ,'idGrid'
+         ,'activo'
 		 ,'nombre'
-		 ,'nombreGrid'
 		 ,'tipoProcedimiento'
-		 ,'tipoProcedimientoGrid'
 		 ,{name:'saldoARecuperar',sortType:Ext.data.SortTypes.asInt}
-		 ,'saldoARecuperarGrid'
 		 ,'tipoReclamacion'
-		 ,'tipoReclamacionGrid'
 		 ,'pVencido'
-		 ,'pVencidoGrid'
 		 ,'pNoVencido'
-		 ,'pNoVencidoGrid'
 		 ,'porcRecup'
-		 ,'porcRecupGrid'
 		 ,'meses'
-		 ,'mesesGrid'
 		 ,'estado'
-		 ,'estadoGrid'
 		 ,'nivel'
 		 ,'procedimientoPadre'
-		 ,'procedimientoPadreGrid'
 		 ,'demandados'
-		 ,'demandadosGrid'
 		 ,'descripcionProcedimiento'
-		 ,'descripcionProcedimientoGrid'
 		 ,'fechaInicio'
-		 ,'fechaInicioGrid'
-		 ,'codProcEnJuzgado'
-		 ,'codProcEnJuzgadoGrid'
+		 ,'codProcEnJuzgado'		 
       ]);
 
    var procedimientosStore = page.getStore({
@@ -171,22 +157,29 @@
 		return str + val;
 	}
 
+	var coloredRender = function (value, meta, record) {
+		var activo = record.get('activo');
+		if (activo){
+			return '<span style="color: #4169E1; font-weight: bold;">'+value+'</span>';
+		}
+		return value;
+	};
 
 	var procedimientosCm = new Ext.grid.ColumnModel([
-		{header : '<s:message code="asunto.tabcabecera.grid.numero" text="**Numero" />',dataIndex : 'idGrid' ,width:52}
-		,{header : '<s:message code="asunto.tabcabecera.grid.nombre" text="**Nombre"/>', dataIndex : 'nombreGrid' }
-		,{header : '<s:message code="asunto.tabcabecera.grid.tipoprocedimiento" text="**tipo procedimiento"/>', dataIndex : 'tipoProcedimientoGrid'}
-		,{header : '<s:message code="asunto.tabcabecera.grid.procedimientoPadre" text="**Procedimiento Padre"/>', dataIndex : 'procedimientoPadreGrid',align:'right'}
-		,{header : '<s:message code="asunto.tabcabecera.grid.saldoARecuperar" text="**Saldo a recuperar"/>', dataIndex : 'saldoARecuperarGrid',align:'right',width:82}
-		,{header : '<s:message code="asunto.tabcabecera.grid.tiporeclamacion" text="**tipo reclamacion"/>', dataIndex : 'tipoReclamacionGrid',hidden:true }
-		,{header : '<s:message code="asunto.tabcabecera.grid.fechainicio" text="**fecha inicio"/>', dataIndex : 'fechaInicioGrid', hidden:true, width:65}
-		,{header : '<s:message code="asunto.tabcabecera.grid.saldovencido" text="**P. Vencido"/>', dataIndex : 'pVencidoGrid',align:'right',hidden:true,width:90}
-		,{header : '<s:message code="asunto.tabcabecera.grid.saldonovencido" text="**P. No Vencido"/>', dataIndex : 'pNoVencidoGrid',align:'right',hidden:true,width:90}
-		,{header : '<s:message code="asunto.tabcabecera.grid.recuperacion" text="**recuperacion %"/>', dataIndex : 'porcRecupGrid',align:'right' ,hidden:true}
-		,{header : '<s:message code="asunto.tabcabecera.grid.meses" text="**Meses recuperacion"/>', dataIndex : 'mesesGrid',align:'right' ,hidden:true}
-		,{header : '<s:message code="asunto.tabcabecera.grid.nroprocjuzgado" text="**Nro Proc Juzgado"/>', dataIndex : 'codProcEnJuzgadoGrid' ,width:65}
-		,{header : '<s:message code="asunto.tabcabecera.grid.estado" text="**Estado"/>', dataIndex : 'estadoGrid' ,width:65}
-		,{header : '<s:message code="asunto.tabcabecera.grid.demandados" text="**Demandados"/>', dataIndex : 'demandadosGrid' ,width:120}
+		{header : '<s:message code="asunto.tabcabecera.grid.numero" text="**Numero" />',dataIndex : 'id' ,width:52, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.nombre" text="**Nombre"/>', dataIndex : 'nombre' , renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.tipoprocedimiento" text="**tipo procedimiento"/>', dataIndex : 'tipoProcedimiento', renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.procedimientoPadre" text="**Procedimiento Padre"/>', dataIndex : 'procedimientoPadre',align:'right', renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.saldoARecuperar" text="**Saldo a recuperar"/>', dataIndex : 'saldoARecuperar',align:'right',width:82, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.tiporeclamacion" text="**tipo reclamacion"/>', dataIndex : 'tipoReclamacion',hidden:true, renderer: coloredRender }
+		,{header : '<s:message code="asunto.tabcabecera.grid.fechainicio" text="**fecha inicio"/>', dataIndex : 'fechaInicio', hidden:true, width:65, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.saldovencido" text="**P. Vencido"/>', dataIndex : 'pVencido',align:'right',hidden:true,width:90, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.saldonovencido" text="**P. No Vencido"/>', dataIndex : 'pNoVencido',align:'right',hidden:true,width:90, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.recuperacion" text="**recuperacion %"/>', dataIndex : 'porcRecup',align:'right' ,hidden:true, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.meses" text="**Meses recuperacion"/>', dataIndex : 'meses',align:'right' ,hidden:true, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.nroprocjuzgado" text="**Nro Proc Juzgado"/>', dataIndex : 'codProcEnJuzgado' ,width:65, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.estado" text="**Estado"/>', dataIndex : 'estado' ,width:65, renderer: coloredRender}
+		,{header : '<s:message code="asunto.tabcabecera.grid.demandados" text="**Demandados"/>', dataIndex : 'demandados' ,width:120, renderer: coloredRender}
 	]);
 	
 	var btnCargaListaPrc=new Ext.Button({
@@ -194,9 +187,9 @@
 	      ,iconCls:'icon_marcar_pte'
 	      ,handler: function() {
 	              procedimientosStore.webflow({id:data.id});
-	              }
+	              this.enable = false;
 	      }
-	  );
+	});
               
 	
 	var procedimientosGrid = app.crearGrid(procedimientosStore,procedimientosCm,{
@@ -207,7 +200,6 @@
 		,style:'padding-right: 5px'
 		,cls:'cursor_pointer'
 		,height : 250
-		,tbar:[btnCargaListaPrc]
 	});
 	
 	

@@ -38,7 +38,7 @@ DECLARE
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
       T_FUNCION('AnotacionesEmailFrom','SV00697@bankia.com','Anotaciones: email FROM'),
       T_FUNCION('AnotacionesMailSmtpUser','SV00697','Anotaciones: email USER'),
-      T_FUNCION('AnotacionesPwdCorreo',' ','Anotaciones: email PWD')
+      T_FUNCION('AnotacionesPwdCorreo','5QHCiGfDoRLSlt3OgXbJbw==48807719','Anotaciones: email PWD')
     ); 
     V_TMP_FUNCION T_FUNCION;
     

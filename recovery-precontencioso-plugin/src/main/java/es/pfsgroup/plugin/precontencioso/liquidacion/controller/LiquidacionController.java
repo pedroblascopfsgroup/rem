@@ -130,7 +130,7 @@ public class LiquidacionController {
 		liquidacionDto.setApoderadoUsuarioId(usuarioId);
 		liquidacionDto.setApoderadoDespachoId(despachoId);
 
-		liquidacionApi.editar(liquidacionDto);
+		liquidacionApi.editarValoresCalculados(liquidacionDto);
 
 		return DEFAULT;
 	}

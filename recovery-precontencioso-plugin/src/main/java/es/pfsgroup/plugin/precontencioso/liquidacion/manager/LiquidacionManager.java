@@ -60,7 +60,7 @@ public class LiquidacionManager implements LiquidacionApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void editar(LiquidacionDTO liquidacionDto) {
+	public void editarValoresCalculados(LiquidacionDTO liquidacionDto) {
 		LiquidacionPCO liquidacion = liquidacionDao.get(liquidacionDto.getId());
 
 		liquidacion.setId(liquidacionDto.getId());

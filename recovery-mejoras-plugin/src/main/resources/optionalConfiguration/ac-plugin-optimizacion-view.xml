@@ -186,8 +186,8 @@
 		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/clientes.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
-	<bean p:entity="tabs.expediente.fast" p:name="titulos"  p:order="400"
-		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/titulos.jsp" 
+	<bean p:entity="tabs.expediente.fast" p:name="titulos"  p:order="400" p:permission="TAB_TITULOS_EXPEDIENTE"
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/titulos.jsp"
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
 	<bean p:entity="tabs.expediente.fast" p:name="gestionYanalisis"  p:order="500"

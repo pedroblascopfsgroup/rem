@@ -203,6 +203,8 @@
 	} else {
 		datosRecobroFieldSet.setVisible(false);
 		tipoExpediente.setVisible(false);
+		fechaMaxEnAgencia.setVisible(false);
+		fechaMaxCobroParcial.setVisible(false);
 	}
 	
   };

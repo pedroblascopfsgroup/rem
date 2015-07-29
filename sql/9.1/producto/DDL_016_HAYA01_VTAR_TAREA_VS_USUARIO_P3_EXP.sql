@@ -193,7 +193,7 @@ CREATE VIEW '||V_ESQUEMA||'.'||V_NOMBRE_VISTA||' AS
              -- TODO poner para el resto de unidades de gestion
             ELSE NULL
           END FECHACREACIONENTIDADFORMATEADA
-          , NULL DESCRIPCIONEXPEDIENTE  -- TODO poner para expediente
+          , EXP.EXP_DESCRIPCION DESCRIPCIONEXPEDIENTE  -- TODO poner para expediente
           , NULL DESCRIPCIONCONTRATO     -- TODO poner para contrato
           , NULL IDENTIDADPERSONA   -- TODO poner para objetivo y para cliente
           , CASE DDTPOENTI.DD_EIN_CODIGO

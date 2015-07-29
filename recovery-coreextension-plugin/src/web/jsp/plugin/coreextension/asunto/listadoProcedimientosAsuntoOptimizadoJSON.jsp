@@ -9,149 +9,149 @@
 	<json:array name="listado" items="${listado}" var="rec">
 	
 				<json:object>
-					<json:property name="id" value="${rec.procedimiento.id}" />
+					<json:property name="id" value="${rec.id}" />
 					<json:property name="idGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.id}
+							${rec.id}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.id}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.id}</span>
 						</c:if>
 					</json:property>
-					<json:property name="codigo" value="${rec.procedimiento.id}" />
-					<json:property name="nombre" value="${rec.procedimiento.nombreProcedimiento}" />
+					<json:property name="codigo" value="${rec.id}" />
+					<json:property name="nombre" value="${rec.nombreProcedimiento}" />
 					<json:property name="nombreGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.nombreProcedimiento}
+							${rec.nombreProcedimiento}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.nombreProcedimiento}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.nombreProcedimiento}</span>
 						</c:if>
 					</json:property>
-					<json:property name="tipoProcedimiento" value="${rec.procedimiento.tipoProcedimiento.descripcion}" />
+					<json:property name="tipoProcedimiento" value="${rec.tipoProcedimiento.descripcion}" />
 					<json:property name="tipoProcedimientoGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.tipoProcedimiento.descripcion}
+							${rec.tipoProcedimiento.descripcion}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.tipoProcedimiento.descripcion}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.tipoProcedimiento.descripcion}</span>
 						</c:if>
 					</json:property>
-			 	 	<json:property name="saldoARecuperar" value="${rec.procedimiento.saldoRecuperacion}" />
+			 	 	<json:property name="saldoARecuperar" value="${rec.saldoRecuperacion}" />
 			 	 	<json:property name="saldoARecuperarGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							<pfsformat:money value="${rec.procedimiento.saldoRecuperacion}"/>
+							<pfsformat:money value="${rec.saldoRecuperacion}"/>
 						</c:if>
 						<c:if test="${rec.activo}">
 							<span style="color: #4169E1; font-weight: bold;">
-								<pfsformat:money value="${rec.procedimiento.saldoRecuperacion}"/>
+								<pfsformat:money value="${rec.saldoRecuperacion}"/>
 							</span>
 						</c:if>
 					</json:property>
-			 	 	<json:property name="tipoReclamacion" value="${rec.procedimiento.tipoReclamacion.descripcion}" />
+			 	 	<json:property name="tipoReclamacion" value="${rec.tipoReclamacion.descripcion}" />
 			 	 	<json:property name="tipoReclamacionGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.tipoReclamacion.descripcion}
+							${rec.tipoReclamacion.descripcion}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.tipoReclamacion.descripcion}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.tipoReclamacion.descripcion}</span>
 						</c:if>
 					</json:property>
-					<json:property name="pVencido" value="${rec.procedimiento.saldoOriginalVencido}" />
+					<json:property name="pVencido" value="${rec.saldoOriginalVencido}" />
 			 	 	<json:property name="pVencidoGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							<pfsformat:money value="${rec.procedimiento.saldoOriginalVencido}"/>
+							<pfsformat:money value="${rec.saldoOriginalVencido}"/>
 						</c:if>
 						<c:if test="${rec.activo}">
 							<span style="color: #4169E1; font-weight: bold;">
-								<pfsformat:money value="${rec.procedimiento.saldoOriginalVencido}"/>
+								<pfsformat:money value="${rec.saldoOriginalVencido}"/>
 							</span>
 						</c:if>
 					</json:property>
-					<json:property name="pNoVencido" value="${rec.procedimiento.saldoOriginalNoVencido}" />
+					<json:property name="pNoVencido" value="${rec.saldoOriginalNoVencido}" />
 			 	 	<json:property name="pNoVencidoGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.saldoOriginalNoVencido}"
+							${rec.saldoOriginalNoVencido}"
 						</c:if>
 						<c:if test="${rec.activo}">
 							<span style="color: #4169E1; font-weight: bold;">
-								<pfsformat:money value="${rec.procedimiento.saldoOriginalNoVencido}"/>
+								<pfsformat:money value="${rec.saldoOriginalNoVencido}"/>
 							</span>
 						</c:if>
 					</json:property>
-					<json:property name="porcRecup" value="${rec.procedimiento.porcentajeRecuperacion}" />
+					<json:property name="porcRecup" value="${rec.porcentajeRecuperacion}" />
 			 	 	<json:property name="porcRecupGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.porcentajeRecuperacion}
+							${rec.porcentajeRecuperacion}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.porcentajeRecuperacion}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.porcentajeRecuperacion}</span>
 						</c:if>
 					</json:property>
-					<json:property name="meses" value="${rec.procedimiento.plazoRecuperacion}" />
+					<json:property name="meses" value="${rec.plazoRecuperacion}" />
 					<json:property name="mesesGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.plazoRecuperacion}
+							${rec.plazoRecuperacion}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.plazoRecuperacion}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.plazoRecuperacion}</span>
 						</c:if>
 					</json:property>
-					<json:property name="estado" value="${rec.procedimiento.estadoProcedimiento.descripcion}" />
+					<json:property name="estado" value="${rec.estadoProcedimiento.descripcion}" />
 					<json:property name="estadoGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.estadoProcedimiento.descripcion}
+							${rec.estadoProcedimiento.descripcion}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.estadoProcedimiento.descripcion}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.estadoProcedimiento.descripcion}</span>
 						</c:if>
 					</json:property>
-			 	 	<json:property name="codProcEnJuzgado" value="${rec.procedimiento.codigoProcedimientoEnJuzgado}" />
+			 	 	<json:property name="codProcEnJuzgado" value="${rec.codigoProcedimientoEnJuzgado}" />
 			 	 	<json:property name="codProcEnJuzgadoGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.codigoProcedimientoEnJuzgado}
+							${rec.codigoProcedimientoEnJuzgado}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.codigoProcedimientoEnJuzgado}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.codigoProcedimientoEnJuzgado}</span>
 						</c:if>
 					</json:property>
 					<json:property name="fechaInicio" > 
-						<fwk:date value="${rec.procedimiento.auditoria.fechaCrear}" />
+						<fwk:date value="${rec.auditoria.fechaCrear}" />
 					</json:property>	
 					<json:property name="fechaInicioGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							<fwk:date value="${rec.procedimiento.auditoria.fechaCrear}" />
+							<fwk:date value="${rec.auditoria.fechaCrear}" />
 						</c:if>
 						<c:if test="${rec.activo}">
 							<span style="color: #4169E1; font-weight: bold;">
-								<fwk:date value="${rec.procedimiento.auditoria.fechaCrear}" /></span>
+								<fwk:date value="${rec.auditoria.fechaCrear}" /></span>
 						</c:if>
 					</json:property>										
-			 	 	<json:property name="procedimientoPadre" value="${rec.procedimiento.procedimientoPadre.id}" />
+			 	 	<json:property name="procedimientoPadre" value="${rec.procedimientoPadre.id}" />
 			 	 	<json:property name="procedimientoPadreGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.procedimientoPadre.id}
+							${rec.procedimientoPadre.id}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.procedimientoPadre.id}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.procedimientoPadre.id}</span>
 						</c:if>
 					</json:property>
-			 	 	<json:property name="demandados" value="${rec.procedimiento.personasAfectadas[0].apellidoNombre}" />
+			 	 	<json:property name="demandados" value="${rec.personasAfectadas[0].apellidoNombre}" />
 			 	 	<json:property name="demandadosGrid" escapeXml="false">
 						<c:if test="${!rec.activo}">
-							${rec.procedimiento.personasAfectadas[0].apellidoNombre}
+							${rec.personasAfectadas[0].apellidoNombre}
 						</c:if>
 						<c:if test="${rec.activo}">
-							<span style="color: #4169E1; font-weight: bold;">${rec.procedimiento.personasAfectadas[0].apellidoNombre}</span>
+							<span style="color: #4169E1; font-weight: bold;">${rec.personasAfectadas[0].apellidoNombre}</span>
 						</c:if>
 					</json:property>
 					<json:property name="descripcionProcedimiento">
-	 	 				<s:message text="${procedimiento.asunto.nombre}" javaScriptEscape="true" />-<s:message text="${rec.procedimiento.tipoProcedimiento.descripcion}" javaScriptEscape="true" />
+	 	 				<s:message text="${procedimiento.asunto.nombre}" javaScriptEscape="true" />-<s:message text="${rec.tipoProcedimiento.descripcion}" javaScriptEscape="true" />
 	 	 			</json:property>							
 			 	 	
 				</json:object>
-				<c:forEach items="${rec.procedimiento.personasAfectadas}" var="pa">
-					<c:if test="${pa.id!=rec.procedimiento.personasAfectadas[0].id}">
+				<c:forEach items="${rec.personasAfectadas}" var="pa">
+					<c:if test="${pa.id!=rec.personasAfectadas[0].id}">
 						<json:object>
 							<json:property name="demandadosGrid" escapeXml="false">
 								<c:if test="${!rec.activo}">${pa.apellidoNombre}</c:if>
@@ -160,7 +160,7 @@
 								</c:if>
 							</json:property>
 							<json:property name="descripcionProcedimientoGrid">
-			 	 				<s:message text="${procedimiento.asunto.nombre}" javaScriptEscape="true" />-<s:message text="${rec.procedimiento.tipoProcedimiento.descripcion}" javaScriptEscape="true" />
+			 	 				<s:message text="${procedimiento.asunto.nombre}" javaScriptEscape="true" />-<s:message text="${rec.tipoProcedimiento.descripcion}" javaScriptEscape="true" />
 			 	 			</json:property>							
 							<json:property name="saldoARecuperarGrid" value="" />
 							<json:property name="pVencidoGrid" value="" />

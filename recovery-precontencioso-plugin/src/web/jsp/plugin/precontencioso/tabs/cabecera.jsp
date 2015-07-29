@@ -47,13 +47,13 @@
 	var fechaInicio = label('fechaInicio', '<s:message code="procedimiento.tabcabecera.fechainicio" text="**Fecha Inicio"/>');
 	var contratoPase = label('contratoPase', '<s:message code="plugin.mejoras.procedimiento.tabcabecera.contratoPase" text="**Contrato pase"/>');
 	var nExpedienteInterno = label('nExpedienteInterno', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteInt" text="**Nro. expediente interno"/>');
-  
+
 	var panelAsunto = fieldset('<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>',
 		[{items:[asunto, despacho, fechaInicio, contratoPase]},
                  {items:[gestor,supervisor,procurador, nExpedienteInterno]}
 	]);
 
-	var nExpedienteExterno = label('estadoProcedimiento', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteExt" text="**Nro. expediente externo:"/>');
+	var nExpedienteExterno = label('nExpedienteExterno', '<s:message code="plugin.precontencioso.cabecera.nroexpedienteExt" text="**Nro. expediente externo:"/>');
 	var estadoProcedimiento = label('estadoProcedimiento', '<s:message code="plugin.precontencioso.cabecera.estadoExpediente" text="**Estado del expediente"/>');
 	var procedimientoPropuesto = label('procedimientoPropuesto', '<s:message code="plugin.precontencioso.cabecera.procedimientoPropuesto" text="**Procedimiento propuesto"/>');
 	var procedimientoIniciado = label('procedimientoIniciado', '<s:message code="plugin.precontencioso.cabecera.procedimientoAiniciar" text="**Procedimiento a iniciar"/>');
@@ -95,8 +95,8 @@
 	);
 
 	var procedimiento = label('procedimiento', '<s:message code="procedimiento.tabcabecera.procedimiento" text="**Procedimiento"/>');
-	var procedimientoInterno = label('procedimientoInterno', '<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
-	var procedimientoJuzgado = label('procedimientoJuzgado', '<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');
+	var procedimientoInterno = label('procedimientoInterno', '<s:message code="procedimiento.tabcabecera.procinterno" text="**Nro. Proc. Interno"/>');
+	var procedimientoJuzgado = label('procedimientoJuzgado', '<s:message code="procedimiento.tabcabecera.procjuzgado" text="**Nro. Proc. en Juzgado"/>');
 	var juzgado = label('juzgado', '<s:message code="procedimiento.tabcabecera.juzgado" text="**Juzgado"/>');
 	var plazaJuzgado = label('plazaJuzgado', '<s:message code="procedimiento.tabcabecera.plaza" text="**Plaza"/>');
 	var reclamacion = label('reclamacion', '<s:message code="procedimiento.tabcabecera.reclamacion" text="**Reclamacion"/>');
@@ -118,7 +118,7 @@
   
   var panelRecuperacion = fieldset('<s:message code="procedimiento.tabcabecera.estimacionrecuperacion" text="**Estimacion Recuperacion"/>',
                  [{items:[saldoVencido,saldoNoVencido,saldoOriginalVencido, saldoOriginalNoVencido]},
-            {items:[reclamacion,saldoRecuperar]} ]
+            {items:[reclamacion,saldoRecuperar,recuperacion,meses]} ]
   );
   
   
@@ -306,8 +306,45 @@
 		
 		clientesIncluirStore.removeAll();
 		clientesIncluirStore.loadData( d.clientes );
-		storeHistoricoEstados.webflow({idProcedimiento: panel.getProcedimientoId()});
+
+		refreshPrecontenciosoFields();
    	}
+
+	function refreshPrecontenciosoFields() 
+	{
+		if (data.hayPrecontencioso) {
+			storeHistoricoEstados.webflow({idProcedimiento: panel.getProcedimientoId()});
+
+			panelProcedimientoPrecontencioso.show();
+			nExpedienteInterno.show();
+			recuperacion.hide();
+			meses.hide();
+
+			var cabeceraPCO = entidad.get("data").precontencioso;
+
+			entidad.setLabel('nExpedienteInterno', cabeceraPCO.numExpInterno);
+			entidad.setLabel('nExpedienteExterno', cabeceraPCO.numExpExterno);
+			entidad.setLabel('estadoProcedimiento', cabeceraPCO.estadoActual);
+			entidad.setLabel('procedimientoPropuesto', cabeceraPCO.tipoProcPropuestoDesc);
+			entidad.setLabel('procedimientoIniciado', cabeceraPCO.tipoProcIniciadoDesc);
+			entidad.setLabel('tipoPreparacion', cabeceraPCO.tipoPreparacionDesc);
+			procedimientoInterno.setValue(cabeceraPCO.nombreExpJudicial);
+
+			procedimientoInterno.label.update('<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
+			procedimientoJuzgado.label.update('<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');
+
+		} else {
+			panelProcedimientoPrecontencioso.hide();
+			nExpedienteInterno.hide();
+			recuperacion.show();
+			meses.show();
+
+			procedimientoInterno.label.update('<s:message code="procedimiento.tabcabecera.procinterno" text="**Nro. Proc. Interno"/>');
+			procedimientoJuzgado.label.update('<s:message code="procedimiento.tabcabecera.procjuzgado" text="**Nro. Proc. en Juzgado"/>');
+			procedimientoInterno.setValue();
+			entidad.setLabel('procedimientoInterno', entidad.get("data").cabecera.procedimientoInterno);
+		}
+	}
 	
 	return panel;
 	

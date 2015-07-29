@@ -60,5 +60,5 @@ public interface LiquidacionApi {
 	 * 
 	 * @param liquidacionDTO
 	 */
-	void editar(LiquidacionDTO liquidacionDto);
+	void editarValoresCalculados(LiquidacionDTO liquidacionDto);
 }

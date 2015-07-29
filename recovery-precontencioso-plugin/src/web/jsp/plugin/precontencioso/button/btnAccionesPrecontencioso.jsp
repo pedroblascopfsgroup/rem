@@ -12,7 +12,7 @@ new Ext.Button({
 				var page = new fwk.Page("pfs", "", "", "");
 				Ext.Ajax.request({
 					url: page.resolveUrl('expedientejudicial/finalizarpreparacion'),
-					params: { idProcedimiento: data.id},
+					params: {idProcedimiento: data.id},
 					method: 'POST',
 					success: function ( result, request ) {
 

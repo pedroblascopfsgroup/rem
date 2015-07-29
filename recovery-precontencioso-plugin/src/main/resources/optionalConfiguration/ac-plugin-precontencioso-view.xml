@@ -10,7 +10,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 
-	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="exportar"
+	<bean p:entity="entidad.procedimiento.buttons.left.fast" p:name="accionesPrecontencioso"
 		p:order="1"
 		p:fileName="/WEB-INF/jsp/plugin/precontencioso/button/btnAccionesPrecontencioso.jsp"
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"	/>

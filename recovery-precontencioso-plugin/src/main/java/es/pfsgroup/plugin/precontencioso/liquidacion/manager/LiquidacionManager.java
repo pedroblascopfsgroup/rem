@@ -60,7 +60,7 @@ public class LiquidacionManager implements LiquidacionApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void editar(LiquidacionDTO liquidacionDto) {
+	public void editarValoresCalculados(LiquidacionDTO liquidacionDto) {
 		LiquidacionPCO liquidacion = liquidacionDao.get(liquidacionDto.getId());
 
 		liquidacion.setId(liquidacionDto.getId());
@@ -73,6 +73,12 @@ public class LiquidacionManager implements LiquidacionApi {
 		GestorDespacho apoderado = obtenerApoderado(liquidacionDto);
 		if (apoderado != null) {
 			liquidacion.setApoderado(apoderado);
+		}
+
+		DDEstadoLiquidacionPCO estado = liquidacion.getEstadoLiquidacion();
+		if (estado != null && !DDEstadoLiquidacionPCO.CALCULADA.equals(estado.getCodigo())) {
+			DDEstadoLiquidacionPCO estadoCalculado = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CALCULADA);
+			liquidacion.setEstadoLiquidacion(estadoCalculado);
 		}
 
 		liquidacionDao.saveOrUpdate(liquidacion);

@@ -63,6 +63,11 @@ var storeDocumentos = page.getStore({
       ,remoteSort : true
 });
 
+var myRenderer =  function(value, meta) {
+   meta.style = "background-color:lavender;";
+   return value;
+}
+
 var cmDocumento = [ 
  	myCboxSelModel2, 
  	{header: 'id',dataIndex:'id',hidden:'true'},
@@ -76,13 +81,13 @@ var cmDocumento = [
 	{header : '<s:message code="precontencioso.grid.documento.estado" text="**Estado" />', dataIndex : 'estado'},
 	{header : '<s:message code="precontencioso.grid.documento.adjunto" text="**Adjunto" />', dataIndex : 'adjunto'},
 	{header : '<s:message code="precontencioso.grid.documento.ejecutivo" text="**Ejecutivo" />', dataIndex : 'ejecutivo'},
-	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor'},
-	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor'},
-	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud'},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado'},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio'},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion'},	
-	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado'},
+	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor', renderer: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', renderer: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', renderer: myRenderer},
 	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario'}	
 ]; 
 
@@ -417,6 +422,14 @@ var checkControlButtons = function(){
 			uniqueArray = arrayCodigoEstadoDocumento.filter(function(item, pos) {
 	    			return arrayCodigoEstadoDocumento.indexOf(item) == pos;
 			});	
+			
+			<%-- SI DOCUMENTOS ELEGIDOS DE DISTINTO TIPO -> AVISO DE LA IMPOSIBILIDAD DE HACER NADA --%>
+			if (uniqueArray.length > 1){
+				controlButtons(true, true, true, true, true, true, true);
+				Ext.MessageBox.alert('<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.titulo" text="**Tipos de documento distintos" />'
+                 ,'<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.aviso" text="**Debe seleccionar documentos del mismo tipo" />');
+			}
+						
 			<%-- **** ESTADO PENDIENTE DE SOLICITAR --%>
 			<%-- Vemos si tenemos solo un resultado y es PS (PENDIENTE SOLICITAR --%>
 			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){

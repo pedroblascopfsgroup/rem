@@ -187,8 +187,11 @@
 	      ,iconCls:'icon_marcar_pte'
 	      ,handler: function() {
 	              procedimientosStore.webflow({id:data.id});
-	              this.enable = false;
 	      }
+	});
+	
+	btnCargaListaPrc.on('click', function(){
+		btnCargaListaPrc.hide();
 	});
               
 	
@@ -287,7 +290,7 @@
 		
 		reiniciarKOCDD();
 		procedimientosStore.removeAll();
-		btnCargaListaPrc.enable();
+		btnCargaListaPrc.show();
 		
 		// Muestra botones de ficha global o no
 		var buttonInformeFGConcurso = Ext.getCmp('btn-exportar-informes-asunto-fg-concurso');

@@ -51,6 +51,10 @@ DECLARE
       ,T_TIPO_TFA('AAPLIQ', 'Auto aprobando plan de liquidación', 'Auto aprobando plan de liquidación', 'CO') -- Trámite de fase de liquidación      
       ,T_TIPO_TFA('INFRENCUE', 'Informe de rendición de cuentas', 'Informe de rendición de cuentas', 'CO') -- Trámite de fase de liquidación
       ,T_TIPO_TFA('AUTCONCON', 'Auto de conclusión de concurso', 'Auto de conclusión de concurso', 'CO') -- Trámite de fase de liquidación
+      ,T_TIPO_TFA('INFPRO', 'Informe de la propuesta', 'Informe de la propuesta', 'CO') -- Trámite de propuesta anticipada
+      ,T_TIPO_TFA('RESJUD', 'Resolución judicial', 'Resolución judicial', 'CO') -- Trámite de propuesta anticipada
+      ,T_TIPO_TFA('INFADMCON', 'Informe del Adm. Concursal', 'Informe del Adm. Concursal', 'CO') -- Trámite de fase convenio
+      ,T_TIPO_TFA('ACTJUNACR', 'Acta de la junta de acreedores', 'Acta de la junta de acreedores', 'CO') -- Trámite de fase convenio
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

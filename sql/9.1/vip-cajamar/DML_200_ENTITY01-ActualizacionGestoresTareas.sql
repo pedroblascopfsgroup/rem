@@ -54,6 +54,18 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGCTRGE','SCTRGE')
 ,T_TIPO_VALOR('H021','H021_RevisionEjecucionesParalizadas','TGESCON','SUCON')
 ,T_TIPO_VALOR('H021','H021_SolicitudConcursal','TGESCON','SUCON')
 ,T_TIPO_VALOR('H021','H021_registrarOposicion','TGESCON','SUCON')
+,T_TIPO_VALOR('H035','H035_aperturaLiquidacion','TGESCON','SUCON')
+,T_TIPO_VALOR('H035','H035_resolucionFirme','TGESCON','SUCON')
+,T_TIPO_VALOR('H035','H035_ResolucionDecision','TGESCON','SUCON')
+,T_TIPO_VALOR('H031','H031_ContabilizarConvenio','TGESCHRE','SUCHRE')
+,T_TIPO_VALOR('H031','H031_ConvenioDecision','TGESCON','SUCON')
+,T_TIPO_VALOR('H031','H031_ElevarAComite','TGEANREC','SUANREC')
+,T_TIPO_VALOR('H031','H031_EscritoEvaluacion','TGESCON','SUCON')
+,T_TIPO_VALOR('H031','H031_PrepararInforme','TGESCON','SUCON')
+,T_TIPO_VALOR('H031','H031_RegistrarRespuestaComite','TGEANREC','SUANREC')
+,T_TIPO_VALOR('H031','H031_ResolucionJudicial','TGESCON','SUCON')
+,T_TIPO_VALOR('H031','H031_admisionTramiteConvenio','TGESCON','SUCON')
+,T_TIPO_VALOR('H031','H031_registrarPropAnticipadaConvenio','TGESCON','SUCON')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

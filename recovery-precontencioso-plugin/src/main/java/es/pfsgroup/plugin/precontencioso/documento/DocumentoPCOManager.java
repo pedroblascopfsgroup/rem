@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
@@ -156,9 +157,10 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		DDSiNo siNo;
 		String descripcionUG = null;
 		String ugIdDto = null;
+		NMBBienEntidad bienEntidad;
 		// Dependiendo del tipo unidad gestion (Contrato, Persona o Bien) hay que obtener los datos de forma diferente
 		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.CONTRATOS)){
-			ugIdDto = documento.getUnidadGestionId()+"";
+			ugIdDto = contratoDao.get(documento.getUnidadGestionId()).getNroContrato();			//documento.getUnidadGestionId()+"";
 			descripcionUG = contratoDao.get(documento.getUnidadGestionId()).getTipoProductoEntidad().getDescripcion();			
 		}
 		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.PERSONAS)){
@@ -167,7 +169,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			
 		}
 		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.BIENES)){
-			ugIdDto = documento.getUnidadGestionId()+"";
+			bienEntidad = genericDao.get(NMBBienEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", documento.getUnidadGestionId()));			
+			ugIdDto = "Finca: "+bienEntidad.getNumFinca();					//documento.getUnidadGestionId()+"";
 			descripcionUG = bienDao.get(documento.getUnidadGestionId()).getDescripcionBien();
 		}
 		
@@ -462,34 +465,9 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		DDEstadoDocumentoPCO estadoDocumento = genericDao.get(
 				DDEstadoDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR)); 
 		documento.setEstadoDocumento(estadoDocumento);
-		
-		// Crear la solicitud primera
-//		SolicitudDocumentoPCO solicitud =new SolicitudDocumentoPCO();
-		
+
 		///////////////////////////////////////////////
-		// TODO - DATOS PROVISIONALES
-//		GestorDespacho usuario = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
-//		solicitud.setActor(usuario);
-//		
-//		DDResultadoSolicitudPCO resultadoSolicitud = genericDao.get(
-//				DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "OK"));
-//		
-//		solicitud.setResultadoSolicitud(resultadoSolicitud);
-//		
-//		DDTipoActorPCO tipoActor = genericDao.get(
-//				DDTipoActorPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getTipoActor()));
-//		solicitud.setTipoActor(tipoActor);
-//		
-//		Auditoria.save(solicitud);
-//		
-//		solicitud.setDocumento(documento);
-//		
-//		List<SolicitudDocumentoPCO> solicitudes = new ArrayList<SolicitudDocumentoPCO>();
-//		
-//		solicitudes.add(solicitud);
-//		
-//		documento.setSolicitudes(solicitudes);
-		
+		// TODO - DATOS PROVISIONALES	
 		ProcedimientoPCO procPCO = genericDao.get(
 				ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
 		
@@ -606,7 +584,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			HashMap<Long, Persona> personaH = new HashMap<Long, Persona>();
 			List<ContratoPersona> contratoPersonas;
 			
-			// Procesamos para no tener contratosy personas	 repetidos
+			// Procesamos para no tener contratos y personas	 repetidos
 			for (ExpedienteContrato expCnt : procedimientos){
 				contratoH.put(expCnt.getContrato().getId(), expCnt.getContrato());
 				
@@ -658,13 +636,15 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 				bienH.put(bien.getId(), bien);			
 			}		
 			Bien bienf;
+			NMBBienEntidad bienEntidad;
 			it = bienH.entrySet().iterator();
 			while (it.hasNext()) {
 				e = (Map.Entry)it.next();
 				bienf = (Bien)e.getValue();
+				bienEntidad = genericDao.get(NMBBienEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", bienf.getId()));				
 				docUG = new DocumentosUGPCODto();
 				docUG.setId(bienf.getId());
-				docUG.setContrato(bienf.getReferenciaCatastral());
+				docUG.setContrato("Finca: "+bienEntidad.getNumFinca());
 				docUG.setUnidadGestionId(DDUnidadGestionPCO.BIENES);
 				docUG.setDescripcionUG(bienf.getDescripcionBien());			
 				documentosUG.add(docUG);

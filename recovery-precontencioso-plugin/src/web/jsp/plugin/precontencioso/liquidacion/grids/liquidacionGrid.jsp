@@ -101,6 +101,15 @@ var btnDescartar = new Ext.Button({
 	}
 });
 
+var btnGenerar = new Ext.Button({
+	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.generar" text="**Generar" />',
+	iconCls: 'icon_pdf',
+	cls: 'x-btn-text-icon',
+	handler: function() {
+
+	}
+});
+
 <%-- Grid --%>
 
 var liquidacionesRecord = Ext.data.Record.create([
@@ -155,7 +164,7 @@ var cmLiquidacion = new Ext.grid.ColumnModel([
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
-	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar],
+	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar, new Ext.Toolbar.Fill(), btnGenerar],
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',
@@ -179,6 +188,7 @@ var actualizarBotones = function() {
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
+			btnGenerar.setDisabled(true);
 			return;
 		}
 	}
@@ -196,6 +206,7 @@ var actualizarBotones = function() {
 			btnEditarValores.setDisabled(false);
 			btnConfirmar.setDisabled(false);
 			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(true);
 			break;
 
 		case 'DES':
@@ -203,6 +214,7 @@ var actualizarBotones = function() {
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
+			btnGenerar.setDisabled(true);
 			break;
 
 		case 'CON':
@@ -210,6 +222,7 @@ var actualizarBotones = function() {
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(false);
 			break;
 
 		case 'CAL':
@@ -217,6 +230,7 @@ var actualizarBotones = function() {
 			btnEditarValores.setDisabled(false);
 			btnConfirmar.setDisabled(false);
 			btnDescartar.setDisabled(false);
+			btnGenerar.setDisabled(true);
 			break;
 
 		default:
@@ -224,6 +238,7 @@ var actualizarBotones = function() {
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
+			btnGenerar.setDisabled(true);
 	}
 }
 
@@ -246,6 +261,7 @@ var idLiquidacionSeleccionada = function() {
 }
 
 var refrescarLiquidacionesGrid = function() {
+debugger;
 	storeLiquidaciones.webflow({idProcedimientoPCO: '1'});
 }
 

@@ -676,13 +676,19 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cex.auditoria." + Auditoria.UNDELETED_RESTICTION);
 		}
 
-
 		if (requierePrevioCDD(dto)) {
 			hql.append(" and asu.id = cdd.asunto.id ");
 		}
 
 		if (requierePostCDD(dto)) {
-			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion and asu.codigoExterno = crn.codigoExterno ");
+			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id ");
+			hql.append(" and asu.id = cdd2.asunto.id ");
+			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion ");
+			
+			hql.append(" and crn.id in ( ");
+			hql.append(" select max(crn1.id) ");
+			hql.append(" from  BatchCDDResultadoNuse crn1 ");
+			hql.append(" group by crn1.codigoExterno, crn1.batchAcuerdoCierreDeuda.id ) ");			
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
@@ -820,10 +826,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
 			if("0".equals(dto.getComboErrorPostCDD())){
 				hql.append(" and rvn.codigo <> '0' and cdd2.fechaAlta <= crn.fechaResultado");
-			}
-			else{
-				hql.append(" and rvn.id = :errorPost and cdd2.fechaAlta <= crn.fechaResultado");
-				params.put("errorPost", (dto.getComboErrorPostCDD()));
+			}else{
+				hql.append(" and rvn.id = :errorPost and cdd2.fechaAlta <= crn.fechaResultado ");
+				params.put("errorPost", (Long.valueOf(dto.getComboErrorPostCDD())));
 			}			
 		}
 		
@@ -1171,7 +1176,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
             if (!q.list().isEmpty()){
                 if(!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
-                    msgErrorEnvioCDD = "Error validación CDD: " + q.list().get(0).toString();
+                    msgErrorEnvioCDD = "Error validaciï¿½n CDD: " + q.list().get(0).toString();
                 }
             }
 

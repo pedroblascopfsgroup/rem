@@ -26,6 +26,7 @@
 
 	panel.setValue = function(){
 	        var data = entidad.get("data");
+	        refrescarLiquidacionesGrid();
 	}
 
  	panel.setVisibleTab = function(data) {

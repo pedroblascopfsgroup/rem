@@ -8,7 +8,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCO
 
 public interface ExpedienteJudicialApi {
 
-	static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.preconencioso.getPrecontenciosoPorProcedimientoId";
+	static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
 	
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.

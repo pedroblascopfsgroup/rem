@@ -142,7 +142,7 @@ var storeLiquidaciones = page.getStore({
 storeLiquidaciones.on(
 	'load',
 	function (store, data, options) {
-		actualizarBotones();
+		actualizarBotonesLiquidacion();
 	}
 );
 
@@ -173,16 +173,16 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 });
 
 gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
-	actualizarBotones();
+	actualizarBotonesLiquidacion();
 });
 
 <%-- States --%>
 
-var actualizarBotones = function() {
+var actualizarBotonesLiquidacion = function() {
 
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
-	if (entidad.actualId != null && entidad.get('data')) {
-		var estadoActualCodigoProcedimiento = entidad.get('data').precontencioso.estadoActualCodigo;
+	if (data != null) {
+		var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
 		if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
@@ -261,8 +261,5 @@ var idLiquidacionSeleccionada = function() {
 }
 
 var refrescarLiquidacionesGrid = function() {
-debugger;
-	storeLiquidaciones.webflow({idProcedimientoPCO: '1'});
+	storeLiquidaciones.webflow({idProcedimientoPCO: data.precontencioso.id});
 }
-
-refrescarLiquidacionesGrid();

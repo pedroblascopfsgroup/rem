@@ -55,18 +55,21 @@
             }, adecuacionesRecord)
         });
     
-   var revisionCuotaRenderer = function(value) {   
+   var revisionCuotaRenderer = function(value) {  
+   		debugger; 
    		var valueRendered = parseInt(value)/100;   		
    		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
    
-   var tipoRenderer = function(value) {   
+   var tipoRenderer = function(value) {
+   		debugger;   
    		var valueRendered = parseInt(value);
    		
-   		return Ext.isEmpty(value) ? "0,00" : value.replace(".", app.format.DECIMAL_SEPARATOR);
+   		return Ext.isEmpty(valueRendered) ? "0,00" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 
    
-   var razonProgresionRenderer = function(value) {   
+   var razonProgresionRenderer = function(value) {
+   		debugger;   
    		var valueRendered = parseInt(value)/100;
    		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
    }; 

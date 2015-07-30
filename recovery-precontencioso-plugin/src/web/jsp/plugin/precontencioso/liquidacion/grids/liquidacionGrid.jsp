@@ -11,24 +11,39 @@ var btnSolicitar = new Ext.Button({
 	iconCls: 'icon_mas',
 	cls: 'x-btn-text-icon',
 	handler: function() {
-		var w = app.openWindow({
-			flow: 'liquidacion/abrirSolicitarLiquidacion',
-			autoWidth: true,
-			closable: true,
-			title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.solicitarliq" text="**Solicitar liquidación" />',
-			params: {idLiquidacion: idLiquidacionSeleccionada()}
-		});
-
-		w.on(app.event.DONE, function() {
-			refrescarLiquidacionesGrid();
-			w.close();
-		});
-
-		w.on(app.event.CANCEL, function() {
-			w.close();
-		});
+		if (comprobarDatosCalculoRellenos()) {
+			Ext.Msg.confirm(
+			'<s:message code="app.confirmar" text="**Confirmar" />', 
+			'<s:message code="plugin.precontencioso.grid.liquidacion.solicitarLiquidacion.confirmacion" text="**La liquidacion seleccionada se encuentra calculada, ¿Desea continuar?" />', 
+			function(btn) {
+				if (btn == 'yes') {
+					abrirPantallaSolicitar();
+				}
+			});
+		} else {
+			abrirPantallaSolicitar();
+		}
 	}
 });
+
+var abrirPantallaSolicitar = function() {
+	var w = app.openWindow({
+		flow: 'liquidacion/abrirSolicitarLiquidacion',
+		autoWidth: true,
+		closable: true,
+		title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.solicitarliq" text="**Solicitar liquidación" />',
+		params: {idLiquidacion: idLiquidacionSeleccionada()}
+	});
+
+	w.on(app.event.DONE, function() {
+		refrescarLiquidacionesGrid();
+		w.close();
+	});
+
+	w.on(app.event.CANCEL, function() {
+		w.close();
+	});
+}
 
 var btnEditarValores = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.editar" text="**Editar valores" />',
@@ -159,7 +174,7 @@ var actualizarBotones = function() {
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
 	if (entidad.actualId != null && entidad.get('data')) {
 		var estadoActualCodigoProcedimiento = entidad.get('data').precontencioso.estadoActualCodigo;
-		if (estadoActualCodigoProcedimiento == '') {
+		if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(true);
@@ -198,7 +213,7 @@ var actualizarBotones = function() {
 			break;
 
 		case 'CAL':
-			btnSolicitar.setDisabled(true);
+			btnSolicitar.setDisabled(false);
 			btnEditarValores.setDisabled(false);
 			btnConfirmar.setDisabled(false);
 			btnDescartar.setDisabled(false);
@@ -210,21 +225,21 @@ var actualizarBotones = function() {
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 	}
-
-	// Se comprueba que la liquidacion tenga los datos contables informados.
-	if (liquidacion) {
-		var faltanDatosDeCalculo = liquidacion.get('capitalVencido') == "" 
-			|| liquidacion.get('capitalNoVencido') == ""
-			|| liquidacion.get('interesesOrdinarios') == ""
-			|| liquidacion.get('interesesDemora') == ""
-			|| liquidacion.get('total') == "" ;
-
-		btnConfirmar.setDisabled(btnConfirmar.disabled || faltanDatosDeCalculo);
-	}
-
 }
 
 <%-- Utils --%>
+
+var comprobarDatosCalculoRellenos = function() {
+	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();
+
+	return (liquidacion
+			&& liquidacion.get('capitalVencido') != ""
+			&& liquidacion.get('capitalNoVencido') != ""
+			&& liquidacion.get('interesesOrdinarios') != ""
+			&& liquidacion.get('interesesDemora') != ""
+			&& liquidacion.get('total') != "" );
+}
+
 
 var idLiquidacionSeleccionada = function() {
 	return gridLiquidaciones.getSelectionModel().getSelected().get('id');

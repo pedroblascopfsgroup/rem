@@ -434,8 +434,12 @@ public class ClienteManager {
 		logger.debug("Creando cliente para la persona con id: " + personaId);
 
         Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET_WITH_CONTRATOS, personaId);
-
-        Arquetipo arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, arquetipoId);
+        
+        Arquetipo arquetipo = null;
+        
+        if(arquetipoId != null)
+        	arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, arquetipoId);
+        
         Boolean isRecuperacion = true;
         //Boolean isRecuperacion = arquetipo.getItinerario().getRecuperacion();
 
@@ -487,7 +491,12 @@ public class ClienteManager {
         }
         cliente.setArquetipo(arquetipo);
 
-        persona.setArquetipo(arquetipo.getId());
+        //Daba error si el arquetipo es null. 
+        // Además el atributo arquetipo en persona está desactualizado, hay que ver si hace falta hacer esto
+        // pero utilizando las tablas ARR_ARQ_RECUPERACION_PERSONA y ARP_ARQ_RECOBRO_PERSONA
+        if (arquetipo!=null)
+        	persona.setArquetipo(arquetipo.getId());
+        
         executor.execute(PrimariaBusinessOperation.BO_PER_MGR_SAVE_OR_UPDATE, persona);
         save(cliente);
 

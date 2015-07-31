@@ -118,7 +118,7 @@
 		if(currentPanel==1){
 			panel1.remove();
 			panel2.load({
-				url:app.resolveFlow('expedientes/creacionManualExpediente_2')
+				url:app.resolveFlow('expedientes/creacionManualExpediente_2_GV')
 				,scripts:true
 				,method:'POST'
 				,params:{

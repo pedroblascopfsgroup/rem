@@ -9,52 +9,37 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <fwk:page>
 	
-   
-	
-    var contenidoBurofax='${textoBurofax}';
-    var arrayIdEnvios="${arrayIdEnvios}";
     
 	
-	<%--	
-	var textoBurofax = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="plugin.precontencioso.grid.burofax.contenido" text="**Contenido Burofax" />'
-		,name: 'prueba'
-		,value:'<s:message text='${textoBurofax}' javaScriptEscape="true" />'
-		,width: 400 
-		,height:400
-		, maxLength: 2000
-		,allowBlank: false
-	});	
-	--%>
-	
-	var burofaxEditor = new Ext.form.HtmlEditor({
-			id:'htmlDescripcion'
-			,readOnly:false
-			,hideLabel:true
-			,width:700
-			,maxLength:3500
-			,height : 400
-			,hideParent:true
-			,enableColors: false
-        	,enableAlignments: false
-        	,enableFont:false
-        	,enableFontSize:false
-        	,enableFormat:true
-        	,enableLinks:false
-        	,enableLists:false
-        	,enableSourceEdit:true
-        	,value:'<s:message text='${textoBurofax}' javaScriptEscape="true" />'
+    var arrayIdEnvios='${arrayIdEnvios}';
+   
+
+	<pfsforms:ddCombo name="estadoBurofax"
+		labelKey="plugin.precontencioso.grid.burofax.estado" 
+ 		label="**Estado Burofax" value="" dd="${estadosBurofax}" 
+		propertyCodigo="id" propertyDescripcion="descripcion" />
+		
+    var fechaAcuse = new Ext.ux.form.XDateField({
+		name : 'fechaAcuse'
+		,fieldLabel : '<s:message code="plugin.precontencioso.grid.burofax.fechaAcuse" text="**Fecha Acuse" />'
+		,style:'margin:0px'
 	});
+	
+	var fechaEnvio = new Ext.ux.form.XDateField({
+		name : 'fechaEnvio'
+		,fieldLabel : '<s:message code="plugin.precontencioso.grid.burofax.fechaEnvio" text="**Fecha Envio" />'
+		,style:'margin:0px'
+	});		
 
 	var bottomBar = [];
 
 	var btnGuardar = new Ext.Button({
-		text : '<s:message code="app.guardar" text="**Guardar" />'
+		text : '<s:message code="app.aceptar" text="**Aceptar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){	
 		    	Ext.Ajax.request({
-						url : page.resolveUrl('burofax/editarBurofax'), 
-						params : {contenidoBurofax:burofaxEditor.getValue(),arrayIdEnvios:arrayIdEnvios},
+						url : page.resolveUrl('burofax/configuraInformacionEnvio'), 
+						params : {idEstadoBurofax:estadoBurofax.value,fechaAcuse:fechaAcuse.getValue().format('d/m/Y'),fechaEnvio:fechaEnvio.getValue().format('d/m/Y'),arrayIdEnvios:arrayIdEnvios},
 						method: 'POST',
 						success: function ( result, request ) {
 							page.fireEvent(app.event.DONE);
@@ -81,7 +66,7 @@
 		,width:700
 		,bodyStyle:'padding:10px;cellspacing:20px'
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		,items : [burofaxEditor]
+		,items : [estadoBurofax,fechaEnvio,fechaAcuse]
 		,bbar:bottomBar
 	});
 	

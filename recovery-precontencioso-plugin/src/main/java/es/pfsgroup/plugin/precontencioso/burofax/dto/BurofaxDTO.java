@@ -1,23 +1,29 @@
 package es.pfsgroup.plugin.precontencioso.burofax.dto;
 
-import java.io.Serializable;
+import java.util.Date;
 
-public class BurofaxDTO implements Serializable{
+import es.capgemini.devon.dto.WebDto;
+
+public class BurofaxDTO extends WebDto{
 
 	
 	private static final long serialVersionUID = 4065164471137337436L;
 	
 	private Long id;
+	private Long idBurofax;
+	private Long idEnvio;
 	private Long idCliente;
 	private Long idDireccion;
 	private Long idTipoBurofax;
 	private String cliente;
+	private String tipoIntervencion;
+	private String contrato;
 	private String estado;
 	private String direccion;
 	private String tipo;
-	private String fechaSolicitud;
-	private String fechaEnvio;
-	private String fechaAcuse;
+	private Date fechaSolicitud;
+	private Date fechaEnvio;
+	private Date fechaAcuse;
 	private String resultado;
 	
 	
@@ -45,24 +51,7 @@ public class BurofaxDTO implements Serializable{
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	public String getFechaSolicitud() {
-		return fechaSolicitud;
-	}
-	public void setFechaSolicitud(String fechaSolicitud) {
-		this.fechaSolicitud = fechaSolicitud;
-	}
-	public String getFechaEnvio() {
-		return fechaEnvio;
-	}
-	public void setFechaEnvio(String fechaEnvio) {
-		this.fechaEnvio = fechaEnvio;
-	}
-	public String getFechaAcuse() {
-		return fechaAcuse;
-	}
-	public void setFechaAcuse(String fechaAcuse) {
-		this.fechaAcuse = fechaAcuse;
-	}
+	
 	public String getResultado() {
 		return resultado;
 	}
@@ -87,6 +76,44 @@ public class BurofaxDTO implements Serializable{
 	public void setIdTipoBurofax(Long idTipoBurofax) {
 		this.idTipoBurofax = idTipoBurofax;
 	}
+	
+	public String getContrato() {
+		return contrato;
+	}
+	public void setContrato(String contrato) {
+		this.contrato = contrato;
+	}
+	public Date getFechaSolicitud() {
+		return fechaSolicitud;
+	}
+	public void setFechaSolicitud(Date fechaSolicitud) {
+		this.fechaSolicitud = fechaSolicitud;
+	}
+	public Date getFechaEnvio() {
+		return fechaEnvio;
+	}
+	public void setFechaEnvio(Date fechaEnvio) {
+		this.fechaEnvio = fechaEnvio;
+	}
+	public Date getFechaAcuse() {
+		return fechaAcuse;
+	}
+	public void setFechaAcuse(Date fechaAcuse) {
+		this.fechaAcuse = fechaAcuse;
+	}
+	
+	public Long getIdBurofax() {
+		return idBurofax;
+	}
+	public void setIdBurofax(Long idBurofax) {
+		this.idBurofax = idBurofax;
+	}
+	public Long getIdEnvio() {
+		return idEnvio;
+	}
+	public void setIdEnvio(Long idEnvio) {
+		this.idEnvio = idEnvio;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -94,7 +121,12 @@ public class BurofaxDTO implements Serializable{
 		this.id = id;
 	}
 	
-	
+	public String getTipoIntervencion() {
+		return tipoIntervencion;
+	}
+	public void setTipoIntervencion(String tipoIntervencion) {
+		this.tipoIntervencion = tipoIntervencion;
+	}
 	
 	
 

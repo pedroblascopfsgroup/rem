@@ -19,6 +19,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEstadoBurofaxPCO implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = -5243471679670786669L;
+	
+	public static final String NOTIFICADO = "OK";
+	public static final String NO_NOTIFICADO = "KO";
 
 	@Id
 	@Column(name = "DD_PCO_BFE_ID")

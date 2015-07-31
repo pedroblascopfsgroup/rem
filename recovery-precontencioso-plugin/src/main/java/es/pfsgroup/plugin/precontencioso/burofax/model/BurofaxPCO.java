@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.burofax.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -25,6 +24,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
@@ -50,6 +51,16 @@ public class BurofaxPCO implements Serializable, Auditable {
 	@JoinColumn(name = "PER_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private Persona demandado;
+	
+	@ManyToOne
+	@JoinColumn(name = "CNT_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private Contrato contrato;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_TIN_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private DDTipoIntervencion tipoIntervencion;
 
 	@ManyToOne
 	@JoinColumn(name = "DD_PCO_BFE_ID")
@@ -131,5 +142,25 @@ public class BurofaxPCO implements Serializable, Auditable {
 
 	public void setEnviosBurofax(List<EnvioBurofaxPCO> enviosBurofax) {
 		this.enviosBurofax = enviosBurofax;
+	}
+
+	public Contrato getContrato() {
+		return contrato;
+	}
+
+	public void setContrato(Contrato contrato) {
+		this.contrato = contrato;
+	}
+
+	public DDTipoIntervencion getTipoIntervencion() {
+		return tipoIntervencion;
+	}
+
+	public void setTipoIntervencion(DDTipoIntervencion tipoIntervencion) {
+		this.tipoIntervencion = tipoIntervencion;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

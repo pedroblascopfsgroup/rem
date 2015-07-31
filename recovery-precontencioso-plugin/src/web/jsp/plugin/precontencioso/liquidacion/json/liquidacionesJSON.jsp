@@ -27,7 +27,7 @@
 			<json:property name="interesesOrdinarios" value="${l.interesesOrdinarios}" />
 			<json:property name="interesesDemora" value="${l.interesesDemora}" />
 			<json:property name="total" value="${l.total}" />
-			<json:property name="apoderado" value="${l.apoderado}" />
+			<json:property name="apoderado" value="${l.apoderadoNombre}" />
 		</json:object>
 	</json:array>
 </fwk:json>

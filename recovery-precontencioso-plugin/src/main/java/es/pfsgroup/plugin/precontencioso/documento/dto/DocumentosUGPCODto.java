@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class DocumentosUGPCODto {
 	private Long id;
-	private Long unidadGestionId;
+	private String unidadGestionId;
 	private String contrato;
 	private String descripcionUG;
 	
@@ -14,10 +14,10 @@ public class DocumentosUGPCODto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getUnidadGestionId() {
+	public String getUnidadGestionId() {
 		return unidadGestionId;
 	}
-	public void setUnidadGestionId(Long unidadGestionId) {
+	public void setUnidadGestionId(String unidadGestionId) {
 		this.unidadGestionId = unidadGestionId;
 	}
 	public String getContrato() {

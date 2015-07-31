@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
+import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 
@@ -31,6 +32,47 @@ public class DocumentoPCODaoImpl extends AbstractEntityDao<DocumentoPCO, Long> i
         List<SolicitudDocumentoPCO> solicitudesDoc = getHibernateTemplate().find(hql, idDocPCO);
         return solicitudesDoc;
     }
+    
+	/**
+	 * Obtener los documentos de un procedimientoPCO
+	 * 
+	 * @param idProcedimientoPCO
+	 * @return lista documentos
+	 */
+    @SuppressWarnings("unchecked")    
+    public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO){
+        String hql = "from DocumentoPCO d where d.procedimientoPCO.procedimiento.id = ? and d.auditoria.borrado = 0";
+        List<DocumentoPCO> documentosProc = getHibernateTemplate().find(hql, idProcedimientoPCO);
+  
+		return documentosProc;    	
+    }
+    
+	/**
+	 * Obtiene las solicitudes de un documentoPCO
+	 * 
+	 * @param idDocPCO
+	 * @return
+	 */
+	public List<SolicitudDocumentoPCO> getSolicitudesPorIdDocumentoPCO(Long idDocumentoPCO){
+		String hql = "from SolicitudDocumentoPCO s where s.documento.id = ? and s.auditoria.borrado = 0";
+	    List<SolicitudDocumentoPCO> solicitudesDoc = getHibernateTemplate().find(hql, idDocumentoPCO);
+	    
+	        return solicitudesDoc;		
+	}; 
+	
+	/**
+	 * Obtiene el DTO de un documentoPCO
+	 * 
+	 * @param idDocPCO
+	 * @return
+	 */
+	public DocumentoPCO getDocumentoPorIdDocumentoPCO(Long idDocumentoPCO){
+		String hql = "from DocumentoPCO d where s.procedimientoPCO.id = ? and d.auditoria.borrado = 0";
+	    DocumentoPCO documento = (DocumentoPCO)getHibernateTemplate().get(DocumentoPCO.class, idDocumentoPCO);
+	    
+	    return documento;
+		
+	};	
     
 	
 }

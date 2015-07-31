@@ -27,6 +27,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
@@ -53,12 +54,14 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@JoinColumn(name = "DD_PCO_PTP_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private DDTipoPreparacionPCO tipoPreparacion;
+	
+	@ManyToOne
+	@JoinColumn(name = "PCO_PRC_TIPO_PRC_PROP")
+	private TipoProcedimiento tipoProcPropuesto;
 
-	@Column(name = "PCO_PRC_TIPO_PRC_PROP")
-	private String tipoProcPropuesto;
-
-	@Column(name = "PCO_PRC_TIPO_PRC_INICIADO")
-	private String tipoProcIniciado;
+	@ManyToOne
+    @JoinColumn(name = "PCO_PRC_TIPO_PRC_INICIADO")
+	private TipoProcedimiento tipoProcIniciado;
 
 	@Column(name = "PCO_PRC_PRETURNADO")
 	private Boolean preturnado;
@@ -68,30 +71,12 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	@Column(name = "PCO_PRC_NUM_EXP_INT")
 	private String numExpInterno;
+	
+	@Column(name = "PCO_PRC_NUM_EXP_EXT")
+	private String numExpExterno;
 
 	@Column(name = "PCO_PRC_CNT_PRINCIPAL")
 	private String cntPrincipal;
-	
-	@Column(name = "PCO_PRC_FECHA_INICIO")
-	private Date fechaInicio;
-
-	@Column(name = "PCO_PRC_FECHA_PREPARADO")
-	private Date fechaPreparado;
-
-	@Column(name = "PCO_PRC_FECHA_ENVIO_LETRADO")
-	private Date fechaEnvioLetrado;
-
-	@Column(name = "PCO_PRC_FECHA_FINALIZADO")
-	private Date fechaFinalizado;
-
-	@Column(name = "PCO_PRC_FECHA_ULTIMA_SUBSANA")
-	private Date fechaUltimaSubsanacion;
-
-	@Column(name = "PCO_PRC_FECHA_CANCELADO")
-	private Date fechaCancelado;
-
-	@Column(name = "PCO_PRC_FECHA_PARALIZACION")
-	private Date fechaParalizacion;
 
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PCO_PRC_ID")
@@ -115,12 +100,32 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
-	
+
 	@Version
 	private Integer version;
 
 	@Embedded
 	private Auditoria auditoria;
+
+	/**
+	 * Devuelve el <DDEstadoPreparacionPCO> en el que se encuentra el procedimiento
+	 */
+	public DDEstadoPreparacionPCO getEstadoActual () {
+		DDEstadoPreparacionPCO estadoActual = null;
+
+		// Recuperar estado actual por fecha inicio mas actual
+		Date fechaMasActual = null;
+		for (HistoricoEstadoProcedimientoPCO historicoEstado : estadosPreparacionProc) {
+			if (fechaMasActual == null || fechaMasActual.before(historicoEstado.getFechaInicio())) {
+				fechaMasActual = historicoEstado.getFechaInicio();
+				if (historicoEstado != null) {
+					estadoActual = historicoEstado.getEstadoPreparacion();
+				}
+			}
+		}
+
+		return estadoActual;
+	}
 
 	/*
 	 * GETTERS & SETTERS
@@ -128,6 +133,10 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public Long getId() {
 		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Procedimiento getProcedimiento() {
@@ -146,19 +155,19 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		this.tipoPreparacion = tipoPreparacion;
 	}
 
-	public String getTipoProcPropuesto() {
+	public TipoProcedimiento getTipoProcPropuesto() {
 		return tipoProcPropuesto;
 	}
 
-	public void setTipoProcPropuesto(String tipoProcPropuesto) {
+	public void setTipoProcPropuesto(TipoProcedimiento tipoProcPropuesto) {
 		this.tipoProcPropuesto = tipoProcPropuesto;
 	}
 
-	public String getTipoProcIniciado() {
+	public TipoProcedimiento getTipoProcIniciado() {
 		return tipoProcIniciado;
 	}
 
-	public void setTipoProcIniciado(String tipoProcIniciado) {
+	public void setTipoProcIniciado(TipoProcedimiento tipoProcIniciado) {
 		this.tipoProcIniciado = tipoProcIniciado;
 	}
 
@@ -186,84 +195,20 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		this.numExpInterno = numExpInterno;
 	}
 
+	public String getNumExpExterno() {
+		return numExpExterno;
+	}
+
+	public void setNumExpExterno(String numExpExterno) {
+		this.numExpExterno = numExpExterno;
+	}
+
 	public String getCntPrincipal() {
 		return cntPrincipal;
 	}
 
 	public void setCntPrincipal(String cntPrincipal) {
 		this.cntPrincipal = cntPrincipal;
-	}
-
-	public Date getFechaInicio() {
-		return fechaInicio;
-	}
-
-	public void setFechaInicio(Date fechaInicio) {
-		this.fechaInicio = fechaInicio;
-	}
-
-	public Date getFechaPreparado() {
-		return fechaPreparado;
-	}
-
-	public void setFechaPreparado(Date fechaPreparado) {
-		this.fechaPreparado = fechaPreparado;
-	}
-
-	public Date getFechaEnvioLetrado() {
-		return fechaEnvioLetrado;
-	}
-
-	public void setFechaEnvioLetrado(Date fechaEnvioLetrado) {
-		this.fechaEnvioLetrado = fechaEnvioLetrado;
-	}
-
-	public Date getFechaFinalizado() {
-		return fechaFinalizado;
-	}
-
-	public void setFechaFinalizado(Date fechaFinalizado) {
-		this.fechaFinalizado = fechaFinalizado;
-	}
-
-	public Date getFechaUltimaSubsanacion() {
-		return fechaUltimaSubsanacion;
-	}
-
-	public void setFechaUltimaSubsanacion(Date fechaUltimaSubsanacion) {
-		this.fechaUltimaSubsanacion = fechaUltimaSubsanacion;
-	}
-
-	public Date getFechaCancelado() {
-		return fechaCancelado;
-	}
-
-	public void setFechaCancelado(Date fechaCancelado) {
-		this.fechaCancelado = fechaCancelado;
-	}
-
-	public Date getFechaParalizacion() {
-		return fechaParalizacion;
-	}
-
-	public void setFechaParalizacion(Date fechaParalizacion) {
-		this.fechaParalizacion = fechaParalizacion;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
 	}
 
 	public List<DocumentoPCO> getDocumentos() {
@@ -304,5 +249,21 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setSysGuid(String sysGuid) {
 		this.sysGuid = sysGuid;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
 	}
 }

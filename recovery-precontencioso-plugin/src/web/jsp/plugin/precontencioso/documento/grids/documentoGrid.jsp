@@ -9,10 +9,14 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 var idSolicitud;
+var idDocumento;
 var rowsSelected=new Array(); 
 var arrayIdDocumentos=new Array();
+var arrayEsDocumento=new Array();
+var arrayTieneSolicitud=new Array();
+var arrayCodigoEstadoDocumento=new Array();
 
-var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
+var myCboxSelModel2 = new Ext.grid.CheckboxSelectionModel({
  		handleMouseDown : function(g, rowIndex, e){
   		 	var view = this.grid.getView();
     		var isSelected = this.isSelected(rowIndex);
@@ -31,11 +35,16 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 var documentosRecord = Ext.data.Record.create([
 	{name:'id'},
 	{name:'idDoc'},	
+	{name:'esDocumento'},	
+	{name:'tieneSolicitud'},	
+	{name:'codigoEstadoDocumento'},		
 	{name:'contrato'},
 	{name:'descripcionUG'},
 	{name:'tipoDocumento'},
 	{name:'estado'},
 	{name:'adjunto'},
+	{name:'ejecutivo'},
+	{name:'tipoActor'},	
 	{name:'actor'},
 	{name:'fechaSolicitud'},	
 	{name:'fechaResultado'},	
@@ -47,29 +56,38 @@ var documentosRecord = Ext.data.Record.create([
 
 var storeDocumentos = page.getStore({
       eventName : 'listado'
-      ,flow:'documentopco/getSolicitudesDocumentos'
+      ,flow:'documentopco/getSolicitudesDocumentosPorProcedimientoId'
       ,reader: new Ext.data.JsonReader({
               root: 'solicitudesDocumento'
       }, documentosRecord)
       ,remoteSort : true
 });
 
+var myRenderer =  function(value, meta) {
+   meta.style = "background-color:lavender;";
+   return value;
+}
 
 var cmDocumento = [ 
- 	myCboxSelModel, 
+ 	myCboxSelModel2, 
  	{header: 'id',dataIndex:'id',hidden:'true'},
  	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
+ 	{header: 'esDocumento',dataIndex:'esDocumento',hidden:'true'},
+ 	{header: 'tieneSolicitud',dataIndex:'tieneSolicitud',hidden:'true'},	
+ 	{header: 'codigoEstadoDocumento',dataIndex:'codigoEstadoDocumento',hidden:'true'}, 	
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
 	{header : '<s:message code="precontencioso.grid.documento.descripcion" text="**Descripción" />', dataIndex : 'descripcionUG'},
 	{header : '<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />', dataIndex : 'tipoDocumento'},
 	{header : '<s:message code="precontencioso.grid.documento.estado" text="**Estado" />', dataIndex : 'estado'},
 	{header : '<s:message code="precontencioso.grid.documento.adjunto" text="**Adjunto" />', dataIndex : 'adjunto'},
-	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor'},
-	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud'},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado'},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio'},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion'},	
-	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado'},
+	{header : '<s:message code="precontencioso.grid.documento.ejecutivo" text="**Ejecutivo" />', dataIndex : 'ejecutivo'},
+	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor', renderer: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', renderer: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', renderer: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', renderer: myRenderer},
 	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario'}	
 ]; 
 
@@ -88,13 +106,12 @@ var incluirDocButton = new Ext.Button({
 				});
         	}else{
 		        var w = app.openWindow({
-						flow: 'documentopco/incluirDocumento'
-						,params: {idSolicitud:idSolicitud}
+						flow: 'documentopco/abrirIncluirDocumento'
 						,title: '<s:message code="precontencioso.grid.documento.incluirDocumento" text="**Incluir Documento" />'
 						,width: 640
 					});
 					w.on(app.event.DONE, function() {
-						storeDocumentos.webflow();
+						refrescarDocumentosGrid();
 						w.close();
 					});
 					w.on(app.event.CANCEL, function(){ w.close(); });
@@ -110,57 +127,42 @@ var excluirDocButton = new Ext.Button({
 		,cls: 'x-btn-text-icon'
 		,handler:function(){
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			var p = getParametrosExcluirDescartarSolicitarDocs();			
 			if (rowsSelected == '') {
 				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
 			}
-			else {
-				if (rowsSelected.length > 1){
-					Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
-				}
-				else {		
-						Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.excluirDocumento.confirmacion" text="**Va a exlcuir documentos y las solicitudes asociadas ¿Desea continuar?" />', function(btn){
-		    				if (btn == 'yes'){
-								Ext.Ajax.request({
-										url : page.resolveUrl('documentopco/excluirDocumentos'), 
-										params : {idSolicitud:idSolicitud} ,
-										method: 'POST',
-										success: function ( result, request ) {
-											storeDocumentos.webflow();
-										}
-								});
-		    				}
-						});						
-				}
+			else {		
+					Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.excluirDocumento.confirmacion" text="**Va a exlcuir documentos y las solicitudes asociadas ¿Desea continuar?" />', function(btn){
+	    				if (btn == 'yes'){
+							Ext.Ajax.request({
+									url : page.resolveUrl('documentopco/excluirDocumentos'), 
+									params : p,									<%-- {idDocumento:idDocumento} , --%>
+									method: 'POST',
+									success: function ( result, request ) {
+										refrescarDocumentosGrid();
+									}
+							});
+	    				}
+					});						
 			}
 	    }
-	});	
+	});
 	
-<%-- 	var validateExcluir = function(){	
-		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
-		if (rowsSelected == '') {
-			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.exluirDocumento.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+var getParametrosExcluirDescartarSolicitarDocs = function() {
+		var rowsSelected=new Array(); 
+		var arrayIdDocumentos=new Array();	
+		rowsSelected = gridDocumentos.getSelectionModel().getSelections(); 
+		for (var i=0; i < rowsSelected.length; i++){
+		  	arrayIdDocumentos.push(rowsSelected[i].get('idDoc'));		
 		}
-		else if (rowsSelected.length > 1){
-				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.exluirDocumento.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
-			 }
-			 else {
-	        	Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', 
-	        		'<s:message code="precontencioso.grid.documento.excluiDocumento.avisoExcluir" 
-	        		text="**Se borrará el documento y todas sus solicitudes ¿Desea continuar?" />', 
-	        		function(btn){
-	    				if (btn == 'yes'){
-	    					return true;
-	    				}
-	    				else {
-	    					return false;
-	    				}
-					});	
-	        }
-
-		return true;
-	}		 --%>
-
-
+		
+		var arrayIdDocumentos = Ext.encode(arrayIdDocumentos);		
+	 	var parametros = {};
+	 	parametros.arrayIdDocumentos = arrayIdDocumentos;
+	 	
+	 	return parametros;
+}			
+	
 var descartarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.descartarDocumentos" text="**Descartar Documentos" />'
 		,iconCls : 'icon_cancel'
@@ -168,30 +170,26 @@ var descartarDocButton = new Ext.Button({
 		,cls: 'x-btn-text-icon'
 		,handler:function(){
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			var p = getParametrosExcluirDescartarSolicitarDocs();			
 			if (rowsSelected == '') {
 				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
 			}
 			else {
-				if (rowsSelected.length > 1){
-					Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
-				}
-				else {	
-						Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.descartarDocumento.confirmacion" text="**Va a descartar documentos ¿Desea continuar?" />', function(btn){
-		    				if (btn == 'yes'){
-								Ext.Ajax.request({
-										url : page.resolveUrl('documentopco/descartarDocumentos'), 
-										params : {idSolicitud:idSolicitud} ,
-										method: 'POST',
-										success: function ( result, request ) {
-											storeDocumentos.webflow();
-										}
-								});
-		    				}
-						});						
-				}
+				Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.descartarDocumento.confirmacion" text="**Va a descartar documentos ¿Desea continuar?" />', function(btn){
+	   				if (btn == 'yes'){
+						Ext.Ajax.request({
+							url : page.resolveUrl('documentopco/descartarDocumentos'), 
+							params: p, 			<%--{idDocumento:idDocumento} , --%>
+							method: 'POST',
+							success: function ( result, request ) {
+								refrescarDocumentosGrid();
+							}
+						});
+					}
+				});						
 			}
 	    }
-	});	
+});	
 
 var validacionEditar=false;	
 var solicitarDocButton = new Ext.Button({
@@ -201,47 +199,82 @@ var solicitarDocButton = new Ext.Button({
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
 		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+		var p = getParametrosExcluirDescartarSolicitarDocs();		
 		if (rowsSelected == '') {
 			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
 		}
 		else {
-			if (rowsSelected.length > 1){
-				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.multipleDocSeleccionado" text="**Solo debe seleccionar un documento." />');
-			}
-			else {
-	        	if(validacionEditar) {
-		        	Ext.Msg.show({
-					   title:'Aviso',
-					   msg: '<s:message code="precontencioso.grid.documento.crearSolicitudes.aviso" text="**No se puede crear solicitud" />',
-					   buttons: Ext.Msg.OK
+	        if(validacionEditar) {
+		       	Ext.Msg.show({
+				   title:'Aviso',
+				   msg: '<s:message code="precontencioso.grid.documento.crearSolicitudes.aviso" text="**No se puede crear solicitud" />',
+				   buttons: Ext.Msg.OK
+				});
+	        }
+	        else {
+			       var w = app.openWindow({
+						flow: 'documentopco/abrirCrearSolicitudes'
+						,params: p				<%--{idDocumento:idDocumento} --%>
+						,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
+						,width: 430
 					});
-	        	}
-	        	else {
-			        var w = app.openWindow({
-							flow: 'documentopco/crearSolicitudes'
-							,params: {idSolicitud:idSolicitud}
-							,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
-							,width: 300
-						});
-					w.on(app.event.DONE, function() {
-						storeDocumentos.webflow();					
-						w.close(); 
-						
-					});
-					w.on(app.event.CANCEL, function(){ w.close(); });
-					}
+				w.on(app.event.DONE, function() {
+					refrescarDocumentosGrid();					
+					w.close(); 
+					
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
 				}
 			}
 		}				
 	});	
+	
+var getParametrosAnularSolicitudes = function() {
+		var rowsSelected=new Array(); 
+		var arrayIdSolicitudes=new Array();	
+		var arrayIdDocumentos=new Array();
+		rowsSelected = gridDocumentos.getSelectionModel().getSelections(); 
+		for (var i=0; i < rowsSelected.length; i++){
+		  	arrayIdSolicitudes.push(rowsSelected[i].get('id'));	
+		  	arrayIdDocumentos.push(rowsSelected[i].get('idDoc'));
+		}
+		
+		var arrayIdSolicitudes = Ext.encode(arrayIdSolicitudes);		
+		var arrayIdDocumentos = Ext.encode(arrayIdDocumentos);		
+	 	var parametros = {};
+	 	parametros.arrayIdSolicitudes = arrayIdSolicitudes;
+	 	parametros.arrayIdDocumentos = arrayIdDocumentos;
+	 	
+	 	return parametros;
+}			
 
-
-var anularSolicitudes = {
+var anularSolicitudesButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.anularSolicitudes" text="**Anular Solicitudes" />'
 		,iconCls : 'icon_menos'
+		,disabled : false
 		,cls: 'x-btn-text-icon'
-	};	
-var anularSolicitudesButton = new Ext.Button(anularSolicitudes);
+		,handler:function(){
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			var p = getParametrosAnularSolicitudes();			
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinSolSeleccionada" text="**Debe seleccionar algún documento." />');
+			}
+			else {
+					Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.anularSolicitudes.confirmacion" text="**Va a anular solicitudes ¿Desea continuar?" />', function(btn){
+		    			if (btn == 'yes'){
+							Ext.Ajax.request({
+									url : page.resolveUrl('documentopco/anularSolicitudes'), 
+									params: p, 		<%--{idSolicitud:idSolicitud} , --%>
+									method: 'POST',
+									success: function ( result, request ) {
+										refrescarDocumentosGrid();
+									}
+							});
+		    			}
+					});						
+			}
+	    }
+	});
 
 var validacionEstado=false;
 var informarDocButton = new Ext.Button({
@@ -264,15 +297,15 @@ var informarDocButton = new Ext.Button({
 		        var w = app.openWindow({
 						flow: 'documentopco/informarSolicitud'
 						,params: {idSolicitud:rowsSelected[0].get('id'), actor:rowsSelected[0].get('actor'), idDoc:rowsSelected[0].get('idDoc'), 
-							estado:rowsSelected[0].get('estado'),adjuntado:rowsSelected[0].get('adjunto'),
 							fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
-							fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion'),
-							comentario:rowsSelected[0].get('comentario')}
+							fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion')}
 						,title: '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
 						,width: 640
 					});
 					w.on(app.event.DONE, function() {
-						w.close(); });
+						refrescarDocumentosGrid(); 
+						w.close(); 
+					});
 					w.on(app.event.CANCEL, function(){ w.close(); });
 			}
 		}				
@@ -296,22 +329,204 @@ var editarDocButton = new Ext.Button({
 			    Ext.Msg.show({title:'Aviso',msg: '<s:message code="precontencioso.grid.documento.editarDocumento.aviso" text="**No se puede Editar" />',buttons: Ext.Msg.OK});
 			} 
 			else {
-		        var w = app.openWindow({
-						flow: 'documentopco/editarDocumento'
-						,params: {idSolicitud:idSolicitud}
-						,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
-						,width: 640
-					});
-				w.on(app.event.DONE, function() {
-					w.close(); 
-				});
-				w.on(app.event.CANCEL, function(){ 
-					w.close(); 
-				});
+			        var w = app.openWindow({
+							flow: 'documentopco/abrirEditarDocumento'
+							,params: {idDocumento:idDocumento}
+							,title: '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
+							,width: 640
+						});
+					w.on(app.event.DONE, function() {
+						w.close(); });
+						w.on(app.event.CANCEL, function(){ w.close(); });
+					}
 			}
-		}
 	});	
-	
+
+<%-- FUNCION: Control habilitar/deshabilitar los distintos botones --%>	
+var controlButtons = function (incluirB, excluirB, descartarB, editarB, anularB, solicitarB, informarB){
+	incluirDocButton.setDisabled(incluirB);
+	excluirDocButton.setDisabled(excluirB);
+	descartarDocButton.setDisabled(descartarB);
+	editarDocButton.setDisabled(editarB);	
+	anularSolicitudesButton.setDisabled(anularB);
+	solicitarDocButton.setDisabled(solicitarB);	
+	informarDocButton.setDisabled(informarB);
+}	
+
+<%-- FUNCION: Chequeo estados para control botones --%>
+var checkControlButtons = function(){
+		<%-- SI SOLO UN ELEMENTO SELECCIONADO --%>
+		if(myCboxSelModel2.getCount() == 1){
+     		<%-- Si el documento está PENDIENTE SOLICITAR O SOLICITADO --%>
+			if((gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'PS' ||
+				gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'SO') 
+				&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true){
+				<%-- Si es solicitud --%>
+				if (gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == true){ 
+					<%-- Si no tiene resultado --%>
+					if (gridDocumentos.getSelectionModel().getSelected().get('resultado') == ''){
+			      		controlButtons(true, true, false, false, false, false, false);
+			      	}
+			      	<%-- Si la solicitud tiene resultado --%>
+			      	else {
+			      		controlButtons(true, true, true, true, true, true, false);		      					      		
+			      	}
+			    }
+      			<%-- Si no es solicitud --%>
+      			else {
+      				controlButtons(true, false, true, false, true, false, true);
+      			}   
+			}
+			else {	
+				<%-- Si el documento está DESCARTADO --%>
+				if(gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'DE'
+					&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true){
+	      			controlButtons(true, true, true, true, true, false, false);   
+				}
+				else {		
+		     		<%-- Si el documento es solicitud --%>				
+					if(gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == true) {
+						<%-- Si no tiene resultado --%>
+						if (gridDocumentos.getSelectionModel().getSelected().get('resultado') == ''){
+			      			controlButtons(true, true, true, true, false, true, false);
+			      		}
+			      		<%-- Si la solicitud tiene resultado --%>
+			      		else {
+			      			controlButtons(true, true, true, true, true, true, false);		      					      		
+			      		}      						
+					}		
+				}
+			}				
+		}
+		<%-- SI SELECCION MULTIPLE DE ELEMENTOS --%>
+		else {
+			// Inicialmente todos desahabilitados
+			controlButtons(true, true, true, true, true, true, true);
+			
+			var rowsSelected=new Array(); 
+			var arrayIdDocumentos=new Array();
+			var arrayEsDocumento=new Array();
+			var arrayTieneSolicitud=new Array();
+			var arrayCodigoEstadoDocumento=new Array();	
+			var arrayResultado=new Array();		
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 			
+			for (var i=0; i < rowsSelected.length; i++){
+			  arrayEsDocumento.push(rowsSelected[i].get('esDocumento'));
+			  arrayTieneSolicitud.push(rowsSelected[i].get('tieneSolicitud'));
+			  arrayCodigoEstadoDocumento.push(rowsSelected[i].get('codigoEstadoDocumento'));				 
+			  arrayResultado.push(rowsSelected[i].get('resultado'));				 
+			}
+			<%-- Para realizar una acción multiple todos los elementos tienen que estar en el mismo estado --%>	
+			<%-- Para saber si las filas seleccionadas todas están en el mismo estado, eliminamos los elementos duplicados del array
+			entonces si todas las filas seleccionadas tienen el mismo estado el array tendrá un tamaño=1 --%>
+			uniqueArray = arrayCodigoEstadoDocumento.filter(function(item, pos) {
+	    			return arrayCodigoEstadoDocumento.indexOf(item) == pos;
+			});	
+			
+			<%-- SI DOCUMENTOS ELEGIDOS DE DISTINTO TIPO -> AVISO DE LA IMPOSIBILIDAD DE HACER NADA --%>
+			if (uniqueArray.length > 1){
+				controlButtons(true, true, true, true, true, true, true);
+				Ext.MessageBox.alert('<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.titulo" text="**Tipos de documento distintos" />'
+                 ,'<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.aviso" text="**Debe seleccionar documentos del mismo tipo" />');
+			}
+						
+			<%-- **** ESTADO PENDIENTE DE SOLICITAR --%>
+			<%-- Vemos si tenemos solo un resultado y es PS (PENDIENTE SOLICITAR --%>
+			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){
+				uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
+	    			return arrayEsDocumento.indexOf(item) == pos;
+				});
+				<%-- Si todos los seleccionados son documentos --%>	
+				if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
+					uniqueArray3 = arrayTieneSolicitud.filter(function(item, pos) {
+		    			return arrayTieneSolicitud.indexOf(item) == pos;
+					});
+					<%-- Si hay documentos con solicitudes o sin solicitudes --%>
+					if (uniqueArray3.length > 1){
+						<%-- SOLICITAR MASIVAMENTE --%>
+						controlButtons(true, true, true, true, true, false, true);							
+					}
+					else {
+						<%-- Y ademas no tienen solicitudes --%>
+						if (uniqueArray3.length ==1 && uniqueArray3[0] == false){
+							<%-- EXCLUIR DOCUMENTOS Y SOLICITAR MASIVAMENTE --%>
+							controlButtons(true, false, true, true, true, false, true);		      					      									
+						}
+						<%-- Si todas tienen solicitudes --%>
+						if (uniqueArray3.length ==1 && uniqueArray3[0] == true){
+							uniqueArray4 = arrayResultado.filter(function(item, pos) {
+				    			return arrayResultado.indexOf(item) == pos;
+							});
+							<%-- pero no tienen resultado --%>
+							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
+								<%-- DESCARTAR DOCUMENTOS y ANULAR SOLICITUDES MASIVAMENTE --%>
+								controlButtons(true, true, false, true, false, true, true);
+							}		      					      									
+						}
+					}
+				}
+				<%-- Si no todos los seleccionado son documentos, tambien hay solicitudes --%>
+				else {
+					uniqueArray4 = arrayResultado.filter(function(item, pos) {
+			    		return arrayResultado.indexOf(item) == pos;
+					});
+					<%-- Si todas las solicitudes no tienen resultado --%>
+					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
+						<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
+						controlButtons(true, true, true, true, false, true, true);
+					}		      					      																	
+				}												
+			}
+			<%-- **** ESTADO SOLICITADO --%>
+			<%-- Vemos si tenemos solo un resultado y es SO (SOLICITADO) --%>
+			if (uniqueArray.length == 1 && uniqueArray[0] == 'SO'){
+				uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
+	    			return arrayEsDocumento.indexOf(item) == pos;
+				});
+				<%-- Si todos los seleccionados son documentos --%>	
+				if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
+					uniqueArray4 = arrayResultado.filter(function(item, pos) {
+			    		return arrayResultado.indexOf(item) == pos;
+					});
+					<%-- Si todas las solicitudes no tienen resultado --%>
+					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
+						<%-- DESCARTAR DOCUMENTOS Y ANULAR SOLICITUDES MASIVAMENTE --%>
+						controlButtons(true, true, false, true, false, false, true);
+					}
+					<%-- Si hay alguna solicitud con resultado --%>
+					else {
+						<%-- SOLICITAR MASIVAMENTE --%>
+						controlButtons(true, true, true, true, true, false, true);
+					} 		      					      									
+				}
+				<%-- Si no todos los seleccionado son documentos, tambien hay solicitudes --%>
+				else {
+					uniqueArray4 = arrayResultado.filter(function(item, pos) {
+			    		return arrayResultado.indexOf(item) == pos;
+					});
+					<%-- Si todas las solicitudes no tienen resultado --%>
+					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
+						<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
+						controlButtons(true, true, true, true, false, true, true);
+					}		      					      																	
+				}				
+			}
+			<%-- **** ESTADO DESCARTADO --%>
+			<%-- Vemos si tenemos solo un resultado y es DE (DESCARTADO) --%>
+			if (uniqueArray.length == 1 && uniqueArray[0] == 'DE'){
+				uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
+	    			return arrayEsDocumento.indexOf(item) == pos;
+				});
+				<%-- Si todos los seleccionados son documentos --%>	
+				if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
+					<%-- SOLICITAR MASIVAMENTE --%>
+					controlButtons(true, true, true, true, true, false, true);
+				}
+			}																											
+		}
+}	
+
+<%-- States --%>
 
 //Definimos eventos checkselectionmodel
 Ext.namespace('Ext.ux.plugins');
@@ -333,8 +548,8 @@ Ext.namespace('Ext.ux.plugins');
       		this.sm.on('rowselect', this.onSelect, this);
       		this.sm.on('rowdeselect', this.onDeselect, this);
       		this.store.on('load', this.restoreState, this);
-      		//btnPreparar.disabled=true;
       		
+      		controlButtons(false,true, true, true, true, true, true);     		
    		},
 
    		onSelect: function(sm, idx, rec){
@@ -342,7 +557,9 @@ Ext.namespace('Ext.ux.plugins');
       		if (this.idArray.indexOf(rec.get(this.idProperty)) < 0){
       			this.idArray.push(rec.get(this.idProperty));
       		}
-      		//btnPreparar.setDisabled(false);
+      		
+      		checkControlButtons();
+			
    		},
 
    		onDeselect: function(sm, idx, rec){
@@ -352,8 +569,12 @@ Ext.namespace('Ext.ux.plugins');
       			delete this.idArray.splice(i,1);
       		}
       		
-      		if(myCboxSelModel.getCount() == 0){
-      			//btnPreparar.setDisabled(true);
+      		<%-- Si no hay ninguno seleccionado --> Habilitar incluir documento y deshabilitar todos los demas --%>
+      		if(myCboxSelModel2.getCount() == 0){
+      			controlButtons(false,true, true, true, true, true, true); 			
+      		}
+      		else {
+      			checkControlButtons();
       		}
    		},
 
@@ -388,24 +609,31 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,store: storeDocumentos
 		,height: 170
 		,loadMask: true
-        ,sm: myCboxSelModel
+        ,sm: myCboxSelModel2
         ,clicksToEdit: 1
         ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
 		,cls:'cursor_pointer'
 		,height: 250
 		,autoWidth: true			
-		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, anularSolicitudesButton, editarDocButton, separadorButtons, solicitarDocButton, informarDocButton ]
+		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton ]
 	});
 	
-
-
-storeDocumentos.webflow();
-
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);
 		idSolicitud = rec.get('id');
-});	
+		idDocumento = rec.get('idDoc');		
+});
+
+var refrescarDocumentosGrid = function() {
+	storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
+	//storeDocumentos.webflow({idProcedimientoPCO: entidad.get("data").id});
+}
+
+refrescarDocumentosGrid();	
+
+
+
 
 
 

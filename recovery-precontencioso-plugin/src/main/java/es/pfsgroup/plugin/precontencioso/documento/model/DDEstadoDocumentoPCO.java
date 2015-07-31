@@ -18,6 +18,12 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_PCO_DOC_ESTADO", schema = "${entity.schema}")
 public class DDEstadoDocumentoPCO implements Dictionary, Auditable {
 
+	public static final String PENDIENTE_SOLICITAR = "PS";
+	public static final String SOLICITADO = "SO";
+	public static final String ENVIADO = "EN";
+	public static final String DISPONIBLE = "DI";
+	public static final String DESCARTADO = "DE";
+	
 	private static final long serialVersionUID = 3659782421784672994L;
 
 	@Id

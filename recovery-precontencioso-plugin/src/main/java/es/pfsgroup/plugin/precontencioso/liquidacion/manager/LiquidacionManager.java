@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.pfs.users.dao.UsuarioDao;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.assembler.LiquidacionAssembler;
@@ -24,7 +25,7 @@ public class LiquidacionManager implements LiquidacionApi {
 	private LiquidacionDao liquidacionDao;
 
 	@Autowired
-	private UsuarioDao usuarioDao;
+	private GestorDespachoDao gestorDespachoDao;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -59,7 +60,7 @@ public class LiquidacionManager implements LiquidacionApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void editar(LiquidacionDTO liquidacionDto) {
+	public void editarValoresCalculados(LiquidacionDTO liquidacionDto) {
 		LiquidacionPCO liquidacion = liquidacionDao.get(liquidacionDto.getId());
 
 		liquidacion.setId(liquidacionDto.getId());
@@ -68,11 +69,16 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setInteresesOrdinarios(liquidacionDto.getInteresesOrdinarios());
 		liquidacion.setInteresesDemora(liquidacionDto.getInteresesDemora());
 		liquidacion.setTotal(liquidacionDto.getTotal());
-		
-		Long apoderadoId = liquidacionDto.getApoderadoId();
 
-		if (apoderadoId != null) {
-			liquidacion.setApoderado(usuarioDao.get(apoderadoId));			
+		GestorDespacho apoderado = obtenerApoderado(liquidacionDto);
+		if (apoderado != null) {
+			liquidacion.setApoderado(apoderado);
+		}
+
+		DDEstadoLiquidacionPCO estado = liquidacion.getEstadoLiquidacion();
+		if (estado != null && !DDEstadoLiquidacionPCO.CALCULADA.equals(estado.getCodigo())) {
+			DDEstadoLiquidacionPCO estadoCalculado = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CALCULADA);
+			liquidacion.setEstadoLiquidacion(estadoCalculado);
 		}
 
 		liquidacionDao.saveOrUpdate(liquidacion);
@@ -109,5 +115,24 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setEstadoLiquidacion(estadoDescartada);
 
 		liquidacionDao.saveOrUpdate(liquidacion);
+	}
+
+	/**
+	 * Helper Method - editar
+	 * Recupera el GestorDespacho (apoderado)
+	 *
+	 * @param liquidacionDto contiene los datos usu_id y des_id para realizar la busqueda del gestordespacho
+	 * @return
+	 */
+	private GestorDespacho obtenerApoderado(final LiquidacionDTO liquidacionDto) {
+		Long apoderadoUsuarioId = liquidacionDto.getApoderadoUsuarioId();
+		Long apoderadoDespachoId = liquidacionDto.getApoderadoDespachoId();
+
+		GestorDespacho gestorDespacho = null;
+		if (apoderadoUsuarioId != null && apoderadoDespachoId != null) {
+			gestorDespacho = gestorDespachoDao.getGestorDespachoPorUsuarioyDespacho(apoderadoUsuarioId, apoderadoDespachoId);
+		}
+
+		return gestorDespacho;
 	}
 }

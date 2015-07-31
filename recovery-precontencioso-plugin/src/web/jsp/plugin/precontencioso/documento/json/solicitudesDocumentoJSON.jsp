@@ -9,11 +9,16 @@
         <json:object>
             <json:property name="id" value="${s.id}" />
             <json:property name="idDoc" value="${s.idDoc}" />
+            <json:property name="esDocumento" value="${s.esDocumento}" />
+            <json:property name="tieneSolicitud" value="${s.tieneSolicitud}" />
+            <json:property name="codigoEstadoDocumento" value="${s.codigoEstadoDocumento}" />            
             <json:property name="contrato" value="${s.contrato}" />    
             <json:property name="descripcionUG" value="${s.descripcionUG}" />
      		<json:property name="tipoDocumento" value="${s.tipoDocumento}" />            
             <json:property name="estado" value="${s.estado}" />
             <json:property name="adjunto" value="${s.adjunto}" />
+            <json:property name="ejecutivo" value="${s.ejecutivo}" />
+            <json:property name="tipoActor" value="${s.tipoActor}" />
             <json:property name="actor" value="${s.actor}" />
             <json:property name="fechaSolicitud" value="${s.fechaSolicitud}" />
             <json:property name="fechaResultado" value="${s.fechaResultado}" />

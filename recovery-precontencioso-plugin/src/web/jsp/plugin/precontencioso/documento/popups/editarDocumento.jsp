@@ -30,7 +30,7 @@
 				if (validateForm()) {		    
 			    	var p = getParametros();
 			    	Ext.Ajax.request({
-							url : page.resolveUrl('documentopco/updateDocumentos'), 
+							url : page.resolveUrl('documentopco/editarDocumento'), 
 							params : p ,
 							method: 'POST',
 							success: function ( result, request ) {
@@ -63,7 +63,10 @@
 	 	parametros.id = ${dtoDoc.id};
 	 	parametros.protocolo = protocolo.getValue();
 	 	parametros.notario = notario.getValue();
-	 	parametros.fechaEscritura = fechaEscritura.getValue();
+ 		if (fechaEscritura.getValue()=='')
+	 		parametros.fechaEscritura = '';
+	 	else
+	 		parametros.fechaEscritura = fechaEscritura.getValue().format('d/m/Y');	 	
 	 	parametros.asiento = asiento.getValue();
 	 	parametros.finca = finca.getValue();
 	 	parametros.tomo = tomo.getValue();
@@ -92,7 +95,7 @@
 	var fechaEscritura = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.fechaEscritura" text="**Fecha escritura" />'
-		,value : '<fwk:date value="${fechaEscritura}" />'
+		,value : '<s:message text="${dtoDoc.fechaEscritura}" />'
 		,style:'margin:0px'
 	});
 	
@@ -140,7 +143,7 @@
 	
 	var plaza = new Ext.form.TextField({
 		name : 'plaza'
-		,value : '<s:message text="${plaza}" javaScriptEscape="true" />'
+		,value : '<s:message text="${dtoDoc.plaza}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.editarDocumento.plaza" text="**Plaza" />'
 	});  	
 	

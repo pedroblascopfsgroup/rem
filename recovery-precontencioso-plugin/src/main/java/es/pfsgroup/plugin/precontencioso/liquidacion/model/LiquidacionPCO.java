@@ -22,7 +22,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.Contrato;
-import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
 @Entity
@@ -79,10 +79,25 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Column(name = "PCO_LIQ_TOTAL")
 	private Float total;
 
+	@Column(name = "PCO_LIQ_ORI_CAPITAL_VENCIDO")
+	private Float capitalVencidoOriginal;
+
+	@Column(name = "PCO_LIQ_ORI_CAPITAL_NO_VENCIDO")
+	private Float capitalNoVencidoOriginal;
+
+	@Column(name = "PCO_LIQ_ORI_INTE_DEMORA")
+	private Float interesesDemoraOriginal;
+
+	@Column(name = "PCO_LIQ_ORI_INTE_ORDINARIOS")
+	private Float interesesOrdinariosOriginal;
+
+	@Column(name = "PCO_LIQ_ORI_TOTAL")
+	private Float totalOriginal;
+
 	@ManyToOne
-	@JoinColumn(name = "USU_ID")
+	@JoinColumn(name = "USD_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private Usuario apoderado;
+	private GestorDespacho apoderado;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -201,12 +216,60 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		this.total = total;
 	}
 
-	public Usuario getApoderado() {
+	public Float getCapitalVencidoOriginal() {
+		return capitalVencidoOriginal;
+	}
+
+	public void setCapitalVencidoOriginal(Float capitalVencidoOriginal) {
+		this.capitalVencidoOriginal = capitalVencidoOriginal;
+	}
+
+	public Float getCapitalNoVencidoOriginal() {
+		return capitalNoVencidoOriginal;
+	}
+
+	public void setCapitalNoVencidoOriginal(Float capitalNoVencidoOriginal) {
+		this.capitalNoVencidoOriginal = capitalNoVencidoOriginal;
+	}
+
+	public Float getInteresesDemoraOriginal() {
+		return interesesDemoraOriginal;
+	}
+
+	public void setInteresesDemoraOriginal(Float interesesDemoraOriginal) {
+		this.interesesDemoraOriginal = interesesDemoraOriginal;
+	}
+
+	public Float getInteresesOrdinariosOriginal() {
+		return interesesOrdinariosOriginal;
+	}
+
+	public void setInteresesOrdinariosOriginal(Float interesesOrdinariosOriginal) {
+		this.interesesOrdinariosOriginal = interesesOrdinariosOriginal;
+	}
+
+	public Float getTotalOriginal() {
+		return totalOriginal;
+	}
+
+	public void setTotalOriginal(Float totalOriginal) {
+		this.totalOriginal = totalOriginal;
+	}
+
+	public GestorDespacho getApoderado() {
 		return apoderado;
 	}
 
-	public void setApoderado(Usuario apoderado) {
+	public void setApoderado(GestorDespacho apoderado) {
 		this.apoderado = apoderado;
+	}
+
+	public String getSysGuid() {
+		return sysGuid;
+	}
+
+	public void setSysGuid(String sysGuid) {
+		this.sysGuid = sysGuid;
 	}
 
 	public Integer getVersion() {
@@ -223,13 +286,5 @@ public class LiquidacionPCO implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public String getSysGuid() {
-		return sysGuid;
-	}
-
-	public void setSysGuid(String sysGuid) {
-		this.sysGuid = sysGuid;
 	}
 }

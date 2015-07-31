@@ -27,7 +27,8 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler:function(){
-				if (validateForm) {		    
+				var formulario = panelEdicion.getForm();
+				if (formulario.isValid()) {		    
 			    	var p = getParametros();
 			    	Ext.Ajax.request({
 							url : page.resolveUrl('documentopco/saveCrearSolicitudes'), 
@@ -37,67 +38,175 @@
 								page.fireEvent(app.event.DONE);
 							}
 					});
+				}else{
+						Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios.');
 				}
 	     }
 	});
 	
 
-	var validateForm = true;
 
 	var getParametros = function() {
 		
 	 	var parametros = {};
 	 	
-	 	parametros.id = ${dtoDoc.id};
-	 	parametros.fechaSolicitud = fechaSolicitud.getValue().format('d/m/Y');
-	 	parametros.actor = actor.getValue();
+	 	var arrayIdDocumentos=new Array();	
+		arrayIdDocumentos = ${arrayIdDocumentos};		
+		var arrayIdDocumentos = Ext.encode(arrayIdDocumentos);		
+	 	parametros.arrayIdDocumentos = arrayIdDocumentos;
+	 	parametros.actor = comboUsuario.getValue();
+	 	if(fechaSolicitud.getValue()!=null && fechaSolicitud.getValue()!= '') parametros.fechaSolicitud = fechaSolicitud.getValue().format('d/m/Y');
+	 	parametros.tipogestor = comboTipoGestor.getValue();
+	 	parametros.idDespacho = comboTipoDespacho.getValue();
+	 	
 	 	
 	 	return parametros;
 	 }	
-	
-	var actor = new Ext.form.TextField({
-		name : 'actor'
-		,value : '<s:message text="${actor}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="precontencioso.grid.documento.crearSolicitudes.actor" text="**Actor" />'
-	});    
-	
-	
-	<pfsforms:datefield labelKey="precontencioso.grid.documento.crearSolicitudes.fechaSolicitud" label="**Fecha de Solicitud" name="fechaSolicitud" obligatory="true"/>
-		
-	var panelEdicion = new Ext.form.FormPanel({
-		autoHeight:true
-		, border : false
-				,layout : 'column'
-				,height: 255
-				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:200}
-				,items:[{
-					title:'<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Creación Solicitudes" />'
-					,layout:'table'
-					,layoutConfig:{
-						columns:2							
-					}
-					,defaults:{layout : 'form',border:false,height:175}
-					,items:
-						{
-						items:[{
-							border:false
-							,style:'font-size:11px; margin:4px; top:5px'
-							, bodyStyle:'padding:5px'
-							,items:[fechaSolicitud, actor]
-								}]
-						, width: 280
-						}
-				}]
+	 
+	 <%-- Combo Tipo Gestor --%>
+
+	var tipoGestorRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigo'},
+		{name: 'descripcion'}
+	]);
+
+	var tipoGestorStore = page.getStore({
+		flow: 'documentopco/getTiposGestorActores',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoGestores'
+		}, tipoGestorRecord)
 	});
+
+	var comboTipoGestor = new Ext.form.ComboBox({
+		store: tipoGestorStore,
+		displayField: 'descripcion',
+		valueField: 'id',
+		allowBlank: false,
+		mode: 'remote',
+		forceSelection: true,
+		emptyText: 'Seleccionar',
+		triggerAction: 'all',
+		disabled: false,
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoGestor" text="**Tipo gestor" />'
+	});
+	
+	<%-- Combo Tipo Despacho --%>
+
+	var tipoDespachoRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'cod'},
+		{name: 'descripcion'}
+	]);
+
+	var tipoDespachoStore = page.getStore({
+		flow: 'coreextension/getListTipoDespachoData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoDespachos'
+		}, tipoDespachoRecord)
+	});
+
+	var comboTipoDespacho = new Ext.form.ComboBox({
+		store: tipoDespachoStore,
+		displayField: 'descripcion',
+		valueField:'cod',
+		allowBlank: false,
+		mode: 'remote',
+		disabled: true,
+		forceSelection: true,
+		emptyText: 'Seleccionar',
+		triggerAction: 'all',
+		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoDespacho" text="**Tipo despacho" />'
+	});
+	
+	<%-- Combo Usuario --%>
+
+	var usuarioRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'username'}
+	]);
+
+	var usuarioStore = page.getStore({
+		flow: 'coreextension/getListUsuariosPaginatedData',
+		reader: new Ext.data.JsonReader({
+			root: 'listadoUsuarios'
+		}, usuarioRecord)
+	});
+
+	var comboUsuario = new Ext.form.ComboBox({
+		store: usuarioStore,
+		allowBlank: false,
+		blankElementText: '---',
+		emptyText: '---',
+		disabled: true,
+		displayField: 'username',
+		valueField: 'id',
+		fieldLabel: '<s:message code="precontencioso.grid.documento.crearSolicitudes.actor" text="**Actor" />',
+		loadingText: 'Buscando...',
+		labelStyle: 'width:100px',
+		width: 250,
+		resizable: true,
+		pageSize: 10,
+		triggerAction: 'all',
+		mode: 'local'
+	});
+
+	comboUsuario.on('afterrender', function(combo) {
+		combo.mode = 'remote';
+	});
+	
+	
+		<%-- Events --%>
+
+	comboTipoGestor.on('afterrender', function(combo) {
+		tipoGestorStore.webflow();
+	});
+	
+	comboTipoGestor.on('select', function() {
+		
+		comboTipoDespacho.reset();
+		comboUsuario.reset();
+		comboTipoDespacho.setDisabled(false);
+		comboUsuario.setDisabled(true);
+
+		tipoDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()});
+	});
+
+	comboTipoDespacho.on('select', function() {
+		usuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()});
+
+		comboUsuario.reset();
+		comboUsuario.setDisabled(false);
+	});
+	   
+	var fechaSolicitud = new Ext.ux.form.XDateField({
+		name : 'fechaEscritura'
+		,allowBlank: false
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.crearSolicitudes.fechaSolicitud" text="**Fecha solicitud" />'
+		,value : new Date() 
+		,style:'margin:0px'
+	});
+	
+
+
+
+	var panelEdicion = new Ext.FormPanel({
+		layout:'table'
+		,layoutConfig:{columns:2}
+		,border:false
+   	    ,width: 400
+		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+		,items:[{items: [ comboTipoGestor, comboTipoDespacho, comboUsuario, fechaSolicitud]}
+		]
+	});	
 
 	var panel=new Ext.Panel({
 		border:false
 		,bodyStyle : 'padding:5px'
-		,autoHeight:true
+		,height: 180
+		,autoWidth:true
 		,autoScroll:true
-		,width:840
-		,height:600
-		,defaults:{xtype:'fieldset',cellCls : 'vtop',width:840,autoHeight:true}
+		,defaults:{xtype:'fieldset',cellCls : 'vtop'}
 		,items:panelEdicion
 		,bbar:[btnGuardar, btnCancelar]
 	});	

@@ -8,7 +8,6 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
-
 (function(page,entidad){
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/documento/grids/documentoGrid.jsp" %>
@@ -20,16 +19,19 @@
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'
-		,items: [gridDocumentos, gridLiquidaciones,gridBurofax]
-	});
+		,items: [gridDocumentos, gridLiquidaciones, gridBurofax]
+	}); 
 
+	panel.getValue = function() {}
 
-        panel.getValue = function() {}
+	panel.setValue = function(){
+	        var data = entidad.get("data");
+	        refrescarLiquidacionesGrid();
+	}
 
-        panel.setValue = function(){
-                var data = entidad.get("data");
-        }
+ 	panel.setVisibleTab = function(data) {
+		return data.hayPrecontencioso;
+	}
 
-        return panel;
+	return panel;
 })
-

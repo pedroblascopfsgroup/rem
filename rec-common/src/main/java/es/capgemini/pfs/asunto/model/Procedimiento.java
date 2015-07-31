@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -151,8 +152,11 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private Set<AdjuntoAsunto> adjuntos;
     
-    
-    @Embedded
+    @Transient
+    private Boolean activo;
+
+
+	@Embedded
     private Auditoria auditoria;
 
     @Version
@@ -722,5 +726,14 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
 	public void setAdjuntos(Set<AdjuntoAsunto> adjuntos) {
 		this.adjuntos = adjuntos;
 	}
+
+	public Boolean getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
+	
 
 }

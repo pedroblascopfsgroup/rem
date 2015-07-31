@@ -63,6 +63,13 @@ var storeDocumentos = page.getStore({
       ,remoteSort : true
 });
 
+storeDocumentos.on(
+	'load',
+	function (store, data, options) {
+		actualizarBotonesDocumentos();	
+	}
+);
+
 var myRenderer =  function(value, meta) {
    meta.style = "background-color:lavender;";
    return value;
@@ -343,7 +350,7 @@ var editarDocButton = new Ext.Button({
 	});	
 
 <%-- FUNCION: Control habilitar/deshabilitar los distintos botones --%>	
-var controlButtons = function (incluirB, excluirB, descartarB, editarB, anularB, solicitarB, informarB){
+var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, editarB, anularB, solicitarB, informarB){
 	incluirDocButton.setDisabled(incluirB);
 	excluirDocButton.setDisabled(excluirB);
 	descartarDocButton.setDisabled(descartarB);
@@ -354,7 +361,24 @@ var controlButtons = function (incluirB, excluirB, descartarB, editarB, anularB,
 }	
 
 <%-- FUNCION: Chequeo estados para control botones --%>
-var checkControlButtons = function(){
+var actualizarBotonesDocumentos = function(){
+
+	    <%--Se comprueba que el procedimiento se encuentre en un estado que permita editar lOs documentos --%>
+		if (data != null) {
+			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
+			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
+	    		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
+	    		return;
+			}
+			else {
+				habilitarDeshabilitarButtons(false,true, true, true, true, true, true);
+			}
+      	} 
+      	else {
+			habilitarDeshabilitarButtons(true,true, true, true, true, true, true);
+			return;
+      	}		
+
 		<%-- SI SOLO UN ELEMENTO SELECCIONADO --%>
 		if(myCboxSelModel2.getCount() == 1){
      		<%-- Si el documento está PENDIENTE SOLICITAR O SOLICITADO --%>
@@ -365,34 +389,40 @@ var checkControlButtons = function(){
 				if (gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == true){ 
 					<%-- Si no tiene resultado --%>
 					if (gridDocumentos.getSelectionModel().getSelected().get('resultado') == ''){
-			      		controlButtons(true, true, false, false, false, false, false);
+			      		habilitarDeshabilitarButtons(true, true, false, false, false, false, false);
+			      		return;
 			      	}
 			      	<%-- Si la solicitud tiene resultado --%>
 			      	else {
-			      		controlButtons(true, true, true, true, true, true, false);		      					      		
+			      		habilitarDeshabilitarButtons(true, true, true, true, true, true, false);	
+			      		return;	      					      		
 			      	}
 			    }
       			<%-- Si no es solicitud --%>
       			else {
-      				controlButtons(true, false, true, false, true, false, true);
+      				habilitarDeshabilitarButtons(true, false, true, false, true, false, true);
+      				return;
       			}   
 			}
 			else {	
 				<%-- Si el documento está DESCARTADO --%>
 				if(gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'DE'
 					&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true){
-	      			controlButtons(true, true, true, true, true, false, false);   
+	      			habilitarDeshabilitarButtons(true, true, true, true, true, false, false);  
+	      			return; 
 				}
 				else {		
 		     		<%-- Si el documento es solicitud --%>				
 					if(gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == true) {
 						<%-- Si no tiene resultado --%>
 						if (gridDocumentos.getSelectionModel().getSelected().get('resultado') == ''){
-			      			controlButtons(true, true, true, true, false, true, false);
+			      			habilitarDeshabilitarButtons(true, true, true, true, false, true, false);
+			      			return;
 			      		}
 			      		<%-- Si la solicitud tiene resultado --%>
 			      		else {
-			      			controlButtons(true, true, true, true, true, true, false);		      					      		
+			      			habilitarDeshabilitarButtons(true, true, true, true, true, true, false);
+			      			return;		      					      		
 			      		}      						
 					}		
 				}
@@ -401,7 +431,7 @@ var checkControlButtons = function(){
 		<%-- SI SELECCION MULTIPLE DE ELEMENTOS --%>
 		else {
 			// Inicialmente todos desahabilitados
-			controlButtons(true, true, true, true, true, true, true);
+			//habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
 			
 			var rowsSelected=new Array(); 
 			var arrayIdDocumentos=new Array();
@@ -425,9 +455,10 @@ var checkControlButtons = function(){
 			
 			<%-- SI DOCUMENTOS ELEGIDOS DE DISTINTO TIPO -> AVISO DE LA IMPOSIBILIDAD DE HACER NADA --%>
 			if (uniqueArray.length > 1){
-				controlButtons(true, true, true, true, true, true, true);
+				habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
 				Ext.MessageBox.alert('<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.titulo" text="**Tipos de documento distintos" />'
                  ,'<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.aviso" text="**Debe seleccionar documentos del mismo tipo" />');
+                return;
 			}
 						
 			<%-- **** ESTADO PENDIENTE DE SOLICITAR --%>
@@ -444,13 +475,15 @@ var checkControlButtons = function(){
 					<%-- Si hay documentos con solicitudes o sin solicitudes --%>
 					if (uniqueArray3.length > 1){
 						<%-- SOLICITAR MASIVAMENTE --%>
-						controlButtons(true, true, true, true, true, false, true);							
+						habilitarDeshabilitarButtons(true, true, true, true, true, false, true);
+						return;							
 					}
 					else {
 						<%-- Y ademas no tienen solicitudes --%>
 						if (uniqueArray3.length ==1 && uniqueArray3[0] == false){
 							<%-- EXCLUIR DOCUMENTOS Y SOLICITAR MASIVAMENTE --%>
-							controlButtons(true, false, true, true, true, false, true);		      					      									
+							habilitarDeshabilitarButtons(true, false, true, true, true, false, true);	
+							return;	      					      									
 						}
 						<%-- Si todas tienen solicitudes --%>
 						if (uniqueArray3.length ==1 && uniqueArray3[0] == true){
@@ -460,7 +493,8 @@ var checkControlButtons = function(){
 							<%-- pero no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- DESCARTAR DOCUMENTOS y ANULAR SOLICITUDES MASIVAMENTE --%>
-								controlButtons(true, true, false, true, false, true, true);
+								habilitarDeshabilitarButtons(true, true, false, true, false, true, true);
+								return;
 							}		      					      									
 						}
 					}
@@ -473,7 +507,8 @@ var checkControlButtons = function(){
 					<%-- Si todas las solicitudes no tienen resultado --%>
 					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 						<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-						controlButtons(true, true, true, true, false, true, true);
+						habilitarDeshabilitarButtons(true, true, true, true, false, true, true);
+						return;
 					}		      					      																	
 				}												
 			}
@@ -491,12 +526,14 @@ var checkControlButtons = function(){
 					<%-- Si todas las solicitudes no tienen resultado --%>
 					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 						<%-- DESCARTAR DOCUMENTOS Y ANULAR SOLICITUDES MASIVAMENTE --%>
-						controlButtons(true, true, false, true, false, false, true);
+						habilitarDeshabilitarButtons(true, true, false, true, false, false, true);
+						return;
 					}
 					<%-- Si hay alguna solicitud con resultado --%>
 					else {
 						<%-- SOLICITAR MASIVAMENTE --%>
-						controlButtons(true, true, true, true, true, false, true);
+						habilitarDeshabilitarButtons(true, true, true, true, true, false, true);
+						return;
 					} 		      					      									
 				}
 				<%-- Si no todos los seleccionado son documentos, tambien hay solicitudes --%>
@@ -507,7 +544,8 @@ var checkControlButtons = function(){
 					<%-- Si todas las solicitudes no tienen resultado --%>
 					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 						<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-						controlButtons(true, true, true, true, false, true, true);
+						habilitarDeshabilitarButtons(true, true, true, true, false, true, true);
+						return;
 					}		      					      																	
 				}				
 			}
@@ -520,9 +558,13 @@ var checkControlButtons = function(){
 				<%-- Si todos los seleccionados son documentos --%>	
 				if (uniqueArray2.length ==1 && uniqueArray2[0] == true){
 					<%-- SOLICITAR MASIVAMENTE --%>
-					controlButtons(true, true, true, true, true, false, true);
+					habilitarDeshabilitarButtons(true, true, true, true, true, false, true);
+					return;
 				}
-			}																											
+			}
+			
+			habilitarDeshabilitarButtons(false, true, true, true, true, true, true);
+			
 		}
 }	
 
@@ -549,7 +591,6 @@ Ext.namespace('Ext.ux.plugins');
       		this.sm.on('rowdeselect', this.onDeselect, this);
       		this.store.on('load', this.restoreState, this);
       		
-      		controlButtons(false,true, true, true, true, true, true);     		
    		},
 
    		onSelect: function(sm, idx, rec){
@@ -558,7 +599,7 @@ Ext.namespace('Ext.ux.plugins');
       			this.idArray.push(rec.get(this.idProperty));
       		}
       		
-      		checkControlButtons();
+      		actualizarBotonesDocumentos();
 			
    		},
 
@@ -567,15 +608,10 @@ Ext.namespace('Ext.ux.plugins');
       		var i = this.idArray.indexOf(rec.get(this.idProperty));
       		if (i >= 0){
       			delete this.idArray.splice(i,1);
-      		}
-      		
-      		<%-- Si no hay ninguno seleccionado --> Habilitar incluir documento y deshabilitar todos los demas --%>
-      		if(myCboxSelModel2.getCount() == 0){
-      			controlButtons(false,true, true, true, true, true, true); 			
-      		}
-      		else {
-      			checkControlButtons();
-      		}
+      		} 
+      		     		
+   			actualizarBotonesDocumentos();
+   			
    		},
 
    		restoreState: function(){
@@ -626,11 +662,10 @@ gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 });
 
 var refrescarDocumentosGrid = function() {
-	storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
-	//storeDocumentos.webflow({idProcedimientoPCO: entidad.get("data").id});
+	//storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
+	storeDocumentos.webflow({idProcedimientoPCO: data.id});
 }
 
-refrescarDocumentosGrid();	
 
 
 

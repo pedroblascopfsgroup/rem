@@ -78,8 +78,11 @@ public class DocumentoPCOController {
 
 		idProcPCO = new Long(idProcedimientoPCO);
 		
+		
 	    Procedimiento procedimiento = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idProcPCO);
-	    Long gestorAsuntoId = procedimiento.getAsunto().getGestor().getUsuario().getId();
+	    Long gestorAsuntoId;
+	    if (procedimiento != null)
+	    	gestorAsuntoId = procedimiento.getAsunto().getGestor().getUsuario().getId();
 				
 		boolean esDocumento;	
 		boolean tieneSolicitud;

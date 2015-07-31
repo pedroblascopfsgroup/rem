@@ -43,7 +43,7 @@ function(entidad,page){
 				flow:'plugin/recobroWeb/expedientes/creacionManualExpediente'
 				,width:870
 				,closable:false
-				,title : tituloCreacionExpedienteRecuperacion
+				,title : tituloCreacionExpedienteRecobro
 				,params:{idPersona:toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer}
 			});
 			w.on(app.event.DONE, function(){
@@ -60,7 +60,7 @@ function(entidad,page){
 		,iconCls : 'icon_expediente_manual'
 		,handler : function(){
 			var w = app.openWindow({
-				flow:'expedientes/creacionManualExpediente'
+				flow:'expedientes/creacionManualExpediente_GV'
 				,width:870
 				,closable:false
 				,title : tituloCreacionExpedienteRecuperacion
@@ -95,12 +95,14 @@ function(entidad,page){
 		}
 	});
 
+	var tituloCreacionExpedienteRecobro='<s:message code="expedientes.creacion.recobro" text="**Expediente de Recobro" />';
 	var tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacion" text="**Expediente de Recuperación" />';
 	var tituloCreacionExpedienteSeguimiento='<s:message code="expedientes.creacion.seguimiento" text="**Expediente de Seguimiento" />';
 	var proponer=true;
 	
 	<sec:authorize ifAllGranted="SUPERUSUARIO_CREACION_EXPEDIENTE">
 		proponer=false;
+		tituloCreacionExpedienteRecobro='<s:message code="expedientes.creacion.recobroSinProponer" text="**Crear Expediente de Recobro" />';		
 		tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacionSinProponer" text="**Crear Expediente de Recuperación" />';
 		tituloCreacionExpedienteSeguimiento='<s:message code="expedientes.creacion.seguimientoSinProponer" text="**Crear Expediente de Seguimiento" />';
 	</sec:authorize>
@@ -307,10 +309,12 @@ function(entidad,page){
 
 		var esEnabled =[
 			[botonResponder, data.idTareaPendiente!=''] 
-			,[creacionExpedienteButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 
-					&&  !(data.arquetipoPersona.isSeguimiento || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)]
+			,[creacionExpedienteButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento)
+					&& !(data.arquetipoRecuperacion.isNull)
+					&& !(data.arquetipoRecuperacion.isSeguimiento || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)]
 			,[creacionExpedienteSeguimientoButton, (data.expedientePropuesto.isNull || data.expedientePropuesto.seguimiento)
-					&& 	!(data.arquetipoPersona.isRecuperacion || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)] 
+					&& !(data.arquetipoRecuperacion.isNull)
+					&& !(data.arquetipoRecuperacion.isRecuperacion || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)] 
 			,[creacionExpedienteRecobroButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 
 					&&  !(data.arquetipoPersona.isSeguimiento || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)]
 		];

@@ -295,7 +295,7 @@
 
 
 		page.webflow({
-			flow : 'expedientes/creacionManualExpediente_3'
+			flow : 'expedientes/creacionManualExpediente_3_GV'
 			,params : {
 						idExpediente:'${expediente.id}'
 						,idPersona:'${idPersona}'
@@ -323,7 +323,7 @@
 			//}
 			if (boton=='yes') {
 					page.webflow({
-						flow : 'expedientes/borrarCreacionManualExpediente'
+						flow : 'expedientes/borrarCreacionManualExpediente_GV'
 						,params : {idExpediente : '${expediente.id}', idPersona : '${idPersona}' }
 						,success : function() { page.fireEvent(app.event.CANCEL); }
 						,scope:this

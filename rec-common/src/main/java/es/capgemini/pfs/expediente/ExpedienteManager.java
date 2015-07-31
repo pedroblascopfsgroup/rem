@@ -31,6 +31,7 @@ import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.actitudAptitudActuacion.dao.ActitudAptitudActuacionDao;
 import es.capgemini.pfs.actitudAptitudActuacion.dto.DtoActitudAptitudActuacion;
 import es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion;
+import es.capgemini.pfs.arquetipo.dao.ArquetipoDao;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.asunto.dto.DtoAsunto;
 import es.capgemini.pfs.asunto.dto.ProcedimientoDto;
@@ -155,6 +156,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
 
     @Autowired
     private AdjuntoExpedienteDao adjuntoExpedienteDao;
+    
+    @Autowired
+    private ArquetipoDao arquetipoDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -758,8 +762,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         Cliente cliente = persona.getClienteActivo();
         Long idArquetipo = null;
         if (cliente == null) {
-            //calcular el arquetipo
-            idArquetipo = persona.getArquetipoCalculado();
+        	//Ahora esto está deprecated
+        	//idArquetipo = persona.getArquetipoCalculado();
+        	Arquetipo arquetipo = arquetipoDao.getArquetipoPorPersona(persona.getId());
+        	if (arquetipo!= null)
+        		idArquetipo = arquetipo.getId();
             executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE, idPersona, null, idArquetipo, true);
         } else {
             idArquetipo = cliente.getArquetipo().getId();

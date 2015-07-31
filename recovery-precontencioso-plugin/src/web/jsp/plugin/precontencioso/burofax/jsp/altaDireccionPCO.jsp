@@ -11,15 +11,17 @@
 
 	var panelWidth=800;
 	var labelStyle='width:100px';
-	var idAsunto = "${idAsunto}";
 	var idCliente = "${idCliente}";
+	var idProcedimiento = "${idProcedimiento}";
+	var idContrato = "${idContrato}";	
+	
 
   	<pfsforms:ddCombo name="provincia"
 		labelKey="rec-web.direccion.form.provincia" 
  		label="**Provincia" value="" dd="${provincias}" 
 		propertyCodigo="id" propertyDescripcion="descripcion" />
 	
-    //provincia.labelStyle=labelStyle;	
+    
 	provincia.on('select',function(){
 		if( provincia.getValue() != null && provincia.getValue() != '' ){
 			localidad.reset();
@@ -119,9 +121,9 @@
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
-		,handler : function(){
-			vaciarFormulario();
-		}
+		,handler:function(){
+      		page.fireEvent(app.event.CANCEL);
+     	}
 	});
 	btnGuardar.on('click', function(){
 		if (provincia.getValue() == '') {
@@ -135,10 +137,9 @@
 			tipoVia.focus();
 		} else {
 			panelEdicion.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
-			//recorrerPersonasStore();
 			Ext.Ajax.request({
 						url : page.resolveUrl('burofax/guardaDireccion'), 
-						params : {idCliente:idCliente,provincia:provincia.getValue(),codigoPostal:codigoPostal.getValue(),localidad:localidad.getValue(),municipio:municipio.getValue(),tipoVia:tipoVia.getValue(),
+						params : {idProcedimiento:idProcedimiento,idContrato:idContrato,idCliente:idCliente,provincia:provincia.getValue(),codigoPostal:codigoPostal.getValue(),localidad:localidad.getValue(),municipio:municipio.getValue(),tipoVia:tipoVia.getValue(),
 								domicilio:domicilio.getValue(),numero:numero.getValue(),portal:portal.getValue(),piso:piso.getValue(),escalera:escalera.getValue(),puerta:puerta.getValue(),
 								origen:origen.getValue()},
 						method: 'POST',
@@ -167,19 +168,17 @@
   
 
   
-  	var panelEdicion = new Ext.form.FieldSet({
-		title:'<s:message code="rec-web.direccion.form.datosDireccion" text="**Datos de la dirección" />'
-		,defaults : {cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,border : true
+  	var panelEdicion = new Ext.form.FormPanel({
+		defaults : {cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
+		,border : false
 		,height : 200
         ,layout : 'table'
-		,width:panelWidth
 		,bbar:bottomBar
 		,items : [
 			{   layout:'table'
 				,layoutConfig:{columns:2}
 				,border:false
-				,defaults : {xtype : 'fieldset', height:200, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:1px'}
+				,defaults : {xtype : 'fieldset', border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:1px'}
 				,items:[{items: [ provincia,codigoPostal,localidad,municipio,tipoVia,domicilio]}
 						,{items: [ numero,portal,piso,escalera,puerta,origen]}
 				]

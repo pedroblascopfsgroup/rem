@@ -11,25 +11,26 @@
 	
 	var panelWidth=800;
 	var labelStyle='width:100px';
-	var idAsunto = "${idAsunto}";
-
+	var idProcedimiento = '${idProcedimiento}';
+	
+	
 	
 
 	
 	var _handler =  function() {
 		    var arrayIdPersonas=new Array();
-			panelEdicionExtendido.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
+			panelEdicionPersonas.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
 			recorrerPersonasStore(arrayIdPersonas);
 			arrayIdPersonas = Ext.encode(arrayIdPersonas);
 			Ext.Ajax.request({
 						url : page.resolveUrl('burofax/guardaPersona'), 
-						params : {arrayIdPersonas:arrayIdPersonas},
+						params : {arrayIdPersonas:arrayIdPersonas,idProcedimiento:idProcedimiento},
 						method: 'POST',
 						success: function ( result, request ) {
 							page.fireEvent(app.event.DONE);
 						},
 					    failure: function(form, action) {
-					    	panelEdicionExtendido.container.unmask();
+					    	panelEdicionPersonas.container.unmask();
 					        switch (action.failureType) {
 					            case Ext.form.Action.CLIENT_INVALID:
 					                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');
@@ -64,54 +65,42 @@
 		
 	}
 	
-	var vaciarFormulario = function() {
-		panelEdicionExtendido.getForm().reset();
-		provincia.reset();
-		localidad.setDisabled(true);
-		localidad.reset();
-		tipoVia.reset();
-		persona.reset();
-		personasStore.removeAll();
-		btnIncluir.setDisabled(true);
-		btnExcluir.setDisabled(true);
-		page.fireEvent(app.event.CANCEL);
-		provincia.focus(); 
-	}
+	
 
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
-		,handler : function(){
-			vaciarFormulario();
-		}
+		,handler:function(){
+      		page.fireEvent(app.event.CANCEL);
+     	}
 	});
 
 	
 
-var listaIdPersonas = new Ext.form.TextField({hidden:true,value:'', name:'listaIdPersonas'});
-
-var idPersona = app.creaText("idPersona","Id Persona","",{
-	width : 100
-	,allowBlank: true
-	,hidden: true
-});
+	var listaIdPersonas = new Ext.form.TextField({hidden:true,value:'', name:'listaIdPersonas'});
 	
-var dniPersona_labelStyle='font-weight:bolder>;width:50px';
-var dniPersona = new Ext.ux.form.StaticTextField({
-		fieldLabel : '<s:message code="rec-web.direccion.form.dniPersona" text="**NIF" />'
-		,value : ''
-		,name : 'dniPersona'
-		,labelStyle:dniPersona_labelStyle
-		,width : 100 
+	var idPersona = app.creaText("idPersona","Id Persona","",{
+		width : 100
+		,allowBlank: true
+		,hidden: true
 	});
-	
-var nombrePersona_labelStyle='font-weight:bolder>;width:50px';
-var nombrePersona = new Ext.ux.form.StaticTextField({
-		fieldLabel : '<s:message code="rec-web.direccion.form.nombrePersona" text="**Nombre" />'
-		,value : ''
-		,name : 'nombrePersona'
-		,labelStyle:nombrePersona_labelStyle
-		,width : 240 
+		
+	var dniPersona_labelStyle='font-weight:bolder>;width:50px';
+	var dniPersona = new Ext.ux.form.StaticTextField({
+			fieldLabel : '<s:message code="rec-web.direccion.form.dniPersona" text="**NIF" />'
+			,value : ''
+			,name : 'dniPersona'
+			,labelStyle:dniPersona_labelStyle
+			,width : 100 
+		});
+		
+	var nombrePersona_labelStyle='font-weight:bolder>;width:50px';
+	var nombrePersona = new Ext.ux.form.StaticTextField({
+			fieldLabel : '<s:message code="rec-web.direccion.form.nombrePersona" text="**Nombre" />'
+			,value : ''
+			,name : 'nombrePersona'
+			,labelStyle:nombrePersona_labelStyle
+			,width : 240 
 	});
 	
     //Template para el combo de personas
@@ -123,7 +112,7 @@ var nombrePersona = new Ext.ux.form.StaticTextField({
 
     //Store del combo de personas
     var personasComboStore = page.getStore({
-        flow:'direccion/getPersonasInstant'
+        flow:'burofax/getPersonasInstant'
         ,remoteSort:false
         ,autoLoad: false
         ,reader : new Ext.data.JsonReader({
@@ -132,7 +121,7 @@ var nombrePersona = new Ext.ux.form.StaticTextField({
         })
     });    
     
-    personasComboStore.setBaseParam('idAsunto',idAsunto);
+    //personasComboStore.setBaseParam('idAsunto',idAsunto);
     //Combo de personas
     var persona = new Ext.form.ComboBox({
         name: 'persona' 
@@ -162,36 +151,36 @@ var nombrePersona = new Ext.ux.form.StaticTextField({
          }
     });
 
-/* Grupo de controles de manejo de la lista de personas */	
-var recordPersona = Ext.data.Record.create([
-	{name: 'id'},
-	{name: 'dni'},
-	{name: 'nombre'}
-]);
-
-var personasStore = page.getStore({
-	flow:''
-	,reader: new Ext.data.JsonReader({
-  		root : 'data'
-	} 
-	, recordPersona)
-});
-
-var personasCM = new Ext.grid.ColumnModel([
-	{header : '<s:message code="rec-web.direccion.gridPersonas.id" text="**Id" />', dataIndex : 'id' ,sortable:false, hidden:true}
-	,{header : '<s:message code="rec-web.direccion.gridPersonas.dni" text="**NIF" />', dataIndex : 'dni' ,sortable:false, hidden:false, width:80}
-	,{header : '<s:message code="rec-web.direccion.gridPersonas.nombre" text="**Nombre" />', dataIndex : 'nombre',sortable:false, hidden:false, width:200}
-]);
-
-var personasGrid = new Ext.grid.EditorGridPanel({
-    title : '<s:message code="rec-web.direccion.form.listaPersonas" text="**Lista Personas" />'
-    ,cm: personasCM
-    ,store: personasStore
-    ,width: 300
-    ,height: 150
-    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-    ,clicksToEdit: 1
-});
+	/* Grupo de controles de manejo de la lista de personas */	
+	var recordPersona = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'dni'},
+		{name: 'nombre'}
+	]);
+	
+	var personasStore = page.getStore({
+		flow:''
+		,reader: new Ext.data.JsonReader({
+	  		root : 'data'
+		} 
+		, recordPersona)
+	});
+	
+	var personasCM = new Ext.grid.ColumnModel([
+		{header : '<s:message code="rec-web.direccion.gridPersonas.id" text="**Id" />', dataIndex : 'id' ,sortable:false, hidden:true}
+		,{header : '<s:message code="rec-web.direccion.gridPersonas.dni" text="**NIF" />', dataIndex : 'dni' ,sortable:false, hidden:false, width:80}
+		,{header : '<s:message code="rec-web.direccion.gridPersonas.nombre" text="**Nombre" />', dataIndex : 'nombre',sortable:false, hidden:false, width:200}
+	]);
+	
+	var personasGrid = new Ext.grid.EditorGridPanel({
+	    title : '<s:message code="rec-web.direccion.form.listaPersonas" text="**Lista Personas" />'
+	    ,cm: personasCM
+	    ,store: personasStore
+	    ,width: 300
+	    ,height: 150
+	    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+	    ,clicksToEdit: 1
+	});
 
 	var incluirPersona = function() {
 	    var personaAInsertar = personasGrid.getStore().recordType;
@@ -239,12 +228,13 @@ var personasGrid = new Ext.grid.EditorGridPanel({
 		}
 	});
 
-	var panelEdicionPersonas = new Ext.form.FieldSet({
-		height: 180
-        ,title:'<s:message code="rec-web.direccion.form.personasAsociadas" text="**Personas asociadas a la dirección" />'
-        ,defaults : {layout:'form',border: false,bodyStyle:'padding:0px'} 
-		,border : true
+	var panelEdicionPersonas = new Ext.form.FormPanel({
+		autoHeight: true,
+		bodyStyle:'padding:10px;cellspacing:20px'
 		,width:panelWidth
+		,bbar : [
+			btnGuardar, btnCancelar
+		]
 		,items : [
 			{   autoHeight:true
 				,layout:'table'
@@ -259,6 +249,7 @@ var personasGrid = new Ext.grid.EditorGridPanel({
 		]
 	});
 	
+	<%--
 	var panelEdicionExtendido = new Ext.form.FormPanel({
 		autoHeight : true
         ,defaults : {layout:'form',border: false,bodyStyle:'padding-top:10px'} 
@@ -276,8 +267,8 @@ var personasGrid = new Ext.grid.EditorGridPanel({
 		,bbar : [
 			btnGuardar, btnCancelar
 		]
-	});	
+	});	--%>
 
-	page.add(panelEdicionExtendido);
+	page.add(panelEdicionPersonas);
 	
 </fwk:page>	

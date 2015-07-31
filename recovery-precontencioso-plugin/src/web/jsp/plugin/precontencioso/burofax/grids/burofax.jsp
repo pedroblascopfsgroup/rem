@@ -8,6 +8,11 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
+	var idProcedimiento='${idProcedimiento}';
+	var idContrato='${idContrato}';
+	
+	idProcedimiento=100328666;
+	idContrato=5832323;
 
 	var limit=25;
 	
@@ -31,42 +36,54 @@
 		myCboxSelModel
 		,{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.cliente" text="**Cliente"/>',
-			dataIndex: 'cliente', sortable: true
+			dataIndex: 'cliente', sortable: true,autoWidth:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.tipoIntervencion" text="**Tipo Intervencion"/>',
+			dataIndex: 'tipoIntervencion', sortable: true,autoWidth:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.contrato" text="**Contrato"/>',
+			dataIndex: 'contrato', sortable: true,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.estado" text="**Estado"/>',
-			dataIndex: 'estado', sortable: true
+			dataIndex: 'estado', sortable: true,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.direccion" text="**Dirección"/>',
-			dataIndex: 'direccion', sortable: false
+			dataIndex: 'direccion', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.tipo" text="**Tipo"/>',
-			dataIndex: 'tipo', sortable: false
+			dataIndex: 'tipo', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.fechaSolicitud" text="**Fecha Solicitud"/>',
-			dataIndex: 'fechaSolicitud', sortable: false
+			dataIndex: 'fechaSolicitud', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.fechaEnvio" text="**Fecha Envío"/>',
-			dataIndex: 'fechaEnvio', sortable: false
+			dataIndex: 'fechaEnvio', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.fechaAcuse" text="**Fecha Acuse"/>',
-			dataIndex: 'fechaAcuse', sortable: false
+			dataIndex: 'fechaAcuse', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultado" text="**Resultado"/>'
-			,dataIndex: 'resultado', sortable: false
+			,dataIndex: 'resultado', sortable: true,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoooo" text="**IdDireccion"/>'
-			,dataIndex: 'idDireccion', sortable: false
+			,dataIndex: 'idDireccion', sortable: false,autoWidth:true,hidden:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadooooo" text="**idCliente"/>'
-			,dataIndex: 'idCliente', sortable: true
+			,dataIndex: 'idCliente', sortable: true,autoWidth:true,hidden:true
 		}
 		, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoooooo" text="**idTipoBurofax"/>'
-			,dataIndex: 'idTipoBurofax', sortable: false
+			,dataIndex: 'idTipoBurofax', sortable: false,autoWidth:true,hidden:true
 		}
 		, {
-			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOO" text="**id"/>'
-			,dataIndex: 'id', sortable: false
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOO" text="**idBurofax"/>'
+			,dataIndex: 'idBurofax', sortable: false,autoWidth:true,hidden:false,hidden:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOO" text="**idEnvio"/>'
+			,dataIndex: 'idEnvio', sortable: false,autoWidth:true,hidden:true
+		}, {
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOOoo" text="**id"/>'
+			,dataIndex: 'id', sortable: true,autoWidth:true,hidden:true
 		}
 	];
 
@@ -74,6 +91,8 @@
 	
 	var Burofax = Ext.data.Record.create([
 		{name:'cliente'}
+	   ,{name:'tipoIntervencion'}
+	   ,{name:'contrato'}
 	   ,{name:'estado'}
 	   ,{name:'direccion'}
 	   ,{name:'tipo'}
@@ -84,6 +103,8 @@
 	   ,{name: 'idDireccion'}
 	   ,{name: 'idCliente'}
 	   ,{name: 'idTipoBurofax'}
+	   ,{name: 'idBurofax'}
+	   ,{name: 'idEnvio'}
 	   ,{name: 'id'}
 		
 	]);
@@ -92,7 +113,7 @@
 		eventName : 'listado'
 		,limit:limit
 		,flow:'burofax/getListaBurofax'
-		,sortInfo:{field: 'idCliente', direction: "ASC"}
+		,sortInfo:{field: 'idCliente', direction: "DESC"}
 		,groupField:'group'
 		,groupOnSort:'true'
 		,reader: new Ext.data.JsonReader({
@@ -103,7 +124,7 @@
 	});
 	
 	burofaxStore.addListener('load', agrupa);
-	burofaxStore.setDefaultSort('idCliente', 'ASC');
+	//burofaxStore.setDefaultSort('idCliente', 'DESC');
 	function agrupa(store, meta) {
 		if (!('${noGrouping}'=='true')) {
 			//store.groupBy('group', true);
@@ -111,7 +132,8 @@
 		burofaxStore.removeListener('load', agrupa);
     };
 	
-	burofaxStore.webflow();
+	burofaxStore.webflow({idProcedimiento:100328666, idContrato:5832323});
+	
 	
 	
 	var botonesTabla = fwk.ux.getPaging(burofaxStore);
@@ -126,7 +148,7 @@
 	
 	var btnEnviar = new Ext.Button({
 			text : '<s:message code="plugin.precontencioso.grid.burofax.enviar" text="**Enviar" />'
-			,iconCls : 'email'
+			,iconCls : 'icon_comunicacion'
 			,cls: 'x-btn-text-icon'
 	});
 	
@@ -152,6 +174,13 @@
 			text : '<s:message code="plugin.precontencioso.grid.burofax.cancelar" text="**Cancelar" />'
 			,iconCls : 'icon_cancel'
 			,cls: 'x-btn-text-icon'
+	});
+	
+	
+	var btnNotificar = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.añadir.informacion.envio" text="**Añadir Información de Envío" />'
+			,iconCls : 'icon_info'
+			,cls: 'x-btn-text-icon'
 	});	
 	
 	Ext.namespace('Ext.ux.plugins');
@@ -175,9 +204,12 @@
       		this.store.on('load', this.restoreState, this);
       		btnPreparar.disabled=true;
       		btnEditar.disabled=true;
+      		btnNuevaDir.disabled=true;
+      		btnEnviar.disabled=true;
+      		btnNotificar.disabled=true;
       		
-      		this.store.sort('idCliente','ASC');
-	        this.store.setDefaultSort('idCliente', 'ASC');
+      		//this.store.sort('idCliente','DESC');
+	        //this.store.setDefaultSort('idCliente', 'DESC');
       		
    		},
 
@@ -188,9 +220,37 @@
       		}
       		btnPreparar.setDisabled(false);
       		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
-			if(gridBurofax.getSelectionModel().getSelected().get('estado') == 'Preparado'){
+			if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
 				btnEditar.setDisabled(false);
 			}
+			else{
+				btnEditar.setDisabled(true);
+			}
+			
+			
+			<%-- Comprobamos que se ha seleccionado un cliente --%>
+			if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
+				btnNuevaDir.setDisabled(false);
+			}
+			
+			<%--Si el resultado del envio es enviado y todavia no ha sido enviado habilitamos el boton de notificar --%>
+			if(gridBurofax.getSelectionModel().getSelected().get('idEnvio') != '' && gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') == ''){
+				btnNotificar.setDisabled(false);
+			}
+			
+			<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
+			btnEnviar.setDisabled(false);
+			
+			<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
+			if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
+				btnNotificar.setDisabled(false);
+			}
+			else{
+				btnNotificar.setDisabled(true);
+			}
+			
+			
+			
    		},
 
    		onDeselect: function(sm, idx, rec){
@@ -203,6 +263,9 @@
       		if(myCboxSelModel.getCount() == 0){
       			btnPreparar.setDisabled(true);
       			btnEditar.setDisabled(true);
+      			btnNuevaDir.setDisabled(true);
+      			btnEnviar.setDisabled(true);
+      			btnNotificar.setDisabled(true);
       		}
    		},
 
@@ -231,121 +294,136 @@
 	var columMemoryPlugin = new Ext.ux.plugins.CheckBoxMemory();	
 	
 	
-	
 	var gridBurofax = new Ext.grid.GridPanel({
 		title: '<s:message code="plugin.precontencioso.grid.burofax.titulo" text="**Burofaxes" />'	
 		,columns: columnArray
 		,store: burofaxStore
-		,height: 170
+		,height: 270
 		,loadMask: true
         ,sm: myCboxSelModel
         ,viewConfig: {forceFit: true}
+        ,autoExpand:true
         ,clicksToEdit: 1
-        ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
-       	,style:'padding:10px'
+       	,style:'padding-top:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-		,height:175
-		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar  ]
+		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar  ]
+		,autoWidth: true
+		
+		
 	});
 	
 
-	<%--
-	gridBurofax.on('rowdblclick', function(grid, rowIndex, e) {
-    	var rec = grid.getStore().getAt(rowIndex);
-    	var nombre_asunto=rec.get('nombre');
-    	var id=rec.get('id');
-    	app.abreAsunto(id, nombre_asunto);
-    });--%>
-
-	
-	
    <%-- Eventos para los botones --%>
    
    btnPreparar.on('click', function(){
 	var rowsSelected=new Array(); 
-	var arrayIdClientes=new Array();
+	var arrayIdBurofax=new Array();
 	var arrayIdDirecciones=new Array();
+	var arrayIdEnvios=new Array();
 		 
 	rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 		
 	for (var i=0; i < rowsSelected.length; i++){
-	  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
-	  arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+	  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
+	  if(rowsSelected[i].get('idDireccion') != ''){
+	  	arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+	  }
+	  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
 	}
 
-	 var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
-	 var arrayIdClientes = Ext.encode(arrayIdClientes);
-     <%--Comprobamos que hay direcciones seleccionadas --%>
-     if(myCboxSelModel.getCount() > 0){
+	
+     <%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
+     if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){
+     	 var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
+		 var arrayIdBurofax = Ext.encode(arrayIdBurofax);
+		 var arrayIdEnvios = Ext.encode(arrayIdEnvios);
 		var w = app.openWindow({
 		  flow : 'burofax/getTipoBurofax'
 		  //,width:320
 		  ,autoWidth:true
 		  ,closable:true
 		  ,title : '<s:message code="plugin.precontencioso.grid.burofax.tipo.titulo" text="**Seleccionar tipo burofax" />'
-		  ,params:{idProcedimiento:1,arrayIdClientes:arrayIdClientes,arrayIdDirecciones:arrayIdDirecciones}
+		  ,params:{arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios}
 		
 		});
 		w.on(app.event.DONE,function(){
 				w.close();
-				burofaxStore.webflow();
+				burofaxStore.webflow({idProcedimiento:100328666, idContrato:5832323});
 				
 			});
 		w.on(app.event.CANCEL, function(){w.close();});
+	  }
+	  else{
+	  	 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.noDirecciones" text="**No hay direcciones seleccionadas" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.noDirecciones" text="**Todas las selecciones deben tener una dirección asociada" />');
 	  }
 	});	
 	
 	
 	btnEditar.on('click', function(){
 		var rowsSelected=new Array(); 
-		var arrayIdClientes=new Array();
-		var arrayIdDirecciones=new Array();
-		var arrayIdTipoBurofax=new Array();
 		
+		var arrayIdTipoBurofax=new Array();
+		var arrayIdEnvios=new Array();
+		var arrayResultados=new Array();
 			 
 		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idCliente'));
-		  arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+		  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
 		  arrayIdTipoBurofax.push(rowsSelected[i].get('idTipoBurofax'));
-		 
+		  arrayResultados.push(rowsSelected[i].get('resultado'));
+		   
 		}
 		
-		<%--Para saber si las filas seleccionadas tienen el mismo tipo de burofax, eliminamos los elementos duplicados del array
-			entonces si todas las filas seleccionadas tienen el mismo tipo de burofax el array tendrá un tamaño=1 --%>
-		uniqueArray = arrayIdTipoBurofax.filter(function(item, pos) {
-		    return arrayIdTipoBurofax.indexOf(item) == pos;
+		<%-- Comprobamos que todas las filas seleccionadas estan en estado Preparado --%>
+		uniqueArrayResultados = arrayResultados.filter(function(item, pos) {
+		    return arrayResultados.indexOf(item) == pos;
 		});
-
-	     
-		 var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
-		 var arrayIdClientes = Ext.encode(arrayIdClientes);
-	     <%--Comprobamos que el tamaño del array es 1 --%>
-	     if(uniqueArray.length==1){
-			var w = app.openWindow({
-			  flow : 'burofax/getEditarBurofax'
-			  //,width:320
-			  ,autoWidth:true
-			  ,closable:true
-			  ,title : '<s:message code="plugin.precontencioso.grid.burofax.editar.titulo" text="**Editar Contenido Burofax" />'
-			  ,params:{idProcedimiento:1,arrayIdClientes:arrayIdClientes,arrayIdDirecciones:arrayIdDirecciones}
-			
+		
+		
+		if(uniqueArrayResultados.length == 1 && uniqueArrayResultados[0] == 'Preparado'){
+		
+			<%--Para saber si las filas seleccionadas tienen el mismo tipo de burofax, eliminamos los elementos duplicados del array
+				entonces si todas las filas seleccionadas tienen el mismo tipo de burofax el array tendrá un tamaño=1 --%>
+			uniqueArray = arrayIdTipoBurofax.filter(function(item, pos) {
+			    return arrayIdTipoBurofax.indexOf(item) == pos;
 			});
-			w.on(app.event.DONE,function(){
-					w.close();
-					
+	
+		     
+			 var arrayIdEnvios = Ext.encode(arrayIdEnvios);
+			
+			
+		     <%--Comprobamos que el tamaño del array es 1 --%>
+		     if(uniqueArray.length==1){
+				var w = app.openWindow({
+				  flow : 'burofax/getEditarBurofax'
+				  ,width:740
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.editar.titulo" text="**Editar Contenido Burofax" />'
+				  ,params:{arrayIdEnvios:arrayIdEnvios}
+				
 				});
-			w.on(app.event.CANCEL, function(){w.close();});
-		  }
-		  else{
-		  	<%--Como los tipos de burofax no son todos iguales NO podemos editar--%>
-		  	
-		  	 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistinto" text="**Tipos de burofax distintos" />'
-                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistinto" text="**Debe seleccionar envios con el mismo tipo de burofax" />');
-		  }
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+					});
+				w.on(app.event.CANCEL, function(){w.close();});
+			  }
+			  else{
+			  	<%--Como los tipos de burofax no son todos iguales NO podemos editar--%>
+			  	
+			  	 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistinto" text="**Tipos de burofax distintos" />'
+	                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistinto" text="**Debe seleccionar envios con el mismo tipo de burofax" />');
+			  }
+		}
+		else{
+			 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios no preparados" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooo" text="**Todos los envios tienen que estar preparados" />');
+		}
 	
 	});
 	
@@ -363,19 +441,21 @@
 		    return arrayIdClientes.indexOf(item) == pos;
 		});
 		if(uniqueArray.length==1){
+		 
 			var idCliente = gridBurofax.getSelectionModel().getSelected().get('idCliente');
+			
 			var w = app.openWindow({
 				  flow : 'burofax/getAltaDireccion'
-				  //,width:320
+				  ,width:720
 				  ,autoWidth:true
 				  ,closable:true
-				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.editar.titulo" text="**Editar Contenido Burofax" />'
-				  ,params:{idCliente:idCliente}
+				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.direccion" text="**Agregar Dirección" />'
+				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento,idContrato:idContrato}
 				
 				});
 				w.on(app.event.DONE,function(){
 						w.close();
-						burofaxStore.webflow();
+						burofaxStore.webflow({idProcedimiento:100328666, idContrato:5832323});
 						
 				});
 				w.on(app.event.CANCEL, function(){w.close();});
@@ -396,16 +476,187 @@
 				  ,width:820
 				  ,autoWidth:true
 				  ,closable:true
-				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.editar.titulossss" text="**Agregar Persona" />'
-				  //,params:{idCliente:idCliente}
+				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Agregar Persona" />'
+				  ,params:{idProcedimiento:idProcedimiento}
 				
 				});
 				w.on(app.event.DONE,function(){
 						w.close();
-						burofaxStore.webflow();
+						burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
 						
 				});
 				w.on(app.event.CANCEL, function(){w.close();});
 			
 	
 	});
+	
+	
+	btnEnviar.on('click', function(){
+
+			var rowsSelected=new Array(); 
+			var arrayResultado=new Array();
+			var arrayIdEnvios=new Array();
+			var arrayIdContrato=new Array();
+			var arrayIdBurofax=new Array();
+			var arrayIdDirecciones=new Array();
+			var tipoBurofax=gridBurofax.getSelectionModel().getSelected().get('tipoBurofax');
+			
+				 
+			rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+				
+			for (var i=0; i < rowsSelected.length; i++){
+			  arrayResultado.push(rowsSelected[i].get('resultado'));
+			  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
+			  arrayIdContrato.push(rowsSelected[i].get('contrato'));
+			  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
+	  		  
+	  		  if(rowsSelected[i].get('idDireccion') != ''){
+	  		  	arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
+	  		  }
+	  		 
+			}
+		
+			<%--Comprobamos que hay direcciones seleccionadas en TODAS las selecciones --%>
+     		if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){	
+				//Parametros para configurar el tipo de burofax
+				var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
+		 		var arrayIdBurofax = Ext.encode(arrayIdBurofax);
+				var arrayIdEnvios =	Ext.encode(arrayIdEnvios);
+				
+				//Comprobamos que los resultados son iguales
+				uniqueArray = arrayResultado.filter(function(item, pos) {
+				    return arrayResultado.indexOf(item) == pos;
+				});
+				
+				if(uniqueArray.length==1){
+				  //Como los resultados son iguales , comprobamos si el estado es NO preparado
+				  if(uniqueArray[0]==''){
+				    //Comprobamos que el tipo de burofax configurado por defecto es el mismo para todos
+				    var arrayTipoBurofax=new Array();
+				    
+				    for (var i=0; i < rowsSelected.length; i++){
+				  		arrayTipoBurofax.push(rowsSelected[i].get('tipo'));
+				 
+					}
+					
+					uniqueArrayTipoBurofax = arrayTipoBurofax.filter(function(item, pos) {
+				    	return arrayTipoBurofax.indexOf(item) == pos;
+					});
+					
+					if(uniqueArrayTipoBurofax.length == 1){
+					 //Abrimos ventana
+					 var w = app.openWindow({
+							  flow : 'burofax/getEnvioBurofax'
+							  ,width:320
+							  ,autoWidth:true
+							  ,closable:true
+							  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'
+							  ,params:{codigoTipoBurofax:uniqueArrayTipoBurofax[0],arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios,comboEditable:true}
+							  		  
+							});
+							w.on(app.event.DONE,function(){
+									w.close();
+									burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
+									
+							});
+							w.on(app.event.CANCEL, function(){w.close();});
+						}
+					  else{
+						//Mensaje de error
+							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios con tipos de burofax distinto" />'
+		                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooooo" text="**Debe seleccionar envios con el mismo tipo de burofax configurado por defecto" />');
+					  }	
+					 
+					}
+					 
+					 else if(uniqueArray[0]=='Preparado'){
+					  	//Comprobamos que el tipo de burofax  es el mismo para todos
+					    var arrayTipoBurofax=new Array();
+					    
+					    for (var i=0; i < rowsSelected.length; i++){
+					  		arrayTipoBurofax.push(rowsSelected[i].get('tipo'));
+					 
+						}
+						
+						uniqueArrayTipoBurofax = arrayTipoBurofax.filter(function(item, pos) {
+					    	return arrayTipoBurofax.indexOf(item) == pos;
+						});
+						
+						if(uniqueArrayTipoBurofax.length == 1){
+						 //Abrimos ventana
+						 var w = app.openWindow({
+							  flow : 'burofax/getEnvioBurofax'
+							  ,width:320
+							  ,autoWidth:true
+							  ,closable:true
+							  ,title : '<s:message code="plugin.precontencioso.grid.burofax.envio" text="**Envio Burofaxes" />'
+							 ,params:{codigoTipoBurofax:uniqueArrayTipoBurofax[0],arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios,comboEditable:false}
+							
+							});
+							w.on(app.event.DONE,function(){
+									w.close();
+									burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
+									
+							});
+							w.on(app.event.CANCEL, function(){w.close();});
+						}
+						else{
+							//Mensaje de error
+							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios con tipos de burofax distinto" />'
+		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooooo" text="**Debe seleccionar envios con el mismo tipo de burofax" />');
+						}
+					    
+					  }
+					
+				    
+				  
+				  }
+				  else{
+					Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios con resultado distinto" />'
+		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooooo" text="**Debe seleccionar envios con el mismo resultado" />');
+					}
+			}
+			else{
+				 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.noDirecciones" text="**No hay direcciones seleccionadas" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.noDirecciones" text="**Todas las selecciones deben tener una dirección asociada" />');
+			}
+			  
+			 
+	
+	
+	});
+	
+	
+	btnNotificar.on('click', function(){
+	
+			var arrayIdEnvios=new Array();
+		 
+			rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
+				
+			for (var i=0; i < rowsSelected.length; i++){
+			  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
+			 
+			}
+			
+			//Parametros para configurar el tipo de burofax
+			var arrayIdEnvios = Ext.encode(arrayIdEnvios);
+	 		
+			var w = app.openWindow({
+				  flow : 'burofax/getPantallaInformacionEnvio'
+				  ,width:820
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.añadir.informacion.envio" text="**Añadir Información de Envío" />'
+				  ,params:{arrayIdEnvios:arrayIdEnvios}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});
+			
+	
+	});
+	

@@ -9,16 +9,17 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <fwk:page>
 	
-    var idProcedimiento='${idProcedimiento}';
-	var arrayIdClientes='${arrayIdClientes}';
+    //var idDireccion='${idDireccion}';
+    //var idBurofax='${idBurofax}';
+	var arrayIdBurofax='${arrayIdBurofax}';
     var arrayIdDirecciones='${arrayIdDirecciones}';
-    
+    var arrayIdEnvios='${arrayIdEnvios}';
    
 
 	<pfsforms:ddCombo name="tipoBurofax"
 		labelKey="plugin.precontencioso.grid.burofax.tipoBurofax" 
  		label="**Tipo Burofax" value="" dd="${tipoBurofax}" 
-		propertyCodigo="codigo" propertyDescripcion="descripcion" />
+		propertyCodigo="id" propertyDescripcion="descripcion" />
 
 	var bottomBar = [];
 
@@ -28,7 +29,8 @@
 		,handler : function(){	
 		    	Ext.Ajax.request({
 						url : page.resolveUrl('burofax/configurarTipoBurofax'), 
-						params : {idTipoBurofax:tipoBurofax.value,idProcedimiento:idProcedimiento,arrayIdClientes:arrayIdClientes,arrayIdDirecciones},
+						//params : {idTipoBurofax:tipoBurofax.value,idDireccion:idDireccion,idBurofax:idBurofax},
+						params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios},
 						method: 'POST',
 						success: function ( result, request ) {
 							page.fireEvent(app.event.DONE);

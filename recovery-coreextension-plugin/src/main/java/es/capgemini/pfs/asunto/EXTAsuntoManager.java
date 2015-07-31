@@ -1705,22 +1705,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			p.setActivo(isProcedimientoActivo(p));
 		}
 		
-//		
-//		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(asuId);
-//		if (!Checks.esNulo(asunto)) {
-//			List<Procedimiento> procedimientos = asunto.getProcedimientos();
-//			if (!Checks.estaVacio(procedimientos)) {
-//				for (Procedimiento p : procedimientos) {
-//					DtoProcedimiento dto = new DtoProcedimiento();
-//					dto.setProcedimiento(p);
-//					
-//					Boolean procActivo = false;//isProcedimientoActivo(p.getId());
-//					dto.setActivo(procActivo);
-//					listado.add(dto);
-//				}
-//			}
-//		}
-
 		list = ordena(list);
 
 		return list;
@@ -1787,9 +1771,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@SuppressWarnings("unchecked")
 	private Boolean isProcedimientoActivo(Procedimiento prc) {
 
-		//MEJProcedimiento procedimiento = (MEJProcedimiento) proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProcedimiento);
-		//MEJProcedimiento procedimiento = (MEJProcedimiento) genericdDao.get(MEJProcedimiento.class, genericdDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),
-		//		genericdDao.createFilter(FilterType.EQUALS, "id", idProcedimiento));
 		MEJProcedimiento procedimiento = (MEJProcedimiento) prc;
 		
 		if(procedimiento.isEstaParalizado()){
@@ -1811,50 +1792,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 							return true;
 						}
 					}
-				}
-				
-				// Si el procedimiento no tiene ninguna tarea externa
-				// pendiente comprobamos
-				// si tiene decisiones pendientes de las que no tienen tarea
-				// externa
-	//			String codigoSubtarea;
-	//			for (TareaNotificacion tar : tareasProc) {
-	//				if(tar.getSubtipoTarea() != null){
-	//					codigoSubtarea = tar.getSubtipoTarea().getCodigoSubtarea();					
-	//					if (codigoSubtarea != null
-	//							&& (codigoSubtarea.equals(SubtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_GESTOR )
-	//									|| codigoSubtarea.equals(SubtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_SUPERVISOR)
-	//									|| codigoSubtarea.equals(SubtipoTarea.CODIGO_TOMA_DECISION_BPM)
-	//									|| codigoSubtarea.equals(SubtipoTarea.CODIGO_PROPUESTA_DECISION_PROCEDIMIENTO)
-	//									|| codigoSubtarea.equals(SubtipoTarea.CODIGO_ACUERDO_PROPUESTO)
-	//									|| codigoSubtarea.equals(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC)
-	//									|| codigoSubtarea.equals(SubtipoTarea.CODIGO_TAREA_PROPUESTA_OBJETIVO)
-	//									|| codigoSubtarea.equals(SubtipoTarea.CODIGO_TAREA_PROPUESTA_CUMPLIMIENTO_OBJETIVO)
-	//									|| codigoSubtarea.equals(EXTSubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG)
-	//									|| codigoSubtarea.equals(EXTSubtipoTarea.CODIGO_TAREA_PRORROGA_TOMA_DECISION)
-	//									|| codigoSubtarea.equals(EXTSubtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE)
-	//									|| codigoSubtarea.equals(EXTSubtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE)
-	//									|| codigoSubtarea.equals(EXTSubtipoTarea.CODIGO_TAREA_GESTOR_ADMINISTRATIVO) 
-	//									|| codigoSubtarea.equals(EXTSubtipoTarea.CODIGO_TAREA_RESPONSABLE_CONCURSAL))) {
-	//						
-	//						if (Checks.esNulo(tar.getTareaFinalizada()) || (!Checks.esNulo(tar.getTareaFinalizada()) && !tar.getTareaFinalizada())){
-	//							
-	////							// Comprobar que no se haya derivado el procedimiento
-	////							List<DecisionProcedimiento> listDecProcedimiento = (List<DecisionProcedimiento>) executor.execute("decisionProcedimientoManager.getList",procedimiento.getId());
-	////							
-	////							if (!Checks.estaVacio(listDecProcedimiento)){
-	////								for (DecisionProcedimiento dec : listDecProcedimiento){
-	////									if (dec.getParalizada()){
-	////										return false;
-	////									} 
-	////								}
-	////							} else {
-	////								return true;
-	////							}							
-	//						}
-	//					}
-	//				}
-	//			}					
+				}		
 			}		
 		}
 

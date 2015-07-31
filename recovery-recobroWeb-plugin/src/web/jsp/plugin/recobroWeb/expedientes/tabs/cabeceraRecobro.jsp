@@ -189,7 +189,7 @@
 		entidad.setLabel('fechaMaxCobroParcial',cabeceraRecobro.fechaMaxCobroParcial);
 		
 		<sec:authorize ifAllGranted="PUEDE_VER_INFO_ADICIONAL_EXP">
-		if (cabeceraRecobro.cartera == "" || cabeceraRecobro.subcartera == ""){
+		if ((cabeceraRecobro.cartera == "" || cabeceraRecobro.subcartera == "") && cabecera.manual && entidad.get("data").toolbar.estaEstadoActivo){
 			mensajeExceptuacionLabel.setVisible(true);			
 		}
 		else{

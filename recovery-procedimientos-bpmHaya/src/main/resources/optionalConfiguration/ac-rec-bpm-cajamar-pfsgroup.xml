@@ -15,6 +15,7 @@
 	<bean id="endElevacionCajamarActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PROEndElevacionCajamarActionHandler" />
 	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
 	<bean id="subastaBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccLeaveActionHandler" />
+	<bean id="subastaTercerosBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaTercerosBccLeaveActionHandler" />
  	    
 	<!-- BPM activos -->
 	<!-- Nacho -->

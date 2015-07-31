@@ -140,7 +140,7 @@ public class SubastaBccEnterActionHandler extends PROGenericEnterActionHandler {
 			super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 		}
 		
-		if (executionContext.getNode().getName().contains("SolicitudSubasta")) {
+		if (executionContext.getNode().getName().contains("SolicitudSubasta") || executionContext.getNode().getName().contains("SenyalamientoSubasta")) {
 			// personalización del handler: creación de una subasta
 			Procedimiento procedimiento=getProcedimiento(executionContext);
 			if (Checks.esNulo(sub)) {

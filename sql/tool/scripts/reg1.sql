@@ -81,7 +81,7 @@ END;
 
 
 CREATE OR REPLACE FUNCTION RSR_PASO2 (v_RSR_NOMBRE_SCRIPT IN VARCHAR2,
-v_RSR_FECHACREACION IN VARCHAR2) RETURN VARCHAR2
+v_RSR_FECHACREACION IN VARCHAR2, v_RSR_ESQUEMA IN VARCHAR2) RETURN VARCHAR2
 
 IS
 
@@ -98,10 +98,10 @@ BEGIN
       ' esta registrado como ejecutado en RSR_REGISTRO_SQLS');
     
     EXECUTE IMMEDIATE 'select count(1) from ' || v_schema || '.RSR_REGISTRO_SQLS WHERE RSR_NOMBRE_SCRIPT=''' || v_RSR_NOMBRE_SCRIPT 
-      || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || ''' AND RSR_RESULTADO=''OK''' into v_count;
+      || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || ''' AND RSR_ESQUEMA = ''' || v_RSR_ESQUEMA || ''' AND RSR_RESULTADO=''OK''' into v_count;
     
     if v_count > 0 then
-      DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || 
+      DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || ' y esquema ' || v_RSR_ESQUEMA ||
      ' YA EJECUTADO');
       V_RESULTADO := 'YA_EXISTE';
     else 

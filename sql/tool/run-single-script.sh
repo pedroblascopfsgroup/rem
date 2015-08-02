@@ -42,7 +42,10 @@ function usoCorrecto() {
     echo -e "      CLIENTE  (para que se use ~/setEnvGlobalCLIENTE.sh)" 
     echo -e "      -        (para que se use ~/setEnvGlobal.sh)"
     echo -e ""
-    echo -e "   -v Para modo verbose"
+    echo -e "   -v Paria modo verbose"
+    echo -e ""
+    echo -e "NOTA: Puedes forzar el esquema de ejecución del script anteponiendo su nombre junto a password,"
+    echo -e "      con el formato: esquema/password"
     echo ""
 }
 

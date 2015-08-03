@@ -678,6 +678,11 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		if (requierePrevioCDD(dto)) {
 			hql.append(" and asu.id = cdd.asunto.id ");
+                        
+			hql.append(" and cdd.id in ( ");
+			hql.append(" select max(cdd1.id) ");
+			hql.append(" from  BatchAcuerdoCierreDeuda cdd1 ");
+			hql.append(" group by cdd1.asunto.id, cdd1.batchAcuerdoCierreDeuda.id ) ");	
 		}
 
 		if (requierePostCDD(dto)) {
@@ -815,10 +820,12 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		//FILTRO ERROR CDD
 		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
 			if("Todos".equals(dto.getComboErrorPreviCDD())){
-				hql.append(" and cdd.resultadoValidacionCDD is not null");
+                                hql.append(" and cdd.resultadoValidacion <> 1");
+//				hql.append(" and cdd.resultadoValidacionCDD is not null");
 			}
 			else{
-				hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
+                            hql.append(" and cdd.resultadoValidacion <> 1");
+                            hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
 				params.put("errorPrevio", dto.getComboErrorPreviCDD());
 			}
 		}

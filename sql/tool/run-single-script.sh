@@ -43,9 +43,6 @@ function usoCorrecto() {
     echo -e "      -        (para que se use ~/setEnvGlobal.sh)"
     echo -e ""
     echo -e "   -v Paria modo verbose"
-    echo -e ""
-    echo -e "NOTA: Puedes forzar el esquema de ejecución del script anteponiendo su nombre junto a password,"
-    echo -e "      con el formato: esquema/password"
     echo ""
 }
 

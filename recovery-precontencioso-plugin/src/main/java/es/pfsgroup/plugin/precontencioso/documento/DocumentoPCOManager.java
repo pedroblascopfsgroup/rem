@@ -169,8 +169,11 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			
 		}
 		if (documento.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.BIENES)){
-			bienEntidad = genericDao.get(NMBBienEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", documento.getUnidadGestionId()));			
-			ugIdDto = "Finca: "+bienEntidad.getNumFinca();					//documento.getUnidadGestionId()+"";
+			bienEntidad = genericDao.get(NMBBienEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", documento.getUnidadGestionId()));
+			if (bienEntidad != null)
+				ugIdDto = "Finca: "+bienEntidad.getNumFinca();					//documento.getUnidadGestionId()+"";
+			else
+				ugIdDto = "Finca: ";
 			descripcionUG = bienDao.get(documento.getUnidadGestionId()).getDescripcionBien();
 		}
 		

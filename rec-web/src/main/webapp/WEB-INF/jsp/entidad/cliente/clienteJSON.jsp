@@ -13,6 +13,12 @@
 		<json:property name="isSeguimiento" value="${arquetipoPersona != null && arquetipoPersona.itinerario.dDtipoItinerario.itinerarioSeguimiento == true}" />
 		<json:property name="isArquetipoGestion" value="true" />
 	</json:object>
+	<json:object name="arquetipoRecuperacion" >
+		<json:property name="isNull" value="${arquetipoRecuperacion==null}" />
+		<json:property name="isRecuperacion" value="${arquetipoRecuperacion != null && arquetipoRecuperacion.itinerario.dDtipoItinerario.itinerarioRecuperacion == true}" />
+		<json:property name="isSeguimiento" value="${arquetipoRecuperacion != null && arquetipoRecuperacion.itinerario.dDtipoItinerario.itinerarioSeguimiento == true}" />
+		<json:property name="isArquetipoGestion" value="true" />
+	</json:object>
 	<json:property name="tieneContratosParaCliente" value="${tieneContratos==true}" />
 	<json:property name="idCliente" value="${persona.clienteActivo.id}" />
 	<json:property name="fechaCreacion" >

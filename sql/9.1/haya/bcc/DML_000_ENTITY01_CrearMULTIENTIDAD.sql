@@ -37,7 +37,7 @@ DECLARE
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
       	T_TIPO_TPO('workingCode','2039')
-		,T_TIPO_TPO('jndiName','jdbc/haya01_Oracle9iDialect')
+		,T_TIPO_TPO('jndiName','jdbc/haya02_Oracle9iDialect')
 		,T_TIPO_TPO('driverClassName','oracle.jdbc.driver.OracleDriver')
 		,T_TIPO_TPO('url','jdbc:oracle:thin:haya02/admin@//localhost:1521/ibd011')
 		,T_TIPO_TPO('username','haya02')

@@ -191,9 +191,10 @@
 	});
 	
 	btnCargaListaPrc.on('click', function(){
-		btnCargaListaPrc.hide();
+		btnCargaListaPrc.setDisabled(true);
 	});
-              
+       
+        
 	
 	var procedimientosGrid = app.crearGrid(procedimientosStore,procedimientosCm,{
 		title:'<s:message code="asunto.tabcabecera.grid.titulo" text="**Procedimientos"/>'

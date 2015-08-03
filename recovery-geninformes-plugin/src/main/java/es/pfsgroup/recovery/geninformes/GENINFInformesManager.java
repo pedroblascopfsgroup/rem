@@ -27,6 +27,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.JRParameter;
 
 import org.apache.commons.logging.Log;
@@ -748,7 +749,9 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		
 		try {
 			//Compilar la plantilla
-			JasperReport report = JasperCompileManager.compileReport(is);
+			JasperReport report = (JasperReport) JRLoader.loadObject(is);
+			//JasperReport report = (JasperReport)JRLoader.loadObjectFromFile("jasper/" + ficheroPlantilla);
+			//JasperReport report = JasperCompileManager.compileReport(is);
 			
 			//Rellenar los datos del informe
 			JasperPrint print = JasperFillManager.fillReport(report, mapaValores, new JRBeanCollectionDataSource(array));

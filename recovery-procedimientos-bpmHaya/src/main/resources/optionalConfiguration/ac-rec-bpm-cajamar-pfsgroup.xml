@@ -123,6 +123,20 @@
 					return true;
 				}
 				
+				def bienConCesionRemate = {
+	  				def entidad = '';
+	                def nMBProcedimientoManager = ctx.getBean("nmbProcedimientoManager");
+	                def listadoBienes = nMBProcedimientoManager.getBienesDeUnProcedimiento(idProcedimiento); 
+	  				for (bien in listadoBienes) {
+	  					if (bien.getAdjudicacion() != null 
+	  						&& bien.getAdjudicacion().getCesionRemate() != null
+	  						&& bien.getAdjudicacion().getCesionRemate()) {
+	  						return true;
+	  					}
+	  				}
+	  				return false;
+	  			}
+				
 				def vieneDeTCesionRemateTAdjudicacion = {
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005' || 

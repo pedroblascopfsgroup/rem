@@ -169,7 +169,7 @@ DECLARE
         
         T_TIPO_TFI('H004_ConfirmarContabilidad','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A trav&eacute;s de esta tarea deber&aacute; informar la fecha en la que queda contabilizado en el sistema el pago realizado por el tercero.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','DD'),
         T_TIPO_TFI('H004_ConfirmarContabilidad','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD')
-        T_TIPO_TFI('H004_ConfirmarContabilidad','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),      
+        T_TIPO_TFI('H004_ConfirmarContabilidad','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')     
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     

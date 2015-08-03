@@ -33,7 +33,7 @@ DECLARE
       ,T_TIPO_TFA('HRESOL', 'Resolución (Hipotecario)', 'Resolución (Hipotecario)', 'EJ') -- T. Hipotecario
       ,T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
       ,T_TIPO_TFA('INFLIQ', 'Informe de liquidación', 'Informe de liquidación', 'TR') -- T. Calculo de deuda a fecha
-      ,T_TIPO_TFA('IFISCAL', 'Informe fiscal (T. Subasta)', 'Informe fiscal (T. Subasta)', 'AP') -- T. Calculo de deuda a fecha
+      ,T_TIPO_TFA('IFISCAL', 'Informe fiscal (T. Subasta)', 'Informe fiscal (T. Subasta)', 'AP') -- T. Subasta
       ,T_TIPO_TFA('EDCSDE', 'Escrito de demanda completo + copia sellada de la demanda', 'Escrito de demanda completo + copia sellada de la demanda', 'DE') -- Trámites de Tipo de Actuación Declarativo 
       ,T_TIPO_TFA('COMAD', 'Comunicación adicional', 'Comunicación adicional', 'AP') -- Trámites de Adjudicación 
       ,T_TIPO_TFA('LIBARR', 'Certificado de Libertad de arrendamientos', 'Certificado de Libertad de arrendamientos', 'TR') -- Trámite de certificado de libertad de arrendamiento
@@ -47,6 +47,19 @@ DECLARE
       ,T_TIPO_TFA('DSPJ', 'Documentación con sello de presentación en el Juzgado', 'Documentación con sello de presentación en el Juzgado', 'TR') -- Trámite de mandamiento de cancelación de cargas
       ,T_TIPO_TFA('MCC', 'Mandato de cancelación de cargas', 'Mandato de cancelación de cargas', 'TR') -- Trámite de mandamiento de cancelación de cargas
       ,T_TIPO_TFA('SAP', 'Solicitud archivo procedimiento', 'Solicitud archivo procedimiento', 'TR') -- Trámite de mandamiento de cancelación de cargas
+      ,T_TIPO_TFA('PLALIQ', 'Plan de liquidación', 'Plan de liquidación', 'CO') -- Trámite de fase de liquidación
+      ,T_TIPO_TFA('AAPLIQ', 'Auto aprobando plan de liquidación', 'Auto aprobando plan de liquidación', 'CO') -- Trámite de fase de liquidación      
+      ,T_TIPO_TFA('INFRENCUE', 'Informe de rendición de cuentas', 'Informe de rendición de cuentas', 'CO') -- Trámite de fase de liquidación
+      ,T_TIPO_TFA('AUTCONCON', 'Auto de conclusión de concurso', 'Auto de conclusión de concurso', 'CO') -- Trámite de fase de liquidación
+      ,T_TIPO_TFA('INFPRO', 'Informe de la propuesta', 'Informe de la propuesta', 'CO') -- Trámite de propuesta anticipada
+      ,T_TIPO_TFA('RESJUD', 'Resolución judicial', 'Resolución judicial', 'CO') -- Trámite de propuesta anticipada
+      ,T_TIPO_TFA('INFADMCON', 'Informe del Adm. Concursal', 'Informe del Adm. Concursal', 'CO') -- Trámite de fase convenio
+      ,T_TIPO_TFA('ACTJUNACR', 'Acta de la junta de acreedores', 'Acta de la junta de acreedores', 'CO') -- Trámite de fase convenio
+      ,T_TIPO_TFA('RESADE', 'Resolución de la adenda', 'Resolución de la adenda', 'CO') -- Trámite de fase común
+      ,T_TIPO_TFA('RESJUZ', 'Resolución juzgado', 'Resolución juzgado', 'CO') -- Trámite de fase común
+      ,T_TIPO_TFA('BOE', 'BOE', 'BOE', 'CO') -- Trámite de fase común
+      ,T_TIPO_TFA('INTDEM', 'Interposición de la demanda', 'Interposición de la demanda', 'CO') -- Trámite de demanda incidental
+      ,T_TIPO_TFA('INSUFI', 'Informe Subasta Firmado', 'Informe Subasta Firmado', 'AP') -- T. Subasta
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

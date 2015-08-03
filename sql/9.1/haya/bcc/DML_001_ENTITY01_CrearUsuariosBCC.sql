@@ -29,6 +29,7 @@ DECLARE
     
     V_ENTIDAD_ID NUMBER(16);
     V_USUARIO_ID NUMBER(16);
+    ID_ENTIDAD NUMBER(16);
     
     --Valores a insertar
     TYPE T_TIPO_TFA IS TABLE OF VARCHAR2(150);
@@ -289,6 +290,9 @@ BEGIN
 	-- LOOP Insertando valores en dd_tfa_fichero_adjunto
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.des_despacho_externo... Empezando a crear despachos...');
     
+	V_MSQL := 'SELECT '|| V_ESQUEMA_M ||'.ENTIDAD WHERE DESCRIPCION=''CAJAMAR''';        
+	EXECUTE IMMEDIATE V_MSQL INTO ID_ENTIDAD;
+	
 	FOR I IN V_TIPO_TFA.FIRST .. V_TIPO_TFA.LAST
       LOOP              
             V_TMP_TIPO_TFA := V_TIPO_TFA(I);          		
@@ -361,7 +365,7 @@ BEGIN
 					        		'USU_GRUPO, USU_FECHA_EXTRACCION,USU_BAJA_LDAP, BORRADO, USUARIOBORRAR, FECHABORRAR)'||
 								' VALUES ('
 					        		||V_USUARIO_ID||','
-					        		||'1,'
+					        		||ID_ENTIDAD||','
 					        		||''''||V_TMP_TIPO_TFA(2)||''''||','
 					        		||''''||V_TMP_TIPO_TFA(3)||''''||','
 					        		||''''||V_TMP_TIPO_TFA(4)||''''||','

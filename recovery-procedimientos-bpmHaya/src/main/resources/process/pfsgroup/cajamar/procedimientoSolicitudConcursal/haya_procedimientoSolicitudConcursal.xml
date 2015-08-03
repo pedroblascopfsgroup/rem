@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_procedimientoSolicitudConcursal">
+<process-definition xmlns="" name="hcj_procedimientoSolicitudConcursal">
 
 	<start-state name="Inicio">
 		<transition to="H021_SolicitudConcursal"></transition>
@@ -123,7 +123,6 @@
 	<decision name="H021_RegistrarOposicionDecision" expression="#{H021_registrarOposicionDecision}">
 		<transition to="H021_RegistrarVista" name="SI"></transition>
 		<transition to="H021_AutoDeclarandoConcurso" name="NO"></transition>
-		<transition to="H021_AutoDeclarandoConcurso" name="ALLANAMIENTO"></transition>
 	</decision>
 
 	<state name="H021_RegistrarResolucion">
@@ -191,7 +190,7 @@
 		</event>
 		<transition to="H021_AutoDeclarandoConcurso" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="H021_AutoDeclarandoConcursoDecision" name="avanzaBPM"></transition>
+		<transition to="ForkAutoDeclarandoConcurso" name="avanzaBPM"></transition>
 	</state>
 
 	<decision name="H021_ResolucionFirmeDecision" expression="#{H021_ResolucionFirmeDecision}">
@@ -208,29 +207,6 @@
 		<transition to="Fin" name="Fin"></transition>
 	</node>
 
-	<decision name="H021_AutoDeclarandoConcursoDecision" expression="#{H021_AutoDeclarandoConcursoDecision}">
-		<transition to="H021_BPMTramiteFaseComunAbreviado" name="ABREVIADO"></transition>
-		<transition to="H021_BPMTramiteFaseComunOrdinario" name="ORDINARIO"></transition>
-	</decision>
-
-	<state name="H021_BPMTramiteFaseComunAbreviado">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
-			</action>
-		</event>
-		<transition to="Fin" name="haya_tramiteFaseComunAbreviadoV4"></transition>
-	</state>
-
 	<state name="H021_BPMTramiteFaseComunOrdinario">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -246,9 +222,33 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="haya_tramiteFaseComunAbreviadoV4"></transition>
+		<transition to="Fin" name="hcj_tramiteFaseComun"></transition>
 	</state>
 
+	<fork name="ForkAutoDeclarandoConcurso">
+		<transition to="H021_BPMTramiteFaseComunOrdinario" name="faseComun"></transition>
+		<transition to="H021_RevisionEjecucionesParalizadas" name="revision"></transition>
+	</fork>
+
+	<state name="H021_RevisionEjecucionesParalizadas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H021_RevisionEjecucionesParalizadas" name="activarAlerta"></transition>
+	</state>
 
 	<end-state name="Fin">
 		<event type="node-enter">

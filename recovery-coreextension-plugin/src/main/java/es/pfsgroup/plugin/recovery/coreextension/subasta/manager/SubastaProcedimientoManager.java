@@ -587,5 +587,26 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 
 		return true;
 	}
+	
+	/**
+	 * Funcion que valida si entre los bienes de una subasta adjudicados a terceros
+	 * existe alguno que no sea vivienda habitual.
+	 */
+	@Override
+	@BusinessOperation(BO_SUBASTA_NO_VIVIENDA_HABITUAL_TERCEROS)
+	public boolean isNotViviendaHabitualAdjTerceros(Long prcId){
+		
+		List<Bien> listadoBienes = getBienesSubastaByPrcId(prcId);
+		for(Bien bien: listadoBienes) {
+			
+			NMBBien nmbBien = (NMBBien) bien;
+			if(!Checks.esNulo(nmbBien.getAdjudicacion()) && DDEntidadAdjudicataria.TERCEROS.equals(nmbBien.getAdjudicacion().getEntidadAdjudicataria())){
+				if (!("1".equals(nmbBien.getViviendaHabitual()))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 }

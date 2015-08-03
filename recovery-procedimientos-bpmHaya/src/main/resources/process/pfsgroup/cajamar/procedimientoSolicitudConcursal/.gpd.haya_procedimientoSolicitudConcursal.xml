@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_procedimientoSolicitudConcursal" width="1438" height="705">
+<root-container name="hcj_procedimientoSolicitudConcursal" width="1438" height="887">
   <node name="Inicio" x="35" y="42" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -89,10 +89,7 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-101" y="-10"/>
+      <label x="7" y="6"/>
     </edge>
   </node>
   <node name="H021_RegistrarResolucion" x="38" y="496" width="191" height="36">
@@ -138,8 +135,7 @@
       <bendpoint w1="123" h1="-126" w2="-601" h2="12"/>
     </edge>
     <edge>
-      <label x="-59" y="-16"/>
-      <bendpoint w1="238" h1="-1" w2="-107" h2="-75"/>
+      <label x="-60" y="-18"/>
     </edge>
   </node>
   <node name="H021_ResolucionFirmeDecision" x="539" y="495" width="214" height="36">
@@ -157,23 +153,28 @@
       <bendpoint w1="630" h1="40" w2="-93" h2="370"/>
     </edge>
   </node>
-  <node name="H021_AutoDeclarandoConcursoDecision" x="809" y="460" width="260" height="36">
-    <edge>
-      <label x="-36" y="1"/>
-    </edge>
-    <edge>
-      <label x="-31" y="-12"/>
-    </edge>
-  </node>
-  <node name="H021_BPMTramiteFaseComunAbreviado" x="1017" y="330" width="251" height="36">
-    <edge>
-      <label x="-130" y="-3"/>
-    </edge>
-  </node>
   <node name="H021_BPMTramiteFaseComunOrdinario" x="1012" y="594" width="252" height="36">
     <edge>
-      <label x="-132" y="3"/>
-      <bendpoint w1="130" h1="-40" w2="-83" h2="209"/>
+      <label x="-124" y="127"/>
+    </edge>
+  </node>
+  <node name="ForkAutoDeclarandoConcurso" x="860" y="456" width="252" height="24">
+    <edge>
+      <label x="-56" y="-43"/>
+    </edge>
+    <edge>
+      <label x="-54" y="8"/>
+    </edge>
+  </node>
+  <node name="H021_RevisionEjecucionesParalizadas" x="985" y="353" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="Fin" x="1305" y="259" width="132" height="36"/>

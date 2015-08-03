@@ -486,6 +486,11 @@ BEGIN
 	--EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW=''plugin/cajamar/tramiteAdjudicacion/notifDecAdjuContrario'',TAP_SCRIPT_VALIDACION_JBPM=''valores['''''||V_TAREA||'''''][''''comboNotificacion'''']==DDSiNo.SI && valores['''''||V_TAREA||'''''][''''fecha'''']==null ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe indicar la fecha de notificaci&oacute;n.</div>'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 	--EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items SET TFI_ERROR_VALIDACION=NULL,TFI_VALIDACION=NULL WHERE TFI_NOMBRE=''fecha'' TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	
+	V_TAREA:='H005_declararIVAeIGIC';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS WHERE TFI_NOMBRE IN (''fecha'', ''observaciones'') AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Una vez emitido el auto decreto de adjudicaci&oacute;n, la entidad deber&aacute; realizar la declaraci&oacute;n en funci&oacute;n del tipo de tributaci&oacute;n definido en el informe fiscal. En el caso de el tipo de tributaci&oacute;n sea IVA sujeto y deducible, adem&aacute;s de la declaraci&oacute;n la entidad deber&aacute; auto emitir una factura.</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET DD_TPO_ID_BPM = (SELECT DD_TPO_ID FROM '||V_ESQUEMA ||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''HCJ001''), TAP_CODIGO = ''H005_BPMDeclaracionIVAIGIC'' WHERE TAP_CODIGO = '''||V_TAREA||''')';
+	
 	/* ------------------- -------------------------- */
 	/* ------------------- -------------------------- */
 

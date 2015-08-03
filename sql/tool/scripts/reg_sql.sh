@@ -69,47 +69,26 @@ echo 'PRODUCTO='$PRODUCTO  >> $BASEDIR/$nombreLog
 echo "###############################################################"  >> $BASEDIR/$nombreLog
 echo ""  >> $BASEDIR/$nombreLog
 
-ESQUEMA=''
-ESQUEMA_MASTER=''
-ESQUEMA_ENTIDAD=''
-ESQUEMA_ENTIDAD_02=''
-CADENAS_SUSTITUCION=""
+ESQUEMA='' # para reemplazo de variables
+ESQUEMA_MASTER='' # para reemplazo de variables
+ESQUEMA_EJECUCION='' # para la ejecución del script
+ESQUEMA_REGISTRO='' # el que alberga la tabla de registro
+CONNECTION='' # para la conexión a la BD
+
 IFS=',' read -a array <<< "$VARIABLES_SUSTITUCION"
 for index in "${!array[@]}"
 do
-#    echo "$index ${array[index]}"
-
     KEY=`echo ${array[index]} | cut -d\; -f1`
     VALUE=`echo ${array[index]} | cut -d\; -f2`
     if [[ $KEY == '#ESQUEMA_MASTER#' ]]; then
        ESQUEMA_MASTER=$VALUE
     fi
-    if [[ $KEY == '#ESQUEMA_ENTIDAD#' ]]; then
-       ESQUEMA_ENTIDAD=$VALUE
-    fi
-    if [[ $KEY == '#ESQUEMA_ENTIDAD_02#' ]]; then
-       ESQUEMA_ENTIDAD_02=$VALUE
-    fi
     if [[ $KEY == '#ESQUEMA#' ]]; then
        ESQUEMA=$VALUE
+       ESQUEMA_REGISTRO=$ESQUEMA
     fi
-
-    IFS=';' read -a array2 <<< "${array[index]}"
-    for index2 in "${!array2[@]}"
-    do
-       if [ "$index2" -eq "0" ] ; then
-          CADENA="-e s/""${array2[index2]}""/"
-       fi
-       if [ "$index2" -eq "1" ] ; then
-          CADENA="$CADENA""${array2[index2]}/g "
-       fi
-       #echo "--- $index2 ${array2[index2]}"
-    done
-    CADENAS_SUSTITUCION="$CADENAS_SUSTITUCION""$CADENA "
 done
-#echo "$CADENAS_SUSTITUCION"
 
-CONNECTION=''
 if [ `expr index $PW '@'` -gt 0 ] ; then
     CONNECTION=`echo $PW | cut -f2 -d@`
     PW=`echo $PW | cut -f1 -d@`
@@ -117,14 +96,12 @@ fi
 
 if [ `expr index $PW '/'` -gt 0 ] ; then
     ESQUEMA_EJECUCION=`echo $PW | cut -f1 -d/`
+    ESQUEMA=$ESQUEMA_EJECUCION
     PW=`echo $PW | cut -f2 -d/`
 else
     ESQUEMA_EJECUCION=`echo $nombreFichero | cut -d_ -f3`
     if [[ $ESQUEMA_EJECUCION == "BANK01" ]] || [[ $ESQUEMA_EJECUCION == "ENTITY01" ]] || [[ $ESQUEMA_EJECUCION == "HAYA01" ]]; then
-        ESQUEMA_EJECUCION=$ESQUEMA_ENTIDAD 
-    fi
-    if [[ $ESQUEMA_EJECUCION == "ENTITY02" ]] || [[ $ESQUEMA_EJECUCION == "HAYA02" ]]; then
-        ESQUEMA_EJECUCION=$ESQUEMA_ENTIDAD_02
+        ESQUEMA_EJECUCION=$ESQUEMA 
     fi
     if [[ $ESQUEMA_EJECUCION == "BANKMASTER" ]] || [[ $ESQUEMA_EJECUCION == "MASTER" ]] || [[ $ESQUEMA_EJECUCION == "HAYAMASTER" ]]; then
         ESQUEMA_EJECUCION=$ESQUEMA_MASTER
@@ -134,13 +111,26 @@ if [ "$CONNECTION" != "" ] ; then
     PW="$PW""@""$CONNECTION"
 fi
 
+CADENAS_SUSTITUCION=""
+IFS=',' read -a array <<< "$VARIABLES_SUSTITUCION"
+for index in "${!array[@]}"
+do
+    KEY=`echo ${array[index]} | cut -d\; -f1`
+    VALUE=`echo ${array[index]} | cut -d\; -f2`
+    if [[ $KEY == '#ESQUEMA#' ]]; then
+        VALUE=$ESQUEMA
+    fi
+    CADENA="-e s/$KEY/$VALUE/g "
+    CADENAS_SUSTITUCION="$CADENAS_SUSTITUCION""$CADENA "
+done
+
 #Invocar PASO1
 export PASO1=reg1.sql
-sed -e s/#ESQUEMA#/${ESQUEMA}/g "$BASEDIR/${PASO1}" > $BASEDIR/${FECHA_CREACION}-${PASO1}
+sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO1}" > $BASEDIR/${FECHA_CREACION}-${PASO1}
 if [[ $VERBOSE == 1 ]]; then
-    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO1}  >> $BASEDIR/$nombreLog"
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO1}  >> $BASEDIR/$nombreLog"
 fi
-$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO1}  >> $BASEDIR/$nombreLog
+$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO1}  >> $BASEDIR/$nombreLog
 if [ $? != 0 ] ; then 
     echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO1} >> $BASEDIR/$nombreLog
     echo " #KO# :  $BASEDIR/$nombreLog"
@@ -151,9 +141,9 @@ fi
 export PASO2=reg2.sql
 cat "$BASEDIR/${PASO2}" > $BASEDIR/${FECHA_CREACION}-${PASO2}
 if [[ $VERBOSE == 1 ]]; then
-    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null"
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null"
 fi
-exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null
+exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null
 export RESULTADO=$?
 if [ $RESULTADO == 33 ] ; then 
     if [[ $VERBOSE == 1 ]]; then
@@ -184,9 +174,9 @@ export PASO3=reg3.sql
 cat "$BASEDIR/${PASO3}" > $BASEDIR/${FECHA_CREACION}-${PASO3}
 echo "#####    Inserción inicial de datos en tabla de registro"  >> $BASEDIR/$nombreLog
 if [[ $VERBOSE == 1 ]]; then
-    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR""
+    echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR""
 fi
-exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO" >> $BASEDIR/$nombreLog
+exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO" >> $BASEDIR/$nombreLog
 
 #Ejecución del script en sí mismo
 sed $CADENAS_SUSTITUCION "$BASEDIR/${NOMBRE_SCRIPT}" > $BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT}
@@ -209,9 +199,9 @@ if [ $RESULTADO != 0 ] ; then
     echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${NOMBRE_SCRIPT} >> $BASEDIR/$nombreLog
     echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
     if [[ $VERBOSE == 1 ]]; then
-        echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog"
+        echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog"
     fi
-    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog
+    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "KO" "$RESULTADO"  >> $BASEDIR/$nombreLog
     if [ $? != 0 ] ; then 
         echo -e "\n\n======>>> "Error en @$BASEDIR/${FECHA_CREACION}-${PASO4} >> $BASEDIR/$nombreLog
         echo " #KO# :  $BASEDIR/$nombreLog"
@@ -227,9 +217,9 @@ if [ $RESULTADO == 0 ] ; then
     echo -e "\n\nSCRIPT @${FECHA_CREACION}-${NOMBRE_SCRIPT} FINALIZADO CORRECTAMENTE" >> $BASEDIR/$nombreLog
     echo "#####    Ejecución la actualización de resultados en la tabla de registro"  >> $BASEDIR/$nombreLog
     if [[ $VERBOSE == 1 ]]; then
-        echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog"
+        echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog"
     fi
-    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog
+    exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${FECHA_CREACION}-${PASO4} "$NOMBRE_SCRIPT" "$FECHA_CREACION" "OK" "$RESULTADO"  >> $BASEDIR/$nombreLog
     if [ $? != 0 ] ; then 
         echo -e "\n\n======>>> "Error en @${FECHA_CREACION}-${PASO4} >> $BASEDIR/$nombreLog
         echo " #KO# :  $BASEDIR/$nombreLog"

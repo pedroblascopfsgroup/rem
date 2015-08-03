@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="haya_tramiteDemandaIncidental">
+<process-definition xmlns="" name="hcj_tramiteDemandaIncidental">
 
 	<start-state name="Inicio">
 		<transition to="H023_interposicionDemanda" name="iniciarProceso"></transition>
@@ -137,7 +137,7 @@
 				</targetBean>
 			</action>
 		</event>		
-		<transition to="fork1" name="avanzaBPM"></transition>
+		<transition to="H023_DemandaDecision" name="avanzaBPM"></transition>
 		<transition to="H023_resolucionFirme" name="activarAlerta"></transition>
 		<transition to="H023_registrarResolucion" name="vueltaAtras"></transition>
 		<transition to="Fin" name="Fin"></transition>
@@ -187,33 +187,6 @@
 		<transition to="H023_registrarVista" name="SI"></transition>
 		<transition to="H023_registrarResolucion" name="NO"></transition>
 	</decision>
-
-	<fork name="fork1">
-		<transition to="H023_DemandaDecision" name="proponerActuacion"></transition>
-		<transition to="H023_informarSareb" name="informarSareb"></transition>
-	</fork>
-
-	<state name="H023_informarSareb">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="Fin" name="Fin"></transition>
-		<transition to="H023_informarSareb" name="activarAlarma"></transition>
-		<transition to="Fin" name="avanzaBPM"></transition>
-	</state>
 
 
 	<end-state name="Fin">

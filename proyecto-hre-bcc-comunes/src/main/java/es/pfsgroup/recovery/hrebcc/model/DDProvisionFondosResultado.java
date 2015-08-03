@@ -12,7 +12,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_PFR_PROV_FONDOS_RESULTADO", schema = "${entity.schema}")
+@Table(name = "DD_PFR_PROV_FONDOS_RESULT", schema = "${entity.schema}")
 public class DDProvisionFondosResultado implements Auditable, Dictionary{
     
 	public static final String ACEPTAR = "APR";

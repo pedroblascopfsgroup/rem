@@ -116,23 +116,35 @@ public class InformeValidacionCDDBean {
 
 	private List<DatosLoteCDD> rellenaDatosLoteCDD(Subasta subasta) {
 		List<DatosLoteCDD> datosLoteCDD = new ArrayList<DatosLoteCDD>();
+		asignarLotesABienesSeleccionados(subasta);
 		for (LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
 			if(!Checks.estaVacio(this.informeDTO.getBienesLote())){
-				
+				List<Long> lotes = new ArrayList<Long>();
 				for(BienLoteDto bienLote : this.informeDTO.getBienesLote()) {
-					
-					for(Bien bien: loteSubasta.getBienes()) {
-						if (Checks.esNulo(bienLote.getLote()) && bien.getId().equals(bienLote.getIdBien())) {
-							bienLote.setLote(loteSubasta.getId());							
-							datosLoteCDD.add(completaDatosLote(loteSubasta));							
-						}
+					if(!lotes.contains(bienLote.getLote()) && loteSubasta.getId().equals(bienLote.getLote())) {
+						lotes.add(bienLote.getLote());
+						datosLoteCDD.add(completaDatosLote(loteSubasta));
 					}
-				}				
+				}
 			}else {
 				datosLoteCDD.add(completaDatosLote(loteSubasta));
 			}
 		}
 		return datosLoteCDD;
+	}
+	
+	private void asignarLotesABienesSeleccionados(Subasta subasta) {
+		if(!Checks.estaVacio(this.informeDTO.getBienesLote())){
+			for (LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+				for(BienLoteDto bienLote : this.informeDTO.getBienesLote()) {
+					for(Bien bien: loteSubasta.getBienes()) {
+						if(bienLote.getIdBien().equals(bien.getId())) {
+							bienLote.setLote(loteSubasta.getId());
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private DatosLoteCDD completaDatosLote(LoteSubasta loteSubasta) {

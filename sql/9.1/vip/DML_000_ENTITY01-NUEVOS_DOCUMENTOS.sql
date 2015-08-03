@@ -55,6 +55,10 @@ DECLARE
       ,T_TIPO_TFA('RESJUD', 'Resolución judicial', 'Resolución judicial', 'CO') -- Trámite de propuesta anticipada
       ,T_TIPO_TFA('INFADMCON', 'Informe del Adm. Concursal', 'Informe del Adm. Concursal', 'CO') -- Trámite de fase convenio
       ,T_TIPO_TFA('ACTJUNACR', 'Acta de la junta de acreedores', 'Acta de la junta de acreedores', 'CO') -- Trámite de fase convenio
+      ,T_TIPO_TFA('RESADE', 'Resolución de la adenda', 'Resolución de la adenda', 'CO') -- Trámite de fase común
+      ,T_TIPO_TFA('RESJUZ', 'Resolución juzgado', 'Resolución juzgado', 'CO') -- Trámite de fase común
+      ,T_TIPO_TFA('BOE', 'BOE', 'BOE', 'CO') -- Trámite de fase común
+      ,T_TIPO_TFA('INTDEM', 'Interposición de la demanda', 'Interposición de la demanda', 'CO') -- Trámite de demanda incidental
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

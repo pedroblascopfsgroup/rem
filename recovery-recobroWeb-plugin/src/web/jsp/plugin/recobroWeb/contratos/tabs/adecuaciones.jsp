@@ -63,15 +63,21 @@
    
    var tipoRenderer = function(value) {
    		debugger;   
-   		var valueRendered = parseInt(value);
+   		var valueRendered = value;
    		
-   		return Ext.isEmpty(valueRendered) ? "0,00" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
+   		return Ext.isEmpty(valueRendered) ? "0,000" : valueRendered.toFixed(3).replace(".", ",");
    }; 
    
    var razonProgresionRenderer = function(value) {
    		debugger;   
    		var valueRendered = parseInt(value)/100;
    		return Ext.isEmpty(valueRendered) ? "" : valueRendered.toFixed(3).replace(".", app.format.DECIMAL_SEPARATOR);
+   };
+   
+   var cuotaRenderer = function(value) {
+   		debugger;   
+   		var valueRendered = value;
+   		return Ext.isEmpty(valueRendered) ? "0,00" : valueRendered.toFixed(2).replace(".", ",");
    }; 
  
    var adecuacionesCM  = new Ext.grid.ColumnModel([
@@ -84,8 +90,8 @@
         {header:'<s:message code="contrato.tabAdecuaciones.tipo" text="**tipo" />',dataIndex:'tipo',width:120, renderer:tipoRenderer},
         {header:'<s:message code="contrato.tabAdecuaciones.diferencial" text="diferencial" />',dataIndex:'diferencial',width:120,hidden:true, renderer:tipoRenderer},
         {header:'<s:message code="contrato.tabAdecuaciones.plazo" text="**plazo" />',dataIndex:'plazo',width:120,hidden:true},        
-        {header:'<s:message code="contrato.tabAdecuaciones.cuota" text="**cuota actual" />',dataIndex:'cuota',width:120,hidden:true},
-        {header:'<s:message code="contrato.tabAdecuaciones.cuotaTrasCarencia" text="**cuotaTrasCarencia" />',dataIndex:'cuotaTrasCarencia',width:120,hidden:true},
+        {header:'<s:message code="contrato.tabAdecuaciones.cuota" text="**cuota actual" />',dataIndex:'cuota',width:120,hidden:true, renderer: cuotaRenderer},
+        {header:'<s:message code="contrato.tabAdecuaciones.cuotaTrasCarencia" text="**cuotaTrasCarencia" />',dataIndex:'cuotaTrasCarencia',width:120,hidden:true, renderer:cuotaRenderer},
         {header:'<s:message code="contrato.tabAdecuaciones.sistemaAmortizacion" text="**sistemaAmortizacion" />',dataIndex:'sistemaAmortizacion',width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.razonProgresion" text="**razonProgresion" />',dataIndex:'razonProgresion', renderer: razonProgresionRenderer, width:120,hidden:true},
         {header:'<s:message code="contrato.tabAdecuaciones.periodicidadRecibos" text="**periodicidadRecibos" />',dataIndex:'periodicidadRecibos',width:120,hidden:true},

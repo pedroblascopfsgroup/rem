@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteSubasta" width="2890" height="2001">
+<root-container name="hcj_tramiteSubasta" width="2897" height="2001">
   <node name="Inicio" x="-121" y="134" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -300,6 +300,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-459" h1="-112" w2="329" h2="234"/>
     </edge>
   </node>
   <node name="H002_SuspenderDecision" x="2149" y="530" width="176" height="36">
@@ -379,6 +380,12 @@
       <label x="5" y="-10"/>
       <bendpoint w1="-242" h1="-119" w2="-178" h2="158"/>
     </edge>
+    <edge>
+      <label x="-341" y="-23"/>
+      <bendpoint w1="-1" h1="80" w2="1" h2="778"/>
+      <bendpoint w1="357" h1="83" w2="359" h2="781"/>
+      <bendpoint w1="353" h1="-676" w2="355" h2="22"/>
+    </edge>
   </node>
   <node name="H002_DictarInstruccionesSubastaDecision" x="1325" y="846" width="276" height="36">
     <edge>
@@ -395,9 +402,14 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="101" h1="-93" w2="180" h2="243"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-81" y="-21"/>
+      <bendpoint w1="-2" h1="87" w2="238" h2="0"/>
     </edge>
   </node>
   <node name="NS" x="653" y="78" width="132" height="36">
@@ -505,11 +517,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
-  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
-  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
-  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
-  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
   <node name="H002_SolicitarSuspenderSubasta" x="1734" y="471" width="219" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -526,4 +533,9 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
+  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
+  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
+  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
+  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
 </root-container>

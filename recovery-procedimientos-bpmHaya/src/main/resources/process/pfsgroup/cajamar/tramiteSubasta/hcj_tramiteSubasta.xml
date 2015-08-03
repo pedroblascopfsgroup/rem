@@ -12,7 +12,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaEnterActionHandler
+				<targetBean>subastaBccEnterActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -20,7 +20,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -42,7 +42,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -65,7 +65,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -87,7 +87,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -115,7 +115,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -145,7 +145,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -168,7 +168,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -191,7 +191,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -234,7 +234,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaEnterActionHandler
+				<targetBean>subastaBccEnterActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -254,7 +254,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaEnterActionHandler
+				<targetBean>subastaBccEnterActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -283,7 +283,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -305,7 +305,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -328,7 +328,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -378,12 +378,12 @@
 		<transition to="Fin4" name="no"></transition>
 	</decision>
 
-	<decision name="F" expression="#{DecisionRama_6}">
+	<decision name="F" expression="#{DecisionRama_5}">
 		<transition to="H002_SolicitarMandamientoPago" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
 
-	<decision name="G" expression="#{DecisionRama_7}">
+	<decision name="G" expression="#{DecisionRama_6}">
 		<transition to="H002_BPMTramiteSolSolvenciaPatrimonial" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
@@ -410,7 +410,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -432,7 +432,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -459,7 +459,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -486,13 +486,14 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
 		<transition to="H002_DictarInstruccionesDeneSuspension"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 		<transition to="H002_RegistrarResSuspSubasta" name="vueltaAtras"></transition>
+		<transition to="Fin3" name="avanzaBPM"></transition>
 	</state>
 
 	<decision name="H002_DictarInstruccionesSubastaDecision" expression="#{H002_DictarInstruccionesSubastaDecision}">
@@ -513,13 +514,14 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>subastaBccLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
 		<transition to="Fin4" name="Fin"></transition>
 		<transition to="H002_DictarInstruccionesSubasta" name="vueltaAtras"></transition>
 		<transition to="H002_LecturaConfirmacionInstrucciones" name="activarAlerta"></transition>
+		<transition to="Fin4" name="avanzaBPM"></transition>
 	</state>
 
 	<decision name="NS" expression="#{decisionDoc_1}">
@@ -555,7 +557,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -583,7 +585,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -605,7 +607,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -628,7 +630,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -656,7 +658,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaV4HayaLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	

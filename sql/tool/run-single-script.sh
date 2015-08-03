@@ -42,7 +42,7 @@ function usoCorrecto() {
     echo -e "      CLIENTE  (para que se use ~/setEnvGlobalCLIENTE.sh)" 
     echo -e "      -        (para que se use ~/setEnvGlobal.sh)"
     echo -e ""
-    echo -e "   -v Para modo verbose"
+    echo -e "   -v Paria modo verbose"
     echo ""
 }
 

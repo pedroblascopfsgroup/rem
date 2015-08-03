@@ -23,6 +23,25 @@ function print_banner() {
     echo "******************************************************************************************"
 }
 
+function getConnectionParam() {
+    filename=`basename $1`
+    schema=`echo $filename | cut -d_ -f3`
+    if [[ $schema == "BANKMASTER" ]] || [[ $schema == "MASTER" ]] || [[ $schema == "HAYAMASTER" ]]; then
+        echo "$3"
+    else
+        echo "$2/$3"
+    fi
+} 
+
+function registerSQLScript() {
+    git log $1 >> /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        HASH=`git rev-list HEAD $1 | tail -n 1`
+        DATE=`git show -s --format="%ct" $HASH --`
+        printf "%s#%s %s\n" "$DATE" $1 $3 >> $2
+    fi
+}
+
 clear
 
 if [ "$0" != "./sql/tool/$(basename $0)" ]; then
@@ -40,13 +59,21 @@ if [ "$#" -lt 3 ]; then
     echo ""
     echo "Para simular antes de ejecutar:"
     echo ""
-    echo "   Uso: $0 <tag> CLIENTE password_esquemas"
+    if [ "$ORACLE_SID" == "" ] ; then
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas@sid"
+    else
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas"
+    fi
     echo ""
     echo "Para ejecutarlo:"
     echo ""
-    echo "   Uso: $0 <tag> CLIENTE password_esquemas go!"
-    echo ""
-    echo "   Uso: $0 <tag> CLIENTE password_esquemas go! -v"
+    if [ "$ORACLE_SID" == "" ] ; then
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas@sid go!"
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas@sid go! -v"
+    else
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas go!"
+        echo "   Uso: $0 <tag> CLIENTE password_esquemas go! -v"
+    fi
     echo ""
     echo "       -v: verbose"
     echo ""
@@ -70,21 +97,69 @@ print_banner
 
 BASEDIR=$(dirname $0)
 
+export SETENVGLOBAL=~/setEnvGlobal.sh
+if [ -f ~/setEnvGlobal${CUSTOMER_IN_UPPERCASE}.sh ] ; then
+  export SETENVGLOBAL=~/setEnvGlobal${CUSTOMER_IN_UPPERCASE}.sh
+fi
+if [ ! -f $SETENVGLOBAL ]; then
+    echo "No existe el fichero: $SETENVGLOBAL"
+    echo "Consulta las plantillas que hay en sql/tool/templates"
+    exit 1
+fi
+source $SETENVGLOBAL
+
 rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql
 
-for file in `git diff $1 --name-only sql/ | grep "\.sql"`
+#PRODUCTO
+for file in `git diff $1 --name-only sql/**/producto/*.sql`
 do
-        git log $file >> /dev/null 2>&1
-        if [ $? -eq 0 ]; then
-            HASH=`git rev-list HEAD $file | tail -n 1`    
-            DATE=`git show -s --format="%ct" $HASH --`   
-            printf "%s#%s \n" "$DATE" $file >> $BASEDIR/tmp/from-date-list-1.txt
-        fi
+    if [ "$MULTIENTIDAD" != "" ] ; then
+        IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+        for entidad in "${entidades[@]}"
+        do
+            connectionParam=`getConnectionParam $file ${!entidad} $3`
+            registerSQLScript $file $BASEDIR/tmp/product-list-from-tag.txt $connectionParam
+        done
+    else
+        registerSQLScript $file $BASEDIR/tmp/product-list-from-tag.txt $3
+    fi
 done
 
-#cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto\|$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
-cat $BASEDIR/tmp/from-date-list-1.txt | grep "producto" | sort | cut -d# -f2 > $BASEDIR/tmp/from-date-list-2.txt
-cat $BASEDIR/tmp/from-date-list-1.txt | grep "$CUSTOMER_IN_LOWERCASE" | sort | cut -d# -f2 >> $BASEDIR/tmp/from-date-list-2.txt
+#CLIENTE
+for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/*.sql`
+do
+    if [ "$MULTIENTIDAD" != "" ] ; then
+        IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+        for entidad in "${entidades[@]}"
+        do
+            connectionParam=`getConnectionParam $file ${!entidad} $3`
+            registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam
+        done
+    else
+        registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $3
+    fi
+done
+
+#SUBCLIENTE EN CASO DE MULTIENTIDAD
+if [ "$MULTIENTIDAD" != "" ] ; then
+    IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+    for entidad in "${entidades[@]}"
+    do
+        SUBENTITY=`echo $entidad | tr '[:upper:]' '[:lower:]'`
+        for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/*.sql`
+        do
+            connectionParam=`getConnectionParam $file ${!entidad} $3`
+            registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam
+        done
+    done
+fi
+
+if [ -f $BASEDIR/tmp/product-list-from-tag.txt ] ; then
+    cat $BASEDIR/tmp/product-list-from-tag.txt | sort | cut -d# -f2 > $BASEDIR/tmp/list-from-tag.txt
+fi
+if [ -f $BASEDIR/tmp/customer-list-from-tag.txt ] ; then
+    cat $BASEDIR/tmp/customer-list-from-tag.txt | sort | cut -d# -f2 >> $BASEDIR/tmp/list-from-tag.txt
+fi
 
 
 if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
@@ -92,21 +167,21 @@ if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
     do
         if [[ "$5" == "-v" ]]; then
             echo "--------------------------------------------------------------------------------"
-            echo "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE -v"
-            $BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE -v
+            echo "$BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE -v"
+            $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE -v
             echo "--------------------------------------------------------------------------------"
         else
-            $BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE
+            $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE
         fi
-    done < $BASEDIR/tmp/from-date-list-2.txt
+    done < $BASEDIR/tmp/list-from-tag.txt
 else
     echo ""
     echo "Lo que pretendo ejecutar es:"
     echo ""
     while read -r line
     do
-        echo "$BASEDIR/run-single-script.sh $line $3 $CUSTOMER_IN_UPPERCASE"
-    done < $BASEDIR/tmp/from-date-list-2.txt
+        echo "$BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE"
+    done < $BASEDIR/tmp/list-from-tag.txt
     echo ""
     echo "Si estás de acuerdo, añade go! al final de la línea de comandos"
     echo ""

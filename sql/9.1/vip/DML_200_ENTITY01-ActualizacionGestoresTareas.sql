@@ -344,8 +344,10 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H022','H022_InterposicionDemanda','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H022','H022_JBPMTramiteNotificacion','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H022','H022_MonitorioDecision','CJ-814','GCONPR')
-
-); 
+,T_TIPO_VALOR('H005','H005_BPMDeclaracionIVAIGIC','CJ-TGESEXT','CJ-SUEXT')
+,T_TIPO_VALOR('H036','H036_ElevarPropuestaAComite','CJ-TGESEXT','CJ-SUEXT')
+,T_TIPO_VALOR('H033','H033_aperturaFase','TGESCON','SUCON')
+,T_TIPO_VALOR('H033','H033_InformeLiquidacion','TGESCON','SUCON')); 
     V_TMP_TIPO T_TIPO_VALOR;
     
 BEGIN	

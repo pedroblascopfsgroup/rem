@@ -682,7 +682,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cdd.id in ( ");
 			hql.append(" select max(cdd1.id) ");
 			hql.append(" from  BatchAcuerdoCierreDeuda cdd1 ");
-			hql.append(" group by cdd1.asunto.id, cdd1.batchAcuerdoCierreDeuda.id ) ");	
+			hql.append(" group by cdd1.asunto.id, cdd1.procedimiento.id ) ");	
 		}
 
 		if (requierePostCDD(dto)) {

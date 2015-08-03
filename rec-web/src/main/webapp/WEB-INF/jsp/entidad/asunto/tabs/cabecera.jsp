@@ -291,7 +291,7 @@
 		
 		reiniciarKOCDD();
 		procedimientosStore.removeAll();
-		btnCargaListaPrc.show();
+		btnCargaListaPrc.setDisabled(false);
 		
 		// Muestra botones de ficha global o no
 		var buttonInformeFGConcurso = Ext.getCmp('btn-exportar-informes-asunto-fg-concurso');

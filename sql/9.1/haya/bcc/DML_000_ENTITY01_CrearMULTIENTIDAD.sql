@@ -22,7 +22,7 @@ DECLARE
     * CONFIGURACION: ESQUEMAS
     *---------------------------------------------------------------------
     */
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER'; -- Configuracion Esquema Master
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_MSQL VARCHAR2(32000 CHAR);                        -- Sentencia a ejecutar     
     V_SQL VARCHAR2(4000 CHAR);                          -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16);                            -- Vble. para validar la existencia de una tabla.   
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
       	T_TIPO_TPO('workingCode','2039')
-		,T_TIPO_TPO('jndiName','jdbc/haya01_Oracle9iDialect')
+		,T_TIPO_TPO('jndiName','jdbc/haya02_Oracle9iDialect')
 		,T_TIPO_TPO('driverClassName','oracle.jdbc.driver.OracleDriver')
 		,T_TIPO_TPO('url','jdbc:oracle:thin:haya02/admin@//localhost:1521/ibd011')
 		,T_TIPO_TPO('username','haya02')

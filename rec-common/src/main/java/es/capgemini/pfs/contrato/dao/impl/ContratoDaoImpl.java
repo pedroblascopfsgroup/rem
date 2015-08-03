@@ -371,8 +371,9 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 																		// mov.
 		}
 		if (cruzaPersonas) {
-			hql.append(" and cp.persona = p and cp.contrato = c and cp.auditoria.borrado = 0 ");
-			hql.append(" and cp.tipoIntervencion.titular = true and cp.orden = 1 ");
+			hql.append(" and cp.persona = p and cp.contrato = c ");
+                        //hql.append(" and  cp.auditoria.borrado = 0 ");
+			//hql.append(" and cp.tipoIntervencion.titular = true and cp.orden = 1 ");
 		}
 		if (cruzaExpediente || cruzaAsuntos) {
 			hql.append(" and cex.auditoria.borrado = 0 and cex.contrato = c and cex.expediente = e ");
@@ -391,9 +392,9 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 					.append(getHqlContratosEnProcedimientos(columnaRelacion))
 					.append(")");
 			// Que no esté en expedientes (mirando si son o no cancelados)
-			hql.append(" and c.id not in (")
-					.append(getHqlContratosEnExpedientes(columnaRelacion))
-					.append(")");
+			//hql.append(" and c.id not in (")
+			//		.append(getHqlContratosEnExpedientes(columnaRelacion))
+			//		.append(")");
 			// Que sea activo o pasivo negativo
 			hql.append(" and mov.riesgo > 0 ");
 		}

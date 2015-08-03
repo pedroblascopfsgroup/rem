@@ -1164,7 +1164,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
             sql += " INNER JOIN ( ";
             sql += "   SELECT cnv1.asu_id, max(cnv1.id_acuerdo_cierre) max_id_acuerdo_cierre ";
             sql += "   FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1 ";
-            sql += "   WHERE cnv1.resultado_validacion = 0 ";
+//            sql += "   WHERE cnv1.resultado_validacion = 0 ";
             sql += "   GROUP BY cnv1.asu_id  ";
             sql += " ) mcnv ON cnv.id_acuerdo_cierre = mcnv.max_id_acuerdo_cierre ";
             sql += " WHERE cnv.resultado_validacion = 0 ";
@@ -1199,7 +1199,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
             sql += "   (SELECT crn1.asu_id_externo, ";
             sql += "     MAX(crn1.crn_id) max_crn_id ";
             sql += "   FROM CDD_CRN_RESULTADO_NUSE crn1 ";
-            sql += "   WHERE crn1.crn_resultado <> '0' ";
+//            sql += "   WHERE crn1.crn_resultado <> '0' ";
             sql += "   GROUP BY crn1.asu_id_externo ";
             sql += "   ) mcrn ";
             sql += " ON crn.crn_id = mcrn.max_crn_id ";

@@ -31,7 +31,7 @@
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-				<targetBean>endElevacionCajamarActionHandler
+				<targetBean>endProcessActionHandler
 				</targetBean>
 			</action>
 		</event>

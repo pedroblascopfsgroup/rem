@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd
+			http://www.springframework.org/schema/integration/jms
+			http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+			http://www.springframework.org/schema/integration/file
+			http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+
+	<!-- CONFIGURACION DE LA SALIDA -->
+	<bean id="filenameGenerator" class="es.pfsgroup.recovery.integration.FilenameGenerator" />
+
+	<!-- ******** Flow BPM ******* -->
+	<integration:gateway 
+		id="notificarEventosBpmGW" 
+		default-request-channel="canalSalidaEntityRecovery" 
+		service-interface="es.pfsgroup.recovery.integration.bpm.NotificarEventosBPMGateway"/>
+
+	<!-- ************* 
+		 GateWay para eventos de Convenios.
+		 No integrados en esta fase.
+		 *************	 
+	integration:gateway 
+		id="notificarEventosHayaBpmGW" 
+		default-request-channel="syncEventosBpmRequest" 
+		service-interface="es.pfsgroup.recovery.haya.integration.bpm.NotificarEventosBPMGateway"/>
+	-->
+		
+	<!-- ************* 
+		 Cadena de transformación transforma el objeto de entrada (Entity de Recovery) en un DataContanier normalizado.
+		 Filtro por propiedades de DataContanierRegEx
+		 El orden de las salidas es importante
+		 *************	 --> 
+	<integration:chain input-channel="canalSalidaEntityRecovery" output-channel="canalSalidaDataPayload">
+		<integration:transformer>
+			<bean class="es.pfsgroup.recovery.haya.integration.bpm.EntityToPayloadTransformer">
+				<constructor-arg ref="diccionarioCodigosProducer"/>
+			</bean>
+		</integration:transformer>
+		<integration:filter method="accept" ref="syncProducerRules" />
+	</integration:chain>
+
+	<!-- ************* 
+		 Transforma la salida en JSON.
+		 El orden de las salidas es importante
+		 *************	 --> 
+	<integration:chain input-channel="canalSalidaDataPayload" output-channel="canalSalidaJsonTxtMsg">
+		<!-- integration:header-enricher error-channel="recoveryRequestErrorChannel"/ -->
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />
+	</integration:chain>
+
+	<!-- ************* 
+		 Canales de salida
+		 ************* 	 --> 
+	<integration:publish-subscribe-channel id="canalSalidaJsonTxtMsg" />
+	<!-- file:outbound-channel-adapter 
+			id="outgoingFolder"
+			channel="jsonTxtMessageChannel" 
+			directory="${integracion.output}"
+			filename-generator="filenameGenerator" / -->
+		
+	<file:outbound-channel-adapter 
+		id="syncBackupFolder"
+		channel="canalSalidaJsonTxtMsg" 
+		directory="${integracion.backup}"
+		filename-generator="filenameGenerator" />
+		
+	<jms:outbound-channel-adapter 
+		id="jmsout" 
+		channel="canalSalidaJsonTxtMsg" 
+		destination="paraHayaQueue"/>
+
+	<!-- ... CANAL DE DESCARTADOS ... hay que activarlo en el filter.
+		... NO SE USA ....	 
+	<integration:transformer ref="procedimientoMsgTransformer" input-channel="syncDiscard" output-channel="syncDiscardFolder" method="serialize" />
+	<file:outbound-channel-adapter id="syncDiscardFolder"
+		directory="file:/Documentos/borrar/mensajes/discard"
+		filename-generator="filenameGenerator" />
+ 	-->
+
+
+	<!-- ***************** -->
+	<!-- REGLAS DE SALIDA -->
+	<!-- ***************** -->
+	<bean id="syncProducerRules" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
+		<constructor-arg>
+			<list>
+				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+					<property name="tipo" value="BPM-FIN|DO-FINALIZAR-BPM|DO-PARALIZAR-BPM|DO-ACTIVAR-BPM" />
+				</bean>
+				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- TRADUCTOR DE CODIGOS PROCEDIMIENTOS, TAREAS, DD -->
+	<bean id ="diccionarioCodigosProducer" class="es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos">
+		<constructor-arg>
+			<map>
+				<entry key="procedimientos">
+					<map>
+					<!-- 
+						<entry key="P416" value="CJ416" />
+					 -->
+					</map>
+				</entry>
+				<entry key="tareas">
+					<map>
+					<!-- 
+						<entry key="P413_SenyalamientoSubastas" value="P412_SenyalamientoSubastas" />
+					 -->
+					</map>
+				</entry>
+				<entry key="DD">
+					<map>
+					<!-- 
+						<entry key="DDSiNo.01" value="01" />
+					 -->
+					</map>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+</beans>

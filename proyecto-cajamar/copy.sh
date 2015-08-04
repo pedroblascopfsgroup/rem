@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLUGIN=proyecto-cajamar-online
+PLUGIN=proyecto-cajamar
 
 if [ -z $1 ]; then
 	echo "Tienes que indicar el entorno de desarrollo en el que quieres desplegar"

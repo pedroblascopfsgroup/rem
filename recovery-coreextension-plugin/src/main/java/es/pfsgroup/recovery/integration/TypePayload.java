@@ -13,10 +13,10 @@ public class TypePayload {
 	 * Campo más importante, tipo de mensaje
 	 */
 	private final String tipo;
-	private final Long entidad;
+	private final String entidad;
 	private String descripcion;
 
-	public TypePayload(String tipo, Long entidad) {
+	public TypePayload(String tipo, String entidad) {
 		this.tipo = tipo;
 		this.entidad = entidad;
 	}
@@ -33,7 +33,7 @@ public class TypePayload {
 		this.descripcion = descripcion;
 	}
 
-	public Long getEntidad() {
+	public String getEntidad() {
 		return entidad;
 	}
 

@@ -131,6 +131,9 @@ public class RecursoPayload {
 	private void setGuid(String guid) {
 		data.addGuid(KEY_RECURSO, guid);
 	}
+	public String getGuid() {
+		return data.getGuid(KEY_RECURSO);
+	}
 
 	public void setEsGestor(boolean esGestor) {
 		data.addFlag(CAMPO_ESGESTOR, esGestor);

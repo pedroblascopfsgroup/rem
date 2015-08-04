@@ -8,12 +8,16 @@
 	</parent>
 
 	<groupId>es.pfsgroup.plugin</groupId>
-	<artifactId>proyecto-haya-online</artifactId>
+	<artifactId>proyecto-haya</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>proyecto-haya</artifactId>
+			<artifactId>proyecto-hre-bcc-comunes</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procedimientos-bpmHaya</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>

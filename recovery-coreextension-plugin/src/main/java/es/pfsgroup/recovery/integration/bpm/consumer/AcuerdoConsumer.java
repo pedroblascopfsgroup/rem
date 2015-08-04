@@ -106,19 +106,19 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	}
 
 	private String getAcuerdoGuid(AcuerdoPayload acuerdo) {
-		return String.format("%d-EXT", acuerdo.getId());
+		return acuerdo.getGuid(); //String.format("%d-EXT", acuerdo.getId());
 	}
 
 	private String getActuacionRealizadaGuid(ActuacionesRealizadasPayload payload) {
-		return String.format("%d-EXT", payload.getId());
+		return payload.getGuid(); //String.format("%d-EXT", payload.getId());
 	}
 
 	private String getActuacionAExplorarGuid(ActuacionesAExplorarPayload payload) {
-		return String.format("%d-EXT", payload.getId());
+		return payload.getGuid(); //String.format("%d-EXT", payload.getId());
 	}
 
 	private String getTerminoGuid(TerminoAcuerdoPayload payload) {
-		return String.format("%d-EXT", payload.getId());
+		return payload.getGuid(); //String.format("%d-EXT", payload.getId());
 	}
 	
 	private void actualizaAnalisis(AcuerdoPayload acuerdoPayload, Long idAcuerdo) {

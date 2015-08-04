@@ -1001,7 +1001,35 @@
 				<!-- Fin del driver JDBC -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-hre-bcc-comunes</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-haya</artifactId>
 					<exclusions>
 						<exclusion>
 							<groupId>es.pfsgroup</groupId>

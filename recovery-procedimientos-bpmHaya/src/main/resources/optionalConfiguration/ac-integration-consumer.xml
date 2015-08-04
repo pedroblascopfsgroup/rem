@@ -16,14 +16,14 @@
 	<!-- CONFIGURACION DE LA ENTRADA -->
 	<integration:channel id="integacionErrorChannel"/> 
 	
-	 <jms:inbound-channel-adapter id="jmsIn"
+	 <!-- jms:inbound-channel-adapter id="jmsIn"
 	                              destination="requestQueue"
 	                              channel="inputChannelCommon"
 	                              extract-payload="true">
 	     <integration:poller>
 	         <integration:interval-trigger interval="5" time-unit="SECONDS"/>
 	     </integration:poller>
-	 </jms:inbound-channel-adapter>
+	 </jms:inbound-channel-adapter -->
  	
 	<!-- FLOW -->
 	<file:inbound-channel-adapter id="inputFolderChannel"

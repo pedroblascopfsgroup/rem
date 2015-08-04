@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150803
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=-
 --## PRODUCTO=NO
 --##
 --## Finalidad: Crear multientidad en HRE

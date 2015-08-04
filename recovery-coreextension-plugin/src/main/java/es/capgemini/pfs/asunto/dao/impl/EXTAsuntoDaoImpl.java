@@ -682,7 +682,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cdd.id in ( ");
 			hql.append(" select max(cdd1.id) ");
 			hql.append(" from  BatchAcuerdoCierreDeuda cdd1 ");
-			hql.append(" group by cdd1.asunto.id, cdd1.procedimiento.id ) ");	
+			hql.append(" group by cdd1.asunto.id ) ");	
 		}
 
 		if (requierePostCDD(dto)) {
@@ -819,6 +819,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		//FILTRO ERROR CDD
 		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
+                        hql.append(" and cdd.fechaEntrega is null ");
+                        //Si se buscan KOs de Pivote, se debe filtrar también por fechaEntrega vacío
+                        
 			if("Todos".equals(dto.getComboErrorPreviCDD())){
                                 hql.append(" and cdd.resultadoValidacion <> 1");
 //				hql.append(" and cdd.resultadoValidacionCDD is not null");
@@ -1174,7 +1177,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 //            sql += "   WHERE cnv1.resultado_validacion = 0 ";
             sql += "   GROUP BY cnv1.asu_id  ";
             sql += " ) mcnv ON cnv.id_acuerdo_cierre = mcnv.max_id_acuerdo_cierre ";
-            sql += " WHERE cnv.resultado_validacion = 0 ";
+            sql += " WHERE cnv.resultado_validacion <> 1 ";
             sql += " AND cnv.fecha_entrega is null ";
             sql += " AND cnv.asu_id = " + idAsunto;
             sql += " AND ROWNUM = 1 ";

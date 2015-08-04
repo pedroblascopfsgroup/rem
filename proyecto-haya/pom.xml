@@ -13,10 +13,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>proyecto-hre-bcc-comunes</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-procedimientos-bpmHaya</artifactId>
 		</dependency>
 		<dependency>

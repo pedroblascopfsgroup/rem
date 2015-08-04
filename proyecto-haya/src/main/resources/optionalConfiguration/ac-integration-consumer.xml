@@ -181,7 +181,7 @@
 					</constructor-arg>
 					<property name="description" value="Finzaliza un BPM"/>
 					<property name="forzarTransicion" value="Fin"/>
-				</bean -->
+				</bean>
 
 				<!-- Paralizar un BPM -->
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarBPM">

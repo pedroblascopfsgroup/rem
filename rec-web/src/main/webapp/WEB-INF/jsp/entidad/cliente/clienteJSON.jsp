@@ -19,6 +19,8 @@
 		<json:property name="isSeguimiento" value="${arquetipoRecuperacion != null && arquetipoRecuperacion.itinerario.dDtipoItinerario.itinerarioSeguimiento == true}" />
 		<json:property name="isArquetipoGestion" value="true" />
 	</json:object>
+	<json:property name="tieneExpedienteSeguimiento" value="${tieneExpedienteSeguimiento}" />
+	<json:property name="tieneExpedienteRecuperacion" value="${tieneExpedienteRecuperacion}" />
 	<json:property name="tieneContratosParaCliente" value="${tieneContratos==true}" />
 	<json:property name="idCliente" value="${persona.clienteActivo.id}" />
 	<json:property name="fechaCreacion" >

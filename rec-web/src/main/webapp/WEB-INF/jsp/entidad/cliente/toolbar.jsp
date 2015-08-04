@@ -309,10 +309,10 @@ function(entidad,page){
 
 		var esEnabled =[
 			[botonResponder, data.idTareaPendiente!=''] 
-			,[creacionExpedienteButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento)
+			,[creacionExpedienteButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
 					&& !(data.arquetipoRecuperacion.isNull)
 					&& !(data.arquetipoRecuperacion.isSeguimiento || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)]
-			,[creacionExpedienteSeguimientoButton, (data.expedientePropuesto.isNull || data.expedientePropuesto.seguimiento)
+			,[creacionExpedienteSeguimientoButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
 					&& !(data.arquetipoRecuperacion.isNull)
 					&& !(data.arquetipoRecuperacion.isRecuperacion || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)] 
 			,[creacionExpedienteRecobroButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 

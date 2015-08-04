@@ -60,6 +60,7 @@ DECLARE
       ,T_TIPO_TFA('BOE', 'BOE', 'BOE', 'CO') -- Trámite de fase común
       ,T_TIPO_TFA('INTDEM', 'Interposición de la demanda', 'Interposición de la demanda', 'CO') -- Trámite de demanda incidental
       ,T_TIPO_TFA('INSUFI', 'Informe Subasta Firmado', 'Informe Subasta Firmado', 'AP') -- T. Subasta
+      ,T_TIPO_TFA('INFCANOPE', 'Informe de cancelación de operación', 'Informe de cancelación de operación', 'CO') -- Trámite de demandado en incidente
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

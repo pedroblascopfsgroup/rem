@@ -26,9 +26,9 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 BEGIN
-	DBMS_OUTPUT.PUT_LINE('******** DD_REC_RECOBRO_ADJUNTOS ********'); 
+	DBMS_OUTPUT.PUT_LINE('******** DD_REC_RESULTADO_COMITE ********'); 
 
-	 V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_REC_RECOBRO_ADJUNTOS' ||
+	 V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_REC_RESULTADO_COMITE' ||
 			  ' SET DD_REC_DESCRIPCION = ''Suspender Subasta'' ' ||
 	          ' ,DD_REC_DESCRIPCION_LARGA = ''Suspender Subasta'' ' ||
 			  ' WHERE DD_REC_CODIGO = ''SUS''';
@@ -36,7 +36,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Descripción SUS actualizada.');
     
-    V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_REC_RECOBRO_ADJUNTOS' ||
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_REC_RESULTADO_COMITE' ||
 			  ' SET DD_REC_DESCRIPCION = ''Rechazar'' ' ||
 	          ' ,DD_REC_DESCRIPCION_LARGA = ''Rechazar'' ' ||
 			  ' WHERE DD_REC_CODIGO = ''REC''';
@@ -44,7 +44,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Descripción SUS actualizada.');
     
-    V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_REC_RECOBRO_ADJUNTOS' ||
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_REC_RESULTADO_COMITE' ||
 			  ' SET DD_REC_DESCRIPCION = ''Continuar Subasta'' ' ||
 	          ' ,DD_REC_DESCRIPCION_LARGA = ''Continuar Subasta'' ' ||
 			  ' WHERE DD_REC_CODIGO = ''ACE''';

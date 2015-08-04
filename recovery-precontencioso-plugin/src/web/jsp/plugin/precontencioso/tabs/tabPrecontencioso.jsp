@@ -28,6 +28,7 @@
 	        var data = entidad.get("data");
 	        refrescarLiquidacionesGrid();
 	        refrescarDocumentosGrid();
+	        refrescarBurofaxGrid();
 	}
 
  	panel.setVisibleTab = function(data) {

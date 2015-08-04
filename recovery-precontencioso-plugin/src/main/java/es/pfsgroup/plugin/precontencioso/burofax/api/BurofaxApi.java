@@ -20,7 +20,7 @@ public interface BurofaxApi {
 	public static final String OBTENER_CONTRATO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getContrato";
 	public static final String OBTENER_LISTA_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getListaBurofaxPCO";
 	public static final String GUARDA_DIRECCION = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.guardaDireccion";
-	public static final String GUARDA_DIRECCION_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.guardaDireccionBurofax";
+	//public static final String GUARDA_DIRECCION_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.guardaDireccionBurofax";
 	public static final String DICCIONARIO_TIPO_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getTiposBurofaxex";
 	public static final String CONFIGURA_TIPO_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.configurarTipoBurofax";
 	public static final String OBTENER_CONTENIDO_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.obtenerContenidoBurofax";
@@ -87,8 +87,10 @@ public interface BurofaxApi {
 	 * @param idEnvio
 	 * @param idDireccion
 	 */
+	/*
 	@BusinessOperationDefinition(GUARDA_DIRECCION_BUROFAX)
 	boolean guardaDireccionBurofax(Long idPersona,Long idDireccion,Long idProcedimiento,Long idContrato);
+	*/
 	
 	/**
 	 * Devuelve los tipos de Burofax

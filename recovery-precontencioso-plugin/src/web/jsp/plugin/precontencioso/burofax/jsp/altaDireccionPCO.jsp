@@ -13,7 +13,7 @@
 	var labelStyle='width:100px';
 	var idCliente = "${idCliente}";
 	var idProcedimiento = "${idProcedimiento}";
-	var idContrato = "${idContrato}";	
+	//var idContrato = "${idContrato}";	
 	
 
   	<pfsforms:ddCombo name="provincia"
@@ -139,7 +139,7 @@
 			panelEdicion.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
 			Ext.Ajax.request({
 						url : page.resolveUrl('burofax/guardaDireccion'), 
-						params : {idProcedimiento:idProcedimiento,idContrato:idContrato,idCliente:idCliente,provincia:provincia.getValue(),codigoPostal:codigoPostal.getValue(),localidad:localidad.getValue(),municipio:municipio.getValue(),tipoVia:tipoVia.getValue(),
+						params : {idProcedimiento:idProcedimiento,idCliente:idCliente,provincia:provincia.getValue(),codigoPostal:codigoPostal.getValue(),localidad:localidad.getValue(),municipio:municipio.getValue(),tipoVia:tipoVia.getValue(),
 								domicilio:domicilio.getValue(),numero:numero.getValue(),portal:portal.getValue(),piso:piso.getValue(),escalera:escalera.getValue(),puerta:puerta.getValue(),
 								origen:origen.getValue()},
 						method: 'POST',

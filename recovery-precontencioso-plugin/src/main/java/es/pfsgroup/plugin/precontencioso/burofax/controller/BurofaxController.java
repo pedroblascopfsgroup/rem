@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +78,6 @@ public class BurofaxController {
 		for(BurofaxPCO burofax : listaBurofax){
 			BurofaxDTO dto=new BurofaxDTO();
 			dto.setId(burofax.getId());
-    		//dto.setId(burofax.getDemandado().getId());
 			dto.setIdBurofax(burofax.getId());
 			dto.setIdCliente(burofax.getDemandado().getId());
 			dto.setCliente(burofax.getDemandado().getApellidoNombre());
@@ -212,6 +210,7 @@ public class BurofaxController {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getEditarBurofax(WebRequest request,ModelMap model) {
 		
@@ -247,29 +246,22 @@ public class BurofaxController {
 			burofaxManager.configurarContenidoBurofax(Long.valueOf(arrayIdEnvios[i]), contenidoBurofax);
 		}
 		
-	
-		
-		
-		/**
-		 * Cuando este creada la capa de acceso a datos , guardaremos el nuevo contenido del burofax
-		 */
-		
 		
 		return DEFAULT;
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idContrato,Long idCliente){
+	private String getAltaDireccion(WebRequest request, ModelMap model,Long idProcedimiento,Long idCliente){
 		
-		model.put("idAsunto", 1);
 		List<DDProvincia> provincias = (List<DDProvincia>) executor.execute("dictionaryManager.getList", "DDProvincia");
 		model.put("provincias", provincias);
 		List<DDTipoVia> tiposVia = (List<DDTipoVia>) proxyFactory.proxy(DireccionApi.class).getListTiposVia();
 		model.put("tiposVia", tiposVia);
 		model.put("idCliente", idCliente);
 		model.put("idProcedimiento", idProcedimiento);
-		model.put("idContrato", idContrato);
+		//model.put("idContrato", idContrato);
 		
 		return JSP_ALTA_DIRECCION;
 	}
@@ -282,7 +274,7 @@ public class BurofaxController {
 	 * @throws Exception 
 	 */
 	@RequestMapping
-	public String guardaDireccion(WebRequest request, ModelMap model,Long idCliente,Long idProcedimiento,Long idContrato) throws Exception{
+	public String guardaDireccion(WebRequest request, ModelMap model,Long idCliente,Long idProcedimiento) throws Exception{
 		
 		DireccionAltaDto dto=new DireccionAltaDto();
 		dto.setProvincia(request.getParameter("provincia"));
@@ -299,8 +291,9 @@ public class BurofaxController {
 		dto.setListaIdPersonas(idCliente.toString());
 		dto.setOrigen(request.getParameter("origen"));
 
-	    Long idDireccion=burofaxManager.guardaDireccion(dto);
-	    boolean res=false;
+	    
+		burofaxManager.guardaDireccion(dto);
+	    
 		
 	
 		return DEFAULT;
@@ -375,10 +368,16 @@ public class BurofaxController {
 		}
 		
 		model.put("listaTipoBurofax", listaTipoBurofax);
-		model.put("idTipoBurofax", tipoBurofax.getId());
 		model.put("comboEditable",comboEditable);
-		model.put("descripcionTipoBurofax", tipoBurofax.getCodigo());
 		
+		if(!Checks.esNulo(tipoBurofax)){
+			model.put("idTipoBurofax", tipoBurofax.getId());
+			model.put("descripcionTipoBurofax", tipoBurofax.getCodigo());
+		}
+		else{
+			model.put("idTipoBurofax", "");
+			model.put("descripcionTipoBurofax", "");
+		}
 		
 		String idDirecciones="";
 		for(int i=0;i<arrayIdDirecciones.length;i++){
@@ -434,7 +433,8 @@ public class BurofaxController {
      * @param model
      * @return
      */
-    @RequestMapping
+    @SuppressWarnings("unchecked")
+	@RequestMapping
     public String getPantallaInformacionEnvio(WebRequest request, ModelMap model){
     	
     	String arrayIdEnvios=request.getParameter("arrayIdEnvios");

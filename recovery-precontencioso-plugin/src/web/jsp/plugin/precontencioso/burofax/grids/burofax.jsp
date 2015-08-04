@@ -8,12 +8,6 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
-	var idProcedimiento='${idProcedimiento}';
-	var idContrato='${idContrato}';
-	
-	idProcedimiento=100328666;
-	idContrato=5832323;
-
 	var limit=25;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
@@ -131,10 +125,6 @@
 		}		
 		burofaxStore.removeListener('load', agrupa);
     };
-	
-	burofaxStore.webflow({idProcedimiento:100328666, idContrato:5832323});
-	
-	
 	
 	var botonesTabla = fwk.ux.getPaging(burofaxStore);
 	botonesTabla.hide();
@@ -350,7 +340,7 @@
 		});
 		w.on(app.event.DONE,function(){
 				w.close();
-				burofaxStore.webflow({idProcedimiento:100328666, idContrato:5832323});
+				refrescarBurofaxGrid();
 				
 			});
 		w.on(app.event.CANCEL, function(){w.close();});
@@ -450,12 +440,12 @@
 				  ,autoWidth:true
 				  ,closable:true
 				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.direccion" text="**Agregar Dirección" />'
-				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento,idContrato:idContrato}
+				  ,params:{idCliente:idCliente,idProcedimiento:idProcedimiento}
 				
 				});
 				w.on(app.event.DONE,function(){
 						w.close();
-						burofaxStore.webflow({idProcedimiento:100328666, idContrato:5832323});
+						refrescarBurofaxGrid();
 						
 				});
 				w.on(app.event.CANCEL, function(){w.close();});
@@ -482,7 +472,8 @@
 				});
 				w.on(app.event.DONE,function(){
 						w.close();
-						burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
+						refrescarBurofaxGrid();
+						
 						
 				});
 				w.on(app.event.CANCEL, function(){w.close();});
@@ -496,7 +487,6 @@
 			var rowsSelected=new Array(); 
 			var arrayResultado=new Array();
 			var arrayIdEnvios=new Array();
-			var arrayIdContrato=new Array();
 			var arrayIdBurofax=new Array();
 			var arrayIdDirecciones=new Array();
 			var tipoBurofax=gridBurofax.getSelectionModel().getSelected().get('tipoBurofax');
@@ -507,7 +497,6 @@
 			for (var i=0; i < rowsSelected.length; i++){
 			  arrayResultado.push(rowsSelected[i].get('resultado'));
 			  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
-			  arrayIdContrato.push(rowsSelected[i].get('contrato'));
 			  arrayIdBurofax.push(rowsSelected[i].get('idBurofax'));
 	  		  
 	  		  if(rowsSelected[i].get('idDireccion') != ''){
@@ -556,8 +545,7 @@
 							});
 							w.on(app.event.DONE,function(){
 									w.close();
-									burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
-									
+									refrescarBurofaxGrid();
 							});
 							w.on(app.event.CANCEL, function(){w.close();});
 						}
@@ -595,8 +583,7 @@
 							});
 							w.on(app.event.DONE,function(){
 									w.close();
-									burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
-									
+									refrescarBurofaxGrid();
 							});
 							w.on(app.event.CANCEL, function(){w.close();});
 						}
@@ -652,11 +639,17 @@
 				});
 				w.on(app.event.DONE,function(){
 						w.close();
-						burofaxStore.webflow({idProcedimiento:idProcedimiento, idContrato:5832323});
+						refrescarBurofaxGrid();
 						
 				});
 				w.on(app.event.CANCEL, function(){w.close();});
 			
 	
 	});
+	
+	var idProcedimiento;
+	var refrescarBurofaxGrid = function() {
+		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
+		idProcedimiento=data.precontencioso.id;
+	}
 	

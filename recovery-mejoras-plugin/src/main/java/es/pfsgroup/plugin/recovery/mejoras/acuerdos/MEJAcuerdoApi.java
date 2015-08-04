@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -23,7 +24,8 @@ public interface MEJAcuerdoApi {
 	public static final String BO_EXT_ACUERDO_MGR_GUARDAR_ACUERDO = "mejacuerdo.guardarAcuerdo";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_CONTRATOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoContratosAcuerdoByAsuId";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TERMINOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoTerminosAcuerdoByAcuId";	
-	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO = "mejacuerdo.getListTipoAcuerdo";		
+	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO = "mejacuerdo.getListTipoAcuerdo";	
+	public static final String BO_ACUERDO_MGR_GET_LISTADO_SUB_TIPO_ACUERDO = "mejacuerdo.getListSubTipoAcuerdo";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_PRODUCTO = "mejacuerdo.getListTipoProducto";		
 	public static final String BO_ACUERDO_MGR_SAVE_TERMINO_ACUERDO = "mejacuerdo.saveTerminoAcuerdo";	
 	public static final String BO_ACUERDO_MGR_SAVE_TERMINO_CONTRATO = "mejacuerdo.saveTerminoContrato";	
@@ -54,7 +56,10 @@ public interface MEJAcuerdoApi {
     public List<ListadoTerminosAcuerdoDto> obtenerListadoTerminosAcuerdoByAcuId(Long idAcuerdo) ;   
     
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO)
-	public List<DDTipoAcuerdo> getListTipoAcuerdo();    
+	public List<DDTipoAcuerdo> getListTipoAcuerdo();   
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_SUB_TIPO_ACUERDO)
+	public List<DDSubTipoAcuerdo> getListSubTipoAcuerdo(); 
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_TIPO_PRODUCTO)
 	public List<DDTipoProducto> getListTipoProducto();    	

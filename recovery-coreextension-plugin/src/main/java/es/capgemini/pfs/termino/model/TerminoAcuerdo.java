@@ -19,6 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -54,6 +55,10 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 	@ManyToOne
 	@JoinColumn(name = "DD_TPA_ID")
 	private DDTipoAcuerdo tipoAcuerdo;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_SBT_ID")
+	private DDSubTipoAcuerdo subtipoAcuerdo;
 	
     @ManyToOne
     @JoinColumn(name = "DD_TPR_ID")
@@ -117,6 +122,14 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 
 	public void setTipoAcuerdo(DDTipoAcuerdo tipoAcuerdo) {
 		this.tipoAcuerdo = tipoAcuerdo;
+	}
+	
+	public DDSubTipoAcuerdo getSubtipoAcuerdo() {
+		return subtipoAcuerdo;
+	}
+
+	public void setSubtipoAcuerdo(DDSubTipoAcuerdo subtipoAcuerdo) {
+		this.subtipoAcuerdo = subtipoAcuerdo;
 	}
 
 	public DDTipoProducto getTipoProducto() {

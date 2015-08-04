@@ -17,6 +17,17 @@ public class EXTAcuerdo extends Acuerdo {
 	
 	@Column(name = "ACU_FECHA_LIMITE")
 	private Date fechaLimite;	
+	
+	@Column(name = "ACU_IMPORTE_COSTAS")
+	private Long importeCostas;	
+
+	public Long getImporteCostas() {
+		return importeCostas;
+	}
+
+	public void setImporteCostas(Long importeCostas) {
+		this.importeCostas = importeCostas;
+	}
 
 	public String getMotivo() {
 		return motivo;

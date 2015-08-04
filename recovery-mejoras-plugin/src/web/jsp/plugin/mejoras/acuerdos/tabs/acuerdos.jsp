@@ -10,6 +10,7 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page,entidad){
+
 	var panel=new Ext.Panel({
 		title : '<s:message code="acuerdos.titulo" text="**Acuerdos"/>'
 		,layout:'form'

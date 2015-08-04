@@ -23,6 +23,7 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDPeriodicidadAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSolicitante;
+import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoPagoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -229,7 +230,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			logger.error("Error parseando la fecha", e);
 		}		
 		
-		
+		if (!Checks.esNulo(dto.getImporteCostas())) {
+			acuerdo.setImporteCostas(dto.getImporteCostas());
+		}
 		
 		acuerdoDao.saveOrUpdate(acuerdo);
 		return acuerdo.getId();
@@ -312,7 +315,22 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		List<DDTipoAcuerdo> listado = (ArrayList<DDTipoAcuerdo>) genericDao.getList(DDTipoAcuerdo.class, fBorrado);
 
 		return listado;
-	}    
+	}   
+	
+    /**
+     * 
+     * Obtiene el listado de los subtipos de acuerdo
+     * 
+     * @return
+     */
+	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_SUB_TIPO_ACUERDO)
+	public List<DDSubTipoAcuerdo> getListSubTipoAcuerdo() {
+
+		Filter fBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<DDSubTipoAcuerdo> listado = (ArrayList<DDSubTipoAcuerdo>) genericDao.getList(DDSubTipoAcuerdo.class, fBorrado);
+
+		return listado;
+	} 
 	
 	   /**
      * 

@@ -6,11 +6,11 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 
 <fwk:json>
-	<json:array name="listadoAcuerdos" items="${data}" var="rec">
+	<json:array name="listadoSubtiposAcuerdos" items="${data}" var="subta">
 		<json:object>
-			<json:property name="id" value="${rec.id}"/>
-			<json:property name="descripcion" value="${rec.descripcion}"/>
-			<json:property name="codigo" value="${rec.codigo}"/>
+			<json:property name="id" value="${subta.id}"/>
+			<json:property name="descripcion" value="${subta.descripcion}"/>
+			<json:property name="codigo" value="${subta.codigo}"/>
 		</json:object>
 	</json:array>
 </fwk:json>			

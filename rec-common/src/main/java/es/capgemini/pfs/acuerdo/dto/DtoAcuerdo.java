@@ -25,6 +25,7 @@ public class DtoAcuerdo extends WebDto {
 	private Long periodo;
 	private String fechaCierre;
 	private String fechaLimite;
+	private Long importeCostas;	
 
 
 	/**
@@ -209,6 +210,16 @@ public class DtoAcuerdo extends WebDto {
 
 	public void setFechaLimite(String fechaLimite) {
 		this.fechaLimite = fechaLimite;
+	}
+
+
+	public Long getImporteCostas() {
+		return importeCostas;
+	}
+
+
+	public void setImporteCostas(Long importeCostas) {
+		this.importeCostas = importeCostas;
 	}
 	
 }

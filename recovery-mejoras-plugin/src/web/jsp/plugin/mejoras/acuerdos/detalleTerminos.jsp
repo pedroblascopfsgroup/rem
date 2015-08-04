@@ -121,7 +121,7 @@ var crearTerminosAsuntos=function(){
 	      	        var w = app.openWindow({
 			          flow : 'mejacuerdo/openAltaTermino'
 			          ,closable:allowClose
-			          ,width: 1200
+			          ,width: 900
 			          ,autoHeight: true
 			          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
 	     			  ,params:{
@@ -214,13 +214,12 @@ var crearTerminosAsuntos=function(){
 			btnBorrarTermino.disable();
 		}
 	});
-
-   panelTerminos.add(contratosAsuntoGrid);
-   panelTerminos.contratosAsuntoGrid=contratosAsuntoGrid;
    
    panelTerminos.add(terminosAcuerdoGrid);
-   panelTerminos.terminosAcuerdoGrid=terminosAcuerdoGrid;      
+   panelTerminos.terminosAcuerdoGrid=terminosAcuerdoGrid;
    
+   panelTerminos.add(contratosAsuntoGrid);
+   panelTerminos.contratosAsuntoGrid=contratosAsuntoGrid;      
 
    return panelTerminos;
 

@@ -49,7 +49,7 @@ BEGIN
 	/* ------------------- --------------------------------- */
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SFIS'')' ||
+			  ' SET DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SFIS'')' ||
 			  ' ,TAP_SCRIPT_DECISON = null' ||
 			  ' WHERE TAP_CODIGO = ''H054_ValidaBienesTributacion''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -64,7 +64,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H054_EmisionInformeFiscal actualizada.');
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SFIS'')' ||
+			  ' SET DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SFIS'')' ||
 	          ' WHERE TAP_CODIGO = ''H054_PresentarEscritoJuzgado''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

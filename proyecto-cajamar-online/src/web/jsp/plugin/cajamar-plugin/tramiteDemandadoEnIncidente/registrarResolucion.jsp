@@ -55,13 +55,17 @@ var cb_comboCondena = items[3 + muestraBotonGuardar];
 var n_importeCondena = items[4 + muestraBotonGuardar];
 var cb_comboGarantias = items[5 + muestraBotonGuardar];
 var n_importeGarantias = items[6 + muestraBotonGuardar];
-var cb_comboRecurso = items[7 + muestraBotonGuardar];
+var cb_comboOperacion = items[7 + muestraBotonGuardar];
+var cb_comboCreditos = items[8 + muestraBotonGuardar];
+var ta_otros = items[9 + muestraBotonGuardar];
 
 cb_comboCondena.setDisabled(true);
 n_importeCondena.setDisabled(true);
 cb_comboGarantias.setDisabled(true);
 n_importeGarantias.setDisabled(true);
-cb_comboRecurso.setDisabled(true);
+cb_comboOperacion.setDisabled(true);
+cb_comboCreditos.setDisabled(true);
+ta_otros.setDisabled(true);
 
 cb_comboResultado.on('select', function(){
 	if(cb_comboResultado.getValue() == '01') {//favorable
@@ -69,25 +73,34 @@ cb_comboResultado.on('select', function(){
 		n_importeCondena.setDisabled(true);
 		cb_comboGarantias.setDisabled(true);
 		n_importeGarantias.setDisabled(true);
-		cb_comboRecurso.setDisabled(true);
+		cb_comboOperacion.setDisabled(true);
+		cb_comboCreditos.setDisabled(true);
+		ta_otros.setDisabled(true);
 		cb_comboCondena.setValue('');
 		n_importeCondena.setValue('');
 		cb_comboGarantias.setValue('');
 		n_importeGarantias.setValue('');
-		cb_comboRecurso.setValue('');
+		cb_comboOperacion.setValue('');
+		cb_comboCreditos.setValue('');
+		ta_otros.setValue('');
 		cb_comboCondena.allowBlank = true;
 		cb_comboGarantias.allowBlank = true;
-		cb_comboRecurso.allowBlank = true;
+		cb_comboOperacion.allowBlank = true;
+		cb_comboCreditos.allowBlank = true;
 		n_importeCondena.allowBlank = true;
 		n_importeGarantias.allowBlank = true;
+		ta_otros.allowBlank = true;
 	}
 	else if(cb_comboResultado.getValue() == '02') {//no_favorable
 		cb_comboCondena.setDisabled(false);
 		cb_comboGarantias.setDisabled(false);
-		cb_comboRecurso.setDisabled(false);
+		cb_comboOperacion.setDisabled(false);
+		cb_comboCreditos.setDisabled(false);
+		ta_otros.setDisabled(false);
 		cb_comboCondena.allowBlank = false;
 		cb_comboGarantias.allowBlank = false;
-		cb_comboRecurso.allowBlank = false;
+		cb_comboOperacion.allowBlank = false;
+		cb_comboCreditos.allowBlank = false;
 	}
 });	
 

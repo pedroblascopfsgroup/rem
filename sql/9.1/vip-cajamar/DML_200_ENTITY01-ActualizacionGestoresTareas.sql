@@ -105,6 +105,7 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGCTRGE','SCTRGE')
 ,T_TIPO_VALOR('H025','H025_registrarResolucion','TGESCON','SUCON')
 ,T_TIPO_VALOR('H025','H025_registrarVista','TGESCON','SUCON')
 ,T_TIPO_VALOR('H025','H025_resolucionFirme','TGESCON','SUCON')
+,T_TIPO_VALOR('H043','H043_AutoDeclarandoConcurso','TGESCON','SUCON')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

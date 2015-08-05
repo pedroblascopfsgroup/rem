@@ -20,12 +20,16 @@ public class ProcedimientoPayload {
 	
 	public static final String JBPM_TRANSICION = "transicion";
 	public static final String JBPM_TAR_GUID_ORIGEN = "tar-guid-origen";
-	
+	public static final String EXTRA_FIELD = "$extra";
 	
 	public final static String KEY_PROCEDIMIENTO = "@prc";
 	public final static String KEY_PROCEDIMIENTO_PADRE = "@prc.padre";
 
 	private final DataContainerPayload data;
+	public DataContainerPayload getData() {
+		return data;
+	}
+
 	private final AsuntoPayload asunto;
 	private final UsuarioPayload usuario;
 

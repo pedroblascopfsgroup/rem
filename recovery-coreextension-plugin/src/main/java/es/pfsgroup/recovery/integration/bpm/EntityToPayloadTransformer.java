@@ -75,6 +75,8 @@ public class EntityToPayloadTransformer {
 	
 	private final DiccionarioDeCodigos diccionarioCodigos;
 	
+	private TransformerDataProcessor dataContainerProcessor;
+	
 	public EntityToPayloadTransformer(DiccionarioDeCodigos diccionarioCodigos) {
 		this.diccionarioCodigos = diccionarioCodigos;
 	}

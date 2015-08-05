@@ -26,10 +26,10 @@
 	</bean>
 
 	<bean id="paraCajamarQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="para.cajamar"/>
+		<constructor-arg value="${integracion.producer.cola}"/>
 	</bean>
 	<bean id="paraHayaQueue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="para.haya"/>
+		<constructor-arg value="${integracion.consumer.cola}"/>
 	</bean>
 	
 </beans>

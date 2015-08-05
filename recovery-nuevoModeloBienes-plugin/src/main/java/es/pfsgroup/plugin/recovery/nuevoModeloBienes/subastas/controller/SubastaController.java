@@ -192,7 +192,7 @@ public class SubastaController {
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta, 
 			ModelMap model) {
 		
-		String plantilla ="reportInformeSubastaLetrado.jasper";
+		String plantilla ="reportInformeSubastaLetrado.jrxml";
 		
 		InformeSubastaLetradoBean informe = proxyFactory.proxy(SubastaApi.class).getInformeSubastasLetrado(idSubasta);
 		

@@ -63,7 +63,7 @@ DECLARE
     V_CODIGO_PLAZAS VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Plazos
     V_CODIGO1_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo1 FK con codigo de TFI Items
     V_CODIGO2_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo2 FK con codigo de TFI Items
-    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'H025'; -- Código de procedimiento para reemplazar
+    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'H043'; -- Código de procedimiento para reemplazar
     
     /*
     * ARRAY TABLA2: TAP_TAREA_PROCEDIMIENTO

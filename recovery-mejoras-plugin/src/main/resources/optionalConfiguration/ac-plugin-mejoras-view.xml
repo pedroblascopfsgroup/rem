@@ -158,6 +158,11 @@
 		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
 	<bean p:entity="tabs.contrato" p:name="intervinientesContrato"
+		p:order="100"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/contratos/tabs/tabAtipicos.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.contrato" p:name="atipicosContrato"
 		p:order="300"
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/contratos/tabs/tabIntervinientes.jsp"
 		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />

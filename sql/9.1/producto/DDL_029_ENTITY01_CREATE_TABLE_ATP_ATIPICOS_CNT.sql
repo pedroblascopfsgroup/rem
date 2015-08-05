@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=AGUSTIN MOMPO
---## FECHA_CREACION=20150804
+--## FECHA_CREACION=20150805
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-161

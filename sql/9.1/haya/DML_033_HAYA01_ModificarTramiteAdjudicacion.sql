@@ -79,7 +79,7 @@ BEGIN
 	/* ------------------- --------------------------------- */
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS' ||
-			  ' SET DD_PTP_PLAZO_SCRIPT = ''valoresBPMPadre[''''H002_SenyalamientoSubasta'''']!= null ? damePlazo(valoresBPMPadre[''''H002_SenyalamientoSubasta''''][''''fechaSenyalamiento'''']) + 20*24*60*60*1000L : (valoresBPMPadre[''''H003_SenyalamientoSubasta'''']!= null ? damePlazo(valoresBPMPadre[''''H003_SenyalamientoSubasta''''][''''fechaSenyalamiento'''']) + 20*24*60*60*1000L : (valoresBPMPadre[''''H004_SenyalamientoSubasta'''']!= null)?  damePlazo(valoresBPMPadre[''''H004_SenyalamientoSubasta''''][''''fechaSenyalamiento'''']) + 20*24*60*60*1000L : 1*24*60*60*1000L))'' ' ||
+			  ' SET DD_PTP_PLAZO_SCRIPT = ''valoresBPMPadre[''''H002_SenyalamientoSubasta'''']!= null ? damePlazo(valoresBPMPadre[''''H002_SenyalamientoSubasta''''][''''fechaSenyalamiento'''']) + 20*24*60*60*1000L : (valoresBPMPadre[''''H003_SenyalamientoSubasta'''']!= null ? damePlazo(valoresBPMPadre[''''H003_SenyalamientoSubasta''''][''''fechaSenyalamiento'''']) + 20*24*60*60*1000L : (valoresBPMPadre[''''H004_SenyalamientoSubasta'''']!= null?  damePlazo(valoresBPMPadre[''''H004_SenyalamientoSubasta''''][''''fechaSenyalamiento'''']) + 20*24*60*60*1000L : 1*24*60*60*1000L))'' ' ||
 			  ' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H005_SolicitudDecretoAdjudicacion'')';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

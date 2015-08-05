@@ -81,7 +81,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         if (riesgo!=null)
         {
         	hql.append(" and m.riesgo > ?" );
-        	return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente, riesgo });
+        	return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente, new Float(riesgo.toString()) });
         }
 
         return getHibernateTemplate().find(hql.toString(), new Object[] { idExpediente });

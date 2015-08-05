@@ -41,7 +41,7 @@ BEGIN
 V_NUM_SEQ := 0;
 select count(1) INTO V_NUM_SEQ from all_sequences
 where sequence_owner = V_ESQUEMA
-and sequence_name = 'S_CDD_CRN_RESULTADO_NUSE';
+and sequence_name = 'S_DD_RVN_RES_VALIDACION_NUSE';
 
 if V_NUM_SEQ > 0 then 
 --YA existe una versión de la secuencia , se elimina primero

@@ -35,7 +35,7 @@ DECLARE
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
         T_TIPO_TFI('H054_EmisionInformeFiscal','1','combo','comboInformeFiscal','Informe Fiscal Válido','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
         T_TIPO_TFI('H054_EmisionInformeFiscal','3','combo','comboPresentar','Presentar Escrito Juzgado',null,null,null,'DDSiNo','0','DD'),
-        T_TIPO_TFI('H054_PresentarEscritoJuzgado','1','combo','comboModelo','Modelo de escrito a presentar',null,null,'valores[''comboResultadoInformeFiscal''][''comboModelo'']','DDModeloEscrito','0','DD')
+        T_TIPO_TFI('H054_PresentarEscritoJuzgado','1','combo','comboModelo','Modelo de escrito a presentar',null,null,'valores[''H054_EmisionInformeFiscal''][''comboModelo'']','DDModeloEscrito','0','DD')
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     

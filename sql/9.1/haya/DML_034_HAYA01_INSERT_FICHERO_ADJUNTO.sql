@@ -75,7 +75,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
     IF V_NUM_TABLAS > 0 THEN	  
 		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO ...no se modificará nada.');
 	ELSE
-		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO (DD_TFA_ID, DD_TFA_CODIGO, DD_TFA_DESCRIPCION, DD_TFA_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_TAC_ID) values ('||V_ESQUEMA||'.S_DD_TFA_FICHERO_ADJUNTO.NEXTVAL, ''DPRCD'', ''Documento que acredite la presentaci&oacute;n en Registro con la fecha Car&aacute;tula del Decreto con el sello de presentaci&oacute;n'', ''Documento que acredite la presentaci&oacute;n en Registro con la fecha Car&aacute;tula del Decreto con el sello de presentaci&oacute;n'', 0, ''DML'', SYSDATE, null, null, null, null, 0, (SELECT DD_TAC_ID FROM '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''AP''))';
+		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO (DD_TFA_ID, DD_TFA_CODIGO, DD_TFA_DESCRIPCION, DD_TFA_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_TAC_ID) values ('||V_ESQUEMA||'.S_DD_TFA_FICHERO_ADJUNTO.NEXTVAL, ''DPRCD'', ''Documento presentaci&oacute;n en Registro con el sello de presentaci&oacute;n'', ''Documento presentaci&oacute;n en Registro con el sello de presentaci&oacute;n'', 0, ''DML'', SYSDATE, null, null, null, null, 0, (SELECT DD_TAC_ID FROM '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = ''AP''))';
 
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO... Datos del diccionario insertado');

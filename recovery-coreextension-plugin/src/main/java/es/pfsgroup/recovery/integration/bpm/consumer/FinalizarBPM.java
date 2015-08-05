@@ -44,7 +44,7 @@ public class FinalizarBPM extends ConsumerAction<DataContainerPayload> {
 	}
 
 	private String getGuidProcedimiento(ProcedimientoPayload procedimiento) {
-		return String.format("%d-EXT", procedimiento.getIdOrigen()); //message.getGuidProcedimiento();
+		return procedimiento.getGuid(); //String.format("%d-EXT", procedimiento.getIdOrigen()); //message.getGuidProcedimiento();
 	}
 	
 	@Override

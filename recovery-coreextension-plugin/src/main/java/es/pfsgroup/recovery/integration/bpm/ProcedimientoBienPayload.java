@@ -31,6 +31,10 @@ public class ProcedimientoBienPayload {
 		data.addSourceId(KEY_PROCEDIMIENTOBIEN, id);
 	}
 
+	public String getGuid() {
+		return data.getGuid(KEY_PROCEDIMIENTOBIEN);
+	}
+	
 	public void setGuid(String guid) {
 		data.addGuid(KEY_PROCEDIMIENTOBIEN, guid);
 	}

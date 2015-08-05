@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
-import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.bien.BienManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -23,7 +22,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.MEJRecursoManager;
-import es.pfsgroup.plugin.recovery.mejoras.recurso.dto.MEJDtoRecurso;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.ext.impl.bienes.EXTBienesManager;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
@@ -67,15 +65,15 @@ public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
     private EXTBienesManager extBienesManager;
 	
 	private String getSubastaGuid(SubastaPayload subastaPayload) {
-		return String.format("%s-EXT", subastaPayload.getId()); //payload.getGuid().get("rec");
+		return subastaPayload.getGuid(); // String.format("%s-EXT", subastaPayload.getId());
 	}
 
 	private String getLoteSubastaGuid(LoteSubastaPayload lotePayload) {
-		return String.format("%s-EXT", lotePayload.getId()); //payload.getGuid().get("rec");
+		return lotePayload.getGuid(); //String.format("%s-EXT", lotePayload.getId());
 	}
 	
 	private String getMEJProcedimientoGuid(ProcedimientoPayload procedimiento) {
-		return String.format("%s-EXT", procedimiento.getIdOrigen()); //payload.getGuid().get(Payload.KEY_PROCEDIMIENTO);
+		return procedimiento.getGuid(); //String.format("%s-EXT", procedimiento.getIdOrigen());
 	}
 	
 	

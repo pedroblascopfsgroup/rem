@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLUGIN=procedimientos-bpmHaya-plugin
+PLUGIN=proyecto-cajamar-online
 
 if [ -z $1 ]; then
 	echo "Tienes que indicar el entorno de desarrollo en el que quieres desplegar"
@@ -20,13 +20,13 @@ rm -Rf /tmp/$PLUGIN
 mkdir -p /tmp/$PLUGIN/jsp
 mkdir -p /tmp/$PLUGIN/flows
 
-if [ -f target/recovery-$PLUGIN*.jar ]; then
+if [ -f target/$PLUGIN*.jar ]; then
 	rm -Rf target/*sources*
-	mv target/recovery-$PLUGIN*.jar /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/lib
+	mv target/$PLUGIN*.jar /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/lib
 	chmod 777 /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/lib/*${PLUGIN}*
 	echo "Se ha copiado el jar"
 else
-	echo "No se encuentra target/recovery-$PLUGIN*.jar, no se sobreescribira"
+	echo "No se encuentra target/$PLUGIN*.jar, no se sobreescribira"
 fi
 
 if [ -d src/web/jsp/plugin/$PLUGIN ];then

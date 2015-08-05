@@ -49,11 +49,11 @@ public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
 	private UtilDiccionarioApi diccionarioApi;
 
 	private String getMEJRecursoGuid(RecursoPayload recurso) {
-		return String.format("%s-EXT", recurso.getIdOrigen()); //payload.getGuid().get("rec");
+		return recurso.getGuid(); // String.format("%s-EXT", recurso.getIdOrigen());
 	}
 
 	private String getMEJProcedimientoGuid(RecursoPayload recurso) {
-		return String.format("%s-EXT", recurso.getProcedimiento().getIdOrigen()); //payload.getGuid().get(Payload.KEY_PROCEDIMIENTO);
+		return recurso.getProcedimiento().getGuid(); //String.format("%s-EXT", recurso.getProcedimiento().getIdOrigen());
 	}
 	
 	

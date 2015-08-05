@@ -28,7 +28,6 @@ import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -102,11 +101,11 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	}
 
 	private String getGuidProcedimiento(TareaExternaPayload tareaExtenaPayload) {
-		return String.format("%d-EXT", tareaExtenaPayload.getProcedimiento().getIdOrigen()); //message.getGuidProcedimiento();
+		return tareaExtenaPayload.getProcedimiento().getGuid(); // String.format("%d-EXT", tareaExtenaPayload.getProcedimiento().getIdOrigen());
 	}
 
 	private String getGuidTareaNotificacion(TareaExternaPayload tareaExtenaPayload) {
-		return String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea()); // message.getGuidTARTarea();
+		return tareaExtenaPayload.getGuidTARTarea(); //String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea());
 	}
 	
 	@Transactional(readOnly = false)

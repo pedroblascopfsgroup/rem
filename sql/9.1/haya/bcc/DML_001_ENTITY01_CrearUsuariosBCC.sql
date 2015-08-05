@@ -290,7 +290,7 @@ BEGIN
 	-- LOOP Insertando valores en dd_tfa_fichero_adjunto
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.des_despacho_externo... Empezando a crear despachos...');
     
-	V_MSQL := 'SELECT '|| V_ESQUEMA_M ||'.ENTIDAD WHERE DESCRIPCION=''CAJAMAR''';        
+	V_MSQL := 'SELECT ID FROM '|| V_ESQUEMA_M ||'.ENTIDAD WHERE DESCRIPCION=''CAJAMAR''';        
 	EXECUTE IMMEDIATE V_MSQL INTO ID_ENTIDAD;
 	
 	FOR I IN V_TIPO_TFA.FIRST .. V_TIPO_TFA.LAST

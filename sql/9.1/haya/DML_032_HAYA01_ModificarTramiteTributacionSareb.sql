@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=NACHO ARCOS
---## FECHA_CREACION=20150805
+--## FECHA_CREACION=20150806
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.4
 --## INCIDENCIA_LINK=HR-1042
@@ -92,6 +92,7 @@ BEGIN
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 			  ' SET TFI_LABEL = ''Transmitente'' ' ||
 			  ',TFI_NOMBRE = ''comboTransmitente'' ' ||
+			  ',TFI_BUSINESS_OPERATION = ''DDTipoPersona'' ' ||
 			  ' WHERE TFI_NOMBRE = ''comboInformeFiscal'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H054_ValidaBienesTributacion'')';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

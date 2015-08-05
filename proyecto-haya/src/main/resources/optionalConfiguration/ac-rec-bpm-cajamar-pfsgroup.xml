@@ -90,7 +90,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteRegistrarResolucionInteres/haya_tramiteRegistrarResolucionInteres.xml" p:version="-1"/>
 	 -->
 	<!-- Groovy's -->
-	<bean id="jbpmUtilCajamar" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
+	<bean id="jbpmUtilCajamarLitigios" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
   		<list>
   			<value><![CDATA[ 	

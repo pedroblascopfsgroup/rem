@@ -67,9 +67,9 @@ function(entidad,page){
 				,params:{idPersona:toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer}
 			});
 			w.on(app.event.DONE, function(){
+				entidad.refrescar();
 				w.close();
 				//recargarTab();
-				entidad.refrescar();
 			});
 			w.on(app.event.CANCEL, function(){ w.close(); });
 		}
@@ -87,8 +87,8 @@ function(entidad,page){
 				,params:{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer}
 			});
 			w.on(app.event.DONE, function(){
-				w.close();
 				entidad.refrescar();
+				w.close();
 				//recargarTab();
 			});
 			w.on(app.event.CANCEL, function(){ w.close(); });
@@ -309,10 +309,10 @@ function(entidad,page){
 
 		var esEnabled =[
 			[botonResponder, data.idTareaPendiente!=''] 
-			,[creacionExpedienteButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento)
+			,[creacionExpedienteButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
 					&& !(data.arquetipoRecuperacion.isNull)
 					&& !(data.arquetipoRecuperacion.isSeguimiento || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)]
-			,[creacionExpedienteSeguimientoButton, (data.expedientePropuesto.isNull || data.expedientePropuesto.seguimiento)
+			,[creacionExpedienteSeguimientoButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
 					&& !(data.arquetipoRecuperacion.isNull)
 					&& !(data.arquetipoRecuperacion.isRecuperacion || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)] 
 			,[creacionExpedienteRecobroButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 

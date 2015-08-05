@@ -76,6 +76,7 @@ import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.expediente.model.DDMotivoExpedienteManual;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -108,6 +109,8 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Clase manager de la entidad Expediente.
@@ -159,6 +162,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     
     @Autowired
     private ArquetipoDao arquetipoDao;
+    
+    @Autowired
+	GenericABMDao genericDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -804,8 +810,16 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
 
         //Le seteamos el nombre ya que ahora no se obtiene a trav�s de una f�rmula
         setearNombreExpediente(expediente);
-
-        saveOrUpdate(expediente);
+        
+        // Seteamos el tipo de expediente
+        DDTipoExpediente tipo = null;
+        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        else
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        expediente.setTipoExpediente(tipo); 
+		
+		saveOrUpdate(expediente);
 
         return expediente;
     }
@@ -1117,7 +1131,63 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         expedientes = expedienteDao.obtenerExpedientesDeUnaPersona(persona.getId());
         return expedientes;
     }
-
+    
+    /**
+     * Devuelve si la persona que se pasa como parámetro tiene expedientes de seguimiento activos.
+     * @param idPersona id de una persona
+     * @return boolean
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_SEGUIMIENTO)
+    public Boolean tieneExpedienteDeSeguimiento(Long idPersona){
+    	
+    	Boolean resultado = false;
+    	List<Expediente> expedientes = null;
+    	
+    	expedientes = expedienteDao.obtenerExpedientesDeUnaPersona(idPersona);
+    	
+    	for(Expediente e: expedientes){
+    		Arquetipo arquetipo = e.getArquetipo();
+    		
+    		if(arquetipo !=null 
+    				&& arquetipo.getItinerario()!=null 
+    				&& arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
+    				&& !e.getEstaCancelado()){
+    			resultado = true;
+    			break;
+    		}
+    	}
+    	
+    	return resultado;
+    } 
+    
+    /**
+     * Devuelve si la persona que se pasa como parámetro tiene expedientes de recuperación activos.
+     * @param idPersona id de una persona
+     * @return boolean
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_RECUPERACION)
+    public Boolean tieneExpedienteDeRecuperacion(Long idPersona){
+    	
+    	Boolean resultado = false;
+    	List<Expediente> expedientes = null;
+    	
+    	expedientes = expedienteDao.obtenerExpedientesDeUnaPersona(idPersona);
+    	
+    	for(Expediente e: expedientes){
+    		Arquetipo arquetipo = e.getArquetipo();
+    		
+    		if(arquetipo !=null 
+    				&& arquetipo.getItinerario()!=null 
+    				&& arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()
+    				&& !e.getEstaCancelado()){
+    			resultado = true;
+    			break;
+    		}
+    	}
+    	
+    	return resultado;
+    } 
+    
     /**
      * Retorna los expedientes de una persona no borrados (pero si los cancelados).
      * @param idPersona id de un cliente

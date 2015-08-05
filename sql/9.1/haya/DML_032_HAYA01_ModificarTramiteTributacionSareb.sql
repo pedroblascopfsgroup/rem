@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=NACHO ARCOS
---## FECHA_CREACION=2015730
+--## FECHA_CREACION=20150805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.4
 --## INCIDENCIA_LINK=HR-1042
@@ -18,7 +18,7 @@ SET DEFINE OFF;
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -50,14 +50,14 @@ BEGIN
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
 			  ' SET DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SFIS'')' ||
-			  ' ,TAP_SCRIPT_DECISON = null' ||
+			  ' ,TAP_SCRIPT_DECISION = null' ||
 			  ' WHERE TAP_CODIGO = ''H054_ValidaBienesTributacion''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H054_ValidaBienesTributacion actualizada.');
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_DECISON = ''valores[''''H054_ValidaBienesTributacion''''][''''comboInformeFiscal''''] == DDSiNo.SI ? ''''SI'''' : ''''NO'''' ''' ||
+			  ' SET TAP_SCRIPT_DECISION = ''valores[''''H054_ValidaBienesTributacion''''][''''comboInformeFiscal''''] == DDSiNo.SI ? ''''SI'''' : ''''NO'''' ''' ||
 			  ' WHERE TAP_CODIGO = ''H054_EmisionInformeFiscal''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
@@ -161,7 +161,7 @@ BEGIN
 	V_TAREA:='H054_ConfirmarComEmpresario';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=sysdate(),USUARIOBORRAR=''NACHO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''BORRAR_'||V_TAREA||''',BORRADO=1,FECHABORRAR=SYSDATE,USUARIOBORRAR=''NACHO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 	
 	
 	/* ------------------- -------------------------- */

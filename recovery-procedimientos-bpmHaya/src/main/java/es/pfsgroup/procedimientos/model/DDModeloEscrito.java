@@ -12,7 +12,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_MOE_MODELO_ESCRITO", schema = "${entity.schema}")
+@Table(name = "DD_MOE_MODELO_ESCRITO", schema = "${master.schema}")
 public class DDModeloEscrito implements Auditable, Dictionary{
 	/**
 	 * 

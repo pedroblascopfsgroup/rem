@@ -65,8 +65,8 @@ DECLARE
 			   ,ATC_FECHA_MOVIMIENTO		    TIMESTAMP(6) NOT NULL
                ,ATC_CHAR_EXTRA1                 VARCHAR2(50 CHAR)
                ,ATC_CHAR_EXTRA2                 VARCHAR2(50 CHAR)
-			   ,ATC_FLAG_EXTRA1     	  		VARCHAR2(1 CHAR)
-			   ,ATC_FLAG_EXTRA2     	  		VARCHAR2(1 CHAR)
+			   ,ATC_FLAG_EXTRA1     	  		NUMBER(1)
+			   ,ATC_FLAG_EXTRA2     	  		NUMBER(1)
 			   ,ATC_DATE_EXTRA1					TIMESTAMP(6)
 			   ,ATC_DATE_EXTRA2					TIMESTAMP(6)
 			   ,ATC_NUM_EXTRA1		 	  		NUMBER(16)

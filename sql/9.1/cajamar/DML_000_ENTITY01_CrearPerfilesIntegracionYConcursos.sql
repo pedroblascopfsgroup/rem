@@ -879,13 +879,24 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
-        )
-		
+        ),		
 		
 	  ----------------------        
       -- **** TOMAS DE DECISION ****
 	  ----------------------        
-	  
+		T_TIPO_STB(
+			/*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+			/*dd_tar_id..................:*/ '1',
+			/*dd_sta_codigo,.............:*/ 'DGERREC',
+			/*dd_sta_descripcion,........:*/ 'Toma decisión gerente de recuperaciones',
+			/*dd_sta_descripcion_larga...:*/ 'Toma de decisión del gerente de recuperaciones',
+			/*dd_tge_id..................:*/ 'GERREC',
+			/*dtype......................:*/ 'EXTSubtipoTarea',
+			/*version,...................:*/ '0',
+			/*usuariocrear,..............:*/ 'DD',
+			/*fechacrear,................:*/ 'sysdate',
+			/*borrado,...................:*/ '0' 
+		)
 	  ----------------------        
       -- **** FIN TOMAS DE DECISION ***
 	  ----------------------        

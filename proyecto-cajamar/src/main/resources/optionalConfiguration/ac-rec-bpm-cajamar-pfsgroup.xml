@@ -25,6 +25,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandadoEnIncidente/haya_tramiteDemandadoEnIncidente.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVentaDirecta/cj_ventaDirecta.xml" p:version="-1"/>
 		
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
@@ -115,6 +116,26 @@
 	            def comprobarExisteDocumentoINFCANOPE = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFCANOPE");
+	            }
+	            
+	            def comprobarExisteDocumentoOFEVEN = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "OFEVEN");
+	            }
+	            
+	            def comprobarExisteDocumentoINFSOBVEN = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSOBVEN");
+	            }
+	            
+	            def comprobarExisteDocumentoINFSUB = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSUB");
+	            }
+	            
+	            def comprobarExisteDocumentoAUTO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTO");
 	            }
 	            
   			 ]]>

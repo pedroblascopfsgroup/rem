@@ -130,25 +130,25 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 
 	protected String getGuidProcedimientoPadre(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
-				? String.format("%d-EXT", procedimiento.getIdOrigen()) //procedimiento.getGuid()
-				: procedimiento.getGuidProcedimientoPadre(); // "0a9012c8-6091-4a5b-9497-d1453d1cd81a"
+				? procedimiento.getGuid() //String.format("%d-EXT", procedimiento.getIdOrigen()) 
+				: procedimiento.getGuidProcedimientoPadre(); 
 	}
 	
 	protected String getGuidProcedimiento(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
 				? UUID.randomUUID().toString()
-				: String.format("%d-EXT", procedimiento.getIdOrigen()); //message.getGuidProcedimiento();
+				: procedimiento.getGuid(); //String.format("%d-EXT", procedimiento.getIdOrigen());
 	}
 
 
 	protected String getGuidProcedimientoBien(ProcedimientoBienPayload procedimientoBien) {
 		return (this.isCrearNuevo()) 
 				? UUID.randomUUID().toString()
-				: String.format("%d-EXT", procedimientoBien.getIdOrigen()); //message.getGuid("prb")
+				: procedimientoBien.getGuid(); // String.format("%d-EXT", procedimientoBien.getIdOrigen());
 	}
 
 	protected String getGuidTareaNotificacion(TareaExternaPayload tareaExternaPayload) {
-		return String.format("%d-EXT", tareaExternaPayload.getIdTARTarea()); // message.getGuidTARTarea();
+		return tareaExternaPayload.getGuidTARTarea(); //String.format("%d-EXT", tareaExternaPayload.getIdTARTarea()); 
 	}
 
 	protected String getCodigoTipoProcedimiento(ProcedimientoPayload procedimiento) {

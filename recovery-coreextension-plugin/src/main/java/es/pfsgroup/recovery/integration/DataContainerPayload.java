@@ -31,7 +31,7 @@ public class DataContainerPayload extends TypePayload {
 	
 	@JsonCreator
 	public DataContainerPayload(@JsonProperty("tipo") String tipo,
-			@JsonProperty("entidad") Long entidad,
+			@JsonProperty("entidad") String entidad,
 			@JsonProperty("codigo") Map<String, String> codigo,
 			@JsonProperty("guid") Map<String, String> guid,
 			@JsonProperty("extraInfo") Map<String, String> extraInfo,
@@ -62,7 +62,7 @@ public class DataContainerPayload extends TypePayload {
 		this.children = children;
 	}
 	
-	public DataContainerPayload(String tipo, Long entidad) {
+	public DataContainerPayload(String tipo, String entidad) {
 		this(tipo
 				, entidad
 				, null

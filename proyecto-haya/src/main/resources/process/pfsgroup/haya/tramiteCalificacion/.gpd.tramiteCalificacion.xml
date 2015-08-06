@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="tramiteCalificacion" width="846" height="701">
+  <node name="Inicio" x="42" y="40" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P34_aperturaLiquidacion" x="263" y="40" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="385" h1="-8" w2="64" h2="-311"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="0" w2="-146" h2="0"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P34_personacionFaseLiquidacion" x="264" y="99" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-172" h1="-28" w2="-171" h2="31"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="298" h1="-3" w2="-22" h2="-247"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="0" w2="-146" h2="0"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P34_escritoPersonacion" x="268" y="223" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-218" h1="-59" w2="-214" h2="65"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="283" h1="-1" w2="-33" h2="-121"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="0" w2="-146" h2="0"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P34_personacionFaseLiquidacionDecision" x="265" y="162" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-354" h1="41" w2="-357" h2="-361"/>
+      <bendpoint w1="-358" h1="403" w2="-361" h2="1"/>
+    </edge>
+  </node>
+  <node name="P34_registrarCalificacionFiscal" x="269" y="354" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="293" h1="20" w2="-23" h2="-37"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="0" w2="-146" h2="0"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-231" h1="-34" w2="-230" h2="33"/>
+    </edge>
+  </node>
+  <node name="P34_registrarCalificacionConcursal" x="269" y="290" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="0" w2="-146" h2="0"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P34_registrarOposicion" x="269" y="416" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-194" h1="-33" w2="-193" h2="35"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="0" w2="-146" h2="0"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P34_registrarOposicionDecision" x="268" y="485" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P34_BPMtramiteDemandaIncidental" x="34" y="486" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="52" h1="190" w2="-553" h2="333"/>
+      <bendpoint w1="745" h1="194" w2="140" h2="337"/>
+    </edge>
+  </node>
+  <node name="P34_registrarResolucion" x="268" y="564" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="170" h1="-81" w2="170" h2="67"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="187" h1="-4" w2="-125" h2="217"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-109" h1="-35" w2="-109" h2="-35"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+  </node>
+  <node name="P34_resolucionFirme" x="459" y="633" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-193" h1="-1" w2="-2" h2="68"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-146" h1="0" w2="-146" h2="0"/>
+      <bendpoint w1="-146" h1="-21" w2="-146" h2="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Decision" x="638" y="553" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="639" y="343" width="132" height="36"/>
+</root-container>

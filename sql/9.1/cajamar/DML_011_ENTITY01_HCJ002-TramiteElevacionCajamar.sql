@@ -188,7 +188,7 @@ DECLARE
             /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
             /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
             /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ 'DDValidacionCajamarComite',
+            /*TFI_BUSINESS_OPERATION.:*/ 'DDResultadoComite',
             /*VERSION................:*/ '0',
             /*USUARIOCREAR...........:*/ 'DD'
         ),
@@ -201,7 +201,7 @@ DECLARE
             /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
             /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
             /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ 'DDValidacionCajamarSuspension',
+            /*TFI_BUSINESS_OPERATION.:*/ 'DDMotivoSuspension',
             /*VERSION................:*/ '0',
             /*USUARIOCREAR...........:*/ 'DD'
         ),

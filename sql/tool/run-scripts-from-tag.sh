@@ -36,9 +36,7 @@ function getConnectionParam() {
 function registerSQLScript() {
     git log $1 >> /dev/null 2>&1
     if [ $? -eq 0 ]; then
-        HASH=`git rev-list HEAD $1 | tail -n 1`
-        DATE=`git show -s --format="%ct" $HASH --`
-        printf "%s#%s %s\n" "$DATE" $1 $3 >> $2
+        printf "%s %s\n" $1 $3 >> $2
     fi
 }
 

@@ -1,53 +1,30 @@
 package es.pfsgroup.recovery.integration.bpm.consumer;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
-import es.capgemini.pfs.core.api.procesosJudiciales.dto.EXTDtoCrearTareaExterna;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
-import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
-import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
-import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
-import es.pfsgroup.recovery.api.TareaProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
-import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
-import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
-import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.pfsgroup.recovery.integration.bpm.TareaExternaPayload;
 import es.pfsgroup.recovery.integration.bpm.TareaNotificacionPayload;
 import es.pfsgroup.recovery.integration.bpm.UsuarioPayload;
 
@@ -105,7 +82,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 	}
 
 	private String getGuidTareaNotificacion(TareaNotificacionPayload tareaPayload) {
-		return String.format("%d-EXT", tareaPayload.getId()); // message.getGuid();
+		return tareaPayload.getGuid(); //String.format("%d-EXT", tareaPayload.getId());
 	}
 
 	private void suplantarUsuario(UsuarioPayload usuarioPayload, Auditable auditable) {

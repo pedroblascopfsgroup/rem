@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+	<!-- CONFIGURACION GENERICA E/S -->
+	<bean id="jsonFormatter" class="es.pfsgroup.recovery.integration.JSONTranslator" />
+	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">
+		<constructor-arg index="0" ref="jsonFormatter" />
+	</bean>
+
+	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+		<property name="targetConnectionFactory">
+			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
+				<property name="brokerURL" value="${activemq.broker.url}"/>		
+			</bean>
+		</property>
+		<property name="sessionCacheSize" value="10"/>
+		<property name="cacheProducers" value="false"/>
+	</bean>
+
+	<bean id="paraCajamarQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="${integracion.producer.cola}"/>
+	</bean>
+	<bean id="paraHayaQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="${integracion.consumer.cola}"/>
+	</bean>
+	
+</beans>

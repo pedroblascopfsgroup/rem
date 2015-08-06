@@ -115,6 +115,26 @@
 						<value>TSPGL</value>
 						<value>CJ-TGESEXT</value>
 						<value>CJ-TSUEXT</value>
+
+						<!-- CAJAMAR -->
+						<value>TGESCHRE</value>
+						<value>TSUCHRE</value>
+						<value>TDIRREC</value>
+						<value>TGESCON</value>
+						<value>TGESINC</value>
+						<value>TGERREC</value>
+						<value>TGEANREC</value>
+						<value>TGESHRE</value>
+						<value>TGADMCON</value>
+						<value>TGESOF</value>
+						<value>TSUCON</value>
+						<value>TSUINC</value>
+						<value>TSUANREC</value>
+						<value>TSUHRE</value>
+						<value>TSUADMCON</value>
+						<value>TDIRCON</value>
+						<value>TDIRHRE</value>
+
 					</set>
 				</entry>
 			</map>

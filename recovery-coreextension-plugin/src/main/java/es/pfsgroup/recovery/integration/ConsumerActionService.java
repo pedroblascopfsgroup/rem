@@ -1,6 +1,7 @@
 package es.pfsgroup.recovery.integration;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -49,7 +50,7 @@ public class ConsumerActionService extends DataContainerPayloadService<DataConta
 	}
 
 	@Override
-	protected void doOnError(Message<DataContainerPayload> message) {
+	protected void doOnError(Message<DataContainerPayload> message, Exception ex) {
 		AsuntoPayload asuntoPayload = new AsuntoPayload(message.getPayload());
 		if (message.getHeaders().containsKey(FileHeaders.ORIGINAL_FILE)) {
 			File file = (File)message.getHeaders().get(FileHeaders.ORIGINAL_FILE);
@@ -58,7 +59,21 @@ public class ConsumerActionService extends DataContainerPayloadService<DataConta
 				File timeDest = new File(errorFolder, uuidAsunto);
 				moveFile(file, timeDest);
 			}
+		} else {
+			SimpleDateFormat sdf = new SimpleDateFormat(FilenameGenerator.FILE_TIMESTAMP_FORMAT);
+			String uuidAsunto = asuntoPayload.getGuid();
+			Date d = new Date(message.getHeaders().getTimestamp());
+			String fileName = String.format("%s-%s.log", sdf.format(d), message.getHeaders().get(TypePayload.HEADER_MSG_TYPE)); 
+			File timeDest = new File(errorFolder, uuidAsunto);
+			File finalName = new File(timeDest, fileName);
+			try {
+				FileWriter fw = new FileWriter(finalName);
+				fw.write(String.format("%s. %s", ex.getMessage(), ex.getStackTrace()));
+			} catch (Exception exception) {
+				
+			}
 		}
+		
 	}
 
 	private void moveFile(File file, File destFolder) {

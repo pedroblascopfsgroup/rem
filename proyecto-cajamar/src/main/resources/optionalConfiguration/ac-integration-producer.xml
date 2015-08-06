@@ -41,6 +41,11 @@
 		<integration:transformer>
 			<bean class="es.pfsgroup.recovery.haya.integration.bpm.EntityToPayloadTransformer">
 				<constructor-arg ref="diccionarioCodigosProducer"/>
+				<property name="helper">
+					<bean class="es.pfsgroup.recovery.cajamar.integration.BPMTransformHelper">
+						<property name="tareaParaEnviar" value="HCJ002_ObtenerValidacionComite"/>
+					</bean>
+				</property>
 			</bean>
 		</integration:transformer>
 		<integration:filter method="accept" ref="syncProducerRules" />

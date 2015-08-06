@@ -2202,6 +2202,20 @@
 				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar-online</artifactId>
 					<exclusions>
 						<exclusion>

@@ -51,7 +51,7 @@ BEGIN
     */
     DBMS_OUTPUT.PUT_LINE('[INICIO-SCRIPT]------------------------------------------------------- ');
 
-    V_MSQL := 'update '||PAR_ESQUEMA_MASTER||'.entidadconfig set datavalue=''jdbc/cmmaster_Oracle9iDialect'' where datakey=''jndiName'' ';
+    V_MSQL := 'update '||PAR_ESQUEMA_MASTER||'.entidadconfig set datavalue=''jdbc/cm01_Oracle9iDialect'' where datakey=''jndiName'' ';
     DBMS_OUTPUT.PUT_LINE('[INFO] Configurando la variable jndiName de la tabla HAYAMASTER.ENTIDADCONFIG.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
@@ -91,7 +91,13 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] Configurando la variable pathToSqlLoader de la tabla HAYAMASTER.ENTIDADCONFIG.......');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] Variable pathToSqlLoader correctamente configurada.......');    
+    DBMS_OUTPUT.PUT_LINE('[INFO] Variable pathToSqlLoader correctamente configurada.......');
+    
+    V_MSQL := 'update '||PAR_ESQUEMA_MASTER||'.entidadconfig set datavalue=''cliente_logo.gif'' where datakey=''logo'' ';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Configurando la variable logo de la tabla HAYAMASTER.ENTIDADCONFIG.......');
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Variable logo correctamente configurada.......');
     
     /*
     * COMMIT ALL BLOCK-CODE

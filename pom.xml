@@ -550,7 +550,6 @@
 			<modules>
 				<module>recovery-procedimientos-bpmHaya</module>
 				<module>proyecto-cajamar</module>
-				<module>recovery-procedimientos-bpmHaya-plugin</module>
 				<module>proyecto-cajamar-online</module>
 
 				<module>rec-web</module>

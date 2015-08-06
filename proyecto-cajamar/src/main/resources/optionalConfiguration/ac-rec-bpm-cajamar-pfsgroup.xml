@@ -11,11 +11,13 @@
 	<!-- Beans,handlers,Managers ... --> 
  	    
 	<!-- BPM activos -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
+	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseLiquidacion/haya_tramiteFaseLiquidacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteConclusion/haya_tramiteConclusion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoSolicitudConcursal/haya_procedimientoSolicitudConcursal.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalificacion/haya_tramiteCalificacion.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePropuestaAnticipadaConvenio/tramitePropuestaAnticipadaConvenio.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseConvenio/tramiteFaseConvenioV4.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseComunAbreviado/tramiteFaseComunAbreviadoV4.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandaIncidental/haya_tramiteDemandaIncidental.xml" p:version="-1"/>

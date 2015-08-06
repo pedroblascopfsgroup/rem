@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
@@ -14,7 +13,6 @@ import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -24,7 +22,6 @@ import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.ProcedimientoPayload;
-import es.pfsgroup.recovery.integration.bpm.TareaExternaPayload;
 
 /**
  * Transiciona un BPM según la transición desde el token que llega. 
@@ -67,12 +64,9 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 	}
 	
 	private String getGuidTareaATransicionar(ProcedimientoPayload procedimiento) {
-		if (Checks.esNulo(procedimiento.getTransicionBPM())) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] El mensaje no contiene la Info. extra '%s', indica el guid de la tarea sobre la que se va a generar la transición.", ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN));
-		}
 		String tarGUID =  procedimiento.getTareaOrigenDelBPM();
 		if (Checks.esNulo(tarGUID)) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] No se ha indicado GUID de la tarea a transicionar.", tarGUID));
+			throw new IntegrationDataException(String.format("[INTEGRACION] El mensaje no contiene la Info. extra '%s', indica el guid de la tarea sobre la que se va a generar la transición.", ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN));
 		}
 		return tarGUID; 
 	}

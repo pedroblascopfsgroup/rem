@@ -75,12 +75,30 @@ public class EntityToPayloadTransformer {
 	
 	private final DiccionarioDeCodigos diccionarioCodigos;
 	
-	private TransformerDataProcessor dataContainerProcessor;
+	private TransformerHelper helper;
 	
+	public TransformerHelper getHelper() {
+		return helper;
+	}
+
+	public void setHelper(TransformerHelper helper) {
+		this.helper = helper;
+	}
+
 	public EntityToPayloadTransformer(DiccionarioDeCodigos diccionarioCodigos) {
 		this.diccionarioCodigos = diccionarioCodigos;
 	}
 
+	/**
+	 * Procesa la información recopilada a través del helper
+	 * @param dataPayload
+	 */
+	private void postProcessDataContainer(DataContainerPayload dataPayload) {
+		if (helper!=null) {
+			helper.ampliar(dataPayload);
+		}
+	}
+	
 	protected TareaExterna setup4sync(TareaExterna tareaExterna) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", tareaExterna.getId());
 		tareaExterna = genericDao.get(TareaExterna.class, filter);
@@ -154,6 +172,7 @@ public class EntityToPayloadTransformer {
 		// Carga los valores
 		DataContainerPayload data = getNewPayload(message);
 		TareaNotificacionPayload tareaPayload = new TareaNotificacionPayload(data, tar);
+		postProcessDataContainer(data);
  
 		//translateValues(message);
 		Message<DataContainerPayload> newMessage = MessageBuilder
@@ -178,6 +197,7 @@ public class EntityToPayloadTransformer {
  
 		loadTareaFormItems(tareaPayload, tex);
 		tareaPayload.translate(diccionarioCodigos);
+		postProcessDataContainer(data);
 		
 		//translateValues(message);
 		Message<DataContainerPayload> newMessage = MessageBuilder
@@ -188,7 +208,6 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}	
 
-	
 	public Message<DataContainerPayload> transformPRC(Message<Procedimiento> message) {
 		Procedimiento procedimiento = message.getPayload();
 
@@ -198,6 +217,7 @@ public class EntityToPayloadTransformer {
 		DataContainerPayload data = getNewPayload(message);
 		ProcedimientoPayload procPayload = new ProcedimientoPayload(data, procedimiento);
 		procPayload.translate(diccionarioCodigos);
+		postProcessDataContainer(data);
 		
 		//translateValues(message);
 		Message<DataContainerPayload> newMessage = MessageBuilder
@@ -249,7 +269,7 @@ public class EntityToPayloadTransformer {
 		
 		DataContainerPayload data = getNewPayload(message);
 		SubastaPayload subastaPayload = new SubastaPayload(data, subasta);
-		
+		postProcessDataContainer(data);
 		
 		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
@@ -271,7 +291,8 @@ public class EntityToPayloadTransformer {
 			
 		DataContainerPayload data = getNewPayload(message);
 		AcuerdoPayload acuerdoPayload = new AcuerdoPayload(data, acuerdo);
-
+		postProcessDataContainer(data);
+		
 		// Información de usuario registrado:
 		if (SecurityUtils.getCurrentUser() != null) {
 			Asunto asunto = acuerdo.getAsunto();
@@ -296,7 +317,8 @@ public class EntityToPayloadTransformer {
 		
 		DataContainerPayload data = getNewPayload(message);
 		ActuacionesRealizadasPayload acuerdoPayload = new ActuacionesRealizadasPayload(data, actRealizada);
-
+		postProcessDataContainer(data);
+		
 		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
@@ -312,7 +334,8 @@ public class EntityToPayloadTransformer {
 		
 		DataContainerPayload data = getNewPayload(message);
 		ActuacionesAExplorarPayload acuerdoPayload = new ActuacionesAExplorarPayload(data, actAExplorar);
-
+		postProcessDataContainer(data);
+		
 		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
@@ -336,6 +359,7 @@ public class EntityToPayloadTransformer {
 		payload
 			.buildTerminoContrato(listadoTerminoContratos)
 			.buildTerminoBien(listadoTerminoBienes);
+		postProcessDataContainer(data);
 		
 		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)

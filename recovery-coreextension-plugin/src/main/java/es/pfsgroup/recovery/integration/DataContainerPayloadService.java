@@ -42,7 +42,7 @@ public class DataContainerPayloadService<T extends DataContainerPayload> {
 	protected void doAfterCommit(Message<T> message) {
 	}
 	
-	protected void doOnError(Message<T> message) {
+	protected void doOnError(Message<T> message, Exception ex) {
 	}
 
 	public Message<T> dispatchMessage(Message<T> message) {
@@ -56,11 +56,11 @@ public class DataContainerPayloadService<T extends DataContainerPayload> {
 			transactionManager.commit(transaction);
 			doAfterCommit(message);
 		} catch (IntegrationDataException ex) {
-			doOnError(message);
+			doOnError(message, ex);
 			transactionManager.rollback(transaction);
 			logger.error("[INTEGRACION] Error de datos en consumer integración.", ex);
 		} catch (Exception ex) {
-			doOnError(message);
+			doOnError(message, ex);
 			transactionManager.rollback(transaction);
 			logger.error("[INTEGRACION] Error ejecutando consumer integración.", ex);
 		}

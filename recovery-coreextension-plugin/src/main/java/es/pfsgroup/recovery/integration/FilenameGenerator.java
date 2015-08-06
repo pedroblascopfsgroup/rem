@@ -10,7 +10,7 @@ import org.springframework.integration.file.DefaultFileNameGenerator;
 
 public class FilenameGenerator extends  DefaultFileNameGenerator {
 	
-	private static final String FILE_TIMESTAMP_FORMAT = "yyyy-MM-dd-HHmmss-SSSSSS";
+	public static final String FILE_TIMESTAMP_FORMAT = "yyyy-MM-dd-HHmmss-SSSSSS";
 	
     private final Log logger = LogFactory.getLog(getClass());
 

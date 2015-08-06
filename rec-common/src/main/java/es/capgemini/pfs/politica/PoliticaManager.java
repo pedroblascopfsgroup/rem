@@ -330,8 +330,8 @@ public class PoliticaManager {
      */
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_INICIALIZAR_POLITICAS_EXPEDIENTE)
     public void inicializaPoliticasExpediente(Expediente expediente) {
-        //Si no es un expediente de seguimiento
-        if (!expediente.getSeguimiento()) { return; }
+        //Si no es un expediente de seguimiento o de recuperación
+        if (!expediente.getSeguimiento() && !expediente.getRecuperacion()) { return; }
 
         DDAmbitoExpediente ambitoExpediente = expediente.getArquetipo().getItinerario().getAmbitoExpediente();
 

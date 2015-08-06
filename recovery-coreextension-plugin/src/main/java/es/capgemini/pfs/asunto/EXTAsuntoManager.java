@@ -1923,7 +1923,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return esUsuarioGestorDecision(id);
 			
 		} catch (Exception e) {
-			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
+			logger.error("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id, e);
 			return false;
 			//throw new BusinessOperationException(e);
 		}
@@ -1952,11 +1952,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		for (String st : staC) {
 			
 			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
-			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
-			
+			if (extSubtipoTarea!=null) {
+				listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
+			}
 		}
-		
-		
 		
 		boolean gestor = false;
 
@@ -1970,8 +1969,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}*/
 
 		return gestor;
-		
-
 	}
 
 	@Override

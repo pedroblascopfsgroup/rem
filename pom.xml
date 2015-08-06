@@ -464,7 +464,7 @@
 		<module>pfs-commons-java</module>
 		<module>rec-encrypt</module>
 		<module>batch-monitor</module>
-		<module>batch-shell</module>
+		<!--module>batch-shell</module-->
 		<module>rec-common</module>
 		<module>recovery-domain</module>
 		<!--module>recovery-api-plugin</module-->

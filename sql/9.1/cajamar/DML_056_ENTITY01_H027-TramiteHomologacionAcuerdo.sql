@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.1-hy-rc02
---## INCIDENCIA_LINK=CMREC-398
+--## INCIDENCIA_LINK=CMREC-412
 --## PRODUCTO=NO
 --##
 --## Finalidad: Adaptar BPM's Haya-Cajamar
@@ -38,7 +38,7 @@ DECLARE
     * CONFIGURACION: IDENTIDAD SCRIPT
     *---------------------------------------------------------------------
     */
-    PAR_TIT_TRAMITE VARCHAR2(50 CHAR)   := 'Trámite de elevación a Cajamar';   -- [PARAMETRO] Título del trámite
+    PAR_TIT_TRAMITE VARCHAR2(75 CHAR)   := 'Trámite de homologación de acuerdo';   -- [PARAMETRO] Título del trámite
     PAR_AUTHOR VARCHAR2(20 CHAR)        := 'Alberto';                            -- [PARAMETRO] Nick del autor
     PAR_AUTHOR_EMAIL VARCHAR2(50 CHAR)  := 'alberto.campos@pfsgroup.es';   -- [PARAMETRO] Email del autor
     PAR_AUTHOR_TELF VARCHAR2(10 CHAR)   := '2034';                              -- [PARAMETRO] Teléfono del autor
@@ -52,6 +52,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16);                            -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);                                 -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR);                        -- Vble. auxiliar para registrar errores en el script.
+    V_TAREA VARCHAR(50 CHAR);
 
     VAR_SEQUENCENAME VARCHAR2(50 CHAR);                 -- Variable para secuencias
     VAR_CURR_ROWARRAY VARCHAR2(25 CHAR);                -- Variable con fila array actual - para excepciones
@@ -62,33 +63,7 @@ DECLARE
     V_CODIGO_PLAZAS VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Plazos
     V_CODIGO1_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo1 FK con codigo de TFI Items
     V_CODIGO2_TFI VARCHAR2(100 CHAR); -- Variable para nombre campo2 FK con codigo de TFI Items
-    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'HCJ002'; -- Código de procedimiento para reemplazar
-
-	/*
-    * ARRAY TABLA1: DD_TPO_TIPO_PROCEDIMIENTO
-    *---------------------------------------------------------------------
-    */
-    TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(5000);
-    TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
-    V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-    	T_TIPO_TPO(
-    		/*DD_TPO_CODIGO................:*/ V_COD_PROCEDIMIENTO,
-    		/*DD_TPO_DESCRIPCION...........:*/ 'T. elevación a Cajamar - HCJ',
-    		/*DD_TPO_DESCRIPCION_LARGA.....:*/ 'Trámite de elevación a Cajamar',
-    		/*DD_TPO_HTML..................:*/ null,
-    		/*DD_TPO_XML_JBPM..............:*/ 'hcj_elevacionCajamar',
-    		/*VERSION......................:*/ '0',
-    		/*USUARIOCREAR.................:*/ 'DD',
-    		/*BORRADO......................:*/ '0',
-    		/*DD_TAC_ID(FK)................:*/ 'TR',
-    		/*DD_TPO_SALDO_MIN.............:*/ null,
-    		/*DD_TPO_SALDO_MAX.............:*/ null,
-    		/*FLAG_PRORROGA................:*/ '1',
-    		/*DTYPE........................:*/ 'MEJTipoProcedimiento',
-    		/*FLAG_DERIVABLE...............:*/ '1',
-    		/*FLAG_UNICO_BIEN..............:*/ '0')
-    ); 
-    V_TMP_TIPO_TPO T_TIPO_TPO;
+    V_COD_PROCEDIMIENTO VARCHAR(10 CHAR) := 'H027'; -- Código de procedimiento para reemplazar
     
     /*
     * ARRAY TABLA2: TAP_TAREA_PROCEDIMIENTO
@@ -97,55 +72,122 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(2000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-	      T_TIPO_TAP(
-	        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
-	        /*TAP_CODIGO...................:*/ 'HCJ002_ObtenerValidacionComite',
-	        /*TAP_VIEW.....................:*/ null,
-	        /*TAP_SCRIPT_VALIDACION........:*/ null,
-	        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-	        /*TAP_SCRIPT_DECISION..........:*/ null,
-	        /*DD_TPO_ID_BPM(FK)............:*/ null,
-	        /*TAP_SUPERVISOR,..............:*/ '0',
-	        /*TAP_DESCRIPCION,.............:*/ 'Obtener validación comité',
-	        /*VERSION......................:*/ '0',
-	        /*USUARIOCREAR.................:*/ 'DD',
-	        /*BORRADO......................:*/ '0',
-	        /*TAP_ALERT_NO_RETORNO.........:*/ null,
-	        /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
-	        /*DD_FAP_ID(FK)................:*/ null,
-	        /*TAP_AUTOPRORROGA.............:*/ '0',
-	        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
-	        /*TAP_MAX_AUTOP................:*/ '3',
-	        /*DD_TGE_ID(FK)................:*/ null,
-	        /*DD_STA_ID(FK)................:*/ 'TGCTRGE',
-	        /*TAP_EVITAR_REORG.............:*/ null,
-	        /*DD_TSUP_ID(FK)...............:*/ 'DRECU',
-	        /*TAP_BUCLE_BPM................:*/ null        
-	        )
-       );
+			T_TIPO_TAP(
+				/*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+				/*TAP_CODIGO...................:*/ 'H027_ComprobarSolicitudConcurso',
+				/*TAP_VIEW.....................:*/ null,
+				/*TAP_SCRIPT_VALIDACION........:*/ null,
+				/*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+				/*TAP_SCRIPT_DECISION..........:*/ 'valores[''H027_ComprobarSolicitudConcurso''][''comboConcurso''] == DDSiNo.SI ? ''si'' : ''no''',
+				/*DD_TPO_ID_BPM(FK)............:*/ null,
+				/*TAP_SUPERVISOR,..............:*/ '0',
+				/*TAP_DESCRIPCION,.............:*/ 'Comprobar solicitud concurso',
+				/*VERSION......................:*/ '0',
+				/*USUARIOCREAR.................:*/ 'DD',
+				/*BORRADO......................:*/ '0',
+				/*TAP_ALERT_NO_RETORNO.........:*/ null,
+				/*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+				/*DD_FAP_ID(FK)................:*/ null,
+				/*TAP_AUTOPRORROGA.............:*/ '0',
+				/*DTYPE........................:*/ 'EXTTareaProcedimiento',
+				/*TAP_MAX_AUTOP................:*/ '3',
+				/*DD_TGE_ID(FK)................:*/ null,
+				/*DD_STA_ID(FK)................:*/ 'TGESINC',
+				/*TAP_EVITAR_REORG.............:*/ null,
+				/*DD_TSUP_ID(FK)...............:*/ 'GERREC',
+				/*TAP_BUCLE_BPM................:*/ null        
+			),
+			T_TIPO_TAP(
+				/*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+				/*TAP_CODIGO...................:*/ 'H027_ElevarComite',
+				/*TAP_VIEW.....................:*/ null,
+				/*TAP_SCRIPT_VALIDACION........:*/ null,
+				/*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+				/*TAP_SCRIPT_DECISION..........:*/ null,
+				/*DD_TPO_ID_BPM(FK)............:*/ null,
+				/*TAP_SUPERVISOR,..............:*/ '0',
+				/*TAP_DESCRIPCION,.............:*/ 'Elevar a comité',
+				/*VERSION......................:*/ '0',
+				/*USUARIOCREAR.................:*/ 'DD',
+				/*BORRADO......................:*/ '0',
+				/*TAP_ALERT_NO_RETORNO.........:*/ null,
+				/*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+				/*DD_FAP_ID(FK)................:*/ null,
+				/*TAP_AUTOPRORROGA.............:*/ '0',
+				/*DTYPE........................:*/ 'EXTTareaProcedimiento',
+				/*TAP_MAX_AUTOP................:*/ '3',
+				/*DD_TGE_ID(FK)................:*/ null,
+				/*DD_STA_ID(FK)................:*/ 'TGEANREC',
+				/*TAP_EVITAR_REORG.............:*/ null,
+				/*DD_TSUP_ID(FK)...............:*/ 'SUANREC',
+				/*TAP_BUCLE_BPM................:*/ null        
+			),
+			T_TIPO_TAP(
+				/*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+				/*TAP_CODIGO...................:*/ 'H027_RealizarAdecuacionContable',
+				/*TAP_VIEW.....................:*/ null,
+				/*TAP_SCRIPT_VALIDACION........:*/ null,
+				/*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+				/*TAP_SCRIPT_DECISION..........:*/ null,
+				/*DD_TPO_ID_BPM(FK)............:*/ null,
+				/*TAP_SUPERVISOR,..............:*/ '0',
+				/*TAP_DESCRIPCION,.............:*/ 'Realizar adecuación contable',
+				/*VERSION......................:*/ '0',
+				/*USUARIOCREAR.................:*/ 'DD',
+				/*BORRADO......................:*/ '0',
+				/*TAP_ALERT_NO_RETORNO.........:*/ null,
+				/*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+				/*DD_FAP_ID(FK)................:*/ null,
+				/*TAP_AUTOPRORROGA.............:*/ '0',
+				/*DTYPE........................:*/ 'EXTTareaProcedimiento',
+				/*TAP_MAX_AUTOP................:*/ '3',
+				/*DD_TGE_ID(FK)................:*/ null,
+				/*DD_STA_ID(FK)................:*/ 'TGESOF',
+				/*TAP_EVITAR_REORG.............:*/ null,
+				/*DD_TSUP_ID(FK)...............:*/ 'GESINC',
+				/*TAP_BUCLE_BPM................:*/ null        
+			)
+		);
         
-        V_TMP_TIPO_TAP T_TIPO_TAP;    
+		V_TMP_TIPO_TAP T_TIPO_TAP;   
     
-    /*
+	/*
     * ARRAYS TABLA3: DD_PTP_PLAZOS_TAREAS_PLAZAS
     *---------------------------------------------------------------------
     */
     TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
-       T_TIPO_PLAZAS(
-          /*DD_JUZ_ID(FK)............:*/ null,
-          /*DD_PLA_ID(FK)............:*/ null,
-          /*TAP_ID(FK)...............:*/ 'HCJ002_ObtenerValidacionComite',
-          /*DD_PTP_PLAZO_SCRIPT......:*/ '7*24*60*60*1000L',
-          /*VERSION..................:*/ '0',
-          /*BORRADO..................:*/ '0',
-          /*USUARIOCREAR.............:*/ 'DD'
-        )
+		T_TIPO_PLAZAS(
+			/*DD_JUZ_ID(FK)............:*/ null,
+			/*DD_PLA_ID(FK)............:*/ null,
+			/*TAP_ID(FK)...............:*/ 'H027_ComprobarSolicitudConcurso',
+			/*DD_PTP_PLAZO_SCRIPT......:*/ '120*24*60*60*1000L',
+			/*VERSION..................:*/ '0',
+			/*BORRADO..................:*/ '0',
+			/*USUARIOCREAR.............:*/ 'DD'
+		),
+		T_TIPO_PLAZAS(
+			/*DD_JUZ_ID(FK)............:*/ null,
+			/*DD_PLA_ID(FK)............:*/ null,
+			/*TAP_ID(FK)...............:*/ 'H027_ElevarComite',
+			/*DD_PTP_PLAZO_SCRIPT......:*/ '7*24*60*60*1000L',
+			/*VERSION..................:*/ '0',
+			/*BORRADO..................:*/ '0',
+			/*USUARIOCREAR.............:*/ 'DD'
+		),
+		T_TIPO_PLAZAS(
+			/*DD_JUZ_ID(FK)............:*/ null,
+			/*DD_PLA_ID(FK)............:*/ null,
+			/*TAP_ID(FK)...............:*/ 'H027_RealizarAdecuacionContable',
+			/*DD_PTP_PLAZO_SCRIPT......:*/ '30*24*60*60*1000L',
+			/*VERSION..................:*/ '0',
+			/*BORRADO..................:*/ '0',
+			/*USUARIOCREAR.............:*/ 'DD'
+		)		
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
-        
     /*
     * ARRAYS TABLA4: TFI_TAREAS_FORM_ITEMS
     *---------------------------------------------------------------------
@@ -154,60 +196,47 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HCJ002_ObtenerValidacionComite',
+            /*DD_TAP_ID..............:*/ 'H027_ComprobarSolicitudConcurso',
             /*TFI_ORDEN..............:*/ '0',
             /*TFI_TIPO...............:*/ 'label',
             /*TFI_NOMBRE.............:*/ 'titulo',
-            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea, deber&aacute; indicar la fecha en la que el comit&eacute; decide sobre el informe de subasta. Podr&aacute; consultar el informe de subasta remitido por HRE y adjunto a la actuaci&oacute;n.</p><p style="margin-bottom: 10px">En caso de que la recomendaci&oacute;n del informe sea suspender subasta, o bien la entidad decida suspenderla, deber&aacute; indicar en el campo "Motivo de suspensi&oacute;n", el motivo por el que se suspende la subasta.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellena esta pantalla, HRE recibirá su repuesta y la siguiente tarea a completar por los gestores de HRE será:<ul style="list-style-type:square;margin-left:35px;"><li>En el caso que sea la respuesta del comit&eacute; sea "Continuar subasta" o "Suspender subasta", se lanzar&aacute; "Dictar instrucciones".</li><li>En el caso que sea la respuesta del comit&eacute; sea "Rechazar" el informe, se volver&aacute; a la tarea de "Preparar informe de Subasta".</li></ul></p></div>',
+            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Puesto que se ha indicado que no se ha propuesto o no se ha llegado a un acuerdo, para dar por finalizada esta tarea deber&aacute; verificar que se ha solicitado el concurso dentro del plazo estipulado por la ley.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla, finalizar&aacute; el tr&aacute;mite.</p></div>',
             /*TFI_ERROR_VALIDACION...:*/ null,
             /*TFI_VALIDACION.........:*/ null,
             /*TFI_VALOR_INICIAL......:*/ null,
             /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
+			/*VERSION................:*/ '0',
             /*USUARIOCREAR...........:*/ 'DD'
         ),
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HCJ002_ObtenerValidacionComite',
+            /*DD_TAP_ID..............:*/ 'H027_ComprobarSolicitudConcurso',
             /*TFI_ORDEN..............:*/ '1',
-            /*TFI_TIPO...............:*/ 'date',
-            /*TFI_NOMBRE.............:*/ 'fechaDecision',
-            /*TFI_LABEL..............:*/ 'Fecha',
+            /*TFI_TIPO...............:*/ 'combo',
+            /*TFI_NOMBRE.............:*/ 'comboConcurso',
+            /*TFI_LABEL..............:*/ 'Solicitado concurso',
             /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
             /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ 'DDSiNo',
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_ComprobarSolicitudConcurso',
+            /*TFI_ORDEN..............:*/ '2',
+            /*TFI_TIPO...............:*/ 'date',
+            /*TFI_NOMBRE.............:*/ 'fecha',
+            /*TFI_LABEL..............:*/ 'Fecha solicitud',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
             /*TFI_VALOR_INICIAL......:*/ null,
             /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
+			/*VERSION................:*/ '0',
             /*USUARIOCREAR...........:*/ 'DD'
         ),
         T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HCJ002_ObtenerValidacionComite',
-            /*TFI_ORDEN..............:*/ '2',
-            /*TFI_TIPO...............:*/ 'combo',
-            /*TFI_NOMBRE.............:*/ 'comboResultado',
-            /*TFI_LABEL..............:*/ 'Resultado del Comité',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ 'DDResultadoComite',
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HCJ002_ObtenerValidacionComite',
+            /*DD_TAP_ID..............:*/ 'H027_ComprobarSolicitudConcurso',
             /*TFI_ORDEN..............:*/ '3',
-            /*TFI_TIPO...............:*/ 'combo',
-            /*TFI_NOMBRE.............:*/ 'comboSuspension',
-            /*TFI_LABEL..............:*/ 'Motivo de suspensión',
-            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
-            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
-            /*TFI_VALOR_INICIAL......:*/ null,
-            /*TFI_BUSINESS_OPERATION.:*/ 'DDMotivoSuspension',
-            /*VERSION................:*/ '0',
-            /*USUARIOCREAR...........:*/ 'DD'
-        ),
-        T_TIPO_TFI (
-            /*DD_TAP_ID..............:*/ 'HCJ002_ObtenerValidacionComite',
-            /*TFI_ORDEN..............:*/ '4',
             /*TFI_TIPO...............:*/ 'textarea',
             /*TFI_NOMBRE.............:*/ 'observaciones',
             /*TFI_LABEL..............:*/ 'Observaciones',
@@ -215,13 +244,138 @@ DECLARE
             /*TFI_VALIDACION.........:*/ null,
             /*TFI_VALOR_INICIAL......:*/ null,
             /*TFI_BUSINESS_OPERATION.:*/ null,
-            /*VERSION................:*/ '0',
+			/*VERSION................:*/ '0',
             /*USUARIOCREAR...........:*/ 'DD'
-        )
+        ),
+        
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_ElevarComite',
+            /*TFI_ORDEN..............:*/ '0',
+            /*TFI_TIPO...............:*/ 'label',
+            /*TFI_NOMBRE.............:*/ 'titulo',
+            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea deber&aacute; registrar la decisi&oacute;n del comit&eacute; sobre la propuesta elevada.</p><p style="margin-bottom: 10px">En el campo Fecha indicar la fecha en la que se toma la decisi&oacute;n.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla se le abrir&aacute; una tarea en la que propondr&aacute;, seg&uacute;n su criterio, la siguiente actuaci&oacute;n al responsable de la entidad.</p></div>',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_ElevarComite',
+            /*TFI_ORDEN..............:*/ '1',
+            /*TFI_TIPO...............:*/ 'date',
+            /*TFI_NOMBRE.............:*/ 'fecha',
+            /*TFI_LABEL..............:*/ 'Fecha',
+            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
+            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_ElevarComite',
+            /*TFI_ORDEN..............:*/ '2',
+            /*TFI_TIPO...............:*/ 'combo',
+            /*TFI_NOMBRE.............:*/ 'comboDecision',
+            /*TFI_LABEL..............:*/ 'Decisión',
+            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
+            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ 'DDAceptadoRechazado',
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_ElevarComite',
+            /*TFI_ORDEN..............:*/ '3',
+            /*TFI_TIPO...............:*/ 'textarea',
+            /*TFI_NOMBRE.............:*/ 'observaciones',
+            /*TFI_LABEL..............:*/ 'Observaciones',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_RegistrarResultadoAcuerdo',
+            /*TFI_ORDEN..............:*/ '2',
+            /*TFI_TIPO...............:*/ 'combo',
+            /*TFI_NOMBRE.............:*/ 'comboHomologacion',
+            /*TFI_LABEL..............:*/ 'Hay homologación',
+            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
+            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ 'DDSiNo',
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_RealizarAdecuacionContable',
+            /*TFI_ORDEN..............:*/ '0',
+            /*TFI_TIPO...............:*/ 'label',
+            /*TFI_NOMBRE.............:*/ 'titulo',
+            /*TFI_LABEL..............:*/ '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A trav&eacute;s de esta pantalla, la oficina deber&aacute; realizar la adecuaci&oacute;n contable en el terminal financiero de la entidad.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla, finalizar&aacute; el tr&eacute;mite.</p></div>',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_RealizarAdecuacionContable',
+            /*TFI_ORDEN..............:*/ '1',
+            /*TFI_TIPO...............:*/ 'date',
+            /*TFI_NOMBRE.............:*/ 'fecha',
+            /*TFI_LABEL..............:*/ 'Fecha',
+            /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
+            /*TFI_VALIDACION.........:*/ 'valor != null && valor != '''' ? true : false',
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'H027_RealizarAdecuacionContable',
+            /*TFI_ORDEN..............:*/ '2',
+            /*TFI_TIPO...............:*/ 'textarea',
+            /*TFI_NOMBRE.............:*/ 'observaciones',
+            /*TFI_LABEL..............:*/ 'Observaciones',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ null,
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+			/*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        )  
+        
+        
+        
     ); --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
     V_TMP_TIPO_TFI T_TIPO_TFI;
+    
+    /**
+     * TAREAS QUE HAY QUE BORRAR
+     */    
+    CURSOR CRS_TAREA_BORRAR(P_COD_PROCEDIMIENTO V_COD_PROCEDIMIENTO%TYPE) IS 
+		SELECT TAP_CODIGO 
+			FROM TAP_TAREA_PROCEDIMIENTO TAP, DD_TPO_TIPO_PROCEDIMIENTO TPO 
+			WHERE TPO.DD_TPO_CODIGO = P_COD_PROCEDIMIENTO
+				AND TPO.DD_TPO_ID = TAP.DD_TPO_ID
+				AND TAP.TAP_CODIGO NOT LIKE 'DEL_%'
+				AND TAP_CODIGO NOT IN ('H027_RegistrarPublicacionSolArticulo', 'H027_RegistrarAperturaNegociaciones', 'H027_RegistrarPropuestaAcuerdo', 'H027_AceptarPropuestaAcuerdo', 'H027_ComprobarSolicitudConcurso',
+										'H027_ElevarComite', 'H027_LecturaAceptacionInstrucciones', 'H027_RegistrarResultadoAcuerdo', 'H027_RegistrarResHomologacionJudicial', 'H027_BPMTramiteDemandaIncidental', 'H027_DecisionSupervisor',
+										'H027_RegistrarEntradaEnVigor', 'H027_RealizarAdecuacionContable');
+
 BEGIN
-    /*
+	
+	/*
     *---------------------------------------------------------------------------------------------------------
     *                                COMIENZO - BLOQUE DE CODIGO DEL SCRIPT
     *---------------------------------------------------------------------------------------------------------
@@ -230,68 +384,34 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('    Generacion de datos BPM: '||PAR_TIT_TRAMITE);
 
     /*
-    * LOOP ARRAY BLOCK-CODE: DD_TPO_TIPO_PROCEDIMIENTO
-    *---------------------------------------------------------------------
-    */
-    VAR_CURR_TABLE := PAR_TABLENAME_TPROC;
-    V_CODIGO_TPO := 'DD_TPO_CODIGO';
-    VAR_CURR_ROWARRAY := 0;
-    DBMS_OUTPUT.PUT('    [INSERT] '||PAR_ESQUEMA||'.' || PAR_TABLENAME_TPROC || '......');
-    FOR I IN V_TIPO_TPO.FIRST .. V_TIPO_TPO.LAST
-      LOOP
-        V_TMP_TIPO_TPO := V_TIPO_TPO(I);
-        
-        --EXISTENCIA DE REGISTROS: Mediante consulta a la tabla, se verifica si existen ya los registros a insertar mas adelante,
-        -- si ya existían los registros en la tabla, se informa de q existen y no se hace nada
-        -----------------------------------------------------------------------------------------------------------
-        DBMS_OUTPUT.PUT_LINE('[INFO] Array codigo '||V_CODIGO_TPO||' = '''||V_TMP_TIPO_TPO(1)||''' Descripcion = '''||V_TMP_TIPO_TPO(2)||'''---------------------------------'); 
-        DBMS_OUTPUT.PUT('[INFO] Verificando existencia de REGISTROS de la tabla '||VAR_CURR_TABLE||', con codigo '||V_CODIGO_TPO||' = '''||V_TMP_TIPO_TPO(1)||'''...'); 
+	 * ---------------------------------------------------------------------------------------------------------
+	 * 								ACTUALIZACIONES
+	 * ---------------------------------------------------------------------------------------------------------
+	 */
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. Homologación de acuerdo - CJ'', DD_TPO_XML_JBPM = ''cj_tramiteHomologacionAcuerdo'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
+	
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''H027_RegistrarResultadoAcuerdo''''][''''resultadoAcuerdo''''] == DDSiNo.NO ? ''''sinAcuerdo'''' : valores[''''H027_RegistrarResultadoAcuerdo''''][''''comboHomologacion''''] == DDSiNo.SI ? ''''SI'''' : ''''NO'''''' WHERE TAP_CODIGO = ''H027_RegistrarResultadoAcuerdo''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET DD_STA_ID = null WHERE TAP_CODIGO = ''H027_BPMTramiteDemandaIncidental''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''H027_RegistrarPropuestaAcuerdo''''][''''acuerdoPropuesto''''] == DDSiNo.SI ? ''''si'''' : ''''no'''''' WHERE TAP_CODIGO = ''H027_RegistrarPropuestaAcuerdo''';
 
-        V_SQL := 'SELECT COUNT(1) FROM '||PAR_ESQUEMA||'.'||VAR_CURR_TABLE||' WHERE '||V_CODIGO_TPO||' = '''|| V_TMP_TIPO_TPO(1) ||''' ';
-        --DBMS_OUTPUT.PUT_LINE(V_SQL);
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea deber&aacute; informar la fecha en que se hayan iniciado las negociaciones con el concursado.</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto del procedimiento.</p><p style="margin-bottom: 10px;">Una vez rellene esta pantalla la siguiente tarea ser&aacute; "Registrar propuesta de acuerdo".</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_RegistrarAperturaNegociaciones'')';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea deber&aacute; registrar un acuerdo a trav&eacute;s de la pestaña "Acuerdos" de la ficha del Asunto correspondiente. En caso de no iniciar ning&uacute;n acuerdo deber&aacute; informar dicha situaci&oacute;n en el campo "Acuerdo". En el campo "Intereses Entidad" deber&aacute; informar si el acuerdo planteado es favorable o no para los intereses de la entidad.</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto del procedimiento.</p><p style="margin-bottom: 10px;">Una vez rellene esta pantalla, en caso de que se haya propuesto alg&uacute;n acuerdo, la siguiente tarea ser&aacute; "Preparar decisi&oacute;n sobre propuesta de acuerdo" a realizar por el supervisor. En caso contrario, se lanzar&aacute; "Comprobar solicitud acuerdo".</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_RegistrarPropuestaAcuerdo'')';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A trav&eacute;s de esta pantalla, deber&aacute; preparar el acuerdo propuesto por el letrado o en su defecto la no propuesta de acuerdo para elevarla al comit&eacute; y que nos indique su postura del acuerdo.</p><p style="margin-bottom: 10px;">En el campo Fecha deber&aacute; informar la fecha en que da por revisado la decisi&oacute;n propuesta por el gestor de incumplimiento, en el campo "Resultado" deber&aacute; indicar la conformidad o no con la propuesta realizada.</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto del procedimiento.</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_AceptarPropuestaAcuerdo'')';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A trav&eacute;s de esta pantalla el gestor atiende las instrucciones propuestas por el comit&eacute;.</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto del procedimiento.</p><p style="margin-bottom: 10px;">Si hay homologaci&oacute;n o no, se mandar&aacute; el acuerdo a la oficina.</p><p style="margin-bottom: 10px;">Una vez rellene esta pantalla la siguiente tarea ser&aacute; "Registrar Resultado del Acuerdo".</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_LecturaAceptacionInstrucciones'')';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A trav&eacute;s de esta tarea deber&aacute; indicar en el campo "Acuerdo alcanzado" si efectivamente se ha llegado al acuerdo propuesto o no y en el campo "Hay homologaci&oacute;n" si en el caso de acuerdo alcanzado, &eacute;ste acuerdo implica homologaci&oacute;n o no. En el campo "Fecha" deber&aacute; informar la fecha en que se haya resuelto el acuerdo.</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto del procedimiento.</p><p style="margin-bottom: 10px;">En caso haberse producido el acuerdo con homologaci&oacute;n, la siguiente tarea ser&aacute; "Registrar resoluci&oacute;n homologaci&oacute;n judicial". En caso de haberse producido el acuerdo sin homologaci&oacute;n, la siguiente tarea ser&aacute; "Ejecutar acuerdo". En caso de no producirse el acuerdo se crear&aacute; una tarea en la que propondr&aacute;, seg&uacute;n su criterio, la siguiente actuaci&oacute;n al responsable de la entidad.</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_RegistrarResultadoAcuerdo'')';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ORDEN = 3 WHERE TFI_NOMBRE = ''fecha'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_RegistrarResultadoAcuerdo'')';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ORDEN = 4 WHERE TFI_NOMBRE = ''observaciones'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_RegistrarResultadoAcuerdo'')';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A trav&eacute;s de esta pantalla deber&aacute; informar de la fecha en que se nos haya notificado la resoluci&oacute;n judicial respecto al acuerdo que se ha presentado. En el caso de que en la resoluci&oacute;n dada por el comit&eacute; en la decisi&oacute;n del acuerdo, haya dado instrucciones de impugnar el acuerdo, deber&aacute; indicarlo en el campo "Impugnaci&oacute;n Entidad" y se lanzar&aacute; el "T. Demanda Incidental".</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto del procedimiento.</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H027_RegistrarResHomologacionJudicial'')';
+	
+	-- BORRADO DE TAREA (lógico)
+	FOR REG_TAREA IN CRS_TAREA_BORRAR(V_COD_PROCEDIMIENTO) LOOP
+		V_TAREA:= REG_TAREA.TAP_CODIGO;
+		EXECUTE IMMEDIATE 'DELETE FROM '||PAR_ESQUEMA ||'.DD_PTP_PLAZOS_TAREAS_PLAZAS WHERE TAP_ID IN (SELECT TAP_ID FROM '||PAR_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+		EXECUTE IMMEDIATE 'DELETE FROM '||PAR_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS WHERE TAP_ID IN (SELECT TAP_ID FROM '||PAR_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+		EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''', BORRADO=1, FECHABORRAR=SYSDATE, USUARIOBORRAR=''ALBERTO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	END LOOP;
 
-        IF V_NUM_TABLAS > 0 THEN
-            DBMS_OUTPUT.PUT_LINE('OK - YA existe');
-            DBMS_OUTPUT.PUT_LINE('[INFO] NO se inserta el registro del array porque ya existe en '||VAR_CURR_TABLE);
-        ELSE
-            DBMS_OUTPUT.PUT_LINE('OK - NO existe');
-
-            V_MSQL := 'INSERT INTO '|| PAR_ESQUEMA ||'.' || PAR_TABLENAME_TPROC || ' (' ||
-                        'DD_TPO_ID,DD_TPO_CODIGO,DD_TPO_DESCRIPCION,DD_TPO_DESCRIPCION_LARGA,' ||
-                        'DD_TPO_HTML,DD_TPO_XML_JBPM,VERSION,USUARIOCREAR,' ||
-                        'FECHACREAR,BORRADO,DD_TAC_ID,DD_TPO_SALDO_MIN,'||
-                        'DD_TPO_SALDO_MAX,FLAG_PRORROGA,DTYPE,FLAG_DERIVABLE,FLAG_UNICO_BIEN) ' ||
-                        'SELECT ' ||
-                        'S_DD_TPO_TIPO_PROCEDIMIENTO.NEXTVAL, ' ||
-                        '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') || ''',''' 
-                             || REPLACE(TRIM(V_TMP_TIPO_TPO(2)),'''','''''') || ''',' ||
-                        '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(3)),'''','''''') || ''',''' 
-                             || REPLACE(TRIM(V_TMP_TIPO_TPO(4)),'''','''''') || ''',' ||
-                        '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(5)),'''','''''') || ''',''' 
-                             || REPLACE(TRIM(V_TMP_TIPO_TPO(6)),'''','''''') || ''',' ||
-                        '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(7)),'''','''''') || ''',
-                             sysdate,' ||
-                        '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(8)),'''','''''') || ''',' ||
-                             '(SELECT DD_TAC_ID FROM '|| PAR_ESQUEMA ||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO=''' || TRIM(V_TMP_TIPO_TPO(9)) || '''),' ||
-                        '''' || TRIM(V_TMP_TIPO_TPO(10)) || ''',''' 
-                             || TRIM(V_TMP_TIPO_TPO(11)) || ''',''' 
-                             || TRIM(V_TMP_TIPO_TPO(12)) || ''',' ||
-                        '''' || TRIM(V_TMP_TIPO_TPO(13)) || ''',''' 
-                             || TRIM(V_TMP_TIPO_TPO(14)) || ''',''' 
-                             || TRIM(V_TMP_TIPO_TPO(15)) 
-                        || ''' FROM DUAL'; 
-
-                VAR_CURR_ROWARRAY := I;
-                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-                --DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TPO(1) ||''','''||TRIM(V_TMP_TIPO_TPO(2))||'''');
-                EXECUTE IMMEDIATE V_MSQL;
-        END IF;
-    END LOOP;
-    DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
-
-
-    /*
+	/*
     * LOOP ARRAY BLOCK-CODE: TAP_TAREA_PROCEDIMIENTO
     *---------------------------------------------------------------------
     */
@@ -465,8 +585,8 @@ BEGIN
         END IF;
     END LOOP;
     DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
-
-    /*
+	
+	/*
     * COMMIT ALL BLOCK-CODE
     *---------------------------------------------------------------------
     */

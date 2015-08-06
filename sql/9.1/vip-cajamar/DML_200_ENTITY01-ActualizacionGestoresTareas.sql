@@ -106,6 +106,18 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGCTRGE','SCTRGE')
 ,T_TIPO_VALOR('H025','H025_registrarVista','TGESCON','SUCON')
 ,T_TIPO_VALOR('H025','H025_resolucionFirme','TGESCON','SUCON')
 ,T_TIPO_VALOR('H043','H043_AutoDeclarandoConcurso','TGESCON','SUCON')
+,T_TIPO_VALOR('H027','H027_AceptarPropuestaAcuerdo','TGEANREC','SUANREC')
+,T_TIPO_VALOR('H027','H027_ComprobarSolicitudConcurso','TGESINC','GERREC')
+,T_TIPO_VALOR('H027','H027_DecisionSupervisor','TGESINC','GERREC')
+,T_TIPO_VALOR('H027','H027_ElevarComite','TGEANREC','SUANREC')
+,T_TIPO_VALOR('H027','H027_LecturaAceptacionInstrucciones','TGEANREC','SUANREC')
+,T_TIPO_VALOR('H027','H027_RealizarAdecuacionContable','TGESOF','GESINC')
+,T_TIPO_VALOR('H027','H027_RegistrarAperturaNegociaciones','TGESINC','GERREC')
+,T_TIPO_VALOR('H027','H027_RegistrarEntradaEnVigor','TGESINC','GERREC')
+,T_TIPO_VALOR('H027','H027_RegistrarPropuestaAcuerdo','TGESINC','GERREC')
+,T_TIPO_VALOR('H027','H027_RegistrarPublicacionSolArticulo','TGESINC','GERREC')
+,T_TIPO_VALOR('H027','H027_RegistrarResHomologacionJudicial','TGESINC','GERREC')
+,T_TIPO_VALOR('H027','H027_RegistrarResultadoAcuerdo','TGESINC','GERREC')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

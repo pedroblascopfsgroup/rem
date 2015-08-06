@@ -119,8 +119,8 @@ DECLARE
       	/*nombre usuario ..*/ 'CJ_SUHRE',
       	/*nombre-despacho..*/ 'Despacho Supervisor HRE'),
       T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-SUADMCON',
-      	/*username.........*/ 'CJ_SUADMCON',
+      	/*codigo tde.......*/ 'D-SUADCON',
+      	/*username.........*/ 'CJ_SUADCON',
       	/*password.........*/ '1234',
       	/*nombre usuario ..*/ 'CJ_SUADMCON',
       	/*nombre-despacho..*/ 'Despacho Supervisor administración contable'),

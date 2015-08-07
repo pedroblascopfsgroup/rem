@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_declaracionIncumplimiento" width="1108" height="965">
+<root-container name="cj_declaracionIncumplimiento" width="1108" height="965">
   <node name="Inicio" x="318" y="37" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -95,10 +95,10 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="318" y="928" width="132" height="36"/>
   <node name="CJ006_BPMFaseLiquidacion" x="634" y="667" width="288" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="Fin" x="318" y="928" width="132" height="36"/>
 </root-container>

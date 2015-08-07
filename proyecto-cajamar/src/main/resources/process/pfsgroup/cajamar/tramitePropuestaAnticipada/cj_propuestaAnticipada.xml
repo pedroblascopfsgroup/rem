@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<process-definition name="hcj_tramitePropuestaAnticipada" xmlns="urn:jbpm.org:jpdl-3.2">
+<process-definition name="cj_tramitePropuestaAnticipada" xmlns="urn:jbpm.org:jpdl-3.2">
 
 	<start-state name="Inicio">
 		<transition to="H031_registrarPropAnticipadaConvenio"></transition>
@@ -124,7 +124,7 @@
       	
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H031_EscritoEvaluacion" name="activarAlerta"></transition>
-		<transition to="H031_admisionTramiteConvenioDecision" name="vueltaAtras"></transition>
+		<transition to="H031_admisionTramiteConvenio" name="vueltaAtras"></transition>
 		<transition to="H031_ResolucionJudicial" name="avanzaBPM"></transition>
 	</state>
 	

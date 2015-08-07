@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramitePropuestaAnticipada" width="1108" height="1403">
+<root-container name="cj_tramitePropuestaAnticipada" width="1108" height="1403">
   <node name="Inicio" x="317" y="-40" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

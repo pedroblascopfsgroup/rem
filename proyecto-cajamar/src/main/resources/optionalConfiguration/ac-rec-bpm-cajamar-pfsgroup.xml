@@ -26,6 +26,8 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="-1"/>	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVentaDirecta/cj_ventaDirecta.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePropuestaAnticipada/cj_propuestaAnticipada.xml" p:version="-1"/>		
+	
 		
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
@@ -138,6 +140,73 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTO");
 	            }
 	            
+	            def existeConvenioAnticipadoAsunto = {
+               		def cuentaAnticipado = 0;
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+	                  	if (convenio.getTipoConvenio().getCodigo() == '1') {
+	                  		cuentaAnticipado = cuentaAnticipado + 1
+	                  	  	if (cuentaAnticipado>1) {
+	                  	  		return false;
+	                  	  	}
+	                  	  	
+	                  	  	if (convenio.getDescripcionAnticipado() == null) {
+	                  	  		return false;
+	                  	  	}
+	                  	}
+               		};
+               		
+               		if (cuentaAnticipado<1) {
+               			return false;
+               		} 
+               		else {
+               			return true;
+               		}
+            	}
+            	
+            	def existeConvenioAnticipadoAdmitidoAsunto = {
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                  		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '2')) {
+                  	 		return true;
+                  		}
+               		};
+               		
+               		return false;
+            	}
+            	
+            	def existeConvenioAnticipadoNoAdmitidoAsunto = {
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                  		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '4')) {
+                  	 		return true;
+                  		}
+               		};
+               		
+               		return false;
+            	}
+            	
+            	def existeConvenioAnticipadoAdmitidoTrasAprobacionAsunto = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '5')) {
+	                  		return true;
+    	              	}
+        	       	};
+        	       	
+            	   	return false;
+				}	
+            	
+            	def existeConvenioAnticipadoNoAdmitidoTrasAprobacionAsunto = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '6')) {
+                  			return true;
+                  		}
+               		};
+               		
+               		return false;
+				}
   			 ]]>
   			</value>
   		</list>

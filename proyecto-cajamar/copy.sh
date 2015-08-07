@@ -56,7 +56,7 @@ else
 	echo "No hay librerias JavaScript que copiar"
 fi
 
-if [ -f target/classes/optionalConfiguration/ac*.xml ]; then
+if [ -f target/classes/optionalConfiguration/ac-rec*.xml ]; then
         cp -Rf target/classes/optionalConfiguration/* /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/classes/optionalConfiguration
         echo "Se ha copiado target/classes/optionalConfiguration/*"
 else

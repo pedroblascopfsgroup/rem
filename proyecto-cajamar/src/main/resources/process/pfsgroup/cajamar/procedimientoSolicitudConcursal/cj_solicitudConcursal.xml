@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="hcj_procedimientoSolicitudConcursal">
+<process-definition xmlns="" name="cj_solicitudConcursal">
 
 	<start-state name="Inicio">
 		<transition to="H021_SolicitudConcursal"></transition>
@@ -222,7 +222,7 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_tramiteFaseComun"></transition>
+		<transition to="Fin" name="cj_faseComun"></transition>
 	</state>
 
 	<fork name="ForkAutoDeclarandoConcurso">

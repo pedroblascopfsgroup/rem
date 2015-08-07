@@ -151,7 +151,7 @@ DECLARE
 			/*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
 			/*TAP_CODIGO...................:*/ 'CJ001_ElevarComite',
 			/*TAP_VIEW.....................:*/ null,
-			/*TAP_SCRIPT_VALIDACION........:*/ 'comprobarExisteDocumentoINFSUB() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Para completar esta tarea debe adjuntar el documento "Informe de subasta" al procedimiento.</div>''',
+			/*TAP_SCRIPT_VALIDACION........:*/ null,
 			/*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
 			/*TAP_SCRIPT_DECISION..........:*/ null,
 			/*DD_TPO_ID_BPM(FK)............:*/ null,

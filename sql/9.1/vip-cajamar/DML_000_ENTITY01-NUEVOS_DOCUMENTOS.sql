@@ -43,7 +43,6 @@ DECLARE
       ,T_TIPO_TFA('INFCANOPE', 'Informe de cancelación de operación', 'Informe de cancelación de operación', 'CO') -- Trámite de demandado en incidente
       ,T_TIPO_TFA('OFEVEN', 'Oferta venta', 'Oferta venta', 'CO') -- Trámite de venta directa
       ,T_TIPO_TFA('INFSOBVEN', 'Informe sobre oferta', 'Informe sobre oferta', 'CO') -- Trámite de venta directa
-      ,T_TIPO_TFA('INFSUB', 'Informe de subasta', 'Informe de subasta', 'CO') -- Trámite de venta directa
       ,T_TIPO_TFA('AUTO', 'Auto', 'Auto', 'CO') -- Trámite de venta directa
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;

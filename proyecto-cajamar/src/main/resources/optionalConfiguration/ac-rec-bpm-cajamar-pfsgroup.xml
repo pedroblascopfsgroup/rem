@@ -130,11 +130,6 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSOBVEN");
 	            }
 	            
-	            def comprobarExisteDocumentoINFSUB = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSUB");
-	            }
-	            
 	            def comprobarExisteDocumentoAUTO = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTO");

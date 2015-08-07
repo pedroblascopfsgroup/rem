@@ -146,9 +146,16 @@
 		parameters="itinerarioParams"
 		autoload="true"/>
 		
-	<pfs:grid  name="gridReglasRE" 
+	<pfs:defineColumnModel name="reglasElevacionCMRE">
+		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.tipoRegla" sortable="false" 
+			dataIndex="ddTipoReglasElevacion" caption="**Tipo de Regla" firstHeader="true"/>
+		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.ambitoExpediente" sortable="false" 
+			dataIndex="ambitoExpediente" caption="**Ámbito del Expediente" />
+	</pfs:defineColumnModel>		
+		
+	<pfs:grid name="gridReglasRE" 
 		dataStore="reglasElevacionDSRE"
-		columnModel="reglasElevacionCM" 
+		columnModel="reglasElevacionCMRE" 
 		title="**Reglas de Elevación del Estado Revisar Expediente" 
 		collapsible="false" 
 		titleKey="plugin.itinerarios.tipoReglasElevacion.reglasRE"
@@ -206,9 +213,16 @@
 		parameters="itinerarioParams"
 		autoload="true"/>
 		
+	<pfs:defineColumnModel name="reglasElevacionCMDC">
+		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.tipoRegla" sortable="false" 
+			dataIndex="ddTipoReglasElevacion" caption="**Tipo de Regla" firstHeader="true"/>
+		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.ambitoExpediente" sortable="false" 
+			dataIndex="ambitoExpediente" caption="**Ámbito del Expediente" />
+	</pfs:defineColumnModel>		
+		
 	<pfs:grid  name="gridReglasDC" 
 		dataStore="reglasElevacionDSDC"
-		columnModel="reglasElevacionCM" 
+		columnModel="reglasElevacionCMDC" 
 		title="**Reglas de Elevación del Estado Decisión de Comité" 
 		collapsible="false" 
 		titleKey="plugin.itinerarios.tipoReglasElevacion.reglasDC"

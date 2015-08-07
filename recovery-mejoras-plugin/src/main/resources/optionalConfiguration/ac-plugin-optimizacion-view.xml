@@ -34,6 +34,9 @@
 		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/adjuntos.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
+	<bean p:entity="tabs.contrato.fast" p:name="atipicosContrato"  p:order="111" 
+		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/tabAtipicos.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
 	<!-- CLIENTES FAST -->	
 	

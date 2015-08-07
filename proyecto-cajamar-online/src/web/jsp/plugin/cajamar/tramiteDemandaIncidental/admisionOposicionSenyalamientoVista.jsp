@@ -50,81 +50,38 @@ var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
 
-var cb_comboResultado = items[2 + muestraBotonGuardar];
-var cb_comboCondena = items[3 + muestraBotonGuardar];
-var n_importeCondena = items[4 + muestraBotonGuardar];
-var cb_comboGarantias = items[5 + muestraBotonGuardar];
-var n_importeGarantias = items[6 + muestraBotonGuardar];
-var cb_comboOperacion = items[7 + muestraBotonGuardar];
-var cb_comboCreditos = items[8 + muestraBotonGuardar];
-var ta_otros = items[9 + muestraBotonGuardar];
 
-cb_comboCondena.setDisabled(true);
-n_importeCondena.setDisabled(true);
-cb_comboGarantias.setDisabled(true);
-n_importeGarantias.setDisabled(true);
-cb_comboOperacion.setDisabled(true);
-cb_comboCreditos.setDisabled(true);
-ta_otros.setDisabled(true);
+var cb_admision = items[1 + muestraBotonGuardar];
+var fecha_admision = items[2 + muestraBotonGuardar];
+var cb_vista = items[3 + muestraBotonGuardar];
+var fecha_vista = items[4 + muestraBotonGuardar];
 
-cb_comboResultado.on('select', function(){
-	if(cb_comboResultado.getValue() == '01') {//favorable
-		cb_comboCondena.setDisabled(true);
-		n_importeCondena.setDisabled(true);
-		cb_comboGarantias.setDisabled(true);
-		n_importeGarantias.setDisabled(true);
-		cb_comboOperacion.setDisabled(true);
-		cb_comboCreditos.setDisabled(true);
-		ta_otros.setDisabled(true);
-		cb_comboCondena.setValue('');
-		n_importeCondena.setValue('');
-		cb_comboGarantias.setValue('');
-		n_importeGarantias.setValue('');
-		cb_comboOperacion.setValue('');
-		cb_comboCreditos.setValue('');
-		ta_otros.setValue('');
-		cb_comboCondena.allowBlank = true;
-		cb_comboGarantias.allowBlank = true;
-		cb_comboOperacion.allowBlank = true;
-		cb_comboCreditos.allowBlank = true;
-		n_importeCondena.allowBlank = true;
-		n_importeGarantias.allowBlank = true;
-		ta_otros.allowBlank = true;
+cb_admision.on('select', function(){
+	if(cb_admision.getValue() == '01') {    //si
+		fecha_admision.setDisabled(false);
+		cb_vista.setDisabled(false);
+		if(cb_vista.getValue() != '02') {    //distinto de no
+			fecha_vista.setDisabled(false);
+		}
+		
 	}
-	else if(cb_comboResultado.getValue() == '02') {//no_favorable
-		cb_comboCondena.setDisabled(false);
-		cb_comboGarantias.setDisabled(false);
-		cb_comboOperacion.setDisabled(false);
-		cb_comboCreditos.setDisabled(false);
-		ta_otros.setDisabled(false);
-		cb_comboCondena.allowBlank = false;
-		cb_comboGarantias.allowBlank = false;
-		cb_comboOperacion.allowBlank = false;
-		cb_comboCreditos.allowBlank = false;
-	}
-});	
-
-cb_comboCondena.on('select', function(){
-	if(cb_comboCondena.getValue() == '01') {//si
-		n_importeCondena.setDisabled(false);
-		n_importeCondena.allowBlank = false;
-	}
-	else if(cb_comboCondena.getValue() == '02') {//no
-		n_importeCondena.setDisabled(true);
-		n_importeCondena.setValue('');
-		n_importeCondena.allowBlank = true;
+	else{   //no
+		fecha_admision.setValue('');
+		fecha_admision.setDisabled(true);
+		cb_vista.setValue('');
+		cb_vista.setDisabled(true);
+		fecha_vista.setValue('');
+		fecha_vista.setDisabled(true);
 	}
 });
 
-cb_comboGarantias.on('select', function(){
-	if(cb_comboGarantias.getValue() == '01') {//si
-		n_importeGarantias.setDisabled(false);
-		n_importeGarantias.allowBlank = false;
+cb_vista.on('select', function(){
+	if(cb_vista.getValue() == '01') {    //si
+		fecha_vista.setDisabled(false);
 	}
-	else if(cb_comboGarantias.getValue() == '02') {//no
-		n_importeGarantias.setDisabled(true);
-		n_importeGarantias.setValue('');
-		n_importeGarantias.allowBlank = true;
+	else{   //no
+		fecha_vista.setValue('');
+		fecha_vista.setDisabled(true);
 	}
 });
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteDemandaIncidental" width="1208" height="888">
+<root-container name="cj_demandaIncidental" width="1208" height="664">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-53" y="-13"/>

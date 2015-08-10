@@ -35,6 +35,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
 
 EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] == null || valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] == '''''''' || valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] == ''''0'''' ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditos'''': (cuentaCreditosInsinuadosExt()!=valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditosInsinuados'''' : null)'' WHERE TAP_CODIGO = ''H009_RegistrarInsinuacionCreditos''';
+EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos''''] == null || valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos''''] == '''''''' || valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos''''] == ''''0'''' ? (cuentaCreditosInsinuadosSup() != ''''0'''' ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditos'''' : null) : (cuentaCreditosInsinuadosSup()!=valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos''''] ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditosInsinuados'''' : null)'' WHERE TAP_CODIGO = ''H009_RevisarInsinuacionCreditos''';
 
 COMMIT;
 

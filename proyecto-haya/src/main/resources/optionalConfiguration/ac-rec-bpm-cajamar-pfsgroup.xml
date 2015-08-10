@@ -65,7 +65,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseLiquidacion/haya_tramiteFaseLiquidacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseConvenio/tramiteFaseConvenioV4.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseComunAbreviado/tramiteFaseComunAbreviadoV4.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandadoEnIncidente/haya_tramiteDemandadoEnIncidente.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="-1"/>	
 	

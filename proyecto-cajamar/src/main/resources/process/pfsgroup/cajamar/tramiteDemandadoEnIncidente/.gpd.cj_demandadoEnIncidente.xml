@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_tramiteDemandadoEnIncidente" width="1618" height="1269">
+<root-container name="cj_demandadoEnIncidente" width="1618" height="1269">
   <node name="Inicio" x="42" y="12" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -183,9 +183,6 @@
       <bendpoint w1="-152" h1="-40" w2="168" h2="-40"/>
     </edge>
   </node>
-  <node name="Fin" x="22" y="263" width="132" height="36"/>
-  <node name="Fin2" x="1051" y="17" width="132" height="36"/>
-  <node name="Fin3" x="97" y="1232" width="132" height="36"/>
   <node name="H025_BPMTramiteCostas" x="874" y="880" width="197" height="36">
     <edge>
       <label x="-115" y="375"/>
@@ -251,4 +248,7 @@
       <label x="172" y="429"/>
     </edge>
   </node>
+  <node name="Fin" x="22" y="263" width="132" height="36"/>
+  <node name="Fin2" x="1051" y="17" width="132" height="36"/>
+  <node name="Fin3" x="97" y="1232" width="132" height="36"/>
 </root-container>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="cj_tramiteDemandadoEnIncidente">
+<process-definition xmlns="" name="cj_demandadoEnIncidente">
 
 	<start-state name="Inicio">
 		<transition to="H025_notificacionDemandaIncidental"></transition>
@@ -247,7 +247,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin2" name="hcj_tramiteCostas"></transition>		
+		<transition to="Fin2" name="cj_costas"></transition>		
 	</state>
 
 	<state name="H025_ElaborarInformeCancelacion">

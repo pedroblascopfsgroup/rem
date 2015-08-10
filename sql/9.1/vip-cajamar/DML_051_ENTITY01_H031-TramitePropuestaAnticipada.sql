@@ -559,7 +559,7 @@ BEGIN
 	 * 								ACTUALIZACIONES
 	 * ---------------------------------------------------------------------------------------------------------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. Propuesta Anticipada Convenio - CJ'', DD_TPO_XML_JBPM = ''cj_tramitePropuestaAnticipada'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. Propuesta Anticipada Convenio - CJ'', DD_TPO_XML_JBPM = ''cj_propuestaAnticipada'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
 	
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoPRAC() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Para completar esta tarea debe adjuntar el documento "Propuesta Anticipada Convenio" al procedimiento.</div>'''''' WHERE TAP_CODIGO = ''H031_registrarPropAnticipadaConvenio''';
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''existeConvenioAnticipadoAsunto() ? null : ''''tareaExterna.procedimiento.tramiteFaseComun.noHayConvenioAnticipado'''''' WHERE TAP_CODIGO = ''H031_registrarPropAnticipadaConvenio''';

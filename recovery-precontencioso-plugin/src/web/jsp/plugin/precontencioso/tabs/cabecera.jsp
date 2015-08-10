@@ -78,7 +78,7 @@
 		title: '<s:message code="plugin.precontencioso.cabecera.estadosPreparacion" text="**Estados de la preparación" />',
 		columns: [
 			{ header: 'Estado',  dataIndex: 'estado' },
-			{ header: 'Fecha Inicio', dataIndex: 'fechaInicio' },
+			{ header: 'Fecha Inicio', dataIndex: 'fechaInicio'},
 			{ header: 'Fecha Fin', dataIndex: 'fechaFin' }
 		],
 		store: storeHistoricoEstados,
@@ -88,10 +88,6 @@
 		loadMask: true,
 		iconCls : 'icon_procedimiento'
 	});
-	
-	storeHistoricoEstados.addListener('load', function(store, meta) {
-		store.sort('fechaInicio', 'DESC');
-    });
 
 	var panelProcedimientoPrecontencioso = fieldset('<s:message code="plugin.precontencioso.cabecera.gestionExpediente" text="**Gestion Expediente"/>',
 		[{items:[nExpedienteExterno, estadoProcedimiento, procedimientoPropuesto, procedimientoIniciado, tipoPreparacion]},

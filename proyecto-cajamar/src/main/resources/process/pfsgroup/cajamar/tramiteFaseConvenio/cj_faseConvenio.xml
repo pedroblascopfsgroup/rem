@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<process-definition name="hcj_tramiteFaseConvenio" xmlns="urn:jbpm.org:jpdl-3.2">
+<process-definition name="cj_faseConvenio" xmlns="urn:jbpm.org:jpdl-3.2">
 
 	<start-state name="Inicio">
 		<transition to="H017_AutoApertura" name="iniciarProceso"></transition>
@@ -344,7 +344,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H017_BPMFaseLiquidacion" name="activarAlerta"></transition>
-		<transition to="Fin" name="hcj_faseLiquidacion"></transition>
+		<transition to="Fin" name="cj_faseLiquidacion"></transition>
 	</state>
 	
 	<state name="H017_BPMSeguimientoCumplimientoConvenio">
@@ -366,7 +366,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H017_BPMSeguimientoCumplimientoConvenio" name="activarAlerta"></transition>
-		<transition to="Fin" name="hcj_seguimientoCumplimientoConvenio"></transition>
+		<transition to="Fin" name="cj_seguimientoCumplimientoConvenio"></transition>
 	</state>
 	
 	<end-state name="Fin">

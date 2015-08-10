@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteFaseConvenio" width="1108" height="1927">
+<root-container name="cj_faseConvenio" width="1108" height="1927">
   <node name="Inicio" x="442" y="-880" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

@@ -519,7 +519,7 @@ BEGIN
 	 * 								ACTUALIZACIONES
 	 * ---------------------------------------------------------------------------------------------------------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. fase de liquidación - HCJ'', DD_TPO_XML_JBPM = ''hcj_tramiteFaseLiquidacion'' WHERE DD_TPO_CODIGO = ''H033''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. fase de liquidación - CJ'', DD_TPO_XML_JBPM = ''cj_faseLiquidacion'' WHERE DD_TPO_CODIGO = ''H033''';
 	
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoPLALIQ() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar el documento "Plan de liquidaci&oacute;n" </div>'''''' WHERE TAP_CODIGO = ''H033_InformeLiquidacion''';
 	

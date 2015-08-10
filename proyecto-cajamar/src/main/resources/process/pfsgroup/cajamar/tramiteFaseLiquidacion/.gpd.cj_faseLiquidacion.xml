@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteFaseLiquidacion" width="1108" height="1167">
+<root-container name="cj_faseLiquidacion" width="1108" height="1167">
   <node name="Inicio" x="30" y="23" width="132" height="36">
     <edge>
       <label x="-82" y="-35"/>

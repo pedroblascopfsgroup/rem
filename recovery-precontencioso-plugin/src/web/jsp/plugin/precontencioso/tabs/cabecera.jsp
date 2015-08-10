@@ -88,6 +88,10 @@
 		loadMask: true,
 		iconCls : 'icon_procedimiento'
 	});
+	
+	storeHistoricoEstados.addListener('load', function(store, meta) {
+		store.sort('fechaInicio', 'DESC');
+    });
 
 	var panelProcedimientoPrecontencioso = fieldset('<s:message code="plugin.precontencioso.cabecera.gestionExpediente" text="**Gestion Expediente"/>',
 		[{items:[nExpedienteExterno, estadoProcedimiento, procedimientoPropuesto, procedimientoIniciado, tipoPreparacion]},

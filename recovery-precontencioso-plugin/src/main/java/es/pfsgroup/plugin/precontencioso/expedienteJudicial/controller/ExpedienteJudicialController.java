@@ -18,6 +18,12 @@ public class ExpedienteJudicialController {
 
 	@Autowired
 	ExpedienteJudicialApi expedienteJudicialApi;
+	
+	@RequestMapping
+	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		boolean finalizado = expedienteJudicialApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);		
+		return JSON_HISTORICO_ESTADOS;
+	}
 
 	@RequestMapping
 	public String getHistoricoEstadosPorProcedimientoId(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {

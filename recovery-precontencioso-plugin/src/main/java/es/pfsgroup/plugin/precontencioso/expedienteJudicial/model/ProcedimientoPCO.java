@@ -118,14 +118,26 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		for (HistoricoEstadoProcedimientoPCO historicoEstado : estadosPreparacionProc) {
 			if (fechaMasActual == null || fechaMasActual.before(historicoEstado.getFechaInicio())) {
 				fechaMasActual = historicoEstado.getFechaInicio();
-				if (historicoEstado != null) {
-					estadoActual = historicoEstado.getEstadoPreparacion();
-				}
+				estadoActual = historicoEstado.getEstadoPreparacion();
 			}
 		}
 
 		return estadoActual;
 	}
+	
+	public HistoricoEstadoProcedimientoPCO getEstadoActualByHistorico() {
+		HistoricoEstadoProcedimientoPCO estadoActual = null;
+		// Recuperar estado actual por fecha inicio mas actual
+		Date fechaMasActual = null;
+		for (HistoricoEstadoProcedimientoPCO historicoEstado : estadosPreparacionProc) {
+			if (fechaMasActual == null || fechaMasActual.before(historicoEstado.getFechaInicio())) {
+				fechaMasActual = historicoEstado.getFechaInicio();
+				estadoActual = historicoEstado;
+			}
+		}
+		return estadoActual;
+	}
+
 
 	/*
 	 * GETTERS & SETTERS

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="cj_tramiteHomologacionAcuerdo">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="cj_homologacionAcuerdo">
 
 	<start-state name="Inicio">
 		<transition to="H027_RegistrarPublicacionSolArticulo" name="iniciarProceso"></transition>
@@ -185,7 +185,7 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="H027_DecisionSupervisor" name="cj_tramiteDemandaIncidental"></transition>
+		<transition to="H027_DecisionSupervisor" name="cj_demandaIncidental"></transition>
 	</state>
 
 	<state name="H027_ElevarComite">

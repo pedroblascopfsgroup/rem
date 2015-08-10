@@ -714,7 +714,7 @@ BEGIN
 	 * 								ACTUALIZACIONES
 	 * ---------------------------------------------------------------------------------------------------------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. fase común - HCJ'', DD_TPO_XML_JBPM = ''hcj_tramiteFaseComun'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. fase común - CJ'', DD_TPO_XML_JBPM = ''cj_faseComun'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
 	
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoBOE() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento BOE</div>'''''' WHERE TAP_CODIGO = ''H009_RegistrarPublicacionBOE''';
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] == null || valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] == '''''''' || valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] == ''''0'''' ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditos'''': (cuentaCreditosInsinuadosExt()!=valores[''''H009_RegistrarInsinuacionCreditos''''][''''numCreditos''''] ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditosInsinuados'''' : null)'' WHERE TAP_CODIGO = ''H009_RegistrarInsinuacionCreditos''';

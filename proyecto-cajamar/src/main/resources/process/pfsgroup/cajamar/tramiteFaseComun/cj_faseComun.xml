@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<process-definition name="hcj_tramiteFaseComun"
+<process-definition name="cj_faseComun"
 	xmlns="urn:jbpm.org:jpdl-3.2">
 
 	<start-state name="Inicio">
@@ -340,7 +340,7 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="H009_ActualizarEstadoCreditos" name="hcj_tramiteDemandaIncidental"></transition>
+		<transition to="H009_ActualizarEstadoCreditos" name="cj_demandaIncidental"></transition>
 	</state>
 	
 	<state name='H009_BPMTramiteFaseLiquidacion'>
@@ -358,7 +358,7 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_tramiteFaseLiquidacion"></transition>
+		<transition to="Fin" name="cj_faseLiquidacion"></transition>
 	</state>
 	
 	<state name="H009_BPMTramiteFaseConvenioV4">
@@ -376,7 +376,7 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_tramiteFaseConvenio"></transition>
+		<transition to="Fin" name="cj_faseConvenio"></transition>
 	</state>
 		
 	<end-state name="Fin">

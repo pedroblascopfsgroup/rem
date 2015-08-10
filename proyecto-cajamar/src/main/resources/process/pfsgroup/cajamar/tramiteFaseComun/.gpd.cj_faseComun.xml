@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteFaseComun" width="1409" height="1849">
+<root-container name="cj_faseComun" width="1409" height="1849">
   <node name="Inicio" x="257" y="-238" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

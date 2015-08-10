@@ -922,6 +922,19 @@ DECLARE
 			/*usuariocrear,..............:*/ 'DD',
 			/*fechacrear,................:*/ 'sysdate',
 			/*borrado,...................:*/ '0' 
+		),
+		T_TIPO_STB(
+			/*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+			/*dd_tar_id..................:*/ '1',
+			/*dd_sta_codigo,.............:*/ 'DGESHRE',
+			/*dd_sta_descripcion,........:*/ 'Toma decisión gestor HRE',
+			/*dd_sta_descripcion_larga...:*/ 'Toma de decisión del gestor HRE',
+			/*dd_tge_id..................:*/ 'GESHRE',
+			/*dtype......................:*/ 'EXTSubtipoTarea',
+			/*version,...................:*/ '0',
+			/*usuariocrear,..............:*/ 'DD',
+			/*fechacrear,................:*/ 'sysdate',
+			/*borrado,...................:*/ '0' 
 		)		
 	  ----------------------        
       -- **** FIN TOMAS DE DECISION ***

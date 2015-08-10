@@ -167,9 +167,9 @@ DECLARE
 				/*DTYPE........................:*/ 'EXTTareaProcedimiento',
 				/*TAP_MAX_AUTOP................:*/ '3',
 				/*DD_TGE_ID(FK)................:*/ null,
-				/*DD_STA_ID(FK)................:*/ 'TGESCON',
+				/*DD_STA_ID(FK)................:*/ 'DGESCON',
 				/*TAP_EVITAR_REORG.............:*/ null,
-				/*DD_TSUP_ID(FK)...............:*/ 'SUCON',
+				/*DD_TSUP_ID(FK)...............:*/ null,
 				/*TAP_BUCLE_BPM................:*/ null        
 			),
 			T_TIPO_TAP(
@@ -192,9 +192,9 @@ DECLARE
 				/*DTYPE........................:*/ 'EXTTareaProcedimiento',
 				/*TAP_MAX_AUTOP................:*/ '3',
 				/*DD_TGE_ID(FK)................:*/ null,
-				/*DD_STA_ID(FK)................:*/ 'TGESHRE',
+				/*DD_STA_ID(FK)................:*/ 'DGESHRE',
 				/*TAP_EVITAR_REORG.............:*/ null,
-				/*DD_TSUP_ID(FK)...............:*/ 'GESCON',
+				/*DD_TSUP_ID(FK)...............:*/ null,
 				/*TAP_BUCLE_BPM................:*/ null        
 			)
 		);
@@ -406,7 +406,7 @@ BEGIN
 	 * 								ACTUALIZACIONES
 	 * ---------------------------------------------------------------------------------------------------------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''P. reapertura de concurso - CJ'', DD_TPO_XML_JBPM = ''cj_tramiteReaperturaConcurso'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''P. reapertura de concurso - CJ'', DD_TPO_XML_JBPM = ''cj_reaperturaConcurso'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
 
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoADCO() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar el documento "Auto declarando el concurso"</div>''''''  WHERE TAP_CODIGO = ''H043_AutoDeclarandoConcurso''';
 

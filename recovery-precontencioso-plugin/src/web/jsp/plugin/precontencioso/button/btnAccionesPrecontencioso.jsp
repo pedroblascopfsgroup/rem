@@ -5,11 +5,9 @@
 
 	
 new Ext.Button({
-	itemId: 'btnAccionesPrecontencioso',
 	text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
 	menu: {
 		items: [{
-			itemId: 'btnFinalizarPreparacion',
 			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparación" />',
 			handler: function() {
 				var estado = data.estadoPrecontencioso;

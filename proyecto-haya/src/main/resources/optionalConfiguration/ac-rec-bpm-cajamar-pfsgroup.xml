@@ -357,12 +357,13 @@
 	            def comprobarCostasLetradoValidas = {
 	            	def principal = tareaExterna.getTareaPadre().getProcedimiento().getSaldoRecuperacion();
 	            	def costas = valores['H002_SenyalamientoSubasta']['costasLetrado'];
-	            	if((costas.toDouble() * 0.05 )) > principal.doubleValue()){
+	            	if((costas.toDouble() * 0.05 ) > principal.doubleValue()){
 	            		return false;
 	            	} else {
 	            		return true;
 	            	}
 	            }
+	            
   			 ]]>
   			</value>
   		</list>

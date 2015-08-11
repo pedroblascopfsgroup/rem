@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Gonzalo Estellés
---## FECHA_CREACION=20150720
+--## FECHA_CREACION=20150721
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-368

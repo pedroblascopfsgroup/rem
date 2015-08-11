@@ -186,6 +186,8 @@ BEGIN
 			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-814'')' ||
 	          ' ,DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GCONGE'')' ||
 	          ' ,TAP_DESCRIPCION = ''Comunicación con señalamiento de subasta'' ' ||
+	          ' ,TAP_SCRIPT_VALIDACION_JBPM = ''comprobarCostasLetradoValidas() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;"><p>&iexcl;Atenci&oacute;n! Las costas del letrado no pueden superar el 5% del principal.</p></div>'''' '' ' ||
+	          ' ,TAP_VIEW = null' ||
 			  ' WHERE TAP_CODIGO = ''H004_SenyalamientoSubasta''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

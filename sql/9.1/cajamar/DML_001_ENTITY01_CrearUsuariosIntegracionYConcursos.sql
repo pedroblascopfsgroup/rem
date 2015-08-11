@@ -289,7 +289,7 @@ BEGIN
 							'''SAG'','||
 							'sysdate,'||
 							'0,'||
-							'12501,'||
+							'(SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01''),'||
 							'(SELECT DD_TDE_ID FROM '||V_ESQUEMA_M||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO='''||V_TMP_TIPO_TFA(1)||''') ' ||
 						')';
 	              		

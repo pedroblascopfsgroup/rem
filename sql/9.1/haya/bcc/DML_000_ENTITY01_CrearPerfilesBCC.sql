@@ -378,6 +378,18 @@ DECLARE
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0',
         /*dd_tge_editable_web........:*/ '1'
+        ),
+        
+      T_TIPO_TGE(
+        /*dd_tge_id..................:*/ 's_dd_tge_tipo_gestor.nextval',
+        /*dd_tge_codigo,.............:*/ 'SUCONGEN2',
+        /*dd_tge_descripcion,........:*/ 'CJ - Supervisor contencioso gestión nivel 2',
+        /*dd_tge_descripcion_larga,..:*/ 'CJ - Supervisor contencioso gestión nivel 2',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0',
+        /*dd_tge_editable_web........:*/ '1'
         )
 	
     ); 
@@ -659,6 +671,17 @@ DECLARE
         /*dd_tde_codigo,.............:*/ 'D-CJ-SUEXT',
         /*dd_tde_descripcion,........:*/ 'Despacho Supervisor Externo',
         /*dd_tde_descripcion_larga,..:*/ 'Despacho Supervisor Externo',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0'
+        ),	
+	
+      T_TIPO_TDE(
+        /*dd_tde_id..................:*/ 's_dd_tde_tipo_despacho.nextval',
+        /*dd_tde_codigo,.............:*/ 'D-SUCONGEN2',
+        /*dd_tde_descripcion,........:*/ 'Despacho Supervisor contencioso gestión nivel 2',
+        /*dd_tde_descripcion_larga,..:*/ 'Despacho Supervisor contencioso gestión nivel 2',
         /*version,...................:*/ '0',
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
@@ -1258,6 +1281,19 @@ DECLARE
         /*dd_sta_descripcion,........:*/ 'Tarea del Supervisor Externo',
         /*dd_sta_descripcion_larga...:*/ 'Tarea del Supervisor Externo',
         /*dd_tge_id..................:*/ 'CJ-SUEXT',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ),   
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'TSUCONGEN2',
+        /*dd_sta_descripcion,........:*/ 'Tarea del Supervisor contencioso gestión nivel 2',
+        /*dd_sta_descripcion_larga...:*/ 'Tarea del Supervisor contencioso gestión nivel 2',
+        /*dd_tge_id..................:*/ 'SUCONGEN2',
         /*dtype......................:*/ 'EXTSubtipoTarea',
         /*version,...................:*/ '0',
         /*usuariocrear,..............:*/ 'DD',

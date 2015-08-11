@@ -371,6 +371,11 @@
 	            	}
 	            }
 	            
+	            def comprobarExisteDocumentoINFSUBEXT = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSUBEXT");
+	            }
+	            
   			 ]]>
   			</value>
   		</list>

@@ -106,9 +106,12 @@ var btnGenerar = new Ext.Button({
 	iconCls: 'icon_pdf',
 	cls: 'x-btn-text-icon',
 	handler: function() {
-
-	}
-});
+			var flow='/pfs/liquidacion/generarDocumentoLiquidacion';
+			var params={idLiquidacion:idLiquidacionSeleccionada()};
+			app.openBrowserWindow(flow,params);
+			page.fireEvent(app.event.DONE);
+	}		
+});	
 
 <%-- Grid --%>
 

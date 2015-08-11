@@ -154,4 +154,15 @@ public class LiquidacionController {
 
 		return DEFAULT;
 	}
+	
+	@RequestMapping
+	public String generarDocumentoLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, 
+			ModelMap model) {
+		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
+		liquidacionDto.setId(id);
+		model.put("liquidacion", liquidacionDto);
+
+		return JSP_SOLICITAR_LIQUIDACION;
+	}
+	
 }

@@ -71,7 +71,7 @@ DECLARE
       T_TIPO_TAP('H002','H002_AdjuntarInformeFiscal',null,'comprobarExisteDocumentoIFISCAL() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar el Informe Fiscal.</div>''',null,null,null,'0','Adjuntar informe fiscal','0','DD','0',null,null,null,'0','EXTTareaProcedimiento','3',null,'803',null,'SDEU',null),      
       T_TIPO_TAP('H002','H002_ValidarInformeDeSubasta',null,'comprobarExisteDocumentoINSUFI() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar el Informe Subasta Firmado.</div>''',null,'valores[''H002_ValidarInformeDeSubasta''][''comboInforme''] == DDSiNo.NO ? ''Rechazado'' : (valores[''H002_ValidarInformeDeSubasta''][''comboAtribuciones''] == DDSiNo.NO ? ''AceptadoSinAtribuciones'' :''AceptadoConAtribuciones'')',null,'0','Validar informe de subasta','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'TSUCONGE',null,'SUCONT',null),
       T_TIPO_TAP('H002','H002_ObtenerValidacionComite',null,null,null,'valores[''H002_ObtenerValidacionComite''][''comboResultado''] == ''REC'' ? ''Rechazada'' : ''Aceptada''',null,'0','Obtener validación comité','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'CJ-TGESEXT',null,'CJ-SUEXT',null),     
-      T_TIPO_TAP('H002','H002_DictarInstruccionesSubasta',null,'comprobarInformacionCompletaInstrucciones() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">La informaci&oacute;n de las instrucciones de los lotes no est&aacute; completa.</div>''',null,'valores[''H002_ObtenerValidacionComite''][''comboResultado''] == ''SUS'' ? ''Suspender'' : ''NoSuspender''',null,'0','Dictar instrucciones','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null),     
+      T_TIPO_TAP('H002','H002_DictarInstruccionesSubasta',null,'comprobarInformacionCompletaInstrucciones() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">La informaci&oacute;n de las instrucciones de los lotes no est&aacute; completa.</div>''',null,'valores[''H002_DictarInstruccionesSubasta''][''comboResultado''] == ''SUS'' ? ''Suspender'' : ''NoSuspender''',null,'0','Dictar instrucciones','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null),     
       T_TIPO_TAP('H002','H002_SolicitarSuspenderSubasta',null,null,null,null,null,'0','Solicitar suspender subasta','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'CJ-814',null,'GCONGE',null),
       T_TIPO_TAP('H002','H002_RegistrarResSuspSubasta',null,null,null,null,null,'0','Registrar resolución suspensión subasta','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'CJ-814',null,'GCONGE',null),
       T_TIPO_TAP('H002','H002_DictarInstruccionesDeneSuspension',null,'comprobarInformacionCompletaInstrucciones() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">La informaci&oacute;n de las instrucciones de los lotes no est&aacute; completa.</div>''',null,null,null,'0','Dictar instrucciones por denegación de suspensión','0','DD','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null),
@@ -217,7 +217,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_PrepararInformeSubasta actualizada.');
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-814'')' ||
+			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-819'')' ||
 	          ' ,DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GCONGE'')' ||
 			  ' WHERE TAP_CODIGO = ''H002_SuspenderDecision''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -243,7 +243,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_CelebracionSubasta actualizada.');
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-814'')' ||
+			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-819'')' ||
 	          ' ,DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GCONGE'')' ||
 			  ' WHERE TAP_CODIGO = ''H002_CelebracionDecision''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);

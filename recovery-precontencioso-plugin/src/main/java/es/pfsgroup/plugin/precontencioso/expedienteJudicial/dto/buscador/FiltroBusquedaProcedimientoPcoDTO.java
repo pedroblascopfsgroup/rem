@@ -6,6 +6,8 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 
 	private static final long serialVersionUID = -1113911238693790533L;
 
+	private String tipoBusqueda; // Documentos, Liquidaciones, Burofaxes.
+
 	// ProcedimientoPco
 	private String proCodigo;
 	private String proNombre;
@@ -449,6 +451,12 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	}
 	public void setBurFechaEnvioHasta(String burFechaEnvioHasta) {
 		this.burFechaEnvioHasta = burFechaEnvioHasta;
+	}
+	public String getTipoBusqueda() {
+		return tipoBusqueda;
+	}
+	public void setTipoBusqueda(String tipoBusqueda) {
+		this.tipoBusqueda = tipoBusqueda;
 	}
 
 }

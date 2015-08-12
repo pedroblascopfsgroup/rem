@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroB
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -95,11 +97,48 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String busquedaProcedimientos(FiltroBusquedaProcedimientoPcoDTO dto, ModelMap model) {
 
-		List<ProcedimientoPcoGridDTO> procedimientosPco = procedimientoPcoApi.busquedaProcedimientosPco(dto);
-		model.put("procedimientosPco", procedimientosPco);
-		model.put("totalCount", procedimientosPco.size());
+		List<ProcedimientoPCO> procedimientosPco = procedimientoPcoApi.busquedaProcedimientosPco(dto);
+		List<ProcedimientoPcoGridDTO> expeditentesGrid = completarDatosBusquedaProcedimiento(procedimientosPco);
+
+		model.put("procedimientosPco", expeditentesGrid);
+		model.put("totalCount", expeditentesGrid.size());
 
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
 	}
 
+	private List<ProcedimientoPcoGridDTO> completarDatosBusquedaProcedimiento(List<ProcedimientoPCO> procedimientos) {
+		List<ProcedimientoPcoGridDTO> out = new ArrayList<ProcedimientoPcoGridDTO>();
+
+		for (ProcedimientoPCO procedimientoPco : procedimientos) {
+			ProcedimientoPcoGridDTO expedienteGrid = new ProcedimientoPcoGridDTO();
+
+			expedienteGrid.setCodigo(procedimientoPco.getProcedimiento().getId().toString());
+			expedienteGrid.setNombreExpediente(procedimientoPco.getNombreExpJudicial());
+			expedienteGrid.setEstadoExpediente(procedimientoPco.getEstadoActual().getDescripcion());
+			//expedienteGrid.setDiasEnGestion();
+			//expedienteGrid.setFechaEstado();
+
+			if (procedimientoPco.getTipoProcPropuesto() != null) {
+				expedienteGrid.setTipoProcPropuesto(procedimientoPco.getTipoProcPropuesto().getDescripcion());	
+			}
+
+			if (procedimientoPco.getTipoPreparacion() != null) {
+				expedienteGrid.setTipoPreparacion(procedimientoPco.getTipoPreparacion().getDescripcion());
+			}
+
+			//expedienteGrid.setFechaInicioPreparacion();
+			//expedienteGrid.setDiasEnPreparacion();
+			//expedienteGrid.setDocumentacionCompleta();
+			//expedienteGrid.setTotalLiquidacion();
+			//expedienteGrid.setNotificadoClientes();
+			//expedienteGrid.setFechaEnvioLetrado();
+			//expedienteGrid.setAceptadoLetrado();
+			//expedienteGrid.setTodosDocumentos();
+			//expedienteGrid.setTodasLiquidaciones();
+
+			out.add(expedienteGrid);
+		}
+
+		return out;
+	}
 }

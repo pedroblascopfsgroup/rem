@@ -88,45 +88,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		return procedimientoDto;
 	}
 
-	public List<ProcedimientoPcoGridDTO> busquedaProcedimientosPco(FiltroBusquedaProcedimientoPcoDTO filtro) {
+	@Override
+	public List<ProcedimientoPCO> busquedaProcedimientosPco(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		List<ProcedimientoPCO> procedimientos = procedimientoPcoDao.getProcedimientosPcoPorFiltro(filtro);
-		List<ProcedimientoPcoGridDTO> expeditentesGrid = completarDatosGrid(procedimientos);
 
-		return expeditentesGrid;
-	}
-
-	private List<ProcedimientoPcoGridDTO> completarDatosGrid(List<ProcedimientoPCO> procedimientos) {
-		List<ProcedimientoPcoGridDTO> out = new ArrayList<ProcedimientoPcoGridDTO>();
-
-		for (ProcedimientoPCO procedimientoPco : procedimientos) {
-			ProcedimientoPcoGridDTO expedienteGrid = new ProcedimientoPcoGridDTO();
-
-			expedienteGrid.setCodigo(procedimientoPco.getProcedimiento().getId().toString());
-			expedienteGrid.setNombreExpediente(procedimientoPco.getNombreExpJudicial());
-			expedienteGrid.setEstadoExpediente(procedimientoPco.getEstadoActual().getDescripcion());
-			//expedienteGrid.setDiasEnGestion();
-			//expedienteGrid.setFechaEstado();
-
-			if (procedimientoPco.getTipoProcPropuesto() != null) {
-				expedienteGrid.setTipoProcPropuesto(procedimientoPco.getTipoProcPropuesto().getDescripcion());	
-			}
-
-			if (procedimientoPco.getTipoPreparacion() != null) {
-				expedienteGrid.setTipoPreparacion(procedimientoPco.getTipoPreparacion().getDescripcion());
-			}
-
-			//expedienteGrid.setFechaInicioPreparacion();
-			//expedienteGrid.setDiasEnPreparacion();
-			//expedienteGrid.setDocumentacionCompleta();
-			//expedienteGrid.setTotalLiquidacion();
-			//expedienteGrid.setNotificadoClientes();
-			//expedienteGrid.setFechaEnvioLetrado();
-			//expedienteGrid.setAceptadoLetrado();
-			//expedienteGrid.setTodosDocumentos();
-			//expedienteGrid.setTodasLiquidaciones();
-
-			out.add(expedienteGrid);
-		}
-		return out;
+		return procedimientos;
 	}
 }

@@ -29,6 +29,12 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	private LiquidacionGridDTO liquidacion;
 	private BurofaxGridDTO burofax;
 
+	public ProcedimientoPcoGridDTO() {
+		documento = new DocumentoGridDTO();
+		liquidacion = new LiquidacionGridDTO();
+		burofax = new BurofaxGridDTO();
+	}
+
 	public String getCodigo() {
 		return codigo;
 	}

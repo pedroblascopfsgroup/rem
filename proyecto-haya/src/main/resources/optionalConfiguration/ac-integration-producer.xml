@@ -19,7 +19,7 @@
 	<!-- ******** Flow BPM ******* -->
 	<integration:gateway 
 		id="notificarEventosBpmGW" 
-		default-request-channel="canalSalidaEntityRecovery" 
+		default-request-channel="para.cajamar.peticion" 
 		service-interface="es.pfsgroup.recovery.integration.bpm.NotificarEventosBPMGateway"/>
 
 	<!-- ************* 
@@ -37,7 +37,7 @@
 		 Filtro por propiedades de DataContanierRegEx
 		 El orden de las salidas es importante
 		 *************	 --> 
-	<integration:chain input-channel="canalSalidaEntityRecovery" output-channel="canalSalidaDataPayload">
+	<integration:chain input-channel="para.cajamar.peticion" output-channel="para.cajamar.canonical">
 		<integration:transformer>
 			<bean class="es.pfsgroup.recovery.haya.integration.bpm.EntityToPayloadTransformer">
 				<constructor-arg ref="diccionarioCodigosProducer"/>
@@ -50,15 +50,22 @@
 		 Transforma la salida en JSON.
 		 El orden de las salidas es importante
 		 *************	 --> 
-	<integration:chain input-channel="canalSalidaDataPayload" output-channel="canalSalidaJsonTxtMsg">
+	<integration:chain input-channel="para.cajamar.canonical" output-channel="para.cajamar.json">
 		<!-- integration:header-enricher error-channel="recoveryRequestErrorChannel"/ -->
 		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />
 	</integration:chain>
 
+
+	<!-- integration:inbound-channel-adapter id="jdbReader" ref="messagesManager" method="next">
+		<integration:poller><integration:interval-trigger interval="2" time-unit="SECONDS"/></integration:poller>
+	</integration:inbound-channel-adapter  -->
+	
+
+
 	<!-- ************* 
 		 Canales de salida
 		 ************* 	 --> 
-	<integration:publish-subscribe-channel id="canalSalidaJsonTxtMsg" />
+	<integration:publish-subscribe-channel id="para.cajamar.json" />
 	<!-- file:outbound-channel-adapter 
 			id="outgoingFolder"
 			channel="jsonTxtMessageChannel" 
@@ -67,15 +74,22 @@
 		
 	<file:outbound-channel-adapter 
 		id="syncBackupFolder"
-		channel="canalSalidaJsonTxtMsg" 
+		channel="para.cajamar.json" 
 		directory="${integracion.backup}"
 		filename-generator="filenameGenerator" />
 		
-	<jms:outbound-channel-adapter 
+		
+	<!-- jms:outbound-channel-adapter 
 		id="jmsout" 
-		channel="canalSalidaJsonTxtMsg" 
-		destination="paraCajamarQueue"/>
+		channel="${integracion.producer.cola}.json" 
+		destination="paraCajamarQueue"/ -->
 
+	<integration:outbound-channel-adapter channel="para.cajamar.json" ref="jdbcOutboundAdapter" method="createNew">
+	</integration:outbound-channel-adapter>	
+	<bean id="jdbcOutboundAdapter" class="es.pfsgroup.recovery.integration.jdbc.JdbcAdapter">
+		<constructor-arg value="${integracion.producer.cola}"/>
+	</bean>
+	
 	<!-- ... CANAL DE DESCARTADOS ... hay que activarlo en el filter.
 		... NO SE USA ....	 
 	<integration:transformer ref="procedimientoMsgTransformer" input-channel="syncDiscard" output-channel="syncDiscardFolder" method="serialize" />

@@ -43,9 +43,9 @@ public class ExpedienteJudicialManager implements ExpedienteJudicialApi {
 		DDEstadoPreparacionPCO estado = procedimientoPco.getEstadoActual();
 		boolean finalizar = true;
 		
-		if(DDEstadoPreparacionPCO.ESTADO_PREPARACION.equals(estado.getCodigo()) 
-				|| DDEstadoPreparacionPCO.ESTADO_SUBSANAR.equals(estado.getCodigo()) 
-				|| DDEstadoPreparacionPCO.ESTADO_SUBSANAR_POR_CAMBIO.equals(estado.getCodigo())) {
+		if(DDEstadoPreparacionPCO.PREPARADO.equals(estado.getCodigo()) 
+				|| DDEstadoPreparacionPCO.SUBSANAR.equals(estado.getCodigo()) 
+				|| DDEstadoPreparacionPCO.SUBSANAR_POR_CAMBIO.equals(estado.getCodigo())) {
 			
 			
 			for(DocumentoPCO doc : procedimientoPco.getDocumentos()){
@@ -62,7 +62,7 @@ public class ExpedienteJudicialManager implements ExpedienteJudicialApi {
 				
 				HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
 				historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-				DDEstadoPreparacionPCO estadoFinalizado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.ESTADO_FINALIZADO);
+				DDEstadoPreparacionPCO estadoFinalizado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.FINALIZADO);
 				historicoNuevoRegistro.setEstadoPreparacion(estadoFinalizado);
 				historicoNuevoRegistro.setFechaInicio(new Date());
 				genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);

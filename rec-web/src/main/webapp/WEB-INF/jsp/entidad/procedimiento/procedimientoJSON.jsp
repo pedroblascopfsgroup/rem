@@ -18,6 +18,7 @@
   <json:property name="derivacionAceptada" value="${procedimiento.derivacionAceptada}" />
   <json:property name="nombreProcedimiento" value="${procedimiento.nombreProcedimiento}" />
   <json:property name="hayPrecontencioso" value="${precontencioso.id != null}" />
+  <json:property name="estadoPrecontencioso" value="${precontencioso.estadoActualCodigo}" />
   <json:object name="toolbar">
 	  <json:property name="fechaCreacionFormateada" value="${procedimiento.asunto.fechaCreacionFormateada}" />
 	  <json:property name="estadoItinerario" value="${procedimiento.asunto.estadoItinerario.descripcion}" />

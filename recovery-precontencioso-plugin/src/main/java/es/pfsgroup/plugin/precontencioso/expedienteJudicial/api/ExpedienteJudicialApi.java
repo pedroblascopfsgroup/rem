@@ -32,8 +32,8 @@ public interface ExpedienteJudicialApi {
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID)
 	ProcedimientoPCODTO getPrecontenciosoPorProcedimientoId(Long idProcedimiento);
 
-	List<ProcedimientoPcoGridDTO> busquedaProcedimientosPco(FiltroBusquedaProcedimientoPcoDTO dto);
-	
 	@BusinessOperationDefinition(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
 	boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);
+
+	List<ProcedimientoPcoGridDTO> busquedaProcedimientosPco(FiltroBusquedaProcedimientoPcoDTO dto);
 }

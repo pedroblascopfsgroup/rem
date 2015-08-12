@@ -22,6 +22,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -96,6 +97,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@OneToMany(mappedBy = "procedimientoPCO", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "PCO_PRC_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@OrderBy(clause = "PCO_PRC_HEP_FECHA_INCIO DESC")
 	private List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc;
 
 	@Column(name = "SYS_GUID")
@@ -111,21 +113,28 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	 * Devuelve el <DDEstadoPreparacionPCO> en el que se encuentra el procedimiento
 	 */
 	public DDEstadoPreparacionPCO getEstadoActual () {
-		DDEstadoPreparacionPCO estadoActual = null;
-
+		HistoricoEstadoProcedimientoPCO historico = getEstadoActualByHistorico();
+		if(historico != null) {
+			return historico.getEstadoPreparacion();
+		}
+		return null;
+	}
+	
+	public HistoricoEstadoProcedimientoPCO getEstadoActualByHistorico() {
+		HistoricoEstadoProcedimientoPCO estadoActual = null;
 		// Recuperar estado actual por fecha inicio mas actual
 		Date fechaMasActual = null;
 		for (HistoricoEstadoProcedimientoPCO historicoEstado : estadosPreparacionProc) {
 			if (fechaMasActual == null || fechaMasActual.before(historicoEstado.getFechaInicio())) {
-				fechaMasActual = historicoEstado.getFechaInicio();
-				if (historicoEstado != null) {
-					estadoActual = historicoEstado.getEstadoPreparacion();
+				if( historicoEstado.getEstadoPreparacion() != null) {
+					fechaMasActual = historicoEstado.getFechaInicio();
+					estadoActual = historicoEstado;
 				}
 			}
 		}
-
 		return estadoActual;
 	}
+
 
 	/*
 	 * GETTERS & SETTERS

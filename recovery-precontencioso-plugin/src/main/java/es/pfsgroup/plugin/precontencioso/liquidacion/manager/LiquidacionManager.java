@@ -7,16 +7,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.contrato.dao.ContratoDao;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.expediente.model.Expediente;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.assembler.LiquidacionAssembler;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
+import es.pfsgroup.plugin.precontencioso.liquidacion.dto.InclusionLiquidacionProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.api.ProcedimientoApi;
 
 @Service
 public class LiquidacionManager implements LiquidacionApi {
@@ -28,7 +39,14 @@ public class LiquidacionManager implements LiquidacionApi {
 	private GestorDespachoDao gestorDespachoDao;
 
 	@Autowired
+	private ContratoDao contratoDao;
+	
+	@Autowired
+	private ProcedimientoPCODao procedimientoPCODao;
+	
+	@Autowired
 	private ApiProxyFactory proxyFactory;
+
 
 	@Override
 	public List<LiquidacionDTO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
@@ -135,4 +153,49 @@ public class LiquidacionManager implements LiquidacionApi {
 
 		return gestorDespacho;
 	}
+	
+    /**
+	 * Incluye los contratos al expediente.
+	 * 
+	 * @param dto
+	 *            DtoExclusionContratoExpediente
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO)
+	@Transactional(readOnly = false)
+    public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto){
+		ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(dto.getIdProcedimiento());
+		if(prcPCO != null) {
+			List<Contrato> contratos = contratoDao.getContratosById(dto.getContratos());
+	    	Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(dto.getIdProcedimiento());
+			
+			if ((!Checks.estaVacio(contratos)) && procedimiento != null) {
+				Expediente expediente = procedimiento.getAsunto().getExpediente();
+				if (expediente != null) {
+					for (Contrato contrato : contratos) {
+						LiquidacionPCO liquidacion = settearLiquidacionPCO(procedimiento, prcPCO, contrato); 
+						liquidacionDao.save(liquidacion);
+					}
+				}
+				HibernateUtils.merge(procedimiento);
+			}
+		}
+    }
+	
+	//TODO
+	private LiquidacionPCO settearLiquidacionPCO(Procedimiento procedimiento, ProcedimientoPCO prcPCO, Contrato contrato){
+		LiquidacionPCO liquidacion = new LiquidacionPCO();
+		
+		DDEstadoLiquidacionPCO estadoCalculada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CALCULADA);
+		GestorDespacho apoderado = gestorDespachoDao.getGestorDespachoPorUsuarioyDespacho(1L,1L);
+		
+		liquidacion.setApoderado(apoderado);
+		liquidacion.setProcedimientoPCO(prcPCO);
+		liquidacion.setEstadoLiquidacion(estadoCalculada);
+		liquidacion.setContrato(contrato);
+		
+		return liquidacion;
+	}
+
 }

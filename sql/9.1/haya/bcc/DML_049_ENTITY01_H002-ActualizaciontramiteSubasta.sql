@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Nacho arcos
---## FECHA_CREACION=20150812
+--## FECHA_CREACION=20150811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-481-484
@@ -142,7 +142,7 @@ BEGIN
 					',null FROM DUAL';
           
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-            DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_TIPO_TAP(2)||''','''||TRIM(V_TMP_TIPO_TAP(9))||'''');
+            DBMS_OUTPUT.PUT_LINE('INSERTANDO: ');
             EXECUTE IMMEDIATE V_MSQL;
             
        ELSE

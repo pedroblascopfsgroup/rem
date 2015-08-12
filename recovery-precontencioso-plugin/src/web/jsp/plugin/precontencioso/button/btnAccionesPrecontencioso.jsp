@@ -55,7 +55,7 @@ new Ext.Button({
 						,error: function(){
 							Ext.MessageBox.show({
 					            title: 'Guardado',
-					            msg: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.resetCDD.avisoKO" text="**Ha ocurrido un error al reiniciar las propuestas. Consulte con soporte" />',
+					            msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
 					            width:300,
 					            buttons: Ext.MessageBox.OK
 					        });

@@ -878,7 +878,7 @@ var formBusquedaSubastas=function(){
 	
 	var cfg={
 		title:'<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.tituloGrid" text="Subastas"/>'
-		,style:'padding-bottom:10px; padding-right:15px;'
+		,style:'padding-bottom:10px; padding-right:20px;'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_bienes'
 		,collapsible : true

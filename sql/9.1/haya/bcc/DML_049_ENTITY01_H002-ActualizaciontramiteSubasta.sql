@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Nacho arcos
---## FECHA_CREACION=20150813
+--## FECHA_CREACION=20150815
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-481-484
@@ -71,14 +71,14 @@ BEGIN
     
     /*CMREC-484 */
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_DECISION = ''valores[''''H002_DictarInstruccionesSubasta''''][''''comboResultado''''] == ''''SUS'''' ? ''''Suspender'''' : ''''NoSuspender'''' '' ' ||
+			  ' SET TAP_SCRIPT_DECISION = ''valores[''''H002_DictarInstruccionesSubasta''''][''''comboSuspender''''] == DDSiNo.SI ? ''''Suspender'''' : ''''NoSuspender'''' '' ' ||
 			  ' WHERE TAP_CODIGO = ''H002_DictarInstruccionesSubasta''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_DictarInstruccionesSubasta actualizada.');
     
      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_SCRIPT_DECISION = ''valores[''''H004_DictarInstruccionesSubasta''''][''''comboResultado''''] == ''''SUS'''' ? ''''Suspender'''' : ''''NoSuspender'''' '' ' ||
+			  ' SET TAP_SCRIPT_DECISION = ''valores[''''H004_DictarInstruccionesSubasta''''][''''comboSuspender''''] == DDSiNo.SI ? ''''Suspender'''' : ''''NoSuspender'''' '' ' ||
 			  ' WHERE TAP_CODIGO = ''H004_DictarInstruccionesSubasta''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

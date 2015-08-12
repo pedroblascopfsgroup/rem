@@ -295,8 +295,6 @@
       <label x="-7" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="1177" y="308" width="132" height="36"/>
-  <node name="Fin2" x="23" y="643" width="132" height="36"/>
   <node name="H001_DemandaCertificacionCargasDecision" x="247" y="84" width="245" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -305,4 +303,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="Fin" x="1177" y="308" width="132" height="36"/>
+  <node name="Fin2" x="23" y="643" width="132" height="36"/>
 </root-container>

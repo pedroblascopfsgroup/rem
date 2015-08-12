@@ -19,6 +19,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEstadoPreparacionPCO implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = 8837420496603055594L;
+	
+    public static final String ESTADO_PREPARACION = "PR";
+    public static final String ESTADO_SUBSANAR = "SU";
+    public static final String ESTADO_SUBSANAR_POR_CAMBIO = "SC";
+    public static final String ESTADO_FINALIZADO = "FI";
 
 	@Id
 	@Column(name = "DD_PCO_PEP_ID")

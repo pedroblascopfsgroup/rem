@@ -15,9 +15,17 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoP
 public class ExpedienteJudicialController {
 
 	private static final String JSON_HISTORICO_ESTADOS = "plugin/precontencioso/historicoEstados/json/historicoEstadosJSON";
+	private static final String JSON_RESULTADO_FINALIZAR_PREPARACION = "plugin/precontencioso/acciones/json/resultadoFinalizarPreparacionJSON";
 
 	@Autowired
 	ExpedienteJudicialApi expedienteJudicialApi;
+	
+	@RequestMapping
+	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		boolean finalizado = expedienteJudicialApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
+		model.put("finalizado", finalizado);
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+	}	
 
 	@RequestMapping
 	public String getHistoricoEstadosPorProcedimientoId(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {

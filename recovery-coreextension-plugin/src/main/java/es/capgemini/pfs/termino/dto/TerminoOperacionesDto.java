@@ -1,6 +1,7 @@
 package es.capgemini.pfs.termino.dto;
 
-import java.sql.Date;
+
+import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -35,8 +36,8 @@ public class TerminoOperacionesDto extends WebDto{
     private String relacionCesionarioTitular;
     private Float solvenciaCesionario;
     private Float importeCesion;
-    private Date fechaPago;
-    private Date fechaPlanPago;
+    private String fechaPago;
+    private String fechaPlanPago;
     private Integer frecuenciaPlanpago;
     private Integer numeroPagosPlanpago;
     private Integer importePlanpago;
@@ -238,19 +239,19 @@ public class TerminoOperacionesDto extends WebDto{
 		this.importeCesion = importeCesion;
 	}
 
-	public Date getFechaPago() {
+	public String getFechaPago() {
 		return fechaPago;
 	}
 
-	public void setFechaPago(Date fechaPago) {
+	public void setFechaPago(String fechaPago) {
 		this.fechaPago = fechaPago;
 	}
 
-	public Date getFechaPlanPago() {
+	public String getFechaPlanPago() {
 		return fechaPlanPago;
 	}
 
-	public void setFechaPlanPago(Date fechaPlanPago) {
+	public void setFechaPlanPago(String fechaPlanPago) {
 		this.fechaPlanPago = fechaPlanPago;
 	}
 

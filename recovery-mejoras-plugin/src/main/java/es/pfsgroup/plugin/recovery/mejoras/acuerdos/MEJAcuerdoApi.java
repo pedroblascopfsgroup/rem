@@ -34,7 +34,8 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_BIENES_TERMINO = "mejacuerdo.obtenerListadoBienesAcuerdoByTeaId";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_ACUERDO = "mejacuerdo.deleteTerminoAcuerdo";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_CONTRATO = "mejacuerdo.deleteTerminoContrato";	
-	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_BIEN = "mejacuerdo.deleteTerminoBien";		
+	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_BIEN = "mejacuerdo.deleteTerminoBien";	
+	public static final String BO_ACUERDO_MGR_GET_TERMINO_ACUERDO = "mejacuerdo.getTerminoAcuerdo";	
 	
     
 	/**
@@ -93,5 +94,8 @@ public interface MEJAcuerdoApi {
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_TERMINO_BIEN)
 	@Transactional(readOnly = false)
 	public void deleteTerminoBien(TerminoBien tb); 	
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_TERMINO_ACUERDO)
+	public TerminoAcuerdo getTerminoAcuerdo(Long idTermino);    
 
 }

@@ -286,6 +286,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         	dtoTerAcu.setComisiones(termino.getComisiones());
         	dtoTerAcu.setImporte(termino.getImporte());
         	dtoTerAcu.setTipoAcuerdo(termino.getTipoAcuerdo());
+        	dtoTerAcu.setSubTipoAcuerdo(termino.getSubtipoAcuerdo());
         	
         	List<TerminoContrato> listaContratosTermino = (List<TerminoContrato>) genericDao.getList(TerminoContrato.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", termino.getId()));
         	ArrayList<EXTContrato> listaContratos = new ArrayList<EXTContrato>();
@@ -466,6 +467,11 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @Transactional(readOnly = false)
     public void deleteTerminoBien(TerminoBien tb) {
     	genericDao.deleteById(TerminoBien.class, tb.getId());
-    }	  	 
+    }
+
+    @BusinessOperation(BO_ACUERDO_MGR_GET_TERMINO_ACUERDO)
+	public TerminoAcuerdo getTerminoAcuerdo(Long idTermino) {
+    	return genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idTermino));
+	}	  	 
 
 }

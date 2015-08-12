@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
@@ -50,6 +52,7 @@ public class MEJAcuerdoController {
 	static final String JSON_LIST_SUB_TIPOS_ACUERDO  ="plugin/mejoras/acuerdos/subtiposAcuerdoJSON";
 	static final String JSON_LIST_TIPO_PRODUCTO  ="plugin/mejoras/acuerdos/tipoProductoJSON";	
 	static final String JSON_LISTADO_BIENES_ACUERDO = "plugin/mejoras/acuerdos/listadoBienesAcuerdoJSON";	
+	static final String JSON_LIST_CAMPOS_DINAMICOS_TERMINOS_POR_TIPO_ACUERDO  ="plugin/mejoras/acuerdos/camposTerminosPorTipoAcuerdoJSON";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -117,6 +120,28 @@ public class MEJAcuerdoController {
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	
 	
+	
+	/**
+	 * 
+	 * Muestra el detalle de terminos
+	 * 
+	 */
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, @RequestParam(value = "idAsunto", required = true) Long idAsunto) {
+		
+		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
+		map.put("termino", termino);
+		
+		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
+		
+		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
+		map.put("asunto", asunto);
+		
+		return JSP_ALTA_TERMINO_ACUERDO;
+	}
+	
 	/**
 	 * Obtener la lista de tipos de acuerdo
 	 * 
@@ -129,6 +154,19 @@ public class MEJAcuerdoController {
 		model.put("data", list);
 		return JSON_LIST_TIPO_ACUERDO;
 	}	
+	
+	/**
+	 * Obtener la lista de los campos segun el tipo de acuerdo
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping
+	public String getCamposDinamicosTerminosPorTipoAcuerdo(ModelMap model, Long idTipoAcuerdo){
+		
+		model.put("operacionesPorTipo", terminoOperacionesManager.getCamposOperacionesPorTipoAcuerdo(idTipoAcuerdo) );
+		return JSON_LIST_CAMPOS_DINAMICOS_TERMINOS_POR_TIPO_ACUERDO;
+	}
 	
 	
 	/**
@@ -162,10 +200,11 @@ public class MEJAcuerdoController {
 	 * 
 	 * @param model
 	 * @return
+	 * @throws ParseException 
 	 */
 	@SuppressWarnings("unchecked")	
 	@RequestMapping
-	public String crearTerminoAcuerdo(TerminoOperacionesDto termOpDto, WebRequest request, ModelMap model){
+	public String crearTerminoAcuerdo(TerminoOperacionesDto termOpDto, WebRequest request, ModelMap model) throws ParseException{
 		
 		TerminoAcuerdoDto taDTO = creaTerminoAcuerdoDTO(request);
 		
@@ -177,8 +216,11 @@ public class MEJAcuerdoController {
 		ta.setAcuerdo(acuerdo);
 		DDTipoAcuerdo tipoAcuerdo = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdTipoAcuerdo()));
 		ta.setTipoAcuerdo(tipoAcuerdo);
-		DDSubTipoAcuerdo subtipoAcuerdo = genericDao.get(DDSubTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdSubTipoAcuerdo()));
-		ta.setSubtipoAcuerdo(subtipoAcuerdo);
+		if(taDTO.getIdSubTipoAcuerdo()!=null){
+			DDSubTipoAcuerdo subtipoAcuerdo = genericDao.get(DDSubTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdSubTipoAcuerdo()));
+			ta.setSubtipoAcuerdo(subtipoAcuerdo);	
+		}
+		
 		DDTipoProducto tipoProducto = genericDao.get(DDTipoProducto.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdTipoProducto()));
 		ta.setTipoProducto(tipoProducto);
 		ta.setModoDesembolso(taDTO.getModoDesembolso());
@@ -195,6 +237,7 @@ public class MEJAcuerdoController {
 		
 		TerminoOperaciones terminooperaciones = terminoOperacionesManager.creaTerminoOperaciones(termOpDto);
 		terminooperaciones.setTermino(taSaved);
+		Auditoria.save(terminooperaciones);
 		terminoOperacionesManager.guardaTerminoOperaciones(terminooperaciones);
 		
 		// Creamos los contratos asociados al termino

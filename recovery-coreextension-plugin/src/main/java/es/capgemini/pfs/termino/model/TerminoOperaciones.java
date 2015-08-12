@@ -1,7 +1,7 @@
 package es.capgemini.pfs.termino.model;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -406,7 +406,6 @@ public class TerminoOperaciones implements Serializable, Auditable{
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-    
     
 
 }

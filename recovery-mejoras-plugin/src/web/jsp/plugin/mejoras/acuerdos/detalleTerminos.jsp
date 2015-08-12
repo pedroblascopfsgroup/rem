@@ -38,8 +38,9 @@ var crearTerminosAsuntos=function(){
   var terminosAcuerdoRecord = Ext.data.Record.create([
 	      {name : 'id' }
 		 ,{name : 'tipoAcuerdo'}
-		 ,{name : 'importe'}
-		 ,{name : 'comisiones'}
+		 ,{name : 'subTipoAcuerdo'}
+<!-- 		 ,{name : 'importe'} -->
+<!-- 		 ,{name : 'comisiones'} -->
 	 	 ,{name : 'idContrato'}
 		 ,{name : 'cc'}
 		 ,{name : 'tipo'}
@@ -62,8 +63,9 @@ var crearTerminosAsuntos=function(){
    var terminosAcuerdoCM = new Ext.grid.ColumnModel([
   	  {dataIndex: 'id', hidden:true, fixed:true }
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.tipoAcuerdo" text="**Tipo Acuerdo" />', dataIndex : 'tipoAcuerdo',width: 35}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.importe" text="**Importe" />', dataIndex : 'importe',width: 65}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.comisiones" text="**Comisiones" />', dataIndex : 'comisiones',width: 100}
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.subtipoAcuerdo" text="**Subtipo Acuerdo" />', dataIndex : 'subTipoAcuerdo',width: 35}
+<%--       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.importe" text="**Importe" />', dataIndex : 'importe',width: 65} --%>
+<%--       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.comisiones" text="**Comisiones" />', dataIndex : 'comisiones',width: 100} --%>
 	  ,{dataIndex: 'idContrato', hidden:true, fixed:true }      
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.codigoContrato" text="**C&oacute;digo contrato" />', dataIndex : 'cc',width: 75}
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.producto" text="**Producto" />', dataIndex : 'tipo',width: 75}
@@ -79,6 +81,8 @@ var crearTerminosAsuntos=function(){
             , contratosAsuntoRecord
         )
    });
+
+
    
   var terminosAcuerdoStore = page.getStore({
         flow: 'mejacuerdo/obtenerListadoTerminosAcuerdoByAcuId'
@@ -192,6 +196,7 @@ var crearTerminosAsuntos=function(){
 	      ]         
    });
    
+   
    var terminosAcuerdoGrid = app.crearGrid(terminosAcuerdoStore,terminosAcuerdoCM,{
          title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.titulo" text="**Terminos/Acuerdo" />'
          ,style:'padding : 5px'
@@ -201,7 +206,7 @@ var crearTerminosAsuntos=function(){
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
          ,bbar : [
 	        btnBorrarTermino
-	      ]                  
+	      ]   
    }); 
    
    terminosAcuerdoGrid.on('rowclick', function(grid, rowIndex, e){
@@ -214,6 +219,34 @@ var crearTerminosAsuntos=function(){
 			btnBorrarTermino.disable();
 		}
 	});
+	
+	terminosAcuerdoGrid.on('rowdblclick', function(grid, rowIndex, e){
+		var rec = grid.getStore().getAt(rowIndex);
+		idTerminoSeleccionado = rec.get('id');
+
+     	   	var w = app.openWindow({
+	          flow : 'mejacuerdo/openDetalleTermino'
+	          ,closable:false
+	          ,width: 900
+	          ,autoHeight: true
+	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
+    			  ,params:{
+     				  id:idTerminoSeleccionado,
+     				  idAsunto:panel.getAsuntoId()
+<!--      				  contratosIncluidos: contratosIncluidos, -->
+<!--      				  idAcuerdo : idAcuerdo -->
+     				}
+	       });
+	       w.on(app.event.DONE, function(){
+	          w.close();
+			  terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});			          
+	       });
+	       w.on(app.event.CANCEL, function(){ 
+	       		w.close();
+	       });
+		
+	});
+	
    
    panelTerminos.add(terminosAcuerdoGrid);
    panelTerminos.terminosAcuerdoGrid=terminosAcuerdoGrid;

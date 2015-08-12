@@ -27,10 +27,21 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public static final String CONST_TIPO_PROCEDIMIENTO_POSESION = "POSESION";
 	public static final String CONST_TIPO_PROCEDIMIENTO_GESTION_LLAVES = "GESTION-LLAVES";
 	
+	public static final String ADJUDICACION_TAREA_CONFIRMAR_TESTIMONIO = "ConfirmarTestimonio";
+	public static final String SUBASTA_BANKIA_TAREA_CONTABILIZAR_CDD = "ContabilizarCierreDeuda";
+	
+	public static final String SUBASTA_BANKIA = "BANKIA";
+	public static final String SUBASTA_SAREB = "SAREB";
+	
 	private Set<String> tareasStopValidarLotesSubasta;
 	private Long nivelZonaOficinaGestoraEnInformes;
 	private List<String> tiposPrcAdjudicados;
 	private Map<String, String> mapaTiposPrc;
+	private Map<String, String> tareasCierreDeuda;
+	private Map<String, String> mapaSubastas;
+	private List<String> codigosSubastaValidacion;
+	private List<String> codigosSubastas;
+	private String comboPostoresCelebracionSubasta;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -147,20 +158,20 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		String observacionesComite = null;
 		String fechaDecision = null;
 		for (EXTTareaExternaValor tareaExternaValor : listadoTareaValor) {
-			if (tareaExternaValor.getNombre().equals("observaciones")) {
+			if ("observaciones".equals(tareaExternaValor.getNombre())) {
 				observacionesComite = tareaExternaValor.getValor();
 			}
-			if (tareaExternaValor.getNombre().equals("fechaDecision")) {
+			if ("fechaDecision".equals(tareaExternaValor.getNombre())) {
 				fechaDecision = tareaExternaValor.getValor();
 			}
 		}
 		
 		Date fecha = new Date();
 		try {
-		if (!Checks.esNulo(fechaDecision)) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			fecha = sdf.parse(fechaDecision);
-		}
+			if (!Checks.esNulo(fechaDecision)) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				fecha = sdf.parse(fechaDecision);
+			}
 		} catch (ParseException parseEx) {
 			// No hace nada, coge la fecha de hoy
 		}
@@ -175,8 +186,50 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		
 		DDEstadoLoteSubasta estadoLote = (DDEstadoLoteSubasta)diccionarioApi.dameValorDiccionarioByCod(DDEstadoLoteSubasta.class, codEstado);
 		lote.setObservacionesComite(observacionesComite);
-		lote.setEstado(estadoLote);;
+		lote.setEstado(estadoLote);
 		lote.setFechaEstado(fecha);
 	}
 	
+	@Override
+	public Map<String, String> getTareasCierreDeuda() {
+		return tareasCierreDeuda;
+	}
+
+	public void setTareasCierreDeuda(Map<String, String> tareasCierreDeuda) {
+		this.tareasCierreDeuda = tareasCierreDeuda;
+	}
+
+	public List<String> getCodigosSubastaValidacion(){
+		return codigosSubastaValidacion; 
+	}
+	
+	public void setCodigosSubastaValidacion( List<String> codigosSubastaValidacion ){
+		this.codigosSubastaValidacion = codigosSubastaValidacion; 
+	}
+	
+	public List<String> getCodigosSubastas(){
+		return codigosSubastas;
+	}
+	
+	public void setCodigosSubastas(List<String> codigosSubastas){
+		this.codigosSubastas = codigosSubastas ;
+	}
+	
+	@Override
+	public String getComboPostoresCelebracionSubasta() {
+		return comboPostoresCelebracionSubasta;
+	}
+	
+	public void setComboPostoresCelebracionSubasta(String comboPostoresCelebracionSubasta) {
+		this.comboPostoresCelebracionSubasta = comboPostoresCelebracionSubasta;
+	}
+	
+	@Override
+	public Map<String, String> getMapaSubastas() {
+		return mapaSubastas;
+	}
+	
+	public void setMapaSubastas(Map<String, String> mapaSubastas) {
+		this.mapaSubastas = mapaSubastas;
+	}
 }

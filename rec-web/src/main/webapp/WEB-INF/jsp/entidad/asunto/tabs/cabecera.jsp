@@ -1,4 +1,4 @@
-﻿﻿﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@page import="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -24,7 +24,7 @@
 			return 'No';
 		}
 	};
-
+	
 	var labelStyle='font-weight:bolder;width:150px';
   	var asunto = label('asunto', '<s:message code="asunto.tabcabecera.asunto" text="**Asunto"/>');
   	var codigoAsunto = label('codigoAsunto','<s:message code="asuntos.listado.codigo" text="**Codigo"/>');
@@ -41,6 +41,9 @@
   	var comite = label('comite','<s:message code="comite.edicion.comite" text="**Comite"/>');
   	var tipoAsunto = label('tipoAsunto','<s:message code="asunto.tabcabecera.tipo.asunto" text="**Tipo Asunto"/>');
 	var provision = label('provision', '<s:message code="asunto.tabcabecera.provision" text="**Provisión"/>');
+	var titulizada = label('titulizada','<s:message code="asunto.tabcabecera.titulizada" text="**Titulizada*"/>')
+  	var fondo = label('fondo','<s:message code="asunto.tabcabecera.fondo" text="**Fondo"/>')
+        var msgErrorEnvioCDD = new Ext.form.Label({text : '', id : 'entidad-asunto-msgErrorEnvioCDD', style: 'color:red; font-size:smaller' });
   	
 	// formulario para editar el nombre del asunto.
 		
@@ -88,20 +91,6 @@
         panelNombreAsunto.autoHeight = true;
         panelNombreAsunto.style='margin:0px';   
 			
-	var DatosFieldSet = new Ext.form.FieldSet({
-		autoHeight:'false'
-		,style:'padding:0px'
-		,border:true
-		,layout : 'table'
-		,layoutConfig:{	columns:2 }
-		,width:785
-		,title:'<s:message code="asunto.tabcabecera.fieldset.titulo" text="**Datos Principales"/>'
-		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-		,items : [ { items:[ panelNombreAsunto,codigoAsunto,fecha,estado,expediente,comite,tipoAsunto <sec:authorize ifAllGranted="PUEDE_VER_PROVISIONES">,provision</sec:authorize>]}
-				  ,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador]}
-				 ]
-	});	
-	
 	btnEditarNombre.hide()
 	
 	<sec:authorize ifAllGranted="ROLE_EDIT_CABECERA_ASUNTO">
@@ -123,10 +112,11 @@
 		,items : [
 				  
 				  { items:[ panelNombreAsunto,codigoAsunto,fecha,estado,expediente,comite,tipoAsunto<sec:authorize ifAllGranted="PUEDE_VER_PROVISIONES">,provision</sec:authorize>]}
-				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador]}
+				,{ items:[ codigoExterno,propiedadAsunto,gestionAsunto,despacho,gestor,supervisor,procurador<sec:authorize ifAllGranted="PUEDE_VER_TITULZADA">,titulizada,fondo</sec:authorize><sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">,msgErrorEnvioCDD</sec:authorize>]}
 		 	 
 		]
 	});	
+
 	 var procedimiento = Ext.data.Record.create([
          'id'
          ,'idGrid'
@@ -222,6 +212,24 @@
     		app.abreProcedimiento(id, nombre_procedimiento);
     	}
     });
+    
+    var reiniciarKOCDD =  function() {
+           Ext.Ajax.request({
+                   url: page.resolveUrl('extasunto/getMsgErrorEnvioCDDCabecera')
+                   ,method: 'POST'
+                   ,params:{
+                              idAsunto:panel.getAsuntoId()
+                           }
+                   ,success: function (result, request){
+                          msgErrorEnvioCDD.setText(''); 
+                           var r = Ext.util.JSON.decode(result.responseText);
+                           var h = r.okko == 'NoCDDError' ? '': r.okko;
+                           msgErrorEnvioCDD.setText(h);
+                   }
+           });
+   }
+
+	
 	
 	var panel = new Ext.Panel({
 		title:'<s:message code="asunto.tabcabecera.titulo" text="**Cabecera"/>'
@@ -259,14 +267,19 @@
 		entidad.setLabel("expediente", cabecera.expediente);
 		entidad.setLabel("comite", cabecera.comite.nobmre);
 		entidad.setLabel("provision", sinoRender(data.toolbar.provision));
-		
+		entidad.setLabel("titulizada", cabecera.titulizada);
+		entidad.setLabel("fondo", cabecera.fondo);
+		entidad.setLabel("cdd", (cabecera.errorEnvioCDD != '' ? '<s:message code="plugin.mejoras.asuntos.cabecera.errorEnvioCDDValidacionesPre" text="**Este asunto tiene un error de envío a CDD" /> '+cabecera.errorEnvioCDD : ''));
+                entidad.setLabel("msgErrorEnvioCDD", cabecera.msgErrorEnvioCDD == 'NoCDDError' ? '': cabecera.msgErrorEnvioCDD);
 		
 		panel.getAsuntoId = function(){
 			return entidad.get("data").id;
 		}
 		entidad.cacheOrLoad(data, panel.procedimientosGrid.getStore(), { id : data.id } );
 		procedimientosStore.webflow({id:data.id});
-
+		
+		reiniciarKOCDD();
+		
 		// Muestra botones de ficha global o no
 		var buttonInformeFGConcurso = Ext.getCmp('btn-exportar-informes-asunto-fg-concurso');
 		var buttonInformeFGLitigio = Ext.getCmp('btn-exportar-informes-asunto-fg-litigio');
@@ -283,3 +296,5 @@
 
 	return panel;
 })
+
+

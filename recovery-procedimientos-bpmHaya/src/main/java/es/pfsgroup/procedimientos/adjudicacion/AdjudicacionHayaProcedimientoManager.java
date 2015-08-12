@@ -57,7 +57,7 @@ public class AdjudicacionHayaProcedimientoManager {
 	public String validarAdjuntoSareb(Long prcId)  {
 	
 		String tipoAdj = new String();
-		String tipoTextoValidacion = new String();
+		String tipoTextoValidacion = null;
 		String prcPadre = new String();
 
 		Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId);

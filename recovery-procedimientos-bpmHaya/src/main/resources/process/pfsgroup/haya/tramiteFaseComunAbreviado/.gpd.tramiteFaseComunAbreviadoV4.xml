@@ -92,7 +92,7 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-32" y="-28"/>
       <bendpoint w1="194" h1="1" w2="-206" h2="367"/>
     </edge>
     <edge>
@@ -210,7 +210,16 @@
   </node>
   <node name="H009_BPMhaya_tramiteElevacionPropSarebLitigiosA" x="561" y="52" width="383" height="36">
     <edge>
-      <label x="-167" y="-78"/>
+      <label x="-113" y="-71"/>
+    </edge>
+    <edge>
+      <label x="-174" y="-238"/>
+      <bendpoint w1="458" h1="3" w2="147" h2="-501"/>
+      <bendpoint w1="459" h1="501" w2="148" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="-32" y="-8"/>
+      <bendpoint w1="15" h1="196" w2="-296" h2="-308"/>
     </edge>
   </node>
   <node name="forkTrasAceptacion" x="685" y="-45" width="136" height="24">
@@ -221,7 +230,7 @@
       <label x="-33" y="-7"/>
     </edge>
   </node>
-  <node name="Decision" x="990" y="334" width="132" height="36">
+  <node name="H009_ElevacionDecision" x="990" y="334" width="170" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -236,9 +245,17 @@
   </node>
   <node name="H009_BPMhaya_tramiteElevacionPropSarebLitigiosB" x="815" y="1432" width="353" height="36">
     <edge>
-      <label x="-168" y="296"/>
+      <label x="-109" y="317"/>
       <bendpoint w1="125" h1="-108" w2="67" h2="696"/>
       <bendpoint w1="127" h1="-637" w2="69" h2="167"/>
+    </edge>
+    <edge>
+      <label x="-26" y="-30"/>
+    </edge>
+    <edge>
+      <label x="-56" y="277"/>
+      <bendpoint w1="153" h1="-51" w2="81" h2="825"/>
+      <bendpoint w1="159" h1="-658" w2="87" h2="218"/>
     </edge>
   </node>
   <node name="H009_ContactarDeudor" x="665" y="384" width="200" height="36">
@@ -256,4 +273,9 @@
   </node>
   <node name="Fin" x="1012" y="556" width="103" height="36"/>
   <node name="Fin2" x="17" y="596" width="132" height="36"/>
+  <node name="H009_SarebDecision" x="941" y="1277" width="155" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

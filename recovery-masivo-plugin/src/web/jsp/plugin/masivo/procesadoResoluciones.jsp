@@ -21,7 +21,6 @@ Ext.override(Ext.form.ComboBox, {
 
 Ext.override(Ext.form.ComboBox, {
 onViewClick : function(doFocus){
-		//debugger;
         var index = this.view.getSelectedIndexes()[0],
             s = this.store,
             r = s.getAt(index);
@@ -351,7 +350,6 @@ onViewClick : function(doFocus){
     		return false;
     	} else{
     		busquedaActiva = true;
-			//debugger;
 			//filtroAsunto.showLoadingText();
 			//filtroAsunto.list.show();
     	}
@@ -359,7 +357,6 @@ onViewClick : function(doFocus){
     });
     
     asuntosComboStore.on('load', function(store, records, options){
-    	//debugger;
     	//filtroAsunto.setDisabled(false);
     	//filtroAsunto.focus();
     	//return false;
@@ -392,7 +389,6 @@ onViewClick : function(doFocus){
         ,itemSelector: 'div.search-item'
         ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
         ,onSelect: function(record) {
-        //debugger;
         	filtroPlaza.setValue(record.data.plaza);
         	filtroJuzgado.setValue(record.data.juzgado);
         	filtroAuto.setValue(record.data.auto);
@@ -414,14 +410,12 @@ onViewClick : function(doFocus){
 			habilitaBotonesPopUp(false, false);
 			filtroAsunto.getStore().removeAll();
 			filtroAsunto.lastQuery = filtroAsunto.lastSelectionText;
-			//debugger;
          }
     });
     
     filtroAsunto.on('specialkey', function(field, event){
     	
 		if (event.getKey() == event.ENTER) {
-			//debugger;
 			var query = this.getValue();
 			if (query != null && query.length > 2 && query != this.lastQuery){
 				this.doQuery(query,true);
@@ -431,7 +425,6 @@ onViewClick : function(doFocus){
     });
     
     filtroAsunto.on('beforequery', function(queryEvent){
-    	//debugger;
     	//return false;
     });
     

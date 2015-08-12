@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteCertificacionCargasRevision" width="1080" height="786">
+<root-container name="haya_tramiteCertificacionCargasRevision" width="1283" height="851">
   <node name="Inicio" x="435" y="6" width="150" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -48,16 +48,12 @@
   </node>
   <node name="H030_SolicitarInformacionCargasAntDecision" x="370" y="357" width="286" height="36">
     <edge>
-      <label x="5" y="-16"/>
+      <label x="-24" y="-24"/>
+      <bendpoint w1="552" h1="51" w2="107" h2="-200"/>
+      <bendpoint w1="555" h1="254" w2="110" h2="3"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="Decision 1" x="101" y="356" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="0" h1="366" w2="-421" h2="1"/>
     </edge>
   </node>
   <node name="H030_RegistrarInformacionCargasAnt" x="378" y="431" width="264" height="36">
@@ -77,7 +73,7 @@
       <bendpoint w1="204" h1="-111" w2="201" h2="55"/>
     </edge>
   </node>
-  <node name="Decision 2" x="890" y="608" width="132" height="36">
+  <node name="H030_CertificacionDecision" x="861" y="608" width="194" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="0" h1="114" w2="337" h2="-1"/>

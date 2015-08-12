@@ -16,6 +16,11 @@
 			<json:property name="fechaHasta">
 				<fwk:date  value="${gah.fechaHasta}" />
 			</json:property>
+			<json:property name="tipoVia" value="${gah.gestor.despachoExterno.tipoVia}" />
+			<json:property name="domicilio" value="${gah.gestor.despachoExterno.domicilio}" />
+			<json:property name="domicilioPlaza" value="${gah.gestor.despachoExterno.domicilioPlaza}" />
+			<json:property name="telefono1" value="${gah.gestor.despachoExterno.telefono1}" />
+			<json:property name="email" value="${gah.gestor.usuario.email}" />
 		</json:object>
 	</json:array>
 </fwk:json>

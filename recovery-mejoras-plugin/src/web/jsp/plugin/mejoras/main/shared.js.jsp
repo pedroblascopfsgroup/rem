@@ -141,6 +141,9 @@ app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_MARCADO = '<fwk:const value="es.capgem
 app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK" />';
 app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO" />';
 
+app.categoriaSubTipoTarea={};
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
+
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -185,6 +188,7 @@ app.codigoAcuerdoRechazado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.D
 app.codigoAcuerdoCancelado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CANCELADO" />';
 app.codigoAcuerdoFinalizado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_FINALIZADO" />';
 app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ENVIADO" />';
+
 
 /**
  * Abre una pestaña con la información del cliente
@@ -1281,7 +1285,7 @@ app.crearGrid=	function(myStore,columnModel, config){
 		if (config.plugins) cfg.plugins=config.plugins;
 		if (config.cls) cfg.cls=config.cls;
 
-		//implementa el tooltip para ver el contenido de las celdas
+		//implementa el tooltip para ver el contenido de las celdas si tienen valor
 		cfg.onRender = function() {
         	Ext.grid.GridPanel.prototype.onRender.apply(this, arguments);
         	this.addEvents("beforetooltipshow");
@@ -1308,7 +1312,7 @@ app.crearGrid=	function(myStore,columnModel, config){
 			            	this.fireEvent("beforetooltipshow", this, row, cell, rowData);
 			            }
 			            this.lastRowData = rowData;
-			            if (!rowData) return false;
+			            if (!rowData || Ext.isEmpty(rowData.trim())) return false;
 	        		},
 	        		scope: this
 	        	}
@@ -1407,6 +1411,7 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
 
 			            var store = this.getStore();
 			            var row = v.findRowIndex(qt.baseTarget);
+			            if (row===false || row===-1) return;
 			            var cell = v.findCellIndex(qt.baseTarget);
 			            if (cell===false) return;
 			            var field = this.getColumnModel().config[cell].dataIndex;
@@ -1418,7 +1423,7 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
 			            	this.fireEvent("beforetooltipshow", this, row, cell, rowData);
 			            }
 			            this.lastRowData = rowData;
-			            if (!rowData) return false;
+			            if (!rowData || Ext.isEmpty(rowData.trim())) return false;
 	        		},
 	        		scope: this
 	        	}
@@ -1428,7 +1433,6 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
         cfg.listeners = {
 			render: function(g) {
 			g.on("beforetooltipshow", function(grid, row, col, rowData) {
-				//debugger;
 				if (grid.colModel.config[col].tooltipInstruccion!=null){
 				}else {
 					grid.tooltip.body.update(rowData);
@@ -1658,4 +1662,61 @@ app.promptPw=function(title,msg,handler){
 	var win = new Ext.Window(cfg);
 	win.show();	
 }
+
+/* -------------------------------------------------------------------------------------------------------
+* ESPACIO PARA AGRUPAR LOS POSIBLES OVERRIDES DEL CORE DE EXTJS PARA SOLUCIONAR POSIBLES BUGS O
+* AÑADIR FUNCIONALIDADES NUEVAS.
+*
+* FIXME En caso de incrementarse el número de overrides se puede plantear crear una clase overrides.js que los contenga
+*		 
+* Overrides members of the specified `target` with the given values.
+*
+* If the `target` is a function, it is assumed to be a constructor and the contents
+* of `overrides` are applied to its `prototype` using {@link Ext#apply Ext.apply}.
+* 
+* If the `target` is an instance of a class created using {@link #define},
+* the `overrides` are applied to only that instance. In this case, methods are
+* specially processed to allow them to use {@link Ext.Base#callParent}.
+* 
+*      var panel = new Ext.Panel({ ... });
+*      
+*      Ext.override(panel, {
+*          initComponent: function () {
+*              // extra processing...
+*              
+*              this.callParent();
+*          }
+*      });
+*
+* If the `target` is none of these, the `overrides` are applied to the `target`
+* using {@link Ext#apply Ext.apply}.
+*
+* Please refer to {@link Ext#define Ext.define} for further details.
+*
+* @param {Object} target The target to override.
+* @param {Object} overrides The properties to add or replace on `target`. 
+* @method override*
+*
+* -------------------------------------------------------------------------------------------------------*/
+
+
+	Ext.override(Ext.grid.ColumnModel, {
+			 /**
+		     * Devuelve true si la columna especificada es sortable.
+		     * Se sobreescribe para evitar errores en el caso de recibir un indice 
+		     * fuera de rango ( en algunos casos llega a esta funcin el valor -1)
+		     * @param {Number} col The column index
+		     * @return {Boolean}
+		     */
+		    isSortable : function(col) {
+		    
+		    	var column = this.config[col];
+		    	if (Ext.isEmpty(column)) {
+		    		return false
+		    	} else {
+		        	return !!column.sortable;
+		        }
+		    }
+	});
+
 

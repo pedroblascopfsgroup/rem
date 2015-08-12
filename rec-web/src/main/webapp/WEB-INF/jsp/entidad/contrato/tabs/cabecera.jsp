@@ -143,6 +143,7 @@
  	var impuestos = label('impuestos','<s:message code="contrato.consulta.tabcabecera.impuestos" text="**Impuestos"/>');
  	var provisionPorcentaje = label('provisionPorcentaje','<s:message code="contrato.consulta.tabcabecera.provisionPorcentaje" text="**% Provisión"/>');
  	
+ 	
  
  //OTROS DATOS
 	var extra1    = label('extra1','<s:message code="contrato.consulta.tabcabecera.extra1" text="**Saldo muy dudoso"/>');
@@ -179,6 +180,11 @@
 	var contratoAnt = label('contratoAnt','<s:message code="contrato.consulta.tabcabecera.contratoAnt" text="**N&ordm; contrato anterior"/>');
 	var motivoRenum = label('motivoRenum','<s:message code="contrato.consulta.tabcabecera.motivoRenum" text="**Motivo Renumeración"/>');
  
+ 	var marca = label('marca','<s:message code="contrato.consulta.tabcabecera.marca" text="**Marca de la operación"/>');
+ 	var motivoMarca = label('motivoMarca','<s:message code="contrato.consulta.tabcabecera.motivoMarca" text="**Motivo de la marca"/>');
+ 	var indicador = label('indicador','<s:message code="contrato.consulta.tabcabecera.indicador" text="**Indicador de nómina/pensión"/>');
+ 	var contadorReincidencia = label('contadorReincidencia','<s:message code="contrato.consulta.tabcabecera.contadorReincidencia" text="**Contador de reincidencia"/>');
+ 	
 
    var datosPrincipalesFieldSet = new Ext.form.FieldSet({
    autoHeight:true
@@ -248,9 +254,9 @@
 		  ,items : [{items:[domiciExt,domiciExtFecha,fechaIniEpiIrregular,gestionEspecial,remunEsp
 		  ,numextra1,numextra2,numextra3
 		  ,dateextra1
-		  ,flagextra1,flagextra2,flagextra3]},
+		  ,flagextra1,flagextra2,flagextra3,indicador]},
 		   {items:[domiciExtTotal,contratoAnt,motivoRenum,riesgo
-		   ,charextra1,charextra2,charextra3,charextra4,charextra5,charextra6,charextra7,charextra8]}
+		   ,charextra1,charextra2,charextra3,charextra4,charextra5,charextra6,charextra7,charextra8,marca,motivoMarca,contadorReincidencia]}
 		  ]
 	  });
   
@@ -412,7 +418,10 @@
   entidad.setLabel('interesFijoVariable',d.interesFijoVariable);
   entidad.setLabel('deudaExigible',app.format.moneyRenderer(''+d.deudaExigible));
   entidad.setLabel('deudaIrregular',app.format.moneyRenderer(''+d.deudaIrregular));
-  
+  entidad.setLabel('marca', d.marca);
+  entidad.setLabel('motivoMarca', d.motivoMarca);
+  entidad.setLabel('indicador', d.indicador);
+  entidad.setLabel('contadorReincidencia',d.contadorReincidencia);
   
  }
   return panel;

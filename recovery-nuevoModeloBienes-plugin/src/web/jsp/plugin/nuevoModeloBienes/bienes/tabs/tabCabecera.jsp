@@ -17,7 +17,8 @@
 		
 	// DATOS PRINCIPALES
 	var codBien				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.CodigoBien" text="**Código"/>','${NMBbien.id}', {labelStyle:labelStyle});
-	var codigoInterno		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codigoInterno" text="**Código interno"/>','${NMBbien.codigoInterno}', {labelStyle:labelStyle});
+	var garantiaBien		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.garantiaBien" text="**Garantia Bien"/>','${NMBbien.sarebId}', {labelStyle:labelStyle});
+	var codigoInterno 		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codigoInterno" text="**Código interno"/>','${NMBbien.codigoInterno}', {labelStyle:labelStyle});
 	var origen				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.origenCarga" text="**Origen"/>','${NMBbien.origen.descripcion}', {labelStyle:labelStyle});
 	var valorActual			= app.creaLabel('<s:message code="bienesCliente.valorActual" text="**Valor actual"/>',app.format.moneyRenderer('${NMBbien.valorActual}'), {labelStyle:labelStyle});
 	var ValorTotalCargas	= app.creaLabel('<s:message code="bienesCliente.cargas" text="**Cargas"/>',app.format.moneyRenderer('${NMBbien.importeCargas}'), {labelStyle:labelStyle});
@@ -26,7 +27,7 @@
 	//var participacion		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.participacion" text="**% Propiedad"/>','${NMBbien.participacion}',{labelStyle:labelStyle});
 
 	var situacionPosesoria  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.situacionPosesoria" text="**situacionPosesoria"/>','${NMBbien.situacionPosesoria.descripcion}', {labelStyle:labelStyle});
-	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual ? 'Si' : 'No'}', {labelStyle:labelStyle});
+	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual==null ? '--':NMBbien.viviendaHabitual == '1' ? 'Sí' : 'No'}', {labelStyle:labelStyle});
 	var tipoSubasta		    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tipoSubasta" text="**Tipo Subasta"/>',app.format.moneyRenderer('${NMBbien.tipoSubasta}'),{labelStyle:labelStyle});
 	var numeroActivo        = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.numeroActivo" text="**numeroActivo"/>','${NMBbien.numeroActivo}', {labelStyle:labelStyle});
 	var licenciaPrimeraOcupacion = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.licenciaPrimeraOcupacion" text="**licenciaPrimeraOcupacion"/>','${NMBbien.licenciaPrimeraOcupacion}', {labelStyle:labelStyle});
@@ -36,6 +37,7 @@
 	var arrendadoSinOpcCompra = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.arrendadoSinOpcCompra" text="**arrendadoSinOpcCompra"/>','${NMBbien.arrendadoSinOpcCompra}', {labelStyle:labelStyle});
 	var usoPromotorMayorDosAnyos = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.usoPromotorMayorDosAnyos" text="**usoPromotorMayorDosAnyos"/>','${NMBbien.usoPromotorMayorDosAnyos}', {labelStyle:labelStyle});
 
+        
 	// DATOS DESCRIPCION
 	var Descripcion = new Ext.form.TextArea({
 		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.descripcion" text="**Descripciï¿½n" />'
@@ -74,7 +76,16 @@
     var fechaSolicitudTasacion = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaSolicitudTasacion" text="**fechaSolicitudTasacion"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaSolicitudTasacion}"/>',{labelStyle:labelStyle});
 	var fechaDueD 			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaDueD" text="**fechaDueD"/>','<fwk:date value="${NMBbien.fechaDueD}"/>', {labelStyle:labelStyle});
 	var fechaSolicitudDueD	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaSolicitudDueD" text="**fechaSolicitudDueD"/>','<fwk:date value="${NMBbien.fechaSolicitudDueD}"/>', {labelStyle:labelStyle});
+	<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">
+	var tributacion  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tributacionCompra" text="**tributacionCompra"/>','${NMBbien.tributacion.descripcion}', {labelStyle:labelStyle});
+	</sec:authorize>
+	<sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">
 	var tributacion  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tributacion" text="**tributacion"/>','${NMBbien.tributacion.descripcion}', {labelStyle:labelStyle});
+	</sec:authorize>
+	var tributacionVenta  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tributacionVenta" text="**tributacionVenta"/>','${NMBbien.tributacionVenta.descripcion}', {labelStyle:labelStyle});
+	var imposicionCompra  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.imposicionCompra" text="**imposicionCompra"/>','${NMBbien.tipoImposicionCompra.descripcion}', {labelStyle:labelStyle});
+	var imposicionVenta  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.imposicionVenta" text="**imposicionVenta"/>','${NMBbien.tipoImposicionVenta.descripcion}', {labelStyle:labelStyle});
+	var inversionRenuncia  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.inversionRenuncia" text="**inversionRenuncia"/>','${NMBbien.inversionPorRenuncia.descripcion}', {labelStyle:labelStyle});
 	var porcentajeImpuestoCompra  = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.porcentajeImpuestoCompra" text="**porcentajeImpuestoCompra"/>','${NMBbien.porcentajeImpuestoCompra}', {labelStyle:labelStyle});
 	var impuestoCompra  = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.impuestoCompra" text="**impuestoCompra"/>','${NMBbien.impuestoCompra.descripcion}', {labelStyle:labelStyleDescripcion});
 	
@@ -96,7 +107,9 @@
 	var tomo				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.tomo" text="**Tomo"/>','${NMBbien.datosRegistralesActivo.tomo}',{labelStyle:labelStyle});
 	var libro				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.libro" text="**Libro"/>','${NMBbien.datosRegistralesActivo.libro}',{labelStyle:labelStyle});
 	var folio				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.folio" text="**Folio"/>','${NMBbien.datosRegistralesActivo.folio}',{labelStyle:labelStyle});
-	var minicipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />',{labelStyle:labelStyle});	
+	//var minicipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />',{labelStyle:labelStyle});
+	var municipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipioRegistro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.localidad.descripcion}" />',{labelStyle:labelStyle});
+	var provinciaRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.provinciaRegistro" text="**"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.provincia.descripcion}" />',{labelStyle:labelStyle});	
 	var numRegistro			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**Nï¿½ Registro"/>','${NMBbien.datosRegistralesActivo.numRegistro}',{labelStyle:labelStyle});
 	var tipoRegistro		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.codigoRegistro" text="**Tipo registro"/>','${NMBbien.datosRegistralesActivo.codigoRegistro}',{labelStyle:labelStyle});
 	var refCatastral		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.referenciaCatastral" text="**Ref. Catastral"/>','${NMBbien.datosRegistralesActivo.referenciaCatastralBien}',{labelStyle:labelStyle});
@@ -154,7 +167,8 @@
 	
 	//Inmueble
 	var tiposInmuebles		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tipoInmueble" text="**Tipo Inmueble"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoInmueble.descripcion}" />',{labelStyle:labelStyle});
-	
+	var codigoTipoInmueble          = "${NMBbien.adicional.tipoInmueble.codigo}";
+        
 	//activosFinancieros
 	var tiposFinancieros	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tiposFinaciero" text="**Tipo Financiero"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoProdBancario.descripcion}" />',{labelStyle:labelStyle});
 	var valorProdBancario	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoraciï¿½n"/>',app.format.moneyRenderer('${NMBbien.adicional.valoracion}'),{labelStyle:labelStyle});
@@ -226,7 +240,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosPrincipales.titulo" text="**Datos Principales"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[mensajeSolvenciaNoEncontrada, origen, codigoInterno ,codBien, tipoBien, solvenciaNoEncontrada, obraEnCurso, dueDilligence, situacionPosesoria,viviendaHabitual,usoPromotorMayorDosAnyos,tipoSubasta]},
+	    ,items : [{items:[mensajeSolvenciaNoEncontrada, origen, codigoInterno ,codBien <sec:authorize ifAllGranted="PERSONALIZACION-HY">, garantiaBien </sec:authorize>, tipoBien, solvenciaNoEncontrada, obraEnCurso, dueDilligence, situacionPosesoria,viviendaHabitual,usoPromotorMayorDosAnyos,tipoSubasta]},
 				  {items:[numeroActivo,licenciaPrimeraOcupacion,primeraTransmision,transmitentePromotor,contratoAlquiler,arrendadoSinOpcCompra,Descripcion]}
 				 ]
 	});
@@ -244,8 +258,8 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosEconomicos.titulo" text="**Datos económicos"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[fechaVerificacion, valorActual, ValorTotalCargas, fechaValSubjetivo, valorSubjetivo,tributacion,respuestaConsulta]},
-				  {items:[valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion,fechaValApreciacion, valorApreciacion, fechaValTasacion, valorTasacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">, fechaSolicitudDueD, fechaDueD</sec:authorize>, porcentajeImpuestoCompra, impuestoCompra]}
+	    ,items : [{items:[fechaVerificacion, valorActual, ValorTotalCargas, fechaValSubjetivo, valorSubjetivo,tributacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,imposicionCompra,tributacionVenta,imposicionVenta,inversionRenuncia</sec:authorize>,respuestaConsulta]},
+				  {items:[valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion,fechaValApreciacion, valorApreciacion, fechaValTasacion, valorTasacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">, fechaSolicitudDueD, fechaDueD</sec:authorize> <sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">, porcentajeImpuestoCompra, impuestoCompra</sec:authorize>]}
 				 ]
 	});
 	
@@ -336,7 +350,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosRegistrales.titulo" text="**Datos registrales"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[tiposInmuebles, supTerreno, supConstruida, tomo, libro, folio, minicipioRegistro]},
+	    ,items : [{items:[tiposInmuebles, supTerreno, supConstruida, tomo, libro, folio, provinciaRegistro, municipioRegistro]},
 				  {items:[numRegistro, refCatastral, tipoRegistro, inscripcion, fechaInscripcion, numFinca]}
 				 ]
 	});
@@ -354,7 +368,7 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosDomicilio.titulo" text="**Domicilio"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [{items:[pais, provincia, localidad, unidadPoblacional, codPostal, tipoVia]},
-				  {items:[nombreVia, numeroDomicilio, portal, escalera, piso, puerta, barrio, direccion]}
+				  {items:[nombreVia, numeroDomicilio, portal, bloque, escalera, piso, puerta, barrio, direccion]}
 				 ]
 	});
 	
@@ -400,8 +414,9 @@
 		
 		
 		var validarProvLocFinBien = function() {
-			
-			if(numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
+
+                        //Se valida por existencia de codigoTipoInmueble porque es dato obligatorio en el diccionario y no puede ser null en un tipo de inmueble
+			if(codigoTipoInmueble=='' || numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
 				Ext.MessageBox.show({
 		           title: 'Campos obligatorios',
 		           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolNumActivoCamposObligatorios" text="**Los campos provincia, localidad, número de finca y número de registro son obligatorios para solicitar el número de activo" />',
@@ -412,7 +427,7 @@
 			}
 			return true;			
 		}
-		
+                
 		var btnSolicitarNumActivo = new Ext.Button({
 		    text: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarNumActivo" text="**Solicitar Numero de Activo" />'
 			<app:test id="btnSolicitarNumActivo" addComa="true" />
@@ -428,7 +443,6 @@
 			      			flow:'editbien/solicitarNumActivo'
 			      			,params:{id:${NMBbien.id}}
 			      			,success: function(result,request){
-			      			   debugger;		   
 			      			   if(result.msgError=='1'){
 			      			   		Ext.Msg.show({
 									title:'Operación realizada',
@@ -441,7 +455,7 @@
 			      			   	
 				      			   	Ext.Msg.show({
 									title:'Advertencia',
-									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ko"/>',
+									msg: 'No se ha podido obtener el n\u00BA de activo. \n' + result.msgError,
 									buttons: Ext.Msg.OK,
 									icon:Ext.MessageBox.WARNING});
 				      			   	

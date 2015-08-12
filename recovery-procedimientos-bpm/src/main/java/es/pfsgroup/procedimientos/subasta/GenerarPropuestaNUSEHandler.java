@@ -1,18 +1,20 @@
 package es.pfsgroup.procedimientos.subasta;
 
-import java.util.Calendar;
-
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
@@ -20,12 +22,21 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 
 	private static final long serialVersionUID = 1L;
     
-	private static final String BANKIA = "BANKIA";
+	//private static final String PROPIEDAD_BANKIA = "BANKIA";
+	private static final String PROPIEDAD_SAREB = "SAREB";
 	
 	@Autowired
 	private Executor executor;
+
+	@Autowired
+	private GenericABMDao genericDao;	
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 	
 	private Procedimiento procedimiento = null;
+	
+	private Procedimiento procedimientoSubasta = null;
 	
 	/**
 	 * Procedimiento asociado
@@ -35,12 +46,23 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 		return procedimiento;
 	}
 
-	/**
-	 * Devuelve el asnto extendido
-	 * 
-	 * @return
-	 */
-	protected EXTAsunto getExtAsunto(Procedimiento procedimiento) {
+	
+	public Procedimiento getProcedimientoSubasta() {
+		return procedimientoSubasta;
+	}
+
+
+	public void setProcedimientoSubasta(Procedimiento procedimientoSubasta) {
+		this.procedimientoSubasta = procedimientoSubasta;
+	}
+
+
+	public void setProcedimiento(Procedimiento procedimiento) {
+		this.procedimiento = procedimiento;
+	}
+
+
+	protected EXTAsunto getExtAsunto() {
 		EXTAsunto extAsunto = null;
 		Asunto asunto = procedimiento.getAsunto();
 		if (Hibernate.getClass(asunto).equals(EXTAsunto.class)) {
@@ -53,31 +75,44 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
 	}
 	
 	/**
-	 * Genera una instancia del cierre de deuda
-	 * @return 
+	 * Devuelve la subasta
+	 * 
+	 * @return
 	 */
-	protected BatchAcuerdoCierreDeuda getCierreDeudaInstance() {
-		Auditoria auditoria = Auditoria.getNewInstance();
-		BatchAcuerdoCierreDeuda cierreDeuda = new BatchAcuerdoCierreDeuda();
-		cierreDeuda.setIdProcedimiento(procedimiento.getId());
-		cierreDeuda.setIdAsunto(procedimiento.getAsunto().getId());
-		cierreDeuda.setFechaAlta(Calendar.getInstance().getTime());
-		cierreDeuda.setUsuarioCrear(auditoria.getUsuarioCrear());
-		cierreDeuda.setEntidad(BANKIA);
-		logger.debug(String.format("CIERRE DE DEUDA SAREB: idProcedimiento: %d, idAsunto: %d, Entidad: %s", 
-				cierreDeuda.getIdProcedimiento(), 
-				cierreDeuda.getIdAsunto(), 
-				cierreDeuda.getEntidad()));
+	protected Subasta getSubasta() {
+
+		Subasta subasta = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", procedimientoSubasta.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+
+		if (Checks.esNulo(subasta)) {     
+        	logger.warn(String.format("CIERRE DE DEUDA: No se ha encontrado la subasta para el procedimiento " + procedimientoSubasta.getId()));        	
+        }
 		
-		return cierreDeuda;
+		return subasta;
 	}
 	
-	/**
-	 * Guarda el cierre de deuda.
-	 */
-	protected void guardaCierreDeuda() {
-		BatchAcuerdoCierreDeuda cierreDeuda = getCierreDeudaInstance();
-		executor.execute("es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.guardaBatchAcuerdoCierre", cierreDeuda);
+	
+	
+	protected void enviarCierreDeuda() {		
+		
+		EXTAsunto extAsunto = getExtAsunto();
+		Subasta subasta = getSubasta();
+		
+		
+		if(!Checks.esNulo(extAsunto) &&  !Checks.esNulo(subasta) ) {		
+			
+			if (PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
+
+				for(ProcedimientoBien bien: procedimiento.getBienes()){					
+					executor.execute("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.generarEnvioCierreDeuda", subasta, bien.getBien().getId(), BatchAcuerdoCierreDeuda.PROPIEDAD_AUTOMATICO);		
+				}				
+				
+			} else {
+
+				executor.execute("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.generarEnvioCierreDeuda", subasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_AUTOMATICO);
+			}
+		
+		}
+
 	}
 	
     /**
@@ -87,11 +122,15 @@ public class GenerarPropuestaNUSEHandler extends PROBaseActionHandler {
      */
     @Override
     public void run(ExecutionContext executionContext) throws Exception {
-    	// Recupera la subasta de este procedimiento
-		procedimiento = getProcedimiento(executionContext);
-		guardaCierreDeuda();
-    	// Avanza BPM
+    	// Recuperamos el procedimiento
+		this.procedimiento = getProcedimiento(executionContext);
+		this.procedimientoSubasta = procedimiento;
+				
+		enviarCierreDeuda();
+    	
+		// Avanza BPM
 		executionContext.getToken().signal(BPMContants.TRANSICION_AVANZA_BPM);
     }
+
 
 }

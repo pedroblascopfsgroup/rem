@@ -2,10 +2,9 @@ package es.pfsgroup.plugin.recovery.coreextension.subasta.manager;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.core.api.asunto.AsuntoApi;
-import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteBien;
 
 /**
  *
@@ -132,12 +131,51 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 		return null;
 	}
 	
+	//HAYA
+	@Override
+	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION)
+	public boolean comprobarAdjudicacionBienesCelebracionSubasta(Long prcId) {
+	//  Este metodo se implementa en el nuevoModeloBienes
+		return false;
+	}
+	
+	//HAYA
+	@Override
+	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION_DOC)
+	public boolean comprobarAdjudicacionDocBienesCelebracionSubasta(Long prcId) {
+	//  Este metodo se implementa en el nuevoModeloBienes
+		return false;
+	}
+
+		
 	//BANKIA
 	@Override
-	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_SAREB_POST)
-	public String validacionesCelebracionSubastaSarebPOST(Long prcId) {
+	@BusinessOperation(BO_SUBASTA_COMPROBAR_NUMERO_ACTIVO)
+	public boolean comprobarNumeroActivo(Long prcId) {
 		//  Este metodo se implementa en el nuevoModeloBienes
-		return null;		
+		return false;		
+	}
+
+	//BANKIA
+	@Override
+	@BusinessOperation(BO_SUBASTA_VALIDACIONES_CONTRATOS_CONFIRMAR_TESTIMONIO_POST)
+	public boolean validacionesContratosConfirmarTestimonioPOST(Long prcId) {
+		//  Este metodo se implementa en el nuevoModeloBienes
+		return false;
+	}
+
+	@Override
+	@BusinessOperation(BO_SUBASTA_GENERAR_INFORME_VALIDACION_CDD)
+	public InformeValidacionCDDDto generarInformeValidacionCDD(Long idSubasta, String idsBien) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	@BusinessOperation(BO_SUBASTA_GET_LOTE_BY_PRC_BIEN)
+	public LoteBien getLoteByPrcBien(Long idProcedimiento, Long idBien) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

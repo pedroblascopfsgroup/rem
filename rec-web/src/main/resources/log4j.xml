@@ -80,6 +80,11 @@
         <appender-ref ref="file" />
     </logger>
      -->
+    <logger name="org.springframework.security.ldap" additivity="false">
+        <level value="warn"/> 
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </logger>
 
 	<!-- Hibernate -->
     <logger name="org.hibernate.event.def.AbstractFlushingEventListener" additivity="false">
@@ -122,12 +127,13 @@
     
     
     <!-- Descomentar para Ver las SQL-->
-    <!-- 
+
+	<!--
     <logger name="org.hibernate.SQL" additivity="false">
         <level value="debug"/>
         <appender-ref ref="console" />
     </logger>
-    -->
+ 	-->
      
      
      <!-- Descomentar para Ver las SQL que ejecuta la aplicacion, el Thread, la session y la transaccion en al que se ejecutan-->

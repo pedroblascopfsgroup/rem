@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_ejecucionTituloNoJudicial" width="1254" height="729">
+<root-container name="haya_ejecucionTituloNoJudicial" width="1160" height="729">
   <node name="Inicio" x="29" y="21" width="132" height="36">
     <edge>
       <label x="-36" y="21"/>
@@ -36,7 +36,8 @@
   </node>
   <node name="H020_AutoDespaEjecMasDecretoEmbargoDecision" x="151" y="172" width="375" height="36">
     <edge>
-      <label x="14" y="-39"/>
+      <label x="-55" y="-23"/>
+      <bendpoint w1="251" h1="8" w2="-87" h2="-321"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -48,7 +49,7 @@
   </node>
   <node name="fork1" x="275" y="254" width="131" height="24">
     <edge>
-      <label x="-41" y="-26"/>
+      <label x="-82" y="-16"/>
     </edge>
     <edge>
       <label x="20" y="-8"/>
@@ -60,7 +61,7 @@
       <bendpoint w1="258" h1="-2" w2="-25" h2="-78"/>
     </edge>
   </node>
-  <node name="H020_BPMVigilanciaCaducidadAnotacion" x="612" y="249" width="269" height="36">
+  <node name="H020_BPMVigilanciaCaducidadAnotacion" x="633" y="243" width="269" height="36">
     <edge>
       <label x="-66" y="-39"/>
     </edge>
@@ -140,7 +141,7 @@
       <bendpoint w1="315" h1="1" w2="-106" h2="61"/>
     </edge>
   </node>
-  <node name="Decision2" x="610" y="501" width="132" height="36">
+  <node name="H020_JudicialDecision" x="555" y="501" width="187" height="36">
     <edge>
       <label x="-31" y="13"/>
     </edge>

@@ -502,8 +502,10 @@ public class PersonaManager {
     	Persona persona = personaDao.get(idPersona);
     	Oficina oficina = persona.getOficinaGestora();
     	if (!Checks.esNulo(oficina)) {
-    		
-    		oficina.getZona().setDescripcion(oficina.getCodDescripOficina(true, false));
+    		//Comprobamos si la oficina tiene zona
+    		if(!Checks.esNulo(oficina.getZona())){
+    			oficina.getZona().setDescripcion(oficina.getCodDescripOficina(true, false));
+    		}
     		return oficina.getZona();
     	} else {
     		return null;

@@ -1,13 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.pfs.bien.model.DDTipoBien;
 
 public class DtoNMBBien extends WebDto {
 
@@ -25,7 +18,7 @@ public class DtoNMBBien extends WebDto {
     private String fechaVerificacion;
     private Float participacionNMB;
     private String situacionPosesoria;
-	private boolean viviendaHabitual;
+	private String viviendaHabitual;
 	private Float tipoSubasta;
 	private String numeroActivo ;
 	private String licenciaPrimeraOcupacion;
@@ -65,6 +58,10 @@ public class DtoNMBBien extends WebDto {
 	private String municipoLibro;
 	
 	private String codigoRegistro;
+	
+	private String municipioRegistro;
+	
+	private String provinciaRegistro;
     
 	/* Datos Localizacion */
 	private String provincia;
@@ -131,6 +128,11 @@ public class DtoNMBBien extends WebDto {
     
     private Float porcentajeImpuestoCompra;
     private String impuestoCompra;
+    private String tipoImposicionCompra;
+    private String tributacionVenta;
+    private String tipoImposicionVenta;
+    private String inversionPorRenuncia;
+    
     
     /* Datos Adicionales */
     
@@ -190,11 +192,11 @@ public class DtoNMBBien extends WebDto {
 		this.situacionPosesoria = situacionPosesoria;
 	}
 
-	public boolean getViviendaHabitual() {
+	public String getViviendaHabitual() {
 		return viviendaHabitual;
 	}
 
-	public void setViviendaHabitual(boolean viviendaHabitual) {
+	public void setViviendaHabitual(String viviendaHabitual) {
 		this.viviendaHabitual = viviendaHabitual;
 	}
 
@@ -352,6 +354,22 @@ public class DtoNMBBien extends WebDto {
 
 	public void setCodigoRegistro(String codigoRegistro) {
 		this.codigoRegistro = codigoRegistro;
+	}
+
+	public String getMunicipioRegistro() {
+		return municipioRegistro;
+	}
+
+	public void setMunicipioRegistro(String municipioRegistro) {
+		this.municipioRegistro = municipioRegistro;
+	}
+
+	public String getProvinciaRegistro() {
+		return provinciaRegistro;
+	}
+
+	public void setProvinciaRegistro(String provinciaRegistro) {
+		this.provinciaRegistro = provinciaRegistro;
 	}
 
 	public String getProvincia() {
@@ -854,7 +872,38 @@ public class DtoNMBBien extends WebDto {
 	public void setImpuestoCompra(String impuestoCompra) {
 		this.impuestoCompra = impuestoCompra;
 	}
-	
+
+	public String getTipoImposicionCompra() {
+		return tipoImposicionCompra;
+	}
+
+	public void setTipoImposicionCompra(String tipoImposicionCompra) {
+		this.tipoImposicionCompra = tipoImposicionCompra;
+	}
+
+	public String getTributacionVenta() {
+		return tributacionVenta;
+	}
+
+	public void setTributacionVenta(String tributacionVenta) {
+		this.tributacionVenta = tributacionVenta;
+	}
+
+	public String getTipoImposicionVenta() {
+		return tipoImposicionVenta;
+	}
+
+	public void setTipoImposicionVenta(String tipoImposicionVenta) {
+		this.tipoImposicionVenta = tipoImposicionVenta;
+	}
+
+	public String getInversionPorRenuncia() {
+		return inversionPorRenuncia;
+	}
+
+	public void setInversionPorRenuncia(String inversionPorRenuncia) {
+		this.inversionPorRenuncia = inversionPorRenuncia;
+	}
 	
 
 }

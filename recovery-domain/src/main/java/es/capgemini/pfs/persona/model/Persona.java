@@ -504,7 +504,12 @@ public class Persona implements Serializable, Auditable, Describible {
 			+ "','"
 			+ DDEstadoAsunto.ESTADO_ASUNTO_PROPUESTO
 			+ "') and cpe.per_id = PER_ID)")
-	private Integer numAsuntosActivos;
+	private Integer numAsuntosActivos;	
+	
+	@Formula(value = "(SELECT COUNT (DISTINCT asu.asu_id) FROM ASU_ASUNTOS asu JOIN PRC_PROCEDIMIENTOS prc ON prc.asu_id = asu.asu_id "
+			+ " JOIN PRC_PER PRCPER ON PRC.PRC_ID = PRCPER.PRC_ID "
+			+ " WHERE asu.borrado = 0 and prc.borrado = 0 and PRCPER.PER_ID = PER_ID)")
+	private Integer numAsuntosActivosPorPrc;
 
 	/**
 	 * Situaci�n de gesti�n: Cliente (todos los que no son ni expediente, ni
@@ -702,6 +707,15 @@ public class Persona implements Serializable, Auditable, Describible {
 	// ***************************************
 	// *******HASTA AQUI 29-04-2014
 	// **************************************
+	
+	@Formula("(select tcn.dd_tcn_descripcion from EXT_ICC_INFO_EXTRA_CLI icc, ${master.schema}.DD_TCN_TIPO_CNAE tcn"
+			+ "  where icc.per_id = per_id "
+			+ "  and icc.icc_value = tcn.dd_tcn_codigo"
+			+ "  and icc.dd_ifx_id = ("
+			+ "select ifx.dd_ifx_id from EXT_DD_IFX_INFO_EXTRA_CLI ifx where ifx.dd_ifx_codigo = '"
+			+ DDTipoInfoCliente.CHAR_EXTRA1
+			+ "'))")
+	private String descripcionCnae;
 
 	/**
 	 * @return the id
@@ -1805,6 +1819,10 @@ public class Persona implements Serializable, Auditable, Describible {
 		return numAsuntosActivos;
 	}
 
+	public Integer getNumAsuntosActivosPorPrc() {
+		return numAsuntosActivosPorPrc;
+	}
+
 	/**
 	 * @return the diasVencido
 	 */
@@ -2659,6 +2677,11 @@ public class Persona implements Serializable, Auditable, Describible {
 	public void setNumAsuntosActivos(Integer numAsuntosActivos) {
 		this.numAsuntosActivos = numAsuntosActivos;
 	}
+	
+	public void setNumAsuntosActivosPorPrc(Integer numAsuntosActivosPorPrc) {
+		this.numAsuntosActivosPorPrc = numAsuntosActivosPorPrc;
+
+	}
 
 	/**
 	 * @param situacion
@@ -3109,6 +3132,14 @@ public class Persona implements Serializable, Auditable, Describible {
 
 	public void setEstadoCicloVida(String estadoCicloVida) {
 		this.estadoCicloVida = estadoCicloVida;
+	}
+	
+	public String getDescripcionCnae() {
+		return descripcionCnae;
+	}
+
+	public void setDescripcionCnae(String descripcionCnae) {
+		this.descripcionCnae = descripcionCnae;
 	}
 
 }

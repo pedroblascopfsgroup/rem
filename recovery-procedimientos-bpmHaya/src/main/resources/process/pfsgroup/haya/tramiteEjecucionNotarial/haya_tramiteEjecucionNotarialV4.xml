@@ -80,7 +80,7 @@
 		<transition to="H036_registrarRecepcionCertCargasDecision" name="avanzaBPM"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="H036_RegistrarDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -91,7 +91,7 @@
 
 	<decision name="H036_registrarRecepcionCertCargasDecision" expression="#{H036_registrarRecepcionCertCargasDecision}">
 		<transition to="H036_registrarRequerimientoAdeudor" name="correcto"></transition>
-		<transition to="Decision" name="incorrecto"></transition>
+		<transition to="H036_RegistrarDecision" name="incorrecto"></transition>
 	</decision>
 
 	<state name="H036_registrarRequerimientoAdeudor">
@@ -121,7 +121,7 @@
 
 	<decision name="H036_registrarRequerimientoAdeudorDecision" expression="#{H036_registrarRequerimientoAdeudorDecision}">
 		<transition to="H036_registrarPagoDelDeudor" name="positivo"></transition>
-		<transition to="Decision" name="negativo"></transition>
+		<transition to="H036_RegistrarDecision" name="negativo"></transition>
 	</decision>
 
 	<state name="H036_registrarPagoDelDeudor">
@@ -150,7 +150,7 @@
 	</state>
 
 	<decision name="H036_registrarPagoDelDeudorDecision" expression="#{H036_registrarPagoDelDeudorDecision}">
-		<transition to="Decision" name="positivo"></transition>
+		<transition to="H036_RegistrarDecision" name="positivo"></transition>
 		<transition to="H036_registrarNotificacion" name="negativo"></transition>
 	</decision>
 
@@ -181,7 +181,7 @@
 
 	
 	<decision name="H036_registrarNotificacionDecision" expression="#{H036_registrarNotificacionDecision}">
-		<transition to="Decision" name="NoSePuedeNotificar"></transition>
+		<transition to="H036_RegistrarDecision" name="NoSePuedeNotificar"></transition>
 		<transition to="H036_registrarAnuncioSubasta" name="TodosNotificados"></transition>
 		<transition to="H036_registrarNotificacion" name="FaltanPorNotificar"></transition>
 	</decision>	
@@ -289,7 +289,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Decision2" name="avanzaBPM"></transition>
+		<transition to="H036_SubastaDecision" name="avanzaBPM"></transition>
 		<transition to="H036_SuspenderSubasta" name="activarAlerta"></transition>
 		<transition to="Fin4" name="Fin"></transition>				
 	</state>
@@ -549,7 +549,7 @@
 		<transition to="H036_PrepararInformeSubasta" name="Modificada"></transition>
 	</decision>
 
-	<node name="Decision2">
+	<node name="H036_SubastaDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -559,7 +559,7 @@
 	</node>
 
 	<decision name="H036_CelebracionSubastaDecision" expression="#{H036_CelebracionSubastaDecision}">
-		<transition to="Decision2" name="SUSPENDIDA"></transition>
+		<transition to="H036_SubastaDecision" name="SUSPENDIDA"></transition>
 		<transition to="H036_BPMTramiteInscripcionDelTitulo" name="ADJUDICACIONSINCESION"></transition>
 		<transition to="fork1" name="ADJUDICACICONCESION"></transition>
 		<transition to="H036_SolicitarMandamientoPago" name="TERCEROS"></transition>
@@ -687,7 +687,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Decision3" name="avanzaBPM"></transition>
+		<transition to="H036_SarebDecision" name="avanzaBPM"></transition>
 		<transition to="H036_RegistrarRespuestaSareb" name="activarAlerta"></transition>
 		<transition to="H036_ElevarPropuestaSareb" name="vueltaAtras"></transition>
 		<transition to="Fin5" name="Fin"></transition>
@@ -767,13 +767,13 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Decision3" name="avanzaBPM"></transition>
+		<transition to="H036_SubastaDecision" name="avanzaBPM"></transition>
 		<transition to="H036_ValidarMinuta" name="vueltaAtras"></transition>
 		<transition to="H036_RegistrarRecepcionEscritura" name="activarAlerta"></transition>
 		<transition to="Fin5" name="Fin"></transition>
 	</state>
 
-	<node name="Decision3">
+	<node name="H036_SarebDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler

@@ -4,6 +4,7 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.dao.SubtipoTareaDao;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
@@ -31,6 +32,15 @@ public class PROGenericUserDecisionActionHandler extends PROBaseActionHandler {
 			String idSubtipoTarea = SubtipoTarea.CODIGO_TOMA_DECISION_BPM;
 			String idTipoEntidad = DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO;
 			String codigoPlazo = PlazoTareasDefault.CODIGO_PROPUESTA_DECISION_PROCEDIMIENTO;
+			
+			// Comprobamos si existe una tarea de Procedimiento y no es null 
+			//para asignar el id de Subtarea - AMQ - ABR2015
+			if (getTareaProcedimientoBBDD(executionContext) instanceof EXTTareaProcedimiento){
+				EXTTareaProcedimiento tareaProc = (EXTTareaProcedimiento)getTareaProcedimientoBBDD(executionContext);
+			
+				if (tareaProc !=null && tareaProc.getSubtipoTareaNotificacion()!=null)
+					idSubtipoTarea = tareaProc.getSubtipoTareaNotificacion().getCodigoSubtarea().toString();
+			}
 
 			String descripcion = subtipoTareaDao
 					.buscarPorCodigo(idSubtipoTarea).getDescripcionLarga();

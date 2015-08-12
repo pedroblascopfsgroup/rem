@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteEmbargoSalarios" width="1256" height="654">
+<root-container name="haya_tramiteEmbargoSalarios" width="882" height="624">
   <node name="Inicio" x="6" y="18" width="132" height="36">
     <edge>
       <label x="-32" y="-14"/>
@@ -69,7 +69,9 @@
   </node>
   <node name="H038_ActualizarDatos" x="651" y="425" width="189" height="36">
     <edge>
-      <label x="15" y="16"/>
+      <label x="-167" y="-22"/>
+      <bendpoint w1="-1" h1="178" w2="647" h2="297"/>
+      <bendpoint w1="-648" h1="180" w2="0" h2="299"/>
     </edge>
     <edge>
       <label x="-9" y="-22"/>
@@ -78,12 +80,7 @@
       <label x="-6" y="9"/>
     </edge>
   </node>
-  <node name="Decision1" x="679" y="543" width="132" height="36">
-    <edge>
-      <label x="17" y="-23"/>
-    </edge>
-  </node>
-  <node name="Decision2" x="31" y="306" width="132" height="36">
+  <node name="H038_SalariosDecision" x="25" y="306" width="165" height="36">
     <edge>
       <label x="-68" y="-33"/>
     </edge>
@@ -117,7 +114,7 @@
       <bendpoint w1="-280" h1="1" w2="0" h2="-147"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-41" y="-19"/>
     </edge>
   </node>
   <node name="Fin" x="408" y="571" width="132" height="36"/>

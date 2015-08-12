@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +47,7 @@ import es.capgemini.pfs.persona.model.EXTPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.DDPostores2;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.FuncionManager;
@@ -62,6 +66,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoImposicion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoInmueble;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoProdBancario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoTributacion;
@@ -91,7 +96,9 @@ import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
 public class NMBBienManager extends BusinessOperationOverrider<BienApi> implements BienApi {
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
+	
+	protected static final Log logger = LogFactory.getLog(NMBBienManager.class);
+	
 	@Autowired
 	private Executor executor;
 
@@ -135,6 +142,19 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	@BusinessOperation(overrides = PrimariaBusinessOperation.BO_BIEN_MGR_GET)
 	public Bien get(Long id) {
 		Bien b = parent().get(id);
+		try {
+			NMBBien bien = new NMBBien();
+			bien = getNMBBien(b);
+			return bien;
+		} catch (Exception e) {
+			return b;
+		}
+	}
+	
+	@BusinessOperation(GET_BIEN_BY_ID)
+	public Bien getBienById(Long id) {
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id",id);
+		Bien b = genericDao.get(Bien.class, f1);
 		try {
 			NMBBien bien = new NMBBien();
 			bien = getNMBBien(b);
@@ -300,6 +320,27 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			DDTipoTributacion tipoTributacion = genericDao.get(DDTipoTributacion.class, filtroTributacion);
 			bien.setTributacion(tipoTributacion);
 		}
+		if (dtoBien.getTributacionVenta() != null) {
+			Filter filtroTributacionVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTributacionVenta());
+			DDTipoTributacion tipoTributacionVenta = genericDao.get(DDTipoTributacion.class, filtroTributacionVenta);
+			bien.setTributacionVenta(tipoTributacionVenta);
+		}
+		if (dtoBien.getTipoImposicionCompra() != null) {
+			Filter filtroImposicion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionCompra());
+			DDTipoImposicion tipoImposicion = genericDao.get(DDTipoImposicion.class, filtroImposicion);
+			bien.setTipoImposicionCompra(tipoImposicion);
+		}
+		if (dtoBien.getTipoImposicionVenta() != null) {
+			Filter filtroImposicionVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoImposicionVenta());
+			DDTipoImposicion tipoImposicionVenta = genericDao.get(DDTipoImposicion.class, filtroImposicionVenta);
+			bien.setTipoImposicionVenta(tipoImposicionVenta);
+		}
+		if (dtoBien.getInversionPorRenuncia() != null) {
+			Filter filtroInversion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getInversionPorRenuncia());
+			DDSiNo tipoImposicion = genericDao.get(DDSiNo.class, filtroInversion);
+			bien.setInversionPorRenuncia(tipoImposicion);
+		}
+		
 
 		if (funcionManager.tieneFuncion(usuarioLogado, "ESTRUCTURA_COMPLETA_BIENES")) {
 			// cargar valores del nuevo formulario
@@ -327,6 +368,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			DDimpuestoCompra impuestoCompra = genericDao.get(DDimpuestoCompra.class, filterImpuesto);
 			bien.setImpuestoCompra(impuestoCompra);
 		}
+		
 		
 
 		genericDao.update(NMBBien.class, bien);
@@ -382,11 +424,17 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				DDProvincia provincia = genericDao.get(DDProvincia.class, f1);
 				nmbLocalizacion.setProvincia(provincia);
 			}
+			else{
+				nmbLocalizacion.setProvincia(null);
+			}
 			
 			if (!Checks.esNulo(dtoBien.getLocalidad())) {
 				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getLocalidad());
 				Localidad localidad = genericDao.get(Localidad.class, f1);
 				nmbLocalizacion.setLocalidad(localidad);
+			}
+			else{
+				nmbLocalizacion.setLocalidad(null);
 			}
 			
 			if (!Checks.esNulo(dtoBien.getUnidadPoblacional())) {
@@ -394,17 +442,26 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				DDUnidadPoblacional unidadPoblacional = genericDao.get(DDUnidadPoblacional.class, f1);
 				nmbLocalizacion.setUnidadPoblacional(unidadPoblacional);
 			}
+			else{
+				nmbLocalizacion.setUnidadPoblacional(null);
+			}
 			
 			if (!Checks.esNulo(dtoBien.getTipoVia())) {
 				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoVia());
 				DDTipoVia ddTipoVia = genericDao.get(DDTipoVia.class, f1);
 				nmbLocalizacion.setTipoVia(ddTipoVia);
 			}
+			else{
+				nmbLocalizacion.setTipoVia(null);
+			}
 			
 			if (!Checks.esNulo(dtoBien.getPais())) {
 				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getPais());
 				DDCicCodigoIsoCirbeBKP pais = genericDao.get(DDCicCodigoIsoCirbeBKP.class, f1);
 				nmbLocalizacion.setPais(pais);
+			}
+			else{
+				nmbLocalizacion.setPais(null);
 			}
 			
 			genericDao.save(NMBLocalizacionesBien.class, nmbLocalizacion);
@@ -438,6 +495,25 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			nmbInformacionRegistralBien.setCodigoRegistro(dtoBien.getCodigoRegistro());
 			nmbInformacionRegistralBien.setSuperficieConstruida(dtoBien.getSuperficieConstruida());
 			nmbInformacionRegistralBien.setSuperficie(dtoBien.getSuperficie());
+			
+			if (!Checks.esNulo(dtoBien.getProvinciaRegistro())) {
+				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getProvinciaRegistro());
+				DDProvincia provincia = genericDao.get(DDProvincia.class, f1);
+				nmbInformacionRegistralBien.setProvincia(provincia);
+			}
+			else{
+				nmbInformacionRegistralBien.setProvincia(null);
+			}
+			
+			if (!Checks.esNulo(dtoBien.getMunicipioRegistro())) {
+				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getMunicipioRegistro());
+				Localidad localidad = genericDao.get(Localidad.class, f1);
+				nmbInformacionRegistralBien.setLocalidad(localidad);
+			}
+			else{
+				nmbInformacionRegistralBien.setLocalidad(null);
+			}
+			
 			genericDao.save(NMBInformacionRegistralBien.class, nmbInformacionRegistralBien);
 
 			/* Datos adicionales */
@@ -460,11 +536,17 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				DDTipoProdBancario tipoProdBancario = genericDao.get(DDTipoProdBancario.class, f1);
 				nmbAdicionalBien.setTipoProdBancario(tipoProdBancario);
 			}
+			else{
+				nmbAdicionalBien.setTipoProdBancario(null);
+			}
 
 			if (!Checks.esNulo(dtoBien.getTipoInmueble())) {
 				f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoBien.getTipoInmueble());
 				DDTipoInmueble tipoInmueble = genericDao.get(DDTipoInmueble.class, f1);
 				nmbAdicionalBien.setTipoInmueble(tipoInmueble);
+			}
+			else{
+				nmbAdicionalBien.setTipoInmueble(null);
 			}
 
 			nmbAdicionalBien.setValoracion(dtoBien.getValoracion());
@@ -478,8 +560,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				try {
 					nmbAdicionalBien.setFechaMatricula(DateFormat.toDate(dtoBien.getFechaMatricula()));
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("createOrUpdateNMB: "+e);
 				}
 			}
 			genericDao.save(NMBAdicionalBien.class, nmbAdicionalBien);
@@ -497,7 +578,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				try {
 					nmbValoracionesBien.setFechaValorApreciacion(DateFormat.toDate(dtoBien.getFechaValorApreciacion()));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("createOrUpdateNMB fechaValorApreciacion: "+e);
 				}
 			else
 				nmbValoracionesBien.setFechaValorApreciacion(null);
@@ -505,7 +586,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				try {
 					nmbValoracionesBien.setFechaValorSubjetivo(DateFormat.toDate(dtoBien.getFechaValorSubjetivo()));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("createOrUpdateNMB fechaValorSubjetivo: "+e);
 				}
 			else
 				nmbValoracionesBien.setFechaValorSubjetivo(null);
@@ -513,7 +594,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				try {
 					nmbValoracionesBien.setFechaValorTasacion(DateFormat.toDate(dtoBien.getFechaValorTasacion()));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("createOrUpdateNMB fechaValorTasacion: "+e);
 				}
 			else
 				nmbValoracionesBien.setFechaValorTasacion(null);
@@ -529,14 +610,14 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				try {
 					nmbValoracionesBien.setFechaTasacionExterna(ft.parse(dtoBien.getFechaTasacionExterna()));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("createOrUpdateNMB fechaTasacionExterna: "+e);
 				}
 			}
 			if (dtoBien.getFechaSolicitudTasacion() != null) {
 				try {
 					nmbValoracionesBien.setFechaSolicitudTasacion(ft.parse(dtoBien.getFechaSolicitudTasacion()));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("createOrUpdateNMB fechaSolicitudTasacion: "+e);
 				}
 			}
 
@@ -921,9 +1002,9 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 					if (!Checks.esNulo(solvenciaGarantia)) {
 						procBien.setSolvenciaGarantia(solvenciaGarantia);
 					}
-				}				
+				}		
 				genericDao.save(ProcedimientoBien.class, procBien);
-
+				
 			}
 
 		}
@@ -941,7 +1022,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
 				ProcedimientoBien procBien = genericDao.get(ProcedimientoBien.class, f1, f2);
 
-				genericDao.deleteById(ProcedimientoBien.class, procBien.getId());
+				genericDao.deleteById(ProcedimientoBien.class, procBien.getId());	
 			}
 		}
 

@@ -27,6 +27,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.embargoProcedimiento.model.EmbargoProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -135,7 +136,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	private DDSituacionPosesoria  situacionPosesoria;
 	
 	@Column(name= "BIE_VIVIENDA_HABITUAL") 
-	private Boolean viviendaHabitual;
+	private String viviendaHabitual;
 	
 	@Column(name= "BIE_NUMERO_ACTIVO")  
 	private String numeroActivo;
@@ -180,7 +181,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	
 	@ManyToOne
     @JoinColumn(name = "DD_TRI_ID")
-	private DDTipoTributacion tributacion;
+	private DDTipoTributacion tributacion; 
 	
 	@Column(name = "BIE_PORCT_IMP_COMPRA")
 	private Float porcentajeImpuestoCompra;
@@ -188,6 +189,25 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	@ManyToOne
 	@JoinColumn(name="DD_QCI_ID")
 	private DDimpuestoCompra impuestoCompra;
+	
+	@Column(name = "BIE_SAREB_ID")
+    private String sarebId;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_TPI_ID")
+	private DDTipoImposicion tipoImposicionCompra;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_TRIV_ID")
+	private DDTipoTributacion tributacionVenta;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_TPIV_ID")
+	private DDTipoImposicion tipoImposicionVenta;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_IPR_ID")
+	private DDSiNo inversionPorRenuncia;
 	
 //	@Transient
 //	private Boolean adjudicacionOK;
@@ -441,11 +461,11 @@ public class NMBBien extends Bien implements NMBBienInfo{
 		this.situacionPosesoria = situacionPosesoria;
 	}
 
-	public Boolean getViviendaHabitual() {
+	public String getViviendaHabitual() {
 		return viviendaHabitual;
 	}
 
-	public void setViviendaHabitual(Boolean viviendaHabitual) {
+	public void setViviendaHabitual(String viviendaHabitual) {
 		this.viviendaHabitual = viviendaHabitual;
 	}
 
@@ -905,6 +925,46 @@ public class NMBBien extends Bien implements NMBBienInfo{
 
 	public void setImpuestoCompra(DDimpuestoCompra impuestoCompra) {
 		this.impuestoCompra = impuestoCompra;
+	}
+
+	public String getSarebId() {
+		return sarebId;
+	}
+
+	public void setSarebId(String sarebId) {
+		this.sarebId = sarebId;
+	}
+
+	public DDTipoImposicion getTipoImposicionCompra() {
+		return tipoImposicionCompra;
+	}
+
+	public void setTipoImposicionCompra(DDTipoImposicion tipoImposicionCompra) {
+		this.tipoImposicionCompra = tipoImposicionCompra;
+	}
+
+	public DDTipoTributacion getTributacionVenta() {
+		return tributacionVenta;
+	}
+
+	public void setTributacionVenta(DDTipoTributacion tributacionVenta) {
+		this.tributacionVenta = tributacionVenta;
+	}
+
+	public DDTipoImposicion getTipoImposicionVenta() {
+		return tipoImposicionVenta;
+	}
+
+	public void setTipoImposicionVenta(DDTipoImposicion tipoImposicionVenta) {
+		this.tipoImposicionVenta = tipoImposicionVenta;
+	}
+
+	public DDSiNo getInversionPorRenuncia() {
+		return inversionPorRenuncia;
+	}
+
+	public void setInversionPorRenuncia(DDSiNo inversionPorRenuncia) {
+		this.inversionPorRenuncia = inversionPorRenuncia;
 	}
 	
 }

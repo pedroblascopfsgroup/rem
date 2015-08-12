@@ -336,7 +336,9 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="Decision" name="haya_tramiteElevacionPropSarebLitigios"></transition>
+		<transition to="H009_ElevacionDecision" name="DENEGADA"></transition>
+		<transition to="Fin" name="ACEPTADA"></transition>
+		<transition to="Fin" name="ACCONCAM"></transition>
 	</state>
 
 	<fork name="forkTrasAceptacion">
@@ -344,7 +346,7 @@
 		<transition to="H009_BPMhaya_tramiteElevacionPropSarebLitigiosA" name="elevarSareb"></transition>
 	</fork>
 
-	<node name="Decision">
+	<node name="H009_ElevacionDecision">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -373,7 +375,9 @@
 				<targetBean>genericLeaveActionHandler</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="haya_tramiteElevacionPropSarebLitigios"></transition>
+		<transition to="Fin" name="ACEPTADA"></transition>
+		<transition to="H009_SarebDecision" name="DENEGADA"></transition>
+		<transition to="Fin" name="ACCONCAM"></transition>
 	</state>
 
 	<state name="H009_ContactarDeudor">
@@ -398,6 +402,15 @@
 		<transition to="H009_ContactarDeudor" name="contactarDeudor"></transition>
 		<transition to="H009_PresentarEscritoInsinuacion" name="sigueBPM"></transition>
 	</fork>
+
+	<node name="H009_SarebDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>	
+		<transition to="Fin" name="Fin"></transition>
+	</node>
 	
 	<end-state name="Fin">
 		<event type="node-enter">

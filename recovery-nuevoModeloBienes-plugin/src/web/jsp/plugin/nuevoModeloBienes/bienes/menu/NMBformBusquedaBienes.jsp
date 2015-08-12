@@ -66,7 +66,8 @@ var formBusquedaBienes=function(){
 	var txtTasacionDesde = app.creaInteger('tasacionDesde', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.valorTasacionDesde" text="**Valor tasaci�n desde" />', '${tasacionDesde}'); 
 	var txtTasacionHasta = app.creaInteger('tasacionHasta', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.valorTasacionHasta" text="**Valor tasaci�n hasta" />', '${tasacionHasta}'); 
 	var txtTipoSubastaDesde = app.creaInteger('tipoSubastaDesde', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.tipoSubastaDesde" text="**Tipo subasta desde" />', '${tipoSubastaDesde}'); 
-	var txtTipoSubastaHasta = app.creaInteger('tipoSubastaHasta', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.tipoSubastaHasta" text="**Tipo subasta hasta" />', '${tipoSubastaHasta}'); 
+	var txtTipoSubastaHasta = app.creaInteger('tipoSubastaHasta', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.tipoSubastaHasta" text="**Tipo subasta hasta" />', '${tipoSubastaHasta}');
+	var txtNumFinca = app.creaText('numFinca', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.numFinca" text="**N� finca" />', '${numFinca}'); 
 	
 	<%-- Filtros localizaciones --%>
 	var txtDireccion = app.creaText('direccion', '<s:message code="plugin.nuevoModeloBienes.busquedaBienes.filtros.direccion" text="**Direcci�n" />', '${direccion}');
@@ -95,7 +96,7 @@ var formBusquedaBienes=function(){
 					,items: [txtCodPostal, comboTipoBien, txtValorHasta, txtTotalCargasHasta /*, txtValor, txtTotalCargas*/, txtTasacionHasta, txtTipoSubastaHasta]
 				},{
 					layout:'form'
-					,items: [txtNumActivo, txtNumRegistro, txtReferenciaCatastral, txtSubtipoBien]
+					,items: [txtNumActivo, txtNumRegistro, txtReferenciaCatastral, txtSubtipoBien, txtNumFinca]
 				}]
 	});
 
@@ -215,6 +216,7 @@ var formBusquedaBienes=function(){
 			b.localidad=txtLocalidad.getValue();
 			b.codigoPostal=txtCodigoPostal.getValue();		
 		}
+		b.numFinca=txtNumFinca.getValue();
 		return b;
 	}
 	
@@ -251,6 +253,7 @@ var formBusquedaBienes=function(){
 			txtLocalidad.reset();
 			txtCodigoPostal.reset();
 		}
+		txtNumFinca.reset();
 	}
 	
 	 var rendererChechkbox = function(value, metaData, record, rowIndex, colIndex, store){ 

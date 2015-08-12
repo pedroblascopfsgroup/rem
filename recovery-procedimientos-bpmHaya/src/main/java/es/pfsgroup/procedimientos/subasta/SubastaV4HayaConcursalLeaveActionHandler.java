@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
@@ -81,7 +82,7 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 			}
 		} else if (executionContext.getNode().getName().contains("AdjuntarInformeSubasta")) {
 
-			if (!Checks.esNulo(sub)) {
+			if (!Checks.esNulo(sub) && !Checks.esNulo(sub.getEstadoSubasta()) && DDEstadoSubasta.PIN.compareTo(sub.getEstadoSubasta().getCodigo()) == 0) {
 
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.PPR);
 			}
@@ -172,7 +173,9 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 	}
 	
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
-		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0) {
+		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && 
+				(DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0 || 
+				DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta().getCodigo()) != 0)) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			sub.setEstadoSubasta(esu);
 		}
@@ -200,7 +203,7 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 						return DDEstadoSubasta.PAC;
 					}
 				}
-				return DDEstadoSubasta.PPR;
+				return DDEstadoSubasta.PCO;
 			}
 		}
 		return null;
@@ -344,13 +347,6 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 				}
 			}
 			
-			if ("comboCesionRemate".equals(val.getNombre())){
-				comboCesionRemate = val.getValor();
-				if (DDSiNo.SI.equals(comboCesionRemate)){
-					cesionRemate = true;
-				}
-			}
-			
 			if ("comboDecisionSuspension".equals(val.getNombre())){
 				comboDecisionSuspension = val.getValor();				
 				if(DDDecisionSuspension.TERCEROS.equals(comboDecisionSuspension)){
@@ -362,27 +358,12 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 				}												
 			}
 			
-			if ("comboAdjudicadoEntidad".equals(val.getNombre())){
-				comboAdjudicadoEntidad = val.getValor();
-				if (DDSiNo.SI.equals(comboAdjudicadoEntidad)){
-					adjudicadoEntidadPosibleRemate = true;
-				}
-			}
-			
 			if ("comboPostores".equals(val.getNombre())){
 				comboPostores = val.getValor();
 				if (DDSiNo.SI.equals(comboPostores)){
 					hayPostores = true;
 				}
 			}	
-			
-			// Solo Concursal
-			if ("comboOtorgamientoEscritura".equals(val.getNombre())){
-				comboOtorgamientoEscritura = val.getValor();
-				if (DDSiNo.SI.equals(comboOtorgamientoEscritura)){
-					otorgamientoEscritura = true;
-				}
-			}
 			
 		}	
 		
@@ -395,8 +376,16 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 					if(!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
 						if (!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
 							if(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0) 
-							{
-								bienAdjuEntidad = true;
+							{	
+								if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate()){
+									cesionRemate = true;
+								}else if(!Checks.esNulo(bien.getAdjudicacion().getTipoDocAdjudicacion())){
+									if(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo().compareTo(DDDocAdjudicacion.ESCRITURA) == 0){
+										otorgamientoEscritura = true;
+									}else{
+										bienAdjuEntidad = true;
+									}
+								}
 							}
 							else{
 								bienAdjuTerceroFondo = true;
@@ -425,47 +414,19 @@ public class SubastaV4HayaConcursalLeaveActionHandler extends PROGenericLeaveAct
 				resultado[2] = true;
 			}
 			
-			//1.3 Si hay un bien que se lo ha adjudicado la entidad:
-			if (bienAdjuEntidad){
-				//1.3.1 que exista posibilidad de remate, para ello habrá una tarea de espera de 20 días y transcurrido 
-				//ese plazo se lanzaría el Tramite de Adjudicación
-				if (adjudicadoEntidadPosibleRemate){
-					if (!otorgamientoEscritura){
-						resultado[4] = true;
-					}
-					else{
-						resultado[8] = true;
-					}
-				}
-				//1.3.2 en el caso que no exista posibilidad de remate, se lanzará el "Tramite de Adjudicación"
-				else{
-					if (!otorgamientoEscritura){
-						resultado[3] = true;
-					}
-					else{
-						resultado[7] = true;
-					}
-				}												
-			}		
+			//Si hay un bien que se lo ha adjudicado la entidad con decreto lanzamos el trámite Adjudicación:
+			if (bienAdjuEntidad){	
+				resultado[3] = true;
+			}
+			//Si hay un bien que se lo ha adjudicado la entidad con escritura lanzamos el trámite Escritura:
+			if (otorgamientoEscritura){					
+				resultado[7] = true;
+			}																
 			
 		}
 		//2. Si NO está celebrada:
 		else{
-			
-			//OJO: en el caso de subastas concursales y de terceros no existen estos dos caminos (SuspendidaTerceros y SuspendidaEntidad)
-			
-			//2.1 Si es "Suspendida Terceros" ha de lanzarse otra vez un trámite de subasta
-			/*
-			if (suspendidaTerceros){
-				resultado[0] = true;
-			}
-			*/
-			//2.2 Si es "Suspendida Entidad" ha de ir a una decisión
-			/*
-			if (suspendidaEntidad){
-				resultado[1] = true;
-			}
-			*/
+			resultado[0] = true;
 		}
 				
 		return resultado;

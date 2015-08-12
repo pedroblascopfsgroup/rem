@@ -9,9 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.app.VelocityEngine;
@@ -20,7 +18,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -51,6 +48,7 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoCrearAnotacionR
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoCrearAnotacionUsuarioInfo;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.manager.RecoveryAnotacionApi;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.ClasspathResourceUtil;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.EmailContentUtil;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
@@ -119,7 +117,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class)
 				.getUsuarioLogado();
 
-		// FIXME Refactorizar toda esta parte para obtener el nombre y ug. Utilizar una factoría o algo.
+		// FIXME Refactorizar toda esta parte para obtener el nombre y ug. Utilizar una factorï¿½a o algo.
 		String nombre = "";
 		String ug = "";
 		String codUg = dto.getCodUg();
@@ -391,7 +389,8 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 
 		if (mailsPara.size() > 0) {
 			try {
-				String emailFrom = obtenerDireccionEmailUsuarioLogado();
+				Usuario usuarioLogueado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				String textoFrom =  usuarioLogueado.getUsername();
 				
 				//AÃ±adimos SOLO en el asunto del email, el nombre del asunto
 				Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dto.getIdUg());
@@ -400,14 +399,17 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 					asuntoMail = asu.getNombre() + " - " + asuntoMail;
 				}
 					
-				String cuerpoEmail = processCuerpoEmail(
-						emailFrom,
-						StringUtils.collectionToCommaDelimitedString(mailsPara),
-						dto.getAsuntoMail(), ug, nombre, HtmlUtils.htmlUnescape(dto.getCuerpoEmail()),
+				String cuerpoEmail = processCuerpoEmail( textoFrom, StringUtils.collectionToCommaDelimitedString(mailsPara),
+						 StringUtils.collectionToCommaDelimitedString(mailsCC), dto.getAsuntoMail(), ug, nombre, HtmlUtils.htmlUnescape(dto.getCuerpoEmail()),
 						dto);
-				// DIANA: Nuevo método para añadir adjuntos al email
-				enviarMailConAdjuntos(mailsPara, emailFrom, dto.getDireccionesMailCc(),
+				
+				AgendaMultifuncionCorreoUtils.dameInstancia().enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
 						asuntoMail, cuerpoEmail, dto.getAdjuntosList());
+				
+				/*DIANA: Nuevo mï¿½todo para aï¿½adir adjuntos al email
+				enviarMailConAdjuntos(mailsPara, mailManager.getUsername(), dto.getDireccionesMailCc(),
+						asuntoMail, cuerpoEmail, dto.getAdjuntosList());*/
+				
 				dejarTraza(
 						usuarioLogado.getId(),
 						MEJDDTipoRegistro.CODIGO_ENVIO_EMAILS,
@@ -415,7 +417,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						codUg,
 						createInfoEventoMailConAdjunto(
 								dto.getAsuntoMail(),
-								emailFrom,
+								mailManager.getUsername(),
 								StringUtils
 										.collectionToCommaDelimitedString(mailsPara),
 								StringUtils
@@ -503,7 +505,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	}
 	
 	/*
-	 * Este método es protected para poder hacer un spy durante el testeo
+	 * Este mï¿½todo es protected para poder hacer un spy durante el testeo
 	 */
 	protected void enviarMailConAdjuntos(List<String> mailsPara,
 			String emailFrom, List<String> direccionesMailCc,
@@ -512,11 +514,11 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		helper.setFrom(emailFrom);
 		helper.setTo(mailsPara.toArray(new String[mailsPara.size()]));
 		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
-			helper.setCc(mailsPara.toArray(new String[direccionesMailCc.size()]));
+			helper.setCc(direccionesMailCc.toArray(new String[direccionesMailCc.size()]));
 		}
 		helper.setSubject(asuntoMail);
 		helper.setText(cuerpoEmail, true);
-		// diana : añadimos aquí los adjuntos
+		// diana : aï¿½adimos aquï¿½ los adjuntos
 		if(!Checks.esNulo(list) && !Checks.estaVacio(list)){
 			for(DtoAdjuntoMail adj : list){
 				helper.addAttachment(adj.getNombre(), adj.getAdjunto().getFileItem().getFile());
@@ -692,7 +694,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		return info;
 	}
 
-	private String processCuerpoEmail(String origen, String destino,
+	private String processCuerpoEmail(String origen, String destino, String destinoCC,
 			String asunto, String tipoUnidadGestion,
 			String nombreUnidadGestion, String cuerpoOld,
 			DtoCrearAnotacionInfo dto) {
@@ -701,6 +703,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 
 		model.put("origen", origen);
 		model.put("destino", destino);
+		model.put("destinoCC", destinoCC);
 		model.put("asunto", asunto);
 		model.put("tipoUnidadGestion", tipoUnidadGestion);
 		model.put("nombreUnidadGestion", nombreUnidadGestion);
@@ -711,7 +714,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 
 		if (customize != null) {
 			model.putAll(customize);
-			//FIXME ¿Cómo sabemos que el mapa debe tener esa propiedad?, buscar un modo mejor de hacer esto.
+			//FIXME ï¿½Cï¿½mo sabemos que el mapa debe tener esa propiedad?, buscar un modo mejor de hacer esto.
 			customizeTempate = customize.get(AgendaMultifuncionCustomTemplate.LOCATION_TEMPLATE_KEY);
 		}
 
@@ -732,7 +735,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	}
 
 	/*
-	 * Este método se pone como protected para poder hacer un spy sobre el durante el testeo
+	 * Este mï¿½todo se pone como protected para poder hacer un spy sobre el durante el testeo
 	 */
 	protected Long crearTarea(Long idUg, String codUg, String asuntoMail,
 			Long idUsuarioDestinatarioTarea, boolean enEspera,
@@ -957,11 +960,12 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	}
 
 	private String obtenerDireccionEmailUsuarioLogado() {
-		String email = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado()
-				.getEmail();
+		String email = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getEmail();
+		
 		if (email == null || email.length() == 0) {
 			email = appProperties.getProperty("agendaMultifuncion.mail.from");
 		}
+		
 		return email;
 	}
 

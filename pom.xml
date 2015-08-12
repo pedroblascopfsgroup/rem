@@ -49,6 +49,14 @@
 			<url>http://interecovery.pfsgroup.es:8086</url>
 		</repository>
 		<repository>
+			<id>thirdparty</id>
+			<url>http://192.168.0.16:8081/nexus/content/repositories/thirdparty</url>
+		</repository>
+		<repository>
+			<id>pfsNexusFramework</id>
+			<url>http://nexus.pfsgroup.es/nexus/content/repositories/framework</url>
+		</repository>
+		<repository>
 			<id>Framework</id>
 			<url>http://192.168.0.143:8458/nexus/content/repositories/Framework</url>
 		</repository>
@@ -325,11 +333,6 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup</groupId>
-				<artifactId>sql</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>es.pfsgroup</groupId>
 				<artifactId>pfs-tesfwk</artifactId>
 				<version>1.0.3</version>
 				<scope>test</scope>
@@ -479,7 +482,6 @@
 		<module>recovery-cambiosMasivosAsunto-plugin</module>
 		<module>recovery-recobro-bpm</module>
 		<module>recovery-controlcalidad-plugin</module>
-		<module>sql</module>
 	</modules>
 
 	<profiles>

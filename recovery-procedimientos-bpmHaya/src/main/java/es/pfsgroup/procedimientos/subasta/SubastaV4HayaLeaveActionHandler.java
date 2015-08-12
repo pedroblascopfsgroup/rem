@@ -119,7 +119,7 @@ public class SubastaV4HayaLeaveActionHandler extends
 		} else if (executionContext.getNode().getName()
 				.contains("AdjuntarInformeSubasta")) {
 
-			if (!Checks.esNulo(sub)) {
+			if (!Checks.esNulo(sub) && !Checks.esNulo(sub.getEstadoSubasta()) && DDEstadoSubasta.PIN.compareTo(sub.getEstadoSubasta().getCodigo()) == 0) {
 
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.PPR);
 			}
@@ -230,8 +230,9 @@ public class SubastaV4HayaLeaveActionHandler extends
 
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo())
-				&& DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta()
-						.getCodigo()) != 0) {
+				&& (DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta()
+						.getCodigo()) != 0 || DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta()
+								.getCodigo()) != 0)) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class,
 					genericDao
 							.createFilter(FilterType.EQUALS, "codigo", estado),
@@ -267,7 +268,7 @@ public class SubastaV4HayaLeaveActionHandler extends
 						return DDEstadoSubasta.PAC;
 					}
 				}
-				return DDEstadoSubasta.PPR;
+				return DDEstadoSubasta.PCO;
 			}
 		}
 		return null;
@@ -375,19 +376,6 @@ public class SubastaV4HayaLeaveActionHandler extends
 				}
 			}
 
-			/*
-			 * else if ("comboSuspension".equals(val.getNombre())){
-			 * comboSuspendida = val.getValor(); if
-			 * ("01".equals(comboSuspendida)){ suspendida = true; } }
-			 */
-
-			if ("comboCesionRemate".equals(val.getNombre())) {
-				comboCesionRemate = val.getValor();
-				if (DDSiNo.SI.equals(comboCesionRemate)) {
-					cesionRemate = true;
-				}
-			}
-
 			if ("comboDecisionSuspension".equals(val.getNombre())) {
 				comboDecisionSuspension = val.getValor();
 				if (DDDecisionSuspension.TERCEROS.equals(comboDecisionSuspension)) {
@@ -396,13 +384,6 @@ public class SubastaV4HayaLeaveActionHandler extends
 				// B - suspendida entidad
 				if (DDDecisionSuspension.ENTIDAD.equals(comboDecisionSuspension)) {
 					suspendidaEntidad = true;
-				}
-			}
-
-			if ("comboAdjudicadoEntidad".equals(val.getNombre())) {
-				comboAdjudicadoEntidad = val.getValor();
-				if (DDSiNo.SI.equals(comboAdjudicadoEntidad)) {
-					adjudicadoEntidadPosibleRemate = true;
 				}
 			}
 
@@ -424,7 +405,11 @@ public class SubastaV4HayaLeaveActionHandler extends
 						if (!Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
 							if (bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo()
 								.compareTo(DDEntidadAdjudicataria.ENTIDAD) == 0) {
-								bienAdjuEntidad = true;
+								if(!Checks.esNulo(bien.getAdjudicacion().getCesionRemate()) && bien.getAdjudicacion().getCesionRemate()){
+									cesionRemate = true;
+								}else{
+									bienAdjuEntidad = true;
+								}
 							} else {
 								bienAdjuTerceroFondo = true;
 							}
@@ -458,17 +443,8 @@ public class SubastaV4HayaLeaveActionHandler extends
 
 			// 1.3 Si hay un bien que se lo ha adjudicado la entidad:
 			if (bienAdjuEntidad) {
-				// 1.3.1 que exista posibilidad de remate, para ello habrá una
-				// tarea de espera de 20 días y transcurrido
-				// ese plazo se lanzaría el Tramite de Adjudicación
-				if (adjudicadoEntidadPosibleRemate) {
-					resultado[4] = true;
-				}
-				// 1.3.2 en el caso que no exista posibilidad de remate, se
 				// lanzará el "Tramite de Adjudicación"
-				else {
-					resultado[3] = true;
-				}
+				resultado[3] = true;				
 			}
 
 		}

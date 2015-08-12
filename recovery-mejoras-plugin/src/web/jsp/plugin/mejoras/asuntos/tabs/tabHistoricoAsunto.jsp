@@ -60,7 +60,9 @@
 		<pfs:defineHeader dataIndex="group" captionKey="plugin.mejoras.asunto.tabHistorico.tipo" 
 			caption="**Tipo" sortable="true"  />
 		<pfs:defineHeader dataIndex="nombreUsuario" captionKey="plugin.mejoras.asunto.tabHistorico.usuario" 
-			caption="**usuario" sortable="true" />
+			caption="**usuario" sortable="true" hidden="true"/>
+		<pfs:defineHeader dataIndex="destinatarioTarea" captionKey="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" 
+			caption="**Destinatario" sortable="true" />
 		<pfs:defineHeader dataIndex="fechaVencimiento" captionKey="plugin.mejoras.asunto.tabHistorico.fechaVenc" 
 			caption="**fecha venc" sortable="false"/>	
 		<pfs:defineHeader dataIndex="fechaVencReal" captionKey="plugin.mejoras.asunto.tabHistorico.fechaVencReal" 
@@ -81,8 +83,7 @@
 			caption="**importe" sortable="true" renderer="app.format.moneyRenderer" hidden="true"/>
 		<pfs:defineHeader dataIndex="numeroAutos" captionKey="plugin.mejoras.asunto.tabHistorico.numeroAutos" 
 			caption="**Numero autos" sortable="true"  hidden="true" />
-		<pfs:defineHeader dataIndex="destinatarioTarea" captionKey="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" 
-			caption="**Destinatario" sortable="true"  hidden="true" />
+		
 		
 	</pfs:defineColumnModel>
 	

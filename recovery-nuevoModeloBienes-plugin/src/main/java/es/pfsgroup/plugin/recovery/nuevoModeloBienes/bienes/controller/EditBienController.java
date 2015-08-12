@@ -10,7 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +48,6 @@ import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -56,7 +58,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDTO;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastasServicioTasacionDelegateApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabs;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.NMBconfigTabsTipoBien;
@@ -69,6 +74,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienAdjudicac
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.serder.BienesAdjudicaciones;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.bienes.InformePropuestaCancelacionBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
@@ -76,6 +82,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionTitulo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoImposicion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoInmueble;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoProdBancario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoTributacion;
@@ -111,6 +118,9 @@ public class EditBienController {
 	private static final String JSON_LIST_LOCALIDADES = "plugin/nuevoModeloBienes/bienes/LocalidadesJSON";
 	private static final String JSON_LIST_UNIDADES_POBLACIONALES = "plugin/nuevoModeloBienes/bienes/UnidadesPoblacionalesJSON";
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";
+	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	private Executor executor;
@@ -199,6 +209,9 @@ public class EditBienController {
 		List<DDEntidadAdjudicataria> entidadAdjudicataria = (List<DDEntidadAdjudicataria>) executor
 				.execute("dictionaryManager.getList", "DDEntidadAdjudicataria");
 		map.put("entidadAdjudicataria", entidadAdjudicataria);
+		List<DDDocAdjudicacion> tipoDocAdjudicacion = (List<DDDocAdjudicacion>) executor
+				.execute("dictionaryManager.getList", "DDDocAdjudicacion");
+		map.put("tipoDocAdjudicacion", tipoDocAdjudicacion);
 		List<DDSituacionTitulo> situacionTitulo = (List<DDSituacionTitulo>) executor
 				.execute("dictionaryManager.getList", "DDSituacionTitulo");
 		map.put("situacionTitulo", situacionTitulo);
@@ -359,6 +372,14 @@ public class EditBienController {
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
 		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+		
 		map.put("tabs", mapaTabs);
 		map.put("operacion", "editar");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
@@ -432,6 +453,15 @@ public class EditBienController {
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
+		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+
 		map.put("operacion", "editar");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
 	}
@@ -472,6 +502,15 @@ public class EditBienController {
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
+		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+		
 		map.put("operacion", "nuevo");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
 	}
@@ -518,6 +557,15 @@ public class EditBienController {
 		List<DDTipoVia> vias = (List<DDTipoVia>) executor
 				.execute("dictionaryManager.getList", "DDTipoVia");
 		map.put("vias", vias);
+		
+		List<DDTipoImposicion> imposicion = (List<DDTipoImposicion>) executor
+				.execute("dictionaryManager.getList", "DDTipoImposicion");
+		map.put("imposicion", imposicion);
+		
+		List<DDSiNo> sino = (List<DDSiNo>) executor
+				.execute("dictionaryManager.getList", "DDSiNo");
+		map.put("sino", sino);
+		
 		map.put("operacion", "nuevo");
 		return "plugin/nuevoModeloBienes/clientes/bienes.js";
 	}
@@ -610,8 +658,7 @@ public class EditBienController {
 					.getParameter("situacionPosesoria"));
 
 		if (!Checks.esNulo(request.getParameter("viviendaHabitual")))
-			dto.setViviendaHabitual(Boolean.parseBoolean(request
-					.getParameter("viviendaHabitual")));
+			dto.setViviendaHabitual(request.getParameter("viviendaHabitual"));
 
 		if (!Checks.esNulo(request.getParameter("tipoSubasta")))
 			dto.setTipoSubasta(new Float(request.getParameter("tipoSubasta")));
@@ -674,6 +721,12 @@ public class EditBienController {
 			dto.setMunicipoLibro(request.getParameter("municipoLibro"));
 		if (!Checks.esNulo(request.getParameter("codigoRegistro")))
 			dto.setCodigoRegistro(request.getParameter("codigoRegistro"));
+		if (!Checks.esNulo(request.getParameter("municipioRegistro")))
+			dto.setMunicipioRegistro(request.getParameter("municipioRegistro"));
+		if (!Checks.esNulo(request.getParameter("provinciaRegistro")))
+			dto.setProvinciaRegistro(request.getParameter("provinciaRegistro"));
+		
+		
 
 		/* NMB Datos Localizacion */
 		if (!Checks.esNulo(request.getParameter("poblacion")))
@@ -756,6 +809,18 @@ public class EditBienController {
 
 		if (!Checks.esNulo(request.getParameter("tributacion")))
 			dto.setTributacion(request.getParameter("tributacion"));
+		
+		if (!Checks.esNulo(request.getParameter("tributacionVenta")))
+			dto.setTributacionVenta(request.getParameter("tributacionVenta"));
+		
+		if (!Checks.esNulo(request.getParameter("imposicionCompra")))
+			dto.setTipoImposicionCompra(request.getParameter("imposicionCompra"));
+		
+		if (!Checks.esNulo(request.getParameter("imposicionVenta")))
+			dto.setTipoImposicionVenta(request.getParameter("imposicionVenta"));
+		
+		if (!Checks.esNulo(request.getParameter("inversionRenuncia")))
+			dto.setInversionPorRenuncia(request.getParameter("inversionRenuncia"));
 
 		if (!Checks.esNulo(request.getParameter("fechaSolicitudDueD")))
 			dto.setFechaSolicitudDueD(request
@@ -1429,6 +1494,16 @@ public class EditBienController {
 		} else {
 			adjudicacion.setEntidadAdjudicataria(null);
 		}
+		
+		if (!Checks.esNulo(request.getParameter("tipoDocAdjudicacion"))) {
+			DDDocAdjudicacion tipoDocAdjudicacion = (DDDocAdjudicacion) proxyFactory
+					.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(
+							DDDocAdjudicacion.class,
+							request.getParameter("tipoDocAdjudicacion"));
+			adjudicacion.setTipoDocAdjudicacion(tipoDocAdjudicacion);
+		} else {
+			adjudicacion.setTipoDocAdjudicacion(null);
+		}
 
 		if (!Checks.esNulo(request.getParameter("situacionTitulo"))) {
 			DDSituacionTitulo situacionTitulo = (DDSituacionTitulo) proxyFactory
@@ -1855,8 +1930,15 @@ public class EditBienController {
 		String[] arrBien = idsBien.split(",");
 		if ("AGREGAR".equals(accion)) {
 			String[] arrCodSolvencia = codsSolvencia.split(",");
-			proxyFactory.proxy(BienApi.class).agregarBienes(idProcedimiento,
-					arrBien, arrCodSolvencia);
+			try{
+				proxyFactory.proxy(BienApi.class).agregarBienes(idProcedimiento, arrBien, arrCodSolvencia);
+			}
+			catch(DataIntegrityViolationException e){
+				logger.error(new Date() + "guardarAgregarExcluirBienPrc: " + e);
+			}
+			catch (Exception e) {
+				logger.error(new Date() + "guardarAgregarExcluirBienPrc: " + e);
+			}
 		} else {
 			proxyFactory.proxy(BienApi.class).excluirBienes(idProcedimiento,
 					arrBien);
@@ -2994,9 +3076,7 @@ public class EditBienController {
 								tev = new TareaExternaValor();
 								tev.setTareaExterna(tareaExterna);
 								tev.setNombre("comboViviendaHab");
-								tev.setValor(bien.getViviendaHabitual() != null
-										&& bien.getViviendaHabitual() ? DDSiNo.SI
-										: DDSiNo.NO);
+								tev.setValor(bien.getViviendaHabitual());
 								genericDao.save(TareaExternaValor.class, tev);
 
 								tev = new TareaExternaValor();
@@ -3904,12 +3984,12 @@ public class EditBienController {
 			} else {
 				// adjudicacion.setResolucionMoratoria(null);
 			}
+			
+			
 
 			// BIEN
 			if (!Checks.esNulo(bienAdjudicacion.getHabitual())) {
-				bien.setViviendaHabitual(Boolean.parseBoolean(bienAdjudicacion
-						.getHabitual())
-						|| DDSiNo.SI.compareTo(bienAdjudicacion.getHabitual()) == 0);
+				bien.setViviendaHabitual(bienAdjudicacion.getHabitual());
 			} else {
 				// adjudicacion.setOcupado(null);
 			}
@@ -3994,7 +4074,7 @@ public class EditBienController {
 		// executor.execute(SubastasServicioTasacionDelegateApi.BO_UVEM_SOLICITUD_NUMERO_ACTIVO,
 		// idBien);
 		// proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarNumeroActivo(idBien);
-		Integer respuesta = proxyFactory.proxy(
+		String respuesta = proxyFactory.proxy(
 				SubastasServicioTasacionDelegateApi.class)
 				.solicitarNumeroActivoConRespuesta(idBien);
 		model.put("msgError", respuesta);
@@ -4050,5 +4130,48 @@ public class EditBienController {
 		model.put("data", list);
 		return DICCIONARIO_JSON;
 	}
-
+	
+	/**
+	 * Comprueba si algunos de los bienes pasados por parámetro está incluido en un lote de la subasta asociado al procedimiento
+	 * 
+	 * @param idProcedimiento
+	 * @param idsBien
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isBienAsociadoSubasta(
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "idsBien", required = true) String idsBien,
+			ModelMap model) throws Exception 
+	{
+		try {
+			String resultado = "OK";
+			String[] arrBien = idsBien.split(",");
+			Procedimiento procedimiento = proxyFactory.proxy(es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi.class).getProcedimiento(idProcedimiento);
+			
+			// Se recuperan los bienes asociados a la subasta del procedimiento y se comprueba si alguno de los que se quiere excluir está entre ellos
+			Subasta subasta = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(procedimiento.getId());
+			
+			if(!Checks.esNulo(subasta)) {
+				for(LoteSubasta loteSubasta : subasta.getLotesSubasta()) {
+					for(Bien bien : loteSubasta.getBienes()) {
+						if(ArrayUtils.contains(arrBien, bien.getId().toString())) {
+							resultado = "KO";
+						}
+					}			
+				}
+			}
+			
+			model.put("okko", resultado);
+	
+			return OK_KO_RESPUESTA_JSON;
+		}
+		catch(Exception e) {
+			logger.error("isBienAsociadoSubasta: " + e);
+			throw e;
+		}
+	}
 }

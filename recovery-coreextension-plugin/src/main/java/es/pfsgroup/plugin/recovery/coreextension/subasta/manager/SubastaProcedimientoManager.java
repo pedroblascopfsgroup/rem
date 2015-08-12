@@ -14,6 +14,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
@@ -26,7 +27,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -502,6 +502,12 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 		return "subastaDelegada";
 	}
 	
+	/**
+	 * Función que valida si todos los bienes asociados al procedimiento de subasta que recibe como parámetro
+	 * tienen informada la provincia, la localidad y el número de finca.
+	 * @param prcId id procedimiento
+	 * @return boolean en función de si pasa o no la validación
+	 */
 	@Override
 	@BusinessOperation(BO_SUBASTA_COMPROBAR_PROV_LOC_FIN_BIEN)
 	public boolean comprobarProvLocFinBien(Long prcId) {
@@ -512,10 +518,60 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 			
 			NMBBien nmbBien = (NMBBien) bien;
 			
-			if (Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia()) || Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad()) || Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumFinca())) {
+			if (Checks.esNulo(nmbBien.getLocalizacionActual())
+					|| Checks.esNulo(nmbBien.getLocalizacionActual().getProvincia()) 
+                    || Checks.esNulo(nmbBien.getLocalizacionActual().getLocalidad())
+                    || Checks.esNulo(nmbBien.getDatosRegistralesActivo())
+                    || Checks.esNulo(nmbBien.getDatosRegistralesActivo().getNumFinca())
+                    || Checks.esNulo(nmbBien.getAdicional())
+                    || Checks.esNulo(nmbBien.getAdicional().getTipoInmueble())
+                    || Checks.esNulo(nmbBien.getAdicional().getTipoInmueble().getCodigo())) {
 				return false;
 			}
 
+		}		
+
+		return true;
+	}
+
+	/**
+	 *	Función que valida si las costas del letrado introducidas en la tarea que recibe como parámetro
+	 *  superan el 5% del principal para el caso de tener algún bien asociado al procedimiento de subasta que recibe como parámetro
+	 *  @param prcId id procedimiento
+	 *  @param texId id tarea
+	 *  @return boolean en función de si pasa o no la validación
+	 */
+	@Override
+	@BusinessOperation(BO_SUBASTA_COMPROBAR_COSTAS_LETRADO_VIVIENDA_HABITUAL)
+	public boolean comprobarCostasLetradoViviendaHabitual(Long prcId, Long texId) {
+		
+		// Averiguamos el importe principal
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
+		BigDecimal principal = prc.getSaldoRecuperacion(); // FIXME principal???
+
+		// Calculamos el 5% del principal
+		BigDecimal princpal5PorCiento = principal.multiply(new BigDecimal(5)).divide(new BigDecimal(100));
+
+		// Averiguamos las costas indicadas en la tarea
+		String valueCostas = genericDao.get(EXTTareaExternaValor.class, genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", texId), genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "nombre", "costasLetrado")).getValor();
+		BigDecimal costas = Checks.esNulo(valueCostas) ? null : new BigDecimal(valueCostas);
+			
+		// Comprobamos si algún bien es vivienda habitual
+		List<Bien> listadoBienes = getBienesSubastaByPrcId(prcId);		
+		boolean isViviendaHabitual = false;
+		
+		for(Bien bien: listadoBienes) {
+			
+			NMBBien nmbBien = (NMBBien) bien;
+			
+			if ("1".equals(nmbBien.getViviendaHabitual())) {
+				isViviendaHabitual=true;
+			}
+		}
+		
+		// Si hay algún bien que es vivienda habitual y las costas superan el 5% del principal se devuelve false para mostrar el error correspondiente.
+		if (isViviendaHabitual && (!Checks.esNulo(costas) && costas.doubleValue() > princpal5PorCiento.doubleValue())) {
+			return false;
 		}		
 
 		return true;

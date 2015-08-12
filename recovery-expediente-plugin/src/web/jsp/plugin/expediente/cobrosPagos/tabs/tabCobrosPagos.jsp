@@ -49,7 +49,7 @@
 	        ,{header: '<s:message code="plugin.expediente.cobrosPagos.tab.contrato" text="**Contrato" />',dataIndex: 'contrato',sortable:true}
 			,{header: '<s:message code="plugin.expediente.cobrosPagos.tab.tipo" text="**Tipo" />',dataIndex: 'tipoCobroPago',sortable:true}
             ,{header: '<s:message code="plugin.expediente.cobrosPagos.tab.origen" text="**Origen" />',dataIndex: 'origenCobro',sortable:true}
-            ,{header: '<s:message code="plugin.expediente.cobrosPagos.tab.importe" text="**Importe" />',dataIndex: 'importe',sortable:true}
+            ,{header: '<s:message code="plugin.expediente.cobrosPagos.tab.importe" text="**Importe" />',dataIndex: 'importe',sortable:true, renderer: app.format.moneyRenderer, align: 'right' }
   	 ]);
 
 	var recargar = function(){

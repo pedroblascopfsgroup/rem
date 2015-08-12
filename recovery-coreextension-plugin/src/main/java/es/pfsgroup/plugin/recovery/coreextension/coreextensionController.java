@@ -7,10 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -19,10 +22,13 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 
 //FIXME Hay que eliminar esta clase o renombrarla
@@ -35,6 +41,7 @@ public class coreextensionController {
 	private static final String TIPO_USUARIO_JSON = "plugin/coreextension/asunto/tipoUsuarioJSON";
 	private static final String TIPO_USUARIO_PAGINATED_JSON = "plugin/coreextension/asunto/tipoUsuarioPaginatedJSON";
 	private static final String GESTORES_ADICIONALES_JSON = "plugin/coreextension/multigestor/multiGestorAdicionalDataJSON";
+	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -94,20 +101,22 @@ public class coreextensionController {
 	public String getListTipoDespachoData(ModelMap model, Long idTipoGestor, 
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
 			@RequestParam(value="adicional", required=false) Boolean adicional,
-			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional){
+			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional,
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
 		
 		List<DespachoExterno> listadoDespachos = null;
 		
 		if (porUsuario==null) porUsuario = false;
 		if (adicional==null) adicional = false;
 		if (procuradorAdicional==null) procuradorAdicional = false;
-
+		if (incluirBorrados==null) incluirBorrados = false;
+		
 		// POR USUARIO
 		if (porUsuario) {
 			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListDespachosDeUsuario(idTipoGestor, usuario.getId(), adicional, procuradorAdicional);
 		} else {
-			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListDespachos(idTipoGestor);
+			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
 		}
 		//////
 		
@@ -124,9 +133,12 @@ public class coreextensionController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListUsuariosData(ModelMap model, Long idTipoDespacho){
+	public String getListUsuariosData(ModelMap model, Long idTipoDespacho,
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
 		
-		List<Usuario> listadoUsuarios = proxyFactory.proxy(coreextensionApi.class).getListUsuariosData(idTipoDespacho);
+		incluirBorrados = incluirBorrados != null ? incluirBorrados : false;
+		
+		List<Usuario> listadoUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(idTipoDespacho, incluirBorrados);
 		model.put("listadoUsuarios", listadoUsuarios);
 		
 		return TIPO_USUARIO_JSON;
@@ -220,5 +232,31 @@ public class coreextensionController {
 
 	public GenericABMDao getGenericDao() {
 		return genericDao;
+	}
+	
+	/**
+	 * Comprueba si el procurador asociado al asunto tiene provisiones 
+	 * 
+	 * @param idAsunto
+	 * @return String
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isProcuradorConProvisiones(Long idAsunto
+			, WebRequest request, ModelMap model) throws Exception{
+		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
+		Provisiones prov = genericDao.get(Provisiones.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		
+		//Es un usuario Procurador Con provisiones
+		if (Checks.esNulo(asu) || Checks.esNulo(prov)){
+			model.put("okko",(String)"KO");
+		}else{
+			if ( (Checks.esNulo(prov.getFechaBaja())) && (asu.getProcurador() != null ) ){
+				model.put("okko","OK");
+			}else{
+				model.put("okko","KO");
+			}
+		}
+		return OK_KO_RESPUESTA_JSON;
 	}
 }

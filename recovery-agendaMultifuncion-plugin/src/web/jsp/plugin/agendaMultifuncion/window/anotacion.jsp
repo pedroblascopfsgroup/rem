@@ -44,9 +44,14 @@
          ]
         })
     });
+    
+    var activarEmail = false;    
+    <sec:authorize ifAllGranted="ACTIVAR_EMAIL_ANOTACIONES">
+    activarEmail = true;
+    </sec:authorize>
 	
     var rendererChechkbox = function(value, metaData, record, rowIndex, colIndex, store){ 
-       
+     
         
         if(parseInt(value) == 1){ 
             metaData.css='icon_checkbox_on';
@@ -59,13 +64,7 @@
     var rendererChechkboxMail = function(value, metaData, record, rowIndex, colIndex, store){ 
        
         var tieneEmail = record.get('tieneEmail');
-        var activarEmail = false;
-        
-        <sec:authorize ifAllGranted="ACTIVAR_EMAIL_ANOTACIONES">
-        activarEmail = true;
-        </sec:authorize>
-        
-                    
+         
         if(activarEmail && tieneEmail){          
 	        if(parseInt(value) == 1){ 
 	            metaData.css='icon_checkbox_on';
@@ -108,8 +107,10 @@
         //     ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.perfil" text="**perfil" />', width: 50,  dataIndex: 'perfil',sortable:true}
              ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.incorporar" text="**incorporar" />', width: 17,  dataIndex: 'incorporar',sortable:true,renderer:rendererChechkbox}
              ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.fecha" text="**fecha" />', width: 20,  dataIndex: 'fecha',sortable:true, editor: fechaGrid, renderer:rendererFecha}
+             <sec:authorize ifAllGranted="ACTIVAR_EMAIL_ANOTACIONES">
             ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.email" text="**email" />', width: 10,  dataIndex: 'email',sortable:true,renderer:rendererChechkboxMail}
-        //   ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.isOficina" text="**isOficina" />', width: 10,  dataIndex: 'oficina',sortable:false,hidden:false}
+            </sec:authorize>
+        //  ,{header: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.gridUsuarios.isOficina" text="**isOficina" />', width: 10,  dataIndex: 'oficina',sortable:false,hidden:false}
     ]});
     
     //Template para el combo de usuarios
@@ -237,6 +238,7 @@
 	            }
             }
             if (columnName == 'incorporar') {
+ 
                 var rec = gridUsuarios.getStore().getAt(rowIndex);
                 if(rec){
                     var fechaEditor = cm.getCellEditor(cm.findColumnIndex('fecha'), rowIndex).field;
@@ -246,6 +248,8 @@
                         value = 0;
                         rec.set('fecha', '');
                         fechaEditor.disable();
+                        // FASE-1441 : No es posible desmarcar la casilla de incorporar y dejar marcada la de email 
+                        rec.set('email', value);
                     }
                     else {
                         fechaEditor.enable();
@@ -253,10 +257,12 @@
                     }
                     
                     rec.set('incorporar', value);
+
                 }
             }
             
             if (columnName == 'email') {
+
                 var rec = grid.getStore().getAt(rowIndex);
                 var tieneEmail = rec.get('tieneEmail');
                 if(tieneEmail){
@@ -270,6 +276,11 @@
 	                    else {
 	                    	value = 1;
 	                    	permiteAdjuntar=permiteAdjuntar+1;
+	                    	// FASE-1441 : No es posible marcar la casilla de email sin marcar la de incorporar. 
+	                    	// Al marcar la casilla de incorporar habilitamos el campo de fecha. 
+	                    	rec.set('incorporar', value);
+	                    	var fechaEditor = cm.getCellEditor(cm.findColumnIndex('fecha'), rowIndex).field;
+	                    	fechaEditor.enable();
 	                    }
 	                    if((mailPara.validate() && mailPara.getValue()!=null && mailPara.getValue()!='') ||(permiteAdjuntar>0)){
 	                    	panelAdjuntos.setDisabled(false);
@@ -319,6 +330,7 @@
         ,fieldLabel: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.mail.para" text="**para"/>'
         ,labelStyle:labelStyleMail
         ,validator: mailValidator
+
     });
     
     var mailCC = new Ext.form.TextField({
@@ -326,6 +338,8 @@
         ,fieldLabel: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.mail.cc" text="**cc"/>'
         ,labelStyle:labelStyleMail
         ,validator: mailValidator
+
+
     });
     
     var mailAsunto = new Ext.form.TextField({
@@ -734,7 +748,7 @@
         title:'<s:message code="asuntos.adjuntos.grid" text="**Adjuntos"/>'
         ,collapsible:true
         ,collapsed:true
-        ,autoHeight: true
+        ,height: 200
         ,style : 'padding:0px;'
         ,parentWidth:maxWidth - bordersWidth
         ,width:maxWidth - bordersWidth
@@ -1150,8 +1164,10 @@
                 idUg: idUg
                 ,codUg: codUg
                 ,usuarios: paramUserList
+
                 ,para:mailPara.getValue()
                 ,cc:mailCC.getValue()
+
                 ,asuntoMail:mailAsunto.getValue()
                 ,cuerpoEmail:cuerpoEmail.getValue()
                 ,tipoAnotacion:tipo.getValue()

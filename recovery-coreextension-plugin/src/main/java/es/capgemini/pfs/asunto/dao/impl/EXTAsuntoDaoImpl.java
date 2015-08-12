@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.utils.StringUtils;
+import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.asunto.dao.EXTAsuntoDao;
 import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
 import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
@@ -46,12 +47,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.api.asunto.EXTBusquedaAsuntoFiltroDinamico;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 @Repository
-public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements EXTAsuntoDao {
+public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
+		EXTAsuntoDao {
 
 	@Resource
 	private PaginationManager paginationManager;
@@ -61,7 +64,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 	@Autowired
 	GenericABMDao genericDao;
-	
+
 	@Autowired(required = false)
 	private List<EXTBusquedaAsuntoFiltroDinamico> filtrosBusquedaDinamica;
 
@@ -79,7 +82,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereContrato(dto)) {
 			hql.append(", ProcedimientoContratoExpediente pce, ExpedienteContrato cex, Contrato cnt ");
 		}
-		if (dto.getIdSesionComite() != null || dto.getIdComite() != null ){
+		if (dto.getIdSesionComite() != null || dto.getIdComite() != null) {
 			hql.append(", DecisionComite dco , DDEstadoItinerario estIti ");
 		}
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
@@ -103,8 +106,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 					+ filtroGestorSupervisorAsuntoMultiGestor(usuarioLogado,
 							params)
 					+ " or "
-					+ filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(usuarioLogado,
-							params) + ")");
+					+ filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(
+							usuarioLogado, params) + ")");
 
 		}
 		// ASUNTO
@@ -371,18 +374,21 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 				|| dto.getMinImporteEstimado() != null
 				|| dto.getMaxSaldoTotalContratos() != null
 				|| dto.getMinSaldoTotalContratos() != null
-				|| (dto.getCodigoProcedimientoEnJuzgado() != null && !dto.getCodigoProcedimientoEnJuzgado().equals(""))
-				|| (dto.getNumeroProcedimientoEnJuzgado() != null && !dto.getNumeroProcedimientoEnJuzgado().equals(""))		
-				|| (dto.getAnyoProcedimientoEnJuzgado() != null && !dto.getAnyoProcedimientoEnJuzgado().equals(""))	
+				|| (dto.getCodigoProcedimientoEnJuzgado() != null && !dto
+						.getCodigoProcedimientoEnJuzgado().equals(""))
+				|| (dto.getNumeroProcedimientoEnJuzgado() != null && !dto
+						.getNumeroProcedimientoEnJuzgado().equals(""))
+				|| (dto.getAnyoProcedimientoEnJuzgado() != null && !dto
+						.getAnyoProcedimientoEnJuzgado().equals(""))
 				|| (dto.getTiposProcedimiento() != null && dto
 						.getTiposProcedimiento().size() > 0);
 	}
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
 		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto
-				.getFiltroContrato() > 0L));
+				.getFiltroContrato() > 0L) || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
 	}
-	
+
 	private String filtroGestorSupervisorAsuntoMonoGestor(
 			Usuario usuarioLogado, HashMap<String, Object> params) {
 		StringBuilder hql = new StringBuilder();
@@ -395,27 +401,26 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	}
 
 	private String filtroGestorGrupo(List<Long> idsUsuariosGrupo) {
-		if (idsUsuariosGrupo==null || idsUsuariosGrupo.size()==0)
+		if (idsUsuariosGrupo == null || idsUsuariosGrupo.size() == 0)
 			return "";
-		
+
 		StringBuilder hql = new StringBuilder();
-		
+
 		hql.append("or (asu.id in (");
 		hql.append("select gaa.asunto.id from EXTGestorAdicionalAsunto gaa  ");
 		hql.append("where gaa.gestor.usuario.id IN (");
-		
+
 		StringBuilder idsUsuarios = new StringBuilder();
 		for (Long idUsario : idsUsuariosGrupo) {
 			idsUsuarios.append("," + idUsario.toString());
 		}
-		if (idsUsuarios.length()>1)
+		if (idsUsuarios.length() > 1)
 			hql.append(idsUsuarios.deleteCharAt(0).toString());
-		
+
 		hql.append(")))");
 		return hql.toString();
 	}
-	
-	
+
 	private String filtroGestorSupervisorAsuntoMultiGestor(
 			Usuario usuarioLogado, HashMap<String, Object> params) {
 		StringBuilder hql = new StringBuilder();
@@ -426,14 +431,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		params.put("usuarioLogado", usuarioLogado.getId());
 		return hql.toString();
 	}
-	
-	
+
 	private String filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(
 			Usuario usuarioLogado, HashMap<String, Object> params) {
 		StringBuilder hql = new StringBuilder();
 		hql.append(" (asu.id in (");
 		hql.append("select ge.unidadGestionId from EXTGestorEntidad ge");
-		hql.append(" where ge.tipoEntidad.codigo = " + DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO);
+		hql.append(" where ge.tipoEntidad.codigo = "
+				+ DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO);
 		hql.append(" and ge.gestor.id = :usuarioLogado");
 		hql.append("))");
 		params.put("usuarioLogado", usuarioLogado.getId());
@@ -462,8 +467,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			and = " and ";
 		}
 		if (!Checks.esNulo(comboGestor)) {
-			subhql.append(and
-					+ "gaa.usuario in (");
+			subhql.append(and + "gaa.usuario in (");
 			StringTokenizer tokensGestores = new StringTokenizer(comboGestor,
 					",");
 			while (tokensGestores.hasMoreElements()) {
@@ -574,59 +578,76 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	@Override
 	public Page buscarAsuntosPaginatedDinamico(Usuario usuarioLogado,
 			EXTDtoBusquedaAsunto dto, String paramsDinamicos) {
-		HashMap<String, Object> params = buscarAsuntosPaginatedDinamicoComun(usuarioLogado, dto, paramsDinamicos);
+		HashMap<String, Object> params = buscarAsuntosPaginatedDinamicoComun(
+				usuarioLogado, dto, paramsDinamicos);
 		StringBuffer hql = (StringBuffer) params.get("hql");
 		params.remove("hql");
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				hql.toString(), dto, params);
 	}
-		
+
 	@Override
-	public Integer buscarAsuntosPaginatedDinamicoCount(Usuario usuarioLogado, EXTDtoBusquedaAsunto dto, String paramsDinamicos) {
-		HashMap<String, Object> params = buscarAsuntosPaginatedDinamicoComun(usuarioLogado, dto, paramsDinamicos);
+	public Integer buscarAsuntosPaginatedDinamicoCount(Usuario usuarioLogado,
+			EXTDtoBusquedaAsunto dto, String paramsDinamicos) {
+		HashMap<String, Object> params = buscarAsuntosPaginatedDinamicoComun(
+				usuarioLogado, dto, paramsDinamicos);
 		StringBuffer hql = (StringBuffer) params.get("hql");
 		params.remove("hql");
-		return paginationManager.getHibernatePage(getHibernateTemplate(),
-				hql.toString(), dto, params).getResults().size();
+		return paginationManager
+				.getHibernatePage(getHibernateTemplate(), hql.toString(), dto,
+						params).getResults().size();
 	}
-	
-	private HashMap<String, Object> buscarAsuntosPaginatedDinamicoComun(Usuario usuarioLogado,
-			EXTDtoBusquedaAsunto dto, String paramsDinamicos) {
-		
+
+	private HashMap<String, Object> buscarAsuntosPaginatedDinamicoComun(
+			Usuario usuarioLogado, EXTDtoBusquedaAsunto dto,
+			String paramsDinamicos) {
+
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		final int bufferSize = 1024;
+		if(dto != null && !Checks.esNulo(dto.getSort())){
+			if("fechaCrear".equals(dto.getSort())){
+				dto.setSort("a.auditoria." + dto.getSort());
+			} else {
+				dto.setSort("a." + dto.getSort());
+			}
+		}
 		StringBuffer hql = new StringBuffer(bufferSize);
-		
-		hql.append("from Asunto a where a.id in ");
-		
+
+		hql.append("from Asunto a ");
+		hql.append(" JOIN FETCH a.estadoAsunto ");
+		hql.append(" LEFT JOIN FETCH a.fichaAceptacion ");
+		hql.append(" where a.id in ");
+
 		/***
-		 * La lista de los parï¿½metros dinï¿½nmicos debe venir de la siguiente manera
+		 * La lista de los parï¿½metros dinï¿½nmicos debe venir de la siguiente
+		 * manera
 		 * 
-		 * _param_origen:plugin1;plugin1param1:valor1;plugin1param2:valor2;%param%origen:plugin2;plugin2param1:valor1;plugin2param2:valor2;
+		 * _param_origen:plugin1;plugin1param1:valor1;plugin1param2:valor2;%
+		 * param%origen:plugin2;plugin2param1:valor1;plugin2param2:valor2;
 		 * 
 		 * */
-		
-		if(paramsDinamicos != null && filtrosBusquedaDinamica != null){
+
+		if (paramsDinamicos != null && filtrosBusquedaDinamica != null) {
 			String[] paramsVector = paramsDinamicos.split("_param_");
-			if(paramsVector != null && paramsVector.length>0){
-				for(String paramDinamico:paramsVector){
-					for(EXTBusquedaAsuntoFiltroDinamico filtro:filtrosBusquedaDinamica){
-						if(filtro.isValid(paramDinamico)){
-							
+			if (paramsVector != null && paramsVector.length > 0) {
+				for (String paramDinamico : paramsVector) {
+					for (EXTBusquedaAsuntoFiltroDinamico filtro : filtrosBusquedaDinamica) {
+						if (filtro.isValid(paramDinamico)) {
+
 							hql.append(" ( ");
 							hql.append(filtro.obtenerFiltro(paramDinamico));
 							hql.append(" ) and a.id in ");
-							
+
 						}
 					}
 				}
 			}
 		}
-		
+
 		hql.append(" (select distinct asu.id from Asunto asu");
-	
+
 		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
-			hql.append(", Procedimiento prc");
+			hql.append(", Procedimiento prc ");
 		}
 		if (requiereContrato(dto)) {
 			hql.append(", ProcedimientoContratoExpediente pce, ExpedienteContrato cex, Contrato cnt ");
@@ -634,18 +655,36 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (dto.getIdSesionComite() != null || dto.getIdComite() != null) {
 			hql.append(", DecisionComite dco , DDEstadoItinerario estIti ");
 		}
+
+		if (requierePrevioCDD(dto)) {
+			hql.append(", BatchAcuerdoCierreDeuda cdd ");
+		}
+
+		if (requierePostCDD(dto)) {
+			hql.append(", BatchAcuerdoCierreDeuda cdd2, DDResultadoValidacionNuse rvn ,BatchCDDResultadoNuse crn ");
+		}
+		
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
-	
+
 		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
 			hql.append(" and prc.asunto.id = asu.id ");
 			hql.append(" and prc.auditoria." + Auditoria.UNDELETED_RESTICTION);
-	
+
 		}
 		if (requiereContrato(dto)) {
 			hql.append(" and prc.id = pce.procedimiento and cex.id = pce.expedienteContrato and cex.contrato.id = cnt.id ");
 			hql.append(" and cex.auditoria." + Auditoria.UNDELETED_RESTICTION);
 		}
-	
+
+
+		if (requierePrevioCDD(dto)) {
+			hql.append(" and asu.id = cdd.asunto.id ");
+		}
+
+		if (requierePostCDD(dto)) {
+			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion and asu.codigoExterno = crn.codigoExterno ");
+		}
+
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
 		if (usuarioLogado.getUsuarioExterno()) {
 			hql.append(" and ("
@@ -655,11 +694,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 					+ filtroGestorSupervisorAsuntoMultiGestor(usuarioLogado,
 							params)
 					+ " or "
-					+ filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(usuarioLogado,
-							params)
-					+ filtroGestorGrupo(dto.getIdsUsuariosGrupos())
-					+ ")");
-	
+					+ filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(
+							usuarioLogado, params)
+					+ filtroGestorGrupo(dto.getIdsUsuariosGrupos()) + ")");
+
 		}
 		// ASUNTO
 		if (dto.getCodigoAsunto() != null) {
@@ -679,20 +717,23 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 							new Long(dto.getComboDespachos()), params) + ")");
 		}
 		// GESTOR
-		if (!es.capgemini.pfs.utils.StringUtils.emtpyString(dto.getComboGestor()) || 
-				!es.capgemini.pfs.utils.StringUtils.emtpyString(dto.getComboTiposGestor())) {
+		if (!es.capgemini.pfs.utils.StringUtils.emtpyString(dto
+				.getComboGestor())
+				|| !es.capgemini.pfs.utils.StringUtils.emtpyString(dto
+						.getComboTiposGestor())) {
 			hql.append(" and asu.id in ("
 					+ getIdsAsuntosParaGestor(dto.getComboGestor(),
 							dto.getComboTiposGestor()) + ")");
 		}
-	
+
 		// ESTADO ASUNTO
 		if (dto.getComboEstados() != null && !"".equals(dto.getComboEstados())) {
 			hql.append(" and asu.estadoAsunto.codigo = :estadoAsu");
 			params.put("estadoAsu", dto.getComboEstados());
 		}
 		// TIPO ASUNTO
-		if (dto.getComboTipoAsunto() != null && !"".equals(dto.getComboTipoAsunto())) {
+		if (dto.getComboTipoAsunto() != null
+				&& !"".equals(dto.getComboTipoAsunto())) {
 			hql.append(" and asu.tipoAsunto.descripcion = :tipoAsu");
 			params.put("tipoAsu", dto.getComboTipoAsunto());
 		}
@@ -719,7 +760,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and asu.decisionComite.id = dco.id and dco.sesion.id = :sesionComiteId");
 			params.put("sesionComiteId", dto.getIdSesionComite());
 		}
-	
+
 		// ESTADO ANALISIS
 		// TODO VER CON FO: artf429805
 		/*
@@ -732,7 +773,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		 * (tokensEstados.hasMoreElements()){ hql.append(" or "); } }
 		 * hql.append(")"); }
 		 */
-	
+
 		// CODIGO CONTRATO
 		if (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L) {
 			hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
@@ -765,18 +806,65 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}
 		}
 		
+		//FILTRO ERROR CDD
+		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
+			if("Todos".equals(dto.getComboErrorPreviCDD())){
+				hql.append(" and cdd.resultadoValidacionCDD is not null");
+			}
+			else{
+				hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
+				params.put("errorPrevio", dto.getComboErrorPreviCDD());
+			}
+		}
+		
+		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
+			if("0".equals(dto.getComboErrorPostCDD())){
+				hql.append(" and rvn.codigo <> '0' and cdd2.fechaAlta <= crn.fechaResultado");
+			}
+			else{
+				hql.append(" and rvn.id = :errorPost and cdd2.fechaAlta <= crn.fechaResultado");
+				params.put("errorPost", (dto.getComboErrorPostCDD()));
+			}			
+		}
+		
+		// FECHA DESDE ENVIO PIVOTE
+		if (!Checks.esNulo(dto.getFechaEntregaDesde())) {
+			hql.append(" and cdd.fechaEntrega >= :fechaEntregaDesde");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				params.put("fechaEntregaDesde",
+						sdf1.parse(dto.getFechaEntregaDesde()));
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha entrega desde", e);
+			}
+		}
+		// FECHA HASTA ENVIO PIVOTE
+		if (!Checks.esNulo(dto.getFechaEntregaHasta())) {
+			hql.append(" and cdd.fechaEntrega <= :fechaEntregaHasta");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				Calendar c = new GregorianCalendar();
+				c.setTime(sdf1.parse(dto.getFechaEntregaHasta()));
+				c.add(Calendar.DAY_OF_YEAR, 1);
+				params.put("fechaEntregaHasta", c.getTime());
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha hasta", e);
+			}
+		}
+		
 		// FILTRO GESTION
-		if (dto.getComboGestion()!=null && !"".equals(dto.getComboGestion())) {
+		if (dto.getComboGestion() != null && !"".equals(dto.getComboGestion())) {
 			hql.append(" and asu.gestionAsunto.codigo = :gestionAsunto");
 			params.put("gestionAsunto", dto.getComboGestion());
 		}
-		
+
 		// FILTRO PROPIEDAD
-		if (dto.getComboPropiedades()!=null && !"".equals(dto.getComboPropiedades())) {
+		if (dto.getComboPropiedades() != null
+				&& !"".equals(dto.getComboPropiedades())) {
 			hql.append(" and asu.propiedadAsunto.codigo = :propiedadAsunto");
 			params.put("propiedadAsunto", dto.getComboPropiedades());
 		}
-	
+
 		// VISIBILIDAD
 		// Se suma la visibilidad por pertenencia al asunto + la visibilidad por
 		// zonas
@@ -797,12 +885,12 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		 * hql.delete(hql.length() - 2, hql.length()); hql.append(" ) "); }
 		 * hql.append(")"); }
 		 */
-	
+
 		// FILTRO DE ZONAS
 		if (dto.getJerarquia() != null && dto.getJerarquia().length() > 0) {
-			hql.append(" and cnt.zona.nivel.id >= :nivelId");
-			params.put("nivelId", new Long(dto.getJerarquia()));
-	
+			hql.append(" and cnt.zona.nivel.codigo <= :nivelId");
+			params.put("nivelId", Integer.valueOf(dto.getJerarquia()));
+
 			if (dto.getCodigoZonas().size() > 0) {
 				hql.append(" and ( ");
 				for (String codigoZ : dto.getCodigoZonas()) {
@@ -815,9 +903,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 				hql.append(" ) ");
 			}
 		}
-	
+
 		if (requiereProcedimiento(dto)) {
-	
+
 			// Codigo de procedimiento en juzgado
 			if (dto.getCodigoProcedimientoEnJuzgado() != null
 					&& !dto.getCodigoProcedimientoEnJuzgado().equals("")) {
@@ -826,18 +914,27 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 						+ dto.getCodigoProcedimientoEnJuzgado() + "%' ");
 				hql.append(" ) ");
 			}
-			//UGAS-188
-			if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado()) && !Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())){
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
-			}else if(!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())){
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%')");
-			}else if(!Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())){
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
+			// UGAS-188
+			if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())
+					&& !Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"
+						+ dto.getNumeroProcedimientoEnJuzgado() + "%-%"
+						+ dto.getAnyoProcedimientoEnJuzgado() + "%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"
+						+ dto.getNumeroProcedimientoEnJuzgado() + "%/%"
+						+ dto.getAnyoProcedimientoEnJuzgado() + "%')");
+			} else if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())) {
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"
+						+ dto.getNumeroProcedimientoEnJuzgado() + "%-%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"
+						+ dto.getNumeroProcedimientoEnJuzgado() + "%/%')");
+			} else if (!Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-%"
+						+ dto.getAnyoProcedimientoEnJuzgado() + "%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/%"
+						+ dto.getAnyoProcedimientoEnJuzgado() + "%')");
 			}
-			
+
 			// Tipos de procedimiento
 			if (dto.getTiposProcedimiento() != null
 					&& dto.getTiposProcedimiento().size() > 0) {
@@ -853,22 +950,22 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 				}
 				hql.append(" ) ");
 			}
-	
+
 		}
 		hql.append(" group by asu.id  ");
-	
+
 		hql.append(")"); // El que cierra la subquery
 		// MAX MINS
-	
+
 		if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
-	
+
 			if (dto.getMaxSaldoTotalContratos() == null) {
 				dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
 			}
 			if (dto.getMinSaldoTotalContratos() == null) {
 				dto.setMinSaldoTotalContratos(0d);
 			}
-	
+
 			hql.append(" and a.id in ");
 			hql.append(" ( ");
 			hql.append(" select distinct a.id from Movimiento m, Asunto a ");
@@ -900,10 +997,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" sum(m.posVivaVencida + m.posVivaNoVencida) between :minSaldoTotalCnt and :maxSaldoTotalCnt ");
 			hql.append(" ) ");
 			hql.append(" ) ");
-	
+
 			params.put("minSaldoTotalCnt", dto.getMinSaldoTotalContratos());
 			params.put("maxSaldoTotalCnt", dto.getMaxSaldoTotalContratos());
-	
+
 		}
 		if (requiereProcedimiento(dto) && requiereFiltrarPorPadreNulo(dto)) {
 			if (dto.getMaxImporteEstimado() == null) {
@@ -912,7 +1009,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			if (dto.getMinImporteEstimado() == null) {
 				dto.setMinImporteEstimado(0d);
 			}
-	
+
 			hql.append(" and a.id in ");
 			hql.append("(");
 			hql.append(" select distinct asu.id from Asunto asu, Procedimiento prc ");
@@ -921,24 +1018,41 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and prc.procedimientoPadre is null ");
 			hql.append(" group by asu.id having ( ");
 			hql.append(" sum( abs(prc.saldoRecuperacion)) between :minImporteEst and :maxImporteEst )");
-	
+
 			hql.append(")");
-	
+
 			params.put("minImporteEst",
 					new BigDecimal(dto.getMinImporteEstimado()));
 			params.put("maxImporteEst",
 					new BigDecimal(dto.getMaxImporteEstimado()));
-	
+
 		}
-	
+
 		if (DtoBusquedaAsunto.SALIDA_XLS.equals(dto.getTipoSalida())) {
 			dto.setLimit(Integer.MAX_VALUE);
 		}
 		params.put("hql", hql);
-		
+
 		return params;
 	}
+
+	private boolean requierePrevioCDD(EXTDtoBusquedaAsunto dto) {
+		
+		if(!Checks.esNulo(dto.getComboErrorPreviCDD()) || !Checks.esNulo(dto.getFechaEntregaDesde()) || !Checks.esNulo(dto.getFechaEntregaHasta())){
+			return true;
+		}
+		return false;
+	}
 	
+	private boolean requierePostCDD(EXTDtoBusquedaAsunto dto) {
+		
+		if(!Checks.esNulo(dto.getComboErrorPostCDD())){
+			return true;
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unused")
 	private Set<String> getCodigosDeZona(DtoBusquedaAsunto dtoBusquedaAsuntos) {
 		Set<String> zonas;
 		if (dtoBusquedaAsuntos.getCodigoZona() != null
@@ -947,12 +1061,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 					.getCodigoZona().split(",")));
 			zonas = new HashSet<String>(list);
 		} else {
-			
+
 			zonas = new HashSet<String>();
 		}
 		return zonas;
 	}
-	
+
+	@SuppressWarnings("unused")
 	private Set<String> getTiposProcedimiento(
 			DtoBusquedaAsunto dtoBusquedaAsuntos) {
 		Set<String> tiposProcedimiento = null;
@@ -964,24 +1079,26 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 		return tiposProcedimiento;
 	}
-	
-	
+
 	/**
 	 * Devuelve las tareas pendientes por asunto.
 	 * 
 	 * @param asuId
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoReportAnotacionAgenda> getListaTareasPendientes(Long asuId) {
 		String queryString = " select tar_tarea, usu_nombre || ' ' || usu_apellido1 || ' ' || usu_apellido2 nombre, tar.dd_tar_descripcion, tar_fecha_ini, tar_fecha_venc, tar_id, dd_tpo_descripcion "
 				+ " from vtar_tarea_vs_usuario vta "
-				+ " join prc_procedimientos prc on prc.prc_id=vta.prc_id " 
-				+ " join dd_tpo_tipo_procedimiento tpo on tpo.dd_tpo_id=prc.dd_tpo_id " 
-				+ " join ${master.schema}.usu_usuarios usu on vta.usu_pendientes = usu.usu_id and vta.asu_id=" + asuId 
+				+ " join prc_procedimientos prc on prc.prc_id=vta.prc_id "
+				+ " join dd_tpo_tipo_procedimiento tpo on tpo.dd_tpo_id=prc.dd_tpo_id "
+				+ " join ${master.schema}.usu_usuarios usu on vta.usu_pendientes = usu.usu_id and vta.asu_id="
+				+ asuId
 				+ " join ${master.schema}.dd_sta_subtipo_tarea_base sta on sta.dd_sta_id=vta.dd_sta_id "
-				+ " join ${master.schema}.dd_tar_tipo_tarea_base tar on tar.dd_tar_id=sta.dd_tar_id and tar.dd_tar_codigo='" + TipoTarea.TIPO_TAREA + "'";
-		
+				+ " join ${master.schema}.dd_tar_tipo_tarea_base tar on tar.dd_tar_id=sta.dd_tar_id and tar.dd_tar_codigo='"
+				+ TipoTarea.TIPO_TAREA + "'";
+
 		SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory()
 				.getCurrentSession().createSQLQuery(queryString);
 
@@ -989,11 +1106,12 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		List<Object[]> lista = sqlQuery.list();
 		for (Object[] obj : lista) {
 			DtoReportAnotacionAgenda anotacion = new DtoReportAnotacionAgenda();
-			anotacion.setDescripcionTarea(obj[0] != null ? obj[0].toString() : "");
+			anotacion.setDescripcionTarea(obj[0] != null ? obj[0].toString()
+					: "");
 			anotacion.setUsuario(obj[1] != null ? obj[1].toString() : "");
 			anotacion.setTipo(obj[2] != null ? obj[2].toString() : "");
-			anotacion.setFechaInicio(obj[3] != null ? (Date)obj[3] : null);
-			anotacion.setFechaVto(obj[4] != null ? (Date)obj[4] : null);
+			anotacion.setFechaInicio(obj[3] != null ? (Date) obj[3] : null);
+			anotacion.setFechaVto(obj[4] != null ? (Date) obj[4] : null);
 			anotacion.setIdTarea(obj[5] != null ? obj[5].toString() : "");
 			anotacion.setActuacion(obj[6] != null ? obj[6].toString() : "");
 			listado.add(anotacion);
@@ -1001,6 +1119,118 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		return listado;
 	}
-	
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDTipoFondo> esTitulizada(Long idAsunto) {
+		
+		List<DDTipoFondo> listResultado = new ArrayList<DDTipoFondo>();
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select distinct tfo ");
+		hql.append(" from Contrato cnt, ExpedienteContrato cex, ProcedimientoContratoExpediente pc,");
+		hql.append(" Procedimiento prc, Asunto asu, EXTInfoAdicionalContrato iac, DDTipoFondo tfo");
+		hql.append(" where asu.id = :idAsunto ");
+		hql.append(" and cex.contrato.id = cnt.id");
+		hql.append(" and pc.expedienteContrato = cex.id");
+		hql.append(" and prc.id = pc.procedimiento");
+		hql.append(" and asu.id = prc.asunto.id");
+		hql.append(" and iac.contrato.id = cnt.id and iac.tipoInfoContrato.codigo = :codigo");
+		hql.append(" and tfo.codigo = iac.value and tfo.cesionRemate = 1");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idAsunto", idAsunto);
+		q.setParameter("codigo", APPConstants.CHAR_EXTRA7);
+		;
+		listResultado = q.list();
+		
+		return listResultado;
+	}
+        
+	@Override
+	public String getMsgErrorEnvioCDD(Long idAsunto) {
+
+            String msgErrorEnvioCDD = new String();
+            String sql = new String();
+            sql =  " SELECT rvc.dd_rvc_descripcion ";
+            sql += " FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv ";
+            sql += " INNER JOIN DD_RVC_RES_VALIDACION_CDD rvc ";
+            sql += " ON cnv.dd_rvc_id               = rvc.dd_rvc_id ";
+            sql += " INNER JOIN ( ";
+            sql += "   SELECT cnv1.asu_id, max(cnv1.id_acuerdo_cierre) max_id_acuerdo_cierre ";
+            sql += "   FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1 ";
+            sql += "   WHERE cnv1.resultado_validacion = 0 ";
+            sql += "   GROUP BY cnv1.asu_id  ";
+            sql += " ) mcnv ON cnv.id_acuerdo_cierre = mcnv.max_id_acuerdo_cierre ";
+            sql += " WHERE cnv.resultado_validacion = 0 ";
+            sql += " AND cnv.fecha_entrega is null ";
+            sql += " AND cnv.asu_id = " + idAsunto;
+            sql += " AND ROWNUM = 1 ";
+
+            SQLQuery q = getSession().createSQLQuery(sql);
+
+            if (!q.list().isEmpty()){
+                if(!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                    msgErrorEnvioCDD = "Error validación CDD: " + q.list().get(0).toString();
+                }
+            }
+
+            return msgErrorEnvioCDD;
+                
+        }
+
+	@Override
+	public String getMsgErrorEnvioCDDNuse(Long idAsunto) {
+
+            String msgErrorEnvioCDD = new String();
+            String sql = new String();
+            sql =  " SELECT rvn.dd_rvn_descripcion ";
+            sql += " FROM CDD_CRN_RESULTADO_NUSE crn ";
+            sql += " INNER JOIN CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv ";
+            sql += " ON crn.id_acuerdo_cierre = cnv.id_acuerdo_cierre ";
+            sql += " INNER JOIN DD_RVN_RES_VALIDACION_NUSE rvn ";
+            sql += " ON crn.crn_resultado   = rvn.dd_rvn_codigo ";
+            sql += " INNER JOIN ";
+            sql += "   (SELECT crn1.asu_id_externo, ";
+            sql += "     MAX(crn1.crn_id) max_crn_id ";
+            sql += "   FROM CDD_CRN_RESULTADO_NUSE crn1 ";
+            sql += "   WHERE crn1.crn_resultado <> '0' ";
+            sql += "   GROUP BY crn1.asu_id_externo ";
+            sql += "   ) mcrn ";
+            sql += " ON crn.crn_id = mcrn.max_crn_id ";
+            sql += " WHERE cnv.fecha_alta <= crn.crn_fecha_result ";
+            sql += " AND rvn.dd_rvn_codigo <> '0' ";
+            sql += " AND cnv.asu_id = " + idAsunto;
+            sql += " AND ROWNUM = 1 ";            
+
+            SQLQuery q = getSession().createSQLQuery(sql);
+            
+            if (!q.list().isEmpty()){
+                if (!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                    msgErrorEnvioCDD = "Error NUSE CDD: " + q.list().get(0).toString();
+                }
+            }
+
+            return msgErrorEnvioCDD;
+                
+        }
+        
+	@Override
+	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
+
+            if (!Checks.esNulo(this.getMsgErrorEnvioCDD(idAsunto))){
+                
+                return this.getMsgErrorEnvioCDD(idAsunto);
+                        
+            }else{
+                if (!Checks.esNulo(this.getMsgErrorEnvioCDDNuse(idAsunto))){
+                    
+                    return this.getMsgErrorEnvioCDDNuse(idAsunto);
+                    
+                }
+            }
+            
+            return null;
+        }
+        
 }

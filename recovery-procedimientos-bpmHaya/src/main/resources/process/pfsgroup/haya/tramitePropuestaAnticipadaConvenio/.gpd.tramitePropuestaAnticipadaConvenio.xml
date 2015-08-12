@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramitePropuestaAnticipadaConvenio" width="885" height="872">
+<root-container name="haya_tramitePropuestaAnticipadaConvenio" width="882" height="872">
   <node name="Inicio" x="29" y="-45" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -50,11 +50,12 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Decision1" x="68" y="354" width="132" height="36">
+  <node name="H031_ConvenioDecision" x="30" y="354" width="163" height="36">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-73" h1="51" w2="-320" h2="-339"/>
-      <bendpoint w1="-73" h1="287" w2="-320" h2="-103"/>
+      <bendpoint w1="-98" h1="-3" w2="-345" h2="-393"/>
+      <bendpoint w1="-94" h1="434" w2="-341" h2="44"/>
+      <bendpoint w1="253" h1="433" w2="6" h2="43"/>
     </edge>
   </node>
   <node name="H031_informeAdmonConcursal" x="264" y="422" width="263" height="36">
@@ -107,21 +108,29 @@
   <node name="H031_informeAdmonConcursalDecision" x="252" y="505" width="260" height="36">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-250" h1="-3" w2="-2" h2="148"/>
+      <bendpoint w1="-271" h1="1" w2="0" h2="152"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="315" y="744" width="132" height="36"/>
   <node name="H031_BPMElevarPropuestaSarebLitigios" x="249" y="123" width="284" height="36">
     <edge>
-      <label x="-77" y="-9"/>
+      <label x="-69" y="-9"/>
+      <bendpoint w1="108" h1="33" w2="114" h2="-38"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="373" h1="10" w2="383" h2="-590"/>
       <bendpoint w1="373" h1="502" w2="383" h2="-98"/>
+    </edge>
+    <edge>
+      <label x="8" y="-20"/>
+      <bendpoint w1="-263" h1="0" w2="1" h2="-115"/>
+    </edge>
+    <edge>
+      <label x="-30" y="-8"/>
+      <bendpoint w1="-124" h1="34" w2="-118" h2="-37"/>
     </edge>
   </node>
   <node name="H031_ValidarInstrucciones" x="296" y="194" width="179" height="36">
@@ -148,6 +157,17 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H031_ContabilizarDecision" x="56" y="745" width="187" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="315" y="744" width="132" height="36"/>
+  <node name="H031_SarebDecision" x="47" y="238" width="161" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

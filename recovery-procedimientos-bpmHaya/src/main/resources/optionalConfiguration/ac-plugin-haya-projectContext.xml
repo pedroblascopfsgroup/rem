@@ -27,9 +27,37 @@
 				<entry key="GESTION-LLAVES" value="H040"/>
 			</map>
 		</property>
+		<property name="tareasCierreDeuda"> 
+			<map>
+				<entry key="ConfirmarTestimonio" value="H005_ConfirmarTestimonio"/>
+			</map>
+		</property>
+		<property name="comboPostoresCelebracionSubasta">
+				<value>comboPostores</value>
+		</property>
+		<property name="mapaSubastas">
+			<map>
+				<entry key="SAREB" value="H002"/>
+			</map>
+		</property>
 	</bean>
 
-	<bean id="coreProjectContext" parent="coreProjectContextDefault">
+	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">
+		<property name="categoriasSubTareas">
+			<map>
+				<entry key="TOMA_DE_DECISION">
+					<set>
+						<value>46</value>
+						<value>819</value>
+						<value>820</value>
+						<value>821</value>
+						<value>822</value>
+						<value>823</value>
+						<value>824</value>
+					</set>
+				</entry>
+			</map>
+		</property>
 		<property name="tiposProcedimientosAdjudicados">
 			<list>
 				<value>H005</value>
@@ -39,6 +67,51 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
+		<property name="limiteDeudaGlobal" value="1000000"/>
+		<property name="limiteDeudaBien" value="15000"/>
+		<property name="tipoSubastaSareb" value="H002"/>
+		<property name="codigoCargaAnterior" value="ANT"/>
+		<property name="tiposSubasta">
+			<list>
+				<value>H002</value>
+				<value>H003</value>
+				<value>H004</value>
+				<value>H036</value>
+			</list>
+		</property>
+		<property name="tareasCelebracionSubasta">
+			<list>
+				<value>H002_CelebracionSubasta</value>
+				<value>H003_CelebracionSubasta</value>
+				<value>H004_CelebracionSubasta</value>
+				<value>H036_CelebracionSubasta</value>
+			</list>
+		</property>
+		<property name="tareasSenyalamientoSubastas">
+			<list>
+				<value>H002_SenyalamientoSubasta</value>
+				<value>H003_SenyalamientoSubasta</value>
+				<value>H004_SenyalamientoSubasta</value>
+			</list>
+		</property>
+		<property name="camposCostas">
+			<list>
+				<value>costasLetrado</value>
+				<value>costasProcurador</value>
+				<value>intereses</value>
+			</list>
+		</property>
+		<property name="camposSuspensionSubasta">
+			<list>
+				<value>comboSuspension</value>
+			</list>
+		</property>
+	</bean>	
 
-	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>	
+
+	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
+	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
+	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
 </beans>	

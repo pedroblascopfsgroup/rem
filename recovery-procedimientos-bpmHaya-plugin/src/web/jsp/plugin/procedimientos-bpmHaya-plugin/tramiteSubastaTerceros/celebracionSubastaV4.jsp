@@ -52,47 +52,27 @@ var bottomBar = [];
 
 var cb_subastaCelebrada = items[1 + muestraBotonGuardar];
 var cb_postores = items[2 + muestraBotonGuardar];
-var cb_cesionRemate = items[3 + muestraBotonGuardar];
-var cb_adjudicadoEntidad = items[4 + muestraBotonGuardar];
-var cb_decisionSuspension = items[5 + muestraBotonGuardar];
-var cb_motivo = items[6 + muestraBotonGuardar];
+var cb_decisionSuspension = items[3 + muestraBotonGuardar];
+var cb_motivo = items[4 + muestraBotonGuardar];
 
 cb_subastaCelebrada.on('select', function(){
 	//Borramos todos los combos dependientes ante cualquier cambio
 	cb_postores.setValue('');
-	cb_cesionRemate.setValue('');
-	cb_adjudicadoEntidad.setValue('');
 	cb_decisionSuspension.setValue('');
 	cb_motivo.setValue('');
 	
 	if(cb_subastaCelebrada.getValue() == '01') {//si
-		cb_postores.setDisabled(false);
-		cb_cesionRemate.setDisabled(false);
-		cb_adjudicadoEntidad.setDisabled(false);		
+		cb_postores.setDisabled(false);		
 		cb_decisionSuspension.setDisabled(true);
 		cb_motivo.setDisabled(true);
 	}
 	else if(cb_subastaCelebrada.getValue() == '02') {//no
 		cb_postores.setDisabled(true);
-		cb_cesionRemate.setDisabled(true);
-		cb_adjudicadoEntidad.setDisabled(true);
 		cb_decisionSuspension.setDisabled(false);
 		cb_motivo.setDisabled(false);
 	}
 });
 
-cb_cesionRemate.on('select', function(){
-	//Borramos todos los combos dependientes ante cualquier cambio
-	
-	if(cb_cesionRemate.getValue() == '01') {//si
-		cb_decisionSuspension.setDisabled(true);
-		cb_motivo.setDisabled(true);
-	}	
-	else if(cb_cesionRemate.getValue() == '02') {//no
-		cb_decisionSuspension.setDisabled(true);
-		cb_motivo.setDisabled(true);
-	}
-});
 
 </c:if>
 

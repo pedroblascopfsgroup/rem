@@ -25,6 +25,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -39,6 +40,7 @@ import es.pfsgroup.recovery.recobroCommon.contrato.dao.CicloRecobroContratoDao;
 import es.pfsgroup.recovery.recobroCommon.core.manager.api.DiccionarioApi;
 import es.pfsgroup.recovery.recobroCommon.core.model.RecobroAdjuntos;
 import es.pfsgroup.recovery.recobroCommon.facturacion.manager.api.RecobroModeloFacturacionApi;
+import es.pfsgroup.recovery.recobroCommon.procesosFacturacion.dao.api.RecobroAdjuntosDao;
 import es.pfsgroup.recovery.recobroCommon.procesosFacturacion.dao.api.RecobroProcesoFacturacionDao;
 import es.pfsgroup.recovery.recobroCommon.procesosFacturacion.dto.RecobroProcesosFacturacionDto;
 import es.pfsgroup.recovery.recobroCommon.procesosFacturacion.manager.api.RecobroProcesosFacturacionApi;
@@ -65,6 +67,9 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 	
 	@Autowired
 	private CicloRecobroContratoDao cicloRecobroContratoDao;
+	
+	@Autowired
+	private RecobroAdjuntosDao recobroAdjuntosDao;
 	
 	@Resource
 	private Properties appProperties;
@@ -203,13 +208,39 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 					proceso.setErrorBatch(errorBatch);
 					/* Si se pasa a pendiente hay que eliminar su relación con el adjunto */
 					if (estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_PENDIENTE)) {
-						RecobroAdjuntos factura = proceso.getFichero();
-						// Borramos el adjunto
-						if (!Checks.esNulo(factura))
-							genericDao.deleteById(RecobroAdjuntos.class, factura.getId());
+						//RecobroAdjuntos factura = proceso.getFichero();
 						//Borramos la relación
 						proceso.setFichero(null);
-					}					
+						// Borramos el adjunto
+						//if (!Checks.esNulo(factura)) { 
+							
+							//recobroAdjuntosDao.deleteById(factura.getId());
+							
+							
+							/*Auditoria audit = factura.getAuditoria();
+							audit.setBorrado(true);
+							audit.setFechaBorrar(new Date());
+							audit.setUsuarioBorrar("PRUEBA");
+							
+							factura.setAuditoria(audit);
+							recobroAdjuntosDao.saveOrUpdate(factura);*/
+						//}
+
+					}
+					
+					if (estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_LIBERADO) || estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_CANCELADO)) { 
+						Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+						//Actualizar fechas de cambios y el usuario que realiza el cambio
+						if (estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_LIBERADO)) {
+							proceso.setFechaLiberacion(new Date());
+							proceso.setUsuarioLiberacion(usuarioLogado);
+						}
+						
+						if (estado.getCodigo().equals(RecobroDDEstadoProcesoFacturable.RCF_ESTADO_PROCESO_FACTURACION_CANCELADO)) {
+							proceso.setFechaCancelacion(new Date());
+							proceso.setUsuarioCancelacion(usuarioLogado);
+						}
+					}
 					
 					recobroProcesoFacturacionDao.save(proceso);
 				} else {
@@ -388,8 +419,8 @@ public class RecobroProcesosFacturacionManager implements RecobroProcesosFactura
 							appProperties.getProperty("procesoFacturacion.rutaExcelDetalles") : "tmp" + File.separator;
 			
 			makeDir(rutaFicheroResultados);
-			String nombreFicheroResultados = "procFactu_" +	procesoFacturacion.getNombre() + "_" + procesoFacturacion.getId()+".xls";			
-			excel.crearNuevoExcel(rutaFicheroResultados + nombreFicheroResultados, cabeceras, listaValores,false);
+			String nombreFicheroResultados = "procFactu_" +	procesoFacturacion.getId()+".xls";			
+			excel.crearNuevoExcel(rutaFicheroResultados + nombreFicheroResultados, cabeceras, listaValores,false, 50000);
 
 			FileItem excelFileItem = new FileItem(excel.getFile());
 			excelFileItem.setFileName(nombreFicheroResultados);

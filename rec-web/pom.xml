@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -22,7 +23,7 @@
 	<name>rec-web</name>
 
 	<dependencies>
-		
+
 		<!-- Inicio plugins de Recovery -->
 		<dependency>
 			<groupId>pfs</groupId>
@@ -257,16 +258,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>es.pfsgroup.plugin</groupId>
-		    <artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
-		    <scope>compile</scope>
-		    <exclusions>
-		            <exclusion>
-		                    <groupId>*</groupId>
-		                    <artifactId>*</artifactId>
-		            </exclusion>
-		    </exclusions>
-        </dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-liquidaciones-plugin</artifactId>
@@ -718,18 +719,6 @@
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
 			<artifactId>com.springsource.org.apache.ws.commons.schema</artifactId>
-			<version>UNKNOWN</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-			<version>UNKNOWN</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-			<artifactId>com.springsource.org.aspectj.weaver</artifactId>
 			<version>UNKNOWN</version>
 			<scope>compile</scope>
 		</dependency>
@@ -1420,13 +1409,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-optionalConfiguration</id>
 						<phase>compile</phase>
@@ -1441,13 +1423,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-jsp</id>
 						<phase>compile</phase>
@@ -1462,13 +1437,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-js</id>
 						<phase>compile</phase>
@@ -1483,13 +1451,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-img</id>
 						<phase>compile</phase>
@@ -1504,13 +1465,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-flows</id>
 						<phase>compile</phase>
@@ -1527,12 +1481,80 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- JETTY PLUGIN -->
+			<plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>8.1.3.v20120416</version>
+                <configuration>
+                	<systemProperties>
+      					<systemProperty>
+         					<name>DEVON_HOME</name>
+         					<value>home/bruno/mydata/work/Git-Dev/Unirepo/recovery/rec-web/target</value>
+       					</systemProperty>
+    				</systemProperties>
+    				<jettyXml>jetty/desarrollo/jetty-env-bankia.xml</jettyXml>
+                	<war>${project.build.directory}/pfs-${version}.war</war>
+                  	<scanIntervalSeconds>10</scanIntervalSeconds>
+                  	<connectors>
+	                    <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                      	<port>8888</port>
+                      	<maxIdleTime>60000</maxIdleTime>
+                    	</connector>
+                  	</connectors>
+                </configuration>
+                <!--<dependencies>
+                	<dependency>
+						<groupId>es.pfsgroup.recovery.framework.libs</groupId>
+						<artifactId>ojdbc14</artifactId>
+						<version>UNKNOWN</version>
+					</dependency>
+                </dependencies>-->
+            </plugin>
+            <!-- JETTY PLUGIN (end) -->
 		</plugins>
 	</build>
 	<profiles>
+		<!-- Perfil por defecto -->
+		<profile>
+			<id>default</id>
+			<activation>
+            	<activeByDefault>true</activeByDefault>
+        	</activation>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+			</dependencies>
+		</profile>
 		<profile>
 			<id>bankia</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-bankiaWeb-plugin</artifactId>
@@ -1586,10 +1608,10 @@
 					</exclusions>
 				</dependency>
 				<dependency>
-			                <groupId>es.cm.gw</groupId>
-			                <artifactId>GW_IPLUS</artifactId>
-			                <version>1.0.0</version>
-			        </dependency>
+					<groupId>es.cm.gw</groupId>
+					<artifactId>GW_IPLUS</artifactId>
+					<version>1.0.0</version>
+				</dependency>
 				<dependency>
 					<groupId>es.bankia</groupId>
 					<artifactId>krbFiltro</artifactId>
@@ -1601,114 +1623,149 @@
 					<version>1.0</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ArquitecturaBase</artifactId>
-		  			<version>00.02.14</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>ArquitecturaBase</artifactId>
+					<version>00.02.14</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ArquitecturaConfMad</artifactId>
-		  			<version>0.0.5</version>
-				</dependency>		
+					<groupId>es.bankia</groupId>
+					<artifactId>ArquitecturaConfMad</artifactId>
+					<version>0.0.5</version>
+				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ArquitecturaMad</artifactId>
-		  			<version>0.0.29</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>ArquitecturaMad</artifactId>
+					<version>0.0.29</version>
 				</dependency>
 				<dependency>
 		  			<groupId>es.bankia</groupId>
 		 		 	<artifactId>GMP5JD20_INS</artifactId>
-		  			<version>1.0.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>GMPETS07_INS</artifactId>
-		  			<version>1.0.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>MADCommons</artifactId>
-		  			<version>0.0.8</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>MADUtilidades</artifactId>
-		  			<version>0.0.3</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>ambar-commons</artifactId>
-		  			<version>3.5.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>axis-jaxrpc</artifactId>
-		  			<version>1.4</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>backport-util-concurrent</artifactId>
-		  			<version>3.1</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-arq</artifactId>
-		  			<version>1.0.0</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-client</artifactId>
-		  			<version>3.7.12</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-commons</artifactId>
-		  			<version>3.7.12</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-criptografia</artifactId>
-		  			<version>3.4.2</version>
-				</dependency>
-				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>bisa-sn</artifactId>
 		  			<version>1.0.1</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>commons-codec</artifactId>
-		  			<version>1.8</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>GMPETS07_INS</artifactId>
+					<version>1.0.0</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>commons-httpclient</artifactId>
-		  			<version>3.1</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>MADCommons</artifactId>
+					<version>0.0.8</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>commons-logging</artifactId>
-		  			<version>1.1.3</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>MADUtilidades</artifactId>
+					<version>0.0.3</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>hessian</artifactId>
-		  			<version>4.0.7</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>ambar-commons</artifactId>
+					<version>3.5.0</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>slf4j-api</artifactId>
-		  			<version>1.7.5</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>axis-jaxrpc</artifactId>
+					<version>1.4</version>
 				</dependency>
 				<dependency>
-		  			<groupId>es.bankia</groupId>
-		  			<artifactId>slf4j-log4j12</artifactId>
-		  			<version>1.7.5</version>
+					<groupId>es.bankia</groupId>
+					<artifactId>backport-util-concurrent</artifactId>
+					<version>3.1</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-arq</artifactId>
+					<version>1.0.0</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-client</artifactId>
+					<version>3.7.12</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-commons</artifactId>
+					<version>3.7.12</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-criptografia</artifactId>
+					<version>3.4.2</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>bisa-sn</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>commons-codec</artifactId>
+					<version>1.8</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>commons-httpclient</artifactId>
+					<version>3.1</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>commons-logging</artifactId>
+					<version>1.1.3</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>hessian</artifactId>
+					<version>4.0.7</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<version>1.7.5</version>
+				</dependency>
+				<dependency>
+					<groupId>es.bankia</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+					<version>1.7.5</version>
 				</dependency>
 			</dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/bankia/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
 		</profile>
 		<profile>
 			<id>bankia-test</id>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+			</dependencies>
 			<build>
 				<resources>
 					<resource>
@@ -1736,6 +1793,7 @@
 									<includes>
 										<include>inicioBankia.jsp</include>
 										<include>WEB-INF/config/bankia.htaccess</include>
+                                        <include>img/cliente_logo.gif</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -1748,6 +1806,20 @@
 		<profile>
 			<id>bankia-delivery</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
@@ -1888,6 +1960,7 @@
 									<includes>
 										<include>inicioBankia.jsp</include>
 										<include>WEB-INF/config/bankia.htaccess</include>
+                                        <include>img/cliente_logo.gif</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -1901,35 +1974,103 @@
 		<profile>
 			<id>haya</id>
 			<dependencies>
-					<dependency>
-						<groupId>es.pfsgroup.plugin</groupId>
-						<artifactId>recovery-procedimientos-bpmHaya</artifactId>
-						<exclusions>
-							<exclusion>
-								<groupId>es.pfsgroup</groupId>
-								<artifactId>recovery-domain</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>*</groupId>
-								<artifactId>*</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-					
-					<dependency>
-						<groupId>es.pfsgroup.plugin</groupId>
-						<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
-						<exclusions>
-							<exclusion>
-								<groupId>es.pfsgroup</groupId>
-								<artifactId>recovery-domain</artifactId>
-							</exclusion>
-							<exclusion>
-								<groupId>*</groupId>
-								<artifactId>*</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-integracionuvem-plugin</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-core</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-hibernate</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-bpm</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-web</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>pfs</groupId>
+							<artifactId>plugins</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>javax.validation</groupId>
+							<artifactId>validation-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>javax.ejb</groupId>
+							<artifactId>ejb-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-coreextension-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienes-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-batch</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -1938,9 +2079,96 @@
 						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
 							<webXml>src/custom/haya/webapp/WEB-INF/web.xml</webXml>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/haya/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
 						</configuration>
 					</plugin>
 				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>haya-delivery</id>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+				<dependency>
+					<groupId>org.springframework.ldap</groupId>
+					<artifactId>spring-ldap-core</artifactId>
+					<version>1.3.0.RELEASE</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/haya/resources</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		<profile>
+			<id>cajamar</id>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+    				<groupId>org.aspectj</groupId>
+    				<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+    				<version>1.7.2.RELEASE</version>
+				</dependency>
+				<dependency>
+    				<groupId>org.aspectj</groupId>
+    				<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+    				<version>1.7.2.RELEASE</version>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/cajamar/resources</directory>
+					</resource>
+				</resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/cajamar/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
 			</build>
 		</profile>
 	</profiles>

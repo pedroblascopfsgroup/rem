@@ -216,14 +216,14 @@
 		<transition to="H011_SolicitarInstrucciones" name="activarAlerta"></transition>	
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H011_RegistrarResolucion" name="vueltaAtras"></transition>
-		<transition to="Decision" name="avanzaBPM"></transition>
+		<transition to="H011_InstruccionesDecision" name="avanzaBPM"></transition>
 	</state>
 	
 
 	 
 	
 	
-	<node name="Decision">
+	<node name="H011_InstruccionesDecision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          	<targetBean>genericUserDecisionActionHandler</targetBean>
       	</action>

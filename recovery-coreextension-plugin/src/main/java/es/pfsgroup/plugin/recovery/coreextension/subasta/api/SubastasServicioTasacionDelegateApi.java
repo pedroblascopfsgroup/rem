@@ -66,6 +66,6 @@ public interface SubastasServicioTasacionDelegateApi {
 	 * @return devuelve 1 si ha ido todo bien, -1 en caso de error
 	 */
 	@BusinessOperationDefinition(BO_UVEM_SOLICITUD_NUMERO_ACTIVO_CON_RESPUESTA)
-	public Integer solicitarNumeroActivoConRespuesta(Long bienId);
+	public String solicitarNumeroActivoConRespuesta(Long bienId);
 
 }

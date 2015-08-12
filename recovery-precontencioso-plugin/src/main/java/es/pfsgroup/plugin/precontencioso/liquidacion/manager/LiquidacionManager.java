@@ -165,28 +165,28 @@ public class LiquidacionManager implements LiquidacionApi {
 	@BusinessOperation(PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
     public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto){
-
-		List<Contrato> contratos = contratoDao.getContratosById(dto.getContratos());
-    	Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(dto.getIdProcedimiento());
-		
-		if ((!Checks.estaVacio(contratos)) && procedimiento != null) {
-			Expediente expediente = procedimiento.getAsunto().getExpediente();
-			if (expediente != null) {
-				for (Contrato contrato : contratos) {
-					LiquidacionPCO liquidacion = settearLiquidacionPCO(procedimiento, contrato); 
-					liquidacionDao.save(liquidacion);
+		ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(dto.getIdProcedimiento());
+		if(prcPCO != null) {
+			List<Contrato> contratos = contratoDao.getContratosById(dto.getContratos());
+	    	Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(dto.getIdProcedimiento());
+			
+			if ((!Checks.estaVacio(contratos)) && procedimiento != null) {
+				Expediente expediente = procedimiento.getAsunto().getExpediente();
+				if (expediente != null) {
+					for (Contrato contrato : contratos) {
+						LiquidacionPCO liquidacion = settearLiquidacionPCO(procedimiento, prcPCO, contrato); 
+						liquidacionDao.save(liquidacion);
+					}
 				}
+				HibernateUtils.merge(procedimiento);
 			}
-			HibernateUtils.merge(procedimiento);
 		}
-    	
     }
 	
 	//TODO
-	private LiquidacionPCO settearLiquidacionPCO(Procedimiento procedimiento, Contrato contrato){
+	private LiquidacionPCO settearLiquidacionPCO(Procedimiento procedimiento, ProcedimientoPCO prcPCO, Contrato contrato){
 		LiquidacionPCO liquidacion = new LiquidacionPCO();
 		
-		ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(procedimiento.getId());
 		DDEstadoLiquidacionPCO estadoCalculada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CALCULADA);
 		GestorDespacho apoderado = gestorDespachoDao.getGestorDespachoPorUsuarioyDespacho(1L,1L);
 		

@@ -14,12 +14,14 @@
 			http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
 
 	<!-- CONFIGURACION DE LA SALIDA -->
-	<bean id="filenameGenerator" class="es.pfsgroup.recovery.integration.FilenameGenerator" />
+	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
+		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
+	</bean>
 
 	<!-- ******** Flow BPM ******* -->
 	<integration:gateway 
 		id="notificarEventosBpmGW" 
-		default-request-channel="para.cajamar.peticion" 
+		default-request-channel="integra.salida.peticion" 
 		service-interface="es.pfsgroup.recovery.integration.bpm.NotificarEventosBPMGateway"/>
 
 	<!-- ************* 
@@ -28,7 +30,7 @@
 		 *************	 
 	integration:gateway 
 		id="notificarEventosHayaBpmGW" 
-		default-request-channel="syncEventosBpmRequest" 
+		default-request-channel="integra.salida.peticion" 
 		service-interface="es.pfsgroup.recovery.haya.integration.bpm.NotificarEventosBPMGateway"/>
 	-->
 		
@@ -37,7 +39,7 @@
 		 Filtro por propiedades de DataContanierRegEx
 		 El orden de las salidas es importante
 		 *************	 --> 
-	<integration:chain input-channel="para.cajamar.peticion" output-channel="para.cajamar.canonical">
+	<integration:chain input-channel="integra.salida.peticion" output-channel="integra.salida.canonical">
 		<integration:transformer>
 			<bean class="es.pfsgroup.recovery.haya.integration.bpm.EntityToPayloadTransformer">
 				<constructor-arg ref="diccionarioCodigosProducer"/>
@@ -47,57 +49,69 @@
 	</integration:chain>
 
 	<!-- ************* 
-		 Transforma la salida en JSON.
-		 El orden de las salidas es importante
+		 Salida TRAMO 1
+		 	- Router para descartar los errores   (pendiente!!!!)
+		 	- Transforma la salida en JSON
+		 	- guarda en DISCO
 		 *************	 --> 
-	<integration:chain input-channel="para.cajamar.canonical" output-channel="para.cajamar.json">
-		<!-- integration:header-enricher error-channel="recoveryRequestErrorChannel"/ -->
-		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />
+	<integration:channel id="integra.salida.fichero.out"/>
+	<integration:channel id="integra.salida.fichero.in"/>
+	<integration:channel id="integra.salida.error"/>
+	<integration:publish-subscribe-channel id="integra.salida.salida"/>
+	
+	<integration:chain input-channel="integra.salida.canonical" output-channel="integra.salida.fichero.out">
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />	<!-- CONVIERTE EN FORMATO JSON -->
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformMsg2file"/>	<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
+	</integration:chain>
+	<file:outbound-channel-adapter
+			channel="integra.salida.fichero.out" 
+			directory="${integracion.output}/${integracion.producer.cola}" />
+	<file:inbound-channel-adapter
+			filename-pattern=".+.msg"
+			channel="integra.salida.fichero.in" 
+			directory="${integracion.output}/${integracion.producer.cola}" >
+		<integration:poller>
+			<integration:interval-trigger interval="500" time-unit="MILLISECONDS" />
+		</integration:poller>
+	</file:inbound-channel-adapter>
+	<integration:chain input-channel="integra.salida.fichero.in" output-channel="integra.salida.salida">
+		<integration:header-enricher error-channel="integra.salida.error" />
+		<file:file-to-string-transformer delete-files="false" charset="UTF-8"/>
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformFile2msg" /> <!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
+ 		<integration:service-activator ref="salidaIntegracionAdapter" method="checkExistErrorFolder" /> <!-- ROUTER PARA MENSAJES CON ERROR -->
 	</integration:chain>
 
-
-	<!-- integration:inbound-channel-adapter id="jdbReader" ref="messagesManager" method="next">
-		<integration:poller><integration:interval-trigger interval="2" time-unit="SECONDS"/></integration:poller>
-	</integration:inbound-channel-adapter  -->
-	
+	<!-- ************* 
+		 Salida TRAMO 2
+		 Transforma la salida por JMS y tratamiento de errores.
+		 *************	 --> 
+	<jms:outbound-channel-adapter 
+		id="jmsout"
+		channel="integra.salida.salida"
+		order="1"
+		destination="integracionProducerQueue" /> 
+	<integration:outbound-channel-adapter 
+		channel="integra.salida.salida" 
+		order="2" 
+		ref="salidaIntegracionAdapter" 
+		method="writeLogMsgStr" />
+	<integration:outbound-channel-adapter 
+		channel="integra.salida.error" 
+		ref="salidaIntegracionAdapter" 
+		method="writeErrorMsg" />
 
 
 	<!-- ************* 
-		 Canales de salida
+		 Guardado en Base de datos
 		 ************* 	 --> 
-	<integration:publish-subscribe-channel id="para.cajamar.json" />
-	<!-- file:outbound-channel-adapter 
-			id="outgoingFolder"
-			channel="jsonTxtMessageChannel" 
-			directory="${integracion.output}"
-			filename-generator="filenameGenerator" / -->
-		
-	<file:outbound-channel-adapter 
-		id="syncBackupFolder"
-		channel="para.cajamar.json" 
-		directory="${integracion.backup}"
-		filename-generator="filenameGenerator" />
-		
-		
-	<!-- jms:outbound-channel-adapter 
-		id="jmsout" 
-		channel="${integracion.producer.cola}.json" 
-		destination="paraCajamarQueue"/ -->
-
-	<integration:outbound-channel-adapter channel="para.cajamar.json" ref="jdbcOutboundAdapter" method="createNew">
+		 <!-- 
+	<integration:outbound-channel-adapter channel="integra.salida.json" ref="jdbcAdapter" method="createNew">
 	</integration:outbound-channel-adapter>	
-	<bean id="jdbcOutboundAdapter" class="es.pfsgroup.recovery.integration.jdbc.JdbcAdapter">
+	<bean id="jdbcAdapter" class="es.pfsgroup.recovery.integration.jdbc.JdbcAdapter">
 		<constructor-arg value="${integracion.producer.cola}"/>
+		<property name="numMaxMensajes" value="100"/>
 	</bean>
-	
-	<!-- ... CANAL DE DESCARTADOS ... hay que activarlo en el filter.
-		... NO SE USA ....	 
-	<integration:transformer ref="procedimientoMsgTransformer" input-channel="syncDiscard" output-channel="syncDiscardFolder" method="serialize" />
-	<file:outbound-channel-adapter id="syncDiscardFolder"
-		directory="file:/Documentos/borrar/mensajes/discard"
-		filename-generator="filenameGenerator" />
- 	-->
-
+ -->
 
 	<!-- ***************** -->
 	<!-- REGLAS DE SALIDA -->
@@ -113,7 +127,6 @@
 			</list>
 		</constructor-arg>
 	</bean>
-
 
 	<!-- TRADUCTOR DE CODIGOS PROCEDIMIENTOS, TAREAS, DD -->
 	<bean id ="diccionarioCodigosProducer" class="es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos">

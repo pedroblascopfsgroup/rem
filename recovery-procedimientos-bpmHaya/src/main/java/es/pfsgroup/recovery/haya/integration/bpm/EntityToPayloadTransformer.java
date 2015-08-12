@@ -27,13 +27,15 @@ public class EntityToPayloadTransformer extends es.pfsgroup.recovery.integration
 		
 		DataContainerPayload data = getNewPayload(message);
 		ConvenioPayload convenioPayload = new ConvenioPayload(data, convenio);
-			
-		Message<DataContainerPayload> newMessage = MessageBuilder
+
+		String grpId = convenioPayload.getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
 				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, convenioPayload.getAsunto().getGuid())
 				.build();
-		
+		*/
 		return newMessage;
 	}
 }

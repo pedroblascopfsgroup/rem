@@ -29,10 +29,10 @@ else
 	echo "No se encuentra target/$PLUGIN*.jar, no se sobreescribira"
 fi
 
-if [ -d src/web/jsp/plugin/$PLUGIN ];then
-	rm -Rf /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin/$PLUGIN
+if [ -d src/web/jsp/plugin/cajamar ];then
+	rm -Rf /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin/cajamar
 	cp -Rf src/web/jsp/plugin/* /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin
-	chmod -R 777 /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin/$PLUGIN
+	chmod -R 777 /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin/cajamar
 	echo "Se han copiado las JSP's"
 else
 	echo "No hay JSP's a copiar"

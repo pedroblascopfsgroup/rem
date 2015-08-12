@@ -73,10 +73,10 @@ DECLARE
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
     	T_TIPO_TPO(
     		/*DD_TPO_CODIGO................:*/ V_COD_PROCEDIMIENTO,
-    		/*DD_TPO_DESCRIPCION...........:*/ 'T. declaración incumplimiento - HCJ',
+    		/*DD_TPO_DESCRIPCION...........:*/ 'T. declaración incumplimiento - CJ',
     		/*DD_TPO_DESCRIPCION_LARGA.....:*/ 'Trámite de declaración de incumplimiento de convenio',
     		/*DD_TPO_HTML..................:*/ null,
-    		/*DD_TPO_XML_JBPM..............:*/ 'hcj_declaracionIncumplimiento',
+    		/*DD_TPO_XML_JBPM..............:*/ 'cj_declaracionIncumplimiento',
     		/*VERSION......................:*/ '0',
     		/*USUARIOCREAR.................:*/ 'DD',
     		/*BORRADO......................:*/ '0',

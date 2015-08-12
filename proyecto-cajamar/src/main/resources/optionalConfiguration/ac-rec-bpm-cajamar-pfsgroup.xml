@@ -14,18 +14,20 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
 	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseLiquidacion/haya_tramiteFaseLiquidacion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteConclusion/haya_tramiteConclusion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoSolicitudConcursal/haya_procedimientoSolicitudConcursal.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalificacion/haya_tramiteCalificacion.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseConvenio/tramiteFaseConvenioV4.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseComunAbreviado/tramiteFaseComunAbreviadoV4.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandaIncidental/haya_tramiteDemandaIncidental.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIncumplimiento/hcj_declaracionIncumplimiento.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandadoEnIncidente/haya_tramiteDemandadoEnIncidente.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseLiquidacion/cj_faseLiquidacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteConclusion/cj_conclusion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoSolicitudConcursal/cj_solicitudConcursal.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCalificacion/cj_calificacion.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseConvenio/cj_faseConvenio.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseComun/cj_faseComun.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandaIncidental/cj_demandaIncidental.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIncumplimiento/cj_declaracionIncumplimiento.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDemandadoEnIncidente/cj_demandadoEnIncidente.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteReaperturaConcurso/cj_reaperturaConcurso.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteHomologacionAcuerdo/cj_homologacionAcuerdo.xml" p:version="-1"/>	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVentaDirecta/cj_ventaDirecta.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePropuestaAnticipada/cj_propuestaAnticipada.xml" p:version="-1"/>		
+	
 		
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
@@ -128,16 +130,78 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSOBVEN");
 	            }
 	            
-	            def comprobarExisteDocumentoINFSUB = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSUB");
-	            }
-	            
 	            def comprobarExisteDocumentoAUTO = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTO");
 	            }
 	            
+	            def existeConvenioAnticipadoAsunto = {
+               		def cuentaAnticipado = 0;
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+	                  	if (convenio.getTipoConvenio().getCodigo() == '1') {
+	                  		cuentaAnticipado = cuentaAnticipado + 1
+	                  	  	if (cuentaAnticipado>1) {
+	                  	  		return false;
+	                  	  	}
+	                  	  	
+	                  	  	if (convenio.getDescripcionAnticipado() == null) {
+	                  	  		return false;
+	                  	  	}
+	                  	}
+               		};
+               		
+               		if (cuentaAnticipado<1) {
+               			return false;
+               		} 
+               		else {
+               			return true;
+               		}
+            	}
+            	
+            	def existeConvenioAnticipadoAdmitidoAsunto = {
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                  		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '2')) {
+                  	 		return true;
+                  		}
+               		};
+               		
+               		return false;
+            	}
+            	
+            	def existeConvenioAnticipadoNoAdmitidoAsunto = {
+               		def convenioManager = ctx.getBean("convenioManager");
+               		for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                  		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '4')) {
+                  	 		return true;
+                  		}
+               		};
+               		
+               		return false;
+            	}
+            	
+            	def existeConvenioAnticipadoAdmitidoTrasAprobacionAsunto = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '5')) {
+	                  		return true;
+    	              	}
+        	       	};
+        	       	
+            	   	return false;
+				}	
+            	
+            	def existeConvenioAnticipadoNoAdmitidoTrasAprobacionAsunto = {
+					def convenioManager = ctx.getBean("convenioManager");
+					for (convenio in convenioManager.listaConveniosPorAsunto(idProcedimiento)) {
+                		if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '6')) {
+                  			return true;
+                  		}
+               		};
+               		
+               		return false;
+				}
   			 ]]>
   			</value>
   		</list>

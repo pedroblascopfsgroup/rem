@@ -40,13 +40,10 @@ public class MensajeIntegracion implements Serializable, Auditable {
 	
 	@Id
     @Column(name = "MSQ_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ColaMensajesGenerator")
-    @SequenceGenerator(name = "ColaMensajesGenerator", sequenceName = "${master.schema}.S_MSQ_COLA_MENSAJERIA")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "MensajeIntegracionGenerator")
+    @SequenceGenerator(name = "MensajeIntegracionGenerator", sequenceName = "${master.schema}.S_MSQ_COLA_MENSAJERIA")
     private Long id;
 	
-    @Column(name = "MSQ_FECHA")
-    private Date fecha;
-    
     @Column(name = "MSQ_COLA")
     private String cola;
     
@@ -93,14 +90,6 @@ public class MensajeIntegracion implements Serializable, Auditable {
 
 	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public Date getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
 	}
 
 	public String getCola() {

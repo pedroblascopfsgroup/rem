@@ -388,7 +388,7 @@ BEGIN
 	 * 								ACTUALIZACIONES
 	 * ---------------------------------------------------------------------------------------------------------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. Homologación de acuerdo - CJ'', DD_TPO_XML_JBPM = ''cj_tramiteHomologacionAcuerdo'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. Homologación de acuerdo - CJ'', DD_TPO_XML_JBPM = ''cj_homologacionAcuerdo'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
 	
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''H027_RegistrarResultadoAcuerdo''''][''''resultadoAcuerdo''''] == DDSiNo.NO ? ''''sinAcuerdo'''' : valores[''''H027_RegistrarResultadoAcuerdo''''][''''comboHomologacion''''] == DDSiNo.SI ? ''''SI'''' : ''''NO'''''' WHERE TAP_CODIGO = ''H027_RegistrarResultadoAcuerdo''';
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET DD_STA_ID = null WHERE TAP_CODIGO = ''H027_BPMTramiteDemandaIncidental''';

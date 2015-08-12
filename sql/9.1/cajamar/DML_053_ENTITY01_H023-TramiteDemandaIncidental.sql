@@ -91,10 +91,12 @@ BEGIN
 	 * 								ACTUALIZACIONES
 	 * ---------------------------------------------------------------------------------------------------------
 	 */
-	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. Demanda Incidental - HCJ'', DD_TPO_XML_JBPM = ''hcj_tramiteDemandaIncidental'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO SET DD_TPO_DESCRIPCION = ''T. Demanda Incidental - CJ'', DD_TPO_XML_JBPM = ''cj_demandaIncidental'' WHERE DD_TPO_CODIGO = '''||V_COD_PROCEDIMIENTO||'''';
 
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''!asuntoConProcurador() ? ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe registrar el procurador que representa a la entidad en la ficha del asunto correspondiente.</p></div>'''' : comprobarExisteDocumentoINTDEM() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Para poder continuar debe adjuntar el documento "Interposici&oacute;n de la demanda".</div>'''''' WHERE TAP_CODIGO = ''H023_interposicionDemanda''';
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = null WHERE TAP_CODIGO = ''H023_confirmarOposicion''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW = ''plugin/cajamar/tramiteDemandaIncidental/confirmarOposicion'' WHERE TAP_CODIGO = ''H023_confirmarOposicion''';
+	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW = ''plugin/cajamar/tramiteDemandaIncidental/admisionOposicionSenyalamientoVista'' WHERE TAP_CODIGO = ''H023_admisionOposicionYSenalamientoVista''';
 	
 	EXECUTE IMMEDIATE 'UPDATE '||PAR_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS SET DD_PTP_PLAZO_SCRIPT = ''valoresBPMPadre[''''H009_RegistrarInformeAdmonConcursal''''] != null ? damePlazo(valoresBPMPadre[''''H009_RegistrarInformeAdmonConcursal''''][''''fecha'''']) + 2*24*60*60*1000L : (valoresBPMPadre[''''H035_registrarOposicion''''] != null ? damePlazo(valoresBPMPadre[''''H035_registrarOposicion''''][''''fecha'''']) + 2*24*60*60*1000L : (valoresBPMPadre[''''H027_RegistrarResHomologacionJudicial''''] != null ? damePlazo(valoresBPMPadre[''''H027_RegistrarResHomologacionJudicial''''][''''fecha'''']) + 2*24*60*60*1000L : 2*24*60*60*1000L))'' WHERE TAP_ID = (SELECT TAP_ID FROM '||PAR_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H023_interposicionDemanda'')';
 	

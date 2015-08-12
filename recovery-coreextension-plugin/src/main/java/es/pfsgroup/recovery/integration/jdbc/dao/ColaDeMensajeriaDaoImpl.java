@@ -9,27 +9,30 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.recovery.integration.jdbc.model.MensajeIntegracion;
 
+@Repository
 public class ColaDeMensajeriaDaoImpl extends AbstractEntityDao<MensajeIntegracion, Long> implements ColaDeMensajeriaDao {
 	
 	@Override
-	public List<MensajeIntegracion> getPendientes(String direccion, int maxValues) {
+	public List<MensajeIntegracion> getPendientes(String cola, int maxValues) {
+        Criteria criteria = getSession().createCriteria(MensajeIntegracion.class, "msq");
 		
-        Criteria criteria = getSession().createCriteria(MensajeIntegracion.class, "cola");
-		
-        DetachedCriteria colaErroresCriteria = DetachedCriteria.forClass(MensajeIntegracion.class,"cola2");
-		colaErroresCriteria.add(Property.forName("cola.guid").eqProperty("cola2.guid"));
-		colaErroresCriteria.add(Restrictions.eq("estado", MensajeIntegracion.ESTADO_ERROR));
-		colaErroresCriteria.add(Restrictions.eq("direccion", direccion));
+        DetachedCriteria colaErroresCriteria = DetachedCriteria.forClass(MensajeIntegracion.class,"msq2");
+		colaErroresCriteria.add(Property.forName("msq.guidGrp").eqProperty("msq2.guidGrp"));
+		colaErroresCriteria.add(Restrictions.eq("msq2.estado", MensajeIntegracion.ESTADO_ERROR));
+		colaErroresCriteria.add(Restrictions.eq("msq2.auditoria.borrado", false));
+		colaErroresCriteria.add(Restrictions.eq("msq2.cola", cola));
 
-        criteria.add(Restrictions.eq("estado", MensajeIntegracion.ESTADO_PENDIENTE));
-        criteria.add(Subqueries.notExists(colaErroresCriteria.setProjection(Projections.property("cola2.id"))));
-        criteria.add(Restrictions.eq("direccion", direccion));
+        criteria.add(Restrictions.eq("msq.estado", MensajeIntegracion.ESTADO_PENDIENTE));
+        criteria.add(Restrictions.eq("msq.cola", cola));	
+        criteria.add(Restrictions.eq("msq.auditoria.borrado", false));
+        criteria.add(Subqueries.notExists(colaErroresCriteria.setProjection(Projections.property("msq2.id"))));
 
-        criteria.addOrder(Order.asc("fecha"));
+        criteria.addOrder(Order.asc("msq.auditoria.fechaCrear"));
         criteria.setMaxResults(maxValues);
         
         @SuppressWarnings("unchecked")
@@ -40,9 +43,10 @@ public class ColaDeMensajeriaDaoImpl extends AbstractEntityDao<MensajeIntegracio
 
 	@Override
 	public boolean tieneAlgunError(String direccion, String guid) {
-        Criteria criteria = getSession().createCriteria(MensajeIntegracion.class, "cola");
-        criteria.add(Restrictions.eq("estado", MensajeIntegracion.ESTADO_ERROR));
-        criteria.add(Restrictions.eq("guid", guid));
+        Criteria criteria = getSession().createCriteria(MensajeIntegracion.class, "msq");
+        criteria.add(Restrictions.eq("msq.estado", MensajeIntegracion.ESTADO_ERROR));
+        criteria.add(Restrictions.eq("msq.guidGrp", guid));
+        criteria.add(Restrictions.eq("msq.auditoria.borrado", false));
         criteria.setMaxResults(1);
         
         @SuppressWarnings("unchecked")

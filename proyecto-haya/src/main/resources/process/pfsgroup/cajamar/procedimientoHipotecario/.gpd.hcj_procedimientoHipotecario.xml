@@ -152,7 +152,7 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-33" y="-9"/>
     </edge>
     <edge>
       <label x="-154" y="175"/>
@@ -164,7 +164,7 @@
       <bendpoint w1="104" h1="-82" w2="50" h2="59"/>
     </edge>
   </node>
-  <node name="H001_ResolucionFirmeDecision" x="1205" y="939" width="271" height="36">
+  <node name="H001_DecisionLetrado" x="1205" y="939" width="271" height="36">
     <edge>
       <label x="-315" y="318"/>
       <bendpoint w1="327" h1="-243" w2="376" h2="416"/>
@@ -296,6 +296,14 @@
     </edge>
   </node>
   <node name="H001_DemandaCertificacionCargasDecision" x="247" y="84" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H001_ResolucionFirmeDecision" x="640" y="847" width="290" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

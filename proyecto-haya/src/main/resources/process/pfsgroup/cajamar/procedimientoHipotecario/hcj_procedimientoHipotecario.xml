@@ -230,7 +230,7 @@
 		<transition to="H001_RegistrarResolucion" name="vueltaAtras"></transition>
 	</state>
 
-	<node name="H001_ResolucionFirmeDecision">
+	<node name="H001_DecisionLetrado">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
 			<targetBean>genericUserDecisionActionHandler
@@ -402,6 +402,11 @@
 	<decision name="H001_DemandaCertificacionCargasDecision" expression="#{H001_DemandaCertificacionCargasDecision}">
 		<transition to="fork2" name="SI"></transition>
 		<transition to="H001_AutoDespachandoEjecucion" name="NO"></transition>
+	</decision>
+
+	<decision name="H001_ResolucionFirmeDecision" expression="#{H001_ResolucionFirmeDecision}">
+		<transition to="H001_BPMTramiteSubasta" name="favorable"></transition>
+		<transition to="H001_DecisionLetrado" name="desfavorable"></transition>
 	</decision>
 
 	<end-state name="Fin">

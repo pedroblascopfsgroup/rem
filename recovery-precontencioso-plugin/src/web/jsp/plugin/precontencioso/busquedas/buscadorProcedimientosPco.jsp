@@ -27,19 +27,17 @@
 		activeItem: 0
 	});
 
-var llamalox = new Ext.Button({
-	text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
-			handler: function() {
-				Ext.Ajax.request({
-					url: page.resolveUrl('expedientejudicial/busquedaProcedimientos'),
-					params: getParametros(),
-					method: 'POST',
-					success: function ( result, request ) {
-						page.fireEvent(app.event.DONE);
-					}
-				});
-			}
-})
+	var btnBuscar = new Ext.Button({
+		text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
+		handler: function() {
+			panelFiltros.collapse(true);
+			var params = getParametros();
+			params.start = 0;
+			params.limit = 25;
+			procedimientoPcoStore.webflow(params);
+			pagingBar.hide();
+		}
+	})
 
 	var buttonsR = <app:includeArray files="${buttonsRight}" />;
 	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
@@ -50,7 +48,7 @@ var llamalox = new Ext.Button({
 		title: '<s:message code="asd" text="**Buscador Expedientes Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
-		tbar: [llamalox],
+		tbar: [btnBuscar],
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
 		style: 'padding-bottom: 10px;',
 		items: [{

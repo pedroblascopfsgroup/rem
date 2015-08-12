@@ -5,6 +5,7 @@
 
 	
 new Ext.Button({
+	id:'prc-btnAccionesPrecontencioso-padre',
 	text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
 	menu: {
 		items: [{

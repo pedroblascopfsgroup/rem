@@ -12,7 +12,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ExpedienteJudicialApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPCOAssembler;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
@@ -25,7 +25,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoP
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Service
-public class ExpedienteJudicialManager implements ExpedienteJudicialApi {
+public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
@@ -78,7 +78,7 @@ public class ExpedienteJudicialManager implements ExpedienteJudicialApi {
 		return historicoEstadosOut;
 	}
 
-	@BusinessOperation(ExpedienteJudicialApi.BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID)
+	@BusinessOperation(ProcedimientoPcoApi.BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID)
 	@Override
 	public ProcedimientoPCODTO getPrecontenciosoPorProcedimientoId(Long idProcedimiento) {
 		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);

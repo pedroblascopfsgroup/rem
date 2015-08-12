@@ -75,13 +75,17 @@ var gridProcedimientosPco = app.crearGrid(procedimientoPcoStore, procedimientoPc
 	bbar : [pagingBar],
 	height: 250,
 	collapsible: true,
-	collapsed: false,
+	collapsed: true,
 	titleCollapse: true,
 	autoWidth: true,
 	style:'padding-bottom:10px; padding-right:10px;'
 });
 
 <%-- Events --%>
+
+procedimientoPcoStore.on('load', function() {
+	pagingBar.show();
+});
 
 gridProcedimientosPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);

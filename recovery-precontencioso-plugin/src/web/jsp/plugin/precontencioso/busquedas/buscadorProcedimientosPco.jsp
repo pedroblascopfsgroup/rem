@@ -30,12 +30,12 @@
 	var btnBuscar = new Ext.Button({
 		text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
 		handler: function() {
-			panelFiltros.collapse(true);
 			var params = getParametros();
 			params.start = 0;
 			params.limit = 25;
 			procedimientoPcoStore.webflow(params);
 			pagingBar.hide();
+			panelFiltros.collapse(false);
 		}
 	})
 
@@ -57,12 +57,6 @@
 				items: [filtroTabPanel]
 			}]
 		}]
-	});
-
-<%-- Grid --%>
-
-	gridProcedimientosPco.on('load', function() {
-		panelFiltros.collapse(true);
 	});
 
 	var mainPanel = new Ext.Panel({

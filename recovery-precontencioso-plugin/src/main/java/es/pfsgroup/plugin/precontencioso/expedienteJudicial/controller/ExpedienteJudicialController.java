@@ -16,7 +16,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ExpedienteJudicialApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
@@ -35,14 +35,14 @@ public class ExpedienteJudicialController {
 	private static final String JSON_RESULTADO_FINALIZAR_PREPARACION = "plugin/precontencioso/acciones/json/resultadoFinalizarPreparacionJSON";
 
 	@Autowired
-	ExpedienteJudicialApi expedienteJudicialApi;
+	ProcedimientoPcoApi procedimientoPcoApi;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
 	@RequestMapping
 	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
-		boolean finalizado = expedienteJudicialApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
+		boolean finalizado = procedimientoPcoApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
 		model.put("finalizado", finalizado);
 		return JSON_RESULTADO_FINALIZAR_PREPARACION;
 	}
@@ -50,7 +50,7 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String getHistoricoEstadosPorProcedimientoId(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 
-		List<HistoricoEstadoProcedimientoDTO> historicoEstados = expedienteJudicialApi.getEstadosPorIdProcedimiento(idProcedimiento);
+		List<HistoricoEstadoProcedimientoDTO> historicoEstados = procedimientoPcoApi.getEstadosPorIdProcedimiento(idProcedimiento);
 		model.put("historicoEstados", historicoEstados);
 
 		return JSON_HISTORICO_ESTADOS;
@@ -95,7 +95,7 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String busquedaProcedimientos(FiltroBusquedaProcedimientoPcoDTO dto, ModelMap model) {
 
-		List<ProcedimientoPcoGridDTO> procedimientosPco = expedienteJudicialApi.busquedaProcedimientosPco(dto);
+		List<ProcedimientoPcoGridDTO> procedimientosPco = procedimientoPcoApi.busquedaProcedimientosPco(dto);
 		model.put("procedimientosPco", procedimientosPco);
 		model.put("totalCount", procedimientosPco.size());
 

@@ -121,7 +121,7 @@
     			page.webflow({
 					flow: 'plugin/arquetipos/modelosArquetipos/ARQSubirPrioridadArquetipo'
 					,params: parametros
-					,success : storeArquetipos.reload(arquetipoParams()) 
+					,success : recargar()
 				});
 			}else{
 				Ext.Msg.alert('<s:message code="plugin.arquetipos.modelo.consulta.subir" text="**Subir Prioridad" />','<s:message code="plugin.arquetipos.modelo.consulta.novalor" text="**Debe seleccionar un arquetipo de la lista" />');
@@ -138,7 +138,7 @@
     			page.webflow({
 					flow: 'plugin/arquetipos/modelosArquetipos/ARQBajarPrioridadArquetipo'
 					,params: parametros
-					,success : storeArquetipos.reload(arquetipoParams())
+					,success : recargar()
 				});
 			}else{
 				Ext.Msg.alert('<s:message code="plugin.arquetipos.modelo.consulta.bajar" text="**Bajar Prioridad" />','<s:message code="plugin.arquetipos.modelo.consulta.novalor" text="**Debe seleccionar un arquetipo de la lista" />');

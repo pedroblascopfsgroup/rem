@@ -28,9 +28,16 @@ BEGIN
 	/* --------------  ACTUALIZACIONES --------------- */
 	/* ------------------- -------------------------- */
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW = ''plugin/procedimientos-bpmHaya-plugin/tramiteDePosesion/confirmarNotificacionDeudor'' WHERE TAP_CODIGO = ''H015_ConfirmarNotificacionDeudor''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW = ''plugin/procedimientos-bpmHaya-plugin/tramiteDePosesion/solicitarAlquilerSocial'' WHERE TAP_CODIGO = ''H015_SolicitarAlquilerSocial''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW = ''plugin/procedimientos-bpmHaya-plugin/tramiteDePosesion/formalizacionAlquilerSocial'' WHERE TAP_CODIGO = ''H015_FormalizacionAlquilerSocial''';
 	
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', TFI_VALIDACION = ''valor != null && valor != '''''''' ? true : false'' WHERE TFI_NOMBRE = ''comboNotificado'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H015_ConfirmarNotificacionDeudor'')';
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', TFI_VALIDACION = ''valor != null && valor != '''''''' ? true : false'' WHERE TFI_NOMBRE = ''fechaSenyalamiento'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H015_PresentarSolicitudSenyalamientoPosesion'')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', TFI_VALIDACION = ''valor != null && valor != '''''''' ? true : false'' WHERE TFI_NOMBRE = ''gestionSolicitada'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H015_SolicitarAlquilerSocial'')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', TFI_VALIDACION = ''valor != null && valor != '''''''' ? true : false'' WHERE TFI_NOMBRE = ''alquilerFormalizado'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H015_FormalizacionAlquilerSocial'')';
+	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS SET DD_PTP_PLAZO_SCRIPT = ''valores[''''H015_RegistrarSenyalamientoLanzamiento''''] && valores[''''H015_RegistrarSenyalamientoLanzamiento''''][''''fecha''''] != null ? damePlazo(valores[''''H015_RegistrarSenyalamientoLanzamiento''''][''''fecha'''']) - 2*24*60*60*1000L : 15*24*60*60*1000L'' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H015_FormalizacionAlquilerSocial'')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS SET DD_PTP_PLAZO_SCRIPT = ''valores[''''H015_RegistrarSenyalamientoLanzamiento''''] && valores[''''H015_RegistrarSenyalamientoLanzamiento''''][''''fecha''''] != null ? damePlazo(valores[''''H015_RegistrarSenyalamientoLanzamiento''''][''''fecha'''']) - 1*24*60*60*1000L : 1*24*60*60*1000L'' WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H015_SuspensionLanzamiento'')';
 	
 	COMMIT;
  

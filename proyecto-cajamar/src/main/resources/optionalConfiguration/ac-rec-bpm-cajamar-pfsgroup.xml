@@ -26,9 +26,9 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteReaperturaConcurso/cj_reaperturaConcurso.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteHomologacionAcuerdo/cj_homologacionAcuerdo.xml" p:version="-1"/>	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVentaDirecta/cj_ventaDirecta.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePropuestaAnticipada/cj_propuestaAnticipada.xml" p:version="-1"/>		
-	
-		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePropuestaAnticipada/cj_propuestaAnticipada.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSeguimientoCumplimientoAcuerdo/cj_seguimientoCumplimientoAcuerdo.xml" p:version="-1"/>		
+			
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
@@ -201,6 +201,18 @@
                		};
                		
                		return false;
+				}
+				
+				def plazoTranscurrido = {
+					def tareaExternaManager = ctx.getBean("tareaExternaManager");
+					
+					def listaTareas = tareaExternaManager.getByIdTareaProcedimientoIdProcedimiento(idProcedimiento, tareaExterna.getTareaProcedimiento().getId());
+					if(listaTareas.size() == 3) {
+						return true;
+					}
+					else {
+						return false;
+					}				
 				}
   			 ]]>
   			</value>

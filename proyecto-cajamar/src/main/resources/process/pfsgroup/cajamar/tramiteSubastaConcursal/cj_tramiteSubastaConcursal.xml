@@ -20,7 +20,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaTercerosBccLeaveActionHandler
+				<targetBean>subastaConcursalCjLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -42,7 +42,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaTercerosBccLeaveActionHandler
+				<targetBean>subastaConcursalCjLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -64,7 +64,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaTercerosBccLeaveActionHandler
+				<targetBean>subastaConcursalCjLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -98,7 +98,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaTercerosBccLeaveActionHandler
+				<targetBean>subastaConcursalCjLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -120,7 +120,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaTercerosBccLeaveActionHandler
+				<targetBean>subastaConcursalCjLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -270,7 +270,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>subastaTercerosBccLeaveActionHandler
+				<targetBean>subastaConcursalCjLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	
@@ -373,12 +373,44 @@
 	</state>
 
 	<state name="CJ004_CalcularDeudaActualizada">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="CJ004_ActualizarDeudaJuzgado" name="avanzaBPM"></transition>
 		<transition to="CJ004_CalcularDeudaActualizada" name="activarAlerta"></transition>
 	</state>
 
 	<state name="CJ004_ActualizarDeudaJuzgado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="avanzaBPM"></transition>
 		<transition to="CJ004_CalcularDeudaActualizada" name="vueltaAtras"></transition>

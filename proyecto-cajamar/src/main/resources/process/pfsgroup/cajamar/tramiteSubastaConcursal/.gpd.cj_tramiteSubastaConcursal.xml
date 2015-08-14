@@ -292,15 +292,9 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
-  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
-  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
-  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
-  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
   <node name="CJ004_CalcularDeudaActualizada" x="225" y="1358" width="221" height="36">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-376" h1="4" w2="2" h2="-159"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -314,15 +308,18 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="3" y="-21"/>
-      <bendpoint w1="-278" h1="-22" w2="106" h2="-60"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="20" y="-6"/>
-      <bendpoint w1="-139" h1="-69" w2="-133" h2="56"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
+  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
+  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
+  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
+  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
 </root-container>

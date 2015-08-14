@@ -91,6 +91,9 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		if (dto.getTraerGestionVencidos() != null && dto.getTraerGestionVencidos()) {
 			agregarTareasGestionVencidosSeguimiento(dto, listaRetorno, opcion);
 
+			if (proxyFactory.proxy(EXTOpcionesBusquedaTareasApi.class).tieneOpcion(EXTOpcionesBusquedaTareas.getBuzonesTareasOptimizados(), usuarioLogado))
+				informarCategoriaTarea(listaRetorno);
+
 			page = new PageSql();
 			((PageSql) page).setResults(listaRetorno);
 			((PageSql) page).setTotalCount(listaRetorno.size());

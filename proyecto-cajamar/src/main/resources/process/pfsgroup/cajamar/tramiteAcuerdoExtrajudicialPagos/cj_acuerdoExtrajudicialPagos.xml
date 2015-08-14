@@ -193,13 +193,8 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="CJ005_ComunicarDecisionMediador" name="activarAlerta"></transition>
-		<transition to="CJ005_ComunicarDecisionMediadorDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
-
-	<decision name="CJ005_ComunicarDecisionMediadorDecision" expression="#{CJ005_ComunicarDecisionMediadorDecision}">
-		<transition to="Fin" name="existeNoConforme"></transition>
-		<transition to="CJ005_CelebracionReunion" name="noExisteConforme"></transition>
-	</decision>
 
 	<state name="CJ005_CelebracionReunion">
 		<event type="node-enter">

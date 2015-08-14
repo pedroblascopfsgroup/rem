@@ -279,7 +279,7 @@ DECLARE
 			/*TAP_VIEW.....................:*/ null,
 			/*TAP_SCRIPT_VALIDACION........:*/ null,
 			/*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-			/*TAP_SCRIPT_DECISION..........:*/ 'valores[''CJ005_AnalizarPropuesta''][''comboConformidad''] == DDSiNo.SI || valores[''CJ005_ActualizarCreditos''][''comboCreditos''] == DDSiNo.NO ? ''noExisteConforme'' : ''existeNoConforme''',
+			/*TAP_SCRIPT_DECISION..........:*/ null,
 			/*DD_TPO_ID_BPM(FK)............:*/ null,
 			/*TAP_SUPERVISOR,..............:*/ '0',
 			/*TAP_DESCRIPCION,.............:*/ 'Comunicar decisión al mediador',

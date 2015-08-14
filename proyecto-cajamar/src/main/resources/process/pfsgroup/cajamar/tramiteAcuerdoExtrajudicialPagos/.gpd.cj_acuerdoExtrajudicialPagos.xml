@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_acuerdoExtrajudicialPagos" width="2078" height="1355">
+<root-container name="cj_acuerdoExtrajudicialPagos" width="2078" height="1354">
   <node name="Inicio" x="336" y="1" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -27,10 +27,10 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-140" h1="-70" w2="-141" h2="62"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-133" h1="-69" w2="-134" h2="63"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -148,16 +148,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ005_ComunicarDecisionMediadorDecision" x="256" y="1209" width="307" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-65" y="-10"/>
-      <bendpoint w1="416" h1="-2" w2="-6" h2="757"/>
-      <bendpoint w1="420" h1="-389" w2="-2" h2="370"/>
-    </edge>
-  </node>
   <node name="CJ005_CelebracionReunion" x="735" y="450" width="192" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -243,11 +233,11 @@
       <bendpoint w1="3" h1="400" w2="773" h2="-9"/>
     </edge>
   </node>
-  <node name="Fin" x="343" y="1318" width="132" height="36"/>
   <node name="CJ005_BPMSeguimientoCumplimientoAcuerdo" x="1270" y="580" width="323" height="36">
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="-6" h1="692" w2="1016" h2="-46"/>
     </edge>
   </node>
+  <node name="Fin" x="343" y="1247" width="132" height="36"/>
 </root-container>

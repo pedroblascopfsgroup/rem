@@ -12,8 +12,8 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_VDR_VENTA_DIRECT_RESULT", schema = "${entity.schema}")
-public class DDResultadoVenta implements Auditable, Dictionary{
+@Table(name = "DD_EST_ESTADO_BIEN", schema = "${entity.schema}")
+public class DDEstadoBien implements Auditable, Dictionary{
     
 	/**
 	 *  
@@ -21,16 +21,16 @@ public class DDResultadoVenta implements Auditable, Dictionary{
 	private static final long serialVersionUID = 6488409119873054777L;
 
 	@Id
-    @Column(name = "DD_VDR_ID")
+    @Column(name = "DD_EST_ID")
     private Long id;
 
-    @Column(name = "DD_VDR_CODIGO")
+    @Column(name = "DD_EST_CODIGO")
     private String codigo;
 
-    @Column(name = "DD_VDR_DESCRIPCION")
+    @Column(name = "DD_EST_DESCRIPCION")
     private String descripcion;
 
-    @Column(name = "DD_VDR_DESCRIPCION_LARGA")
+    @Column(name = "DD_EST_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
     @Embedded

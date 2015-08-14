@@ -203,7 +203,7 @@
                		
                		return false;
 				}
-				
+
 				def plazoTranscurrido = {
 					def tareaExternaManager = ctx.getBean("tareaExternaManager");
 					
@@ -225,6 +225,22 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFCON");
 	            }
+
+				def comprobarExisteDocumentoCERFIO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CERFIO");
+	            }
+	            
+	            def comprobarExisteDocumentoLICPRIO = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LICPRIO");
+	            }
+	            
+	            def comprobarExisteDocumentoCERDEU = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CERDEU");
+	            }
+
   			 ]]>
   			</value>
   		</list>

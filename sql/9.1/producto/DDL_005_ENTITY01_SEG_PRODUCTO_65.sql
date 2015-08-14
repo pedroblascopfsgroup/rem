@@ -72,7 +72,7 @@ else
 	    EXECUTE IMMEDIATE 'ALTER TABLE '|| v_schema ||'.ITI_ITINERARIOS 
 						   ADD CONSTRAINT FK_ITI_TPL 
 								FOREIGN KEY (TPL_ID)
-								REFERENCES TPL_TIPO_POLITICA (TPL_ID)';
+								REFERENCES '|| v_schema ||'.TPL_TIPO_POLITICA (TPL_ID)';
 	
 		DBMS_OUTPUT.PUT_LINE('[INFO]: Clave ajena FK_ITI_TPL creada correctamente');
 end if;

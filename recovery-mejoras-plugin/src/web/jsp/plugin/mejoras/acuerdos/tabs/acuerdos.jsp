@@ -63,6 +63,23 @@
         )
    });  
    
+   acuerdosStore.on('load', function () {
+   		
+   		var btnDisbled = false
+	    acuerdosStore.data.each(function() {
+	    	var codEstad = this.data['codigoEstado'];
+	    	if(codEstad == app.codigoAcuerdoEnConformacion || codEstad == app.codigoAcuerdoPropuesto || codEstad == app.codigoAcuerdoVigente ){
+	    		btnDisbled = true;
+	    	}
+	    });
+	    
+	    if(btnDisbled){
+	   		btnAltaAcuerdo.setDisabled(true);
+	    }else{
+	    	btnAltaAcuerdo.setDisabled(false);
+	    }
+	});
+   
    var despuesDeNuevoAcuerdo = function(){
    		var ultimoRegistro = acuerdosStore.getCount();
 		acuerdosGrid.getSelectionModel().selectRow((ultimoRegistro-1));
@@ -308,13 +325,17 @@
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 
          ,bbar : [
-	        btnAltaAcuerdo
-	        ,btnProponerAcuerdo
-        	,btnIncumplirAcuerdo
-     	   	,btnCerrarAcuerdo
-        	,btnAceptarAcuerdo
-        	,btnRechazarAcuerdo
-			,btnCumplimientoAcuerdo
+         	btnAltaAcuerdo,
+          	<sec:authorize ifAllGranted="PROPONER-ACUERDO">
+	        	btnProponerAcuerdo,	
+	        </sec:authorize>
+        	btnIncumplirAcuerdo,
+     	   	btnCerrarAcuerdo,
+        	btnAceptarAcuerdo,
+        	btnRechazarAcuerdo,
+        	<sec:authorize ifAllGranted="DECIDIR-ACUERDO">
+				btnCumplimientoAcuerdo,
+			</sec:authorize>
 	      ]
 
 	}); 
@@ -365,11 +386,18 @@
 			(panel.esGestor() && (codigoEstado == app.codigoAcuerdoPropuesto || codigoEstado == app.codigoAcuerdoVigente))
 		);
 				
-		
-		btnAceptarAcuerdo.setVisible(
-			//esSupervisor && PROPUESTO
-			(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoPropuesto)
-		);
+
+		<sec:authorize ifAllGranted="VALIDAR-ACUERDO">
+			btnAceptarAcuerdo.setVisible(
+				(codigoEstado == app.codigoAcuerdoPropuesto)
+			);	
+	    </sec:authorize>
+	    
+<!-- 	    SE PONE VISIBLE EL BOTON SI EL ACUERDO ESTA PROPUESTO Y TIENE EL PERFIL DE PROPONENTE -->
+<!-- 		btnAceptarAcuerdo.setVisible( -->
+<!-- 			//esSupervisor && PROPUESTO -->
+<!-- 			(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoPropuesto) -->
+<!-- 		); -->
 		
 		btnRechazarAcuerdo.setVisible(
 			//esSupervisor && (PROPUESTO||VIGENTE)
@@ -400,20 +428,36 @@
 			(codigoEstado == app.codigoAcuerdoEnConformacion && panel.esGestor())
 		);
 		
-		btnCerrarAcuerdo.setVisible(
-			//esSupervisor && VIGENTE
-			((codigoEstado == app.codigoAcuerdoVigente && panel.esSupervisor()))
-			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			
-			&& false
-			</sec:authorize>
+<!-- 		btnCerrarAcuerdo.setVisible( -->
+<!-- 			//esSupervisor && VIGENTE -->
+<!-- 			((codigoEstado == app.codigoAcuerdoVigente && panel.esSupervisor())) -->
+<%-- 			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			 --%>
+<!-- 			&& false -->
+<%-- 			</sec:authorize> --%>
+<!-- 		); -->
+		
+		<!-- 		btnCumplimientoAcuerdo.setVisible( -->
+<!-- 			(codigoEstado == app.codigoAcuerdoVigente) -->
+<%-- 			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			 --%>
+<!-- 			&& false -->
+<%-- 			</sec:authorize> --%>
+<!-- 		); -->
+		
+		
+		var decisorAcu = false;
+		<sec:authorize ifAllGranted="DECIDIR-ACUERDO">
+			decisorAcu = true;
+		</sec:authorize>
+	
+		btnCumplimientoAcuerdo.setVisible(
+			(codigoEstado == app.codigoAcuerdoVigente) && decisorAcu
 		);
 		
-		btnCumplimientoAcuerdo.setVisible(
-			(codigoEstado == app.codigoAcuerdoVigente)
-			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			
-			&& false
-			</sec:authorize>
+		btnCerrarAcuerdo.setVisible(
+			(codigoEstado == app.codigoAcuerdoVigente) && decisorAcu
 		);
+
+
 
 		panel.remove(acuerdosTabs);	
 		panel.remove(panelAnterior);
@@ -528,10 +572,10 @@
 		}
 		 --%>
 		
-		var esVisible = [
-			 [btnAltaAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor]
-			,[btnCumplimientoAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor]
-		];
+<!-- 		var esVisible = [ -->
+<!-- 			 [btnAltaAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] -->
+<!-- 			,[btnCumplimientoAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] -->
+<!-- 		]; -->
 
 		entidad.setVisible(esVisible);
 		//Por defecto establecemos el botón como no visible

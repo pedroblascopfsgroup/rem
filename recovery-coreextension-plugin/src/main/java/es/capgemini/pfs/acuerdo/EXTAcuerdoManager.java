@@ -244,22 +244,25 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 	private String buscaCodigoPorPeriodo(
 			DDPeriodicidadAcuerdo periodicidadAcuerdo) {
 		String codigo = PlazoTareasDefault.CODIGO_CIERRE_ACUERDO;
-		String periodo = periodicidadAcuerdo.getCodigo();
-		if (periodo.equals("01")) {
-			codigo = CODIGO_CIERRE_ACUERDO_ANUAL;
-		} else if (periodo.equals("02")) {
-			codigo = CODIGO_CIERRE_ACUERDO_MENSUAL;
-		} else if (periodo.equals("03")) {
-			codigo = CODIGO_CIERRE_ACUERDO_SEMESTRAL;
-		} else if (periodo.equals("04")) {
-			codigo = CODIGO_CIERRE_ACUERDO_TRIMESTRAL;
-		} else if (periodo.equals("05")) {
-			codigo = CODIGO_CIERRE_ACUERDO_BIMESTRAL;
-		} else if (periodo.equals("06")) {
-			codigo = CODIGO_CIERRE_ACUERDO_SEMANAL;
-		} else if (periodo.equals("07")) {
-			codigo = CODIGO_CIERRE_ACUERDO_UNICO;
+		if(!Checks.esNulo(periodicidadAcuerdo)){
+			String periodo = periodicidadAcuerdo.getCodigo();
+			if (periodo.equals("01")) {
+				codigo = CODIGO_CIERRE_ACUERDO_ANUAL;
+			} else if (periodo.equals("02")) {
+				codigo = CODIGO_CIERRE_ACUERDO_MENSUAL;
+			} else if (periodo.equals("03")) {
+				codigo = CODIGO_CIERRE_ACUERDO_SEMESTRAL;
+			} else if (periodo.equals("04")) {
+				codigo = CODIGO_CIERRE_ACUERDO_TRIMESTRAL;
+			} else if (periodo.equals("05")) {
+				codigo = CODIGO_CIERRE_ACUERDO_BIMESTRAL;
+			} else if (periodo.equals("06")) {
+				codigo = CODIGO_CIERRE_ACUERDO_SEMANAL;
+			} else if (periodo.equals("07")) {
+				codigo = CODIGO_CIERRE_ACUERDO_UNICO;
+			}
 		}
+
 		return codigo;
 	}
 

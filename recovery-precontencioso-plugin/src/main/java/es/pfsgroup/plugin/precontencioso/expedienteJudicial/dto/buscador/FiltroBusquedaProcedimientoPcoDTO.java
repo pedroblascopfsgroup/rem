@@ -10,7 +10,7 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
     public static final String BUSQUEDA_LIQUIDACION = "LIQUIDACION";
     public static final String BUSQUEDA_BUROFAX = "BUROFAX";
 
-	private String tipoBusqueda; // Documentos, Liquidaciones, Burofaxes.
+    private String tipoBusqueda; // Documentos, Liquidaciones, Burofaxes.
 
 	// ProcedimientoPco
 	private String proCodigo;

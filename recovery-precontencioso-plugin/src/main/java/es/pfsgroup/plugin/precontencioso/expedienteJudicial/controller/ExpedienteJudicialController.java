@@ -20,10 +20,15 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.BurofaxGridDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.DocumentoGridDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.LiquidacionGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -91,13 +96,18 @@ public class ExpedienteJudicialController {
 		model.put("tipoProducto", tipoProducto);
 
 		// Pestaña documentos
-		List<DDTipoFicheroAdjunto> tipoDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoFicheroAdjunto.class); 
+		List<DDTipoFicheroAdjunto> tipoDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoFicheroAdjunto.class);
 		List<DDEstadoDocumentoPCO> estadoDocumento = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoDocumentoPCO.class);
 		List<DDResultadoSolicitudPCO> resultadoSolicitud = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class);
 
 		model.put("tipoDocumento", tipoDocumento);
 		model.put("estadoDocumento", estadoDocumento);
 		model.put("resultadoSolicitud", resultadoSolicitud);
+
+		// Pestaña liquidaciones
+		List<DDEstadoLiquidacionPCO> estadoLiquidacion = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoLiquidacionPCO.class);
+
+		model.put("estadoLiquidacion", estadoLiquidacion);
 
 		// Pestaña burofax
 		List<DDResultadoBurofaxPCO> resultadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoBurofaxPCO.class);
@@ -108,9 +118,8 @@ public class ExpedienteJudicialController {
 
 	@RequestMapping
 	public String busquedaProcedimientos(FiltroBusquedaProcedimientoPcoDTO dto, ModelMap model) {
-
-		List<ProcedimientoPCO> procedimientosPco = procedimientoPcoApi.busquedaProcedimientosPco(dto);
-		List<ProcedimientoPcoGridDTO> expeditentesGrid = completarDatosBusquedaProcedimiento(procedimientosPco);
+		List<ProcedimientoPCO> procedimientosPco = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(dto);
+		List<ProcedimientoPcoGridDTO> expeditentesGrid = completarDatosBusquedaProcedimientos(procedimientosPco);
 
 		model.put("procedimientosPco", expeditentesGrid);
 		model.put("totalCount", expeditentesGrid.size());
@@ -118,24 +127,48 @@ public class ExpedienteJudicialController {
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
 	}
 
-	private List<ProcedimientoPcoGridDTO> completarDatosBusquedaProcedimiento(List<ProcedimientoPCO> procedimientos) {
+	@RequestMapping
+	public String busquedaElementosPco(FiltroBusquedaProcedimientoPcoDTO dto, ModelMap model) {
+		List<ProcedimientoPcoGridDTO> expeditentesGrid = null;
+
+		if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO.equals(dto.getTipoBusqueda())) {
+
+		} else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(dto.getTipoBusqueda())) {
+
+			List<LiquidacionPCO> liquidacionesPco = procedimientoPcoApi.busquedaLiquidacionesPorFiltro(dto);
+			//expeditentesGrid = completarDatosBusquedaProcedimientos(procedimientosPco);
+
+		} else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX.equals(dto.getTipoBusqueda())) {
+
+			
+		}
+
+		return JSON_BUSQUEDA_PROCEDIMIENTO;
+	}
+
+	/**
+	 * fill ProcedimientoPcoGridDTO from ProcedimientoPCO
+	 * @param procedimientos
+	 * @return
+	 */
+	private List<ProcedimientoPcoGridDTO> completarDatosBusquedaProcedimientos(List<ProcedimientoPCO> procedimientos) {
 		List<ProcedimientoPcoGridDTO> out = new ArrayList<ProcedimientoPcoGridDTO>();
 
 		for (ProcedimientoPCO procedimientoPco : procedimientos) {
-			ProcedimientoPcoGridDTO expedienteGrid = new ProcedimientoPcoGridDTO();
+			ProcedimientoPcoGridDTO procedimientoGrid = new ProcedimientoPcoGridDTO();
 
-			expedienteGrid.setCodigo(procedimientoPco.getProcedimiento().getId().toString());
-			expedienteGrid.setNombreExpediente(procedimientoPco.getNombreExpJudicial());
-			expedienteGrid.setEstadoExpediente(procedimientoPco.getEstadoActual().getDescripcion());
+			procedimientoGrid.setCodigo(procedimientoPco.getProcedimiento().getId().toString());
+			procedimientoGrid.setNombreExpediente(procedimientoPco.getNombreExpJudicial());
+			procedimientoGrid.setEstadoExpediente(procedimientoPco.getEstadoActual().getDescripcion());
 			//expedienteGrid.setDiasEnGestion();
-			//expedienteGrid.setFechaEstado();
+			procedimientoGrid.setFechaEstado(procedimientoPco.getEstadoActualByHistorico().getFechaInicio());
 
 			if (procedimientoPco.getTipoProcPropuesto() != null) {
-				expedienteGrid.setTipoProcPropuesto(procedimientoPco.getTipoProcPropuesto().getDescripcion());	
+				procedimientoGrid.setTipoProcPropuesto(procedimientoPco.getTipoProcPropuesto().getDescripcion());	
 			}
 
 			if (procedimientoPco.getTipoPreparacion() != null) {
-				expedienteGrid.setTipoPreparacion(procedimientoPco.getTipoPreparacion().getDescripcion());
+				procedimientoGrid.setTipoPreparacion(procedimientoPco.getTipoPreparacion().getDescripcion());
 			}
 
 			//expedienteGrid.setFechaInicioPreparacion();
@@ -148,9 +181,59 @@ public class ExpedienteJudicialController {
 			//expedienteGrid.setTodosDocumentos();
 			//expedienteGrid.setTodasLiquidaciones();
 
-			out.add(expedienteGrid);
+			out.add(procedimientoGrid);
 		}
 
 		return out;
+	}
+
+	/**
+	 * fill ProcedimientoPcoGridDTO from ProcedimientoPCO
+	 * @param procedimientos
+	 * @return
+	 */
+	private List<ProcedimientoPcoGridDTO> completarDatosBusquedaElementos(List<ProcedimientoPCO> procedimientos, String tipoElemento) {
+		List<ProcedimientoPcoGridDTO> out = new ArrayList<ProcedimientoPcoGridDTO>();
+
+		for (ProcedimientoPCO procedimientoPco : procedimientos) {
+			ProcedimientoPcoGridDTO elementoGrid = new ProcedimientoPcoGridDTO();
+
+			elementoGrid.setCodigo(procedimientoPco.getProcedimiento().getId().toString());
+			elementoGrid.setNombreExpediente(procedimientoPco.getNombreExpJudicial());
+			elementoGrid.setEstadoExpediente(procedimientoPco.getEstadoActual().getDescripcion());
+			elementoGrid.setFechaEstado(procedimientoPco.getEstadoActualByHistorico().getFechaInicio());
+
+			if (procedimientoPco.getTipoProcPropuesto() != null) {
+				elementoGrid.setTipoProcPropuesto(procedimientoPco.getTipoProcPropuesto().getDescripcion());	
+			}
+
+			if (procedimientoPco.getTipoPreparacion() != null) {
+				elementoGrid.setTipoPreparacion(procedimientoPco.getTipoPreparacion().getDescripcion());
+			}
+
+			out.add(elementoGrid);
+		}
+
+		return out;
+	}
+
+	private DocumentoGridDTO completarDatosDocumento(ProcedimientoPCO procedimientos) {
+		DocumentoGridDTO documento = new DocumentoGridDTO();
+		return documento;
+	}
+
+	private LiquidacionGridDTO completarDatosLiquidacion(ProcedimientoPCO procedimientos) {
+		LiquidacionGridDTO liquidacion = new LiquidacionGridDTO();
+		/*liquidacion.setContrato();
+		liquidacion.setFechaRecepcion();
+		liquidacion.setFechaConfirmacion();
+		liquidacion.setFechaCierre();
+		liquidacion.setTotal();*/
+		return liquidacion;
+	}
+
+	private BurofaxGridDTO completarDatosBurofax(ProcedimientoPCO procedimientos) {
+		BurofaxGridDTO burofax = new BurofaxGridDTO();
+		return burofax;
 	}
 }

@@ -138,12 +138,16 @@ public class Acuerdo implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "DES_ID")
     private DespachoExterno despacho;
+    
+    @Column(name = "ACU_DEUDA_TOTAL")
+    private Double deudaTotal;
 
     @Version
     private Integer version;
 
     @Embedded
     private Auditoria auditoria;
+    
 
     /**
      * @return the id
@@ -485,6 +489,14 @@ public class Acuerdo implements Serializable, Auditable {
 
 	public void setDespacho(DespachoExterno despacho) {
 		this.despacho = despacho;
+	}
+
+	public Double getDeudaTotal() {
+		return deudaTotal;
+	}
+
+	public void setDeudaTotal(Double deudaTotal) {
+		this.deudaTotal = deudaTotal;
 	}
     
 }

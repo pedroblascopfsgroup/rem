@@ -17,6 +17,7 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 public class SubtipoTareaDaoImpl extends AbstractEntityDao<SubtipoTarea, Long> implements SubtipoTareaDao{
 
 	private static final String BUSCAR_POR_CODIGO_HQL = "from SubtipoTarea where codigoSubtarea = ?";
+	
 
 	/**
 	 * {@inheritDoc}
@@ -29,4 +30,5 @@ public class SubtipoTareaDaoImpl extends AbstractEntityDao<SubtipoTarea, Long> i
 		}
 		return null;
 	}
+	
 }

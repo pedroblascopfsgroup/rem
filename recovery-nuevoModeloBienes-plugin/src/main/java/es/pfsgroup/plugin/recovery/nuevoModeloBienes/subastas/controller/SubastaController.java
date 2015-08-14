@@ -1,12 +1,9 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,20 +23,23 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.DatosLoteCDD;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InfoBienesCDD;
+import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoLoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionCDD;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoValidacionNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteBean;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.BienLoteDto;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.DatosLoteCDD;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InfoBienesCDD;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda.InformeValidacionCDDBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastaSareb.InformeSubastaSarebBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
@@ -66,17 +66,14 @@ public class SubastaController {
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
 	
-	private static final String DEVON_PROPERTIES = "devon.properties";
-	private static final String DEVON_PROPERTIES_PROYECTO = "proyecto";
-	private static final String DEVON_HOME_BANKIA_HAYA = "datos/usuarios/recovecp";
-	private static final String DEVON_HOME = "DEVON_HOME";
-	private static final String PROYECTO_HAYA = "HAYA";
-	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private SubastaApi subastaApi;
+	
+	@Autowired
+	private NMBProjectContext nmbProjectContext;
 
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -101,6 +98,13 @@ public class SubastaController {
 		list.add(!habilitarEditInfoCDD(subasta));
 		map.put("disableBotonesCDD", list);
 		return DISABLED_BOTONES_CDD_JSON;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String reiniciarKOCDD(@RequestParam(value = "idAsunto", required = true) Long id, ModelMap map) {
+		subastaApi.eliminarBatchCierreDeudaAsunto(id);		
+		return DEFAULT;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -250,73 +254,65 @@ public class SubastaController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-
-	public String generarInformeValidacionCDD(
+	public String generarInformeCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
 			ModelMap model) {
 
-		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
+		InformeValidacionCDDDto informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+				.generarInformeValidacionCDD(idSubasta, idsBien);
 		return creaExcelValidacion(informe,model);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String generarInformeCierre(
+	public String enviarCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
 			@RequestParam(value = "idBien", required = false) String idsBien,
-			ModelMap model) {
-
-		InformeValidacionCDDBean informe = rellenarInformeValidacionCDD(idSubasta, idsBien);
-		if(!informe.getValidacionOK()) {
-			return creaExcelValidacion(informe,model);
-		}else{
-			if(Checks.esNulo(idsBien)) {
-				List<BatchAcuerdoCierreDeuda> registrosBACDD = subastaApi.findRegistroCierreDeuda(idSubasta, null);
-				if(!Checks.estaVacio(registrosBACDD)) {
-					subastaApi.eliminarRegistroCierreDeuda(idSubasta, registrosBACDD);						
-				}else{
-					subastaApi.guardaBatchAcuerdoCierre(idSubasta, null);
-				}
-			}else{
-				subastaApi.enviarBienesCierreDeuda(idSubasta, obtenerBienEnviarCierre(idsBien));
-			}
-		}
-		return DEFAULT;
-	}
+			ModelMap model) {		
 	
-	private List<Long> obtenerBienEnviarCierre(String idsBien) {
-		List<Long> listIdsBien = new ArrayList<Long>();
-		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");			
-			for (String loteBien : arrLoteBien) {
-				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				listIdsBien.add(Long.valueOf(bien));
-			}
-		}
-		return listIdsBien;
-	}
-	
-	private InformeValidacionCDDBean rellenarInformeValidacionCDD(Long idSubasta, String idsBien) {
-		InformeValidacionCDDBean informe = new InformeValidacionCDDBean();
-		List<BienLoteDto> listBienLote = new ArrayList<BienLoteDto>(); 
-		if(!Checks.esNulo(idsBien)) {
-			String[] arrLoteBien = idsBien.split(",");
+		// En caso de tener bienes informados (SAREB) validamos por bien, y finalmente generamos un informe
+		// global que será el que creará el excel		
+		
+		Subasta subasta = subastaApi.getSubasta(idSubasta);		
+		InformeValidacionCDDDto informe = null;
+		boolean resultadoGlobalOK = true;
+		
+		if(!Checks.esNulo(idsBien)) { // Si tenemos bienes informados (SAREB)
 			
-			for (String loteBien : arrLoteBien) {
-				String bien = loteBien.substring(0,loteBien.indexOf(";")); 
-				String lote = loteBien.substring(loteBien.indexOf(";")+1); 
-				BienLoteDto dto = new BienLoteDto(Long.valueOf(bien), "", Long.valueOf(lote));
-				listBienLote.add(dto);
+			String[] arrBienes = idsBien.split(",");
+			
+			for (String idBien:arrBienes) {				
+			
+				informe = proxyFactory.proxy(SubastaApi.class).generarEnvioCierreDeuda(subasta, Long.valueOf(idBien), BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
+				if(!informe.getValidacionOK()) {
+					resultadoGlobalOK = false;					
+				}
+			}			
+			if(!resultadoGlobalOK) { // Si hay algún bien con KO generamos el informe global que creará el excel
+				informe = proxyFactory.proxy(SubastaProcedimientoDelegateApi.class)
+						.generarInformeValidacionCDD(idSubasta, idsBien);				
 			}
-			informe.setBienesLote(listBienLote);
+			
+		} else { // Si no tenemos bienes, se trata como un único envio
+			
+			informe = subastaApi.generarEnvioCierreDeuda(subasta, null, BatchAcuerdoCierreDeuda.PROPIEDAD_MANUAL);
+			if(!informe.getValidacionOK()) {
+				resultadoGlobalOK = false;					
+			}
 		}
-		informe.setProxyFactory(proxyFactory);
-		informe.setSubastaApi(subastaApi);
-		informe.setIdSubasta(idSubasta);
-		informe.create();
-		return informe;
+		
+		// Si alguna validación es KO, generamos el excel		
+		if(!resultadoGlobalOK) {
+
+			return creaExcelValidacion(informe,model);
+			
+		} else {	
+			
+			return DEFAULT;
+		}
 	}
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -350,11 +346,10 @@ public class SubastaController {
 		ValorNodoTarea costasProcurador = subastaApi.obtenValorNodoPrc(procedimiento, tareaSenyalamientoSubasta, "costasProcurador");
 		
 		ValorNodoTarea conPostores = null;
-		if(PROYECTO_HAYA.equals(cargarProyectoProperties())) {
-			conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, "comboPostores");	
-		}else{
-			conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, "comboCesion");
-		}
+		
+		String comboPostores = nmbProjectContext.getComboPostoresCelebracionSubasta();
+		conPostores = subastaApi.obtenValorNodoPrc(procedimiento, tareaCelebracionSubasta, comboPostores);	
+		
 		if(!Checks.esNulo(costasLetrado)) {
 			dto.setCostasLetrado(costasLetrado.getValor());
 			dto.setIdValorCostasLetrado(costasLetrado.getIdTareaNodoValor());	
@@ -402,9 +397,6 @@ public class SubastaController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformeBusquedaSubastasManager(NMBDtoBuscarSubastas b, ModelMap model) {
-		
-		
-				
 		model.put("fileItem", proxyFactory.proxy(SubastaApi.class).buscarSubastasXLS(b));
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
 	}
@@ -450,7 +442,6 @@ public class SubastaController {
 		// 
 		return DEFAULT;
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -488,7 +479,7 @@ public class SubastaController {
 	}	
 	
 	@SuppressWarnings("unchecked")
-	private String creaExcelValidacion(InformeValidacionCDDBean informe,ModelMap model){
+	private String creaExcelValidacion(InformeValidacionCDDDto informe,ModelMap model){
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		List<String> fila =new ArrayList<String>();
@@ -504,75 +495,63 @@ public class SubastaController {
 		cabeceras.add("F. SEÑALAMIENTO");
 		cabeceras.add("CON POSTORES");
 		
-		
-		
 		fila=new ArrayList<String>();
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getTipoProcedimiento())){
 			fila.add(informe.getProcedimientoSubastaCDD().getTipoProcedimiento().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getLetrado())){
 			fila.add(informe.getProcedimientoSubastaCDD().getLetrado().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getJuzgado())){
 			fila.add(informe.getProcedimientoSubastaCDD().getJuzgado().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getPrincipal()) && !informe.getProcedimientoSubastaCDD().getPrincipal().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getPrincipal().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getDeudaJudicial()) && !informe.getProcedimientoSubastaCDD().getDeudaJudicial().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getDeudaJudicial().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasLetrado()) && !informe.getProcedimientoSubastaCDD().getCostasLetrado().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getCostasLetrado().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getCostasProcurador()) && !informe.getProcedimientoSubastaCDD().getCostasProcurador().equals("0")){
 			fila.add(informe.getProcedimientoSubastaCDD().getCostasProcurador().concat(";White;Number"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getFechaCelebracionSubasta())){
 			fila.add(informe.getProcedimientoSubastaCDD().getFechaCelebracionSubasta().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		
 		if(!Checks.esNulo(informe.getProcedimientoSubastaCDD().getSubastaConPostores())){
 			fila.add(informe.getProcedimientoSubastaCDD().getSubastaConPostores().concat(";White;Text"));
-		}
-		else{
+		} else {
 			fila.add("******;Red;Text");
 		}
 		valores.add(fila);
 		
-		for(DatosLoteCDD datosLoteCDD : informe.getDatosLoteCDD())
-		{	
+		for(DatosLoteCDD datosLoteCDD : informe.getDatosLoteCDD()) {	
 			fila=new ArrayList<String>();
 			fila.add("LOTE;Blue;Text");
 			fila.add("PUJA SIN POSTORES;Blue;Text");
@@ -584,43 +563,35 @@ public class SubastaController {
 			fila=new ArrayList<String>();
 			if(!Checks.esNulo(datosLoteCDD.getNumLote())){
 				fila.add(datosLoteCDD.getNumLote().toString().concat(";Grey;Text"));
-			}
-			else{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getSinPostores()) && !datosLoteCDD.getSinPostores().equals("0")){
 				String sinPostores=datosLoteCDD.getSinPostores().replace(",",".");
 				fila.add(sinPostores.concat(";Grey;Number"));
-				
-			}
-			else{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getConPostoresDesde()) && !datosLoteCDD.getConPostoresDesde().equals("0")){
 				String conPostores=datosLoteCDD.getConPostoresDesde().replace(",", ".");
 				fila.add(conPostores.concat(";Grey;Number"));
-			}
-			else{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getConPostoresHasta()) && !datosLoteCDD.getConPostoresHasta().equals("0")){
 				String conPostoresHasta=datosLoteCDD.getConPostoresHasta().replace(",", ".");
 				fila.add(conPostoresHasta.concat(";Grey;Number"));
-			}
-			else
-			{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			
 			if(!Checks.esNulo(datosLoteCDD.getValorSubasta()) && !datosLoteCDD.getValorSubasta().equals("0")){
 				String valorSubasta=datosLoteCDD.getValorSubasta().replace(",", ".");
 				fila.add(valorSubasta.concat(";Grey;Number"));
-			}
-			else
-			{
+			} else {
 				fila.add("******;Red;Text");
 			}
 			valores.add(fila);
@@ -631,7 +602,7 @@ public class SubastaController {
 				fila.add(" ; ;Text");
 				fila.add("Nº FINCA;Blue;Text");
 				fila.add("Nº ACTIVO;Blue;Text");
-				fila.add("REFERENCIA CATASTRAL;Blue;Text");
+//				fila.add("REFERENCIA CATASTRAL;Blue;Text");
 				fila.add("DESCRIPCIÓN;Blue;Text");
 				fila.add("Nº REGISTRO;Blue;Text");
 				fila.add("VALOR TASACIÓN;Blue;Text");
@@ -647,111 +618,90 @@ public class SubastaController {
 				
 				valores.add(fila);
 				
-				for(InfoBienesCDD infoBienes : datosLoteCDD.getInfoBienes())
-				{	fila=new ArrayList<String>();
+				for(InfoBienesCDD infoBienes : datosLoteCDD.getInfoBienes()) {	
+					fila=new ArrayList<String>();
 					fila.add(" ; ");
 					if(!Checks.esNulo(infoBienes.getNumFinca())){
 						fila.add(infoBienes.getNumFinca().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getNumeroActivo())){
 						fila.add(infoBienes.getNumeroActivo().concat(";White;Text"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
-					if(!Checks.esNulo(infoBienes.getReferenciaCatastral())){
-						fila.add(infoBienes.getReferenciaCatastral().concat(";White;Text"));
-					}
-					else
-					{
-						fila.add("******;Red;Text");
-					}
+//					if(!Checks.esNulo(infoBienes.getReferenciaCatastral())){
+//						fila.add(infoBienes.getReferenciaCatastral().concat(";White;Text"));
+//					}
+//					else
+//					{
+//						fila.add("******;Red;Text");
+//					}
 					
 					if(!Checks.esNulo(infoBienes.getDescripcion())){
 						fila.add(infoBienes.getDescripcion().concat(";White;Text"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getNumRegistro())){
 						fila.add(infoBienes.getNumRegistro().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getValorTasacion()) && !infoBienes.getValorTasacion().equals("0")){
 						String valorTasacion=infoBienes.getValorTasacion().replace(",",".");
 						fila.add(valorTasacion.concat(";White;Number"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getFechaTasacion())){
 						fila.add(infoBienes.getFechaTasacion().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getValorJudicial()) && !infoBienes.getValorJudicial().equals("0")){
 						String valorJudicial=infoBienes.getValorJudicial().replace(",", ".");
 						fila.add(valorJudicial.concat(";White;Number"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					
 					if(!Checks.esNulo(infoBienes.getViviendaHabitual())){
 						fila.add(infoBienes.getViviendaHabitual().concat(";White;Text"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getResultadoAdjudicacion())){
 						fila.add(infoBienes.getResultadoAdjudicacion().concat(";White;Text"));
-					}
-					else{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					
 					if(!Checks.esNulo(infoBienes.getImporteAdjudicacion()) && !infoBienes.getImporteAdjudicacion().equals("0")){
 						String importeAdjudicacion=infoBienes.getImporteAdjudicacion().replace(",", ".");
 						fila.add(importeAdjudicacion.concat(";White;Number"));
-					}
-					else
-					{
+					} else {
 						fila.add("******;Red;Text");
 					}
 					//Si la subasta es de Bankia no mostramos la columna Fecha Testimonio
 					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
 							fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
-						}
-						else
-						{
+						} else {
 							fila.add("******;Red;Text");
 						}
 					}
-					
 					valores.add(fila);
-						
 				}
-				
 			}	
 		}
 		
@@ -783,10 +733,7 @@ public class SubastaController {
 				fila.add(" ;Red;Text");
 				fila.add(" ;Red;Text");
 				valores.add(fila);
-				
 			}
-			
-			
 		}
 		
 		
@@ -802,43 +749,20 @@ public class SubastaController {
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
 	}
 	
-	private String cargarProyectoProperties() {
-		String proyecto = "";	
-		Properties appProperties = cargarProperties(DEVON_PROPERTIES);
-		if (appProperties == null) {
-			System.out.println("No puedo consultar devon.properties");		
-		} else if (appProperties.containsKey(DEVON_PROPERTIES_PROYECTO) && appProperties.getProperty(DEVON_PROPERTIES_PROYECTO) != null) {
-			proyecto = appProperties.getProperty(DEVON_PROPERTIES_PROYECTO);
-		} else {
-			System.out.println("UVEM no instalado");
-		}
-		return proyecto;
+	@RequestMapping
+	public String getListErrorPreviCDDData(ModelMap model){
+		List<DDResultadoValidacionCDD> list = proxyFactory.proxy(SubastaApi.class).getListErrorPreviCDDData();
+		model.put("data", list);
+		return DICCIONARIO_JSON;
 	}
 	
-	private Properties cargarProperties(String nombreProps) {
-		InputStream input = null;
-		Properties prop = new Properties();
+	
 		
-		String devonHome = DEVON_HOME_BANKIA_HAYA;
-		if (System.getenv(DEVON_HOME) != null) {
-			devonHome = System.getenv(DEVON_HOME);
-		}
-		
-		try {
-			input = new FileInputStream("/" + devonHome + "/" + nombreProps);
-			prop.load(input);
-		} catch (IOException ex) {
-			System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + ex.getMessage());
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					System.out.println("[uvem.cargarProperties]: /" + devonHome + "/" + nombreProps + ":" + e.getMessage());
-																																																																																			}
-																																																																																		}
-		}
-		return prop;
+	@RequestMapping
+	public String getListErrorPostCDDData(ModelMap model){
+		List<DDResultadoValidacionNuse> list = proxyFactory.proxy(SubastaApi.class).getListErrorPostCDDData();
+		model.put("data", list);
+		return DICCIONARIO_JSON;
 	}
 	
 }

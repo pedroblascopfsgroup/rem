@@ -57,6 +57,25 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
      * @return
      */
 	List<DDTipoFondo> esTitulizada(Long idAsunto);
+
+	/**
+         * Indica sobre el Asunto si el proceso de envio a cierre de deuda man/auto ha generado errores de validación
+        * @param idAsunto
+        * @return
+        */        
+	String getMsgErrorEnvioCDD(Long idAsunto);
 	
-    
+	/**
+         * Indica sobre el Asunto si el proceso de envio a cierre de deuda man/auto ha generado errores en NUSE
+        * @param idAsunto
+        * @return
+        */        
+	String getMsgErrorEnvioCDDNuse(Long idAsunto);
+        
+	/**
+         * Indica sobre el Asunto el error CDD para mostrar en la cabecera: Validacion / NUSE
+        * @param idAsunto
+        * @return
+        */        
+	String getMsgErrorEnvioCDDCabecera(Long idAsunto);
 }

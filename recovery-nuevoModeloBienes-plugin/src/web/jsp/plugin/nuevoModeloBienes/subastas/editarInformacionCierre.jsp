@@ -192,10 +192,10 @@
 	
 	var getParametros = function() {
 	 	var p = {};
-	 	p.idSubasta = ${dto.idSubasta};
-	 	p.idValorCostasLetrado = ${dto.idValorCostasLetrado};
-	 	p.idValorCostasProcurador = ${dto.idValorCostasProcurador};
-	 	p.idValorConPostores = ${dto.idValorConPostores}; 
+	 	p.idSubasta = '${dto.idSubasta}';
+	 	p.idValorCostasLetrado = '${dto.idValorCostasLetrado}';
+	 	p.idValorCostasProcurador = '${dto.idValorCostasProcurador}';
+	 	p.idValorConPostores = '${dto.idValorConPostores}'; 
 	 	p.principalDemanda = principal.getValue() ? principal.getValue() : '';
 	 	p.deudaJudicial = deudaJudicial.getValue();
 	 	p.idPlazaJuzgado = idTipoPlaza.getValue() ? idTipoPlaza.getValue() : '';

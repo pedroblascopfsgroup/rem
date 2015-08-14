@@ -729,18 +729,6 @@
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-			<artifactId>com.springsource.org.aspectj.runtime</artifactId>
-			<version>UNKNOWN</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
-			<artifactId>com.springsource.org.aspectj.weaver</artifactId>
-			<version>UNKNOWN</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
 			<artifactId>com.springsource.org.codehaus.groovy</artifactId>
 			<version>UNKNOWN</version>
 			<scope>compile</scope>
@@ -1426,13 +1414,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-optionalConfiguration</id>
 						<phase>compile</phase>
@@ -1447,13 +1428,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-jsp</id>
 						<phase>compile</phase>
@@ -1468,13 +1442,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-js</id>
 						<phase>compile</phase>
@@ -1489,13 +1456,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-img</id>
 						<phase>compile</phase>
@@ -1510,13 +1470,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-flows</id>
 						<phase>compile</phase>
@@ -1567,9 +1520,46 @@
 		</plugins>
 	</build>
 	<profiles>
+		<!-- Perfil por defecto -->
+		<profile>
+			<id>default</id>
+			<activation>
+            	<activeByDefault>true</activeByDefault>
+        	</activation>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+			</dependencies>
+		</profile>
 		<profile>
 			<id>bankia</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-bankiaWeb-plugin</artifactId>
@@ -1743,9 +1733,44 @@
 					<version>1.7.5</version>
 				</dependency>
 			</dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/bankia/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
 		</profile>
 		<profile>
 			<id>bankia-test</id>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+			</dependencies>
 			<build>
 				<resources>
 					<resource>
@@ -1773,6 +1798,7 @@
 									<includes>
 										<include>inicioBankia.jsp</include>
 										<include>WEB-INF/config/bankia.htaccess</include>
+                                        <include>img/cliente_logo.gif</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -1785,6 +1811,20 @@
 		<profile>
 			<id>bankia-delivery</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-integracionuvem-plugin</artifactId>
@@ -1925,6 +1965,7 @@
 									<includes>
 										<include>inicioBankia.jsp</include>
 										<include>WEB-INF/config/bankia.htaccess</include>
+                                        <include>img/cliente_logo.gif</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -1938,6 +1979,20 @@
 		<profile>
 			<id>haya</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>
@@ -1967,6 +2022,60 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>recovery-integracionuvem-plugin</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-core</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-hibernate</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-bpm</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-web</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>pfs</groupId>
+							<artifactId>plugins</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>javax.validation</groupId>
+							<artifactId>validation-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>javax.ejb</groupId>
+							<artifactId>ejb-api</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-coreextension-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienes-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup.plugin</groupId>
+							<artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>capgemini</groupId>
+							<artifactId>devon-batch</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -1975,6 +2084,15 @@
 						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
 							<webXml>src/custom/haya/webapp/WEB-INF/web.xml</webXml>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/haya/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -1983,6 +2101,20 @@
 		<profile>
 			<id>haya-delivery</id>
 			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+					<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+					<version>UNKNOWN</version>
+					<scope>compile</scope>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
 				<dependency>
 					<groupId>org.springframework.ldap</groupId>
 					<artifactId>spring-ldap-core</artifactId>
@@ -1998,6 +2130,50 @@
 						<directory>src/custom/haya/resources</directory>
 					</resource>
 				</resources>
+			</build>
+		</profile>
+		<profile>
+			<id>cajamar</id>
+			<dependencies>
+				<!-- Versión de AspectJ -->
+				<dependency>
+    				<groupId>org.aspectj</groupId>
+    				<artifactId>com.springsource.org.aspectj.runtime</artifactId>
+    				<version>1.7.2.RELEASE</version>
+				</dependency>
+				<dependency>
+    				<groupId>org.aspectj</groupId>
+    				<artifactId>com.springsource.org.aspectj.weaver</artifactId>
+    				<version>1.7.2.RELEASE</version>
+				</dependency>
+				<!-- Fin versión de AspectJ -->
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+					<resource>
+						<directory>src/custom/cajamar/resources</directory>
+					</resource>
+				</resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/cajamar/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
 			</build>
 		</profile>
 	</profiles>

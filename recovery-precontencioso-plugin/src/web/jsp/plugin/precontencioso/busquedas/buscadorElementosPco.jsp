@@ -7,11 +7,11 @@
 
 <fwk:page>
 
-	<%@ include file="tabs/procedimiento/tabFiltroProcedimiento.jsp" %>
-	<%@ include file="tabs/procedimiento/tabFiltroPersonaContrato.jsp" %>
-	<%@ include file="tabs/procedimiento/tabFiltroDocumentos.jsp" %>
-	<%@ include file="tabs/procedimiento/tabFiltroLiquidaciones.jsp" %>
-	<%@ include file="tabs/procedimiento/tabFiltroBurofax.jsp" %>
+	<%@ include file="tabs/elementos/tabFiltroProcedimiento.jsp" %>
+	<%@ include file="tabs/elementos/tabFiltroPersonaContrato.jsp" %>
+	<%@ include file="tabs/elementos/tabFiltroDocumentos.jsp" %>
+	<%@ include file="tabs/elementos/tabFiltroLiquidaciones.jsp" %>
+	<%@ include file="tabs/elementos/tabFiltroBurofax.jsp" %>
 	<%@ include file="grids/procedimientoPcoGrid.jsp" %>
 
 <%-- Filtros --%>
@@ -30,12 +30,12 @@
 	var btnBuscar = new Ext.Button({
 		text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
 		handler: function() {
+			panelFiltros.collapse(true);
 			var params = getParametros();
 			params.start = 0;
 			params.limit = 25;
 			procedimientoPcoStore.webflow(params);
 			pagingBar.hide();
-			panelFiltros.collapse(false);
 		}
 	})
 
@@ -57,6 +57,12 @@
 				items: [filtroTabPanel]
 			}]
 		}]
+	});
+
+<%-- Grid --%>
+
+	gridProcedimientosPco.on('load', function() {
+		panelFiltros.collapse(true);
 	});
 
 	var mainPanel = new Ext.Panel({

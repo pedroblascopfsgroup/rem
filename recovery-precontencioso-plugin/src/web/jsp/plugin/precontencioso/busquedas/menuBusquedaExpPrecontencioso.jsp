@@ -5,5 +5,5 @@
 text: '<s:message code="" text="**Expedientes Judiciales" />',
 iconCls : 'icon_busquedas',
 handler : function(){
-	app.openTab("<s:message code="" text="**Expedientes Judiciales"/>", "expedientejudicial/abrirBusquedaProcedimiento", {}, {id: 'plugin-busquedaProcedimientos-busqueda', iconCls: 'icon_busquedas'});
+	app.openTab("<s:message code="" text="**Expedientes Judiciales"/>", "expedientejudicial/abrirBusquedaProcedimiento", {}, {id: 'plugin-precontencioso-busqueda-procedimientos', iconCls: 'icon_busquedas'});
 }

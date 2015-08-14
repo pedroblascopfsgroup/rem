@@ -4,6 +4,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
+<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+
 
 <%-- Codigo --%>
 
@@ -222,7 +224,47 @@ var panelFechaParalizacion = new Ext.Panel({
 	]
 });
 
-<%-- Tipo de procedimiento propuesto por la entidad --%>
+
+	var documento =	'<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO" />';
+	var liquidacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION" />';
+	var burofax = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX" />';
+	
+	var ocultarTipoBusqueda = ${ocultarTipoBusqueda};
+	debugger;
+	var comboTipoBusqueda = new Ext.form.ComboBox({
+	    fieldLabel: '<s:message text="**Tipo de busqueda"/>',
+	    hidden:ocultarTipoBusqueda,
+	    disable:ocultarTipoBusqueda,
+	    allowBlank: true,
+	    triggerAction: 'all',
+	    mode: 'local',
+	    store: new Ext.data.ArrayStore({
+	        id: 0,
+	        fields: [
+	            'myId',
+	            'displayText'
+	        ],
+	        data: [[documento, documento], [liquidacion, liquidacion], [burofax, burofax]]
+	    }),
+	    valueField: 'myId',
+	    displayField: 'displayText'
+	});
+	
+	comboTipoBusqueda.on('select', function(combo, record, index) {
+	    if(comboTipoBusqueda.getValue() == documento) {
+            filtrosTabDocumentos.enable();
+            filtrosTabLiquidacion.disable();	            	
+			filtrosTabBurofax.disable();
+		}else if(comboTipoBusqueda.getValue() == liquidacion) {
+           	filtrosTabDocumentos.disable();
+            filtrosTabLiquidacion.enable();
+           	filtrosTabBurofax.disable();
+        }else if(comboTipoBusqueda.getValue() == burofax) {
+          	filtrosTabDocumentos.disable();
+          	filtrosTabLiquidacion.disable();
+			filtrosTabBurofax.enable();
+        }
+	});
 
 <pfsforms:ddCombo name="comboTipoProcPropuesto" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
@@ -288,7 +330,7 @@ var filtrosTabDatosProcedimiento = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [fieldCodigo, fieldNombreExpedienteJudicial, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes]
+		items: [comboTipoBusqueda, fieldCodigo, fieldNombreExpedienteJudicial, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes]
 	}, {
 		layout: 'form',
 		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, filtroEstadoPreparacion]
@@ -304,6 +346,7 @@ filtrosTabDatosProcedimiento.on('activate',function(){
 var getParametrosFiltroProcedimiento = function() {
 	var out = {};
 
+	out.tipoBusqueda = comboTipoBusqueda.getValue();
 	out.proCodigo = fieldCodigo.getValue();
 	out.proNombre = fieldNombreExpedienteJudicial.getValue();
 	out.proFechaInicioPreparacionDesde = dateFieldInicioPreparacionDesde.getValue();

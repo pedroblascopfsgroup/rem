@@ -554,6 +554,123 @@
 		});
 	}
 	
+	<%-- Modificaciones Operaciones masivas --%>
+	var btnAddRelacionContratoBien = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnNuevaRelacionContratoBien" text="**Añadir Relación Contrato Bien" />'
+			,iconCls : 'icon_mas'
+			,cls: 'x-btn-text-icon'
+			
+	});
+	
+	btnAddRelacionContratoBien.on('click', function(){		
+			var w = app.openWindow({
+				  flow : 'subasta/getRelacionContratoBien'
+				  ,width:1150
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnNuevaRelacionContratoBien" text="**Añadir Relación Contrato Bien" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});
+			
+	
+	});
+	
+	var btnBorrarRelacionContratoBien = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnEliminarRelacionContratoBien" text="**Eliminar Relación Contrato Bien" />'
+			,iconCls : 'icon_cancel'
+			,cls: 'x-btn-text-icon'
+			
+	});
+	
+	btnBorrarRelacionContratoBien.on('click', function(){
+		var w = app.openWindow({
+				  flow : 'subasta/getBorrarRelacionContratoBien'
+				  ,width:1150
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnEliminarRelacionContratoBien" text="**Eliminar Relación Contrato Bien" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});	
+	
+	});
+	
+	var btnAgregarBienCargas = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.cargas.agregar" text="**Nueva Carga" />'
+			,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+			
+	});
+	
+	btnAgregarBienCargas.on('click', function(){
+		var w = app.openWindow({
+				  flow : 'subasta/getAgregarBienCargas'
+				  ,width:800
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.cargas.agregar" text="**Nueva carga" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});	
+	
+	});	
+	
+	
+	var btnEditarRevisionCargas = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnRegistrarNoExistenciaCargas" text="**Registrar No existencia de cargas" />'
+			,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+			
+	});
+	
+	btnEditarRevisionCargas.on('click', function(){
+		var w = app.openWindow({
+				  flow : 'subasta/getEditarRevisionCargas'
+				  ,width:430
+				  ,autoWidth:true
+				  ,closable:true
+				  ,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.titleEditarRevisionCargas" text="**Editar revisión de cargas" />'
+				  ,params:{idBienes:bienesSeleccionados}
+				
+				});
+				w.on(app.event.DONE,function(){
+						w.close();
+						
+						
+				});
+				w.on(app.event.CANCEL, function(){w.close();});	
+	
+	});
+	
+	var btnAccionesSubasta = new Ext.Button({
+      text    : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnAccionesSobreSubastas" text="**Acciones sobre subastas" />',
+      style   : 'position:absolute;right:10px;top:5px',
+      menu : {
+      	items: [btnAddRelacionContratoBien,btnBorrarRelacionContratoBien,btnAgregarBienCargas,btnEditarRevisionCargas
+
+      		]}
+     })	
+	<%-- --%>
+	
 
     var lotesCM = new Ext.grid.ColumnModel([
     		expanderLote,
@@ -583,7 +700,8 @@
 			,enableNoGroups:true
 			,selectedRowClass : 'x-grid-row-selected'	
 		})
-		,bbar:[ btnExpandAll, btnCollapseAll, btnAgregarBien, btnExcluirBien, btnInstrucLotes <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>]
+		,bbar:[ btnExpandAll, btnCollapseAll, btnAgregarBien, btnExcluirBien, btnInstrucLotes <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>
+				,btnAccionesSubasta]
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);

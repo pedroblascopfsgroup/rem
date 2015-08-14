@@ -53,6 +53,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -81,7 +82,10 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBi
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.DatosActaComiteBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.ProcedimientoApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.SubastaApi;
@@ -1397,6 +1401,73 @@ public class SubastaManager implements SubastaApi {
 			Order orderDescripcion = new Order(OrderType.ASC, "descripcion");
 			return (ArrayList<DDResultadoValidacionNuse>) genericDao.getListOrdered(DDResultadoValidacionNuse.class, orderDescripcion, fBorrado);
 		}
-
+		
+		@Override
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_CONTRATO)
+		public Contrato getContratoByNroContrato(String nroContrato){
+			Contrato contrato=null;
+			try{
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "nroContrato", nroContrato);
+				contrato=(Contrato) genericDao.get(Contrato.class,filtro1);
+			}catch(Exception e){
+				logger.error(e);
+			}
+			return contrato;
+		}
+		
+		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_RELACION_BIENES_CONTRATOS)
+		@Override
+		public List<NMBContratoBien> getRelacionesContratosBienes(Long[] idBienes) {
+			List<NMBContratoBien> listNMBContratoBien = new ArrayList<NMBContratoBien>();
+			
+			for(int i=0;i<idBienes.length;i++){
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "bien.id", idBienes[i]);
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				Filter f3 = genericDao.createFilter(FilterType.EQUALS, "contrato.auditoria.borrado", false);
+				listNMBContratoBien.addAll(genericDao.getList(NMBContratoBien.class, f1, f2, f3));
+			}	
+			return listNMBContratoBien;
+		}
+		
+		@BusinessOperation(BO_OBTENER_SITUACION_CARGA)
+		@Override
+	    public DDSituacionCarga getSituacionCarga(String codigo){
+			DDSituacionCarga situacionCarga=null;
+			try{
+				situacionCarga=genericDao.get(DDSituacionCarga.class, genericDao
+					.createFilter(FilterType.EQUALS, "codigo",codigo));
+			}catch(Exception e){
+				logger.error(e);
+			}
+			return situacionCarga;
+		}
+		
+		@BusinessOperation(BO_OBTENER_SITUACION_CARGA_ECONOMICA)
+		@Override
+	    public DDSituacionCarga getSituacionCargaEconomica(String codigo){
+	    	DDSituacionCarga situacionCargaEconomica=null;
+	    	try{
+	    		situacionCargaEconomica = genericDao.get(DDSituacionCarga.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo",codigo));
+	    	}catch(Exception e){
+	    		logger.error(e);
+	    	}
+	    	return situacionCargaEconomica;
+	    }
+	    
+		@BusinessOperation(BO_OBTENER_TIPO_CARGA)
+		@Override
+	    public DDTipoCarga getTipoCarga(String tipoCarga){
+	    	DDTipoCarga tipoCargaRes=null;
+	    	try{
+	    		tipoCargaRes = genericDao.get(DDTipoCarga.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigo",tipoCarga));
+	    	}catch(Exception e){
+	    		logger.error(e);
+	    	}
+	    	return tipoCargaRes;
+	    }
+	    
+		
 
 }

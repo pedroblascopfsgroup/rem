@@ -39,6 +39,7 @@ public class ExpedienteJudicialController {
 	private static final String JSON_HISTORICO_ESTADOS = "plugin/precontencioso/historicoEstados/json/historicoEstadosJSON";
 	private static final String JSON_BUSQUEDA_PROCEDIMIENTO = "plugin/precontencioso/busquedas/json/procedimientoPcoJSON";
 	private static final String JSP_BUSQUEDA_PROCEDIMIENTO = "plugin/precontencioso/busquedas/buscadorProcedimientosPco";
+	private static final String JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO = "plugin/precontencioso/busquedas/buscadorElementosPco";
 	private static final String JSON_RESULTADO_FINALIZAR_PREPARACION = "plugin/precontencioso/acciones/json/resultadoFinalizarPreparacionJSON";
 
 	@Autowired
@@ -65,7 +66,19 @@ public class ExpedienteJudicialController {
 
 	@RequestMapping
 	public String abrirBusquedaProcedimiento(WebRequest request, ModelMap model) {
-
+		model = rellenarFormBusquedaPCO(model);
+		model.put("ocultarTipoBusqueda", true);
+		return JSP_BUSQUEDA_PROCEDIMIENTO;
+	}
+	
+	@RequestMapping
+	public String abrirBusquedaElementosPco(WebRequest request, ModelMap model) {	
+		rellenarFormBusquedaPCO(model);
+		model.put("ocultarTipoBusqueda", false);
+		return JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO;
+	}	
+	
+	private ModelMap rellenarFormBusquedaPCO(ModelMap model) {
 		// General - Expediente judicial
 		List<TipoProcedimiento> tipoProcedimientoProcpuesto = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(TipoProcedimiento.class);
 		List<DDTipoPreparacionPCO> tipoPreparacion = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoPreparacionPCO.class);
@@ -100,8 +113,7 @@ public class ExpedienteJudicialController {
 		List<DDResultadoBurofaxPCO> resultadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoBurofaxPCO.class);
 
 		model.put("resultadoBurofax", resultadoBurofax);
-
-		return JSP_BUSQUEDA_PROCEDIMIENTO;
+		return model;
 	}
 
 	@RequestMapping

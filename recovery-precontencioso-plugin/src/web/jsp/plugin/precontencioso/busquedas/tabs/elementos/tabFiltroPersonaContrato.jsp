@@ -5,6 +5,7 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
 
+
 <%-- NIF / CIF de alguna de las personas relacionadas con el expediente. --%>
 
 var fieldNif = new Ext.form.TextField({
@@ -49,6 +50,10 @@ var comboTiposProducto = app.creaDblSelect(
 
 var filtrosTabPersonaContratoActive = false;
 
+var documento =	'<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO" />';
+var liquidacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION" />';
+var burofax = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX" />';
+	
 var filtrosTabPersonaContrato = new Ext.Panel({
 	title: '<s:message code="asd" text="** Persona y contratos" />',
 	autoHeight: true,

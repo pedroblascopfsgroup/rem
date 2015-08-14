@@ -24,6 +24,8 @@ public class ITIDtoAltaItinerario extends WebDto {
 	
 	private Long ambitoExpediente;
 	
+	private Long prePolitica;
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
@@ -47,6 +49,12 @@ public class ITIDtoAltaItinerario extends WebDto {
 	}
 	public Long getId() {
 		return id;
+	}
+	public Long getPrePolitica() {
+		return prePolitica;
+	}
+	public void setPrePolitica(Long prePolitica) {
+		this.prePolitica = prePolitica;
 	}
 
 }

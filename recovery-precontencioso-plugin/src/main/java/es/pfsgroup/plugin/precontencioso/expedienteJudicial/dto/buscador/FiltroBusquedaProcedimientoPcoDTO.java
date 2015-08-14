@@ -6,6 +6,9 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 
 	private static final long serialVersionUID = -1113911238693790533L;
 
+	public static final String BUSQUEDA_DOCUMENTO = "DOCUMENTO";
+	public static final String BUSQUEDA_LIQUIDACION = "LIQUIDACION";
+	public static final String BUSQUEDA_BUROFAX = "BUROFAX";
 	private String tipoBusqueda; // Documentos, Liquidaciones, Burofaxes.
 
 	// ProcedimientoPco

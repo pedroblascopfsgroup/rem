@@ -3,11 +3,13 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 import java.util.List;
 
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 
 public interface ProcedimientoPcoApi {
@@ -35,10 +37,33 @@ public interface ProcedimientoPcoApi {
 	@BusinessOperationDefinition(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
 	boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);
 
+	/* BUSQUEDAS COMPLEJAS -> busquedas por filtro que debido a la complejidad se deben de realizar desde ProcedimientoPCO */
+
 	/**
-	 * Busca ProcedimientoPCO en base al filtro enviado por parametro.
-	 * @param dto filtro con los datos por los cuales buscar
-	 * @return
+	 * Busqueda de procedimientosPco que cumplan el filtro enviado por parametro
+	 * @param filtro
+	 * @return Listado de ProcedimientosPCO que cumplen dicho filtro.
 	 */
-	List<ProcedimientoPCO> busquedaProcedimientosPco(FiltroBusquedaProcedimientoPcoDTO dto);
+	List<ProcedimientoPCO> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+
+	/**
+	 * Busqueda de SolicitudDocumentoPCO que cumplan el filtro enviado por parametro
+	 * @param filtro
+	 * @return Listado de SolicitudDocumentoPCO que cumplen dicho filtro.
+	 */
+	List<SolicitudDocumentoPCO> busquedaSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+
+	/**
+	 * Busqueda de LiquidacionPCO que cumplan el filtro enviado por parametro
+	 * @param filtro
+	 * @return Listado de LiquidacionPCO que cumplen dicho filtro.
+	 */
+	List<LiquidacionPCO> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+
+	/**
+	 * Busqueda de EnvioBurofaxPCO que cumplan el filtro enviado por parametro
+	 * @param filtro
+	 * @return Listado de EnvioBurofaxPCO que cumplen dicho filtro.
+	 */
+	List<EnvioBurofaxPCO> busquedaEnviosBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 }

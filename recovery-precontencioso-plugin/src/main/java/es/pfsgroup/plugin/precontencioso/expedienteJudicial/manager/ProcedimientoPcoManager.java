@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,18 +9,20 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPCOAssembler;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Service
@@ -89,9 +90,26 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	}
 
 	@Override
-	public List<ProcedimientoPCO> busquedaProcedimientosPco(FiltroBusquedaProcedimientoPcoDTO filtro) {
+	public List<ProcedimientoPCO> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		List<ProcedimientoPCO> procedimientos = procedimientoPcoDao.getProcedimientosPcoPorFiltro(filtro);
-
 		return procedimientos;
+	}
+
+	@Override
+	public List<SolicitudDocumentoPCO> busquedaSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<LiquidacionPCO> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		List<LiquidacionPCO> liquidacionesPco = procedimientoPcoDao.getLiquidacionesPorFiltro(filtro);
+		return liquidacionesPco;
+	}
+
+	@Override
+	public List<EnvioBurofaxPCO> busquedaEnviosBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		List<EnvioBurofaxPCO> envioBurofaxPco = procedimientoPcoDao.getEnviosBurofaxPorFiltro(filtro);
+		return envioBurofaxPco;
 	}
 }

@@ -230,7 +230,7 @@ var panelFechaParalizacion = new Ext.Panel({
 	var burofax = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX" />';
 	
 	var ocultarTipoBusqueda = ${ocultarTipoBusqueda};
-	debugger;
+	
 	var comboTipoBusqueda = new Ext.form.ComboBox({
 	    fieldLabel: '<s:message text="**Tipo de busqueda"/>',
 	    hidden:ocultarTipoBusqueda,
@@ -255,14 +255,23 @@ var panelFechaParalizacion = new Ext.Panel({
             filtrosTabDocumentos.enable();
             filtrosTabLiquidacion.disable();	            	
 			filtrosTabBurofax.disable();
+			gridDocumentoPco.show();
+            gridLiquidacionPco.hide();
+            gridBurofaxPco.hide();
 		}else if(comboTipoBusqueda.getValue() == liquidacion) {
            	filtrosTabDocumentos.disable();
             filtrosTabLiquidacion.enable();
            	filtrosTabBurofax.disable();
+           	gridDocumentoPco.hide();
+            gridLiquidacionPco.show();
+            gridBurofaxPco.hide();
         }else if(comboTipoBusqueda.getValue() == burofax) {
           	filtrosTabDocumentos.disable();
           	filtrosTabLiquidacion.disable();
 			filtrosTabBurofax.enable();
+			gridDocumentoPco.hide();
+            gridLiquidacionPco.hide();
+            gridBurofaxPco.show();
         }
 	});
 

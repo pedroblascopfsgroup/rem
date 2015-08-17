@@ -12,7 +12,9 @@
 	<%@ include file="tabs/elementos/tabFiltroDocumentos.jsp" %>
 	<%@ include file="tabs/elementos/tabFiltroLiquidaciones.jsp" %>
 	<%@ include file="tabs/elementos/tabFiltroBurofax.jsp" %>
-	<%@ include file="grids/procedimientoPcoGrid.jsp" %>
+	<%@ include file="grids/documentosPcoGrid.jsp" %>
+	<%@ include file="grids/liquidacionesPcoGrid.jsp" %>
+	<%@ include file="grids/burofaxesPcoGrid.jsp" %>
 
 <%-- Filtros --%>
 
@@ -61,7 +63,19 @@
 
 <%-- Grid --%>
 
-	gridProcedimientosPco.on('load', function() {
+	gridDocumentoPco.hide();
+    gridLiquidacionPco.hide();
+    gridBurofaxPco.hide();
+
+	gridDocumentoPco.on('load', function() {
+		panelFiltros.collapse(true);
+	});
+	
+	gridLiquidacionPco.on('load', function() {
+		panelFiltros.collapse(true);
+	});
+	
+	gridBurofaxPco.on('load', function() {
 		panelFiltros.collapse(true);
 	});
 
@@ -70,7 +84,7 @@
 		autoHeight: true,
 
 		border: false,
-		items: [panelFiltros, gridProcedimientosPco]
+		items: [panelFiltros, gridDocumentoPco, gridLiquidacionPco, gridBurofaxPco]
 	});
 
 	page.add(mainPanel);

@@ -136,6 +136,7 @@ public final class InternaBusinessOperation {
     public static final String BO_POL_MGR_CANCELAR_POLITICA = "politicaManager.cancelarPolitica";
     public static final String BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS = "politicaManager.deshacerUltimasPoliticas";
     public static final String BO_POL_MGR_BUSCAR_POLITICAS_PARA_PERSONA_EXP = "politicaManager.buscarPoliticasParaPersonaExpediente";
+    public static final String BO_POL_MGR_GET_TIPOS_POLITICA = "politicaManager.getTiposPolitica";
 
     /*****************************************************************************
      ** ObjetivoManager.

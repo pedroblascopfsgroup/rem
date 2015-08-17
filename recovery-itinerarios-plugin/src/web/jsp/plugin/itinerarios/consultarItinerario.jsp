@@ -13,6 +13,11 @@
 <fwk:page>
 
 	Ext.util.CSS.createStyleSheet("button.icon_copiar { background-image: url('../img/plugin/itinerarios/copia.png');}");
+
+	var codigoSeguimientoSistematico = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO"/>';
+	var codigoSeguimientoSintomatico = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO"/>';
+	var tipo = "${itinerario.dDtipoItinerario.codigo}";
+	
 	
 	<pfsforms:textfield name="nombre" labelKey="plugin.itinerarios.alta.nombre" 
 		label="**Nombre" value="${itinerario.nombre}" readOnly="true" />
@@ -22,7 +27,11 @@
 	<pfsforms:textfield name="ambitoExpediente" labelKey="plugin.itinerarios.alta.ambitoExpediente" 
 		label="**Ámbito del Expediente" value="${itinerario.ambitoExpediente.descripcion}" 
 		readOnly="true" width="500"/>
+	
 		
+	<pfsforms:textfield name="prePolitica" labelKey="plugin.itinerarios.alta.prePolitica" 
+		label="**PrePolítica" value="${itinerario.prePolitica.descripcion}" 
+		readOnly="true" width="500"/>		
 		
 	
 	<pfs:defineParameters name="parametros" paramId="${itinerario.id}" />
@@ -57,11 +66,18 @@
 		
 		
 	</pfs:button>
-	
-	<pfs:panel name="panel1" columns="2" collapsible="true" bbar="btEditar, btCopiaItinerario" tbar="">
-		<pfs:items items="nombre, tipoItinerario " width="300" />
-		<pfs:items items="ambitoExpediente" width="600"/>
-	</pfs:panel>
+	if((tipo==codigoSeguimientoSistematico) || (tipo==codigoSeguimientoSintomatico)){
+		<pfs:panel name="panel1" columns="2" collapsible="true" bbar="btEditar, btCopiaItinerario" tbar="">
+			<pfs:items items="nombre, tipoItinerario " width="300" />
+			<pfs:items items="ambitoExpediente,prePolitica" width="600" />
+		</pfs:panel>
+	}
+	else{
+		<pfs:panel name="panel1" columns="2" collapsible="true" bbar="btEditar, btCopiaItinerario" tbar="">
+			<pfs:items items="nombre, tipoItinerario " width="300" />
+			<pfs:items items="ambitoExpediente" width="600" />
+		</pfs:panel>
+	}
 	
 	
 	<pfslayout:includetab name="tabEstados" >

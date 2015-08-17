@@ -135,6 +135,8 @@ public class ITIItinerarioManager {
 		copia.setNombre(original.getNombre()+"_copia");
 		copia.setAmbitoExpediente(original.getAmbitoExpediente());
 		copia.setdDtipoItinerario(original.getdDtipoItinerario());
+		// PRODUCTO-65: cuando creamos la copia del itinerario, añadimos que se copie también la prepolítica
+		copia.setPrePolitica(original.getPrePolitica());
 		itinerarioDao.save(copia);
 		
 		List<Estado> estadosItinerario = estadoDao.getEstadosItienario(id);

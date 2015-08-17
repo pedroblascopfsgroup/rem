@@ -16,10 +16,12 @@ import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConsta
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionClientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionExpedientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoRevisionClientesRecuperaciones;
+import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoRevisionExpedientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoArquetipadoRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionClientesRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoRevisionClientesRecuperacionesJobLauncher;
+import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoRevisionExpedientesRecuperacionesJobLauncher;
 
 /**
  * Lanzadores JMX para los jobs del batch de recuperaciones.
@@ -93,6 +95,20 @@ public class BatchConsoleJMXRecuperaciones {
     	logger.debug(ProcesoRevisionClientesRecuperaciones.PROCESO_REVISION_CLIENTES_RECUPERACIONES_HANDLER + " ya se ha encolado");
 		
 	}
-
+	
+	@ManagedOperation(description = "Ejecuta el proceso de Revision expedientes para el batch de Recuperaciones. Se debe indicar el workingCode")
+	public void ejecutarProcesoRevisionExpedientes(String workingCode) {
+		
+		logger.debug("Encolando " + ProcesoRevisionExpedientesRecuperaciones.PROCESO_REVISION_EXPEDIENTES_RECUPERACIONES_HANDLER);
+		
+		ProcesoRevisionExpedientesRecuperacionesJobLauncher revisionExpedientesJobLauncher = (ProcesoRevisionExpedientesRecuperacionesJobLauncher)ApplicationContextUtil.
+    			getApplicationContext().getBean(ProcesoRevisionExpedientesRecuperaciones.PROCESO_REVISION_EXPEDIENTES_RECUPERACIONES_HANDLER);
+		
+		
+    	revisionExpedientesJobLauncher.handle(workingCode,new Date());
+    	
+    	logger.debug(ProcesoRevisionExpedientesRecuperaciones.PROCESO_REVISION_EXPEDIENTES_RECUPERACIONES_HANDLER + " ya se ha encolado");
+		
+	}
 
 }

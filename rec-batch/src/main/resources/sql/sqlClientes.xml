@@ -309,6 +309,8 @@
 	                     AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo})
 	                     AND pex.per_id = arr.per_id
 	                     AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
+	                      --No sea un expediente de recobro
+	                   	 AND NOT EXISTS (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
 	           )
 	           /* Que la persona no tenga un cliente creado */
 	           AND NOT EXISTS (
@@ -331,8 +333,8 @@
 	               AND m.mov_fecha_pos_vencida IS NOT NULL 
 	               /* Que sea titular del contrato */
 	               AND tin.DD_TIN_TITULAR = 1
-	               /* Que el contrato no esté ni borrado ni cancelado */ 
-	               AND c.borrado = 0 AND e.dd_esc_codigo <> ${estadoContrato.Cancelado.codigo}
+	               /* Que el contrato no esté ni borrado ni cancelado (Se considera cancelado cualquiera que no sea activo)*/ 
+	               AND c.borrado = 0 AND e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
 	               /* Que el contrato no esté en algún procedimiento 'en curso' */
 	               AND NOT EXISTS (
 	                   SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
@@ -448,8 +450,8 @@
 		            WHERE cpe.per_id = arr.per_id
 		              /* Que sea titular del contrato */
 		              AND tin.DD_TIN_TITULAR = 1
-		              /* Que el contrato no esté ni borrado ni cancelado */ 
-		              AND c.borrado = 0 AND e.dd_esc_codigo <> ${estadoContrato.Cancelado.codigo}
+		              /* Que el contrato no esté ni borrado ni cancelado (Se considera cancelado cualquiera que no este activo)*/ 
+		              AND c.borrado = 0 AND e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
 		              /* Que el contrato no esté en algún procedimiento 'en curso' */
 		              AND NOT EXISTS (
 		                  SELECT DISTINCT cex.cnt_id FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
@@ -511,8 +513,8 @@
 	                 INNER JOIN dd_tin_tipo_intervencion tin ON cpe.DD_TIN_ID = tin.DD_TIN_ID AND tin.DD_TIN_TITULAR = 1
 	                 INNER JOIN ${master.schema}.dd_esc_estado_cnt e ON c.dd_esc_id = e.dd_esc_id
 	             WHERE --cpe.per_id = arr.per_id	              
-	               /* Que el contrato no esté cancelado */ 
-	               e.dd_esc_codigo <> ${estadoContrato.Cancelado.codigo}
+	               /* Que el contrato no esté cancelado (Se considera cancelado cualquiera que no este activo)*/ 
+	               e.dd_esc_codigo = ${estadoContrato.Activo.codigo}
 	               /* Que el contrato no esté en algún procedimiento 'en curso' */
 	               AND NOT EXISTS (
                        SELECT cex.cnt_id FROM 
@@ -895,7 +897,7 @@ FROM cnt_contratos c,
   HAYAMASTER.dd_esc_estado_cnt e,      
   VTMP_CNT V    
 WHERE c.dd_tpe_id = t.dd_tpe_id    
-  AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)          
+  --AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)          
   AND c.dd_esc_id                 = e.dd_esc_id    
   AND movAct.cnt_id               = c.cnt_id    
   AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion    
@@ -920,6 +922,8 @@ AND V.CNT_ID = C.CNT_ID
     <![CDATA[
     /******************************************
     Inserta en rec_recuperaciones la variación de saldo
+    --TODO - Modificar este insert y hacerlo lo más parecido a: 
+    "expedientes.recuperacion.revisionExpedientes.informarContratosReducidos.Oracle9iDialect"
     ******************************************/
     
     INSERT INTO REC_RECUPERACIONES (REC_ID, CNT_ID, REC_FECHA_ENTREGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)

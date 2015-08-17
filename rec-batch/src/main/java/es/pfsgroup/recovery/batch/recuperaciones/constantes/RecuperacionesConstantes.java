@@ -48,5 +48,13 @@ public interface RecuperacionesConstantes {
 		public static final String INICIO_MSG = "Inicio del proceso de revisión de clientes de Recuperación ";
 		public static final String FIN_MSG = "El proceso de revisión de clientes de Recuperación para la entidad ";
 	}
-
+	
+	public static class ProcesoRevisionExpedientesRecuperaciones {
+		public static final String DESCRIPCION_PROCESO_REVISION_EXPEDIENTES_RECUPERACIONES = "Ejecuta el proceso de revisión de expedientes correspondiente a los expedientes de Recuperación. Se debe indicar el workingCode";
+		public static final String PROCESO_REVISION_EXPEDIENTES_RECUPERACIONES_HANDLER = "procesoRevisionExpedientesRecuperacionesHandler";
+		public static final String PROCESO_REVISION_EXPEDIENTES_RECUPERACIONES_JOBNAME = "procesoRevisionExpedientesRecuperacionesJob";
+		public static final String INICIO_MSG = "Inicio del proceso de revisión de expedientes de Recuperación ";
+		public static final String FIN_MSG = "El proceso de revisión de expedientes de Recuperación para la entidad ";
+	}
+	
 }

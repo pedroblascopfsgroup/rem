@@ -51,7 +51,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Comenzando...');  
 	
     
-	V_MSQL := 'SELECT ID FROM '|| V_ESQUEMA_M ||'.ENTIDAD WHERE DESCRIPCION=''CAJAMAR''';        
+	V_MSQL := 'SELECT ID FROM '|| V_ESQUEMA_M ||'.ENTIDAD WHERE DESCRIPCION=''BANKIA''';        
 	EXECUTE IMMEDIATE V_MSQL INTO ID_ENTIDAD;
 	
 	FOR I IN V_TIPO_TFA.FIRST .. V_TIPO_TFA.LAST
@@ -99,7 +99,7 @@ BEGIN
 							  '(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME='''||V_TMP_TIPO_TFA(2)||'''),' ||
 							  V_ESQUEMA||'.S_ZON_PEF_USU.NEXTVAL,' ||
 							  '0,' ||
-							  '''HAYAMASTER'',' ||
+							  ''''||V_ESQUEMA_M||''',' ||
 							  'sysdate,' ||
 							  '0)';
 							

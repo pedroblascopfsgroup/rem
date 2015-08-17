@@ -27,7 +27,7 @@ BEGIN
 	/* ------------------- -------------------------- */
 	/* --------------  ACTUALIZACIONES --------------- */
 	/* ------------------- -------------------------- */
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = null, TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H006_AperturaPlazo''''][''''comboFinaliza''''] == DDSiNo.SI && !comprobarExisteDocumentoCRSOLADJ() ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar la Solicitud de adjudicaci&oacute;n con reserva de facultad de cesi&oacute;n de remate.</div>'''' : null''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = null, TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H006_AperturaPlazo''''][''''comboFinaliza''''] == DDSiNo.SI && !comprobarExisteDocumentoCRSOLADJ() ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar la Solicitud de adjudicaci&oacute;n con reserva de facultad de cesi&oacute;n de remate.</div>'''' : null'' WHERE TAP_CODIGO = ''H006_AperturaPlazo''';
 	
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''Realizada solicitud con facultad de cesión de remate'' WHERE TFI_NOMBRE = ''comboFinaliza'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H006_AperturaPlazo'')';
 	

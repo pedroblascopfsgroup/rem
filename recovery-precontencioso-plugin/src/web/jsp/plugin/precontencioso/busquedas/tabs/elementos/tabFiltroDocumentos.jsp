@@ -13,7 +13,7 @@ var comboTipoDocumento = app.creaDblSelect(
 	diccTipoDocumento,
 	'<s:message code="asd" text="** Tipo de documento" />',
 	{
-		id: 'fieldTipoDocumento',
+		id: 'fieldTipoDocumentoEle',
 		height: 150,
 		width: 220
 	}
@@ -27,7 +27,7 @@ var comboEstadoDocumento = app.creaDblSelect(
 	diccEstadoDocumento,
 	'<s:message code="asd" text="** Estado" />',
 	{
-		id: 'fieldEstadoDocumento',
+		id: 'fieldEstadoDocumentoEle',
 		height: 100,
 		width: 220
 	}
@@ -41,7 +41,7 @@ var comboRespuestaSolicitud = app.creaDblSelect(
 	diccResultadoSolicitud,
 	'<s:message code="asd" text="** Respuesta ultima solicitud" />',
 	{
-		id: 'fieldRespuestaSolicitud',
+		id: 'fieldRespuestaSolicitudEle',
 		height: 60,
 		width: 220
 	}
@@ -51,13 +51,13 @@ var comboRespuestaSolicitud = app.creaDblSelect(
 
 <%-- Fecha solicitud (Desde / Hasta) --%>
 
-var dateFieldSolicitudDocDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldSolicitudDocDesde',
+var dateFieldSolicitudDocDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldSolicitudDocDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Solicitud" />'
 });
 
-var dateFieldSolicitudDocHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldSolicitudDocHasta',
+var dateFieldSolicitudDocHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldSolicitudDocHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -72,20 +72,20 @@ var panelFechaSolicitudDoc = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldSolicitudDocDesde]},
-		{layout: 'form', items: [dateFieldSolicitudDocHasta]}
+		{layout: 'form', items: [dateFieldSolicitudDocDesdeEle]},
+		{layout: 'form', items: [dateFieldSolicitudDocHastaEle]}
 	]
 });
 
 <%-- Fecha resultado (Desde / Hasta) --%>
 
-var dateFieldResultadoDocDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldResultadoDocDesde',
+var dateFieldResultadoDocDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldResultadoDocDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Resultado" />'
 });
 
-var dateFieldResultadoDocHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldResultadoDocHasta',
+var dateFieldResultadoDocHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldResultadoDocHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -100,20 +100,20 @@ var panelFechaResultadoDoc = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldResultadoDocDesde]},
-		{layout: 'form', items: [dateFieldResultadoDocHasta]}
+		{layout: 'form', items: [dateFieldResultadoDocDesdeEle]},
+		{layout: 'form', items: [dateFieldResultadoDocHastaEle]}
 	]
 });
 
 <%-- Fecha envío (Desde / Hasta) --%>
 
-var dateFieldEnvioDocDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldEnvioDocDesde',
+var dateFieldEnvioDocDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldEnvioDocDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Envio" />'
 });
 
-var dateFieldEnvioDocHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldEnvioDocHasta',
+var dateFieldEnvioDocHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldEnvioDocHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -128,20 +128,20 @@ var panelFechaEnvioDoc = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldEnvioDocDesde]},
-		{layout: 'form', items: [dateFieldEnvioDocHasta]}
+		{layout: 'form', items: [dateFieldEnvioDocDesdeEle]},
+		{layout: 'form', items: [dateFieldEnvioDocHastaEle]}
 	]
 });
 
 <%-- Fecha Recepción (Desde / Hasta) --%>
 
-var dateFieldRecepcionDocDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldRecepcionDocDesde',
+var dateFieldRecepcionDocDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldRecepcionDocDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Recepción" />'
 });
 
-var dateFieldRecepcionDocHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldRecepcionDocHasta',
+var dateFieldRecepcionDocHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldRecepcionDocHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -156,26 +156,26 @@ var panelFechaRecepcionDoc = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldRecepcionDocDesde]},
-		{layout: 'form', items: [dateFieldRecepcionDocHasta]}
+		{layout: 'form', items: [dateFieldRecepcionDocDesdeEle]},
+		{layout: 'form', items: [dateFieldRecepcionDocHastaEle]}
 	]
 });
 
 <%-- Adjunto --%>
 
-<pfsforms:ddCombo name="comboAdjuntoDoc" propertyCodigo="codigo" propertyDescripcion="descripcion"
+<pfsforms:ddCombo name="comboAdjuntoDocEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
 label="** Adjunto" value="" dd="${ddSiNo}" />
 
 <%-- Solicitud previa --%>
 
-<pfsforms:ddCombo name="comboSolicitudPreviaDoc" propertyCodigo="codigo" propertyDescripcion="descripcion"
+<pfsforms:ddCombo name="comboSolicitudPreviaDocEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
 label="** Solicitud previa" value="" dd="${ddSiNo}" />
 
 <%-- Días en gestión --%>
 
-<pfsforms:numberfield name="fieldDiasGestionDoc" labelKey="asd" label="** Días en gestión" 
+<pfsforms:numberfield name="fieldDiasGestionDocEle" labelKey="asd" label="** Días en gestión" 
 	value=""
 	obligatory="false"
 	allowDecimals="false" />
@@ -193,7 +193,7 @@ var filtrosTabDocumentos = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboAdjuntoDoc, comboSolicitudPreviaDoc, fieldDiasGestionDoc, panelFechaSolicitudDoc, panelFechaResultadoDoc, panelFechaEnvioDoc, panelFechaRecepcionDoc, comboRespuestaSolicitud]
+		items: [comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, panelFechaSolicitudDoc, panelFechaResultadoDoc, panelFechaEnvioDoc, panelFechaRecepcionDoc, comboRespuestaSolicitud]
 	}, {
 		layout: 'form',
 		items: [comboTipoDocumento, comboEstadoDocumento]
@@ -209,20 +209,20 @@ filtrosTabDocumentos.on('activate',function(){
 var getParametrosFiltroDocumentos = function() {
 	var out = {};
 
-	out.docTiposDocumento = fieldTipoDocumento.childNodes[1].value;
-	out.docEstados = fieldEstadoDocumento.childNodes[1].value;
-	out.docUltimaRespuesta = fieldRespuestaSolicitud.childNodes[1].value;
-	out.docFechaSolicitudDesde = dateFieldSolicitudDocDesde.getValue();
-	out.docFechaSolicitudHasta = dateFieldSolicitudDocHasta.getValue();
-	out.docFechaResultadoDesde = dateFieldResultadoDocDesde.getValue();
-	out.docFechaResultadoHasta = dateFieldResultadoDocHasta.getValue();
-	out.docFechaEnvioDesde = dateFieldEnvioDocDesde.getValue();
-	out.docFechaEnvioHasta = dateFieldEnvioDocHasta.getValue();
-	out.docFechaRecepcionDesde = dateFieldRecepcionDocDesde.getValue();
-	out.docFechaRecepcionHasta = dateFieldRecepcionDocHasta.getValue();
-	out.docAdjunto = comboAdjuntoDoc.getValue();
-	out.docSolicitudPrevia = comboSolicitudPreviaDoc.getValue();
-	out.docDiasGestion = fieldDiasGestionDoc.getValue();
+	out.docTiposDocumento = fieldTipoDocumentoEle.childNodes[1].value;
+	out.docEstados = fieldEstadoDocumentoEle.childNodes[1].value;
+	out.docUltimaRespuesta = fieldRespuestaSolicitudEle.childNodes[1].value;
+	out.docFechaSolicitudDesde = dateFieldSolicitudDocDesdeEle.getValue();
+	out.docFechaSolicitudHasta = dateFieldSolicitudDocHastaEle.getValue();
+	out.docFechaResultadoDesde = dateFieldResultadoDocDesdeEle.getValue();
+	out.docFechaResultadoHasta = dateFieldResultadoDocHastaEle.getValue();
+	out.docFechaEnvioDesde = dateFieldEnvioDocDesdeEle.getValue();
+	out.docFechaEnvioHasta = dateFieldEnvioDocHastaEle.getValue();
+	out.docFechaRecepcionDesde = dateFieldRecepcionDocDesdeEle.getValue();
+	out.docFechaRecepcionHasta = dateFieldRecepcionDocHastaEle.getValue();
+	out.docAdjunto = comboAdjuntoDocEle.getValue();
+	out.docSolicitudPrevia = comboSolicitudPreviaDocEle.getValue();
+	out.docDiasGestion = fieldDiasGestionDocEle.getValue();
 
 	//out.ultimoActor = ;
 

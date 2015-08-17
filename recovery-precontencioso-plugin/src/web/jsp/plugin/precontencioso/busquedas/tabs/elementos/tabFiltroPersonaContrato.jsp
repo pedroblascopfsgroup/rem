@@ -8,26 +8,26 @@
 
 <%-- NIF / CIF de alguna de las personas relacionadas con el expediente. --%>
 
-var fieldNif = new Ext.form.TextField({
+var fieldNifEle = new Ext.form.TextField({
 	name: 'nif',
 	fieldLabel: '<s:message code="asd" text="** Nro Documento" />'
 });
 
 <%-- Nombre y apellidosÁrea de contratos --%>
 
-var fieldNombre = new Ext.form.TextField({
+var fieldNombreEle = new Ext.form.TextField({
 	name: 'nombre',
 	fieldLabel: '<s:message code="asd" text="** Nombre" />'
 });
 
-var fieldApellidos = new Ext.form.TextField({
+var fieldApellidosEle = new Ext.form.TextField({
 	name: 'apellidos',
 	fieldLabel: '<s:message code="asd" text="** Apellidos" />'
 });
 
 <%-- Código de contrato. --%>
 
-var fieldCodigoContrato = new Ext.form.TextField({
+var fieldCodigoContratoEle = new Ext.form.TextField({
 	name: 'codigoContrato',
 	fieldLabel: '<s:message code="asd" text="** Codigo Contrato" />'
 });
@@ -36,11 +36,11 @@ var fieldCodigoContrato = new Ext.form.TextField({
 
 var diccTiposProducto = <app:dict value="${tipoProducto}" />;
 
-var comboTiposProducto = app.creaDblSelect(
+var comboTiposProductoEle = app.creaDblSelect(
 	diccTiposProducto,
 	'<s:message code="asd" text="**Tipo de Producto" />',
 	{
-		id: 'fieldTiposProducto',
+		id: 'fieldTiposProductoEle',
 		height: 180,
 		width: 220
 	}
@@ -63,10 +63,10 @@ var filtrosTabPersonaContrato = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [fieldNif, fieldNombre, fieldApellidos, fieldCodigoContrato]
+		items: [fieldNifEle, fieldNombreEle, fieldApellidosEle, fieldCodigoContratoEle]
 	}, {
 		layout: 'form',
-		items: [comboTiposProducto]
+		items: [comboTiposProductoEle]
 	}]
 });
 
@@ -79,11 +79,11 @@ filtrosTabPersonaContrato.on('activate',function(){
 var getParametrosFiltroPersonaContrato = function() {
 	var out = {};
 
-	out.conCodigo = fieldCodigoContrato.getValue();
-	out.conTiposProducto = fieldTiposProducto.childNodes[1].value;
-	out.conNif = fieldNif.getValue();
-	out.conNombre = fieldNombre.getValue();
-	out.conApellidos = fieldApellidos.getValue();
+	out.conCodigo = fieldCodigoContratoEle.getValue();
+	out.conTiposProducto = fieldTiposProductoEle.childNodes[1].value;
+	out.conNif = fieldNifEle.getValue();
+	out.conNombre = fieldNombreEle.getValue();
+	out.conApellidos = fieldApellidosEle.getValue();
 
 	return out;
 }

@@ -9,34 +9,34 @@
 
 <%-- Codigo --%>
 
-var fieldCodigo = new Ext.form.TextField({
+var fieldCodigoEle = new Ext.form.TextField({
 	name: 'codigo',
 	fieldLabel : '<s:message code="asd" text="** Código" />'
 });
 
 <%-- Nombre Expediente Judicial --%>
 
-var fieldNombreExpedienteJudicial = new Ext.form.TextField({
+var fieldNombreExpedienteJudicialEle = new Ext.form.TextField({
 	name: 'nombreExpedienteJudicial',
 	fieldLabel : '<s:message code="asd" text="** Nom. Exp Judicial" />'
 });
 
 <%-- Días en gestión: Número de días transcurridos en el estado actual del expediente, o en caso de seleccionar algún estado en particular, el plazoen gestión de dicho estado. --%>
 
-<pfsforms:numberfield name="fieldDiasGestion" labelKey="asd" label="** Días en gestión" 
+<pfsforms:numberfield name="fieldDiasGestionEle" labelKey="asd" label="** Días en gestión" 
 	value="" 
 	obligatory="false" 
 	allowDecimals="false" />
 
 <%-- Fecha inicio de la preparación (Desde / Hasta) --%>
 
-var dateFieldInicioPreparacionDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldInicioPreparacionDesde',
+var dateFieldInicioPreparacionDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldInicioPreparacionDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Inicio Preparacion" />'
 });
 
-var dateFieldInicioPreparacionHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldInicioPreparacionHasta',
+var dateFieldInicioPreparacionHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldInicioPreparacionHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -51,20 +51,20 @@ var panelFechaInicioPreparacion = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldInicioPreparacionDesde]},
-		{layout: 'form', items: [dateFieldInicioPreparacionHasta]}
+		{layout: 'form', items: [dateFieldInicioPreparacionDesdeEle]},
+		{layout: 'form', items: [dateFieldInicioPreparacionHastaEle]}
 	]
 });
 
 <%-- Fecha preparado (Desde / Hasta) --%>
 
-var dateFieldPreparadoDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldPreparadoDesde',
+var dateFieldPreparadoDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldPreparadoDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Preparado" />'
 });
 
-var dateFieldPreparadoHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldPreparadoHasta',
+var dateFieldPreparadoHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldPreparadoHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -79,20 +79,20 @@ var panelFechaPreparado = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldPreparadoDesde]},
-		{layout: 'form', items: [dateFieldPreparadoHasta]}
+		{layout: 'form', items: [dateFieldPreparadoDesdeEle]},
+		{layout: 'form', items: [dateFieldPreparadoHastaEle]}
 	]
 });
 
 <%-- Fecha enviado a letrado (Desde / Hasta) --%>
 
-var dateFieldEnviadoLetradoDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldEnviadoLetradoDesde',
+var dateFieldEnviadoLetradoDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldEnviadoLetradoDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Preparado" />'
 });
 
-var dateFieldEnviadoLetradoHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldEnviadoLetradoHasta',
+var dateFieldEnviadoLetradoHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldEnviadoLetradoHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -107,20 +107,20 @@ var panelFechaEnviadoLetrado = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldEnviadoLetradoDesde]},
-		{layout: 'form', items: [dateFieldEnviadoLetradoHasta]}
+		{layout: 'form', items: [dateFieldEnviadoLetradoDesdeEle]},
+		{layout: 'form', items: [dateFieldEnviadoLetradoHastaEle]}
 	]
 });
 
 <%-- Fecha finalizado (Desde / Hasta) --%>
 
-var dateFieldFinalizadoDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldFinalizadoDesde',
+var dateFieldFinalizadoDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldFinalizadoDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Finalizado" />'
 });
 
-var dateFieldFinalizadoHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldFinalizadoHasta',
+var dateFieldFinalizadoHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldFinalizadoHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -135,20 +135,20 @@ var panelFechaFinalizado = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldFinalizadoDesde]},
-		{layout: 'form', items: [dateFieldFinalizadoHasta]}
+		{layout: 'form', items: [dateFieldFinalizadoDesdeEle]},
+		{layout: 'form', items: [dateFieldFinalizadoHastaEle]}
 	]
 });
 
 <%-- Fecha última subsanación (Desde / Hasta) --%>
 
-var dateFieldUltimaSubsanacionDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldUltimaSubsanacionDesde',
+var dateFieldUltimaSubsanacionDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldUltimaSubsanacionDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. última subsanación" />'
 });
 
-var dateFieldUltimaSubsanacionHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldUltimaSubsanacionHasta',
+var dateFieldUltimaSubsanacionHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldUltimaSubsanacionHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -163,20 +163,20 @@ var panelFechaUltimaSubsanacion = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldUltimaSubsanacionDesde]},
-		{layout: 'form', items: [dateFieldUltimaSubsanacionHasta]}
+		{layout: 'form', items: [dateFieldUltimaSubsanacionDesdeEle]},
+		{layout: 'form', items: [dateFieldUltimaSubsanacionHastaEle]}
 	]
 });
 
 <%-- Fecha cancelado (Desde / Hasta) --%>
 
-var dateFieldCanceladoDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldCanceladoDesde',
+var dateFieldCanceladoDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldCanceladoDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Cancelado" />'
 });
 
-var dateFieldCanceladoHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldCanceladoHasta',
+var dateFieldCanceladoHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldCanceladoHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -191,20 +191,20 @@ var panelFechaCancelado = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldCanceladoDesde]},
-		{layout: 'form', items: [dateFieldCanceladoHasta]}
+		{layout: 'form', items: [dateFieldCanceladoDesdeEle]},
+		{layout: 'form', items: [dateFieldCanceladoHastaEle]}
 	]
 });
 
 <%-- Fecha paralización (Desde / Hasta) --%>
 
-var dateFieldParalizacionDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldParalizacionDesde',
+var dateFieldParalizacionDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldParalizacionDesdeEle',
 	fieldLabel: '<s:message code="asd" text="** F. Paralización" />'
 });
 
-var dateFieldParalizacionHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldParalizacionHasta',
+var dateFieldParalizacionHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldParalizacionHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -219,8 +219,8 @@ var panelFechaParalizacion = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldParalizacionDesde]},
-		{layout: 'form', items: [dateFieldParalizacionHasta]}
+		{layout: 'form', items: [dateFieldParalizacionDesdeEle]},
+		{layout: 'form', items: [dateFieldParalizacionHastaEle]}
 	]
 });
 
@@ -275,31 +275,31 @@ var panelFechaParalizacion = new Ext.Panel({
         }
 	});
 
-<pfsforms:ddCombo name="comboTipoProcPropuesto" propertyCodigo="codigo" propertyDescripcion="descripcion"
+<pfsforms:ddCombo name="comboTipoProcPropuestoEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
 label="** Tipo de procedimiento propuesto" value="" dd="${tipoProcedimientoProcpuesto}" />
 
 <%-- Tipo de preparación --%>
 
-<pfsforms:ddCombo name="comboTipoPreparacion" propertyCodigo="codigo" propertyDescripcion="descripcion"
+<pfsforms:ddCombo name="comboTipoPreparacionEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
 label="** Tipo de preparación" value="" dd="${tipoPreparacion}" />
 
 <%-- Disponible todos los documentos SI/NO --%>
 
-<pfsforms:ddCombo name="comboDisponibleDocumentos" propertyCodigo="codigo" propertyDescripcion="descripcion"
+<pfsforms:ddCombo name="comboDisponibleDocumentosEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
 label="** Disponible todos los documentos" value="" dd="${ddSiNo}" />
 
 <%-- Disponible todas las liquidaciones SI/NO --%>
 
-<pfsforms:ddCombo name="comboDisponibleLiquidaciones" propertyCodigo="codigo" propertyDescripcion="descripcion"
+<pfsforms:ddCombo name="comboDisponibleLiquidacionesEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
 label="** Disponible todas las liquidaciones" value="" dd="${ddSiNo}" />
 
 <%-- Disponible todos los burofaxes SI/NO --%>
 
-<pfsforms:ddCombo name="comboDisponibleBurofaxes" propertyCodigo="codigo" propertyDescripcion="descripcion"
+<pfsforms:ddCombo name="comboDisponibleBurofaxesEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
 labelKey="asd" 
 label="** Disponible todos los burofaxes" value="" dd="${ddSiNo}" />
 
@@ -320,7 +320,7 @@ var filtroEstadoPreparacion = app.creaDblSelect(
 	'<s:message code="asd" text="** Estado Expediente" />',
 	{
 		store: estadoPreparacionStore,
-		id: 'fieldEstadoPreparacion'
+		id: 'fieldEstadoPreparacionEle'
 	}
 );
 
@@ -339,7 +339,7 @@ var filtrosTabDatosProcedimiento = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboTipoBusqueda, fieldCodigo, fieldNombreExpedienteJudicial, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes]
+		items: [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, fieldDiasGestionEle, comboTipoProcPropuestoEle, comboTipoPreparacionEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle, comboDisponibleBurofaxesEle]
 	}, {
 		layout: 'form',
 		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, filtroEstadoPreparacion]
@@ -356,30 +356,30 @@ var getParametrosFiltroProcedimiento = function() {
 	var out = {};
 
 	out.tipoBusqueda = comboTipoBusqueda.getValue();
-	out.proCodigo = fieldCodigo.getValue();
-	out.proNombre = fieldNombreExpedienteJudicial.getValue();
-	out.proFechaInicioPreparacionDesde = dateFieldInicioPreparacionDesde.getValue();
-	out.proFechaInicioPreparacionHasta = dateFieldInicioPreparacionHasta.getValue();
-	out.proFechaPreparadoDesde = dateFieldPreparadoDesde.getValue();
-	out.proFechaPreparadoHasta = dateFieldPreparadoHasta.getValue();
-	out.proFechaEnviadoLetradoDesde = dateFieldEnviadoLetradoDesde.getValue();
-	out.proFechaEnviadoLetradoHasta = dateFieldEnviadoLetradoHasta.getValue();
-	out.proFechaFinalizadoDesde = dateFieldFinalizadoDesde.getValue();
-	out.proFechaFinalizadoHasta = dateFieldFinalizadoHasta.getValue();
-	out.proFechaUltimaSubsanacionDesde = dateFieldUltimaSubsanacionDesde.getValue();
-	out.proFechaUltimaSubsanacionHasta = dateFieldUltimaSubsanacionHasta.getValue();
-	out.proFechaCanceladoDesde = dateFieldCanceladoDesde.getValue();
-	out.proFechaCanceladoHasta = dateFieldCanceladoHasta.getValue();
-	out.proFechaParalizacionDesde = dateFieldParalizacionDesde.getValue();
-	out.proFechaParalizacionHasta = dateFieldParalizacionHasta.getValue();
-	out.proTipoProcedimiento = comboTipoProcPropuesto.getValue();
-	out.proTipoPreparacion = comboTipoPreparacion.getValue();
-	out.proCodigosEstado = fieldEstadoPreparacion.childNodes[1].value;
+	out.proCodigo = fieldCodigoEle.getValue();
+	out.proNombre = fieldNombreExpedienteJudicialEle.getValue();
+	out.proFechaInicioPreparacionDesde = dateFieldInicioPreparacionDesdeEle.getValue();
+	out.proFechaInicioPreparacionHasta = dateFieldInicioPreparacionHastaEle.getValue();
+	out.proFechaPreparadoDesde = dateFieldPreparadoDesdeEle.getValue();
+	out.proFechaPreparadoHasta = dateFieldPreparadoHastaEle.getValue();
+	out.proFechaEnviadoLetradoDesde = dateFieldEnviadoLetradoDesdeEle.getValue();
+	out.proFechaEnviadoLetradoHasta = dateFieldEnviadoLetradoHastaEle.getValue();
+	out.proFechaFinalizadoDesde = dateFieldFinalizadoDesdeEle.getValue();
+	out.proFechaFinalizadoHasta = dateFieldFinalizadoHastaEle.getValue();
+	out.proFechaUltimaSubsanacionDesde = dateFieldUltimaSubsanacionDesdeEle.getValue();
+	out.proFechaUltimaSubsanacionHasta = dateFieldUltimaSubsanacionHastaEle.getValue();
+	out.proFechaCanceladoDesde = dateFieldCanceladoDesdeEle.getValue();
+	out.proFechaCanceladoHasta = dateFieldCanceladoHastaEle.getValue();
+	out.proFechaParalizacionDesde = dateFieldParalizacionDesdeEle.getValue();
+	out.proFechaParalizacionHasta = dateFieldParalizacionHastaEle.getValue();
+	out.proTipoProcedimiento = comboTipoProcPropuestoEle.getValue();
+	out.proTipoPreparacion = comboTipoPreparacionEle.getValue();
+	out.proCodigosEstado = fieldEstadoPreparacionEle.childNodes[1].value;
 
-	out.proDisponibleDocumentos = comboDisponibleDocumentos.getValue();
-	out.proDisponibleLiquidaciones = comboDisponibleLiquidaciones.getValue();
-	out.proDisponibleBurofaxes = comboDisponibleBurofaxes.getValue();
-	out.proDiasGestion = fieldDiasGestion.getValue();
+	out.proDisponibleDocumentos = comboDisponibleDocumentosEle.getValue();
+	out.proDisponibleLiquidaciones = comboDisponibleLiquidacionesEle.getValue();
+	out.proDisponibleBurofaxes = comboDisponibleBurofaxesEle.getValue();
+	out.proDiasGestion = fieldDiasGestionEle.getValue();
 
 	return out;
 }

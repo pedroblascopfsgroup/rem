@@ -65,8 +65,17 @@
 	 
 	Ext.util.CSS.createStyleSheet(".icon_elevacion { background-image: url('../img/plugin/itinerarios/rocket-fly.png');}");
 	
-	<pfsforms:check labelKey="plugin.itinerarios.estados.automatico" label="**Automático" 
-		name="ceAutomatico" value="${ceSiNo}" readOnly="true"/>
+	<%-- <pfsforms:check labelKey="plugin.itinerarios.estados.automatico" label="**Automático" 
+		name="ceAutomatico" value="${ceSiNo}" readOnly="true"/> --%>
+		
+	<pfsforms:textfield name="ceAutomatico" labelKey="plugin.itinerarios.estados.automatico" 
+		label="**Automático" value="" readOnly="true" />
+		
+	if (${ceSiNo}) {
+		ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
+	 } else {
+		ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
+	}		
 	
 	<pfs:hidden name="idEstado" value="${estadoCE.id}"/>	
 	<pfs:defineParameters name="paramEstadoCE" paramId="${itinerario.id}" 
@@ -79,7 +88,7 @@
 			});			
 	</pfs:button>
 	
-	if (ceAutomatico.checked == true){
+	if (${ceSiNo}){
 		btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
 	}else{
 		btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
@@ -136,8 +145,17 @@
 		parameters="itinerarioParams"/>
 	
 	
-	<pfsforms:check labelKey="plugin.itinerarios.estados.automatico" label="**Automático" 
-		name="reAutomatico" value="${reSiNo}" readOnly="true"/>
+	<%-- <pfsforms:check labelKey="plugin.itinerarios.estados.automatico" label="**Automático" 
+		name="reAutomatico" value="${reSiNo}" readOnly="true"/> --%>
+		
+	<pfsforms:textfield name="reAutomatico" labelKey="plugin.itinerarios.estados.automatico" 
+		label="**Automático" value="" readOnly="true" />
+		
+	if (${reSiNo}) {
+		reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
+	 } else {
+		reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
+	}				
 	
 	<pfs:remoteStore name="reglasElevacionDSRE" 
 		resultRootVar="reglasElevacion" 
@@ -175,7 +193,7 @@
 			});			
 	</pfs:button>
 	
-	if (reAutomatico.checked == true){
+	if (${reSiNo}){
 		btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
 	}else{
 		btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');

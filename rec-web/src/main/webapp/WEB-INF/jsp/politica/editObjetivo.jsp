@@ -129,7 +129,9 @@
 			resumenObjetivo.enable();
 			isObjetivoAutomatico = false;
 			operadorCombo.disable();
+			operadorCombo.setValue('');
 			cantLimiteNumber.disable();
+			cantLimiteNumber.setValue('');
 			if(!isPrimerLlamada) {
 				resumenObjetivo.setValue('');
 			} else {
@@ -366,7 +368,8 @@
 	var estadoItiH = new Ext.form.Hidden({name: 'idEstadoItinerarioPolitica', value:'${idEstadoItinerarioPolitica}',hidden:true});
 
 	var objetivoForm = new Ext.form.FormPanel({
-		items:[idObjetivoH,idContratoH,tipoOperadorH,tipoObjetivoH,fechaLimiteH,valorH,observacionH,resumenH,estadoItiH,justificacionH]
+		items:[idObjetivoH,idContratoH,tipoOperadorH,tipoObjetivoH,fechaLimiteH,valorH,observacionH,resumenH,estadoItiH,justificacionH],
+		border:false
 	  });
 
 	//--------------------------------------------------------

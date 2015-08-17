@@ -14,7 +14,10 @@ import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.itinerario.model.Estado;
 import es.capgemini.pfs.itinerario.model.Itinerario;
+import es.capgemini.pfs.politica.model.DDTipoPolitica;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.itinerarios.PluginItinerariosBusinessOperations;
 import es.pfsgroup.plugin.recovery.itinerarios.api.web.DynamicElementApi;
 import es.pfsgroup.plugin.recovery.itinerarios.ddAmbitoExpediente.dao.ITIDDAmbitoExpedienteDao;
@@ -41,8 +44,9 @@ public class ITIItinerarioManager {
 	
 	@Autowired
 	ApiProxyFactory proxyFactory;
-		
 	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@BusinessOperation(PluginItinerariosBusinessOperations.ITI_MGR_BUSCA)
 	public Page buscaItinerarios(ITIDtoBusquedaItinerarios dto){
@@ -62,9 +66,22 @@ public class ITIItinerarioManager {
 			itinerario = itinerarioDao.get(dto.getId());
 			itinerario.setNombre(dto.getNombre());
 			itinerario.setdDtipoItinerario(tipoItinerarioDao.get(dto.getdDtipoItinerario()));
+			
 			if(dto.getAmbitoExpediente()!= null){
 				itinerario.setAmbitoExpediente(ambitoExpedienteDao.get(dto.getAmbitoExpediente()));
 			}
+			else{
+				itinerario.setAmbitoExpediente(null);
+			}
+			
+			if(dto.getPrePolitica()!=null){
+				itinerario.setPrePolitica(genericDao.get(DDTipoPolitica.class, genericDao.createFilter(FilterType.EQUALS, "id",dto.getPrePolitica())));
+			}
+			else{
+				itinerario.setPrePolitica(null);
+			}
+				
+			
 			itinerarioDao.saveOrUpdate(itinerario);
 		}
 	}
@@ -118,6 +135,8 @@ public class ITIItinerarioManager {
 		copia.setNombre(original.getNombre()+"_copia");
 		copia.setAmbitoExpediente(original.getAmbitoExpediente());
 		copia.setdDtipoItinerario(original.getdDtipoItinerario());
+		// PRODUCTO-65: cuando creamos la copia del itinerario, añadimos que se copie también la prepolítica
+		copia.setPrePolitica(original.getPrePolitica());
 		itinerarioDao.save(copia);
 		
 		List<Estado> estadosItinerario = estadoDao.getEstadosItienario(id);

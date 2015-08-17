@@ -211,12 +211,25 @@ public class ScoringManager {
          */
 
         String tituloColumna = C + String.valueOf(fecha.getTime());
-
+        
+        // Prueba
+        DtoDynamicRow rowTotal = getRowForName(rows, GRUPO, TOTAL);
+        
+        //Si el nombre de la columna ya existe, le añadimos un número detras de la cadena
+        //Esto lo hacemos porque cuando hay fechas repetidas, el cálculo de las columnas no lo hace bien
+        if(rowTotal!=null && rowTotal.getCell(tituloColumna)!=null){
+        	for(Integer i = 1;i<=10;i++){
+        		if(rowTotal.getCell(tituloColumna + i.toString())==null){
+        			tituloColumna = tituloColumna + i.toString();
+        			break;
+        		}
+        	}
+        }
         //Recuperamos todas las puntuaciones
         List<PuntuacionParcial> listadoPuntuaciones = puntuacionTotalDao.getPuntuacionesOrdenadas(puntuacionTotal.getId());
 
         //Recuperamos el totalizador TOTAL y si no existe lo creamos
-        DtoDynamicRow rowTotal = getRowForName(rows, GRUPO, TOTAL);
+        
         if (rowTotal == null) {
             rowTotal = new DtoDynamicRow();
             rows.add(rowTotal);

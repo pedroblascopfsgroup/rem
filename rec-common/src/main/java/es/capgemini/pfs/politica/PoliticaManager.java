@@ -49,6 +49,8 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Clase con los métodos de negocio relativos a los Objetivos.
@@ -69,6 +71,9 @@ public class PoliticaManager {
 
     @Autowired
     private DictionaryManager dictionaryManager;
+    
+    @Autowired
+	private GenericABMDao genericDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -1110,6 +1115,15 @@ public class PoliticaManager {
         //Marcamos la política como histórica
         politica.setEstadoPolitica((DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_HISTORICA));
         politicaDao.save(politica);
+    }
+    
+    /**
+     * Devuelve los tipos de política no marcados como borrado
+     * @return List<DDTipoPolitica> Lista de tipos de política
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPOS_POLITICA)
+    public List<DDTipoPolitica> getTiposPolitica() {
+        return genericDao.getList(DDTipoPolitica.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
     }
 
 }

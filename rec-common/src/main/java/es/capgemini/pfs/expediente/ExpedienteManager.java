@@ -2801,8 +2801,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
 
         for (ExpedientePersona expedientePersona : totalPersonas) {
             if (!personasObligatorias.contains(expedientePersona.getPersona())) {
-                dto = new DtoPersonaPoliticaUlt();
+                
+            	dto = new DtoPersonaPoliticaUlt();
                 dto.setPersona(expedientePersona.getPersona());
+                Politica pol = (Politica) executor.execute(InternaBusinessOperation.BO_POL_MGR_BUSCAR_ULTIMA_POLITICA, dto.getPersona().getId());
+                dto.setPoliticaUltima(pol);
                 personasOpcionales.add(dto);
             }
         }

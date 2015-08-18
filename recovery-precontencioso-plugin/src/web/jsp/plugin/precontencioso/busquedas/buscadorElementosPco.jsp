@@ -47,7 +47,7 @@
 	var panelFiltros = new Ext.Panel({
 		autoHeight: true,
 		autoWidth: true,
-		title: '<s:message code="asd" text="**Buscador Expedientes Judiciales" />',
+		title: '<s:message code="plugin.precontencioso.buscador.elementos.titulo" text="**Buscador Elementos Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
 		tbar: [btnBuscar],

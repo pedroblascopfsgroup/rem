@@ -46,20 +46,20 @@ var liquidacionPcoStore = page.getStore({
 });
 
 var liquidacionPcoCm = new Ext.grid.ColumnModel([
-	{dataIndex: 'codigo', header: '<s:message code="asd" text="**Codigo"/>', sortable: false},
-	{dataIndex: 'nombreExpediente', header: '<s:message code="asd" text="**Nombre"/>', sortable: false},
-	{dataIndex: 'estadoExpediente', header: '<s:message code="asd" text="**Estado exp."/>', sortable: false},
-	{dataIndex: 'fechaEstado', header: '<s:message code="asd" text="**Fecha estado"/>', sortable: false},
-	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="asd" text="**Proc. propuesto"/>', sortable: false},
-	{dataIndex: 'tipoPreparacion', header: '<s:message code="asd" text="**Tipo preparacion"/>', sortable: false},
-	{dataIndex: 'diasEnPreparacion', header: '<s:message code="asd" text="**Dias preparacion"/>', sortable: false},
+	{dataIndex: 'codigo', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.codigo" text="**Codigo"/>', sortable: false},
+	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
+	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
+	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
+	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
+	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
+	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
 <%-- 	{dataIndex: 'estadoLiquidacion', header: '<s:message code="asd" text="**Estado burofax"/>', sortable: false}, --%>
 <%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
-	{dataIndex: 'liqContrato', header: '<s:message code="asd" text="**Contrato"/>', sortable: false},
-	{dataIndex: 'liqFechaRecepcion', header: '<s:message code="asd" text="**Fecha recepcion"/>', sortable: false},
-	{dataIndex: 'liqFechaConfirmacion', header: '<s:message code="asd" text="**Fecha confirmacion"/>', sortable: false},
-	{dataIndex: 'liqFechaCierre', header: '<s:message code="asd" text="**Fecha del cierre"/>', sortable: false},
-	{dataIndex: 'liqTotal', header: '<s:message code="asd" text="**Total"/>', sortable: false}
+	{dataIndex: 'liqContrato', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.contrato" text="**Contrato"/>', sortable: false},
+	{dataIndex: 'liqFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
+	{dataIndex: 'liqFechaConfirmacion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.confirmacion" text="**Fecha confirmacion"/>', sortable: false},
+	{dataIndex: 'liqFechaCierre', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.cierre" text="**Fecha del cierre"/>', sortable: false},
+	{dataIndex: 'liqTotal', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.total" text="**Total"/>', sortable: false}
 ]);
 
 var pagingBar = fwk.ux.getPaging(liquidacionPcoStore);

@@ -11,19 +11,19 @@
 
 var fieldCodigoEle = new Ext.form.TextField({
 	name: 'codigo',
-	fieldLabel : '<s:message code="asd" text="** Código" />'
+	fieldLabel : '<s:message code="plugin.precontencioso.tab.expjudicial.codigo" text="** Código" />'
 });
 
 <%-- Nombre Expediente Judicial --%>
 
 var fieldNombreExpedienteJudicialEle = new Ext.form.TextField({
 	name: 'nombreExpedienteJudicial',
-	fieldLabel : '<s:message code="asd" text="** Nom. Exp Judicial" />'
+	fieldLabel : '<s:message code="plugin.precontencioso.tab.expjudicial.nombre" text="** Nom. Exp Judicial" />'
 });
 
 <%-- Días en gestión: Número de días transcurridos en el estado actual del expediente, o en caso de seleccionar algún estado en particular, el plazoen gestión de dicho estado. --%>
 
-<pfsforms:numberfield name="fieldDiasGestionEle" labelKey="asd" label="** Días en gestión" 
+<pfsforms:numberfield name="fieldDiasGestionEle" labelKey="plugin.precontencioso.tab.expjudicial.dias.gestion" label="** Días en gestión" 
 	value="" 
 	obligatory="false" 
 	allowDecimals="false" />
@@ -32,7 +32,7 @@ var fieldNombreExpedienteJudicialEle = new Ext.form.TextField({
 
 var dateFieldInicioPreparacionDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldInicioPreparacionDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Inicio Preparacion" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparacion" text="** F. Inicio Preparacion" />'
 });
 
 var dateFieldInicioPreparacionHastaEle = new Ext.ux.form.XDateField({
@@ -60,7 +60,7 @@ var panelFechaInicioPreparacion = new Ext.Panel({
 
 var dateFieldPreparadoDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldPreparadoDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Preparado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparado" text="** F. Preparado" />'
 });
 
 var dateFieldPreparadoHastaEle = new Ext.ux.form.XDateField({
@@ -88,7 +88,7 @@ var panelFechaPreparado = new Ext.Panel({
 
 var dateFieldEnviadoLetradoDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnviadoLetradoDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Preparado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparado" text="** F. Preparado" />'
 });
 
 var dateFieldEnviadoLetradoHastaEle = new Ext.ux.form.XDateField({
@@ -116,7 +116,7 @@ var panelFechaEnviadoLetrado = new Ext.Panel({
 
 var dateFieldFinalizadoDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldFinalizadoDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Finalizado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.finalizado" text="** F. Finalizado" />'
 });
 
 var dateFieldFinalizadoHastaEle = new Ext.ux.form.XDateField({
@@ -144,7 +144,7 @@ var panelFechaFinalizado = new Ext.Panel({
 
 var dateFieldUltimaSubsanacionDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldUltimaSubsanacionDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. última subsanación" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.subsanacion" text="** F. última subsanación" />'
 });
 
 var dateFieldUltimaSubsanacionHastaEle = new Ext.ux.form.XDateField({
@@ -172,7 +172,7 @@ var panelFechaUltimaSubsanacion = new Ext.Panel({
 
 var dateFieldCanceladoDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldCanceladoDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Cancelado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.cancelado" text="** F. Cancelado" />'
 });
 
 var dateFieldCanceladoHastaEle = new Ext.ux.form.XDateField({
@@ -232,7 +232,7 @@ var panelFechaParalizacion = new Ext.Panel({
 	var ocultarTipoBusqueda = ${ocultarTipoBusqueda};
 	
 	var comboTipoBusqueda = new Ext.form.ComboBox({
-	    fieldLabel: '<s:message text="**Tipo de busqueda"/>',
+	    fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.busqueda" text="**Tipo de busqueda"/>',
 	    hidden:ocultarTipoBusqueda,
 	    disable:ocultarTipoBusqueda,
 	    allowBlank: true,
@@ -276,31 +276,31 @@ var panelFechaParalizacion = new Ext.Panel({
 	});
 
 <pfsforms:ddCombo name="comboTipoProcPropuestoEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.tipo.procedimiento" 
 label="** Tipo de procedimiento propuesto" value="" dd="${tipoProcedimientoProcpuesto}" />
 
 <%-- Tipo de preparación --%>
 
 <pfsforms:ddCombo name="comboTipoPreparacionEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.tipo.preparacion" 
 label="** Tipo de preparación" value="" dd="${tipoPreparacion}" />
 
 <%-- Disponible todos los documentos SI/NO --%>
 
 <pfsforms:ddCombo name="comboDisponibleDocumentosEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.documentos" 
 label="** Disponible todos los documentos" value="" dd="${ddSiNo}" />
 
 <%-- Disponible todas las liquidaciones SI/NO --%>
 
 <pfsforms:ddCombo name="comboDisponibleLiquidacionesEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.liquidaciones" 
 label="** Disponible todas las liquidaciones" value="" dd="${ddSiNo}" />
 
 <%-- Disponible todos los burofaxes SI/NO --%>
 
 <pfsforms:ddCombo name="comboDisponibleBurofaxesEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.burofaxes" 
 label="** Disponible todos los burofaxes" value="" dd="${ddSiNo}" />
 
 <%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
@@ -317,7 +317,7 @@ var estadoPreparacionStore = new Ext.data.JsonStore({
 
 var filtroEstadoPreparacion = app.creaDblSelect(
 	estadoPreparacion,
-	'<s:message code="asd" text="** Estado Expediente" />',
+	'<s:message code="plugin.precontencioso.tab.expjudicial.disponible.estado" text="** Estado Expediente" />',
 	{
 		store: estadoPreparacionStore,
 		id: 'fieldEstadoPreparacionEle'
@@ -331,7 +331,7 @@ var filtroEstadoPreparacion = app.creaDblSelect(
 var filtrosTabDatosProcedimientoActive = false;
 
 var filtrosTabDatosProcedimiento = new Ext.Panel({
-	title: '<s:message code="asd" text="** Expediente judicial" />',
+	title: '<s:message code="plugin.precontencioso.tab.expjudicial.titulo" text="** Expediente judicial" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',

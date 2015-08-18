@@ -47,21 +47,21 @@ var documentoPcoStore = page.getStore({
 });
 
 var documentoPcoCm = new Ext.grid.ColumnModel([
-	{dataIndex: 'codigo', header: '<s:message code="asd" text="**Codigo"/>', sortable: false},
-	{dataIndex: 'nombreExpediente', header: '<s:message code="asd" text="**Nombre"/>', sortable: false},
-	{dataIndex: 'estadoExpediente', header: '<s:message code="asd" text="**Estado exp."/>', sortable: false},
-	{dataIndex: 'fechaEstado', header: '<s:message code="asd" text="**Fecha estado"/>', sortable: false},
-	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="asd" text="**Proc. propuesto"/>', sortable: false},
-	{dataIndex: 'tipoPreparacion', header: '<s:message code="asd" text="**Tipo preparacion"/>', sortable: false},
-	{dataIndex: 'diasEnPreparacion', header: '<s:message code="asd" text="**Dias preparacion"/>', sortable: false},
+	{dataIndex: 'codigo', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.codigo" text="**Codigo"/>', sortable: false},
+	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
+	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
+	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
+	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
+	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
+	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
 <%-- 	{dataIndex: 'estadoBurofax', header: '<s:message code="asd" text="**Estado burofax"/>', sortable: false}, --%>
 <%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
-	{dataIndex: 'docUltimaRespuesta', header: '<s:message code="asd" text="**Respuesta ultima solicitud"/>', sortable: false},
-	{dataIndex: 'docUltimoActor', header: '<s:message code="asd" text="**Actor ultima solicitud"/>', sortable: false},
-	{dataIndex: 'docFechaResultado', header: '<s:message code="asd" text="**Fecha resultado"/>', sortable: false},
-	{dataIndex: 'docFechaEnvio', header: '<s:message code="asd" text="**Fecha envio"/>', sortable: false},
-	{dataIndex: 'docFechaRecepcion', header: '<s:message code="asd" text="**Fecha recepcion"/>', sortable: false},
-	{dataIndex: 'docAdjunto', header: '<s:message code="asd" text="**Adjunto"/>', sortable: false}
+	{dataIndex: 'docUltimaRespuesta', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.respuesta" text="**Respuesta ultima solicitud"/>', sortable: false},
+	{dataIndex: 'docUltimoActor', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.actor" text="**Actor ultima solicitud"/>', sortable: false},
+	{dataIndex: 'docFechaResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.resultado" text="**Fecha resultado"/>', sortable: false},
+	{dataIndex: 'docFechaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.envio" text="**Fecha envio"/>', sortable: false},
+	{dataIndex: 'docFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
+	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', sortable: false}
 ]);
 
 var pagingBar = fwk.ux.getPaging(documentoPcoStore);

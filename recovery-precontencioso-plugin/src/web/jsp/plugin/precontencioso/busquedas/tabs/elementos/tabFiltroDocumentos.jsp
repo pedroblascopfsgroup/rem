@@ -11,7 +11,7 @@ var diccTipoDocumento = <app:dict value="${tipoDocumento}" />;
 
 var comboTipoDocumento = app.creaDblSelect(
 	diccTipoDocumento,
-	'<s:message code="asd" text="** Tipo de documento" />',
+	'<s:message code="plugin.precontencioso.tab.documento.tipo.documento" text="** Tipo de documento" />',
 	{
 		id: 'fieldTipoDocumentoEle',
 		height: 150,
@@ -25,7 +25,7 @@ var diccEstadoDocumento = <app:dict value="${estadoDocumento}" />;
 
 var comboEstadoDocumento = app.creaDblSelect(
 	diccEstadoDocumento,
-	'<s:message code="asd" text="** Estado" />',
+	'<s:message code="plugin.precontencioso.tab.documento.estado" text="** Estado" />',
 	{
 		id: 'fieldEstadoDocumentoEle',
 		height: 100,
@@ -39,7 +39,7 @@ var diccResultadoSolicitud = <app:dict value="${resultadoSolicitud}" />;
 
 var comboRespuestaSolicitud = app.creaDblSelect(
 	diccResultadoSolicitud,
-	'<s:message code="asd" text="** Respuesta ultima solicitud" />',
+	'<s:message code="plugin.precontencioso.tab.documento.respuesta.solicitud" text="** Respuesta ultima solicitud" />',
 	{
 		id: 'fieldRespuestaSolicitudEle',
 		height: 60,
@@ -53,7 +53,7 @@ var comboRespuestaSolicitud = app.creaDblSelect(
 
 var dateFieldSolicitudDocDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldSolicitudDocDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Solicitud" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.solicitud" text="** F. Solicitud" />'
 });
 
 var dateFieldSolicitudDocHastaEle = new Ext.ux.form.XDateField({
@@ -81,7 +81,7 @@ var panelFechaSolicitudDoc = new Ext.Panel({
 
 var dateFieldResultadoDocDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldResultadoDocDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Resultado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.resultado" text="** F. Resultado" />'
 });
 
 var dateFieldResultadoDocHastaEle = new Ext.ux.form.XDateField({
@@ -109,7 +109,7 @@ var panelFechaResultadoDoc = new Ext.Panel({
 
 var dateFieldEnvioDocDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnvioDocDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Envio" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.envio" text="** F. Envio" />'
 });
 
 var dateFieldEnvioDocHastaEle = new Ext.ux.form.XDateField({
@@ -137,7 +137,7 @@ var panelFechaEnvioDoc = new Ext.Panel({
 
 var dateFieldRecepcionDocDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldRecepcionDocDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Recepción" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.recepcion" text="** F. Recepción" />'
 });
 
 var dateFieldRecepcionDocHastaEle = new Ext.ux.form.XDateField({
@@ -164,19 +164,19 @@ var panelFechaRecepcionDoc = new Ext.Panel({
 <%-- Adjunto --%>
 
 <pfsforms:ddCombo name="comboAdjuntoDocEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.documento.adjunto" 
 label="** Adjunto" value="" dd="${ddSiNo}" />
 
 <%-- Solicitud previa --%>
 
 <pfsforms:ddCombo name="comboSolicitudPreviaDocEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.documento.solicitud.previa" 
 label="** Solicitud previa" value="" dd="${ddSiNo}" />
 
 <%-- Días en gestión --%>
 
-<pfsforms:numberfield name="fieldDiasGestionDocEle" labelKey="asd" label="** Días en gestión" 
-	value=""
+<pfsforms:numberfield name="fieldDiasGestionDocEle" labelKey="plugin.precontencioso.tab.documento.gestion.dias" label="** Días en gestión" 
+	value="plugin.precontencioso.tab.documento.gestion.dias"
 	obligatory="false"
 	allowDecimals="false" />
 
@@ -185,7 +185,7 @@ label="** Solicitud previa" value="" dd="${ddSiNo}" />
 var filtrosTabDocumentosActive = false;
 
 var filtrosTabDocumentos = new Ext.Panel({
-	title: '<s:message code="asd" text="** Documentos" />',
+	title: '<s:message code="plugin.precontencioso.tab.documento.titulo" text="** Documentos" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',

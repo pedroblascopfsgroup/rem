@@ -8,14 +8,14 @@
 <%-- Notificado a todos los clientes: Si / No --%>
 
 <pfsforms:ddCombo name="comboNotificadoEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.burofax.notificado" 
 label="** Notificado a todos los clientes" value="" dd="${ddSiNo}" />
 
 <%-- Fecha solicitud --%>
 
 var dateFieldSolicitudBurDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldSolicitudBurDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Solicitud" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.burofax.fecha.solicitud" text="** F. Solicitud" />'
 });
 
 var dateFieldSolicitudBurHastaEle = new Ext.ux.form.XDateField({
@@ -43,7 +43,7 @@ var panelFechaSolicitudBur = new Ext.Panel({
 
 var dateFieldEnvioBurDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnvioBurDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Envio" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.burofax.fecha.envio" text="** F. Envio" />'
 });
 
 var dateFieldEnvioBurHastaEle = new Ext.ux.form.XDateField({
@@ -71,7 +71,7 @@ var panelFechaEnvioBur = new Ext.Panel({
 
 var dateFieldAcuseBurDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldAcuseBurDesdeEle',
-	fieldLabel: '<s:message code="asd" text="** F. Acuse" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.burofax.fecha.acuse" text="** F. Acuse" />'
 });
 
 var dateFieldAcuseBurHastaEle = new Ext.ux.form.XDateField({
@@ -101,7 +101,7 @@ var diccResultadoBurofax = <app:dict value="${resultadoBurofax}" />;
 
 var comboResultadoBurofax = app.creaDblSelect(
 	diccResultadoBurofax,
-	'<s:message code="asd" text="** Resultado último envío" />',
+	'<s:message code="plugin.precontencioso.tab.burofax.ultimo.envio" text="** Resultado último envío" />',
 	{
 		id: 'fliedResultadoBurofaxEle',
 		height: 100,
@@ -113,7 +113,7 @@ var comboResultadoBurofax = app.creaDblSelect(
 var filtrosTabBurofaxActive = false;
 
 var filtrosTabBurofax = new Ext.Panel({
-	title: '<s:message code="asd" text="** Burofax" />',
+	title: '<s:message code="plugin.precontencioso.tab.burofax.titulo" text="** Burofax" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',

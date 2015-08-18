@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -367,7 +368,6 @@ public class PoliticaManager {
             DDEstadoItinerarioPolitica estadoItinerarioPolitica = (DDEstadoItinerarioPolitica) executor
                     .execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoItinerarioPolitica.class,
                             DDEstadoItinerarioPolitica.ESTADO_PREPOLITICA);
-            DDTipoPolitica politicaPersona = persona.getPrepolitica();
 
             Politica prepolitica = new Politica();
 
@@ -378,9 +378,22 @@ public class PoliticaManager {
             prepolitica.setEstadoItinerarioPolitica(estadoItinerarioPolitica);
             prepolitica.setCicloMarcadoPolitica(cicloMarcado);
 
+            /**DDTipoPolitica politicaPersona = persona.getPrepolitica();
             if (politicaPersona != null) {
                 prepolitica.setTipoPolitica(politicaPersona);
+            }**/
+            //Nueva forma de obtener el tipo de política
+            DDTipoPolitica tipoPolitica = null;
+            Arquetipo arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_RECUPERACION_BY_PERSONA, persona.getId());
+            
+            if( arquetipo!=null && arquetipo.getItinerario()!=null){
+            	tipoPolitica = arquetipo.getItinerario().getPrePolitica();
             }
+            
+            if (tipoPolitica!=null) {
+                prepolitica.setTipoPolitica(tipoPolitica);
+            }
+            
             politicaDao.save(prepolitica);
 
             // ********************************************************************** //
@@ -415,9 +428,9 @@ public class PoliticaManager {
                 politicaCE.setZonaGestor(zonaGestor);
                 politicaCE.setZonaSupervisor(zonaSupervisor);
             }
-
-            if (politicaPersona != null) {
-                politicaCE.setTipoPolitica(politicaPersona);
+            //Nueva forma de obtener el tipo de política para CE
+            if (tipoPolitica!=null) {
+                politicaCE.setTipoPolitica(tipoPolitica);
             }
 
             politicaDao.save(politicaCE);

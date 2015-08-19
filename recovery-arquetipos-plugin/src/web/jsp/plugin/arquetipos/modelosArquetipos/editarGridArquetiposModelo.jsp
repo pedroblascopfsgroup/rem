@@ -9,7 +9,7 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 
 <fwk:page>
-	
+
 	<pfs:defineParameters name="arquetipoParams" paramId="${modelo.id}"/>
 	
 	var recargar = function (){
@@ -127,9 +127,14 @@
 	});
 
 	var itinerario_nombre = function(val){
-		return itinerarios.queryBy(function(rec){
+		var iti_finded = itinerarios.queryBy(function(rec){
 			return rec.data.codigo == val;
-		}).itemAt(0).data.descripcion;
+		});
+		
+		if (iti_finded.getCount() > 0)
+			return iti_finded.itemAt(0).data.descripcion;
+		else
+			return '';
 	}
 	
 	

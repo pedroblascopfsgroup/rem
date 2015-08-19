@@ -442,12 +442,36 @@ public class ScoringManager {
         meta.setHeader(messageService.getMessage("scoring.grid.alerta"));
         list.add(meta);
         SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+        Integer contador = 1;
         for (Date fecha : fechas) {
             DtoMetadata metadata = new DtoMetadata();
             metadata.setName(C + String.valueOf(fecha.getTime()));
-            metadata.setHeader(sdf1.format(fecha));
+            String titulo = sdf1.format(fecha);
+            if(contador==fechas.size()){
+            	titulo = titulo + messageService.getMessage("scoring.grid.fechaSeleccionada");
+            }
+            switch (contador) {
+			case 1:
+				titulo = titulo + messageService.getMessage("scoring.grid.fechaHoy");
+				break;
+			case 2:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha1MesPasado");
+				break;
+			case 3:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha2MesesPasado");
+				break;
+			case 4:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha3MesesPasado");
+				break;
+			case 5:
+				titulo = titulo + messageService.getMessage("scoring.grid.fecha365DiasPasado");
+				break;
+			
+            }
+            metadata.setHeader(titulo);
             metadata.setAlign("right");
             list.add(metadata);
+            contador++;
         }
         return list;
     }

@@ -100,6 +100,7 @@
 		paramId="idModeloArquetipo"  
 		datagrid="gridArquetiposModelo" 
 		parameters="arquetipoParams"
+		onSuccess="recargar"
 		/>
 	
 	<pfs:buttonnew name="btAdd" 
@@ -121,7 +122,7 @@
     			page.webflow({
 					flow: 'plugin/arquetipos/modelosArquetipos/ARQSubirPrioridadArquetipo'
 					,params: parametros
-					,success : storeArquetipos.reload(arquetipoParams()) 
+					,success : recargar 
 				});
 			}else{
 				Ext.Msg.alert('<s:message code="plugin.arquetipos.modelo.consulta.subir" text="**Subir Prioridad" />','<s:message code="plugin.arquetipos.modelo.consulta.novalor" text="**Debe seleccionar un arquetipo de la lista" />');
@@ -138,7 +139,7 @@
     			page.webflow({
 					flow: 'plugin/arquetipos/modelosArquetipos/ARQBajarPrioridadArquetipo'
 					,params: parametros
-					,success : storeArquetipos.reload(arquetipoParams())
+					,success : recargar
 				});
 			}else{
 				Ext.Msg.alert('<s:message code="plugin.arquetipos.modelo.consulta.bajar" text="**Bajar Prioridad" />','<s:message code="plugin.arquetipos.modelo.consulta.novalor" text="**Debe seleccionar un arquetipo de la lista" />');
@@ -151,6 +152,7 @@
 			windowTitle="${modelo.nombre}" 
 			windowTitleKey=""
 			store_ref="storeArquetipos"
+			on_success="recargar"
 			/>
 	 
 	
@@ -208,7 +210,8 @@
 					//,height: 600
 					});
 					w.on(app.event.DONE, function(){
-						w.close();				
+						w.close();
+						recargar();
 					});	
 	</pfs:button>
 	

@@ -21,6 +21,11 @@
 		{header : '<s:message code="plugin.arquetipos.modelo.simula.arquetipo" text="**Arquetipo"/>', dataIndex: 'arquetipo', width:225}
 		,{header : '<s:message code="plugin.arquetipos.modelo.simula.clientes" text="**Clientes"/>', dataIndex: 'clientes', width: 75}
 	]);
+	
+	 var columnasPruebas = new Ext.grid.ColumnModel([
+		{header : '<s:message code="plugin.arquetipos.modelo.simula.arquetipo" text="**Arquetipo"/>', dataIndex: 'arquetipo', width:225}
+		,{header : '<s:message code="plugin.arquetipos.modelo.simula.clientes" text="**Clientes"/>', dataIndex: 'clientes', width: 75}
+	]);	
 	 
 	 var simulacionVigente = page.getStore({
 		flow: 'plugin/arquetipos/modelosArquetipos/ARQsimulacionDeModeloData'
@@ -47,8 +52,8 @@
 	var gridPruebas = new Ext.grid.EditorGridPanel({
 		store : simulacionPruebas
 		,title:'<s:message code="plugin.arquetipos.modelo.simula.pruebas.grid" text="**Modelo de pruebas" />'
-		,cm : columnas
-		,width:columnas.getTotalWidth()+30
+		,cm : columnasPruebas
+		,width:columnasPruebas.getTotalWidth()+30
 		,height : 400
 	});
 	 

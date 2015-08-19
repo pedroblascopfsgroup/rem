@@ -27,7 +27,7 @@
 	</view-state>
 	
 	<action-state id="update">
-		<evaluate expression="executor.execute('plugin.arquetipos.modelosArquetipos.editarArqMod',flowScope.formArquetiposModelo.dtoArquetipos)"></evaluate>
+		<evaluate expression="executor.execute('plugin.arquetipos.modelosArquetipos.editarArqMod', id, flowScope.formArquetiposModelo.dtoArquetipos)"></evaluate>
 		<transition to="fin"/>
 	</action-state>    
 	

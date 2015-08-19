@@ -129,7 +129,10 @@
 
 	panel.setValue = function(){
 		var data = entidad.get("data");
-		entidad.cacheStore(panel.scoringGrid.getStore());
+		panel.scoringGrid.getStore().removeAll();
+		panel.scoringGrid.colModel.setConfig([],false);
+		fechaCombo.clearValue();
+		//entidad.cacheStore(panel.scoringGrid.getStore());
 		//entidad.cacheOrLoad(data, panel.scoringGrid.getStore(), { idPersona : data.id } );
 		entidad.cacheOrLoad(data, fechaCombo.getStore(), { idPersona : data.id, fechas : data.scoring.fechasAlertas } );
 	}

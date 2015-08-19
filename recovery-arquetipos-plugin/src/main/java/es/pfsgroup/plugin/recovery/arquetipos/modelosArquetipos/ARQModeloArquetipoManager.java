@@ -210,7 +210,9 @@ public class ARQModeloArquetipoManager {
 			ARQModeloArquetipo modArq= modeloArquetipoDao.get(dto.getId());
 			if (dto.getItinerario()!=null)
 				modArq.setItinerario(itinerarioDao.get(dto.getItinerario()));
-			modArq.setNivel(dto.getNivel());
+			else
+				modArq.setItinerario(null);
+			modArq.setNivel((dto.getNivel()!=null)?dto.getNivel():0);
 			Long idArquetipo = modArq.getArquetipo().getId();
 			ARQListaArquetipo arquetipo = arquetipoDao.get(idArquetipo);
 			arquetipo.setPlazoDisparo(dto.getPlazoDisparo());	

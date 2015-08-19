@@ -35,7 +35,7 @@ var ${name} = new Ext.Button({
 							w.on(app.event.DONE, function(){
 								w.close();
 								${store_ref}.webflow(${parameters}());
-								<c:if test="on_success!=null">${on_success}();</c:if>
+								<c:if test="${on_success != null}">${on_success}();</c:if>
 							});
 							w.on(app.event.CANCEL, function(){
 								 w.close(); 

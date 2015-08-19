@@ -99,6 +99,7 @@ public class ARQModeloManager {
 			modelo = modeloDao.get(dto.getId());
 			modelo.setNombre(dto.getNombre());
 			modelo.setDescripcion(dto.getDescripcion());
+			modelo.setEstado(estadoModeloDao.getByCodigo(ARQDDEstadoModelo.CODIGO_ESTADO_CONFORMACION));
 			modeloDao.saveOrUpdate(modelo);
 		}	
 	}

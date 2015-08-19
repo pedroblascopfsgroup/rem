@@ -19,6 +19,8 @@
 					,{id:'ModeloRT${modelo.id}'}
 				)
 	};
+	
+	<pfs:hidden name="id" value="${modelo.id}" />
 
 	<pfs:defineRecordType name="ArquetiposModeloRT">
 		<pfs:defineTextColumn name="prioridad"/>

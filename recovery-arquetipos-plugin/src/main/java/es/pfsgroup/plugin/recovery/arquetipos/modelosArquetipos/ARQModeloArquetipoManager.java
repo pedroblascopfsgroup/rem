@@ -17,7 +17,10 @@ import es.pfsgroup.commons.utils.Conversiones;
 import es.pfsgroup.plugin.recovery.arquetipos.PluginArquetiposBusinessOperations;
 import es.pfsgroup.plugin.recovery.arquetipos.arquetipos.dao.ARQArquetipoDao;
 import es.pfsgroup.plugin.recovery.arquetipos.arquetipos.model.ARQListaArquetipo;
+import es.pfsgroup.plugin.recovery.arquetipos.estadoModelo.dao.ARQDDEstadoModeloDao;
+import es.pfsgroup.plugin.recovery.arquetipos.estadoModelo.model.ARQDDEstadoModelo;
 import es.pfsgroup.plugin.recovery.arquetipos.itinerario.dao.ARQItinerarioDao;
+import es.pfsgroup.plugin.recovery.arquetipos.modelos.dao.ARQModeloDao;
 import es.pfsgroup.plugin.recovery.arquetipos.modelos.model.ARQModelo;
 import es.pfsgroup.plugin.recovery.arquetipos.modelosArquetipos.dao.ARQModeloArquetipoDao;
 import es.pfsgroup.plugin.recovery.arquetipos.modelosArquetipos.dto.ARQDtoEditarArqsMod;
@@ -29,10 +32,16 @@ import es.pfsgroup.plugin.recovery.arquetipos.modelosArquetipos.model.ARQModeloA
 public class ARQModeloArquetipoManager {
 	
 	@Autowired
+	private ARQModeloDao modeloDao;
+	
+	@Autowired
 	private ARQModeloArquetipoDao modeloArquetipoDao;
 	
 	@Autowired
 	private ARQArquetipoDao arquetipoDao;
+	
+	@Autowired
+	private ARQDDEstadoModeloDao arqDDEstadoModeloDao;
 	
 	@Autowired
 	private Executor executor;
@@ -51,7 +60,7 @@ public class ARQModeloArquetipoManager {
 
 
 	/**
-	 * @param id de la relación entre modelos y arquetipos
+	 * @param id de la relaciï¿½n entre modelos y arquetipos
 	 * @return devuelve el objeto ARQModeloArquetipo cuyo id coincide con el que le pasamos 
 	 * como entrada
 	 */
@@ -73,7 +82,7 @@ public class ARQModeloArquetipoManager {
 		EventFactory.onMethodStart(this.getClass());
 		
 		if(idModelo == null) {
-			throw new IllegalArgumentException("El argumento de entrada no es válido");
+			throw new IllegalArgumentException("El argumento de entrada no es vï¿½lido");
 		}
 		if(executor.execute(PluginArquetiposBusinessOperations.MODELO_MGR_GET, idModelo)== null){
 			throw new BusinessOperationException("No existe el modelo buscado");
@@ -110,12 +119,17 @@ public class ARQModeloArquetipoManager {
 			modArq.setPrioridad(i);
 			modeloArquetipoDao.save(modArq);
 		}
+		
+		//Volvemos al estado CONFORMACION el modelo afectado
+		modelo.setEstado(arqDDEstadoModeloDao.getByCodigo(ARQDDEstadoModelo.CODIGO_ESTADO_CONFORMACION));
+		modeloDao.saveOrUpdate(modelo);
+
 	}
 	
 	/**
-	 * @param se le pasa como entrada el id de la relación arquetipos-modelo y el id del modelo al que pertenece ese
+	 * @param se le pasa como entrada el id de la relaciï¿½n arquetipos-modelo y el id del modelo al que pertenece ese
 	 * arquetipo
-	 * Este método marcará como borrado lógico esa relación y les subirá la prioridad a todos los arquetipos que
+	 * Este mï¿½todo marcarï¿½ como borrado lï¿½gico esa relaciï¿½n y les subirï¿½ la prioridad a todos los arquetipos que
 	 * tengan una prioridad menor
 	 */
 	@Transactional(readOnly=false)
@@ -132,6 +146,10 @@ public class ARQModeloArquetipoManager {
 		}
 		modeloArquetipoDao.deleteById(idModeloArquetipo);
 		
+		//Volvemos al estado CONFORMACION el modelo afectado
+		ARQModelo modelo = (ARQModelo) executor.execute(PluginArquetiposBusinessOperations.MODELO_MGR_GET, idModelo);		
+		modelo.setEstado(arqDDEstadoModeloDao.getByCodigo(ARQDDEstadoModelo.CODIGO_ESTADO_CONFORMACION));
+		modeloDao.saveOrUpdate(modelo);
 	}
 	
 	/**
@@ -155,7 +173,10 @@ public class ARQModeloArquetipoManager {
 			}
 			modArq.setPrioridad(prioridad -1);
 			//modeloArquetipoDao.saveOrUpdate(modArq);
-		}			
+		}
+		
+		modArq.getModelo().setEstado(arqDDEstadoModeloDao.getByCodigo(ARQDDEstadoModelo.CODIGO_ESTADO_CONFORMACION));
+		modeloDao.saveOrUpdate(modArq.getModelo());
 	}
 	
 	@Transactional(readOnly=false)
@@ -175,16 +196,20 @@ public class ARQModeloArquetipoManager {
 			}
 			modArq.setPrioridad(prioridad +1L);
 			//modeloArquetipoDao.saveOrUpdate(modArq);
-		}			
+		}
+		
+		modArq.getModelo().setEstado(arqDDEstadoModeloDao.getByCodigo(ARQDDEstadoModelo.CODIGO_ESTADO_CONFORMACION));
+		modeloDao.saveOrUpdate(modArq.getModelo());
 	}
 	
 	
 	@Transactional(readOnly=false)
 	@BusinessOperation(PluginArquetiposBusinessOperations.MODELOARQUETIPO_MGR_EDITARQS)
-	public void editarArquetiposModelo (List<ARQDtoEditarArqsMod> dtoArquetipos){
+	public void editarArquetiposModelo (Long idModelo, List<ARQDtoEditarArqsMod> dtoArquetipos){
 		for (ARQDtoEditarArqsMod dto:dtoArquetipos){
 			ARQModeloArquetipo modArq= modeloArquetipoDao.get(dto.getId());
-			modArq.setItinerario(itinerarioDao.get(dto.getItinerario()));
+			if (dto.getItinerario()!=null)
+				modArq.setItinerario(itinerarioDao.get(dto.getItinerario()));
 			modArq.setNivel(dto.getNivel());
 			Long idArquetipo = modArq.getArquetipo().getId();
 			ARQListaArquetipo arquetipo = arquetipoDao.get(idArquetipo);
@@ -193,6 +218,9 @@ public class ARQModeloArquetipoManager {
 			arquetipoDao.save(arquetipo);
 		}
 		
+		ARQModelo modelo = modeloDao.get(idModelo);
+		modelo.setEstado(arqDDEstadoModeloDao.getByCodigo(ARQDDEstadoModelo.CODIGO_ESTADO_CONFORMACION));
+		modeloDao.saveOrUpdate(modelo);
 	}
 	
 	@Transactional(readOnly=false)

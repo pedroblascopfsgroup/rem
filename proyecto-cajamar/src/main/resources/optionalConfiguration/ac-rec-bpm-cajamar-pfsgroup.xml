@@ -10,6 +10,7 @@
 
 	<!-- Beans,handlers,Managers ... --> 
 	<bean id="subastaConcursalCjLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalCjLeaveActionHandler" />
+	<bean id="siguientePagoHandler" class="es.pfsgroup.procedimientos.seguimientoCumplimientoAcuerdo.SiguientePagoHandler"></bean>
  	    
 	<!-- BPM activos -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
@@ -32,6 +33,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAcuerdoExtrajudicialPagos/cj_acuerdoExtrajudicialPagos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteResolucionInteres/cj_resolucionInteres.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubastaConcursal/cj_tramiteSubastaConcursal.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCreditosContingentes/cj_creditosContingentes.xml" p:version="-1"/>
 			
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
@@ -207,18 +209,6 @@
                		return false;
 				}
 
-				def plazoTranscurrido = {
-					def tareaExternaManager = ctx.getBean("tareaExternaManager");
-					
-					def listaTareas = tareaExternaManager.getByIdTareaProcedimientoIdProcedimiento(idProcedimiento, tareaExterna.getTareaProcedimiento().getId());
-					if(listaTareas.size() == 3) {
-						return true;
-					}
-					else {
-						return false;
-					}				
-				}
-				
 				def comprobarExisteDocumentoPROPLAPAG = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PROPLAPAG");
@@ -243,6 +233,78 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CERDEU");
 	            }
+	            
+	            def dameFechaPago = {
+	            	def historicoProcedimientoManager = ctx.getBean("EXTHistoricoProcedimientoManager");
+	            	def listaTareas = historicoProcedimientoManager.getListByProcedimiento(idProcedimiento);
+	            	def idx = -1;
+	            	def ultimaTareaFinalizada = listaTareas[idx];
+	            	while(ultimaTareaFinalizada.getFechaFin() == null) {
+	            		idx--;
+	            		ultimaTareaFinalizada = listaTareas[idx];
+	            	}
+	            	
+	            	if(ultimaTareaFinalizada.getCodigoTarea() == 'CJ002_RegistrarAcuerdoAprobado') {
+	            		return valores['CJ002_RegistrarAcuerdoAprobado']['fecha'];
+	            	}
+	            	else if(ultimaTareaFinalizada.getCodigoTarea() == 'CJ002_ConfirmarResultadoNotificacion' || ultimaTareaFinalizada.getCodigoTarea() == 'CJ002_ValidarFinSeguimiento') {
+	            		
+	            		idx = -2;
+	            		def ultimaTareaCumplimiento = listaTareas[idx];
+	            		while(ultimaTareaCumplimiento.getCodigoTarea() != 'CJ002_RegistrarCumplimiento') {
+	            			idx--;
+	            			ultimaTareaCumplimiento = listaTareas[idx];
+	            		}
+	            		
+	            		def tareaNotificacionManager = ctx.getBean("tareaNotificacionManager");
+	            		def tareaNotificacion = tareaNotificacionManager.get(ultimaTareaCumplimiento.getIdEntidad());
+	            		def listaValores = tareaNotificacion.getTareaExterna().getValores();
+	            		
+	            		for (valor in listaValores) {
+	            			if(valor.getNombre() == 'fechaPago') {
+	            				return valor.getValor();
+	            			}
+	            		}
+	            		
+	            	}
+	            	else {
+	            		return new java.text.SimpleDateFormat('yyyy-MM-dd').format(tareaExterna.getTareaPadre().getFechaInicio());
+	            	}	
+	            }
+	            
+	            def dameCodigoUltimaTarea = {
+	            	def historicoProcedimientoManager = ctx.getBean("EXTHistoricoProcedimientoManager");
+	            	def listaTareas = historicoProcedimientoManager.getListByProcedimiento(idProcedimiento);
+	            	def ultimaTarea = listaTareas[-1];
+	            	
+	            	return ultimaTarea.getCodigoTarea();
+	            }
+	            
+	            def plazoCumplido = {
+				
+					def valores = tareaExterna.getValores();
+					for (valor in valores) {
+						
+						if (valor.getNombre() == 'fechaPago') {
+							
+							def fechaPago = new java.text.SimpleDateFormat('yyyy-MM-dd').parse(valor.getValor());
+							def cal = java.util.Calendar.getInstance();
+							cal.setTime(new java.util.Date());
+							cal.add(Calendar.DATE, -90);
+							def dateBefore90Days = cal.getTime();
+							
+							if (fechaPago.before(dateBefore90Days)) {
+								return true;
+							}
+							else {
+								return false;
+							}							
+						}
+					}
+				
+					return false;
+				}
+				
 
   			 ]]>
   			</value>

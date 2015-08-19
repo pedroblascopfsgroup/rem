@@ -126,10 +126,10 @@ DECLARE
 		T_TIPO_TAP(
 			/*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
 			/*TAP_CODIGO...................:*/ 'CJ002_RegistrarCumplimiento',
-			/*TAP_VIEW.....................:*/ null,
+			/*TAP_VIEW.....................:*/ 'plugin/cajamar/tramiteSeguimientoCumplimientoAcuerdo/registrarCumplimiento',
 			/*TAP_SCRIPT_VALIDACION........:*/ null,
 			/*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
-			/*TAP_SCRIPT_DECISION..........:*/ 'valores[''CJ002_RegistrarCumplimiento''][''comboCumplimiento''] == DDSiNo.NO ? ''incumplimiento'' : valores[''CJ002_RegistrarCumplimiento''][''comboFinalizar''] == DDSiNo.SI ? ''cumplimientoYFin'' : plazoTranscurrido() ? ''tresMesesIncumplimiento'' : ''cumplimientoSinFin''',
+			/*TAP_SCRIPT_DECISION..........:*/ 'valores[''CJ002_RegistrarCumplimiento''][''comboFinalizar''] == DDSiNo.SI ? ''cumplimientoYFin'' : valores[''CJ002_RegistrarCumplimiento''][''comboCumplimiento''] == DDSiNo.SI ? ''cumplimientoSinFin'' : plazoCumplido() ? ''tresMesesIncumplimiento'' : ''incumplimiento''',
 			/*DD_TPO_ID_BPM(FK)............:*/ null,
 			/*TAP_SUPERVISOR,..............:*/ '0',
 			/*TAP_DESCRIPCION,.............:*/ 'Registrar cumplimiento',
@@ -271,7 +271,7 @@ DECLARE
 			/*DD_JUZ_ID(FK)............:*/ null,
 			/*DD_PLA_ID(FK)............:*/ null,
 			/*TAP_ID(FK)...............:*/ 'CJ002_RegistrarCumplimiento',
-			/*DD_PTP_PLAZO_SCRIPT......:*/ '30*24*60*60*1000L',
+			/*DD_PTP_PLAZO_SCRIPT......:*/ '(dameCodigoUltimaTarea() == ''CJ002_RegistrarAcuerdoAprobado'' ? damePlazo(valores[''CJ002_RegistrarAcuerdoAprobado''][''fecha'']) : dameCodigoUltimaTarea() == ''CJ002_ConfirmarResultadoNotificacion'' ? 0 : damePlazo(dameFechaPago())) + 30*24*60*60*1000L',
 			/*VERSION..................:*/ '0',
 			/*BORRADO..................:*/ '0',
 			/*USUARIOCREAR.............:*/ 'DD'
@@ -445,6 +445,19 @@ DECLARE
             /*DD_TAP_ID..............:*/ 'CJ002_RegistrarCumplimiento',
             /*TFI_ORDEN..............:*/ '1',
             /*TFI_TIPO...............:*/ 'date',
+            /*TFI_NOMBRE.............:*/ 'fechaPago',
+            /*TFI_LABEL..............:*/ 'Fecha de pago',
+            /*TFI_ERROR_VALIDACION...:*/ null,
+            /*TFI_VALIDACION.........:*/ null,
+            /*TFI_VALOR_INICIAL......:*/ 'dameFechaPago()',
+            /*TFI_BUSINESS_OPERATION.:*/ null,
+            /*VERSION................:*/ '0',
+            /*USUARIOCREAR...........:*/ 'DD'
+        ),
+        T_TIPO_TFI (
+            /*DD_TAP_ID..............:*/ 'CJ002_RegistrarCumplimiento',
+            /*TFI_ORDEN..............:*/ '2',
+            /*TFI_TIPO...............:*/ 'date',
             /*TFI_NOMBRE.............:*/ 'fecha',
             /*TFI_LABEL..............:*/ 'Fecha revisión',
             /*TFI_ERROR_VALIDACION...:*/ 'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio',
@@ -456,7 +469,7 @@ DECLARE
         ),
         T_TIPO_TFI (
             /*DD_TAP_ID..............:*/ 'CJ002_RegistrarCumplimiento',
-            /*TFI_ORDEN..............:*/ '2',
+            /*TFI_ORDEN..............:*/ '3',
             /*TFI_TIPO...............:*/ 'combo',
             /*TFI_NOMBRE.............:*/ 'comboCumplimiento',
             /*TFI_LABEL..............:*/ 'Cumplimiento',
@@ -469,7 +482,7 @@ DECLARE
         ),
         T_TIPO_TFI (
             /*DD_TAP_ID..............:*/ 'CJ002_RegistrarCumplimiento',
-            /*TFI_ORDEN..............:*/ '3',
+            /*TFI_ORDEN..............:*/ '4',
             /*TFI_TIPO...............:*/ 'combo',
             /*TFI_NOMBRE.............:*/ 'comboFinalizar',
             /*TFI_LABEL..............:*/ 'Finalizar',
@@ -482,7 +495,7 @@ DECLARE
         ),
         T_TIPO_TFI (
             /*DD_TAP_ID..............:*/ 'CJ002_RegistrarCumplimiento',
-            /*TFI_ORDEN..............:*/ '4',
+            /*TFI_ORDEN..............:*/ '5',
             /*TFI_TIPO...............:*/ 'textarea',
             /*TFI_NOMBRE.............:*/ 'observaciones',
             /*TFI_LABEL..............:*/ 'Observaciones',

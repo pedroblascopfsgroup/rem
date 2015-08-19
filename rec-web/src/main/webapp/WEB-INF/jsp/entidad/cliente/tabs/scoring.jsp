@@ -56,6 +56,7 @@
 		,iconCls : 'icon_mas'
 		,cls: 'x-btn-text-icon'
       ,handler:function() {
+      		debugger;
 			if(fechaCombo.getValue()===''){ 
 					Ext.Msg.show({
 					   title: fwk.constant.errorMsg
@@ -73,19 +74,23 @@
 					fechasString += fechaCombo.getValue();
 					panel.scoringGrid.store.load({params:{
 							idPersona:panel.getPersonaId()
-							,fechas:panel.getFechasString()
+							,fechas:fechasString
 					}});
-					fechaStore.webflow({idPersona:panel.getPersonaId(),fechas:fechasString});
+					fechaStore.webflow({idPersona:panel.getPersonaId(),fechas:panel.getFechasString()});
 				}
     	  }
 	  });
-
 
 	panel.scoringGrid = new Ext.ux.DynamicGridPanel({
 	    storeUrl: '../clientes/scoringData.htm'
 	    ,height: 300
 	    ,collapsible: true
 	});
+	
+	var leyenda = new Ext.form.Label({
+                text: "<s:message code="scoring.leyenda" text="***Las fechas son aproximaciones calculadas a partir de las alertas cargadas en el sistema." />"
+                ,style: "color:red;font-size:12px;"
+    });
 	
 	var panelFiltro = new Ext.form.FieldSet({
 		title: '<s:message code="scoring.filtro.fechas" text="**Fechas" />'
@@ -108,6 +113,7 @@
 
 	panel.add(panelFiltro);
 	panel.add(panel.scoringGrid);
+	panel.add(leyenda);
 
 	panel.getFechasString = function(){
 		var data = entidad.get("data");

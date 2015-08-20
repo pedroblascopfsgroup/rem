@@ -66,20 +66,20 @@ public class SiguientePagoHandler extends PROBaseActionHandler {
 		// Se recorren las tareas
 		for (TareaNotificacion tarea : listTareas) {
 			
-			// Si se trata de la tarea CJ002_RegistrarAcuerdoAprobado se recupera la periodicidad del acuerdo
-			if (!Checks.esNulo(tarea.getTarea()) && tarea.getTarea().contains("Registrar acuerdo aprobado")) {
+			// Si se trata de la tarea CJ002_RegistrarAcuerdoAprobado o H041_registrarConvenio se recupera la periodicidad del acuerdo
+			if (!Checks.esNulo(tarea.getTarea()) && (tarea.getTareaExterna().getTareaProcedimiento().getCodigo().equals("CJ002_RegistrarAcuerdoAprobado") || tarea.getTareaExterna().getTareaProcedimiento().getCodigo().equals("H041_registrarConvenio"))) {
 				TareaExterna tareaExterna = tarea.getTareaExterna();
 				List<TareaExternaValor> listTareaExternaValor = tareaExterna.getValores();
 				
 				for (TareaExternaValor tareaExternaValor : listTareaExternaValor) {
-					if ("comboPeriodicidad".equals(tareaExternaValor.getNombre())) {
+					if ("comboPeriodicidad".equals(tareaExternaValor.getNombre()) || "comboAdhesion".equals(tareaExternaValor.getNombre())) {
 						
 						codigoPeriodicidad = tareaExternaValor.getValor();
 					}
 				}
 			}
-			// Si se trata de la tarea CJ002_RegistrarCumplimiento se recupera la fecha de pago en caso de ser la mayor de todas las tareas de este tipo
-			else if(!Checks.esNulo(tarea.getTarea()) && tarea.getTarea().contains("Registrar cumplimiento")) {
+			// Si se trata de la tarea CJ002_RegistrarCumplimiento o H041_registrarCumplimiento se recupera la fecha de pago en caso de ser la mayor de todas las tareas de este tipo
+			else if(!Checks.esNulo(tarea.getTarea()) && (tarea.getTareaExterna().getTareaProcedimiento().getCodigo().equals("CJ002_RegistrarCumplimiento") || tarea.getTareaExterna().getTareaProcedimiento().getCodigo().equals("H041_registrarCumplimiento"))) {
 				
 				TareaExterna tareaExterna = tarea.getTareaExterna();
 				List<TareaExternaValor> listTareaExternaValor = tareaExterna.getValores();
@@ -134,7 +134,7 @@ public class SiguientePagoHandler extends PROBaseActionHandler {
 			break;
 		// Diario
 		case 8:
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
+			calendar.add(Calendar.DATE, 1);
 			break;
 		// Único y otros (estos valores no se deberían indicar)
 		default:

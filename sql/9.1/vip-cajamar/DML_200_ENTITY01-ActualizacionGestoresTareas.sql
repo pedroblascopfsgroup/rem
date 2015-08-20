@@ -120,6 +120,10 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGESCHRE','SUCHRE')
 ,T_TIPO_VALOR('H027','H027_RegistrarResultadoAcuerdo','TGESINC','GERREC')
 ,T_TIPO_VALOR('H029','H029_ResolucionDecision','DGESCON','')
 ,T_TIPO_VALOR('H029','H029_registrarResolucion','TGESCON','SUCON')
+,T_TIPO_VALOR('H041','H041_RegistroPrestamoConvenio','TGESCHRE','SUCHRE')
+,T_TIPO_VALOR('H041','H041_registrarConvenio','TGESCHRE','SUCHRE')
+,T_TIPO_VALOR('H041','H041_registrarCumplimiento','TGESCHRE','SUCHRE')
+,T_TIPO_VALOR('H041','H041_validarFinSeguimiento','TSUCHRE','DIRHRE')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

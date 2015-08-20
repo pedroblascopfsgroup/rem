@@ -50,18 +50,20 @@
 	</state>
 	
 	<decision name="CJ002_RegistrarCumplimientoDecision" expression="#{CJ002_RegistrarCumplimientoDecision}">
-		<transition to="CJ002_NodoEspera" name="cumplimientoSinFin"></transition>
+		<transition to="CJ002_TareaEspera" name="cumplimientoSinFin"></transition>
 		<transition to="CJ002_NotificarDeudor" name="incumplimiento"></transition>
 		<transition to="CJ002_ValidarFinSeguimiento" name="cumplimientoYFin"></transition>
 		<transition to="CJ002_ComunicacionMediador" name="tresMesesIncumplimiento"></transition>
 	</decision>
 	
-	<node name="CJ002_NodoEspera">
-		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-         	<targetBean>siguientePagoHandler</targetBean>
-      	</action>
+	<state name="CJ002_TareaEspera">
+		<event type="node-enter">
+			<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         		<targetBean>siguientePagoHandler</targetBean>
+      		</action>
+		</event>
 		<transition to="CJ002_RegistrarCumplimiento" name="avanzaBPM"></transition>
-	</node>
+	</state>
 
 	<state name="CJ002_NotificarDeudor">
 		<event type="node-enter">

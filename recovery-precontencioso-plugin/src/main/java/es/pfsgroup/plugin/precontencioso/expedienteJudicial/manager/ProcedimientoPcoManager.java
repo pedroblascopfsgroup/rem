@@ -7,8 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
@@ -16,6 +23,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPCOAssembler;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
@@ -111,5 +119,48 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	public List<EnvioBurofaxPCO> busquedaEnviosBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		List<EnvioBurofaxPCO> envioBurofaxPco = procedimientoPcoDao.getEnviosBurofaxPorFiltro(filtro);
 		return envioBurofaxPco;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	@BusinessOperation(BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO)
+	public void actualizaProcedimiento(ActualizarProcedimientoPcoDtoInfo dto) {
+		Procedimiento p = null;
+		ProcedimientoPCO pco = null;
+		if (!Checks.esNulo(dto.getId())) {
+			p = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+			pco = genericDao.get(ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", dto.getId()));
+		} else {
+			throw new BusinessOperationException(
+					"plugin.santander.actualizaProcedimiento.idNulo");
+		}
+		if (!Checks.esNulo(dto.getTipoReclamacion())) {
+			Filter filtroTipoReclamacion = genericDao.createFilter(FilterType.EQUALS, "id", dto.getTipoReclamacion());
+			DDTipoReclamacion reclamacion = genericDao.get(DDTipoReclamacion.class, filtroTipoReclamacion);
+			p.setTipoReclamacion(reclamacion);
+		}
+		if (!Checks.esNulo(dto.getTipoJuzgado())) {
+			Filter filtroJuzgado = genericDao.createFilter(FilterType.EQUALS, "id", dto.getTipoJuzgado());
+			TipoJuzgado juzgado = genericDao.get(TipoJuzgado.class, filtroJuzgado);
+			p.setJuzgado(juzgado);
+		}
+		if (!Checks.esNulo(dto.getPrincipal())) {
+			p.setSaldoRecuperacion(dto.getPrincipal());
+		}
+		if (!Checks.esNulo(dto.getEstimacion())) {
+			p.setPorcentajeRecuperacion(dto.getEstimacion());
+		}
+		if (!Checks.esNulo(dto.getPlazoRecuperacion())) {
+			p.setPlazoRecuperacion(dto.getPlazoRecuperacion());
+		}
+		if (!Checks.esNulo(dto.getNumeroAutos())){
+			p.setCodigoProcedimientoEnJuzgado(dto.getNumeroAutos());
+		}
+		if(!Checks.esNulo(dto.getNumExpExterno())){
+			pco.setNumExpExterno(dto.getNumExpExterno());
+		}
+
+		genericDao.update(Procedimiento.class, p);
+		genericDao.update(ProcedimientoPCO.class, pco);
 	}
 }

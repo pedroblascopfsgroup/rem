@@ -201,9 +201,15 @@
   
   
 	var funcionEditaCabeceraProcedimiento=function(){
+		var flow = '';
+		if (data.hayPrecontencioso) {
+			flow = 'expedientejudicial/editar';
+		}else{
+			flow = 'editprocedimiento/open';
+		}
 		var w = app.openWindow({
              text:'<s:message code="plugin.mejoras.asuntos.cabecera.editar" text="**Editar" />'
-			,flow: 'editprocedimiento/open'
+			,flow: flow
 			,width:850
 			,title: '<s:message code="plugin.mejoras.asuntos.cabecera.editar" text="**Editar" />'
 			,params:{

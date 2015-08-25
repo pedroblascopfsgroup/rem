@@ -11,6 +11,7 @@ public class LiquidacionDTO extends WebDto {
 	private Long id;
 	private Long idProcedimientoPCO;
 	private Long idContrato;
+	private String nroContrato;
 	private String producto;
 	private Date fechaSolicitud;
 	private Date fechaRecepcion;
@@ -235,5 +236,12 @@ public class LiquidacionDTO extends WebDto {
 	}
 	public void setImpuestosOriginal(Float impuestosOriginal) {
 		this.impuestosOriginal = impuestosOriginal;
+	}
+	
+	public String getNroContrato() {
+		return nroContrato;
+	}
+	public void setNroContrato(String nroContrato) {
+		this.nroContrato = nroContrato;
 	}
 }

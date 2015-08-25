@@ -118,6 +118,7 @@ var btnGenerar = new Ext.Button({
 var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'id'},
 	{name: 'contrato'},
+	{name: 'nroContrato'},
 	{name: 'producto'},
 	{name: 'estadoLiquidacion'},
 	{name: 'estadoCodigo'},
@@ -154,7 +155,8 @@ storeLiquidaciones.on(
 );
 
 var cmLiquidacion = new Ext.grid.ColumnModel([
-	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato',hidden:true},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'nroContrato'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.producto" text="**Producto" />', dataIndex: 'producto'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.estadoLiquidacion" text="**Estado Liquidacion" />', dataIndex: 'estadoLiquidacion'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex: 'fechaSolicitud'},

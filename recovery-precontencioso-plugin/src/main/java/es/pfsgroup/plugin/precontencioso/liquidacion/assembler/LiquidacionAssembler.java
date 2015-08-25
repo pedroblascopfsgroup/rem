@@ -73,6 +73,7 @@ public class LiquidacionAssembler {
 		// Contrato
 		if (liquidacion.getContrato() != null) {
 			liquidacionDto.setIdContrato(liquidacion.getContrato().getId());
+			liquidacionDto.setNroContrato(liquidacion.getContrato().getNroContrato());
 			liquidacionDto.setProducto(liquidacion.getContrato().getTipoProductoEntidad().getDescripcion());
 		}
 

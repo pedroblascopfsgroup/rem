@@ -58,6 +58,12 @@ public class LiquidacionAssembler {
 		liquidacionDto.setInteresesOrdinariosOriginal(liquidacion.getInteresesOrdinariosOriginal());
 		liquidacionDto.setTotalOriginal(liquidacion.getTotalOriginal());
 		liquidacionDto.setSysGuid(liquidacion.getSysGuid());
+		liquidacionDto.setComisiones(liquidacion.getComisiones());
+		liquidacionDto.setGastos(liquidacion.getGastos());
+		liquidacionDto.setImpuestos(liquidacion.getImpuestos());
+		liquidacionDto.setComisionesOriginal(liquidacion.getComisionesOriginal());
+		liquidacionDto.setGastosOriginal(liquidacion.getGastosOriginal());
+		liquidacionDto.setImpuestosOriginal(liquidacion.getImpuestosOriginal());
 
 		// ProcedimientoPCO
 		if (liquidacion.getProcedimientoPCO() != null) {

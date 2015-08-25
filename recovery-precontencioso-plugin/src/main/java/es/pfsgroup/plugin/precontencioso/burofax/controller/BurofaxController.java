@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
@@ -312,11 +313,10 @@ public class BurofaxController {
 	
 	
 	@RequestMapping
-	private String guardaPersona(WebRequest request, ModelMap model,Long idProcedimiento){
-		String[] arrayIdPersonas=request.getParameter("arrayIdPersonas").replace("[","").replace("]","").replace("&quot;", "").split(",");
+	private String guardaPersona(WebRequest request, ModelMap model,Long idProcedimiento,@RequestParam(value = "arrayIdPersonas", required = true) Long[] arrayIdPersonas){
 		
 		for(int i=0;i<arrayIdPersonas.length;i++){
-			burofaxManager.guardaPersonaCreandoBurofax(Long.valueOf(arrayIdPersonas[i]),idProcedimiento);
+			burofaxManager.guardaPersonaCreandoBurofax(arrayIdPersonas[i],idProcedimiento);
 		}
 		
 		

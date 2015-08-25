@@ -98,6 +98,24 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@JoinColumn(name = "USD_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private GestorDespacho apoderado;
+	
+	@Column(name = "PCO_LIQ_COMISIONES")
+	private Float comisiones;
+	
+	@Column(name = "PCO_LIQ_GASTOS")
+	private Float gastos;
+	
+	@Column(name = "PCO_LIQ_IMPUESTOS")
+	private Float impuestos;
+	
+	@Column(name = "PCO_LIQ_ORI_COMISIONES")
+	private Float comisionesOriginal;
+	
+	@Column(name = "PCO_LIQ_ORI_GASTOS")
+	private Float gastosOriginal;
+	
+	@Column(name = "PCO_LIQ_ORI_IMPUESTOS")
+	private Float impuestosOriginal;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -286,5 +304,53 @@ public class LiquidacionPCO implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Float getComisiones() {
+		return comisiones;
+	}
+
+	public void setComisiones(Float comisiones) {
+		this.comisiones = comisiones;
+	}
+
+	public Float getGastos() {
+		return gastos;
+	}
+
+	public void setGastos(Float gastos) {
+		this.gastos = gastos;
+	}
+
+	public Float getImpuestos() {
+		return impuestos;
+	}
+
+	public void setImpuestos(Float impuestos) {
+		this.impuestos = impuestos;
+	}
+
+	public Float getComisionesOriginal() {
+		return comisionesOriginal;
+	}
+
+	public void setComisionesOriginal(Float comisionesOriginal) {
+		this.comisionesOriginal = comisionesOriginal;
+	}
+
+	public Float getGastosOriginal() {
+		return gastosOriginal;
+	}
+
+	public void setGastosOriginal(Float gastosOriginal) {
+		this.gastosOriginal = gastosOriginal;
+	}
+
+	public Float getImpuestosOriginal() {
+		return impuestosOriginal;
+	}
+
+	public void setImpuestosOriginal(Float impuestosOriginal) {
+		this.impuestosOriginal = impuestosOriginal;
 	}
 }

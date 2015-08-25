@@ -130,7 +130,11 @@ var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'interesesOrdinarios'},
 	{name: 'interesesDemora'},
 	{name: 'total'},
-	{name: 'apoderado'}
+	{name: 'apoderado'},
+	{name: 'comisiones'},
+	{name: 'gastos'},
+	{name: 'impuestos'}
+	
 ]);
 
 var storeLiquidaciones = page.getStore({
@@ -162,7 +166,12 @@ var cmLiquidacion = new Ext.grid.ColumnModel([
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" text="**Intereses Ordinarios" />', dataIndex: 'interesesOrdinarios'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesDemora" text="**Intereses Demora" />', dataIndex: 'interesesDemora'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.total" text="**Total" />', dataIndex: 'total'},
-	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado', width: 200}
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado', width: 200},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.comisiones" text="**Comisiones" />', dataIndex: 'comisiones', width: 200},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.gastos" text="**Gastos" />', dataIndex: 'gastos', width: 200},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.impuestos" text="**Impuestos" />', dataIndex: 'impuestos', width: 200}
+	
+	
 ]);
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {

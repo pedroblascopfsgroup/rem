@@ -87,6 +87,9 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setInteresesOrdinarios(liquidacionDto.getInteresesOrdinarios());
 		liquidacion.setInteresesDemora(liquidacionDto.getInteresesDemora());
 		liquidacion.setTotal(liquidacionDto.getTotal());
+		liquidacion.setComisiones(liquidacionDto.getComisiones());
+		liquidacion.setGastos(liquidacionDto.getGastos());
+		liquidacion.setImpuestos(liquidacionDto.getImpuestos());
 
 		GestorDespacho apoderado = obtenerApoderado(liquidacionDto);
 		if (apoderado != null) {

@@ -104,6 +104,9 @@ public class LiquidacionController {
 		Float interesesDemora = Float.valueOf(request.getParameter("interesesDemora"));
 		Float total = Float.valueOf(request.getParameter("total"));
 		String apoderadoNombre = request.getParameter("apoderadoNombre");
+		Float comisiones = Float.valueOf(request.getParameter("comisiones"));
+		Float gastos = Float.valueOf(request.getParameter("gastos"));
+		Float impuestos = Float.valueOf(request.getParameter("impuestos"));
 
 		String usuario = request.getParameter("apoderadoUsuarioId");
 
@@ -129,6 +132,9 @@ public class LiquidacionController {
 		liquidacionDto.setApoderadoNombre(apoderadoNombre);
 		liquidacionDto.setApoderadoUsuarioId(usuarioId);
 		liquidacionDto.setApoderadoDespachoId(despachoId);
+		liquidacionDto.setComisiones(comisiones);
+		liquidacionDto.setGastos(gastos);
+		liquidacionDto.setImpuestos(impuestos);
 
 		liquidacionApi.editarValoresCalculados(liquidacionDto);
 

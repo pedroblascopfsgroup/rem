@@ -27,6 +27,12 @@ public class LiquidacionDTO extends WebDto {
 	private Float interesesOrdinariosOriginal;
 	private Float totalOriginal;
 	private String sysGuid;
+	private Float comisiones;
+	private Float gastos;
+	private Float impuestos;
+	private Float comisionesOriginal;
+	private Float gastosOriginal;
+	private Float impuestosOriginal;
 
 	// Estado
 	private String estadoCod;
@@ -193,5 +199,41 @@ public class LiquidacionDTO extends WebDto {
 	}
 	public void setApoderadoDespachoId(Long apoderadoDespachoId) {
 		this.apoderadoDespachoId = apoderadoDespachoId;
+	}
+	public Float getComisiones() {
+		return comisiones;
+	}
+	public void setComisiones(Float comisiones) {
+		this.comisiones = comisiones;
+	}
+	public Float getGastos() {
+		return gastos;
+	}
+	public void setGastos(Float gastos) {
+		this.gastos = gastos;
+	}
+	public Float getImpuestos() {
+		return impuestos;
+	}
+	public void setImpuestos(Float impuestos) {
+		this.impuestos = impuestos;
+	}
+	public Float getComisionesOriginal() {
+		return comisionesOriginal;
+	}
+	public void setComisionesOriginal(Float comisionesOriginal) {
+		this.comisionesOriginal = comisionesOriginal;
+	}
+	public Float getGastosOriginal() {
+		return gastosOriginal;
+	}
+	public void setGastosOriginal(Float gastosOriginal) {
+		this.gastosOriginal = gastosOriginal;
+	}
+	public Float getImpuestosOriginal() {
+		return impuestosOriginal;
+	}
+	public void setImpuestosOriginal(Float impuestosOriginal) {
+		this.impuestosOriginal = impuestosOriginal;
 	}
 }

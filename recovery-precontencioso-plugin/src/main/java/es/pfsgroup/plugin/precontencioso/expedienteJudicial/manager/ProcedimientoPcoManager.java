@@ -65,8 +65,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			
 			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
 			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-			DDEstadoPreparacionPCO estadoFinalizado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.FINALIZADO);
-			historicoNuevoRegistro.setEstadoPreparacion(estadoFinalizado);
+			DDEstadoPreparacionPCO estadoPreparado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARADO);
+			historicoNuevoRegistro.setEstadoPreparacion(estadoPreparado);
 			historicoNuevoRegistro.setFechaInicio(new Date());
 			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
 		}			

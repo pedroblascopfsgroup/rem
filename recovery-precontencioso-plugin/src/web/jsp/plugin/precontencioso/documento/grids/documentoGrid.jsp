@@ -70,10 +70,7 @@ storeDocumentos.on(
 	}
 );
 
-var myRenderer =  function(value, meta) {
-   meta.style = "background-color:lavender;";
-   return value;
-}
+var myRenderer =  'background-color:lavender;';
 
 var cmDocumento = [ 
  	myCboxSelModel2, 
@@ -88,14 +85,14 @@ var cmDocumento = [
 	{header : '<s:message code="precontencioso.grid.documento.estado" text="**Estado" />', dataIndex : 'estado'},
 	{header : '<s:message code="precontencioso.grid.documento.adjunto" text="**Adjunto" />', dataIndex : 'adjunto'},
 	{header : '<s:message code="precontencioso.grid.documento.ejecutivo" text="**Ejecutivo" />', dataIndex : 'ejecutivo'},
-	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor', renderer: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', renderer: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', renderer: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario'}	
+	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor', css: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', css: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', css: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario', css: myRenderer}	
 ]; 
 
 var validacion=false;
@@ -362,7 +359,24 @@ var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, edi
 
 <%-- FUNCION: Chequeo estados para control botones --%>
 var actualizarBotonesDocumentos = function(){
-
+		<%--Manu preguntar a quien hizo este comportamiento --%>
+		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
+		if(myCboxSelModel2.getCount() == 1){
+			editarDocButton.setDisabled(false);
+		}
+		var rowsSelecteds=gridDocumentos.getSelectionModel().getSelections(); 	
+		if(rowsSelecteds.length > 0) {
+			descartarDocButton.setDisabled(false);
+			anularSolicitudesButton.setDisabled(false);
+			for (var i=0; i < rowsSelecteds.length; i++){
+				if(rowsSelecteds[i].get('fechaResultado') != '') {
+					anularSolicitudesButton.setDisabled(true);
+				}
+			}		
+		}
+		
+		return;	
+		
 	    <%--Se comprueba que el procedimiento se encuentre en un estado que permita editar lOs documentos --%>
 		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;

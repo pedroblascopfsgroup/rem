@@ -11,6 +11,7 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
+import es.pfsgroup.plugin.recovery.configuracionEmails.api.ConfiguracionEmailsApi;
 import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
 import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
@@ -85,6 +86,9 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 			proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
 			// tareaNotificacionManager.borrarNotificacionTarea(prorroga.getTarea().getId());
 		}
+		
+		// Se envían los mails automáticos asociados a la tarea
+		proxyFactory.proxy(ConfiguracionEmailsApi.class).enviarEmailsTarea(getTareaExterna(executionContext));
 	}
 
 	/**

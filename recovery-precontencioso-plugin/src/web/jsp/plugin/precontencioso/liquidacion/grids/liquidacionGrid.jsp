@@ -174,15 +174,24 @@ var cmLiquidacion = new Ext.grid.ColumnModel([
 	
 ]);
 
+var botonRefresh = new Ext.Button({
+		text : 'Refresh'
+		,iconCls : 'icon_refresh'
+		,handler:function(){
+			refrescarLiquidacionesGrid();
+		}
+});
+
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
-	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar, new Ext.Toolbar.Fill(), btnGenerar],
+	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar, new Ext.Toolbar.Fill(), btnGenerar,botonRefresh],
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',
 	collapsible: true,
 	sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 });
+
 
 gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
 	actualizarBotonesLiquidacion();

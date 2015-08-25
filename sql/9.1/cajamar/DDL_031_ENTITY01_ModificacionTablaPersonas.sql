@@ -24,7 +24,7 @@ DECLARE
  err_num NUMBER;
  err_msg VARCHAR2(2048); 
  V_MSQL VARCHAR2(8500 CHAR);
-  V_MSQL2 VARCHAR2(8500 CHAR);
+ V_MSQL2 VARCHAR2(8500 CHAR);
 
 
 BEGIN 
@@ -32,23 +32,40 @@ BEGIN
 
   V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  ADD
              (
-                PER_COD_ESTADO_CICLO_VIDA VARCHAR2(50 CHAR),
-		PER_SCORING VARCHAR2(10 CHAR),
-		PER_SERV_NOMINA_PENSION VARCHAR2(1 CHAR),
-		PER_ULTIMA_ACTUACION VARCHAR2(1024 CHAR),
-		PER_SITUACION_CONCURSAL VARCHAR2(1 CHAR),
-		PER_FECHA_CREACION DATE
+                 PER_COD_ESTADO_CICLO_VIDA VARCHAR2(50 CHAR)
+               , CNT_PER_FEC_CLO_VIDA_REL DATE
+               , PER_SCORING VARCHAR2(10 CHAR)
+               , PER_SERV_NOMINA_PENSION VARCHAR2(1 CHAR)
+               , PER_ULTIMA_ACTUACION VARCHAR2(1024 CHAR)
+               , PER_SITUACION_CONCURSAL VARCHAR2(1 CHAR)
             )';
-			
-			 V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  MODIFY
-             (
-                DD_SCL_ID NUMBER(16, 0) NULL,
-		DD_SCE_ID NUMBER(16, 0) NULL
+
+  V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  MODIFY
+            (
+                 DD_SCL_ID NUMBER(16, 0) NULL
+              ,  DD_SCE_ID NUMBER(16, 0) NULL
+              ,  PER_REX_FECHA DATE NULL
+              ,  DD_PNV_ID NULL
+              ,  DD_COS_ID NULL
+              ,  DD_TPG_ID NULL
+              ,  PER_DOC_ID NULL
+              ,  PER_TELEFONO_1 NULL
+              ,  PER_NOM50                VARCHAR2(1200)
+              ,  PER_SEXO                 VARCHAR2(4) 
+              ,  PER_RIESGO_AUTORIZADO    NUMBER(15,2)
+              ,  PER_RIESGO_DISPUESTO     NUMBER(15,2)
+              ,  PER_RIESGO_IND           NUMBER(15,2)
+              ,  PER_PASIVO_VISTA         NUMBER(15,2)
+              ,  PER_PASIVO_PLAZO         NUMBER(15,2)
+              ,  PER_INGRESOS_DOMICILIADOS   VARCHAR2(4) 
+              ,  PER_VR_OTRAS_ENT            NUMBER(15,2)
+              ,  PER_VR_DANIADO_OTRAS_ENT    NUMBER(15,2)
+              ,  PER_VOL_FACTURACION         NUMBER(15,2)             
             )';
 
      
-	 EXECUTE IMMEDIATE V_MSQL;
-	 EXECUTE IMMEDIATE V_MSQL2;
+  EXECUTE IMMEDIATE V_MSQL;
+  EXECUTE IMMEDIATE V_MSQL2;
 
 DBMS_OUTPUT.PUT_LINE(''||TABLA||' Modificada');
 

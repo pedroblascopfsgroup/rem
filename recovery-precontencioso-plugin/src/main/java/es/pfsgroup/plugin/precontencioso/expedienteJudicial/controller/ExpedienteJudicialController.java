@@ -10,15 +10,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
+import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
+import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.BurofaxGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.DocumentoGridDTO;
@@ -236,4 +244,35 @@ public class ExpedienteJudicialController {
 		BurofaxGridDTO burofax = new BurofaxGridDTO();
 		return burofax;
 	}
+	
+	@RequestMapping
+	public String editar(@RequestParam(value = "id", required = true) Long id, ModelMap map){
+		Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(id);
+		map.put("procedimiento", procedimiento);
+		
+		List<DDTipoReclamacion> tiposReclamacion = proxyFactory.proxy(ProcedimientoApi.class).getTiposReclamacion();
+		map.put("tiposReclamacion", tiposReclamacion);
+		
+		List<TipoPlaza> plazas = proxyFactory.proxy(PlazaJuzgadoApi.class).listaPlazas();
+		map.put("plazas",plazas);
+		
+		ProcedimientoPCODTO pcoDto = proxyFactory.proxy(ProcedimientoPcoApi.class).getPrecontenciosoPorProcedimientoId(id);
+		map.put("pcoDto",pcoDto);
+		
+		return "plugin/precontencioso/tabs/editaCabeceraProcedimientoPco";
+		
+	}
+	
+	@RequestMapping
+	public String saveDatosPrc(WebRequest request){
+		ActualizarProcedimientoPcoDtoInfo dto = creaDTOParaActualizar(request);
+		proxyFactory.proxy(ProcedimientoPcoApi.class).actualizaProcedimiento(dto);
+		return "default";
+	}
+	
+	private ActualizarProcedimientoPcoDtoInfo creaDTOParaActualizar(
+			final WebRequest request) {
+		return DynamicDtoUtils.create(ActualizarProcedimientoPcoDtoInfo.class, request);
+	}
+
 }

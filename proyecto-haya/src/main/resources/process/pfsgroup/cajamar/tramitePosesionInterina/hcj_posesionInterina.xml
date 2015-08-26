@@ -350,5 +350,13 @@
 		</event>
 	</end-state>
 
-	<end-state name="Fin2"></end-state>
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
 </process-definition>

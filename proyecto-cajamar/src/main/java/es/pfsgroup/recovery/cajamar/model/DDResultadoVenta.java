@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.hrebcc.model;
+package es.pfsgroup.recovery.cajamar.model;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;

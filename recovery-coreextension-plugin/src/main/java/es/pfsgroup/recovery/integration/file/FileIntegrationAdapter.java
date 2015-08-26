@@ -209,9 +209,15 @@ public class FileIntegrationAdapter {
 		String content = createTextFile(mensajeOriginal);
 		StringBuilder sb = new StringBuilder();
 		sb.append(content)
-			.append(LINE_SEPARATOR)
-			.append(mensajeError.getMessage())
-			.append(mensajeError.getStackTrace());
+			.append(LINE_SEPARATOR);
+		if (mensajeError.getCause()!=null) {
+			sb.append("CAUSA\n")
+			.append(mensajeError.getCause().getMessage()).append("\n")
+			.append(mensajeError.getCause().getStackTrace()).append("\n");
+		}
+		sb.append("\n")
+			.append(mensajeError.getMessage()).append("\n")
+			.append(mensajeError.getStackTrace()).append("\n");
 		writeFile(finalFile, sb.toString());
 			
 		// Elimina el mensaje original

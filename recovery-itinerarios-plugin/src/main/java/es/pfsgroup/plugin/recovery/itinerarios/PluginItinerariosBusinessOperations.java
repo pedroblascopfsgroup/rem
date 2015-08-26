@@ -21,6 +21,8 @@ public class PluginItinerariosBusinessOperations {
 	
 	public static final String AEX_MGR_LISTAREC="plugin.itinerarios.ddAmbitoExpediente.listaAmbitoExpedienteRecuperaciones";
 	
+	public static final String AEX_MGR_LISTA_BY_REGLA = "plugin.itinerarios.ddAmbitoExpediente.listaAmbitoExpedienteByRegla";
+	
 	/**
 	 * @param id del tipo de itinerario
 	 * @return devuelve una lista de ambitos de Expediente dependiendo del tipo de itinerario

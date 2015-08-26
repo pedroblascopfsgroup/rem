@@ -9,7 +9,7 @@
 		<on-entry>
 			<evaluate expression="executor.execute('plugin.itinerarios.estados.getEstadoRevisarExpediente',id)" result="flowScope.estado"/>
 			<evaluate expression="executor.execute('plugin.itinerarios.reglasElevacion.getRestoReglasRE',id)" result="flowScope.ddTipoReglasElevacion"/>
-			<evaluate expression="executor.execute('plugin.itinerarios.ddAmbitoExpediente.listaAmbitoExpediente')" result="flowScope.ddAmbitoExpediente"/>	
+			<!-- <evaluate expression="executor.execute('plugin.itinerarios.ddAmbitoExpediente.listaAmbitoExpediente')" result="flowScope.ddAmbitoExpediente"/>  -->	
 		</on-entry>
 		
 	</end-state>

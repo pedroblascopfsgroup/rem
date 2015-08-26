@@ -15,10 +15,10 @@ public interface ARQModeloDao extends AbstractDao<ARQModelo, Long> {
 
 	/**
 	 * 
-	 * @param dto de búsqueda de modelos
+	 * @param dto de bï¿½squeda de modelos
 	 * @return devuelve una lista paginada de modelos cuyos criterios
-	 * de búsqueda coincidan con los del dto que le pasamos como entrada
+	 * de bï¿½squeda coincidan con los del dto que le pasamos como entrada
 	 */
-	public Page findModelos(ARQDtoBusquedaModelo dto); 
+	public Page findModelos(ARQDtoBusquedaModelo dto);
 
 }

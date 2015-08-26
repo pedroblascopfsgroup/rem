@@ -266,7 +266,7 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H002','H002_SolicitarInformeFiscal','TGCONGE','SUCONGE')
 ,T_TIPO_VALOR('H002','H002_AdjuntarInformeFiscal','TGCONGE','SUCONGE')
 ,T_TIPO_VALOR('H002','H002_PrepararInformeSubasta','TGCONGE','SUCONGE')
-,T_TIPO_VALOR('H002','H002_ValidarInformeDeSubasta','TSUCONGE','SUCONT')
+,T_TIPO_VALOR('H002','H002_ValidarInformeDeSubasta','TSUCONGE','SUCONGEN2')
 ,T_TIPO_VALOR('H002','H002_ObtenerValidacionComite','TGCTRGE','DRECU')
 ,T_TIPO_VALOR('H002','H002_DictarInstruccionesSubasta','TGCONGE','SUCONGE')
 ,T_TIPO_VALOR('H002','H002_SolicitarSuspenderSubasta','CJ-814','GCONGE')
@@ -369,6 +369,7 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H036','H036_SubastaDecision','CJ-819','')
 ,T_TIPO_VALOR('H036','H036_SuspenderSubasta','TGCONGE','SUCONGEN2')
 ,T_TIPO_VALOR('H036','H036_ValidarPropuesta','TSUCONGE','SUCONGEN2')
+,T_TIPO_VALOR('H004','H004_ValidarInformeDeSubasta','TSUCONGE','SUCONGEN2')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

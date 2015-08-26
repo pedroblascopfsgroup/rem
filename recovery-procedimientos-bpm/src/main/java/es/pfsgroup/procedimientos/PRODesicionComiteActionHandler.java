@@ -58,7 +58,7 @@ public class PRODesicionComiteActionHandler extends PROBaseActionHandler impleme
 
         String comeFrom = executionContext.getTransitionSource().getName();
 
-        if (!GENERAR_NOTIFICACION.equals(comeFrom)) {
+        if (!(GENERAR_NOTIFICACION.equals(comeFrom) || DECISION_COMITE_AUTO.equals(comeFrom))) {
             //Se deber� generar la tarea para el gestor
             Estado estadoRE = arquetipoManager.getWithEstado(idArquetipo).getItinerario().getEstado(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
             Estado estadoCE = arquetipoManager.getWithEstado(idArquetipo).getItinerario().getEstado(DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE);

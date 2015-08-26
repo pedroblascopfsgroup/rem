@@ -1329,6 +1329,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         Expediente exp = expedienteDao.get(idExpediente);
         Long bpmProcess = exp.getProcessBpm();
         if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+//        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, null);
         String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
         if (ExpedienteBPMConstants.STATE_REVISION_EXPEDIENTE.equals(node)) {
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVERACOMPLETAR);

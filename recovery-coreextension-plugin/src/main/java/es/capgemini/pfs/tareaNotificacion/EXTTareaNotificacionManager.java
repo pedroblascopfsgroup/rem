@@ -726,7 +726,11 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
             tareaNotificacion.setAsunto(asu);
             tareaNotificacion.setEstadoItinerario(asu.getEstadoItinerario());
-            tareaNotificacion.setEmisor(asu.getGestor().getUsuario().getApellidoNombre());
+            if (Checks.esNulo(asu.getGestor())) {
+            	tareaNotificacion.setEmisor("Automático");
+            } else {
+            	tareaNotificacion.setEmisor(asu.getGestor().getUsuario().getApellidoNombre());
+            }
         }
         if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(codigoTipoEntidad)) {
             Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idEntidad);
@@ -735,6 +739,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             tareaNotificacion.setEstadoItinerario(proc.getAsunto().getEstadoItinerario());
             if (proc.getAsunto().getGestor() != null) {
                 tareaNotificacion.setEmisor(proc.getAsunto().getGestor().getUsuario().getApellidoNombre());
+            } else {
+            	tareaNotificacion.setEmisor("Automático");
             }
         }
         if (DDTipoEntidad.CODIGO_ENTIDAD_NOTIFICACION.equals(codigoTipoEntidad)) {

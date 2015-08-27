@@ -24,6 +24,8 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 	@Autowired
 	IntegracionBpmService bpmIntegrationService;
 	
+	private ConfiguracionEmailsApi configuracionEmails;
+	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
 		printInfoNode("Sale nodo", executionContext);
@@ -88,7 +90,9 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 		}
 		
 		// Se envían los mails automáticos asociados a la tarea
-		proxyFactory.proxy(ConfiguracionEmailsApi.class).enviarEmailsTarea(getTareaExterna(executionContext));
+		if(configuracionEmails != null) {
+			configuracionEmails.enviarEmailsTarea(getTareaExterna(executionContext));
+		}
 	}
 
 	/**
@@ -182,5 +186,19 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 	public String getCity() {
 		return city;
 	}
+	
+	/**
+	 * @return the configuracionEmails
+	 */
+	public ConfiguracionEmailsApi getConfiguracionEmails() {
+		return configuracionEmails;
+	}
 
+	/**
+	 * @param configuracionEmails the configuracionEmails to set
+	 */
+	public void setConfiguracionEmails(
+			ConfiguracionEmailsApi configuracionEmails) {
+		this.configuracionEmails = configuracionEmails;
+	}
 }

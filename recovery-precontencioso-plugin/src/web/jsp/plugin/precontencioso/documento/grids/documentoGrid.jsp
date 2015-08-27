@@ -86,7 +86,7 @@ var cmDocumento = [
 	{header : '<s:message code="precontencioso.grid.documento.adjunto" text="**Adjunto" />', dataIndex : 'adjunto'},
 	{header : '<s:message code="precontencioso.grid.documento.ejecutivo" text="**Ejecutivo" />', dataIndex : 'ejecutivo'},
 	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor', css: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', css: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', css: myRenderer, hidden:'true'},
 	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud', css: myRenderer},	
 	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado', css: myRenderer},	
 	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', css: myRenderer},	
@@ -361,11 +361,15 @@ var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, edi
 var actualizarBotonesDocumentos = function(){
 		<%--Manu preguntar a quien hizo este comportamiento --%>
 		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
+		solicitarDocButton.setDisabled(false);
+		incluirDocButton.setDisabled(false);
+		
 		if(myCboxSelModel2.getCount() == 1){
 			editarDocButton.setDisabled(false);
 		}
 		var rowsSelecteds=gridDocumentos.getSelectionModel().getSelections(); 	
 		if(rowsSelecteds.length > 0) {
+			incluirDocButton.setDisabled(true);
 			descartarDocButton.setDisabled(false);
 			anularSolicitudesButton.setDisabled(false);
 			for (var i=0; i < rowsSelecteds.length; i++){

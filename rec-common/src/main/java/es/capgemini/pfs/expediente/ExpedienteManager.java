@@ -735,19 +735,23 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         // Se asigna como contrato de pase el de mayor riesgo de la persona de pase (artf554001)
         List<Contrato> contratos = (List<Contrato>) executor.execute(
                 PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
-        Contrato contratoMax = contratos.get(0);
-        Float riesgoMax = contratoMax.getRiesgo();
-        for (Contrato contrato : contratos) {
-            Float riesgo = contrato.getRiesgo();
-            if (riesgo > riesgoMax) {
-                contratoMax = contrato;
-                riesgoMax = riesgo;
-            }
+        if (contratos.size()>0) {
+	        Contrato contratoMax = contratos.get(0);
+	        Float riesgoMax = contratoMax.getRiesgo();
+	        for (Contrato contrato : contratos) {
+	            Float riesgo = contrato.getRiesgo();
+	            if (riesgo > riesgoMax) {
+	                contratoMax = contrato;
+	                riesgoMax = riesgo;
+	            }
+	        }
+	        // Creamos el expediente
+	        Expediente expediente = crearExpedienteManual(idPersona, contratoMax.getId());
+	       
+	        return expediente;
+        } else {
+        	return null;
         }
-        // Creamos el expediente
-        Expediente expediente = crearExpedienteManual(idPersona, contratoMax.getId());
-
-        return expediente;
     }
 
     /**

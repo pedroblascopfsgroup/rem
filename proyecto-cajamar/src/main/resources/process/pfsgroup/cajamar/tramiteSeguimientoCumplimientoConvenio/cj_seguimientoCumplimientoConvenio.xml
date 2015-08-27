@@ -243,14 +243,14 @@
 		<transition to="H041_espera" name="espera"></transition>
 	</decision>
 
-	<state name="H041_EsperaSiguientePago">
-		<event type="node-enter">
-			<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-         		<targetBean>siguientePagoHandler</targetBean>
-      		</action>
-		</event>
+	<node name="H041_EsperaSiguientePago">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>siguientePagoHandler
+			</targetBean>
+		</action>
 		<transition to="H041_registrarCumplimiento" name="avanzaBPM"></transition>
-	</state>
+	</node>
 	
 	<end-state name="Fin">
 		<event type="node-enter">

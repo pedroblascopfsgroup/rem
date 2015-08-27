@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_seguimientoCumplimientoConvenio" width="1457" height="1043">
+<root-container name="cj_seguimientoCumplimientoConvenio" width="1457" height="1032">
   <node name="Inicio" x="482" y="7" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -40,7 +40,7 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-52" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -64,7 +64,7 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-23" y="222"/>
       <bendpoint w1="122" h1="-39" w2="-178" h2="457"/>
       <bendpoint w1="122" h1="-492" w2="-178" h2="4"/>
     </edge>
@@ -143,7 +143,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="503" y="1006" width="132" height="36"/>
   <node name="H041_ObtenerInformeSemestral" x="-123" y="544" width="227" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -168,9 +167,10 @@
       <bendpoint w1="-176" h1="-235" w2="-185" h2="0"/>
     </edge>
   </node>
-  <node name="H041_EsperaSiguientePago" x="-133" y="305" width="239" height="36">
+  <node name="H041_EsperaSiguientePago" x="128" y="543" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="Fin" x="442" y="993" width="132" height="36"/>
 </root-container>

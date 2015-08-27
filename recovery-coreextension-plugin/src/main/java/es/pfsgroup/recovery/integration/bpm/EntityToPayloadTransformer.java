@@ -1,11 +1,13 @@
 package es.pfsgroup.recovery.integration.bpm;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.core.Message;
+import org.springframework.integration.core.MessageHeaders;
 import org.springframework.integration.message.MessageBuilder;
 
 import es.capgemini.devon.security.SecurityUtils;
@@ -115,6 +117,22 @@ public class EntityToPayloadTransformer {
 		return extTareaNotif;
 	}
 
+	protected Message<DataContainerPayload> createMessage(Message<?> originalMsg, 
+			DataContainerPayload payload,
+			String group) {
+		// Construye el nuevo mensaje
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HHmmss-SSSSSS");
+		//String id = String.format("%s.%s.%s", sdf.format(new java.util.Date()), payload.getTipo(), group);
+		String id = String.format("%s.%s", sdf.format(new java.util.Date()), payload.getTipo());
+		Message<DataContainerPayload> newMessage = MessageBuilder
+				.withPayload(payload)
+				.copyHeaders(originalMsg.getHeaders())
+				.setHeader(MessageHeaders.ID, id)
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, group)
+				.build();
+		return newMessage;
+	}
+	
 	protected DataContainerPayload getNewPayload(Message<?> message) {
 		if (!message.getHeaders().containsKey(TypePayload.HEADER_MSG_TYPE)) {
 			throw new IntegrationDataException(String.format("[INTEGRACION] El mensaje no tiene asignado tipo de mensaje en la cabecera, por favor asigne el valor %s a la cabecera.", TypePayload.HEADER_MSG_TYPE));
@@ -175,11 +193,13 @@ public class EntityToPayloadTransformer {
 		postProcessDataContainer(data);
  
 		//translateValues(message);
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		String grpId = tareaPayload.getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, tareaPayload.getAsunto().getGuid())
-				.build();
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, tareaPayload.getAsunto().getGuid())
+				.build();*/
 		return newMessage;
 	}	
 	
@@ -200,11 +220,13 @@ public class EntityToPayloadTransformer {
 		postProcessDataContainer(data);
 		
 		//translateValues(message);
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		String grpId = tareaPayload.getProcedimiento().getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, tareaPayload.getProcedimiento().getAsunto().getGuid())
-				.build();
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, tareaPayload.getProcedimiento().getAsunto().getGuid())
+				.build();*/
 		return newMessage;
 	}	
 
@@ -220,11 +242,14 @@ public class EntityToPayloadTransformer {
 		postProcessDataContainer(data);
 		
 		//translateValues(message);
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		String grpId = procPayload.getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, procPayload.getAsunto().getGuid())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, procPayload.getAsunto().getGuid())
 				.build();
+*/
 		return newMessage;
 	}	
 
@@ -254,11 +279,13 @@ public class EntityToPayloadTransformer {
 		recursoPayload.getProcedimiento().translate(diccionarioCodigos);
 		
 		//translateValues(message);
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		String grpId = recursoPayload.getProcedimiento().getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, recursoPayload.getProcedimiento().getAsunto().getGuid())
-				.build();
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, recursoPayload.getProcedimiento().getAsunto().getGuid())
+				.build();*/
 		return newMessage;
 	}
 	
@@ -271,12 +298,14 @@ public class EntityToPayloadTransformer {
 		SubastaPayload subastaPayload = new SubastaPayload(data, subasta);
 		postProcessDataContainer(data);
 		
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		String grpId = subastaPayload.getProcedimiento().getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, subastaPayload.getProcedimiento().getAsunto().getGuid())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, subastaPayload.getProcedimiento().getAsunto().getGuid())
 				.build();
-		
+*/		
 		return newMessage;
 	}
 	
@@ -302,12 +331,13 @@ public class EntityToPayloadTransformer {
 			acuerdoPayload.setEsSupervisor(esSupervisor);
 		}
 		
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, acuerdoPayload.getAsunto().getGuid());
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAsunto().getGuid())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, acuerdoPayload.getAsunto().getGuid())
 				.build();
-		
+	*/	
 		return newMessage;
 	}
 
@@ -319,12 +349,13 @@ public class EntityToPayloadTransformer {
 		ActuacionesRealizadasPayload acuerdoPayload = new ActuacionesRealizadasPayload(data, actRealizada);
 		postProcessDataContainer(data);
 		
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, acuerdoPayload.getAcuerdo().getAsunto().getGuid());
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAcuerdo().getAsunto().getGuid())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, acuerdoPayload.getAcuerdo().getAsunto().getGuid())
 				.build();
-		
+	*/	
 		return newMessage;
 	}
 	
@@ -336,12 +367,13 @@ public class EntityToPayloadTransformer {
 		ActuacionesAExplorarPayload acuerdoPayload = new ActuacionesAExplorarPayload(data, actAExplorar);
 		postProcessDataContainer(data);
 		
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, acuerdoPayload.getAcuerdo().getAsunto().getGuid());
+/*		Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, acuerdoPayload.getAcuerdo().getAsunto().getGuid())
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, acuerdoPayload.getAcuerdo().getAsunto().getGuid())
 				.build();
-		
+	*/	
 		return newMessage;
 	}
 	
@@ -361,11 +393,12 @@ public class EntityToPayloadTransformer {
 			.buildTerminoBien(listadoTerminoBienes);
 		postProcessDataContainer(data);
 		
-		Message<DataContainerPayload> newMessage = MessageBuilder
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, payload.getAcuerdo().getAsunto().getGuid());
+		/*Message<DataContainerPayload> newMessage = MessageBuilder
 				.withPayload(data)
 				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_DESC, payload.getAcuerdo().getAsunto().getGuid())
-				.build();
+				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, payload.getAcuerdo().getAsunto().getGuid())
+				.build();*/
 		
 		return newMessage;
 	}

@@ -185,7 +185,13 @@ DECLARE
       	/*username.........*/ 'CJ_SUEXT',
       	/*password.........*/ '1234',
       	/*nombre usuario ..*/ 'CJ_SUEXT',
-      	/*nombre-despacho..*/ 'Despacho Supervisor Externo')
+      	/*nombre-despacho..*/ 'Despacho Supervisor Externo'),
+      T_TIPO_TFA(
+      	/*codigo tde.......*/ 'D-SUGEN2',
+      	/*username.........*/ 'CJ_SUGEN2',
+      	/*password.........*/ '1234',
+      	/*nombre usuario ..*/ 'CJ_SUCONGEN2',
+      	/*nombre-despacho..*/ 'Despacho Supervisor contencioso gestión nivel 2 CJ')
 
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;

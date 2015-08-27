@@ -1,6 +1,7 @@
 package es.pfsgroup.concursal.credito.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -71,6 +72,9 @@ public class Credito implements Serializable, Auditable{
 	
 	@Column(name = "CRE_PRINCIPAL_FINAL")
 	private Double principalDefinitivo;
+	
+	@Column(name = "CRE_FECHA_VENCIMIENTO")
+	private Date fechaVencimiento;	
 	
 	@Column(name="SYS_GUID")
 	private String guid;
@@ -184,6 +188,14 @@ public class Credito implements Serializable, Auditable{
 
 	public DDEstadoCredito getEstadoCredito() {
 		return estadoCredito;
+	}
+
+	public Date getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+
+	public void setFechaVencimiento(Date fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
 	}
 	
 	public String getGuid() {

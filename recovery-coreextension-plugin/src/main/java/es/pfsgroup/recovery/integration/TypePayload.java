@@ -7,7 +7,7 @@ public class TypePayload {
 
 	public final static String HEADER_MSG_ENTIDAD = "rec-msg-entity";
 	public final static String HEADER_MSG_TYPE = "rec-msg-type";
-	public final static String HEADER_MSG_DESC = "rec-msg-desc";
+	public final static String HEADER_MSG_GROUP = "rec-msg-grp";
 	
 	/**
 	 * Campo más importante, tipo de mensaje

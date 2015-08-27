@@ -1,11 +1,11 @@
 package es.capgemini.pfs.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.Session;
@@ -17,25 +17,27 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoAdjuntoMail;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.Encriptador;
 
+@Component
 public class GenericMailUtils {
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	
-	private static final String DEVON_HOME_BANKIA = "datos/usuarios/recovecp";
-	private static final String DEVON_HOME = "DEVON_HOME";
 	private static final String MAIL_SMTP_USER = "mail.smtp.user";
 	private static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
 	private static final String MAIL_SMTP_PORT = "mail.smtp.port";
 	private static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
 	private static final String MAIL_SMTP_HOST = "mail.smtp.host";
 	private static final String TRANSPORT_SMTP = "smtp";
-	
-	private static final String DEVON_PROPERTIES = "devon.properties";
 	
 	// Entradas en devon.properties que servirán para componer el mensaje
 	private static final String MAIL_FROM = "agendaMultifuncion.mail.from";
@@ -44,21 +46,14 @@ public class GenericMailUtils {
 	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
 	private static final String USUARIO_CORREO = "agendaMultifuncion.mail.usuario";
 	
+	@Resource
 	private Properties appProperties;
 
-	private static GenericMailUtils genericMailUtils;
+	@Autowired
+	private VelocityEngine velocityEngine;
 	
-	public static GenericMailUtils dameInstancia() {
-		if (genericMailUtils == null) {
-			genericMailUtils = new GenericMailUtils();
-		}
-		
-		return genericMailUtils;
-	}
-	
-	public GenericMailUtils() {
-		this.appProperties = cargarProperties(DEVON_PROPERTIES);
-	}	
+	@Autowired 
+	private UtilDiccionarioApi utilDiccionario;
 
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc, String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
 
@@ -126,8 +121,6 @@ public class GenericMailUtils {
 				System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos cuerpoEmail al body]");
 			}
 
-			//logger.debug("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] mensaje=" + emailFrom + ", " + mailsPara.toString() + "," + direccionesMailCc.toString() + "," + asuntoMail);
-
 			// Lo enviamos.
 			Transport t = session.getTransport(TRANSPORT_SMTP);
 
@@ -161,6 +154,23 @@ public class GenericMailUtils {
 		}
 	}
 	
+	public String createContentWithVelocityFromString(String stringTemplate, Map<String, String> model) throws Exception {
+		
+		try {
+			StringWriter writer = new StringWriter();
+			VelocityContext velocityContext = new VelocityContext(model);
+						
+			velocityEngine.evaluate(velocityContext, writer, "Mail template", stringTemplate);
+			
+	        return writer.toString();
+		}
+		catch (Exception e) {
+			logger.error("\n" + e.getMessage() + "\n");
+			throw new Exception(e);
+		}
+    }
+	
+	
 	private Properties getPropiedades() {	
 		
 		Properties props = new Properties();
@@ -174,32 +184,5 @@ public class GenericMailUtils {
 		
 
 		return props;
-	}
-	
-	private Properties cargarProperties(String nombreProps) {
-
-		InputStream input = null;
-		Properties prop = new Properties();
-		
-		String devonHome = DEVON_HOME_BANKIA;
-		if (System.getenv(DEVON_HOME) != null) {
-			devonHome = System.getenv(DEVON_HOME);
-		}
-		
-		try {
-			input = new FileInputStream("/" + devonHome + "/" + nombreProps);
-			prop.load(input);
-		} catch (IOException ex) {
-			System.out.println("[GenericMailUtils.cargarProperties]: " + ex.getMessage() + " /" + devonHome + "/" + nombreProps);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					System.out.println("[GenericMailUtils.cargarProperties]: " + e.getMessage());
-				}
-			}
-		}
-		return prop;
 	}
 }

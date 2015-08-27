@@ -8,7 +8,7 @@ import org.springframework.integration.core.Message;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.integration.Rule;
 
-public class TypePayloadRegexRule<T extends TypePayload> implements Rule<T> {
+public class TypePayloadHeadersRegexRule<T extends TypePayload> implements Rule<T> {
 
 	private Pattern tipo;
 	private Pattern entidad;
@@ -35,26 +35,6 @@ public class TypePayloadRegexRule<T extends TypePayload> implements Rule<T> {
 		if (message==null || !this.isValidRule()) {
 			return false;
 		}
-		TypePayload payload = message.getPayload();
-		if (!Checks.esNulo(tipo)) { // comprueba este campo.
-			boolean matches = match(tipo, payload.getTipo());
-			if (!matches) {
-				return false;
-			}
-		}
-		if (!Checks.esNulo(entidad)) { // comprueba este campo.
-			boolean matches = match(entidad, payload.getEntidad());
-			if (!matches) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public boolean checkHeaders(Message<T> message) {
-		if (message==null || !this.isValidRule()) {
-			return false;
-		}
 		if (!Checks.esNulo(tipo)) { // comprueba este campo.
 			String tipoHeader = (message.getHeaders().containsKey(TypePayload.HEADER_MSG_TYPE)) ? (String)message.getHeaders().get(TypePayload.HEADER_MSG_TYPE) : "";
 			boolean matches = match(tipo, tipoHeader);
@@ -63,7 +43,7 @@ public class TypePayloadRegexRule<T extends TypePayload> implements Rule<T> {
 			}
 		}
 		if (!Checks.esNulo(entidad)) { // comprueba este campo.
-			String entidadHeader = (message.getHeaders().containsKey(TypePayload.HEADER_MSG_TYPE)) ? (String)message.getHeaders().get(TypePayload.HEADER_MSG_ENTIDAD) : "";
+			String entidadHeader = "haya01";//(message.getHeaders().containsKey(TypePayload.HEADER_MSG_TYPE)) ? (String)message.getHeaders().get(TypePayload.HEADER_MSG_ENTIDAD) : "";
 			boolean matches = match(entidad, entidadHeader);
 			if (!matches) {
 				return false;

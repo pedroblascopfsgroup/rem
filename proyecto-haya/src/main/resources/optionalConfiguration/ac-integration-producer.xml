@@ -40,12 +40,13 @@
 		 El orden de las salidas es importante
 		 *************	 --> 
 	<integration:chain input-channel="integra.salida.peticion" output-channel="integra.salida.canonical">
+		<integration:filter method="accept" ref="filtroPorCabeceras" />
 		<integration:transformer>
 			<bean class="es.pfsgroup.recovery.haya.integration.bpm.EntityToPayloadTransformer">
 				<constructor-arg ref="diccionarioCodigosProducer"/>
 			</bean>
 		</integration:transformer>
-		<integration:filter method="accept" ref="syncProducerRules" />
+		<!-- integration:filter method="accept" ref="filtroPorContenido" / -->
 	</integration:chain>
 
 	<!-- ************* 
@@ -54,14 +55,14 @@
 		 	- Transforma la salida en JSON
 		 	- guarda en DISCO
 		 *************	 --> 
-	<integration:channel id="integra.salida.fichero.out"/>
+	<!-- integration:channel id="integra.salida.fichero.out"/>
 	<integration:channel id="integra.salida.fichero.in"/>
 	<integration:channel id="integra.salida.error"/>
 	<integration:publish-subscribe-channel id="integra.salida.salida"/>
 	
 	<integration:chain input-channel="integra.salida.canonical" output-channel="integra.salida.fichero.out">
-		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />	<!-- CONVIERTE EN FORMATO JSON -->
-		<integration:transformer ref="salidaIntegracionAdapter" method="transformMsg2file"/>	<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					CONVIERTE EN FORMATO JSON 
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformMsg2file"/>				CONVIERTE EN FORMATO FICHERO CON METADATA
 	</integration:chain>
 	<file:outbound-channel-adapter
 			channel="integra.salida.fichero.out" 
@@ -77,8 +78,17 @@
 	<integration:chain input-channel="integra.salida.fichero.in" output-channel="integra.salida.salida">
 		<integration:header-enricher error-channel="integra.salida.error" />
 		<file:file-to-string-transformer delete-files="false" charset="UTF-8"/>
-		<integration:transformer ref="salidaIntegracionAdapter" method="transformFile2msg" /> <!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
- 		<integration:service-activator ref="salidaIntegracionAdapter" method="checkExistErrorFolder" /> <!-- ROUTER PARA MENSAJES CON ERROR -->
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformFile2msg" />  				CONVIERTE EN FORMATO FICHERO CON METADATA 
+ 		<integration:service-activator ref="salidaIntegracionAdapter" method="checkExistErrorFolder" />		ROUTER PARA MENSAJES CON ERROR 
+	</integration:chain>
+	-->
+
+	<integration:channel id="integra.salida.fichero"/>
+	<integration:channel id="integra.salida.error"/>
+	<integration:publish-subscribe-channel id="integra.salida.salida"/>
+	<integration:chain input-channel="integra.salida.canonical" output-channel="integra.salida.salida">
+		<integration:header-enricher error-channel="integra.salida.error" />
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					<!-- CONVIERTE EN FORMATO JSON --> 
 	</integration:chain>
 
 	<!-- ************* 
@@ -89,9 +99,15 @@
 		id="jmsout"
 		channel="integra.salida.salida"
 		order="1"
-		destination="integracionProducerQueue" /> 
+		destination="integracionProducerQueue" />
+	<integration:transformer 
+		input-channel="integra.salida.salida" 
+		order="2" 
+		output-channel="integra.salida.fichero" 
+		ref="salidaIntegracionAdapter" 
+		method="transformMsg2file"/>				<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->		
 	<integration:outbound-channel-adapter 
-		channel="integra.salida.salida" 
+		channel="integra.salida.fichero" 
 		order="2" 
 		ref="salidaIntegracionAdapter" 
 		method="writeLogMsgStr" />
@@ -116,10 +132,10 @@
 	<!-- ***************** -->
 	<!-- REGLAS DE SALIDA -->
 	<!-- ***************** -->
-	<bean id="syncProducerRules" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
+	<bean id="filtroPorCabeceras" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
 		<constructor-arg>
 			<list>
-				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
 					<property name="entidad" value="${integracion.producer.filtro.entidad}" />	<!-- DEJAMOS PASAR MENSAJES DE LA ENTIDAD CAJAMAR -->
 					<property name="tipo" value="BPM-TAREA-.+|DATOS-RECURSO|DATOS-SUBASTA|DATOS-ACUERDO.+" />
 				</bean>
@@ -127,6 +143,17 @@
 			</list>
 		</constructor-arg>
 	</bean>
+	<!-- bean id="filtroPorContenido" class="es.pfsgroup.recovery.integration.RuleMessageSelector">
+		<constructor-arg>
+			<list>
+				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+					<property name="entidad" value="${integracion.producer.filtro.entidad}" />	
+					<property name="tipo" value="BPM-TAREA-.+|DATOS-RECURSO|DATOS-SUBASTA|DATOS-ACUERDO.+" />
+				</bean>
+				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
+			</list>
+		</constructor-arg>
+	</bean -->
 
 	<!-- TRADUCTOR DE CODIGOS PROCEDIMIENTOS, TAREAS, DD -->
 	<bean id ="diccionarioCodigosProducer" class="es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos">

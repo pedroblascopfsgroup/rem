@@ -658,6 +658,15 @@ Ext.namespace('Ext.ux.plugins');
 	var columMemoryPlugin = new Ext.ux.plugins.CheckBoxMemory();
 	var separadorButtons = new Ext.Toolbar.Fill();	
 
+
+	var botonRefresh = new Ext.Button({
+			text : 'Refresh'
+			,iconCls : 'icon_refresh'
+			,handler:function(){
+				refrescarDocumentosGrid();
+			}
+	});
+
 var gridDocumentos = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
 		,columns: cmDocumento
@@ -671,7 +680,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,cls:'cursor_pointer'
 		,height: 250
 		,autoWidth: true			
-		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton ]
+		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
 	});
 	
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {

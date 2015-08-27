@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +18,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
@@ -30,9 +30,6 @@ public class SiguientePagoHandler extends PROBaseActionHandler {
 	private static final String TRANSICION_FIN = "Fin";
 	private static final String TIMER_NAME = "Espera Registrar Cumplimiento";
 	private static final String TIMER_DURATION_MASK = "%d days";
-
-	@Autowired
-	protected ApiProxyFactory proxyFactory;
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -73,8 +70,8 @@ public class SiguientePagoHandler extends PROBaseActionHandler {
 				
 				for (TareaExternaValor tareaExternaValor : listTareaExternaValor) {
 					if ("comboPeriodicidad".equals(tareaExternaValor.getNombre()) || "comboAdhesion".equals(tareaExternaValor.getNombre())) {
-						
 						codigoPeriodicidad = tareaExternaValor.getValor();
+						break;
 					}
 				}
 			}
@@ -90,6 +87,7 @@ public class SiguientePagoHandler extends PROBaseActionHandler {
 						Date dPago = sdf.parse(tareaExternaValor.getValor());
 						if(dPago.getTime() > fechaPago) {
 							fechaPago = dPago.getTime();
+							break;
 						}
 					}
 				}
@@ -97,13 +95,16 @@ public class SiguientePagoHandler extends PROBaseActionHandler {
 		}
 		
 		// Se calcula el tiempo que va a estar la tarea en espera y se crea el timer
-		String duracion = dameDuracion(fechaPago, codigoPeriodicidad);
+		Calendar fechaSiguientePago = calculaFechaSiguientePago(fechaPago, codigoPeriodicidad);
+		String duracion = dameDuracion(fechaPago, fechaSiguientePago);
 		BPMUtils.createTimer(executionContext, TIMER_NAME, duracion, BPMContants.TRANSICION_AVANZA_BPM);
+		
+		// Se guarda la fecha del siguiente pago
+		this.setVariable("fechaSiguientePago", DateFormatUtils.format(fechaSiguientePago.getTime(), "yyyy-MM-dd"), executionContext);
 	}
 
-	// Devuelve una cadena con la duración en días que va a tener la espera, teniendo en cuenta la periodicidad del acuerdo 
-	private String dameDuracion(long fechaPago, String codigoPeriodicidad) {
-		
+	private Calendar calculaFechaSiguientePago(long fechaPago, String codigoPeriodicidad) 
+	{
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTimeInMillis(fechaPago);
 		
@@ -141,7 +142,13 @@ public class SiguientePagoHandler extends PROBaseActionHandler {
 			break;
 		}
 		
-		long diasEspera= (calendar.getTimeInMillis() - fechaPago) / MILLSECS_PER_DAY;
+		return calendar;
+	}
+
+	// Devuelve una cadena con la duración en días que va a tener la espera, teniendo en cuenta la periodicidad del acuerdo 
+	private String dameDuracion(long fechaPago, Calendar fechaSiguientePago) 
+	{
+		long diasEspera= (fechaSiguientePago.getTimeInMillis() - fechaPago) / MILLSECS_PER_DAY;
 		String duracion = String.format(TIMER_DURATION_MASK, diasEspera);
 		
 		return duracion;

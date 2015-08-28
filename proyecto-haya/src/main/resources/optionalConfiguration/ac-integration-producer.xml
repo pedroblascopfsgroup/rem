@@ -68,6 +68,7 @@
 			channel="integra.salida.fichero.out" 
 			directory="${integracion.output}/${integracion.producer.cola}" />
 	<file:inbound-channel-adapter
+			auto-startup="${integracion.activa}"
 			filename-pattern=".+.msg"
 			channel="integra.salida.fichero.in" 
 			directory="${integracion.output}/${integracion.producer.cola}" >

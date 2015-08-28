@@ -202,32 +202,29 @@ var solicitarDocButton = new Ext.Button({
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
-		var p = getParametrosExcluirDescartarSolicitarDocs();		
-		if (rowsSelected == '') {
-			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
-		}
-		else {
-	        if(validacionEditar) {
-		       	Ext.Msg.show({
-				   title:'Aviso',
-				   msg: '<s:message code="precontencioso.grid.documento.crearSolicitudes.aviso" text="**No se puede crear solicitud" />',
-				   buttons: Ext.Msg.OK
-				});
-	        }
-	        else {
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			var p = getParametrosExcluirDescartarSolicitarDocs();		
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+			} else {
+	        	if(validacionEditar) {
+		       		Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="precontencioso.grid.documento.crearSolicitudes.aviso" text="**No se puede crear solicitud" />',
+				   		buttons: Ext.Msg.OK
+					});
+	        	} else {
 			       var w = app.openWindow({
 						flow: 'documentopco/abrirCrearSolicitudes'
 						,params: p				<%--{idDocumento:idDocumento} --%>
 						,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
 						,width: 430
 					});
-				w.on(app.event.DONE, function() {
-					refrescarDocumentosGrid();					
-					w.close(); 
-					
-				});
-				w.on(app.event.CANCEL, function(){ w.close(); });
+					w.on(app.event.DONE, function() {
+						refrescarDocumentosGrid();				
+						w.close(); 				
+					});
+					w.on(app.event.CANCEL, function(){ w.close(); });
 				}
 			}
 		}				
@@ -279,6 +276,21 @@ var anularSolicitudesButton = new Ext.Button({
 			}
 	    }
 	});
+	
+
+	var existeSolDisponible = function(solicitudSeleccionada, documentos) {
+		var data = documentos.store.data;
+		var items = data.items;
+		for(i=0; i < items.length; i++) {
+			if(solicitudSeleccionada.data.idDoc == items[i].data.idDoc) {
+				if("DI" == items[i].data.codigoEstadoDocumento && solicitudSeleccionada.data.id != items[i].data.id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 
 var validacionEstado=false;
 var informarDocButton = new Ext.Button({
@@ -301,8 +313,10 @@ var informarDocButton = new Ext.Button({
 		        var w = app.openWindow({
 						flow: 'documentopco/informarSolicitud'
 						,params: {idSolicitud:rowsSelected[0].get('id'), actor:rowsSelected[0].get('actor'), idDoc:rowsSelected[0].get('idDoc'), 
-							fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
-							fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion')}
+									fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
+									fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion'),
+									existeSolDisponible:existeSolDisponible(rowsSelected[0], gridDocumentos)
+								}
 						,title: '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
 						,width: 640
 					});
@@ -363,7 +377,7 @@ var actualizarBotonesDocumentos = function(){
 		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
 		solicitarDocButton.setDisabled(false);
 		incluirDocButton.setDisabled(false);
-		
+
 		if(myCboxSelModel2.getCount() == 1){
 			editarDocButton.setDisabled(false);
 		}
@@ -693,10 +707,3 @@ var refrescarDocumentosGrid = function() {
 	//storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
 	storeDocumentos.webflow({idProcedimientoPCO: data.id});
 }
-
-
-
-
-
-
-

@@ -158,6 +158,7 @@ public class DocumentoPCOController {
 			@RequestParam(value = "resultado", required = true) String resultado, 
 			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
 			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
+			@RequestParam(value = "existeSolDisponible", required = true) String existeSolDisponible,
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
@@ -166,7 +167,9 @@ public class DocumentoPCOController {
 		
 		DocumentoPCODto doc = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
 		
-		dto.setIdSolicitud(Long.parseLong(idSolicitud));
+		if(!Checks.esNulo(idSolicitud)) {
+			dto.setIdSolicitud(Long.parseLong(idSolicitud));			
+		}
 		dto.setActor(obtenerCodigoDiccionario(DDTipoActorPCO.class, actor));
 		dto.setIdDoc(idDocumento);
 		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, doc.getEstado()));
@@ -206,6 +209,7 @@ public class DocumentoPCOController {
 		model.put("respuestasSolicitud", respuestasSolicitud);		
 		model.put("ddSiNo", ddsino);
 		model.put("ddSiNoNoAplica", ddsinonoaplica);
+		model.put("existeSolDisponible", ("true".equals(existeSolDisponible) ? true : false));
 		
 		return INFORMAR_DOC;
 	}
@@ -589,11 +593,10 @@ public class DocumentoPCOController {
         	dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaEnvio")));
         }
         dto.setComentario(request.getParameter("comentario"));
-        
+     
         documentoPCOApi.saveInformarSolicitud(dto);
         
         return DEFAULT;
-        
 	}
 	
 	private Date parseaFecha(String fecha) {

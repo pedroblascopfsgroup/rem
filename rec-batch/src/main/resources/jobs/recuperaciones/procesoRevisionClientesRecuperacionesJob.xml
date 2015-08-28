@@ -73,14 +73,95 @@
 									
 									
 									
-									
-									
-									
-									
-									
-									
-									
-									
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.limpiarTMPMovRevisados.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.limpiarTMPMovRevisados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.informarContratosReducidos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.informarContratosReducidos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.antecedentes.incrementar.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.antecedentes.incrementar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.antecedentes.actualizar.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.antecedentes.actualizar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.revisarContratosPase.cancelados.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.revisarContratosPase.cancelados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.revisarContratosPase.saldados.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.revisarContratosPase.saldados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.insertarNuevosContratosCliente.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.insertarNuevosContratosCliente" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.eliminarCliConCntsEnExp.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.eliminarCliConCntsEnExp" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.cancelarClientes.borrarContratos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.cancelarClientes.borrarContratos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="clientes.revisionClientes.cancelarClientes.borrarClientes.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="clientes.revisionClientes.cancelarClientes.borrarClientes" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="borrarCntCanceladosclientes.revisionClientes.cancelarContratos.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="borrarCntCanceladosclientes.revisionClientes.cancelarContratos" />
+										<entry key="severidad" value="error" />
+									</map>
+				
 																
 								</list>
 							</property>

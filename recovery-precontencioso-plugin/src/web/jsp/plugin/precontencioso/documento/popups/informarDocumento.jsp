@@ -70,6 +70,11 @@
 	});
 	
 	var validateForm = function(){	
+		if((fechaResultado.getValue() != "" || fechaEnvio.getValue() != "" || fechaRecepcion.getValue().getValue() != "") && comboRespuestasSolicitud.getValue() == "") {
+			Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.informarDocumento.resultadoObligatorio3" text="**Es obligatorio el campo Resultado, si se informa la Fecha Resultado o la Fecha Envío o la Fecha Recepción." />');
+			comboRespuestasSolicitud.focus();
+			return false;
+		}
 	
 		if ('${solicitud.actor}'=='GEST') {
 			if (fechaResultado.getValue() == "" || comboRespuestasSolicitud.getValue() == "") {

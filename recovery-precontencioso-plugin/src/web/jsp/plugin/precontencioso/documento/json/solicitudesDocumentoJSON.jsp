@@ -23,7 +23,7 @@
             <json:property name="fechaSolicitud" value="${s.fechaSolicitud}" />
             <json:property name="fechaResultado" value="${s.fechaResultado}" />
             <json:property name="fechaEnvio" value="${s.fechaEnvio}" />
-            <json:property name="fechaRecepcion" value="${s.fechaEnvio}" />
+            <json:property name="fechaRecepcion" value="${s.fechaRecepcion}" />
             <json:property name="resultado" value="${s.resultado}" />
             <json:property name="comentario" value="${s.comentario}" />
         </json:object>

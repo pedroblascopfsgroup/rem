@@ -577,11 +577,17 @@ public class DocumentoPCOController {
         dto.setIdSolicitud(request.getParameter("idSolicitud"));
         dto.setEstado(request.getParameter("estado"));
         dto.setAdjuntado(request.getParameter("adjuntado"));
-        dto.setEjecutivo(obtenerIdDiccionario(DDSiNoNoAplica.class, request.getParameter("ejecutivo")));
+        if (!Checks.esNulo(request.getParameter("ejecutivo"))) {
+        	DDSiNoNoAplica siNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNoNoAplica.class, request.getParameter("ejecutivo"));
+        	dto.setEjecutivo(siNoAplica.getId());        	
+        }
         dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
         dto.setResultado(request.getParameter("resultado"));
         dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
         dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
+        if(Checks.esNulo(request.getParameter("fechaRecepcion")) && !Checks.esNulo(request.getParameter("fechaEnvio"))) {
+        	dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaEnvio")));
+        }
         dto.setComentario(request.getParameter("comentario"));
         
         documentoPCOApi.saveInformarSolicitud(dto);

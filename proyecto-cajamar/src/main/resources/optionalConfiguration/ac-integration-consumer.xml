@@ -136,7 +136,7 @@
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 							<property name="tipo" value="BPM-TAREA-FIN"/>
-							<property name="codigoTarea" value="H002_ObtenerValidacionComite|H004_ObtenerValidacionComite|EJ_NOTARIAL"/>
+							<property name="codigoTarea" value="H002_ObtenerValidacionComite|H004_ObtenerValidacionComite|H036_ElevarPropuestaAComite"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Inicio de Elevacion Cajamar"/>

@@ -89,11 +89,12 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 			
 			generarTimerTareaProcedimiento(idTarea, executionContext);
 
+			TareaExterna tareaExterna = tareaExternaManager.get(idTarea);
 			if (tieneProcesoBpmAsociado(executionContext) && !isTramitesExcluidos(executionContext)) {
 				lanzaNuevoBpmHijo(executionContext);
 
 				// No se quiere ver la tarea de lanzado un BPM externo
-				tareaExternaManager.borrar(tareaExternaManager.get(idTarea));
+				tareaExternaManager.borrar(tareaExterna);
 			}
 
 			generaTrancisionesDeAlerta(executionContext); // Necesita de la
@@ -101,6 +102,9 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 															// vencimiento de la
 															// tarea
 			//generaTransicionRetrasar(executionContext);
+			
+			// Sincroniza con el envío de tareas.
+			bpmIntegrationService.notificaInicioTarea(tareaExterna);
 		}
 
 		// Llamamos al nodo gen�rico de transici�n
@@ -361,10 +365,6 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 			tareaExternaManager.detener(tareaExterna);
 		}
 
-		// Sincroniza con el envío de tareas.
-		bpmIntegrationService.notificaInicioTarea(tareaExterna);
-
-		
 		// Guardamos el id de la tarea externa de este nodo por si
 		// necesit�ramos recuperarla posteriormente (generalmente en timers)
 		// NOTA. Si pasa dos veces por el mismo nodo se quedar� la �ltima ID

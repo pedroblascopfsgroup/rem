@@ -123,7 +123,7 @@
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-FIN"/>
+							<property name="tipo" value="BPM-TAREA-INICIO"/>
 							<property name="codigoTarea" value="H005_declararIVAeIGIC"/>
 						</bean>
 					</constructor-arg>
@@ -135,7 +135,7 @@
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-FIN"/>
+							<property name="tipo" value="BPM-TAREA-INICIO"/>
 							<property name="codigoTarea" value="H002_ObtenerValidacionComite|H004_ObtenerValidacionComite|H036_ElevarPropuestaAComite"/>
 						</bean>
 					</constructor-arg>

@@ -234,7 +234,8 @@ public class ProcedimientoPayload {
 	
 	public List<ProcedimientoBienPayload> getProcedimientoBien() {
 		List<ProcedimientoBienPayload> listado = new ArrayList<ProcedimientoBienPayload>();
-		if (!data.getChildren().containsKey(ProcedimientoBienPayload.KEY_PROCEDIMIENTOBIEN)) {
+		if (data.getChildren()==null ||
+				!data.getChildren().containsKey(ProcedimientoBienPayload.KEY_PROCEDIMIENTOBIEN)) {
 			return listado;
 		}
 		List<DataContainerPayload> dataList = data.getChildren(ProcedimientoBienPayload.KEY_PROCEDIMIENTOBIEN);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_faseComun" width="1409" height="1849">
+<root-container name="cj_faseComun" width="1409" height="1872">
   <node name="Inicio" x="257" y="-238" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -19,7 +19,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="forkTrasAceptacion" x="199" y="61" width="252" height="24">
+  <node name="forkTrasAceptacion" x="196" y="-42" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -27,7 +27,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_RevisarEjecuciones" x="590" y="148" width="243" height="36">
+  <node name="H009_RevisarEjecuciones" x="587" y="45" width="243" height="36">
     <edge>
       <label x="-553" y="-715"/>
       <bendpoint w1="691" h1="-2" w2="203" h2="-1427"/>
@@ -42,7 +42,7 @@
       <bendpoint w1="684" h1="1415" w2="196" h2="-10"/>
     </edge>
   </node>
-  <node name="H009_RegistrarInsinuacionCreditos" x="169" y="144" width="311" height="36">
+  <node name="H009_RegistrarInsinuacionCreditos" x="166" y="41" width="311" height="36">
     <edge>
       <label x="130" y="-724"/>
       <bendpoint w1="-310" h1="-5" w2="-1185" h2="-1434"/>
@@ -55,7 +55,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_PresentarEscritoInsinuacion" x="199" y="270" width="252" height="36">
+  <node name="H009_PresentarEscritoInsinuacion" x="195" y="151" width="252" height="36">
     <edge>
       <label x="-943" y="-654"/>
       <bendpoint w1="1060" h1="-10" w2="186" h2="-1313"/>
@@ -72,7 +72,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_RevisarInsinuacionCreditos" x="194" y="398" width="261" height="36">
+  <node name="H009_RevisarInsinuacionCreditos" x="190" y="279" width="261" height="36">
     <edge>
       <label x="-919" y="-589"/>
       <bendpoint w1="1054" h1="8" w2="179" h2="-1167"/>
@@ -89,15 +89,18 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_RevisarInsinuacionCreditosDecision" x="178" y="513" width="296" height="36">
+  <node name="H009_RevisarInsinuacionCreditosDecision" x="174" y="394" width="296" height="36">
     <edge>
       <label x="-41" y="-9"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="-162" y="-73"/>
+    </edge>
   </node>
-  <node name="H009_RectificarInsinuacionCreditos" x="610" y="514" width="255" height="36">
+  <node name="H009_RectificarInsinuacionCreditos" x="606" y="395" width="255" height="36">
     <edge>
       <label x="-492" y="-526"/>
       <bendpoint w1="620" h1="1" w2="158" h2="-1058"/>
@@ -113,7 +116,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_RegistrarProyectoInventario" x="194" y="650" width="268" height="36">
+  <node name="H009_RegistrarProyectoInventario" x="188" y="704" width="268" height="36">
     <edge>
       <label x="-893" y="-469"/>
       <bendpoint w1="1027" h1="0" w2="156" h2="-923"/>
@@ -126,7 +129,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_RegistrarInformeAdmonConcursal" x="183" y="789" width="289" height="36">
+  <node name="H009_RegistrarInformeAdmonConcursal" x="175" y="790" width="289" height="36">
     <edge>
       <label x="-871" y="-379"/>
       <bendpoint w1="1024" h1="-8" w2="152" h2="-792"/>
@@ -143,7 +146,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_RevisarResultadoInfAdmon" x="166" y="918" width="325" height="36">
+  <node name="H009_RevisarResultadoInfAdmon" x="158" y="919" width="325" height="36">
     <edge>
       <label x="-848" y="-313"/>
       <bendpoint w1="1015" h1="-1" w2="144" h2="-656"/>
@@ -160,7 +163,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_RevisarResultadoInfAdmonDecision" x="141" y="1037" width="380" height="36">
+  <node name="H009_RevisarResultadoInfAdmonDecision" x="133" y="1038" width="380" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -284,6 +287,29 @@
   <node name="H009_BPMTramiteFaseConvenioV4" x="330" y="1482" width="271" height="36">
     <edge>
       <label x="-266" y="-33"/>
+    </edge>
+  </node>
+  <node name="H009_RectificarInsinuacionCreditosDecision" x="571" y="506" width="325" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-115" y="6"/>
+    </edge>
+  </node>
+  <node name="fork1" x="643" y="634" width="184" height="24">
+    <edge>
+      <label x="-46" y="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H009_BPMCreditosContingentes" x="949" y="626" width="233" height="36">
+    <edge>
+      <label x="-190" y="-504"/>
+      <bendpoint w1="318" h1="0" w2="139" h2="-1044"/>
+      <bendpoint w1="316" h1="988" w2="137" h2="-56"/>
     </edge>
   </node>
   <node name="Fin" x="1133" y="1573" width="132" height="36"/>

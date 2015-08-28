@@ -11,6 +11,7 @@
 	<!-- Beans,handlers,Managers ... --> 
 	<bean id="subastaConcursalCjLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalCjLeaveActionHandler" />
 	<bean id="siguientePagoHandler" class="es.pfsgroup.procedimientos.seguimientoCumplimientoAcuerdo.SiguientePagoHandler"></bean>
+	<bean id="creditosContingentesLeaveActionHandler" class="es.pfsgroup.procedimientos.creditosContingentes.CreditosContingentesLeaveActionHandler"></bean>
 	<bean id="genericLeaveActionHandler" class="es.pfsgroup.procedimientos.PROGenericLeaveActionHandler">
 		<property name="configuracionEmails">
 			<bean class="es.pfsgroup.plugin.recovery.configuracionEmails.ConfiguracionEmailsManager"></bean>
@@ -249,61 +250,45 @@
 	            
 	            def plazoCumplido = {
 				
-					def fechaPago = new java.text.SimpleDateFormat('yyyy-MM-dd').parse(dameFechaPago());
-					def cal = java.util.Calendar.getInstance();
-					cal.setTime(new java.util.Date());
-					cal.add(Calendar.DATE, -90);
-					def dateBefore90Days = cal.getTime();
+					def bpmManager = ctx.getBean("BPMManager");
+					return bpmManager.compruebaPlazoCumplido(dameFechaPago(), 90);
+	            }
+				
+				def dameSiguienteFechaVencimiento = {
+				
+					def jbpmProcessManager = ctx.getBean("jbpmUtil");
+	            	def procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+	            	def fecha = null;
+	            	if(procedimiento.getProcessBPM() != null) {
+	            		fecha = jbpmProcessManager.getVariablesToProcess(procedimiento.getProcessBPM(), "fechaSiguienteVencimiento");
+	            	}
+	            	
+            		if(fecha == null) {
+	            		def bpmManager = ctx.getBean("BPMManager");
+						fecha = bpmManager.dameFechaSiguienteVencimientoCreditoContingente(null, idProcedimiento);
+	            	}
+		            
+	            	return fecha;
+				}
+				
+				def existeSiguienteFechaVencimiento = {
+					def jbpmProcessManager = ctx.getBean("jbpmUtil");
+	            	def procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+	            	
+					def fecha = jbpmProcessManager.getVariablesToProcess(procedimiento.getProcessBPM(), "fechaSiguienteVencimiento");
 					
-					if (fechaPago.before(dateBefore90Days)) {
-						return true;
+					if(fecha == null) {
+						return false;
 					}
 					else {
-						return false;
+						return true;
 					}
 				}
 				
-				def dameSiguienteFechaVencimiento = {
-					def idAsunto = procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getId();
-					def concursoManager = ctx.getBean("concursoManager");
-					def fechaVencimiento;
-					if (it != null) {
-						fechaVencimiento = new java.text.SimpleDateFormat('yyyy-MM-dd').parse(it);
-					}
-					
-					def proximaFechaVencimiento;
-					def hoy = new java.util.Date();
-					
-					def listado = concursoManager.listadoFaseComun(idAsunto);
-					for (concurso in listado) {
-						if(concurso.getContratos() != null) {
-							for(contrato in concurso.getContratos()) {
-								if(contrato.getCreditos() != null) {
-									for (credito in contrato.getCreditos()) {
-										
-										if(credito.getTipoDefinitivo() != null && credito.getTipoDefinitivo().getCodigo() == '7') {
-											if((fechaVencimiento == null || fechaVencimiento.before(credito.getFechaVencimiento()))
-												&& (proximaFechaVencimiento == null || proximaFechaVencimiento.after(credito.getFechaVencimiento()))) {
-													proximaFechaVencimiento = credito.getFechaVencimiento();
-											}																			
-										}								
-									}
-								}
-							}						
-						}
-						else {
-							return null;
-						}
-					}
-					
-					if(proximaFechaVencimiento != null) {					
-						return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(proximaFechaVencimiento.getTime()));
-					}
-					else {
-						return proximaFechaVencimiento;
-					}
+				def existenCreditosContingentes = {
+					def bpmManager = ctx.getBean("BPMManager");
+					return bpmManager.existenCreditosContingentes(idProcedimiento);
 				}
-
   			 ]]>
   			</value>
   		</list>

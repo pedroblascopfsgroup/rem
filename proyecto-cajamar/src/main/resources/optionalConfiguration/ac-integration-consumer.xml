@@ -35,11 +35,11 @@
 	<!--  TRANSFORMA MENSAJE JMS EN FORMATO TXT PARA GUARDAR EN FICHERO-->
 	<integration:transformer
 		input-channel="integra.entrada.jms"
-		output-channel="entradaCajamarJMSFichero" 
+		output-channel="entradaDeHayaJMSFichero" 
 		ref="entradaIntegracionAdapter"
 		method="transformMsg2file"/>
 	<file:outbound-channel-adapter
-			id="entradaCajamarJMSFichero"
+			id="entradaDeHayaJMSFichero"
 			directory="${integracion.input}/${integracion.consumer.cola}"/>
 
 	<file:inbound-channel-adapter
@@ -53,7 +53,7 @@
 				time-unit="MILLISECONDS" />
 		</integration:poller>
 	</file:inbound-channel-adapter>
-	<integration:chain input-channel="entradaDeCajamarFichero" output-channel="integra.entrada.ok">
+	<integration:chain input-channel="entradaDeHayaFichero" output-channel="integra.entrada.ok">
 		<integration:header-enricher error-channel="integra.entrada.error" />
 		<file:file-to-string-transformer delete-files="false" charset="UTF-8"/>
 		<integration:transformer ref="entradaIntegracionAdapter" method="transformFile2msg" />				<!-- CONVIERTE EN FORMATO TXT DE FICHERO EN FORMATO MENSAJE DE TXT -->

@@ -148,7 +148,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @return
 	 */
 	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, 
-																	boolean esDocumento, boolean tieneSolicitud){
+																	boolean esDocumento, boolean tieneSolicitud, int idIdentificativo){
 		SolicitudDocumentoPCODto solDto=null;
 		DDSiNo siNo;
 		String descripcionUG = null;
@@ -185,7 +185,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 				
 		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, 
-																	esDocumento, tieneSolicitud, siNo, siNoNoAplica);
+																	esDocumento, tieneSolicitud, siNo, siNoNoAplica, idIdentificativo);
 		
 		return solDto;
 	};

@@ -33,6 +33,7 @@ var myCboxSelModel2 = new Ext.grid.CheckboxSelectionModel({
 	});
 	
 var documentosRecord = Ext.data.Record.create([
+	{name:'idIdentificativo'},
 	{name:'id'},
 	{name:'idDoc'},	
 	{name:'esDocumento'},	
@@ -74,6 +75,7 @@ var myRenderer =  'background-color:lavender;';
 
 var cmDocumento = [ 
  	myCboxSelModel2, 
+ 	{header: 'idIdentificativo',dataIndex:'idIdentificativo',hidden:'true'},
  	{header: 'id',dataIndex:'id',hidden:'true'},
  	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
  	{header: 'esDocumento',dataIndex:'esDocumento',hidden:'true'},
@@ -614,7 +616,7 @@ Ext.namespace('Ext.ux.plugins');
       		this.prefix = 'id_';
       		this.items = {};
       		this.idArray = new Array();
-      		this.idProperty = config.idProperty || 'id';
+      		this.idProperty = config.idProperty || 'idIdentificativo';
    		},
 
    		init: function(grid){

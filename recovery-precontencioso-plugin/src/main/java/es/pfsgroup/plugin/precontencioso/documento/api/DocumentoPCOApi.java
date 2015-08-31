@@ -48,7 +48,7 @@ public interface DocumentoPCOApi {
 	 * @return
 	 */
 	SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, 
-															boolean esDocumento, boolean tieneSolicitud);
+															boolean esDocumento, boolean tieneSolicitud, int idIdentificativo);
 	
 	/**
 	 * Obtiene el DTO de un documentoPCO

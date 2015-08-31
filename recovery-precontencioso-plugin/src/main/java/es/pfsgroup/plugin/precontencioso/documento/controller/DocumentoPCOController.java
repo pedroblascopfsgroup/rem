@@ -88,6 +88,7 @@ public class DocumentoPCOController {
 		
 		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
 		List<SolicitudDocumentoPCO> solicitudes; 
+		int idIdentificativo = 1;
 		for (DocumentoPCO doc : documentos) {
 			solicitudes = doc.getSolicitudes();
 			esDocumento = true;
@@ -96,14 +97,17 @@ public class DocumentoPCOController {
 			if (solicitudes != null && solicitudes.size()>0){
 				for (SolicitudDocumentoPCO sol : solicitudes) {
 					tieneSolicitud = true;
-					solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud));
+					solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud, idIdentificativo));
 					if (esDocumento) esDocumento = false;
+					idIdentificativo++;
 				}
 			}
 			else {
 				tieneSolicitud = false;
-				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud));				
+				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud, idIdentificativo));
+				idIdentificativo++;
 			}
+			
 		}
 		
 		model.put("solicitudesDocumento", solicitudesDoc);

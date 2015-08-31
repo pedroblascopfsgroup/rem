@@ -7,6 +7,7 @@
 <fwk:json>
     <json:array name="solicitudesDocumento" items="${solicitudesDocumento}" var="s">
         <json:object>
+        	<json:property name="idIdentificativo" value="${s.idIdentificativo}" />
             <json:property name="id" value="${s.id}" />
             <json:property name="idDoc" value="${s.idDoc}" />
             <json:property name="esDocumento" value="${s.esDocumento}" />

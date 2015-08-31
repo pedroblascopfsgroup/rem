@@ -39,6 +39,7 @@ DECLARE
 
 	
 	 V_TIPO_NACIONALIDAD T_ARRAY_NACIONALIDAD := T_ARRAY_NACIONALIDAD(
+									T_TIPO_NACIONALIDAD('001','FRANCIA','FRANCIA'),	 
 									T_TIPO_NACIONALIDAD('002','BELGICA','BELGICA'),
 									T_TIPO_NACIONALIDAD('003','PAISES BAJOS','PAISES BAJOS'),
 									T_TIPO_NACIONALIDAD('004','ALEMANIA','ALEMANIA'),
@@ -307,7 +308,8 @@ DECLARE
 								   
 								    V_TIPO_SEX T_ARRAY_SEX := T_ARRAY_SEX(
 											T_TIPO_SEX('M','MUJER','MUJER'),
-											T_TIPO_SEX('V','VARÓN','VARÓN')
+											T_TIPO_SEX('V','VARÓN','VARÓN'),
+                                                                                        T_TIPO_SEX('E','EMPRESAS, SOCIEDADES, ETC')
                                    );
 								   
 		

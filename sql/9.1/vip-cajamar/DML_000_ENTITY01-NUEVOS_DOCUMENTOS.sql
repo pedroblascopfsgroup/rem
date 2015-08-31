@@ -17,7 +17,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'CM01'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -44,6 +44,8 @@ DECLARE
       ,T_TIPO_TFA('OFEVEN', 'Oferta venta', 'Oferta venta', 'CO') -- Trámite de venta directa
       ,T_TIPO_TFA('INFSOBVEN', 'Informe sobre oferta', 'Informe sobre oferta', 'CO') -- Trámite de venta directa
       ,T_TIPO_TFA('AUTO', 'Auto', 'Auto', 'CO') -- Trámite de venta directa
+      ,T_TIPO_TFA('PROPLAPAG', 'Propuesta de plan de pagos', 'Propuesta de plan de pagos', 'CO') -- Trámite de acuerdo extrajudicial de pagos
+      ,T_TIPO_TFA('INFCON', 'Informe concursal', 'Informe concursal', 'CO') -- Trámite de acuerdo extrajudicial de pagos
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

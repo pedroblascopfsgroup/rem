@@ -185,7 +185,6 @@ DECLARE
       	/*password.........*/ '1234',
       	/*nombre usuario ..*/ 'CJ_SUEXT',
       	/*nombre-despacho..*/ 'Despacho Supervisor Externo')
-
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

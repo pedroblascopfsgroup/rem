@@ -170,7 +170,7 @@ public class SubastaTercerosBccLeaveActionHandler extends
 				cambiaEstadoSubasta(
 						sub,
 						obtenerEstadoSiguiente(executionContext,
-								"CelebracionSubasta", "comboCelebracion"));
+								"CelebracionSubasta", "comboCelebrada"));
 				decidirRamasCelebracion();
 			}
 		} else if (executionContext.getNode().getName()
@@ -467,14 +467,14 @@ public class SubastaTercerosBccLeaveActionHandler extends
 		}
 		
 		if(notaSimple){
-			resultado[2] = true;
+			resultado[0] = true;
 		}
 		
 		if(tasacion){
-			resultado[3] = true;
+			resultado[1] = true;
 		} else {
 			if(informeFiscal){
-				resultado[3] = true;
+				resultado[2] = true;
 			}
 		}	
 

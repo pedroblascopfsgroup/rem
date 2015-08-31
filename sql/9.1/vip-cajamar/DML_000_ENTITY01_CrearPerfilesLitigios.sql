@@ -378,8 +378,7 @@ DECLARE
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0',
         /*dd_tge_editable_web........:*/ '1'
-        )
-	
+        )	
     ); 
     V_TMP_TIPO_TGE T_TIPO_TGE;
 
@@ -663,8 +662,7 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0'
-        )
-        
+        )        
     ); 
     V_TMP_TIPO_TDE T_TIPO_TDE;
 
@@ -1263,8 +1261,7 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
-        ),
-        
+        ),       
         
 	  ----------------------        
       -- **** TOMAS DE DECISION ****

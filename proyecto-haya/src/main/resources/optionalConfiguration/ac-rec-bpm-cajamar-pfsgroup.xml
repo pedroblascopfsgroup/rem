@@ -16,7 +16,9 @@
 	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
 	<bean id="subastaBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccLeaveActionHandler" />
 	<bean id="subastaTercerosBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaTercerosBccLeaveActionHandler" />
- 	    
+	<bean id="subastaV4HayaEjecucionNotarialEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialEnterActionHandler"></bean>
+ 	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>
+ 	 	    
 	<!-- BPM activos -->
 	<!-- Nacho -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubasta/hcj_tramiteSubasta.xml" p:version="-1"/>
@@ -62,12 +64,13 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteEjecucionNotarial/hcj_ejecucionNotarial.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePosesionInterina/hcj_posesionInterina.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSarebConcursal/haya_tramiteSubastaConcursal.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaTerceros/haya_tramiteSubastaTerceros.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteEjecucionNotarial/haya_tramiteEjecucionNotarialV4.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebLitigios/tramiteElevacionPropSarebLitigios.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebAdjudicados/tramiteElevacionPropSarebAdjudicados.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbalDesdeMonitorio/haya_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
@@ -75,7 +78,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePresentacionPropConvenio/tramitePresentacionPropConvenio.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSeguimientoConvenio/tramiteSeguimientoConvenio.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSolicitudActuacionesPronunciamientos/haya_tramiteSolicitudActuacionesPronunciamientos.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteRegistrarResolucionInteres/haya_tramiteRegistrarResolucionInteres.xml" p:version="-1"/>
 	 -->
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarLitigios" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
@@ -354,6 +356,11 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AUTDECCON");
 	            }
 	            
+	            def comprobarExisteDocumentoINSEXT = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INSEXT");
+	            }	            
+
 	            def comprobarCostasLetradoValidas = {
 	            	def principal = tareaExterna.getTareaPadre().getProcedimiento().getSaldoRecuperacion();
 	            	def costas = valores['H002_SenyalamientoSubasta']['costasLetrado'];
@@ -363,6 +370,21 @@
 	            		return true;
 	            	}
 	            }
+	            
+	            def comprobarExisteDocumentoINFSUBEXT = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFSUBEXT");
+	            }
+	            
+	            def comprobarExisteDocumentoDECADM = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DECADM");
+	            }
+	            
+	            def vieneDeTramiteHipotecario = {
+					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
+						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H001'));
+				}
 	            
   			 ]]>
   			</value>

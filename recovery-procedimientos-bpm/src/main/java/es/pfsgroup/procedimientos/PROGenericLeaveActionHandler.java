@@ -11,6 +11,7 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
+import es.pfsgroup.plugin.recovery.configuracionEmails.api.ConfiguracionEmailsApi;
 import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
 import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
@@ -22,6 +23,8 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 
 	@Autowired
 	IntegracionBpmService bpmIntegrationService;
+	
+	private ConfiguracionEmailsApi configuracionEmails;
 	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -84,6 +87,11 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 		if (prorroga != null) {
 			proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
 			// tareaNotificacionManager.borrarNotificacionTarea(prorroga.getTarea().getId());
+		}
+		
+		// Se envían los mails automáticos asociados a la tarea
+		if(configuracionEmails != null) {
+			configuracionEmails.enviarEmailsTarea(getTareaExterna(executionContext));
 		}
 	}
 
@@ -178,5 +186,19 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 	public String getCity() {
 		return city;
 	}
+	
+	/**
+	 * @return the configuracionEmails
+	 */
+	public ConfiguracionEmailsApi getConfiguracionEmails() {
+		return configuracionEmails;
+	}
 
+	/**
+	 * @param configuracionEmails the configuracionEmails to set
+	 */
+	public void setConfiguracionEmails(
+			ConfiguracionEmailsApi configuracionEmails) {
+		this.configuracionEmails = configuracionEmails;
+	}
 }

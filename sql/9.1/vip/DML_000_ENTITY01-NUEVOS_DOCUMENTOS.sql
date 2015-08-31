@@ -48,6 +48,9 @@ DECLARE
       ,T_TIPO_TFA('MCC', 'Mandato de cancelación de cargas', 'Mandato de cancelación de cargas', 'TR') -- Trámite de mandamiento de cancelación de cargas
       ,T_TIPO_TFA('SAP', 'Solicitud archivo procedimiento', 'Solicitud archivo procedimiento', 'TR') -- Trámite de mandamiento de cancelación de cargas
       ,T_TIPO_TFA('INSUFI', 'Informe Subasta Firmado', 'Informe Subasta Firmado', 'AP') -- T. Subasta
+      ,T_TIPO_TFA('INSEXT', 'Informe de subasta', 'Informe de subasta', 'EX') -- Trámite de ejecución notarial
+      ,T_TIPO_TFA('INFSUBEXT', 'Informe Subasta firmada', 'Informe Subasta firmada', 'EX') -- Trámite de ejecución notarial
+      ,T_TIPO_TFA('DECADM', 'Decreto de admisión', 'Decreto de admisión', 'TR') -- Trámite de posesión interina
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

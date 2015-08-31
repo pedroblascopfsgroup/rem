@@ -25,10 +25,10 @@
 		<property name="cacheProducers" value="false"/>
 	</bean>
 
-	<bean id="paraCajamarQueue" class="org.apache.activemq.command.ActiveMQQueue">
+	<bean id="integracionProducerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.producer.cola}"/>
 	</bean>
-	<bean id="paraHayaQueue" class="org.apache.activemq.command.ActiveMQQueue">
+	<bean id="integracionConsumerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.consumer.cola}"/>
 	</bean>
 	

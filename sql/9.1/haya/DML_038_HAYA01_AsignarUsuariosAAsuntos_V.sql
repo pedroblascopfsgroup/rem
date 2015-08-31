@@ -126,8 +126,6 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('El proceso ha finalizado correctamente.');
  	
-	CLOSE USUARIOS_CURSOR;						
-    CLOSE ASUNTOS_CURSOR;
     
 EXCEPTION
      

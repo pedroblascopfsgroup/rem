@@ -676,13 +676,24 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cex.auditoria." + Auditoria.UNDELETED_RESTICTION);
 		}
 
-
 		if (requierePrevioCDD(dto)) {
 			hql.append(" and asu.id = cdd.asunto.id ");
+                        
+			hql.append(" and cdd.id in ( ");
+			hql.append(" select max(cdd1.id) ");
+			hql.append(" from  BatchAcuerdoCierreDeuda cdd1 ");
+			hql.append(" group by cdd1.asunto.id ) ");	
 		}
 
 		if (requierePostCDD(dto)) {
-			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion and asu.codigoExterno = crn.codigoExterno ");
+			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id ");
+			hql.append(" and asu.id = cdd2.asunto.id ");
+			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion ");
+			
+			hql.append(" and crn.id in ( ");
+			hql.append(" select max(crn1.id) ");
+			hql.append(" from  BatchCDDResultadoNuse crn1 ");
+			hql.append(" group by crn1.codigoExterno, crn1.batchAcuerdoCierreDeuda.id ) ");			
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
@@ -808,11 +819,16 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		//FILTRO ERROR CDD
 		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
+                        hql.append(" and cdd.fechaEntrega is null ");
+                        //Si se buscan KOs de Pivote, se debe filtrar también por fechaEntrega vacío
+                        
 			if("Todos".equals(dto.getComboErrorPreviCDD())){
-				hql.append(" and cdd.resultadoValidacionCDD is not null");
+                                hql.append(" and cdd.resultadoValidacion <> 1");
+//				hql.append(" and cdd.resultadoValidacionCDD is not null");
 			}
 			else{
-				hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
+                            hql.append(" and cdd.resultadoValidacion <> 1");
+                            hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
 				params.put("errorPrevio", dto.getComboErrorPreviCDD());
 			}
 		}
@@ -820,10 +836,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
 			if("0".equals(dto.getComboErrorPostCDD())){
 				hql.append(" and rvn.codigo <> '0' and cdd2.fechaAlta <= crn.fechaResultado");
-			}
-			else{
-				hql.append(" and rvn.id = :errorPost and cdd2.fechaAlta <= crn.fechaResultado");
-				params.put("errorPost", (dto.getComboErrorPostCDD()));
+			}else{
+				hql.append(" and rvn.id = :errorPost and cdd2.fechaAlta <= crn.fechaResultado ");
+				params.put("errorPost", (Long.valueOf(dto.getComboErrorPostCDD())));
 			}			
 		}
 		
@@ -1159,10 +1174,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
             sql += " INNER JOIN ( ";
             sql += "   SELECT cnv1.asu_id, max(cnv1.id_acuerdo_cierre) max_id_acuerdo_cierre ";
             sql += "   FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1 ";
-            sql += "   WHERE cnv1.resultado_validacion = 0 ";
+//            sql += "   WHERE cnv1.resultado_validacion = 0 ";
             sql += "   GROUP BY cnv1.asu_id  ";
             sql += " ) mcnv ON cnv.id_acuerdo_cierre = mcnv.max_id_acuerdo_cierre ";
-            sql += " WHERE cnv.resultado_validacion = 0 ";
+            sql += " WHERE cnv.resultado_validacion <> 1 ";
             sql += " AND cnv.fecha_entrega is null ";
             sql += " AND cnv.asu_id = " + idAsunto;
             sql += " AND ROWNUM = 1 ";
@@ -1171,7 +1186,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
             if (!q.list().isEmpty()){
                 if(!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
-                    msgErrorEnvioCDD = "Error validación CDD: " + q.list().get(0).toString();
+                    msgErrorEnvioCDD = "Error validaciï¿½n CDD: " + q.list().get(0).toString();
                 }
             }
 
@@ -1194,7 +1209,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
             sql += "   (SELECT crn1.asu_id_externo, ";
             sql += "     MAX(crn1.crn_id) max_crn_id ";
             sql += "   FROM CDD_CRN_RESULTADO_NUSE crn1 ";
-            sql += "   WHERE crn1.crn_resultado <> '0' ";
+//            sql += "   WHERE crn1.crn_resultado <> '0' ";
             sql += "   GROUP BY crn1.asu_id_externo ";
             sql += "   ) mcrn ";
             sql += " ON crn.crn_id = mcrn.max_crn_id ";

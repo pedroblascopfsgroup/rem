@@ -99,6 +99,11 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private GestorDespacho apoderado;
 	
+	@ManyToOne
+	@JoinColumn(name = "PCO_LIQ_SOLICITANTE")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GestorDespacho solicitante;
+	
 	@Column(name = "PCO_LIQ_COMISIONES")
 	private Float comisiones;
 	
@@ -352,5 +357,13 @@ public class LiquidacionPCO implements Serializable, Auditable {
 
 	public void setImpuestosOriginal(Float impuestosOriginal) {
 		this.impuestosOriginal = impuestosOriginal;
+	}
+
+	public GestorDespacho getSolicitante() {
+		return solicitante;
+	}
+
+	public void setSolicitante(GestorDespacho solicitante) {
+		this.solicitante = solicitante;
 	}
 }

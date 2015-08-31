@@ -14,11 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.api.GestorDespachoApi;
 
 @Controller
 public class LiquidacionController {
@@ -37,6 +42,13 @@ public class LiquidacionController {
 
 	@Autowired
 	UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	UsuarioManager usuarioManager;
+	
+	
+	
+	
 
 	@RequestMapping
 	public String getLiquidacionesPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
@@ -88,7 +100,7 @@ public class LiquidacionController {
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 		liquidacionDto.setId(id);
 		liquidacionDto.setFechaCierre(fechaCierreDate);
-
+		
 		liquidacionApi.solicitar(liquidacionDto);
 
 		return DEFAULT;

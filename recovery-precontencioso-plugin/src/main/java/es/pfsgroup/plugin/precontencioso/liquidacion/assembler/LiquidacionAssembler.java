@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.assembler;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
@@ -89,6 +90,10 @@ public class LiquidacionAssembler {
 			liquidacionDto.setApoderadoUsdId(liquidacion.getApoderado().getId());
 			liquidacionDto.setApoderadoUsuarioId(liquidacion.getApoderado().getUsuario().getId());
 			liquidacionDto.setApoderadoDespachoId(liquidacion.getApoderado().getDespachoExterno().getId());
+		}
+		
+		if(!Checks.esNulo(liquidacion.getSolicitante())){
+			liquidacionDto.setSolicitante(liquidacion.getSolicitante().getUsuario().getApellidoNombre());
 		}
 
 		return liquidacionDto;

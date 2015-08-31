@@ -99,10 +99,11 @@ DECLARE
 
 
      V_TIPO_TELEFONO T_ARRAY_TIPO_TELEFONO := T_ARRAY_TIPO_TELEFONO(
-                                    T_TIPO_TELEFONO('1','TÉLEX','TÉLEX'),
-									T_TIPO_TELEFONO('10','TELÉFONO','TELÉFONO'),
-									T_TIPO_TELEFONO('20','FAX','FAX'),
-									T_TIPO_TELEFONO('30','TELÉFONO MÓVIL','TELÉFONO MÓVIL')
+                                    T_TIPO_TELEFONO('0','no existe','no existe'),     
+                                    T_TIPO_TELEFONO('1','Télex','Télex'),
+				    T_TIPO_TELEFONO('10','Teléfono','Teléfono'),
+				    T_TIPO_TELEFONO('20','Fax','Fax'),
+				    T_TIPO_TELEFONO('30','Teléfono Móvil','Teléfono Móvil')
                                    );								   
 								   
 								   
@@ -115,15 +116,15 @@ DECLARE
 
 
    V_TIPO_SSC T_ARRAY_SSC := T_ARRAY_SSC(
-                                         T_TIPO_SSC('1','AGRICULTOR BAJO PLASTICO MINORISTA','AGRICULTOR BAJO PLASTICO MINORISTA'),
-                                         T_TIPO_SSC('2','COMERCIALIZADORA HORTOFRUTICOLA   ','COMERCIALIZADORA HORTOFRUTICOLA   '),
-                                         T_TIPO_SSC('3','PROMOTOR GRANDE                   ','PROMOTOR GRANDE                   '),
-                                         T_TIPO_SSC('4','GRAN EMPRESA                      ','GRAN EMPRESA                      '),
-                                         T_TIPO_SSC('5','MEDIANA EMPRESA                   ','MEDIANA EMPRESA                   '),
-                                         T_TIPO_SSC('6','PEQUEÑA EMPRESA                   ','PEQUEÑA EMPRESA                   '),
-                                         T_TIPO_SSC('7','MICROEMPRESA                      ','MICROEMPRESA                      '),
-                                         T_TIPO_SSC('8','PARTICULARES                      ','PARTICULARES                      '),
-                                         T_TIPO_SSC('9','SECTOR PUBLICO                    ','SECTOR PUBLICO                    '),
+                                         T_TIPO_SSC('01','AGRICULTOR BAJO PLASTICO MINORISTA','AGRICULTOR BAJO PLASTICO MINORISTA'),
+                                         T_TIPO_SSC('02','COMERCIALIZADORA HORTOFRUTICOLA   ','COMERCIALIZADORA HORTOFRUTICOLA   '),
+                                         T_TIPO_SSC('03','PROMOTOR GRANDE                   ','PROMOTOR GRANDE                   '),
+                                         T_TIPO_SSC('04','GRAN EMPRESA                      ','GRAN EMPRESA                      '),
+                                         T_TIPO_SSC('05','MEDIANA EMPRESA                   ','MEDIANA EMPRESA                   '),
+                                         T_TIPO_SSC('06','PEQUEÑA EMPRESA                   ','PEQUEÑA EMPRESA                   '),
+                                         T_TIPO_SSC('07','MICROEMPRESA                      ','MICROEMPRESA                      '),
+                                         T_TIPO_SSC('08','PARTICULARES                      ','PARTICULARES                      '),
+                                         T_TIPO_SSC('09','SECTOR PUBLICO                    ','SECTOR PUBLICO                    '),
                                          T_TIPO_SSC('10','ENTIDADES SIN ANIMO DE LUCRO      ','ENTIDADES SIN ANIMO DE LUCRO      '),
                                          T_TIPO_SSC('11','INTERMEDIARIOS FINANCIEROS        ','INTERMEDIARIOS FINANCIEROS        '),
                                          T_TIPO_SSC('12','RESTO SECTOR PRIMARIO MINORISTA   ','RESTO SECTOR PRIMARIO MINORISTA   '),
@@ -151,14 +152,15 @@ DECLARE
                                    );
 		
    V_TIPO_SCE T_ARRAY_SCE := T_ARRAY_SCE(
-                               T_TIPO_SCE('1','Agricultor bajo plástico minorista','Agricultor bajo plástico minorista'),
-                               T_TIPO_SCE('3','Promotor','Promotor'),
-                               T_TIPO_SCE('4','Gran empresa','Gran empresa'),
-                               T_TIPO_SCE('5','Mediana empresa','Mediana empresa'),
-                               T_TIPO_SCE('6','Pequeña empresa','Pequeña empresa'),
-                               T_TIPO_SCE('7','Microempresa','Microempresa'),
-                               T_TIPO_SCE('8','Particulares','Particulares'),
-                               T_TIPO_SCE('9','Sector público','Sector público'),
+                               T_TIPO_SCE('01','Agricultor bajo plástico minorista','Agricultor bajo plástico minorista'),
+                               T_TIPO_SCE('02','Comercializadora Hortofruticola'),
+                               T_TIPO_SCE('03','Promotor','Promotor'),
+                               T_TIPO_SCE('04','Gran empresa','Gran empresa'),
+                               T_TIPO_SCE('05','Mediana empresa','Mediana empresa'),
+                               T_TIPO_SCE('06','Pequeña empresa','Pequeña empresa'),
+                               T_TIPO_SCE('07','Microempresa','Microempresa'),
+                               T_TIPO_SCE('08','Particulares','Particulares'),
+                               T_TIPO_SCE('09','Sector público','Sector público'),
                                T_TIPO_SCE('10','Entidades sin ánimo de lucro','Entidades sin ánimo de lucro'),
                                T_TIPO_SCE('11','Intermediarios financieros','Intermediarios financieros'),
                                T_TIPO_SCE('12','Resto sector primario minorista','Resto sector primario minorista'),

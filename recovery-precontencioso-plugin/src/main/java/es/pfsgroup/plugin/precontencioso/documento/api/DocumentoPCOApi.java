@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.precontencioso.documento.api;
 import java.util.List;
 
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
@@ -22,6 +21,7 @@ public interface DocumentoPCOApi {
 	static final String PCO_DOCUMENTO_CREAR_SOLICITUDES = "es.pfsgroup.plugin.precontencioso.documento.saveCrearSolicitudes";
 	static final String PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES = "es.pfsgroup.plugin.precontencioso.documento.getTiposGestorActores";
 	static final String PCO_DOCUMENTO_CREAR = "es.pfsgroup.plugin.precontencioso.documento.saveCrearDocumento";
+	static final String PCO_VALIDAR_DOCUMENTO_UNICO = "es.pfsgroup.plugin.precontencioso.documento.validarDocumentoUnico";
 		
 	/**
 	 * Obtiene las solicitudes de los documentos de precontencioso de un procedimiento
@@ -48,7 +48,7 @@ public interface DocumentoPCOApi {
 	 * @return
 	 */
 	SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, 
-															boolean esDocumento, boolean tieneSolicitud);
+															boolean esDocumento, boolean tieneSolicitud, int idIdentificativo);
 	
 	/**
 	 * Obtiene el DTO de un documentoPCO
@@ -171,4 +171,7 @@ public interface DocumentoPCOApi {
 	 * 
 	 */
 	void anularSolicitudes(Long idSolicitud, Long idDocumento);	
+	
+	@BusinessOperationDefinition(PCO_VALIDAR_DOCUMENTO_UNICO)
+	boolean validarDocumentoUnico(String undGest, String tipoDoc, String protocolo, String notario);
 }

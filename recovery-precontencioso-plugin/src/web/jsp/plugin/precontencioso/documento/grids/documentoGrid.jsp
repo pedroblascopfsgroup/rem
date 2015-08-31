@@ -33,6 +33,7 @@ var myCboxSelModel2 = new Ext.grid.CheckboxSelectionModel({
 	});
 	
 var documentosRecord = Ext.data.Record.create([
+	{name:'idIdentificativo'},
 	{name:'id'},
 	{name:'idDoc'},	
 	{name:'esDocumento'},	
@@ -70,13 +71,11 @@ storeDocumentos.on(
 	}
 );
 
-var myRenderer =  function(value, meta) {
-   meta.style = "background-color:lavender;";
-   return value;
-}
+var myRenderer =  'background-color:lavender;';
 
 var cmDocumento = [ 
  	myCboxSelModel2, 
+ 	{header: 'idIdentificativo',dataIndex:'idIdentificativo',hidden:'true'},
  	{header: 'id',dataIndex:'id',hidden:'true'},
  	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
  	{header: 'esDocumento',dataIndex:'esDocumento',hidden:'true'},
@@ -88,14 +87,14 @@ var cmDocumento = [
 	{header : '<s:message code="precontencioso.grid.documento.estado" text="**Estado" />', dataIndex : 'estado'},
 	{header : '<s:message code="precontencioso.grid.documento.adjunto" text="**Adjunto" />', dataIndex : 'adjunto'},
 	{header : '<s:message code="precontencioso.grid.documento.ejecutivo" text="**Ejecutivo" />', dataIndex : 'ejecutivo'},
-	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor', renderer: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', renderer: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', renderer: myRenderer},	
-	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', renderer: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario'}	
+	{header : '<s:message code="precontencioso.grid.documento.tipoActor" text="**Tipo Actor" />', dataIndex : 'tipoActor', css: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.actor" text="**Actor" />', dataIndex : 'actor', css: myRenderer, hidden:'true'},
+	{header : '<s:message code="precontencioso.grid.documento.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex : 'fechaSolicitud', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaResultado" text="**Fecha Resultado" />', dataIndex : 'fechaResultado', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', css: myRenderer},	
+	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', css: myRenderer},
+	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario', css: myRenderer}	
 ]; 
 
 var validacion=false;
@@ -205,32 +204,29 @@ var solicitarDocButton = new Ext.Button({
 		,disabled : false
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
-		rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
-		var p = getParametrosExcluirDescartarSolicitarDocs();		
-		if (rowsSelected == '') {
-			Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
-		}
-		else {
-	        if(validacionEditar) {
-		       	Ext.Msg.show({
-				   title:'Aviso',
-				   msg: '<s:message code="precontencioso.grid.documento.crearSolicitudes.aviso" text="**No se puede crear solicitud" />',
-				   buttons: Ext.Msg.OK
-				});
-	        }
-	        else {
+			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
+			var p = getParametrosExcluirDescartarSolicitarDocs();		
+			if (rowsSelected == '') {
+				Ext.Msg.alert('Aviso', '<s:message code="precontencioso.grid.documento.aviso.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
+			} else {
+	        	if(validacionEditar) {
+		       		Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="precontencioso.grid.documento.crearSolicitudes.aviso" text="**No se puede crear solicitud" />',
+				   		buttons: Ext.Msg.OK
+					});
+	        	} else {
 			       var w = app.openWindow({
 						flow: 'documentopco/abrirCrearSolicitudes'
 						,params: p				<%--{idDocumento:idDocumento} --%>
 						,title: '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear solicitudes" />'
 						,width: 430
 					});
-				w.on(app.event.DONE, function() {
-					refrescarDocumentosGrid();					
-					w.close(); 
-					
-				});
-				w.on(app.event.CANCEL, function(){ w.close(); });
+					w.on(app.event.DONE, function() {
+						refrescarDocumentosGrid();				
+						w.close(); 				
+					});
+					w.on(app.event.CANCEL, function(){ w.close(); });
 				}
 			}
 		}				
@@ -282,6 +278,21 @@ var anularSolicitudesButton = new Ext.Button({
 			}
 	    }
 	});
+	
+
+	var existeSolDisponible = function(solicitudSeleccionada, documentos) {
+		var data = documentos.store.data;
+		var items = data.items;
+		for(i=0; i < items.length; i++) {
+			if(solicitudSeleccionada.data.idDoc == items[i].data.idDoc) {
+				if("DI" == items[i].data.codigoEstadoDocumento && solicitudSeleccionada.data.id != items[i].data.id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 
 var validacionEstado=false;
 var informarDocButton = new Ext.Button({
@@ -304,8 +315,10 @@ var informarDocButton = new Ext.Button({
 		        var w = app.openWindow({
 						flow: 'documentopco/informarSolicitud'
 						,params: {idSolicitud:rowsSelected[0].get('id'), actor:rowsSelected[0].get('actor'), idDoc:rowsSelected[0].get('idDoc'), 
-							fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
-							fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion')}
+									fechaResultado:rowsSelected[0].get('fechaResultado'),resultado:rowsSelected[0].get('resultado'),
+									fechaEnvio:rowsSelected[0].get('fechaEnvio'),fechaRecepcion:rowsSelected[0].get('fechaRecepcion'),
+									existeSolDisponible:existeSolDisponible(rowsSelected[0], gridDocumentos)
+								}
 						,title: '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
 						,width: 640
 					});
@@ -362,7 +375,28 @@ var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, edi
 
 <%-- FUNCION: Chequeo estados para control botones --%>
 var actualizarBotonesDocumentos = function(){
+		<%--Manu preguntar a quien hizo este comportamiento --%>
+		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
+		solicitarDocButton.setDisabled(false);
+		incluirDocButton.setDisabled(false);
 
+		if(myCboxSelModel2.getCount() == 1){
+			editarDocButton.setDisabled(false);
+		}
+		var rowsSelecteds=gridDocumentos.getSelectionModel().getSelections(); 	
+		if(rowsSelecteds.length > 0) {
+			incluirDocButton.setDisabled(true);
+			descartarDocButton.setDisabled(false);
+			anularSolicitudesButton.setDisabled(false);
+			for (var i=0; i < rowsSelecteds.length; i++){
+				if(rowsSelecteds[i].get('fechaResultado') != '') {
+					anularSolicitudesButton.setDisabled(true);
+				}
+			}		
+		}
+		
+		return;	
+		
 	    <%--Se comprueba que el procedimiento se encuentre en un estado que permita editar lOs documentos --%>
 		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
@@ -582,7 +616,7 @@ Ext.namespace('Ext.ux.plugins');
       		this.prefix = 'id_';
       		this.items = {};
       		this.idArray = new Array();
-      		this.idProperty = config.idProperty || 'id';
+      		this.idProperty = config.idProperty || 'idIdentificativo';
    		},
 
    		init: function(grid){
@@ -640,6 +674,15 @@ Ext.namespace('Ext.ux.plugins');
 	var columMemoryPlugin = new Ext.ux.plugins.CheckBoxMemory();
 	var separadorButtons = new Ext.Toolbar.Fill();	
 
+
+	var botonRefresh = new Ext.Button({
+			text : 'Refresh'
+			,iconCls : 'icon_refresh'
+			,handler:function(){
+				refrescarDocumentosGrid();
+			}
+	});
+
 var gridDocumentos = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
 		,columns: cmDocumento
@@ -653,7 +696,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,cls:'cursor_pointer'
 		,height: 250
 		,autoWidth: true			
-		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton ]
+		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
 	});
 	
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
@@ -666,10 +709,3 @@ var refrescarDocumentosGrid = function() {
 	//storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
 	storeDocumentos.webflow({idProcedimientoPCO: data.id});
 }
-
-
-
-
-
-
-

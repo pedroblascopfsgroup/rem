@@ -18,12 +18,9 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
@@ -41,7 +38,6 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -66,6 +62,7 @@ public class DocumentoPCOController {
 	private static final String EDITAR_DOC = "plugin/precontencioso/documento/popups/editarDocumento";
 	private static final String CREAR_SOLICITUDES = "plugin/precontencioso/documento/popups/crearSolicitudes";
 	private static final String TIPO_GESTOR_JSON = "plugin/coreextension/asunto/tipoGestorJSON";
+	private static final String VALIDACION_DOCUMENTO_UNICO = "plugin/precontencioso/documento/json/validacionDocUnicoJSON";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -91,6 +88,7 @@ public class DocumentoPCOController {
 		
 		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
 		List<SolicitudDocumentoPCO> solicitudes; 
+		int idIdentificativo = 1;
 		for (DocumentoPCO doc : documentos) {
 			solicitudes = doc.getSolicitudes();
 			esDocumento = true;
@@ -99,14 +97,17 @@ public class DocumentoPCOController {
 			if (solicitudes != null && solicitudes.size()>0){
 				for (SolicitudDocumentoPCO sol : solicitudes) {
 					tieneSolicitud = true;
-					solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud));
+					solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud, idIdentificativo));
 					if (esDocumento) esDocumento = false;
+					idIdentificativo++;
 				}
 			}
 			else {
 				tieneSolicitud = false;
-				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud));				
+				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud, idIdentificativo));
+				idIdentificativo++;
 			}
+			
 		}
 		
 		model.put("solicitudesDocumento", solicitudesDoc);
@@ -161,6 +162,7 @@ public class DocumentoPCOController {
 			@RequestParam(value = "resultado", required = true) String resultado, 
 			@RequestParam(value = "fechaEnvio", required = true) String fechaEnvio, 
 			@RequestParam(value = "fechaRecepcion", required = true) String fechaRecepcion, 
+			@RequestParam(value = "existeSolDisponible", required = true) String existeSolDisponible,
 			ModelMap model) {
 
 		InformarDocumentoDto dto = new InformarDocumentoDto();
@@ -169,7 +171,9 @@ public class DocumentoPCOController {
 		
 		DocumentoPCODto doc = documentoPCOApi.getDocumentoPorIdDocumentoPCO(idDocumento);
 		
-		dto.setIdSolicitud(Long.parseLong(idSolicitud));
+		if(!Checks.esNulo(idSolicitud)) {
+			dto.setIdSolicitud(Long.parseLong(idSolicitud));			
+		}
 		dto.setActor(obtenerCodigoDiccionario(DDTipoActorPCO.class, actor));
 		dto.setIdDoc(idDocumento);
 		dto.setEstado(obtenerCodigoDiccionario(DDEstadoDocumentoPCO.class, doc.getEstado()));
@@ -209,6 +213,7 @@ public class DocumentoPCOController {
 		model.put("respuestasSolicitud", respuestasSolicitud);		
 		model.put("ddSiNo", ddsino);
 		model.put("ddSiNoNoAplica", ddsinonoaplica);
+		model.put("existeSolDisponible", ("true".equals(existeSolDisponible) ? true : false));
 		
 		return INFORMAR_DOC;
 	}
@@ -429,7 +434,6 @@ public class DocumentoPCOController {
 		
 		StringTokenizer stIdDoc;
 		StringTokenizer stIdUG;
-		DDUnidadGestionPCO unidadGestion = null;
 		
 		// Tratamos los documentos a incluir	
 		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");
@@ -437,7 +441,6 @@ public class DocumentoPCOController {
 		
 		Long idDocUG;
 		String contrato = "";
-		String descripcionUG;
 		String tipoUG = ""; 
 		while (stIdDoc.hasMoreElements()){
 			idDocUG = new Long(stIdDoc.nextToken());
@@ -449,7 +452,6 @@ public class DocumentoPCOController {
 			// Crear DOCUMENTO
 			
 			DocumentoPCODto docDto = new DocumentoPCODto();
-			SolicitudDocumentoPCODto solDto = new SolicitudDocumentoPCODto();
 			
 			docDto.setAdjunto("0");
 			docDto.setAsiento(request.getParameter("asiento"));
@@ -479,6 +481,17 @@ public class DocumentoPCOController {
 		}
 
 		return DEFAULT;
+	}
+	
+	@RequestMapping	
+	public String validacionDuplicadoDocumento(WebRequest request, ModelMap model) {
+		boolean documento_duplicado = documentoPCOApi.validarDocumentoUnico(
+				request.getParameter("arrayIdUG"), 
+				request.getParameter("comboTipoDocumento"), 
+				request.getParameter("protocolo"), 
+				request.getParameter("notario"));
+		model.put("documento_duplicado", documento_duplicado);
+		return VALIDACION_DOCUMENTO_UNICO;
 	}
 
 	/**
@@ -572,17 +585,22 @@ public class DocumentoPCOController {
         dto.setIdSolicitud(request.getParameter("idSolicitud"));
         dto.setEstado(request.getParameter("estado"));
         dto.setAdjuntado(request.getParameter("adjuntado"));
-        dto.setEjecutivo(obtenerIdDiccionario(DDSiNoNoAplica.class, request.getParameter("ejecutivo")));
+        if (!Checks.esNulo(request.getParameter("ejecutivo"))) {
+        	DDSiNoNoAplica siNoAplica = (DDSiNoNoAplica) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDSiNoNoAplica.class, request.getParameter("ejecutivo"));
+        	dto.setEjecutivo(siNoAplica.getId());        	
+        }
         dto.setFechaResultado(parseaFecha(request.getParameter("fechaResultado")));
         dto.setResultado(request.getParameter("resultado"));
         dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
         dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
+        if(Checks.esNulo(request.getParameter("fechaRecepcion")) && !Checks.esNulo(request.getParameter("fechaEnvio"))) {
+        	dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaEnvio")));
+        }
         dto.setComentario(request.getParameter("comentario"));
-        
+     
         documentoPCOApi.saveInformarSolicitud(dto);
         
         return DEFAULT;
-        
 	}
 	
 	private Date parseaFecha(String fecha) {

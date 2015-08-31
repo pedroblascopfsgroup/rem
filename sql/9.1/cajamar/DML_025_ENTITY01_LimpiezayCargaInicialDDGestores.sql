@@ -56,7 +56,12 @@ DECLARE
 --Configuracion  PEF_PERFILES                                   
                                    
    V_PEF T_ARRAY_PEF := T_ARRAY_PEF( 
-                                    T_PEF('0000', 'SIN INFORMAR PERFIL GESTOR', 'SIN INFORMAR PERFIL GESTOR')
+                                      T_PEF('0', 'SIN INFORMAR PERFIL GESTOR', 'SIN INFORMAR PERFIL GESTOR')
+                                    , T_PEF('FPFSRSUPASU', 'Usuario de soporte Sistemas', 'Usuario de soporte Sistemas')
+                                    , T_PEF('FPSOFICINA', 'Usuario con funcion de supervisor', 'Usuario con funcion de supervisor')
+                                    , T_PEF('FPFSADMIN', 'Usuario administrador', 'Usuario administrador')
+                                    , T_PEF('FPFDT', 'Gestor itineario exp. recobro', 'Gestor itineario exp. recobro')
+                                    , T_PEF('FPFSRUSUREC', 'Usuario con acceso a Recovery', 'Usuario con acceso a Recovery')                                                                        
                                    );   
    
    V_TMP_TPG T_TPG;
@@ -64,6 +69,14 @@ DECLARE
 
    
 BEGIN
+
+
+-- Deshabilitamos FKs
+   EXECUTE IMMEDIATE('ALTER TABLE PER_PERSONAS DISABLE CONSTRAINTS  FK_PER_FK_DD_TPG_ID');
+   EXECUTE IMMEDIATE('ALTER TABLE FUN_PEF      DISABLE CONSTRAINTS  FUN_PER_IBFK_2');
+   EXECUTE IMMEDIATE('ALTER TABLE PER_PERSONAS DISABLE CONSTRAINTS  FK_PER_PEF_ID');
+   EXECUTE IMMEDIATE('ALTER TABLE ZON_PEF_USU  DISABLE CONSTRAINTS  ZON_PER_USU_IBFK3');
+
 
 
     DBMS_OUTPUT.PUT_LINE('Se borra la configuración de EST_ESTADOS.');
@@ -154,6 +167,12 @@ BEGIN
 
    COMMIT;
 
+-- Habilitamos FKs
+   EXECUTE IMMEDIATE('ALTER TABLE PER_PERSONAS ENABLE CONSTRAINTS FK_PER_FK_DD_TPG_ID');
+   EXECUTE IMMEDIATE('ALTER TABLE FUN_PEF      ENABLE CONSTRAINTS FUN_PER_IBFK_2');
+   EXECUTE IMMEDIATE('ALTER TABLE PER_PERSONAS ENABLE CONSTRAINTS FK_PER_PEF_ID');
+   EXECUTE IMMEDIATE('ALTER TABLE ZON_PEF_USU  ENABLE CONSTRAINTS ZON_PER_USU_IBFK3');   
+   
 
 EXCEPTION
 

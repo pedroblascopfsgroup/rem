@@ -40,8 +40,7 @@ BEGIN
 
   V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  MODIFY
              (     
-                  CNT_CONTRATO               NUMBER(17)
-                , CNT_CUOTA_IMPORTE	     NUMBER(15,2)
+                  CNT_CUOTA_IMPORTE	     NUMBER(15,2)
                 , CNT_DISPUESTO              NUMBER(15,2)
                 , CNT_LIMITE_INI	     NUMBER (15,2)
                 , CNT_LIMITE_FIN	     NUMBER(15,2)
@@ -49,7 +48,6 @@ BEGIN
                 , CNT_INTERES_FIJO_VAR	     VARCHAR2(4)
                 , CNT_CCC_DOMICILIACION	     VARCHAR2(80)
                 , CNT_DOMICI_EXT	     VARCHAR2(4)
-                , CNT_CONTRATO_ANTERIOR	     NUMBER(17)
                 , CNT_COD_OFICINA	     NUMBER(12)
               )';
      

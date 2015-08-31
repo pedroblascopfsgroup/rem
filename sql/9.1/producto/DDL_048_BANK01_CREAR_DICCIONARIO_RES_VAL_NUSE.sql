@@ -29,6 +29,7 @@ DECLARE
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia  
+    V_NUM_IDX NUMBER(16); -- Vble. para validar la existencia de un indice
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -64,9 +65,8 @@ if V_NUM_TABLAS > 0 then
   DBMS_OUTPUT.PUT_LINE('OK');
 
 END IF;
-	
 
-	 
+
 EXECUTE IMMEDIATE 'CREATE SEQUENCE '||V_ESQUEMA||'.S_DD_RVN_RES_VALIDACION_NUSE'; 	 
 	 
 EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.DD_RVN_RES_VALIDACION_NUSE

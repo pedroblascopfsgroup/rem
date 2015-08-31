@@ -1697,35 +1697,25 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 	@Override
 	@BusinessOperation(BO_ASU_MGR_OBTENER_ACTUACIONES_ASUNTO_OPTIMIZADO)
-	public List<DtoProcedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId) {
+	public List<Procedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId) {
 
-		List<DtoProcedimiento> listado = new ArrayList<DtoProcedimiento>();
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(asuId);
-		if (!Checks.esNulo(asunto)) {
-			List<Procedimiento> procedimientos = asunto.getProcedimientos();
-			if (!Checks.estaVacio(procedimientos)) {
-				for (Procedimiento p : procedimientos) {
-					DtoProcedimiento dto = new DtoProcedimiento();
-					dto.setProcedimiento(p);
-					
-					Boolean procActivo = isProcedimientoActivo(p.getId());
-					dto.setActivo(procActivo);
-					listado.add(dto);
-				}
-			}
+		//List<DtoProcedimiento> listado = new ArrayList<DtoProcedimiento>();
+		List<Procedimiento> list = genericdDao.getList(Procedimiento.class, genericdDao.createFilter(FilterType.EQUALS, "asunto.id", asuId));
+		for (Procedimiento p : list) {
+			p.setActivo(isProcedimientoActivo(p));
 		}
+		
+		list = ordena(list);
 
-		listado = ordena(listado);
-
-		return listado;
+		return list;
 	}
 	
-	private List<DtoProcedimiento> ordena(List<DtoProcedimiento> list) {
+	private List<Procedimiento> ordena(List<Procedimiento> list) {
 		if (!Checks.estaVacio(list)) {
-			Collections.sort(list, new Comparator<DtoProcedimiento>() {
+			Collections.sort(list, new Comparator<Procedimiento>() {
 
 				@Override
-				public int compare(DtoProcedimiento o1, DtoProcedimiento o2) {
+				public int compare(Procedimiento o1, Procedimiento o2) {
 					if ((o1 == null) && (o2 == null))
 						return compareById(o1, o2);
 						//return 0;
@@ -1734,8 +1724,8 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 					else if ((o1 != null) && (o2 == null))
 						return -1;
 					else {
-						Date f1 = o1.getProcedimiento().getAuditoria().getFechaCrear();
-						Date f2 = o2.getProcedimiento().getAuditoria().getFechaCrear();
+						Date f1 = o1.getAuditoria().getFechaCrear();
+						Date f2 = o2.getAuditoria().getFechaCrear();
 						if ((f1 == null) && (f2 == null))
 							return 0;
 						else if ((f1 == null) && (f2 != null))
@@ -1771,94 +1761,42 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return ((HistoricoProcedimiento) o).getIdProcedimiento();
 		} else if (o instanceof HistoricoAsuntoInfo) {
 			return ((HistoricoProcedimiento) o).getIdProcedimiento();
-		} else {
+		} else if (o instanceof DtoProcedimiento) {
 			return ((DtoProcedimiento) o).getProcedimiento().getId();
+		} else {
+			return ((Procedimiento) o).getId();
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Boolean isProcedimientoActivo(Long idProcedimiento) {
+	private Boolean isProcedimientoActivo(Procedimiento prc) {
 
-		Boolean isActivo = false;
-		//MEJProcedimiento procedimiento = (MEJProcedimiento) proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(idProcedimiento);
-		MEJProcedimiento procedimiento = (MEJProcedimiento) genericdDao.get(MEJProcedimiento.class, genericdDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),
-				genericdDao.createFilter(FilterType.EQUALS, "id", idProcedimiento));
-
-		if (!Checks.esNulo(procedimiento)) {
-			if (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_ACEPTADO)
-				|| (procedimiento.getDerivacionAceptada() 
-					&& !procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO)
-							&& !procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))) {
+		MEJProcedimiento procedimiento = (MEJProcedimiento) prc;
+		
+		if(procedimiento.isEstaParalizado()){
+			return true;
+		}
+		
+		String estadoProcedimiento = procedimiento.getEstadoProcedimiento().getCodigo();
+		
+		//Si el procedimiento no está en un estado factible de tener tareas pendientes, nunca se debe marcar como activo
+		if ((DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_ACEPTADO.equals(procedimiento.getEstadoProcedimiento().getCodigo()) || (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO).equals(procedimiento.getEstadoProcedimiento().getCodigo()))) {
+			if (!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(estadoProcedimiento)
+							&& !DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(estadoProcedimiento)) {
 				Set<TareaNotificacion> tareasProc = procedimiento.getTareas();
-
-				Boolean texPendientes = false;
+	
 				for (TareaNotificacion tar : tareasProc) {
 					TareaExterna tarExterna = tar.getTareaExterna();
 					if (!Checks.esNulo(tarExterna)) {
 						if (tarExterna.getAuditoria() != null && !tarExterna.getAuditoria().isBorrado()) {
-							texPendientes = true;
+							return true;
 						}
 					}
-				}
-				if (texPendientes) {
-					isActivo = true;
-				} else {
-					// Si el procedimiento no tiene ninguna tarea externa
-					// pendiente comprobamos
-					// si tiene decisiones pendientes de las que no tienen tarea
-					// externa
-					Boolean tarPendiente = false;
-					for (TareaNotificacion tar : tareasProc) {
-						if (tar.getSubtipoTarea() != null
-								&& tar.getSubtipoTarea().getCodigoSubtarea() != null
-								&& (tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_GESTOR )
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_ACTUALIZAR_ESTADO_RECURSO_SUPERVISOR)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_TOMA_DECISION_BPM)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_PROPUESTA_DECISION_PROCEDIMIENTO)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_ACUERDO_PROPUESTO)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_TAREA_PROPUESTA_OBJETIVO)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_TAREA_PROPUESTA_CUMPLIMIENTO_OBJETIVO)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_TAREA_PRORROGA_TOMA_DECISION)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE)
-										|| tar.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_TAREA_GESTOR_ADMINISTRATIVO) || tar.getSubtipoTarea().getCodigoSubtarea()
-										.equals(EXTSubtipoTarea.CODIGO_TAREA_RESPONSABLE_CONCURSAL))) {
-							
-							if (Checks.esNulo(tar.getTareaFinalizada()) || (!Checks.esNulo(tar.getTareaFinalizada()) && !tar.getTareaFinalizada())){
-								
-								// Comprobar que no se haya derivado el procedimiento
-								List<DecisionProcedimiento> listDecProcedimiento = (List<DecisionProcedimiento>) executor.execute("decisionProcedimientoManager.getList",procedimiento.getId());
-								
-								if (!Checks.estaVacio(listDecProcedimiento)){
-									for (DecisionProcedimiento dec : listDecProcedimiento){
-										if (!Checks.esNulo(dec) && dec.getParalizada() == null){
-											tarPendiente = false;
-										} else {
-											tarPendiente = true;
-										}
-									}
-								} else {
-									tarPendiente = true;
-								}
-								
-							}
-						}
-					}
-					if (tarPendiente) {
-						isActivo = true;
-					}
-				}
-				//Si el procedimiento no está en un estado factible de tener tareas pendientes, nunca se debe marcar como activo
-				if ((DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_ACEPTADO.equals(procedimiento.getEstadoProcedimiento().getCodigo()) || (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO).equals(procedimiento.getEstadoProcedimiento().getCodigo())) && procedimiento.isEstaParalizado()) {
-					isActivo = true;
-				}
-
-			}
+				}		
+			}		
 		}
 
-		return isActivo;
+		return false;
 
 	}
 

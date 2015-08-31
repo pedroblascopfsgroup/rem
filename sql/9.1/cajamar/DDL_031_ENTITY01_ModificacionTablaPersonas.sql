@@ -33,7 +33,6 @@ BEGIN
   V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  ADD
              (
                  PER_COD_ESTADO_CICLO_VIDA VARCHAR2(50 CHAR)
-               , CNT_PER_FEC_CLO_VIDA_REL DATE
                , PER_SCORING VARCHAR2(10 CHAR)
                , PER_SERV_NOMINA_PENSION VARCHAR2(1 CHAR)
                , PER_ULTIMA_ACTUACION VARCHAR2(1024 CHAR)
@@ -42,14 +41,9 @@ BEGIN
 
   V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  MODIFY
             (
-                 DD_SCL_ID NUMBER(16, 0) NULL
-              ,  DD_SCE_ID NUMBER(16, 0) NULL
-              ,  PER_REX_FECHA DATE NULL
-              ,  DD_PNV_ID NULL
-              ,  DD_COS_ID NULL
-              ,  DD_TPG_ID NULL
-              ,  PER_DOC_ID NULL
-              ,  PER_TELEFONO_1 NULL
+                 DD_SCL_ID NUMBER(16, 0) 
+              ,  DD_SCE_ID NUMBER(16, 0) 
+              ,  PER_REX_FECHA DATE 
               ,  PER_NOM50                VARCHAR2(1200)
               ,  PER_SEXO                 VARCHAR2(4) 
               ,  PER_RIESGO_AUTORIZADO    NUMBER(15,2)

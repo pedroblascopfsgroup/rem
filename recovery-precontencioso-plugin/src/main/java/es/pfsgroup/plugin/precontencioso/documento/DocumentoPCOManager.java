@@ -140,6 +140,84 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 	};
 	
+	@Override
+	public List<DocumentoPCO> getDocumentosOrdenadosByUnidadGestion(List<DocumentoPCO> listDocPco) {
+		List<DocumentoPCO> list = new ArrayList<DocumentoPCO>();
+		List<Long> idsUndGestContrato = new ArrayList<Long>();
+		List<Long> idsUndGestPersonas = new ArrayList<Long>();
+		List<Long> idsUndGestBienes = new ArrayList<Long>();
+		
+		for(DocumentoPCO docPco : listDocPco) {
+			if (docPco.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.CONTRATOS)){
+				idsUndGestContrato.add(docPco.getUnidadGestionId());
+			}
+			if (docPco.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.PERSONAS)){
+				idsUndGestPersonas.add(docPco.getUnidadGestionId());
+			}
+			if (docPco.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.BIENES)){
+				idsUndGestBienes.add(docPco.getUnidadGestionId());
+			}
+		}
+		
+		List<Contrato> contratos = documentoPCODao.getContratosByIdsOrderByDesc(convertirListLongToString(idsUndGestContrato));
+		List<Persona> personas = documentoPCODao.getPersonasByIdsOrderByDesc(convertirListLongToString(idsUndGestPersonas));
+		List<NMBBienEntidad> bienes = documentoPCODao.getBienesByIdsOrderByDesc(convertirListLongToString(idsUndGestBienes));
+		
+		for(Contrato contrato : contratos){
+			for(DocumentoPCO doc : listDocPco) {
+				if(doc.getUnidadGestionId().equals(contrato.getId())) {
+					list.add(doc);
+				}
+			}
+		}
+		
+		for(Persona persona : personas){
+			for(DocumentoPCO doc : listDocPco) {
+				if(doc.getUnidadGestionId().equals(persona.getId())) {
+					list.add(doc);
+				}
+			}
+		}
+		
+		for(NMBBienEntidad bien : bienes){
+			for(DocumentoPCO doc : listDocPco) {
+				if(doc.getUnidadGestionId().equals(bien.getId())) {
+					list.add(doc);
+				}
+			}
+		}		
+		
+		if(bienes.size() != idsUndGestBienes.size()) {
+			for(Long datoLong : idsUndGestBienes) {
+				boolean existe = false;
+				for(NMBBienEntidad bEnt : bienes) {
+					if(bEnt.getId().equals(datoLong)){
+						existe = true;
+					}
+				}
+				if(!existe) {
+					for(DocumentoPCO doc : listDocPco) {
+						if(doc.getId().equals(datoLong)){
+							list.add(doc);
+						}
+					}
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+	private String convertirListLongToString(List<Long> longs) {
+		String string = "";
+		for(int i=0; i<longs.size(); i++) {
+			string += longs.get(i);
+			if(i < longs.size()-1){
+				string += ",";				
+			}
+		}
+		return string;
+	}
 	
 	/**
 	 * Crea un DTO de la solicitud a partir del documento y de la solicitud

@@ -28,13 +28,16 @@
 		,iconCls : 'icon_ok'
 		,handler:function(){
 				var formulario = panelEdicion.getForm();
-				if (formulario.isValid()) {		    
+				if (formulario.isValid()) {
+					var mask=new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+				    mask.show();		    
 			    	var p = getParametros();
 			    	Ext.Ajax.request({
 							url : page.resolveUrl('documentopco/saveCrearSolicitudes'), 
 							params : p ,
 							method: 'POST',
 							success: function ( result, request ) {
+								mask.hide();
 								page.fireEvent(app.event.DONE);
 							}
 					});

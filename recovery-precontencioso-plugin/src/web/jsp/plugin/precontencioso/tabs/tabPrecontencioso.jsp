@@ -15,7 +15,7 @@
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/burofax/grids/burofax.jsp" %>
 
 	var panel = new Ext.Panel({
-		title:'<s:message code="procedimiento.precontencioso" text="**Precontencioso"/>'
+		title:'<s:message code="procedimiento.precontencioso.expedienteJudicial" text="**Precontencioso"/>'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'

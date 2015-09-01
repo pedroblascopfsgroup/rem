@@ -290,6 +290,9 @@ var actualizarBotonesLiquidacion = function() {
 	}
 
 	btnConfirmar.setDisabled(btnConfirmar.disabled || !comprobarDatosCalculoRellenos());
+	
+			
+	
 }
 
 <%-- Utils --%>

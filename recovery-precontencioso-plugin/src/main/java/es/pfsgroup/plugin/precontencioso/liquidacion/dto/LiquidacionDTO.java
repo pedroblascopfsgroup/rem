@@ -46,11 +46,17 @@ public class LiquidacionDTO extends WebDto {
 	// Apoderado usuario/despacho
 	private Long apoderadoUsuarioId;
 	private Long apoderadoDespachoId;
+	
+	//Solicitante
+	private String solicitante;
+	
+	
 
 	/*
 	 * GETTERS & SETTERS
 	 */
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -244,4 +250,13 @@ public class LiquidacionDTO extends WebDto {
 	public void setNroContrato(String nroContrato) {
 		this.nroContrato = nroContrato;
 	}
+	public String getSolicitante() {
+		return solicitante;
+	}
+	public void setSolicitante(String solicitante) {
+		this.solicitante = solicitante;
+	}
+	
+	
+	
 }

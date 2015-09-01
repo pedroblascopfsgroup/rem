@@ -48,7 +48,7 @@ public class LiquidacionController {
 	
 	@Autowired
 	UsuarioManager usuarioManager;
-	
+
 	@RequestMapping
 	public String getLiquidacionesPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
@@ -106,7 +106,7 @@ public class LiquidacionController {
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 		liquidacionDto.setId(id);
 		liquidacionDto.setFechaCierre(fechaCierreDate);
-
+		
 		liquidacionApi.solicitar(liquidacionDto);
 
 		return DEFAULT;

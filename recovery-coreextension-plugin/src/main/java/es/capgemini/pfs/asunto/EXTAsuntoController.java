@@ -33,5 +33,18 @@ public class EXTAsuntoController {
 		
         return "plugin/coreextension/exportacionGenericoCountJSON";
     }
+	
+
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getMsgErrorEnvioCDDCabecera(Long idAsunto, ModelMap model) {		
+    	
+		String mensaje = proxyFactory.proxy(EXTAsuntoApi.class).getMsgErrorEnvioCDDCabecera(idAsunto);
+		
+		model.put("okko", mensaje);
+		
+        return "plugin/coreextension/OkRespuestaJSON";
+    }
 
 }

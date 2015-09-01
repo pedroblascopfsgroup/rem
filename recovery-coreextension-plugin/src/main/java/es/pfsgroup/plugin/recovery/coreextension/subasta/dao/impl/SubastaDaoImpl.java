@@ -1,9 +1,9 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +20,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
@@ -31,9 +32,11 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchCDDResultadoNuse;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
@@ -107,7 +110,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		where.add(Restrictions.eq("auditoria.borrado", false));
 		where.add(Restrictions.eq("asunto.auditoria.borrado", false));
 
-		// Filtros PestaÃ±as
+		// Filtros Pestañas
 		where.addAll(restriccionesPorUsuarioExterno(usuLogado, query));
 		where.addAll(restriccionesDatosSubasta(filtro));
 		where.addAll(restriccionesCliente(filtro, query));
@@ -115,7 +118,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		where.addAll(restriccionesJerarquia(filtro, query));
 		where.addAll(restriccionesAsunto(filtro));
 
-		// AÃ±adir filtros a la consulta
+		// Añadir filtros a la consulta
 		for (Criterion condicion : where) {
 			query.add(condicion);
 		}
@@ -183,7 +186,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para aÃ±adir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesJerarquia(NMBDtoBuscarSubastas filtro, Criteria query) {
@@ -209,7 +212,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para aÃ±adir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesContrato(NMBDtoBuscarSubastas filtro, Usuario usuLogado, Criteria query) {
@@ -244,7 +247,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para aÃ±adir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesCliente(NMBDtoBuscarSubastas filtro, Criteria query) {
@@ -299,7 +302,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para aÃ±adir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesPorUsuarioExterno(Usuario usuLogado, Criteria query) {
@@ -365,7 +368,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para aÃ±adir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesDatosSubasta(NMBDtoBuscarSubastas filtro) {
@@ -457,7 +460,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	
 	public Page buscarSubastasPaginados(NMBDtoBuscarSubastas dto,
 			Usuario usuLogado) {
-		// Establece el orden de la bÃºsqueda
+		// Establece el orden de la búsqueda
 		setSortSubastas(dto);
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				generarHQLBuscarSubastasPaginados(dto, usuLogado), dto);
@@ -494,7 +497,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		StringBuffer hqlFrom = new StringBuffer();
 		StringBuffer hqlWhere = new StringBuffer();
 
-		// Consulta inicial bï¿½sica
+		// Consulta inicial b?sica
 		hqlSelect.append(" select distinct s ");
 
 		hqlFrom.append("  from Subasta s ");
@@ -532,7 +535,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 					+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
 		}
 
-		// Filtros de pestaï¿½a de Subasta
+		// Filtros de pesta?a de Subasta
 		if (dto.getId() != null) {
 			hqlWhere.append(" and s.id = ".concat(dto.getId().toString()));
 		}
@@ -658,7 +661,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 
 		if (!StringUtils.emtpyString(dto.getIdComboEmbargo())) {
 			// (SERGIO):
-			// "Indica si la subasta es consecuencia de un embargo, esto es, que alguno de los bienes de la subasta este asociado a un embargo en alguno de los trï¿½mite del asunto donde esta la subasta"
+			// "Indica si la subasta es consecuencia de un embargo, esto es, que alguno de los bienes de la subasta este asociado a un embargo en alguno de los tr?mite del asunto donde esta la subasta"
 			if (dto.getIdComboEmbargo().equalsIgnoreCase("1")) {
 				hqlWhere.append(" and s.embargo=1 ");
 			} else if (dto.getIdComboEmbargo().equalsIgnoreCase("0")) {
@@ -666,7 +669,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			}
 		}
 
-		// Filtros de pestaï¿½a de Cliente
+		// Filtros de pesta?a de Cliente
 		if (!StringUtils.emtpyString(dto.getCodigoCliente())
 				|| !StringUtils.emtpyString(dto.getNombre())
 				|| !StringUtils.emtpyString(dto.getApellidos())
@@ -703,7 +706,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			hqlWhere.append(" and tpe.codigo = '" + dto.getTipoPersona() + "' ");
 		}
 
-		// Filtros de pestaï¿½a de Contrato
+		// Filtros de pesta?a de Contrato
 		if (existsFiltroContrato(dto)) {
 			//TODO quitar todos estos comenarios
 
@@ -725,7 +728,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algÃºn modo
+		 * la subasta de algún modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodRecibo())) {
 			hqlFrom.append(", Recibo recibo");
@@ -735,7 +738,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algÃºn modo
+		 * la subasta de algún modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodEfecto())) {
 			hqlFrom.append(", EfectoContrato efecto ");
@@ -745,7 +748,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algÃºn modo
+		 * la subasta de algún modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodDisposicion())) {
 			hqlFrom.append(" , Disposicion disp ");
@@ -764,11 +767,11 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 					+ dto.getTiposProductoEntidad() + ")");
 		}
 
-		// Filtros de pestaï¿½a de Jerarquï¿½a
+		// Filtros de pesta?a de Jerarqu?a
 
 		if (!StringUtils.emtpyString(dto.getCodigoZona())) {
 
-			// Incluyo el cruce de tablas si aï¿½n no se ha incluido
+			// Incluyo el cruce de tablas si a?n no se ha incluido
 			if (hqlFrom.indexOf("Oficina oficinacontable") < 0) {
 				hqlFrom.append(", Oficina oficinacontable ");
 				hqlWhere.append(" and c.oficinaContable=oficinacontable ");
@@ -784,7 +787,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(dto.getCodigoZonaAdm())) {
-			// Incluyo el cruce de tablas si aï¿½n no se ha incluido
+			// Incluyo el cruce de tablas si a?n no se ha incluido
 			if (hqlFrom.indexOf("Oficina oficinaadministrativa") < 0) {
 				hqlFrom.append(", Oficina oficinaadministrativa ");
 				hqlWhere.append(" and c.oficinaAdministrativa=oficinaadministrativa ");
@@ -800,7 +803,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 
-		// Filtros pestaï¿½a asuntos
+		// Filtros pesta?a asuntos
 		if (!StringUtils.emtpyString(dto.getGestion())) {
 			hqlWhere.append(" and asu.gestionAsunto.codigo = '"
 					+ dto.getGestion() + "' ");
@@ -866,8 +869,8 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 
 	/**
-	 * Este mÃ©todo nos dice si vamos a necesitar cruzar por Contratos en la
-	 * bÃºsqueda
+	 * Este método nos dice si vamos a necesitar cruzar por Contratos en la
+	 * búsqueda
 	 * 
 	 * @param dto
 	 * @param usuLogado
@@ -882,7 +885,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 	
 	/**
-	 * Nos dice si el usuario ha introducido algÃºn filtro relativo a la ZonificaciÃ³n en el DTO
+	 * Nos dice si el usuario ha introducido algún filtro relativo a la Zonificación en el DTO
 	 * @param dto
 	 * @return
 	 */
@@ -892,7 +895,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 
 	/**
-	 * Nos dice si el usuario ha introducido algÃºn filtro relativo al Contrato en el DTO
+	 * Nos dice si el usuario ha introducido algún filtro relativo al Contrato en el DTO
 	 * @param dto
 	 * @return
 	 */
@@ -905,6 +908,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				|| (!StringUtils.emtpyString(dto.getTiposProductoEntidad()));
 	}
 	
+	//FIXME esto funciona? LoteBien no existe
 	public List<Subasta> getSubastasporIdBien (Long id){
 		List<Subasta> listaSubastas = new ArrayList<Subasta>();
 		HQLBuilder hql = new HQLBuilder("select lob.loteSubasta.subasta "
@@ -954,7 +958,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	@Override
 	public Page buscarLotesSubastasPaginados(NMBDtoBuscarLotesSubastas dto,
 			Usuario usuLogado) {
-		// Establece el orden de la bÃºsqueda
+		// Establece el orden de la búsqueda
 		setSortLotesSubastas(dto);
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				generarHQLBuscarLotesSubastasPaginados(dto, usuLogado), dto);
@@ -967,7 +971,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		StringBuffer hqlFrom = new StringBuffer();
 		StringBuffer hqlWhere = new StringBuffer();
 
-		// Consulta inicial bï¿½sica
+		// Consulta inicial b?sica
 		hqlSelect.append("select lot ");
 
 		hqlFrom.append("  from LoteSubasta lot ");
@@ -1005,7 +1009,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 					+ DDEstadoAsunto.ESTADO_ASUNTO_CERRADO + ")");
 		}
 
-		// Filtros de pestaï¿½a de Subasta
+		// Filtros de pesta?a de Subasta
 		if (dto.getId() != null) {
 			hqlWhere.append(" and lot.subasta.id = ".concat(dto.getId().toString()));
 		}
@@ -1157,7 +1161,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 
 		if (!StringUtils.emtpyString(dto.getIdComboEmbargo())) {
 			// (SERGIO):
-			// "Indica si la subasta es consecuencia de un embargo, esto es, que alguno de los bienes de la subasta este asociado a un embargo en alguno de los trï¿½mite del asunto donde esta la subasta"
+			// "Indica si la subasta es consecuencia de un embargo, esto es, que alguno de los bienes de la subasta este asociado a un embargo en alguno de los tr?mite del asunto donde esta la subasta"
 			if (dto.getIdComboEmbargo().equalsIgnoreCase("1")) {
 				hqlWhere.append(" and lot.subasta.embargo=1 ");
 			} else if (dto.getIdComboEmbargo().equalsIgnoreCase("0")) {
@@ -1165,7 +1169,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			}
 		}
 
-		// Filtros de pestaï¿½a de Cliente
+		// Filtros de pesta?a de Cliente
 		if (!StringUtils.emtpyString(dto.getCodigoCliente())
 				|| !StringUtils.emtpyString(dto.getNombre())
 				|| !StringUtils.emtpyString(dto.getApellidos())
@@ -1202,7 +1206,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			hqlWhere.append(" and tpe.codigo = '" + dto.getTipoPersona() + "' ");
 		}
 
-		// Filtros de pestaï¿½a de Contrato
+		// Filtros de pesta?a de Contrato
 		if (existsFiltroContrato(dto)) {
 			//TODO quitar todos estos comenarios
 
@@ -1223,7 +1227,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 		
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algÃºn modo
+		 * la subasta de algún modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodRecibo())) {
 			hqlFrom.append(", Recibo recibo");
@@ -1233,7 +1237,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algÃºn modo
+		 * la subasta de algún modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodEfecto())) {
 			hqlFrom.append(", EfectoContrato efecto ");
@@ -1243,7 +1247,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algÃºn modo
+		 * la subasta de algún modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodDisposicion())) {
 			hqlFrom.append(" , Disposicion disp ");
@@ -1260,11 +1264,11 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			hqlWhere.append(String.format("and c.tipoProductoEntidad.codigo in (%s)", dto.getTiposProductoEntidad()));
 		}
 
-		// Filtros de pestaï¿½a de Jerarquï¿½a
+		// Filtros de pesta?a de Jerarqu?a
 
 		if (!StringUtils.emtpyString(dto.getCodigoZona())) {
 
-			// Incluyo el cruce de tablas si aï¿½n no se ha incluido
+			// Incluyo el cruce de tablas si a?n no se ha incluido
 			if (hqlFrom.indexOf("Oficina oficinacontable") < 0) {
 				hqlFrom.append(", Oficina oficinacontable ");
 				hqlWhere.append(" and c.oficinaContable=oficinacontable ");
@@ -1280,7 +1284,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		if (!StringUtils.emtpyString(dto.getCodigoZonaAdm())) {
-			// Incluyo el cruce de tablas si aï¿½n no se ha incluido
+			// Incluyo el cruce de tablas si a?n no se ha incluido
 			if (hqlFrom.indexOf("Oficina oficinaadministrativa") < 0) {
 				hqlFrom.append(", Oficina oficinaadministrativa ");
 				hqlWhere.append(" and c.oficinaAdministrativa=oficinaadministrativa ");
@@ -1296,7 +1300,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 
-		// Filtros pestaï¿½a asuntos
+		// Filtros pesta?a asuntos
 		if (!StringUtils.emtpyString(dto.getGestion())) {
 			hqlWhere.append(" and asu.gestionAsunto.codigo = '"
 					+ dto.getGestion() + "' ");
@@ -1366,7 +1370,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	private String generarHQLBuscarBatchAcuerdoCierreDeuda(Long idAsunto, Long idProcedimiento, Long idBien) {
 		StringBuilder hql = new StringBuilder();
 
-		// Consulta inicial bï¿½sica
+		// Consulta inicial b?sica
 		hql.append(" select baccd ");
 		hql.append(" from BatchAcuerdoCierreDeuda baccd ");
 		hql.append(" where baccd.idProcedimiento = ").append(idProcedimiento);
@@ -1397,17 +1401,93 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		sb.append(" (idProcedimiento, fechaAlta, idAsunto, fechaEntrega, usuarioCrear, idBien, entidad) ");
 		sb.append(" values ");
 		sb.append(" (");
-		sb.append(acuerdoCierreDeuda.getIdProcedimiento()).append(",");
+		sb.append(acuerdoCierreDeuda.getProcedimiento().getId()).append(",");
 		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaAlta())).append(",");
-		sb.append(acuerdoCierreDeuda.getIdAsunto()).append(",");
+		sb.append(acuerdoCierreDeuda.getAsunto().getId()).append(",");
 		sb.append(DateFormat.toString(acuerdoCierreDeuda.getFechaEntrega())).append(",");
 		sb.append(acuerdoCierreDeuda.getUsuarioCrear()).append(",");
-		sb.append(acuerdoCierreDeuda.getIdBien()).append(",");
+		sb.append(!Checks.esNulo(acuerdoCierreDeuda.getBien()) ? acuerdoCierreDeuda.getBien().getId() : "").append(",");
 		sb.append(acuerdoCierreDeuda.getEntidad());
 		sb.append(")");
 		
 		Query query = getSession().createQuery(sb.toString());
 		query.executeUpdate();
+	}
+	
+	@Override
+	public void eliminarBatchAcuerdoCierreDeuda(BatchAcuerdoCierreDeuda acuerdoCierreDeuda){
+		//Se eliminan todos los registros por id de BACD
+                StringBuilder sb = new StringBuilder();
+		sb.append(" delete from BatchAcuerdoCierreDeuda bacd");
+		sb.append(" where 1=1 ");
+		//bacd.resultadoValidacion = ").append(BatchAcuerdoCierreDeuda.PROPIEDAD_RESULTADO_KO);
+                sb.append(" and bacd.id = ").append(acuerdoCierreDeuda.getId());
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
+        
+	@Override
+	public void eliminarBatchCDDResultadoNuse(BatchCDDResultadoNuse acuerdoCierreDeudaNuse){
+		//Se eliminan todos los registros KO por ide BCDDNuse
+                StringBuilder sb = new StringBuilder();
+		sb.append(" delete from BatchCDDResultadoNuse bnus");
+		sb.append(" where bnus.resultado <> 0 ");
+		sb.append(" and borrado = 0 ");
+        sb.append(" and bnus.id = ").append(acuerdoCierreDeudaNuse.getId());
+		
+		Query query = getSession().createQuery(sb.toString());
+		query.executeUpdate();
+	}
+	
+	@Override
+	public BatchAcuerdoCierreDeuda findBatchAcuerdoCierreDeuda(AcuerdoCierreDeudaDto acuerdo){
+		Query query = getSession().createQuery(
+				generarHQLBuscarBatchAcuerdoCierreDeuda(acuerdo));
+		return (BatchAcuerdoCierreDeuda) query.uniqueResult();
+	}
+
+	/**
+	 * Función que buscará un registro en BatchAcuerdoCierreDeuda que coincida con los filtros
+	 * añadidos a la consulta en función de los valores recibidos. El asunto es obligatorio.
+	 * @param acuerdo
+	 * @return BatchAcuerdoCierreDeuda acuerdo
+	 */
+	private String generarHQLBuscarBatchAcuerdoCierreDeuda(AcuerdoCierreDeudaDto acuerdo) {
+
+	
+		StringBuilder hql = new StringBuilder();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		// Consulta inicial b?sica	
+		hql.append(" select baccd ");
+		hql.append(" from BatchAcuerdoCierreDeuda baccd ");
+		// Siempre tendremos el asunto
+		hql.append(" where baccd.asunto.id = ").append(acuerdo.getAsunto().getId());
+		
+		// Añadimos filtros en función de los valores recibidos
+//		if(!Checks.esNulo(acuerdo.getId())) {
+//			hql.append(" and baccd.id = ").append(acuerdo.getId());
+//		}		
+		
+		if(!Checks.esNulo(acuerdo.getProcedimiento().getId())) {
+			hql.append(" and baccd.procedimiento.id = ").append(acuerdo.getProcedimiento().getId());
+		}
+		
+		if(!Checks.esNulo(acuerdo.getBien()) && !Checks.esNulo(acuerdo.getBien().getId())) {
+			hql.append(" and baccd.bien.id = ").append(acuerdo.getBien().getId());
+		}else {
+			hql.append(" and baccd.bien is null ");
+		}
+		
+		if(Checks.esNulo(acuerdo.getFechaEntrega())) {
+			hql.append(" and baccd.fechaEntrega is null ");
+		} else {
+			String fechaEntrega = dateFormat.format(acuerdo.getFechaEntrega());
+			hql.append(" and baccd.fechaEntrega = to_date('").append(fechaEntrega).append("', 'DD/MM/YYYY')");
+		}
+
+		return hql.toString();
+
 	}
 	
 }

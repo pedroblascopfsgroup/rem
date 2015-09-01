@@ -1429,13 +1429,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-optionalConfiguration</id>
 						<phase>compile</phase>
@@ -1450,13 +1443,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-jsp</id>
 						<phase>compile</phase>
@@ -1471,13 +1457,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-js</id>
 						<phase>compile</phase>
@@ -1492,13 +1471,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-img</id>
 						<phase>compile</phase>
@@ -1513,13 +1485,6 @@
 							<overWriteSnapshots>true</overWriteSnapshots>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
 					<execution>
 						<id>extract-flows</id>
 						<phase>compile</phase>
@@ -1783,6 +1748,25 @@
 					<version>1.7.5</version>
 				</dependency>
 			</dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/bankia/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
 		</profile>
 		<profile>
 			<id>bankia-test</id>
@@ -1829,6 +1813,7 @@
 									<includes>
 										<include>inicioBankia.jsp</include>
 										<include>WEB-INF/config/bankia.htaccess</include>
+                                        <include>img/cliente_logo.gif</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -1995,6 +1980,7 @@
 									<includes>
 										<include>inicioBankia.jsp</include>
 										<include>WEB-INF/config/bankia.htaccess</include>
+                                        <include>img/cliente_logo.gif</include>
 									</includes>
 									<filtering>true</filtering>
 								</resource>
@@ -2113,6 +2099,15 @@
 						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
 							<webXml>src/custom/haya/webapp/WEB-INF/web.xml</webXml>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/haya/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -2168,7 +2163,6 @@
 				</dependency>
 				<!-- Fin versión de AspectJ -->
 			</dependencies>
-			<!-- No tiene configurados resources adicionales (de momento)
 			<build>
 				<resources>
 					<resource>
@@ -2178,8 +2172,24 @@
 						<directory>src/custom/cajamar/resources</directory>
 					</resource>
 				</resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/custom/cajamar/webapp/</directory>
+                                    <includes>
+                                        <include>img/cliente_logo.gif</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
 			</build>
-		-->
 		</profile>
 	</profiles>
 </project>

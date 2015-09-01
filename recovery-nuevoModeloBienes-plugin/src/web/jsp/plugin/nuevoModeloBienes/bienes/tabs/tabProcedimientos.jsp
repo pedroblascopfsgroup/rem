@@ -43,7 +43,7 @@
    procedimientosStore.webflow({idBien:${NMBbien.id}});    
    
  	var procedimientosCM  = new Ext.grid.ColumnModel([
-         {header: '<s:message code="plugin.nuevoModeloBienes.procedimientos.id" text="**id"/>',width:52, sortable: true, dataIndex: 'id', hidden: true}
+         {header: '<s:message code="plugin.nuevoModeloBienes.procedimientos.id" text="**id"/>',width:52, sortable: true, dataIndex: 'idPrc', hidden: true}
          ,{header: '<s:message code="plugin.nuevoModeloBienes.procedimientos.tipoProcedimiento" text="**tipoProcedimiento"/>',width:52, sortable: true, dataIndex: 'tipoProcedimiento', hidden: false}
          ,{header: '<s:message code="plugin.nuevoModeloBienes.procedimientos.idBien" text="**idBien"/>',width:52, sortable: true, dataIndex: 'idBien', hidden: true}
          ,{header: '<s:message code="plugin.nuevoModeloBienes.procedimientos.solvenciaGarantia" text="**solvenciaGarantia"/>',width:52, sortable: true, dataIndex: 'solvenciaGarantia', hidden: true}

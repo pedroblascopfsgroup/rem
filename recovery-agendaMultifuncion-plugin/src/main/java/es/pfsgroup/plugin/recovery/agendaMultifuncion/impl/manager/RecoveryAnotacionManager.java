@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.app.VelocityEngine;
@@ -18,8 +20,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
+
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.mail.MailManager;
@@ -102,6 +106,9 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	
 	@Autowired
 	private EmailContentUtil emailContentUtil;
+	
+	@Autowired
+	private Executor executor;	
 
 	@Override
 	@BusinessOperation(AMF_GET_USUARIOS)
@@ -395,7 +402,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		if (mailsPara.size() > 0) {
 			try {
 				Usuario usuarioLogueado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				String textoFrom =  usuarioLogueado.getUsername();
+				String textoFrom =  usuarioLogueado.getApellidoNombre();
 				
 				//Añadimos SOLO en el asunto del email, el nombre del asunto
 				Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dto.getIdUg());
@@ -408,7 +415,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						 StringUtils.collectionToCommaDelimitedString(mailsCC), dto.getAsuntoMail(), ug, nombre, HtmlUtils.htmlUnescape(dto.getCuerpoEmail()),
 						dto);
 				
-				AgendaMultifuncionCorreoUtils.dameInstancia().enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
+				AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
 						asuntoMail, cuerpoEmail, dto.getAdjuntosList());
 				
 				/*DIANA: Nuevo m�todo para a�adir adjuntos al email

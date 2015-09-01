@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -25,6 +29,7 @@ public class LiquidacionController {
 
 	private static final String DEFAULT = "default";
 	private static final String JSON_LIQUIDACIONES = "plugin/precontencioso/liquidacion/json/liquidacionesJSON";
+	private static final String JSON_OCULTAR_BOTON_SOLICITAR = "plugin/precontencioso/liquidacion/json/ocultarBtnSolicitarJSON";
 	private static final String JSP_EDITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/editarLiquidacion";
 	private static final String JSP_SOLICITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/solicitarLiquidacion";
 	
@@ -33,20 +38,33 @@ public class LiquidacionController {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
 	LiquidacionApi liquidacionApi;
 
 	@Autowired
 	UtilDiccionarioApi diccionarioApi;
-
+	
+	@Autowired
+	UsuarioManager usuarioManager;
+	
 	@RequestMapping
 	public String getLiquidacionesPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
 		List<LiquidacionDTO> liquidaciones = liquidacionApi.getLiquidacionesPorIdProcedimientoPCO(idProcedimientoPCO);
 		model.put("liquidaciones", liquidaciones);
-
+		
 		return JSON_LIQUIDACIONES;
 	}
 
+	@RequestMapping
+	public String getOcultarBotonSolicitar(ModelMap model) {
+		Parametrizacion visibleBtnSolicitar = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.VISIBLE_BOTON_SOLICITAR_LIQUIDACION);
+		model.put("ocultarBtnSolicitar", ("1".equals(visibleBtnSolicitar.getValor()) ? true : false));
+		return JSON_OCULTAR_BOTON_SOLICITAR;
+	}
+	
 	@RequestMapping
 	public String abrirEditarLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 

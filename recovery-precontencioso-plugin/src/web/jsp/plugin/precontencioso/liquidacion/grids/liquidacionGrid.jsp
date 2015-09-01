@@ -6,9 +6,27 @@
 
 <%-- Buttons --%>
 
+var ocultarBtnSolicitar = function(){
+	Ext.Ajax.request({
+		url : page.resolveUrl('liquidacion/getOcultarBotonSolicitar'), 
+		method: 'POST',
+		success: function ( result, request ) {
+			var resultado = Ext.decode(result.responseText);
+			if(resultado.ocultarBtnSolicitar) {
+				return true;
+			}else{
+				return false;
+			}
+		} 
+	});
+}
+
+var ocultaSolicitar = ocultarBtnSolicitar();
+
 var btnSolicitar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.solicitar" text="**Solicitar" />',
 	iconCls: 'icon_mas',
+	hidden: ocultaSolicitar,
 	cls: 'x-btn-text-icon',
 	handler: function() {
 		if (comprobarDatosCalculoRellenos()) {
@@ -119,6 +137,7 @@ var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'id'},
 	{name: 'contrato'},
 	{name: 'nroContrato'},
+	{name: 'solicitante'},
 	{name: 'producto'},
 	{name: 'estadoLiquidacion'},
 	{name: 'estadoCodigo'},
@@ -157,6 +176,7 @@ storeLiquidaciones.on(
 var cmLiquidacion = new Ext.grid.ColumnModel([
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato',hidden:true},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'nroContrato'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.solicitante" text="**Solicitante" />', dataIndex: 'solicitante',hidden:true},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.producto" text="**Producto" />', dataIndex: 'producto'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.estadoLiquidacion" text="**Estado Liquidacion" />', dataIndex: 'estadoLiquidacion'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex: 'fechaSolicitud'},
@@ -202,7 +222,6 @@ gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
 <%-- States --%>
 
 var actualizarBotonesLiquidacion = function() {
-
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
 	if (data != null) {
 		var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
@@ -224,9 +243,15 @@ var actualizarBotonesLiquidacion = function() {
 	}
 
 	switch(estadoCodigo) {
-		case 'SOL':
+		
+		case 'PEN':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
+			break;
+			
+		case 'SOL':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(false);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);

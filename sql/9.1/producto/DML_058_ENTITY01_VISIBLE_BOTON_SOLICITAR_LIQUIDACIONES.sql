@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MANUEL MEJIAS
---## FECHA_CREACION=20150831
+--## FECHA_CREACION=20150901
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-221	
@@ -43,7 +43,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
       V_SQL := 'Insert into '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD
    			(PEN_ID, PEN_PARAM, PEN_VALOR, PEN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
  			Values
-   			('||V_ESQUEMA||'.s_pen_param_entidad.nextval, ''visibleBtnSolicitarLiquidacion'', ''1'', ''Dar visibilidad a un boton, si es 1 es visible, si es 0 no es visible'', 0, ''DD'', sysdate, 0)';
+   			('||V_ESQUEMA||'.s_pen_param_entidad.nextval, ''visibleBtnSolicitarLiquidacion'', ''0'', ''Dar visibilidad a un boton, si es 0 es visible, si es 1 no es visible'', 0, ''DD'', sysdate, 0)';
       EXECUTE IMMEDIATE V_SQL ;      
     END IF ;
 

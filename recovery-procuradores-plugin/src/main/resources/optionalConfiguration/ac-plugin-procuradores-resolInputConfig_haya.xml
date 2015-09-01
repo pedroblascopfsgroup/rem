@@ -113,6 +113,16 @@
 						</bean>
 					</list>
 				</entry>
+ 				<entry key="R_PR_HIP_REQ_PAGO_NEG">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_PR_HIP_REQ_PAGO_NEG</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
  				<entry key="R_PR_HIP_ESCR_OPOS_CONTR">
 					<list>
 						<bean

@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.manager.RecoveryAnotac
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacionUsuario;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
+import es.pfsgroup.plugin.recovery.masivo.dao.MSVResolucionDao;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
@@ -222,9 +223,6 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		// MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
 				MSVResolucion msvResolucion = proxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
 				
-				//apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardaDatosResolucion(dtoResolucion);
-
-				
 					//Se sobreescribe el fichero del procurador.
 					if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
 					{
@@ -248,7 +246,7 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 					}
 					
 					msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).procesaResolucion(msvResolucion.getId());
-			
+					
 					if(!msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA) && !msvResolucion.getTipoResolucion().getTipoAccion().getCodigo().equals("INFO"))
 					{
 						DtoGenericForm dto = this.rellenaDTO(msvResolucion);

@@ -1305,19 +1305,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
       					}	
 	   				}
 //	   				,{"xtype":'combo',"store":storeSINO,"value":"01", "name":"con_vista_si_no","fieldLabel":"Vista",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'con_vista_si_no'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	   				,{"xtype":'datefield',"name":"d_vistaImpugnacion","fieldLabel":"Fecha vista",allowBlank:true, filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, id:"d_vistaImpugnacion"+this.idFactoria 
-                     	   ,validator : function(v) {
-	                     		   	if(this.esProcurador)
-	                     			   return true;
-  	                     		   	else{
-				               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" /*&& Ext.getCmp('con_vista_si_no' + idFactoria).getValue() == "01"*/ && Ext.getCmp('d_vistaImpugnacion' + idFactoria).getValue() == ""){
-				               	   			return false;
-				               	   		}else{
-				               	   			return true;
-				               	   		}
-  	                     		   	}
-                     	   }
-	   				}
+	   				,{"xtype":'datefield',"name":"d_vistaImpugnacion","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('Y-m-d'), minValue: fechaMinima, id:"d_vistaImpugnacion"+this.idFactoria}
 	   				,{"xtype":'combo',"store":this.storeMotivoImpugnacion,"name":"d_comboResultado","fieldLabel":"Motivo impugnación",allowBlank:true,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
 	                 	   ,validator : function(v) {
 		               	   		if(Ext.getCmp('d_comboImpugnacion' + idFactoria).getValue() == "01" && Ext.getCmp('d_comboResultado' + idFactoria).getValue() == ""){

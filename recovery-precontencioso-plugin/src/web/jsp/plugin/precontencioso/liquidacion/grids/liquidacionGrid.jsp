@@ -6,9 +6,27 @@
 
 <%-- Buttons --%>
 
+var ocultarBtnSolicitar = function(){
+	Ext.Ajax.request({
+		url : page.resolveUrl('liquidacion/getOcultarBotonSolicitar'), 
+		method: 'POST',
+		success: function ( result, request ) {
+			var resultado = Ext.decode(result.responseText);
+			if(resultado.ocultarBtnSolicitar) {
+				btnSolicitar.hide();
+				return true;
+			}else{
+				btnSolicitar.show();
+				return false;
+			}
+		} 
+	});
+}
+
 var btnSolicitar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.solicitar" text="**Solicitar" />',
 	iconCls: 'icon_mas',
+	hidden: ocultarBtnSolicitar(),
 	cls: 'x-btn-text-icon',
 	handler: function() {
 		if (comprobarDatosCalculoRellenos()) {
@@ -204,7 +222,6 @@ gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
 <%-- States --%>
 
 var actualizarBotonesLiquidacion = function() {
-
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
 	if (data != null) {
 		var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
@@ -226,9 +243,18 @@ var actualizarBotonesLiquidacion = function() {
 	}
 
 	switch(estadoCodigo) {
-		case 'SOL':
+		
+		case 'PEN':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(true);
+			btnGenerar.setDisabled(true);
+			break;
+			
+		case 'SOL':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(false);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);

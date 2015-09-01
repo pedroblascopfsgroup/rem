@@ -11,7 +11,7 @@ var diccEstadoLiquidacion = <app:dict value="${estadoLiquidacion}" />;
 
 var comboEstadoLiquidacion = app.creaDblSelect(
 	diccEstadoLiquidacion,
-	'<s:message code="asd" text="** Estado" />',
+	'<s:message code="plugin.precontencioso.tab.liquidacion.estado" text="** Estado" />',
 	{
 		id: 'fieldEstadoLiquidacion',
 		height: 100,
@@ -23,7 +23,7 @@ var comboEstadoLiquidacion = app.creaDblSelect(
 
 var dateFieldSolicitudLiqDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldSolicitudLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Solicitud" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.solicitud" text="** F. Solicitud" />'
 });
 
 var dateFieldSolicitudLiqHasta = new Ext.ux.form.XDateField({
@@ -51,7 +51,7 @@ var panelFechaSolicitudLiq = new Ext.Panel({
 
 var dateFieldRecepcionLiqDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldRecepcionLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Recepción" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.recepcion" text="** F. Recepción" />'
 });
 
 var dateFieldRecepcionLiqHasta = new Ext.ux.form.XDateField({
@@ -79,7 +79,7 @@ var panelFechaRecepcionLiq = new Ext.Panel({
 
 var dateFieldConfirmacionLiqDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldConfirmacionLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Confirmación" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.confirmacion" text="** F. Confirmación" />'
 });
 
 var dateFieldConfirmacionLiqHasta = new Ext.ux.form.XDateField({
@@ -107,7 +107,7 @@ var panelFechaConfirmacionLiq = new Ext.Panel({
 
 var dateFieldCierreLiqDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldCierreLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Cierre" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.cierre" text="** F. Cierre" />'
 });
 
 var dateFieldCierreLiqHasta = new Ext.ux.form.XDateField({
@@ -133,19 +133,19 @@ var panelFechaCierreLiq = new Ext.Panel({
 
 <%-- Total liquidación (Desde / Hasta) --%>
 
-<pfsforms:numberfield name="fieldTotalLiqDesde" labelKey="asd" label="** Total liquidación desde" 
+<pfsforms:numberfield name="fieldTotalLiqDesde" labelKey="plugin.precontencioso.tab.liquidacion.total.desde" label="** Total liquidación desde" 
 	value="" 
 	obligatory="false" 
 	allowDecimals="true" />
 
-<pfsforms:numberfield name="fieldTotalLiqHasta" labelKey="" label="** Total liquidación hasta"
+<pfsforms:numberfield name="fieldTotalLiqHasta" labelKey="plugin.precontencioso.tab.liquidacion.total.hasta" label="** Total liquidación hasta"
 	value=""
 	obligatory="false" 
 	allowDecimals="true" />
 
 <%-- Días en gestión --%>
 
-<pfsforms:numberfield name="fieldDiasGestionLiq" labelKey="asd" label="** Días en gestión" 
+<pfsforms:numberfield name="fieldDiasGestionLiq" labelKey="plugin.precontencioso.tab.liquidacion.gestion.dias" label="** Días en gestión" 
 	value="" 
 	obligatory="false" 
 	allowDecimals="false" />
@@ -155,7 +155,7 @@ var panelFechaCierreLiq = new Ext.Panel({
 var filtrosTabLiquidacionActive = false;
 
 var filtrosTabLiquidacion = new Ext.Panel({
-	title: '<s:message code="asd" text="** Liquidaciones" />',
+	title: '<s:message code="plugin.precontencioso.tab.liquidacion.titulo" text="** Liquidaciones" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',

@@ -212,7 +212,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes..antecedentes.incrementar.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar.Oracle9iDialect">
     <![CDATA[
     /***************************
 	SI LOS CONTRATOS ESTÁN SALDADOS SE ACTUALIZAN LOS ANTECEDENTES

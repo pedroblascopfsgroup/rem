@@ -1107,11 +1107,16 @@ AND V.CNT_ID = C.CNT_ID
     <entry key="clientes.revisionClientes.eliminarCliConCntsEnExp.Oracle9iDialect">
     <![CDATA[   
 	 
-	/*******************************************
+	/*******************************************	
 	Para asegurarnos que la bd esta ok	
 	Eliminamos los clientes que tengan contratos 
 	en expedientes ya creados 
-	*******************************************/   
+	*******************************************/
+	
+	/*****
+	TODO - Habrá que eliminar los clientes que estén en un exp. de seguimiento activo
+	y los contratos que estén en un exp. de recuperación activo o en un asunto.
+	****/  
     
     INSERT INTO TMP_CLI_A_CANCELAR  
 	 (SELECT cli.cli_id FROM CLI_CLIENTES CLI INNER JOIN CCL_CONTRATOS_CLIENTE CCL ON CLI.CLI_ID = CCL.CLI_ID 

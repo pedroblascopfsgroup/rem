@@ -23,37 +23,37 @@
 					}
 	});
 	
+	var handlerGuardar = function() {
+		var p = getParametros();
+    	Ext.Ajax.request({
+				url : page.resolveUrl('documentopco/editarDocumento'), 
+				params : p ,
+				method: 'POST',
+				success: function ( result, request ) {
+					page.fireEvent(app.event.DONE);
+				}
+		});
+	}
+	
 	var btnGuardar= new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler:function(){
 				if (validateForm()) {		    
-			    	var p = getParametros();
-			    	Ext.Ajax.request({
-							url : page.resolveUrl('documentopco/editarDocumento'), 
-							params : p ,
-							method: 'POST',
-							success: function ( result, request ) {
-								page.fireEvent(app.event.DONE);
-							}
-					});
+			    	handlerGuardar();
 				}
 	     }
 	});
 	
 
 	var validateForm = function(){	
-	if(protocolo.getValue() == '') {
-		Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.editarDocumento.sinProtocolo" text="**No se ha informado el campo PROTOCOLO ¿Desea continuar?" />', function(btn){
-			if (btn == 'yes'){
-				return true;
-			}
-			else {
-	    		return false;
-	    	}
-		});	
-	}	              
-		return true;
+		if(protocolo.getValue() == '') {
+			Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.editarDocumento.sinProtocolo" text="**No se ha informado el campo PROTOCOLO ¿Desea continuar?" />', function(btn){
+				if (btn == 'yes'){
+					handlerGuardar();
+				}
+			});	
+		}
 	}	
 
 	var getParametros = function() {

@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +16,14 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
@@ -46,6 +53,11 @@ public class LiquidacionManager implements LiquidacionApi {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 
 
 	@Override
@@ -87,6 +99,9 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setInteresesOrdinarios(liquidacionDto.getInteresesOrdinarios());
 		liquidacion.setInteresesDemora(liquidacionDto.getInteresesDemora());
 		liquidacion.setTotal(liquidacionDto.getTotal());
+		liquidacion.setComisiones(liquidacionDto.getComisiones());
+		liquidacion.setGastos(liquidacionDto.getGastos());
+		liquidacion.setImpuestos(liquidacionDto.getImpuestos());
 
 		GestorDespacho apoderado = obtenerApoderado(liquidacionDto);
 		if (apoderado != null) {
@@ -120,9 +135,20 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setInteresesOrdinarios(null);
 		liquidacion.setInteresesDemora(null);
 		liquidacion.setTotal(null);
+		
+		//Se registra el usd_id del solicitante
+		if(!Checks.esNulo(usuarioManager)){
+			List<GestorDespacho> listaGestorDespacho = getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+			if(!Checks.esNulo(listaGestorDespacho.get(0))){
+				liquidacion.setSolicitante(listaGestorDespacho.get(0));
+			}
+		}
+		
 
 		liquidacionDao.saveOrUpdate(liquidacion);
 	}
+	@Autowired
+	UsuarioManager usuarioManager;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -196,6 +222,24 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setContrato(contrato);
 		
 		return liquidacion;
+	}
+	
+	@Override
+	@BusinessOperation(PRECONTENCIOSO_BO_OBRENER_GESTOR_DESPACHO)
+	public List<GestorDespacho> getGestorDespachoByUsuId(Long usuId){
+		List<GestorDespacho> listaGestorDespacho=null;
+		
+		try{
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuId);
+			listaGestorDespacho=(List<GestorDespacho>) genericDao.getList(GestorDespacho.class,filtro1);
+			
+	
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		return listaGestorDespacho;
+		
 	}
 
 }

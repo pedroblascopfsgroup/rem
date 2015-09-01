@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.documento.dto;
 import java.util.Date;
 
 public class SolicitudDocumentoPCODto {
+	private String idIdentificativo;
 	private Long id;
 	private Long idDoc;
 	private String contrato;
@@ -138,4 +139,10 @@ public class SolicitudDocumentoPCODto {
 		this.codigoEstadoDocumento = codigoEstadoDocumento;
 	}
 	
+	public String getIdIdentificativo() {
+		return idIdentificativo;
+	}
+	public void setIdIdentificativo(String idIdentificativo) {
+		this.idIdentificativo = idIdentificativo;
+	}
 }

@@ -21,7 +21,7 @@
 		    var arrayIdPersonas=new Array();
 			panelEdicionPersonas.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
 			recorrerPersonasStore(arrayIdPersonas);
-			arrayIdPersonas = Ext.encode(arrayIdPersonas);
+			
 			Ext.Ajax.request({
 						url : page.resolveUrl('burofax/guardaPersona'), 
 						params : {arrayIdPersonas:arrayIdPersonas,idProcedimiento:idProcedimiento},
@@ -60,6 +60,7 @@
 			auxId = personasStore.getAt(i).data.id;
 			//listaIdPersonas.setValue(listaIdPersonas.getValue() + auxId + ',');
 			arrayIdPersonas.push(auxId);
+			debugger;
 			
 		}
 		
@@ -79,7 +80,7 @@
 
 	var listaIdPersonas = new Ext.form.TextField({hidden:true,value:'', name:'listaIdPersonas'});
 	
-	var idPersona = app.creaText("idPersona","Id Persona","",{
+	var idPersona = app.creaNumber("idPersona","Id Persona","",{
 		width : 100
 		,allowBlank: true
 		,hidden: true

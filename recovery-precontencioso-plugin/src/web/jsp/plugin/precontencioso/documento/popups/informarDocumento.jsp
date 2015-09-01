@@ -70,6 +70,11 @@
 	});
 	
 	var validateForm = function(){	
+		if((fechaResultado.getValue() != "" || fechaEnvio.getValue() != "" || fechaRecepcion.getValue() != "") && comboRespuestasSolicitud.getValue() == "") {
+			Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.informarDocumento.resultadoObligatorio3" text="**Es obligatorio el campo Resultado, si se informa la Fecha Resultado o la Fecha Envío o la Fecha Recepción." />');
+			comboRespuestasSolicitud.focus();
+			return false;
+		}
 	
 		if ('${solicitud.actor}'=='GEST') {
 			if (fechaResultado.getValue() == "" || comboRespuestasSolicitud.getValue() == "") {
@@ -83,23 +88,17 @@
 				comboEstadosDocumento.setValue("PS");
 			}
 		} else {
-			if (fechaResultado.getValue() != "") {
-				if (comboRespuestasSolicitud.getValue() == "") {
-					Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.informarDocumento.resultadoObligatorio2" text="**Es obligatorio el campo Resultado, si se informa la Fecha Resultado." />');
-					comboRespuestasSolicitud.focus();
-					return false;
-				}
-			}
-			if (fechaResultado.getValue() != "" && "OK" == comboRespuestasSolicitud.getValue()) {
-				comboEstadosDocumento.setValue("EN");
-			} 
-			if (fechaResultado.getValue() != "" && "OK" != comboRespuestasSolicitud.getValue()) {
-				comboEstadosDocumento.setValue("PS");
-			}
-			if (fechaEnvio.getValue()) {
-				comboEstadosDocumento.setValue("EN");
-			} 
-			if (fechaRecepcion.getValue() != "" && "01"==adjuntado.getValue()) {
+			if(!${existeSolDisponible}){
+				if (fechaRecepcion.getValue() != "" && "01"==adjuntado.getValue()) {
+					comboEstadosDocumento.setValue("DI");
+				}else if (fechaEnvio.getValue()) {
+					comboEstadosDocumento.setValue("EN");
+				}else if (fechaResultado.getValue() != "" && "OK" != comboRespuestasSolicitud.getValue()) {
+					comboEstadosDocumento.setValue("PS");
+				}else if (fechaResultado.getValue() != "" && "OK" == comboRespuestasSolicitud.getValue()) {
+					comboEstadosDocumento.setValue("EN");
+				} 
+			}else{
 				comboEstadosDocumento.setValue("DI");
 			}
 		}

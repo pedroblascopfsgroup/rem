@@ -48,15 +48,15 @@ var procedimientoPcoStore = page.getStore({
 });
 
 var procedimientoPcoCm = new Ext.grid.ColumnModel([
-	{dataIndex: 'codigo', header: '<s:message code="asd" text="**Codigo"/>', sortable: false},
-	{dataIndex: 'nombreExpediente', header: '<s:message code="asd" text="**Nombre"/>', sortable: false},
-	{dataIndex: 'estadoExpediente', header: '<s:message code="asd" text="**Estado exp."/>', sortable: false},
+	{dataIndex: 'codigo', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.codigo" text="**Codigo"/>', sortable: false},
+	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
+	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
 	{dataIndex: 'diasEnGestion', header: '<s:message code="asd" text="**Dias gestion"/>', sortable: false},
-	{dataIndex: 'fechaEstado', header: '<s:message code="asd" text="**Fecha estado"/>', sortable: false},
-	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="asd" text="**Proc. propuesto"/>', sortable: false},
-	{dataIndex: 'tipoPreparacion', header: '<s:message code="asd" text="**Tipo preparacion"/>', sortable: false},
+	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
+	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
+	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'fechaInicioPreparacion', header: '<s:message code="asd" text="**Fecha Ini. preparacion"/>', sortable: false},
-	{dataIndex: 'diasEnPreparacion', header: '<s:message code="asd" text="**Dias preparacion"/>', sortable: false},
+	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
 	{dataIndex: 'documentacionCompleta', header: '<s:message code="asd" text="**Documentacion completa"/>', renderer: OK_KO_Render, align:'center', sortable: false},
 	{dataIndex: 'totalLiquidacion', header: '<s:message code="asd" text="**Total liquidacion"/>', sortable: false},
 	{dataIndex: 'notificadoClientes', header: '<s:message code="asd" text="**Clientes notificados"/>', renderer: OK_KO_Render, align:'center', sortable: false},

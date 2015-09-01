@@ -11,9 +11,9 @@ var diccEstadoLiquidacion = <app:dict value="${estadoLiquidacion}" />;
 
 var comboEstadoLiquidacion = app.creaDblSelect(
 	diccEstadoLiquidacion,
-	'<s:message code="asd" text="** Estado" />',
+	'<s:message code="plugin.precontencioso.tab.liquidacion.estado" text="** Estado" />',
 	{
-		id: 'fieldEstadoLiquidacion',
+		id: 'fieldEstadoLiquidacionEle',
 		height: 100,
 		width: 220
 	}
@@ -21,13 +21,13 @@ var comboEstadoLiquidacion = app.creaDblSelect(
 
 <%-- Fecha solicitud (Desde / Hasta) --%>
 
-var dateFieldSolicitudLiqDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldSolicitudLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Solicitud" />'
+var dateFieldSolicitudLiqDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldSolicitudLiqDesdeEle',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.solicitud" text="** F. Solicitud" />'
 });
 
-var dateFieldSolicitudLiqHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldSolicitudLiqHasta',
+var dateFieldSolicitudLiqHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldSolicitudLiqHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -42,20 +42,20 @@ var panelFechaSolicitudLiq = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldSolicitudLiqDesde]},
-		{layout: 'form', items: [dateFieldSolicitudLiqHasta]}
+		{layout: 'form', items: [dateFieldSolicitudLiqDesdeEle]},
+		{layout: 'form', items: [dateFieldSolicitudLiqHastaEle]}
 	]
 });
 
 <%-- Fecha Recepción (Desde / Hasta) --%>
 
-var dateFieldRecepcionLiqDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldRecepcionLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Recepción" />'
+var dateFieldRecepcionLiqDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldRecepcionLiqDesdeEle',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.recepcion" text="** F. Recepción" />'
 });
 
-var dateFieldRecepcionLiqHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldRecepcionLiqHasta',
+var dateFieldRecepcionLiqHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldRecepcionLiqHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -70,20 +70,20 @@ var panelFechaRecepcionLiq = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldRecepcionLiqDesde]},
-		{layout: 'form', items: [dateFieldRecepcionLiqHasta]}
+		{layout: 'form', items: [dateFieldRecepcionLiqDesdeEle]},
+		{layout: 'form', items: [dateFieldRecepcionLiqHastaEle]}
 	]
 });
 
 <%-- Fecha confirmación (Desde / Hasta) --%>
 
-var dateFieldConfirmacionLiqDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldConfirmacionLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Confirmación" />'
+var dateFieldConfirmacionLiqDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldConfirmacionLiqDesdeEle',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.confirmacion" text="** F. Confirmación" />'
 });
 
-var dateFieldConfirmacionLiqHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldConfirmacionLiqHasta',
+var dateFieldConfirmacionLiqHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldConfirmacionLiqHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -98,20 +98,20 @@ var panelFechaConfirmacionLiq = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldConfirmacionLiqDesde]},
-		{layout: 'form', items: [dateFieldConfirmacionLiqHasta]}
+		{layout: 'form', items: [dateFieldConfirmacionLiqDesdeEle]},
+		{layout: 'form', items: [dateFieldConfirmacionLiqHastaEle]}
 	]
 });
 
 <%-- Fecha del cierre (Desde / Hasta) --%>
 
-var dateFieldCierreLiqDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldCierreLiqDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Cierre" />'
+var dateFieldCierreLiqDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldCierreLiqDesdeEle',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.liquidacion.fecha.cierre" text="** F. Cierre" />'
 });
 
-var dateFieldCierreLiqHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldCierreLiqHasta',
+var dateFieldCierreLiqHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldCierreLiqHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -126,26 +126,26 @@ var panelFechaCierreLiq = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldCierreLiqDesde]},
-		{layout: 'form', items: [dateFieldCierreLiqHasta]}
+		{layout: 'form', items: [dateFieldCierreLiqDesdeEle]},
+		{layout: 'form', items: [dateFieldCierreLiqHastaEle]}
 	]
 });
 
 <%-- Total liquidación (Desde / Hasta) --%>
 
-<pfsforms:numberfield name="fieldTotalLiqDesde" labelKey="asd" label="** Total liquidación desde" 
+<pfsforms:numberfield name="fieldTotalLiqDesdeEle" labelKey="plugin.precontencioso.tab.liquidacion.total.desde" label="** Total liquidación desde" 
 	value="" 
 	obligatory="false" 
 	allowDecimals="true" />
 
-<pfsforms:numberfield name="fieldTotalLiqHasta" labelKey="" label="** Total liquidación hasta"
+<pfsforms:numberfield name="fieldTotalLiqHastaEle" labelKey="plugin.precontencioso.tab.liquidacion.total.hasta" label="** Total liquidación hasta"
 	value=""
 	obligatory="false" 
 	allowDecimals="true" />
 
 <%-- Días en gestión --%>
 
-<pfsforms:numberfield name="fieldDiasGestionLiq" labelKey="asd" label="** Días en gestión" 
+<pfsforms:numberfield name="fieldDiasGestionLiqEle" labelKey="plugin.precontencioso.tab.liquidacion.gestion.dias" label="** Días en gestión" 
 	value="" 
 	obligatory="false" 
 	allowDecimals="false" />
@@ -155,7 +155,7 @@ var panelFechaCierreLiq = new Ext.Panel({
 var filtrosTabLiquidacionActive = false;
 
 var filtrosTabLiquidacion = new Ext.Panel({
-	title: '<s:message code="asd" text="** Liquidaciones" />',
+	title: '<s:message code="plugin.precontencioso.tab.liquidacion.titulo" text="** Liquidaciones" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',
@@ -163,7 +163,7 @@ var filtrosTabLiquidacion = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboEstadoLiquidacion, fieldDiasGestionLiq, fieldTotalLiqDesde, fieldTotalLiqHasta]
+		items: [comboEstadoLiquidacion, fieldDiasGestionLiqEle, fieldTotalLiqDesdeEle, fieldTotalLiqHastaEle]
 	}, {
 		layout: 'form',
 		items: [panelFechaSolicitudLiq, panelFechaRecepcionLiq, panelFechaConfirmacionLiq, panelFechaCierreLiq]
@@ -179,18 +179,18 @@ filtrosTabLiquidacion.on('activate',function(){
 var getParametrosFiltroLiquidaciones = function() {
 	var out = {};
 
-	out.liqEstados = fieldEstadoLiquidacion.childNodes[1].value;
-	out.liqFechaSolicitudDesde = dateFieldSolicitudLiqDesde.getValue();
-	out.liqFechaSolicitudHasta = dateFieldSolicitudLiqHasta.getValue();
-	out.liqFechaRecepcionDesde = dateFieldRecepcionLiqDesde.getValue();
-	out.liqFechaRecepcionHasta = dateFieldRecepcionLiqHasta.getValue();
-	out.liqFechaConfirmacionDesde = dateFieldConfirmacionLiqDesde.getValue();
-	out.liqFechaConfirmacionHasta = dateFieldConfirmacionLiqHasta.getValue();
-	out.liqFechaCierreDesde = dateFieldCierreLiqDesde.getValue();
-	out.liqFechaCierreHasta = dateFieldCierreLiqHasta.getValue();
-	out.liqTotalDesde = fieldTotalLiqDesde.getValue();
-	out.liqTotalHasta = fieldTotalLiqHasta.getValue();
-	out.liqDiasGestion = fieldDiasGestionLiq.getValue();
+	out.liqEstados = fieldEstadoLiquidacionEle.childNodes[1].value;
+	out.liqFechaSolicitudDesde = dateFieldSolicitudLiqDesdeEle.getValue();
+	out.liqFechaSolicitudHasta = dateFieldSolicitudLiqHastaEle.getValue();
+	out.liqFechaRecepcionDesde = dateFieldRecepcionLiqDesdeEle.getValue();
+	out.liqFechaRecepcionHasta = dateFieldRecepcionLiqHastaEle.getValue();
+	out.liqFechaConfirmacionDesde = dateFieldConfirmacionLiqDesdeEle.getValue();
+	out.liqFechaConfirmacionHasta = dateFieldConfirmacionLiqHastaEle.getValue();
+	out.liqFechaCierreDesde = dateFieldCierreLiqDesdeEle.getValue();
+	out.liqFechaCierreHasta = dateFieldCierreLiqHastaEle.getValue();
+	out.liqTotalDesde = fieldTotalLiqDesdeEle.getValue();
+	out.liqTotalHasta = fieldTotalLiqHastaEle.getValue();
+	out.liqDiasGestion = fieldDiasGestionLiqEle.getValue();
 
 	return out;
 }

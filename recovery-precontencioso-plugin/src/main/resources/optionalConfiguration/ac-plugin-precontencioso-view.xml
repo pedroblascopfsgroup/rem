@@ -27,8 +27,8 @@
 		p:fileName="/WEB-INF/jsp/plugin/precontencioso/busquedas/menuBusquedaExpPrecontencioso.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
-<!-- 	<bean p:entity="menu" p:name="busquedas/busquedaElementosPco" p:order="1600" -->
-<!-- 		p:fileName="/WEB-INF/jsp/plugin/precontencioso/busquedas/menuBusquedaElementosPco.jsp" -->
-<!-- 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+	<bean p:entity="menu" p:name="busquedas/busquedaElementosPco" p:order="1600"
+		p:fileName="/WEB-INF/jsp/plugin/precontencioso/busquedas/menuBusquedaElementosPco.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
 </beans>

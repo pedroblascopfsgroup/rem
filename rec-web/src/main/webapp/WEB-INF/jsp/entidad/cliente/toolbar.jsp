@@ -306,15 +306,11 @@ function(entidad,page){
 				,['x-cliente-menuTelecobro', exclusionTelecobro || decisionTelecobro]
 			</sec:authorize>
 		];
-
+		
 		var esEnabled =[
 			[botonResponder, data.idTareaPendiente!=''] 
-			,[creacionExpedienteButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
-					&& !(data.arquetipoRecuperacion.isNull)
-					&& !(data.arquetipoRecuperacion.isSeguimiento || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)]
-			,[creacionExpedienteSeguimientoButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
-					&& !(data.arquetipoRecuperacion.isNull)
-					&& !(data.arquetipoRecuperacion.isRecuperacion || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)] 
+			,[creacionExpedienteButton, ((!data.tieneExpedienteRecuperacion) && data.tieneContratosLibres)]
+			,[creacionExpedienteSeguimientoButton, ((!data.tieneExpedienteSeguimiento) && data.tieneContratosActivos)] 
 			,[creacionExpedienteRecobroButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 
 					&&  !(data.arquetipoPersona.isSeguimiento || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)]
 		];

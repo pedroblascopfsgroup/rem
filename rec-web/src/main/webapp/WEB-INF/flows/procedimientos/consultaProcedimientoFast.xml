@@ -29,7 +29,7 @@
 	    	<evaluate expression="executor.execute('core.procedimiento.getContratoPrincipal',id)" result="flowScope.contratoPrincipal" />
 			<evaluate expression="executor.execute('procedimientoManager.getProcedimiento',id)" result="flowScope.procedimiento" />
 	    	<evaluate expression="executor.execute('procedimientoManager.esGestor',id)" result="flowScope.esGestor" />
-    	    <evaluate expression="executor.execute('asuntosManager.esGestorDecision')" result="flowScope.esGestorDecision" />		    	
+    	    <evaluate expression="executor.execute('asuntosManager.esGestorDecision',id)" result="flowScope.esGestorDecision" />		    	
 	    	<evaluate expression="executor.execute('procedimientoManager.esSupervisor',id)" result="flowScope.esSupervisor" />
             <evaluate expression="executor.execute('procedimientoManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />
 	    	<evaluate expression="executor.execute('recursoManager.puedeCrearRecurso',id)" result="flowScope.puedeCrearRecurso" />

@@ -174,4 +174,6 @@ public interface DocumentoPCOApi {
 	
 	@BusinessOperationDefinition(PCO_VALIDAR_DOCUMENTO_UNICO)
 	boolean validarDocumentoUnico(String undGest, String tipoDoc, String protocolo, String notario);
+
+	List<DocumentoPCO> getDocumentosOrdenadosByUnidadGestion(List<DocumentoPCO> listDocPco);
 }

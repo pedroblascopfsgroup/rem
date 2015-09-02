@@ -60,7 +60,6 @@
 			auxId = personasStore.getAt(i).data.id;
 			//listaIdPersonas.setValue(listaIdPersonas.getValue() + auxId + ',');
 			arrayIdPersonas.push(auxId);
-			debugger;
 			
 		}
 		

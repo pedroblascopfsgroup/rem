@@ -653,7 +653,7 @@
 		idProcedimiento=data.precontencioso.id;
 		
 		if (data != null) {
-			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;debugger;
+			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
 			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
 				btnAddPersona.setDisabled(true);
 				btnEnviar.setDisabled(true);

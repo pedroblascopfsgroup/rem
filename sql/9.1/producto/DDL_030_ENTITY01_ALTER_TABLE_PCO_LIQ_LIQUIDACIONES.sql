@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VICENTE LOZANO
---## FECHA_CREACION=20150825
+--## FECHA_CREACION=20150902
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-194
@@ -129,6 +129,17 @@ DECLARE
 	END IF;
     
 	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.PCO_LIQ_LIQUIDACIONES... Modificar campo: USD_ID');
+	V_SQL := 'select COUNT(1) from all_tab_cols where UPPER(OWNER)='''||V_ESQUEMA||''' 
+		  and UPPER(table_name)=''PCO_LIQ_LIQUIDACIONES'' and UPPER(column_name)=''USD_ID''';
+	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+	IF V_COUNT > 0 THEN
+		V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.PCO_LIQ_LIQUIDACIONES MODIFY USD_ID NUMBER(16) NULL ';
+		EXECUTE IMMEDIATE V_SQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.PCO_LIQ_LIQUIDACIONES... Apoderado actualizada.');
+	ELSE 
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.PCO_LIQ_LIQUIDACIONES... USD_ID no existe.');
+	END IF;
     
     
 EXCEPTION

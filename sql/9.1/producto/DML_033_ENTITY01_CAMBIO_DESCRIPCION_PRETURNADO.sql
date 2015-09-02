@@ -40,7 +40,7 @@ BEGIN
 	
 	IF V_NUM_TABLAS = 1 THEN
 	    DBMS_OUTPUT.PUT_LINE('[INFO] Actualizar Sí');
-	    V_SQL := 'UPDATE ' || V_ESQUEMA || '.' || V_DDNAME || ' SET DD_PCO_PEP_DESCRIPCION = ''En estudio'' , DD_PCO_PEP_DESCRIPCION_LARGA = ''En estudio'' WHERE DD_PCO_BFT_CODIGO = ''PT''';
+	    V_SQL := 'UPDATE ' || V_ESQUEMA || '.' || V_DDNAME || ' SET DD_PCO_PEP_DESCRIPCION = ''En estudio'' , DD_PCO_PEP_DESCRIPCION_LARGA = ''En estudio'' WHERE DD_PCO_PEP_CODIGO = ''PT''';
 	    EXECUTE IMMEDIATE V_SQL;
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] El código PT (Preturnado) no existe');    

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +42,7 @@ import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoDto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
+import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.ProcedimientoBienPayload;
@@ -136,14 +136,14 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 	
 	protected String getGuidProcedimiento(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
-				? UUID.randomUUID().toString()
+				? Guid.getNewInstance().toString()
 				: procedimiento.getGuid(); //String.format("%d-EXT", procedimiento.getIdOrigen());
 	}
 
 
 	protected String getGuidProcedimientoBien(ProcedimientoBienPayload procedimientoBien) {
 		return (this.isCrearNuevo()) 
-				? UUID.randomUUID().toString()
+				? Guid.getNewInstance().toString()
 				: procedimientoBien.getGuid(); // String.format("%d-EXT", procedimientoBien.getIdOrigen());
 	}
 

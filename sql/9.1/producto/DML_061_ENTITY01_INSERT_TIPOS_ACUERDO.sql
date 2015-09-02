@@ -57,7 +57,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''11'',''Cesión remate'',''Cesión remate'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''11'',''Cesión remate'',''Cesión remate'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -81,7 +81,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''12'',''Cesión de crédito'',''Cesión de crédito'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''12'',''Cesión de crédito'',''Cesión de crédito'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -105,7 +105,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''13'',''Regularización'',''Regularización'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''13'',''Regularización'',''Regularización'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -129,7 +129,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''14'',''Cancelación'',''Cancelación'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''14'',''Cancelación'',''Cancelación'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -153,7 +153,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''15'',''Entrega voluntaria de llaves'',''Entrega voluntaria de llaves'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''15'',''Entrega voluntaria de llaves'',''Entrega voluntaria de llaves'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -177,7 +177,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''16'',''Alquiler especial'',''Alquiler especial'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''16'',''Alquiler especial'',''Alquiler especial'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -201,7 +201,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''17'',''Plan de pagos'',''Plan de pagos'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''17'',''Plan de pagos'',''Plan de pagos'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -225,7 +225,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''18'',''Condonación de deuda'',''Condonación de deuda'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''18'',''Condonación de deuda'',''Condonación de deuda'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
@@ -249,7 +249,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_TPA_ID,DD_TPA_CODIGO,DD_TPA_DESCRIPCION,DD_TPA_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SBT_SUBTIPO_ACUERDO.nextval,''19'',''Aplazamientos reclamación'',''Aplazamientos reclamación'',''0'',''PRODUCTO'',sysdate,''0'') ';
+  '('||V_ESQUEMA||'.S_DD_TPA_TIPO_ACUERDO.nextval,''19'',''Aplazamientos reclamación'',''Aplazamientos reclamación'',''0'',''PRODUCTO'',sysdate,''0'') ';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 

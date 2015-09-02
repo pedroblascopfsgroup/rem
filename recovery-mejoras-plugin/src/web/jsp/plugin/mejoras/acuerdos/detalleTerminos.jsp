@@ -94,6 +94,11 @@ var crearTerminosAsuntos=function(){
         )
    });      
    
+	terminosAcuerdoStore.on('load', function(){  
+		countTerminos = terminosAcuerdoStore.getCount();
+   });
+
+   
    function transformParamInc() {
 		var store = panelTerminos.contratosAsuntoGrid.getStore();
 		var str = '';
@@ -150,7 +155,7 @@ var crearTerminosAsuntos=function(){
 		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.borrar" text="**Borrar Termino" />',
 		iconCls: 'icon_menos',
 		handler: function(){
-			if (idTerminoSeleccionado){
+			if (typeof idTerminoSeleccionado != 'undefined'){
 				//BORRAR EL ASUNTOS
 				Ext.Msg.confirm('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.borrar" text="**Borrar Termino" />', 
 	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning.confirmarBorrado" text="**Est&aacute; seguro de que desea borrar el T&eacutermino?" />',
@@ -178,6 +183,38 @@ var crearTerminosAsuntos=function(){
 	         			}
 	       			 }
 	});   
+	
+	
+	var btnVerTermino = new Ext.Button({
+		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />',
+		iconCls: 'icon_edit',
+		handler: function(){
+			if (typeof idTerminoSeleccionado != 'undefined'){
+	     	   	var w = app.openWindow({
+		          flow : 'mejacuerdo/openDetalleTermino'
+		          ,closable:false
+		          ,width: 900
+		          ,autoHeight: true
+		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
+	    			  ,params:{
+	     				  id:idTerminoSeleccionado,
+	     				  idAsunto:panel.getAsuntoId()
+	     				}
+		       });
+		       w.on(app.event.DONE, function(){
+		          w.close();
+				  terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});			          
+		       });
+		       w.on(app.event.CANCEL, function(){ 
+		       		w.close();
+		       });
+
+			}else{
+					Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.terminoNoSelec" text="**No ha seleccionado ningún contrato" />');
+	        }
+		}
+	}); 
    
    
    contratosAsuntoStore.webflow({idAsunto:panel.getAsuntoId()});
@@ -205,7 +242,7 @@ var crearTerminosAsuntos=function(){
          ,cls:'cursor_pointer'
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
          ,bbar : [
-	        btnBorrarTermino
+	        btnBorrarTermino, btnVerTermino
 	      ]   
    }); 
    

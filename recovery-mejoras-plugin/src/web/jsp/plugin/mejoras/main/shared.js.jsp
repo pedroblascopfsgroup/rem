@@ -183,6 +183,7 @@ public static final String ACUERDO_EN_CONFORMACION = "01";
 
 app.codigoAcuerdoEnConformacion = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_EN_CONFORMACION" />';
 app.codigoAcuerdoPropuesto = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_PROPUESTO" />';
+app.codigoAcuerdoAceptado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ACEPTADO" />';
 app.codigoAcuerdoVigente = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_VIGENTE" />';
 app.codigoAcuerdoRechazado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_RECHAZADO" />';
 app.codigoAcuerdoCancelado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CANCELADO" />';

@@ -71,7 +71,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_BIENES_TERMINO = "mejacuerdo.obtenerListadoBienesAcuerdoByTeaId";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_ACUERDO = "mejacuerdo.deleteTerminoAcuerdo";			
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_CONTRATO = "mejacuerdo.deleteTerminoContrato";			
-	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_BIEN = "mejacuerdo.deleteTerminoBien";			
+	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_BIEN = "mejacuerdo.deleteTerminoBien";	
+	public static final String BO_ACUERDO_MGR_VIGENTE_ACUERDO = "mejacuerdoManager.vigenteAcuerdo";
 	
 		
 	private final Log logger = LogFactory.getLog(getClass());
@@ -144,7 +145,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public Long guardarAcuerdo(DtoAcuerdo dto) {
 
 		// NO PUEDE HABER OTROS ACUERDOS VIGENTES.
-		if (DDEstadoAcuerdo.ACUERDO_VIGENTE.equals(dto.getEstado()) && acuerdoDao.hayAcuerdosVigentes(dto.getIdAsunto(), dto.getIdAcuerdo())) {
+		if (DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(dto.getEstado()) && acuerdoDao.hayAcuerdosVigentes(dto.getIdAsunto(), dto.getIdAcuerdo())) {
 			throw new BusinessOperationException("acuerdos.hayOtrosVigentes");
 		}
 
@@ -209,7 +210,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			DDEstadoAcuerdo estadoAcuerdoFinalizado = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_FINALIZADO);
 
 			acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
-		} else if (DDEstadoAcuerdo.ACUERDO_VIGENTE.equals(dto.getEstado())) {
+		} else if (DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(dto.getEstado())) {
 			
 			//Si tiene el permiso CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA entonces NO DEBE generar la tarea
 			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
@@ -472,6 +473,32 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @BusinessOperation(BO_ACUERDO_MGR_GET_TERMINO_ACUERDO)
 	public TerminoAcuerdo getTerminoAcuerdo(Long idTermino) {
     	return genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idTermino));
-	}	  	 
+	}	  
+    
+    
+    /**
+     * Pasa un acuerdo a estado Vigente.
+     * @param idAcuerdo el id del acuerdo a aceptar.
+     */
+    @BusinessOperation(BO_ACUERDO_MGR_VIGENTE_ACUERDO)
+    @Transactional(readOnly = false)
+    public void vigenteAcuerdo(Long idAcuerdo) {
+        Acuerdo acuerdo = acuerdoDao.get(idAcuerdo);
+        //NO PUEDE HABER OTROS ACUERDOS VIGENTES.
+        if (acuerdoDao.hayAcuerdosVigentes(acuerdo.getAsunto().getId(), idAcuerdo)) { throw new BusinessOperationException(
+                "acuerdos.hayOtrosVigentes"); }
+        DDEstadoAcuerdo estadoAcuerdoVigente = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_VIGENTE);
+
+        acuerdo.setEstadoAcuerdo(estadoAcuerdoVigente);
+        acuerdo.setFechaEstado(new Date());
+        //Cancelo las tareas del supervisor
+        cancelarTareasAcuerdoPropuesto(acuerdo);
+        //Genero tareas al gestor para el cierre del acuerdo.
+        Long idJBPM = (Long) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_TAREA_CON_BPM, acuerdo.getAsunto().getId(),
+                DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO, PlazoTareasDefault.CODIGO_CIERRE_ACUERDO);
+        acuerdo.setIdJBPM(idJBPM);
+        acuerdoDao.save(acuerdo);
+    }
 
 }

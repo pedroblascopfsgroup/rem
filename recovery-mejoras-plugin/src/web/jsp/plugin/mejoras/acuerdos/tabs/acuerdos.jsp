@@ -29,6 +29,7 @@
 	
 	var acuerdoSeleccionado = null;
 	var indexAcuerdoSeleccionado = null;
+	var countTerminos = 999;
 
 	var acuerdo = Ext.data.Record.create([
           {name : 'idAcuerdo'}
@@ -68,7 +69,7 @@
    		var btnDisbled = false
 	    acuerdosStore.data.each(function() {
 	    	var codEstad = this.data['codigoEstado'];
-	    	if(codEstad == app.codigoAcuerdoEnConformacion || codEstad == app.codigoAcuerdoPropuesto || codEstad == app.codigoAcuerdoVigente ){
+	    	if(codEstad == app.codigoAcuerdoEnConformacion || codEstad == app.codigoAcuerdoPropuesto || codEstad == app.codigoAcuerdoAceptado ){
 	    		btnDisbled = true;
 	    	}
 	    });
@@ -142,6 +143,7 @@
 		<app:test id="CumplimientoAcuerdoBtn" addComa="true" />
 		,iconCls : 'icon_edit'
 		,cls: 'x-btn-text-icon'
+		,hidden:true
 		,handler:function(){
       		var w = app.openWindow({
 		          flow : 'editacuerdo/open'
@@ -167,20 +169,28 @@
        ,cls: 'x-btn-text-icon'
        ,hidden:true
        ,handler:function(){
-      	    deshabilitarBotones();
-      	    page.webflow({
-      			flow:"acuerdos/proponerAcuerdo"
-      			,params:{
-      				idAcuerdo:acuerdoSeleccionado
-   				}
-      			,success: function(){
-           		 	acuerdosStore.on('load',despuesDeEvento);
-           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
-           		 	btnProponerAcuerdo.hide();
-           		 	btnIncumplirAcuerdo.hide();
-           		}	
-	      	});
-			habilitarBotones();	
+       
+       		if (countTerminos > 0){
+       		
+       		    deshabilitarBotones();
+	      	    page.webflow({
+	      			flow:"acuerdos/proponerAcuerdo"
+	      			,params:{
+	      				idAcuerdo:acuerdoSeleccionado
+	   				}
+	      			,success: function(){
+	           		 	acuerdosStore.on('load',despuesDeEvento);
+	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+	           		 	btnProponerAcuerdo.hide();
+	           		 	btnIncumplirAcuerdo.hide();
+	           		}	
+		      	});
+				habilitarBotones();	
+
+			}else{
+					Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinTerminos" text="**No es posible proponer un acuerdo sin terminos" />');
+	        }
      	}
    });
    
@@ -188,47 +198,47 @@
    			btnProponerAcuerdo.disable();
            	btnIncumplirAcuerdo.disable();
            	btnRechazarAcuerdo.disable();
-			btnCerrarAcuerdo.disable();
+<!-- 			btnCerrarAcuerdo.disable(); -->
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
            	btnIncumplirAcuerdo.enable();
            	btnRechazarAcuerdo.enable();
-			btnCerrarAcuerdo.enable();
+<!-- 			btnCerrarAcuerdo.enable(); -->
    }
    
    var ocultarBotones=function(){
    			btnProponerAcuerdo.hide();
            	btnIncumplirAcuerdo.hide();
            	btnRechazarAcuerdo.hide();
-			btnCerrarAcuerdo.hide();
+<!-- 			btnCerrarAcuerdo.hide(); -->
    }
    
    
-   var btnCerrarAcuerdo = new Ext.Button({
-       text:  '<s:message code="acuerdos.cerrar" text="**Cerrar" />'
-       <app:test id="btnCerrarAcuerdo" addComa="true" />
-       ,iconCls : 'icon_menos'
-       ,cls: 'x-btn-text-icon'
-       ,hidden:true
-       ,handler:function(){
-	   		deshabilitarBotones();
-      	    page.webflow({
-      			flow:"acuerdos/finalizarAcuerdo"
-      			,params:{
-      				idAcuerdo:acuerdoSeleccionado
-   				}
-      			,success: function(){
-           		 	acuerdosStore.on('load',despuesDeEvento);
-           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
-					btnCerrarAcuerdo.hide();
-           		 	btnIncumplirAcuerdo.hide();
-					btnRechazarAcuerdo.hide();
-           		}	
-	      	});	
-			habilitarBotones();
-     	}
-   });
+<!--    var btnCerrarAcuerdo = new Ext.Button({ -->
+<%--        text:  '<s:message code="acuerdos.cerrar" text="**Cerrar" />' --%>
+<%--        <app:test id="btnCerrarAcuerdo" addComa="true" /> --%>
+<!--        ,iconCls : 'icon_menos' -->
+<!--        ,cls: 'x-btn-text-icon' -->
+<!--        ,hidden:true -->
+<!--        ,handler:function(){ -->
+<!-- 	   		deshabilitarBotones(); -->
+<!--       	    page.webflow({ -->
+<!--       			flow:"acuerdos/finalizarAcuerdo" -->
+<!--       			,params:{ -->
+<!--       				idAcuerdo:acuerdoSeleccionado -->
+<!--    				} -->
+<!--       			,success: function(){ -->
+<!--            		 	acuerdosStore.on('load',despuesDeEvento); -->
+<!--            		 	acuerdosStore.webflow({id:panel.getAsuntoId()}); -->
+<!-- 					btnCerrarAcuerdo.hide(); -->
+<!--            		 	btnIncumplirAcuerdo.hide(); -->
+<!-- 					btnRechazarAcuerdo.hide(); -->
+<!--            		}	 -->
+<!-- 	      	});	 -->
+<!-- 			habilitarBotones(); -->
+<!--      	} -->
+<!--    }); -->
 
 	var btnIncumplirAcuerdo = new Ext.Button({
 	       text:  '<s:message code="acuerdos.incumplido" text="**Incumplido" />'
@@ -277,6 +287,30 @@
      	}
    });
    
+   	var btnVigenteAcuerdo = new Ext.Button({
+       text:  '<s:message code="app.vigente" text="**Vigente" />'
+       <app:test id="btnVigenteAcuerdo" addComa="true" />
+       ,iconCls : 'icon_ok'
+       ,cls: 'x-btn-text-icon'
+       ,hidden:true
+       ,handler:function(){
+      	    deshabilitarBotones();
+      	    page.webflow({
+      			flow:"acuerdos/vigenteAcuerdo"
+      			,params:{
+      				idAcuerdo:acuerdoSeleccionado
+   				}
+      			,success: function(){
+           		 	acuerdosStore.on('load',despuesDeEvento);
+           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+           		 	btnAceptarAcuerdo.hide();
+           		 	btnRechazarAcuerdo.hide();
+           		}	
+	      	});
+			habilitarBotones();	
+     	}
+   });
+   
 	var btnRechazarAcuerdo = new Ext.Button({
        text:  '<s:message code="acuerdos.rechazar" text="**Rechazar" />'
        <app:test id="btnRechazarAcuerdo" addComa="true" />
@@ -302,7 +336,7 @@
 		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
 		   		 	btnAceptarAcuerdo.hide();
 		   		 	btnRechazarAcuerdo.hide();
-		   		 	btnCerrarAcuerdo.hide();
+<!-- 		   		 	btnCerrarAcuerdo.hide(); -->
 		   		 	btnIncumplirAcuerdo.hide();
    		 		}
 	      	});	
@@ -330,11 +364,12 @@
 	        	btnProponerAcuerdo,	
 	        </sec:authorize>
         	btnIncumplirAcuerdo,
-     	   	btnCerrarAcuerdo,
+<!--      	   	btnCerrarAcuerdo, -->
         	btnAceptarAcuerdo,
         	btnRechazarAcuerdo,
         	<sec:authorize ifAllGranted="DECIDIR-ACUERDO">
 				btnCumplimientoAcuerdo,
+				btnVigenteAcuerdo,
 			</sec:authorize>
 	      ]
 
@@ -370,7 +405,10 @@
 	//Comienzan las 4 partes dependientes del acuerdo	
 	var panelAnterior;
 	var panelAnteriorTerminos;
+	
+	
 	acuerdosGrid.on('rowclick', function(grid, rowIndex, e) {
+	
    		var rec = grid.getStore().getAt(rowIndex);
 		var idAcuerdo = rec.get('idAcuerdo');
 		acuerdoSeleccionado = idAcuerdo;
@@ -383,7 +421,7 @@
 			//esSupervisor  && PROPUESTO
 			(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoPropuesto)||
 			//esGestor && (PROPUESTO||VIGENTE)
-			(panel.esGestor() && (codigoEstado == app.codigoAcuerdoPropuesto || codigoEstado == app.codigoAcuerdoVigente))
+			(panel.esGestor() && (codigoEstado == app.codigoAcuerdoPropuesto || codigoEstado == app.codigoAcuerdoAceptado))
 		);
 				
 
@@ -399,28 +437,29 @@
 <!-- 			(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoPropuesto) -->
 <!-- 		); -->
 		
-		btnRechazarAcuerdo.setVisible(
-			//esSupervisor && (PROPUESTO||VIGENTE)
-			((panel.esSupervisor() && (codigoEstado == app.codigoAcuerdoPropuesto || codigoEstado == app.codigoAcuerdoVigente)))
-			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			
-			&& false
-			</sec:authorize>
-		);
+<!-- 		btnRechazarAcuerdo.setVisible( -->
+<!-- 			//esSupervisor && (PROPUESTO||VIGENTE) -->
+<!-- 			((panel.esSupervisor() && (codigoEstado == app.codigoAcuerdoPropuesto || codigoEstado == app.codigoAcuerdoAceptado))) -->
+<%-- 			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			 --%>
+<!-- 			&& false -->
+<%-- 			</sec:authorize> --%>
+<!-- 		); -->
 		
-		btnIncumplirAcuerdo.setVisible(
-			//esGestor && EN CONFORMACION
-			((codigoEstado == app.codigoAcuerdoEnConformacion && panel.esGestor())||
-			//esSupervisor && (VIGENTE)
-			(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoVigente))
-			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			
-			&& false
-			</sec:authorize>
-		);
-		if((codigoEstado == app.codigoAcuerdoEnConformacion && panel.esGestor())){
-			btnIncumplirAcuerdo.setText('<s:message code="acuerdos.cancelar" text="**Cancelar" />');
-		}else if(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoVigente){
-			btnIncumplirAcuerdo.setText('<s:message code="acuerdos.incumplido" text="**Incumplido" />');
-		}
+<!-- 		btnIncumplirAcuerdo.setVisible( -->
+<!-- 			//esGestor && EN CONFORMACION -->
+<!-- 			((codigoEstado == app.codigoAcuerdoEnConformacion && panel.esGestor())|| -->
+<!-- 			//esSupervisor && (VIGENTE) -->
+<!-- 			(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoAceptado)) -->
+<%-- 			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			 --%>
+<!-- 			&& false -->
+<%-- 			</sec:authorize> --%>
+<!-- 		); -->
+
+<!-- 		if((codigoEstado == app.codigoAcuerdoEnConformacion && panel.esGestor())){ -->
+<%-- 			btnIncumplirAcuerdo.setText('<s:message code="acuerdos.cancelar" text="**Cancelar" />'); --%>
+<!-- 		}else if(panel.esSupervisor() && codigoEstado == app.codigoAcuerdoAceptado){ -->
+<%-- 			btnIncumplirAcuerdo.setText('<s:message code="acuerdos.incumplido" text="**Incumplido" />'); --%>
+<!-- 		} -->
 		
 		
 		btnProponerAcuerdo.setVisible(
@@ -430,14 +469,14 @@
 		
 <!-- 		btnCerrarAcuerdo.setVisible( -->
 <!-- 			//esSupervisor && VIGENTE -->
-<!-- 			((codigoEstado == app.codigoAcuerdoVigente && panel.esSupervisor())) -->
+<!-- 			((codigoEstado == app.codigoAcuerdoAceptado && panel.esSupervisor())) -->
 <%-- 			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			 --%>
 <!-- 			&& false -->
 <%-- 			</sec:authorize> --%>
 <!-- 		); -->
 		
 		<!-- 		btnCumplimientoAcuerdo.setVisible( -->
-<!-- 			(codigoEstado == app.codigoAcuerdoVigente) -->
+<!-- 			(codigoEstado == app.codigoAcuerdoAceptado) -->
 <%-- 			<sec:authorize ifAllGranted="CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA">			 --%>
 <!-- 			&& false -->
 <%-- 			</sec:authorize> --%>
@@ -448,14 +487,39 @@
 		<sec:authorize ifAllGranted="DECIDIR-ACUERDO">
 			decisorAcu = true;
 		</sec:authorize>
-	
+		
+		btnVigenteAcuerdo.setVisible(
+			(codigoEstado == app.codigoAcuerdoAceptado) && decisorAcu
+		);
+		
 		btnCumplimientoAcuerdo.setVisible(
 			(codigoEstado == app.codigoAcuerdoVigente) && decisorAcu
 		);
 		
-		btnCerrarAcuerdo.setVisible(
+		btnIncumplirAcuerdo.setVisible(
 			(codigoEstado == app.codigoAcuerdoVigente) && decisorAcu
 		);
+		
+		
+<!-- 		btnCerrarAcuerdo.setVisible( -->
+<!-- 			(codigoEstado == app.codigoAcuerdoAceptado) && decisorAcu -->
+<!-- 		); -->
+		
+		
+		///Si es validador puede rechazar si esta propuesto
+		<sec:authorize ifAllGranted="VALIDAR-ACUERDO">
+			btnRechazarAcuerdo.setVisible(
+				(codigoEstado == app.codigoAcuerdoPropuesto)
+			);	
+	    </sec:authorize>
+	    
+	    ////Si es decisor puede rechazar si esta propuesto
+	    <sec:authorize ifAllGranted="DECIDIR-ACUERDO">
+			btnRechazarAcuerdo.setVisible(
+				(codigoEstado == app.codigoAcuerdoPropuesto)
+			);	
+	    </sec:authorize>
+	    
 
 
 
@@ -494,7 +558,6 @@
 		//panel.add(panelAnterior);
 		panel.doLayout();
 		panel.show();
-		
 		
 	});
    

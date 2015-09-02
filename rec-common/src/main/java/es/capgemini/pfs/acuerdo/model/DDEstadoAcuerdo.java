@@ -26,11 +26,12 @@ public class DDEstadoAcuerdo implements Dictionary, Auditable {
 
     public static final String ACUERDO_EN_CONFORMACION = "01";
     public static final String ACUERDO_PROPUESTO = "02";
-    public static final String ACUERDO_VIGENTE = "03";
+    public static final String ACUERDO_ACEPTADO = "03";
     public static final String ACUERDO_RECHAZADO = "04";
     public static final String ACUERDO_CANCELADO = "05";
     public static final String ACUERDO_FINALIZADO = "06";
     public static final String ACUERDO_ENVIADO = "07";
+    public static final String ACUERDO_VIGENTE = "08";
 
     private static final long serialVersionUID = -5000987797957822994L;
 

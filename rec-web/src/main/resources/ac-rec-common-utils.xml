@@ -358,18 +358,17 @@
   </bean>  
 
   <bean id="mailManager" parent="mail.mailManager">
-    <property name="host" value="${mailManager.host}"/>
-    <!-- <property name="host" value="smtp.gmail.com" />
-    <property name="username" value="pedro.blasco@pfsgroup.es" />
-    <property name="password" value="Pedrosco1969?" />
+    <property name="host" value="${mailManager.host}" />
+    <!--property name="username" value="${agendaMultifuncion.mail.from}" />
+    <property name="password" value="${agendaMultifuncion.mail.pw}" />
     <property name="javaMailProperties">
     <props>
-        <prop key="mail.smtp.host">smtp.gmail.com</prop>
-        <prop key="mail.smtp.port">587</prop>
+        <prop key="mail.smtp.host">${mailManager.host}</prop>
+        <prop key="mail.smtp.port">${mailManager.port}</prop>
         <prop key="mail.smtp.auth">true</prop>
         <prop key="mail.smtp.starttls.enable">true</prop>
     </props>
-    </property>-->
+    </property-->
   </bean>
     
   <import resource="classpath:ac-rec-common-rule-engine.xml"/>

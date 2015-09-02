@@ -6,9 +6,27 @@
 
 <%-- Buttons --%>
 
+var ocultarBtnSolicitar = function(){
+	Ext.Ajax.request({
+		url : page.resolveUrl('liquidacion/getOcultarBotonSolicitar'), 
+		method: 'POST',
+		success: function ( result, request ) {
+			var resultado = Ext.decode(result.responseText);
+			if(resultado.ocultarBtnSolicitar) {
+				btnSolicitar.hide();
+				return true;
+			}else{
+				btnSolicitar.show();
+				return false;
+			}
+		} 
+	});
+}
+
 var btnSolicitar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.solicitar" text="**Solicitar" />',
 	iconCls: 'icon_mas',
+	hidden: ocultarBtnSolicitar(),
 	cls: 'x-btn-text-icon',
 	handler: function() {
 		if (comprobarDatosCalculoRellenos()) {
@@ -118,6 +136,8 @@ var btnGenerar = new Ext.Button({
 var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'id'},
 	{name: 'contrato'},
+	{name: 'nroContrato'},
+	{name: 'solicitante'},
 	{name: 'producto'},
 	{name: 'estadoLiquidacion'},
 	{name: 'estadoCodigo'},
@@ -130,7 +150,11 @@ var liquidacionesRecord = Ext.data.Record.create([
 	{name: 'interesesOrdinarios'},
 	{name: 'interesesDemora'},
 	{name: 'total'},
-	{name: 'apoderado'}
+	{name: 'apoderado'},
+	{name: 'comisiones'},
+	{name: 'gastos'},
+	{name: 'impuestos'}
+	
 ]);
 
 var storeLiquidaciones = page.getStore({
@@ -150,7 +174,9 @@ storeLiquidaciones.on(
 );
 
 var cmLiquidacion = new Ext.grid.ColumnModel([
-	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'contrato',hidden:true},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.contrato" text="**Contrato" />', dataIndex: 'nroContrato'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.solicitante" text="**Solicitante" />', dataIndex: 'solicitante',hidden:true},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.producto" text="**Producto" />', dataIndex: 'producto'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.estadoLiquidacion" text="**Estado Liquidacion" />', dataIndex: 'estadoLiquidacion'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.fechaSolicitud" text="**Fecha Solicitud" />', dataIndex: 'fechaSolicitud'},
@@ -162,18 +188,32 @@ var cmLiquidacion = new Ext.grid.ColumnModel([
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesOrdinarios" text="**Intereses Ordinarios" />', dataIndex: 'interesesOrdinarios'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.interesesDemora" text="**Intereses Demora" />', dataIndex: 'interesesDemora'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.total" text="**Total" />', dataIndex: 'total'},
-	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado', width: 200}
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado', width: 200},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.comisiones" text="**Comisiones" />', dataIndex: 'comisiones', width: 200},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.gastos" text="**Gastos" />', dataIndex: 'gastos', width: 200},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.impuestos" text="**Impuestos" />', dataIndex: 'impuestos', width: 200}
+	
+	
 ]);
+
+var botonRefresh = new Ext.Button({
+		text : 'Refresh'
+		,iconCls : 'icon_refresh'
+		,handler:function(){
+			refrescarLiquidacionesGrid();
+		}
+});
 
 var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
-	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar, new Ext.Toolbar.Fill(), btnGenerar],
+	bbar: [btnSolicitar, btnEditarValores, btnConfirmar, btnDescartar, new Ext.Toolbar.Fill(), btnGenerar,botonRefresh],
 	height: 250,
 	autoWidth: true,
 	style:'padding-top: inherit',
 	collapsible: true,
 	sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 });
+
 
 gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
 	actualizarBotonesLiquidacion();
@@ -182,7 +222,6 @@ gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
 <%-- States --%>
 
 var actualizarBotonesLiquidacion = function() {
-
 	// Se comprueba que el procedimiento se encuentre en un estado que permita editar las liquidaciones
 	if (data != null) {
 		var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
@@ -204,9 +243,18 @@ var actualizarBotonesLiquidacion = function() {
 	}
 
 	switch(estadoCodigo) {
-		case 'SOL':
+		
+		case 'PEN':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(true);
+			btnGenerar.setDisabled(true);
+			break;
+			
+		case 'SOL':
+			btnSolicitar.setDisabled(true);
+			btnEditarValores.setDisabled(true);
 			btnConfirmar.setDisabled(false);
 			btnDescartar.setDisabled(false);
 			btnGenerar.setDisabled(true);
@@ -245,6 +293,9 @@ var actualizarBotonesLiquidacion = function() {
 	}
 
 	btnConfirmar.setDisabled(btnConfirmar.disabled || !comprobarDatosCalculoRellenos());
+	
+			
+	
 }
 
 <%-- Utils --%>

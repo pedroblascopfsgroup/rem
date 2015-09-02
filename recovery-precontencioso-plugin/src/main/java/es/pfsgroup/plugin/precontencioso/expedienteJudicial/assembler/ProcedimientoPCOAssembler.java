@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;

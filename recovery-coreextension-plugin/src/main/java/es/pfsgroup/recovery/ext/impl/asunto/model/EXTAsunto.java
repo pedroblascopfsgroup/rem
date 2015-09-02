@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
+import org.hibernate.proxy.HibernateProxy;
 
 import es.capgemini.pfs.PluginCoreextensionConstantes;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -126,9 +127,6 @@ public class EXTAsunto extends Asunto {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_GES_ID")
 	private DDGestionAsunto gestionAsunto;
-	
-	@Column(name = "ERROR_ENVIO_CDD")
-    private Integer errorEnvioCDD;
 	
 	
 	//private Boolean esMultigestor;
@@ -363,18 +361,17 @@ public class EXTAsunto extends Asunto {
 		return ultimoProc;
 	}
 
-	/**
-	 * @return the errorEnvioCDD
-	 */
-	public Integer getErrorEnvioCDD() {
-		return errorEnvioCDD;
-	}
 
-	/**
-	 * @param errorEnvioCDD the errorEnvioCDD to set
-	 */
-	public void setErrorEnvioCDD(Integer errorEnvioCDD) {
-		this.errorEnvioCDD = errorEnvioCDD;
+	@Transient
+	public static EXTAsunto instanceOf(Asunto asunto) {
+		EXTAsunto extAsunto = null;
+		if (asunto==null) return null;
+	    if (asunto instanceof HibernateProxy) {
+	    	extAsunto = (EXTAsunto) ((HibernateProxy) asunto).getHibernateLazyInitializer()
+	                .getImplementation();
+	    } else if (asunto instanceof EXTAsunto){
+	    	extAsunto = (EXTAsunto) asunto;
+		}
+		return extAsunto;
 	}
-	
 }

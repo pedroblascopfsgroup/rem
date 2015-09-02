@@ -47,6 +47,8 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String LIMITE_EXPORT_EXCEL = "limiteExportExcel";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS = "limiteExportExcelBuscadorAsuntos";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS = "limiteExportExcelBuscadorSubastas";
+    public static final String LIMITE_EXPORT_EXCEL_BIENES_SUBASTA_CDD = "limiteExportExcelBienesSubastaCDD";
+    public static final String VISIBLE_BOTON_SOLICITAR_LIQUIDACION = "visibleBtnSolicitarLiquidacion";
 
     @Id
     @Column(name = "PEN_ID")

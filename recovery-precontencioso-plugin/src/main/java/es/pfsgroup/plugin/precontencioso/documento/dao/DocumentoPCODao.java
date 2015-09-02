@@ -2,10 +2,12 @@ package es.pfsgroup.plugin.precontencioso.documento.dao;
 
 import java.util.List;
 
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractDao;
-import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
+import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
 
 public interface DocumentoPCODao extends AbstractDao<DocumentoPCO, Long> {
 
@@ -19,5 +21,11 @@ public interface DocumentoPCODao extends AbstractDao<DocumentoPCO, Long> {
 	 * @return lista documentos
 	 */
 	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO);
+	
+	List<Contrato> getContratosByIdsOrderByDesc(String ids);
+	
+	List<Persona> getPersonasByIdsOrderByDesc(String ids);
+	
+	List<NMBBienEntidad> getBienesByIdsOrderByDesc(String ids);
 	
 }

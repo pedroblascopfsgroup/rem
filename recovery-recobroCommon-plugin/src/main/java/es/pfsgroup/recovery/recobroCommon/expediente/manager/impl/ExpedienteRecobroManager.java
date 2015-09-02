@@ -90,7 +90,11 @@ import es.pfsgroup.recovery.recobroCommon.agenciasRecobro.manager.api.RecobroAge
 import es.pfsgroup.recovery.recobroCommon.agenciasRecobro.model.RecobroAgencia;
 import es.pfsgroup.recovery.recobroCommon.contrato.model.CicloRecobroContrato;
 import es.pfsgroup.recovery.recobroCommon.core.manager.api.DiccionarioApi;
+import es.pfsgroup.recovery.recobroCommon.esquema.model.RecobroCarteraEsquema;
 import es.pfsgroup.recovery.recobroCommon.esquema.model.RecobroDDTipoGestionCartera;
+import es.pfsgroup.recovery.recobroCommon.esquema.model.RecobroEsquema;
+import es.pfsgroup.recovery.recobroCommon.esquema.model.RecobroSubCartera;
+import es.pfsgroup.recovery.recobroCommon.esquema.model.RecobroSubcarteraAgencia;
 import es.pfsgroup.recovery.recobroCommon.expediente.dao.ExpedienteRecobroDao;
 import es.pfsgroup.recovery.recobroCommon.expediente.dao.OficinaEmailDao;
 import es.pfsgroup.recovery.recobroCommon.expediente.dto.AcuerdoExpedienteDto;
@@ -1224,6 +1228,32 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		RecobroModeloFacturacion modelo = genericDao.get(RecobroModeloFacturacion.class, genericDao.createFilter(FilterType.EQUALS, "nombre", dto.getModeloFacturacion()),
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		cre.setModeloFacturacion(modelo);
+		
+		//BCFI-587
+		//Esquema
+		RecobroEsquema esquema = genericDao.get(RecobroEsquema.class, genericDao.createFilter(FilterType.EQUALS, "nombre", "Expedientes manuales"));
+		cre.setEsquema(esquema);
+		
+		//CarteraEsquema
+		RecobroCarteraEsquema carteraEsquema = genericDao.get(RecobroCarteraEsquema.class, genericDao.createFilter(FilterType.EQUALS, "esquema.nombre", "Expedientes manuales"),
+				genericDao.createFilter(FilterType.EQUALS, "cartera.nombre", "EXPEDIENTES MANUALES"));
+		cre.setCarteraEsquema(carteraEsquema);
+
+		//SubCartera
+		RecobroSubCartera subcartera = null;
+		if (carteraEsquema!=null){
+			subcartera = genericDao.get(RecobroSubCartera.class, genericDao.createFilter(FilterType.EQUALS, "carteraEsquema.id", carteraEsquema.getId()));
+		}
+		cre.setSubcartera(subcartera);
+		
+		//SubCarteraAgencia
+		RecobroSubcarteraAgencia subCarteraAgencia = null;
+		
+		if( subcartera!=null && age!=null ){
+			subCarteraAgencia = genericDao.get(RecobroSubcarteraAgencia.class, genericDao.createFilter(FilterType.EQUALS, "subCartera.id", subcartera.getId()),
+												genericDao.createFilter(FilterType.EQUALS, "agencia.id", age.getId()));
+		}
+		cre.setSubCarteraAgencia(subCarteraAgencia);
 
 		genericDao.save(CicloRecobroExpediente.class, cre);
 
@@ -2005,6 +2035,10 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 					acuerdo.setDespacho(despacho);
 				}
 			}
+			
+			Double deudaTotal = acuerdo.getExpediente().getVolumenRiesgo();		
+			
+			acuerdo.setDeudaTotal(Checks.esNulo(deudaTotal) ? 0D : deudaTotal);
 			
 			Long idAcuerdo = acuerdoDao.save(acuerdo);
 			

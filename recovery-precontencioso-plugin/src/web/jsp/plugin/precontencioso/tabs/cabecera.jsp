@@ -201,9 +201,15 @@
   
   
 	var funcionEditaCabeceraProcedimiento=function(){
+		var flow = '';
+		if (data.hayPrecontencioso) {
+			flow = 'expedientejudicial/editar';
+		}else{
+			flow = 'editprocedimiento/open';
+		}
 		var w = app.openWindow({
              text:'<s:message code="plugin.mejoras.asuntos.cabecera.editar" text="**Editar" />'
-			,flow: 'editprocedimiento/open'
+			,flow: flow
 			,width:850
 			,title: '<s:message code="plugin.mejoras.asuntos.cabecera.editar" text="**Editar" />'
 			,params:{
@@ -328,7 +334,6 @@
 			entidad.setLabel('procedimientoPropuesto', cabeceraPCO.tipoProcPropuestoDesc);
 			entidad.setLabel('procedimientoIniciado', cabeceraPCO.tipoProcIniciadoDesc);
 			entidad.setLabel('tipoPreparacion', cabeceraPCO.tipoPreparacionDesc);
-			procedimientoInterno.setValue(cabeceraPCO.nombreExpJudicial);
 
 			procedimientoInterno.label.update('<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
 			procedimientoJuzgado.label.update('<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');

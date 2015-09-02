@@ -33,6 +33,21 @@
 	value="${liquidacion.total}" 
 	obligatory="true" 
 	allowDecimals="true" />
+	
+	<pfsforms:numberfield name="comisionesField" labelKey="plugin.precontencioso.grid.liquidacion.comisiones" label="**Comisiones" 
+		value="${liquidacion.comisiones}" 
+		obligatory="true" 
+		allowDecimals="true" />
+		
+	<pfsforms:numberfield name="gastosField" labelKey="plugin.precontencioso.grid.liquidacion.gastos" label="**Gastos" 
+		value="${liquidacion.gastos}" 
+		obligatory="true" 
+		allowDecimals="true" />
+		
+	<pfsforms:numberfield name="impuestosField" labelKey="plugin.precontencioso.grid.liquidacion.impuestos" label="**Impuestos" 
+		value="${liquidacion.impuestos}" 
+		obligatory="true" 
+		allowDecimals="true" />	
 
 	var capitalVencidoOriginalField = new Ext.form.NumberField({
 		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.capitalVencidoOriginal" text="**Capital Vencido Original" />',
@@ -68,6 +83,29 @@
 		disabled: true,
 		allowDecimals: true
 	});
+
+	var comisionesOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.comisionesOriginal" text="**Comisiones Original" />',
+		value: '${liquidacion.comisionesOriginal}',
+		disabled: true,
+		allowDecimals: true
+	});
+	
+	var gastosOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.gastosOriginal" text="**Gastos Original" />',
+		value: '${liquidacion.gastosOriginal}',
+		disabled: true,
+		allowDecimals: true
+	});
+	
+	var impuestosOriginalField = new Ext.form.NumberField({
+		fieldLabel: '<s:message code="plugin.precontencioso.grid.liquidacion.impuestosOriginal" text="**Impuestos Original" />',
+		value: '${liquidacion.impuestosOriginal}',
+		disabled: true,
+		allowDecimals: true
+	});
+	
+		
 
 <%-- Apoderado --%>
 
@@ -263,9 +301,9 @@
 		bbar: [btnGuardar, btnCancelar],
 		items: [
 			{
-				items: [ capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField, comboTipoGestor, comboTipoDespacho, comboUsuario ]
+				items: [ capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField,comisionesField,gastosField,impuestosField , comboTipoGestor, comboTipoDespacho, comboUsuario ]
 			}, {
-				items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField ]
+				items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField,comisionesOriginalField,gastosOriginalField,impuestosOriginalField]
 			}
 		]
 	});
@@ -309,6 +347,9 @@
 		parametros.interesesOrdinarios= interesesOrdinariosField.getValue();
 		parametros.interesesDemora = interesesDemoraField.getValue();
 		parametros.total = totalField.getValue();
+		parametros.comisiones = comisionesField.getValue();
+		parametros.gastos = gastosField.getValue();
+		parametros.impuestos = impuestosField.getValue();
 
 		if (comboUsuario.getValue() != "") {
 			parametros.apoderadoDespachoId = comboTipoDespacho.getValue();

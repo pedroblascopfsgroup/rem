@@ -10,11 +10,12 @@ new Ext.Button({
 	menu: {
 		items: [{
 			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparación" />',
+			icon:'/pfs/css/book_next.png',
 			handler: function() {
 				var estado = data.estadoPrecontencioso;
-				var estadoPreparacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.ESTADO_PREPARACION" />';
-				var estadoSubsanar = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.ESTADO_SUBSANAR" />';
-				var estadoSubsanarCambio = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.ESTADO_SUBSANAR_POR_CAMBIO" />';
+				var estadoPreparacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.PREPARACION" />';
+				var estadoSubsanar = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.SUBSANAR" />';
+				var estadoSubsanarCambio = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.SUBSANAR_POR_CAMBIO" />';
 				var result;
 				if(estado == estadoPreparacion || estado == estadoSubsanar || estado == estadoSubsanarCambio) {
 					result = false;

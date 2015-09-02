@@ -19,11 +19,16 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEstadoPreparacionPCO implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = 8837420496603055594L;
-	
-    public static final String ESTADO_PREPARACION = "PR";
-    public static final String ESTADO_SUBSANAR = "SU";
-    public static final String ESTADO_SUBSANAR_POR_CAMBIO = "SC";
-    public static final String ESTADO_FINALIZADO = "FI";
+
+	public static final String PRETURNADO = "PT";
+	public static final String PREPARACION = "PR";
+	public static final String PREPARADO = "PP";
+	public static final String ENVIADO = "EN";
+	public static final String FINALIZADO = "FI";
+	public static final String SUBSANAR = "SU";
+	public static final String SUBSANAR_POR_CAMBIO = "SC";
+	public static final String PARALIZADO = "PA";
+	public static final String CANCELADO = "CA";
 
 	@Id
 	@Column(name = "DD_PCO_PEP_ID")

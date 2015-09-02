@@ -12,7 +12,7 @@ public class LiquidacionGridDTO extends WebDto {
 	private Date fechaRecepcion;
 	private Date fechaConfirmacion;
 	private Date fechaCierre;
-	private Double total;
+	private Float total;
 
 	public String getContrato() {
 		return contrato;
@@ -38,10 +38,10 @@ public class LiquidacionGridDTO extends WebDto {
 	public void setFechaCierre(Date fechaCierre) {
 		this.fechaCierre = fechaCierre;
 	}
-	public Double getTotal() {
+	public Float getTotal() {
 		return total;
 	}
-	public void setTotal(Double total) {
+	public void setTotal(Float total) {
 		this.total = total;
 	}
 }

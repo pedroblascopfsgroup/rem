@@ -20,11 +20,14 @@
 		style: 'padding-top:0px',
 		handler: function() {
 			if (validarForm() == '') {
+				var mask=new Ext.LoadMask(Ext.getBody(), {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+				mask.show();
 				Ext.Ajax.request({
 					url: page.resolveUrl('liquidacion/solicitar'),
 					params: {idLiquidacion: ${liquidacion.id}, fechaCierre: fechaCierreField.getValue().format('d/m/Y')},
 					method: 'POST',
 					success: function ( result, request ) {
+						mask.hide();
 						page.fireEvent(app.event.DONE);
 					}
 				});

@@ -21,6 +21,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -109,6 +110,7 @@ public class DocumentoPCO implements Serializable, Auditable {
 	@Column(name = "PCO_DOC_PDD_OBSERVACIONES")
 	private String observaciones;
 	
+	@OrderBy(clause = "PCO_DOC_DSO_FECHA_SOLICITUD desc")
 	@OneToMany(mappedBy = "documento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<SolicitudDocumentoPCO> solicitudes;

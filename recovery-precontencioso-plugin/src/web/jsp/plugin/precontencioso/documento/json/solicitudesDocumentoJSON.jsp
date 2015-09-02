@@ -7,6 +7,7 @@
 <fwk:json>
     <json:array name="solicitudesDocumento" items="${solicitudesDocumento}" var="s">
         <json:object>
+        	<json:property name="idIdentificativo" value="${s.idIdentificativo}" />
             <json:property name="id" value="${s.id}" />
             <json:property name="idDoc" value="${s.idDoc}" />
             <json:property name="esDocumento" value="${s.esDocumento}" />
@@ -23,7 +24,7 @@
             <json:property name="fechaSolicitud" value="${s.fechaSolicitud}" />
             <json:property name="fechaResultado" value="${s.fechaResultado}" />
             <json:property name="fechaEnvio" value="${s.fechaEnvio}" />
-            <json:property name="fechaRecepcion" value="${s.fechaEnvio}" />
+            <json:property name="fechaRecepcion" value="${s.fechaRecepcion}" />
             <json:property name="resultado" value="${s.resultado}" />
             <json:property name="comentario" value="${s.comentario}" />
         </json:object>

@@ -39,8 +39,8 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('HC103','HC103_ConfirmarSolicitud','TGCON','GCONPR')
 ,T_TIPO_VALOR('HC103','HC103_RealizarTransferencia','TGCON','GCONPR')
 ,T_TIPO_VALOR('HC103','HC103_ConfirmarTransferencia','TGCON','GCONPR')
-,T_TIPO_VALOR('HC103','HC103_DecisionAprobFondos','TGCON','GCONPR')
-,T_TIPO_VALOR('HC103','HC103_DecisionAprobarSolcIns','TGCON','GCONPR')
+,T_TIPO_VALOR('HC103','HC103_DecisionAprobFondos','DGCON','GCONPR')
+,T_TIPO_VALOR('HC103','HC103_DecisionAprobarSolcIns','DGCON','GCONPR')
 ,T_TIPO_VALOR('H005','H005_SolicitudDecretoAdjudicacion','CJ-814','GCONGE')
 ,T_TIPO_VALOR('H005','H005_notificacionDecretoAdjudicacionAEntidad','CJ-814','CJ-GAREO')
 ,T_TIPO_VALOR('H005','H005_declararIVAeIGIC','TGCTRGE','SCTRGE')
@@ -370,7 +370,6 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H036','H036_SuspenderSubasta','TGCONGE','SUCONGEN2')
 ,T_TIPO_VALOR('H036','H036_ValidarPropuesta','TSUCONGE','SUCONGEN2')
 ,T_TIPO_VALOR('H004','H004_ValidarInformeDeSubasta','TSUCONGE','SUCONGEN2')
-
 ); 
     V_TMP_TIPO T_TIPO_VALOR;
     

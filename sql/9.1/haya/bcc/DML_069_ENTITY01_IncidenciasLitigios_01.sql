@@ -88,6 +88,41 @@ BEGIN
           ' SET TAP_SCRIPT_DECISION = ''valores[''''H002_RegistrarResSuspSubasta''''][''''comboSuspension''''] == DDSiNo.SI ? ''''Aceptado'''' : ''''Denegado'''''' ' ||
           ' WHERE TAP_CODIGO = ''H002_RegistrarResSuspSubasta'' ';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-554');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-606');
+	V_TAREA:='H006_RevisarInfoContable';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''Fecha''' ||
+	  ' WHERE TFI_NOMBRE=''fecha'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	V_TAREA:='H006_ConfirmarContabilidad';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''Fecha contabilidad''' ||
+	  ' WHERE TFI_NOMBRE=''fecha'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-606');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-608');
+	V_TAREA:='H048_TrasladoDocuDeteccionOcupantes';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''<div style="FONT-SIZE: 8pt; MARGIN-BOTTOM: 30px; FONT-FAMILY: Arial" align="justify"><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Antes de dar por completada esta tarea deberá de haber un bien vinculado al procedimiento, esto podrá comprobarlo a través de la pestaña Bienes del procedimiento, en caso de no haberlo, a través de esa misma pestaña dispone de la opción de Agregar por la cual se le permite vincular un bien al procedimiento.</p><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">A través de esta pantalla deberá confirmar si el bien se encuentra ocupado o no, si dispone de la documentación de detección de ocupantes, en caso afirmativo, deberá indicar si existe o no inquilino y en tal caso la fecha del contrato de arrendamiento y el nombre del arrendatario. </p><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Los campos Fecha vista y Fecha fin para alegaciones deberá de informarlos en caso de ya disponer de dicha información.</p><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Una vez rellene esta pantalla en caso de no disponer de la documentación de detección se lanzará la tarea "Solicitud de requerimiento documentación a ocupantes", en caso contrario se lanzará la tarea "Obtener aprobación alquiler".</p></div>''' ||
+	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	V_TAREA:='H048_RegistrarRecepcionDoc';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''<div style="FONT-SIZE: 8pt; MARGIN-BOTTOM: 30px; FONT-FAMILY: Arial" align="justify"><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Para dar por completada esta tarea deberá de informar la fecha en que haya recibido la documentación solicitada a los ocupantes.</p><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Los campos Fecha vista y Fecha fin para alegaciones deberá de informarlos en caso de ya disponer de dicha información.</p><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Una vez rellene esta pantalla se lanzará la tarea "Obtener aprobación de alquiler".</p></div>''' ||
+	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-608');
+	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-602');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+          ' SET TAP_DESCRIPCION = ''Suspensión lanzamiento'' ' ||
+          ' WHERE TAP_CODIGO = ''H015_SuspensionLanzamiento'' ';
+	V_TAREA:='H015_SuspensionLanzamiento';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ERROR_VALIDACION=''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio''' ||
+	  ' ,TFI_VALIDACION=''valor != null && valor != '''' ? true : false''' ||
+	  ' WHERE TFI_NOMBRE=''fechaParalizacion'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-602');
+	
 	
 	COMMIT;
  

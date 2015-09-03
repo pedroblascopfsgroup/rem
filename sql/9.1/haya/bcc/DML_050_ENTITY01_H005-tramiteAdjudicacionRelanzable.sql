@@ -404,9 +404,8 @@ DECLARE
 			FROM TAP_TAREA_PROCEDIMIENTO TAP, DD_TPO_TIPO_PROCEDIMIENTO TPO 
 			WHERE TPO.DD_TPO_CODIGO = P_COD_PROCEDIMIENTO
 				AND TPO.DD_TPO_ID = TAP.DD_TPO_ID
-				AND TAP_CODIGO IN ('H005_SolicitudDecretoAdjudicacion', 'H005_notificacionDecretoAdjudicacionAEntidad', 'H005_notificacionDecretoAdjudicacionAlContrario', 'H005_SolicitudTestimonioDecretoAdjudicacion', 'H005_ConfirmarTestimonio',
-										'H005_RegistrarPresentacionEnRegistro', 'H005_RegistrarInscripcionDelTitulo', 'H005_RegistrarEntregaTitulo', 'H005_RegistrarPresentacionEnHacienda', 'H005_ConfirmarContabilidad', 'H005_declararIVAeIGIC');
-
+				AND TAP_CODIGO IN ('H005_notificacionDecretoAdjudicacionAEntidad', 'H005_ConfirmarTestimonio', 'H005_RegistrarEntregaTitulo', 'H005_RegistrarPresentacionEnHacienda', 'H005_ConfirmarContabilidad')
+				AND NOT EXISTS (SELECT 1 FROM TAP_TAREA_PROCEDIMIENTO TAP_I WHERE TAP_I.TAP_CODIGO IN ('DEL_H005_notificacionDecretoAdjudicacionAEntidad', 'DEL_H005_ConfirmarTestimonio', 'DEL_H005_RegistrarEntregaTitulo', 'DEL_H005_RegistrarPresentacionEnHacienda', 'DEL_H005_ConfirmarContabilidad'));
     
 BEGIN	
 	
@@ -414,6 +413,30 @@ BEGIN
 	/* ------------------- -------------------------- */
 	/* --------------  ACTUALIZACIONES --------------- */
 	/* ------------------- -------------------------- */
+	V_TAREA:='H005_SolicitudDecretoAdjudicacion';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items SET ' ||
+	  ' tfi_label=''<div align="justify" style="FONT-SIZE: 8pt; MARGIN-BOTTOM: 30px; FONT-FAMILY: Arial" align="justify"><p style="margin-bottom: 10px;">Tanto si en la subasta no han concurrido postores, como si la entidad ha resultado mejor postor, el letrado deberá solicitar la adjudicación a favor de la entidad con reserva de la facultad de ceder el remate, por lo que a través de esta tarea deberá de informar la fecha de presentación en el Juzgado del escrito de solicitud del Decreto de Adjudicación.</p><p style="margin-bottom: 10px;">En caso de no haber un bien ya vinculado al procedimiento, antes de dar por completada esta tarea el sistema le obligará a asociarlo a través de la pestaña bienes del procedimiento el bien que corresponda.</p><p style="margin-bottom: 10px;">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px;">Una vez rellene esta pantalla se lanzará la tarea "Notificación decreto de adjudicación a la entidad".</p></div>''' ||
+	  ' WHERE tfi_nombre=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	
+	V_TAREA:='H005_notificacionDecretoAdjudicacionAlContrario';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=NULL WHERE TAP_CODIGO='''||V_TAREA||'''';
+	
+	V_TAREA:='H005_SolicitudTestimonioDecretoAdjudicacion';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_ALERT_VUELTA_ATRAS=NULL WHERE TAP_CODIGO='''||V_TAREA||'''';
+	
+	V_TAREA:='H005_RegistrarPresentacionEnRegistro';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	
+	V_TAREA:='H005_RegistrarInscripcionDelTitulo';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION=''comprobarExisteDocumentoNOSI() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar la Nota simple.</div>'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+
+	V_TAREA:='H005_declararIVAeIGIC';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS WHERE TFI_NOMBRE IN (''fecha'', ''observaciones'') AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Una vez emitido el auto decreto de adjudicaci&oacute;n, la entidad deber&aacute; realizar la declaraci&oacute;n en funci&oacute;n del tipo de tributaci&oacute;n definido en el informe fiscal. En el caso de el tipo de tributaci&oacute;n sea IVA sujeto y deducible, adem&aacute;s de la declaraci&oacute;n la entidad deber&aacute; auto emitir una factura.</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET DD_TPO_ID_BPM = (SELECT DD_TPO_ID FROM '||V_ESQUEMA ||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = ''HCJ001''), TAP_CODIGO = ''H005_BPMDeclaracionIVAIGIC'' WHERE TAP_CODIGO = '''||V_TAREA||'''';
+		
 	-- BORRADO DE TAREA (lógico)
 	FOR REG_TAREA IN CRS_TAREA_BORRAR(V_COD_PROCEDIMIENTO) LOOP
 		V_TAREA:= REG_TAREA.TAP_CODIGO;
@@ -422,6 +445,22 @@ BEGIN
 		EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_CODIGO=''DEL_'||V_TAREA||''', BORRADO=1, FECHABORRAR=SYSDATE, USUARIOBORRAR=''ALBERTO'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 	END LOOP;
 
+	-- LOOP Insertando valores en TAP_TAREA_PROCEDIMIENTO
+    VAR_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar TAREAS');
+    FOR I IN V_TIPO_TPO.FIRST .. V_TIPO_TPO.LAST
+      LOOP
+        V_TMP_TIPO_TPO := V_TIPO_TPO(I);
+        V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.' || VAR_TABLENAME || ' SET ' ||
+        		' DD_TPO_CODIGO='''||REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') ||''''|| 
+        		' ,DD_TPO_XML_JBPM='''||REPLACE(TRIM(V_TMP_TIPO_TPO(5)),'''','''''')||''''||
+				' WHERE DD_TPO_CODIGO='''||REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') ||'''';
+            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+            DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TPO(1) ||''','''||TRIM(V_TMP_TIPO_TPO(2))||'''');
+            EXECUTE IMMEDIATE V_MSQL;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Procedimiento');
+	
     /*
     * LOOP ARRAY BLOCK-CODE: TAP_TAREA_PROCEDIMIENTO
     *---------------------------------------------------------------------

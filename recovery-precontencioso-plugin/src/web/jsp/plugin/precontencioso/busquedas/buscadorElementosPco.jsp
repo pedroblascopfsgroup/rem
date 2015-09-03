@@ -36,7 +36,14 @@
 			var params = getParametros();
 			params.start = 0;
 			params.limit = 25;
-			procedimientoPcoStore.webflow(params);
+			
+			if(comboTipoBusqueda.getValue() == documento) {
+				documentoPcoStore.webflow(params);
+			} else if(comboTipoBusqueda.getValue() == liquidacion){
+				liquidacionPcoStore.webflow(params);
+			} else if(comboTipoBusqueda.getValue() == burofax){
+				burofaxPcoStore.webflow(params);
+			}
 			pagingBar.hide();
 		}
 	})
@@ -66,6 +73,10 @@
 	gridDocumentoPco.hide();
     gridLiquidacionPco.hide();
     gridBurofaxPco.hide();
+    
+	filtrosTabDocumentos.disable();
+    filtrosTabLiquidacion.disable();	            	
+	filtrosTabBurofax.disable();
 
 	gridDocumentoPco.on('load', function() {
 		panelFiltros.collapse(true);

@@ -209,8 +209,6 @@ public class DocumentoPCOController {
 		return INFORMAR_DOC;
 	}
 	
-	
-	// METODO PROVISIONAL
 	/**
 	 * Incluir Documento
 	 * 

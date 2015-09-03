@@ -36,6 +36,12 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String proDisponibleLiquidaciones;
 	private String proDisponibleBurofaxes;
 	private String proDiasGestion;
+	private String proTipoGestor;
+	private String proDespacho;
+	private String proGestor;
+	private String proJerarquiaContable;
+	private String proCentroContable;
+	
 
 	// Contrato - Persona
 	private String conCodigo;
@@ -462,5 +468,34 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	public void setTipoBusqueda(String tipoBusqueda) {
 		this.tipoBusqueda = tipoBusqueda;
 	}
-
+	public String getProTipoGestor() {
+		return proTipoGestor;
+	}
+	public void setProTipoGestor(String proTipoGestor) {
+		this.proTipoGestor = proTipoGestor;
+	}
+	public String getProDespacho() {
+		return proDespacho;
+	}
+	public void setProDespacho(String proDespacho) {
+		this.proDespacho = proDespacho;
+	}
+	public String getProGestor() {
+		return proGestor;
+	}
+	public void setProGestor(String proGestor) {
+		this.proGestor = proGestor;
+	}
+	public String getProJerarquiaContable() {
+		return proJerarquiaContable;
+	}
+	public void setProJerarquiaContable(String proJerarquiaContable) {
+		this.proJerarquiaContable = proJerarquiaContable;
+	}
+	public String getProCentroContable() {
+		return proCentroContable;
+	}
+	public void setProCentroContable(String proCentroContable) {
+		this.proCentroContable = proCentroContable;
+	}
 }

@@ -79,7 +79,9 @@
 			channel="integra.salida.fichero.in" 
 			directory="${integracion.output}/${integracion.producer.cola}" >
 		<integration:poller>
-			<integration:interval-trigger interval="500" time-unit="MILLISECONDS" />
+			<integration:interval-trigger 
+				interval="${integracion.producer.poller}" 
+				time-unit="MILLISECONDS" />
 		</integration:poller>
 	</file:inbound-channel-adapter>
 	<integration:chain input-channel="integra.salida.fichero.in" output-channel="integra.salida.salida">

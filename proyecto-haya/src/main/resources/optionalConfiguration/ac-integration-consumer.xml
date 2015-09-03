@@ -49,7 +49,7 @@
 		filename-pattern=".+.msg">
 		<integration:poller id="poller">
 			<integration:interval-trigger 
-				interval="500"
+				interval="${integracion.consumer.poller}"
 				time-unit="MILLISECONDS" />
 		</integration:poller>
 	</file:inbound-channel-adapter>

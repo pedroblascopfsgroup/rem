@@ -252,8 +252,6 @@ label="** Disponible todas las liquidaciones" value="" dd="${ddSiNo}" />
 labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.burofaxes" 
 label="** Disponible todos los burofaxes" value="" dd="${ddSiNo}" />
 
-<%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
-
 <%-- Selector múltiple del estado en que se encuentran los expedientes. --%>
 
 var estadoPreparacion = <app:dict value="${estadoPreparacion}" />;
@@ -273,7 +271,244 @@ var filtroEstadoPreparacion = app.creaDblSelect(
 	}
 );
 
+<%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
+
+<pfsforms:ddCombo name="comboTiposGestor" propertyCodigo="id" propertyDescripcion="descripcion"
+labelKey="ext.asuntos.busqueda.filtro.tipoGestor" label="**Tipo de gestor" value="" dd="${ddListadoGestores}" />
+
+comboTiposGestor.on('select', function(){
+	comboDespachos.reset();
+	optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue(), 'incluirBorrados': true}); 
+	comboGestor.reset();
+	comboDespachos.setDisabled(false);
+});
+ 
+//store generico de combo diccionario
+var optionsDespachosRecord = Ext.data.Record.create([
+	 {name:'cod'}
+	,{name:'descripcion'}
+]);
+
+var optionsDespachoStore = page.getStore({
+       flow: 'expedientejudicial/getListTipoDespachoData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoDespachos'
+    }, optionsDespachosRecord)	       
+});
+
+//Campo Combo Despacho
+var comboDespachos = new Ext.form.ComboBox({
+	store:optionsDespachoStore
+	,displayField:'descripcion'
+	,valueField:'cod'
+	,mode: 'remote'
+	,emptyText:'---'
+	,editable: false
+	,triggerAction: 'all'
+	,disabled:true
+	,resizable:true
+	,fieldLabel : '<s:message code="asuntos.busqueda.filtro.despacho" text="**Despacho"/>'
+	<app:test id="comboDespachos" addComa="true"/>
+});
+
+comboDespachos.on('select', function(){
+	comboGestor.reset();
+	optionsGestoresStore.webflow({'idTipoDespacho': comboDespachos.getValue(), 'incluirBorrados': true}); 
+	comboGestor.setDisabled(false);
+});
+
+var Gestor = Ext.data.Record.create([
+	 {name:'id'}
+	,{name:'username'}
+]);
+
+var optionsGestoresStore =  page.getStore({
+       flow: 'expedientejudicial/getListUsuariosData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoUsuarios'
+    }, Gestor)	       
+});
+
+//Campo Gestores, double select 
+var creaDblSelectMio = function(label, config){
+
+	var store = config.store ;
+	var cfg = {
+	   	fieldLabel: label || ''
+	   	,displayField:'username'
+	   	,valueField: 'id'
+	   	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
+	   	,dataFields : ['id', 'username']
+	   	,fromStore:store
+	   	,toData : []
+	       ,msHeight : config.height || 60
+		,labelStyle:config.labelStyle || ''
+	       ,msWidth : config.width || 140
+	       ,drawTopIcon:false
+	       ,drawBotIcon:false
+	       ,drawUpIcon:false
+		,drawDownIcon:false
+		,disabled:true
+		,toSortField : 'codigo'
+	    };
+	if(config.id) {
+		cfg.id = config.id;
+	}
+	
+	var itemSelector = new Ext.ux.ItemSelector(cfg);
+	if (config.funcionReset){
+		itemSelector.funcionReset = config.funcionReset;
+	}
+	
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
+	itemSelector.setValue =  function(val) {
+	       if(!val) {
+	           return;
+	       }
+	       val = val instanceof Array ? val : val.split(',');
+	       var rec, i, id;
+	       for(i = 0; i < val.length; i++) {
+	           id = val[i];
+	           if(this.toStore.find('id',id)>=0) {
+	               continue;
+	           }
+	           rec = this.fromStore.find('id',id);
+	           if(rec>=0) {
+	           	rec = this.fromStore.getAt(rec);
+	               this.toStore.add(rec);
+	               this.fromStore.remove(rec);
+	           }
+	       }
+	   };
+	
+	itemSelector.getStore =  function() {
+		return this.toStore;
+	};
+	
+	return itemSelector;
+};
+
+var comboGestor = creaDblSelectMio('<s:message code="asuntos.busqueda.filtro.gestor" text="**Gestor" />',{store:optionsGestoresStore, funcionReset:recargarComboGestores});
+
+var recargarComboGestores = function(){
+	optionsGestoresStore.webflow({id:0});
+}
+
+var validarEmptyForm = function(){
+	return (comboDespachos.getValue() != '' || comboGestor.getValue() != '' || comboTiposGestor.getValue() != '');
+}
+		
+var validaMinMax = function(){
+	return true;
+}
+
 <%-- Jerarquía y Centros: Donde el filtro aplicará sobre el centro al que pertenece alguno de los contratos en preparación. --%>
+
+var jerarquia = <app:dict value="${ddJerarquia}" blankElement="true" blankElementValue="" blankElementText="---" />;
+	
+var comboJerarquia = app.creaCombo({
+	triggerAction: 'all', 
+	data:jerarquia, 
+	value:jerarquia.diccionario[0].codigo, 
+	name : 'jerarquia', 
+	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'
+});
+
+//Campo Zonas, double select 
+var creaDblSelectZonas = function(label, config){
+
+	var store = config.store ;
+	var cfg = {
+	   	fieldLabel: label || ''
+	   	,displayField:'descripcion'
+	   	,valueField: 'codigo'
+	   	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
+	   	,dataFields : ['codigo', 'descripcion']
+	   	,fromStore:store
+	   	,toData : []
+	       ,msHeight : config.height || 60
+		,labelStyle:config.labelStyle || ''
+	       ,msWidth : config.width || 140
+	       ,drawTopIcon:false
+	       ,drawBotIcon:false
+	       ,drawUpIcon:false
+		,drawDownIcon:false
+		,disabled:true
+		,toSortField : 'codigo'
+	    };
+	if(config.id) {
+		cfg.id = config.id;
+	}
+	
+	var itemSelector = new Ext.ux.ItemSelector(cfg);
+	if (config.funcionReset){
+		itemSelector.funcionReset = config.funcionReset;
+	}
+	
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
+	itemSelector.setValue =  function(val) {
+	       if(!val) {
+	           return;
+	       }
+	       val = val instanceof Array ? val : val.split(',');
+	       var rec, i, id;
+	       for(i = 0; i < val.length; i++) {
+	           id = val[i];
+	           if(this.toStore.find('id',id)>=0) {
+	               continue;
+	           }
+	           rec = this.fromStore.find('id',id);
+	           if(rec>=0) {
+	           	rec = this.fromStore.getAt(rec);
+	               this.toStore.add(rec);
+	               this.fromStore.remove(rec);
+	           }
+	       }
+	   };
+	
+	itemSelector.getStore =  function() {
+		return this.toStore;
+	};
+	
+	return itemSelector;
+};
+	
+var zonasRecord = Ext.data.Record.create([
+	 {name:'codigo'}
+	,{name:'descripcion'}
+]);
+    
+var optionsZonasStore =  page.getStore({
+       flow: 'expedientejudicial/getZonasPorNivel'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'ddZonas'
+    }, zonasRecord)	       
+});
+
+var comboZonas = creaDblSelectZonas('<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />',
+	{store:optionsZonasStore, funcionReset:recargarComboZonas}
+);
+	
+var recargarComboZonas = function(){
+	if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
+		optionsZonasStore.webflow({idJerarquia:comboJerarquia.getValue()});
+	}else{
+		optionsZonasStore.webflow({idJerarquia:0});
+		comboZonas.setValue('');
+		optionsZonasStore.removeAll();
+	}
+}
+	
+var limpiarYRecargar = function(){
+	comboZonas.reset();
+	recargarComboZonas();
+	comboZonas.setDisabled(false);
+}
+	
+comboJerarquia.on('select',limpiarYRecargar);
+
+recargarComboZonas();
+
 
 <%-- Paneles --%>
 
@@ -288,10 +523,10 @@ var filtrosTabDatosProcedimiento = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [fieldCodigo, fieldNombreExpedienteJudicial, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes]
+		items: [fieldCodigo, fieldNombreExpedienteJudicial, comboTiposGestor, comboDespachos, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes, comboJerarquia, comboZonas]
 	}, {
 		layout: 'form',
-		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, filtroEstadoPreparacion]
+		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, comboGestor, filtroEstadoPreparacion]
 	}]
 });
 
@@ -322,6 +557,11 @@ var getParametrosFiltroProcedimiento = function() {
 	out.proTipoProcedimiento = comboTipoProcPropuesto.getValue();
 	out.proTipoPreparacion = comboTipoPreparacion.getValue();
 	out.proCodigosEstado = fieldEstadoPreparacion.childNodes[1].value;
+	out.proTipoGestor = comboTiposGestor.getValue();
+	out.proDespacho = comboDespachos.getValue();
+	out.proGestor = comboGestor.getValue();
+	out.proJerarquiaContable = comboJerarquia.getValue();
+	out.proCentroContable = comboZonas.getValue();
 
 	out.proDisponibleDocumentos = comboDisponibleDocumentos.getValue();
 	out.proDisponibleLiquidaciones = comboDisponibleLiquidaciones.getValue();

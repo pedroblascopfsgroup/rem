@@ -87,14 +87,12 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String abrirBusquedaProcedimiento(WebRequest request, ModelMap model) {
 		model = rellenarFormBusquedaPCO(model);
-		model.put("ocultarTipoBusqueda", true);
 		return JSP_BUSQUEDA_PROCEDIMIENTO;
 	}
 	
 	@RequestMapping
 	public String abrirBusquedaElementosPco(WebRequest request, ModelMap model) {	
 		rellenarFormBusquedaPCO(model);
-		model.put("ocultarTipoBusqueda", false);
 		return JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO;
 	}	
 	

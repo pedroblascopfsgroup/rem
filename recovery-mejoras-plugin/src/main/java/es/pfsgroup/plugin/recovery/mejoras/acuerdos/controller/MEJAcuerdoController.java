@@ -129,7 +129,9 @@ public class MEJAcuerdoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, @RequestParam(value = "idAsunto", required = true) Long idAsunto) {
+	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, 
+							@RequestParam(value = "idAsunto", required = true) Long idAsunto,
+							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo) {
 		
 		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
 		map.put("termino", termino);
@@ -138,6 +140,8 @@ public class MEJAcuerdoController {
 		
 		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
 		map.put("asunto", asunto);
+		
+		map.put("idAcuerdo", idAcuerdo);
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}

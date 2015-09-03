@@ -198,7 +198,8 @@ var crearTerminosAsuntos=function(){
 		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
 	    			  ,params:{
 	     				  id:idTerminoSeleccionado,
-	     				  idAsunto:panel.getAsuntoId()
+	     				  idAsunto:panel.getAsuntoId(),
+	     				  idAcuerdo : idAcuerdo	     				  
 	     				}
 		       });
 		       w.on(app.event.DONE, function(){
@@ -269,7 +270,8 @@ var crearTerminosAsuntos=function(){
 	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
     			  ,params:{
      				  id:idTerminoSeleccionado,
-     				  idAsunto:panel.getAsuntoId()
+     				  idAsunto:panel.getAsuntoId(),
+					  idAcuerdo : idAcuerdo     				  
 <!--      				  contratosIncluidos: contratosIncluidos, -->
 <!--      				  idAcuerdo : idAcuerdo -->
      				}

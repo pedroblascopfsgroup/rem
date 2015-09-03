@@ -548,7 +548,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,items : [flujoFieldSetContenedor, bienesFieldSet, detalleFieldSetContenedor, informeFieldSet]
 		<c:choose>
 		    <c:when test="${termino != null && termino != ''}">
-		       ,bbar : [btnCancelar]
+		       ,bbar : [btnGuardar, btnCancelar]
 		    </c:when>
 		    <c:otherwise>
 				,bbar : [btnGuardar,btnCancelar]
@@ -607,11 +607,11 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	       		informeLetrado.setValue("${termino.informeLetrado}");
 	       	}
 	       	
-	       	comboTipoAcuerdo.setDisabled(true);
-	       	comboSubTipoAcuerdo.setDisabled(true);
-	       	comboTipoProducto.setDisabled(true);
-	       	comboBienes.setDisabled(true);
-	       	informeLetrado.setDisabled(true);
+	       	comboTipoAcuerdo.setDisabled(false);
+	       	comboSubTipoAcuerdo.setDisabled(false);
+	       	comboTipoProducto.setDisabled(false);
+	       	comboBienes.setDisabled(false);
+	       	informeLetrado.setDisabled(false);
 	       	
 		}
 	});

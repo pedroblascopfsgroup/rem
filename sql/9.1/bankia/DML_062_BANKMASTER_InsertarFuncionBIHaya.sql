@@ -3,9 +3,9 @@
 --## AUTOR=MANUEL MEJIAS
 --## FECHA_CREACION=20150803
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.15-bk
+--## VERSION_ARTEFACTO=9.1.14-bk-patch02
 --## INCIDENCIA_LINK=FASE-1549
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

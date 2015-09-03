@@ -462,10 +462,6 @@ public class DocumentoPCOController {
 			docDto.setContrato(contrato);
 			docDto.setId(idDocUG);
 			
-			// TODO - DATOS PROVISIONALES - REVISAR
-			docDto.setActor("1");
-			docDto.setTipoActor(DDTipoActorPCO.PREPARADOR);
-
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}
 

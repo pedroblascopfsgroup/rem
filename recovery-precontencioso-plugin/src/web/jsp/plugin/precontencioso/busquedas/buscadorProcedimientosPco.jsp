@@ -33,9 +33,10 @@
 			var params = getParametros();
 			params.start = 0;
 			params.limit = 25;
+			debugger;
+			panelFiltros.collapse(true);
 			procedimientoPcoStore.webflow(params);
-			pagingBar.hide();
-			panelFiltros.collapse(false);
+			pagingBar.show();
 		}
 	})
 

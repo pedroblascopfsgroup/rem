@@ -742,7 +742,28 @@
 						return extAsuntoManager.esTipoGestorAsignado(procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getId(), "LETR");
 					else
 						{return false}
-				}		    		                       
+				}
+				
+				def comprobarExisteDocumentoESADJ = { 
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ESADJ");
+				}	
+				
+				
+				def comprobarExisteDocumentoMCC = { 
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "MCC");
+				}	
+				
+				def comprobarExisteDocumentoDPRCD = { 
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DPRCD");
+				}	
+				
+				def comprobarExisteDocumentoTITINSC = { 
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "TITINSC");
+				}	    		                       
         	            
   			 ]]>
   			</value>

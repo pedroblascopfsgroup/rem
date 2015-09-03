@@ -128,6 +128,11 @@ public class DtoNMBBien extends WebDto {
     
     private Float porcentajeImpuestoCompra;
     private String impuestoCompra;
+    private String tipoImposicionCompra;
+    private String tributacionVenta;
+    private String tipoImposicionVenta;
+    private String inversionPorRenuncia;
+    
     
     /* Datos Adicionales */
     
@@ -867,7 +872,38 @@ public class DtoNMBBien extends WebDto {
 	public void setImpuestoCompra(String impuestoCompra) {
 		this.impuestoCompra = impuestoCompra;
 	}
-	
+
+	public String getTipoImposicionCompra() {
+		return tipoImposicionCompra;
+	}
+
+	public void setTipoImposicionCompra(String tipoImposicionCompra) {
+		this.tipoImposicionCompra = tipoImposicionCompra;
+	}
+
+	public String getTributacionVenta() {
+		return tributacionVenta;
+	}
+
+	public void setTributacionVenta(String tributacionVenta) {
+		this.tributacionVenta = tributacionVenta;
+	}
+
+	public String getTipoImposicionVenta() {
+		return tipoImposicionVenta;
+	}
+
+	public void setTipoImposicionVenta(String tipoImposicionVenta) {
+		this.tipoImposicionVenta = tipoImposicionVenta;
+	}
+
+	public String getInversionPorRenuncia() {
+		return inversionPorRenuncia;
+	}
+
+	public void setInversionPorRenuncia(String inversionPorRenuncia) {
+		this.inversionPorRenuncia = inversionPorRenuncia;
+	}
 	
 
 }

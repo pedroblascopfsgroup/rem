@@ -26,7 +26,7 @@ var documentoPcoRecord = Ext.data.Record.create([
 	{name: 'tipoProcPropuesto'},
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
-<!-- 	{name: 'estadoDocumento'}, -->
+	{name: 'docEstado'},
 <!-- 	{name: 'fechaSolicitud'}, -->	
 	{name: 'docUltimaRespuesta'},
 	{name: 'docUltimoActor'},
@@ -54,7 +54,7 @@ var documentoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
-<%-- 	{dataIndex: 'estadoBurofax', header: '<s:message code="asd" text="**Estado burofax"/>', sortable: false}, --%>
+	{dataIndex: 'docEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.estado" text="**Estado"/>', sortable: false},
 <%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
 	{dataIndex: 'docUltimaRespuesta', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.respuesta" text="**Respuesta ultima solicitud"/>', sortable: false},
 	{dataIndex: 'docUltimoActor', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.actor" text="**Actor ultima solicitud"/>', sortable: false},
@@ -68,7 +68,7 @@ var pagingBar = fwk.ux.getPaging(documentoPcoStore);
 pagingBar.hide();
 
 var gridDocumentoPco = app.crearGrid(documentoPcoStore, documentoPcoCm, {
-	title: '<s:message code="asd" text="**Expedientes Judiciales" />',
+	title: '<s:message code="plugin.precontencioso.tab.documento.listado" text="**Listado Documentos" />',
 	cls: 'cursor_pointer',
 	bbar : [pagingBar],
 	height: 250,

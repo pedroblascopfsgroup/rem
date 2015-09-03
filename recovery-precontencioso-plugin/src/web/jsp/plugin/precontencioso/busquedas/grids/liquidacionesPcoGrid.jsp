@@ -26,7 +26,7 @@ var liquidacionPcoRecord = Ext.data.Record.create([
 	{name: 'tipoProcPropuesto'},
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
-<!-- 	{name: 'estadoLiquidacion'}, -->
+	{name: 'liqEstado'},
 <!-- 	{name: 'fechaSolicitud'}, -->	
 	{name: 'liqContrato'},
 	{name: 'liqFechaRecepcion'},
@@ -53,7 +53,7 @@ var liquidacionPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
-<%-- 	{dataIndex: 'estadoLiquidacion', header: '<s:message code="asd" text="**Estado burofax"/>', sortable: false}, --%>
+	{dataIndex: 'liqEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.estado" text="**Estado"/>', sortable: false},
 <%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
 	{dataIndex: 'liqContrato', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.contrato" text="**Contrato"/>', sortable: false},
 	{dataIndex: 'liqFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
@@ -66,7 +66,7 @@ var pagingBar = fwk.ux.getPaging(liquidacionPcoStore);
 pagingBar.hide();
 
 var gridLiquidacionPco = app.crearGrid(liquidacionPcoStore, liquidacionPcoCm, {
-	title: '<s:message code="asd" text="**Expedientes Judiciales" />',
+	title: '<s:message code="plugin.precontencioso.tab.liquidacion.listado" text="**Listado Liquidaciones" />',
 	cls: 'cursor_pointer',
 	bbar : [pagingBar],
 	height: 250,

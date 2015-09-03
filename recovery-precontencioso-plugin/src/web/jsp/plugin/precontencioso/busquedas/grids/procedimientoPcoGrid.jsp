@@ -70,7 +70,7 @@ var pagingBar = fwk.ux.getPaging(procedimientoPcoStore);
 pagingBar.hide();
 
 var gridProcedimientosPco = app.crearGrid(procedimientoPcoStore, procedimientoPcoCm, {
-	title: '<s:message code="asd" text="**Expedientes Judiciales" />',
+	title: '<s:message code="plugin.precontencioso.tab.expjudicial.listado" text="**Listado Expedientes judicial" />',
 	cls: 'cursor_pointer',
 	bbar : [pagingBar],
 	height: 250,

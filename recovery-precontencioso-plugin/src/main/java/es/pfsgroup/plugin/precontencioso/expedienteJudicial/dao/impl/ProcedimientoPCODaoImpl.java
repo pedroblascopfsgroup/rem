@@ -222,7 +222,15 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProDisponibleDocumentos())) {
-			where.add(Restrictions.eq("procedimientoPco.todosDocumentos", filtro.getProDisponibleDocumentos()));
+			where.add(Restrictions.eq("procedimientoPco.todosDocumentos", "01".equals(filtro.getProDisponibleDocumentos())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getProDisponibleLiquidaciones())) {
+			where.add(Restrictions.eq("procedimientoPco.todasLiquidaciones", "01".equals(filtro.getProDisponibleLiquidaciones())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getProDisponibleBurofaxes())) {
+			where.add(Restrictions.eq("procedimientoPco.todosBurofaxes", "01".equals(filtro.getProDisponibleBurofaxes())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigosEstado())) {

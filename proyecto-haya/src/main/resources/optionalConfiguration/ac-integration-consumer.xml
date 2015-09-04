@@ -22,9 +22,10 @@
 	 Canales de entrada (JSM y escucha de directorio)
 	 ************* 	 -->
 	<jms:inbound-channel-adapter id="entradaDeCajamarJMS"
-                        destination="integracionConsumerQueue"
-                        channel="integra.entrada.jms"
-                        extract-payload="true">
+						auto-startup="${integracion.activa}"
+						destination="integracionConsumerQueue"
+						channel="integra.entrada.jms"
+						extract-payload="true">
 	     <integration:poller>
 	         <integration:interval-trigger 
 	         	interval="1" 
@@ -41,12 +42,14 @@
 			id="entradaCajamarJMSFichero"
 			directory="${integracion.input}/${integracion.consumer.cola}"/>
 
-	<file:inbound-channel-adapter id="entradaDeCajamarFichero"
+	<file:inbound-channel-adapter
+		id="entradaDeCajamarFichero"
+		auto-startup="${integracion.activa}"
 		directory="${integracion.input}/${integracion.consumer.cola}"
 		filename-pattern=".+.msg">
 		<integration:poller id="poller">
 			<integration:interval-trigger 
-				interval="500"
+				interval="${integracion.consumer.poller}"
 				time-unit="MILLISECONDS" />
 		</integration:poller>
 	</file:inbound-channel-adapter>

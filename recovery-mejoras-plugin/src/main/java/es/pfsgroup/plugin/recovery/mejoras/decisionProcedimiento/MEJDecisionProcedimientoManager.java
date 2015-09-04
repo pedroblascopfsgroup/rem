@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoProce
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 
 @Component
@@ -109,6 +110,9 @@ public class MEJDecisionProcedimientoManager extends
 	
 	@Autowired
 	private CoreProjectContext coreProjectContext;
+	
+	@Autowired
+	private IntegracionBpmService integracionBpmService;
     
     
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
@@ -671,7 +675,10 @@ public class MEJDecisionProcedimientoManager extends
                     jbpmUtil.finalizarProcedimiento(p.getId());
                     p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
             				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
-                    
+
+                    // Integración con mensajería
+                    integracionBpmService.finalizarBPM(p);
+
                     cancelarSubastaActiva(p);
                     
                 } catch (Exception e) {
@@ -690,6 +697,8 @@ public class MEJDecisionProcedimientoManager extends
 				p.setFechaUltimaParalizacion(new Date());
 				genericDao.save(MEJProcedimiento.class, p);
 
+				// Paralizamos el BPM
+				integracionBpmService.paralizarBPM(p);
 			}
 		}
 		
@@ -747,6 +756,10 @@ public class MEJDecisionProcedimientoManager extends
 			if(!Checks.esNulo(sub)){
 				sub.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.CAN)));
 				genericDao.save(Subasta.class, sub);
+				
+				// Mensaje de integración para notificar fin de BPM.
+				integracionBpmService.enviarDatos(sub);
+				
 			}
 		}
 	}

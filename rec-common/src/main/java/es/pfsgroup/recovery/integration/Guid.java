@@ -10,6 +10,9 @@ import es.pfsgroup.commons.utils.Checks;
 @Embeddable
 public class Guid {
 
+	private static final CharSequence GUID_SEPARATOR = "-";
+	private static final CharSequence EMPTY_STRING = "";
+	
 	@Column(name = "SYS_GUID")
 	private String valor;
 
@@ -23,18 +26,22 @@ public class Guid {
 	
     public static Guid getNewInstance() {
     	Guid guid = new Guid();
-    	guid.setValor(UUID.randomUUID().toString());
+    	guid.setValor(UUID.randomUUID().toString().replace(GUID_SEPARATOR, EMPTY_STRING).toUpperCase());
 		return guid;
 	}
 
     public static Guid getNewInstance(String valor) {
-    	Guid guid = new Guid();
     	if (Checks.esNulo(valor)) {
-    		guid.setValor(UUID.randomUUID().toString());
+    		return null;
     	} else {
+    		Guid guid = new Guid();
     		guid.setValor(valor);
+    		return guid;
     	}
-		return guid;
 	}
     
+    @Override
+    public String toString() {
+    	return (this.getValor()!=null) ? this.getValor() : super.toString();
+    }
 }

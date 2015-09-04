@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -88,6 +87,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
+import es.pfsgroup.recovery.integration.Guid;
 
 @Component
 public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionManager implements TareaNotificacionApi {
@@ -1306,7 +1306,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 		EXTTareaNotificacion extTareaNotif = EXTTareaNotificacion.instanceOf(tareaNotif); 
 		if (tareaNotif == null) return null;
 		if (Checks.esNulo(extTareaNotif.getGuid())) {
-			extTareaNotif.setGuid(UUID.randomUUID().toString());
+			extTareaNotif.setGuid(Guid.getNewInstance().toString());
 			genericDao.save(EXTTareaNotificacion.class, extTareaNotif);
 		}
 		return extTareaNotif;

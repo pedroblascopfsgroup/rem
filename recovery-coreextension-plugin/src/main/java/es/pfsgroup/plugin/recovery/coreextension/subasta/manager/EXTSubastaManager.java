@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.recovery.coreextension.subasta.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.recovery.integration.Guid;
 
 /**
  *
@@ -172,7 +172,7 @@ public class EXTSubastaManager {
 	
 	public Subasta prepareGuid(Subasta subasta) {
 		if (Checks.esNulo(subasta.getGuid())) {
-			subasta.setGuid(UUID.randomUUID().toString());
+			subasta.setGuid(Guid.getNewInstance().toString());
 			subastaDao.saveOrUpdate(subasta);
 		}
 
@@ -187,7 +187,7 @@ public class EXTSubastaManager {
 	
 	public LoteSubasta prepareGuid(LoteSubasta lote) {
 		if (Checks.esNulo(lote.getGuid())) {
-			lote.setGuid(UUID.randomUUID().toString());
+			lote.setGuid(Guid.getNewInstance().toString());
 			genericDao.save(LoteSubasta.class, lote);
 		}
 		return lote;

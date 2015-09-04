@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Campos
---## FECHA_CREACION=20150714
+--## FECHA_CREACION=20150903
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.1-hy-rc02
+--## VERSION_ARTEFACTO=9.1.3-hcj
 --## INCIDENCIA_LINK=CMREC-405
 --## PRODUCTO=NO
 --##

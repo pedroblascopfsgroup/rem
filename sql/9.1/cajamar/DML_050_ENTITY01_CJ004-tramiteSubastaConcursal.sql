@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=NACHO ARCOS
---## FECHA_CREACION=2015812
+--## FECHA_CREACION=2015813
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-401
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF; 
 DECLARE
@@ -24,7 +25,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_COD_PROCEDIMIENTO VARCHAR (20 CHAR) := 'CJ004';
+    V_COD_PROCEDIMIENTO VARCHAR (20 CHAR) := 'H003';
     
     VAR_TABLENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
     VAR_SEQUENCENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
@@ -32,7 +33,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO(V_COD_PROCEDIMIENTO,'T. de subasta concursal - HCJ','Trámite de subasta concursal - HCJ','','cj_tramiteSubastaConcursal','0','dd','0','AP',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('CJ004','T. de subasta concursal - HCJ','Trámite de subasta concursal - HCJ','','cj_tramiteSubastaConcursal','0','dd','0','AP',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -166,6 +167,7 @@ BEGIN
 			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''TGESCON'')' ||
 	          ' ,DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SUCON'')' ||
 	          ' ,TAP_DESCRIPCION = ''Comunicación con señalamiento de subasta'' ' ||
+	          ' ,TAP_SCRIPT_VALIDACION = ''comprobarMinimoBienLote() ? (comprobarExisteDocumentoESRAS() ? (comprobarProvLocFinBien() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Los bienes con lote deben tener informado el tipo de inmueble, provincia, localidad y n&uacute;mero de finca.</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Edicto de subasta y resoluci&oacute;n acordando se&ntilde;alamiento</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Al menos un bien debe estar asignado a un lote</div>'''' '' ' ||
 	          ' ,TAP_VIEW = null' ||
 	          ' ,TAP_CODIGO = ''CJ004_SenyalamientoSubasta'' ' ||
 			  ' WHERE TAP_CODIGO = ''H003_SenyalamientoSubasta''';
@@ -188,7 +190,7 @@ BEGIN
 			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''TGESCON'')' ||
 	          ' ,DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SUCON'')' ||
 			  ' ,TAP_CODIGO = ''CJ004_CelebracionSubasta'' ' ||
-			  ' ,TAP_SCRIPT_DECISION_JBPM = ''valores[''''CJ004_CelebracionSubasta''''][''''comboCelebrada''''] == DDSiNo.NO ? (valores[''''CJ004_CelebracionSubasta''''][''''comboDecisionSuspension''''] == null ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">El campo Decisi&oacute;n suspensi&oacute;n es obligatorio</div>'''' : null) : (comprobarExisteDocumentoACS() ? (validarBienesDocCelebracionSubasta() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe rellenar en cada bien los datos de adjudicaci&oacute;n o de cesi&oacute;n remate</div>'''') :  ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Acta de subasta</div>'''') '' ' ||
+			  ' ,TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''CJ004_CelebracionSubasta''''][''''comboCelebrada''''] == DDSiNo.NO ? (valores[''''CJ004_CelebracionSubasta''''][''''comboDecisionSuspension''''] == null ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">El campo Decisi&oacute;n suspensi&oacute;n es obligatorio</div>'''' : null) : (comprobarExisteDocumentoACS() ? (validarBienesDocCelebracionSubasta() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe rellenar en cada bien los datos de adjudicaci&oacute;n o de cesi&oacute;n remate</div>'''') :  ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Acta de subasta</div>'''') '' ' ||
 	          ' ,TAP_VIEW = ''plugin/cajamar/tramiteSubastaConcursal/celebracionSubasta'' ' ||
 			  ' WHERE TAP_CODIGO = ''H003_CelebracionSubasta''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -509,7 +511,7 @@ BEGIN
         		' ,DD_TPO_DESCRIPCION='''||REPLACE(TRIM(V_TMP_TIPO_TPO(2)),'''','''''') ||''''||
         		' ,DD_TPO_DESCRIPCION_LARGA='''||REPLACE(TRIM(V_TMP_TIPO_TPO(3)),'''','''''') ||''''||
         		' ,DD_TPO_XML_JBPM='''||REPLACE(TRIM(V_TMP_TIPO_TPO(5)),'''','''''')||''''||
-				' WHERE DD_TPO_CODIGO='''||REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') ||'''';
+				' WHERE DD_TPO_CODIGO='''|| V_COD_PROCEDIMIENTO ||'''';
         /*V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || VAR_TABLENAME || ' (' ||
                     'DD_TPO_ID,DD_TPO_CODIGO,DD_TPO_DESCRIPCION,DD_TPO_DESCRIPCION_LARGA,' ||
                     'DD_TPO_HTML,DD_TPO_XML_JBPM,VERSION,USUARIOCREAR,' ||

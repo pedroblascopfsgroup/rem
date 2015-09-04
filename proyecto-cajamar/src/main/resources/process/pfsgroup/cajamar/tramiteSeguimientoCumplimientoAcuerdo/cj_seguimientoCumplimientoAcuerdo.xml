@@ -56,14 +56,14 @@
 		<transition to="CJ002_ComunicacionMediador" name="tresMesesIncumplimiento"></transition>
 	</decision>
 	
-	<state name="CJ002_TareaEspera">
-		<event type="node-enter">
-			<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-         		<targetBean>siguientePagoHandler</targetBean>
-      		</action>
-		</event>
+	<node name="CJ002_TareaEspera">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>siguientePagoHandler
+			</targetBean>
+		</action>
 		<transition to="CJ002_RegistrarCumplimiento" name="avanzaBPM"></transition>
-	</state>
+	</node>
 
 	<state name="CJ002_NotificarDeudor">
 		<event type="node-enter">

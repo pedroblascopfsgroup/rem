@@ -40,11 +40,11 @@ public class GenericMailUtils {
 	private static final String TRANSPORT_SMTP = "smtp";
 	
 	// Entradas en devon.properties que servirán para componer el mensaje
-	private static final String MAIL_FROM = "agendaMultifuncion.mail.from";
-	private static final String MAIL_FROM_PW = "agendaMultifuncion.mail.pwd";
-	private static final String SERVIDOR_CORREO = "agendaMultifuncion.mail.server";
-	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
-	private static final String USUARIO_CORREO = "agendaMultifuncion.mail.usuario";
+	private static final String MAIL_FROM = "mail.smtp.from";
+	private static final String MAIL_FROM_PW = "mail.smtp.pwd";
+	private static final String SERVIDOR_CORREO = "mail.smtp.server";
+	private static final String PUERTO_CORREO = "mail.smtp.port";
+	private static final String USUARIO_CORREO = "mail.smtp.usuario";
 	
 	@Resource
 	private Properties appProperties;

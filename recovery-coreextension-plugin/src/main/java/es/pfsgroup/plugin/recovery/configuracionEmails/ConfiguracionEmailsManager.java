@@ -137,9 +137,8 @@ public class ConfiguracionEmailsManager implements ConfiguracionEmailsApi {
 				genericMailUtils.enviarCorreoConAdjuntos(null, destinatarios, new LinkedList<String>(), asuntoMail, cuerpoEmail, listaAdjuntos);
 			} 
 			catch (Exception e) {
-				logger.error("Error enviando los mails asociados a la tarea.");
+				logger.error("Error enviando los mails asociados a la tarea: " + e.getMessage());
 				e.printStackTrace();
-				throw new FrameworkException("Error enviando los mails asociados a la tarea.");
 			}
 		}
 	}

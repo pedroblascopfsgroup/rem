@@ -43,7 +43,7 @@ public class TypePayloadHeadersRegexRule<T extends TypePayload> implements Rule<
 			}
 		}
 		if (!Checks.esNulo(entidad)) { // comprueba este campo.
-			String entidadHeader = "haya01";//(message.getHeaders().containsKey(TypePayload.HEADER_MSG_TYPE)) ? (String)message.getHeaders().get(TypePayload.HEADER_MSG_ENTIDAD) : "";
+			String entidadHeader = (message.getHeaders().containsKey(TypePayload.HEADER_MSG_TYPE)) ? (String)message.getHeaders().get(TypePayload.HEADER_MSG_ENTIDAD) : "";
 			boolean matches = match(entidad, entidadHeader);
 			if (!matches) {
 				return false;

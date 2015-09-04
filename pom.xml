@@ -379,6 +379,11 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-cajamar-ws</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>proyecto-cajamar-online</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -534,6 +539,7 @@
 			<modules>
 				<module>recovery-integracionuvem-plugin</module>
 				<module>recovery-procedimientos-bpmHaya</module>
+				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
 
@@ -549,6 +555,7 @@
 			</activation>
 			<modules>
 				<module>recovery-procedimientos-bpmHaya</module>
+				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-cajamar</module>
 				<module>proyecto-cajamar-online</module>
 

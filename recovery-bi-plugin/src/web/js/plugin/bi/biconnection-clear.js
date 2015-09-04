@@ -11,7 +11,7 @@ function centeredWindowStyle() {
 
 function openRecBI() {
 	
-	// TODO: Probar cuando estÃ en el mismo dominio
+	// TODO: Probar cuando estï¿½ en el mismo dominio
 	/*var win = new Ext.Window({  
 	        id: 'windowBI',  
 	        title: 'Recovery BI',  
@@ -25,7 +25,7 @@ function openRecBI() {
 	});  
 	win.show();*/
 
-	// Desconexión previa (no es compatible con IE9)
+	// Desconexiï¿½n previa (no es compatible con IE9)
 	/*var xmlhttp=new XMLHttpRequest();
         xmlhttp.open("GET","/pfs/recovery-bi/servlet/mstrWeb?evt=3019&src=mstrWeb.3019",false);
         xmlhttp.send();*/
@@ -36,6 +36,35 @@ function openRecBI() {
         }
         count++;
         window.open('../js/plugin/bi/rec-bi.html', '', centeredWindowStyle());
+}
+
+function openRecBIHaya() {
+	
+	// TODO: Probar cuando estï¿½ en el mismo dominio
+	/*var win = new Ext.Window({  
+	        id: 'windowBI',  
+	        title: 'Recovery BI',  
+	        width: 1000,  
+	        height: 600,  
+	        layout: 'fit',  
+	        autoLoad : {  
+	            url : '../js/plugin/bi/rec-bi.html',  
+	            scripts: true  
+	        }  
+	});  
+	win.show();*/
+
+	// Desconexiï¿½n previa (no es compatible con IE9)
+	/*var xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("GET","/pfs/recovery-bi/servlet/mstrWeb?evt=3019&src=mstrWeb.3019",false);
+        xmlhttp.send();*/
+
+        if (count != 0) {
+                window.open('/pfs/recovery-bi/servlet/mstrWeb', '', centeredWindowStyle());
+                return;
+        }
+        count++;
+        window.open('../js/plugin/bi/rec-biHaya.html', '', centeredWindowStyle());
 }
 
 
@@ -74,7 +103,14 @@ function getParamFromURL(param) {
 
 
 function login2RecBI() {
-	var form = createHiddenAuthForm('../../../recovery-bi/servlet/mstrWeb', 'PfYf7lC9kAUY', '0ooZ7jlLtPvc9nr');
+	var form = createHiddenAuthForm('../../../recovery-bi/servlet/mstrWeb', 'PfYf7lC9kAUY', 'o8gkPlBGLe1yeIOYpPvi');
+ 	document.body.appendChild(form);
+ 	form.submit();
+}
+
+function login2RecBIHaya() {
+	var form = createHiddenAuthForm('../../../recovery-bi/servlet/mstrWeb', 'HaiGasdm6Lq', 'H9cp153TEvkEzT2F1y');
  	document.body.appendChild(form);
  	form.submit();
 } 
+

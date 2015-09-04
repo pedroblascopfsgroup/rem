@@ -38,6 +38,13 @@ function getConnectionParam() {
 function registerSQLScript() {
     git log $1 >> /dev/null 2>&1
     if [ $? -eq 0 ]; then
+        filename=`basename $1`
+        if [[ ! $filename =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
+            echo "ERROR"
+            echo "  El nombre del script no sigue la nomenclatura definida: "$filename
+            echo "  Consulta sql/tool/templates para ver un ejemplo de plantilla"
+            exit 1
+        fi
         printf "%s %s\n" $1 $3 >> $2
     fi
 }
@@ -105,8 +112,9 @@ if [ -f ~/setEnvGlobal${CUSTOMER_IN_UPPERCASE}.sh ] ; then
   export SETENVGLOBAL=~/setEnvGlobal${CUSTOMER_IN_UPPERCASE}.sh
 fi
 if [ ! -f $SETENVGLOBAL ]; then
-    echo "No existe el fichero: $SETENVGLOBAL"
-    echo "Consulta las plantillas que hay en sql/tool/templates"
+    echo "ERROR"
+    echo "  No existe el fichero: $SETENVGLOBAL"
+    echo "  Consulta las plantillas que hay en sql/tool/templates"
     exit 1
 fi
 source $SETENVGLOBAL
@@ -177,8 +185,8 @@ if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
         else
             $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE
             if [[ "$?" != 0 ]]; then
-                echo ""
-                echo "ABORTADA EJECUCION POR #KO#"
+                echo "ERROR"
+                echo "  ABORTADA EJECUCION POR #KO#"
                 exit 1
             fi 
         fi
@@ -190,6 +198,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     do
         $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE -p
         if [[ "$?" != 0 ]]; then
+            echo "ERROR"
             exit 1
         fi
     done < $BASEDIR/tmp/list-from-tag.txt

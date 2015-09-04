@@ -8,6 +8,7 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
+
 	var limit=25;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
@@ -164,6 +165,7 @@
 			text : '<s:message code="plugin.precontencioso.grid.burofax.cancelar" text="**Cancelar" />'
 			,iconCls : 'icon_cancel'
 			,cls: 'x-btn-text-icon'
+			,hidden: true
 	});
 	
 	
@@ -283,6 +285,13 @@
 	
 	var columMemoryPlugin = new Ext.ux.plugins.CheckBoxMemory();	
 	
+	var botonRefresh = new Ext.Button({
+		text : 'Refresh'
+		,iconCls : 'icon_refresh'
+		,handler:function(){
+			refrescarBurofaxGrid();
+		}
+	});
 	
 	var gridBurofax = new Ext.grid.GridPanel({
 		title: '<s:message code="plugin.precontencioso.grid.burofax.titulo" text="**Burofaxes" />'	
@@ -298,7 +307,7 @@
        	,style:'padding-top:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar  ]
+		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar , new Ext.Toolbar.Fill(), botonRefresh ]
 		,autoWidth: true
 		
 		
@@ -653,7 +662,7 @@
 		idProcedimiento=data.precontencioso.id;
 		
 		if (data != null) {
-			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;debugger;
+			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
 			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
 				btnAddPersona.setDisabled(true);
 				btnEnviar.setDisabled(true);
@@ -665,5 +674,25 @@
 				
 			}
 		}
+		
+		
+	}
+	
+	var getTipoGestor = function(){
+		debugger;
+		Ext.Ajax.request({
+						url : page.resolveUrl('burofax/getTipoGestor'), 
+						params : {asuId:data.cabecera.asuntoId},
+						method: 'POST',
+						success: function ( result, request ) {
+							
+							debugger;
+							
+						}
+					});
+					
+		var codigoTipoGestor='${codigoTipoGestor}';
+		debugger;
+					
 	}
 	

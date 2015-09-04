@@ -36,7 +36,7 @@ var liquidacionPcoRecord = Ext.data.Record.create([
 ]);
 
 var liquidacionPcoStore = page.getStore({
-	flow: 'expedientejudicial/busquedaProcedimientos',
+	flow: 'expedientejudicial/busquedaElementosPco',
 	limit: 25,
 	remoteSort: true,
 	reader: new Ext.data.JsonReader({

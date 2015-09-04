@@ -230,7 +230,6 @@ var panelFechaParalizacion = new Ext.Panel({
 	
 	var comboTipoBusqueda = new Ext.form.ComboBox({
 	    fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.busqueda" text="**Tipo de busqueda"/>',
-	    allowBlank: true,
 	    triggerAction: 'all',
 	    mode: 'local',
 	    store: new Ext.data.ArrayStore({
@@ -241,6 +240,7 @@ var panelFechaParalizacion = new Ext.Panel({
 	        ],
 	        data: [[documento, documento], [liquidacion, liquidacion], [burofax, burofax]]
 	    }),
+	    value: documento,
 	    valueField: 'myId',
 	    displayField: 'displayText'
 	});

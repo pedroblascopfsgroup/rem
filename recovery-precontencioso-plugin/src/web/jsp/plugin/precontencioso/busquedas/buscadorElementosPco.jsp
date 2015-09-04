@@ -30,7 +30,7 @@
 	});
 
 	var btnBuscar = new Ext.Button({
-		text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
+		text: '<s:message code="plugin.precontencioso.button.buscar" text="**Buscar" />',
 		handler: function() {
 			if(comboTipoBusqueda.getValue() != '') {
 				panelFiltros.collapse(true);
@@ -72,12 +72,10 @@
 
 <%-- Grid --%>
 
-	gridDocumentoPco.hide();
-    gridLiquidacionPco.hide();
+	gridLiquidacionPco.hide();
     gridBurofaxPco.hide();
     
-	filtrosTabDocumentos.disable();
-    filtrosTabLiquidacion.disable();	            	
+	filtrosTabLiquidacion.disable();	            	
 	filtrosTabBurofax.disable();
 
 	gridDocumentoPco.on('load', function() {

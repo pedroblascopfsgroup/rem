@@ -38,7 +38,7 @@ var burofaxesPcoRecord = Ext.data.Record.create([
 ]);
 
 var burofaxPcoStore = page.getStore({
-	flow: 'expedientejudicial/busquedaProcedimientos',
+	flow: 'expedientejudicial/busquedaElementosPco',
 	limit: 25,
 	remoteSort: true,
 	reader: new Ext.data.JsonReader({

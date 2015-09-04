@@ -221,6 +221,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.eq("tipoProcPropuesto.codigo", filtro.getProTipoProcedimiento()));
 		}
 
+		if (!StringUtils.emtpyString(filtro.getProDisponibleDocumentos())) {
+			where.add(Restrictions.eq("procedimientoPco.todosDocumentos", filtro.getProDisponibleDocumentos()));
+		}
+
 		if (!StringUtils.emtpyString(filtro.getProCodigosEstado())) {
 			query.createCriteria("estadosPreparacionProc", "estadosPreparacionProc");
 			query.createCriteria("estadosPreparacionProc.estadoPreparacion", "estadoPreparacion");

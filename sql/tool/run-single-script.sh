@@ -198,7 +198,8 @@ nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
 
 if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
-    echo "El nombre del script no sigue la nomenclatura definida"
+    echo ""
+    echo "El nombre del script $nombreFicheroSinDir no sigue la nomenclatura definida"
     echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
     exit 1
 fi

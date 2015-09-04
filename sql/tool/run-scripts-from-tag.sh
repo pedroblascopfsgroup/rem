@@ -166,6 +166,7 @@ fi
 
 
 if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
+
     while read -r line
     do
         if [[ "$5" == "-v" ]]; then
@@ -182,27 +183,31 @@ if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
             fi 
         fi
     done < $BASEDIR/tmp/list-from-tag.txt
+
 elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
+
     while read -r line
     do
         $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE -p
+        if [[ "$?" != 0 ]]; then
+            exit 1
+        fi
     done < $BASEDIR/tmp/list-from-tag.txt
     mkdir -p $BASEDIR/tmp/package
-    mkdir $BASEDIR/tmp/package/ddl
-    mkdir $BASEDIR/tmp/package/ddl/scripts/
-    mkdir $BASEDIR/tmp/package/dml
-    mkdir $BASEDIR/tmp/package/dml/scripts/
-    cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/dml/scripts/
-    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/dml/DML-scripts.sh
-    cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/ddl/scripts/
-    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/ddl/DDL-scripts.sh
-    cd $BASEDIR/tmp/package/ddl
-    zip DDL-scripts.zip -r *
-    cd ../dml
-    zip DML-scripts.zip -r *
-    cd ..
-    mv **/*.zip .
+    mkdir $BASEDIR/tmp/package/DDL
+    mkdir $BASEDIR/tmp/package/DDL/scripts/
+    mkdir $BASEDIR/tmp/package/DML
+    mkdir $BASEDIR/tmp/package/DML/scripts/
+    cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
+    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
+    cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
+    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    cd $BASEDIR/tmp/package/
+    zip scripts.zip -r *
+    echo "GENERADO ZIP PARA SOLICITUD DE DESPLIEGUE: $BASEDIR/tmp/package/scripts.zip"
+
 else
+
     echo ""
     echo "Lo que pretendo ejecutar es:"
     echo ""
@@ -214,4 +219,5 @@ else
     echo "Si estás de acuerdo, añade go! al final de la línea de comandos"
     echo ""
     echo "******************************************************************************************"
+
 fi

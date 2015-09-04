@@ -600,7 +600,9 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 		for(Bien bien: listadoBienes) {
 			
 			NMBBien nmbBien = (NMBBien) bien;
-			if(!Checks.esNulo(nmbBien.getAdjudicacion()) && DDEntidadAdjudicataria.TERCEROS.equals(nmbBien.getAdjudicacion().getEntidadAdjudicataria())){
+			if(!Checks.esNulo(nmbBien.getAdjudicacion()) && 
+					!Checks.esNulo(nmbBien.getAdjudicacion().getEntidadAdjudicataria()) &&
+					DDEntidadAdjudicataria.TERCEROS.equals(nmbBien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
 				if (!("1".equals(nmbBien.getViviendaHabitual()))) {
 					return true;
 				}

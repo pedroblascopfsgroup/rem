@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,6 +38,7 @@ import es.pfsgroup.plugin.recovery.mejoras.recurso.Dao.MEJRecursoDao;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.dto.MEJDtoRecurso;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
+import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
@@ -420,7 +420,7 @@ public class MEJRecursoManager implements MEJRecursoAPI {
 
 	public void prepareGuid(MEJRecurso recurso) {
 		if (Checks.esNulo(recurso.getGuid())) {
-			recurso.setGuid(UUID.randomUUID().toString());
+			recurso.setGuid(Guid.getNewInstance().toString());
 		}
 		recursoDao.saveOrUpdate(recurso);
 	}

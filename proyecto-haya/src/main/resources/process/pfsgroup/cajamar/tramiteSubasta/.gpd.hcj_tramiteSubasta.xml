@@ -452,6 +452,10 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="-6" y="-9"/>
+      <bendpoint w1="46" h1="-82" w2="94" h2="115"/>
+    </edge>
   </node>
   <node name="fork3" x="706" y="243" width="252" height="24">
     <edge>

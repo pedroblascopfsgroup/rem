@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF; 
 DECLARE

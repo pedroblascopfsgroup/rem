@@ -61,14 +61,14 @@
 		 	- Transforma la salida en JSON
 		 	- guarda en DISCO
 		 *************	 --> 
-	<!-- integration:channel id="integra.salida.fichero.out"/>
+	<integration:channel id="integra.salida.fichero.out"/>
 	<integration:channel id="integra.salida.fichero.in"/>
 	<integration:channel id="integra.salida.error"/>
 	<integration:publish-subscribe-channel id="integra.salida.salida"/>
 	
 	<integration:chain input-channel="integra.salida.canonical" output-channel="integra.salida.fichero.out">
-		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					CONVIERTE EN FORMATO JSON 
-		<integration:transformer ref="salidaIntegracionAdapter" method="transformMsg2file"/>				CONVIERTE EN FORMATO FICHERO CON METADATA
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					<!-- CONVIERTE EN FORMATO JSON -->
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformMsg2file"/>				<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
 	</integration:chain>
 	<file:outbound-channel-adapter
 			channel="integra.salida.fichero.out" 
@@ -79,24 +79,26 @@
 			channel="integra.salida.fichero.in" 
 			directory="${integracion.output}/${integracion.producer.cola}" >
 		<integration:poller>
-			<integration:interval-trigger interval="500" time-unit="MILLISECONDS" />
+			<integration:interval-trigger 
+				interval="${integracion.producer.poller}" 
+				time-unit="MILLISECONDS" />
 		</integration:poller>
 	</file:inbound-channel-adapter>
 	<integration:chain input-channel="integra.salida.fichero.in" output-channel="integra.salida.salida">
 		<integration:header-enricher error-channel="integra.salida.error" />
 		<file:file-to-string-transformer delete-files="false" charset="UTF-8"/>
-		<integration:transformer ref="salidaIntegracionAdapter" method="transformFile2msg" />  				CONVIERTE EN FORMATO FICHERO CON METADATA 
- 		<integration:service-activator ref="salidaIntegracionAdapter" method="checkExistErrorFolder" />		ROUTER PARA MENSAJES CON ERROR 
+		<integration:transformer ref="salidaIntegracionAdapter" method="transformFile2msg" />  				<!-- CONVIERTE EN FORMATO FICHERO CON METADATA -->
+ 		<integration:service-activator ref="salidaIntegracionAdapter" method="checkExistErrorFolder" />		<!-- ROUTER PARA MENSAJES CON ERROR -->
 	</integration:chain>
-	-->
-	
+
+<!--
 	<integration:channel id="integra.salida.error"/>
 	<integration:publish-subscribe-channel id="integra.salida.salida"/>
 	<integration:chain input-channel="integra.salida.canonical" output-channel="integra.salida.salida">
 		<integration:header-enricher error-channel="integra.salida.error" />
-		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					<!-- CONVIERTE EN FORMATO JSON --> 
+		<integration:transformer ref="jsonAsuntoPayloadTransformer" method="serialize" />					CONVIERTE EN FORMATO JSON 
 	</integration:chain>
-	
+-->	
 	<!-- ************* 
 		 Salida TRAMO 2
 		 Transforma la salida por JMS y tratamiento de errores.

@@ -3,7 +3,6 @@ package es.pfsgroup.recovery.ext.impl.procedimiento;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
@@ -31,6 +30,7 @@ import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTUsuarioRelacionadoInfo;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.procedimiento.dao.EXTProcedimientoDao;
+import es.pfsgroup.recovery.integration.Guid;
 
 @Component
 public class EXTProcedimientoManager implements EXTProcedimientoApi {
@@ -175,7 +175,7 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		MEJProcedimiento mejProc = MEJProcedimiento.instanceOf(procedimiento);
 		if (Checks.esNulo(mejProc.getGuid())) {
 			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
-			mejProc.setGuid(UUID.randomUUID().toString());
+			mejProc.setGuid(Guid.getNewInstance().toString());
 			extProcedimientoDao.saveOrUpdate(mejProc);
 		}
 		
@@ -183,7 +183,7 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		boolean modificados = false;
 		for (ProcedimientoBien prcBien : mejProc.getBienes()) {
 			if (Checks.esNulo(prcBien.getGuid())) {
-				prcBien.setGuid(UUID.randomUUID().toString());
+				prcBien.setGuid(Guid.getNewInstance().toString());
 				modificados = true;
 			}
 		}
@@ -212,7 +212,7 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 			procedimiento.setTipoProcedimiento(procDto.getTipoProcedimiento());
 			procedimiento.setDecidido(procDto.getDecidido());
 
-			String guid = (!Checks.esNulo(procDto.getGuid())) ? procDto.getGuid() : UUID.randomUUID().toString();
+			String guid = (!Checks.esNulo(procDto.getGuid())) ? procDto.getGuid() : Guid.getNewInstance().toString();
 			procedimiento.setGuid(guid);
 			
 			if (Checks.esNulo(configuracion)){			

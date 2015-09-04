@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Campos
---## FECHA_CREACION=20150715
+--## FECHA_CREACION=20150716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.1-hy-rc02
 --## INCIDENCIA_LINK=CMREC-385

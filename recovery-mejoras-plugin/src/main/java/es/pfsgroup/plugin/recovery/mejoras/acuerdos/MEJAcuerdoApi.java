@@ -14,6 +14,7 @@ import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
+import es.capgemini.pfs.termino.model.TerminoOperaciones;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
 public interface MEJAcuerdoApi {
@@ -35,6 +36,7 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_ACUERDO = "mejacuerdo.deleteTerminoAcuerdo";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_CONTRATO = "mejacuerdo.deleteTerminoContrato";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_BIEN = "mejacuerdo.deleteTerminoBien";	
+	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_OPERACIONES = "mejacuerdo.deleteTerminoOperaciones";		
 	public static final String BO_ACUERDO_MGR_GET_TERMINO_ACUERDO = "mejacuerdo.getTerminoAcuerdo";	
 	
     
@@ -94,6 +96,10 @@ public interface MEJAcuerdoApi {
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_TERMINO_BIEN)
 	@Transactional(readOnly = false)
 	public void deleteTerminoBien(TerminoBien tb); 	
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_DELETE_TERMINO_OPERACIONES)
+	@Transactional(readOnly = false)
+	public void deleteTerminoOperaciones(TerminoOperaciones to); 	
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_TERMINO_ACUERDO)
 	public TerminoAcuerdo getTerminoAcuerdo(Long idTermino);    

@@ -16,7 +16,7 @@
 	
 	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
 	var idAsunto = '${asunto.id}';
-	
+	var idTermino = '${termino.id}';
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'descripcion'}
@@ -354,7 +354,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	});	
 	
 	var flujoFieldSetContenedor = new Ext.form.FieldSet({
-		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.titulo" text="**Flujo"/>' 
+		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.flujo.titulo" text="**Flujo por solución"/>' 
 		,border:true
 		,items: [flujoFieldSet]
 	});	
@@ -402,7 +402,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	});	
 	
 	var informeFieldSet = new Ext.form.FieldSet({
-		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.informe" text="**Informe letrado"/>'
+		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.informe" text="**Observaciones"/>'
 		,layout:'form'
 		,autoHeight:true
 		,autoWidth: true
@@ -443,7 +443,8 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	       		Ext.apply(params, {idTipoProducto : comboTipoProducto.getValue()});
 	       		Ext.apply(params, {informeLetrado : informeLetrado.getValue()});
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
-	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});
+	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
+	       		Ext.apply(params, {idTermino : idTermino });     		
 	<!--        		Ext.apply(params, {modoDesembolso : modoDesembolso.getValue()}); -->
 	<!--        		Ext.apply(params, {formalizacion : formalizacion.getValue()}); -->
 	<!--        		Ext.apply(params, {importe : importe.getValue()}); -->
@@ -521,11 +522,11 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	bienesStore.webflow({idAsunto:idAsunto});			
 	config.store = bienesStore;	
 	
-	var comboBienes = app.creaDblSelect(null,null,config); 
+	var comboBienes = app.creaDblSelect(null,'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.combo" text="**Bienes del asunto/Bienes para dación" />',config); 
 	
 
 	var bienesFieldSet = new Ext.form.FieldSet({
-		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.titulo" text="**Bienes de la propuesta"/>'
+		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.titulo" text="**Bienes de la propuesta y garantías seleccionadas"/>'
 		,layout:'form'
 		,autoWidth: true
 		,autoHeight: true
@@ -542,8 +543,9 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		layout:'form'
 		,border : false
 		,bodyStyle:'padding:5px;margin:5px'
-		,autoWidth: true
-		,autoHeight: true
+		,width: 800
+		,height: 400
+		,autoScroll: true
 		,nombreTab : 'altaTermino'
 		,items : [flujoFieldSetContenedor, bienesFieldSet, detalleFieldSetContenedor, informeFieldSet]
 		<c:choose>
@@ -572,7 +574,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	        		if("${operacionesPorTipo}"!=null && "${operacionesPorTipo}"!=''){
 			       		<c:forEach var="operacion" items="${operacionesPorTipo}">
 					    	Ext.getCmp('${operacion.nombre}').setValue('${operacion.valor}');
-					    	Ext.getCmp('${operacion.nombre}').setDisabled(true);
+					    	Ext.getCmp('${operacion.nombre}').setDisabled(false);
 						</c:forEach>
 			       	}
 		       	});

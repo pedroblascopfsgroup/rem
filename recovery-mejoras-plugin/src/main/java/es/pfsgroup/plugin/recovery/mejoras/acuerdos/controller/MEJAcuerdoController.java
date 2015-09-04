@@ -213,9 +213,16 @@ public class MEJAcuerdoController {
 		TerminoAcuerdoDto taDTO = creaTerminoAcuerdoDTO(request);
 		
 		String contratosIncluidos = request.getParameter("contratosIncluidos"); 
-		String bienesIncluidos = request.getParameter("bienesIncluidos"); 		
+		String bienesIncluidos = request.getParameter("bienesIncluidos"); 
+		String terminoId = request.getParameter("idTermino");
 		
-		TerminoAcuerdo ta = new TerminoAcuerdo();
+		TerminoAcuerdo ta;
+		if (terminoId != null && terminoId.length()>0){
+			ta = genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(terminoId)));
+		}
+		else
+			ta = new TerminoAcuerdo();
+		
 		EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdAcuerdo()));
 		ta.setAcuerdo(acuerdo);
 		DDTipoAcuerdo tipoAcuerdo = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", taDTO.getIdTipoAcuerdo()));
@@ -237,9 +244,15 @@ public class MEJAcuerdoController {
 		ta.setPeriodoVariable(taDTO.getPeriodoVariable());
 		ta.setInformeLetrado(taDTO.getInformeLetrado());
 		
+		TerminoOperaciones terminooperaciones;
+		// Borramos la operacion asociada al termino
+		if (terminoId != null && terminoId.length()>0){
+			terminooperaciones = genericDao.get(TerminoOperaciones.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", new Long(terminoId)));
+			proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoOperaciones(terminooperaciones);
+		}
 		TerminoAcuerdo taSaved = proxyFactory.proxy(MEJAcuerdoApi.class).saveTerminoAcuerdo(ta);
 		
-		TerminoOperaciones terminooperaciones = terminoOperacionesManager.creaTerminoOperaciones(termOpDto);
+		terminooperaciones = terminoOperacionesManager.creaTerminoOperaciones(termOpDto);
 		terminooperaciones.setTermino(taSaved);
 		Auditoria.save(terminooperaciones);
 		terminoOperacionesManager.guardaTerminoOperaciones(terminooperaciones);
@@ -249,8 +262,12 @@ public class MEJAcuerdoController {
 			crearContratosTermino(taSaved, contratosIncluidos);
 		
 		// Creamos los bienes asociados al termino
-		if (bienesIncluidos.trim().length()>0) 		
+		if (bienesIncluidos.trim().length()>0) {	
+			if (terminoId != null && terminoId.length()>0){
+				eliminarBienesTermino(new Long(terminoId));
+			}
 			crearBienesTermino(taSaved, bienesIncluidos);
+		}
 		
 		return "default";
 

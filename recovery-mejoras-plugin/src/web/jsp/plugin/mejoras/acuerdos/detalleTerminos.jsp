@@ -186,7 +186,7 @@ var crearTerminosAsuntos=function(){
 	
 	
 	var btnVerTermino = new Ext.Button({
-		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />',
+		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Termino" />',
 		iconCls: 'icon_edit',
 		handler: function(){
 			if (typeof idTerminoSeleccionado != 'undefined'){
@@ -195,7 +195,7 @@ var crearTerminosAsuntos=function(){
 		          ,closable:false
 		          ,width: 900
 		          ,autoHeight: true
-		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
+		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Termino" />'
 	    			  ,params:{
 	     				  id:idTerminoSeleccionado,
 	     				  idAsunto:panel.getAsuntoId(),
@@ -253,8 +253,10 @@ var crearTerminosAsuntos=function(){
 
 		if(idTerminoSeleccionado!='') {
 			btnBorrarTermino.enable();
+			btnVerTermino.enable();
 		} else {
 			btnBorrarTermino.disable();
+			btnVerTermino.disable();
 		}
 	});
 	

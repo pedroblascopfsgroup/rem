@@ -24,6 +24,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoAcuerdoDto;
@@ -32,6 +33,8 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.termino.model.TerminoOperaciones;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -53,6 +56,8 @@ public class MEJAcuerdoController {
 	static final String JSON_LIST_TIPO_PRODUCTO  ="plugin/mejoras/acuerdos/tipoProductoJSON";	
 	static final String JSON_LISTADO_BIENES_ACUERDO = "plugin/mejoras/acuerdos/listadoBienesAcuerdoJSON";	
 	static final String JSON_LIST_CAMPOS_DINAMICOS_TERMINOS_POR_TIPO_ACUERDO  ="plugin/mejoras/acuerdos/camposTerminosPorTipoAcuerdoJSON";
+	static final String JSON_CONFIG_USERS_ACUERDO_ASUNTOS = "plugin/mejoras/acuerdos/configUsersAcuerdoAsuntoJSON";
+	static final String JSP_FINALIZACION_ACUERDO = "plugin/mejoras/acuerdos/finalizacionAcuerdo";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -61,6 +66,10 @@ public class MEJAcuerdoController {
 	private GenericABMDao genericDao;
 	
 	@Autowired TerminoOperacionesManager terminoOperacionesManager;
+	
+	@Autowired MEJAcuerdoApi mejAcuerdoApi;
+	
+	@Autowired private UsuarioManager usuarioManager;
 	
     /**
      * Pasa un acuerdo a estado Rechazado con motivo.
@@ -96,6 +105,41 @@ public class MEJAcuerdoController {
 		model.put("listadoTerminosAcuerdo", listadoTerminosAcuerdo);
 		
 		return JSON_LISTADO_TERMINOS;
+	}
+	
+	 /**
+     * Obtiene la configuracion de los usuarios en el acuerdo - asunto
+     * @param idAcuerdo el id del acuerdo
+     */
+	@RequestMapping
+    public String getConfigUsersAcuerdoAsunto(ModelMap model, Long idTipoGestorProponente, Long idAsunto) {
+
+		model.put("map",mejAcuerdoApi.getTiposGestoresAcuerdoAsunto(idTipoGestorProponente));
+		
+		Usuario user = usuarioManager.getUsuarioLogado();
+		model.put("idUsuario",user.getId());
+		
+		List<EXTGestorAdicionalAsunto> gestoresAsunto = genericDao.getList(EXTGestorAdicionalAsunto.class, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",idAsunto));
+		
+		if(gestoresAsunto.size()==1){
+			
+			model.put("tipoGestorAsunto",gestoresAsunto.get(0).getTipoGestor());
+			
+		}else if(gestoresAsunto.size()>1){
+			
+			EXTGestorAdicionalAsunto gestorAsunto = gestoresAsunto.get(0);
+			for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
+				if(gaa.getGestor().getGestorPorDefecto()){
+					gestorAsunto = gaa;
+					break;
+				}
+			}
+			model.put("tipoGestorAsunto",gestorAsunto.getTipoGestor());
+		}
+		
+		
+		
+		return JSON_CONFIG_USERS_ACUERDO_ASUNTOS;
 	}
 	
 	/**
@@ -140,6 +184,23 @@ public class MEJAcuerdoController {
 		map.put("asunto", asunto);
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
+	}
+	
+	
+	/**
+	 * 
+	 * Devuelve la página de finalizacion de acuerdo
+	 * 
+	 */
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String openFinalizacionAcuerdo(@RequestParam(value = "idAcuerdo", required = true) Long id, ModelMap map) {
+				
+		Acuerdo acuerdo = proxyFactory.proxy(AcuerdoApi.class).getAcuerdoById(id);
+		map.put("acuerdo",acuerdo);
+		
+		return JSP_FINALIZACION_ACUERDO;
 	}
 	
 	/**

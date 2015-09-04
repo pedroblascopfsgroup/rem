@@ -49,6 +49,49 @@ BEGIN
 	
 	COMMIT;
 	
+	
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.'||V_DDNAME||' WHERE DD_EAC_CODIGO= ''09''';
+	
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS > 0 THEN    
+	  DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+	  DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el estado de acuerdo INCUMPLIDO '||V_DDNAME||'.');
+	
+	ELSE
+	
+	  execute immediate 'Insert into '||V_ESQUEMA_M||'.'||V_DDNAME||' '||
+	  '(DD_EAC_ID, DD_EAC_CODIGO,DD_EAC_DESCRIPCION,DD_EAC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) values '||
+	  '('||V_ESQUEMA_M||'.S_DD_EAC_ESTADO_ACUERDO.nextval,''09'',''Incumplido'',''Incumplido'',''0'',''PRODUCTO'',sysdate,''0'') ';
+	
+	  DBMS_OUTPUT.PUT_LINE('OK modificado');
+	
+	END IF;
+	
+	COMMIT;
+	
+	
+	
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.'||V_DDNAME||' WHERE DD_EAC_CODIGO= ''10''';
+	
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS > 0 THEN    
+	  DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
+	  DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el estado de acuerdo CUMPLIDO '||V_DDNAME||'.');
+	
+	ELSE
+	
+	  execute immediate 'Insert into '||V_ESQUEMA_M||'.'||V_DDNAME||' '||
+	  '(DD_EAC_ID, DD_EAC_CODIGO,DD_EAC_DESCRIPCION,DD_EAC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) values '||
+	  '('||V_ESQUEMA_M||'.S_DD_EAC_ESTADO_ACUERDO.nextval,''10'',''Cumplido'',''Cumplido'',''0'',''PRODUCTO'',sysdate,''0'') ';
+	
+	  DBMS_OUTPUT.PUT_LINE('OK modificado');
+	
+	END IF;
+	
+	COMMIT;
+	
     
     
 	DBMS_OUTPUT.PUT_LINE('[INFO] Fin.');

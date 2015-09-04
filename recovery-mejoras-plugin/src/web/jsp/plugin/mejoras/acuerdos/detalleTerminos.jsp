@@ -6,7 +6,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-var crearTerminosAsuntos=function(){
+var crearTerminosAsuntos=function(noPuedeModificar){
 
    var panelTerminos=new Ext.Panel({
 		layout:'form'
@@ -118,6 +118,7 @@ var crearTerminosAsuntos=function(){
        text:  '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar termino" />'
        ,iconCls : 'icon_mas'
        ,cls: 'x-btn-text-icon'
+       ,hidden : noPuedeModificar
        ,handler:function(){
 				var allowClose= false;
 				var contratosIncluidos = transformParamInc(); 
@@ -154,6 +155,7 @@ var crearTerminosAsuntos=function(){
    var btnBorrarTermino = new Ext.Button({
 		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.borrar" text="**Borrar Termino" />',
 		iconCls: 'icon_menos',
+		hidden : noPuedeModificar,
 		handler: function(){
 			if (typeof idTerminoSeleccionado != 'undefined'){
 				//BORRAR EL ASUNTOS
@@ -188,6 +190,7 @@ var crearTerminosAsuntos=function(){
 	var btnVerTermino = new Ext.Button({
 		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />',
 		iconCls: 'icon_edit',
+		hidden : noPuedeModificar,
 		handler: function(){
 			if (typeof idTerminoSeleccionado != 'undefined'){
 	     	   	var w = app.openWindow({

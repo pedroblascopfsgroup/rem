@@ -4,8 +4,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 
 @Entity
 public class EXTAcuerdo extends Acuerdo {
@@ -20,6 +24,30 @@ public class EXTAcuerdo extends Acuerdo {
 	
 	@Column(name = "ACU_IMPORTE_COSTAS")
 	private Long importeCostas;	
+	
+    @ManyToOne
+    @JoinColumn(name = "ACU_USER_PROPONENTE")
+	private Usuario proponente;
+    
+    @ManyToOne
+    @JoinColumn(name = "TIPO_GESTOR_PROPONENTE")
+	private EXTDDTipoGestor tipoGestorProponente;
+
+	public EXTDDTipoGestor getTipoGestorProponente() {
+		return tipoGestorProponente;
+	}
+
+	public void setTipoGestorProponente(EXTDDTipoGestor tipoGestorProponente) {
+		this.tipoGestorProponente = tipoGestorProponente;
+	}
+
+	public Usuario getProponente() {
+		return proponente;
+	}
+
+	public void setProponente(Usuario proponente) {
+		this.proponente = proponente;
+	}
 
 	public Long getImporteCostas() {
 		return importeCostas;

@@ -164,7 +164,7 @@ public class EXTAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi>
 		}
 		DDEstadoAcuerdo estadoAcuerdoVigente = (DDEstadoAcuerdo) executor
 				.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-						DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_VIGENTE);
+						DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_ACEPTADO);
 
 		acuerdo.setEstadoAcuerdo(estadoAcuerdoVigente);
 		acuerdo.setFechaEstado(new Date());

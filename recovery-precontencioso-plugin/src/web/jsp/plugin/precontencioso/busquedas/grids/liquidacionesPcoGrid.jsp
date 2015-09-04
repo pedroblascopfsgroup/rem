@@ -17,73 +17,73 @@ var OK_KO_Render = function(value, meta, record) {
 
 <%-- Grid --%>
 
-var procedimientoPcoRecord = Ext.data.Record.create([
-	{name: 'prcId'},
+var liquidacionPcoRecord = Ext.data.Record.create([
+		{name: 'prcId'},
 	{name: 'codigo'},
 	{name: 'nombreExpediente'},
 	{name: 'estadoExpediente'},
-	{name: 'diasEnGestion'},
 	{name: 'fechaEstado'},
 	{name: 'tipoProcPropuesto'},
 	{name: 'tipoPreparacion'},
-	{name: 'fechaInicioPreparacion'},
 	{name: 'diasEnPreparacion'},
-	{name: 'documentacionCompleta'},
-	{name: 'totalLiquidacion'},
-	{name: 'notificadoClientes'},
-	{name: 'fechaEnvioLetrado'},
-	{name: 'aceptadoLetrado'},
-	{name: 'todosDocumentos'},
-	{name: 'todasLiquidaciones'}
+	{name: 'liqEstado'},
+<!-- 	{name: 'fechaSolicitud'}, -->	
+	{name: 'liqContrato'},
+	{name: 'liqFechaRecepcion'},
+	{name: 'liqFechaConfirmacion'},
+	{name: 'liqFechaCierre'},
+	{name: 'liqTotal'}
 ]);
 
-var procedimientoPcoStore = page.getStore({
+var liquidacionPcoStore = page.getStore({
 	flow: 'expedientejudicial/busquedaProcedimientos',
 	limit: 25,
 	remoteSort: true,
 	reader: new Ext.data.JsonReader({
 		root : 'procedimientosPco',
 		totalProperty : 'total'
-	}, procedimientoPcoRecord)
+	}, liquidacionPcoRecord)
 });
 
-var procedimientoPcoCm = new Ext.grid.ColumnModel([
-	{dataIndex: 'codigo', header: '<s:message code="asd" text="**Codigo"/>', sortable: false},
-	{dataIndex: 'nombreExpediente', header: '<s:message code="asd" text="**Nombre"/>', sortable: false},
-	{dataIndex: 'estadoExpediente', header: '<s:message code="asd" text="**Estado exp."/>', sortable: false},
-	{dataIndex: 'diasEnGestion', header: '<s:message code="asd" text="**Dias gestion"/>', sortable: false},
-	{dataIndex: 'fechaEstado', header: '<s:message code="asd" text="**Fecha estado"/>', sortable: false},
-	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="asd" text="**Proc. propuesto"/>', sortable: false},
-	{dataIndex: 'tipoPreparacion', header: '<s:message code="asd" text="**Tipo preparacion"/>', sortable: false},
-	{dataIndex: 'fechaInicioPreparacion', header: '<s:message code="asd" text="**Fecha Ini. preparacion"/>', sortable: false},
-	{dataIndex: 'diasEnPreparacion', header: '<s:message code="asd" text="**Dias preparacion"/>', sortable: false},
-	{dataIndex: 'documentacionCompleta', header: '<s:message code="asd" text="**Documentacion completa"/>', renderer: OK_KO_Render, align:'center', sortable: false},
-	{dataIndex: 'totalLiquidacion', header: '<s:message code="asd" text="**Total liquidacion"/>', sortable: false},
-	{dataIndex: 'notificadoClientes', header: '<s:message code="asd" text="**Clientes notificados"/>', renderer: OK_KO_Render, align:'center', sortable: false},
-	{dataIndex: 'fechaEnvioLetrado', header: '<s:message code="asd" text="**Fecha envio letrado"/>', sortable: false},
-	{dataIndex: 'aceptadoLetrado', header: '<s:message code="asd" text="**Aceptado"/>', renderer: OK_KO_Render, align:'center', sortable: false},
-	{dataIndex: 'todosDocumentos', header: '<s:message code="asd" text="**Todos los documentos"/>', renderer: OK_KO_Render, align:'center', sortable: false},
-	{dataIndex: 'todasLiquidaciones', header: '<s:message code="asd" text="**Todas las liquidaciones"/>', renderer: OK_KO_Render, align:'center', sortable: false}
+var liquidacionPcoCm = new Ext.grid.ColumnModel([
+	{dataIndex: 'codigo', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.codigo" text="**Codigo"/>', sortable: false},
+	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
+	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
+	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
+	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
+	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
+	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
+	{dataIndex: 'liqEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.estado" text="**Estado"/>', sortable: false},
+<%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
+	{dataIndex: 'liqContrato', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.contrato" text="**Contrato"/>', sortable: false},
+	{dataIndex: 'liqFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
+	{dataIndex: 'liqFechaConfirmacion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.confirmacion" text="**Fecha confirmacion"/>', sortable: false},
+	{dataIndex: 'liqFechaCierre', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.cierre" text="**Fecha del cierre"/>', sortable: false},
+	{dataIndex: 'liqTotal', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.total" text="**Total"/>', sortable: false}
 ]);
 
-var pagingBar = fwk.ux.getPaging(procedimientoPcoStore);
+var pagingBar = fwk.ux.getPaging(liquidacionPcoStore);
 pagingBar.hide();
 
-var gridProcedimientosPco = app.crearGrid(procedimientoPcoStore, procedimientoPcoCm, {
-	title: '<s:message code="asd" text="**Expedientes Judiciales" />',
+var gridLiquidacionPco = app.crearGrid(liquidacionPcoStore, liquidacionPcoCm, {
+	title: '<s:message code="plugin.precontencioso.tab.liquidacion.listado" text="**Listado Liquidaciones" />',
 	cls: 'cursor_pointer',
 	bbar : [pagingBar],
 	height: 250,
 	collapsible: true,
-	collapsed: false,
+	collapsed: true,
 	titleCollapse: true,
 	autoWidth: true,
 	style:'padding-bottom:10px; padding-right:10px;'
 });
 
 <%-- Events --%>
+liquidacionPcoStore.on('load', function() {
+	gridLiquidacionPco.expand(true)
+	pagingBar.show();
+});
 
-gridProcedimientosPco.addListener('rowdblclick', function(grid, rowIndex, e) {
+gridLiquidacionPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
 	//app.abreAsuntoTab(id, nombre_asunto,'tabSubastas');

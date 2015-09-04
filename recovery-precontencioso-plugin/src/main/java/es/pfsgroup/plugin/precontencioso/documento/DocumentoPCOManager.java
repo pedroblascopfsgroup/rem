@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,23 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
-import es.capgemini.pfs.asunto.dto.PersonasProcedimientoDto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.dao.BienDao;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -55,7 +52,6 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
@@ -144,6 +140,84 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 	};
 	
+	@Override
+	public List<DocumentoPCO> getDocumentosOrdenadosByUnidadGestion(List<DocumentoPCO> listDocPco) {
+		List<DocumentoPCO> list = new ArrayList<DocumentoPCO>();
+		List<Long> idsUndGestContrato = new ArrayList<Long>();
+		List<Long> idsUndGestPersonas = new ArrayList<Long>();
+		List<Long> idsUndGestBienes = new ArrayList<Long>();
+		
+		for(DocumentoPCO docPco : listDocPco) {
+			if (docPco.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.CONTRATOS)){
+				idsUndGestContrato.add(docPco.getUnidadGestionId());
+			}
+			if (docPco.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.PERSONAS)){
+				idsUndGestPersonas.add(docPco.getUnidadGestionId());
+			}
+			if (docPco.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.BIENES)){
+				idsUndGestBienes.add(docPco.getUnidadGestionId());
+			}
+		}
+		
+		List<Contrato> contratos = documentoPCODao.getContratosByIdsOrderByDesc(convertirListLongToString(idsUndGestContrato));
+		List<Persona> personas = documentoPCODao.getPersonasByIdsOrderByDesc(convertirListLongToString(idsUndGestPersonas));
+		List<NMBBienEntidad> bienes = documentoPCODao.getBienesByIdsOrderByDesc(convertirListLongToString(idsUndGestBienes));
+		
+		for(Contrato contrato : contratos){
+			for(DocumentoPCO doc : listDocPco) {
+				if(doc.getUnidadGestionId().equals(contrato.getId())) {
+					list.add(doc);
+				}
+			}
+		}
+		
+		for(Persona persona : personas){
+			for(DocumentoPCO doc : listDocPco) {
+				if(doc.getUnidadGestionId().equals(persona.getId())) {
+					list.add(doc);
+				}
+			}
+		}
+		
+		for(NMBBienEntidad bien : bienes){
+			for(DocumentoPCO doc : listDocPco) {
+				if(doc.getUnidadGestionId().equals(bien.getId())) {
+					list.add(doc);
+				}
+			}
+		}		
+		
+		if(bienes.size() != idsUndGestBienes.size()) {
+			for(Long datoLong : idsUndGestBienes) {
+				boolean existe = false;
+				for(NMBBienEntidad bEnt : bienes) {
+					if(bEnt.getId().equals(datoLong)){
+						existe = true;
+					}
+				}
+				if(!existe) {
+					for(DocumentoPCO doc : listDocPco) {
+						if(doc.getId().equals(datoLong)){
+							list.add(doc);
+						}
+					}
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+	private String convertirListLongToString(List<Long> longs) {
+		String string = "";
+		for(int i=0; i<longs.size(); i++) {
+			string += longs.get(i);
+			if(i < longs.size()-1){
+				string += ",";				
+			}
+		}
+		return string;
+	}
 	
 	/**
 	 * Crea un DTO de la solicitud a partir del documento y de la solicitud
@@ -152,7 +226,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	 * @return
 	 */
 	public SolicitudDocumentoPCODto crearSolicitudDocumentoDto(DocumentoPCO documento, SolicitudDocumentoPCO solicitud, 
-																	boolean esDocumento, boolean tieneSolicitud){
+																	boolean esDocumento, boolean tieneSolicitud, int idIdentificativo){
 		SolicitudDocumentoPCODto solDto=null;
 		DDSiNo siNo;
 		String descripcionUG = null;
@@ -189,7 +263,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 				
 		solDto = DocumentoAssembler.docAndSolEntityToSolicitudDto(documento, solicitud, ugIdDto, descripcionUG, 
-																	esDocumento, tieneSolicitud, siNo, siNoNoAplica);
+																	esDocumento, tieneSolicitud, siNo, siNoNoAplica, idIdentificativo);
 		
 		return solDto;
 	};
@@ -653,6 +727,34 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 	
 		return documentosUG;
+	}
+	
+	@Override
+	@BusinessOperation(PCO_VALIDAR_DOCUMENTO_UNICO)
+	public boolean validarDocumentoUnico(String undGest, String tipoDoc, String protocolo, String notario){
+		DDTipoFicheroAdjunto tipoDocumento = genericDao.get(
+				DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDoc));
+		
+		undGest = undGest.substring(1, undGest.length()-1);
+		StringTokenizer stIdUG = new StringTokenizer(undGest,",");
+	
+		while (stIdUG.hasMoreElements()){
+			String tipoUG = stIdUG.nextToken();
+			tipoUG = tipoUG.substring(1, tipoUG.length()-1);
+			DDUnidadGestionPCO unidadGestion = genericDao.get(
+					DDUnidadGestionPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoUG));
+			
+			List<DocumentoPCO> listDocPco = genericDao.getList(DocumentoPCO.class, 
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento", tipoDocumento),
+					genericDao.createFilter(FilterType.EQUALS, "unidadGestion", unidadGestion),
+					genericDao.createFilter(FilterType.EQUALS, "protocolo", protocolo),
+					genericDao.createFilter(FilterType.EQUALS, "notario", notario));
+		
+			if(listDocPco != null && listDocPco.size() > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
  }

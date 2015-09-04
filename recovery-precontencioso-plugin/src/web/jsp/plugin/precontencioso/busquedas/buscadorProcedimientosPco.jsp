@@ -33,9 +33,9 @@
 			var params = getParametros();
 			params.start = 0;
 			params.limit = 25;
+			panelFiltros.collapse(true);
 			procedimientoPcoStore.webflow(params);
-			pagingBar.hide();
-			panelFiltros.collapse(false);
+			pagingBar.show();
 		}
 	})
 
@@ -45,7 +45,7 @@
 	var panelFiltros = new Ext.Panel({
 		autoHeight: true,
 		autoWidth: true,
-		title: '<s:message code="asd" text="**Buscador Expedientes Judiciales" />',
+		title: '<s:message code="plugin.precontencioso.buscador.expedientes.titulo" text="**Buscador Expedientes Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
 		tbar: [btnBuscar],

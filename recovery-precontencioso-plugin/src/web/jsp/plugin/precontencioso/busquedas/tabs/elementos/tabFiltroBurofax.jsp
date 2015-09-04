@@ -7,19 +7,19 @@
 
 <%-- Notificado a todos los clientes: Si / No --%>
 
-<pfsforms:ddCombo name="comboNotificado" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+<pfsforms:ddCombo name="comboNotificadoEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
+labelKey="plugin.precontencioso.tab.burofax.notificado" 
 label="** Notificado a todos los clientes" value="" dd="${ddSiNo}" />
 
 <%-- Fecha solicitud --%>
 
-var dateFieldSolicitudBurDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldSolicitudBurDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Solicitud" />'
+var dateFieldSolicitudBurDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldSolicitudBurDesdeEle',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.burofax.fecha.solicitud" text="** F. Solicitud" />'
 });
 
-var dateFieldSolicitudBurHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldSolicitudBurHasta',
+var dateFieldSolicitudBurHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldSolicitudBurHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -34,20 +34,20 @@ var panelFechaSolicitudBur = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldSolicitudBurDesde]},
-		{layout: 'form', items: [dateFieldSolicitudBurHasta]}
+		{layout: 'form', items: [dateFieldSolicitudBurDesdeEle]},
+		{layout: 'form', items: [dateFieldSolicitudBurHastaEle]}
 	]
 });
 
 <%-- Fecha envío --%>
 
-var dateFieldEnvioBurDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldEnvioBurDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Envio" />'
+var dateFieldEnvioBurDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldEnvioBurDesdeEle',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.burofax.fecha.envio" text="** F. Envio" />'
 });
 
-var dateFieldEnvioBurHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldEnvioBurHasta',
+var dateFieldEnvioBurHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldEnvioBurHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -62,20 +62,20 @@ var panelFechaEnvioBur = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldEnvioBurDesde]},
-		{layout: 'form', items: [dateFieldEnvioBurHasta]}
+		{layout: 'form', items: [dateFieldEnvioBurDesdeEle]},
+		{layout: 'form', items: [dateFieldEnvioBurHastaEle]}
 	]
 });
 
 <%-- Fecha acuse --%>
 
-var dateFieldAcuseBurDesde = new Ext.ux.form.XDateField({
-	name: 'dateFieldAcuseBurDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Acuse" />'
+var dateFieldAcuseBurDesdeEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldAcuseBurDesdeEle',
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.burofax.fecha.acuse" text="** F. Acuse" />'
 });
 
-var dateFieldAcuseBurHasta = new Ext.ux.form.XDateField({
-	name: 'dateFieldAcuseBurHasta',
+var dateFieldAcuseBurHastaEle = new Ext.ux.form.XDateField({
+	name: 'dateFieldAcuseBurHastaEle',
 	hideLabel: true,
 	width: 95
 });
@@ -90,8 +90,8 @@ var panelFechaAcuseBur = new Ext.Panel({
 	border: false,
 	defaults: {xtype: 'panel', border: false, cellCls: 'vtop'},
 	items: [
-		{layout: 'form', items: [dateFieldAcuseBurDesde]},
-		{layout: 'form', items: [dateFieldAcuseBurHasta]}
+		{layout: 'form', items: [dateFieldAcuseBurDesdeEle]},
+		{layout: 'form', items: [dateFieldAcuseBurHastaEle]}
 	]
 });
 
@@ -101,9 +101,9 @@ var diccResultadoBurofax = <app:dict value="${resultadoBurofax}" />;
 
 var comboResultadoBurofax = app.creaDblSelect(
 	diccResultadoBurofax,
-	'<s:message code="asd" text="** Resultado último envío" />',
+	'<s:message code="plugin.precontencioso.tab.burofax.ultimo.envio" text="** Resultado último envío" />',
 	{
-		id: 'fliedResultadoBurofax',
+		id: 'fliedResultadoBurofaxEle',
 		height: 100,
 		width: 200
 	}
@@ -113,7 +113,7 @@ var comboResultadoBurofax = app.creaDblSelect(
 var filtrosTabBurofaxActive = false;
 
 var filtrosTabBurofax = new Ext.Panel({
-	title: '<s:message code="asd" text="** Burofax" />',
+	title: '<s:message code="plugin.precontencioso.tab.burofax.titulo" text="** Burofax" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',
@@ -121,7 +121,7 @@ var filtrosTabBurofax = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboNotificado, comboResultadoBurofax]
+		items: [comboNotificadoEle, comboResultadoBurofax]
 	}, {
 		layout: 'form',
 		items: [panelFechaSolicitudBur, panelFechaEnvioBur, panelFechaAcuseBur]
@@ -137,14 +137,14 @@ filtrosTabBurofax.on('activate',function(){
 var getParametrosFiltroBurofax = function() {
 	var out = {};
 
-	out.burNotificado = comboNotificado.getValue();
-	out.burResultadoEnvio = fliedResultadoBurofax.childNodes[1].value;
-	out.burFechaSolicitudDesde = dateFieldSolicitudBurDesde.getValue();
-	out.burFechaSolicitudHasta = dateFieldSolicitudBurHasta.getValue();
-	out.burFechaAcuseDesde = dateFieldEnvioBurDesde.getValue();
-	out.burFechaAcuseHasta = dateFieldEnvioBurHasta.getValue();
-	out.burFechaEnvioDesde = dateFieldAcuseBurDesde.getValue();
-	out.burFechaEnvioHasta = dateFieldAcuseBurHasta.getValue();
+	out.burNotificado = comboNotificadoEle.getValue();
+	out.burResultadoEnvio = fliedResultadoBurofaxEle.childNodes[1].value;
+	out.burFechaSolicitudDesde = dateFieldSolicitudBurDesdeEle.getValue();
+	out.burFechaSolicitudHasta = dateFieldSolicitudBurHastaEle.getValue();
+	out.burFechaAcuseDesde = dateFieldEnvioBurDesdeEle.getValue();
+	out.burFechaAcuseHasta = dateFieldEnvioBurHastaEle.getValue();
+	out.burFechaEnvioDesde = dateFieldAcuseBurDesdeEle.getValue();
+	out.burFechaEnvioHasta = dateFieldAcuseBurHastaEle.getValue();
 
 	return out;
 }

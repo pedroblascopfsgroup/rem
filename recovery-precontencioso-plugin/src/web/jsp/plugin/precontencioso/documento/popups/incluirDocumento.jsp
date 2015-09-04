@@ -30,7 +30,6 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
   		singleSelect: false
 	});
 
-
 	var config = {width: 150, labelStyle:"width:100px"};
 	
 	//unidades Gestion
@@ -47,21 +46,25 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 					}
 	});
 	
+	var handlerGuardar = function() {
+		var p = getParametros();
+    	Ext.Ajax.request({
+				url : page.resolveUrl('documentopco/saveIncluirDocumentos'), 
+				params : p ,
+				method: 'POST',
+				success: function ( result, request ) {
+					page.fireEvent(app.event.DONE);
+				}
+		});
+	}
+	
 	var btnGuardar= new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler:function(){
-				if (validateForm()) {		    
-			    	var p = getParametros();
-			    	Ext.Ajax.request({
-							url : page.resolveUrl('documentopco/saveIncluirDocumentos'), 
-							params : p ,
-							method: 'POST',
-							success: function ( result, request ) {
-								page.fireEvent(app.event.DONE);
-							}
-					});
-				}
+			if (validateForm()) {		    
+		    	handlerGuardar();
+			}
 	     }
 	});
 	
@@ -80,30 +83,47 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	};
 
 	var validateForm = function(){	
+		var validate = true;
 		rowsSelected=gridDocs.getSelectionModel().getSelections(); 
 		if (rowsSelected.length == 0) {
 			Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinDocSeleccionado" text="**Debe seleccionar algún documento." />');
-			return false;
+			validate = false;
+		}else if (comboTipoDocumento.getValue() == ''){
+			Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinTipoDocumento" text="**Debe de elegir un tipo de documento." />');
+			validate = false;
+		}else if(protocolo.getValue() == '') {
+			validate = false;
+			Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinProtocolo" text="**No se ha informado el campo PROTOCOLO ¿Desea continuar?" />', function(btn){
+   				if (btn == 'yes'){
+   					handlerGuardar();
+   				}
+   				else {
+   					return false;
+   				}
+			});	
+		}else{
+			validate = false;
+			Ext.Ajax.request({
+					url : page.resolveUrl('documentopco/validacionDuplicadoDocumento'), 
+					params : getParametros() ,
+					method: 'POST',
+					success: function ( result, request ) {
+						var resultado = Ext.decode(result.responseText);
+						if(resultado.documento_duplicado){
+							Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.incluirDocumento.documentoDuplicado" text="**Ya existe un documento del mismo tipo, siendo el mismo protocolo y notario en la unidad de gestión seleccionada." />', function(btn){
+								if (btn == 'yes'){
+				   					handlerGuardar();
+				   				}
+							});
+						}else{
+							handlerGuardar();
+						}
+					}
+			});
 		}
-		else if (comboTipoDocumento.getValue() == ''){
-				Ext.Msg.alert('Error', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinTipoDocumento" text="**Debe de elegir un tipo de documento." />');
-				return false;
-			}
-			else if(protocolo.getValue() == '') {
-					Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="precontencioso.grid.documento.incluirDocumento.sinProtocolo" text="**No se ha informado el campo PROTOCOLO ¿Desea continuar?" />', function(btn){
-	    				if (btn == 'yes'){
-	    					return true;
-	    				}
-	    				else {
-	    					return false;
-	    				}
-					});	
-			}
-
-		              
-		return true;
+		return validate;
 	}	
-
+	
 	var getParametros = function() {
 		var rowsSelected=new Array(); 
 		var arrayIdDocumentos=new Array();	

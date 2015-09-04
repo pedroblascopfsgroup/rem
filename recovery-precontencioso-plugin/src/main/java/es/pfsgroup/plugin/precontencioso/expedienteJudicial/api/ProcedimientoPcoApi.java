@@ -2,12 +2,15 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
@@ -16,6 +19,7 @@ public interface ProcedimientoPcoApi {
 
 	public static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
+	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
 
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
@@ -37,33 +41,44 @@ public interface ProcedimientoPcoApi {
 	@BusinessOperationDefinition(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
 	boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);
 
-	/* BUSQUEDAS COMPLEJAS -> busquedas por filtro que debido a la complejidad se deben de realizar desde ProcedimientoPCO */
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
-	 * Busqueda de procedimientosPco que cumplan el filtro enviado por parametro
+	 * Busqueda de ProcedimientoPcoGridDTO que cumplan el filtro enviado por parametro
 	 * @param filtro
-	 * @return Listado de ProcedimientosPCO que cumplen dicho filtro.
+	 * @return Listado de ProcedimientoPcoGridDTO que cumplen dicho filtro.
 	 */
-	List<ProcedimientoPCO> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<ProcedimientoPcoGridDTO> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
 	 * Busqueda de SolicitudDocumentoPCO que cumplan el filtro enviado por parametro
 	 * @param filtro
 	 * @return Listado de SolicitudDocumentoPCO que cumplen dicho filtro.
 	 */
-	List<SolicitudDocumentoPCO> busquedaSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<ProcedimientoPcoGridDTO> busquedaSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
 	 * Busqueda de LiquidacionPCO que cumplan el filtro enviado por parametro
 	 * @param filtro
 	 * @return Listado de LiquidacionPCO que cumplen dicho filtro.
 	 */
-	List<LiquidacionPCO> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<ProcedimientoPcoGridDTO> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
 	 * Busqueda de EnvioBurofaxPCO que cumplan el filtro enviado por parametro
 	 * @param filtro
 	 * @return Listado de EnvioBurofaxPCO que cumplen dicho filtro.
 	 */
-	List<EnvioBurofaxPCO> busquedaEnviosBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<ProcedimientoPcoGridDTO> busquedaBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	
+	@BusinessOperationDefinition(BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO)
+	void actualizaProcedimiento(ActualizarProcedimientoPcoDtoInfo dto);
+
+    List<Nivel> getNiveles();
+
 }

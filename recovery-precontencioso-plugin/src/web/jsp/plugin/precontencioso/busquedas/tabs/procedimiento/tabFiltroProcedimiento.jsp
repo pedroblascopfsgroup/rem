@@ -11,19 +11,19 @@
 
 var fieldCodigo = new Ext.form.TextField({
 	name: 'codigo',
-	fieldLabel : '<s:message code="asd" text="** Código" />'
+	fieldLabel : '<s:message code="plugin.precontencioso.tab.expjudicial.codigo" text="** Código" />'
 });
 
 <%-- Nombre Expediente Judicial --%>
 
 var fieldNombreExpedienteJudicial = new Ext.form.TextField({
 	name: 'nombreExpedienteJudicial',
-	fieldLabel : '<s:message code="asd" text="** Nom. Exp Judicial" />'
+	fieldLabel : '<s:message code="plugin.precontencioso.tab.expjudicial.nombre" text="** Nom. Exp Judicial" />'
 });
 
 <%-- Días en gestión: Número de días transcurridos en el estado actual del expediente, o en caso de seleccionar algún estado en particular, el plazoen gestión de dicho estado. --%>
 
-<pfsforms:numberfield name="fieldDiasGestion" labelKey="asd" label="** Días en gestión" 
+<pfsforms:numberfield name="fieldDiasGestion" labelKey="plugin.precontencioso.tab.expjudicial.dias.gestion" label="** Días en gestión" 
 	value="" 
 	obligatory="false" 
 	allowDecimals="false" />
@@ -32,7 +32,7 @@ var fieldNombreExpedienteJudicial = new Ext.form.TextField({
 
 var dateFieldInicioPreparacionDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldInicioPreparacionDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Inicio Preparacion" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparacion" text="** F. Inicio Preparacion" />'
 });
 
 var dateFieldInicioPreparacionHasta = new Ext.ux.form.XDateField({
@@ -60,7 +60,7 @@ var panelFechaInicioPreparacion = new Ext.Panel({
 
 var dateFieldPreparadoDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldPreparadoDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Preparado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparado" text="** F. Preparado" />'
 });
 
 var dateFieldPreparadoHasta = new Ext.ux.form.XDateField({
@@ -88,7 +88,7 @@ var panelFechaPreparado = new Ext.Panel({
 
 var dateFieldEnviadoLetradoDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnviadoLetradoDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Preparado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparado" text="** F. Preparado" />'
 });
 
 var dateFieldEnviadoLetradoHasta = new Ext.ux.form.XDateField({
@@ -116,7 +116,7 @@ var panelFechaEnviadoLetrado = new Ext.Panel({
 
 var dateFieldFinalizadoDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldFinalizadoDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Finalizado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.finalizado" text="** F. Finalizado" />'
 });
 
 var dateFieldFinalizadoHasta = new Ext.ux.form.XDateField({
@@ -144,7 +144,7 @@ var panelFechaFinalizado = new Ext.Panel({
 
 var dateFieldUltimaSubsanacionDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldUltimaSubsanacionDesde',
-	fieldLabel: '<s:message code="asd" text="** F. última subsanación" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.subsanacion" text="** F. última subsanación" />'
 });
 
 var dateFieldUltimaSubsanacionHasta = new Ext.ux.form.XDateField({
@@ -172,7 +172,7 @@ var panelFechaUltimaSubsanacion = new Ext.Panel({
 
 var dateFieldCanceladoDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldCanceladoDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Cancelado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.cancelado" text="** F. Cancelado" />'
 });
 
 var dateFieldCanceladoHasta = new Ext.ux.form.XDateField({
@@ -225,34 +225,32 @@ var panelFechaParalizacion = new Ext.Panel({
 });
 
 <pfsforms:ddCombo name="comboTipoProcPropuesto" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.tipo.procedimiento" 
 label="** Tipo de procedimiento propuesto" value="" dd="${tipoProcedimientoProcpuesto}" />
 
 <%-- Tipo de preparación --%>
 
 <pfsforms:ddCombo name="comboTipoPreparacion" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.tipo.preparacion" 
 label="** Tipo de preparación" value="" dd="${tipoPreparacion}" />
 
 <%-- Disponible todos los documentos SI/NO --%>
 
 <pfsforms:ddCombo name="comboDisponibleDocumentos" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.documentos" 
 label="** Disponible todos los documentos" value="" dd="${ddSiNo}" />
 
 <%-- Disponible todas las liquidaciones SI/NO --%>
 
 <pfsforms:ddCombo name="comboDisponibleLiquidaciones" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.liquidaciones" 
 label="** Disponible todas las liquidaciones" value="" dd="${ddSiNo}" />
 
 <%-- Disponible todos los burofaxes SI/NO --%>
 
 <pfsforms:ddCombo name="comboDisponibleBurofaxes" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.burofaxes" 
 label="** Disponible todos los burofaxes" value="" dd="${ddSiNo}" />
-
-<%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
 
 <%-- Selector múltiple del estado en que se encuentran los expedientes. --%>
 
@@ -266,21 +264,258 @@ var estadoPreparacionStore = new Ext.data.JsonStore({
 
 var filtroEstadoPreparacion = app.creaDblSelect(
 	estadoPreparacion,
-	'<s:message code="asd" text="** Estado Expediente" />',
+	'<s:message code="plugin.precontencioso.tab.expjudicial.disponible.estado" text="** Estado Expediente" />',
 	{
 		store: estadoPreparacionStore,
 		id: 'fieldEstadoPreparacion'
 	}
 );
 
+<%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
+
+<pfsforms:ddCombo name="comboTiposGestor" propertyCodigo="id" propertyDescripcion="descripcion"
+labelKey="ext.asuntos.busqueda.filtro.tipoGestor" label="**Tipo de gestor" value="" dd="${ddListadoGestores}" />
+
+comboTiposGestor.on('select', function(){
+	comboDespachos.reset();
+	optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue(), 'incluirBorrados': true}); 
+	comboGestor.reset();
+	comboDespachos.setDisabled(false);
+});
+ 
+//store generico de combo diccionario
+var optionsDespachosRecord = Ext.data.Record.create([
+	 {name:'cod'}
+	,{name:'descripcion'}
+]);
+
+var optionsDespachoStore = page.getStore({
+       flow: 'expedientejudicial/getListTipoDespachoData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoDespachos'
+    }, optionsDespachosRecord)	       
+});
+
+//Campo Combo Despacho
+var comboDespachos = new Ext.form.ComboBox({
+	store:optionsDespachoStore
+	,displayField:'descripcion'
+	,valueField:'cod'
+	,mode: 'remote'
+	,emptyText:'---'
+	,editable: false
+	,triggerAction: 'all'
+	,disabled:true
+	,resizable:true
+	,fieldLabel : '<s:message code="asuntos.busqueda.filtro.despacho" text="**Despacho"/>'
+	<app:test id="comboDespachos" addComa="true"/>
+});
+
+comboDespachos.on('select', function(){
+	comboGestor.reset();
+	optionsGestoresStore.webflow({'idTipoDespacho': comboDespachos.getValue(), 'incluirBorrados': true}); 
+	comboGestor.setDisabled(false);
+});
+
+var Gestor = Ext.data.Record.create([
+	 {name:'id'}
+	,{name:'username'}
+]);
+
+var optionsGestoresStore =  page.getStore({
+       flow: 'expedientejudicial/getListUsuariosData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoUsuarios'
+    }, Gestor)	       
+});
+
+//Campo Gestores, double select 
+var creaDblSelectMio = function(label, config){
+
+	var store = config.store ;
+	var cfg = {
+	   	fieldLabel: label || ''
+	   	,displayField:'username'
+	   	,valueField: 'id'
+	   	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
+	   	,dataFields : ['id', 'username']
+	   	,fromStore:store
+	   	,toData : []
+	       ,msHeight : config.height || 60
+		,labelStyle:config.labelStyle || ''
+	       ,msWidth : config.width || 140
+	       ,drawTopIcon:false
+	       ,drawBotIcon:false
+	       ,drawUpIcon:false
+		,drawDownIcon:false
+		,disabled:true
+		,toSortField : 'codigo'
+	    };
+	if(config.id) {
+		cfg.id = config.id;
+	}
+	
+	var itemSelector = new Ext.ux.ItemSelector(cfg);
+	if (config.funcionReset){
+		itemSelector.funcionReset = config.funcionReset;
+	}
+	
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
+	itemSelector.setValue =  function(val) {
+	       if(!val) {
+	           return;
+	       }
+	       val = val instanceof Array ? val : val.split(',');
+	       var rec, i, id;
+	       for(i = 0; i < val.length; i++) {
+	           id = val[i];
+	           if(this.toStore.find('id',id)>=0) {
+	               continue;
+	           }
+	           rec = this.fromStore.find('id',id);
+	           if(rec>=0) {
+	           	rec = this.fromStore.getAt(rec);
+	               this.toStore.add(rec);
+	               this.fromStore.remove(rec);
+	           }
+	       }
+	   };
+	
+	itemSelector.getStore =  function() {
+		return this.toStore;
+	};
+	
+	return itemSelector;
+};
+
+var comboGestor = creaDblSelectMio('<s:message code="asuntos.busqueda.filtro.gestor" text="**Gestor" />',{store:optionsGestoresStore, funcionReset:recargarComboGestores});
+
+var recargarComboGestores = function(){
+	optionsGestoresStore.webflow({id:0});
+}
+
+var validarEmptyForm = function(){
+	return (comboDespachos.getValue() != '' || comboGestor.getValue() != '' || comboTiposGestor.getValue() != '');
+}
+		
+var validaMinMax = function(){
+	return true;
+}
+
 <%-- Jerarquía y Centros: Donde el filtro aplicará sobre el centro al que pertenece alguno de los contratos en preparación. --%>
+
+var jerarquia = <app:dict value="${ddJerarquia}" blankElement="true" blankElementValue="" blankElementText="---" />;
+	
+var comboJerarquia = app.creaCombo({
+	triggerAction: 'all', 
+	data:jerarquia, 
+	value:jerarquia.diccionario[0].codigo, 
+	name : 'jerarquia', 
+	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'
+});
+
+//Campo Zonas, double select 
+var creaDblSelectZonas = function(label, config){
+
+	var store = config.store ;
+	var cfg = {
+	   	fieldLabel: label || ''
+	   	,displayField:'descripcion'
+	   	,valueField: 'codigo'
+	   	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
+	   	,dataFields : ['codigo', 'descripcion']
+	   	,fromStore:store
+	   	,toData : []
+	       ,msHeight : config.height || 60
+		,labelStyle:config.labelStyle || ''
+	       ,msWidth : config.width || 140
+	       ,drawTopIcon:false
+	       ,drawBotIcon:false
+	       ,drawUpIcon:false
+		,drawDownIcon:false
+		,disabled:true
+		,toSortField : 'codigo'
+	    };
+	if(config.id) {
+		cfg.id = config.id;
+	}
+	
+	var itemSelector = new Ext.ux.ItemSelector(cfg);
+	if (config.funcionReset){
+		itemSelector.funcionReset = config.funcionReset;
+	}
+	
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
+	itemSelector.setValue =  function(val) {
+	       if(!val) {
+	           return;
+	       }
+	       val = val instanceof Array ? val : val.split(',');
+	       var rec, i, id;
+	       for(i = 0; i < val.length; i++) {
+	           id = val[i];
+	           if(this.toStore.find('id',id)>=0) {
+	               continue;
+	           }
+	           rec = this.fromStore.find('id',id);
+	           if(rec>=0) {
+	           	rec = this.fromStore.getAt(rec);
+	               this.toStore.add(rec);
+	               this.fromStore.remove(rec);
+	           }
+	       }
+	   };
+	
+	itemSelector.getStore =  function() {
+		return this.toStore;
+	};
+	
+	return itemSelector;
+};
+	
+var zonasRecord = Ext.data.Record.create([
+	 {name:'codigo'}
+	,{name:'descripcion'}
+]);
+    
+var optionsZonasStore =  page.getStore({
+       flow: 'expedientejudicial/getZonasPorNivel'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'ddZonas'
+    }, zonasRecord)	       
+});
+
+var comboZonas = creaDblSelectZonas('<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />',
+	{store:optionsZonasStore, funcionReset:recargarComboZonas}
+);
+	
+var recargarComboZonas = function(){
+	if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
+		optionsZonasStore.webflow({idJerarquia:comboJerarquia.getValue()});
+	}else{
+		optionsZonasStore.webflow({idJerarquia:0});
+		comboZonas.setValue('');
+		optionsZonasStore.removeAll();
+	}
+}
+	
+var limpiarYRecargar = function(){
+	comboZonas.reset();
+	recargarComboZonas();
+	comboZonas.setDisabled(false);
+}
+	
+comboJerarquia.on('select',limpiarYRecargar);
+
+recargarComboZonas();
+
 
 <%-- Paneles --%>
 
 var filtrosTabDatosProcedimientoActive = false;
 
 var filtrosTabDatosProcedimiento = new Ext.Panel({
-	title: '<s:message code="asd" text="** Expediente judicial" />',
+	title: '<s:message code="plugin.precontencioso.tab.expjudicial.titulo" text="** Expediente judicial" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',
@@ -288,10 +523,10 @@ var filtrosTabDatosProcedimiento = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [fieldCodigo, fieldNombreExpedienteJudicial, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes]
+		items: [fieldCodigo, fieldNombreExpedienteJudicial, comboTiposGestor, comboDespachos, fieldDiasGestion, comboTipoProcPropuesto, comboTipoPreparacion, comboDisponibleDocumentos, comboDisponibleLiquidaciones, comboDisponibleBurofaxes, comboJerarquia, comboZonas]
 	}, {
 		layout: 'form',
-		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, filtroEstadoPreparacion]
+		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, comboGestor, filtroEstadoPreparacion]
 	}]
 });
 
@@ -322,6 +557,11 @@ var getParametrosFiltroProcedimiento = function() {
 	out.proTipoProcedimiento = comboTipoProcPropuesto.getValue();
 	out.proTipoPreparacion = comboTipoPreparacion.getValue();
 	out.proCodigosEstado = fieldEstadoPreparacion.childNodes[1].value;
+	out.proTipoGestor = comboTiposGestor.getValue();
+	out.proDespacho = comboDespachos.getValue();
+	out.proGestor = comboGestor.getValue();
+	out.proJerarquiaContable = comboJerarquia.getValue();
+	out.proCentroContable = comboZonas.getValue();
 
 	out.proDisponibleDocumentos = comboDisponibleDocumentos.getValue();
 	out.proDisponibleLiquidaciones = comboDisponibleLiquidaciones.getValue();

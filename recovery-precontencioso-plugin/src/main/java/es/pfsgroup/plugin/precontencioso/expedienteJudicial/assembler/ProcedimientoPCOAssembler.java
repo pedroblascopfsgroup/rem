@@ -9,7 +9,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstad
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
 /**
- * Clase que se encarga de ensablar ProcedimientoPCO entity a DTO.
+ * Clase que se encarga de ensamblar ProcedimientoPCO entity a DTO.
  * 
  * @author jmartin
  */

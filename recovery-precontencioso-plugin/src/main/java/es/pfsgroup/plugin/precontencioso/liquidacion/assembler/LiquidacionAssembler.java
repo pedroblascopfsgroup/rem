@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.assembler;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
@@ -58,6 +59,12 @@ public class LiquidacionAssembler {
 		liquidacionDto.setInteresesOrdinariosOriginal(liquidacion.getInteresesOrdinariosOriginal());
 		liquidacionDto.setTotalOriginal(liquidacion.getTotalOriginal());
 		liquidacionDto.setSysGuid(liquidacion.getSysGuid());
+		liquidacionDto.setComisiones(liquidacion.getComisiones());
+		liquidacionDto.setGastos(liquidacion.getGastos());
+		liquidacionDto.setImpuestos(liquidacion.getImpuestos());
+		liquidacionDto.setComisionesOriginal(liquidacion.getComisionesOriginal());
+		liquidacionDto.setGastosOriginal(liquidacion.getGastosOriginal());
+		liquidacionDto.setImpuestosOriginal(liquidacion.getImpuestosOriginal());
 
 		// ProcedimientoPCO
 		if (liquidacion.getProcedimientoPCO() != null) {
@@ -67,6 +74,7 @@ public class LiquidacionAssembler {
 		// Contrato
 		if (liquidacion.getContrato() != null) {
 			liquidacionDto.setIdContrato(liquidacion.getContrato().getId());
+			liquidacionDto.setNroContrato(liquidacion.getContrato().getNroContrato());
 			liquidacionDto.setProducto(liquidacion.getContrato().getTipoProductoEntidad().getDescripcion());
 		}
 
@@ -82,6 +90,10 @@ public class LiquidacionAssembler {
 			liquidacionDto.setApoderadoUsdId(liquidacion.getApoderado().getId());
 			liquidacionDto.setApoderadoUsuarioId(liquidacion.getApoderado().getUsuario().getId());
 			liquidacionDto.setApoderadoDespachoId(liquidacion.getApoderado().getDespachoExterno().getId());
+		}
+		
+		if(!Checks.esNulo(liquidacion.getSolicitante())){
+			liquidacionDto.setSolicitante(liquidacion.getSolicitante().getUsuario().getApellidoNombre());
 		}
 
 		return liquidacionDto;

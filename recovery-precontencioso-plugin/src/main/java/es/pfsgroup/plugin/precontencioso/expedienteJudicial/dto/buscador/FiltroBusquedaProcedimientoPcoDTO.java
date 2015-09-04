@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.recovery.ext.impl.utils.StringUtils;
 
 public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 
@@ -36,6 +37,12 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String proDisponibleLiquidaciones;
 	private String proDisponibleBurofaxes;
 	private String proDiasGestion;
+	private String proTipoGestor;
+	private String proDespacho;
+	private String proGestor;
+	private String proJerarquiaContable;
+	private String proCentroContable;
+	
 
 	// Contrato - Persona
 	private String conCodigo;
@@ -83,6 +90,97 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String burFechaAcuseHasta;
 	private String burFechaEnvioDesde;
 	private String burFechaEnvioHasta;
+
+	/**
+	 * Comprueba si está informado el filtro de persona
+	 */
+	public Boolean filtroPersonaInformado() {
+		Boolean filtroPersonaInformado = Boolean.valueOf((!StringUtils.emtpyString(getConNombre())
+			|| !StringUtils.emtpyString(getConApellidos())
+			|| !StringUtils.emtpyString(getConNif())));
+
+		return filtroPersonaInformado;
+	}
+
+	/**
+	 * Comprueba si está informado el filtro de contrato
+	 */
+	public Boolean filtroContratoInformado() {
+		Boolean filtroContratoInformado = Boolean.valueOf(!StringUtils.emtpyString(getConCodigo())
+				|| !StringUtils.emtpyString(getConTiposProducto()));
+
+		return filtroContratoInformado;
+	}
+
+	/**
+	 * Comprueba si está informado el filtro de documento
+	 */
+	public Boolean filtroDocumentoInformado() {
+		Boolean filtroDocumentoInformado = Boolean.valueOf(
+			!StringUtils.emtpyString(getDocTiposDocumento())
+			|| !StringUtils.emtpyString(getDocEstados())
+			|| !StringUtils.emtpyString(getDocAdjunto())
+			|| !StringUtils.emtpyString(getDocSolicitudPrevia()));
+		return filtroDocumentoInformado;
+	}
+
+	/**
+	 * Comprueba si está informado el filtro de solicitud
+	 */
+	public Boolean filtroSolicitudInformado() {
+		Boolean filtroSolicitudInformado = Boolean.valueOf(
+			!StringUtils.emtpyString(getDocUltimaRespuesta())
+			|| !StringUtils.emtpyString(getDocFechaSolicitudDesde())
+			|| !StringUtils.emtpyString(getDocFechaSolicitudHasta())
+			|| !StringUtils.emtpyString(getDocFechaResultadoDesde())
+			|| !StringUtils.emtpyString(getDocFechaResultadoHasta())
+			|| !StringUtils.emtpyString(getDocFechaEnvioDesde())
+			|| !StringUtils.emtpyString(getDocFechaEnvioHasta())
+			|| !StringUtils.emtpyString(getDocFechaRecepcionDesde())
+			|| !StringUtils.emtpyString(getDocFechaRecepcionHasta())
+			|| !StringUtils.emtpyString(getDocDiasGestion()));
+		return filtroSolicitudInformado;
+	}
+
+	/**
+	 * Comprueba si está informado el filtro de liquidacion
+	 */
+	public Boolean filtroLiquidacionInformado() {
+		Boolean filtroLiquidacionInformado = Boolean.valueOf(
+			!StringUtils.emtpyString(getLiqEstados())
+			|| !StringUtils.emtpyString(getLiqFechaSolicitudDesde())
+			|| !StringUtils.emtpyString(getLiqFechaSolicitudHasta())
+			|| !StringUtils.emtpyString(getLiqFechaRecepcionDesde())
+			|| !StringUtils.emtpyString(getLiqFechaRecepcionHasta())
+			|| !StringUtils.emtpyString(getLiqFechaConfirmacionDesde())
+			|| !StringUtils.emtpyString(getLiqFechaConfirmacionHasta())
+			|| !StringUtils.emtpyString(getLiqFechaCierreDesde())
+			|| !StringUtils.emtpyString(getLiqFechaCierreHasta())
+			|| !StringUtils.emtpyString(getLiqTotalDesde())
+			|| !StringUtils.emtpyString(getLiqTotalHasta())
+			|| !StringUtils.emtpyString(getLiqDiasGestion()));
+		return filtroLiquidacionInformado;
+	}
+
+	/**
+	 * Comprueba si está informado el filtro de burofaxes
+	 */
+	public Boolean filtroBurofaxInformado() {
+		Boolean filtroBurofaxInformado = Boolean.valueOf(
+			!StringUtils.emtpyString(getBurNotificado())
+			|| !StringUtils.emtpyString(getBurResultadoEnvio())
+			|| !StringUtils.emtpyString(getBurFechaSolicitudDesde())
+			|| !StringUtils.emtpyString(getBurFechaSolicitudHasta())
+			|| !StringUtils.emtpyString(getBurFechaAcuseDesde())
+			|| !StringUtils.emtpyString(getBurFechaAcuseHasta())
+			|| !StringUtils.emtpyString(getBurFechaEnvioDesde())
+			|| !StringUtils.emtpyString(getBurFechaEnvioHasta()));
+		return filtroBurofaxInformado;
+	}
+
+	/*
+	 * GETTERS & SETTERS
+	 */
 
 	public String getProCodigo() {
 		return proCodigo;
@@ -462,5 +560,34 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	public void setTipoBusqueda(String tipoBusqueda) {
 		this.tipoBusqueda = tipoBusqueda;
 	}
-
+	public String getProTipoGestor() {
+		return proTipoGestor;
+	}
+	public void setProTipoGestor(String proTipoGestor) {
+		this.proTipoGestor = proTipoGestor;
+	}
+	public String getProDespacho() {
+		return proDespacho;
+	}
+	public void setProDespacho(String proDespacho) {
+		this.proDespacho = proDespacho;
+	}
+	public String getProGestor() {
+		return proGestor;
+	}
+	public void setProGestor(String proGestor) {
+		this.proGestor = proGestor;
+	}
+	public String getProJerarquiaContable() {
+		return proJerarquiaContable;
+	}
+	public void setProJerarquiaContable(String proJerarquiaContable) {
+		this.proJerarquiaContable = proJerarquiaContable;
+	}
+	public String getProCentroContable() {
+		return proCentroContable;
+	}
+	public void setProCentroContable(String proCentroContable) {
+		this.proCentroContable = proCentroContable;
+	}
 }

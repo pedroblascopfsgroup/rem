@@ -11,7 +11,7 @@ var diccTipoDocumento = <app:dict value="${tipoDocumento}" />;
 
 var comboTipoDocumento = app.creaDblSelect(
 	diccTipoDocumento,
-	'<s:message code="asd" text="** Tipo de documento" />',
+	'<s:message code="plugin.precontencioso.tab.documento.tipo.documento" text="** Tipo de documento" />',
 	{
 		id: 'fieldTipoDocumento',
 		height: 150,
@@ -25,7 +25,7 @@ var diccEstadoDocumento = <app:dict value="${estadoDocumento}" />;
 
 var comboEstadoDocumento = app.creaDblSelect(
 	diccEstadoDocumento,
-	'<s:message code="asd" text="** Estado" />',
+	'<s:message code="plugin.precontencioso.tab.documento.estado" text="** Estado" />',
 	{
 		id: 'fieldEstadoDocumento',
 		height: 100,
@@ -39,7 +39,7 @@ var diccResultadoSolicitud = <app:dict value="${resultadoSolicitud}" />;
 
 var comboRespuestaSolicitud = app.creaDblSelect(
 	diccResultadoSolicitud,
-	'<s:message code="asd" text="** Respuesta ultima solicitud" />',
+	'<s:message code="plugin.precontencioso.tab.documento.respuesta.solicitud" text="** Respuesta ultima solicitud" />',
 	{
 		id: 'fieldRespuestaSolicitud',
 		height: 60,
@@ -53,7 +53,7 @@ var comboRespuestaSolicitud = app.creaDblSelect(
 
 var dateFieldSolicitudDocDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldSolicitudDocDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Solicitud" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.solicitud" text="** F. Solicitud" />'
 });
 
 var dateFieldSolicitudDocHasta = new Ext.ux.form.XDateField({
@@ -81,7 +81,7 @@ var panelFechaSolicitudDoc = new Ext.Panel({
 
 var dateFieldResultadoDocDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldResultadoDocDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Resultado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.resultado" text="** F. Resultado" />'
 });
 
 var dateFieldResultadoDocHasta = new Ext.ux.form.XDateField({
@@ -109,7 +109,7 @@ var panelFechaResultadoDoc = new Ext.Panel({
 
 var dateFieldEnvioDocDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnvioDocDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Envio" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.envio" text="** F. Envio" />'
 });
 
 var dateFieldEnvioDocHasta = new Ext.ux.form.XDateField({
@@ -137,7 +137,7 @@ var panelFechaEnvioDoc = new Ext.Panel({
 
 var dateFieldRecepcionDocDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldRecepcionDocDesde',
-	fieldLabel: '<s:message code="asd" text="** F. Recepción" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.documento.fecha.recepcion" text="** F. Recepción" />'
 });
 
 var dateFieldRecepcionDocHasta = new Ext.ux.form.XDateField({
@@ -164,18 +164,18 @@ var panelFechaRecepcionDoc = new Ext.Panel({
 <%-- Adjunto --%>
 
 <pfsforms:ddCombo name="comboAdjuntoDoc" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.documento.adjunto" 
 label="** Adjunto" value="" dd="${ddSiNo}" />
 
 <%-- Solicitud previa --%>
 
 <pfsforms:ddCombo name="comboSolicitudPreviaDoc" propertyCodigo="codigo" propertyDescripcion="descripcion"
-labelKey="asd" 
+labelKey="plugin.precontencioso.tab.documento.solicitud.previa" 
 label="** Solicitud previa" value="" dd="${ddSiNo}" />
 
 <%-- Días en gestión --%>
 
-<pfsforms:numberfield name="fieldDiasGestionDoc" labelKey="asd" label="** Días en gestión" 
+<pfsforms:numberfield name="fieldDiasGestionDoc" labelKey="plugin.precontencioso.tab.documento.gestion.dias" label="** Días en gestión" 
 	value=""
 	obligatory="false"
 	allowDecimals="false" />
@@ -185,7 +185,7 @@ label="** Solicitud previa" value="" dd="${ddSiNo}" />
 var filtrosTabDocumentosActive = false;
 
 var filtrosTabDocumentos = new Ext.Panel({
-	title: '<s:message code="asd" text="** Documentos" />',
+	title: '<s:message code="plugin.precontencioso.tab.documento.titulo" text="** Documentos" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',

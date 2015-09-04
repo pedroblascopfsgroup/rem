@@ -29,8 +29,10 @@
 			<json:property name="aceptadoLetrado" value="${p.aceptadoLetrado}" />
 			<json:property name="todosDocumentos" value="${p.todosDocumentos}" />
 			<json:property name="todasLiquidaciones" value="${p.todasLiquidaciones}" />
+			<json:property name="todosBurofaxes" value="${p.todosBurofaxes}" />
 
 			<%-- Documentos --%>
+			<json:property name="docEstado" value="${p.documento.estado}" />
 			<json:property name="docUltimaRespuesta" value="${p.documento.ultimaRespuesta}" />
 			<json:property name="docUltimoActor" value="${p.documento.ultimoActor}" />
 			<json:property name="docFechaResultado">
@@ -45,6 +47,7 @@
 			<json:property name="docAdjunto" value="${p.documento.adjunto}" />
 
 			<%-- Liquidaciones --%>
+			<json:property name="liqEstado" value="${p.liquidacion.estado}" />
 			<json:property name="liqContrato" value="${p.liquidacion.contrato}" />
 			<json:property name="liqFechaRecepcion">
 				<fwk:date value="${p.liquidacion.fechaRecepcion}" />
@@ -58,9 +61,9 @@
 			<json:property name="liqTotal" value="${p.liquidacion.total}" />
 
 			<%-- Burofax --%>
+			<json:property name="burEstado" value="${p.burofax.estado}" />
 			<json:property name="burNif" value="${p.burofax.nif}" />
-			<json:property name="burNombre" value="${p.burofax.nombre}" />
-			<json:property name="burApellido" value="${p.burofax.apellido}" />
+			<json:property name="burApellidoNombre" value="${p.burofax.apellidoNombre}" />
 			<json:property name="burFechaSolicitud">
 				<fwk:date value="${p.burofax.fechaSolicitud}" />
 			</json:property>

@@ -8,6 +8,7 @@ public class DocumentoGridDTO extends WebDto {
 
 	private static final long serialVersionUID = 5010922485498368922L;
 
+	private String estado;
 	private String ultimaRespuesta;
 	private String ultimoActor;
 	private Date fechaResultado;
@@ -15,6 +16,12 @@ public class DocumentoGridDTO extends WebDto {
 	private Date fechaRecepcion;
 	private Boolean adjunto;
 
+	public String getEstado() {
+		return estado;
+	}
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
 	public String getUltimaRespuesta() {
 		return ultimaRespuesta;
 	}

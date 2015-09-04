@@ -10,6 +10,7 @@ new Ext.Button({
 	menu: {
 		items: [{
 			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparaci�n" />',
+			icon:'/pfs/css/book_next.png',
 			handler: function() {
 				var estado = data.estadoPrecontencioso;
 				var estadoPreparacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.PREPARACION" />';

@@ -10,26 +10,26 @@
 
 var fieldNif = new Ext.form.TextField({
 	name: 'nif',
-	fieldLabel: '<s:message code="asd" text="** Nro Documento" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.personacontratos.numdocumento" text="** Nro Documento" />'
 });
 
 <%-- Nombre y apellidosÁrea de contratos --%>
 
 var fieldNombre = new Ext.form.TextField({
 	name: 'nombre',
-	fieldLabel: '<s:message code="asd" text="** Nombre" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.personacontratos.nombre" text="** Nombre" />'
 });
 
 var fieldApellidos = new Ext.form.TextField({
 	name: 'apellidos',
-	fieldLabel: '<s:message code="asd" text="** Apellidos" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.personacontratos.apellidos" text="** Apellidos" />'
 });
 
 <%-- Código de contrato. --%>
 
 var fieldCodigoContrato = new Ext.form.TextField({
 	name: 'codigoContrato',
-	fieldLabel: '<s:message code="asd" text="** Codigo Contrato" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.personacontratos.codigo" text="** Codigo Contrato" />'
 });
 
 <%-- Tipo de producto. --%>
@@ -38,7 +38,7 @@ var diccTiposProducto = <app:dict value="${tipoProducto}" />;
 
 var comboTiposProducto = app.creaDblSelect(
 	diccTiposProducto,
-	'<s:message code="asd" text="**Tipo de Producto" />',
+	'<s:message code="plugin.precontencioso.tab.personacontratos.tipo.producto" text="**Tipo de Producto" />',
 	{
 		id: 'fieldTiposProducto',
 		height: 180,
@@ -55,7 +55,7 @@ var liquidacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedient
 var burofax = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX" />';
 	
 var filtrosTabPersonaContrato = new Ext.Panel({
-	title: '<s:message code="asd" text="** Persona y contratos" />',
+	title: '<s:message code="plugin.precontencioso.tab.personacontratos.titulo" text="** Persona y contratos" />',
 	autoHeight: true,
 	bodyStyle: 'padding: 10px',
 	layout: 'table',

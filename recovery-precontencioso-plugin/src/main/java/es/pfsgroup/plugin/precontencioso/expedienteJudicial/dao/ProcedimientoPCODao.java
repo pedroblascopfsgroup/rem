@@ -1,46 +1,51 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao;
 
+import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
-import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 public interface ProcedimientoPCODao extends AbstractDao<ProcedimientoPCO, Long> {
 
 	ProcedimientoPCO getProcedimientoPcoPorIdProcedimiento(Long idProcedimiento);
 
-	/* BUSQUEDAS COMPLEJAS -> busquedas por filtro que debido a la complejidad se deben de realizar desde ProcedimientoPCO */
+	/**
+	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
+	 * @param filtro
+	 * @return numero de resultados
+	 */
+	Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
 	 * Busqueda de procedimientosPco que cumplan el filtro enviado por parametro
 	 * @param filtro
 	 * @return Listado de ProcedimientosPCO que cumplen dicho filtro.
 	 */
-	List<ProcedimientoPCO> getProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<HashMap<String, Object>> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
-	 * Busqueda de SolicitudDocumentoPCO que cumplan el filtro enviado por parametro
+	 * Busqueda de documentos que cumplan el filtro enviado por parametro
 	 * @param filtro
-	 * @return Listado de SolicitudDocumentoPCO que cumplen dicho filtro.
+	 * @return Listado de documentos que cumplen dicho filtro.
 	 */
-	List<SolicitudDocumentoPCO> getSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<HashMap<String, Object>> busquedaDocumentosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
-	 * Busqueda de LiquidacionPCO que cumplan el filtro enviado por parametro
+	 * Busqueda de liquidaciones que cumplan el filtro enviado por parametro
 	 * @param filtro
-	 * @return Listado de LiquidacionPCO que cumplen dicho filtro.
+	 * @return Listado de Liquidaciones que cumplen dicho filtro.
 	 */
-	List<LiquidacionPCO> getLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<HashMap<String, Object>> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
 
 	/**
-	 * Busqueda de EnvioBurofaxPCO que cumplan el filtro enviado por parametro
+	 * Busqueda de burofaxes que cumplan el filtro enviado por parametro
 	 * @param filtro
-	 * @return Listado de EnvioBurofaxPCO que cumplen dicho filtro.
+	 * @return Listado de burofaxes que cumplen dicho filtro.
 	 */
-	List<EnvioBurofaxPCO> getEnviosBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+	List<HashMap<String, Object>> busquedaBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
+
 }
 

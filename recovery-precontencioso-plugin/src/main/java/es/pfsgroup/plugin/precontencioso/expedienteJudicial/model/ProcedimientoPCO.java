@@ -22,6 +22,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Where;
 
@@ -30,7 +31,9 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 @Entity
@@ -108,6 +111,101 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
+
+	/*
+	 * Formulas para el buscador de precontencioso
+	 */
+
+	@Formula(value = 
+			" (SELECT dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion" +
+			" FROM   pco_prc_hep_histor_est_prep " +
+			"       INNER JOIN pco_prc_procedimientos " +
+			"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			"       INNER JOIN dd_pco_prc_estado_preparacion " +
+			"               ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+			" WHERE  pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +
+			"       AND pco_prc_procedimientos.borrado = 0 " +
+			"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
+			"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
+			"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
+	private String estadoActual;
+
+	@Formula(value = 
+			" (SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +
+			" FROM   pco_prc_hep_histor_est_prep " +
+			"       INNER JOIN pco_prc_procedimientos " +
+			"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			" WHERE  pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +
+			"       AND pco_prc_procedimientos.borrado = 0 " +
+			"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
+			"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
+	private Date fechaEstadoActual;
+
+	@Formula(value = 
+			" (SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +
+			" FROM   pco_prc_hep_histor_est_prep " +
+			"       INNER JOIN pco_prc_procedimientos " +
+			"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			"       INNER JOIN dd_pco_prc_estado_preparacion " +
+			"               ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+			" WHERE pco_prc_procedimientos.borrado = 0 " +
+			"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
+			"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
+			"       AND dd_pco_prc_estado_preparacion.DD_PCO_PEP_CODIGO = '" + DDEstadoPreparacionPCO.PREPARACION + "'"+
+			"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID) ")
+	private Date fechaInicioPreparacion;
+
+	@Formula(value = 
+			"(SELECT SUM(pco_liq_liquidaciones.pco_liq_total) " +
+			" FROM   pco_prc_procedimientos " +
+			"       INNER JOIN pco_liq_liquidaciones ON pco_prc_procedimientos.pco_prc_id = pco_liq_liquidaciones.pco_prc_id " +
+			" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID) ")
+	private Float totalLiquidacion;
+
+	@Formula(value = 
+			" (SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +
+			" FROM   pco_prc_hep_histor_est_prep " +
+			"       INNER JOIN pco_prc_procedimientos " +
+			"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			"       INNER JOIN dd_pco_prc_estado_preparacion " +
+			"               ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+			" WHERE pco_prc_procedimientos.borrado = 0 " +
+			"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
+			"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
+			"       AND dd_pco_prc_estado_preparacion.DD_PCO_PEP_CODIGO = '" + DDEstadoPreparacionPCO.ENVIADO + "'"+
+			"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID) ")
+	private Date fechaEnvioLetrado;
+
+	@Formula(value = 
+		" (SELECT CASE WHEN Count(1) > 0 THEN 0 ELSE 1 END " +
+		" FROM   pco_prc_procedimientos " +
+		"        INNER JOIN pco_doc_documentos " +
+		"                ON pco_prc_procedimientos.pco_prc_id = pco_doc_documentos.pco_prc_id " +
+		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
+		"        AND pco_doc_documentos.pco_doc_pdd_adjunto = 0) ")
+	private Boolean todosDocumentos;
+
+	@Formula(value = 
+		" (SELECT CASE WHEN Count(1) > 0 THEN 0 ELSE 1 END " +
+		" FROM   pco_liq_liquidaciones " +
+		"        INNER JOIN pco_prc_procedimientos " +
+		"                ON pco_prc_procedimientos.pco_prc_id = pco_liq_liquidaciones.pco_prc_id " +
+		"        INNER JOIN dd_pco_liq_estado " +
+		"                ON dd_pco_liq_estado.dd_pco_liq_id = pco_liq_liquidaciones.dd_pco_liq_id " +
+		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
+		"        AND dd_pco_liq_estado.dd_pco_liq_codigo != '" + DDEstadoLiquidacionPCO.CONFIRMADA + "' )")
+	private Boolean todasLiquidaciones;
+
+	@Formula(value = 
+		" (SELECT CASE WHEN Count(1) > 0 THEN 0 ELSE 1 END " +
+		" FROM   pco_prc_procedimientos " +
+		"        INNER JOIN pco_bur_burofax " +
+		"                ON pco_prc_procedimientos.pco_prc_id = pco_bur_burofax.pco_prc_id " +
+		"        INNER JOIN dd_pco_bfe_estado " +
+		"                ON dd_pco_bfe_estado.dd_pco_bfe_id = pco_bur_burofax.dd_pco_bfe_id " +
+		" WHERE  dd_pco_bfe_estado.dd_pco_bfe_codigo != '" + DDEstadoBurofaxPCO.NOTIFICADO + "' " +
+		"        AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID )")
+	private Boolean todosBurofaxes;
 
 	/**
 	 * Devuelve el <DDEstadoPreparacionPCO> en el que se encuentra el procedimiento

@@ -11,6 +11,7 @@ public class LiquidacionDTO extends WebDto {
 	private Long id;
 	private Long idProcedimientoPCO;
 	private Long idContrato;
+	private String nroContrato;
 	private String producto;
 	private Date fechaSolicitud;
 	private Date fechaRecepcion;
@@ -27,6 +28,12 @@ public class LiquidacionDTO extends WebDto {
 	private Float interesesOrdinariosOriginal;
 	private Float totalOriginal;
 	private String sysGuid;
+	private Float comisiones;
+	private Float gastos;
+	private Float impuestos;
+	private Float comisionesOriginal;
+	private Float gastosOriginal;
+	private Float impuestosOriginal;
 
 	// Estado
 	private String estadoCod;
@@ -39,11 +46,17 @@ public class LiquidacionDTO extends WebDto {
 	// Apoderado usuario/despacho
 	private Long apoderadoUsuarioId;
 	private Long apoderadoDespachoId;
+	
+	//Solicitante
+	private String solicitante;
+	
+	
 
 	/*
 	 * GETTERS & SETTERS
 	 */
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -194,4 +207,56 @@ public class LiquidacionDTO extends WebDto {
 	public void setApoderadoDespachoId(Long apoderadoDespachoId) {
 		this.apoderadoDespachoId = apoderadoDespachoId;
 	}
+	public Float getComisiones() {
+		return comisiones;
+	}
+	public void setComisiones(Float comisiones) {
+		this.comisiones = comisiones;
+	}
+	public Float getGastos() {
+		return gastos;
+	}
+	public void setGastos(Float gastos) {
+		this.gastos = gastos;
+	}
+	public Float getImpuestos() {
+		return impuestos;
+	}
+	public void setImpuestos(Float impuestos) {
+		this.impuestos = impuestos;
+	}
+	public Float getComisionesOriginal() {
+		return comisionesOriginal;
+	}
+	public void setComisionesOriginal(Float comisionesOriginal) {
+		this.comisionesOriginal = comisionesOriginal;
+	}
+	public Float getGastosOriginal() {
+		return gastosOriginal;
+	}
+	public void setGastosOriginal(Float gastosOriginal) {
+		this.gastosOriginal = gastosOriginal;
+	}
+	public Float getImpuestosOriginal() {
+		return impuestosOriginal;
+	}
+	public void setImpuestosOriginal(Float impuestosOriginal) {
+		this.impuestosOriginal = impuestosOriginal;
+	}
+	
+	public String getNroContrato() {
+		return nroContrato;
+	}
+	public void setNroContrato(String nroContrato) {
+		this.nroContrato = nroContrato;
+	}
+	public String getSolicitante() {
+		return solicitante;
+	}
+	public void setSolicitante(String solicitante) {
+		this.solicitante = solicitante;
+	}
+	
+	
+	
 }

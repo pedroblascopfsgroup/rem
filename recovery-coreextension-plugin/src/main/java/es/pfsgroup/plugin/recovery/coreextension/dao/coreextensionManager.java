@@ -550,17 +550,20 @@ public class coreextensionManager implements coreextensionApi {
 				if (!Checks.esNulo(prc)) {
 					EXTAsunto asu = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", prc.getAsunto().getId()));
 					String eliminar;
-					propiedad = asu.getPropiedadAsunto().getCodigo();
-					if (DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(propiedad)) {
-						eliminar = "P409";
-					} else {
-						eliminar = "P401";
-					}
-					for (TipoProcedimiento tipo : list)
-						if (eliminar.equals(tipo.getCodigo())) {
-							list.remove(tipo);
-							break;
+					if(!Checks.esNulo(asu.getPropiedadAsunto())){
+						propiedad = asu.getPropiedadAsunto().getCodigo();
+						if (DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(propiedad)) {
+							eliminar = "P409";
+						} else {
+							eliminar = "P401";
 						}
+						for (TipoProcedimiento tipo : list){
+							if (eliminar.equals(tipo.getCodigo())) {
+								list.remove(tipo);
+								break;
+							}
+						}
+					}
 				}
 			}
 			return list;

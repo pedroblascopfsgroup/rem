@@ -66,6 +66,9 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	private String docAdjunto;
 	private String docSolicitudPrevia;
 	private String docDiasGestion;
+	private String docTipoGestor;
+	private String docDespacho;
+	private String docGestor;
 
 	// Liquidacion
 	private String liqEstados;
@@ -590,4 +593,23 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	public void setProCentroContable(String proCentroContable) {
 		this.proCentroContable = proCentroContable;
 	}
+	public String getDocTipoGestor() {
+		return docTipoGestor;
+	}
+	public void setDocTipoGestor(String docTipoGestor) {
+		this.docTipoGestor = docTipoGestor;
+	}
+	public String getDocDespacho() {
+		return docDespacho;
+	}
+	public void setDocDespacho(String docDespacho) {
+		this.docDespacho = docDespacho;
+	}
+	public String getDocGestor() {
+		return docGestor;
+	}
+	public void setDocGestor(String docGestor) {
+		this.docGestor = docGestor;
+	}
+	
 }

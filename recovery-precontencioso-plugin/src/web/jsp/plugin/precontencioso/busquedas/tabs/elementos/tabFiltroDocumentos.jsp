@@ -179,6 +179,138 @@ label="** Solicitud previa" value="" dd="${ddSiNo}" />
 	value="plugin.precontencioso.tab.documento.gestion.dias"
 	obligatory="false"
 	allowDecimals="false" />
+	
+<%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
+
+<pfsforms:ddCombo name="comboTiposGestorEleDoc" propertyCodigo="id" propertyDescripcion="descripcion"
+labelKey="ext.asuntos.busqueda.filtro.tipoGestor" label="**Tipo de gestor" value="" dd="${ddListadoGestores}" />
+
+comboTiposGestorEleDoc.on('select', function(){
+	comboDespachosEleDoc.reset();
+	optionsDespachoStoreDoc.webflow({'idTipoGestor': comboTiposGestorEleDoc.getValue(), 'incluirBorrados': true}); 
+	comboGestorEleDoc.reset();
+	comboDespachosEleDoc.setDisabled(false);
+});
+ 
+//store generico de combo diccionario
+var optionsDespachosRecordDoc = Ext.data.Record.create([
+	 {name:'cod'}
+	,{name:'descripcion'}
+]);
+
+var optionsDespachoStoreDoc = page.getStore({
+       flow: 'expedientejudicial/getListTipoDespachoData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoDespachos'
+    }, optionsDespachosRecordDoc)	       
+});
+
+//Campo Combo Despacho
+var comboDespachosEleDoc = new Ext.form.ComboBox({
+	store:optionsDespachoStoreDoc
+	,displayField:'descripcion'
+	,valueField:'cod'
+	,mode: 'remote'
+	,emptyText:'---'
+	,editable: false
+	,triggerAction: 'all'
+	,disabled:true
+	,resizable:true
+	,fieldLabel : '<s:message code="asuntos.busqueda.filtro.despacho" text="**Despacho"/>'
+	<app:test id="comboDespachosEleDoc" addComa="true"/>
+});
+
+comboDespachosEleDoc.on('select', function(){
+	comboGestorEleDoc.reset();
+	optionsGestoresStoreDoc.webflow({'idTipoDespacho': comboDespachosEleDoc.getValue(), 'incluirBorrados': true}); 
+	comboGestorEleDoc.setDisabled(false);
+});
+
+var GestorDoc = Ext.data.Record.create([
+	 {name:'id'}
+	,{name:'username'}
+]);
+
+var optionsGestoresStoreDoc =  page.getStore({
+       flow: 'expedientejudicial/getListUsuariosData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoUsuarios'
+    }, GestorDoc)	       
+});
+
+//Campo Gestores, double select 
+var creaDblSelectMioDoc = function(label, config){
+
+	var store = config.store ;
+	var cfg = {
+	   	fieldLabel: label || ''
+	   	,displayField:'username'
+	   	,valueField: 'id'
+	   	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
+	   	,dataFields : ['id', 'username']
+	   	,fromStore:store
+	   	,toData : []
+	       ,msHeight : config.height || 60
+		,labelStyle:config.labelStyle || ''
+	       ,msWidth : config.width || 140
+	       ,drawTopIcon:false
+	       ,drawBotIcon:false
+	       ,drawUpIcon:false
+		,drawDownIcon:false
+		,disabled:true
+		,toSortField : 'codigo'
+	    };
+	if(config.id) {
+		cfg.id = config.id;
+	}
+	
+	var itemSelector = new Ext.ux.ItemSelector(cfg);
+	if (config.funcionReset){
+		itemSelector.funcionReset = config.funcionReset;
+	}
+	
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
+	itemSelector.setValue =  function(val) {
+	       if(!val) {
+	           return;
+	       }
+	       val = val instanceof Array ? val : val.split(',');
+	       var rec, i, id;
+	       for(i = 0; i < val.length; i++) {
+	           id = val[i];
+	           if(this.toStore.find('id',id)>=0) {
+	               continue;
+	           }
+	           rec = this.fromStore.find('id',id);
+	           if(rec>=0) {
+	           	rec = this.fromStore.getAt(rec);
+	               this.toStore.add(rec);
+	               this.fromStore.remove(rec);
+	           }
+	       }
+	   };
+	
+	itemSelector.getStore =  function() {
+		return this.toStore;
+	};
+	
+	return itemSelector;
+};
+
+var comboGestorEleDoc = creaDblSelectMioDoc('<s:message code="asuntos.busqueda.filtro.gestor" text="**Gestor" />',{store:optionsGestoresStoreDoc, funcionReset:recargarComboGestoresDoc});
+
+var recargarComboGestoresDoc = function(){
+	optionsGestoresStoreDoc.webflow({id:0});
+}
+
+var validarEmptyForm = function(){
+	return (comboDespachosEleDoc.getValue() != '' || comboGestorEleDoc.getValue() != '' || comboTiposGestorEleDoc.getValue() != '');
+}
+		
+var validaMinMax = function(){
+	return true;
+}
+
 
 <%-- Paneles --%>
 
@@ -193,7 +325,7 @@ var filtrosTabDocumentos = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, panelFechaSolicitudDoc, panelFechaResultadoDoc, panelFechaEnvioDoc, panelFechaRecepcionDoc, comboRespuestaSolicitud]
+		items: [comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, panelFechaSolicitudDoc, panelFechaResultadoDoc, panelFechaEnvioDoc, panelFechaRecepcionDoc, comboRespuestaSolicitud, comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc]
 	}, {
 		layout: 'form',
 		items: [comboTipoDocumento, comboEstadoDocumento]
@@ -223,6 +355,9 @@ var getParametrosFiltroDocumentos = function() {
 	out.docAdjunto = comboAdjuntoDocEle.getValue();
 	out.docSolicitudPrevia = comboSolicitudPreviaDocEle.getValue();
 	out.docDiasGestion = fieldDiasGestionDocEle.getValue();
+	out.docTipoGestor = comboTiposGestorEleDoc.getValue();
+	out.docDespacho = comboDespachosEleDoc.getValue();
+	out.docGestor = comboGestorEleDoc.getValue();
 
 	//out.ultimoActor = ;
 

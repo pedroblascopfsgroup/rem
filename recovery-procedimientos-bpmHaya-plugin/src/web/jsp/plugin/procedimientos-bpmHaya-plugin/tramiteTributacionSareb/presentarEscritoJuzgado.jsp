@@ -49,20 +49,9 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 var bottomBar = [];
 
 
-var cb_resultado = items[2 + muestraBotonGuardar];
-var cb_fechaFin = items[3 + muestraBotonGuardar];
+var cb_modelo = items[1 + muestraBotonGuardar];
+cb_modelo.setDisabled(true);
 
-cb_resultado.on('select', function(){
-	//Borramos todos los combos dependientes ante cualquier cambio
-	cb_fechaFin.setValue('');	
-	
-	if(cb_resultado.getValue() == '02') {//desfavorable
-		cb_fechaFin.setDisabled(false);
-	}
-	else if(cb_resultado.getValue() == '01') {//favorable
-		cb_fechaFin.setDisabled(true);
-	}
-});
 
 
 //mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion

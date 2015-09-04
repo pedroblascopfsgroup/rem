@@ -31,9 +31,9 @@ public class ProcedimientoPcoGridDTOAssembler {
 
 			procedimientoGridDto.setCodigo(ObjectUtils.toString(procedimiento.get("codigo")));
 			procedimientoGridDto.setNombreExpediente(ObjectUtils.toString(procedimiento.get("nombreExpJudicial")));
-			procedimientoGridDto.setEstadoExpediente(ObjectUtils.toString(procedimiento.get("estadoExpediente")));
+			procedimientoGridDto.setEstadoExpediente(ObjectUtils.toString(procedimiento.get("estadoActualProcedimiento")));
 			procedimientoGridDto.setDiasEnGestion((Integer) procedimiento.get("diasEnGestion"));
-			procedimientoGridDto.setFechaEstado((Date) procedimiento.get("fechaEstadoExpediente"));
+			procedimientoGridDto.setFechaEstado((Date) procedimiento.get("fechaEstadoProcedimiento"));
 			procedimientoGridDto.setTipoProcPropuesto(ObjectUtils.toString(procedimiento.get("tipoProcPropuesto")));
 			procedimientoGridDto.setTipoPreparacion(ObjectUtils.toString(procedimiento.get("tipoPreparacion")));
 			procedimientoGridDto.setFechaInicioPreparacion((Date) procedimiento.get("fechaInicioPreparacion"));
@@ -45,6 +45,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 			procedimientoGridDto.setAceptadoLetrado(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("aceptadoLetrado"))));
 			procedimientoGridDto.setTodosDocumentos(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todosDocumentos"))));
 			procedimientoGridDto.setTodasLiquidaciones(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todasLiquidaciones"))));
+			procedimientoGridDto.setTodosBurofaxes(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todosBurofaxes"))));
 
 			out.add(procedimientoGridDto);
 		}
@@ -141,8 +142,8 @@ public class ProcedimientoPcoGridDTOAssembler {
 
 		prcPcoGridDto.setCodigo(ObjectUtils.toString(row.get("codigo")));
 		prcPcoGridDto.setNombreExpediente(ObjectUtils.toString(row.get("nombreExpJudicial")));
-		prcPcoGridDto.setEstadoExpediente(ObjectUtils.toString(row.get("estadoExpediente")));
-		prcPcoGridDto.setFechaEstado((Date) row.get("fechaEstadoExpediente"));
+		prcPcoGridDto.setEstadoExpediente(ObjectUtils.toString(row.get("estadoActualProcedimiento")));
+		prcPcoGridDto.setFechaEstado((Date) row.get("fechaEstadoProcedimiento"));
 		prcPcoGridDto.setTipoProcPropuesto(ObjectUtils.toString(row.get("tipoProcPropuesto")));
 		prcPcoGridDto.setTipoPreparacion(ObjectUtils.toString(row.get("tipoPreparacion")));
 

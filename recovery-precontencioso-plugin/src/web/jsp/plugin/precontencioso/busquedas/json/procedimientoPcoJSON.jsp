@@ -29,6 +29,7 @@
 			<json:property name="aceptadoLetrado" value="${p.aceptadoLetrado}" />
 			<json:property name="todosDocumentos" value="${p.todosDocumentos}" />
 			<json:property name="todasLiquidaciones" value="${p.todasLiquidaciones}" />
+			<json:property name="todosBurofaxes" value="${p.todosBurofaxes}" />
 
 			<%-- Documentos --%>
 			<json:property name="docEstado" value="${p.documento.estado}" />

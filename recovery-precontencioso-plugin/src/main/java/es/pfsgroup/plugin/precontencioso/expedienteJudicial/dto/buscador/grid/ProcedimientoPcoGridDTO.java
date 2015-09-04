@@ -25,6 +25,7 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	private Boolean aceptadoLetrado;
 	private Boolean todosDocumentos;
 	private Boolean todasLiquidaciones;
+	private Boolean todosBurofaxes;
 	private DocumentoGridDTO documento;
 	private LiquidacionGridDTO liquidacion;
 	private BurofaxGridDTO burofax;
@@ -154,5 +155,11 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	}
 	public void setPrcId(String prcId) {
 		this.prcId = prcId;
+	}
+	public Boolean getTodosBurofaxes() {
+		return todosBurofaxes;
+	}
+	public void setTodosBurofaxes(Boolean todosBurofaxes) {
+		this.todosBurofaxes = todosBurofaxes;
 	}
 }

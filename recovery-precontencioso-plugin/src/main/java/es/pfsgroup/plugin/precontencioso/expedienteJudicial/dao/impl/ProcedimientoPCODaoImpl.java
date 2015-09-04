@@ -58,8 +58,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		//select.add(Projections.property("procedimientoPco").as("procedimientoPco"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
-		select.add(Projections.property("procedimientoPco.estadoActualExpediente").as("estadoExpediente"));
-		select.add(Projections.property("procedimientoPco.fechaEstadoActualExpediente").as("fechaEstadoExpediente"));
+		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
+		select.add(Projections.property("procedimientoPco.fechaEstadoActual").as("fechaEstadoProcedimiento"));
 		//select.add(Projections.property("procedimientoPco.diasEnGestion").as("diasEnGestion"));
 		select.add(Projections.property("tipoProcPropuesto.descripcion").as("tipoProcPropuesto"));
 		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
@@ -153,8 +153,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	private void addDefaultProcedimientoProjection(ProjectionList select) {
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
-		// Estado del expediente
-		// Fecha estado (Fecha en que el expediente cambió al estado actual)
+		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
+		select.add(Projections.property("procedimientoPco.fechaEstadoActual").as("fechaEstadoProcedimiento"));
 		select.add(Projections.property("tipoProcPropuesto.descripcion").as("tipoProcPropuesto"));
 		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
 	}

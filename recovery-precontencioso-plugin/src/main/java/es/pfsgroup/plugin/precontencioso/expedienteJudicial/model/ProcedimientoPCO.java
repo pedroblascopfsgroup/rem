@@ -128,7 +128,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 			"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
 			"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
 			"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
-	private String estadoActualExpediente;
+	private String estadoActual;
 
 	@Formula(value = 
 			" (SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +
@@ -139,7 +139,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 			"       AND pco_prc_procedimientos.borrado = 0 " +
 			"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
 			"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
-	private Date fechaEstadoActualExpediente;
+	private Date fechaEstadoActual;
 
 	@Formula(value = 
 			" (SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +

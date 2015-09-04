@@ -46,10 +46,13 @@ import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
+import es.capgemini.pfs.termino.dao.TerminoAcuerdoDao;
+import es.capgemini.pfs.termino.dao.TerminoOperacionesDao;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
+import es.capgemini.pfs.termino.model.TerminoOperaciones;
 import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -90,6 +93,12 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 
 	@Autowired
 	private AcuerdoDao acuerdoDao;
+	
+	@Autowired
+	private TerminoAcuerdoDao terminoAcuerdoDao;
+	
+	@Autowired
+	private TerminoOperacionesDao terminoOperacionesDao;	
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -390,7 +399,10 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @BusinessOperation(BO_ACUERDO_MGR_SAVE_TERMINO_ACUERDO)
     @Transactional(readOnly = false)
     public TerminoAcuerdo saveTerminoAcuerdo(TerminoAcuerdo ta) {
-    	return genericDao.save(TerminoAcuerdo.class, ta);
+    	//return genericDao.save(TerminoAcuerdo.class, ta);
+    	terminoAcuerdoDao.saveOrUpdate(ta);
+    	
+    	return ta;
 
     }	
     
@@ -483,6 +495,17 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     public void deleteTerminoAcuerdo(TerminoAcuerdo ta) {
     	genericDao.deleteById(TerminoAcuerdo.class, ta.getId());
     }	
+    
+	/**
+     * @param to TerminoOperaciones
+     * @return 
+     */
+    @BusinessOperation(BO_ACUERDO_MGR_DELETE_TERMINO_OPERACIONES)
+    @Transactional(readOnly = false)
+    public void deleteTerminoOperaciones(TerminoOperaciones to) {
+    	//genericDao.deleteById(TerminoAcuerdo.class, ta.getId());
+    	terminoOperacionesDao.delete(to);
+    }	    
     
 	/**
      * @param tc TerminoContrato

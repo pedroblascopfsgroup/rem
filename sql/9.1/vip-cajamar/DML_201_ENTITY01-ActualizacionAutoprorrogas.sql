@@ -31,6 +31,7 @@ DECLARE
     TYPE T_ARRAY_TFA IS TABLE OF T_TIPO_VALOR;
     V_TIPO_VALOR T_ARRAY_TFA := T_ARRAY_TFA(
 
+   -- HRE-BCC --
 T_TIPO_VALOR('HC103','HC103_SolicitarProvision','1','3')
 ,T_TIPO_VALOR('HC103','HC103_RevisarSolicitud','1','3')
 ,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudFondos','1','3')

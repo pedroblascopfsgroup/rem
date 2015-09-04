@@ -1,4 +1,3 @@
-
 --/*
 --##########################################
 --## AUTOR=Gonzalo E
@@ -65,7 +64,7 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H001','H001_RegistrarComparecencia','CJ-814','TGCONPR')
 ,T_TIPO_VALOR('H001','H001_RegistrarResolucion','CJ-814','TGCONPR')
 ,T_TIPO_VALOR('H001','H001_ResolucionFirme','CJ-814','TGCONPR')
-,T_TIPO_VALOR('H001','H001_ResolucionFirme','CJ-814','TGCONPR')
+,T_TIPO_VALOR('H001','H001_RegistrarResolucion','CJ-814','TGCONPR')
 ,T_TIPO_VALOR('H001','H001_BPMTramiteSubasta','CJ-814','TGCONPR')
 ,T_TIPO_VALOR('H001','H001_BPMTramiteNotificacion','CJ-814','TGCONPR')
 ,T_TIPO_VALOR('H001','H001_AutoDespachandoDecision','CJ-819','TGCONPR')
@@ -370,6 +369,7 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('H036','H036_SuspenderSubasta','TGCONGE','SUCONGEN2')
 ,T_TIPO_VALOR('H036','H036_ValidarPropuesta','TSUCONGE','SUCONGEN2')
 ,T_TIPO_VALOR('H004','H004_ValidarInformeDeSubasta','TSUCONGE','SUCONGEN2')
+
 ); 
     V_TMP_TIPO T_TIPO_VALOR;
     

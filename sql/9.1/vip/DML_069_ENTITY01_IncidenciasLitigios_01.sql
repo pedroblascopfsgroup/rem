@@ -123,6 +123,13 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''fechaParalizacion'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-602');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-614');
+	V_TAREA:='H054_ConfirmarComEmpresario';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''<div align="justify" style="margin-bottom: 30px;"><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Deberá comprobar si, para los bienes sujetos a IVA, en la comunicación de deuda enviada en la preparación del expediente judicial se incluyó las menciones fiscales pertinentes a la referencia a la tributación. En caso de no haberse incluido, deberá remitir burofax a la parte demandada con certificación en el que manifieste lo siguiente:</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">"La entidad de acuerdo con lo dispuesto &nbsp;en el articulo 24 quarter del Real Decreto 1624/1992, por el que se aprueba el Reglamento del Impuesto del Valor Añadido, le comunica que la adquisición del inmueble que se llegara a realizar en ejecución de la presente garantía, será efectuada en el ámbito empresarial del ejecutante".</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">En el campo Fecha indicará la fecha en la que realiza la comprobación / envío de los burofaxes.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</span></font></p></div>''' ||
+	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-614');
+	
 	
 	COMMIT;
  

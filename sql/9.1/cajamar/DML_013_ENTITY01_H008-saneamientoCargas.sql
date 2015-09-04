@@ -92,9 +92,9 @@ DECLARE
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RegInsCancelacionCargasReg','damePlazo(valores[''H008_RegistrarPresentacionInscripcion''][''fechaPresentacion''])+30*24*60*60*1000L','0','0','DD'),
 		--EQ T_TIPO_PLAZAS(null,null,'H008_PropuestaCancelacionCargas','damePlazo(valores[''H008_RevisarEstadoCargas''][''fechaCargas''])+10*24*60*60*1000L','0','0','DD'),
 		--DEL T_TIPO_PLAZAS(null,null,'H008_BPMTramiteElevarPropSarebAdjudicados','300*24*60*60*1000L','0','0','DD'),
-		T_TIPO_PLAZAS(null,null,'H008_ObtenerAprobPropuesta','5*24*60*60*1000L','0','0','DD')
+		T_TIPO_PLAZAS(null,null,'H008_ObtenerAprobPropuesta','5*24*60*60*1000L','0','0','DD'),
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RevisarPropuestaCancelacionCargas','damePlazo(valores[''H008_PropuestaCancelacionCargas''][''fechaPropuesta''])+5*24*60*60*1000L','0','0','DD'),
-		T_TIPO_PLAZAS(null,null,'H008_LiquidarCargas','damePlazo(valores[''H008_PropuestaCancelacionCargas''][''fechaPropuesta''])+10*24*60*60*1000L','0','0','DD'),
+		T_TIPO_PLAZAS(null,null,'H008_LiquidarCargas','damePlazo(valores[''H008_PropuestaCancelacionCargas''][''fechaPropuesta''])+10*24*60*60*1000L','0','0','DD')
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RegInsCancelacionCargasEconomicas','damePlazo(valores[''H008_LiquidarCargas''][''fechaCancelacion''])+10*24*60*60*1000L','0','0','DD'),
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RegistrarPresentacionInscripcionEco','damePlazo(valores[''H008_RegInsCancelacionCargasEconomicas''][''fechaInsEco''])+10*24*60*60*1000L','0','0','DD'),
 		--EQ T_TIPO_PLAZAS(null,null,'H008_RegInsCancelacionCargasRegEco','damePlazo(valores[''H008_RegistrarPresentacionInscripcionEco''][''fechaPresentacion''])+30*24*60*60*1000L','0','0','DD'),
@@ -194,6 +194,7 @@ BEGIN
 		' WHERE TAP_CODIGO='''||V_TAREA||'''';
 	
 	V_TAREA:='H008_LiquidarCargas';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Dd_Ptp_Plazos_Tareas_Plazas WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
 		' TAP_DESCRIPCION=''Liquidar las cargas y formalizar títulos'', ' ||

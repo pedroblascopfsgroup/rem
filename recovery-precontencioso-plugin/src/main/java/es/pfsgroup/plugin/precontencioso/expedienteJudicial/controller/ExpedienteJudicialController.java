@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
@@ -48,6 +49,9 @@ public class ExpedienteJudicialController {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
+	@Autowired
+	private GestorTareasApi gestorTareasApi;
+	
 	@RequestMapping
 	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		boolean finalizado = procedimientoPcoApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
@@ -236,4 +240,53 @@ public class ExpedienteJudicialController {
 		BurofaxGridDTO burofax = new BurofaxGridDTO();
 		return burofax;
 	}
+
+
+	@RequestMapping
+	public String crearTareaEspecial(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		
+		boolean finalizado = false;
+		
+		String tipoTarea = "PCO_RegResultadoExped";
+		
+		finalizado = gestorTareasApi.crearTareaEspecial(idProcedimiento, tipoTarea);
+		model.put("finalizado", finalizado);
+		
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+		
+	}
+
+
+	@RequestMapping
+	public String cancelarTareaEspecial(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		
+		boolean finalizado = false;
+		
+		String tipoTarea = "PCO_RegResultadoExped";
+		
+		finalizado = gestorTareasApi.cancelarTareaEspecial(idProcedimiento, tipoTarea);
+		model.put("finalizado", finalizado);
+		
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+		
+	}
+
+	@RequestMapping
+	public String recalcularTareasEspeciales(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		
+		boolean finalizado = true;
+
+		try {
+			gestorTareasApi.recalcularTareasPreparacionDocumental(idProcedimiento);
+		} catch (Exception e) {
+			finalizado=false;
+			e.printStackTrace();
+		}
+		
+		model.put("finalizado", finalizado);
+		
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+		
+	}
+
 }

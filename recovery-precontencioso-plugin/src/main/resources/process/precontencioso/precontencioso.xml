@@ -273,6 +273,26 @@
 		<transition to="PCO_IniciarProcJudicial" name="si_sin_nueva_prep"></transition>
 	</decision>
 
+	<state name="PCO_RegResultadoExped"></state>
+
+	<state name="PCO_RecepcionExped"></state>
+
+	<state name="PCO_RegResultadoDoc"></state>
+
+	<state name="PCO_RegEnvioDoc"></state>
+
+	<state name="PCO_RecepcionDoc"></state>
+
+	<state name="PCO_AdjuntarDoc"></state>
+
+	<state name="PCO_GenerarLiq"></state>
+
+	<state name="PCO_ConfirmarLiq"></state>
+
+	<state name="PCO_EnviarBurofax"></state>
+
+	<state name="PCO_AcuseReciboBurofax"></state>
+
 
 	<end-state name="Fin"></end-state>
 

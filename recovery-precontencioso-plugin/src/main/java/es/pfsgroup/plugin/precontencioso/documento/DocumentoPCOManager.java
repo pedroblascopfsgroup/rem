@@ -346,24 +346,22 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		solicitud.setFechaResultado(solDto.getFechaResultado());
 		solicitud.setFechaEnvio(solDto.getFechaEnvio());
 		solicitud.setFechaRecepcion(solDto.getFechaRecepcion());
-		if(!Checks.esNulo(solDto.getResultado())){ solicitud.setResultadoSolicitud(genericDao.get(DDResultadoSolicitudPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", solDto.getResultado())));}
-		
-		///Obtenemos el tipo de gestor para setear el codigo de actor que corresponde a ese gestor
-		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", solDto.getIdTipoGestor()));
-		solicitud.setTipoActor(genericDao.get(DDTipoActorPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestor.getCodigo())));
-		
-		Auditoria.save(solicitud);
-		
-		//genericDao.save(SolicitudDocumentoPCO.class,solicitud);
-		try{
-			solicituddocumentopcodao.save(solicitud);	
-		}catch(Exception e){
-			System.out.println(e);
+		if(!Checks.esNulo(solDto.getResultado())){ 
+			DDResultadoSolicitudPCO resSolPco = genericDao.get(DDResultadoSolicitudPCO.class, 
+					genericDao.createFilter(FilterType.EQUALS, "codigo", solDto.getResultado()));
+			solicitud.setResultadoSolicitud(resSolPco);
 		}
 		
+		///Obtenemos el tipo de gestor para setear el codigo de actor que corresponde a ese gestor
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, 
+				genericDao.createFilter(FilterType.EQUALS, "id", solDto.getIdTipoGestor()));
+		DDTipoActorPCO tipoActorPco = genericDao.get(DDTipoActorPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestor.getCodigo()));
+		solicitud.setTipoActor(tipoActorPco);
+		
+		genericDao.save(SolicitudDocumentoPCO.class,solicitud);
 		
 		return solicitud;
-
 	}
 	
 	/** 

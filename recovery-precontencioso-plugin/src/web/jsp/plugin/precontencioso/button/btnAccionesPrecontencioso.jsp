@@ -9,7 +9,7 @@ new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
 	menu: {
 		items: [{
-			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparación" />',
+			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparaciï¿½n" />',
 			handler: function() {
 				var estado = data.estadoPrecontencioso;
 				var estadoPreparacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.PREPARACION" />';
@@ -25,7 +25,7 @@ new Ext.Button({
 					Ext.Msg.show({
 						title: fwk.constant.alert,
 						msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.tipo"
-	             				text="**Podrán ser finalizados aquellos expedientes que se encuentren en estado Preparación, Subsanar o Subsanar por cambio de procedimiento." />',			             
+	             				text="**Podrï¿½n ser finalizados aquellos expedientes que se encuentren en estado Preparaciï¿½n, Subsanar o Subsanar por cambio de procedimiento." />',			             
 						buttons: Ext.Msg.OK,
 						icon:Ext.MessageBox.WARNING});
 				}else{
@@ -48,7 +48,7 @@ new Ext.Button({
 								Ext.Msg.show({
 									title: fwk.constant.alert,
 									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.faltanDocumentos"
-				             				text="**No es posible finalizar la preparación del expediente judicial hasta que todos los documentos disponibles estén adjuntos" />',			             
+				             				text="**No es posible finalizar la preparaciï¿½n del expediente judicial hasta que todos los documentos disponibles estï¿½n adjuntos" />',			             
 									buttons: Ext.Msg.OK,
 									icon:Ext.MessageBox.WARNING});
 							}
@@ -63,6 +63,124 @@ new Ext.Button({
 						} 
 					});
 				}
+			}
+		},{
+			text: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial" text="**Tarea Especial" />',
+			handler: function() {
+					var page = new fwk.Page("pfs", "", "", "");
+					Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/crearTareaEspecial'),
+						params: {idProcedimiento: data.id},
+						method: 'POST',
+						success: function (result, request){
+							var resultado = Ext.decode(result.responseText);
+							if(resultado.finalizado == true){
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial.correcto"
+				             				text="**Se ha creado la tarea especial." />',
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.WARNING});
+							}else{
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial.error"
+				             				text="**Error al crear la tarea especial." />',			             
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.WARNING});
+							}
+						}
+						,error: function(){
+							Ext.MessageBox.show({
+					            title: 'Guardado',
+					            msg: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial.error" 
+					            	text="**Se ha producido un error al crear la tarea especial. Consulte con soporte" />',
+					            width:300,
+					            buttons: Ext.MessageBox.OK
+					        });
+						} 
+					});
+			}
+		},{
+			text: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial" text="**Cancelar Tarea Especial" />',
+			handler: function() {
+					var page = new fwk.Page("pfs", "", "", "");
+					Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/cancelarTareaEspecial'),
+						params: {idProcedimiento: data.id},
+						method: 'POST',
+						success: function (result, request){
+							var resultado = Ext.decode(result.responseText);
+							if(resultado.finalizado == true){
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial.correcto"
+				             				text="**Se ha cancelado la tarea especial." />',
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.WARNING});
+							}else{
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial.error"
+				             				text="**Error al cancelar la tarea especial." />',			             
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.WARNING});
+							}
+						}
+						,error: function(){
+							Ext.MessageBox.show({
+					            title: 'Guardado',
+					            msg: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial.error" 
+					            	text="**Se ha producido un error al cancelar la tarea especial. Consulte con soporte" />',
+					            width:300,
+					            buttons: Ext.MessageBox.OK
+					        });
+						} 
+					});
+			}
+		},{
+			text: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales" text="**Recalcular Tareas Especiales" />',
+			handler: function() {
+					var page = new fwk.Page("pfs", "", "", "");
+					Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/recalcularTareasEspeciales'),
+						params: {idProcedimiento: data.id},
+						method: 'POST',
+						success: function (result, request){
+							var resultado = Ext.decode(result.responseText);
+							if(resultado.finalizado == true){
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales.correcto"
+				             				text="**Se han recalculado las tareas especiales." />',
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.WARNING});
+							}else{
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales.error"
+				             				text="**Error al recalcular las tareas especiales." />',			             
+									buttons: Ext.Msg.OK,
+									icon:Ext.MessageBox.WARNING});
+							}
+						}
+						,error: function(){
+							Ext.MessageBox.show({
+					            title: 'Guardado',
+					            msg: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales.error" 
+					            	text="**Se ha producido un error al recalcular las tareas especiales. Consulte con soporte" />',
+					            width:300,
+					            buttons: Ext.MessageBox.OK
+					        });
+						} 
+					});
+			}
+		},{
+			text: '<s:message code="plugin.precontencioso.button.pruebaAbrirPreparacion" text="**Abrir Preparacion" />',
+			handler: function() {
+					app.abreProcedimientoTab(data.id
+						, '<s:message text="titicaca" javaScriptEscape="true" />'
+	 					, 'precontencioso');
 			}
 		}]
 	}

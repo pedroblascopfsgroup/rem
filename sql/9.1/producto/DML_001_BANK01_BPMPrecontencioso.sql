@@ -37,7 +37,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('PCO','Precontencioso','Precontencioso',null,'precontencioso','0','DD','0','PCO',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('PCO','Preparación de expediente judicial','Preparación de expediente judicial',null,'precontencioso','0','DD','0','PCO',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -51,7 +51,7 @@ DECLARE
        T_TIPO_TAP('PCO','PCO_RevisarNoAceptacion',null,null,null,null,null,'0','Revisar no aceptación del asunto','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
        T_TIPO_TAP('PCO','PCO_RevisarExpediente',null,null,null,null,null,'0','Revisar expediente a preparar','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
        T_TIPO_TAP('PCO','PCO_PrepararExpediente',null,null,null,'valores[''PCO_PreTurnadoManual''][''preTurnado''] == DDSiNo.SI ? ''preturnado'' : (valores[''PCO_PreTurnadoManual''][''automatico''] == DDSiNo.SI ? ''automatico'' : ''manual'')',null,'0','Preparar expediente','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
-       T_TIPO_TAP('PCO','PCO_SolicitarDoc',null,null,null,null,null,'0','Solicitar documentación','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+       T_TIPO_TAP('PCO','PCO_SolicitarDoc','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Solicitar documentación','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
        T_TIPO_TAP('PCO','PCO_PostTurnado',null,null,null,null,null,'0','PostTurnado automatico','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
        T_TIPO_TAP('PCO','PCO_RegistrarAceptacionPost',null,null,null,'valores[''PCO_RegistrarAceptacionPost''][''aceptacion''] == DDSiNo.SI ? ''aceptacion'' : ''no_aceptacion''',null,'0','Registrar aceptación del asunto','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
        T_TIPO_TAP('PCO','PCO_RevisarNoAceptacionPost',null,null,null,null,null,'0','Revisar no aceptación del asunto','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
@@ -61,7 +61,18 @@ DECLARE
        T_TIPO_TAP('PCO','PCO_IniciarProcJudicial',null,null,null,null,null,'0','Iniciar procedimiento judicial','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
        T_TIPO_TAP('PCO','PCO_SubsanarIncidenciaExp',null,null,null,null,null,'0','Subsanar incidencia por cambio de procedimiento','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
        T_TIPO_TAP('PCO','PCO_ValidarCambioProc',null,null,null,'valores[''PCO_ValidarCambioProc''][''cambio_aceptado''] == DDSiNo.NO ? ''no'' : (valores[''PCO_ValidarCambioProc''][''nueva_preparacion''] == DDSiNo.SI ? ''si_nueva_preparacion'' : ''si_sin_nueva_prep'')',null,'0','Validar cambio de procedimiento','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
-       T_TIPO_TAP('PCO','PCO_SubsanarCambioProc',null,null,null,null,null,'0','Subsanar por cambio de procedimiento','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
+       T_TIPO_TAP('PCO','PCO_SubsanarCambioProc',null,null,null,null,null,'0','Subsanar por cambio de procedimiento','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+
+T_TIPO_TAP('PCO','PCO_RegResultadoExped','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Registrar resultado para expediente','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_RecepcionExped','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Registrar recepción expediente','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_RegResultadoDoc','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Registrar resultado para documento','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_RegEnvioDoc','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Registrar envío del documento','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_RecepcionDoc','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Registrar recepción del documento','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_AdjuntarDoc','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Adjuntar documentación','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_GenerarLiq','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Generar liquidación','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_ConfirmarLiq','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Confirmar liquidación','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_EnviarBurofax','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Enviar burofax','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+T_TIPO_TAP('PCO','PCO_AcuseReciboBurofax','plugin/precontencioso/tramite/preparacion',null,null,null,null,'0','Registrar acuse de recibo de burofax','0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -85,7 +96,19 @@ DECLARE
       T_TIPO_PLAZAS(null,null,'PCO_IniciarProcJudicial','1*24*60*60*1000L','0','0','DD'), 
       T_TIPO_PLAZAS(null,null,'PCO_SubsanarIncidenciaExp','1*24*60*60*1000L','0','0','DD'),   
       T_TIPO_PLAZAS(null,null,'PCO_ValidarCambioProc','1*24*60*60*1000L','0','0','DD'),   
-      T_TIPO_PLAZAS(null,null,'PCO_SubsanarCambioProc','1*24*60*60*1000L','0','0','DD')
+      T_TIPO_PLAZAS(null,null,'PCO_SubsanarCambioProc','1*24*60*60*1000L','0','0','DD'),
+
+T_TIPO_PLAZAS(null,null,'PCO_RegResultadoExped','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_RecepcionExped','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_RegResultadoDoc','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_RegEnvioDoc','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_RecepcionDoc','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_AdjuntarDoc','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_GenerarLiq','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_ConfirmarLiq','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_EnviarBurofax','1*24*60*60*1000L','0','0','DD'),
+T_TIPO_PLAZAS(null,null,'PCO_AcuseReciboBurofax','1*24*60*60*1000L','0','0','DD')
+
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -162,8 +185,29 @@ DECLARE
         T_TIPO_TFI('PCO_SubsanarCambioProc','1','textarea','observaciones_letrado','Observaciones letrado',null,null,'valores[''PCO_RegistrarTomaDec''][''observaciones''] ',null,'0','DD'),
         T_TIPO_TFI('PCO_SubsanarCambioProc','2','text','tipo_problema','Tipo de problema',null,null,'valores[''PCO_RegistrarTomaDec''][''tipo_problema'']',null,'0','DD'),
         T_TIPO_TFI('PCO_SubsanarCambioProc','3','date','fecha exp_subsanado','Fecha expediente subsanado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-        T_TIPO_TFI('PCO_SubsanarCambioProc','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
+        T_TIPO_TFI('PCO_SubsanarCambioProc','4','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
         
+T_TIPO_TFI('PCO_RegResultadoExped','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RegResultadoExped','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RecepcionExped','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RecepcionExped','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RegResultadoDoc','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RegResultadoDoc','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RegEnvioDoc','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RegEnvioDoc','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RecepcionDoc','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_RecepcionDoc','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_AdjuntarDoc','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_AdjuntarDoc','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_GenerarLiq','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_GenerarLiq','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_ConfirmarLiq','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_ConfirmarLiq','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_EnviarBurofax','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_EnviarBurofax','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_AcuseReciboBurofax','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Tarea especial.</p></div>',null,null,null,null,'0','DD'),
+T_TIPO_TFI('PCO_AcuseReciboBurofax','1','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
+
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
@@ -311,6 +355,14 @@ BEGIN
       END LOOP;
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');
+
+    --ACTUALIZACION DEL CAMPO TAP_VIEW DE TAP_TAREA_PROCEDIMIENTO
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TAP_VIEW DE TAP_TAREA_PROCEDIMIENTO');
+    V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW=''plugin/precontencioso/tramite/preparacion'' WHERE TAP_CODIGO IN  ' || 
+      '(''PCO_SolicitarDoc'',''PCO_RegResultadoExped'',''PCO_RecepcionExped'',''PCO_RegResultadoDoc'',''PCO_RegEnvioDoc'',''PCO_RecepcionDoc'',''PCO_AdjuntarDoc'',''PCO_GenerarLiq'',''PCO_ConfirmarLiq'',''PCO_EnviarBurofax'',''PCO_AcuseReciboBurofax'')';
+    EXECUTE IMMEDIATE V_SQL;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TAP_VIEW DE TAP_TAREA_PROCEDIMIENTO');
  
 EXCEPTION
      WHEN OTHERS THEN

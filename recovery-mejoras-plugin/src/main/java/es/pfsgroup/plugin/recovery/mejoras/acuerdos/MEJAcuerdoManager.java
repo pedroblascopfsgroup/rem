@@ -637,7 +637,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
      */
     @BusinessOperation(BO_ACUERDO_MGR_FINALIZAR_ACUERDO)
     @Transactional(readOnly = false)
-    public void finalizarAcuerdo(Long id, Date fechaPago, Boolean cumplido) {
+    public void finalizarAcuerdo(Long id, String fechaPago, Boolean cumplido) {
         Acuerdo acuerdo = acuerdoDao.get(id);
         if (acuerdo.getEstadoAcuerdo().getCodigo() == DDEstadoAcuerdo.ACUERDO_CANCELADO) { throw new BusinessOperationException("acuerdos.cancelado"); }
         
@@ -650,7 +650,13 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         
         Date fechaEstado = null;
         if(!Checks.esNulo(fechaPago)){
-        	fechaEstado = fechaPago;
+        	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        	try {
+				fechaEstado =  formatter.parse(fechaPago);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }else{
         	fechaEstado = new Date();
         }

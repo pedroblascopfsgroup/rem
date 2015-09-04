@@ -17,6 +17,8 @@ function print_banner() {
     echo ""
     echo "******************************************************************************************"
     echo "******************************************************************************************"
+}
+function print_banner_description() {
     echo ""
     echo "                 EJECUTO LOS SCRIPTS DE BD DESDE UN TAG DETERMINADO"
     echo ""
@@ -44,6 +46,7 @@ clear
 
 if [ "$0" != "./sql/tool/$(basename $0)" ]; then
     print_banner
+    print_banner_description
     echo ""
     echo "AUCH!! No me ejecutes desde aquí, por favor, que me electrocuto... sal a la raiz del repositorio RECOVERY y ejecútame como:"
     echo ""
@@ -54,6 +57,7 @@ fi
 
 if [ "$#" -lt 3 ]; then
     print_banner
+    print_banner_description
     echo ""
     echo "Para simular antes de ejecutar:"
     echo ""
@@ -82,6 +86,7 @@ fi
 
 if [ "$ORACLE_HOME" == "" ] ; then
     print_banner
+    print_banner_description
     echo ""
     echo "Defina su variable de entorno ORACLE_HOME"
     echo ""
@@ -106,7 +111,7 @@ if [ ! -f $SETENVGLOBAL ]; then
 fi
 source $SETENVGLOBAL
 
-rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql
+rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
 
 #PRODUCTO
 for file in `git diff $1 --name-only sql/**/producto/*.sql`
@@ -153,10 +158,10 @@ if [ "$MULTIENTIDAD" != "" ] ; then
 fi
 
 if [ -f $BASEDIR/tmp/product-list-from-tag.txt ] ; then
-    cat $BASEDIR/tmp/product-list-from-tag.txt | sort | cut -d# -f2 > $BASEDIR/tmp/list-from-tag.txt
+    cat $BASEDIR/tmp/product-list-from-tag.txt | sort > $BASEDIR/tmp/list-from-tag.txt
 fi
 if [ -f $BASEDIR/tmp/customer-list-from-tag.txt ] ; then
-    cat $BASEDIR/tmp/customer-list-from-tag.txt | sort | cut -d# -f2 >> $BASEDIR/tmp/list-from-tag.txt
+    cat $BASEDIR/tmp/customer-list-from-tag.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
 
 
@@ -170,8 +175,33 @@ if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
             echo "--------------------------------------------------------------------------------"
         else
             $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE
+            if [[ "$?" != 0 ]]; then
+                echo ""
+                echo "ABORTADA EJECUCION POR #KO#"
+                exit 1
+            fi 
         fi
     done < $BASEDIR/tmp/list-from-tag.txt
+elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
+    while read -r line
+    do
+        $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE -p
+    done < $BASEDIR/tmp/list-from-tag.txt
+    mkdir -p $BASEDIR/tmp/package
+    mkdir $BASEDIR/tmp/package/ddl
+    mkdir $BASEDIR/tmp/package/ddl/scripts/
+    mkdir $BASEDIR/tmp/package/dml
+    mkdir $BASEDIR/tmp/package/dml/scripts/
+    cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/dml/scripts/
+    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/dml/DML-scripts.sh
+    cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/ddl/scripts/
+    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/ddl/DDL-scripts.sh
+    cd $BASEDIR/tmp/package/ddl
+    zip DDL-scripts.zip -r *
+    cd ../dml
+    zip DML-scripts.zip -r *
+    cd ..
+    mv **/*.zip .
 else
     echo ""
     echo "Lo que pretendo ejecutar es:"

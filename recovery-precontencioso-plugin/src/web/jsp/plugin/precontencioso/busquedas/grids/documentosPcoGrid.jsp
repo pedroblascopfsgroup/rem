@@ -80,6 +80,10 @@ var gridDocumentoPco = app.crearGrid(documentoPcoStore, documentoPcoCm, {
 });
 
 <%-- Events --%>
+documentoPcoStore.on('load', function() {
+	gridDocumentoPco.expand(true)
+	pagingBar.show();
+});
 
 gridDocumentoPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);

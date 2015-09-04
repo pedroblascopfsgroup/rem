@@ -78,6 +78,10 @@ var gridLiquidacionPco = app.crearGrid(liquidacionPcoStore, liquidacionPcoCm, {
 });
 
 <%-- Events --%>
+liquidacionPcoStore.on('load', function() {
+	gridLiquidacionPco.expand(true)
+	pagingBar.show();
+});
 
 gridLiquidacionPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);

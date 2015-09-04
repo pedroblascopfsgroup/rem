@@ -81,6 +81,10 @@ var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
 });
 
 <%-- Events --%>
+burofaxPcoStore.on('load', function() {
+	gridBurofaxPco.expand(true)
+	pagingBar.show();
+});
 
 gridBurofaxPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);

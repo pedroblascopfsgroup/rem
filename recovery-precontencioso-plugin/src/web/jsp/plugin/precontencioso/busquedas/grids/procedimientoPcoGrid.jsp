@@ -84,6 +84,7 @@ var gridProcedimientosPco = app.crearGrid(procedimientoPcoStore, procedimientoPc
 <%-- Events --%>
 
 procedimientoPcoStore.on('load', function() {
+	gridProcedimientosPco.expand(true)
 	pagingBar.show();
 });
 

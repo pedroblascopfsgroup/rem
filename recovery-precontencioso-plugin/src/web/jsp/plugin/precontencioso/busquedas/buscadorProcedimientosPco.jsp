@@ -28,7 +28,7 @@
 	});
 
 	var btnBuscar = new Ext.Button({
-		text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
+		text: '<s:message code="plugin.precontencioso.button.buscar" text="**Buscar" />',
 		handler: function() {
 			var params = getParametros();
 			params.start = 0;

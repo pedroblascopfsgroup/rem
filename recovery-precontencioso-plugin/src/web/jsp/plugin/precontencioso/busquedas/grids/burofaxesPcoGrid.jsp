@@ -26,8 +26,8 @@ var burofaxesPcoRecord = Ext.data.Record.create([
 	{name: 'tipoProcPropuesto'},
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
-	
-<!-- 	{name: 'estadoBurofax'}, -->
+	<!-- 	{name: 'fechaSolicitud'}, -->	
+	{name: 'burEstado'},
 	{name: 'burFechaSolicitud'},
 	{name: 'burNif'},
 	{name: 'burNombre'},
@@ -55,7 +55,7 @@ var burofaxPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
-<%-- 	{dataIndex: 'estadoBurofax', header: '<s:message code="asd" text="**Estado burofax"/>', sortable: false}, --%>
+	{dataIndex: 'burEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.estado" text="**Estado"/>', sortable: false},
 <%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
 	{dataIndex: 'burNif', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.nif" text="**NIF"/>', sortable: false},
 	{dataIndex: 'burNombre', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.nombre.apellidos" text="**Nombre apellidos"/>', sortable: false},
@@ -69,7 +69,7 @@ var pagingBar = fwk.ux.getPaging(burofaxPcoStore);
 pagingBar.hide();
 
 var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
-	title: '<s:message code="asd" text="**Expedientes Judiciales" />',
+	title: '<s:message code="plugin.precontencioso.tab.burofax.listado" text="**Listado Burofaxes" />',
 	cls: 'cursor_pointer',
 	bbar : [pagingBar],
 	height: 250,
@@ -81,6 +81,10 @@ var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
 });
 
 <%-- Events --%>
+burofaxPcoStore.on('load', function() {
+	gridBurofaxPco.expand(true)
+	pagingBar.show();
+});
 
 gridBurofaxPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);

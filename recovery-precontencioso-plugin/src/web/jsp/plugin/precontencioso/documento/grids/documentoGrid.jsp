@@ -129,7 +129,7 @@ var incluirDocButton = new Ext.Button({
 var excluirDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.excluirDocumentos" text="**Excluir Documentos" />'
 		,iconCls : 'icon_menos'
-		,disabled : false
+		,disabled : true
 		,cls: 'x-btn-text-icon'
 		,handler:function(){
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
@@ -172,7 +172,7 @@ var getParametrosExcluirDescartarSolicitarDocs = function() {
 var descartarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.descartarDocumentos" text="**Descartar Documentos" />'
 		,iconCls : 'icon_cancel'
-		,disabled : false
+		,disabled : true
 		,cls: 'x-btn-text-icon'
 		,handler:function(){
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
@@ -201,7 +201,7 @@ var validacionEditar=false;
 var solicitarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.crearSolicitudes" text="**Crear Solicitudes" />'
 		,iconCls : 'icon_mas'
-		,disabled : false
+		,disabled : true
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
@@ -254,7 +254,7 @@ var getParametrosAnularSolicitudes = function() {
 var anularSolicitudesButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.anularSolicitudes" text="**Anular Solicitudes" />'
 		,iconCls : 'icon_menos'
-		,disabled : false
+		,disabled : true
 		,cls: 'x-btn-text-icon'
 		,handler:function(){
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
@@ -298,7 +298,7 @@ var validacionEstado=false;
 var informarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.informarDocumento" text="**Informar Documento" />'
 		,iconCls : 'icon_edit'
-		,disabled : false
+		,disabled : true
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
@@ -335,7 +335,7 @@ var validacionEditar=false;
 var editarDocButton = new Ext.Button({
 		text : '<s:message code="precontencioso.grid.documento.editarDocumento" text="**Editar Documento" />'
 		,iconCls : 'icon_edit'
-		,disabled : false
+		,disabled : true
 		,cls: 'x-btn-text-icon'
         ,handler:function() {
 			rowsSelected=gridDocumentos.getSelectionModel().getSelections(); 
@@ -374,29 +374,14 @@ var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, edi
 }	
 
 <%-- FUNCION: Chequeo estados para control botones --%>
-var actualizarBotonesDocumentos = function(){
-		<%--Manu preguntar a quien hizo este comportamiento --%>
+var actualizarBotonesDocumentos = function(){	
 		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
-		solicitarDocButton.setDisabled(false);
 		incluirDocButton.setDisabled(false);
 
-		if(myCboxSelModel2.getCount() == 1){
-			editarDocButton.setDisabled(false);
-		}
 		var rowsSelecteds=gridDocumentos.getSelectionModel().getSelections(); 	
 		if(rowsSelecteds.length > 0) {
 			incluirDocButton.setDisabled(true);
-			descartarDocButton.setDisabled(false);
-			anularSolicitudesButton.setDisabled(false);
-			for (var i=0; i < rowsSelecteds.length; i++){
-				if(rowsSelecteds[i].get('fechaResultado') != '') {
-					anularSolicitudesButton.setDisabled(true);
-				}
-			}		
-		}
-		
-		return;	
-		
+		}		
 	    <%--Se comprueba que el procedimiento se encuentre en un estado que permita editar lOs documentos --%>
 		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
@@ -405,7 +390,6 @@ var actualizarBotonesDocumentos = function(){
 	    		return;
 			}
 			else {
-				habilitarDeshabilitarButtons(false,true, true, true, true, true, true);
 				if(myCboxSelModel2.getCount() == 0) return;
 			}
       	} 
@@ -429,13 +413,13 @@ var actualizarBotonesDocumentos = function(){
 			      	}
 			      	<%-- Si la solicitud tiene resultado --%>
 			      	else {
-			      		habilitarDeshabilitarButtons(true, true, true, true, true, true, false);	
+			      		habilitarDeshabilitarButtons(true, true, false, false, true, false, false);	
 			      		return;	      					      		
 			      	}
 			    }
       			<%-- Si no es solicitud --%>
       			else {
-      				habilitarDeshabilitarButtons(true, false, true, false, true, false, true);
+      				habilitarDeshabilitarButtons(true, false, false, false, true, false, true);
       				return;
       			}   
 			}
@@ -488,11 +472,11 @@ var actualizarBotonesDocumentos = function(){
 	    			return arrayCodigoEstadoDocumento.indexOf(item) == pos;
 			});	
 			
-			<%-- SI DOCUMENTOS ELEGIDOS DE DISTINTO TIPO -> AVISO DE LA IMPOSIBILIDAD DE HACER NADA --%>
+			<%-- SI DOCUMENTOS ELEGIDOS DE DISTINTO ESTADO -> AVISO DE LA IMPOSIBILIDAD DE HACER NADA --%>
 			if (uniqueArray.length > 1){
 				habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
-				Ext.MessageBox.alert('<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.titulo" text="**Tipos de documento distintos" />'
-                 ,'<s:message code="precontencioso.grid.documento.tipoDocumentosDistintos.aviso" text="**Debe seleccionar documentos del mismo tipo" />');
+				Ext.MessageBox.alert('<s:message code="precontencioso.grid.documento.estadoDocumentosDistintos.titulo" text="**Estados de documento distintos" />'
+                 ,'<s:message code="precontencioso.grid.documento.estadoDocumentosDistintos.aviso" text="**Debe seleccionar documentos con el mismo estado" />');
                 return;
 			}
 						
@@ -510,14 +494,14 @@ var actualizarBotonesDocumentos = function(){
 					<%-- Si hay documentos con solicitudes o sin solicitudes --%>
 					if (uniqueArray3.length > 1){
 						<%-- SOLICITAR MASIVAMENTE --%>
-						habilitarDeshabilitarButtons(true, true, true, true, true, false, true);
+						habilitarDeshabilitarButtons(true, true, false, true, true, false, true);
 						return;							
 					}
 					else {
 						<%-- Y ademas no tienen solicitudes --%>
 						if (uniqueArray3.length ==1 && uniqueArray3[0] == false){
 							<%-- EXCLUIR DOCUMENTOS Y SOLICITAR MASIVAMENTE --%>
-							habilitarDeshabilitarButtons(true, false, true, true, true, false, true);	
+							habilitarDeshabilitarButtons(true, false, false, true, true, false, true);	
 							return;	      					      									
 						}
 						<%-- Si todas tienen solicitudes --%>
@@ -542,7 +526,7 @@ var actualizarBotonesDocumentos = function(){
 					<%-- Si todas las solicitudes no tienen resultado --%>
 					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 						<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-						habilitarDeshabilitarButtons(true, true, true, true, false, true, true);
+						habilitarDeshabilitarButtons(true, true, false, true, false, true, true);
 						return;
 					}		      					      																	
 				}												
@@ -567,7 +551,7 @@ var actualizarBotonesDocumentos = function(){
 					<%-- Si hay alguna solicitud con resultado --%>
 					else {
 						<%-- SOLICITAR MASIVAMENTE --%>
-						habilitarDeshabilitarButtons(true, true, true, true, true, false, true);
+						habilitarDeshabilitarButtons(true, true, false, true, true, false, true);
 						return;
 					} 		      					      									
 				}
@@ -579,7 +563,7 @@ var actualizarBotonesDocumentos = function(){
 					<%-- Si todas las solicitudes no tienen resultado --%>
 					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 						<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-						habilitarDeshabilitarButtons(true, true, true, true, false, true, true);
+						habilitarDeshabilitarButtons(true, true, false, true, false, true, true);
 						return;
 					}		      					      																	
 				}				
@@ -597,9 +581,7 @@ var actualizarBotonesDocumentos = function(){
 					return;
 				}
 			}
-			
-			habilitarDeshabilitarButtons(false, true, true, true, true, true, true);
-			
+						
 		}
 }	
 

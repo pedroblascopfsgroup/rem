@@ -25,6 +25,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.assembler.LiquidacionAssembler;
@@ -192,7 +193,12 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Transactional(readOnly = false)
     public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto){
 		ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(dto.getIdProcedimiento());
-		if(prcPCO != null) {
+		if(prcPCO != null && 
+				(DDEstadoPreparacionPCO.PRETURNADO.equals(prcPCO.getEstadoActual().getCodigo()) ||
+				DDEstadoPreparacionPCO.PREPARACION.equals(prcPCO.getEstadoActual().getCodigo()) ||
+				DDEstadoPreparacionPCO.SUBSANAR.equals(prcPCO.getEstadoActual().getCodigo())
+				)
+			) {
 			List<Contrato> contratos = contratoDao.getContratosById(dto.getContratos());
 	    	Procedimiento procedimiento = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(dto.getIdProcedimiento());
 			
@@ -209,14 +215,10 @@ public class LiquidacionManager implements LiquidacionApi {
 		}
     }
 	
-	//TODO
 	private LiquidacionPCO settearLiquidacionPCO(Procedimiento procedimiento, ProcedimientoPCO prcPCO, Contrato contrato){
 		LiquidacionPCO liquidacion = new LiquidacionPCO();
 		
-		DDEstadoLiquidacionPCO estadoCalculada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CALCULADA);
-		GestorDespacho apoderado = gestorDespachoDao.getGestorDespachoPorUsuarioyDespacho(1L,1L);
-		
-		liquidacion.setApoderado(apoderado);
+		DDEstadoLiquidacionPCO estadoCalculada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.PENDIENTE);
 		liquidacion.setProcedimientoPCO(prcPCO);
 		liquidacion.setEstadoLiquidacion(estadoCalculada);
 		liquidacion.setContrato(contrato);

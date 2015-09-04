@@ -32,12 +32,21 @@
 	var btnBuscar = new Ext.Button({
 		text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
 		handler: function() {
-			panelFiltros.collapse(true);
-			var params = getParametros();
-			params.start = 0;
-			params.limit = 25;
-			procedimientoPcoStore.webflow(params);
-			pagingBar.hide();
+			if(comboTipoBusqueda.getValue() != '') {
+				panelFiltros.collapse(true);
+				var params = getParametros();
+				params.start = 0;
+				params.limit = 25;
+				
+				if(comboTipoBusqueda.getValue() == documento) {
+					documentoPcoStore.webflow(params);
+				} else if(comboTipoBusqueda.getValue() == liquidacion){
+					liquidacionPcoStore.webflow(params);
+				} else if(comboTipoBusqueda.getValue() == burofax){
+					burofaxPcoStore.webflow(params);
+				}
+				pagingBar.show();
+			}
 		}
 	})
 
@@ -66,6 +75,10 @@
 	gridDocumentoPco.hide();
     gridLiquidacionPco.hide();
     gridBurofaxPco.hide();
+    
+	filtrosTabDocumentos.disable();
+    filtrosTabLiquidacion.disable();	            	
+	filtrosTabBurofax.disable();
 
 	gridDocumentoPco.on('load', function() {
 		panelFiltros.collapse(true);

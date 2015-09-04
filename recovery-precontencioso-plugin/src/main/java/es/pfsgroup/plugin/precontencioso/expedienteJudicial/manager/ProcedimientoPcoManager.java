@@ -13,6 +13,8 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.zona.dao.NivelDao;
+import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -42,6 +44,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private NivelDao nivelDao;
+
 	@Autowired
 	UtilDiccionarioApi diccionarioApi;
 	
@@ -176,5 +181,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 		genericDao.update(Procedimiento.class, p);
 		genericDao.update(ProcedimientoPCO.class, pco);
+	}
+	
+	@Override
+	public List<Nivel> getNiveles(){
+		return nivelDao.getList();
 	}
 }

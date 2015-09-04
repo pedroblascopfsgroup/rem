@@ -13,20 +13,20 @@ var ocultarBtnSolicitar = function(){
 		success: function ( result, request ) {
 			var resultado = Ext.decode(result.responseText);
 			if(resultado.ocultarBtnSolicitar) {
+				btnSolicitar.hide();
 				return true;
 			}else{
+				btnSolicitar.show();
 				return false;
 			}
 		} 
 	});
 }
 
-var ocultaSolicitar = ocultarBtnSolicitar();
-
 var btnSolicitar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.solicitar" text="**Solicitar" />',
 	iconCls: 'icon_mas',
-	hidden: ocultaSolicitar,
+	hidden: ocultarBtnSolicitar(),
 	cls: 'x-btn-text-icon',
 	handler: function() {
 		if (comprobarDatosCalculoRellenos()) {
@@ -247,6 +247,9 @@ var actualizarBotonesLiquidacion = function() {
 		case 'PEN':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
+			btnConfirmar.setDisabled(true);
+			btnDescartar.setDisabled(true);
+			btnGenerar.setDisabled(true);
 			break;
 			
 		case 'SOL':

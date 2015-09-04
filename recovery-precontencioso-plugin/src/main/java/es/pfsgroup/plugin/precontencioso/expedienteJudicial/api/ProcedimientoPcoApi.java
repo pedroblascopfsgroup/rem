@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
@@ -77,5 +78,7 @@ public interface ProcedimientoPcoApi {
 	
 	@BusinessOperationDefinition(BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO)
 	void actualizaProcedimiento(ActualizarProcedimientoPcoDtoInfo dto);
+
+    List<Nivel> getNiveles();
 
 }

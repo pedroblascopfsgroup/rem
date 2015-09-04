@@ -651,5 +651,19 @@
 	var refrescarBurofaxGrid = function() {
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
 		idProcedimiento=data.precontencioso.id;
+		
+		if (data != null) {
+			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
+			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
+				btnAddPersona.setDisabled(true);
+				btnEnviar.setDisabled(true);
+				btnNuevaDir.setDisabled(true);
+				btnEditar.setDisabled(true);
+				btnPreparar.setDisabled(true);
+				btnCancelar.setDisabled(true);
+				btnNotificar.setDisabled(true);
+				
+			}
+		}
 	}
 	

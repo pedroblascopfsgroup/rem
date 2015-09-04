@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -74,19 +72,14 @@ public class DocumentoPCOController {
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
 		idProcPCO = new Long(idProcedimientoPCO);
-		
-		
-	    Procedimiento procedimiento = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idProcPCO);
-	    Long gestorAsuntoId;
-	    if (procedimiento != null)
-	    	gestorAsuntoId = procedimiento.getAsunto().getGestor().getUsuario().getId();
-				
+	
 		boolean esDocumento;	
 		boolean tieneSolicitud;
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
-		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
 		List<SolicitudDocumentoPCO> solicitudes; 
 		int idIdentificativo = 1;
 		for (DocumentoPCO doc : documentos) {
@@ -111,8 +104,6 @@ public class DocumentoPCOController {
 		}
 		
 		model.put("solicitudesDocumento", solicitudesDoc);
-		
-
 
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
@@ -218,8 +209,6 @@ public class DocumentoPCOController {
 		return INFORMAR_DOC;
 	}
 	
-	
-	// METODO PROVISIONAL
 	/**
 	 * Incluir Documento
 	 * 
@@ -473,10 +462,6 @@ public class DocumentoPCOController {
 			docDto.setContrato(contrato);
 			docDto.setId(idDocUG);
 			
-			// TODO - DATOS PROVISIONALES - REVISAR
-			docDto.setActor("1");
-			docDto.setTipoActor(DDTipoActorPCO.PREPARADOR);
-
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}
 

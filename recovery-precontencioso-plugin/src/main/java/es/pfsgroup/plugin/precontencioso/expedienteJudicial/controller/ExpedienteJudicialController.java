@@ -15,9 +15,16 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.Nivel;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
@@ -32,7 +39,10 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.Pr
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 @Controller
@@ -44,6 +54,9 @@ public class ExpedienteJudicialController {
 	private static final String JSP_BUSQUEDA_PROCEDIMIENTO = "plugin/precontencioso/busquedas/buscadorProcedimientosPco";
 	private static final String JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO = "plugin/precontencioso/busquedas/buscadorElementosPco";
 	private static final String JSON_RESULTADO_FINALIZAR_PREPARACION = "plugin/precontencioso/acciones/json/resultadoFinalizarPreparacionJSON";
+	private static final String JSON_TIPO_DESPACHO = "plugin/precontencioso/busquedas/json/tipoDespachoJSON";
+	private static final String JSON_TIPO_USUARIO = "plugin/precontencioso/busquedas/json/tipoUsuarioJSON";
+	private static final String JSON_ZONAS = "plugin/precontencioso/busquedas/json/listadoZonasJSON";
 
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
@@ -70,14 +83,12 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String abrirBusquedaProcedimiento(WebRequest request, ModelMap model) {
 		rellenarFormBusquedaPCO(model);
-		model.put("ocultarTipoBusqueda", true);
 		return JSP_BUSQUEDA_PROCEDIMIENTO;
 	}
 
 	@RequestMapping
 	public String abrirBusquedaElementosPco(WebRequest request, ModelMap model) {	
 		rellenarFormBusquedaPCO(model);
-		model.put("ocultarTipoBusqueda", false);
 		return JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO;
 	}	
 
@@ -109,15 +120,53 @@ public class ExpedienteJudicialController {
 
 		// Pestaña liquidaciones
 		List<DDEstadoLiquidacionPCO> estadoLiquidacion = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoLiquidacionPCO.class);
-
 		model.put("estadoLiquidacion", estadoLiquidacion);
 
 		// Pestaña burofax
 		List<DDResultadoBurofaxPCO> resultadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoBurofaxPCO.class);
-
 		model.put("resultadoBurofax", resultadoBurofax);
+
+		List<Nivel> ddJerarquia = procedimientoPcoApi.getNiveles();
+		model.put("ddJerarquia", ddJerarquia);
+		
+		List<EXTDDTipoGestor> ddListadoGestores = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(EXTDDTipoGestor.class);
+		model.put("ddListadoGestores", ddListadoGestores);
+				
 		return model;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListTipoDespachoData(ModelMap model, Long idTipoGestor, 
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
+		
+		List<DespachoExterno> listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
+		
+		model.put("listadoDespachos", listadoDespachos);
+		return JSON_TIPO_DESPACHO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getZonasPorNivel(ModelMap model, Long idJerarquia){
+		List<DDZona> ddZonas = proxyFactory.proxy(EXTAsuntoApi.class).getZonasPorNivel(idJerarquia.intValue());
+		model.put("ddZonas", ddZonas);
+		return JSON_ZONAS;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListUsuariosData(ModelMap model, Long idTipoDespacho,
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
+		
+		incluirBorrados = incluirBorrados != null ? incluirBorrados : false;
+		
+		List<Usuario> listadoUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(idTipoDespacho, incluirBorrados);
+		model.put("listadoUsuarios", listadoUsuarios);
+		
+		return JSON_TIPO_USUARIO;
+	}
+
 
 	@RequestMapping
 	public String busquedaProcedimientos(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) {

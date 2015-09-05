@@ -207,7 +207,6 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     mkdir $BASEDIR/tmp/package/DDL/scripts/
     mkdir $BASEDIR/tmp/package/DML
     mkdir $BASEDIR/tmp/package/DML/scripts/
-    cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
     passtring=''
     if [ "$MULTIENTIDAD" != "" ] ; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"

@@ -208,9 +208,22 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     mkdir $BASEDIR/tmp/package/DML
     mkdir $BASEDIR/tmp/package/DML/scripts/
     cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
-    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
+    passtring=''
+    if [ "$MULTIENTIDAD" != "" ] ; then
+        IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+        for index in "${!entidades[@]}"
+        do
+            passtring="$passtring ""entity0$((index+1))_pass@sid"
+        done        
+    else
+        passtring="entity01_pass@sid"
+    fi
+    sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DML/DML-scripts.sh
+    cp $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    cat $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
     cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
-    cat $BASEDIR/scripts/DxL-scripts.sh $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
     cd $BASEDIR/tmp/package/
     zip scripts.zip -r *
     echo "GENERADO ZIP PARA SOLICITUD DE DESPLIEGUE: $BASEDIR/tmp/package/scripts.zip"

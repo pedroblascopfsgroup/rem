@@ -141,7 +141,7 @@ executionPass=""
 if [[ $ESQUEMA_EJECUCION =~ MASTER$ ]]; then
     executionPass="\$1"
 else
-    executionPass="\$2"
+    executionPass="\$$((${ESQUEMA_EJECUCION: -1} + 1))"
 fi
 
 #Invocar PASO2

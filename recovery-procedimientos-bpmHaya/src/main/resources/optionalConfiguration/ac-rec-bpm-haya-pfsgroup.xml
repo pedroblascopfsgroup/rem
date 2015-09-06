@@ -765,17 +765,17 @@
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "TITINSC");
 				}
 				
-				def comprobarExisteDocumentoPSFDUC() = { 
+				def comprobarExisteDocumentoPSFDUC = { 
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PSFDUC");
 				} 
 				
-				def comprobarExisteDocumentoDECRADJ() = { 
+				def comprobarExisteDocumentoDECRADJ = { 
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DECRADJ");
 				} 
 				
-				def comprobarExisteDocumentoAULIQUI() = { 
+				def comprobarExisteDocumentoAULIQUI = { 
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AULIQUI");
 				}    		                       

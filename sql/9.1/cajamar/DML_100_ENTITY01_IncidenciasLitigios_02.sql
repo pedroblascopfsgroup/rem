@@ -289,7 +289,14 @@ BEGIN
           ' SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoDTCCE() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe adjuntar el documento "Decreto tasaci&oacute;n costas".</div>'''''' ' ||
           ' WHERE TAP_CODIGO = ''H032_RegistrarDecTasacionCostas'' ';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-677');
-	
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-539');
+	V_TAREA:='H001_PresentarAlegaciones';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''Fecha comparecencia''' ||
+	  ' WHERE TFI_NOMBRE=''fechaComparecencia'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-539');
+
 COMMIT;
  
 EXCEPTION

@@ -55,7 +55,7 @@ var documentoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
 	{dataIndex: 'docEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.estado" text="**Estado"/>', sortable: false},
-<%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
+	{dataIndex: 'fechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'docUltimaRespuesta', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.respuesta" text="**Respuesta ultima solicitud"/>', sortable: false},
 	{dataIndex: 'docUltimoActor', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.actor" text="**Actor ultima solicitud"/>', sortable: false},
 	{dataIndex: 'docFechaResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.resultado" text="**Fecha resultado"/>', sortable: false},
@@ -87,6 +87,10 @@ documentoPcoStore.on('load', function() {
 
 gridDocumentoPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
-	var id = rec.get('prcId');
-	//app.abreAsuntoTab(id, nombre_asunto,'tabSubastas');
+	var id = rec.get('codigo');
+	var nombre_procedimiento = rec.get('nombreExpediente');
+
+   	if (id != null && id != ''){
+   		app.abreProcedimiento(id, nombre_procedimiento);
+   	}
 });

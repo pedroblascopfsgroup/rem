@@ -56,6 +56,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		ProjectionList select = Projections.projectionList();
 
 		//select.add(Projections.property("procedimientoPco").as("procedimientoPco"));
+		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
 		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
@@ -88,6 +89,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
+		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
 		// Respuesta ultima solicitud
 		// Actor última solicitud
@@ -109,6 +111,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
+		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("estadoLiquidacion.descripcion").as("estado"));
 		select.add(Projections.property("liqcontrato.nroContrato").as("contrato"));
 		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
@@ -132,6 +135,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
+		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("estadoBurofax.descripcion").as("estado"));
 		select.add(Projections.property("burofax.demandado").as("demandado"));
 		select.add(Projections.property("enviosBurofax.fechaSolicitud").as("fechaSolicitud"));

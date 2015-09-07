@@ -89,5 +89,9 @@ burofaxPcoStore.on('load', function() {
 gridBurofaxPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
-	//app.abreAsuntoTab(id, nombre_asunto,'tabSubastas');
+	var nombre_procedimiento = rec.get('nombreExpediente');
+
+   	if (id != null && id != ''){
+   		app.abreProcedimiento(id, nombre_procedimiento);
+   	}
 });

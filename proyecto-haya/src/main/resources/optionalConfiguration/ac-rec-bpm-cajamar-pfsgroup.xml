@@ -385,7 +385,11 @@
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H001'));
 				}
-	            
+				
+				def comprobarCargasBienesProcedimiento = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarCargasBienesProcedimiento(idProcedimiento);
+				}	            
   			 ]]>
   			</value>
   		</list>

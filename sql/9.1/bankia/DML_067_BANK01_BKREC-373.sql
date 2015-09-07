@@ -37,7 +37,7 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-execute immediate 'update '||V_ESQUEMA||'.tfi_tareas_form_items set usuariomodificar = ''BKREC-373'', fechamodificar=sysdate, tfi_error_validacion = ''''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'''', ''''valor != null && valor != '''''''' ? true : false'''' where tfi_nombre = ''fecha'' and tap_id in (select tap_id from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO in (''P401_ContabilizarCierreDeuda'',''P413_ContabilizarCierreDeuda''))';
+execute immediate 'update '||V_ESQUEMA||'.tfi_tareas_form_items set usuariomodificar = ''BKREC-373'', fechamodificar=sysdate, tfi_error_validacion = ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', tfi_validacion = ''valor != null && valor != '''''''' ? true : false'' where tfi_nombre = ''fecha'' and tap_id in (select tap_id from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO in (''P401_ContabilizarCierreDeuda'',''P413_ContabilizarCierreDeuda''))';
 
 
 

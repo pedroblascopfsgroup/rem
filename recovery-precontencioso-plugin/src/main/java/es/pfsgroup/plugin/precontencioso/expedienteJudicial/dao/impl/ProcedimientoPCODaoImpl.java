@@ -89,7 +89,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
-		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
 		// Respuesta ultima solicitud
 		// Actor última solicitud
@@ -111,7 +110,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
-		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("estadoLiquidacion.descripcion").as("estado"));
 		select.add(Projections.property("liqcontrato.nroContrato").as("contrato"));
 		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
@@ -135,7 +133,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
-		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("estadoBurofax.descripcion").as("estado"));
 		select.add(Projections.property("burofax.demandado").as("demandado"));
 		select.add(Projections.property("enviosBurofax.fechaSolicitud").as("fechaSolicitud"));
@@ -158,6 +155,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param select
 	 */
 	private void addDefaultProcedimientoProjection(ProjectionList select) {
+		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
 		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
@@ -397,6 +395,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		if (!StringUtils.emtpyString(filtro.getLiqEstados())) {
 			where.add(Restrictions.in("estadoLiquidacion.codigo", filtro.getLiqEstados().split(",")));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getLiqDiasGestion())) {
+			where.add(Restrictions.eq("liquidacion.diasGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 
 		where.addAll(floatRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));

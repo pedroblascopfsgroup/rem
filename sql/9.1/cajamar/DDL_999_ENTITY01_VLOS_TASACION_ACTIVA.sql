@@ -85,5 +85,4 @@ END;
 
 /
 
-EXIT
-
+EXIT;

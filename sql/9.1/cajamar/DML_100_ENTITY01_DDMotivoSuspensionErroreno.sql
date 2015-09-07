@@ -55,4 +55,4 @@ END;
 
 /
 
-EXIT
+EXIT;

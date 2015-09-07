@@ -125,5 +125,5 @@ END;
 
 /
 
-EXIT
+EXIT;
 

@@ -104,4 +104,4 @@ END;
 
 /
 
-EXIT
+EXIT;

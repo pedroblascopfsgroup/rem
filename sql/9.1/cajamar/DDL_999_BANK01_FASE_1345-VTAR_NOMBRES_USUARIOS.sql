@@ -91,5 +91,5 @@ END;
 
 /
 
-EXIT
+EXIT;
 

@@ -353,5 +353,4 @@ END;
 
 /
 
-EXIT
-
+EXIT;

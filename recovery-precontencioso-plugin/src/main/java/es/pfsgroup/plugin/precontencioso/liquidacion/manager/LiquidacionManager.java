@@ -58,6 +58,9 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 
@@ -135,8 +138,10 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setCapitalNoVencido(null);
 		liquidacion.setInteresesOrdinarios(null);
 		liquidacion.setInteresesDemora(null);
+		liquidacion.setComisiones(null);
+		liquidacion.setGastos(null);
 		liquidacion.setTotal(null);
-		
+
 		//Se registra el usd_id del solicitante
 		if(!Checks.esNulo(usuarioManager)){
 			List<GestorDespacho> listaGestorDespacho = getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
@@ -144,12 +149,9 @@ public class LiquidacionManager implements LiquidacionApi {
 				liquidacion.setSolicitante(listaGestorDespacho.get(0));
 			}
 		}
-		
 
 		liquidacionDao.saveOrUpdate(liquidacion);
 	}
-	@Autowired
-	UsuarioManager usuarioManager;
 
 	@Override
 	@Transactional(readOnly = false)

@@ -210,7 +210,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigo())) {
-			where.add(Restrictions.eq("procedimiento.id", filtro.getProCodigo()));
+			where.add(Restrictions.eq("procedimiento.id", Long.valueOf(filtro.getProCodigo())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProTipoPreparacion())) {

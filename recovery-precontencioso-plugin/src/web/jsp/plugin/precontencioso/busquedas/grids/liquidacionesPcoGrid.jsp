@@ -62,13 +62,13 @@ var liquidacionPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'liqTotal', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.total" text="**Total"/>', sortable: false}
 ]);
 
-var pagingBar = fwk.ux.getPaging(liquidacionPcoStore);
-pagingBar.hide();
+var pagingBarLiq = fwk.ux.getPaging(liquidacionPcoStore);
+pagingBarLiq.hide();
 
 var gridLiquidacionPco = app.crearGrid(liquidacionPcoStore, liquidacionPcoCm, {
 	title: '<s:message code="plugin.precontencioso.tab.liquidacion.listado" text="**Listado Liquidaciones" />',
 	cls: 'cursor_pointer',
-	bbar : [pagingBar],
+	bbar : [pagingBarLiq],
 	height: 250,
 	collapsible: true,
 	collapsed: true,
@@ -80,7 +80,7 @@ var gridLiquidacionPco = app.crearGrid(liquidacionPcoStore, liquidacionPcoCm, {
 <%-- Events --%>
 liquidacionPcoStore.on('load', function() {
 	gridLiquidacionPco.expand(true)
-	pagingBar.show();
+	pagingBarLiq.show();
 });
 
 gridLiquidacionPco.addListener('rowdblclick', function(grid, rowIndex, e) {

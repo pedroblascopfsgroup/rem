@@ -249,6 +249,9 @@ var panelFechaParalizacion = new Ext.Panel({
 		documentoPcoStore.removeAll();
 		liquidacionPcoStore.removeAll();
 		burofaxPcoStore.removeAll();
+		pagingBarDoc.hide();
+		pagingBarLiq.hide();
+		pagingBarBur.hide();
 		if(comboTipoBusqueda.getValue() == documento) {
             filtrosTabDocumentos.enable();
             filtrosTabLiquidacion.disable();	            	

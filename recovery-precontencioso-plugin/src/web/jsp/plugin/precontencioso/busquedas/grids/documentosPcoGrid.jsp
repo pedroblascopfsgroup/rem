@@ -64,13 +64,13 @@ var documentoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', sortable: false}
 ]);
 
-var pagingBar = fwk.ux.getPaging(documentoPcoStore);
-pagingBar.hide();
+var pagingBarDoc = fwk.ux.getPaging(documentoPcoStore);
+pagingBarDoc.hide();
 
 var gridDocumentoPco = app.crearGrid(documentoPcoStore, documentoPcoCm, {
 	title: '<s:message code="plugin.precontencioso.tab.documento.listado" text="**Listado Documentos" />',
 	cls: 'cursor_pointer',
-	bbar : [pagingBar],
+	bbar : [pagingBarDoc],
 	height: 250,
 	collapsible: true,
 	collapsed: true,
@@ -82,7 +82,7 @@ var gridDocumentoPco = app.crearGrid(documentoPcoStore, documentoPcoCm, {
 <%-- Events --%>
 documentoPcoStore.on('load', function() {
 	gridDocumentoPco.expand(true)
-	pagingBar.show();
+	pagingBarDoc.show();
 });
 
 gridDocumentoPco.addListener('rowdblclick', function(grid, rowIndex, e) {

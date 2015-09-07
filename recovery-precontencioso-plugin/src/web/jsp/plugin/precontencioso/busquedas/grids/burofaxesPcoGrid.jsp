@@ -65,13 +65,13 @@ var burofaxPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'burResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.resultado" text="**Resultado"/>', sortable: false}
 ]);
 
-var pagingBar = fwk.ux.getPaging(burofaxPcoStore);
-pagingBar.hide();
+var pagingBarBur = fwk.ux.getPaging(burofaxPcoStore);
+pagingBarBur.hide();
 
 var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
 	title: '<s:message code="plugin.precontencioso.tab.burofax.listado" text="**Listado Burofaxes" />',
 	cls: 'cursor_pointer',
-	bbar : [pagingBar],
+	bbar : [pagingBarBur],
 	height: 250,
 	collapsible: true,
 	collapsed: true,
@@ -83,7 +83,7 @@ var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
 <%-- Events --%>
 burofaxPcoStore.on('load', function() {
 	gridBurofaxPco.expand(true)
-	pagingBar.show();
+	pagingBarBur.show();
 });
 
 gridBurofaxPco.addListener('rowdblclick', function(grid, rowIndex, e) {

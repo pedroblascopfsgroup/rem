@@ -110,7 +110,8 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	 */
 	public Boolean filtroContratoInformado() {
 		Boolean filtroContratoInformado = Boolean.valueOf(!StringUtils.emtpyString(getConCodigo())
-				|| !StringUtils.emtpyString(getConTiposProducto()));
+				|| !StringUtils.emtpyString(getConTiposProducto())
+				|| !StringUtils.emtpyString(getProCentroContable()));
 
 		return filtroContratoInformado;
 	}

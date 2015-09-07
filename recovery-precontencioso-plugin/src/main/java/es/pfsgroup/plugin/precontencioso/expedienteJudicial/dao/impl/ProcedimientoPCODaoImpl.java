@@ -55,7 +55,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	public List<HashMap<String, Object>> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
-		//select.add(Projections.property("procedimientoPco").as("procedimientoPco"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
@@ -315,6 +314,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		if (!StringUtils.emtpyString(filtro.getConTiposProducto())) {
 			query.createAlias("contrato.tipoProductoEntidad", "tipoProductoEntidad");
 			where.add(Restrictions.in("tipoProductoEntidad.codigo", filtro.getConTiposProducto().split(",")));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getProCentroContable())) {
+			query.createAlias("contrato.oficinaContable", "oficinaContable");
+			query.createAlias("oficinaContable.zona", "oficinaContableZona");
+
+			where.add(Restrictions.in("oficinaContableZona.codigo", filtro.getProCentroContable().split(",")));
 		}
 
 		return where;

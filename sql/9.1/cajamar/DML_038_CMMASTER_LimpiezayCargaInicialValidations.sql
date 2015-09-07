@@ -10,382 +10,398 @@
 --## Finalidad: Limpieza y carga inicial de tablas validaciones DD_JVI_JOB_VAL_INTERFAZ, DD_JVS_JOB_VAL_SEVERITY y BATCH_JOB_VALIDATION, esquema CMMASTER
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--## 0.1 Versión inicial
 --##########################################
 --*/
 
 SET SERVEROUTPUT ON;
 DECLARE
   
-   TYPE T_JVI IS TABLE OF VARCHAR2(250);
-   TYPE T_ARRAY_JVI IS TABLE OF T_JVI;
-   
-   TYPE T_JVS IS TABLE OF VARCHAR2(250);
-   TYPE T_ARRAY_JVS IS TABLE OF T_JVS;
-   
-   TYPE T_JBV IS TABLE OF VARCHAR2(2500);
-   TYPE T_ARRAY_JBV IS TABLE OF T_JBV;   
-   
-      
+ TYPE T_JVI IS TABLE OF VARCHAR2(250);
+ TYPE T_ARRAY_JVI IS TABLE OF T_JVI;
+ 
+ TYPE T_JVS IS TABLE OF VARCHAR2(250);
+ TYPE T_ARRAY_JVS IS TABLE OF T_JVS;
+ 
+ TYPE T_JBV IS TABLE OF VARCHAR2(4000);
+ TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+ 
+ 
 --/*
 --##########################################
 --## Configuraciones a rellenar
 --##########################################
 --*/
   -- Configuracion Esquemas
-   V_ESQUEMA          VARCHAR2(25 CHAR):= 'CM01'; -- Configuracion Esquema
-   V_ESQUEMA_MASTER   VARCHAR2(25 CHAR):= 'CMMASTER'; -- Configuracion Esquema Master
-   seq_count          NUMBER(3); -- Vble. para validar la existencia de las Secuencias.
-   table_count        NUMBER(3); -- Vble. para validar la existencia de las Tablas.
-   v_column_count     NUMBER(3); -- Vble. para validar la existencia de las Columnas.
-   v_constraint_count NUMBER(3); -- Vble. para validar la existencia de las Constraints.
-   err_num            NUMBER; -- Numero de errores
-   err_msg            VARCHAR2(2048); -- Mensaje de error    
-   V_MSQL             VARCHAR2(5000);
-   V_EXIST            NUMBER(10);
-   V_ENTIDAD_ID       NUMBER(16);   
+ V_ESQUEMA VARCHAR2(25 CHAR):= 'CM01'; -- Configuracion Esquema
+ V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'CMMASTER'; -- Configuracion Esquema Master
+ seq_count NUMBER(3); -- Vble. para validar la existencia de las Secuencias.
+ table_count NUMBER(3); -- Vble. para validar la existencia de las Tablas.
+ v_column_count  NUMBER(3); -- Vble. para validar la existencia de las Columnas.
+ v_constraint_count NUMBER(3); -- Vble. para validar la existencia de las Constraints.
+ err_num  NUMBER; -- Numero de errores
+ err_msg  VARCHAR2(2048); -- Mensaje de error 
+ V_MSQL VARCHAR2(4000 CHAR);
+ V_EXIST  NUMBER(10);
+ V_ENTIDAD_ID  NUMBER(16); 
 
-   V_USUARIO_CREAR VARCHAR2(10) := 'INICIAL';
+ V_USUARIO_CREAR VARCHAR2(10) := 'INICIAL';
 
---Código del grupo de carga   
+--Código del grupo de carga 
 --Configuracion  EXT_DD_JVI_JOB_VAL_INTERFAZ
-                                   
-   V_JVI T_ARRAY_JVI := T_ARRAY_JVI(
-                              T_JVI('TMP_CNT_CONTRATOS','Tabla tmp de contratos', 'Tabla tmp de contratos')
-                            , T_JVI('TMP_PER_PERSONAS','Tabla tmp de personas', 'Tabla tmp de personas')
-                            , T_JVI('TMP_CPE_CONTRATOS_PERSONAS','Tabla tmp de relaciones', 'Tabla tmp de relaciones')                            
-                            );
-                            
-   V_JVS T_ARRAY_JVS := T_ARRAY_JVS(
-                              T_JVS('LOW','Severidad baja (no bloqueante)','Severidad baja (no bloqueante)')
-                            , T_JVS('HIGH','Severidad alta (bloqueante)', 'Severidad alta (bloqueante)')
-                            );
-                            
-   V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
-                            T_JBV('cnt-02.loadDateValidator.Oracle9iDialect','3058','SELECT TMP_CNT_FECHA_EXTRACCION AS ERROR_FIELD, (TMP_CNT_COD_ENTIDAD ||''''-''''|| TMP_CNT_COD_OFICINA ||''''-''''|| TMP_CNT_CONTRATO) AS ENTITY_CODE from TMP_CNT_CONTRATOS where TMP_CNT_FECHA_EXTRACCION <> to_date(''''20150825'''',''''YYYYMMDD'''')','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-03.movementValidator','3058','SELECT tc.tmp_cnt_fecha_extraccion AS ERROR_FIELD, (tc.tmp_cnt_cod_entidad || ''''-'''' || tc.tmp_cnt_cod_oficina || ''''-'''' || tc.tmp_cnt_contrato) AS ENTITY_CODE FROM cnt_contratos c, tmp_cnt_contratos tc where c.cnt_contrato = tc.tmp_cnt_contrato and tc.TMP_CNT_COD_ENTIDAD = c.CNT_COD_ENTIDAD and tc.TMP_CNT_COD_OFICINA = c.CNT_COD_OFICINA and c.cnt_fecha_extraccion >= tc.tmp_cnt_fecha_extraccion','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-04.officeCodeValidator','3058',' SELECT distinct TMP_CNT_COD_OFICINA AS ERROR_FIELD FROM tmp_cnt_contratos tc WHERE not EXISTS ( SELECT * FROM ofi_oficinas ofi WHERE ofi.OFI_CODIGO_ENTIDAD_OFICINA = tc.TMP_CNT_COD_ENT_OFI_CNTBLE and ofi.OFI_CODIGO_OFICINA = tc.TMP_CNT_COD_OFI_CNTBLE)','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-05.zonaCodeValidator','3058','SELECT TMP_CNT_COD_CENTRO AS ERROR_FIELD,
-                                                                         (tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt_contrato) AS ENTITY_CODE 
-                                                                         FROM tmp_cnt_contratos tc WHERE NOT EXISTS(SELECT * FROM zon_zonificacion z WHERE tc.TMP_CNT_COD_CENTRO = z.zon_cod)
-                                                                         ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-06.currencyCodeValidator','3058','SELECT TMP_CNT_MONEDA AS ERROR_FIELD,
-                                                                             (tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt_contrato) AS ENTITY_CODE 
-                                                                         FROM tmp_cnt_contratos tc 
-                                                                         WHERE NOT EXISTS 
-                                                                          (SELECT * FROM dd_mon_monedas m WHERE tc.TMP_CNT_MONEDA = m.DD_MON_CODIGO) 
-                                                                         ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-07.productTypeCodeValidator','3058','SELECT tmp_cnt_tipo_producto AS ERROR_FIELD,
-                                                                             (tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt_contrato) AS ENTITY_CODE 
-                                                                         FROM tmp_cnt_contratos tc 
-                                                                         WHERE NOT EXISTS 
-                                                                          (SELECT * FROM dd_tpe_tipo_prod_entidad tpe where trim(tc.tmp_cnt_tipo_producto) = trim(tpe.DD_TPE_CODIGO))
-                                                                         ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-08.contratoRelacionValidator','3058','SELECT ''''No existe relacion'''' AS ERROR_FIELD,
-                                                                               (tc.tmp_cnt_cod_entidad || ''''-'''' || tc.tmp_cnt_cod_oficina || ''''-'''' || tc.tmp_cnt_contrato) AS ENTITY_CODE 
-                                                                           from tmp_cnt_contratos tc where NOT EXISTS 
-                                                                            ( 
-                                                                               select * 
-                                                                               from tmp_cnt_per tcp 
-                                                                               where tc.TMP_CNT_CONTRATO = tcp.TMP_CNT_PER_CONTRATO
-                                                                                   and tc.TMP_CNT_COD_ENTIDAD = tcp.TMP_CNT_PER_COD_ENTIDAD
-                                                                                   and tc.TMP_CNT_COD_OFICINA = tcp.TMP_CNT_PER_COD_OFICINA
-                                                                           )','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-09.movimientoPrevio','3058','SELECT cnt.cnt_id AS ERROR_FIELD,
-                                                                               (CNT.CNT_COD_ENTIDAD ||''''-''''|| CNT.CNT_COD_OFICINA ||''''-''''|| CNT.CNT_CONTRATO) AS ENTITY_CODE
-                                                                           FROM cnt_contratos cnt, ${master.schema}.DD_ESC_ESTADO_CNT ec
-                                                                           WHERE (CNT.CNT_COD_ENTIDAD, CNT.CNT_COD_OFICINA, CNT.CNT_CONTRATO) not in 
-                                                                           (
-                                                                               select TMP.TMP_CNT_COD_ENTIDAD, TMP.TMP_CNT_COD_OFICINA, TMP.TMP_CNT_CONTRATO  
-                                                                               from tmp_cnt_contratos tmp
-                                                                           )
-                                                                           AND CNT.BORRADO = 0
-                                                                           AND CNT.DD_ESC_ID = ec.DD_ESC_ID
-                                                                           AND ec.dd_esc_codigo = ''''?''''
-                                                                           ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-10.fechaExtracionMenorHoy','3058','SELECT tc.tmp_cnt_fecha_extraccion AS ERROR_FIELD,
-                                                                              (tc.tmp_cnt_cod_entidad ||''''-''''|| tc.tmp_cnt_cod_oficina ||''''-''''|| tc.tmp_cnt_contrato) AS ENTITY_CODE         
-                                                                          FROM tmp_cnt_contratos tc
-                                                                          WHERE tc.tmp_cnt_fecha_extraccion > ${sql.function.curdate}
-                                                                          ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-11.fechaPosVencida','3058','SELECT tc.tmp_cnt_fecha_pos_vencida AS ERROR_FIELD,
-                                                                              (tc.tmp_cnt_cod_entidad || ''''-'''' || tc.tmp_cnt_cod_oficina || ''''-'''' || tc.tmp_cnt_contrato) AS ENTITY_CODE         
-                                                                          FROM tmp_cnt_contratos tc, cnt_contratos c, mov_movimientos m
-                                                                          WHERE tc.tmp_cnt_contrato = c.cnt_contrato
-                                                                              and tc.TMP_CNT_COD_ENTIDAD = c.CNT_COD_ENTIDAD
-                                                                              and tc.TMP_CNT_COD_OFICINA = c.CNT_COD_OFICINA
-                                                                              AND c.cnt_id = m.cnt_id
-                                                                              AND tc.tmp_cnt_fecha_pos_vencida < m.mov_fecha_pos_vencida
-                                                                          ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-12.activoPositvo','3058','SELECT tmp_cnt.TMP_CNT_POS_VIVA_NO_VENCIDA AS ERROR_FIELD,
-                                                                      (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                  FROM tmp_cnt_contratos tmp_cnt,dd_tpe_tipo_prod_entidad tp
-                                                                  WHERE TRIM(tp.dd_tpe_codigo) = TRIM(tmp_cnt.TMP_CNT_TIPO_PRODUCTO)
-                                                                      AND tp.dd_tpe_activo=1
-                                                                      AND tmp_cnt.TMP_CNT_POS_VIVA_VENCIDA < 0
-                                                                  ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-13.finalidadOficial','3058','SELECT tmp_cnt.TMP_CNT_FINALIDAD_OFI AS ERROR_FIELD,
-                                                                      (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                  FROM tmp_cnt_contratos tmp_cnt
-                                                                  WHERE tmp_cnt.TMP_CNT_FINALIDAD_OFI is not null and NOT EXISTS 
-                                                                      (
-                                                                      SELECT * FROM DD_FNO_FINALIDAD_OFICIAL FNO
-                                                                      WHERE tmp_cnt.TMP_CNT_FINALIDAD_OFI = FNO.DD_FNO_CODIGO
-                                                                      )      
-                                                                  ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-14.finalidadContrato','3058','SELECT tmp_cnt.TMP_CNT_FINALIDAD_CON AS ERROR_FIELD,
-                                                                        (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                    FROM tmp_cnt_contratos tmp_cnt
-                                                                    WHERE tmp_cnt.TMP_CNT_FINALIDAD_CON is not null and  NOT EXISTS 
-                                                                     (
-                                                                        SELECT * FROM DD_FCN_FINALIDAD_CONTRATO FCN
-                                                                        WHERE tmp_cnt.TMP_CNT_FINALIDAD_CON = FCN.DD_FCN_CODIGO
-                                                                        )      
-                                                                    ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-15.garantia1','3058','SELECT tmp_cnt.TMP_CNT_GARANTIA_1 AS ERROR_FIELD,
-                                                                       (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                   FROM tmp_cnt_contratos tmp_cnt
-                                                                   WHERE tmp_cnt.TMP_CNT_GARANTIA_1 is not null and NOT EXISTS 
-                                                                       (
-                                                                       SELECT * FROM DD_GCN_GARANTIA_CONTRATO GCN
-                                                                       WHERE tmp_cnt.TMP_CNT_GARANTIA_1 = GCN.DD_GCN_CODIGO
-                                                                       )
-                                                                   ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-16.garantia2','3058','SELECT tmp_cnt.TMP_CNT_GARANTIA_2 AS ERROR_FIELD,
-                                                                       (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                   FROM tmp_cnt_contratos tmp_cnt
-                                                                   WHERE tmp_cnt.TMP_CNT_GARANTIA_2 is not null and NOT EXISTS 
-                                                                       (
-                                                                       SELECT * FROM DD_GCO_GARANTIA_CONTABLE GCO
-                                                                       WHERE tmp_cnt.TMP_CNT_GARANTIA_2 = GCO.DD_GCO_CODIGO
-                                                                       )
-                                                                   ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-17.catalogo1','3058','SELECT tmp_cnt.TMP_CNT_CATALOGO_1 AS ERROR_FIELD,
-                                                                        (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                    FROM tmp_cnt_contratos tmp_cnt
-                                                                    WHERE tmp_cnt.TMP_CNT_CATALOGO_1 is not null and NOT EXISTS 
-                                                                        (
-                                                                        SELECT * FROM DD_CT1_CATALOGO_1 CT1
-                                                                        WHERE tmp_cnt.TMP_CNT_CATALOGO_1 = CT1.DD_CT1_CODIGO
-                                                                        )
-                                                                    ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-18.catalogo2','3058','SELECT tmp_cnt.TMP_CNT_CATALOGO_2 AS ERROR_FIELD,
-                                                                         (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                     FROM tmp_cnt_contratos tmp_cnt
-                                                                     WHERE tmp_cnt.TMP_CNT_CATALOGO_2 is not null and NOT EXISTS 
-                                                                      (
-                                                                     SELECT * FROM DD_CT2_CATALOGO_2 CT2
-                                                                     WHERE tmp_cnt.TMP_CNT_CATALOGO_2 = CT2.DD_CT2_CODIGO
-                                                                      )
-                                                                     ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-19.catalogo3','3058','SELECT tmp_cnt.TMP_CNT_CATALOGO_3 AS ERROR_FIELD,
-                                                                        (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                    FROM tmp_cnt_contratos tmp_cnt
-                                                                    WHERE tmp_cnt.TMP_CNT_CATALOGO_3 is not null and NOT EXISTS 
-                                                                        (
-                                                                        SELECT * FROM DD_CT3_CATALOGO_3 CT3
-                                                                        WHERE tmp_cnt.TMP_CNT_CATALOGO_3 = CT3.DD_CT3_CODIGO
-                                                                        )
-                                                                    ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-20.catalogo4','3058','SELECT tmp_cnt.TMP_CNT_CATALOGO_4 AS ERROR_FIELD,
-                                                                        (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                    FROM tmp_cnt_contratos tmp_cnt
-                                                                    WHERE tmp_cnt.TMP_CNT_CATALOGO_4 is not null and NOT EXISTS 
-                                                                     (
-                                                                        SELECT * FROM DD_CT4_CATALOGO_4 CT4
-                                                                        WHERE tmp_cnt.TMP_CNT_CATALOGO_4 = CT4.DD_CT4_CODIGO
-                                                                     )
-                                                                    
-                                                                    ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-21.extra3','3058','SELECT tmp_cnt.TMP_CNT_EXTRA_3_CODIGO AS ERROR_FIELD,
-                                                                        (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                    FROM tmp_cnt_contratos tmp_cnt
-                                                                    WHERE tmp_cnt.TMP_CNT_EXTRA_3_CODIGO is not null and NOT EXISTS 
-                                                                     (
-                                                                        SELECT * FROM DD_MX3_MOVIMIENTO_EXTRA_3 MX3
-                                                                        WHERE tmp_cnt.TMP_CNT_EXTRA_3_CODIGO = MX3.DD_MX3_CODIGO
-                                                                     )
-                                                                    ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-22.extra4','3058','SELECT tmp_cnt.TMP_CNT_EXTRA_4_CODIGO AS ERROR_FIELD,
-                                                                        (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  
-                                                                    FROM tmp_cnt_contratos tmp_cnt
-                                                                    WHERE tmp_cnt.TMP_CNT_EXTRA_4_CODIGO is not null and NOT EXISTS 
-                                                                     (
-                                                                        SELECT * FROM DD_MX4_MOVIMIENTO_EXTRA_4 MX4
-                                                                        WHERE tmp_cnt.TMP_CNT_EXTRA_4_CODIGO = MX4.DD_MX4_CODIGO
-                                                                     )
-                                                                    ','TMP_CNT_CONTRATOS','LOW')
-                          , T_JBV('cnt-23.relacionesCatalogos','3058','select tmp_cnt.TMP_CNT_ID as ERROR_FIELD,
-                                                                        (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE
-                                                                    from tmp_cnt_contratos tmp_cnt 
-                                                                    where tmp_cnt.TMP_CNT_ID not in
-                                                                    (
-                                                                    select tmp_cnt.TMP_CNT_ID
-                                                                    from tmp_cnt_contratos tmp_cnt,DD_CT1_CATALOGO_1 c1 
-                                                                        JOIN DD_CT2_CATALOGO_2 c2 ON c2.dd_ct1_id = c1.dd_ct1_id 
-                                                                        JOIN DD_CT3_CATALOGO_3 c3 ON c3.dd_ct2_id = c2.dd_ct2_id 
-                                                                        JOIN DD_CT4_CATALOGO_4 c4 ON c4.dd_ct3_id = c3.dd_ct3_id 
-                                                                        LEFT JOIN DD_CT5_CATALOGO_5 c5 ON c5.dd_ct4_id = c4.dd_ct4_id 
-                                                                        LEFT JOIN DD_CT6_CATALOGO_6 c6 ON c6.dd_ct5_id = c5.dd_ct5_id 
-                                                                    where c1.dd_ct1_codigo = tmp_cnt.TMP_CNT_CATALOGO_1
-                                                                        and c2.dd_ct2_codigo = tmp_cnt.TMP_CNT_CATALOGO_2
-                                                                        and c3.dd_ct3_codigo = tmp_cnt.TMP_CNT_CATALOGO_3
-                                                                        and c4.dd_ct4_codigo = tmp_cnt.TMP_CNT_CATALOGO_4
-                                                                        and c5.dd_ct5_codigo = tmp_cnt.TMP_CNT_CATALOGO_5
-                                                                        and c6.dd_ct6_codigo = tmp_cnt.TMP_CNT_CATALOGO_6
-                                                                    )
-                                                                    ','TMP_CNT_CONTRATOS','LOW')
-                            );                            
-                                   
+  
+ V_JVI T_ARRAY_JVI := T_ARRAY_JVI(
+ T_JVI('TMP_CNT_CONTRATOS','Tabla tmp de contratos', 'Tabla tmp de contratos')
+  , T_JVI('TMP_PER_PERSONAS','Tabla tmp de personas', 'Tabla tmp de personas')
+  , T_JVI('TMP_CNT_PER','Tabla tmp de relaciones', 'Tabla tmp de relaciones')
+  , T_JVI('TMP_DIRECCIONES','Tabla tmp de direcciones', 'Tabla tmp de direcciones')
+  , T_JVI('TMP_GCL_GRUPOS_CLIENTES','Tabla tmp grupos', 'Tabla tmp de grupos')
+  , T_JVI('TMP_PER_GCL','Tabla tmp de relación grupos clientes', 'Tabla tmp de relación grupos clientes')
+  , T_JVI('TMP_ALE_ALERTAS','Tabla tmp de Alertas', 'Tabla tmp de Alertas')
+  );
+  
+ V_JVS T_ARRAY_JVS := T_ARRAY_JVS(
+ T_JVS('LOW','Severidad baja (no bloqueante)','Severidad baja (no bloqueante)')
+  , T_JVS('HIGH','Severidad alta (bloqueante)', 'Severidad alta (bloqueante)')
+  );
+  
+ V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
+-- Validaciones de contratos 
+               T_JBV('cnt-00.countValidator','3058','select count(1) from tmp_cnt_contratos  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-01.entityValidator','3058','SELECT tmp_cnt_cod_entidad AS ERROR_FIELD,  (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X      WHERE tmp_cnt_cod_entidad <> ?       ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-02.loadDateValidator.Oracle9iDialect','3058','SELECT TMP_CNT_FECHA_EXTRACCION AS ERROR_FIELD,       (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  from TMP_CNT_CONTRATOS X where TMP_CNT_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''')   ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-03.movementValidator','3058','SELECT tc.tmp_cnt_fecha_extraccion AS ERROR_FIELD,  (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(tc.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(tc.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(tc.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(tc.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE    FROM cnt_contratos c, tmp_cnt_contratos tc    where c.cnt_contrato = TO_CHAR(tc.TMP_CNT_CODIGO_PROPIETARIO)||''''|''''||tc.TMP_CNT_TIPO_PRODUCTO||''''|''''||TO_CHAR(tc.TMP_CNT_CONTRATO )||''''|''''||TO_CHAR(tc.TMP_CNT_NUM_ESPEC)    and c.cnt_fecha_extraccion >= tc.tmp_cnt_fecha_extraccion     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-04.insertOfficeZoneCodeValidator','3058','DECLARE CURSOR c_NEWOFFICE IS SELECT TMP_CNT_COD_ENT_OFI_CNTBLE, TMP_CNT_COD_OFI_CNTBLE, TMP_CNT_COD_SUBSC_OFI_CNTBLE, TMP_CNT_COD_OFICINA   FROM tmp_cnt_contratos X WHERE NOT EXISTS ( SELECT 1 FROM ofi_oficinas o WHERE X.TMP_CNT_COD_OFICINA = O.OFI_CODIGO_ENTIDAD_OFICINA||LPAD(O.OFI_CODIGO_OFICINA, 5, ''''0'''')||LPAD(O.OFI_CODIGO_SUBSECCION_OFICINA, 2, ''''0'''') );  v_SQL VARCHAR2(32000);  v_SQLInsert VARCHAR2(32000);  n_OFI_ID NUMBER; n_OFI_CODE VARCHAR2 (100);  n_ZON_ID NUMBER; v_ZON_COD VARCHAR2(50); n_ZON_PID NUMBER; ifExist NUMBER;  BEGIN FOR i IN c_NEWOFFICE LOOP v_SQL := ''''--> VALORES DEL LOOP ''''||i.TMP_CNT_COD_ENT_OFI_CNTBLE||'''' - ''''||i.TMP_CNT_COD_OFI_CNTBLE||'''' - ''''||i.TMP_CNT_COD_SUBSC_OFI_CNTBLE||''''.'''';   select S_OFI_OFICINAS.NEXTVAL into n_OFI_ID from dual;  select i.TMP_CNT_COD_OFICINA into n_OFI_CODE FROM DUAL;  select count(1) into ifExist FROM OFI_OFICINAS where OFI_CODIGO = i.TMP_CNT_COD_OFICINA; if ifExist = 0 then v_SQLInsert := ''''Insert into OFI_OFICINAS ( OFI_ID, OFI_CODIGO, OFI_NOMBRE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, OFI_FECHA_EXTRACCION, OFI_FECHA_DATO, OFI_CODIGO_ENTIDAD_OFICINA, OFI_CODIGO_OFICINA, OFI_CODIGO_SUBSECCION_OFICINA ) SELECT ''''||n_OFI_ID||'''', ''''''''''''||n_OFI_CODE||'''''''''''', ''''''''Oficina pendiente de definir'''''''', ''''''''0'''''''', ''''''''Batch'''''''',sysdate, ''''''''0'''''''', sysdate, sysdate, ''''||i.TMP_CNT_COD_ENT_OFI_CNTBLE||'''',''''||i.TMP_CNT_COD_OFI_CNTBLE||'''',''''||i.TMP_CNT_COD_SUBSC_OFI_CNTBLE||'''' FROM DUAL WHERE ''''''''''''||n_OFI_CODE||'''''''''''' NOT IN (SELECT DISTINCT OFI_CODIGO FROM OFI_OFICINAS)   '''';  EXECUTE IMMEDIATE v_SQLInsert; select s_ZON_ZONIFICACION.nextval into n_ZON_ID from dual; select to_char(''''01''''||newzoncod) zoncod into v_ZON_COD from (select max(hijo)+1 newzoncod  from (select zon_cod, to_number(substr(zon_cod, 3, 6)) hijo from zon_zonificacion where length(zon_cod) = 6 )  ); SELECT ZON_ID into n_ZON_PID FROM ZON_ZONIFICACION WHERE ZON_DESCRIPCION = ''''CENTRO EMPRESA BANKIA''''; v_SQLInsert := ''''Insert into ZON_ZONIFICACION ( ZON_ID, ZON_COD, ZON_PID, NIV_ID, OFI_ID, VERSION, USUARIOCREAR,FECHACREAR, BORRADO, ZON_FECHA_EXTRACCION,ZON_FECHA_DATO ) SELECT ''''||n_ZON_ID||'''', ''''''''''''||v_ZON_COD||'''''''''''', ''''||n_ZON_PID||'''', (SELECT NIV_ID FROM niv_nivel WHERE niv_descripcion = ''''''''Oficina'''''''' and borrado = 0), ''''||n_OFI_ID||'''', ''''''''0'''''''', ''''''''Batch'''''''',sysdate, ''''''''0'''''''', sysdate, sysdate FROM DUAL '''';  EXECUTE IMMEDIATE v_SQLInsert; end if;  END LOOP; END; ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-04.officeCodeValidator','3058','SELECT TMP_CNT_COD_OFICINA AS ERROR_FIELD,   (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X   WHERE NOT EXISTS(SELECT 1      FROM ofi_oficinas o      WHERE X.TMP_CNT_COD_OFICINA = O.OFI_CODIGO_ENTIDAD_OFICINA||LPAD(O.OFI_CODIGO_OFICINA, 5, ''''0'''')||LPAD(O.OFI_CODIGO_SUBSECCION_OFICINA, 2, ''''0'''')     )   ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-05.zonaCodeValidator','3058','SELECT X.TMP_CNT_COD_ENT_OFI_CNTBLE||''''|''''||X.TMP_CNT_COD_OFI_CNTBLE||''''|''''||X.TMP_CNT_COD_SUBSC_OFI_CNTBLE AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X   WHERE NOT EXISTS(SELECT 1      FROM zon_zonificacion z, ofi_oficinas o     where O.OFI_CODIGO_ENTIDAD_OFICINA||LPAD(O.OFI_CODIGO_OFICINA, 5, ''''0'''')||LPAD(O.OFI_CODIGO_SUBSECCION_OFICINA, 2, ''''0'''') = X.TMP_CNT_COD_OFICINA     and z.ofi_id = o.ofi_id    )   ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-06.insertCurrencyCodeValidator','3058','INSERT INTO dd_mon_monedas (DD_MON_ID, DD_MON_CODIGO, DD_MON_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)    SELECT S_dd_mon_monedas.NEXTVAL ,MONX.DD_MON_CODIGO ,MONX.DD_MON_DESCRIPCION ,''''${PasajeAProducciónUser}''''  ,SYSTIMESTAMP ,0   FROM (      SELECT DISTINCT ERROR_FIELD as DD_MON_CODIGO, ''''Moneda pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_MON_DESCRIPCION       from (      SELECT TMP_CNT_MONEDA AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE       FROM tmp_cnt_contratos X      WHERE NOT EXISTS (SELECT 1 FROM dd_mon_monedas m WHERE X.TMP_CNT_MONEDA = m.DD_MON_CODIGO)    )   ) MONX  ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-06.currencyCodeValidator','3058','SELECT TMP_CNT_MONEDA AS ERROR_FIELD,  (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X  WHERE NOT EXISTS (SELECT 1      FROM dd_mon_monedas m       WHERE X.TMP_CNT_MONEDA = m.DD_MON_CODIGO)       ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-07.insertProductTypeCodeValidator','3058','INSERT INTO DD_TPE_TIPO_PROD_ENTIDAD (DD_TPE_ID, DD_TPR_ID, DD_TPE_CODIGO, DD_TPE_ACTIVO, DD_TPE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_TPE_TIPO_PROD_ENTIDAD.NEXTVAL     ,(SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROD TPR WHERE UPPER(TPR.DD_TPR_DESCRIPCION) LIKE ''''%PRODUCTO NO ESPECIFICADO%'''')      ,TPEX.DD_TPE_CODIGO      ,1     ,TPEX.DD_TPE_DESCRIPCION     ,''''${PasajeAProducciónUser}''''      ,SYSTIMESTAMP      ,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_TPE_CODIGO, ''''Tipo producto pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TPE_DESCRIPCION from (       SELECT X.TMP_CNT_TIPO_PRODUCTO AS ERROR_FIELD,     (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE     FROM TMP_CNT_CONTRATOS X     WHERE NOT EXISTS (SELECT 1 FROM DD_TPE_TIPO_PROD_ENTIDAD TPE WHERE X.TMP_CNT_TIPO_PRODUCTO = TRIM(TPE.DD_TPE_CODIGO))      ) ) TPEX      ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-07.productTypeCodeValidator','3058','SELECT tmp_cnt_tipo_producto AS ERROR_FIELD,       (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE FROM tmp_cnt_contratos X WHERE NOT EXISTS (SELECT 1    FROM dd_tpe_tipo_prod_entidad tpe     where trim(X.tmp_cnt_tipo_producto) = trim(tpe.DD_TPE_CODIGO)    )       ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-08.contratoRelacionValidator','3058','SELECT ''''No existe relacion'''' AS ERROR_FIELD,  (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   from tmp_cnt_contratos X  where not exists (select 1    from tmp_cnt_per tcp    where tcp.TMP_CNT_PER_COD_PROPIETARIO = X.TMP_CNT_CODIGO_PROPIETARIO      AND tcp.TMP_CNT_PER_TIPO_PRODUCTO = X.TMP_CNT_TIPO_PRODUCTO      AND X.TMP_CNT_CONTRATO = tcp.TMP_CNT_PER_NUM_CONTRATO      AND tcp.TMP_CNT_PER_NUM_ESPEC = X.TMP_CNT_NUM_ESPEC     )  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-09.movimientoPrevio','3058','SELECT cnt.cnt_id AS ERROR_FIELD,    (cnt_cod_entidad ||''''-''''|| cnt.CNT_CONTRATO)AS ENTITY_CODE   FROM cnt_contratos cnt, ${master.schema}.DD_ESC_ESTADO_CNT ec   WHERE CNT.BORRADO = 0  AND CNT.DD_ESC_ID = ec.DD_ESC_ID  AND ec.dd_esc_codigo = ?  AND NOT EXISTS(SELECT 1   FROM TMP_CNT_CONTRATOS X   WHERE LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''') = cnt.CNT_CONTRATO   )      ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-10.fechaExtracionMenorHoy','3058','SELECT X.tmp_cnt_fecha_extraccion AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X  WHERE X.tmp_cnt_fecha_extraccion > ${sql.function.curdate}      ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-11.fechaPosVencida','3058','SELECT X.tmp_cnt_fecha_pos_vencida AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X, cnt_contratos c, mov_movimientos m      WHERE LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''') = c.cnt_contrato      AND c.cnt_id = m.cnt_id      AND X.tmp_cnt_fecha_pos_vencida < m.mov_fecha_pos_vencida  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-12.activoPositvo','3058','SELECT X.TMP_CNT_POS_VIVA_NO_VENCIDA AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X, dd_tpe_tipo_prod_entidad tp      WHERE TRIM(tp.dd_tpe_codigo) = TRIM(X.TMP_CNT_TIPO_PRODUCTO)      AND tp.dd_tpe_activo=1      AND X.TMP_CNT_POS_VIVA_VENCIDA < 0     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-13.insertFinalidadOficial','3058','INSERT INTO DD_FNO_FINALIDAD_OFICIAL (DD_FNO_ID, DD_FNO_CODIGO, DD_FNO_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)    SELECT S_DD_FNO_FINALIDAD_OFICIAL.NEXTVAL       ,FNOX.DD_FNO_CODIGO       ,FNOX.DD_FNO_DESCRIPCION       ,''''${PasajeAProducciónUser}'''' ,SYSTIMESTAMP       ,0   FROM (    SELECT DISTINCT ERROR_FIELD as DD_FNO_CODIGO, ''''Finalidad pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_FNO_DESCRIPCION     from (     SELECT  X.TMP_CNT_FINALIDAD_OFI AS ERROR_FIELD       ,(tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE       FROM TMP_CNT_CONTRATOS X     WHERE X.TMP_CNT_FINALIDAD_OFI is not null       AND NOT EXISTS (SELECT 1 FROM DD_FNO_FINALIDAD_OFICIAL FNO WHERE X.TMP_CNT_FINALIDAD_OFI = FNO.DD_FNO_CODIGO)    )   ) FNOX     ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-13.finalidadOficial','3058','SELECT X.TMP_CNT_FINALIDAD_OFI AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X      WHERE X.TMP_CNT_FINALIDAD_OFI is not null       AND NOT EXISTS (SELECT 1        FROM DD_FNO_FINALIDAD_OFICIAL FNO      WHERE X.TMP_CNT_FINALIDAD_OFI = FNO.DD_FNO_CODIGO)     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-14.insertFinalidadContrato','3058','INSERT INTO DD_FCN_FINALIDAD_CONTRATO  (DD_FCN_ID, DD_FCN_CODIGO, DD_FCN_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT     S_DD_FCN_FINALIDAD_CONTRATO.NEXTVAL    ,FNOX.DD_FCN_CODIGO    ,FNOX.DD_FCN_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0   FROM (    SELECT DISTINCT ERROR_FIELD as DD_FCN_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_FCN_DESCRIPCION     from (      SELECT X.TMP_CNT_FINALIDAD_CON AS ERROR_FIELD,        (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X        WHERE X.TMP_CNT_FINALIDAD_CON is not null  AND NOT EXISTS (SELECT 1 FROM DD_FCN_FINALIDAD_CONTRATO FCN WHERE X.TMP_CNT_FINALIDAD_CON = FCN.DD_FCN_CODIGO )    )   ) FNOX  ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-14.finalidadContrato','3058','SELECT X.TMP_CNT_FINALIDAD_CON AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X   WHERE X.TMP_CNT_FINALIDAD_CON is not null    AND NOT EXISTS (SELECT 1     FROM DD_FCN_FINALIDAD_CONTRATO FCN       WHERE X.TMP_CNT_FINALIDAD_CON = FCN.DD_FCN_CODIGO       )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-15.insertGarantia1','3058','INSERT INTO DD_GCN_GARANTIA_CONTRATO (DD_GCN_ID, DD_GCN_CODIGO, DD_GCN_DESCRIPCION,       VERSION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT S_DD_GCN_GARANTIA_CONTRATO.NEXTVAL,DD_GCN_CODIGO, DD_GCN_DESCRIPCION,      0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0    FROM ( SELECT DISTINCT ERROR_FIELD as DD_GCN_CODIGO, ''''Garantia contrato pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_GCN_DESCRIPCION  from (  SELECT X.TMP_CNT_GARANTIA_1 AS ERROR_FIELD,  (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE     FROM tmp_cnt_contratos X   WHERE X.TMP_CNT_GARANTIA_1 is not null    AND NOT EXISTS (SELECT 1     FROM DD_GCN_GARANTIA_CONTRATO GCN   WHERE X.TMP_CNT_GARANTIA_1 = GCN.DD_GCN_CODIGO)     )    ) GCNX  ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-15.garantia1','3058','SELECT X.TMP_CNT_GARANTIA_1 AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X       WHERE X.TMP_CNT_GARANTIA_1 is not null AND NOT EXISTS (SELECT 1         FROM DD_GCN_GARANTIA_CONTRATO GCN       WHERE X.TMP_CNT_GARANTIA_1 = GCN.DD_GCN_CODIGO )  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-16.insertGarantia2','3058','INSERT INTO DD_GCO_GARANTIA_CONTABLE (DD_GCO_ID, DD_GCO_CODIGO, DD_GCO_DESCRIPCION,   VERSION, USUARIOCREAR, FECHACREAR, BORRADO)     SELECT S_DD_GCO_GARANTIA_CONTABLE.NEXTVAL,DD_GCO_CODIGO, DD_GCO_DESCRIPCION,      0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_GCO_CODIGO, ''''Garantia contable pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_GCO_DESCRIPCION from (      SELECT X.TMP_CNT_GARANTIA_2 AS ERROR_FIELD,       (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE      FROM tmp_cnt_contratos X    WHERE X.TMP_CNT_GARANTIA_2 is not null     AND NOT EXISTS (SELECT 1 FROM DD_GCO_GARANTIA_CONTABLE GCO WHERE X.TMP_CNT_GARANTIA_2 = GCO.DD_GCO_CODIGO )    )   ) GCOX  ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-16.garantia2','3058','SELECT X.TMP_CNT_GARANTIA_2 AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE     FROM tmp_cnt_contratos X   WHERE X.TMP_CNT_GARANTIA_2 is not null    AND NOT EXISTS (SELECT 1 FROM DD_GCO_GARANTIA_CONTABLE GCO WHERE X.TMP_CNT_GARANTIA_2 = GCO.DD_GCO_CODIGO )        ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-17.insertCatalogo1','3058','INSERT INTO DD_CT1_CATALOGO_1 (DD_CT1_ID, DD_CT1_CODIGO, DD_CT1_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)    SELECT S_DD_CT1_CATALOGO_1.NEXTVAL ,CT1X.DD_CT1_CODIGO ,CT1X.DD_CT1_DESCRIPCION ,''''${PasajeAProducciónUser}''''  ,SYSTIMESTAMP ,0   FROM (      SELECT DISTINCT ERROR_FIELD as DD_CT1_CODIGO, ''''Catalogo 1 pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_CT1_DESCRIPCION       from (      SELECT X.TMP_CNT_CATALOGO_1 AS ERROR_FIELD,    (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X      WHERE X.TMP_CNT_CATALOGO_1 is not null      AND NOT EXISTS (SELECT 1 FROM DD_CT1_CATALOGO_1 CT1 WHERE X.TMP_CNT_CATALOGO_1 = CT1.DD_CT1_CODIGO )    )   ) CT1X   ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-17.catalogo1','3058','SELECT X.TMP_CNT_CATALOGO_1 AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X    WHERE X.TMP_CNT_CATALOGO_1 is not null    AND NOT EXISTS (SELECT 1     FROM DD_CT1_CATALOGO_1 CT1       WHERE X.TMP_CNT_CATALOGO_1 = CT1.DD_CT1_CODIGO       )  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-18.catalogo2','3058','SELECT X.TMP_CNT_CATALOGO_2 AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X    WHERE X.TMP_CNT_CATALOGO_2 is not null    AND NOT EXISTS (SELECT 1      FROM DD_CT2_CATALOGO_2 CT2 WHERE X.TMP_CNT_CATALOGO_2 = CT2.DD_CT2_CODIGO )  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-19.catalogo3','3058','SELECT X.TMP_CNT_CATALOGO_3 AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X    WHERE X.TMP_CNT_CATALOGO_3 is not null    AND NOT EXISTS (SELECT 1      FROM DD_CT3_CATALOGO_3 CT3 WHERE X.TMP_CNT_CATALOGO_3 = CT3.DD_CT3_CODIGO )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-20.catalogo4','3058','SELECT X.TMP_CNT_CATALOGO_4 AS ERROR_FIELD,       (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X    WHERE X.TMP_CNT_CATALOGO_4 is not null    AND NOT EXISTS (SELECT 1     FROM DD_CT4_CATALOGO_4 CT4       WHERE X.TMP_CNT_CATALOGO_4 = CT4.DD_CT4_CODIGO       )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-21.extra3','3058','SELECT tmp_cnt.TMP_CNT_CHAR_EXTRA3 AS ERROR_FIELD,       (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  FROM tmp_cnt_contratos tmp_cnt       WHERE tmp_cnt.TMP_CNT_CHAR_EXTRA3 is not null and NOT EXISTS (     SELECT * FROM DD_MX3_MOVIMIENTO_EXTRA_3 MX3    WHERE tmp_cnt.TMP_CNT_CHAR_EXTRA3 = MX3.DD_MX3_CODIGO)     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-22.extra4','3058','SELECT tmp_cnt.TMP_CNT_CHAR_EXTRA4 AS ERROR_FIELD,       (tmp_cnt.tmp_cnt_cod_entidad ||''''-''''|| tmp_cnt.tmp_cnt_cod_oficina ||''''-''''|| tmp_cnt.tmp_cnt_contrato) AS ENTITY_CODE  FROM tmp_cnt_contratos tmp_cnt       WHERE tmp_cnt.TMP_CNT_CHAR_EXTRA4 is not null and NOT EXISTS (     SELECT * FROM DD_MX4_MOVIMIENTO_EXTRA_4 MX4    WHERE tmp_cnt.TMP_CNT_CHAR_EXTRA4 = MX4.DD_MX4_CODIGO)     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-23.relacionesCatalogos','3058','select      X.TMP_CNT_ID as ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE      from tmp_cnt_contratos X       where X.TMP_CNT_ID not in      (      select    tmp_cnt.TMP_CNT_ID      from tmp_cnt_contratos tmp_cnt,DD_CT1_CATALOGO_1 c1       JOIN DD_CT2_CATALOGO_2 c2 ON c2.dd_ct1_id = c1.dd_ct1_id       JOIN DD_CT3_CATALOGO_3 c3 ON c3.dd_ct2_id = c2.dd_ct2_id       JOIN DD_CT4_CATALOGO_4 c4 ON c4.dd_ct3_id = c3.dd_ct3_id       LEFT JOIN DD_CT5_CATALOGO_5 c5 ON c5.dd_ct4_id = c4.dd_ct4_id       LEFT JOIN DD_CT6_CATALOGO_6 c6 ON c6.dd_ct5_id = c5.dd_ct5_id       where c1.dd_ct1_codigo = tmp_cnt.TMP_CNT_CATALOGO_1      and c2.dd_ct2_codigo = tmp_cnt.TMP_CNT_CATALOGO_2      and c3.dd_ct3_codigo = tmp_cnt.TMP_CNT_CATALOGO_3      and c4.dd_ct4_codigo = tmp_cnt.TMP_CNT_CATALOGO_4      and c5.dd_ct5_codigo = tmp_cnt.TMP_CNT_CATALOGO_5      and c6.dd_ct6_codigo = tmp_cnt.TMP_CNT_CATALOGO_6      )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-24.insertAplicativoOrigen','3058','INSERT INTO DD_APO_APLICATIVO_ORIGEN     (DD_APO_ID, DD_APO_CODIGO, DD_APO_DESCRIPCION,       VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT S_DD_APO_APLICATIVO_ORIGEN.NEXTVAL, APOX.DD_APO_CODIGO, APOX.DD_APO_DESCRIPCION,    0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_APO_CODIGO, ''''Aplicativo Origen pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_APO_DESCRIPCION from (   SELECT X.TMP_CNT_APLICATIVO_ORIGEN AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE    FROM tmp_cnt_contratos X WHERE NOT EXISTS (SELECT 1      FROM DD_APO_APLICATIVO_ORIGEN APO     WHERE TRIM(UPPER(X.TMP_CNT_APLICATIVO_ORIGEN)) = TRIM(UPPER(APO.DD_APO_CODIGO))     )       )   ) APOX   ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-24.aplicativoOrigen','3058','SELECT X.TMP_CNT_APLICATIVO_ORIGEN AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X      WHERE NOT EXISTS (SELECT 1    FROM DD_APO_APLICATIVO_ORIGEN APO          WHERE TRIM(UPPER(X.TMP_CNT_APLICATIVO_ORIGEN)) = TRIM(UPPER(APO.DD_APO_CODIGO))          )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-25.insertCodPropietario','3058','INSERT INTO DD_PRO_PROPIETARIOS     (DD_PRO_ID, DD_PRO_CODIGO, DD_PRO_DESCRIPCION,       VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_PRO_PROPIETARIOS.NEXTVAL, PROX.DD_PRO_CODIGO, PROX.DD_PRO_DESCRIPCION,     0,''''${PasajeAProducciónUser}'''',SYSTIMESTAMP,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_PRO_CODIGO, ''''Propietario pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_PRO_DESCRIPCION from ( SELECT X.TMP_CNT_CODIGO_PROPIETARIO AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE    FROM tmp_cnt_contratos X WHERE NOT EXISTS (SELECT 1      FROM DD_PRO_PROPIETARIOS PRO     WHERE X.TMP_CNT_CODIGO_PROPIETARIO = PRO.DD_PRO_CODIGO)       )   ) PROX  ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-25.codPropietario','3058','SELECT X.TMP_CNT_CODIGO_PROPIETARIO AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X      WHERE NOT EXISTS (SELECT 1    FROM DD_PRO_PROPIETARIOS PRO          WHERE X.TMP_CNT_CODIGO_PROPIETARIO = PRO.DD_PRO_CODIGO          )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-26.insertEstadoFinanciero','3058','INSERT INTO DD_EFC_ESTADO_FINAN_CNT    (DD_EFC_ID, DD_EFC_CODIGO, DD_EFC_DESCRIPCION, DD_EFC_PRIORIDAD,      VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT S_DD_EFC_ESTADO_FINAN_CNT.NEXTVAL, SUBSTR(EFCX.DD_EFC_CODIGO,-3), EFCX.DD_EFC_DESCRIPCION,    (SELECT MAX(DD_EFC_PRIORIDAD) FROM DD_EFC_ESTADO_FINAN_CNT WHERE BORRADO=0) + ROWNUM AS DD_EFC_PRIORIDAD,    0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_EFC_CODIGO, ''''Estado financiero pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_EFC_DESCRIPCION from (   SELECT X.TMP_CNT_ESTADO_FINANCIERO AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X WHERE NOT EXISTS (SELECT 1      FROM DD_EFC_ESTADO_FINAN_CNT EFC     WHERE X.TMP_CNT_ESTADO_FINANCIERO = EFC.DD_EFC_CODIGO)     )      ) EFCX  ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-26.estadoFinanciero','3058','SELECT X.TMP_CNT_ESTADO_FINANCIERO AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X      WHERE NOT EXISTS (SELECT 1    FROM DD_EFC_ESTADO_FINAN_CNT EFC          WHERE X.TMP_CNT_ESTADO_FINANCIERO = EFC.DD_EFC_CODIGO          )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-27.officeAdmCodeValidator','3058','SELECT X.TMP_CNT_COD_ENTIDAD_OFI_ADM||''''|''''||X.TMP_CNT_COD_OFICINA_ADM||''''|''''||X.TMP_CNT_COD_SUBSEC_OFI_ADM AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X   WHERE NOT EXISTS(SELECT 1      FROM ofi_oficinas o      WHERE X.TMP_CNT_COD_OFICINA = O.OFI_CODIGO_ENTIDAD_OFICINA||O.OFI_CODIGO_OFICINA||O.OFI_CODIGO_SUBSECCION_OFICINA     )      ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-28.insertGestionEspecial','3058','INSERT INTO DD_GES_GESTION_ESPECIAL  (DD_GES_ID, DD_GES_CODIGO, DD_GES_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_GES_GESTION_ESPECIAL.NEXTVAL     ,GESX.DD_GES_CODIGO     ,GESX.DD_GES_DESCRIPCION     ,''''${PasajeAProducciónUser}''''      ,SYSTIMESTAMP      ,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_GES_CODIGO, ''''Gestión Especial pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_GES_DESCRIPCION from (    SELECT X.TMP_CNT_COD_GESTION_ESPECIAL AS ERROR_FIELD,  (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE    FROM tmp_cnt_contratos X  WHERE NOT EXISTS (SELECT 1 FROM DD_GES_GESTION_ESPECIAL GES WHERE X.TMP_CNT_COD_GESTION_ESPECIAL = GES.DD_GES_CODIGO )     )      ) GESX       ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-28.gestionEspecial','3058','SELECT X.TMP_CNT_COD_GESTION_ESPECIAL AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X      WHERE NOT EXISTS (SELECT 1    FROM DD_GES_GESTION_ESPECIAL GES          WHERE X.TMP_CNT_COD_GESTION_ESPECIAL = GES.DD_GES_CODIGO          )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-29.insertCondicionesRemuneracion','3058','INSERT INTO DD_CRE_CONDICIONES_REMUN_EXT  (DD_CRE_ID, DD_CRE_CODIGO, DD_CRE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_CRE_CONDICIONES_REMUN_EXT.NEXTVAL     ,CREX.DD_CRE_CODIGO     ,CREX.DD_CRE_DESCRIPCION     ,''''${PasajeAProducciónUser}''''      ,SYSTIMESTAMP      ,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_CRE_CODIGO, ''''Condiciones Remuneración Gestión Especial (''''||ERROR_FIELD||'''')'''' as DD_CRE_DESCRIPCION from (    SELECT X.TMP_CNT_REMU_GEST_ESPECIAL AS ERROR_FIELD,        (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE    FROM tmp_cnt_contratos X  WHERE NOT EXISTS (SELECT 1 FROM DD_CRE_CONDICIONES_REMUN_EXT CRE WHERE X.TMP_CNT_REMU_GEST_ESPECIAL = CRE.DD_CRE_CODIGO )    )     ) CREX       ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-29.condicionesRemuneracion','3058','SELECT X.TMP_CNT_REMU_GEST_ESPECIAL AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X      WHERE NOT EXISTS (SELECT 1    FROM DD_CRE_CONDICIONES_REMUN_EXT CRE          WHERE X.TMP_CNT_REMU_GEST_ESPECIAL = CRE.DD_CRE_CODIGO          )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-30.insertMotivoRenumeracion','3058','INSERT INTO DD_MTR_MOTIVO_RENUMERACION     (DD_MTR_ID, DD_MTR_CODIGO, DD_MTR_DESCRIPCION,       VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_MTR_MOTIVO_RENUMERACION.NEXTVAL, MTRX.DD_MTR_CODIGO, MTRX.DD_MTR_DESCRIPCION,     0,''''${PasajeAProducciónUser}'''',SYSTIMESTAMP,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_MTR_CODIGO, ''''Motivo Remuneración pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_MTR_DESCRIPCION from (    SELECT X.TMP_CNT_MOTIVO_RENUMERACION AS ERROR_FIELD,       (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X        WHERE X.TMP_CNT_MOTIVO_RENUMERACION IS NOT NULL   AND NOT EXISTS (SELECT 1         FROM DD_MTR_MOTIVO_RENUMERACION MTR        WHERE X.TMP_CNT_MOTIVO_RENUMERACION = MTR.DD_MTR_CODIGO)       )   ) MTRX  ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-30.motivoRenumeracion','3058','SELECT X.TMP_CNT_MOTIVO_RENUMERACION AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X      WHERE X.TMP_CNT_MOTIVO_RENUMERACION IS NOT NULL   AND NOT EXISTS (SELECT 1    FROM DD_MTR_MOTIVO_RENUMERACION MTR    WHERE X.TMP_CNT_MOTIVO_RENUMERACION = MTR.DD_MTR_CODIGO          )     ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-31.limiteInicialMayorCero','3058','SELECT X.TMP_CNT_LIMITE_INI AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X      WHERE X.TMP_CNT_LIMITE_INI < 0  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-32.limiteFinalMayorCero','3058','SELECT X.TMP_CNT_LIMITE_FIN AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE        FROM tmp_cnt_contratos X      WHERE X.TMP_CNT_LIMITE_FIN < 0  ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-33.insertEstadoFinancieroAnterior','3058','INSERT INTO DD_EFC_ESTADO_FINAN_CNT     (DD_EFC_ID, DD_EFC_CODIGO, DD_EFC_DESCRIPCION, DD_EFC_PRIORIDAD,       VERSION, USUARIOCREAR, FECHACREAR, BORRADO)    SELECT S_DD_EFC_ESTADO_FINAN_CNT.NEXTVAL, SUBSTR(EFCX.DD_EFC_CODIGO,-3), EFCX.DD_EFC_DESCRIPCION,     (SELECT MAX(DD_EFC_PRIORIDAD) FROM DD_EFC_ESTADO_FINAN_CNT WHERE BORRADO=0) + ROWNUM AS DD_EFC_PRIORIDAD,     0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0    FROM ( SELECT DISTINCT ERROR_FIELD as DD_EFC_CODIGO, ''''Estado financiero pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_EFC_DESCRIPCION  from (    SELECT X.TMP_CNT_ESTADO_FINANCIERO_ANT AS ERROR_FIELD,  (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE    FROM tmp_cnt_contratos X  WHERE NOT EXISTS (SELECT 1       FROM DD_EFC_ESTADO_FINAN_CNT EFC      WHERE X.TMP_CNT_ESTADO_FINANCIERO_ANT = EFC.DD_EFC_CODIGO)      )       ) EFCX   ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-33.estadoFinancieroAnterior','3058','SELECT X.TMP_CNT_ESTADO_FINANCIERO_ANT AS ERROR_FIELD,       (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X       WHERE NOT EXISTS (SELECT 1     FROM DD_EFC_ESTADO_FINAN_CNT EFC    WHERE X.TMP_CNT_ESTADO_FINANCIERO_ANT = EFC.DD_EFC_CODIGO    )      ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-34.estadoContrato','3058','SELECT X.TMP_ESTADO_CONTRATO AS ERROR_FIELD,       (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE   FROM tmp_cnt_contratos X    WHERE NOT EXISTS (SELECT 1        FROM ${master.schema}.DD_ESC_ESTADO_CNT ESC       WHERE X.TMP_ESTADO_CONTRATO = ESC.DD_ESC_CODIGO       )   ','TMP_CNT_CONTRATOS','HIGH')
+             , T_JBV('cnt-35.insertTipoProducto','3058','INSERT INTO DD_TPR_TIPO_PROD     (DD_TPR_ID, DD_TPR_CODIGO, DD_TPR_DESCRIPCION, DD_TPR_DESCRIPCION_LARGA,      VERSION, USUARIOCREAR, FECHACREAR, BORRADO)    SELECT S_DD_TPR_TIPO_PROD.NEXTVAL, TPRX.DD_TPR_CODIGO, TPRX.DD_TPR_DESCRIPCION, TPRX.DD_TPR_DESCRIPCION,     0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0    FROM ( SELECT DISTINCT ERROR_FIELD as DD_TPR_CODIGO, ''''Tipo producto pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TPR_DESCRIPCION  from (       SELECT X.TMP_CNT_TIPO_PRODUCTO AS ERROR_FIELD, (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE    FROM tmp_cnt_contratos X     WHERE NOT EXISTS (SELECT 1  FROM DD_TPR_TIPO_PROD TPR        WHERE X.TMP_CNT_TIPO_PRODUCTO = TPR.DD_TPR_CODIGO        )      )       ) TPRX   ','TMP_CNT_CONTRATOS','LOW')
+             , T_JBV('cnt-35.tipoProducto','3058','SELECT X.TMP_CNT_TIPO_PRODUCTO AS ERROR_FIELD,      (tmp_cnt_cod_entidad ||''''-''''|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,''''0'''')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,''''0'''')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,''''0'''')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,''''0'''')) AS ENTITY_CODE  FROM tmp_cnt_contratos X   WHERE NOT EXISTS (SELECT 1       FROM DD_TPR_TIPO_PROD TPR      WHERE X.TMP_CNT_TIPO_PRODUCTO = TPR.DD_TPR_CODIGO      )  ','TMP_CNT_CONTRATOS','HIGH')
+-- Validaciones de personas
+             , T_JBV('per-00.validateCount','3058','select count(1) from tmp_PER_PERSONAS','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-01.entityValidator','3058','SELECT (''''''''||tp.TMP_PER_COD_ENTIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE  FROM TMP_PER_PERSONAS tp WHERE tmp_per_cod_entidad <> ?   ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-02.loadDateValidator.Oracle9iDialect','3058','SELECT (''''''''||tp.TMP_PER_FECHA_EXTRACCION) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE TMP_PER_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''')     ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-03.personTypeValidator','3058','SELECT (''''''''||tp.TMP_PER_TIPO_PERSONA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT 1 FROM ${master.schema}.DD_TPE_TIPO_PERSONA tpe WHERE trim(tp.TMP_PER_TIPO_PERSONA) = trim(tpe.DD_TPE_CODIGO))','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-04.insertDocumentTypeValidator','3058','INSERT INTO DD_TDI_TIPO_DOCUMENTO_ID (DD_TDI_ID, DD_TDI_CODIGO, DD_TDI_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT         S_DD_TDI_TIPO_DOCUMENTO_ID.NEXTVAL        ,TDIX.DD_TDI_CODIGO        ,TDIX.DD_TDI_DESCRIPCION   ,''''${PasajeAProducciónUser}''''    ,SYSTIMESTAMP    ,0  FROM (   SELECT DISTINCT ERROR_FIELD as DD_TDI_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TDI_DESCRIPCION    from (          SELECT (''''''''||tp.TMP_PER_TIPO_DOCUMENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE NOT EXISTS (SELECT 1 FROM DD_TDI_TIPO_DOCUMENTO_ID tdi WHERE trim(tp.TMP_PER_TIPO_DOCUMENTO) = trim(tdi.DD_TDI_CODIGO)) AND tp.TMP_PER_TIPO_DOCUMENTO IS NOT NULL       )    ) TDIX       ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-04.documentTypeValidator','3058','SELECT (''''''''||tp.TMP_PER_TIPO_DOCUMENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT 1 FROM DD_TDI_TIPO_DOCUMENTO_ID tdi WHERE trim(tp.TMP_PER_TIPO_DOCUMENTO) = trim(tdi.DD_TDI_CODIGO)) ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-05.insertSegmentValidator','3058','INSERT INTO DD_SCE_SEGTO_CLI_ENTIDAD  (DD_SCE_ID, DD_SCE_CODIGO, DD_SCE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_SCE_SEGTO_CLI_ENTIDAD.NEXTVAL    ,SCEX.DD_SCE_CODIGO    ,SCEX.DD_SCE_DESCRIPCION    ,''''${PasajeAProducciónUser}''''             ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_SCE_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_SCE_DESCRIPCION       from (              SELECT (''''''''||trim(tp.TMP_PER_SEGMENTO_CLIENTE_1)) as ERROR_FIELD,                     (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE              FROM TMP_PER_PERSONAS tp              WHERE NOT EXISTS (SELECT 1 FROM DD_SCE_SEGTO_CLI_ENTIDAD s WHERE s.DD_SCE_CODIGO = trim(tp.TMP_PER_SEGMENTO_CLIENTE_1)) AND tp.TMP_PER_SEGMENTO_CLIENTE_1 IS NOT NULL     )  ) SCEX        ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-05.segmentValidator','3058','SELECT (''''''''||trim(tp.TMP_PER_SEGMENTO_CLIENTE_1)) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT 1 FROM DD_SCE_SEGTO_CLI_ENTIDAD s WHERE s.DD_SCE_CODIGO = trim(tp.TMP_PER_SEGMENTO_CLIENTE_1))','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-06.personaRelacionValidator','3058','SELECT (''''''''||tp.TMP_PER_COD_PERSONA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS ( SELECT 1 FROM TMP_CNT_PER tcp WHERE tp.TMP_PER_COD_PERSONA = tcp.TMP_CNT_PER_COD_PERSONA ) ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-07.oficina','3058','SELECT (''''''''||tp.TMP_PER_COD_ENT_OFI_GESTORA||tp.TMP_PER_COD_OFICINA_GESTORA||tp.TMP_PER_COD_SUBSEC_OFI_GESTORA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE              FROM TMP_PER_PERSONAS tp              WHERE (tp.TMP_PER_COD_ENT_OFI_GESTORA||tp.TMP_PER_COD_OFICINA_GESTORA||tp.TMP_PER_COD_SUBSEC_OFI_GESTORA) is not null              AND NOT EXISTS (SELECT 1                              FROM OFI_OFICINAS ofi                              WHERE tp.TMP_PER_COD_ENT_OFI_GESTORA||tp.TMP_PER_COD_OFICINA_GESTORA||tp.TMP_PER_COD_SUBSEC_OFI_GESTORA = ofi.OFI_CODIGO_ENTIDAD_OFICINA||ofi.OFI_CODIGO_OFICINA||ofi.OFI_CODIGO_SUBSECCION_OFICINA)  ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-08.zona','3058','SELECT (''''''''||tp.TMP_PER_COD_CENTRO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE   FROM TMP_PER_PERSONAS tp   WHERE tp.TMP_PER_COD_CENTRO_GESTOR is not null             AND NOT EXISTS (SELECT 1 FROM ZON_ZONIFICACION zon                WHERE tp.TMP_PER_COD_CENTRO_GESTOR = zon.ZON_NUM_CENTRO)         ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-09.insertTipoTelefono1','3058','INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_TTE_TIPO_TELEFONO.NEXTVAL    ,TTEX.DD_TTE_CODIGO    ,TTEX.DD_TTE_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TTE_DESCRIPCION       from (              SELECT (''''''''||tp.TMP_PER_TIPO_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE tp.TMP_PER_TIPO_TELEFONO1 is not null            AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE                             WHERE tp.TMP_PER_TIPO_TELEFONO1 = TTE.DD_TTE_CODIGO)      )  ) TTEX       ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-09.tipoTelefono1','3058','SELECT (''''''''||tp.TMP_PER_TIPO_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE            FROM TMP_PER_PERSONAS tp            WHERE tp.TMP_PER_TIPO_TELEFONO1 is not null           AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE                            WHERE tp.TMP_PER_TIPO_TELEFONO1 = TTE.DD_TTE_CODIGO)      ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-10.insertTipoTelefono2','3058','INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_TTE_TIPO_TELEFONO.NEXTVAL    ,TTEX.DD_TTE_CODIGO    ,TTEX.DD_TTE_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TTE_DESCRIPCION       from (              SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE tp.TMP_DD_TIPO_TELEFONO_2 is not null            AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE                             WHERE tp.TMP_DD_TIPO_TELEFONO_2 = TTE.DD_TTE_CODIGO)      )  ) TTEX       ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-10.tipoTelefono2','3058','SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE   FROM TMP_PER_PERSONAS tp   WHERE tp.TMP_DD_TIPO_TELEFONO_2 is not null and   NOT EXISTS (   SELECT * FROM DD_TTE_TIPO_TELEFONO TTE    WHERE tp.TMP_DD_TIPO_TELEFONO_2 = TTE.DD_TTE_CODIGO)           ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-11.insertTipoTelefono3','3058','INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_TTE_TIPO_TELEFONO.NEXTVAL    ,TTEX.DD_TTE_CODIGO    ,TTEX.DD_TTE_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TTE_DESCRIPCION       from (              SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_3) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE tp.TMP_DD_TIPO_TELEFONO_3 is not null            AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE                             WHERE tp.TMP_DD_TIPO_TELEFONO_3 = TTE.DD_TTE_CODIGO)      )  ) TTEX       ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-11.tipoTelefono3','3058','SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_3) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE tp.TMP_DD_TIPO_TELEFONO_3 is not null and    NOT EXISTS (  SELECT * FROM DD_TTE_TIPO_TELEFONO TTE   WHERE tp.TMP_DD_TIPO_TELEFONO_3 = TTE.DD_TTE_CODIGO)           ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-12.insertTipoTelefono4','3058','INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_TTE_TIPO_TELEFONO.NEXTVAL    ,TTEX.DD_TTE_CODIGO    ,TTEX.DD_TTE_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TTE_DESCRIPCION       from (              SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_4) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE tp.TMP_DD_TIPO_TELEFONO_4 is not null            AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE                             WHERE tp.TMP_DD_TIPO_TELEFONO_4 = TTE.DD_TTE_CODIGO)      )  ) TTEX       ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-12.tipoTelefono4','3058','SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_4) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE  tp.TMP_DD_TIPO_TELEFONO_4 is not null and    NOT EXISTS (  SELECT * FROM DD_TTE_TIPO_TELEFONO TTE   WHERE tp.TMP_DD_TIPO_TELEFONO_4 = TTE.DD_TTE_CODIGO)          ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-13.insertTipoTelefono5','3058','INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_TTE_TIPO_TELEFONO.NEXTVAL    ,TTEX.DD_TTE_CODIGO    ,TTEX.DD_TTE_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TTE_DESCRIPCION       from (              SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_5) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE tp.TMP_DD_TIPO_TELEFONO_5 is not null            AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE                             WHERE tp.TMP_DD_TIPO_TELEFONO_5 = TTE.DD_TTE_CODIGO)      )  ) TTEX       ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-13.tipoTelefono5','3058','SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_5) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE  tp.TMP_DD_TIPO_TELEFONO_5 is not null and    NOT EXISTS (  SELECT * FROM DD_TTE_TIPO_TELEFONO TTE   WHERE tp.TMP_DD_TIPO_TELEFONO_5 = TTE.DD_TTE_CODIGO)           ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-14.insertTipoTelefono6','3058','INSERT INTO DD_TTE_TIPO_TELEFONO  (DD_TTE_ID, DD_TTE_CODIGO, DD_TTE_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_TTE_TIPO_TELEFONO.NEXTVAL    ,TTEX.DD_TTE_CODIGO    ,TTEX.DD_TTE_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_TTE_CODIGO, ''''Finalidad CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TTE_DESCRIPCION       from (              SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_6) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE tp.TMP_DD_TIPO_TELEFONO_6 is not null            AND NOT EXISTS (SELECT 1 FROM DD_TTE_TIPO_TELEFONO TTE                             WHERE tp.TMP_DD_TIPO_TELEFONO_6 = TTE.DD_TTE_CODIGO)      )  ) TTEX       ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-14.tipoTelefono6','3058','SELECT (''''''''||tp.TMP_DD_TIPO_TELEFONO_6) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE  tp.TMP_DD_TIPO_TELEFONO_6 is not null and    NOT EXISTS (    SELECT * FROM DD_TTE_TIPO_TELEFONO TTE     WHERE tp.TMP_DD_TIPO_TELEFONO_6 = TTE.DD_TTE_CODIGO)      ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-15.insertPerfilGestor','3058','INSERT INTO PEF_PERFILES  (PEF_ID, PEF_CODIGO, PEF_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT S_PEF_PERFILES.NEXTVAL, PEFX.PEF_CODIGO, PEFX.PEF_DESCRIPCION,  0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (  SELECT DISTINCT ERROR_FIELD as PEF_CODIGO, ''''Perfil pendiente de definir (''''||ERROR_FIELD||'''')'''' as PEF_DESCRIPCION   from (   SELECT (''''''''||tp.TMP_PER_PERFIL_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE tp.TMP_PER_PERFIL_GESTOR is not null    AND NOT EXISTS (SELECT 1              FROM PEF_PERFILES PEF                         WHERE TO_CHAR(TP.TMP_PER_PERFIL_GESTOR) = PEF.PEF_CODIGO)  )   ) PEFX   ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-15.perfilGestor','3058','SELECT (''''''''||tp.TMP_PER_PERFIL_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE          FROM TMP_PER_PERSONAS tp          WHERE tp.TMP_PER_PERFIL_GESTOR is not null         AND NOT EXISTS (SELECT 1                          FROM PEF_PERFILES pef                          WHERE TO_CHAR(TP.TMP_PER_PERFIL_GESTOR) = PEF.PEF_CODIGO)      ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-16.usuarioGestor','3058','SELECT (''''''''||tp.TMP_PER_USUARIO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE          FROM TMP_PER_PERSONAS tp          WHERE tp.TMP_PER_USUARIO_GESTOR is not null         AND NOT EXISTS (SELECT 1                          FROM ${master.schema}.USU_USUARIOS USU                          WHERE tp.TMP_PER_USUARIO_GESTOR like USU.USU_USERNAME)          ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-17.insertGrupoGestor','3058','INSERT INTO DD_GGE_GRUPO_GESTOR     (DD_GGE_ID, DD_GGE_CODIGO, DD_GGE_DESCRIPCION,      VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_GGE_GRUPO_GESTOR.NEXTVAL, GGEX.DD_GGE_CODIGO, GGEX.DD_GGE_DESCRIPCION,     0,''''${PasajeAProducciónUser}'''',SYSTIMESTAMP,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_GGE_CODIGO, ''''Grupo gestor pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_GGE_DESCRIPCION        from (  SELECT (''''''''||tp.TMP_PER_COD_GRUPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE   FROM TMP_PER_PERSONAS tp   WHERE tp.TMP_PER_COD_GRUPO_GESTOR is not null   AND NOT EXISTS (SELECT 1                   FROM DD_GGE_GRUPO_GESTOR GGE                   WHERE tp.TMP_PER_COD_GRUPO_GESTOR = GGE.DD_GGE_CODIGO)       )   ) GGEX  ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-17.grupoGestor','3058','SELECT (''''''''||tp.TMP_PER_COD_GRUPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE          FROM TMP_PER_PERSONAS tp          WHERE tp.TMP_PER_COD_GRUPO_GESTOR is not null         AND NOT EXISTS (SELECT 1                          FROM DD_GGE_GRUPO_GESTOR GGE                          WHERE tp.TMP_PER_COD_GRUPO_GESTOR = GGE.DD_GGE_CODIGO)                ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-18.insertPolitica','3058','INSERT INTO DD_POL_POLITICAS  (DD_POL_ID, DD_POL_CODIGO, DD_POL_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_POL_POLITICAS.NEXTVAL    ,POLX.DD_POL_CODIGO    ,POLX.DD_POL_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_POL_CODIGO, ''''Politica pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_POL_DESCRIPCION       from (          SELECT (''''''''||tp.TMP_PER_POLITICA_ENTIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE         FROM TMP_PER_PERSONAS tp         WHERE   tp.TMP_PER_POLITICA_ENTIDAD is not null            AND NOT EXISTS (SELECT 1                             FROM DD_POL_POLITICAS POL                       WHERE tp.TMP_PER_POLITICA_ENTIDAD = POL.DD_POL_CODIGO)      )                ) POLX        ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-18.politica','3058','SELECT (''''''''||tp.TMP_PER_POLITICA_ENTIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_POLITICA_ENTIDAD is not null         AND NOT EXISTS (SELECT 1                          FROM DD_POL_POLITICAS POL               WHERE tp.TMP_PER_POLITICA_ENTIDAD = POL.DD_POL_CODIGO)           ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-19.insertRatingExterno','3058','INSERT INTO DD_REX_RATING_EXTERNO  (DD_REX_ID, DD_REX_CODIGO, DD_REX_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_REX_RATING_EXTERNO.NEXTVAL    ,REXX.DD_REX_CODIGO    ,REXX.DD_REX_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_REX_CODIGO, ''''Rating Externo pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_REX_DESCRIPCION       from (          SELECT (''''''''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE         FROM TMP_PER_PERSONAS tp         WHERE   tp.TMP_PER_RATING_REFERENCIA is not null              and NOT EXISTS (SELECT 1                               FROM DD_REX_RATING_EXTERNO REX                               WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO)           )                ) REXX        ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-19.ratingExterno','3058','SELECT (''''''''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE   FROM TMP_PER_PERSONAS tp   WHERE   tp.TMP_PER_RATING_REFERENCIA is not null             AND NOT EXISTS (SELECT 1                              FROM DD_REX_RATING_EXTERNO REX                              WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO)            ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-20.insertRatingAuxiliar','3058','SELECT DISTINCT (''''''''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE     FROM TMP_PER_PERSONAS tp     WHERE tp.TMP_PER_RATING_REFERENCIA is not null and     NOT EXISTS (       SELECT * FROM DD_REX_RATING_EXTERNO REX WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO      )          ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-20.ratingAuxiliar','3058','SELECT DISTINCT (''''''''||tp.TMP_PER_RATING_REFERENCIA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE     FROM TMP_PER_PERSONAS tp     WHERE tp.TMP_PER_RATING_REFERENCIA is not null and     NOT EXISTS (       SELECT * FROM DD_REX_RATING_EXTERNO REX WHERE tp.TMP_PER_RATING_REFERENCIA = REX.DD_REX_CODIGO      )          ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-21.insertNacionalidad','3058','INSERT INTO ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE  (DD_CIC_ID, DD_CIC_CODIGO, DD_CIC_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT ${master.schema}.S_DD_CIC_CODIGO_ISO_CIRBE.NEXTVAL, CICX.DD_CIC_CODIGO, CICX.DD_CIC_DESCRIPCION,  0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_CIC_CODIGO, ''''Nacionalidad pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_CIC_DESCRIPCION        from (        SELECT (''''''''||tp.TMP_PER_NACIONALIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_NACIONALIDAD is not null and   NOT EXISTS (    SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC     WHERE tp.TMP_PER_NACIONALIDAD = CIC.DD_CIC_CODIGO)            )   ) CICX   ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-21.nacionalidad','3058','SELECT (''''''''||tp.TMP_PER_NACIONALIDAD) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_NACIONALIDAD is not null and   NOT EXISTS (  SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC   WHERE tp.TMP_PER_NACIONALIDAD = CIC.DD_CIC_CODIGO)          ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-22.insertPaisNacimiento','3058','INSERT INTO ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE  (DD_CIC_ID, DD_CIC_CODIGO, DD_CIC_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT ${master.schema}.S_DD_CIC_CODIGO_ISO_CIRBE.NEXTVAL, CICX.DD_CIC_CODIGO, CICX.DD_CIC_DESCRIPCION,  0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_CIC_CODIGO, ''''Nacionalidad pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_CIC_DESCRIPCION        from (      SELECT (''''''''||tp.TMP_PER_PAIS_NACIMIENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE tp.TMP_PER_PAIS_NACIMIENTO is not null and   NOT EXISTS (    SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC     WHERE tp.TMP_PER_PAIS_NACIMIENTO = CIC.DD_CIC_CODIGO)            )   ) CICX   ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-22.paisNacimiento','3058','SELECT (''''''''||tp.TMP_PER_PAIS_NACIMIENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE   FROM TMP_PER_PERSONAS tp   WHERE tp.TMP_PER_PAIS_NACIMIENTO is not null and  NOT EXISTS (   SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE CIC    WHERE tp.TMP_PER_PAIS_NACIMIENTO = CIC.DD_CIC_CODIGO)          ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-23.insertSexo','3058','INSERT INTO ${master.schema}.DD_SEX_SEXOS  (DD_SEX_ID, DD_SEX_CODIGO, DD_SEX_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     ${master.schema}.S_DD_SEX_SEXOS.NEXTVAL    ,SEXX.DD_SEX_CODIGO    ,SEXX.DD_SEX_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_SEX_CODIGO, ''''Sexo pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_SEX_DESCRIPCION       from (            SELECT (''''''''||tp.TMP_PER_SEXO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE   tp.TMP_PER_SEXO is not null AND          NOT EXISTS (SELECT * FROM ${master.schema}.DD_SEX_SEXOS SEX WHERE tp.TMP_PER_SEXO = SEX.DD_SEX_CODIGO)              )                  ) SEXX          ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-23.sexo','3058','SELECT (''''''''||tp.TMP_PER_SEXO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE   FROM TMP_PER_PERSONAS tp   WHERE   tp.TMP_PER_SEXO is not null and   NOT EXISTS (SELECT * FROM ${master.schema}.DD_SEX_SEXOS SEX WHERE tp.TMP_PER_SEXO = SEX.DD_SEX_CODIGO)          ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-24.insertSegment2Validator','3058','INSERT INTO DD_SCL_SEGTO_CLI  (DD_SCL_ID, DD_SCL_CODIGO, DD_SCL_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_SCL_SEGTO_CLI.NEXTVAL     ,SSCL.DD_SCL_CODIGO     ,SSCL.DD_SCL_DESCRIPCION     ,''''${PasajeAProducciónUser}''''       ,SYSTIMESTAMP      ,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_SCL_CODIGO, ''''Segmento Cliente pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_SCL_DESCRIPCION       from (            SELECT (''''''''||tp.TMP_PER_SEGMENTO_CLIENTE_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE            FROM TMP_PER_PERSONAS tp            WHERE              not exists( SELECT 1 FROM DD_SCL_SEGTO_CLI WHERE trim(DD_SCL_CODIGO) = trim(tp.TMP_PER_SEGMENTO_CLIENTE_2)) AND tp.TMP_PER_SEGMENTO_CLIENTE_2 IS NOT NULL            )                   ) SSCL     ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-24.segment2Validator','3058','SELECT (''''''''||tp.TMP_PER_SEGMENTO_CLIENTE_2) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE     FROM TMP_PER_PERSONAS tp     WHERE       not exists( SELECT 1           FROM DD_SCL_SEGTO_CLI           WHERE trim(DD_SCL_CODIGO) = trim(tp.TMP_PER_SEGMENTO_CLIENTE_2))      ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-25.insertCodPropietarioValidator','3058','INSERT INTO DD_PRO_PROPIETARIOS  (DD_PRO_ID, DD_PRO_CODIGO, DD_PRO_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT S_DD_PRO_PROPIETARIOS.NEXTVAL, PROX.DD_PRO_CODIGO, PROX.DD_PRO_DESCRIPCION,  0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_PRO_CODIGO, ''''Propietario pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_PRO_DESCRIPCION        from (  SELECT (''''''''||tp.TMP_PER_COD_PROPIETARIO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_COD_PROPIETARIO is not null and   not exists( SELECT 1     FROM DD_PRO_PROPIETARIOS        WHERE DD_PRO_CODIGO = trim(tp.TMP_PER_COD_PROPIETARIO))       )   ) PROX   ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-25.codPropietarioValidator','3058','SELECT (''''''''||tp.TMP_PER_COD_PROPIETARIO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_COD_PROPIETARIO is not null and   not exists( SELECT 1     FROM DD_PRO_PROPIETARIOS                      WHERE DD_PRO_CODIGO = trim(tp.TMP_PER_COD_PROPIETARIO))  ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-26.insertOrigenTelefono1Validator','3058','INSERT INTO DD_OTE_ORIGEN_TELEFONO  (DD_OTE_ID, DD_OTE_CODIGO, DD_OTE_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_OTE_ORIGEN_TELEFONO.NEXTVAL, OTEX.DD_OTE_CODIGO, OTEX.DD_OTE_DESCRIPCION,     0,''''${PasajeAProducciónUser}'''',SYSTIMESTAMP,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_OTE_CODIGO, ''''Origen telefono pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_OTE_DESCRIPCION        from (  SELECT (''''''''||tp.TMP_PER_ORIGEN_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_ORIGEN_TELEFONO1 is not null and   not exists( SELECT 1     FROM DD_OTE_ORIGEN_TELEFONO        WHERE DD_OTE_CODIGO = trim(tp.TMP_PER_ORIGEN_TELEFONO1))  )   ) OTEX   ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-26.origenTelefono1Validator','3058','SELECT (''''''''||tp.TMP_PER_ORIGEN_TELEFONO1) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_ORIGEN_TELEFONO1 is not null and   not exists( SELECT 1     FROM DD_OTE_ORIGEN_TELEFONO                      WHERE DD_OTE_CODIGO = trim(tp.TMP_PER_ORIGEN_TELEFONO1))  ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-27.insertPersonaNivelValidator','3058','INSERT INTO DD_PNV_PERSONA_NIVEL  (DD_PNV_ID, DD_PNV_CODIGO, DD_PNV_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT     S_DD_PNV_PERSONA_NIVEL.NEXTVAL    ,PNVX.DD_PNV_CODIGO    ,PNVX.DD_PNV_DESCRIPCION    ,''''${PasajeAProducciónUser}''''     ,SYSTIMESTAMP     ,0  FROM (      SELECT DISTINCT ERROR_FIELD as DD_PNV_CODIGO, ''''Persona Nivel pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_PNV_DESCRIPCION       from (            SELECT (''''''''||tp.TMP_PER_NIVEL) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE           FROM TMP_PER_PERSONAS tp           WHERE   tp.TMP_PER_NIVEL is not null and          not exists( SELECT 1                 FROM DD_PNV_PERSONA_NIVEL                          WHERE DD_PNV_CODIGO = trim(tp.TMP_PER_NIVEL))    )     ) PNVX        ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-27.personaNivelValidator','3058','SELECT (''''''''||tp.TMP_PER_NIVEL) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_NIVEL is not null and   not exists( SELECT 1     FROM DD_PNV_PERSONA_NIVEL                     WHERE DD_PNV_CODIGO = trim(tp.TMP_PER_NIVEL))   ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-28.insertColectivoSingularValidator','3058','INSERT INTO DD_COS_COLECTIVO_SINGULAR  (DD_COS_ID, DD_COS_CODIGO, DD_COS_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_COS_COLECTIVO_SINGULAR.NEXTVAL     ,COSX.DD_COS_CODIGO     ,COSX.DD_COS_DESCRIPCION     ,''''${PasajeAProducciónUser}''''      ,SYSTIMESTAMP      ,0   FROM (          SELECT DISTINCT ERROR_FIELD as DD_COS_CODIGO, ''''Colectivo Singular pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_COS_DESCRIPCION        from (           SELECT (''''''''||tp.TMP_PER_COLECTIVO_SINGULAR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE          FROM TMP_PER_PERSONAS tp          WHERE   tp.TMP_PER_COLECTIVO_SINGULAR is not null and           not exists( SELECT 1 FROM DD_COS_COLECTIVO_SINGULAR  WHERE DD_COS_CODIGO = trim(tp.TMP_PER_COLECTIVO_SINGULAR))     )      ) COSX    ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-28.colectivoSingularValidator','3058','SELECT (''''''''||tp.TMP_PER_COLECTIVO_SINGULAR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_COLECTIVO_SINGULAR is not null and   not exists( SELECT 1     FROM DD_COS_COLECTIVO_SINGULAR                     WHERE DD_COS_CODIGO = trim(tp.TMP_PER_COLECTIVO_SINGULAR))  ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-29.insertTipoGestorValidator','3058','INSERT INTO DD_TPG_TIPO_GESTOR  (DD_TPG_ID, DD_TPG_CODIGO, DD_TPG_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT S_DD_TPG_TIPO_GESTOR.NEXTVAL, TPGX.DD_TPG_CODIGO, TPGX.DD_TPG_DESCRIPCION,  0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_TPG_CODIGO, ''''Tipo Gestor pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TPG_DESCRIPCION        from (    SELECT (''''''''||tp.TMP_PER_TIPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE   FROM TMP_PER_PERSONAS tp   WHERE   tp.TMP_PER_TIPO_GESTOR is not null and   not exists( SELECT 1     FROM DD_TPG_TIPO_GESTOR        WHERE DD_TPG_CODIGO = trim(tp.TMP_PER_TIPO_GESTOR))  )   ) TPGX   ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-29.tipoGestorValidator','3058','SELECT (''''''''||tp.TMP_PER_TIPO_GESTOR) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_TIPO_GESTOR is not null and   not exists( SELECT 1     FROM DD_TPG_TIPO_GESTOR                     WHERE DD_TPG_CODIGO = trim(tp.TMP_PER_TIPO_GESTOR))  ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-30.insertAreaGestionValidator','3058','INSERT INTO DD_ARG_AREA_GESTION    (DD_ARG_ID, DD_ARG_CODIGO, DD_ARG_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT      S_DD_ARG_AREA_GESTION.NEXTVAL, ARGX.DD_ARG_CODIGO, ARGX.DD_ARG_DESCRIPCION,     0,''''${PasajeAProducciónUser}'''',SYSTIMESTAMP,0   FROM (       SELECT DISTINCT ERROR_FIELD as DD_ARG_CODIGO, ''''Area Gestion pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_ARG_DESCRIPCION        from (  SELECT (''''''''||tp.TMP_PER_COD_AREA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_COD_AREA is not null and   not exists( SELECT 1     FROM DD_ARG_AREA_GESTION       WHERE DD_ARG_CODIGO = trim(tp.TMP_PER_COD_AREA))   )   ) ARGX  ','TMP_PER_PERSONAS','LOW')
+             , T_JBV('per-30.areaGestionValidator','3058','SELECT (''''''''||tp.TMP_PER_COD_AREA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_COD_AREA is not null and   not exists( SELECT 1     FROM DD_ARG_AREA_GESTION                     WHERE DD_ARG_CODIGO = trim(tp.TMP_PER_COD_AREA))   ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-31.vrOtrasEntidadesValidator','3058','SELECT (''''''''||tp.TMP_PER_VR_OTRAS_ENTIDADES) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_VR_OTRAS_ENTIDADES is not null   AND tp.TMP_PER_VR_OTRAS_ENTIDADES < 0   ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-32.vrOtrasEntidadesValidator','3058','SELECT (''''''''||tp.TMP_PER_VR_DANYADO_OTRAS_ENTS) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_VR_DANYADO_OTRAS_ENTS is not null   AND tp.TMP_PER_VR_DANYADO_OTRAS_ENTS < 0   ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-33.tipoGestorPersonaValidator','3058','SELECT (''''''''||tp.TMP_PER_COD_ENT_OFI_GESTORA||TMP_PER_COD_OFICINA_GESTORA||TMP_PER_COD_SUBSEC_OFI_GESTORA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_TIPO_GESTOR = ''''EL DD_TPG_CODIGO QUE CORRESPONADA A "Persona"''''   AND (tp.TMP_PER_COD_ENT_OFI_GESTORA||TMP_PER_COD_OFICINA_GESTORA||TMP_PER_COD_SUBSEC_OFI_GESTORA) IS NOT NULL  ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-34.tipoGestorOficinaValidator','3058','SELECT (''''''''||tp.TMP_PER_COD_ENT_OFI_GESTORA||TMP_PER_COD_OFICINA_GESTORA||TMP_PER_COD_SUBSEC_OFI_GESTORA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_TIPO_GESTOR = ''''EL DD_TPG_CODIGO QUE CORRESPONADA A "Oficina"''''   AND tp.TMP_PER_USUARIO_GESTOR IS NOT NULL   ','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-35.insertTipoPolitica','3058','','TMP_PER_PERSONAS','HIGH')
+             , T_JBV('per-35.tipoPolitica','3058','SELECT TP.TMP_PER_POLITICA_ENTIDAD as ERROR_FIELD, (TP.TMP_PER_COD_ENTIDAD || TP.TMP_PER_COD_PERSONA) AS ENTITY_CODE   FROM TMP_PER_PERSONAS TP   WHERE NOT EXISTS (SELECT 1 FROM TPL_TIPO_POLITICA TPL     WHERE TP.TMP_PER_POLITICA_ENTIDAD = TPL.TPL_CODIGO)   ','TMP_PER_PERSONAS','HIGH')
+-- Validaciones de Relaciones
+             , T_JBV('cnt-per-00.countValidator','3058','select count(1) from tmp_CNT_PER','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-01.entityValidator','3058','SELECT (''''''''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE TMP_CNT_PER_COD_ENTIDAD <> ? ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-02.loadDateValidator.MySQLDialect','3058','SELECT (''''''''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM TMP_CNT_PER tcp     WHERE TMP_CNT_PER_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''')','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-02.loadDateValidator.Oracle9iDialect','3058','SELECT (''''''''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM TMP_CNT_PER tcp     WHERE TMP_CNT_PER_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''')','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-03.insertIntervencionValidator">','3058','INSERT INTO DD_TIN_TIPO_INTERVENCION    (DD_TIN_ID, DD_TIN_CODIGO, DD_TIN_DESCRIPCION,      VERSION, USUARIOCREAR, FECHACREAR, BORRADO)   SELECT S_DD_TIN_TIPO_INTERVENCION.NEXTVAL, DD_TIN_CODIGO, DD_TIN_DESCRIPCION,    0, ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP, 0   FROM (    SELECT DISTINCT ERROR_FIELD as DD_TIN_CODIGO, ''''Tipo intervencion pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TIN_DESCRIPCION    from (     SELECT (''''''''||TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_INTERVENCION))) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE not exists (SELECT 1 FROM dd_tin_tipo_intervencion tin WHERE TRIM(UPPER(tin.DD_TIN_CODIGO)) = TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_INTERVENCION)))    )   ) TINX  ','TMP_CNT_PER','LOW')
+             , T_JBV('cnt-per-03.intervencionValidator','3058','SELECT (''''''''||TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_INTERVENCION))) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE not exists (SELECT 1 FROM dd_tin_tipo_intervencion tin WHERE TRIM(UPPER(tin.DD_TIN_CODIGO)) = TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_INTERVENCION)))     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-04.propietarioValidator.MySQLDialect','3058','SELECT (''''''''||tcp.TMP_CNT_PER_COD_PROPIETARIO) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE not exists (SELECT 1 FROM dd_pro_propietarios pro WHERE pro.DD_PRO_CODIGO = tcp.TMP_CNT_PER_COD_PROPIETARIO)     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-04.propietarioValidator.Oracle9iDialect','3058','SELECT (''''''''||tcp.TMP_CNT_PER_COD_PROPIETARIO) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE not exists (SELECT 1 FROM dd_pro_propietarios pro WHERE pro.DD_PRO_CODIGO = tcp.TMP_CNT_PER_COD_PROPIETARIO)     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-05.ProductTypeValidator.MySQLDialect','3058','SELECT (''''''''||TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_PRODUCTO))) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE not exists (SELECT 1 FROM dd_tpe_tipo_prod_entidad tpe WHERE TRIM(UPPER(tpe.DD_TPE_CODIGO)) = TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_PRODUCTO)))     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-05.ProductTypeValidator.Oracle9iDialect','3058','SELECT (''''''''||TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_PRODUCTO))) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE not exists (SELECT 1 FROM dd_tpe_tipo_prod_entidad tpe WHERE TRIM(UPPER(tpe.DD_TPE_CODIGO)) = TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_PRODUCTO)))     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-06.integridadValidator.MySQLDialect','3058','SELECT (    ''''''''||tcp.tmp_cnt_per_cod_persona||tmp_cnt_per_num_contrato) as ERROR_FIELD,    (tcp.tmp_cnt_per_cod_persona ||''''-''''|| tcp.tmp_cnt_per_num_contrato) as ENTITY_CODE   FROM TMP_CNT_PER tcp   WHERE tcp.tmp_cnt_per_cod_persona NOT IN (     SELECT TMP_PER_COD_PERSONA       FROM TMP_PER_PERSONAS    )     OR (tcp.tmp_cnt_per_num_contrato, tcp.tmp_cnt_per_cod_oficina) NOT IN (     SELECT TMP_CNT_CONTRATO, TMP_CNT_COD_OFICINA       FROM TMP_CNT_CONTRATOS       )     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-06.integridadValidator.Oracle9iDialect','3058','SELECT (''''''''||tcp.TMP_CNT_PER_COD_PERSONA||TMP_CNT_PER_NUM_CONTRATO) as ERROR_FIELD,      (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE   FROM TMP_CNT_PER tcp   WHERE NOT EXISTS(SELECT 1        FROM TMP_PER_PERSONAS TP        WHERE (TP.TMP_PER_COD_PERSONA||TP.TMP_PER_COD_PROPIETARIO) = (tcp.TMP_CNT_PER_COD_PERSONA||tcp.TMP_CNT_PER_COD_PROPIETARIO)       )   UNION   SELECT (''''''''||tcp.TMP_CNT_PER_COD_PERSONA||TMP_CNT_PER_NUM_CONTRATO) as ERROR_FIELD,      (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE   FROM TMP_CNT_PER tcp   WHERE NOT EXISTS(SELECT 1        FROM TMP_CNT_CONTRATOS tc        WHERE TO_CHAR(tc.TMP_CNT_CODIGO_PROPIETARIO)||tc.TMP_CNT_TIPO_PRODUCTO||TO_CHAR(tc.TMP_CNT_CONTRATO)||TO_CHAR(tc.TMP_CNT_NUM_ESPEC)         = TO_CHAR(tcp.TMP_CNT_PER_COD_PROPIETARIO)||tcp.TMP_CNT_PER_TIPO_PRODUCTO||TO_CHAR(tcp.TMP_CNT_PER_NUM_CONTRATO)||TO_CHAR(tcp.TMP_CNT_PER_NUM_ESPEC)        )     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-07.integridadCodOficinaValidator.MySQLDialect','3058','SELECT (''''''''||tcp.tmp_cnt_per_num_contrato||TMP_CNT_PER_COD_OFICINA) as ERROR_FIELD, (tcp.tmp_cnt_per_cod_persona ||''''-''''|| tcp.tmp_cnt_per_num_contrato) as ENTITY_CODE   FROM TMP_CNT_PER tcp,tmp_cnt_contratos c   WHERE  tcp.tmp_cnt_per_num_contrato = c.TMP_CNT_CONTRATO   AND tcp.TMP_CNT_PER_COD_OFICINA <> c.TMP_CNT_COD_OFICINA     ','TMP_CNT_PER','HIGH')
+             , T_JBV('cnt-per-07.integridadCodOficinaValidator.Oracle9iDialect','3058','SELECT (''''''''||t.TMP_CNT_PER_NUM_CONTRATO||t.TMP_CNT_PER_NUM_ESPEC) as ERROR_FIELD, (t.TMP_CNT_PER_COD_PERSONA ||''''-''''|| t.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM TMP_CNT_PER t     WHERE NOT EXISTS (SELECT 1              FROM TMP_CNT_CONTRATOS c              WHERE TO_CHAR(c.TMP_CNT_CODIGO_PROPIETARIO)||UPPER(TRIM(c.TMP_CNT_TIPO_PRODUCTO))||TO_CHAR(c.TMP_CNT_CONTRATO)||TO_CHAR(c.TMP_CNT_NUM_ESPEC) =                 (TO_CHAR(t.TMP_CNT_PER_COD_PROPIETARIO)||UPPER(TRIM(t.TMP_CNT_PER_TIPO_PRODUCTO))||TO_CHAR(t.TMP_CNT_PER_NUM_CONTRATO)||TO_CHAR(t.TMP_CNT_PER_NUM_ESPEC))              ) ','TMP_CNT_PER','HIGH')
+-- Validaciones de Diccionarios
+             , T_JBV('dir-01.entityValidator','3058','select (''''''''||td.TMP_DIR_COD_ENTIDAD) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from TMP_DIRECCIONES td where tmp_dir_cod_entidad <> ? ','TMP_DIRECCIONES','LOW')
+             , T_JBV('dir-02.loadDateValidator.MySQLDialect','3058','select (''''''''||td.TMP_DIR_FECHA_EXTRACCION) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from TMP_DIRECCIONES td where TMP_DIR_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''') ','TMP_DIRECCIONES','LOW')
+             , T_JBV('dir-02.loadDateValidator.Oracle9iDialect','3058','select (''''''''||td.TMP_DIR_FECHA_EXTRACCION) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from TMP_DIRECCIONES td where TMP_DIR_FECHA_EXTRACCION <> to_date(?,''''yyyyMMdd'''') ','TMP_DIRECCIONES','LOW')
+             , T_JBV('dir-03.validarPersona','3058','select (''''''''||td.tmp_dir_cod_cliente_entidad) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from tmp_direcciones td where not exists (select * from per_personas where PER_COD_CLIENTE_ENTIDAD = tmp_dir_cod_cliente_entidad) and not exists (select * from tmp_per_personas where TMP_DIR_COD_CLIENTE_ENTIDAD = tmp_dir_cod_cliente_entidad)','TMP_DIRECCIONES','LOW')
+             , T_JBV('dir-04.validarVia','3058','select (''''''''||td.tmp_dir_tipovia) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from tmp_direcciones td where not exists (select * from ${master.schema}.dd_tvi_tipo_via where dd_tvi_codigo = tmp_dir_tipovia)','TMP_DIRECCIONES','LOW')
+             , T_JBV('dir-05.validarProvincia','3058','select (''''''''||td.TMP_DIR_INE_PROV) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from tmp_direcciones td where not exists (select * from ${master.schema}.dd_prv_provincia where dd_prv_codigo = TMP_DIR_INE_PROV)','TMP_DIRECCIONES','LOW')
+             , T_JBV('dir-06.validarLocalidad','3058','select (''''''''||td.TMP_DIR_INE_POB) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from tmp_direcciones td where not exists (select * from ${master.schema}.dd_loc_localidad where dd_loc_codigo = TMP_DIR_INE_POB)','TMP_DIRECCIONES','LOW')
+-- Validaciones Grupos
+             , T_JBV('gcl-11.lastLoadDateValidator','3058','SELECT FRC_FECHA_EXTRACCION AS ERROR_FIELD, ''''GCL'''' AS ENTITY_CODE from FRC_FICHEROS_CARGADOS  where FRC_FECHA_EXTRACCION > to_date(?,''''YYYYMMDD'''') and DD_TFI_ID = (select DD_TFI_ID from ${master.schema}.DD_TFI_TIPO_FICHERO where DD_TFI_CODIGO=''''GCL'''')','TMP_GCL_GRUPOS_CLIENTES','HIGH')
+             , T_JBV('gcl-01.entityValidatorGrupos','3058','SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_COD_ENTIDAD AS ENTITY_CODE        FROM TMP_GCL_GRUPOS_CLIENTES WHERE TMP_GCL_COD_ENTIDAD <> ?','TMP_GCL_GRUPOS_CLIENTES','HIGH')
+             , T_JBV('gcl-05.entityValidatorRelaciones','3058','SELECT  TMP_PER_GCL_COD_CLI AS ERROR_FIELD, TMP_PER_GCL_COD_ENTIDAD AS ENTITY_CODE        FROM TMP_PER_GCL WHERE TMP_PER_GCL_COD_ENTIDAD <> ?','TMP_PER_GCL','HIGH')
+             , T_JBV('gcl-02.loadDateValidatorGrupos','3058','SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_CODIGO AS ENTITY_CODE from TMP_GCL_GRUPOS_CLIENTES where TMP_GCL_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''') ','TMP_GCL_GRUPOS_CLIENTES','HIGH')
+             , T_JBV('gcl-06.loadDateValidatorRelaciones','3058','SELECT TMP_PER_GCL_COD_CLI AS ERROR_FIELD, TMP_PER_GCL_COD_CLI AS ENTITY_CODE from TMP_PER_GCL where TMP_PER_GCL_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''') ','TMP_GCL_GRUPOS_CLIENTES','HIGH')
+             , T_JBV('gcl-03.insertTipoGrupoValidator','3058','INSERT INTO DD_TGL_TIPO_GRUPO_CLIENTE   (DD_TGL_ID, DD_TGL_CODIGO, DD_TGL_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO)  SELECT S_DD_TGL_TIPO_GRUPO_CLIENTE.NEXTVAL,   TGLX.DD_TGL_CODIGO,   TGLX.DD_TGL_DESCRIPCION,   ''''${PasajeAProducciónUser}'''',SYSTIMESTAMP,0  FROM (   SELECT DISTINCT ERROR_FIELD as DD_TGL_CODIGO, ''''Tipo grupo cliente pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TGL_DESCRIPCION    from (        SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_CODIGO AS ENTITY_CODE        from TMP_GCL_GRUPOS_CLIENTES        where not exists (select * from DD_TGL_TIPO_GRUPO_CLIENTE dd where dd.DD_TGL_CODIGO = TMP_GCL_CODIGO )   )  ) TGLX  ','TMP_GCL_GRUPOS_CLIENTES','LOW')
+             , T_JBV('gcl-03.tipoGrupoValidator','3058','SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_CODIGO AS ENTITY_CODE      from TMP_GCL_GRUPOS_CLIENTES      where not exists (select * from DD_TGL_TIPO_GRUPO_CLIENTE dd where dd.DD_TGL_CODIGO = TMP_GCL_CODIGO )','TMP_GCL_GRUPOS_CLIENTES','HIGH')
+             , T_JBV('gcl-04.gruposVaciosValidator','3058','SELECT pgl.TMP_PER_GCL_CODIGO_GRUPO AS ERROR_FIELD, pgl.TMP_PER_GCL_COD_CLI AS ENTITY_CODE       from TMP_PER_GCL pgl,TMP_PER_GCL pgl1       where pgl.TMP_PER_GCL_ID <> pgl1.TMP_PER_GCL_ID       and pgl.TMP_PER_GCL_COD_CLI = pgl1.TMP_PER_GCL_COD_CLI    ','TMP_PER_GCL','HIGH')
+             , T_JBV('gcl-07.personasValidator','3058','SELECT TMP_PER_GCL_TIPO_RELACION AS ERROR_FIELD, TMP_PER_GCL_CODIGO_GRUPO AS ENTITY_CODE from TMP_PER_GCL where not exists (select * from DD_TGE_TIPO_RELACION_GRUPO dd where dd.DD_TGE_CODIGO = TMP_PER_GCL_TIPO_RELACION) ','TMP_PER_GCL','HIGH')
+             , T_JBV('gcl-08.personasGruposValidator','3058','SELECT pgl.TMP_PER_GCL_CODIGO_GRUPO AS ERROR_FIELD, pgl.TMP_PER_GCL_COD_CLI AS ENTITY_CODE from TMP_PER_GCL pgl where not exists (select *  from TMP_GCL_GRUPOS_CLIENTES g  where pgl.TMP_PER_GCL_CODIGO_GRUPO = g.TMP_GCL_CODIGO)','TMP_GCL_GRUPOS_CLIENTES','HIGH')
+             , T_JBV('gcl-12.gruposRepetidosValidator','3058','SELECT glc1.TMP_GCL_CODIGO AS ERROR_FIELD,  glc1.TMP_GCL_CODIGO AS ENTITY_CODE from TMP_GCL_GRUPOS_CLIENTES glc1, TMP_GCL_GRUPOS_CLIENTES glc2 where glc1.TMP_GCL_CODIGO = glc2.TMP_GCL_CODIGO and glc1.TMP_GCL_CODIGO = glc2.TMP_GCL_CODIGO and glc1.TMP_GCL_ID <> glc2.TMP_GCL_ID ','TMP_PER_GCL','HIGH')
+             , T_JBV('gcl-13.personasEnMasDeUnGrupoValidator','3058','SELECT pgl.TMP_PER_GCL_CODIGO_GRUPO AS ERROR_FIELD, pgl.TMP_PER_GCL_COD_CLI AS ENTITY_CODE from TMP_PER_GCL pgl,TMP_PER_GCL pgl1 where pgl.TMP_PER_GCL_ID <> pgl1.TMP_PER_GCL_ID and pgl.TMP_PER_GCL_COD_CLI = pgl1.TMP_PER_GCL_COD_CLI','TMP_PER_GCL','HIGH')
+             , T_JBV('gcl-15.tipoRelacionGrupoValidator','3058','SELECT TMP_PER_GCL_TIPO_RELACION AS ERROR_FIELD, TMP_PER_GCL_CODIGO_GRUPO AS ENTITY_CODE from TMP_PER_GCL where not exists (select * from DD_TGE_TIPO_RELACION_GRUPO dd where dd.DD_TGE_CODIGO = TMP_PER_GCL_TIPO_RELACION)','TMP_PER_GCL','HIGH')
+-- Validaciones Alertas
+             , T_JBV('ale-01.entityValidator','3058','SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE FROM TMP_ALE_ALERTAS WHERE tmp_ale_cod_entidad <> ?','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-02.loadDateValidator.Oracle9iDialect','3058','SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE FROM tmp_ale_alertas where TMP_ALE_FECHA_EXTRACCION <> to_date(?,''''YYYYMMDD'''')','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-03.grupoDiferente','3058','SELECT tmp_ale_cod_alerta as ERROR_FIELD, (TMP_ALE_COD_ENTIDAD || TMP_ALE_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM tmp_ale_alertas WHERE tmp_ale_cod_grupo_carga <> ?','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-04.codigoCliente','3058','SELECT (''''''''||tp.TMP_ALE_COD_ENTIDAD) as ERROR_FIELD, (tp.TMP_ALE_COD_ENTIDAD || tp.TMP_ALE_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM TMP_ALE_ALERTAS tp WHERE (tp.TMP_ALE_COD_ENTIDAD, tp.TMP_ALE_COD_CLIENTE_ENTIDAD) not in (SELECT PER_COD_ENTIDAD, PER_COD_CLIENTE_ENTIDAD FROM PER_PERSONAS)','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-05.codigoGrupo','3058','SELECT tmp_ale_cod_grupo_carga AS ERROR_FIELD,(tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE FROM tmp_ale_alertas WHERE tmp_ale_cod_grupo_carga not in (select grc_codigo from GRC_GRUPO_CARGA)','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-06.codigoAlerta','3058','SELECT tmp_ale_cod_alerta AS ERROR_FIELD,(tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE FROM tmp_ale_alertas WHERE tmp_ale_cod_alerta not in (select tal_codigo from TAL_TIPO_ALERTA)','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-07.codigoGravedad','3058','SELECT tmp_ale_cod_gravedad AS ERROR_FIELD,(tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE FROM tmp_ale_alertas WHERE tmp_ale_cod_gravedad not in (select ngr_codigo from ngr_nivel_gravedad)','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-08.existenAlertasPosteriores','3058','SELECT tmp_ale_fecha_extraccion AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE FROM tmp_ale_alertas tmp, FRC_FICHEROS_CARGADOS F WHERE tmp.tmp_ale_fecha_extraccion <= F.FRC_FECHA_EXTRACCION and f.DD_TFI_ID = (select DD_TFI_ID from ${master.schema}.DD_TFI_TIPO_FICHERO WHERE DD_TFI_CODIGO = ''''ALE'''')','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-09.entradasDuplicadas','3058','SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE FROM tmp_ale_alertas GROUP BY (tmp_ale_cod_alerta, tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) HAVING COUNT (*) > 1','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-11.alertaDeGrupoDiferente','3058','SELECT tmp_ale_cod_alerta as ERROR_FIELD, (TMP_ALE_COD_ENTIDAD || TMP_ALE_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM tmp_ale_alertas WHERE tmp_ale_cod_alerta NOT IN ( SELECT tal_codigo FROM tal_tipo_alerta t, gal_grupo_alerta g  WHERE t.gal_id = g.gal_id AND g.gal_codigo = ? )','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-12.contratoValidator','3058','SELECT TMP_ALE_NUMERO_CONTRATO as ERROR_FIELD, TMP_ALE_COD_CLIENTE_ENTIDAD as ENTITY_CODE FROM TMP_ALE_ALERTAS WHERE TMP_ALE_NUMERO_CONTRATO is not null and not exists ( select *  from cnt_contratos cnt, cpe_contratos_personas cpe,  per_personas per where cnt.cnt_contrato = TMP_ALE_NUMERO_CONTRATO and cnt.cnt_id = cpe.cnt_id and cpe.per_id = per.per_id and per.PER_COD_CLIENTE_ENTIDAD = TMP_ALE_COD_CLIENTE_ENTIDAD) ','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-13.oficinaContrato','3058','SELECT TMP_COD_CENTRO_CNT as ERROR_FIELD, tmp_ale_cod_alerta as ENTITY_CODE FROM TMP_ALE_ALERTAS WHERE TMP_COD_CENTRO_CNT is not null and NOT EXISTS ( select * from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_CNT ) ','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-14.oficinaAlerta','3058','SELECT TMP_COD_CENTRO_ALE as ERROR_FIELD, tmp_ale_cod_alerta as ENTITY_CODE FROM TMP_ALE_ALERTAS WHERE NOT EXISTS ( select * from ofi_oficinas where ofi_codigo = TMP_COD_CENTRO_ALE ) ','TMP_ALE_ALERTAS','LOW')
+             , T_JBV('ale-32.metricaValidas','3058','SELECT tpe.dd_tpe_descripcion||'''' - ''''||sce.dd_sce_descripcion AS ENTITY_CODE, tal_descripcion||'''' - ''''||ngr_descripcion AS ERROR_FIELD FROM tal_tipo_alerta, ngr_nivel_gravedad, ${master.schema}.DD_TPE_TIPO_PERSONA tpe, DD_SCE_SEGTO_CLI_ENTIDAD sce WHERE 
+                    (tpe.dd_tpe_id, tal_id, ngr_id) NOT IN (
+                   SELECT tpe.dd_tpe_id ,tal_id, ngr_id
+                    FROM mtr_metricas mtr,
+                   mtt_metricas_tipo mtt,
+                   mtg_metricas_tipo_gravedad mtg
+                    WHERE mtr.mtr_id = mtt.mtr_id 
+                    AND mtt.mtt_id = mtg.mtt_id 
+                    AND MTR.DD_TPE_ID = TPE.DD_TPE_ID 
+                    AND MTR.DD_SCE_ID IS NULL
+                    AND mtg.mtg_peso IS NOT NULL) 
+                     AND (sce.dd_sce_id, tal_id, ngr_id) NOT IN (  
+                     SELECT sce.dd_sce_id,tal_id, ngr_id
+                     FROM mtr_metricas mtr,
+                   mtt_metricas_tipo mtt,
+                   mtg_metricas_tipo_gravedad mtg
+                    WHERE mtr.mtr_id = mtt.mtr_id 
+                   AND mtt.mtt_id = mtg.mtt_id 
+                   and MTR.DD_SCE_ID = sce.dd_sce_id 
+                   and mtg.mtg_peso is not null)','TMP_ALE_ALERTAS','LOW')
+  );  
+  
 --/*
 --##########################################
 --## FIN Configuraciones a rellenar
 --##########################################
 --*/  
-   
-   V_TMP_JVI T_JVI;
-   V_TMP_JVS T_JVS;
-   V_TMP_JBV T_JBV;   
+ 
+ V_TMP_JVI T_JVI;
+ V_TMP_JVS T_JVS;
+ V_TMP_JBV T_JBV; 
 
-   
+ 
 BEGIN
 
-    DBMS_OUTPUT.PUT_LINE('Se borra la configuración de BATCH_JOB_VALIDATION');
-    EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA_MASTER ||'.BATCH_JOB_VALIDATION');
+ DBMS_OUTPUT.PUT_LINE('Se borra la configuración de BATCH_JOB_VALIDATION');
+ EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA_MASTER ||'.BATCH_JOB_VALIDATION');
  
-    
-    DBMS_OUTPUT.PUT_LINE('Se borra la configuración de DD_JVI_JOB_VAL_INTERFAZ');
-    EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA_MASTER ||'.DD_JVI_JOB_VAL_INTERFAZ');
-       
+ 
+ DBMS_OUTPUT.PUT_LINE('Se borra la configuración de DD_JVI_JOB_VAL_INTERFAZ');
+ EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA_MASTER ||'.DD_JVI_JOB_VAL_INTERFAZ');
+  
 
-    DBMS_OUTPUT.PUT_LINE('Se borra la configuración de DD_JVS_JOB_VAL_SEVERITY');
-    EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA_MASTER ||'.DD_JVS_JOB_VAL_SEVERITY');
-    
-      
+ DBMS_OUTPUT.PUT_LINE('Se borra la configuración de DD_JVS_JOB_VAL_SEVERITY');
+ EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA_MASTER ||'.DD_JVS_JOB_VAL_SEVERITY');
  
-    DBMS_OUTPUT.PUT_LINE('Reseteamos los contadores......');
-    
-    V_ENTIDAD_ID:=0;
-    SELECT count(*) INTO V_ENTIDAD_ID
-    FROM all_sequences
-    WHERE sequence_name = 'S_JVI_JOB_VAL_INTERFAZ' and sequence_owner=V_ESQUEMA_MASTER;
-   
-    if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
-        DBMS_OUTPUT.PUT_LINE('Contador 1');
-        EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVI_JOB_VAL_INTERFAZ');
-    end if;
-   
-    EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVI_JOB_VAL_INTERFAZ
-                       START WITH 1
-                       MAXVALUE 999999999999999999999999999
-                       MINVALUE 1
-                       NOCYCLE
-                       CACHE 20
-                       NOORDER'
-                      );    
+ 
+ 
+ DBMS_OUTPUT.PUT_LINE('Reseteamos los contadores......');
+ 
+ V_ENTIDAD_ID:=0;
+ SELECT count(*) INTO V_ENTIDAD_ID
+ FROM all_sequences
+ WHERE sequence_name = 'S_JVI_JOB_VAL_INTERFAZ' and sequence_owner=V_ESQUEMA_MASTER;
+ 
+ if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
+ DBMS_OUTPUT.PUT_LINE('Contador 1');
+ EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVI_JOB_VAL_INTERFAZ');
+ end if;
+ 
+ EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVI_JOB_VAL_INTERFAZ
+ START WITH 1
+ MAXVALUE 999999999999999999999999999
+ MINVALUE 1
+ NOCYCLE
+ CACHE 20
+ NOORDER'
+  ); 
  
 
-     V_ENTIDAD_ID:=0;
-    SELECT count(*) INTO V_ENTIDAD_ID
-    FROM all_sequences
-    WHERE sequence_name = 'S_JVS_JOB_VAL_SEVERITY' and sequence_owner=V_ESQUEMA_MASTER;
-   
-    if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
-        DBMS_OUTPUT.PUT_LINE('Contador 2');
-        EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVS_JOB_VAL_SEVERITY');
-    end if;
-   
-    EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVS_JOB_VAL_SEVERITY
-                       START WITH 1
-                       MAXVALUE 999999999999999999999999999
-                       MINVALUE 1
-                       NOCYCLE
-                       CACHE 20
-                       NOORDER'
-                      );    
+  V_ENTIDAD_ID:=0;
+ SELECT count(*) INTO V_ENTIDAD_ID
+ FROM all_sequences
+ WHERE sequence_name = 'S_JVS_JOB_VAL_SEVERITY' and sequence_owner=V_ESQUEMA_MASTER;
+ 
+ if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
+ DBMS_OUTPUT.PUT_LINE('Contador 2');
+ EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVS_JOB_VAL_SEVERITY');
+ end if;
+ 
+ EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA_MASTER || '.S_JVS_JOB_VAL_SEVERITY
+ START WITH 1
+ MAXVALUE 999999999999999999999999999
+ MINVALUE 1
+ NOCYCLE
+ CACHE 20
+ NOORDER'
+  ); 
  
  
-     V_ENTIDAD_ID:=0;
-    SELECT count(*) INTO V_ENTIDAD_ID
-    FROM all_sequences
-    WHERE sequence_name = 'S_BATCH_JOB_VALIDATION' and sequence_owner=V_ESQUEMA_MASTER;
-   
-    if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
-        DBMS_OUTPUT.PUT_LINE('Contador 3');
-        EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA_MASTER || '.S_BATCH_JOB_VALIDATION');
-    end if;
-   
-    EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA_MASTER || '.S_BATCH_JOB_VALIDATION
-                       START WITH 1
-                       MAXVALUE 999999999999999999999999999
-                       MINVALUE 1
-                       NOCYCLE
-                       CACHE 20
-                       NOORDER'
-                      );    
+  V_ENTIDAD_ID:=0;
+ SELECT count(*) INTO V_ENTIDAD_ID
+ FROM all_sequences
+ WHERE sequence_name = 'S_BATCH_JOB_VALIDATION' and sequence_owner=V_ESQUEMA_MASTER;
+ 
+ if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
+ DBMS_OUTPUT.PUT_LINE('Contador 3');
+ EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA_MASTER || '.S_BATCH_JOB_VALIDATION');
+ end if;
+ 
+ EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA_MASTER || '.S_BATCH_JOB_VALIDATION
+ START WITH 1
+ MAXVALUE 999999999999999999999999999
+ MINVALUE 1
+ NOCYCLE
+ CACHE 20
+ NOORDER'
+  ); 
   
  
  
 
-   DBMS_OUTPUT.PUT_LINE('Creando EXT_DD_JVI_JOB_VAL_INTERFAZ......');
-   FOR I IN V_JVI.FIRST .. V_JVI.LAST
-   LOOP
-       V_MSQL := 'SELECT '||V_ESQUEMA_MASTER||'.S_JVI_JOB_VAL_INTERFAZ.NEXTVAL FROM DUAL';
-       EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
-      V_TMP_JVI := V_JVI(I);
-      DBMS_OUTPUT.PUT_LINE('Creando JVI: '||V_TMP_JVI(1));   
+ DBMS_OUTPUT.PUT_LINE('Creando EXT_DD_JVI_JOB_VAL_INTERFAZ......');
+ FOR I IN V_JVI.FIRST .. V_JVI.LAST
+ LOOP
+  V_MSQL := 'SELECT '||V_ESQUEMA_MASTER||'.S_JVI_JOB_VAL_INTERFAZ.NEXTVAL FROM DUAL';
+  EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+ V_TMP_JVI := V_JVI(I);
+ DBMS_OUTPUT.PUT_LINE('Creando JVI: '||V_TMP_JVI(1)); 
 
-      V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.DD_JVI_JOB_VAL_INTERFAZ (DD_JVI_ID, DD_JVI_CODIGO, DD_JVI_DESCRIPCION,' ||
-        'DD_JVI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                 ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_JVI(1)||''','''||SUBSTR(V_TMP_JVI(2),1, 50)||''','''
-         ||V_TMP_JVI(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
-      EXECUTE IMMEDIATE V_MSQL;
-   END LOOP; 
-   V_TMP_JVI := NULL;
+ V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.DD_JVI_JOB_VAL_INTERFAZ (DD_JVI_ID, DD_JVI_CODIGO, DD_JVI_DESCRIPCION,' ||
+ 'DD_JVI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+ ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_JVI(1)||''','''||SUBSTR(V_TMP_JVI(2),1, 50)||''','''
+  ||V_TMP_JVI(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
+ EXECUTE IMMEDIATE V_MSQL;
+ END LOOP; 
+ V_TMP_JVI := NULL;
 
-   
-   DBMS_OUTPUT.PUT_LINE('Creando EXT_DD_JVS_JOB_VAL_SEVERITY......');
-   FOR I IN V_JVS.FIRST .. V_JVS.LAST
-   LOOP
-       V_MSQL := 'SELECT '||V_ESQUEMA_MASTER||'.S_JVS_JOB_VAL_SEVERITY.NEXTVAL FROM DUAL';
-       EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
-      V_TMP_JVS := V_JVS(I);
-      DBMS_OUTPUT.PUT_LINE('Creando JVS: '||V_TMP_JVS(1));   
+ 
+ DBMS_OUTPUT.PUT_LINE('Creando EXT_DD_JVS_JOB_VAL_SEVERITY......');
+ FOR I IN V_JVS.FIRST .. V_JVS.LAST
+ LOOP
+  V_MSQL := 'SELECT '||V_ESQUEMA_MASTER||'.S_JVS_JOB_VAL_SEVERITY.NEXTVAL FROM DUAL';
+  EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+ V_TMP_JVS := V_JVS(I);
+ DBMS_OUTPUT.PUT_LINE('Creando JVS: '||V_TMP_JVS(1)); 
 
-      V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.DD_JVS_JOB_VAL_SEVERITY (DD_JVS_ID, DD_JVS_CODIGO, DD_JVS_DESCRIPCION,' ||
-        'DD_JVS_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                 ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_JVS(1)||''','''||SUBSTR(V_TMP_JVS(2),1, 50)||''','''
-         ||V_TMP_JVS(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
-      EXECUTE IMMEDIATE V_MSQL;
-   END LOOP; 
-   V_TMP_JVS := NULL;
-   
-
-   DBMS_OUTPUT.PUT_LINE('Creando BATCH_JOB_VALIDATION......');
-   FOR I IN V_JBV.FIRST .. V_JBV.LAST
-   LOOP
-       V_MSQL := 'SELECT '||V_ESQUEMA_MASTER||'.S_BATCH_JOB_VALIDATION.NEXTVAL FROM DUAL';
-       EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
-      V_TMP_JBV := V_JBV(I);
-      DBMS_OUTPUT.PUT_LINE('Creando BATCH_JOB_VALIDATION: '||V_TMP_JBV(1));   
-
-      V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.BATCH_JOB_VALIDATION (JOB_VAL_ID, JOB_VAL_CODIGO, JOB_VAL_ENTITY, JOB_VAL_ORDER, JOB_VAL_VALUE, JOB_VAL_INTERFAZ, JOB_VAL_SEVERITY ' ||
-        ', VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-        ' VALUES ('||  V_ENTIDAD_ID || ','''
-         ||V_TMP_JBV(1)||''','''
-         ||V_TMP_JBV(2)||''','''
-         ||V_ENTIDAD_ID||''','''
-         ||V_TMP_JBV(3)||''','''        
-         ||V_TMP_JBV(4)||''','''
-         ||V_TMP_JBV(5)||''',0,'''
-         ||V_USUARIO_CREAR||'''
-         ,SYSDATE,0)';
-      EXECUTE IMMEDIATE V_MSQL;
-   END LOOP; 
-   V_TMP_JVI := NULL;   
+ V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.DD_JVS_JOB_VAL_SEVERITY (DD_JVS_ID, DD_JVS_CODIGO, DD_JVS_DESCRIPCION,' ||
+ 'DD_JVS_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+ ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_JVS(1)||''','''||SUBSTR(V_TMP_JVS(2),1, 50)||''','''
+  ||V_TMP_JVS(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
+ EXECUTE IMMEDIATE V_MSQL;
+ END LOOP; 
+ V_TMP_JVS := NULL;
  
 
-   COMMIT;
+ DBMS_OUTPUT.PUT_LINE('Creando BATCH_JOB_VALIDATION......');
+ FOR I IN V_JBV.FIRST .. V_JBV.LAST
+ LOOP
+  V_MSQL := 'SELECT '||V_ESQUEMA_MASTER||'.S_BATCH_JOB_VALIDATION.NEXTVAL FROM DUAL';
+  EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+ V_TMP_JBV := V_JBV(I);
+ DBMS_OUTPUT.PUT_LINE('Creando BATCH_JOB_VALIDATION: '||V_TMP_JBV(1)); 
+
+ V_MSQL := 'INSERT INTO '||V_ESQUEMA_MASTER||'.BATCH_JOB_VALIDATION (JOB_VAL_ID, JOB_VAL_CODIGO, JOB_VAL_ENTITY, JOB_VAL_ORDER, JOB_VAL_VALUE, JOB_VAL_INTERFAZ, JOB_VAL_SEVERITY ' ||
+ ', VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+ ' VALUES ('||  V_ENTIDAD_ID || ','''
+  ||V_TMP_JBV(1)||''','''
+  ||V_TMP_JBV(2)||''','''
+  ||V_ENTIDAD_ID||''','''
+  ||V_TMP_JBV(3)||''',''' 
+  ||V_TMP_JBV(4)||''','''
+  ||V_TMP_JBV(5)||''',0,'''
+  ||V_USUARIO_CREAR||'''
+  ,SYSDATE,0)';
+ EXECUTE IMMEDIATE V_MSQL;
+ END LOOP; 
+ V_TMP_JVI := NULL; 
+ 
+
+ COMMIT;
 
 EXCEPTION
 
@@ -400,3 +416,4 @@ WHEN OTHERS THEN
   RAISE;
 END;
 /
+EXIT;

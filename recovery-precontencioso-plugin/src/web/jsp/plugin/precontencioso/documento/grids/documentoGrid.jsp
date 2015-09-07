@@ -402,6 +402,8 @@ var actualizarBotonesDocumentos = function(){
 		if(myCboxSelModel2.getCount() == 1){
      		<%-- Si el documento está PENDIENTE SOLICITAR O SOLICITADO --%>
 			if((gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'PS' ||
+				gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'EN' ||
+				gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'DI' ||
 				gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'SO') 
 				&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true){
 				<%-- Si es solicitud --%>
@@ -426,8 +428,9 @@ var actualizarBotonesDocumentos = function(){
 			else {	
 				<%-- Si el documento está DESCARTADO --%>
 				if(gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'DE'
-					&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true){
-	      			habilitarDeshabilitarButtons(true, true, true, true, true, false, false);  
+					&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true &&
+					gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == false){
+	      			habilitarDeshabilitarButtons(true, true, true, false, true, false, false);  
 	      			return; 
 				}
 				else {		
@@ -435,12 +438,12 @@ var actualizarBotonesDocumentos = function(){
 					if(gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == true) {
 						<%-- Si no tiene resultado --%>
 						if (gridDocumentos.getSelectionModel().getSelected().get('resultado') == ''){
-			      			habilitarDeshabilitarButtons(true, true, true, true, false, true, false);
+			      			habilitarDeshabilitarButtons(true, true, true, false, false, true, false);
 			      			return;
 			      		}
 			      		<%-- Si la solicitud tiene resultado --%>
 			      		else {
-			      			habilitarDeshabilitarButtons(true, true, true, true, true, true, false);
+			      			habilitarDeshabilitarButtons(true, true, true, false, true, true, false);
 			      			return;		      					      		
 			      		}      						
 					}		

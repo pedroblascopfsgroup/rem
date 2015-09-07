@@ -380,13 +380,21 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DECADM");
 	            }
-	            
+
+	            def comprobarExisteDocumentoSOLCONS = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SOLCONS");
+	            }
+
+	            def comprobarExisteDocumentoDTCCE = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DTCCE");
+	            }
+
 	            def vieneDeTramiteHipotecario = {
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H001'));
 				}
-<<<<<<< HEAD
-
 
 				def comprobarBienesSolitudSubasta = {
 	                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");

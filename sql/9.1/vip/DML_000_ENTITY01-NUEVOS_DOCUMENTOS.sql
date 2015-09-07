@@ -51,8 +51,11 @@ DECLARE
       ,T_TIPO_TFA('INSEXT', 'Informe de subasta', 'Informe de subasta', 'EX') -- Trámite de ejecución notarial
       ,T_TIPO_TFA('INFSUBEXT', 'Informe Subasta firmada', 'Informe Subasta firmada', 'EX') -- Trámite de ejecución notarial
       ,T_TIPO_TFA('DECADM', 'Decreto de admisión', 'Decreto de admisión', 'TR') -- Trámite de posesión interina
+      ,T_TIPO_TFA('SOLCONS', 'Solicitud de consignación', 'Solicitud de consignación', 'AP') -- Trámite de consignación
+      ,T_TIPO_TFA('DTCCE', 'Decreto de Tasación de Costas (Costas contra entidad)', 'Decreto de Tasación de Costas (Costas contra entidad)', 'CO') -- Trámite de costras contra entidad
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
+    DTC	Decreto de Tasación de Costas	Decreto de Tasación de Costas
     
 BEGIN	
   

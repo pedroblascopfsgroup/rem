@@ -259,6 +259,36 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''observaciones'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-671');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-673');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+          ' SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoLIBARR() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe adjuntar el documento "Certificado de Libertad de arrendamientos".</div>'''''' ' ||
+          ' WHERE TAP_CODIGO = ''HC101_EmitirCertificado'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-673');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-674');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+          ' SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoSOLCONS() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe adjuntar el documento "Solicitud de consignaci&oacute;n".</div>'''''' ' ||
+          ' WHERE TAP_CODIGO = ''H064_solicitarAutorizacionConsignacionSareb'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-674');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-607');
+	V_TAREA:='H048_PresentarEscritoAlegaciones';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS' ||
+          ' SET DD_PTP_PLAZO_SCRIPT = ''damePlazo(valores[''''H048_TrasladoDocuDeteccionOcupantes''''][''''fechaFinAle''''])''' ||
+          ' WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-607');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-616');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+          ' SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H011_RegistrarAdmisionYEmplazamiento''''][''''comboVista''''] == DDSiNo.SI && valores[''''H011_RegistrarAdmisionYEmplazamiento''''][''''fechaSenyalamiento''''] == null ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">La fecha fin de se&ntilde;alamiento es obligatoria</div>'''' : null'' ' ||
+          ' WHERE TAP_CODIGO = ''H011_RegistrarAdmisionYEmplazamiento'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-616');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-677');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+          ' SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumentoDTCCE() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe adjuntar el documento "Decreto tasaci&oacute;n costas".</div>'''''' ' ||
+          ' WHERE TAP_CODIGO = ''H032_RegistrarDecTasacionCostas'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-677');
 	
 COMMIT;
  

@@ -20,6 +20,7 @@
 	
 	var idPersona = '${idPersona}';
 	var isGestor = '${isGestor}';
+	var idArquetipo = '${idArquetipo}';
 	//si viene proponer en false, es como si fuera supervisor -> puede activar el expediente directamente sin proponerlo
 	var isSupervisor = '${isSupervisor || !proponer }';
 	
@@ -127,6 +128,7 @@
 					,idExpediente:idExpediente
 					,isGestor:isGestor
 					,isSupervisor:isSupervisor
+					,idArquetipo:idArquetipo
 				 }
 			});
 			//panel2.hide();

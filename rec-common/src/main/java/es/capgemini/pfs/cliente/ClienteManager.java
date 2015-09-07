@@ -160,7 +160,11 @@ public class ClienteManager {
     @BusinessOperation(PrimariaBusinessOperation.BO_CLI_MGR_TIENE_CONTRATOS_ACTIVOS)
 	@SuppressWarnings("unchecked")    
     public Boolean tieneContratosActivos(Long idPersona) {
-    	Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
+    	
+    	List<Contrato> contratos = (List<Contrato>)executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
+    	return (contratos!=null && contratos.size()>0);
+    	
+    	/*Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
     	if (persona == null) return false;
     	
     	for (Contrato contrato : persona.getContratos()) {
@@ -168,7 +172,7 @@ public class ClienteManager {
 				return true;
 		}
     	
-    	return false;
+    	return false;*/
     }
     
     /**
@@ -176,13 +180,14 @@ public class ClienteManager {
      * @param idPersona
      * @return
      */
-    @BusinessOperation(PrimariaBusinessOperation.BO_CLI_MGR_TIENE_CONTRATOS_LIBRES)
+    @SuppressWarnings("unchecked")
+	@BusinessOperation(PrimariaBusinessOperation.BO_CLI_MGR_TIENE_CONTRATOS_LIBRES)
     public Boolean tieneContratosLibres(Long idPersona) {
     	//Obtenemos los datos de la persona, pera obtener sus expedientes
     	Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
     	if (persona == null) return false;
     	
-    	for (Contrato contrato : persona.getContratos()) {
+    	/*for (Contrato contrato : persona.getContratos()) {
     		if (contrato.getEstadoContrato().getCodigo().equals(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO)) {
     			//Confirmamos que el contrato no tiene asuntos activos
     			if (contrato.getAsuntosActivos() == null || contrato.getAsuntosActivos().size() == 0) {
@@ -191,7 +196,19 @@ public class ClienteManager {
     					return true;
     			}
     		}
-    	}
+    	}*/
+
+    	List<Contrato> contratos = (List<Contrato>)executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
+    	
+    	for (Contrato contrato : contratos) {
+    		//Confirmamos que el contrato no tiene asuntos activos
+			if (contrato.getAsuntosActivos() == null || contrato.getAsuntosActivos().size() == 0) {
+				//Buscamos si entre sus expedientes hay alguno de tipo recuperacion
+				if (!estaContratoEnAlgunExpedienteDeRecuperacion(contrato))
+					return true;
+			}
+		}
+   	
     	
     	//Si ningún contrato ha pasado las validaciones, devolvemos false
     	return false;

@@ -6,6 +6,7 @@
 	<input name="isGestor" type="java.lang.Boolean" />
 	<input name="isSupervisor" type="java.lang.Boolean" />
 	<input name="proponer" type="java.lang.Boolean" />
+	<input name="idArquetipo" type="java.lang.Long"/>
 
     <action-state id="obtenerExpedienteManual">
 		<evaluate expression="executor.execute('personaManager.obtenerIdExpedientePropuestoPersona', idPersona)" result="flowScope.idExpediente" />
@@ -23,7 +24,7 @@
 	</action-state>
 
 	<action-state id="crearExpedienteManual">
-		<evaluate expression="executor.execute('expedienteManager.crearExpedienteManualSeg', idPersona)" result="flowScope.expediente" />
+		<evaluate expression="executor.execute('expedienteManager.crearExpedienteManualSegArq', idPersona, idArquetipo)" result="flowScope.expediente" />
 		<transition to="formulario" />
 	</action-state>
 

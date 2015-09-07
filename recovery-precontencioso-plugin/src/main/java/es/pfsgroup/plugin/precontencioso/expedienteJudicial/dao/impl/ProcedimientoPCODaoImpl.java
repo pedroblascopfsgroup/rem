@@ -77,7 +77,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
 
-		// Distinct, objetos duplicados debido a los joins
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		return query.list();
@@ -89,7 +88,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
-		select.add(Projections.property("estadoDocumento.descripcion").as("estadoDocumento"));
+		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
 		// Respuesta ultima solicitud
 		// Actor última solicitud
 		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
@@ -110,6 +109,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
+		select.add(Projections.property("estadoLiquidacion.descripcion").as("estado"));
 		select.add(Projections.property("liqcontrato.nroContrato").as("contrato"));
 		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
 		select.add(Projections.property("liquidacion.fechaCierre").as("fechaCierre"));
@@ -132,6 +132,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		addDefaultProcedimientoProjection(select);
 
+		select.add(Projections.property("estadoBurofax.descripcion").as("estado"));
 		select.add(Projections.property("burofax.demandado").as("demandado"));
 		select.add(Projections.property("enviosBurofax.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("enviosBurofax.fechaEnvio").as("fechaEnvio"));
@@ -140,6 +141,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
+
+		query.createAlias("burofax.estadoBurofax", "estadoBurofax");
 
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
@@ -326,7 +329,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		// Si no hay ningun filtro informado de documento y ni ningun filtro de solicitud y no se trata de una busqueda de tipo documento, no se aplica ninguna restriccion
+		// Si no hay ningun filtro informado de documento y ningun filtro de solicitud y no se trata de una busqueda de tipo documento, no se aplica ninguna restriccion
 		if (!filtro.filtroDocumentoInformado() && !filtro.filtroSolicitudInformado() && !esBusquedaPorDocumento) {
 			return where;
 		}

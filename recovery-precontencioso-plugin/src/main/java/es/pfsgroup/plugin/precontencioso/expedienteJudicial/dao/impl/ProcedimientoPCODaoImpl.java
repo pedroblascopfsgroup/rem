@@ -302,8 +302,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			return where;
 		}
 
-		query.createAlias("procedimiento.asunto", "asunto", CriteriaSpecification.LEFT_JOIN);
-		query.createAlias("asunto.expediente", "expediente", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("procedimiento.asunto", "asunto");
+		query.createAlias("asunto.gestoresAsunto", "gaa");
+		query.createAlias("asunto.expediente", "expediente");
 		query.createAlias("expediente.contratos", "expcontrato");
 		query.createAlias("expcontrato.contrato", "contrato");
 

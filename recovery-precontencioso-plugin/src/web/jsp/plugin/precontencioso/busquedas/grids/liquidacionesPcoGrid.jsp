@@ -27,7 +27,7 @@ var liquidacionPcoRecord = Ext.data.Record.create([
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
 	{name: 'liqEstado'},
-<!-- 	{name: 'fechaSolicitud'}, -->	
+	{name: 'fechaSolicitud'},
 	{name: 'liqContrato'},
 	{name: 'liqFechaRecepcion'},
 	{name: 'liqFechaConfirmacion'},
@@ -54,7 +54,7 @@ var liquidacionPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
 	{dataIndex: 'liqEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.estado" text="**Estado"/>', sortable: false},
-<%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
+ 	{dataIndex: 'fechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'liqContrato', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.contrato" text="**Contrato"/>', sortable: false},
 	{dataIndex: 'liqFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
 	{dataIndex: 'liqFechaConfirmacion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.confirmacion" text="**Fecha confirmacion"/>', sortable: false},
@@ -86,5 +86,9 @@ liquidacionPcoStore.on('load', function() {
 gridLiquidacionPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
-	//app.abreAsuntoTab(id, nombre_asunto,'tabSubastas');
+	var nombre_procedimiento = rec.get('nombreExpediente');
+
+   	if (id != null && id != ''){
+   		app.abreProcedimiento(id, nombre_procedimiento);
+   	}
 });

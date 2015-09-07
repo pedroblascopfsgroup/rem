@@ -661,7 +661,7 @@
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
 		idProcedimiento=data.precontencioso.id;
 		
-		if (data != null) {
+		/*if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
 			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
 				btnAddPersona.setDisabled(true);
@@ -673,26 +673,9 @@
 				btnNotificar.setDisabled(true);
 				
 			}
-		}
+		}*/
 		
 		
 	}
 	
-	var getTipoGestor = function(){
-		debugger;
-		Ext.Ajax.request({
-						url : page.resolveUrl('burofax/getTipoGestor'), 
-						params : {asuId:data.cabecera.asuntoId},
-						method: 'POST',
-						success: function ( result, request ) {
-							
-							debugger;
-							
-						}
-					});
-					
-		var codigoTipoGestor='${codigoTipoGestor}';
-		debugger;
-					
-	}
 	

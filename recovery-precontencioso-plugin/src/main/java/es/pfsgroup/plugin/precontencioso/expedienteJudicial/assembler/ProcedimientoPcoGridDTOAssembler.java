@@ -29,6 +29,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 		for (HashMap<String, Object> procedimiento : procedimientos) {
 			ProcedimientoPcoGridDTO procedimientoGridDto = new ProcedimientoPcoGridDTO();
 
+			procedimientoGridDto.setPrcId(ObjectUtils.toString(procedimiento.get("prcId")));
 			procedimientoGridDto.setCodigo(ObjectUtils.toString(procedimiento.get("codigo")));
 			procedimientoGridDto.setNombreExpediente(ObjectUtils.toString(procedimiento.get("nombreExpJudicial")));
 			procedimientoGridDto.setEstadoExpediente(ObjectUtils.toString(procedimiento.get("estadoActualProcedimiento")));
@@ -140,6 +141,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 	private static ProcedimientoPcoGridDTO defaultProcedimientoPcoGridDtoFromHashMap(HashMap<String, Object> row) {
 		ProcedimientoPcoGridDTO prcPcoGridDto = new ProcedimientoPcoGridDTO();
 
+		prcPcoGridDto.setPrcId(ObjectUtils.toString(row.get("prcId")));
 		prcPcoGridDto.setCodigo(ObjectUtils.toString(row.get("codigo")));
 		prcPcoGridDto.setNombreExpediente(ObjectUtils.toString(row.get("nombreExpJudicial")));
 		prcPcoGridDto.setEstadoExpediente(ObjectUtils.toString(row.get("estadoActualProcedimiento")));

@@ -144,6 +144,11 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGESCHRE','SUCHRE')
 ,T_TIPO_VALOR('H017','H017_RegistrarSentenciaFirme','TGESCON','SUCON')
 ,T_TIPO_VALOR('H017','H017_RevisarEjecucionesParalizadas','TGEANREC','SUANREC')
 ,T_TIPO_VALOR('H017','H017_BPMFaseLiquidacion','TGESCON','SUCON')
+,T_TIPO_VALOR('H017','H017_BPMSeguimientoCumplimientoConvenio','TGESCON','SUCON')
+,T_TIPO_VALOR('H033','H033_PresentarAlegaciones','TGESCON','SUCON')
+,T_TIPO_VALOR('H033','H033_RegistrarAutoConclusion','TGESCON','SUCON')
+,T_TIPO_VALOR('H033','H033_RegistrarAutoPlanLiquidacion','TGESCON','SUCON')
+,T_TIPO_VALOR('H033','H033_RendimientoCuentas','TGESCON','SUCON')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

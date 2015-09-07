@@ -458,7 +458,7 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 		return resultado;
 	}
 	
-	private List<Bien> getBienesSubastaByPrcId(Long prcId){
+	public List<Bien> getBienesSubastaByPrcId(Long prcId){
 		// Buscamos primero la subasta asociada al prc
 		Subasta sub = genericDao.get(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", prcId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		

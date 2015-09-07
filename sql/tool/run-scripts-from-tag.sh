@@ -17,6 +17,8 @@ function print_banner() {
     echo ""
     echo "******************************************************************************************"
     echo "******************************************************************************************"
+}
+function print_banner_description() {
     echo ""
     echo "                 EJECUTO LOS SCRIPTS DE BD DESDE UN TAG DETERMINADO"
     echo ""
@@ -36,6 +38,13 @@ function getConnectionParam() {
 function registerSQLScript() {
     git log $1 >> /dev/null 2>&1
     if [ $? -eq 0 ]; then
+        filename=`basename $1`
+        if [[ ! $filename =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
+            echo "ERROR"
+            echo "  El nombre del script no sigue la nomenclatura definida: "$filename
+            echo "  Consulta sql/tool/templates para ver un ejemplo de plantilla"
+            exit 1
+        fi
         printf "%s %s\n" $1 $3 >> $2
     fi
 }
@@ -44,6 +53,7 @@ clear
 
 if [ "$0" != "./sql/tool/$(basename $0)" ]; then
     print_banner
+    print_banner_description
     echo ""
     echo "AUCH!! No me ejecutes desde aquí, por favor, que me electrocuto... sal a la raiz del repositorio RECOVERY y ejecútame como:"
     echo ""
@@ -54,6 +64,7 @@ fi
 
 if [ "$#" -lt 3 ]; then
     print_banner
+    print_banner_description
     echo ""
     echo "Para simular antes de ejecutar:"
     echo ""
@@ -82,6 +93,7 @@ fi
 
 if [ "$ORACLE_HOME" == "" ] ; then
     print_banner
+    print_banner_description
     echo ""
     echo "Defina su variable de entorno ORACLE_HOME"
     echo ""
@@ -100,13 +112,14 @@ if [ -f ~/setEnvGlobal${CUSTOMER_IN_UPPERCASE}.sh ] ; then
   export SETENVGLOBAL=~/setEnvGlobal${CUSTOMER_IN_UPPERCASE}.sh
 fi
 if [ ! -f $SETENVGLOBAL ]; then
-    echo "No existe el fichero: $SETENVGLOBAL"
-    echo "Consulta las plantillas que hay en sql/tool/templates"
+    echo "ERROR"
+    echo "  No existe el fichero: $SETENVGLOBAL"
+    echo "  Consulta las plantillas que hay en sql/tool/templates"
     exit 1
 fi
 source $SETENVGLOBAL
 
-rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql
+rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
 
 #PRODUCTO
 for file in `git diff $1 --name-only sql/**/producto/*.sql`
@@ -153,14 +166,15 @@ if [ "$MULTIENTIDAD" != "" ] ; then
 fi
 
 if [ -f $BASEDIR/tmp/product-list-from-tag.txt ] ; then
-    cat $BASEDIR/tmp/product-list-from-tag.txt | sort | cut -d# -f2 > $BASEDIR/tmp/list-from-tag.txt
+    cat $BASEDIR/tmp/product-list-from-tag.txt | sort > $BASEDIR/tmp/list-from-tag.txt
 fi
 if [ -f $BASEDIR/tmp/customer-list-from-tag.txt ] ; then
-    cat $BASEDIR/tmp/customer-list-from-tag.txt | sort | cut -d# -f2 >> $BASEDIR/tmp/list-from-tag.txt
+    cat $BASEDIR/tmp/customer-list-from-tag.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
 
 
 if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
+
     while read -r line
     do
         if [[ "$5" == "-v" ]]; then
@@ -170,9 +184,51 @@ if [[ "$#" -ge 4 ]] && [[ "$4" == "go!" ]]; then
             echo "--------------------------------------------------------------------------------"
         else
             $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE
+            if [[ "$?" != 0 ]]; then
+                echo "ERROR"
+                echo "  ABORTADA EJECUCION POR #KO#"
+                exit 1
+            fi 
         fi
     done < $BASEDIR/tmp/list-from-tag.txt
+
+elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
+
+    while read -r line
+    do
+        $BASEDIR/run-single-script.sh $line $CUSTOMER_IN_UPPERCASE -p
+        if [[ "$?" != 0 ]]; then
+            echo "ERROR"
+            exit 1
+        fi
+    done < $BASEDIR/tmp/list-from-tag.txt
+    mkdir -p $BASEDIR/tmp/package
+    mkdir $BASEDIR/tmp/package/DDL
+    mkdir $BASEDIR/tmp/package/DDL/scripts/
+    mkdir $BASEDIR/tmp/package/DML
+    mkdir $BASEDIR/tmp/package/DML/scripts/
+    passtring=''
+    if [ "$MULTIENTIDAD" != "" ] ; then
+        IFS=',' read -a entidades <<< "$MULTIENTIDAD"
+        for index in "${!entidades[@]}"
+        do
+            passtring="$passtring ""entity0$((index+1))_pass@sid"
+        done        
+    else
+        passtring="entity01_pass@sid"
+    fi
+    sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DML/DML-scripts.sh
+    cp $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    cat $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
+    cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
+    cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
+    cd $BASEDIR/tmp/package/
+    zip scripts.zip -r *
+    echo "GENERADO ZIP PARA SOLICITUD DE DESPLIEGUE: $BASEDIR/tmp/package/scripts.zip"
+
 else
+
     echo ""
     echo "Lo que pretendo ejecutar es:"
     echo ""
@@ -184,4 +240,5 @@ else
     echo "Si estás de acuerdo, añade go! al final de la línea de comandos"
     echo ""
     echo "******************************************************************************************"
+
 fi

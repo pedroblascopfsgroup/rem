@@ -242,6 +242,24 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-639');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-670');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+          ' SET TAP_SCRIPT_VALIDACION = ''!asuntoConProcurador() ? ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe registrar el procurador que representa a la entidad en la ficha del asunto correspondiente.</p></div>'''' : (comprobarExisteDocumentoEDCSDE() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>Es necesario adjuntar el documento Escrito de demanda completo + copia sellada de la demanda.</p></div>'''')'' ' ||
+          ' WHERE TAP_CODIGO = ''H026_InterposicionDemanda'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-670');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-671');
+	V_TAREA:='H030_RegistrarCertificacion';
+	EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.Tfi_Tareas_Form_Items WHERE TFI_NOMBRE=''comboResultado'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.tap_Tarea_procedimiento where tap_codigo = '''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ORDEN=''1''' ||
+	  ' WHERE TFI_NOMBRE=''fecha'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ORDEN=''2''' ||
+	  ' WHERE TFI_NOMBRE=''observaciones'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-671');
+	
+	
 COMMIT;
  
 EXCEPTION
@@ -255,3 +273,4 @@ EXCEPTION
           RAISE;   
 END;
 /
+EXIT;

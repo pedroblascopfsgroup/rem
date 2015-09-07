@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,6 +57,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
+import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
@@ -548,7 +548,7 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 	@Transactional(readOnly = false)
 	public void prepareGuid(TerminoAcuerdo terminoacuerdo) {
 		if (Checks.esNulo(terminoacuerdo.getGuid())) {
-			terminoacuerdo.setGuid(UUID.randomUUID().toString());
+			terminoacuerdo.setGuid(Guid.getNewInstance().toString());
 			saveTerminoAcuerdo(terminoacuerdo);
 		}
 	}
@@ -559,7 +559,7 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 		//boolean modificado = false;
 		if (Checks.esNulo(extAcuerdo.getGuid())) {
 			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
-			extAcuerdo.setGuid(UUID.randomUUID().toString());
+			extAcuerdo.setGuid(Guid.getNewInstance().toString());
 			//modificado = true;
 		}
 		/*
@@ -568,13 +568,13 @@ public class MEJAcuerdoManager extends BusinessOperationOverrider<AcuerdoApi> im
 		List<ActuacionesRealizadasAcuerdo> actuacionesRealizadas = extAcuerdo.getActuacionesRealizadas();
 		for (ActuacionesAExplorarAcuerdo actuacion : actuacionesExplorar) {
 			if (Checks.esNulo(actuacion.getGuid())) {
-				actuacion.setGuid(UUID.randomUUID().toString());
+				actuacion.setGuid(Guid.getNewInstance().toString());
 				modificado = true;
 			}
 		}
 		for (ActuacionesRealizadasAcuerdo actuacion: actuacionesRealizadas) {
 			if (Checks.esNulo(actuacion.getGuid())) {
-				actuacion.setGuid(UUID.randomUUID().toString());
+				actuacion.setGuid(Guid.getNewInstance().toString());
 				modificado = true;
 			}
 		}

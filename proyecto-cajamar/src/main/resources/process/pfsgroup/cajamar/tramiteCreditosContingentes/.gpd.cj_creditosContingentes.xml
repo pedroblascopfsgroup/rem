@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_creditosContingentes" width="1016" height="486">
+<root-container name="cj_creditosContingentes" width="1133" height="887">
   <node name="Inicio" x="471" y="25" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

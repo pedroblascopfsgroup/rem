@@ -42,7 +42,7 @@ function usoCorrecto() {
     echo -e "      CLIENTE  (para que se use ~/setEnvGlobalCLIENTE.sh)" 
     echo -e "      -        (para que se use ~/setEnvGlobal.sh)"
     echo -e ""
-    echo -e "   -v Paria modo verbose"
+    echo -e "   -v Para modo verbose"
     echo ""
 }
 
@@ -162,6 +162,11 @@ if [[ "$#" -eq 4 ]] && [[ "$4" == "-v" ]] ; then
 else
     export VERBOSE=0
 fi
+if [[ "$#" -eq 4 ]] && [[ "$4" == "-p" ]] ; then
+    export PACKAGE=1
+else
+    export PACKAGE=0
+fi
 
 export SETENVGLOBAL=~/setEnvGlobal.sh
 if [[ "$3" != "-" ]] ; then
@@ -192,6 +197,13 @@ nombreFicheroSinDir=`basename $FICHERO`
 nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
 
+if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
+    echo ""
+    echo "El nombre del script $nombreFicheroSinDir no sigue la nomenclatura definida"
+    echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
+    exit 1
+fi
+
 if [ ! -f $BASEDIR/tmp/$nombreSetEnv ] ; then
    obtenerSetEnv $FICHERO
    if [ "$?" != "0" ] ; then
@@ -217,10 +229,8 @@ fi
 if [[ $VERBOSE == 1 ]]; then
     echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
     $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
+elif [[ $PACKAGE == 1 ]]; then
+    $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -p
 else
     $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
-fi
-
-if [[ $VERBOSE == 1 ]]; then
-    echo "Ejecutado! Revise el fichero de log"
 fi

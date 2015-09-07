@@ -22,9 +22,10 @@
 	 Canales de entrada (JSM y escucha de directorio)
 	 ************* 	 -->
 	<jms:inbound-channel-adapter id="entradaDeCajamarJMS"
-                        destination="integracionConsumerQueue"
-                        channel="integra.entrada.jms"
-                        extract-payload="true">
+						auto-startup="${integracion.activa}"
+						destination="integracionConsumerQueue"
+						channel="integra.entrada.jms"
+						extract-payload="true">
 	     <integration:poller>
 	         <integration:interval-trigger 
 	         	interval="1" 
@@ -34,23 +35,25 @@
 	<!--  TRANSFORMA MENSAJE JMS EN FORMATO TXT PARA GUARDAR EN FICHERO-->
 	<integration:transformer
 		input-channel="integra.entrada.jms"
-		output-channel="entradaCajamarJMSFichero" 
+		output-channel="entradaDeHayaJMSFichero" 
 		ref="entradaIntegracionAdapter"
 		method="transformMsg2file"/>
 	<file:outbound-channel-adapter
-			id="entradaCajamarJMSFichero"
+			id="entradaDeHayaJMSFichero"
 			directory="${integracion.input}/${integracion.consumer.cola}"/>
 
-	<file:inbound-channel-adapter id="entradaDeCajamarFichero"
+	<file:inbound-channel-adapter
+		id="entradaDeHayaFichero"	
+		auto-startup="${integracion.activa}"
 		directory="${integracion.input}/${integracion.consumer.cola}"
 		filename-pattern=".+.msg">
 		<integration:poller id="poller">
 			<integration:interval-trigger 
-				interval="500"
+				interval="${integracion.consumer.poller}"
 				time-unit="MILLISECONDS" />
 		</integration:poller>
 	</file:inbound-channel-adapter>
-	<integration:chain input-channel="entradaDeCajamarFichero" output-channel="integra.entrada.ok">
+	<integration:chain input-channel="entradaDeHayaFichero" output-channel="integra.entrada.ok">
 		<integration:header-enricher error-channel="integra.entrada.error" />
 		<file:file-to-string-transformer delete-files="false" charset="UTF-8"/>
 		<integration:transformer ref="entradaIntegracionAdapter" method="transformFile2msg" />				<!-- CONVIERTE EN FORMATO TXT DE FICHERO EN FORMATO MENSAJE DE TXT -->
@@ -120,7 +123,7 @@
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-FIN"/>
+							<property name="tipo" value="BPM-TAREA-INICIO"/>
 							<property name="codigoTarea" value="H005_declararIVAeIGIC"/>
 						</bean>
 					</constructor-arg>
@@ -132,8 +135,8 @@
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-FIN"/>
-							<property name="codigoTarea" value="H002_ObtenerValidacionComite|H004_ObtenerValidacionComite|EJ_NOTARIAL"/>
+							<property name="tipo" value="BPM-TAREA-INICIO"/>
+							<property name="codigoTarea" value="H002_ObtenerValidacionComite|H004_ObtenerValidacionComite|H036_ElevarPropuestaAComite"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Inicio de Elevacion Cajamar"/>

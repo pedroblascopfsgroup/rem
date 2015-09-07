@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,8 +20,6 @@ import es.capgemini.pfs.acuerdo.dao.ActuacionesAExplorarAcuerdoDao;
 import es.capgemini.pfs.acuerdo.dao.ActuacionesRealizadasAcuerdoDao;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dao.AnalisisAcuerdoDao;
-import es.capgemini.pfs.acuerdo.dto.DtoActuacionesAExplorar;
-import es.capgemini.pfs.acuerdo.dto.DtoActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DtoAnalisisAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
@@ -38,9 +35,7 @@ import es.capgemini.pfs.acuerdo.model.DDSolicitante;
 import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoPagoAcuerdo;
-import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
 import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
@@ -51,6 +46,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.recovery.integration.Guid;
 
 /**
  * Servicio para los acuerdos de los asuntos.
@@ -491,7 +487,7 @@ public class AcuerdoManager {
 	@Transactional(readOnly = false)
 	public void prepareGuid(ActuacionesRealizadasAcuerdo actuacion) {
 		if (Checks.esNulo(actuacion.getGuid())) {
-			actuacion.setGuid(UUID.randomUUID().toString());
+			actuacion.setGuid(Guid.getNewInstance().toString());
 			actuacionesRealizadasAcuerdoDao.saveOrUpdate(actuacion);
 		}
 	}
@@ -499,7 +495,7 @@ public class AcuerdoManager {
 	@Transactional(readOnly = false)
 	public void prepareGuid(ActuacionesAExplorarAcuerdo actuacion) {
 		if (Checks.esNulo(actuacion.getGuid())) {
-			actuacion.setGuid(UUID.randomUUID().toString());
+			actuacion.setGuid(Guid.getNewInstance().toString());
 			actuacionesAExplorarAcuerdoDao.saveOrUpdate(actuacion);
 		}
 	}

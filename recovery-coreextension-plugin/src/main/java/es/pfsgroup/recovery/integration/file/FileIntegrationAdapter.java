@@ -242,7 +242,13 @@ public class FileIntegrationAdapter {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(LINE_SEPARATOR)
+		sb.append(LINE_SEPARATOR);
+		if (mensajeError.getCause()!=null) {
+			sb.append("CAUSA\n")
+			.append(mensajeError.getCause().getMessage()).append("\n")
+			.append(mensajeError.getCause().getStackTrace()).append("\n");
+		}
+		sb.append("\n")
 			.append(mensajeError.getMessage())
 			.append(mensajeError.getStackTrace());
 		

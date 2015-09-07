@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +46,7 @@ import es.pfsgroup.concursal.credito.dao.CreditoDao;
 import es.pfsgroup.concursal.credito.model.Credito;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.haya.integration.bpm.IntegracionBpmService;
+import es.pfsgroup.recovery.integration.Guid;
 
 @Service("convenioManager")
 public class ConvenioManager {
@@ -523,7 +523,7 @@ public class ConvenioManager {
 	
 	public Convenio prepareGuid(Convenio convenio) {
 		if (Checks.esNulo(convenio.getGuid())) {
-			convenio.setGuid(UUID.randomUUID().toString());
+			convenio.setGuid(Guid.getNewInstance().toString());
 			convenioDao.saveOrUpdate(convenio);
 		}
 
@@ -538,7 +538,7 @@ public class ConvenioManager {
 	
 	private ConvenioCredito prepareGuid(ConvenioCredito convenioCredito) {
 		if (Checks.esNulo(convenioCredito.getGuid())) {
-			convenioCredito.setGuid(UUID.randomUUID().toString());
+			convenioCredito.setGuid(Guid.getNewInstance().toString());
 			genericDao.save(ConvenioCredito.class, convenioCredito);
 		}
 		

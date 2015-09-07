@@ -192,7 +192,8 @@ public class SubastaPayload {
 	
 	public List<LoteSubastaPayload> getLotesSubasta() {
 		List<LoteSubastaPayload> listado = new ArrayList<LoteSubastaPayload>();
-		if (!data.getChildren().containsKey(LoteSubastaPayload.KEY)) {
+		if (data.getChildren()==null ||
+				!data.getChildren().containsKey(LoteSubastaPayload.KEY)) {
 			return listado;
 		}
 		List<DataContainerPayload> dataList = data.getChildren(LoteSubastaPayload.KEY);

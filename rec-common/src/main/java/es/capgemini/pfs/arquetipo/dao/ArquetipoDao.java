@@ -1,5 +1,7 @@
 package es.capgemini.pfs.arquetipo.dao;
 
+import java.util.List;
+
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.dao.AbstractDao;
 
@@ -45,4 +47,16 @@ public interface ArquetipoDao extends AbstractDao<Arquetipo, Long> {
      * @return Devuelve el Arquetipo asociado a la persona 
      */
     Arquetipo getArquetipoPorPersona(Long idPersona);
+    
+    /**
+     * Devuelve la lista de arquetipos de tipo recuperacion
+     * @return
+     */
+    List<Arquetipo> getListRecuperacion();
+
+    /**
+     * Devuelve la lista de arquetipos de tipo seguimiento
+     * @return
+     */
+	List<Arquetipo> getListSeguimiento();
 }

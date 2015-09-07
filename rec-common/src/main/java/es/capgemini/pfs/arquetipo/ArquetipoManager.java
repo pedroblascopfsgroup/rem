@@ -124,6 +124,23 @@ public class ArquetipoManager {
     	Arquetipo arquetipo = arquetipoDao.getArquetipoPorPersona(id);
         return arquetipo;
     }
+
+    /**
+     * Devuelve una lista con los arquetipos de recuperacion
+     * @return
+     */
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_LIST_RECUPERACION) 
+    public List<Arquetipo> getListRecuperacion() {
+    	return arquetipoDao.getListRecuperacion();
+    }
     
+    /**
+     * Devuelve una lista con los arquetipos de seguimiento
+     * @return
+     */
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_LIST_SEGUIMIENTO) 
+    public List<Arquetipo> getListSeguimiento() {
+    	return arquetipoDao.getListSeguimiento();
+    }
     
 }

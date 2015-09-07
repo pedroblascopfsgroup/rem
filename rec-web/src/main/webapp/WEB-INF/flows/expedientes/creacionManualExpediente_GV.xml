@@ -6,6 +6,7 @@
 	<input name="isGestor" type="java.lang.Boolean"/>
 	<input name="isSupervisor" type="java.lang.Boolean"/>
 	<input name="proponer" type="java.lang.Boolean"/>
+	<input name="idArquetipo" type="java.lang.Long"/>
 
     <action-state id="crearExpedienteManual">
 			<evaluate expression="executor.execute('personaManager.obtenerIdExpedientePropuestoPersona', idPersona)" result="flowScope.idExpediente"/>
@@ -27,6 +28,7 @@
     		<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona"/>
             <evaluate expression="executor.execute('personaManager.obtenerNumContratosGeneracionExpManual', idPersona)" result="flowScope.nContratos"/>
     		<set name="flowScope.idPersona" value="idPersona" />
+    		<set name="flowScope.idArquetipo" value="idArquetipo" />
 			<set name="flowScope.view" value="'expedientes/creacionManualExpediente'" />
     	</on-entry>
     	<on-render>

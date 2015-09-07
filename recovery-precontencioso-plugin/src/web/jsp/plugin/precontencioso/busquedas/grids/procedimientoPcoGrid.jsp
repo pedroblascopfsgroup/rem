@@ -34,7 +34,8 @@ var procedimientoPcoRecord = Ext.data.Record.create([
 	{name: 'fechaEnvioLetrado'},
 	{name: 'aceptadoLetrado'},
 	{name: 'todosDocumentos'},
-	{name: 'todasLiquidaciones'}
+	{name: 'todasLiquidaciones'},
+	{name: 'todosBurofaxes'}
 ]);
 
 var procedimientoPcoStore = page.getStore({
@@ -63,7 +64,8 @@ var procedimientoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'fechaEnvioLetrado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.envio.letrado" text="**Fecha envio letrado"/>', sortable: false},
 	{dataIndex: 'aceptadoLetrado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.aceptado" text="**Aceptado"/>', renderer: OK_KO_Render, align:'center', sortable: false},
 	{dataIndex: 'todosDocumentos', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.doc" text="**Todos los documentos"/>', renderer: OK_KO_Render, align:'center', sortable: false},
-	{dataIndex: 'todasLiquidaciones', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.liquidaciones" text="**Todas las liquidaciones"/>', renderer: OK_KO_Render, align:'center', sortable: false}
+	{dataIndex: 'todasLiquidaciones', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.liquidaciones" text="**Todas las liquidaciones"/>', renderer: OK_KO_Render, align:'center', sortable: false},
+	{dataIndex: 'todosBurofaxes', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.burofaxes" text="**Todos los burofaxes"/>', renderer: OK_KO_Render, align:'center', sortable: false}
 ]);
 
 var pagingBar = fwk.ux.getPaging(procedimientoPcoStore);
@@ -91,5 +93,9 @@ procedimientoPcoStore.on('load', function() {
 gridProcedimientosPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
-	//app.abreAsuntoTab(id, nombre_asunto,'tabSubastas');
+	var nombre_procedimiento = rec.get('nombreExpediente');
+
+   	if (id != null && id != ''){
+   		app.abreProcedimiento(id, nombre_procedimiento);
+   	}
 });

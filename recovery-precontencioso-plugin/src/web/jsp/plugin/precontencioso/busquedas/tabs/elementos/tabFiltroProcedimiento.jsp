@@ -246,7 +246,10 @@ var panelFechaParalizacion = new Ext.Panel({
 	});
 	
 	comboTipoBusqueda.on('select', function(combo, record, index) {
-	    if(comboTipoBusqueda.getValue() == documento) {
+		documentoPcoStore.removeAll();
+		liquidacionPcoStore.removeAll();
+		burofaxPcoStore.removeAll();
+		if(comboTipoBusqueda.getValue() == documento) {
             filtrosTabDocumentos.enable();
             filtrosTabLiquidacion.disable();	            	
 			filtrosTabBurofax.disable();

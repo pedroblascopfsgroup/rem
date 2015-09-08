@@ -224,18 +224,12 @@ var panelFechaParalizacion = new Ext.Panel({
 	]
 });
 
-
 	var documento =	'<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO" />';
 	var liquidacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION" />';
 	var burofax = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX" />';
 	
-	var ocultarTipoBusqueda = ${ocultarTipoBusqueda};
-	
 	var comboTipoBusqueda = new Ext.form.ComboBox({
 	    fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.busqueda" text="**Tipo de busqueda"/>',
-	    hidden:ocultarTipoBusqueda,
-	    disable:ocultarTipoBusqueda,
-	    allowBlank: true,
 	    triggerAction: 'all',
 	    mode: 'local',
 	    store: new Ext.data.ArrayStore({
@@ -246,18 +240,28 @@ var panelFechaParalizacion = new Ext.Panel({
 	        ],
 	        data: [[documento, documento], [liquidacion, liquidacion], [burofax, burofax]]
 	    }),
+	    value: documento,
 	    valueField: 'myId',
 	    displayField: 'displayText'
 	});
 	
 	comboTipoBusqueda.on('select', function(combo, record, index) {
-	    if(comboTipoBusqueda.getValue() == documento) {
+		documentoPcoStore.removeAll();
+		liquidacionPcoStore.removeAll();
+		burofaxPcoStore.removeAll();
+		pagingBarDoc.hide();
+		pagingBarLiq.hide();
+		pagingBarBur.hide();
+	
+		if(comboTipoBusqueda.getValue() == documento) {
             filtrosTabDocumentos.enable();
             filtrosTabLiquidacion.disable();	            	
 			filtrosTabBurofax.disable();
 			gridDocumentoPco.show();
             gridLiquidacionPco.hide();
             gridBurofaxPco.hide();
+            limpiaPestanaLiquidaciones();
+            limpiaPestanaBurofaxes();
 		}else if(comboTipoBusqueda.getValue() == liquidacion) {
            	filtrosTabDocumentos.disable();
             filtrosTabLiquidacion.enable();
@@ -265,6 +269,8 @@ var panelFechaParalizacion = new Ext.Panel({
            	gridDocumentoPco.hide();
             gridLiquidacionPco.show();
             gridBurofaxPco.hide();
+            limpiaPestanaDocumentos();
+            limpiaPestanaBurofaxes();
         }else if(comboTipoBusqueda.getValue() == burofax) {
           	filtrosTabDocumentos.disable();
           	filtrosTabLiquidacion.disable();
@@ -272,7 +278,9 @@ var panelFechaParalizacion = new Ext.Panel({
 			gridDocumentoPco.hide();
             gridLiquidacionPco.hide();
             gridBurofaxPco.show();
-        }
+            limpiaPestanaDocumentos();
+            limpiaPestanaLiquidaciones();
+		}
 	});
 
 <pfsforms:ddCombo name="comboTipoProcPropuestoEle" propertyCodigo="codigo" propertyDescripcion="descripcion"
@@ -303,8 +311,6 @@ label="** Disponible todas las liquidaciones" value="" dd="${ddSiNo}" />
 labelKey="plugin.precontencioso.tab.expjudicial.disponible.todos.burofaxes" 
 label="** Disponible todos los burofaxes" value="" dd="${ddSiNo}" />
 
-<%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
-
 <%-- Selector múltiple del estado en que se encuentran los expedientes. --%>
 
 var estadoPreparacion = <app:dict value="${estadoPreparacion}" />;
@@ -324,7 +330,243 @@ var filtroEstadoPreparacion = app.creaDblSelect(
 	}
 );
 
+<%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
+
+<pfsforms:ddCombo name="comboTiposGestorEle" propertyCodigo="id" propertyDescripcion="descripcion"
+labelKey="ext.asuntos.busqueda.filtro.tipoGestor" label="**Tipo de gestor" value="" dd="${ddListadoGestores}" />
+
+comboTiposGestorEle.on('select', function(){
+	comboDespachosEle.reset();
+	optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestorEle.getValue(), 'incluirBorrados': true}); 
+	comboGestorEle.reset();
+	comboDespachosEle.setDisabled(false);
+});
+ 
+//store generico de combo diccionario
+var optionsDespachosRecord = Ext.data.Record.create([
+	 {name:'cod'}
+	,{name:'descripcion'}
+]);
+
+var optionsDespachoStore = page.getStore({
+       flow: 'expedientejudicial/getListTipoDespachoData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoDespachos'
+    }, optionsDespachosRecord)	       
+});
+
+//Campo Combo Despacho
+var comboDespachosEle = new Ext.form.ComboBox({
+	store:optionsDespachoStore
+	,displayField:'descripcion'
+	,valueField:'cod'
+	,mode: 'remote'
+	,emptyText:'---'
+	,editable: false
+	,triggerAction: 'all'
+	,disabled:true
+	,resizable:true
+	,fieldLabel : '<s:message code="asuntos.busqueda.filtro.despacho" text="**Despacho"/>'
+	<app:test id="comboDespachosEle" addComa="true"/>
+});
+
+comboDespachosEle.on('select', function(){
+	comboGestorEle.reset();
+	optionsGestoresStore.webflow({'idTipoDespacho': comboDespachosEle.getValue(), 'incluirBorrados': true}); 
+	comboGestorEle.setDisabled(false);
+});
+
+var Gestor = Ext.data.Record.create([
+	 {name:'id'}
+	,{name:'username'}
+]);
+
+var optionsGestoresStore =  page.getStore({
+       flow: 'expedientejudicial/getListUsuariosData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoUsuarios'
+    }, Gestor)	       
+});
+
+//Campo Gestores, double select 
+var creaDblSelectMio = function(label, config){
+
+	var store = config.store ;
+	var cfg = {
+	   	fieldLabel: label || ''
+	   	,displayField:'username'
+	   	,valueField: 'id'
+	   	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
+	   	,dataFields : ['id', 'username']
+	   	,fromStore:store
+	   	,toData : []
+	       ,msHeight : config.height || 60
+		,labelStyle:config.labelStyle || ''
+	       ,msWidth : config.width || 140
+	       ,drawTopIcon:false
+	       ,drawBotIcon:false
+	       ,drawUpIcon:false
+		,drawDownIcon:false
+		,disabled:true
+		,toSortField : 'codigo'
+	    };
+	if(config.id) {
+		cfg.id = config.id;
+	}
+	
+	var itemSelector = new Ext.ux.ItemSelector(cfg);
+	if (config.funcionReset){
+		itemSelector.funcionReset = config.funcionReset;
+	}
+	
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
+	itemSelector.setValue =  function(val) {
+	       if(!val) {
+	           return;
+	       }
+	       val = val instanceof Array ? val : val.split(',');
+	       var rec, i, id;
+	       for(i = 0; i < val.length; i++) {
+	           id = val[i];
+	           if(this.toStore.find('id',id)>=0) {
+	               continue;
+	           }
+	           rec = this.fromStore.find('id',id);
+	           if(rec>=0) {
+	           	rec = this.fromStore.getAt(rec);
+	               this.toStore.add(rec);
+	               this.fromStore.remove(rec);
+	           }
+	       }
+	   };
+	
+	itemSelector.getStore =  function() {
+		return this.toStore;
+	};
+	
+	return itemSelector;
+};
+
+var comboGestorEle = creaDblSelectMio('<s:message code="asuntos.busqueda.filtro.gestor" text="**Gestor" />',{store:optionsGestoresStore, funcionReset:recargarComboGestores});
+
+var recargarComboGestores = function(){
+	optionsGestoresStore.webflow({id:0});
+}
+
+var validarEmptyForm = function(){
+	return (comboDespachosEle.getValue() != '' || comboGestorEle.getValue() != '' || comboTiposGestorEle.getValue() != '');
+}
+		
+var validaMinMax = function(){
+	return true;
+}
+
 <%-- Jerarquía y Centros: Donde el filtro aplicará sobre el centro al que pertenece alguno de los contratos en preparación. --%>
+
+var jerarquia = <app:dict value="${ddJerarquia}" blankElement="true" blankElementValue="" blankElementText="---" />;
+	
+var comboJerarquiaEle = app.creaCombo({
+	triggerAction: 'all', 
+	data:jerarquia, 
+	value:jerarquia.diccionario[0].codigo, 
+	name : 'jerarquia', 
+	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'
+});
+
+//Campo Zonas, double select 
+var creaDblSelectZonas = function(label, config){
+
+	var store = config.store ;
+	var cfg = {
+	   	fieldLabel: label || ''
+	   	,displayField:'descripcion'
+	   	,valueField: 'codigo'
+	   	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
+	   	,dataFields : ['codigo', 'descripcion']
+	   	,fromStore:store
+	   	,toData : []
+	       ,msHeight : config.height || 60
+		,labelStyle:config.labelStyle || ''
+	       ,msWidth : config.width || 140
+	       ,drawTopIcon:false
+	       ,drawBotIcon:false
+	       ,drawUpIcon:false
+		,drawDownIcon:false
+		,disabled:true
+		,toSortField : 'codigo'
+	    };
+	if(config.id) {
+		cfg.id = config.id;
+	}
+	
+	var itemSelector = new Ext.ux.ItemSelector(cfg);
+	if (config.funcionReset){
+		itemSelector.funcionReset = config.funcionReset;
+	}
+	
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
+	itemSelector.setValue =  function(val) {
+	       if(!val) {
+	           return;
+	       }
+	       val = val instanceof Array ? val : val.split(',');
+	       var rec, i, id;
+	       for(i = 0; i < val.length; i++) {
+	           id = val[i];
+	           if(this.toStore.find('id',id)>=0) {
+	               continue;
+	           }
+	           rec = this.fromStore.find('id',id);
+	           if(rec>=0) {
+	           	rec = this.fromStore.getAt(rec);
+	               this.toStore.add(rec);
+	               this.fromStore.remove(rec);
+	           }
+	       }
+	   };
+	
+	itemSelector.getStore =  function() {
+		return this.toStore;
+	};
+	
+	return itemSelector;
+};
+	
+var zonasRecord = Ext.data.Record.create([
+	 {name:'codigo'}
+	,{name:'descripcion'}
+]);
+    
+var optionsZonasStore =  page.getStore({
+       flow: 'expedientejudicial/getZonasPorNivel'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'ddZonas'
+    }, zonasRecord)	       
+});
+
+var comboZonasEle = creaDblSelectZonas('<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />',
+	{store:optionsZonasStore, funcionReset:recargarComboZonas}
+);
+	
+var recargarComboZonas = function(){
+	if (comboJerarquiaEle.getValue()!=null && comboJerarquiaEle.getValue()!=''){
+		optionsZonasStore.webflow({idJerarquia:comboJerarquiaEle.getValue()});
+	}else{
+		optionsZonasStore.webflow({idJerarquia:0});
+		comboZonasEle.setValue('');
+		optionsZonasStore.removeAll();
+	}
+}
+	
+var limpiarYRecargar = function(){
+	comboZonasEle.reset();
+	recargarComboZonas();
+	comboZonasEle.setDisabled(false);
+}
+	
+comboJerarquiaEle.on('select',limpiarYRecargar);
+
+recargarComboZonas();
 
 <%-- Paneles --%>
 
@@ -339,10 +581,10 @@ var filtrosTabDatosProcedimiento = new Ext.Panel({
 	layoutConfig: {columns: 2},
 	items: [{
 		layout: 'form',
-		items: [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, fieldDiasGestionEle, comboTipoProcPropuestoEle, comboTipoPreparacionEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle, comboDisponibleBurofaxesEle]
+		items: [comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, fieldDiasGestionEle, comboTipoProcPropuestoEle, comboTipoPreparacionEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle, comboDisponibleBurofaxesEle, comboJerarquiaEle, comboZonasEle]
 	}, {
 		layout: 'form',
-		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, filtroEstadoPreparacion]
+		items: [panelFechaInicioPreparacion, panelFechaPreparado, panelFechaEnviadoLetrado, panelFechaFinalizado, panelFechaUltimaSubsanacion, panelFechaCancelado, comboTiposGestorEle, comboDespachosEle, comboGestorEle, filtroEstadoPreparacion]
 	}]
 });
 
@@ -375,11 +617,27 @@ var getParametrosFiltroProcedimiento = function() {
 	out.proTipoProcedimiento = comboTipoProcPropuestoEle.getValue();
 	out.proTipoPreparacion = comboTipoPreparacionEle.getValue();
 	out.proCodigosEstado = fieldEstadoPreparacionEle.childNodes[1].value;
-
+	out.proTipoGestor = comboTiposGestorEle.getValue();
+	out.proDespacho = comboDespachosEle.getValue();
+	out.proGestor = comboGestorEle.getValue();
+	out.proJerarquiaContable = comboJerarquiaEle.getValue();
+	out.proCentroContable = comboZonasEle.getValue();
+	
 	out.proDisponibleDocumentos = comboDisponibleDocumentosEle.getValue();
 	out.proDisponibleLiquidaciones = comboDisponibleLiquidacionesEle.getValue();
 	out.proDisponibleBurofaxes = comboDisponibleBurofaxesEle.getValue();
 	out.proDiasGestion = fieldDiasGestionEle.getValue();
 
 	return out;
+}
+
+var limpiaPestanaProcedimiento = function() {
+	app.resetCampos([comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, 
+	dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+	dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
+	dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
+	dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
+	comboTipoProcPropuestoEle, comboTipoPreparacionEle, filtroEstadoPreparacion, comboTiposGestorEle,
+	comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle,
+	comboDisponibleBurofaxesEle, fieldDiasGestionEle]);
 }

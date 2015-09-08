@@ -148,3 +148,8 @@ var getParametrosFiltroBurofax = function() {
 
 	return out;
 }
+
+var limpiaPestanaBurofaxes = function() {
+	app.resetCampos([comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
+	dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle]);
+}

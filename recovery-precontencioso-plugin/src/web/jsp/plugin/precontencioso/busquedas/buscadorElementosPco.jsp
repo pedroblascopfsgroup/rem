@@ -29,28 +29,48 @@
 		activeItem: 0
 	});
 
-	var btnBuscar = new Ext.Button({
-		text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
-		handler: function() {
+
+	var btnBuscarEle = app.crearBotonBuscar({
+		handler : function(){
 			panelFiltros.collapse(true);
-			var params = getParametros();
-			params.start = 0;
-			params.limit = 25;
-			procedimientoPcoStore.webflow(params);
-			pagingBar.hide();
-		}
-	})
-
-	var buttonsR = <app:includeArray files="${buttonsRight}" />;
-	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
-
+				var params = getParametros();
+				params.start = 0;
+				params.limit = 25;
+				
+				if(comboTipoBusqueda.getValue() == documento) {
+					documentoPcoStore.webflow(params);
+				} else if(comboTipoBusqueda.getValue() == liquidacion){
+					liquidacionPcoStore.webflow(params);
+				} else if(comboTipoBusqueda.getValue() == burofax){
+					burofaxPcoStore.webflow(params);
+				}
+		}});
+		
+	var btnLimpiarEle = app.crearBotonResetCampos([
+		comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, 
+		dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+		dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
+		dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
+		dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
+		comboTipoProcPropuestoEle, comboTipoPreparacionEle, filtroEstadoPreparacion, comboTiposGestorEle,
+		comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle,
+		comboDisponibleBurofaxesEle, fieldDiasGestionEle,fieldCodigoContratoEle, comboTiposProductoEle, fieldNifEle, 
+		fieldNombreEle, fieldApellidosEle, comboTipoDocumento, comboEstadoDocumento, comboRespuestaSolicitud, 
+		dateFieldSolicitudDocDesdeEle, dateFieldSolicitudDocHastaEle, dateFieldResultadoDocDesdeEle, dateFieldResultadoDocHastaEle,
+		dateFieldEnvioDocDesdeEle, dateFieldEnvioDocHastaEle, dateFieldRecepcionDocDesdeEle, dateFieldRecepcionDocHastaEle, 
+		comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, 
+		comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc, comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, 
+		dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle,
+		dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
+		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle]);
+		
 	var panelFiltros = new Ext.Panel({
 		autoHeight: true,
 		autoWidth: true,
 		title: '<s:message code="plugin.precontencioso.buscador.elementos.titulo" text="**Buscador Elementos Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
-		tbar: [btnBuscar],
+		tbar: [btnBuscarEle, btnLimpiarEle],
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
 		style: 'padding-bottom: 10px;',
 		items: [{
@@ -63,9 +83,11 @@
 
 <%-- Grid --%>
 
-	gridDocumentoPco.hide();
-    gridLiquidacionPco.hide();
+	gridLiquidacionPco.hide();
     gridBurofaxPco.hide();
+    
+	filtrosTabLiquidacion.disable();	            	
+	filtrosTabBurofax.disable();
 
 	gridDocumentoPco.on('load', function() {
 		panelFiltros.collapse(true);

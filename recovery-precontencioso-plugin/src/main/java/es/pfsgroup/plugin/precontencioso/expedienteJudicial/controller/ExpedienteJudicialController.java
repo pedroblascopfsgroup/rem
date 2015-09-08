@@ -15,29 +15,32 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDResultadoSolicitudPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.BurofaxGridDTO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.DocumentoGridDTO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.LiquidacionGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 @Controller
@@ -49,6 +52,9 @@ public class ExpedienteJudicialController {
 	private static final String JSP_BUSQUEDA_PROCEDIMIENTO = "plugin/precontencioso/busquedas/buscadorProcedimientosPco";
 	private static final String JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO = "plugin/precontencioso/busquedas/buscadorElementosPco";
 	private static final String JSON_RESULTADO_FINALIZAR_PREPARACION = "plugin/precontencioso/acciones/json/resultadoFinalizarPreparacionJSON";
+	private static final String JSON_TIPO_DESPACHO = "plugin/precontencioso/busquedas/json/tipoDespachoJSON";
+	private static final String JSON_TIPO_USUARIO = "plugin/precontencioso/busquedas/json/tipoUsuarioJSON";
+	private static final String JSON_ZONAS = "plugin/precontencioso/busquedas/json/listadoZonasJSON";
 
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
@@ -56,6 +62,9 @@ public class ExpedienteJudicialController {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
+	@Autowired
+	private GestorTareasApi gestorTareasApi;
+	
 	@RequestMapping
 	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		boolean finalizado = procedimientoPcoApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
@@ -74,18 +83,16 @@ public class ExpedienteJudicialController {
 
 	@RequestMapping
 	public String abrirBusquedaProcedimiento(WebRequest request, ModelMap model) {
-		model = rellenarFormBusquedaPCO(model);
-		model.put("ocultarTipoBusqueda", true);
+		rellenarFormBusquedaPCO(model);
 		return JSP_BUSQUEDA_PROCEDIMIENTO;
 	}
-	
+
 	@RequestMapping
 	public String abrirBusquedaElementosPco(WebRequest request, ModelMap model) {	
 		rellenarFormBusquedaPCO(model);
-		model.put("ocultarTipoBusqueda", false);
 		return JSP_BUSQUEDA_ELEMENTOS_PRECONTENCIOSO;
 	}	
-	
+
 	private ModelMap rellenarFormBusquedaPCO(ModelMap model) {
 		// General - Expediente judicial
 		List<TipoProcedimiento> tipoProcedimientoProcpuesto = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(TipoProcedimiento.class);
@@ -114,135 +121,85 @@ public class ExpedienteJudicialController {
 
 		// Pestaña liquidaciones
 		List<DDEstadoLiquidacionPCO> estadoLiquidacion = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoLiquidacionPCO.class);
-
 		model.put("estadoLiquidacion", estadoLiquidacion);
 
 		// Pestaña burofax
 		List<DDResultadoBurofaxPCO> resultadoBurofax = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoBurofaxPCO.class);
-
 		model.put("resultadoBurofax", resultadoBurofax);
+
+		List<Nivel> ddJerarquia = procedimientoPcoApi.getNiveles();
+		model.put("ddJerarquia", ddJerarquia);
+		
+		List<EXTDDTipoGestor> ddListadoGestores = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(EXTDDTipoGestor.class);
+		model.put("ddListadoGestores", ddListadoGestores);
+				
 		return model;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListTipoDespachoData(ModelMap model, Long idTipoGestor, 
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
+		
+		List<DespachoExterno> listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
+		
+		model.put("listadoDespachos", listadoDespachos);
+		return JSON_TIPO_DESPACHO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getZonasPorNivel(ModelMap model, Long idJerarquia){
+		List<DDZona> ddZonas = proxyFactory.proxy(EXTAsuntoApi.class).getZonasPorNivel(idJerarquia.intValue());
+		model.put("ddZonas", ddZonas);
+		return JSON_ZONAS;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListUsuariosData(ModelMap model, Long idTipoDespacho,
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
+		
+		incluirBorrados = incluirBorrados != null ? incluirBorrados : false;
+		
+		List<Usuario> listadoUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(idTipoDespacho, incluirBorrados);
+		model.put("listadoUsuarios", listadoUsuarios);
+		
+		return JSON_TIPO_USUARIO;
+	}
+
 
 	@RequestMapping
-	public String busquedaProcedimientos(FiltroBusquedaProcedimientoPcoDTO dto, ModelMap model) {
-		List<ProcedimientoPCO> procedimientosPco = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(dto);
-		List<ProcedimientoPcoGridDTO> expeditentesGrid = completarDatosBusquedaProcedimientos(procedimientosPco);
+	public String busquedaProcedimientos(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) {
+		List<ProcedimientoPcoGridDTO> procedimientosPcoGrid = procedimientoPcoApi.busquedaProcedimientosPcoPorFiltro(filter);
 
-		model.put("procedimientosPco", expeditentesGrid);
-		model.put("totalCount", expeditentesGrid.size());
+		model.put("procedimientosPco", procedimientosPcoGrid);
+
+		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		model.put("totalCount", totalCount);
 
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
 	}
 
 	@RequestMapping
-	public String busquedaElementosPco(FiltroBusquedaProcedimientoPcoDTO dto, ModelMap model) {
-		List<ProcedimientoPcoGridDTO> expeditentesGrid = null;
+	public String busquedaElementosPco(FiltroBusquedaProcedimientoPcoDTO filter, ModelMap model) {
+		List<ProcedimientoPcoGridDTO> elementosGrid = new ArrayList<ProcedimientoPcoGridDTO>();
 
-		if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO.equals(dto.getTipoBusqueda())) {
-
-		} else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(dto.getTipoBusqueda())) {
-
-			List<LiquidacionPCO> liquidacionesPco = procedimientoPcoApi.busquedaLiquidacionesPorFiltro(dto);
-			//expeditentesGrid = completarDatosBusquedaProcedimientos(procedimientosPco);
-
-		} else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX.equals(dto.getTipoBusqueda())) {
-
-			
+		// DOCUMENTO - LIQUIDACION - BUROFAX
+		if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO.equals(filter.getTipoBusqueda())) {
+			elementosGrid = procedimientoPcoApi.busquedaSolicitudesDocumentoPorFiltro(filter);
+		} else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(filter.getTipoBusqueda())) {
+			elementosGrid = procedimientoPcoApi.busquedaLiquidacionesPorFiltro(filter);
+		} else if (FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX.equals(filter.getTipoBusqueda())) {
+			elementosGrid = procedimientoPcoApi.busquedaBurofaxPorFiltro(filter);
 		}
+
+		model.put("procedimientosPco", elementosGrid);
+
+		Integer totalCount = procedimientoPcoApi.countBusquedaPorFiltro(filter);
+		model.put("totalCount", totalCount);
 
 		return JSON_BUSQUEDA_PROCEDIMIENTO;
-	}
-
-	/**
-	 * fill ProcedimientoPcoGridDTO from ProcedimientoPCO
-	 * @param procedimientos
-	 * @return
-	 */
-	private List<ProcedimientoPcoGridDTO> completarDatosBusquedaProcedimientos(List<ProcedimientoPCO> procedimientos) {
-		List<ProcedimientoPcoGridDTO> out = new ArrayList<ProcedimientoPcoGridDTO>();
-
-		for (ProcedimientoPCO procedimientoPco : procedimientos) {
-			ProcedimientoPcoGridDTO procedimientoGrid = new ProcedimientoPcoGridDTO();
-
-			procedimientoGrid.setCodigo(procedimientoPco.getProcedimiento().getId().toString());
-			procedimientoGrid.setNombreExpediente(procedimientoPco.getNombreExpJudicial());
-			procedimientoGrid.setEstadoExpediente(procedimientoPco.getEstadoActual().getDescripcion());
-			//expedienteGrid.setDiasEnGestion();
-			procedimientoGrid.setFechaEstado(procedimientoPco.getEstadoActualByHistorico().getFechaInicio());
-
-			if (procedimientoPco.getTipoProcPropuesto() != null) {
-				procedimientoGrid.setTipoProcPropuesto(procedimientoPco.getTipoProcPropuesto().getDescripcion());	
-			}
-
-			if (procedimientoPco.getTipoPreparacion() != null) {
-				procedimientoGrid.setTipoPreparacion(procedimientoPco.getTipoPreparacion().getDescripcion());
-			}
-
-			//expedienteGrid.setFechaInicioPreparacion();
-			//expedienteGrid.setDiasEnPreparacion();
-			//expedienteGrid.setDocumentacionCompleta();
-			//expedienteGrid.setTotalLiquidacion();
-			//expedienteGrid.setNotificadoClientes();
-			//expedienteGrid.setFechaEnvioLetrado();
-			//expedienteGrid.setAceptadoLetrado();
-			//expedienteGrid.setTodosDocumentos();
-			//expedienteGrid.setTodasLiquidaciones();
-
-			out.add(procedimientoGrid);
-		}
-
-		return out;
-	}
-
-	/**
-	 * fill ProcedimientoPcoGridDTO from ProcedimientoPCO
-	 * @param procedimientos
-	 * @return
-	 */
-	private List<ProcedimientoPcoGridDTO> completarDatosBusquedaElementos(List<ProcedimientoPCO> procedimientos, String tipoElemento) {
-		List<ProcedimientoPcoGridDTO> out = new ArrayList<ProcedimientoPcoGridDTO>();
-
-		for (ProcedimientoPCO procedimientoPco : procedimientos) {
-			ProcedimientoPcoGridDTO elementoGrid = new ProcedimientoPcoGridDTO();
-
-			elementoGrid.setCodigo(procedimientoPco.getProcedimiento().getId().toString());
-			elementoGrid.setNombreExpediente(procedimientoPco.getNombreExpJudicial());
-			elementoGrid.setEstadoExpediente(procedimientoPco.getEstadoActual().getDescripcion());
-			elementoGrid.setFechaEstado(procedimientoPco.getEstadoActualByHistorico().getFechaInicio());
-
-			if (procedimientoPco.getTipoProcPropuesto() != null) {
-				elementoGrid.setTipoProcPropuesto(procedimientoPco.getTipoProcPropuesto().getDescripcion());	
-			}
-
-			if (procedimientoPco.getTipoPreparacion() != null) {
-				elementoGrid.setTipoPreparacion(procedimientoPco.getTipoPreparacion().getDescripcion());
-			}
-
-			out.add(elementoGrid);
-		}
-
-		return out;
-	}
-
-	private DocumentoGridDTO completarDatosDocumento(ProcedimientoPCO procedimientos) {
-		DocumentoGridDTO documento = new DocumentoGridDTO();
-		return documento;
-	}
-
-	private LiquidacionGridDTO completarDatosLiquidacion(ProcedimientoPCO procedimientos) {
-		LiquidacionGridDTO liquidacion = new LiquidacionGridDTO();
-		/*liquidacion.setContrato();
-		liquidacion.setFechaRecepcion();
-		liquidacion.setFechaConfirmacion();
-		liquidacion.setFechaCierre();
-		liquidacion.setTotal();*/
-		return liquidacion;
-	}
-
-	private BurofaxGridDTO completarDatosBurofax(ProcedimientoPCO procedimientos) {
-		BurofaxGridDTO burofax = new BurofaxGridDTO();
-		return burofax;
 	}
 	
 	@RequestMapping
@@ -267,12 +224,59 @@ public class ExpedienteJudicialController {
 	public String saveDatosPrc(WebRequest request){
 		ActualizarProcedimientoPcoDtoInfo dto = creaDTOParaActualizar(request);
 		proxyFactory.proxy(ProcedimientoPcoApi.class).actualizaProcedimiento(dto);
-		return "default";
+		return DEFAULT;
 	}
 	
 	private ActualizarProcedimientoPcoDtoInfo creaDTOParaActualizar(
 			final WebRequest request) {
 		return DynamicDtoUtils.create(ActualizarProcedimientoPcoDtoInfo.class, request);
+	}
+
+	@RequestMapping
+	public String crearTareaEspecial(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		
+		boolean finalizado = false;
+		
+		String tipoTarea = "PCO_RegResultadoExped";
+		
+		finalizado = gestorTareasApi.crearTareaEspecial(idProcedimiento, tipoTarea);
+		model.put("finalizado", finalizado);
+		
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+		
+	}
+
+
+	@RequestMapping
+	public String cancelarTareaEspecial(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		
+		boolean finalizado = false;
+		
+		String tipoTarea = "PCO_RegResultadoExped";
+		
+		finalizado = gestorTareasApi.cancelarTareaEspecial(idProcedimiento, tipoTarea);
+		model.put("finalizado", finalizado);
+		
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+		
+	}
+
+	@RequestMapping
+	public String recalcularTareasEspeciales(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		
+		boolean finalizado = true;
+
+		try {
+			gestorTareasApi.recalcularTareasPreparacionDocumental(idProcedimiento);
+		} catch (Exception e) {
+			finalizado=false;
+			e.printStackTrace();
+		}
+		
+		model.put("finalizado", finalizado);
+		
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+		
 	}
 
 }

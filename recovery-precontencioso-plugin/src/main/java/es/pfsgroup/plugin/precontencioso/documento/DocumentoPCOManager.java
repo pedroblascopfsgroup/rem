@@ -146,6 +146,9 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		List<Long> idsUndGestContrato = new ArrayList<Long>();
 		List<Long> idsUndGestPersonas = new ArrayList<Long>();
 		List<Long> idsUndGestBienes = new ArrayList<Long>();
+		List<Contrato> contratos = new ArrayList<Contrato>();
+		List<Persona> personas = new ArrayList<Persona>();
+		List<NMBBienEntidad> bienes = new ArrayList<NMBBienEntidad>();
 		
 		for(DocumentoPCO docPco : listDocPco) {
 			if (docPco.getUnidadGestion().getCodigo().equals(DDUnidadGestionPCO.CONTRATOS)){
@@ -159,9 +162,15 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			}
 		}
 		
-		List<Contrato> contratos = documentoPCODao.getContratosByIdsOrderByDesc(convertirListLongToString(idsUndGestContrato));
-		List<Persona> personas = documentoPCODao.getPersonasByIdsOrderByDesc(convertirListLongToString(idsUndGestPersonas));
-		List<NMBBienEntidad> bienes = documentoPCODao.getBienesByIdsOrderByDesc(convertirListLongToString(idsUndGestBienes));
+		if(!Checks.estaVacio(idsUndGestContrato)) {
+			contratos = documentoPCODao.getContratosByIdsOrderByDesc(convertirListLongToString(idsUndGestContrato));			
+		}
+		if(!Checks.estaVacio(idsUndGestPersonas)) {
+			personas = documentoPCODao.getPersonasByIdsOrderByDesc(convertirListLongToString(idsUndGestPersonas));			
+		}
+		if(!Checks.estaVacio(idsUndGestBienes)) {
+			bienes = documentoPCODao.getBienesByIdsOrderByDesc(convertirListLongToString(idsUndGestBienes));			
+		}
 		
 		for(Contrato contrato : contratos){
 			for(DocumentoPCO doc : listDocPco) {

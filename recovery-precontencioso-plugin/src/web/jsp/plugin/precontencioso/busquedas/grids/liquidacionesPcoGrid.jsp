@@ -26,8 +26,8 @@ var liquidacionPcoRecord = Ext.data.Record.create([
 	{name: 'tipoProcPropuesto'},
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
-<!-- 	{name: 'estadoLiquidacion'}, -->
-<!-- 	{name: 'fechaSolicitud'}, -->	
+	{name: 'liqEstado'},
+	{name: 'fechaSolicitud'},
 	{name: 'liqContrato'},
 	{name: 'liqFechaRecepcion'},
 	{name: 'liqFechaConfirmacion'},
@@ -36,7 +36,7 @@ var liquidacionPcoRecord = Ext.data.Record.create([
 ]);
 
 var liquidacionPcoStore = page.getStore({
-	flow: 'expedientejudicial/busquedaProcedimientos',
+	flow: 'expedientejudicial/busquedaElementosPco',
 	limit: 25,
 	remoteSort: true,
 	reader: new Ext.data.JsonReader({
@@ -50,11 +50,11 @@ var liquidacionPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
 	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
 	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
+ 	{dataIndex: 'fechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
-<%-- 	{dataIndex: 'estadoLiquidacion', header: '<s:message code="asd" text="**Estado burofax"/>', sortable: false}, --%>
-<%-- 	{dataIndex: 'fechaSolicitud', header: '<s:message code="asd" text="**Fecha solicitud"/>', sortable: false}, --%>
+	{dataIndex: 'liqEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.estado" text="**Estado"/>', sortable: false},
 	{dataIndex: 'liqContrato', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.contrato" text="**Contrato"/>', sortable: false},
 	{dataIndex: 'liqFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
 	{dataIndex: 'liqFechaConfirmacion', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.fecha.confirmacion" text="**Fecha confirmacion"/>', sortable: false},
@@ -62,13 +62,13 @@ var liquidacionPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'liqTotal', header: '<s:message code="plugin.precontencioso.grid.buscador.liquidaciones.total" text="**Total"/>', sortable: false}
 ]);
 
-var pagingBar = fwk.ux.getPaging(liquidacionPcoStore);
-pagingBar.hide();
+var pagingBarLiq = fwk.ux.getPaging(liquidacionPcoStore);
+pagingBarLiq.hide();
 
 var gridLiquidacionPco = app.crearGrid(liquidacionPcoStore, liquidacionPcoCm, {
-	title: '<s:message code="asd" text="**Expedientes Judiciales" />',
+	title: '<s:message code="plugin.precontencioso.tab.liquidacion.listado" text="**Listado Liquidaciones" />',
 	cls: 'cursor_pointer',
-	bbar : [pagingBar],
+	bbar : [pagingBarLiq],
 	height: 250,
 	collapsible: true,
 	collapsed: true,
@@ -78,9 +78,17 @@ var gridLiquidacionPco = app.crearGrid(liquidacionPcoStore, liquidacionPcoCm, {
 });
 
 <%-- Events --%>
+liquidacionPcoStore.on('load', function() {
+	gridLiquidacionPco.expand(true)
+	pagingBarLiq.show();
+});
 
 gridLiquidacionPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
-	//app.abreAsuntoTab(id, nombre_asunto,'tabSubastas');
+	var nombre_procedimiento = rec.get('nombreExpediente');
+
+   	if (id != null && id != ''){
+   		app.abreProcedimiento(id, nombre_procedimiento);
+   	}
 });

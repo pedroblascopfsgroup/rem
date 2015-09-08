@@ -9,7 +9,8 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 
-	var limit=55;
+
+	var limit=50;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
  		handleMouseDown : function(g, rowIndex, e){
@@ -677,6 +678,7 @@
 		idProcedimiento=data.precontencioso.id;
 		actualizarBotonesBurofax();
 		
+
 	}
 	
 	var actualizarBotonesBurofax = function() {
@@ -693,8 +695,14 @@
 				btnNotificar.setDisabled(true);
 				return false;
 			}
+
 		}
 		return true;
+
 	}
+		
+		
+
+	
 	
 	

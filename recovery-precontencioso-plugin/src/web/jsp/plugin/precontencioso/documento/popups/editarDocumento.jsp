@@ -53,6 +53,8 @@
 					handlerGuardar();
 				}
 			});	
+		}else{
+			return true;
 		}
 	}	
 

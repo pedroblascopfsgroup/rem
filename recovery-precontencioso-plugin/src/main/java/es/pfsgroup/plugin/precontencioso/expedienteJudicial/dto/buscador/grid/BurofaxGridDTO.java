@@ -8,31 +8,31 @@ public class BurofaxGridDTO extends WebDto {
 
 	private static final long serialVersionUID = 4729267154334892104L;
 
+	private String estado;
 	private String nif;
-	private String nombre;
-	private String apellido;
+	private String apellidoNombre;
 	private Date fechaSolicitud;
 	private Date fechaEnvio;
 	private Date fechaAcuse;
 	private Boolean resultado;
 
+	public String getEstado() {
+		return estado;
+	}
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
 	public String getNif() {
 		return nif;
 	}
 	public void setNif(String nif) {
 		this.nif = nif;
 	}
-	public String getNombre() {
-		return nombre;
+	public String getApellidoNombre() {
+		return apellidoNombre;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	public String getApellido() {
-		return apellido;
-	}
-	public void setApellido(String apellido) {
-		this.apellido = apellido;
+	public void setApellidoNombre(String apellidoNombre) {
+		this.apellidoNombre = apellidoNombre;
 	}
 	public Date getFechaSolicitud() {
 		return fechaSolicitud;

@@ -261,8 +261,6 @@ public class DocumentoPCOController {
 		return INFORMAR_DOC;
 	}
 	
-	
-	// METODO PROVISIONAL
 	/**
 	 * Incluir Documento
 	 * 
@@ -516,10 +514,6 @@ public class DocumentoPCOController {
 			docDto.setContrato(contrato);
 			docDto.setId(idDocUG);
 			
-			// TODO - DATOS PROVISIONALES - REVISAR
-			docDto.setActor("1");
-			docDto.setTipoActor(DDTipoActorPCO.PREPARADOR);
-
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}
 

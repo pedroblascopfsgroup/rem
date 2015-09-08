@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -13,17 +14,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.recovery.ext.impl.utils.StringUtils;
 
 @Repository
@@ -47,113 +44,142 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	}
 
 	@Override
-	public List<SolicitudDocumentoPCO> getSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
-		Criteria query = getSession().createCriteria(DocumentoPCO.class, "documento");
+	public Integer countBusquedaPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		Criteria query = queryBusquedaPorFiltro(filtro);
 
-		// From
-		query.createCriteria("procedimientoPCO", "procedimientoPCO");
-		query.createCriteria("procedimientoPCO.procedimiento", "procedimiento");
-		query.createCriteria("solicitudes", "solicitudes", CriteriaSpecification.LEFT_JOIN);
+		query.setProjection(Projections.rowCount());
 
-		// Where
-		List<Criterion> where = new ArrayList<Criterion>();
-		
-		if (!StringUtils.emtpyString(filtro.getDocTiposDocumento())) {
-			query.createAlias("documentos.tipoDocumento", "tipoDocumento", CriteriaSpecification.LEFT_JOIN);
-			where.add(Restrictions.in("tipoDocumento.codigo", filtro.getDocTiposDocumento().split(",")));
-		}
-
-		if (!StringUtils.emtpyString(filtro.getDocEstados())) {
-			query.createAlias("documentos.estadoDocumento", "estadoDocumento", CriteriaSpecification.LEFT_JOIN);
-			where.add(Restrictions.in("estadoDocumento.codigo", filtro.getDocEstados().split(",")));
-		}
-
-		if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
-			query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud", CriteriaSpecification.LEFT_JOIN);
-			where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
-		}
-
-		if (!StringUtils.emtpyString(filtro.getDocAdjunto())) {
-			where.add(Restrictions.eq("documento.adjuntado", "01".equals(filtro.getDocAdjunto())));
-		}
-
-		where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
-		where.addAll(dateRangeFilter("solicitud.fechaEnvio", filtro.getDocFechaEnvioDesde(), filtro.getDocFechaEnvioHasta()));
-		where.addAll(dateRangeFilter("solicitud.fechaResultado", filtro.getDocFechaResultadoDesde(), filtro.getDocFechaResultadoHasta()));
-		where.addAll(dateRangeFilter("solicitud.fechaRecepcion", filtro.getDocFechaRecepcionDesde(), filtro.getDocFechaRecepcionHasta()));
-
-		// Añadir filtros a la consulta
-		for (Criterion condicion : where) {
-			query.add(condicion);
-		}
-
-		query.addOrder(Order.asc("id")); // workaround
-		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return query.list();
+		return (Integer) query.uniqueResult();
 	}
 
 	@Override
-	public List<LiquidacionPCO> getLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+	public List<HashMap<String, Object>> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
-		// Distinct
-		select.add(Projections.distinct(Projections.property("liquidacion.id").as("id")));
-		select.add(Projections.property("liquidacion.procedimientoPCO").as("procedimientoPCO"));
-		select.add(Projections.property("liquidacion.estadoLiquidacion").as("estadoLiquidacion"));
-		select.add(Projections.property("liquidacion.contrato").as("contrato"));
-		select.add(Projections.property("liquidacion.fechaSolicitud").as("fechaSolicitud"));
-		select.add(Projections.property("liquidacion.fechaRecepcion").as("fechaRecepcion"));
-		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
-		select.add(Projections.property("liquidacion.fechaCierre").as("fechaCierre"));
-		select.add(Projections.property("liquidacion.capitalVencido").as("capitalVencido"));
-		select.add(Projections.property("liquidacion.capitalNoVencido").as("capitalNoVencido"));
-		select.add(Projections.property("liquidacion.interesesDemora").as("interesesDemora"));
-		select.add(Projections.property("liquidacion.interesesOrdinarios").as("interesesOrdinarios"));
-		select.add(Projections.property("liquidacion.total").as("total"));
-		select.add(Projections.property("liquidacion.capitalVencidoOriginal").as("capitalVencidoOriginal"));
-		select.add(Projections.property("liquidacion.capitalNoVencidoOriginal").as("capitalNoVencidoOriginal"));
-		select.add(Projections.property("liquidacion.interesesDemoraOriginal").as("interesesDemoraOriginal"));
-		select.add(Projections.property("liquidacion.interesesOrdinariosOriginal").as("interesesOrdinariosOriginal"));
-		select.add(Projections.property("liquidacion.totalOriginal").as("totalOriginal"));
-		select.add(Projections.property("liquidacion.apoderado").as("apoderado"));
-		select.add(Projections.property("liquidacion.sysGuid").as("sysGuid"));
+
+		// Distinct por procedimiento id
+		select.add(Projections.distinct(Projections.property("procedimiento.id").as("id")));
+
+		select.add(Projections.property("procedimiento.id").as("prcId"));
+		select.add(Projections.property("procedimiento.id").as("codigo"));
+		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
+		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
+		select.add(Projections.property("procedimientoPco.fechaEstadoActual").as("fechaEstadoProcedimiento"));
+		//select.add(Projections.property("procedimientoPco.diasEnGestion").as("diasEnGestion"));
+		select.add(Projections.property("tipoProcPropuesto.descripcion").as("tipoProcPropuesto"));
+		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
+		select.add(Projections.property("procedimientoPco.fechaInicioPreparacion").as("fechaInicioPreparacion"));
+		//select.add(Projections.property("procedimientoPco.diasEnPreparacion").as("diasEnPreparacion"));
+		//select.add(Projections.property("procedimientoPco.documentacionCompleta").as("documentacionCompleta"));
+		select.add(Projections.property("procedimientoPco.totalLiquidacion").as("totalLiquidacion"));
+		//select.add(Projections.property("procedimientoPco.notificadoClientes").as("notificadoClientes"));
+		select.add(Projections.property("procedimientoPco.fechaEnvioLetrado").as("fechaEnvioLetrado"));
+		//select.add(Projections.property("procedimientoPco.aceptadoLetrado").as("aceptadoLetrado"));
+		select.add(Projections.property("procedimientoPco.todosDocumentos").as("todosDocumentos"));
+		select.add(Projections.property("procedimientoPco.todasLiquidaciones").as("todasLiquidaciones"));
+		select.add(Projections.property("procedimientoPco.todosBurofaxes").as("todosBurofaxes"));
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
-		query.setResultTransformer(new AliasToBeanResultTransformer(LiquidacionPCO.class));
+
+		addPaginationToQuery(filtro, query);
+
+		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		return query.list();
 	}
 
 	@Override
-	public List<EnvioBurofaxPCO> getEnviosBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+	public List<HashMap<String, Object>> busquedaDocumentosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
-		// Distinct
-		select.add(Projections.distinct(Projections.property("enviosBurofax.id").as("id")));
-		select.add(Projections.property("enviosBurofax.burofax").as("burofax"));
-		select.add(Projections.property("enviosBurofax.direccion").as("direccion"));
-		select.add(Projections.property("enviosBurofax.tipoBurofax").as("tipoBurofax"));
-		select.add(Projections.property("enviosBurofax.resultadoBurofax").as("resultadoBurofax"));
+
+		addDefaultProcedimientoProjection(select);
+
+		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
+		// Respuesta ultima solicitud
+		// Actor última solicitud
+		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
+		select.add(Projections.property("solicitud.fechaEnvio").as("fechaEnvio"));
+		select.add(Projections.property("solicitud.fechaRecepcion").as("fechaRecepcion"));
+
+		Criteria query = queryBusquedaPorFiltro(filtro);
+		query.setProjection(select);
+
+		addPaginationToQuery(filtro, query);
+
+		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+
+		return query.list();
+	}
+
+	@Override
+	public List<HashMap<String, Object>> busquedaLiquidacionesPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		ProjectionList select = Projections.projectionList();
+
+		addDefaultProcedimientoProjection(select);
+
+		select.add(Projections.property("estadoLiquidacion.descripcion").as("estado"));
+		select.add(Projections.property("liqcontrato.nroContrato").as("contrato"));
+		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
+		select.add(Projections.property("liquidacion.fechaCierre").as("fechaCierre"));
+		select.add(Projections.property("liquidacion.fechaRecepcion").as("fechaRecepcion"));
+		select.add(Projections.property("liquidacion.total").as("total"));
+
+		Criteria query = queryBusquedaPorFiltro(filtro);
+		query.setProjection(select);
+		query.createAlias("liquidacion.contrato", "liqcontrato");
+
+		addPaginationToQuery(filtro, query);
+
+		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+
+		return query.list();
+	}
+
+	@Override
+	public List<HashMap<String, Object>> busquedaBurofaxPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		ProjectionList select = Projections.projectionList();
+
+		addDefaultProcedimientoProjection(select);
+
+		select.add(Projections.property("estadoBurofax.descripcion").as("estado"));
+		select.add(Projections.property("burofax.demandado").as("demandado"));
 		select.add(Projections.property("enviosBurofax.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("enviosBurofax.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("enviosBurofax.fechaAcuse").as("fechaAcuse"));
-		select.add(Projections.property("enviosBurofax.contenidoBurofax").as("contenidoBurofax"));
-		select.add(Projections.property("enviosBurofax.sysGuid").as("sysGuid"));
+		select.add(Projections.property("resultadoBurofax.descripcion").as("resultado"));
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
-		query.setResultTransformer(new AliasToBeanResultTransformer(EnvioBurofaxPCO.class));
+		query.createAlias("burofax.estadoBurofax", "estadoBurofax");
+
+		addPaginationToQuery(filtro, query);
+
+		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		return query.list();
 	}
 
-	@Override
-	public List<ProcedimientoPCO> getProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
-		Criteria query = queryBusquedaPorFiltro(filtro);
+	/**
+	 * Añade paginacion a una query
+	 */
+	private void addPaginationToQuery(WebDto filtro, Criteria query) {
+		// Pagination
+		query.setMaxResults(filtro.getLimit());
+		query.setFirstResult(filtro.getStart());
+	}
 
-		// Distinct, objetos duplicados debido a los joins
-		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-		return query.list();
+	/**
+	 * Añade a la proyeccion los campos comunes de procedimiento a las busquedas por elemento (documento - liquidacion - burofax)
+	 * @param select
+	 */
+	private void addDefaultProcedimientoProjection(ProjectionList select) {
+		select.add(Projections.property("procedimiento.id").as("prcId"));
+		select.add(Projections.property("procedimiento.id").as("codigo"));
+		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
+		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
+		select.add(Projections.property("procedimientoPco.fechaEstadoActual").as("fechaEstadoProcedimiento"));
+		select.add(Projections.property("tipoProcPropuesto.descripcion").as("tipoProcPropuesto"));
+		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
 	}
 
 	/**
@@ -166,6 +192,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		// From
 		query.createCriteria("procedimiento", "procedimiento");
+		query.createAlias("procedimiento.asunto", "asunto");
 		query.createCriteria("tipoPreparacion", "tipoPreparacion", CriteriaSpecification.LEFT_JOIN);
 		query.createCriteria("tipoProcPropuesto", "tipoProcPropuesto", CriteriaSpecification.LEFT_JOIN);
 
@@ -173,6 +200,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		List<Criterion> where = new ArrayList<Criterion>();
 
 		where.addAll(restriccionesDatosProcedimiento(filtro, query));
+		where.addAll(restriccionesDatosActores(filtro, query));
 		where.addAll(restriccionesDatosPersonas(filtro, query));
 		where.addAll(restriccionesDatosContratos(filtro, query));
 		where.addAll(restriccionesDatosDocumentos(filtro, query));
@@ -185,6 +213,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		query.addOrder(Order.asc("id")); // workaround
+
 		return query;
 	}
 
@@ -202,7 +231,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigo())) {
-			where.add(Restrictions.eq("procedimiento.id", filtro.getProCodigo()));
+			where.add(Restrictions.eq("procedimiento.id", Long.valueOf(filtro.getProCodigo())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProTipoPreparacion())) {
@@ -211,6 +240,18 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		if (!StringUtils.emtpyString(filtro.getProTipoProcedimiento())) {
 			where.add(Restrictions.eq("tipoProcPropuesto.codigo", filtro.getProTipoProcedimiento()));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getProDisponibleDocumentos())) {
+			where.add(Restrictions.eq("procedimientoPco.todosDocumentos", "01".equals(filtro.getProDisponibleDocumentos())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getProDisponibleLiquidaciones())) {
+			where.add(Restrictions.eq("procedimientoPco.todasLiquidaciones", "01".equals(filtro.getProDisponibleLiquidaciones())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getProDisponibleBurofaxes())) {
+			where.add(Restrictions.eq("procedimientoPco.todosBurofaxes", "01".equals(filtro.getProDisponibleBurofaxes())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigosEstado())) {
@@ -230,19 +271,40 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consulta
 	 */
-	private List<Criterion> restriccionesDatosPersonas(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
+	private List<Criterion> restriccionesDatosActores(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		Boolean filtroPersonaInformado = Boolean.valueOf((!StringUtils.emtpyString(filtro.getConNombre()) 
-				|| !StringUtils.emtpyString(filtro.getConApellidos()) 
-				|| !StringUtils.emtpyString(filtro.getConNif())));
-
-		if (!filtroPersonaInformado) {
+		if (!filtro.filtroGestorInformado()) {
 			return where;
 		}
 
-		// FROM
-		query.createAlias("procedimiento.personasAfectadas", "persona", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("asunto.gestoresAsunto", "gaa");
+		query.createAlias("gaa.tipoGestor", "gaaTipoGestor");
+		query.createAlias("gaa.gestor", "gaaGestor");
+		query.createAlias("gaaGestor.usuario", "gaaUsuario");
+		query.createAlias("gaaGestor.despachoExterno", "gaaDespachoExterno");
+
+		where.add(Restrictions.eq("gaaTipoGestor.id", Long.valueOf(filtro.getProTipoGestor())));
+		where.add(Restrictions.eq("gaaUsuario.id", Long.valueOf(filtro.getProGestor())));
+		where.add(Restrictions.eq("gaaDespachoExterno.id", Long.valueOf(filtro.getProDespacho())));
+
+		return where;
+	}
+	
+	/**
+	 * Metodo de ayuda
+	 * @param filtro
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @return devuelve las restricciones aplicar a la consulta
+	 */
+	private List<Criterion> restriccionesDatosPersonas(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (!filtro.filtroPersonaInformado()) {
+			return where;
+		}
+
+		query.createAlias("procedimiento.personasAfectadas", "persona");
 
 		if (!StringUtils.emtpyString(filtro.getConNombre())) {
 			where.add(Restrictions.like("persona.nombre", filtro.getConNombre(), MatchMode.ANYWHERE).ignoreCase());
@@ -279,16 +341,11 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	private List<Criterion> restriccionesDatosContratos(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		Boolean filtroContratoInformado = Boolean.valueOf(!StringUtils.emtpyString(filtro.getConCodigo()) 
-				|| !StringUtils.emtpyString(filtro.getConTiposProducto()));
-
-		if (!filtroContratoInformado) {
+		if (!filtro.filtroContratoInformado()) {
 			return where;
 		}
 
-		// FROM
-		query.createAlias("procedimiento.asunto", "asunto", CriteriaSpecification.LEFT_JOIN);
-		query.createAlias("asunto.expediente", "expediente", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("asunto.expediente", "expediente");
 		query.createAlias("expediente.contratos", "expcontrato");
 		query.createAlias("expcontrato.contrato", "contrato");
 
@@ -301,6 +358,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.in("tipoProductoEntidad.codigo", filtro.getConTiposProducto().split(",")));
 		}
 
+		if (!StringUtils.emtpyString(filtro.getProCentroContable())) {
+			query.createAlias("contrato.oficinaContable", "oficinaContable");
+			query.createAlias("oficinaContable.zona", "oficinaContableZona");
+
+			where.add(Restrictions.in("oficinaContableZona.codigo", filtro.getProCentroContable().split(",")));
+		}
+
 		return where;
 	}
 
@@ -310,39 +374,51 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consulta
 	 */
-	private List<Criterion> restriccionesDatosDocumentos(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
+	private List<Criterion> restriccionesDatosDocumentos(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {
+		Boolean esBusquedaPorDocumento = FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_DOCUMENTO.equals(filtro.getTipoBusqueda());
+
 		List<Criterion> where = new ArrayList<Criterion>();
-		
-		if (!filtroDocumentoInformado(filtro)) {
+
+		// Si no hay ningun filtro informado de documento y ningun filtro de solicitud y no se trata de una busqueda de tipo documento, no se aplica ninguna restriccion
+		if (!filtro.filtroDocumentoInformado() && !filtro.filtroSolicitudInformado() && !esBusquedaPorDocumento) {
 			return where;
 		}
 
 		query.createAlias("procedimientoPco.documentos", "documento");
-		query.createAlias("documentos.solicitudes", "solicitud");
+		query.createAlias("documentos.estadoDocumento", "estadoDocumento", CriteriaSpecification.LEFT_JOIN);
 
 		if (!StringUtils.emtpyString(filtro.getDocTiposDocumento())) {
-			query.createAlias("documentos.tipoDocumento", "tipoDocumento", CriteriaSpecification.LEFT_JOIN);
+			query.createAlias("documentos.tipoDocumento", "tipoDocumento");
 			where.add(Restrictions.in("tipoDocumento.codigo", filtro.getDocTiposDocumento().split(",")));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getDocEstados())) {
-			query.createAlias("documentos.estadoDocumento", "estadoDocumento", CriteriaSpecification.LEFT_JOIN);
 			where.add(Restrictions.in("estadoDocumento.codigo", filtro.getDocEstados().split(",")));
-		}
-
-		if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
-			query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud", CriteriaSpecification.LEFT_JOIN);
-			where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getDocAdjunto())) {
 			where.add(Restrictions.eq("documento.adjuntado", "01".equals(filtro.getDocAdjunto())));
 		}
 
-		where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
-		where.addAll(dateRangeFilter("solicitud.fechaEnvio", filtro.getDocFechaEnvioDesde(), filtro.getDocFechaEnvioHasta()));
-		where.addAll(dateRangeFilter("solicitud.fechaResultado", filtro.getDocFechaResultadoDesde(), filtro.getDocFechaResultadoHasta()));
-		where.addAll(dateRangeFilter("solicitud.fechaRecepcion", filtro.getDocFechaRecepcionDesde(), filtro.getDocFechaRecepcionHasta()));
+		if (!filtro.filtroSolicitudInformado()) {
+
+			// si se está realizando una busqueda por documentos deberán salir aquellos documentos los cuales aun no tienen ninguna solicitud
+			if (esBusquedaPorDocumento) {
+				query.createAlias("documentos.solicitudes", "solicitud", CriteriaSpecification.LEFT_JOIN);
+			} else {
+				query.createAlias("documentos.solicitudes", "solicitud");
+			}
+
+			if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
+				query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud");
+				where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
+			}
+
+			where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
+			where.addAll(dateRangeFilter("solicitud.fechaEnvio", filtro.getDocFechaEnvioDesde(), filtro.getDocFechaEnvioHasta()));
+			where.addAll(dateRangeFilter("solicitud.fechaResultado", filtro.getDocFechaResultadoDesde(), filtro.getDocFechaResultadoHasta()));
+			where.addAll(dateRangeFilter("solicitud.fechaRecepcion", filtro.getDocFechaRecepcionDesde(), filtro.getDocFechaRecepcionHasta()));
+		}
 
 		return where;
 	}
@@ -353,28 +429,27 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consulta
 	 */
-	private List<Criterion> restriccionesDatosLiquidaciones(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
+	private List<Criterion> restriccionesDatosLiquidaciones(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {
+		Boolean esBusquedaPorLiquidacion = FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(filtro.getTipoBusqueda());
+
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		if (!filtroLiquidacionInformado(filtro)) {
+		if (!filtro.filtroLiquidacionInformado() && !esBusquedaPorLiquidacion) {
 			return where;
 		}
 
 		query.createAlias("procedimientoPco.liquidaciones", "liquidacion");
+		query.createAlias("liquidacion.estadoLiquidacion", "estadoLiquidacion", CriteriaSpecification.LEFT_JOIN);
 
 		if (!StringUtils.emtpyString(filtro.getLiqEstados())) {
-			query.createAlias("liquidacion.estadoLiquidacion", "estadoLiquidacion");
 			where.add(Restrictions.in("estadoLiquidacion.codigo", filtro.getLiqEstados().split(",")));
 		}
 
-		if (!StringUtils.emtpyString(filtro.getLiqTotalDesde())) {
-			where.add(Restrictions.ge("liquidacion.total", Float.parseFloat(filtro.getLiqTotalDesde())));
+		if (!StringUtils.emtpyString(filtro.getLiqDiasGestion())) {
+			where.add(Restrictions.eq("liquidacion.diasGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 
-		if (!StringUtils.emtpyString(filtro.getLiqTotalHasta())) {
-			where.add(Restrictions.le("liquidacion.total", Float.parseFloat(filtro.getLiqTotalHasta())));
-		}
-
+		where.addAll(floatRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getLiqFechaSolicitudHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaConfirmacion", filtro.getLiqFechaConfirmacionDesde(), filtro.getLiqFechaConfirmacionHasta()));
 		where.addAll(dateRangeFilter("liquidacion.fechaCierre", filtro.getLiqFechaCierreDesde(), filtro.getLiqFechaCierreHasta()));
@@ -389,18 +464,26 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consulta
 	 */
-	private List<Criterion> restriccionesDatosBurofax(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
+	private List<Criterion> restriccionesDatosBurofax(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		if (!filtroBurofaxInformado(filtro)) {
+		Boolean esBusquedaPorBurofax = FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_BUROFAX.equals(filtro.getTipoBusqueda());
+
+		if (!filtro.filtroBurofaxInformado() && !esBusquedaPorBurofax) {
 			return where;
 		}
 
 		query.createAlias("procedimientoPco.burofaxes", "burofax");
-		query.createAlias("burofax.enviosBurofax", "enviosBurofax");
+		query.createAlias("enviosBurofax.resultadoBurofax", "resultadoBurofax", CriteriaSpecification.LEFT_JOIN);
+
+		// Si se realiza una busqueda por burofaxes deberán salir aquellos burofaxes que aun no tengan ningun envio.
+		if (esBusquedaPorBurofax) {
+			query.createAlias("burofax.enviosBurofax", "enviosBurofax", CriteriaSpecification.LEFT_JOIN);
+		} else {
+			query.createAlias("burofax.enviosBurofax", "enviosBurofax");
+		}
 
 		if (!StringUtils.emtpyString(filtro.getBurResultadoEnvio())) {
-			query.createAlias("enviosBurofax.resultadoBurofax", "resultadoBurofax");
 			where.add(Restrictions.in("resultadoBurofax.codigo", filtro.getBurResultadoEnvio().split(",")));
 		}
 
@@ -409,64 +492,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		where.addAll(dateRangeFilter("enviosBurofax.fechaAcuse", filtro.getBurFechaAcuseDesde(), filtro.getBurFechaAcuseHasta()));
 
 		return where;
-	}
-
-	/**
-	 * Comprueba si está informado el filtro de documento
-	 */
-	private Boolean filtroDocumentoInformado(FiltroBusquedaProcedimientoPcoDTO filtro) {
-		Boolean filtroDocumentoInformado = Boolean.valueOf(
-			!StringUtils.emtpyString(filtro.getDocTiposDocumento())
-			|| !StringUtils.emtpyString(filtro.getDocEstados())
-			|| !StringUtils.emtpyString(filtro.getDocUltimaRespuesta())
-			|| !StringUtils.emtpyString(filtro.getDocFechaSolicitudDesde())
-			|| !StringUtils.emtpyString(filtro.getDocFechaSolicitudHasta())
-			|| !StringUtils.emtpyString(filtro.getDocFechaResultadoDesde())
-			|| !StringUtils.emtpyString(filtro.getDocFechaResultadoHasta())
-			|| !StringUtils.emtpyString(filtro.getDocFechaEnvioDesde())
-			|| !StringUtils.emtpyString(filtro.getDocFechaEnvioHasta())
-			|| !StringUtils.emtpyString(filtro.getDocFechaRecepcionDesde())
-			|| !StringUtils.emtpyString(filtro.getDocFechaRecepcionHasta())
-			|| !StringUtils.emtpyString(filtro.getDocAdjunto())
-			|| !StringUtils.emtpyString(filtro.getDocSolicitudPrevia())
-			|| !StringUtils.emtpyString(filtro.getDocDiasGestion()));
-		return filtroDocumentoInformado;
-	}
-
-	/**
-	 * Comprueba si está informado el filtro de liquidacion
-	 */
-	private Boolean filtroLiquidacionInformado(FiltroBusquedaProcedimientoPcoDTO filtro) {
-		Boolean filtroLiquidacionInformado = Boolean.valueOf(
-			!StringUtils.emtpyString(filtro.getLiqEstados())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaSolicitudDesde())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaSolicitudHasta())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaRecepcionDesde())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaRecepcionHasta())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaConfirmacionDesde())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaConfirmacionHasta())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaCierreDesde())
-			|| !StringUtils.emtpyString(filtro.getLiqFechaCierreHasta())
-			|| !StringUtils.emtpyString(filtro.getLiqTotalDesde())
-			|| !StringUtils.emtpyString(filtro.getLiqTotalHasta())
-			|| !StringUtils.emtpyString(filtro.getLiqDiasGestion()));
-		return filtroLiquidacionInformado;
-	}
-
-	/**
-	 * Comprueba si está informado el filtro de burofaxes
-	 */
-	private Boolean filtroBurofaxInformado(FiltroBusquedaProcedimientoPcoDTO filtro) {
-		Boolean filtroBurofaxInformado = Boolean.valueOf(
-			!StringUtils.emtpyString(filtro.getBurNotificado())
-			|| !StringUtils.emtpyString(filtro.getBurResultadoEnvio())
-			|| !StringUtils.emtpyString(filtro.getBurFechaSolicitudDesde())
-			|| !StringUtils.emtpyString(filtro.getBurFechaSolicitudHasta())
-			|| !StringUtils.emtpyString(filtro.getBurFechaAcuseDesde())
-			|| !StringUtils.emtpyString(filtro.getBurFechaAcuseHasta())
-			|| !StringUtils.emtpyString(filtro.getBurFechaEnvioDesde())
-			|| !StringUtils.emtpyString(filtro.getBurFechaEnvioHasta()));
-		return filtroBurofaxInformado;
 	}
 
 	private List<Criterion> dateRangeFilter(String field, String dateFrom, String dateTo) {
@@ -487,6 +512,20 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		} catch (ParseException e) {
 			logger.error(e.getLocalizedMessage());
 			return where;
+		}
+
+		return where;
+	}
+
+	private List<Criterion> floatRangeFilter(String field, String from, String to) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (!StringUtils.emtpyString(from)) {
+			where.add(Restrictions.ge(field, Float.parseFloat(from)));
+		}
+
+		if (!StringUtils.emtpyString(to)) {
+			where.add(Restrictions.le(field, Float.parseFloat(to)));
 		}
 
 		return where;

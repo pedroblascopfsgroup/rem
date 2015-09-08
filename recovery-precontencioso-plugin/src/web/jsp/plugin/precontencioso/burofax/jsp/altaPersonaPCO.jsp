@@ -58,7 +58,6 @@
 			auxId = personasStore.getAt(i).data.id;
 			arrayIdPersonas.push(auxId);
 			
-			
 		}
 		
 	}

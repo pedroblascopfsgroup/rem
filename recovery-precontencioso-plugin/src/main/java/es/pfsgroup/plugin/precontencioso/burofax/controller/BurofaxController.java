@@ -80,7 +80,7 @@ public class BurofaxController {
 			
 			for(BurofaxPCO burofax : listaBurofax){
 				BurofaxDTO dto=new BurofaxDTO();
-				//dto.setId(burofax.getId());
+				dto.setId(burofax.getId());
 				dto.setIdBurofax(burofax.getId());
 				dto.setIdCliente(burofax.getDemandado().getId());
 				dto.setCliente(burofax.getDemandado().getApellidoNombre());
@@ -101,6 +101,7 @@ public class BurofaxController {
 				
 				if(burofax.getDemandado().getDirecciones().size()>0){
 				    for(Direccion direccion : burofax.getDemandado().getDirecciones()){
+
 				    		dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
 				    		dto.setIdCliente(burofax.getDemandado().getId());
 				    		dto.setIdDireccion(direccion.getId());
@@ -136,7 +137,6 @@ public class BurofaxController {
 				for(EnvioBurofaxPCO envioBurofax : burofax.getEnviosBurofax()){
 					dto=new BurofaxDTO();
 					dto.setId(envioBurofax.getId());
-					
 					dto.setIdBurofax(burofax.getId());
 					dto.setIdTipoBurofax(envioBurofax.getTipoBurofax().getId());
 					dto.setIdCliente(burofax.getDemandado().getId());

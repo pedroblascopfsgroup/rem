@@ -7,7 +7,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
 		
-			
 		var acuerdo = '${acuerdo.id}';
 		<%@ include file="/WEB-INF/jsp/acuerdos/actuacionesRealizadasAcuerdo.jsp" %>
 		var actuacionesRealizadas=crearActuacionesRealizadas();

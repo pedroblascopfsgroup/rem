@@ -110,14 +110,14 @@
 		
 	
 <!-- 	<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
-<!-- 		p:order="900" -->
-<!-- 		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp" -->
-<!-- 		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
+<!--		p:order="900" -->
+<!--		p:fileName="/WEB-INF/jsp/plugin/procuradores/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp" -->
+<!--		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
 		
-		<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento"
-			p:order="900"
-			p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp"
-			p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+<!--		<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
+<!--			p:order="900" -->
+<!--			p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp" -->
+<!--			p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
 		
 <!-- 	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"    -->
 <!--         p:fileName="/WEB-INF/jsp/plugin/procuradores/main/openTareasPendientesFn.jsp"  -->

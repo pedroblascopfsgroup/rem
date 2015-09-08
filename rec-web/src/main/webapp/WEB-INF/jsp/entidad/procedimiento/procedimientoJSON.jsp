@@ -6,6 +6,7 @@
 
 <fwk:json>
   <json:property name="tieneProcurador" value="${tieneProcurador}" />
+  <json:property name="activoDespachoIntegral" value="${activoDespachoIntegral}" />
   <json:property name="id" value="${procedimiento.id}" />
   <json:property name="nombreTab" value="${nombreTab}" />
   <json:property name="fechaVenc" value="${fechaVenc}" />

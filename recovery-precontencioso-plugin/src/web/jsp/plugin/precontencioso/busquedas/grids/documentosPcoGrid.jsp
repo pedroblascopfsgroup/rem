@@ -61,7 +61,7 @@ var documentoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'docFechaResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.resultado" text="**Fecha resultado"/>', sortable: false},
 	{dataIndex: 'docFechaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.envio" text="**Fecha envio"/>', sortable: false},
 	{dataIndex: 'docFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
-	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', sortable: false}
+	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', renderer: OK_KO_Render, align:'center', sortable: false}
 ]);
 
 var pagingBarDoc = fwk.ux.getPaging(documentoPcoStore);

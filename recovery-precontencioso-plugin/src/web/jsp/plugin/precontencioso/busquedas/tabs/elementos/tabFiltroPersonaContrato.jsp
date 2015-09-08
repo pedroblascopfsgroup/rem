@@ -87,3 +87,8 @@ var getParametrosFiltroPersonaContrato = function() {
 
 	return out;
 }
+
+var limpiaPestanaPersonaContrato = function() {
+		app.resetCampos([fieldCodigoContratoEle, comboTiposProductoEle, fieldNifEle, 
+		fieldNombreEle, fieldApellidosEle]);
+	}

@@ -363,3 +363,16 @@ var getParametrosFiltroDocumentos = function() {
 
 	return out;
 }
+
+	var limpiaPestanaDocumentos = function() {
+		app.resetCampos([comboTipoDocumento, comboEstadoDocumento, comboRespuestaSolicitud, 
+		dateFieldSolicitudDocDesdeEle, dateFieldSolicitudDocHastaEle, dateFieldResultadoDocDesdeEle, dateFieldResultadoDocHastaEle,
+		dateFieldEnvioDocDesdeEle, dateFieldEnvioDocHastaEle, dateFieldRecepcionDocDesdeEle, dateFieldRecepcionDocHastaEle, 
+		comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, 
+		comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc]);
+		
+		comboDespachosEleDoc.reset();
+		comboDespachosEleDoc.disable();
+		comboGestorEleDoc.reset();
+		comboGestorEleDoc.disable();
+	}

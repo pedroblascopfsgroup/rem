@@ -252,8 +252,8 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 		String aIplusNombre = aIplus.getNombre().toUpperCase();
 		String aIplusDesc = aIplus.getDescripcion().toUpperCase();
 		
-		System.out.println("[IPLUSUtilsImpl.compararAdjuntos]: aRecovery.getNombre(): " + aRecoveryNombre);
-		System.out.println("[IPLUSUtilsImpl.compararAdjuntos]: aIplus.getNombre(): " + aIplus.getNombre() +
+		System.out.println(new Date() + "[IPLUSUtilsImpl.compararAdjuntos]: aRecovery.getNombre(): " + aRecoveryNombre);
+		System.out.println(new Date() + "[IPLUSUtilsImpl.compararAdjuntos]: aIplus.getNombre(): " + aIplus.getNombre() +
 					" - aIplus.getNombre(): " + aIplus.getDescripcion() );
 		
 		if (Checks.esNulo(aRecoveryNombre) || Checks.esNulo(aIplusDesc) || Checks.esNulo(aIplusNombre) ) {

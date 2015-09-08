@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteCostasVsEntidad" width="1194" height="769">
+<root-container name="haya_tramiteCostasVsEntidad" width="1194" height="725">
   <node name="Inicio" x="440" y="15" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -24,7 +24,7 @@
     </edge>
     <edge>
       <label x="-68" y="1"/>
-      <bendpoint w1="-82" h1="-89" w2="-225" h2="127"/>
+      <bendpoint w1="-84" h1="-67" w2="-227" h2="149"/>
       <bendpoint w1="-82" h1="-186" w2="-225" h2="30"/>
     </edge>
     <edge>
@@ -33,6 +33,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="75" w2="-135" h2="-88"/>
     </edge>
   </node>
   <node name="H032_RegistrarDecTasacionCostas" x="372" y="216" width="265" height="36">
@@ -51,35 +52,17 @@
       <bendpoint w1="146" h1="-51" w2="146" h2="57"/>
     </edge>
   </node>
-  <node name="H032_RegistrarCelebracionVista" x="98" y="638" width="223" height="36">
-    <edge>
-      <label x="-32" y="-16"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-65" y="-10"/>
-      <bendpoint w1="-43" h1="-50" w2="-195" h2="156"/>
-      <bendpoint w1="-43" h1="-146" w2="-195" h2="60"/>
-    </edge>
-  </node>
   <node name="H032_RegistrarDecTasacionCostasDecision" x="360" y="312" width="293" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="7" y="-90"/>
     </edge>
   </node>
-  <node name="H032_RegistrarResolucion" x="401" y="638" width="191" height="36">
+  <node name="H032_RegistrarResolucion" x="401" y="595" width="191" height="36">
     <edge>
       <label x="-36" y="-16"/>
-    </edge>
-    <edge>
-      <label x="-30" y="-13"/>
-      <bendpoint w1="-103" h1="66" w2="184" h2="66"/>
-      <bendpoint w1="-180" h1="65" w2="107" h2="65"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -87,12 +70,7 @@
     <edge>
       <label x="-27" y="1"/>
       <bendpoint w1="0" h1="95" w2="415" h2="299"/>
-      <bendpoint w1="-416" h1="95" w2="-1" h2="299"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="59" h1="-50" w2="194" h2="156"/>
-      <bendpoint w1="59" h1="-144" w2="194" h2="62"/>
+      <bendpoint w1="-256" h1="93" w2="-4" h2="290"/>
     </edge>
   </node>
   <node name="H032_ResolucionFirme" x="677" y="638" width="173" height="36">
@@ -118,7 +96,12 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-29" y="-18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-22"/>
+      <bendpoint w1="-1" h1="-62" w2="-387" h2="-63"/>
+      <bendpoint w1="385" h1="-61" w2="-1" h2="-62"/>
     </edge>
   </node>
   <node name="H032_ResolucionFirmeDecision" x="657" y="548" width="211" height="36">
@@ -132,18 +115,6 @@
   <node name="H032_ResolucionDecision" x="988" y="549" width="182" height="36">
     <edge>
       <label x="-20" y="-18"/>
-    </edge>
-  </node>
-  <node name="H032_ConfirmarPresImpugnacionDecision" x="216" y="521" width="289" height="36">
-    <edge>
-      <label x="-40" y="-24"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-42" y="-9"/>
-      <bendpoint w1="-6" h1="67" w2="145" h2="-50"/>
     </edge>
   </node>
   <node name="Fin2" x="15" y="434" width="132" height="36"/>

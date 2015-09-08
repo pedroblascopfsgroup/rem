@@ -297,6 +297,13 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''fechaComparecencia'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-539');
 
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-680,CMREC-669');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''((valores[''''H024_ConfirmarNotDemanda''''][''''comboResultado''''] == DDPositivoNegativo.POSITIVO) && (valores[''''H024_ConfirmarNotDemanda''''][''''fecha''''] == null))?''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Para poder continuar debe indicar la fecha.</div>'''':null'' WHERE TAP_CODIGO = ''H024_ConfirmarNotDemanda''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''((valores[''''H024_RegistrarAudienciaPrevia''''][''''comboResultado''''] == DDSiNo.NO) && (valores[''''H024_RegistrarAudienciaPrevia''''][''''fechaJuicio''''] == null))?''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Para poder continuar debe indicar la fecha del juicio.</div>'''':null'' WHERE TAP_CODIGO = ''H024_RegistrarAudienciaPrevia''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''((valores[''''H038_ConfirmarRequerimientoResultado''''][''''comboRequerido''''] == DDSiNo.SI) && ((valores[''''H038_ConfirmarRequerimientoResultado''''][''''comboResultado''''] == '''''''')||(valores[''''H038_ConfirmarRequerimientoResultado''''][''''comboResultado''''] == null)||(valores[''''H038_ConfirmarRequerimientoResultado''''][''''importeNom''''] == '''''''')||(valores[''''H038_ConfirmarRequerimientoResultado''''][''''importeRet''''] == '''''''')) )?''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Para poder continuar debe indicar el importe base retenci&oacute;n y la retenci&oacute;n.</div>'''':null''  WHERE TAP_CODIGO = ''H038_ConfirmarRequerimientoResultado''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-680,CMREC-669');
+
+
 COMMIT;
  
 EXCEPTION

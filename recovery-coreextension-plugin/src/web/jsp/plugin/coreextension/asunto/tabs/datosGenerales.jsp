@@ -4,11 +4,11 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 
 (function(){
 	var limit=25;
 	var labelStyle2 = 'font-size:12px;';
-	
 	//Campo Código Asunto
 	var codigoAsunto=app.creaNumber('codigo',
 			'<s:message code="asuntos.busqueda.filtro.codigo" text="**Codigo Asunto" />','',{autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"},listeners:{ specialkey: function(f,e){ if(e.getKey() == e.ENTER) { buscarFunc(); } } }<app:test id="idAsunto" addComa="true"/>});
@@ -339,8 +339,8 @@
 	       ,data : siNo
 	});
 
-	//Campo Combo Error CDD
-	var comboErrorCDD = new Ext.form.ComboBox({
+	//Campo Combo Situacion CDD
+	var comboSituacionCDD = new Ext.form.ComboBox({
 				store:optionsSINOStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
@@ -348,10 +348,104 @@
 				,editable: false
 				,emptyText:'---'
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorCDD" text="**Error CDD"/>'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.situacionCDD" text="**Situaci&oacute;n cierre de deuda"/>'
 	});
 	
+	var generico = Ext.data.Record.create([
+		{name:'id'}
+		,{name:'codigo'}
+		,{name:'descripcion'}
+		,{name:'codigoDescripcion'}
+	]);
 	
+	var optionsErrorPrevioStore = page.getStore({
+	       flow: 'subasta/getListErrorPreviCDDData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	    }, generico)	       
+	});
+
+	//Campo Combo Error previo envio CDD
+	var comboErrorPreviCDD = new Ext.form.ComboBox({
+				store:optionsErrorPrevioStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'remote'
+				,width:300
+				,editable: false
+				,emptyText:'---'
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPrevioEnvio" text="**Error previo env&iacute;o a cierre"/>'
+	});
+	
+	var optionsErrorPostStore = page.getStore({
+	       flow: 'subasta/getListErrorPostCDDData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	    }, generico)	       
+	});
+	
+	//Campo Combo Error post envio CDD
+	var comboErrorPostCDD = new Ext.form.ComboBox({
+				store:optionsErrorPostStore
+				,displayField:'codigoDescripcion'
+				,valueField:'id'
+				,mode: 'remote'
+				,width:300
+				,editable: false
+				,emptyText:'---'
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="menu.clientes.listado.filtro.errorPostEnvio" text="**Resultado propuestas enviadas a cierre"/>'
+	});	
+	
+		
+	var fechaEntregaDesde = new Ext.ux.form.XDateField({
+		fieldLabel:'<s:message code="asuntos.busqueda.filtro.fechaDeEnvioCierre" text="**Fecha de envío" />'
+		,name : 'fechaEntregaDesde'
+	});
+	
+	var fechaEntregaHasta = new Ext.ux.form.XDateField({
+		 hideLabel:true
+		,name : 'fechaEntregaHasta'
+		,style: 'margin-bottom: 7px'
+	});
+
+
+
+	var filtrosCDD = new Ext.Panel({
+		layout:'table'
+		,title : ''
+		,collapsible : false
+		,titleCollapse : false
+		,layoutConfig : {
+			columns: 1
+		}
+		,style:'margin-right:20px;margin-left:0px'
+		,border:false
+		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop'}
+		,items:[
+			
+			{items:[
+				{border: false,layout:'form', items:[comboErrorPreviCDD]}
+				]
+			},
+			{items:[
+				{border: false,layout:'form', items:[comboErrorPostCDD]}
+				]
+			},
+
+			{
+			layout:'table'			
+			,layoutConfig : {
+				columns: 2
+			},
+			items:[
+				{border: false,layout:'form', items:[fechaEntregaDesde]}
+				,{border: false,layout:'form',items:[fechaEntregaHasta]}
+				]
+			}
+		]
+	}); 
 	
 	
 	              
@@ -457,7 +551,6 @@
 
 	
 	var validarEmptyForm = function(){
-
 		if (codigoAsunto.getValue() != '' && app.validate.validateInteger(codigoAsunto.getValue())){
 			return true;
 		}
@@ -519,7 +612,19 @@
 		if (comboJerarquia.getValue() != '' ){
 			return true;
 		}
-		if (comboErrorCDD.getValue() != '' ){
+		if (comboSituacionCDD.getValue() != '' ){
+			return true;
+		}
+		if (!Ext.isEmpty(comboErrorPreviCDD.getValue())){
+			return true;
+		}
+		if (!Ext.isEmpty(comboErrorPostCDD.getValue())){
+			return true;
+		}
+		if (fechaEntregaDesde.getValue() != '' ){
+			return true;
+		}
+		if (fechaEntregaHasta.getValue() != '' ){
 			return true;
 		}
 		if (comboZonas.getValue() != '' ){
@@ -574,7 +679,11 @@
 			,fechaCreacionDesde:app.format.dateRenderer(fechaCreacionDesde.getValue())
 			,fechaCreacionHasta:app.format.dateRenderer(fechaCreacionHasta.getValue())
 			,jerarquia:comboJerarquia.getValue()
-			,comboErrorCDD:comboErrorCDD.getValue()
+			,comboSituacionCDD:comboSituacionCDD.getValue()
+			,comboErrorPreviCDD:comboErrorPreviCDD.getValue()
+			,comboErrorPostCDD:comboErrorPostCDD.getValue()
+			,fechaEntregaDesde:app.format.dateRenderer(fechaEntregaDesde.getValue())
+			,fechaEntregaHasta:app.format.dateRenderer(fechaEntregaHasta.getValue())
 			,codigoZona:comboZonas.getValue()
 			,tipoSalida:'<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_LISTADO" />'
 			//,codigoProcedimientoEnJuzgado:codigoProcedimientoEnJuzgado.getValue()
@@ -619,7 +728,7 @@
 				,{items:[fechaCreacionHasta]}
 				,{items:[filtroNumeroAutosPanel]}
 				,{items:[comboJerarquia]}
-				,{items:[comboErrorCDD]}
+				,{items:[filtrosCDD]}
 				,{items:[comboZonas]}
 				,{colspan:2,items:[comboTipoProcedimientos]}
 				,{items:[comboGestion]}
@@ -660,7 +769,9 @@
     		           ,fechaCreacionDesde
     		           ,fechaCreacionHasta
     		           ,comboJerarquia
-    		           ,comboErrorCDD
+    		           ,comboSituacionCDD
+    		           ,fechaEntregaDesde
+    		           ,fechaEntregaHasta
     		           ,comboZonas
     		           ,codigoProcedimientoEnJuzgado
     		           ,filtroNumeroCodigoProc
@@ -668,6 +779,8 @@
     		           ,comboTipoProcedimientos // Incidencia UGAS-524
 	           ]); 
 	           optionsZonasStore.webflow({id:0}); // Incidencia UGAS-524
+	           comboErrorPreviCDD.clearValue();
+    		   comboErrorPostCDD.clearValue();
     		}
     		,exportar: function() {
     		    var flow='asuntos/exportAsuntos';

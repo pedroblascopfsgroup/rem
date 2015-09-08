@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.coreextension.api;
 
 import java.util.List;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
@@ -36,6 +37,7 @@ public interface coreextensionApi {
 	
 	String GET_LIST_TIPO_DESPACHO_DE_USUARIO = "plugin.recovery.coreextension.api.getListDespachosDeUsuario";
 	String GET_LIST_TIPO_GESTOR_DE_USUARIO = "plugin.recovery.coreextension.api.getLisTipoGestorDeUsuario";
+	String GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO = "plugin.recovery.coreextension.api.getListTipoProcedimientoByPropiedadAsunto";
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR)
 	List<EXTDDTipoGestor> getList(String ugCodigo);
@@ -178,5 +180,8 @@ public interface coreextensionApi {
 	 */
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR_DE_USUARIO)
 	List<EXTDDTipoGestor> getListTipoGestorDeUsuario(Long idUsuario, boolean adicional, boolean procuradorAdicional);
+
+	@BusinessOperationDefinition(GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO)
+	List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(String codigoTipoAct, Long prcId);
 	
 }

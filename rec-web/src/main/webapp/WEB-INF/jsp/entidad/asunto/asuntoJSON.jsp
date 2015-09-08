@@ -44,7 +44,7 @@
 	  <json:property name="supervisorCEXP" value="${asunto.supervisorCEXP.usuario.apellidoNombre}" />
 	  <json:property name="titulizada" value="${titulizada}"/>
 	  <json:property name="fondo" value="${fondo}"/>
-	  <json:property name="errorEnvioCDD" value="${asunto.errorEnvioCDD}" />
+	  <json:property name="msgErrorEnvioCDD" value="${msgErrorEnvioCDD}" />
 	</json:object>
 	<json:object name="comite">
 	  <json:property name="sesion" value="${asunto.comite.ultimaSesion.id}" />

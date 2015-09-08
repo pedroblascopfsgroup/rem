@@ -37,6 +37,7 @@ import es.capgemini.pfs.prorroga.model.Prorroga;
 @Entity
 @Table(name = "LOB_LOTE_BIEN", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Deprecated
 public class LoteBien implements Serializable, Auditable {
 
 	/**

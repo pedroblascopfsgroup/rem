@@ -40,7 +40,6 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -617,7 +616,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		hql.append("from Asunto a ");
 		hql.append(" JOIN FETCH a.estadoAsunto ");
 		hql.append(" LEFT JOIN FETCH a.fichaAceptacion ");
-		hql.append("where a.id in ");
+		hql.append(" where a.id in ");
 
 		/***
 		 * La lista de los parï¿½metros dinï¿½nmicos debe venir de la siguiente
@@ -648,7 +647,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		hql.append(" (select distinct asu.id from Asunto asu");
 
 		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
-			hql.append(", Procedimiento prc");
+			hql.append(", Procedimiento prc ");
 		}
 		if (requiereContrato(dto)) {
 			hql.append(", ProcedimientoContratoExpediente pce, ExpedienteContrato cex, Contrato cnt ");
@@ -656,6 +655,15 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (dto.getIdSesionComite() != null || dto.getIdComite() != null) {
 			hql.append(", DecisionComite dco , DDEstadoItinerario estIti ");
 		}
+
+		if (requierePrevioCDD(dto)) {
+			hql.append(", BatchAcuerdoCierreDeuda cdd ");
+		}
+
+		if (requierePostCDD(dto)) {
+			hql.append(", BatchAcuerdoCierreDeuda cdd2, DDResultadoValidacionNuse rvn ,BatchCDDResultadoNuse crn ");
+		}
+		
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
 
 		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
@@ -666,6 +674,26 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereContrato(dto)) {
 			hql.append(" and prc.id = pce.procedimiento and cex.id = pce.expedienteContrato and cex.contrato.id = cnt.id ");
 			hql.append(" and cex.auditoria." + Auditoria.UNDELETED_RESTICTION);
+		}
+
+		if (requierePrevioCDD(dto)) {
+			hql.append(" and asu.id = cdd.asunto.id ");
+                        
+			hql.append(" and cdd.id in ( ");
+			hql.append(" select max(cdd1.id) ");
+			hql.append(" from  BatchAcuerdoCierreDeuda cdd1 ");
+			hql.append(" group by cdd1.asunto.id ) ");	
+		}
+
+		if (requierePostCDD(dto)) {
+			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id ");
+			hql.append(" and asu.id = cdd2.asunto.id ");
+			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion ");
+			
+			hql.append(" and crn.id in ( ");
+			hql.append(" select max(crn1.id) ");
+			hql.append(" from  BatchCDDResultadoNuse crn1 ");
+			hql.append(" group by crn1.codigoExterno, crn1.batchAcuerdoCierreDeuda.id ) ");			
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
@@ -790,9 +818,53 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 		
 		//FILTRO ERROR CDD
-		if (dto.getComboErrorCDD()!=null && !"".equals(dto.getComboErrorCDD())) {
-			hql.append(" and asu.errorEnvioCDD = :errorCDD");
-			params.put("errorCDD", (dto.getComboErrorCDD().equals(DDSiNo.SI) ? 1 : 0));
+		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
+                        hql.append(" and cdd.fechaEntrega is null ");
+                        //Si se buscan KOs de Pivote, se debe filtrar también por fechaEntrega vacío
+                        
+			if("Todos".equals(dto.getComboErrorPreviCDD())){
+                                hql.append(" and cdd.resultadoValidacion <> 1");
+//				hql.append(" and cdd.resultadoValidacionCDD is not null");
+			}
+			else{
+                            hql.append(" and cdd.resultadoValidacion <> 1");
+                            hql.append(" and cdd.resultadoValidacionCDD.codigo = :errorPrevio");
+				params.put("errorPrevio", dto.getComboErrorPreviCDD());
+			}
+		}
+		
+		if (!Checks.esNulo(dto.getComboErrorPostCDD())) {
+			if("0".equals(dto.getComboErrorPostCDD())){
+				hql.append(" and rvn.codigo <> '0' and cdd2.fechaAlta <= crn.fechaResultado");
+			}else{
+				hql.append(" and rvn.id = :errorPost and cdd2.fechaAlta <= crn.fechaResultado ");
+				params.put("errorPost", (Long.valueOf(dto.getComboErrorPostCDD())));
+			}			
+		}
+		
+		// FECHA DESDE ENVIO PIVOTE
+		if (!Checks.esNulo(dto.getFechaEntregaDesde())) {
+			hql.append(" and cdd.fechaEntrega >= :fechaEntregaDesde");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				params.put("fechaEntregaDesde",
+						sdf1.parse(dto.getFechaEntregaDesde()));
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha entrega desde", e);
+			}
+		}
+		// FECHA HASTA ENVIO PIVOTE
+		if (!Checks.esNulo(dto.getFechaEntregaHasta())) {
+			hql.append(" and cdd.fechaEntrega <= :fechaEntregaHasta");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				Calendar c = new GregorianCalendar();
+				c.setTime(sdf1.parse(dto.getFechaEntregaHasta()));
+				c.add(Calendar.DAY_OF_YEAR, 1);
+				params.put("fechaEntregaHasta", c.getTime());
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha hasta", e);
+			}
 		}
 		
 		// FILTRO GESTION
@@ -979,6 +1051,23 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return params;
 	}
 
+	private boolean requierePrevioCDD(EXTDtoBusquedaAsunto dto) {
+		
+		if(!Checks.esNulo(dto.getComboErrorPreviCDD()) || !Checks.esNulo(dto.getFechaEntregaDesde()) || !Checks.esNulo(dto.getFechaEntregaHasta())){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean requierePostCDD(EXTDtoBusquedaAsunto dto) {
+		
+		if(!Checks.esNulo(dto.getComboErrorPostCDD())){
+			return true;
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unused")
 	private Set<String> getCodigosDeZona(DtoBusquedaAsunto dtoBusquedaAsuntos) {
 		Set<String> zonas;
 		if (dtoBusquedaAsuntos.getCodigoZona() != null
@@ -993,6 +1082,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return zonas;
 	}
 
+	@SuppressWarnings("unused")
 	private Set<String> getTiposProcedimiento(
 			DtoBusquedaAsunto dtoBusquedaAsuntos) {
 		Set<String> tiposProcedimiento = null;
@@ -1011,6 +1101,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	 * @param asuId
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoReportAnotacionAgenda> getListaTareasPendientes(Long asuId) {
 		String queryString = " select tar_tarea, usu_nombre || ' ' || usu_apellido1 || ' ' || usu_apellido2 nombre, tar.dd_tar_descripcion, tar_fecha_ini, tar_fecha_venc, tar_id, dd_tpo_descripcion "
@@ -1070,5 +1161,91 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		return listResultado;
 	}
+        
+	@Override
+	public String getMsgErrorEnvioCDD(Long idAsunto) {
 
+            String msgErrorEnvioCDD = new String();
+            String sql = new String();
+            sql =  " SELECT rvc.dd_rvc_descripcion ";
+            sql += " FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv ";
+            sql += " INNER JOIN DD_RVC_RES_VALIDACION_CDD rvc ";
+            sql += " ON cnv.dd_rvc_id               = rvc.dd_rvc_id ";
+            sql += " INNER JOIN ( ";
+            sql += "   SELECT cnv1.asu_id, max(cnv1.id_acuerdo_cierre) max_id_acuerdo_cierre ";
+            sql += "   FROM CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv1 ";
+//            sql += "   WHERE cnv1.resultado_validacion = 0 ";
+            sql += "   GROUP BY cnv1.asu_id  ";
+            sql += " ) mcnv ON cnv.id_acuerdo_cierre = mcnv.max_id_acuerdo_cierre ";
+            sql += " WHERE cnv.resultado_validacion <> 1 ";
+            sql += " AND cnv.fecha_entrega is null ";
+            sql += " AND cnv.asu_id = " + idAsunto;
+            sql += " AND ROWNUM = 1 ";
+
+            SQLQuery q = getSession().createSQLQuery(sql);
+
+            if (!q.list().isEmpty()){
+                if(!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                    msgErrorEnvioCDD = "Error validaciï¿½n CDD: " + q.list().get(0).toString();
+                }
+            }
+
+            return msgErrorEnvioCDD;
+                
+        }
+
+	@Override
+	public String getMsgErrorEnvioCDDNuse(Long idAsunto) {
+
+            String msgErrorEnvioCDD = new String();
+            String sql = new String();
+            sql =  " SELECT rvn.dd_rvn_descripcion ";
+            sql += " FROM CDD_CRN_RESULTADO_NUSE crn ";
+            sql += " INNER JOIN CNV_AUX_CCDD_PR_CONV_CIERR_DD cnv ";
+            sql += " ON crn.id_acuerdo_cierre = cnv.id_acuerdo_cierre ";
+            sql += " INNER JOIN DD_RVN_RES_VALIDACION_NUSE rvn ";
+            sql += " ON crn.crn_resultado   = rvn.dd_rvn_codigo ";
+            sql += " INNER JOIN ";
+            sql += "   (SELECT crn1.asu_id_externo, ";
+            sql += "     MAX(crn1.crn_id) max_crn_id ";
+            sql += "   FROM CDD_CRN_RESULTADO_NUSE crn1 ";
+//            sql += "   WHERE crn1.crn_resultado <> '0' ";
+            sql += "   GROUP BY crn1.asu_id_externo ";
+            sql += "   ) mcrn ";
+            sql += " ON crn.crn_id = mcrn.max_crn_id ";
+            sql += " WHERE cnv.fecha_alta <= crn.crn_fecha_result ";
+            sql += " AND rvn.dd_rvn_codigo <> '0' ";
+            sql += " AND cnv.asu_id = " + idAsunto;
+            sql += " AND ROWNUM = 1 ";            
+
+            SQLQuery q = getSession().createSQLQuery(sql);
+            
+            if (!q.list().isEmpty()){
+                if (!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
+                    msgErrorEnvioCDD = "Error NUSE CDD: " + q.list().get(0).toString();
+                }
+            }
+
+            return msgErrorEnvioCDD;
+                
+        }
+        
+	@Override
+	public String getMsgErrorEnvioCDDCabecera(Long idAsunto) {
+
+            if (!Checks.esNulo(this.getMsgErrorEnvioCDD(idAsunto))){
+                
+                return this.getMsgErrorEnvioCDD(idAsunto);
+                        
+            }else{
+                if (!Checks.esNulo(this.getMsgErrorEnvioCDDNuse(idAsunto))){
+                    
+                    return this.getMsgErrorEnvioCDDNuse(idAsunto);
+                    
+                }
+            }
+            
+            return null;
+        }
+        
 }

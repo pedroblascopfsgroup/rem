@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.asunto.dto.DtoProcedimiento;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -26,6 +26,10 @@ public interface EXTAsuntoApi {
 	public static final String EXT_BO_ES_GET_FONDO = "es.pfsgroup.recovery.ext.api.asunto.getFondo";
 	public static final String EXT_BO_ES_TIPO_GESTOR_ASIGNADO = "es.pfsgroup.recovery.ext.api.asunto.esTipoGestorAsignado";
 	public static final String BO_ZONA_MGR_GET_ZONAS_POR_NIVEL_BY_CODIGO = "es.pfsgroup.recovery.ext.api.asunto.getZonasPorNivel";
+	public static final String EXT_BO_MSG_ERROR_ENVIO_CDD = "asuntosManager.getMsgErrorEnvioCDD";
+    public static final String EXT_BO_MSG_ERROR_ENVIO_CDD_NUSE = "asuntosManager.getMsgErrorEnvioCDDNuse";
+    public static final String EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO = "asuntosManager.getMsgErrorEnvioCDDCabecera";
+
 	
 	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORES)
 	public List<GestorDespacho> getGestoresAsunto(Long idAsunto);
@@ -59,7 +63,7 @@ public interface EXTAsuntoApi {
 	public List<EXTDDTipoGestor> getListTiposGestorAsuntoUsuarioLogado(Long idAsunto);
 
 	@BusinessOperationDefinition(BO_ASU_MGR_OBTENER_ACTUACIONES_ASUNTO_OPTIMIZADO)
-	List<DtoProcedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId);
+	List<Procedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId);
 
 	@BusinessOperationDefinition(EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params);
@@ -80,9 +84,28 @@ public interface EXTAsuntoApi {
 	
 	@BusinessOperationDefinition(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
 	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor);
+        
+   /**
+   * Indica sobre el Asunto si el proceso de envio a cierre de deuda man/auto ha generado errores de validaci�n
+   * @return Mensaje de error.
+   */
+	@BusinessOperationDefinition(EXT_BO_MSG_ERROR_ENVIO_CDD)
+	public String getMsgErrorEnvioCDD(Long idAsunto);
+        
+    /**
+    * Indica sobre el Asunto si el proceso de envio a cierre de deuda man/auto ha generado errores en NUSE
+    * @return Mensaje de error.
+    */
+	@BusinessOperationDefinition(EXT_BO_MSG_ERROR_ENVIO_CDD_NUSE)
+	public String getMsgErrorEnvioCDDNuse(Long idAsunto);
 
 	@BusinessOperationDefinition(BO_ZONA_MGR_GET_ZONAS_POR_NIVEL_BY_CODIGO)
 	List<DDZona> getZonasPorNivel(Integer codigoNivel);
 
-	
+    /**
+    * Eval�a el mensaje de error de envio a cierre de deuda para mostrar en cabecera asunto: Validaci�n / NUSE
+    * @return Mensaje de error.
+    */
+	@BusinessOperationDefinition(EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO)
+	public String getMsgErrorEnvioCDDCabecera(Long idAsunto);
 }

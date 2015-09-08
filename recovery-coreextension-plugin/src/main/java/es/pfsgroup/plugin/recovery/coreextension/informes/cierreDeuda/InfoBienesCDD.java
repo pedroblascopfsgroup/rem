@@ -1,6 +1,5 @@
-package es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.cierreDeuda;
+package es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda;
 
-import java.util.List;
 
 public class InfoBienesCDD {
 

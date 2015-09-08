@@ -245,11 +245,6 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DSPJ");
 	            }
 	            
-	            def comprobarExisteDocumentoMCC = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "MCC");
-	            }
-	            
 	            def comprobarExisteDocumentoSAP = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SAP");

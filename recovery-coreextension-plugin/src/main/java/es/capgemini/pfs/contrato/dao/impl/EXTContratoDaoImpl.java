@@ -113,8 +113,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			Usuario usuLogado, Map<String, Object> params) {
 		StringBuffer hql = new StringBuffer();
 
-		final boolean cruzaMovimientos = (dto.existenCamposMinMaxCargados() || dto
-				.isInclusion());
+		final boolean cruzaMovimientos = (dto.existenCamposMinMaxCargados()) ; //|| dto.isInclusion());
 		final boolean cruzaPersonas = ((dto.getNombre() != null && dto
 				.getNombre().trim().length() > 0)
 				|| (dto.getApellido1() != null && dto.getApellido1().trim()
@@ -176,32 +175,35 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 																		// mov.
 		}
 		if (cruzaPersonas) {
-			hql.append(" and cp.persona = p and cp.contrato = c and cp.auditoria.borrado = 0 ");
-			hql.append(" and cp.tipoIntervencion.titular = true and cp.orden = 1 ");
+			hql.append(" and cp.persona = p and cp.contrato = c ");
+                        //hql.append(" and cp.auditoria.borrado = 0 ");
+			//hql.append(" and cp.tipoIntervencion.titular = true and cp.orden = 1 ");
 		}
 		if (cruzaExpediente || cruzaAsuntos) {
-			hql.append(" and cex.auditoria.borrado = 0 and cex.contrato = c and cex.expediente = e ");
+                        //hql.append(" and cex.auditoria.borrado = 0 ");
+			hql.append(" and cex.contrato = c and cex.expediente = e ");
 		}
 		if (cruzaAsuntos) {
-			hql.append(" and asu.auditoria.borrado = 0 and asu.expediente = e ");
+                        //hql.append(" and asu.auditoria.borrado = 0 ");
+			hql.append(" and asu.expediente = e ");
 		}
 
 		// *** LAS CONDICIONES ***
 		// En caso de que sea una b�squeda para una inclusi�n de contratos a un
 		// expediente (F3_WEB-10)
-		if (dto.isInclusion()) {
-			String columnaRelacion = "c.id";
+//		if (dto.isInclusion()) {
+//			String columnaRelacion = "c.id";
 			// Que no est� en procedimientos (mirando si son o no cancelados)
-			hql.append(" and c.id not in (")
-					.append(getHqlContratosEnProcedimientos(columnaRelacion))
-					.append(")");
+//			hql.append(" and c.id not in (")
+//					.append(getHqlContratosEnProcedimientos(columnaRelacion))
+//					.append(")");
 			// Que no est� en expedientes (mirando si son o no cancelados)
-			hql.append(" and c.id not in (")
-					.append(getHqlContratosEnExpedientes(columnaRelacion))
-					.append(")");
+//			hql.append(" and c.id not in (")
+//					.append(getHqlContratosEnExpedientes(columnaRelacion))
+//					.append(")");
 			// Que sea activo o pasivo negativo
-			hql.append(" and mov.riesgo > 0 ");
-		}
+//			hql.append(" and mov.riesgo > 0 ");
+//		}
 		// Numero de contrato
 		if (dto.getNroContrato() != null
 				&& dto.getNroContrato().trim().length() > 0) {
@@ -259,9 +261,9 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				&& dto.getDescripcionExpediente().trim().length() > 0) {
 			hql.append(" and UPPER(e.descripcionExpediente) like '%"
 					+ dto.getDescripcionExpediente().toUpperCase() + "%' ");
-			hql.append(" and e.estadoExpediente.codigo NOT IN ("
-					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO + ", "
-					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO + ") ");
+//			hql.append(" and e.estadoExpediente.codigo NOT IN ("
+//					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO + ", "
+//					+ DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO + ") ");
 		}
 		// Nombre del Asunto
 		if (dto.getNombreAsunto() != null
@@ -489,11 +491,17 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	}
 
 	private String hqlFiltroEsGestorAsunto(Usuario usuLogado) {
-		String monogestor = "(asu.id in (select a.id from Asunto a where a.gestor.usuario.id = "
+//		String monogestor = "(asu.id in (select a.id from Asunto a where a.gestor.usuario.id = "
+//				+ usuLogado.getId() + "))";
+//		String multigestor = "(asu.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "
+//				+ +usuLogado.getId() + "))";
+//		return "and (" + monogestor + " or " + multigestor + ")";
+		String monogestor = "(EXISTS (select 1 from Asunto a where a.id = asu.id and a.gestor.usuario.id = "
 				+ usuLogado.getId() + "))";
-		String multigestor = "(asu.id in (select gaa.asunto.id from EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = "
+		String multigestor = "(EXISTS (select 1 from EXTGestorAdicionalAsunto gaa where gaa.asunto.id = asu.id and gaa.gestor.usuario.id = "
 				+ +usuLogado.getId() + "))";
 		return "and (" + monogestor + " or " + multigestor + ")";
+
 	}
 
 	/**

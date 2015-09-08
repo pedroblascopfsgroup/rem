@@ -179,10 +179,17 @@ var asistencia = items[2 + offset];
 var instruccionesSup = items[3 + offset];
 var observacionesSup = items[4 + offset];
 
-fechaJunta.setValue("${valores['P29_autoApertura']['fechaJunta']}");
-asistencia.setValue("${valores['P29_dictarInstrucciones']['comboAsistir']}");
-instruccionesSup.setValue("${valores['P29_dictarInstrucciones']['instrucciones']}")
-observacionesSup.setValue("${valores['P29_dictarInstrucciones']['observaciones']}");
+//P408: Fase Convenio nuevo -- Correspondencia de valores P29 - P408
+fechaJunta.setValue("${valores['P408_autoApertura']['fechaJunta']}");
+asistencia.setValue("${valores['P408_lecturaAceptacionInstrucciones']['comboAceptacion']}");
+instruccionesSup.setValue("${valores['P408_lecturaAceptacionInstrucciones']['propuestaInstrucciones']}")
+observacionesSup.setValue("${valores['P408_lecturaAceptacionInstrucciones']['observaciones']}");
+
+//P29: Fase Convenio antiguo (no se utiliza)
+//fechaJunta.setValue("${valores['P29_autoApertura']['fechaJunta']}");
+//asistencia.setValue("${valores['P29_dictarInstrucciones']['comboAsistir']}");
+//instruccionesSup.setValue("${valores['P29_dictarInstrucciones']['instrucciones']}")
+//observacionesSup.setValue("${valores['P29_dictarInstrucciones']['observaciones']}");
 
 //fechaJunta.setDisabled(true);
 //asistencia.setDisabled(true);

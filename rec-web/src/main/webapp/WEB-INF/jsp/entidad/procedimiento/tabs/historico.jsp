@@ -31,7 +31,6 @@
 		,nombreTab : 'historico'
 		,listeners: {
             activate: function( self ) {
-            	debugger;
                 if(!entidad.get("data").tieneProcurador  || !entidad.get("data").activoDespachoIntegral){
                 	historicoTabPanel.hideTabStripItem(historicoResolucionesGrid);
                 	historicoTabPanel.hideTabStripItem(historicoProcedimientoGrid);
@@ -109,7 +108,6 @@
 
   //Las tareas que se deben implementar son: tareas externas del bpm, recursos, acuerdos, decisiones, prorrogas y comunicaciones
 	var funcionConsultar = function(){
-		debugger;
 		
 		if(!entidad.get("data").tieneProcurador  || !entidad.get("data").activoDespachoIntegral){
 			var rec = historicoGrid.getSelectionModel().getSelected();
@@ -455,8 +453,6 @@
 	expander.on('expand', expandedRow);
    
    var funcionConsultarRes = function(){
-		//var recStore = grid.getStore().getAt(rowIndex);
-		debugger;
 		var recStore = historicoResolucionesGrid.getSelectionModel().getSelected();
 		if (recStore == null) return;
 		

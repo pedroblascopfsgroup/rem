@@ -8,13 +8,14 @@
 	<input name="isGestor" type="java.lang.Boolean"/>
 	<input name="isSupervisor" type="java.lang.Boolean"/>
 	<input name="proponer" type="java.lang.Boolean"/>
+	<input name="idArquetipo" type="java.lang.Long"/>
 
 	<decision-state id="newOrEdit">
 		<if test="idExpediente==null" then="crearExpedienteManual" else="obtenerExpedienteManual"/>
 	</decision-state>
 
 	<action-state id="crearExpedienteManual">
-			<evaluate expression="executor.execute('expedienteManager.crearExpedienteManual', idPersona, idContrato)" result="flowScope.expediente"/>
+			<evaluate expression="executor.execute('expedienteManager.crearExpedienteManualArq', idPersona, idContrato, idArquetipo)" result="flowScope.expediente"/>
 			<transition to="formulario" />
 	</action-state>
 	
@@ -29,6 +30,7 @@
     		<evaluate expression="executor.execute('dictionaryManager.getList', 'DDMotivoExpedienteManual')" result="flowScope.motivos"/>
     		<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona"/>
     		<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', expediente.id)" result="flowScope.propuesta"/>
+    		<set name="flowScope.idArquetipo" value="idArquetipo" />
 			<set name="flowScope.view" value="'expedientes/creacionExpediente_2'" />
 
     	</on-entry>

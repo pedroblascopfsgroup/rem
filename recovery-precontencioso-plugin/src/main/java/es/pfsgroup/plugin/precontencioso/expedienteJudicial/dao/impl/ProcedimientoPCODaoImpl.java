@@ -16,6 +16,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
@@ -55,6 +56,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	public List<HashMap<String, Object>> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
 
+		// Distinct por procedimiento id
+		select.add(Projections.distinct(Projections.property("procedimiento.id").as("id")));
+
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
@@ -77,6 +81,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
 
+		addPaginationToQuery(filtro, query);
+
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		return query.list();
@@ -98,6 +104,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
 
+		addPaginationToQuery(filtro, query);
+
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		return query.list();
@@ -118,8 +126,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
-
 		query.createAlias("liquidacion.contrato", "liqcontrato");
+
+		addPaginationToQuery(filtro, query);
 
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
@@ -141,12 +150,22 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
-
 		query.createAlias("burofax.estadoBurofax", "estadoBurofax");
+
+		addPaginationToQuery(filtro, query);
 
 		query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		return query.list();
+	}
+
+	/**
+	 * Añade paginacion a una query
+	 */
+	private void addPaginationToQuery(WebDto filtro, Criteria query) {
+		// Pagination
+		query.setMaxResults(filtro.getLimit());
+		query.setFirstResult(filtro.getStart());
 	}
 
 	/**
@@ -173,6 +192,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		// From
 		query.createCriteria("procedimiento", "procedimiento");
+		query.createAlias("procedimiento.asunto", "asunto");
 		query.createCriteria("tipoPreparacion", "tipoPreparacion", CriteriaSpecification.LEFT_JOIN);
 		query.createCriteria("tipoProcPropuesto", "tipoProcPropuesto", CriteriaSpecification.LEFT_JOIN);
 
@@ -180,6 +200,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		List<Criterion> where = new ArrayList<Criterion>();
 
 		where.addAll(restriccionesDatosProcedimiento(filtro, query));
+		where.addAll(restriccionesDatosActores(filtro, query));
 		where.addAll(restriccionesDatosPersonas(filtro, query));
 		where.addAll(restriccionesDatosContratos(filtro, query));
 		where.addAll(restriccionesDatosDocumentos(filtro, query));
@@ -190,10 +211,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		for (Criterion condicion : where) {
 			query.add(condicion);
 		}
-
-		// Pagination
-		query.setMaxResults(filtro.getLimit());
-		query.setFirstResult(filtro.getStart());
 
 		query.addOrder(Order.asc("id")); // workaround
 
@@ -254,6 +271,32 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consulta
 	 */
+	private List<Criterion> restriccionesDatosActores(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		if (!filtro.filtroGestorInformado()) {
+			return where;
+		}
+
+		query.createAlias("asunto.gestoresAsunto", "gaa");
+		query.createAlias("gaa.tipoGestor", "gaaTipoGestor");
+		query.createAlias("gaa.gestor", "gaaGestor");
+		query.createAlias("gaaGestor.usuario", "gaaUsuario");
+		query.createAlias("gaaGestor.despachoExterno", "gaaDespachoExterno");
+
+		where.add(Restrictions.eq("gaaTipoGestor.id", Long.valueOf(filtro.getProTipoGestor())));
+		where.add(Restrictions.eq("gaaUsuario.id", Long.valueOf(filtro.getProGestor())));
+		where.add(Restrictions.eq("gaaDespachoExterno.id", Long.valueOf(filtro.getProDespacho())));
+
+		return where;
+	}
+	
+	/**
+	 * Metodo de ayuda
+	 * @param filtro
+	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @return devuelve las restricciones aplicar a la consulta
+	 */
 	private List<Criterion> restriccionesDatosPersonas(FiltroBusquedaProcedimientoPcoDTO filtro, Criteria query) {	
 		List<Criterion> where = new ArrayList<Criterion>();
 
@@ -261,7 +304,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			return where;
 		}
 
-		query.createAlias("procedimiento.personasAfectadas", "persona", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("procedimiento.personasAfectadas", "persona");
 
 		if (!StringUtils.emtpyString(filtro.getConNombre())) {
 			where.add(Restrictions.like("persona.nombre", filtro.getConNombre(), MatchMode.ANYWHERE).ignoreCase());
@@ -302,8 +345,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			return where;
 		}
 
-		query.createAlias("procedimiento.asunto", "asunto");
-		query.createAlias("asunto.gestoresAsunto", "gaa");
 		query.createAlias("asunto.expediente", "expediente");
 		query.createAlias("expediente.contratos", "expcontrato");
 		query.createAlias("expcontrato.contrato", "contrato");

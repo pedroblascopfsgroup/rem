@@ -117,6 +117,17 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	}
 
 	/**
+	 * Comprueba si está informado el filtro de gestor
+	 */
+	public Boolean filtroGestorInformado() {
+		Boolean filtroGestorInformado = Boolean.valueOf(!StringUtils.emtpyString(proTipoGestor)
+			&& !StringUtils.emtpyString(proDespacho)
+			&& !StringUtils.emtpyString(proGestor));
+
+		return filtroGestorInformado;
+	}
+
+	/**
 	 * Comprueba si está informado el filtro de documento
 	 */
 	public Boolean filtroDocumentoInformado() {

@@ -101,8 +101,12 @@ public class BurofaxController {
 				
 				if(burofax.getDemandado().getDirecciones().size()>0){
 				    for(Direccion direccion : burofax.getDemandado().getDirecciones()){
-
-				    		dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
+				    		if(!Checks.esNulo(burofax.getContrato())){
+				    			dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
+				    		}
+				    		else{
+				    			dto.setId(burofax.getId()+burofax.getDemandado().getId()+direccion.getId());
+				    		}
 				    		dto.setIdCliente(burofax.getDemandado().getId());
 				    		dto.setIdDireccion(direccion.getId());
 				    		dto.setIdBurofax(burofax.getId());

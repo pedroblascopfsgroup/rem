@@ -27,7 +27,7 @@ var documentoPcoRecord = Ext.data.Record.create([
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
 	{name: 'docEstado'},
-<!-- 	{name: 'fechaSolicitud'}, -->	
+ 	{name: 'fechaSolicitud'},
 	{name: 'docUltimaRespuesta'},
 	{name: 'docUltimoActor'},
 	{name: 'docFechaResultado'},

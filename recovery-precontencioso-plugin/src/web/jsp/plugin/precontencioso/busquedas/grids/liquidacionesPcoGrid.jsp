@@ -18,7 +18,7 @@ var OK_KO_Render = function(value, meta, record) {
 <%-- Grid --%>
 
 var liquidacionPcoRecord = Ext.data.Record.create([
-		{name: 'prcId'},
+	{name: 'prcId'},
 	{name: 'codigo'},
 	{name: 'nombreExpediente'},
 	{name: 'estadoExpediente'},

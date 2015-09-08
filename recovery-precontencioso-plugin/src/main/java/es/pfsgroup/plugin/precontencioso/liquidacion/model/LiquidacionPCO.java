@@ -145,7 +145,7 @@ public class LiquidacionPCO implements Serializable, Auditable {
 		"        AND pco_liq_liquidaciones.pco_liq_fecha_solicitud IS NOT NULL " +
 		"        AND NOT ( dd_pco_liq_estado.dd_pco_liq_codigo = '" + DDEstadoLiquidacionPCO.DESCARTADA + "' " +
 		"                   OR dd_pco_liq_estado.dd_pco_liq_codigo = '" + DDEstadoLiquidacionPCO.CONFIRMADA + "' )) ")
-	private Integer diasGestion;
+	private Integer diasEnGestion;
 
 	/*
 	 * GETTERS & SETTERS

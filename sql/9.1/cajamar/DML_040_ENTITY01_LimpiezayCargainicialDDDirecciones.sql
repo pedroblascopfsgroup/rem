@@ -254,6 +254,3 @@ EXIT;
 
 
 
-
-select *
-from DD_TVD_TIPO_VIA_DIRECCION

@@ -413,7 +413,7 @@
 		var idAcuerdo = rec.get('idAcuerdo');
 		acuerdoSeleccionado = idAcuerdo;
 		indexAcuerdoSeleccionado = rowIndex;
-		
+		panel.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando" />','x-mask-loading');
 		//Muestro o no los botones que corresponden
 		var codigoEstado = rec.get('codigoEstado');
 		

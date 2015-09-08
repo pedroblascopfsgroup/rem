@@ -345,11 +345,12 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
   	   	,border:false
 		,layout : 'table'
 		,layoutConfig:{
-			columns:1
+			columns:2
 		}
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [
-		 	{items:[comboTipoAcuerdo,comboSubTipoAcuerdo,comboTipoProducto],width:450}
+		 	{items:[comboTipoAcuerdo,comboSubTipoAcuerdo],width:450}
+		 	,{items:[comboTipoProducto],width:450}
 		]
 	});	
 	
@@ -542,8 +543,8 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
    var panelAltaTermino=new Ext.Panel({
 		layout:'form'
 		,border : false
-		,bodyStyle:'padding:5px;margin:5px'
-		,width: 800
+		,bodyStyle:'padding:2px;margin:2px'
+		,width: 700
 		,height: 400
 		,autoScroll: true
 		,nombreTab : 'altaTermino'

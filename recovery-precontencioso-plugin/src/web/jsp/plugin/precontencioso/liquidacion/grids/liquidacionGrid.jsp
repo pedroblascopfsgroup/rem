@@ -188,6 +188,7 @@ var cmLiquidacion = new Ext.grid.ColumnModel([
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.gastos" text="**Gastos" />', dataIndex: 'gastos'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.impuestos" text="**Impuestos" />', dataIndex: 'impuestos'},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.total" text="**Total" />', dataIndex: 'total'},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.solicitante" text="**Solicitante" />', dataIndex: 'solicitante', hidden: true},
 	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.apoderado" text="**Apoderado" />', dataIndex: 'apoderado', width: 200}
 ]);
 
@@ -208,7 +209,6 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	collapsible: true,
 	sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 });
-
 
 gridLiquidaciones.on('rowclick', function(grid, rowIndex, e) {
 	actualizarBotonesLiquidacion();
@@ -238,7 +238,7 @@ var actualizarBotonesLiquidacion = function() {
 	}
 
 	switch(estadoCodigo) {
-		
+
 		case 'PEN':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(false);
@@ -246,7 +246,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 			break;
-			
+
 		case 'SOL':
 			btnSolicitar.setDisabled(true);
 			btnEditarValores.setDisabled(true);
@@ -257,7 +257,7 @@ var actualizarBotonesLiquidacion = function() {
 
 		case 'DES':
 			btnSolicitar.setDisabled(false);
-			btnEditarValores.setDisabled(true);
+			btnEditarValores.setDisabled(false);
 			btnConfirmar.setDisabled(true);
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);

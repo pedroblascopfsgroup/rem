@@ -661,11 +661,19 @@
 	
 	});
 	
+	var btnDescargarPlantillaInstrucciones = new Ext.Button({
+			text : '<s:message code="plugin.nuevoModeloBienes.cargas.agregarrr" text="**Plantilla Instrucciones" />'
+			,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+			
+	});
+	
 	var btnAccionesSubasta = new Ext.Button({
       text    : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnAccionesSobreSubastas" text="**Acciones sobre subastas" />',
       style   : 'position:absolute;right:10px;top:5px',
+      disabled : true,
       menu : {
-      	items: [btnAddRelacionContratoBien,btnBorrarRelacionContratoBien,btnAgregarBienCargas,btnEditarRevisionCargas
+      	items: [btnDescargarPlantillaInstrucciones,btnAddRelacionContratoBien,btnBorrarRelacionContratoBien,btnAgregarBienCargas,btnEditarRevisionCargas
 
       		]}
      })	
@@ -754,7 +762,8 @@
        	        	
        	        		// Al seleccionar un bien, sino estamos en Sareb lo añadimos al saco de bienes, comprobando que no esté ya.			
 			            rowselect: function( sel, rowIndex, record ) {
-
+							//Habilitamos operaciones masivas
+							btnAccionesSubasta.setDisabled(false);
 			            	if(!isAsuntoPropiedadBankia()) {
 				            	var idBien = record.get("idBien");
 			            		var pos = bienesSeleccionados.indexOf(idBien);
@@ -763,7 +772,7 @@
 			            		}
 				            }
 			            // Al deseleccionar un bien	lo quitamos del saco de bienes
-			            }, rowdeselect: function( sel, rowIndex, record ) {  
+			            }, rowdeselect: function( sel, rowIndex, record ) {
 			            	if(!isAsuntoPropiedadBankia()) {   	
 				            	var idBien = record.get("idBien");
 			            		var pos = bienesSeleccionados.indexOf(idBien);
@@ -771,6 +780,12 @@
 			            			bienesSeleccionados.splice(pos,1);
 			            		}	            		
 			            	}
+			            	
+			            	//Si no hay bienes seleccionados desabilitamos operaciones masivas
+			            	
+			            	if(bienesSeleccionados.length == 0){
+			            		btnAccionesSubasta.setDisabled(true);
+			            	}  
 
 			            }
 					}

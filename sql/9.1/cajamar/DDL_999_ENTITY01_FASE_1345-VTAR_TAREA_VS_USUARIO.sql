@@ -350,8 +350,5 @@ EXCEPTION
           RAISE;          
 
 END;
-
 /
-
-EXIT
-
+EXIT;

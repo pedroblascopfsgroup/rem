@@ -329,7 +329,7 @@ DECLARE
 	,T_TIPO_VALOR('H048','H048_RegistrarCelebracionVista','CJ-814','CJ-GAREO')
 	,T_TIPO_VALOR('H048','H048_RegistrarRecepcionDoc','CJ-814','CJ-GAREO')
 	,T_TIPO_VALOR('H048','H048_RegistrarResolucion','CJ-814','CJ-GAREO')
-	,T_TIPO_VALOR('H048','H048_ResolucionDecision','CJ-814','CJ-GAREO')
+	,T_TIPO_VALOR('H048','H048_ResolucionDecision','CJ-819','')
 	,T_TIPO_VALOR('H048','H048_ResolucionFirme','CJ-814','CJ-GAREO')
 	,T_TIPO_VALOR('H048','H048_SolicitudRequerimientoDocOcupantes','CJ-814','CJ-GAREO')
 	,T_TIPO_VALOR('H048','H048_TrasladoDocuDeteccionOcupantes','CJ-814','CJ-GAREO')

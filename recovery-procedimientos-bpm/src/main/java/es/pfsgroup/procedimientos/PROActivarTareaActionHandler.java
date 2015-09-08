@@ -11,6 +11,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.procedimientos.recoveryapi.ProcedimientoApi;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 public class PROActivarTareaActionHandler extends PROBaseActionHandler implements PROJBPMEnterEventHandler{
 
@@ -22,8 +23,11 @@ public class PROActivarTareaActionHandler extends PROBaseActionHandler implement
 	@Autowired
 	ApiProxyFactory proxyFactory;
 
+	@Autowired
+	IntegracionBpmService bpmIntegrationService;
+	
 	/**
-     * Override del método onEnter. Se ejecuta al entrar al nodo
+     * Override del mï¿½todo onEnter. Se ejecuta al entrar al nodo
      */
     public void onEnter(ExecutionContext executionContext) {
         //Seteamos el tiempo de aplazamiento
@@ -54,6 +58,9 @@ public class PROActivarTareaActionHandler extends PROBaseActionHandler implement
         setVariable(BPMContants.BPM_DETENIDO, 0L, executionContext);
         
         cambiaEstadoProcedimientoAActivado(tareaExterna);
+        
+        // IntegraciÃ³n
+        bpmIntegrationService.notificaActivarTarea(tareaExterna);
         
     }
 	

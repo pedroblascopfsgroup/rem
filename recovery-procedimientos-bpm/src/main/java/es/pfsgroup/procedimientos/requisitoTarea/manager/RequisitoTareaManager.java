@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.web.genericForm.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -29,7 +29,7 @@ public class RequisitoTareaManager implements RequisitoTareaApi {
 	@BusinessOperation(BO_EXISTE_REQUISITO_TAREA_TAREA_PROCEDIMIENTO)
 	@Transactional(readOnly = true)
 	public RequisitoTarea existeRequisito(Long idTareaProcedimiento) {
-		// NOTA. Como puede ser que en base de datos haya más de unrequisito
+		// NOTA. Como puede ser que en base de datos haya mï¿½s de unrequisito
 		// para la tarea se devuelve el primer elemento de los encontrados
 		List<RequisitoTarea> requisitos = genericDao.getList(RequisitoTarea.class, genericDao.createFilter(FilterType.EQUALS, "tareaProcedimiento.id", idTareaProcedimiento),
 				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
@@ -52,9 +52,9 @@ public class RequisitoTareaManager implements RequisitoTareaApi {
 		TareaExterna texRequerida = getTareaExterna(idProcedimiento, tpRequerida);
 
 		if (texRequerida != null) {
-			// NOTA. Para evitar que, por errores en la generación de los BPM,
+			// NOTA. Para evitar que, por errores en la generaciï¿½n de los BPM,
 			// se puedan devolver resultados duplicados, obtenemos una lista y
-			// comprobamos que esté relleno al menos uno de los valores.
+			// comprobamos que estï¿½ relleno al menos uno de los valores.
 			List<TareaExternaValor> requeridos = genericDao.getList(TareaExternaValor.class, genericDao.createFilter(FilterType.EQUALS, "tareaExterna.id", texRequerida.getId()),
 					genericDao.createFilter(FilterType.EQUALS, "nombre", campoRequerido.getNombre()));
 			if (!Checks.estaVacio(requeridos)) {

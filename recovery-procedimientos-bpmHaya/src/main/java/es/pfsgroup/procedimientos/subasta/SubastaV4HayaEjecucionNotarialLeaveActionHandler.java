@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.procedimientos.model.DDTipoRespuestaElevacionSareb;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 //public class SubastaV4HayaEjecucionNotarialLeaveActionHandler extends SubastaV4LeaveActionHandler {
 public class SubastaV4HayaEjecucionNotarialLeaveActionHandler extends PROGenericLeaveActionHandler {	
@@ -53,8 +54,11 @@ public class SubastaV4HayaEjecucionNotarialLeaveActionHandler extends PROGeneric
 	@Autowired
 	private JBPMProcessManager jbpmUtil;
 
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+	
 	private ExecutionContext executionContext;
-
+	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
 
@@ -164,6 +168,8 @@ private void avanzamosEstadoSubasta() {
 		}
 
 		genericDao.save(Subasta.class, sub);		
+		bpmIntegracionService.enviarDatos(sub);
+
 	}
 	
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {

@@ -81,7 +81,7 @@ END;
 
 
 CREATE OR REPLACE FUNCTION RSR_PASO2 (v_RSR_NOMBRE_SCRIPT IN VARCHAR2,
-v_RSR_FECHACREACION IN VARCHAR2) RETURN VARCHAR2
+v_RSR_FECHACREACION IN VARCHAR2, v_RSR_ESQUEMA IN VARCHAR2) RETURN VARCHAR2
 
 IS
 
@@ -89,28 +89,29 @@ v_count number(3);
 v_schema varchar2(30) := '#ESQUEMA#';
 v_sql varchar2(4000);
 
-V_RESULTADO VARCHAR2(20) := 'OK';
+v_RESULTADO VARCHAR2(20) := 'OK';
 
 BEGIN
 
     DBMS_OUTPUT.PUT_LINE('[START] Comprobar si el script ' || v_RSR_NOMBRE_SCRIPT || 
       ' con fecha de creacion ' || v_RSR_FECHACREACION || 
+      ' y esquema ' || v_RSR_ESQUEMA || 
       ' esta registrado como ejecutado en RSR_REGISTRO_SQLS');
     
     EXECUTE IMMEDIATE 'select count(1) from ' || v_schema || '.RSR_REGISTRO_SQLS WHERE RSR_NOMBRE_SCRIPT=''' || v_RSR_NOMBRE_SCRIPT 
-      || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || ''' AND RSR_RESULTADO=''OK''' into v_count;
+      || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || ''' AND RSR_ESQUEMA = ''' || v_RSR_ESQUEMA || ''' AND RSR_RESULTADO=''OK''' into v_count;
     
     if v_count > 0 then
-      DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || 
+      DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' || v_RSR_FECHACREACION || ' y esquema ' || v_RSR_ESQUEMA ||
      ' YA EJECUTADO');
-      V_RESULTADO := 'YA_EXISTE';
+      v_RESULTADO := 'YA_EXISTE';
     else 
       DBMS_OUTPUT.PUT_LINE('[INFO] Script ' || v_RSR_NOMBRE_SCRIPT || 
         ' con fecha de creación ' || v_RSR_FECHACREACION || 
         ' No se ha ejecutado');
     end if;
     
-    RETURN (V_RESULTADO);
+    RETURN (v_RESULTADO);
   
     EXCEPTION
          WHEN OTHERS THEN
@@ -145,10 +146,11 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[START] Inserción inicial de los datos de ejecución del script ' 
   || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' 
-  || v_RSR_FECHACREACION || ' en RSR_REGISTRO_SQLS');
+  || v_RSR_FECHACREACION || ' con esquema ' 
+  || v_RSR_ESQUEMA_EJECUCION || ' en RSR_REGISTRO_SQLS');
 
 EXECUTE IMMEDIATE 'DELETE from ' || v_schema || '.RSR_REGISTRO_SQLS WHERE RSR_NOMBRE_SCRIPT=''' || v_RSR_NOMBRE_SCRIPT 
-  || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || ''' AND (RSR_RESULTADO IS NULL OR RSR_RESULTADO=''KO'')';
+  || ''' AND RSR_FECHACREACION = ''' || v_RSR_FECHACREACION || ''' AND RSR_ESQUEMA = ''' || v_RSR_ESQUEMA_EJECUCION || ''' AND (RSR_RESULTADO IS NULL OR RSR_RESULTADO=''KO'')';
 
 EXECUTE IMMEDIATE 'INSERT INTO ' || v_schema || '.RSR_REGISTRO_SQLS ' ||
   '(RSR_ID, RSR_NOMBRE_SCRIPT, RSR_FECHACREACION, RSR_ESQUEMA, RSR_AUTOR, RSR_ARTEFACTO, ' ||
@@ -173,6 +175,7 @@ END;
 CREATE OR REPLACE PROCEDURE RSR_PASO4 (
 v_RSR_NOMBRE_SCRIPT IN VARCHAR2,
 v_RSR_FECHACREACION IN VARCHAR2,
+v_RSR_ESQUEMA_EJECUCION IN VARCHAR2,
 v_RSR_RESULTADO IN VARCHAR2,
 v_RSR_ERROR_SQL IN VARCHAR2
 ) IS
@@ -186,14 +189,16 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[START] Actualización final de los datos de ejecución del script ' 
   || v_RSR_NOMBRE_SCRIPT || ' con fecha de creación ' 
-  || v_RSR_FECHACREACION || ' en RSR_REGISTRO_SQLS');
+  || v_RSR_FECHACREACION || ' con esquema ' 
+  || v_RSR_ESQUEMA_EJECUCION || ' en RSR_REGISTRO_SQLS');
 
 EXECUTE IMMEDIATE 'UPDATE ' || v_schema || '.RSR_REGISTRO_SQLS SET ' ||
   'RSR_RESULTADO=''' || v_RSR_RESULTADO || ''',' ||
   'RSR_ERROR_SQL=''' || v_RSR_ERROR_SQL || ''',' ||
   'RSR_FIN=SYSDATE ' || 
   'WHERE RSR_NOMBRE_SCRIPT=''' || v_RSR_NOMBRE_SCRIPT || ''' AND ' ||
-  'RSR_FECHACREACION=''' || v_RSR_FECHACREACION || '''';
+  'RSR_FECHACREACION=''' || v_RSR_FECHACREACION || ''' AND ' ||
+  'RSR_ESQUEMA=''' || v_RSR_ESQUEMA_EJECUCION || '''';
 
 EXCEPTION
      WHEN OTHERS THEN

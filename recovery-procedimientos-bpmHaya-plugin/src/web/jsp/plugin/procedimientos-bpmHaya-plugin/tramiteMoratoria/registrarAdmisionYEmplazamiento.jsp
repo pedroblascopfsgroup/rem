@@ -59,9 +59,11 @@ cb_admision.on('select', function(){
 	
 	if(cb_admision.getValue() == '01') {//si
 		cb_vista.setDisabled(false);
+		cb_vista.allowBlank = false;
 	}
 	else if(cb_admision.getValue() == '02') {//no
 		cb_vista.setDisabled(true);
+		cb_vista.allowBlank = true;
 		f_senyalamiento.setDisabled(true);
 		f_senyalamiento.setValue('');
 	}

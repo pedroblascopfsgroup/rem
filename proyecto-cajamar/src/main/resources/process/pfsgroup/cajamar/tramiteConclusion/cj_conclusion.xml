@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="cj_conclusion"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+
+	<start-state name="Inicio">
+		<transition to="H039_registrarCausaConclusion"></transition>
+	</start-state>
+
+
+	<state name="H039_registrarCausaConclusion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H039_registrarInformeAdmConcursal" name="avanzaBPM"></transition>
+		<transition to="H039_registrarCausaConclusion" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H039_registrarInformeAdmConcursal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H039_registrarCausaConclusion" name="vueltaAtras"></transition>
+		<transition to="H039_registrarInformeAdmConcursal" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H039_registrarConclusionConcurso" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H039_registrarConclusionConcurso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H039_registrarConclusionConcurso" name="activarAlerta"></transition>
+		<transition to="H039_registrarConclusionConcursoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H039_registrarInformeAdmConcursal" name="vueltaAtras"></transition>
+	</state>
+
+	<decision name="H039_registrarConclusionConcursoDecision" expression="#{H039_registrarConclusionConcursoDecision}">
+		<transition to="H039_ConclusionDecision" name="noConcluye"></transition>
+		<transition to="Fin" name="concluye"></transition>
+	</decision>
+
+	<node name="H039_ConclusionDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
+		<transition to="Fin"></transition>
+	</node>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

@@ -178,7 +178,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 
 		MSVDtoResultadoSubidaFicheroMasivo resultado = new MSVDtoResultadoSubidaFicheroMasivo();
 		
-		//Si el idProceso(idResolucion) es nulo creamos una nueva resolución.
+		//Si el idProceso(idResolucion) es nulo creamos una nueva resoluciï¿½n.
 		MSVResolucion msvResolucion; 
 		if (Checks.esNulo(dto.getIdResolucion())){
 			msvResolucion = new MSVResolucion();
@@ -187,8 +187,8 @@ public class MSVResolucionManager implements MSVResolucionApi {
 		}
 		msvResolucion.setNombreFichero(uploadForm.getFileItem().getFile().getAbsolutePath());
 		
-		//Comprobamos que el fichero se puede abrir (es válido), en caso contrario devolvemos una excepciÃ³n
-		// Si no, devolvemos una excepción
+		//Comprobamos que el fichero se puede abrir (es vï¿½lido), en caso contrario devolvemos una excepciÃ³n
+		// Si no, devolvemos una excepciï¿½n
 		File file = uploadForm.getFileItem().getFile();
 		if (!file.exists()) {
 			throw new BusinessOperationException("Fichero inexistente");
@@ -196,7 +196,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 			msvResolucion.setContenidoFichero(uploadForm.getFileItem());
 		}
 		
-		//Estado inicial de la resolución: CODIGO_EN_PROCESO 
+		//Estado inicial de la resoluciï¿½n: CODIGO_EN_PROCESO 
 		MSVDDEstadoProceso estadoProceso=genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_EN_PROCESO));
 		msvResolucion.setEstadoResolucion(estadoProceso);
 
@@ -271,9 +271,9 @@ public class MSVResolucionManager implements MSVResolucionApi {
 	}
 	
 	/**
-	 * Adjunta un fichero al asunto relacionado con una resolución y lo devuelve.
-	 * @param msvFileItem Objeto que contiene la información del fichero.
-	 * @param msvResolucion Datos de la resolución.
+	 * Adjunta un fichero al asunto relacionado con una resoluciï¿½n y lo devuelve.
+	 * @param msvFileItem Objeto que contiene la informaciï¿½n del fichero.
+	 * @param msvResolucion Datos de la resoluciï¿½n.
 	 */
 	private EXTAdjuntoAsunto adjuntarFicheroFinal(MSVFileItem msvFileItem, MSVResolucion msvResolucion) {
 		
@@ -306,9 +306,9 @@ public class MSVResolucionManager implements MSVResolucionApi {
 	}
 	
 	/**
-	 * Adjunta un fichero al asunto relacionado con una resolución.
-	 * @param msvFileItem Objeto que contiene la información del fichero.
-	 * @param msvResolucion Datos de la resolución.
+	 * Adjunta un fichero al asunto relacionado con una resoluciï¿½n.
+	 * @param msvFileItem Objeto que contiene la informaciï¿½n del fichero.
+	 * @param msvResolucion Datos de la resoluciï¿½n.
 	 */
 	private void adjuntarFichero(MSVFileItem msvFileItem, MSVResolucion msvResolucion) {
 		
@@ -441,7 +441,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 	public	MSVResolucion getResolucion(Long idResolucion)  throws BusinessOperationException {
 		
 		if (idResolucion == null)
-			throw new BusinessOperationException("El id de la resolución (idResolucion) no puede ser nulo.");
+			throw new BusinessOperationException("El id de la resoluciï¿½n (idResolucion) no puede ser nulo.");
 		MSVResolucion resolucion = msvResolucionDao.mergeAndGet(idResolucion);
 		return resolucion;
 	}
@@ -460,7 +460,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 	@Transactional(readOnly = false, noRollbackFor=RuntimeException.class)	
 	public MSVResolucion procesaResolucion(Long idResolucion) {
 		if (idResolucion == null)
-			throw new BusinessOperationException("El id de la resolución (idResolucion) no puede ser nulo.");
+			throw new BusinessOperationException("El id de la resoluciï¿½n (idResolucion) no puede ser nulo.");
 		MSVResolucion msvResolucion = msvResolucionDao.mergeAndGet(idResolucion);
 		
 		String resultadoProceso = MSVDDEstadoProceso.CODIGO_PROCESADO;
@@ -477,7 +477,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 				RecoveryBPMfwkInput myInput = proxyFactory.proxy(RecoveryBPMfwkInputApi.class).saveInput(inputDto);
 				if (!Checks.esNulo(myInput)) {
 					idInput = myInput.getId();
-					//FIXME Código repetido en RecoveryBPMfwkInputInformarDatosExecutor.execute (Evaluar si se añade este caso al framework)
+					//FIXME Cï¿½digo repetido en RecoveryBPMfwkInputInformarDatosExecutor.execute (Evaluar si se aï¿½ade este caso al framework)
 					RecoveryBPMfwkCfgInputDto config = proxyFactory.proxy(RecoveryBPMfwkConfigApi.class).getInputConfigNodo(myInput.getTipo().getCodigo(), msvResolucion.getProcedimiento().getTipoProcedimiento().getCodigo(), MSVResolucionInputApi.MSV_NODO_SIN_TAREAS);
 			        if(config != null){
 				        try {
@@ -495,7 +495,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 			}
 			
 			
-			//TODO - Guarda una relación entre el input y la tarea. Desacoplar de tareas
+			//TODO - Guarda una relaciï¿½n entre el input y la tarea. Desacoplar de tareas
 			if ((!Checks.esNulo(idInput)) && (!Checks.esNulo(msvResolucion.getTarea()))) {
 				proxyFactory.proxy(RecoveryBPMfwkInputsTareasApi.class).save(idInput, msvResolucion.getTarea().getId());
 			}
@@ -509,7 +509,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 			resultadoProceso = MSVDDEstadoProceso.CODIGO_ERROR;
 		}
 		finally{
-			//Actualizamos el estado de la resolución.
+			//Actualizamos el estado de la resoluciï¿½n.
 			msvResolucion.setEstadoResolucion(genericDao.get(MSVDDEstadoProceso.class, 
 					genericDao.createFilter(FilterType.EQUALS, "codigo", resultadoProceso)));
 			msvResolucionDao.saveOrUpdate(msvResolucion);
@@ -522,7 +522,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 	
 	
 	
-	//FIXME: ¡¡¡¡TODO ESTE CÓDIGO ESTÁ DUPLICADO Y TIENE QUE IR A LINDORFF!!!!
+	//FIXME: ï¿½ï¿½ï¿½ï¿½TODO ESTE Cï¿½DIGO ESTï¿½ DUPLICADO Y TIENE QUE IR A LINDORFF!!!!
 	
 
 
@@ -555,7 +555,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 	}
 
 	/**
-	 * Relación tipos de resolución vs tipo de input.
+	 * Relaciï¿½n tipos de resoluciï¿½n vs tipo de input.
 	 * @param codigoTipoResolucion
 	 * @param dtoTarea 
 	 * @return
@@ -573,13 +573,13 @@ public class MSVResolucionManager implements MSVResolucionApi {
 				codigoTipoProcedimiento = prc.getTipoProcedimiento().getCodigo();
 			}
 		}
-		//Añadimos que el campo que indica si tiene el procurador
+		//Aï¿½adimos que el campo que indica si tiene el procurador
 		String tieneProc = "NO";
 		if (prc != null && prc.getAsunto() != null && prc.getAsunto().getProcurador() != null) {
 			tieneProc = "SI";
 		}
 		campos.put("tieneProc", tieneProc);
-		//Añadimos comprobacion de si el importe del procedimiento es mayor o menor de 6000
+		//Aï¿½adimos comprobacion de si el importe del procedimiento es mayor o menor de 6000
 		String importeMayor="MENOR";
 		if (prc != null && prc.getSaldoDeudorTotal()!=null ){
 			BigDecimal valor=new BigDecimal(6000);
@@ -588,7 +588,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 			}
 		}
 		campos.put("importeMayor", importeMayor);
-		// Comprobamos si la notificación positiva ha sido total o parcial, de momento parcial si hay más de un demandado y total si solo hay un demandado
+		// Comprobamos si la notificaciï¿½n positiva ha sido total o parcial, de momento parcial si hay mï¿½s de un demandado y total si solo hay un demandado
 				// TODO
 		String notificacion="TOTAL";
 		if (prc != null && prc.getPersonasAfectadas()!=null){
@@ -598,7 +598,7 @@ public class MSVResolucionManager implements MSVResolucionApi {
 		}
 		campos.put("notificacion", notificacion);
 		
-		// Comprobación para derivar en trámite de embargo dependiendo que lo que venga en el formulario
+		// Comprobaciï¿½n para derivar en trï¿½mite de embargo dependiendo que lo que venga en el formulario
 		String tramiteEmbargo="NINGUNO";
 		if (campos.containsKey("d_embargoBienes") && campos.containsKey("d_embargoSalario")){
 					tramiteEmbargo="BIENES_SALARIO";

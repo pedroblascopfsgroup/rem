@@ -21,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 
+
+
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -80,8 +82,8 @@ public class MSVLanzarETJdesdeFMCallbackTest  {
 	
 	@Test
 	public void testOnEndProcessLong() {
-		// este método no hace nada
-		assertTrue("Este método no está implementado", true);
+		// este mï¿½todo no hace nada
+		assertTrue("Este mï¿½todo no estï¿½ implementado", true);
 	}
 
 	@Test
@@ -105,8 +107,8 @@ public class MSVLanzarETJdesdeFMCallbackTest  {
 
 	@Test
 	public void testOnErrorLongRecoveryBPMfwkInputInfoString() {
-		// este método no hace nada
-		assertTrue("Este método no está implementado", true);
+		// este mï¿½todo no hace nada
+		assertTrue("Este mï¿½todo no estï¿½ implementado", true);
 
 	}
 	
@@ -179,8 +181,8 @@ public class MSVLanzarETJdesdeFMCallbackTest  {
 		
 		mockMSVLanzarETJdesdeFMCallback.onSuccess(tokenProceso, input);
 		
-		// este método no hace nada
-//		assertTrue("Este método no está implementado", true);
+		// este mï¿½todo no hace nada
+//		assertTrue("Este mï¿½todo no estï¿½ implementado", true);
 		
 		verify(mockProcedimientoDao, times(1)).saveOrUpdate(mockProcedimientoHijo);
 		verify(mockProcedimientoDao, times(1)).saveOrUpdate(mockProcedimiento);

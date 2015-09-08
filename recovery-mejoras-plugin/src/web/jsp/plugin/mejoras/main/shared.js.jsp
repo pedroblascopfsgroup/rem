@@ -190,6 +190,7 @@ app.codigoAcuerdoCancelado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.D
 app.codigoAcuerdoFinalizado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_FINALIZADO" />';
 app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ENVIADO" />';
 
+
 /**
  * Abre una pestaï¿½a con la informaciï¿½n del cliente
  */
@@ -1662,4 +1663,61 @@ app.promptPw=function(title,msg,handler){
 	var win = new Ext.Window(cfg);
 	win.show();	
 }
+
+/* -------------------------------------------------------------------------------------------------------
+* ESPACIO PARA AGRUPAR LOS POSIBLES OVERRIDES DEL CORE DE EXTJS PARA SOLUCIONAR POSIBLES BUGS O
+* AÑADIR FUNCIONALIDADES NUEVAS.
+*
+* FIXME En caso de incrementarse el número de overrides se puede plantear crear una clase overrides.js que los contenga
+*		 
+* Overrides members of the specified `target` with the given values.
+*
+* If the `target` is a function, it is assumed to be a constructor and the contents
+* of `overrides` are applied to its `prototype` using {@link Ext#apply Ext.apply}.
+* 
+* If the `target` is an instance of a class created using {@link #define},
+* the `overrides` are applied to only that instance. In this case, methods are
+* specially processed to allow them to use {@link Ext.Base#callParent}.
+* 
+*      var panel = new Ext.Panel({ ... });
+*      
+*      Ext.override(panel, {
+*          initComponent: function () {
+*              // extra processing...
+*              
+*              this.callParent();
+*          }
+*      });
+*
+* If the `target` is none of these, the `overrides` are applied to the `target`
+* using {@link Ext#apply Ext.apply}.
+*
+* Please refer to {@link Ext#define Ext.define} for further details.
+*
+* @param {Object} target The target to override.
+* @param {Object} overrides The properties to add or replace on `target`. 
+* @method override*
+*
+* -------------------------------------------------------------------------------------------------------*/
+
+
+	Ext.override(Ext.grid.ColumnModel, {
+			 /**
+		     * Devuelve true si la columna especificada es sortable.
+		     * Se sobreescribe para evitar errores en el caso de recibir un indice 
+		     * fuera de rango ( en algunos casos llega a esta funcin el valor -1)
+		     * @param {Number} col The column index
+		     * @return {Boolean}
+		     */
+		    isSortable : function(col) {
+		    
+		    	var column = this.config[col];
+		    	if (Ext.isEmpty(column)) {
+		    		return false
+		    	} else {
+		        	return !!column.sortable;
+		        }
+		    }
+	});
+
 

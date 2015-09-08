@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -1001,9 +1002,9 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 					if (!Checks.esNulo(solvenciaGarantia)) {
 						procBien.setSolvenciaGarantia(solvenciaGarantia);
 					}
-				}				
+				}		
 				genericDao.save(ProcedimientoBien.class, procBien);
-
+				
 			}
 
 		}
@@ -1021,7 +1022,7 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
 				ProcedimientoBien procBien = genericDao.get(ProcedimientoBien.class, f1, f2);
 
-				genericDao.deleteById(ProcedimientoBien.class, procBien.getId());
+				genericDao.deleteById(ProcedimientoBien.class, procBien.getId());	
 			}
 		}
 

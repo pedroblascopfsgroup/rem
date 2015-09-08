@@ -1,12 +1,9 @@
 package es.pfsgroup.procedimientos.adjudicacion;
 
-import java.util.List;
-
 import org.jbpm.graph.exe.ExecutionContext;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.BatchAcuerdoCierreDeuda;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 public class GenerarPropuestaNUSEHandler extends es.pfsgroup.procedimientos.subasta.GenerarPropuestaNUSEHandler {
@@ -14,44 +11,52 @@ public class GenerarPropuestaNUSEHandler extends es.pfsgroup.procedimientos.suba
 	private static final long serialVersionUID = 1L;
 	private static final String PROPIEDAD_SAREB = "SAREB";
 	private static final String TRANSICION_FIN = "Fin";
+	private static final String TPO_TIPO_PROCEDIMIENTO_SUBASTA_SAREB = "P409";
 
-	private Procedimiento procedimiento = null;
+	private Procedimiento procedimiento = null;	
+	private Procedimiento procedimientoSubasta = null;	
 	
-	@Override
-	protected BatchAcuerdoCierreDeuda getCierreDeudaInstance() {
-		BatchAcuerdoCierreDeuda cierreDeuda = super.getCierreDeudaInstance();
+	
+	/**
+	 * Función que busca recursivamente la tarea de subasta. 
+	 * Irá consultando los padres de cada procedimiento hasta que encuentre el de subasta o encuentre un procedimiento sin padre.
+	 * @param procedimiento
+	 * @return
+	 */
+	private Procedimiento getProcedimientoSubastaSareb(Procedimiento procedimiento) {
 		
-		cierreDeuda.setEntidad(PROPIEDAD_SAREB);
-		logger.debug(String.format("CIERRE DE DEUDA SAREB: Modificado Entidad: %s", cierreDeuda.getEntidad()));
 		
-		// Recupera el bien asociado.
-		List<ProcedimientoBien> bienes = procedimiento.getBienes();
-		if (bienes!=null && bienes.size()>0) {
-			cierreDeuda.setIdBien(bienes.get(0).getBien().getId());
-		}
+		if(Checks.esNulo(procedimiento) || TPO_TIPO_PROCEDIMIENTO_SUBASTA_SAREB.equals(procedimiento.getTipoProcedimiento().getCodigo())) {
+			
+			return procedimiento;
 		
-		if (cierreDeuda.getIdBien() == null) {
-			logger.warn(String.format("CIERRE DE DEUDA SAREB: No se ha encontrado el Bien del procedimiento %d", procedimiento.getId()));
 		} else {
-			logger.debug(String.format("CIERRE DE DEUDA SAREB: Modificado idBien: %s", cierreDeuda.getIdBien()));	
+			
+			return getProcedimientoSubastaSareb(procedimiento.getProcedimientoPadre());
+			
 		}
-		
-		return cierreDeuda;
-	};
+
+	}
+	
 	
 	
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
-		procedimiento = this.getProcedimiento(executionContext);
 		
-		EXTAsunto extAsunto = getExtAsunto(procedimiento);
+		this.procedimiento = this.getProcedimiento(executionContext);
+		this.procedimientoSubasta = getProcedimientoSubastaSareb(procedimiento.getProcedimientoPadre());
+		super.setProcedimientoSubasta(procedimientoSubasta);
+		super.setProcedimiento(procedimiento);
+		
+		EXTAsunto extAsunto = getExtAsunto();
 		if (extAsunto!=null && PROPIEDAD_SAREB.equals(extAsunto.getPropiedadAsunto().getCodigo())) {
-			super.run(executionContext);
-			return;
+			enviarCierreDeuda();
 		}
 		
     	// Avanza BPM
 		executionContext.getToken().signal(TRANSICION_FIN);
 	}
+
+	
 	
 }

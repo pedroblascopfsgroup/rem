@@ -285,8 +285,8 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		query.createAlias("gaaGestor.despachoExterno", "gaaDespachoExterno");
 
 		where.add(Restrictions.eq("gaaTipoGestor.id", Long.valueOf(filtro.getProTipoGestor())));
-		where.add(Restrictions.eq("gaaUsuario.id", Long.valueOf(filtro.getProGestor())));
 		where.add(Restrictions.eq("gaaDespachoExterno.id", Long.valueOf(filtro.getProDespacho())));
+		where.add(Restrictions.eq("gaaUsuario.id", getListLongFromStringCsv(filtro.getProGestor())));
 
 		return where;
 	}
@@ -400,7 +400,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.eq("documento.adjuntado", "01".equals(filtro.getDocAdjunto())));
 		}
 
-		if (!filtro.filtroSolicitudInformado()) {
+		if (filtro.filtroSolicitudInformado() || esBusquedaPorDocumento) {
 
 			// si se está realizando una busqueda por documentos deberán salir aquellos documentos los cuales aun no tienen ninguna solicitud
 			if (esBusquedaPorDocumento) {
@@ -412,6 +412,15 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
 				query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud");
 				where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getDocDespacho()) && !StringUtils.emtpyString(filtro.getDocGestor())) {
+				query.createAlias("solicitud.actor", "actor");
+				query.createAlias("actor.despachoExterno", "actorDespacho");
+				query.createAlias("actor.usuario", "actorUsuario");
+
+				where.add(Restrictions.eq("actorDespacho.id", Long.valueOf(filtro.getDocDespacho())));
+				where.add(Restrictions.in("actorUsuario.id", getListLongFromStringCsv(filtro.getDocGestor())));
 			}
 
 			where.addAll(dateRangeFilter("solicitud.fechaSolicitud", filtro.getLiqFechaSolicitudDesde(), filtro.getDocFechaSolicitudHasta()));
@@ -529,5 +538,15 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		return where;
+	}
+
+	private List<Long> getListLongFromStringCsv(String stringCsv) {
+		List<Long> idLongs = new ArrayList<Long>();
+
+		for (String s : stringCsv.split(",")) {
+			idLongs.add(Long.valueOf(s));
+		}
+
+		return idLongs;
 	}
 }

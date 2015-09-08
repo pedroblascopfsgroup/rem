@@ -523,10 +523,11 @@ public class ContratoManager {
 			params.setDir("DESC");
 			params.setStart(0);
 			params.setLimit(50);
-			
+
 			Filter filtro = (Filter) genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato);
+			Filter filtro2 = (Filter) genericDao.createFilter(FilterType.EQUALS, "borrado", false);
 			
-			PageHibernate page = (PageHibernate) genericDao.getPage(Recibo.class, params,filtro);
+			PageHibernate page = (PageHibernate) genericDao.getPage(Recibo.class, params,filtro, filtro2);
 //			if (page != null) {
 //				listaRetorno.addAll((List<Recibo>) page.getResults());
 //				page.setResults(listaRetorno);

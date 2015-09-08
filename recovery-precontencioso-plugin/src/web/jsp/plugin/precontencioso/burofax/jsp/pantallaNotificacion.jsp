@@ -63,7 +63,7 @@
 	
 	var panelEdicion=new Ext.form.FormPanel({
 		autoHeight:true
-		,width:700
+		,width:400
 		,bodyStyle:'padding:10px;cellspacing:20px'
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
 		,items : [estadoBurofax,fechaEnvio,fechaAcuse]

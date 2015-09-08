@@ -385,7 +385,7 @@ var actualizarBotonesDocumentos = function(){
 	    <%--Se comprueba que el procedimiento se encuentre en un estado que permita editar lOs documentos --%>
 		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
-			debugger;
+			
 			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
 	    		habilitarDeshabilitarButtons(true, true, true, true, true, true, true);
 	    		return;
@@ -689,6 +689,13 @@ gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 });
 
 var refrescarDocumentosGrid = function() {
-	//storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
-	storeDocumentos.webflow({idProcedimientoPCO: data.id});
+	storeDocumentos.webflow({idProcedimientoPCO: '100353078'});
+	
+	<%--Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado 
+	if(data.isTipoDespachoGestoria.isTipoDespachoGestoria){
+		storeDocumentos.webflow({idProcedimientoPCO: data.id,gestoria:true});	
+	}
+	else{
+		storeDocumentos.webflow({idProcedimientoPCO: data.id,gestoria:false});
+	}--%>
 }

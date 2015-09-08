@@ -22,6 +22,12 @@
 	    	<evaluate expression="executor.execute('consultaProcedimientoManager.getTabs',id)" result="flowScope.tabsProcedimiento" />
 			<evaluate expression="executor.execute('plugin.mejoras.procedimientoManager.procedimientoParalizado',id)" result="flowScope.paralizado" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getPrecontenciosoPorProcedimientoId',id)" result="flowScope.precontencioso" />
+			<!-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado 
+			<evaluate expression="executor.execute('plugin.precontencioso.getTipoGestor',id)" result="flowScope.codigoTipoGestor" />
+			<evaluate expression="executor.execute('plugin.precontencioso.isTipoDespachoPredoc',id)" result="flowScope.isPredoc" />
+			<evaluate expression="executor.execute('plugin.precontencioso.isTipoDespachoGestoria',id)" result="flowScope.isGestoria" />
+			<evaluate expression="executor.execute('plugin.precontencioso.isSupervisor',id)" result="flowScope.isSupervisor" />
+			-->
 	    </on-entry>
     </end-state>     
 </flow>

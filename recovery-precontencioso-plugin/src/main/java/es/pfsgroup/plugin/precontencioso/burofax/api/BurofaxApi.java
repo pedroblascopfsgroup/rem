@@ -28,6 +28,7 @@ public interface BurofaxApi {
 	public static final String OBTENER_PERSONA = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getPersonaById";
 	public static final String GUARDA_PERSONA = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.guardaPersonaCreandoBurofax";
 	public static final String OBTENER_PERSONAS_CON_DIRECCION = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getPersonasConDireccion";
+	public static final String OBTENER_PERSONAS_CON_CONTRATO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getPersonasConContrato";
 	public static final String OBTENER_PERSONAS = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getPersonas";
 	public static final String GUARDAR_ENVIO_BUROFAX = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.guardarEnvioBurofax";
 	public static final String OBTENER_TIPO_BUROFAX_BY_ENVIO = "es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi.getTipoBurofaxByIdEnvio";
@@ -147,6 +148,14 @@ public interface BurofaxApi {
 	 */
 	@BusinessOperationDefinition(OBTENER_PERSONAS)
 	Collection<? extends Persona> getPersonas(String query);
+	
+	/**
+	 * Devuelve una coleccion de personas con contrato
+	 * @param query
+	 * @return
+	 */
+	@BusinessOperationDefinition(OBTENER_PERSONAS_CON_CONTRATO)
+	Collection<? extends Persona> getPersonasConContrato(String query);
 	
 	/**
 	 * Guarda en BD los datos del envio del burofax

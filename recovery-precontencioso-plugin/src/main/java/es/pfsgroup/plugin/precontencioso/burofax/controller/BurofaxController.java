@@ -46,6 +46,8 @@ public class BurofaxController {
 	
 	private static final String JSP_AGREGAR_NOTIFICACION  ="plugin/precontencioso/burofax/jsp/pantallaNotificacion";
 	
+	public static final String JSON_LISTA_PERSONAS = "direcciones/listaPersonasJSON";
+	
 	private static final String DEFAULT = "default";
 	
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -78,7 +80,7 @@ public class BurofaxController {
 			
 			for(BurofaxPCO burofax : listaBurofax){
 				BurofaxDTO dto=new BurofaxDTO();
-				dto.setId(burofax.getId());
+				//dto.setId(burofax.getId());
 				dto.setIdBurofax(burofax.getId());
 				dto.setIdCliente(burofax.getDemandado().getId());
 				dto.setCliente(burofax.getDemandado().getApellidoNombre());
@@ -99,7 +101,7 @@ public class BurofaxController {
 				
 				if(burofax.getDemandado().getDirecciones().size()>0){
 				    for(Direccion direccion : burofax.getDemandado().getDirecciones()){
-				    	
+				    		dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
 				    		dto.setIdCliente(burofax.getDemandado().getId());
 				    		dto.setIdDireccion(direccion.getId());
 				    		dto.setIdBurofax(burofax.getId());
@@ -107,9 +109,12 @@ public class BurofaxController {
 			    			dto.setDireccion(direccion.getDomicilio().concat(" Nº ").concat(direccion.getDomicilio_n()));
 							
 			    			if(!Checks.esNulo(burofax.getContrato())){
-			    				dto.setTipo(burofaxManager.getTipoBurofaxPorDefecto(idProcedimiento,burofax.getContrato().getId()).getCodigo());
-			    				dto.setIdTipoBurofax(burofaxManager.getTipoBurofaxPorDefecto(idProcedimiento,burofax.getContrato().getId()).getId());
-		
+			    				DDTipoBurofaxPCO tipoBurofax=burofaxManager.getTipoBurofaxPorDefecto(idProcedimiento,burofax.getContrato().getId());
+			    				if(!Checks.esNulo(tipoBurofax) && !Checks.esNulo(tipoBurofax.getCodigo())){
+			    					dto.setTipo(tipoBurofax.getCodigo());
+			    					dto.setIdTipoBurofax(tipoBurofax.getId());
+			    				}
+
 			    			}
 			    			else{
 			    				dto.setTipo("");
@@ -131,12 +136,14 @@ public class BurofaxController {
 				for(EnvioBurofaxPCO envioBurofax : burofax.getEnviosBurofax()){
 					dto=new BurofaxDTO();
 					dto.setId(envioBurofax.getId());
+					
 					dto.setIdBurofax(burofax.getId());
 					dto.setIdTipoBurofax(envioBurofax.getTipoBurofax().getId());
 					dto.setIdCliente(burofax.getDemandado().getId());
 					dto.setIdEnvio(envioBurofax.getId());
 					dto.setIdDireccion(envioBurofax.getDireccion().getId());
-					dto.setDireccion(envioBurofax.getDireccion().getDomicilio());
+					//dto.setDireccion(envioBurofax.getDireccion().getDomicilio());
+					dto.setDireccion(envioBurofax.getDireccion().getDomicilio().concat(" Nº ").concat(envioBurofax.getDireccion().getDomicilio_n()));
 					dto.setTipo(envioBurofax.getTipoBurofax().getCodigo());
 					dto.setTipo(envioBurofax.getTipoBurofax().getCodigo());
 					dto.setFechaSolicitud(envioBurofax.getFechaSolicitud());
@@ -325,8 +332,6 @@ public class BurofaxController {
 		return DEFAULT;
 	}
 	
-	
-	public static final String JSON_LISTA_PERSONAS = "direcciones/listaPersonasJSON";
 
 	/**
      * Metodo que devuelve las personas para mostrarlos en el desplegable din�mico del campo asunto.
@@ -338,7 +343,7 @@ public class BurofaxController {
     @RequestMapping
     public String getPersonasInstant(String query, ModelMap model) {
     	
-        model.put("data",burofaxManager.getPersonas(query));
+        model.put("data",burofaxManager.getPersonasConContrato(query));
         return JSON_LISTA_PERSONAS;
     }
     

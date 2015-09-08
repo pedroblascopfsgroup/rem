@@ -13,6 +13,7 @@
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/documento/grids/documentoGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/liquidacion/grids/liquidacionGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/burofax/grids/burofax.jsp" %>
+var codigoTipoGestor='${codigoTipoGestor}';
 
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.precontencioso.expedienteJudicial" text="**Precontencioso"/>'
@@ -26,9 +27,50 @@
 
 	panel.setValue = function(){
 	        var data = entidad.get("data");
-	        refrescarLiquidacionesGrid();
+	        var tipoGestor=data.tipoGestor.codigo;
 	        refrescarDocumentosGrid();
+	        refrescarLiquidacionesGrid();
 	        refrescarBurofaxGrid();
+	        
+	        
+	        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
+	        if(tipoGestor == 'GEXT'){
+	        	refrescarDocumentosGrid();
+	        	gridBurofax.setVisible(false);
+	        	gridLiquidaciones.setVisible(false);
+	        }
+	        else if(tipoGestor == 'PREDOC'){
+	        	refrescarDocumentosGrid();
+	            refrescarLiquidacionesGrid();
+	            refrescarBurofaxGrid();
+	        }
+	        
+	        if(data.supervisor.isSupervisor){
+	        	refrescarDocumentosGrid();
+	            refrescarLiquidacionesGrid();
+	            refrescarBurofaxGrid();
+	        }
+	        else{
+	        
+		        if(data.isTipoDespachoGestoria.isTipoDespachoGestoria){
+		        	refrescarDocumentosGrid();
+		        	gridBurofax.setVisible(false);
+		        	gridLiquidaciones.setVisible(false);
+		        }
+		        else if(data.isTipoDespachoPredoc.isTipoDespachoPredoc){
+		        	refrescarDocumentosGrid();
+		            refrescarLiquidacionesGrid();
+		            refrescarBurofaxGrid();
+		        }
+		        else{
+		        	gridDocumentos.setVisible(false);
+		        	gridBurofax.setVisible(false);
+		        	gridLiquidaciones.setVisible(false);
+		        }
+		    }
+		    --%>
+		    
+
 	}
 
  	panel.setVisibleTab = function(data) {

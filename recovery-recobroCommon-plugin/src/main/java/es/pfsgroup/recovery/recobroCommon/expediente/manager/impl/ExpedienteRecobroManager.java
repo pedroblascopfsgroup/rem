@@ -86,6 +86,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.expediente.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.plugin.recovery.expediente.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 import es.pfsgroup.recovery.recobroCommon.agenciasRecobro.manager.api.RecobroAgenciaApi;
 import es.pfsgroup.recovery.recobroCommon.agenciasRecobro.model.RecobroAgencia;
 import es.pfsgroup.recovery.recobroCommon.contrato.model.CicloRecobroContrato;
@@ -962,6 +963,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		// Borrar todas las tareas asociadas y bpms
 		if (exp.getProcessBpm() != null) {
 			executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, exp.getProcessBpm());
+			proxyFactory.proxy(EXTJBPMProcessApi.class).borraTimersExpediente(exp.getId());
 		}
 
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_TAREAS_ASOCIADAS_EXPEDIENTE, exp.getId());

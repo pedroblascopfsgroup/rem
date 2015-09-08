@@ -252,6 +252,7 @@ var panelFechaParalizacion = new Ext.Panel({
 		pagingBarDoc.hide();
 		pagingBarLiq.hide();
 		pagingBarBur.hide();
+	
 		if(comboTipoBusqueda.getValue() == documento) {
             filtrosTabDocumentos.enable();
             filtrosTabLiquidacion.disable();	            	
@@ -259,6 +260,8 @@ var panelFechaParalizacion = new Ext.Panel({
 			gridDocumentoPco.show();
             gridLiquidacionPco.hide();
             gridBurofaxPco.hide();
+            limpiaPestanaLiquidaciones();
+            limpiaPestanaBurofaxes();
 		}else if(comboTipoBusqueda.getValue() == liquidacion) {
            	filtrosTabDocumentos.disable();
             filtrosTabLiquidacion.enable();
@@ -266,6 +269,8 @@ var panelFechaParalizacion = new Ext.Panel({
            	gridDocumentoPco.hide();
             gridLiquidacionPco.show();
             gridBurofaxPco.hide();
+            limpiaPestanaDocumentos();
+            limpiaPestanaBurofaxes();
         }else if(comboTipoBusqueda.getValue() == burofax) {
           	filtrosTabDocumentos.disable();
           	filtrosTabLiquidacion.disable();
@@ -273,6 +278,8 @@ var panelFechaParalizacion = new Ext.Panel({
 			gridDocumentoPco.hide();
             gridLiquidacionPco.hide();
             gridBurofaxPco.show();
+            limpiaPestanaDocumentos();
+            limpiaPestanaLiquidaciones();
 		}
 	});
 
@@ -622,4 +629,15 @@ var getParametrosFiltroProcedimiento = function() {
 	out.proDiasGestion = fieldDiasGestionEle.getValue();
 
 	return out;
+}
+
+var limpiaPestanaProcedimiento = function() {
+	app.resetCampos([comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, 
+	dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+	dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
+	dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
+	dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
+	comboTipoProcPropuestoEle, comboTipoPreparacionEle, filtroEstadoPreparacion, comboTiposGestorEle,
+	comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle,
+	comboDisponibleBurofaxesEle, fieldDiasGestionEle]);
 }

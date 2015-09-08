@@ -73,6 +73,14 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
 												p:key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados.${entity.dialect}" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados" />

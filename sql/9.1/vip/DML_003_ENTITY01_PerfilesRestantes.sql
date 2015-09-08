@@ -131,6 +131,19 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
+        ),
+      T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'DGAEST',
+        /*dd_sta_descripcion,........:*/ 'Toma decisión Gestor análisis estudio',
+        /*dd_sta_descripcion_larga...:*/ 'Toma decisión Gestor análisis estudio',
+        /*dd_tge_id..................:*/ 'GAEST',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
         )
         
 	  ----------------------        

@@ -567,6 +567,8 @@
 				 ]
 	});	
 	
+	var isFondoTitulizado = false;
+	
 	var fondoTitulizado = function() {
 		Ext.Ajax.request({
 			url : page.resolveUrl('editbien/isFondoTitulizado'), 
@@ -574,8 +576,8 @@
 			params: {codigoFondo:fondo.getValue()},
 			success: function ( result, request ) {
 				var r = Ext.util.JSON.decode(result.responseText);
-				if(r.okko == 'OK') return true;
-				return false;
+				if(r.okko == 'OK') isFondoTitulizado = true;
+				if(r.okko == 'KO') isFondoTitulizado = false;
 			}
 		});
 	}
@@ -585,7 +587,7 @@
 			return 1;
 		}
 		
-		if(entidadAdjudicataria.getValue() == '1' && (cesionRemate.getValue() == 'No' || cesionRemate.getValue() == '02') && !fondoTitulizado()){
+		if(entidadAdjudicataria.getValue() == '1' && (cesionRemate.getValue() == 'No' || cesionRemate.getValue() == '02') && isFondoTitulizado){
 			return 2;
 		}
 		
@@ -705,7 +707,7 @@
 	fechaEnvioDepositario.setDisabled(true);
 	fechaRecepcionDepositarioFinal.setDisabled(true);
 	
-	<sec:authorize ifAllGranted="BIEN_ADJUDICACION_EDITAR">
+	<%--<sec:authorize ifAllGranted="BIEN_ADJUDICACION_EDITAR">--%>
 		fechaDecretoNoFirme.setDisabled(false);
 		fechaDecretoFirme.setDisabled(false);
 		gestoriaAdjudicataria.setDisabled(false);
@@ -747,7 +749,7 @@
 		nombreDepositarioFinal.setDisabled(false);
 		fechaEnvioDepositario.setDisabled(false);
 		fechaRecepcionDepositarioFinal.setDisabled(false);
-	</sec:authorize>	
+	<%--</sec:authorize>--%>	
 	
 	<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
 	 	panel.getBottomToolbar().addButton([btnEditar]);
@@ -755,6 +757,17 @@
 	
 	panel.getBottomToolbar().addButton([btnCancelar]);
 	
+	fondo.on('afterRender',function(){
+		if(fondo.getValue() != null && fondo.getValue() != ''){
+			fondoTitulizado();
+		}
+	});
+	
+	fondo.on('change',function(){
+		if(fondo.getValue() != null && fondo.getValue() != ''){
+			fondoTitulizado();
+		}
+	});
 		
 	page.add(panel);
 	

@@ -4179,12 +4179,17 @@ public class EditBienController {
 	@RequestMapping
 	public String isFondoTitulizado(String codigoFondo, ModelMap model) {
 
-		DDTipoFondo fondo = genericDao.get(DDTipoFondo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoFondo), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-
-		if (!Checks.esNulo(fondo.getCesionRemate()) && fondo.getCesionRemate()){
+		if(!Checks.esNulo(codigoFondo)){
+			DDTipoFondo fondo = genericDao.get(DDTipoFondo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoFondo), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	
+			if (!Checks.esNulo(fondo.getCesionRemate()) && fondo.getCesionRemate()){
+				model.put("okko","OK");
+			}else{
+				model.put("okko","KO");
+			}
+		}
+		else{
 			model.put("okko","OK");
-		}else{
-			model.put("okko","KO");
 		}
 		
 		return OK_KO_RESPUESTA_JSON;

@@ -49,14 +49,22 @@
 				dateFieldRecepcionLiqHasta,dateFieldConfirmacionLiqDesde,dateFieldConfirmacionLiqHasta,dateFieldCierreLiqDesde,dateFieldCierreLiqHasta,
 				fieldTotalLiqDesde,fieldTotalLiqHasta,fieldDiasGestionLiq,comboNotificado,comboResultadoBurofax,dateFieldSolicitudBurDesde,dateFieldSolicitudBurHasta,
 				dateFieldEnvioBurDesde,dateFieldEnvioBurHasta,dateFieldAcuseBurDesde,dateFieldAcuseBurHasta]);
-	
+
+	var btnExportar = new Ext.Button({
+		text: '<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />',
+		iconCls: 'icon_exportar_csv',
+		handler: function() {
+			
+		}
+	});
+
 	var panelFiltros = new Ext.Panel({
 		autoHeight: true,
 		autoWidth: true,
 		title: '<s:message code="plugin.precontencioso.buscador.expedientes.titulo" text="**Buscador Expedientes Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
-		tbar: [btnBuscar, btnLimpiar],
+		tbar: [btnBuscar, btnLimpiar, btnExportar],
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
 		style: 'padding-bottom: 10px;',
 		items: [{

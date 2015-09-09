@@ -23,7 +23,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.users.domain.Usuario;
 
 @Entity
 @Table(name = "PCO_DOC_SOLICITUDES", schema = "${entity.schema}")
@@ -84,7 +83,7 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 	 */
 
 	@Formula(value = 
-		" SELECT TRUNC(SYSDATE) - TRUNC(pco_doc_solicitudes.pco_doc_dso_fecha_solicitud)" +
+		" (SELECT TRUNC(SYSDATE) - TRUNC(pco_doc_solicitudes.pco_doc_dso_fecha_solicitud)" +
 		" FROM   pco_doc_documentos " +
 		"        INNER JOIN dd_pco_doc_estado " +
 		"                ON dd_pco_doc_estado.dd_pco_ded_id = pco_doc_documentos.dd_pco_ded_id " +
@@ -92,7 +91,7 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 		"                ON pco_doc_documentos.pco_doc_pdd_id = pco_doc_solicitudes.pco_doc_pdd_id " +
 		" WHERE  pco_doc_solicitudes.PCO_DOC_DSO_ID = PCO_DOC_DSO_ID " +
 		"        AND dd_pco_doc_estado.dd_pco_ded_codigo != '" + DDEstadoDocumentoPCO.DESCARTADO + "' " +
-		"        AND dd_pco_doc_estado.dd_pco_ded_codigo != '" + DDEstadoDocumentoPCO.DISPONIBLE + "' " )
+		"        AND dd_pco_doc_estado.dd_pco_ded_codigo != '" + DDEstadoDocumentoPCO.DISPONIBLE + "' )" )
 	private Integer diasEnGestion;
 
 	/*

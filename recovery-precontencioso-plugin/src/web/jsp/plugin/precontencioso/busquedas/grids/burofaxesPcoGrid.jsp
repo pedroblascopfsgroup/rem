@@ -63,7 +63,7 @@ var burofaxPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'burFechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'burFechaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.envio" text="**Fecha envio"/>', sortable: false},
 	{dataIndex: 'burFechaAcuse', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.acuse" text="**Fecha acuse"/>', sortable: false},
-	{dataIndex: 'burResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.resultado" text="**Resultado"/>', sortable: false}
+	{dataIndex: 'burResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.resultado" text="**Resultado"/>', renderer: OK_KO_Render, align:'center', sortable: false}
 ]);
 
 var pagingBarBur = fwk.ux.getPaging(burofaxPcoStore);

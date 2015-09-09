@@ -88,7 +88,7 @@ var panelFechaPreparado = new Ext.Panel({
 
 var dateFieldEnviadoLetradoDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnviadoLetradoDesdeEle',
-	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparado" text="** F. Preparado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.envioLetrado" text="** F. enviado a letrado " />'
 });
 
 var dateFieldEnviadoLetradoHastaEle = new Ext.ux.form.XDateField({

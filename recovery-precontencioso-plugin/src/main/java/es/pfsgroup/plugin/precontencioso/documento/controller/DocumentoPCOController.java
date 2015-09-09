@@ -572,9 +572,6 @@ public class DocumentoPCOController {
 			solDto.setIdDespachoExterno(new Long(idDespacho)); 
 	
 			documentoPCOApi.saveCrearSolicitudes(solDto);
-		
-			// Cambiar documento a estado SOLICITADO
-			documentoPCOApi.cambiarEstadoDocumento(new Long(idDoc), DDEstadoDocumentoPCO.SOLICITADO);
 		}
 			
 		return DEFAULT;

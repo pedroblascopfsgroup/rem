@@ -269,7 +269,7 @@ public class BurofaxManager implements BurofaxApi {
 				
 				EnvioBurofaxPCO envio=null;
 				//Si id Envio Existe actualizamos el envio
-				if(!arrayIdEnvios[i].equals("-1")){
+				if(!Checks.esNulo(arrayIdEnvios) && !arrayIdEnvios[i].equals("-1")){
 					Filter filtro6 = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(arrayIdEnvios[i]));
 					envio=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro6);
 					

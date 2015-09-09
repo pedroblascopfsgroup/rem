@@ -25,7 +25,7 @@ public class ElementoDinamicoPorFunciones extends DynamicElementAdapter {
     @Override
     public boolean valid(Object param) {
         if (StringUtils.isBlank(getPermission())) return true;
-        String[] permissions = getPermission().split("|");
+        String[] permissions = getPermission().split(",");
         for (String permission : permissions) {
 			if (tienePerfil(permission)) return true;
 		}

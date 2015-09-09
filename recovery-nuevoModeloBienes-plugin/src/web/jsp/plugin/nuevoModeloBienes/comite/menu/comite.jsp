@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 text : '<s:message code="menu.comite" text="**Comit� de Recuperaciones" />'
 	,menu : [
-		<sec:authorize ifAllGranted="ROLE_COMITE-SUB1">
+		<sec:authorize ifAllGranted="ROLE_COMITE_MENU">
 	      { text : '<s:message code="menu.comite.celebracion" text="**Celebraci�n de Comit�" />'
 			 	,iconCls:'icon_comite_celebrar'
 			 	, handler : function(){
@@ -18,7 +18,7 @@ text : '<s:message code="menu.comite" text="**Comit� de Recuperaciones" />'
 				} 
 			 }
 			, </sec:authorize>	
-			<sec:authorize ifAllGranted="ROLE_COMITE-SUB2">		
+			<sec:authorize ifAllGranted="MSV-INST-SUBASTA">		
 			{
 				text : '<s:message code="subastas.instruccionesLoteSubasta.menu.gestMasivaInstrucciones.tituloMenu" text="**Propuesta de Instrucciones" />' 
 				,iconCls : 'icon_subasta'	

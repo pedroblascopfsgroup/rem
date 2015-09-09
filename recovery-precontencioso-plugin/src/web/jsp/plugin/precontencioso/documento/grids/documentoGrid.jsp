@@ -75,12 +75,6 @@ var myRenderer =  'background-color:lavender;';
 
 var cmDocumento = [ 
  	myCboxSelModel2, 
- 	{header: 'idIdentificativo',dataIndex:'idIdentificativo',hidden:'true'},
- 	{header: 'id',dataIndex:'id',hidden:'true'},
- 	{header: 'idDoc',dataIndex:'idDoc',hidden:'true'},	
- 	{header: 'esDocumento',dataIndex:'esDocumento',hidden:'true'},
- 	{header: 'tieneSolicitud',dataIndex:'tieneSolicitud',hidden:'true'},	
- 	{header: 'codigoEstadoDocumento',dataIndex:'codigoEstadoDocumento',hidden:'true'}, 	
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
 	{header : '<s:message code="precontencioso.grid.documento.descripcion" text="**Descripción" />', dataIndex : 'descripcionUG'},
 	{header : '<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />', dataIndex : 'tipoDocumento'},
@@ -480,7 +474,6 @@ var actualizarBotonesDocumentos = function(){
 						
 			<%-- **** ESTADO PENDIENTE DE SOLICITAR --%>
 			<%-- Vemos si tenemos solo un resultado y es PS (PENDIENTE SOLICITAR --%>
-<!-- 			debugger; -->
 <!-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){ -->
 				uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
 	    			return arrayEsDocumento.indexOf(item) == pos;
@@ -525,7 +518,7 @@ var actualizarBotonesDocumentos = function(){
 					<%-- Si todas las solicitudes no tienen resultado --%>
 					if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 						<%-- ANULAR SOLICITUDES MASIVAMENTE --%>
-						habilitarDeshabilitarButtons(false, true, false, true, false, true, true);
+						habilitarDeshabilitarButtons(false, true, true, true, false, true, true);
 						return;
 					}		      					      																	
 				}												
@@ -680,7 +673,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,autoWidth: true			
 		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
 	});
-	
+
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);
 		idSolicitud = rec.get('id');

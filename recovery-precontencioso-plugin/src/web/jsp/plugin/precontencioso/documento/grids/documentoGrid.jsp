@@ -424,8 +424,7 @@ var actualizarBotonesDocumentos = function(){
 			else {	
 				<%-- Si el documento está DESCARTADO --%>
 				if(gridDocumentos.getSelectionModel().getSelected().get('codigoEstadoDocumento') == 'DE'
-					&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true &&
-					gridDocumentos.getSelectionModel().getSelected().get('tieneSolicitud') == false){
+					&& gridDocumentos.getSelectionModel().getSelected().get('esDocumento') == true){
 	      			habilitarDeshabilitarButtons(false, true, true, false, true, false, false);  
 	      			return; 
 				}
@@ -481,7 +480,8 @@ var actualizarBotonesDocumentos = function(){
 						
 			<%-- **** ESTADO PENDIENTE DE SOLICITAR --%>
 			<%-- Vemos si tenemos solo un resultado y es PS (PENDIENTE SOLICITAR --%>
-			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){
+<!-- 			debugger; -->
+<!-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'PS'){ -->
 				uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
 	    			return arrayEsDocumento.indexOf(item) == pos;
 				});
@@ -511,7 +511,7 @@ var actualizarBotonesDocumentos = function(){
 							<%-- pero no tienen resultado --%>
 							if (uniqueArray4.length ==1 && uniqueArray4[0] == ''){
 								<%-- DESCARTAR DOCUMENTOS y ANULAR SOLICITUDES MASIVAMENTE --%>
-								habilitarDeshabilitarButtons(false, true, false, true, false, true, true);
+								habilitarDeshabilitarButtons(false, true, false, true, false, false, true);
 								return;
 							}		      					      									
 						}
@@ -529,10 +529,10 @@ var actualizarBotonesDocumentos = function(){
 						return;
 					}		      					      																	
 				}												
-			}
+<!-- 			} -->
 			<%-- **** ESTADO SOLICITADO --%>
 			<%-- Vemos si tenemos solo un resultado y es SO (SOLICITADO) --%>
-			if (uniqueArray.length == 1 && uniqueArray[0] == 'SO'){
+<!-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'SO'){ -->
 				uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
 	    			return arrayEsDocumento.indexOf(item) == pos;
 				});
@@ -566,10 +566,10 @@ var actualizarBotonesDocumentos = function(){
 						return;
 					}		      					      																	
 				}				
-			}
+<!-- 			} -->
 			<%-- **** ESTADO DESCARTADO --%>
 			<%-- Vemos si tenemos solo un resultado y es DE (DESCARTADO) --%>
-			if (uniqueArray.length == 1 && uniqueArray[0] == 'DE'){
+<!-- 			if (uniqueArray.length == 1 && uniqueArray[0] == 'DE'){ -->
 				uniqueArray2 = arrayEsDocumento.filter(function(item, pos) {
 	    			return arrayEsDocumento.indexOf(item) == pos;
 				});
@@ -579,7 +579,7 @@ var actualizarBotonesDocumentos = function(){
 					habilitarDeshabilitarButtons(false, true, true, true, true, false, true);
 					return;
 				}
-			}
+<!-- 			} -->
 						
 		}
 }	

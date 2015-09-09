@@ -20,6 +20,7 @@ var OK_KO_Render = function(value, meta, record) {
 var liquidacionPcoRecord = Ext.data.Record.create([
 	{name: 'prcId'},
 	{name: 'codigo'},
+	{name: 'nombreProcedimiento'},
 	{name: 'nombreExpediente'},
 	{name: 'estadoExpediente'},
 	{name: 'fechaEstado'},
@@ -86,7 +87,7 @@ liquidacionPcoStore.on('load', function() {
 gridLiquidacionPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
-	var nombre_procedimiento = rec.get('nombreExpediente');
+	var nombre_procedimiento = rec.get('nombreProcedimiento');
 
    	if (id != null && id != ''){
    		app.abreProcedimiento(id, nombre_procedimiento);

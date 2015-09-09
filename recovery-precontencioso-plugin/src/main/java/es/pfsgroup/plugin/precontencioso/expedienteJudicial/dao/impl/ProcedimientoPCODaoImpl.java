@@ -58,7 +58,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		// Distinct por procedimiento id
 		select.add(Projections.distinct(Projections.property("procedimiento.id").as("id")));
-
+		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
@@ -173,6 +173,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param select
 	 */
 	private void addDefaultProcedimientoProjection(ProjectionList select) {
+		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
@@ -416,6 +417,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
 				query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud");
 				where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getDocDiasGestion())) {
+				where.add(Restrictions.eq("solicitud.diasEnGestion", filtro.getDocDiasGestion()));
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDespacho()) && !StringUtils.emtpyString(filtro.getDocGestor())) {

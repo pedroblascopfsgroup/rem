@@ -63,7 +63,9 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		
 		logger.info("CODERROR: " + output.getCODERROR());
 		logger.info("TXTERROR: " + output.getTXTERROR());
-		logger.info("DESCESTADO: " + output.getDESCESTADO());
+		//logger.info("DESCESTADO: " + output.getDESCESTADO());  QUITADO: YA NO ESTA EN LA INTERFACE
+		// TASA nuevas
+		// IDTA nuevas 
 		logger.info("ESTADO: " + output.getESTADO());
 		logger.info("DOCSOLICITUD: " + output.getDOCSOLICITUD());		
 	}

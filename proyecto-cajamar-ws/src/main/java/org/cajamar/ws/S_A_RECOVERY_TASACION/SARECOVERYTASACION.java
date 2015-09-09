@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "S_A_RECOVERY_TASACION", targetNamespace = "http://cajamar.org/webservice", wsdlLocation = "https://multidesa.larural.es:515/RECOVERY/services/S_A_RECOVERY_TASACION?wsdl")
+@WebServiceClient(name = "S_A_RECOVERY_TASACION", targetNamespace = "http://cajamar.org/webservice", wsdlLocation = "file:/home/gonzalo/Descargas/S_A_RECOVERY_TASACION.wsdl")
 public class SARECOVERYTASACION
     extends Service
 {
@@ -30,9 +30,9 @@ public class SARECOVERYTASACION
         try {
             URL baseUrl;
             baseUrl = org.cajamar.ws.S_A_RECOVERY_TASACION.SARECOVERYTASACION.class.getResource(".");
-            url = new URL(baseUrl, "https://multidesa.larural.es:515/RECOVERY/services/S_A_RECOVERY_TASACION?wsdl");
+            url = new URL(baseUrl, "file:/home/gonzalo/Descargas/S_A_RECOVERY_TASACION.wsdl");
         } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: 'https://multidesa.larural.es:515/RECOVERY/services/S_A_RECOVERY_TASACION?wsdl', retrying as a local file");
+            logger.warning("Failed to create URL for the wsdl Location: 'file:/home/gonzalo/Descargas/S_A_RECOVERY_TASACION.wsdl', retrying as a local file");
             logger.warning(e.getMessage());
         }
         SARECOVERYTASACION_WSDL_LOCATION = url;

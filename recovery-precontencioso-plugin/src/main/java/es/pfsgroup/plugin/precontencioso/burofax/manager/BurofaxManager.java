@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -164,7 +165,6 @@ public class BurofaxManager implements BurofaxApi {
 		
 		try {
 			idDireccion = proxyFactory.proxy(DireccionApi.class).guardarDireccionRetornaId(dto);
-			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error(e);
@@ -289,7 +289,7 @@ public class BurofaxManager implements BurofaxApi {
 				
 				//Guardamos nuevo envio
 				genericDao.save(EnvioBurofaxPCO.class,envio);
-				
+//				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(burofax.getProcedimientoPCO().getProcedimiento().getId());
 				listaEnvioBurofax.add(envio);
 			}	
 			
@@ -335,6 +335,7 @@ public class BurofaxManager implements BurofaxApi {
 			envioBurofax.setContenidoBurofax(contenido);
 			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 		}catch(Exception e){
 			logger.error(e);
 		}
@@ -380,9 +381,8 @@ public class BurofaxManager implements BurofaxApi {
 				burofax.setEstadoBurofax(estado);
 				burofax.setContrato(contratoPersona.getContrato());
 				burofaxDao.save(burofax);
-				
+				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(burofax.getProcedimientoPCO().getProcedimiento().getId());				
 			}
-			
 			
 			
 		}catch(Exception e){
@@ -447,6 +447,7 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setCertificado(certificado);
 				
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
+				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 			}
 		
 		}catch(Exception e){
@@ -531,6 +532,7 @@ public class BurofaxManager implements BurofaxApi {
 				envio.setFechaEnvio(fechaEnvio);
 				
 				genericDao.save(EnvioBurofaxPCO.class,envio);
+				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envio.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 			}
 		}catch(Exception e){
 			logger.error(e);

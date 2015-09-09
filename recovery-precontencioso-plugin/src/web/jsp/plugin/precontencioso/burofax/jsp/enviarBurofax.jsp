@@ -32,7 +32,7 @@
 	<pfsforms:ddCombo name="tipoBurofax"  
 		labelKey="plugin.precontencioso.grid.burofax.tipoBurofax" 
  		label="**Tipo Burofax" value="${idTipoBurofax}" dd="${listaTipoBurofax}" 
-		propertyCodigo="id" propertyDescripcion="descripcion"/>   	
+		propertyCodigo="id" propertyDescripcion="descripcion" obligatory="true"/>   	
 		
   </c:if>
   
@@ -50,23 +50,27 @@
 	});
   </c:if>
   
-  
-	
 
 	var bottomBar = [];
 
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.aceptar" text="**Aceptar" />'
 		,iconCls : 'icon_ok'
-		,handler : function(){	
-		    	Ext.Ajax.request({
-						url : page.resolveUrl('burofax/guardarEnvioBurofax'), 
-						params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable},
-						method: 'POST',
-						success: function ( result, request ) {
-							page.fireEvent(app.event.DONE);
-						}
-					});
+		,handler : function(){
+
+			if (tipoBurofax.getValue() == '' || tipoBurofax.getActiveError() != '') {
+				Ext.Msg.alert(fwk.constant.alert, '<s:message code="plugin.precontencioso.enviar.burofax.errorTipoBur" text="** Tipo burofax obligatorio" />');
+				return;
+			}
+
+			Ext.Ajax.request({
+				url : page.resolveUrl('burofax/guardarEnvioBurofax'), 
+				params : {arrayIdEnvios:arrayIdEnvios,arrayIdContrato:arrayIdContrato,certificado:certificado.getValue(),idTipoBurofax:tipoBurofax.getValue(),arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,comboEditable:comboEditable},
+				method: 'POST',
+				success: function ( result, request ) {
+					page.fireEvent(app.event.DONE);
+				}
+			});
 		}
 	});
 	
@@ -103,7 +107,7 @@
 			,items : [certificado,tipoBurofaxNoEditable]
 			,bbar:bottomBar
 		});
-	</c:if>		
+	</c:if>
 	
 	page.add(panelEdicion);
 

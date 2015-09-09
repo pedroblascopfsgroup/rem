@@ -17,7 +17,6 @@ var arrayTieneSolicitud=new Array();
 var arrayCodigoEstadoDocumento=new Array();
 
 var myCboxSelModel2 = new Ext.grid.CheckboxSelectionModel({
- 		header: '',
  		handleMouseDown : function(g, rowIndex, e){
   		 	var view = this.grid.getView();
     		var isSelected = this.isSelected(rowIndex);
@@ -74,7 +73,7 @@ storeDocumentos.on(
 
 var myRenderer =  'background-color:lavender;';
 
-var cmDocumento = new Ext.grid.ColumnModel([
+var cmDocumento = [
  	myCboxSelModel2,
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
 	{header : '<s:message code="precontencioso.grid.documento.descripcion" text="**Descripción" />', dataIndex : 'descripcionUG'},
@@ -90,7 +89,7 @@ var cmDocumento = new Ext.grid.ColumnModel([
 	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', css: myRenderer},	
 	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', css: myRenderer},
 	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario', css: myRenderer}	
-]); 
+]; 
 
 var validacion=false;
 var incluirDocButton = new Ext.Button({
@@ -658,15 +657,22 @@ Ext.namespace('Ext.ux.plugins');
 			}
 	});
 	
-var gridDocumentos = app.crearGrid(storeDocumentos, cmDocumento, {
-	title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />',
-	bbar: [incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh],
-	height: 170,
-	autoWidth: true,
-	style:'padding-top: inherit',
-	collapsible: true,
-	sm: myCboxSelModel2
-});
+var gridDocumentos = new Ext.grid.GridPanel({
+		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
+		,columns: cmDocumento
+		,store: storeDocumentos
+		,height: 170
+		,loadMask: true
+        ,sm: myCboxSelModel2
+        ,clicksToEdit: 1
+        ,viewConfig: {forceFit:true}
+        ,plugins: [columMemoryPlugin]
+		,collapsible: true
+		,height: 250
+		,autoWidth: true	
+		,resizable:true	
+		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
+	}); 
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);

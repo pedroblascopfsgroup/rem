@@ -74,8 +74,8 @@ storeDocumentos.on(
 
 var myRenderer =  'background-color:lavender;';
 
-var cmDocumento = [ 
- 	myCboxSelModel2, 
+var cmDocumento = [
+ 	myCboxSelModel2,
 	{header : '<s:message code="precontencioso.grid.documento.unidadGestion" text="**Unidad de Gestión" />', dataIndex : 'contrato'},
 	{header : '<s:message code="precontencioso.grid.documento.descripcion" text="**Descripción" />', dataIndex : 'descripcionUG'},
 	{header : '<s:message code="precontencioso.grid.documento.tipoDocumento" text="**Tipo Documento" />', dataIndex : 'tipoDocumento'},
@@ -658,7 +658,7 @@ Ext.namespace('Ext.ux.plugins');
 				refrescarDocumentosGrid();
 			}
 	});
-
+	
 var gridDocumentos = new Ext.grid.GridPanel({
 		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />'	
 		,columns: cmDocumento
@@ -669,12 +669,12 @@ var gridDocumentos = new Ext.grid.GridPanel({
         ,clicksToEdit: 1
         ,viewConfig: {forceFit:true}
         ,plugins: [columMemoryPlugin]
-		,cls:'cursor_pointer'
 		,collapsible: true
 		,height: 250
-		,autoWidth: true			
+		,autoWidth: true	
+		,resizable:true	
 		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
-	});
+	}); 
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);

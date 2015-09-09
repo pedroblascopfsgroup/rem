@@ -8,11 +8,8 @@
 
 
 <%-- Codigo --%>
-
-var fieldCodigo = new Ext.form.TextField({
-	name: 'codigo',
-	fieldLabel : '<s:message code="plugin.precontencioso.tab.expjudicial.codigo" text="** Código" />'
-});
+<pfsforms:numberfield name="fieldCodigo" labelKey="plugin.precontencioso.tab.expjudicial.codigo" label="** Código" 
+	value="" obligatory="false" allowDecimals="false" />
 
 <%-- Nombre Expediente Judicial --%>
 

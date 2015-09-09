@@ -337,6 +337,7 @@
 	var rowsSelected=new Array(); 
 	var arrayIdBurofax=new Array();
 	var arrayIdDirecciones=new Array();
+	var arrayIdEnvios=new Array();
 		 
 	rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 		
@@ -345,7 +346,7 @@
 	  if(rowsSelected[i].get('idDireccion') != ''){
 	  	arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
 	  }
-	  
+	  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
 	}
 
 	
@@ -353,13 +354,14 @@
      if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){
      	 var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
 		 var arrayIdBurofax = Ext.encode(arrayIdBurofax);
+		 var arrayIdEnvios = Ext.encode(arrayIdEnvios);
 		var w = app.openWindow({
 		  flow : 'burofax/getTipoBurofax'
 		  //,width:320
 		  ,autoWidth:true
 		  ,closable:true
 		  ,title : '<s:message code="plugin.precontencioso.grid.burofax.tipo.titulo" text="**Seleccionar tipo burofax" />'
-		  ,params:{arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax}
+		  ,params:{arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios}
 		
 		});
 		w.on(app.event.DONE,function(){

@@ -1,10 +1,10 @@
 #!/bin/bash
 # Generado manualmente por PBO
  
-ENTIDAD=2038
+ENTIDAD=3058
 
-DIR_INPUT=/datos/usuarios/recovecb/transferencia/aprov_troncal/
-export DIR_TXT=/datos/usuarios/recovecb/etl/input/
+DIR_INPUT=/recovery/transferencia/aprov_troncal/
+export DIR_TXT=/recovery/batch-server/control/etl/input/
 
 MAX_WAITING_MINUTES=10
 ficheros=PCR

@@ -1,14 +1,14 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-ENTIDAD=2038
-DIR_INPUT=/datos/usuarios/recovecb/transferencia/aprov_troncal/
+ENTIDAD=3058
+DIR_INPUT=/recovery/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
 ficheros=USUARIOS,ZONPEFUSU
 
 #echo $(basename $0)
 
-DIR_DESTINO=/datos/usuarios/recovecb/etl/input/
+DIR_DESTINO=/recovery/batch-server/control/etl/input/
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"

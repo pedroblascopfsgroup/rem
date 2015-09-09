@@ -1,10 +1,10 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-ENTIDAD=2038
+ENTIDAD=3058
 CARPETA=pcr
 DIR_DESTINO=/$DEVON_HOME/tmp/pfs/$ENTIDAD/$CARPETA/
-DIR_INPUT=/datos/usuarios/recovecb/transferencia/aprov_troncal/
+DIR_INPUT=/recovery/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
 ficheros=PCR
 WAIT_FOR_JOBS=cargaPCRvalidacionesPCRJob,cargaPCRPasajeProduccionJob,precalculoPCRProduccionJob

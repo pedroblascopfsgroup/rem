@@ -1,14 +1,14 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-ENTIDAD=2038
-DIR_INPUT=/datos/usuarios/recovecb/transferencia/aprov_auxiliar/
+ENTIDAD=3058
+DIR_INPUT=/recovery/transferencia/aprov_auxiliar/
 MAX_WAITING_MINUTES=10
 ficheros=CIRBE
 
 #echo $(basename $0)
 
-DIR_DESTINO=/datos/usuarios/recovecb/etl/input/
+DIR_DESTINO=/recovery/batch-server/control/etl/input/
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"

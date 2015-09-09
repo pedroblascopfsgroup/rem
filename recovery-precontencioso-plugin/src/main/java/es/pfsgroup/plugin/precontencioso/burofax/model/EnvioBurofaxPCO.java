@@ -79,20 +79,7 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	/*
-	 * Formulas para el buscador de precontencioso
-	 */
-
-	@Formula(value = 
-		" SELECT TRUNC(SYSDATE) - TRUNC(pco_bur_envio.pco_bur_envio_fecha_solicitud)" +
-		" FROM   pco_bur_burofax " +
-		"        INNER JOIN pco_bur_envio " +
-		"                ON pco_bur_burofax.pco_bur_burofax_id = pco_bur_envio.pco_bur_burofax_id " +
-		"        INNER JOIN dd_pco_bfe_estado " +
-		"                ON dd_pco_bfe_estado.dd_pco_bfe_id = pco_bur_burofax.dd_pco_bfe_id " +
-		" WHERE  pco_bur_envio.pco_bur_envio_id = PCO_BUR_ENVIO_ID " +
-		"        AND dd_pco_bfe_estado.dd_pco_bfe_codigo != '" + DDEstadoBurofaxPCO.NOTIFICADO + "' ")
-	private Integer diasEnGestion;
+	
 
 	/*
 	 * GETTERS & SETTERS

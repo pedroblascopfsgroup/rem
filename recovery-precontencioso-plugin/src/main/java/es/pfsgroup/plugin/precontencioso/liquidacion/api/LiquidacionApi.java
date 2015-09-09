@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.InclusionLiquidacionProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
@@ -12,7 +11,6 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 public interface LiquidacionApi {
 
 	public static final String PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO = "es.pfsgroup.recovery.precontencioso.liquidacion.api.incluirLiquidacionAlProcedimiento";
-	public static final String PRECONTENCIOSO_BO_OBRENER_GESTOR_DESPACHO = "es.pfsgroup.recovery.precontencioso.liquidacion.api.getGestorDespachoByUsuId";
 
 	/**
 	 * Obtiene las liquidaciones de un procedimientoPCO
@@ -78,11 +76,4 @@ public interface LiquidacionApi {
     @Transactional(readOnly = false)
     public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto);
     
-    /**
-     * Obtiene un GestorDespacho a partir de un usu_id
-     * @param usuId
-     * @return
-     */
-    @BusinessOperationDefinition(PRECONTENCIOSO_BO_OBRENER_GESTOR_DESPACHO)
-    List<GestorDespacho> getGestorDespachoByUsuId(Long usuId);
 }

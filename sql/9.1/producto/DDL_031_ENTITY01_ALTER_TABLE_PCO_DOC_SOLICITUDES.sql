@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150909
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=Producto-95
 --## PRODUCTO=SI
 --## Finalidad: DDL Añadir nuevas columnas
 --##           

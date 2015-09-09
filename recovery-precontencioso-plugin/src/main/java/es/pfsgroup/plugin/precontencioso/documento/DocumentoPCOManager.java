@@ -31,6 +31,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -96,6 +97,9 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+    private UsuarioManager usuarioManager; 
 	
     private final Log logger = LogFactory.getLog(getClass());
     private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -435,6 +439,15 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		solicitud.setFechaResultado(solDto.getFechaResultado());
 		solicitud.setFechaEnvio(solDto.getFechaEnvio());
 		solicitud.setFechaRecepcion(solDto.getFechaRecepcion());
+		
+		//Se registra el usd_id del solicitante
+		if(!Checks.esNulo(usuarioManager)){
+			List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+			if(!Checks.esNulo(listaGestorDespacho.get(0))){
+				solicitud.setSolicitante(listaGestorDespacho.get(0));
+			}
+		}
+		
 		if(!Checks.esNulo(solDto.getResultado())){ 
 			DDResultadoSolicitudPCO resSolPco = genericDao.get(DDResultadoSolicitudPCO.class, 
 					genericDao.createFilter(FilterType.EQUALS, "codigo", solDto.getResultado()));

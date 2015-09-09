@@ -17,11 +17,13 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 
 @Entity
 @Table(name = "PCO_BUR_ENVIO", schema = "${entity.schema}")
@@ -76,6 +78,21 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
+
+	/*
+	 * Formulas para el buscador de precontencioso
+	 */
+
+	@Formula(value = 
+		" SELECT TRUNC(SYSDATE) - TRUNC(pco_bur_envio.pco_bur_envio_fecha_solicitud)" +
+		" FROM   pco_bur_burofax " +
+		"        INNER JOIN pco_bur_envio " +
+		"                ON pco_bur_burofax.pco_bur_burofax_id = pco_bur_envio.pco_bur_burofax_id " +
+		"        INNER JOIN dd_pco_bfe_estado " +
+		"                ON dd_pco_bfe_estado.dd_pco_bfe_id = pco_bur_burofax.dd_pco_bfe_id " +
+		" WHERE  pco_bur_envio.pco_bur_envio_id = PCO_BUR_ENVIO_ID " +
+		"        AND dd_pco_bfe_estado.dd_pco_bfe_codigo != '" + DDEstadoBurofaxPCO.NOTIFICADO + "' ")
+	private Integer diasEnGestion;
 
 	/*
 	 * GETTERS & SETTERS

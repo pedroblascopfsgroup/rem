@@ -58,13 +58,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		// Distinct por procedimiento id
 		select.add(Projections.distinct(Projections.property("procedimiento.id").as("id")));
-
+		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
 		select.add(Projections.property("procedimientoPco.estadoActual").as("estadoActualProcedimiento"));
 		select.add(Projections.property("procedimientoPco.fechaEstadoActual").as("fechaEstadoProcedimiento"));
-		//select.add(Projections.property("procedimientoPco.diasEnGestion").as("diasEnGestion"));
+		select.add(Projections.property("procedimientoPco.diasEnGestion").as("diasEnGestion"));
 		select.add(Projections.property("tipoProcPropuesto.descripcion").as("tipoProcPropuesto"));
 		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
 		select.add(Projections.property("procedimientoPco.fechaInicioPreparacion").as("fechaInicioPreparacion"));
@@ -173,6 +173,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param select
 	 */
 	private void addDefaultProcedimientoProjection(ProjectionList select) {
+		select.add(Projections.property("procedimientoPco.procedimiento").as("procedimiento"));
 		select.add(Projections.property("procedimiento.id").as("prcId"));
 		select.add(Projections.property("procedimiento.id").as("codigo"));
 		select.add(Projections.property("procedimientoPco.nombreExpJudicial").as("nombreExpJudicial"));
@@ -252,6 +253,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		if (!StringUtils.emtpyString(filtro.getProDisponibleBurofaxes())) {
 			where.add(Restrictions.eq("procedimientoPco.todosBurofaxes", "01".equals(filtro.getProDisponibleBurofaxes())));
+		}
+
+		if (!StringUtils.emtpyString(filtro.getProDiasGestion())) {
+			where.add(Restrictions.eq("procedimientoPco.diasEnGestion", filtro.getProDiasGestion()));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigosEstado())) {
@@ -412,6 +417,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
 				query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud");
 				where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
+			}
+
+			if (!StringUtils.emtpyString(filtro.getDocDiasGestion())) {
+				where.add(Restrictions.eq("solicitud.diasEnGestion", filtro.getDocDiasGestion()));
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDespacho()) && !StringUtils.emtpyString(filtro.getDocGestor())) {

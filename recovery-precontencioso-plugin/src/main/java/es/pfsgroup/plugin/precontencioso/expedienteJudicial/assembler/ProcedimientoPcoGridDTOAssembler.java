@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.BurofaxGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.DocumentoGridDTO;
@@ -28,6 +29,12 @@ public class ProcedimientoPcoGridDTOAssembler {
 
 		for (HashMap<String, Object> procedimiento : procedimientos) {
 			ProcedimientoPcoGridDTO procedimientoGridDto = new ProcedimientoPcoGridDTO();
+
+			// Nombre del procedimiento
+			if (procedimiento.get("procedimiento") != null) {
+				Procedimiento prc = (Procedimiento) procedimiento.get("procedimiento");
+				procedimientoGridDto.setNombreProcedimiento(prc.getNombreProcedimiento());
+			}
 
 			procedimientoGridDto.setPrcId(ObjectUtils.toString(procedimiento.get("prcId")));
 			procedimientoGridDto.setCodigo(ObjectUtils.toString(procedimiento.get("codigo")));
@@ -141,6 +148,12 @@ public class ProcedimientoPcoGridDTOAssembler {
 	private static ProcedimientoPcoGridDTO defaultProcedimientoPcoGridDtoFromHashMap(HashMap<String, Object> row) {
 		ProcedimientoPcoGridDTO prcPcoGridDto = new ProcedimientoPcoGridDTO();
 
+		// Nombre del procedimiento
+		if (row.get("procedimiento") != null) {
+			Procedimiento prc = (Procedimiento) row.get("procedimiento");
+			prcPcoGridDto.setNombreProcedimiento(prc.getNombreProcedimiento());
+		}
+		
 		prcPcoGridDto.setPrcId(ObjectUtils.toString(row.get("prcId")));
 		prcPcoGridDto.setCodigo(ObjectUtils.toString(row.get("codigo")));
 		prcPcoGridDto.setNombreExpediente(ObjectUtils.toString(row.get("nombreExpJudicial")));

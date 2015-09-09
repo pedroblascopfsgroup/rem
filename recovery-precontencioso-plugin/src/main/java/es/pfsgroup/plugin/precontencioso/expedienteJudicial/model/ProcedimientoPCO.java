@@ -210,6 +210,20 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		"        AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID )")
 	private Boolean todosBurofaxes;
 
+	@Formula(value =
+		" (SELECT TRUNC(SYSDATE) - TRUNC(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio) " +
+		" FROM   pco_prc_procedimientos " +
+		"        INNER JOIN pco_prc_hep_histor_est_prep " +
+		"                ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+		"        INNER JOIN dd_pco_prc_estado_preparacion " +
+		"                ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
+		"        AND pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +
+		"        AND pco_prc_hep_histor_est_prep.borrado = 0 " +
+		"        AND dd_pco_prc_estado_preparacion.dd_pco_pep_codigo != '" + DDEstadoPreparacionPCO.PREPARADO + "' " +
+		"        AND dd_pco_prc_estado_preparacion.dd_pco_pep_codigo != '" + DDEstadoPreparacionPCO.CANCELADO + "' ) ")
+	private Integer diasEnGestion;
+
 	/**
 	 * Devuelve el <DDEstadoPreparacionPCO> en el que se encuentra el procedimiento
 	 */

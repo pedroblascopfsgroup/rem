@@ -20,6 +20,7 @@ var OK_KO_Render = function(value, meta, record) {
 var documentoPcoRecord = Ext.data.Record.create([
 	{name: 'prcId'},
 	{name: 'codigo'},
+	{name: 'nombreProcedimiento'},
 	{name: 'nombreExpediente'},
 	{name: 'estadoExpediente'},
 	{name: 'fechaEstado'},
@@ -27,7 +28,7 @@ var documentoPcoRecord = Ext.data.Record.create([
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
 	{name: 'docEstado'},
-<!-- 	{name: 'fechaSolicitud'}, -->	
+ 	{name: 'fechaSolicitud'},
 	{name: 'docUltimaRespuesta'},
 	{name: 'docUltimoActor'},
 	{name: 'docFechaResultado'},
@@ -88,7 +89,7 @@ documentoPcoStore.on('load', function() {
 gridDocumentoPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('codigo');
-	var nombre_procedimiento = rec.get('nombreExpediente');
+	var nombre_procedimiento = rec.get('nombreProcedimiento');
 
    	if (id != null && id != ''){
    		app.abreProcedimiento(id, nombre_procedimiento);

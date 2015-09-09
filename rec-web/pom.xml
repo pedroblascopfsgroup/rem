@@ -24,36 +24,6 @@
 
 	<dependencies>
 
-		<!--  PARA JMS **************** -->
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>org.springframework.integration.jms</artifactId>
-			<version>1.0.3.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>com.springsource.javax.jms</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>com.springsource.org.apache.activemq</artifactId>
-			<version>5.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>com.springsource.javax.management.j2ee</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		<!--  PARA JMS **************** -->
-
-		
 		<!-- Inicio plugins de Recovery -->
 		<dependency>
 			<groupId>pfs</groupId>
@@ -2004,6 +1974,34 @@
 		<profile>
 			<id>haya</id>
 			<dependencies>
+				<!--  PARA JMS **************** -->
+				<dependency>
+					<groupId>org.springframework.integration</groupId>
+					<artifactId>org.springframework.integration.jms</artifactId>
+					<version>1.0.3.RELEASE</version>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>javax.jms</groupId>
+					<artifactId>com.springsource.javax.jms</artifactId>
+					<version>1.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.activemq</groupId>
+					<artifactId>com.springsource.org.apache.activemq</artifactId>
+					<version>5.2.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>com.springsource.javax.management.j2ee</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+				<!--  PARA JMS **************** -->
 				<!-- Versión de AspectJ -->
 				<dependency>
 					<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
@@ -2032,6 +2030,7 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<!-- PASAR A DELIVERY UNICAMENTE -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar-ws</artifactId>
@@ -2046,6 +2045,7 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<!-- FIN PASAR A DELIVERY UNICAMENTE -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-haya</artifactId>
@@ -2174,6 +2174,34 @@
 		<profile>
 			<id>cajamar</id>
 			<dependencies>
+				<!--  PARA JMS **************** -->
+				<dependency>
+					<groupId>org.springframework.integration</groupId>
+					<artifactId>org.springframework.integration.jms</artifactId>
+					<version>1.0.3.RELEASE</version>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>javax.jms</groupId>
+					<artifactId>com.springsource.javax.jms</artifactId>
+					<version>1.1.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.activemq</groupId>
+					<artifactId>com.springsource.org.apache.activemq</artifactId>
+					<version>5.2.0</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>com.springsource.javax.management.j2ee</artifactId>
+					<version>1.0.1</version>
+				</dependency>
+				<!--  PARA JMS **************** -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>recovery-procedimientos-bpmHaya</artifactId>

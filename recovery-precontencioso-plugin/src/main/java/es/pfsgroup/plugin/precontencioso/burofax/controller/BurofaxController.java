@@ -111,8 +111,13 @@ public class BurofaxController {
 				    		dto.setIdDireccion(direccion.getId());
 				    		dto.setIdBurofax(burofax.getId());
 				    		dto.setIdEnvio(Long.valueOf(-1));
-			    			dto.setDireccion(direccion.getDomicilio().concat(" Nº ").concat(direccion.getDomicilio_n()));
-							
+				    		if(!Checks.esNulo(direccion.getDomicilio_n())){
+				    			dto.setDireccion(direccion.getDomicilio().concat(" Nº ").concat(direccion.getDomicilio_n()));
+				    		}
+				    		else{
+				    			dto.setDireccion(direccion.getDomicilio().concat(" Nº "));
+				    		}
+				    		
 			    			if(!Checks.esNulo(burofax.getContrato())){
 			    				DDTipoBurofaxPCO tipoBurofax=burofaxManager.getTipoBurofaxPorDefecto(idProcedimiento,burofax.getContrato().getId());
 			    				if(!Checks.esNulo(tipoBurofax) && !Checks.esNulo(tipoBurofax.getCodigo())){
@@ -146,8 +151,12 @@ public class BurofaxController {
 					dto.setIdCliente(burofax.getDemandado().getId());
 					dto.setIdEnvio(envioBurofax.getId());
 					dto.setIdDireccion(envioBurofax.getDireccion().getId());
-					//dto.setDireccion(envioBurofax.getDireccion().getDomicilio());
-					dto.setDireccion(envioBurofax.getDireccion().getDomicilio().concat(" Nº ").concat(envioBurofax.getDireccion().getDomicilio_n()));
+					if(!Checks.esNulo(envioBurofax.getDireccion().getDomicilio_n())){
+						dto.setDireccion(envioBurofax.getDireccion().getDomicilio().concat(" Nº ").concat(envioBurofax.getDireccion().getDomicilio_n()));
+					}
+					else{
+						dto.setDireccion(envioBurofax.getDireccion().getDomicilio());
+					}
 					dto.setTipo(envioBurofax.getTipoBurofax().getCodigo());
 					dto.setTipo(envioBurofax.getTipoBurofax().getCodigo());
 					dto.setFechaSolicitud(envioBurofax.getFechaSolicitud());

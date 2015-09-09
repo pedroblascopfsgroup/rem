@@ -27,10 +27,8 @@ var fieldApellidos = new Ext.form.TextField({
 
 <%-- Código de contrato. --%>
 
-var fieldCodigoContrato = new Ext.form.TextField({
-	name: 'codigoContrato',
-	fieldLabel: '<s:message code="plugin.precontencioso.tab.personacontratos.codigo" text="** Codigo Contrato" />'
-});
+<pfsforms:numberfield name="fieldCodigoContrato" labelKey="plugin.precontencioso.tab.personacontratos.codigo" label="** Codigo Contrato" 
+	value="" obligatory="false" allowDecimals="false" />
 
 <%-- Tipo de producto. --%>
 

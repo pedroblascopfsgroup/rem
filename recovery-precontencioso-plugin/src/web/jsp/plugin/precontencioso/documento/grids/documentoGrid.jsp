@@ -35,7 +35,8 @@ var myCboxSelModel2 = new Ext.grid.CheckboxSelectionModel({
 var documentosRecord = Ext.data.Record.create([
 	{name:'idIdentificativo'},
 	{name:'id'},
-	{name:'idDoc'},	
+	{name:'idDoc'},
+	{name:'solicitante'},	
 	{name:'esDocumento'},	
 	{name:'tieneSolicitud'},	
 	{name:'codigoEstadoDocumento'},		
@@ -88,7 +89,8 @@ var cmDocumento = [
 	{header : '<s:message code="precontencioso.grid.documento.fechaEnvio" text="**Fecha Envio" />', dataIndex : 'fechaEnvio', css: myRenderer},	
 	{header : '<s:message code="precontencioso.grid.documento.fechaRecepcion" text="**Fecha Recepcion" />', dataIndex : 'fechaRecepcion', css: myRenderer},	
 	{header : '<s:message code="precontencioso.grid.documento.resultado" text="**Resultado" />', dataIndex : 'resultado', css: myRenderer},
-	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario', css: myRenderer}	
+	{header : '<s:message code="precontencioso.grid.documento.comentario" text="**Comentario" />', dataIndex : 'comentario', css: myRenderer},
+	{header: '<s:message code="plugin.precontencioso.grid.liquidacion.solicitante" text="**Solicitante" />', dataIndex: 'solicitante', hidden: true,css:myRenderer}
 ]; 
 
 var validacion=false;

@@ -68,6 +68,11 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 
 	@Column(name = "PCO_DOC_DSO_FECHA_RECEPCION")
 	private Date fechaRecepcion;
+	
+	@ManyToOne
+	@JoinColumn(name = "PCO_DOC_SOLICITANTE")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GestorDespacho solicitante;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -188,5 +193,13 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 
 	public void setSysGuid(String sysGuid) {
 		this.sysGuid = sysGuid;
+	}
+
+	public GestorDespacho getSolicitante() {
+		return solicitante;
+	}
+
+	public void setSolicitante(GestorDespacho solicitante) {
+		this.solicitante = solicitante;
 	}
 }

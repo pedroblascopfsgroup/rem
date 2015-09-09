@@ -146,7 +146,7 @@ public class LiquidacionManager implements LiquidacionApi {
 
 		//Se registra el usd_id del solicitante
 		if(!Checks.esNulo(usuarioManager)){
-			List<GestorDespacho> listaGestorDespacho = getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+			List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
 			if(!Checks.esNulo(listaGestorDespacho.get(0))){
 				liquidacion.setSolicitante(listaGestorDespacho.get(0));
 			}
@@ -231,22 +231,6 @@ public class LiquidacionManager implements LiquidacionApi {
 		return liquidacion;
 	}
 	
-	@Override
-	@BusinessOperation(PRECONTENCIOSO_BO_OBRENER_GESTOR_DESPACHO)
-	public List<GestorDespacho> getGestorDespachoByUsuId(Long usuId){
-		List<GestorDespacho> listaGestorDespacho=null;
-		
-		try{
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuId);
-			listaGestorDespacho=(List<GestorDespacho>) genericDao.getList(GestorDespacho.class,filtro1);
-			
 	
-		}catch(Exception e){
-			logger.error(e);
-		}
-		
-		return listaGestorDespacho;
-		
-	}
 
 }

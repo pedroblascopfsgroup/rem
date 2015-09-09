@@ -194,7 +194,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO)
     public Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params) {
     	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-    	expedientes.setLimit(2000);
+    	expedientes.setLimit(25);
     	EventFactory.onMethodStart(this.getClass());
         if (expedientes.getCodigoZona() != null && expedientes.getCodigoZona().trim().length() > 0) {
             StringTokenizer tokens = new StringTokenizer(expedientes.getCodigoZona(), ",");

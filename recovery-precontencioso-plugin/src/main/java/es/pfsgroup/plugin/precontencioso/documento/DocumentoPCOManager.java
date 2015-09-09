@@ -761,7 +761,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento", tipoDocumento),
 					genericDao.createFilter(FilterType.EQUALS, "unidadGestion", unidadGestion),
 					genericDao.createFilter(FilterType.EQUALS, "protocolo", protocolo),
-					genericDao.createFilter(FilterType.EQUALS, "notario", notario));
+					genericDao.createFilter(FilterType.EQUALS, "notario", notario),
+					genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		
 			if(listDocPco != null && listDocPco.size() > 0) {
 				return true;

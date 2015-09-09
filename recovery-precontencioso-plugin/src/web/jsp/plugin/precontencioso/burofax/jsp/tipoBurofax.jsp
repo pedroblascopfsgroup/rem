@@ -9,11 +9,10 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <fwk:page>
 	
-    //var idDireccion='${idDireccion}';
-    //var idBurofax='${idBurofax}';
+    
 	var arrayIdBurofax='${arrayIdBurofax}';
     var arrayIdDirecciones='${arrayIdDirecciones}';
-    var arrayIdEnvios='${arrayIdEnvios}';
+    //var arrayIdEnvios='${arrayIdEnvios}';
    
 
 	<pfsforms:ddCombo name="tipoBurofax"
@@ -30,7 +29,7 @@
 		    	Ext.Ajax.request({
 						url : page.resolveUrl('burofax/configurarTipoBurofax'), 
 						//params : {idTipoBurofax:tipoBurofax.value,idDireccion:idDireccion,idBurofax:idBurofax},
-						params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios},
+						params : {idTipoBurofax:tipoBurofax.value,arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax},
 						method: 'POST',
 						success: function ( result, request ) {
 							page.fireEvent(app.event.DONE);

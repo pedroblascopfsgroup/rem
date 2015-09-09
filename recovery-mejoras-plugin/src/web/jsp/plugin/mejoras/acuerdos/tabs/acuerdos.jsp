@@ -70,7 +70,6 @@
    
    <!--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado -->
    acuerdosStore.on('load', function () {
-   		
    		var btnDisbled = false
 	    acuerdosStore.data.each(function() {
 	    	var codEstad = this.data['codigoEstado'];
@@ -84,6 +83,18 @@
 	    }else{
 	    	btnAltaAcuerdo.setDisabled(false);
 	    }
+	    
+	    if (panel != null){
+		    if (acuerdosTabs != null){
+		    	panel.remove(acuerdosTabs);
+		    }	
+			if (panelAnterior != null){
+				panel.remove(panelAnterior);
+			}
+			if (panelAnteriorTerminos != null){
+				panel.remove(panelAnteriorTerminos);
+			}
+		}
 	});
    
    var despuesDeNuevoAcuerdo = function(){
@@ -408,9 +419,14 @@
 	}); 
 
 	var reload = function(){
-		analisisTab.remove(panelAnterior);
+		if (analisisTab != null){
+			analisisTab.remove(panelAnterior);
+		}
 		panelAnterior = recargarAcuerdo(acuerdoSeleccionado);
-		analisisTab.add(panelAnterior);
+		
+		if (analisisTab !=null) {
+			analisisTab.add(panelAnterior);
+		}
 		panel.doLayout();
 		acuerdosStore.webflow({id:panel.getAsuntoId()});
 	}
@@ -509,11 +525,13 @@
 		
 				analisisTab = new Ext.Panel({
 					title:'<s:message code="plugin.mejoras.acuerdos.tabAnalisis" text="**Análisis"/>'
+					,id:'asunto-analisisTabs-${asunto.id}'
 					,autoHeight:true
 				});
 			
 				terminosTab = new Ext.Panel({
 					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Términos"/>'
+					,id:'asunto-terminosTabs-${asunto.id}'
 					,autoHeight:true
 				});
 		
@@ -631,7 +649,7 @@
 <!-- 			,[btnCumplimientoAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] -->
 <!-- 		]; -->
 
-		entidad.setVisible(esVisible);
+		//entidad.setVisible(esVisible);
 		//Por defecto establecemos el botón como no visible
 		btnCumplimientoAcuerdo.setVisible(false);
 		//terminosTab.hide();

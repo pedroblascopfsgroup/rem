@@ -42,6 +42,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.revisionProcedimientos.RevisionProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.revisionProcedimiento.dto.RevisionProcedimientoDto;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 @Controller
@@ -154,7 +155,11 @@ public class MEJAcuerdoController {
 			@RequestParam(value = "id", required = true) Long id,
 			String contratosIncluidos, 
 			Long idAcuerdo) {
-				
+			
+		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
+			
+		map.put("termino", termino);
+		
 		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
 			
 		map.put("asunto", asunto);
@@ -178,6 +183,9 @@ public class MEJAcuerdoController {
 							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo) {
 		
 		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
+		// Sacamos los bienes que tiene asignado este termino
+		List<TerminoBien> tbList = genericDao.getList(TerminoBien.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", termino.getId()));
+		termino.setBienes(tbList);		
 		map.put("termino", termino);
 		
 		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
@@ -436,6 +444,67 @@ public class MEJAcuerdoController {
 		
 		return JSON_LISTADO_BIENES_ACUERDO;
 	}	
+	
+	 /**
+     * Obtiene la lista de Bienes asociados a los contratos de un termino
+     * 
+     * @param idTermino el id del termino
+     * @param contratosIncluidos Lista contratos incluidos en el termino cuando es un alta
+     * 
+     */
+	@RequestMapping
+    public String obtenerListadoBienesContratosAcuerdo(ModelMap model, Long idTermino, String contratosIncluidos) {
+		
+		List<Bien> listadoBienesAcuerdoRep = new ArrayList<Bien>();
+		List<Long> listaContratosId = new ArrayList<Long>();
+		
+		// Obtenemos los contratos de ese termino.
+		// Si lo estamos dando de alta 
+		if (idTermino == null){
+			StringTokenizer tokens = new StringTokenizer(contratosIncluidos, ",");
+			Contrato cnt; 
+			TerminoContrato tcnt;
+			while (tokens.hasMoreTokens()){
+				listaContratosId.add(new Long(tokens.nextToken()));
+			}
+		}
+		// Si lo estamos editando
+		else {
+	     	List<TerminoContrato> listaContratosTermino = (List<TerminoContrato>) genericDao.getList(TerminoContrato.class, genericDao.createFilter(FilterType.EQUALS, "termino.id", idTermino));
+	     	for (TerminoContrato tc : listaContratosTermino){
+	     		listaContratosId.add(tc.getContrato().getId());
+	     	}
+		}
+		
+	     // Obtenemos los bienes de cada uno de los contratos
+     	for (Long lCntIds : listaContratosId){     		
+    		List<NMBContratoBien> listaBienesContrato = (List<NMBContratoBien>) genericDao.getList(NMBContratoBien.class,
+    				genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "contrato.id", lCntIds));
+    		
+    		for (NMBContratoBien nb : listaBienesContrato){
+    			listadoBienesAcuerdoRep.add(nb.getBien());
+    		}
+     	}
+     	    
+		// En este punto tenemos una lista de bienes que puede estar repetida
+		// Vamos a procesarla para quedarnos solo con los no repetidos
+	    TreeMap<Long, Bien> bienesTerminoMap = new TreeMap<Long, Bien>();
+    	for (Bien bien : listadoBienesAcuerdoRep){
+    		bienesTerminoMap.put(bien.getId(), bien);
+    	}	
+    	
+        // Convertir el Map con los bienes en una lista
+        List<Bien> listadoBienesAcuerdo = new ArrayList<Bien>();
+        Bien bienL;
+        for(Iterator it = bienesTerminoMap.keySet().iterator(); it.hasNext();) {
+        	bienL = (Bien) bienesTerminoMap.get(it.next());
+        	listadoBienesAcuerdo.add(bienL);
+       	}  
+        
+		model.put("listadoBienesAcuerdo", listadoBienesAcuerdo);
+		
+		return JSON_LISTADO_BIENES_ACUERDO;
+	}		
 	
 	/**
 	 * Eliminar un Término asociado a un objeto

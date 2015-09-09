@@ -17,6 +17,8 @@
 	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
 	var idAsunto = '${asunto.id}';
 	var idTermino = '${termino.id}';
+	var contratosIncluidos = '${contratosIncluidos}';
+	
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
 		,{name:'descripcion'}
@@ -512,6 +514,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,{name:'descripcion'}
 	]);	
 	
+<%--  
    var bienesStore = page.getStore({
 		eventName : 'listado'
 		,flow:'mejacuerdo/obtenerListadoBienesAcuerdoByAsuId'
@@ -520,7 +523,19 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		}, bienesRecord)
 	});	
 			
-	bienesStore.webflow({idAsunto:idAsunto});			
+	bienesStore.webflow({idAsunto:idAsunto});
+--%>
+
+	var bienesStore = page.getStore({
+		eventName : 'listado'
+		,flow:'mejacuerdo/obtenerListadoBienesContratosAcuerdo'
+		,reader: new Ext.data.JsonReader({
+	        root: 'bienes'
+		}, bienesRecord)
+	});	
+			
+	bienesStore.webflow({idTermino:idTermino, contratosIncluidos:contratosIncluidos});			
+				
 	config.store = bienesStore;	
 	
 	var comboBienes = app.creaDblSelect(null,'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.combo" text="**Bienes del asunto/Bienes para dación" />',config); 

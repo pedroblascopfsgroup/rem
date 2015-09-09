@@ -115,7 +115,7 @@ public class BurofaxController {
 				    			dto.setDireccion(direccion.getDomicilio().concat(" Nº ").concat(direccion.getDomicilio_n()));
 				    		}
 				    		else{
-				    			dto.setDireccion(direccion.getDomicilio().concat(" Nº "));
+				    			dto.setDireccion(direccion.getDomicilio());
 				    		}
 				    		
 			    			if(!Checks.esNulo(burofax.getContrato())){

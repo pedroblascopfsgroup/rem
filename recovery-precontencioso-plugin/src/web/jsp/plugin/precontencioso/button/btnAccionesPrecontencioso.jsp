@@ -6,10 +6,10 @@
 	
 new Ext.Button({
 	id:'prc-btnAccionesPrecontencioso-padre',
-	text: '<s:message code="plugin.precontencioso.button.titulo" text="**Acciones" />',
+	text: '<s:message code="plugin.precontencioso.button.acciones.titulo" text="**Acciones" />',
 	menu: {
 		items: [{
-			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparaciï¿½n" />',
+			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparación" />',
 			icon:'/pfs/css/book_next.png',
 			handler: function() {
 				var estado = data.estadoPrecontencioso;
@@ -66,122 +66,43 @@ new Ext.Button({
 				}
 			}
 		},{
-			text: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial" text="**Tarea Especial" />',
+			text: '<s:message code="plugin.precontencioso.button.devolverPreparacion" text="**Devolver a preparacion" />',
 			handler: function() {
-					var page = new fwk.Page("pfs", "", "", "");
-					Ext.Ajax.request({
-						url: page.resolveUrl('expedientejudicial/crearTareaEspecial'),
-						params: {idProcedimiento: data.id},
-						method: 'POST',
-						success: function (result, request){
-							var resultado = Ext.decode(result.responseText);
-							if(resultado.finalizado == true){
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial.correcto"
-				             				text="**Se ha creado la tarea especial." />',
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-							}else{
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial.error"
-				             				text="**Error al crear la tarea especial." />',			             
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-							}
-						}
-						,error: function(){
-							Ext.MessageBox.show({
-					            title: 'Guardado',
-					            msg: '<s:message code="plugin.precontencioso.button.pruebaTareaEspecial.error" 
-					            	text="**Se ha producido un error al crear la tarea especial. Consulte con soporte" />',
-					            width:300,
-					            buttons: Ext.MessageBox.OK
-					        });
-						} 
+	
+				var estadoPreparado = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.PREPARADO" />';
+
+				if(data.estadoPrecontencioso != estadoPreparado) {
+					Ext.Msg.show({
+						title: fwk.constant.alert,
+						msg: '<s:message code="plugin.precontencioso.button.devolverPreparacion.error.estado"
+	             				text="**Podrán ser devueltos a preparación aquellos expedientes que se encuentren en estado preparado." />',			             
+						buttons: Ext.Msg.OK,
+						icon: Ext.MessageBox.WARNING
 					});
-			}
-		},{
-			text: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial" text="**Cancelar Tarea Especial" />',
-			handler: function() {
-					var page = new fwk.Page("pfs", "", "", "");
-					Ext.Ajax.request({
-						url: page.resolveUrl('expedientejudicial/cancelarTareaEspecial'),
-						params: {idProcedimiento: data.id},
-						method: 'POST',
-						success: function (result, request){
-							var resultado = Ext.decode(result.responseText);
-							if(resultado.finalizado == true){
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial.correcto"
-				             				text="**Se ha cancelado la tarea especial." />',
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-							}else{
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial.error"
-				             				text="**Error al cancelar la tarea especial." />',			             
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-							}
-						}
-						,error: function(){
-							Ext.MessageBox.show({
-					            title: 'Guardado',
-					            msg: '<s:message code="plugin.precontencioso.button.pruebaCancelarTareaEspecial.error" 
-					            	text="**Se ha producido un error al cancelar la tarea especial. Consulte con soporte" />',
-					            width:300,
-					            buttons: Ext.MessageBox.OK
-					        });
-						} 
-					});
-			}
-		},{
-			text: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales" text="**Recalcular Tareas Especiales" />',
-			handler: function() {
-					var page = new fwk.Page("pfs", "", "", "");
-					Ext.Ajax.request({
-						url: page.resolveUrl('expedientejudicial/recalcularTareasEspeciales'),
-						params: {idProcedimiento: data.id},
-						method: 'POST',
-						success: function (result, request){
-							var resultado = Ext.decode(result.responseText);
-							if(resultado.finalizado == true){
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales.correcto"
-				             				text="**Se han recalculado las tareas especiales." />',
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-							}else{
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales.error"
-				             				text="**Error al recalcular las tareas especiales." />',			             
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-							}
-						}
-						,error: function(){
-							Ext.MessageBox.show({
-					            title: 'Guardado',
-					            msg: '<s:message code="plugin.precontencioso.button.recalcularTareasEspeciales.error" 
-					            	text="**Se ha producido un error al recalcular las tareas especiales. Consulte con soporte" />',
-					            width:300,
-					            buttons: Ext.MessageBox.OK
-					        });
-						} 
-					});
-			}
-		},{
-			text: '<s:message code="plugin.precontencioso.button.pruebaAbrirPreparacion" text="**Abrir Preparacion" />',
-			handler: function() {
-					app.abreProcedimientoTab(data.id
-						, '<s:message text="titicaca" javaScriptEscape="true" />'
-	 					, 'precontencioso');
+					return;
+				}
+				var page = new fwk.Page("pfs", "", "", "");
+				Ext.Ajax.request({
+					url: page.resolveUrl('expedientejudicial/devolverPreparacion'),
+					params: {idProcedimiento: data.id},
+					method: 'POST',
+					success: function (result, request) {
+						Ext.Msg.show({
+							title: fwk.constant.alert,
+							msg: '<s:message code="plugin.precontencioso.button.devolverPreparacion.correcto"
+		             				text="**El expediente judicial se ha devuelto a preparacion correctamente" />',
+							buttons: Ext.Msg.OK
+						});
+					},
+					error: function(){
+						Ext.MessageBox.show({
+				            title: fwk.constant.alert,
+				            msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
+				            width: 300,
+				            buttons: Ext.MessageBox.OK
+				        });
+					} 
+				});
 			}
 		}]
 	}

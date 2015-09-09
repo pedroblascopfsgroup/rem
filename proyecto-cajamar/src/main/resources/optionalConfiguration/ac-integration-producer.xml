@@ -14,6 +14,11 @@
 			http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
 
 	<!-- CONFIGURACION DE LA SALIDA -->
+	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">
+		<constructor-arg index="0">
+			<bean class="es.pfsgroup.recovery.integration.JSONTranslator" />
+		</constructor-arg>
+	</bean>
 	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
 		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
 	</bean>

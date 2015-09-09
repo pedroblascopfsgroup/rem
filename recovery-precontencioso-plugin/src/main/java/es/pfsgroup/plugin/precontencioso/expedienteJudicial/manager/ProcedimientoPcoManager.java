@@ -225,6 +225,31 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
+	public void devolverPreparacionPorProcedimientoId(Long idProcedimiento) {
+		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+
+		// Comprobacion que el estado actual del procedimiento sea preparado
+		if (procedimientoPco.getEstadoActual() != null && !DDEstadoPreparacionPCO.PREPARADO.equals(procedimientoPco.getEstadoActual().getCodigo())) {
+			throw new BusinessOperationException("Estado incorrecto");
+		}
+
+		// Actualizar fecha fin estado actual
+		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
+		historico.setFechaFin(new Date());
+		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+
+		// Nuevo registro en historico con el nuevo estado
+		DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);
+
+		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+		historicoNuevoRegistro.setEstadoPreparacion(estadoPreparacion);
+		historicoNuevoRegistro.setFechaInicio(new Date());
+		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);	
+	}
+
+	@Override
 	public List<HistoricoEstadoProcedimientoDTO> getEstadosPorIdProcedimiento(Long idProcedimiento) {
 		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
 

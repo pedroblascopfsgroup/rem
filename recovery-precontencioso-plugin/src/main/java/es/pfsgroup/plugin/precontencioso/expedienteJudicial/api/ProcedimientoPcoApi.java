@@ -23,6 +23,7 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_EXPEDIENTE_IS_SUPERVISOR = "plugin.precontencioso.isSupervisor";
 	public static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
+	public static final String BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID = "plugin.precontencioso.devolverPreparacionPorProcedimientoId";
 	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
 	
 	/*
@@ -59,6 +60,13 @@ public interface ProcedimientoPcoApi {
 
 	@BusinessOperationDefinition(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
 	boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);
+
+	/**
+	 * Únicamente los expedientes que se encuentren en estado “Preparado” podrán ser devueltos al estado “Preparación” a través de esta función.
+	 * @param idProcedimiento
+	 */
+	@BusinessOperationDefinition(BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID)
+	void devolverPreparacionPorProcedimientoId(Long idProcedimiento);
 
 	/**
 	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro

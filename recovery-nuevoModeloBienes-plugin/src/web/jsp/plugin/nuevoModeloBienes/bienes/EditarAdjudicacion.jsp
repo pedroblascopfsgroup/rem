@@ -618,7 +618,7 @@
 				else if(res == 1){
 					Ext.MessageBox.show({
 			           title: 'Guardado',
-			           msg: '<s:message code="" text="**No es posible completar la operación, con cesión de remate la adjudicación debe ser a la Entidad, no a un tercero."/>',
+			           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.validacion1" text="**No es posible completar la operación, con cesión de remate la adjudicación debe ser a la Entidad, no a un tercero."/>',
 			           width:300,
 			           buttons: Ext.MessageBox.OK
 			       });
@@ -626,7 +626,7 @@
 				else if(res == 2){
 					Ext.MessageBox.show({
 			           title: 'Guardado',
-			           msg: '<s:message code="" text="**No es posible completar la operación, los bienes titulizados con adjudicación a la Entidad necesariamente deben tener cesión de remate."/>',
+			           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.validacion2" text="**No es posible completar la operación, los bienes titulizados con adjudicación a la Entidad necesariamente deben tener cesión de remate."/>',
 			           width:300,
 			           buttons: Ext.MessageBox.OK
 			       });

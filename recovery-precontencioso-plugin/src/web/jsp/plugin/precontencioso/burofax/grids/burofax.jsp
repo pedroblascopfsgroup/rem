@@ -13,6 +13,7 @@
 	var limit=50;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
+ 		header: '',
  		handleMouseDown : function(g, rowIndex, e){
   		 	var view = this.grid.getView();
     		var isSelected = this.isSelected(rowIndex);
@@ -28,7 +29,7 @@
   		singleSelect: false
 	});
 
-	var columnArray = [
+	var columnArray = new Ext.grid.ColumnModel([
 		myCboxSelModel
 		,{
 			header: '<s:message code="plugin.precontencioso.grid.burofax.cliente" text="**Cliente"/>',
@@ -81,7 +82,7 @@
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOOoo" text="**id"/>'
 			,dataIndex: 'id', sortable: true,autoWidth:true,hidden:true
 		}
-	];
+	]);
 
 
 	
@@ -309,25 +310,14 @@
 		}
 	});
 	
-	var gridBurofax = new Ext.grid.GridPanel({
-		title: '<s:message code="plugin.precontencioso.grid.burofax.titulo" text="**Burofaxes" />'	
-		,columns: columnArray
-		,store: burofaxStore
-		,height: 270
-		,loadMask: true
-        ,sm: myCboxSelModel
-        ,viewConfig: {forceFit: true}
-        ,autoExpand:true
-        ,clicksToEdit: 1
-        ,plugins: [columMemoryPlugin]
-       	,style:'padding-top:10px'
-		,cls:'cursor_pointer'
-		,iconCls : 'icon_asuntos'
-		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar , new Ext.Toolbar.Fill(), botonRefresh ]
-		,autoWidth: true
-		,collapsible: true
-		
-		
+	var gridBurofax = app.crearGrid(burofaxStore, columnArray, {
+		title: '<s:message code="precontencioso.grid.documento.titulo" text="**Documentos" />',
+		bbar: [botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar , new Ext.Toolbar.Fill(), botonRefresh],
+		height: 270,
+		autoWidth: true,
+		style:'padding-top: inherit',
+		collapsible: true,
+		sm: myCboxSelModel
 	});
 	
 
@@ -337,7 +327,6 @@
 	var rowsSelected=new Array(); 
 	var arrayIdBurofax=new Array();
 	var arrayIdDirecciones=new Array();
-	var arrayIdEnvios=new Array();
 		 
 	rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 		
@@ -346,7 +335,7 @@
 	  if(rowsSelected[i].get('idDireccion') != ''){
 	  	arrayIdDirecciones.push(rowsSelected[i].get('idDireccion'));
 	  }
-	  arrayIdEnvios.push(rowsSelected[i].get('idEnvio'));
+	  
 	}
 
 	
@@ -354,14 +343,13 @@
      if(myCboxSelModel.getCount() > 0 && arrayIdDirecciones.length == myCboxSelModel.getCount()){
      	 var arrayIdDirecciones = Ext.encode(arrayIdDirecciones);
 		 var arrayIdBurofax = Ext.encode(arrayIdBurofax);
-		 var arrayIdEnvios = Ext.encode(arrayIdEnvios);
 		var w = app.openWindow({
 		  flow : 'burofax/getTipoBurofax'
 		  //,width:320
 		  ,autoWidth:true
 		  ,closable:true
 		  ,title : '<s:message code="plugin.precontencioso.grid.burofax.tipo.titulo" text="**Seleccionar tipo burofax" />'
-		  ,params:{arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax,arrayIdEnvios:arrayIdEnvios}
+		  ,params:{arrayIdDirecciones:arrayIdDirecciones,arrayIdBurofax:arrayIdBurofax}
 		
 		});
 		w.on(app.event.DONE,function(){

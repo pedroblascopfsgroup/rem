@@ -325,6 +325,7 @@
 		,iconCls : 'icon_asuntos'
 		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar , new Ext.Toolbar.Fill(), botonRefresh ]
 		,autoWidth: true
+		,collapsible: true
 		
 		
 	});
@@ -491,7 +492,7 @@
 				  ,width:820
 				  ,autoWidth:true
 				  ,closable:true
-				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Agregar Persona" />'
+				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
 				  ,params:{idProcedimiento:idProcedimiento}
 				
 				});

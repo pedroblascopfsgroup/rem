@@ -14,8 +14,10 @@
 
 	<pfsforms:ddCombo name="comboEstadosDocumento"
 		labelKey="precontencioso.grid.documento.informarDocumento.estadoDocumento" 
- 		label="**Estado Documento" value="${solicitud.estado}" dd="${estadosDocumento}" 
+ 		label="**Estado Documento" value="" dd="${estadosDocumento}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
+
+	comboEstadosDocumento.setValue('${solicitud.estado}');
 
 	<pfsforms:ddCombo name="adjuntado"
 		labelKey="precontencioso.grid.documento.informarDocumento.adjuntado"
@@ -23,7 +25,9 @@
 		
 	<pfsforms:ddCombo name="ejecutivo" 
 		labelKey="precontencioso.grid.documento.informarDocumento.ejecutivo"
-		label="**Ejecutivo" value="${solicitud.ejecutivo}" dd="${ddSiNoNoAplica}" width="100"  propertyCodigo="codigo"/>	
+		label="**Ejecutivo" value="" dd="${ddSiNoNoAplica}" width="100"  propertyCodigo="codigo"/>	
+		
+	ejecutivo.setValue('${solicitud.ejecutivo}');
 		
 	var fechaResultado = new Ext.ux.form.XDateField({
 		name : 'fechaResultado'
@@ -34,9 +38,10 @@
 	
 	<pfsforms:ddCombo name="comboRespuestasSolicitud"
 		labelKey="precontencioso.grid.documento.informarDocumento.respuestaSolicitud" 
- 		label="**Respuesta Solicitud" value="${solicitud.respuesta}" dd="${respuestasSolicitud}" 
+ 		label="**Respuesta Solicitud" value="" dd="${respuestasSolicitud}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
 
+	comboRespuestasSolicitud.setValue('${solicitud.respuesta}');
 
 	var fechaEnvio = new Ext.ux.form.XDateField({
 		name : 'fechaEnvio'

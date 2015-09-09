@@ -23,7 +23,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
-import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -90,6 +90,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setFechaConfirmacion(new Date());
 
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -119,6 +120,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		}
 
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -149,8 +151,8 @@ public class LiquidacionManager implements LiquidacionApi {
 				liquidacion.setSolicitante(listaGestorDespacho.get(0));
 			}
 		}
-
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -162,6 +164,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setEstadoLiquidacion(estadoDescartada);
 
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	/**

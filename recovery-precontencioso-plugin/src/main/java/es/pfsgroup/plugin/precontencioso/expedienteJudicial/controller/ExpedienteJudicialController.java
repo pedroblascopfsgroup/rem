@@ -73,6 +73,12 @@ public class ExpedienteJudicialController {
 	}
 
 	@RequestMapping
+	public String devolverPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		procedimientoPcoApi.devolverPreparacionPorProcedimientoId(idProcedimiento);
+		return DEFAULT;
+	}
+
+	@RequestMapping
 	public String getHistoricoEstadosPorProcedimientoId(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 
 		List<HistoricoEstadoProcedimientoDTO> historicoEstados = procedimientoPcoApi.getEstadosPorIdProcedimiento(idProcedimiento);

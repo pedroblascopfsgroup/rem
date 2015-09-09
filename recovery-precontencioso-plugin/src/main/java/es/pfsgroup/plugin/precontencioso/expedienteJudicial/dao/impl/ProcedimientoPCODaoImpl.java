@@ -256,7 +256,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProDiasGestion())) {
-			where.add(Restrictions.eq("procedimientoPco.diasEnGestion", filtro.getProDiasGestion()));
+			where.add(Restrictions.ge("procedimientoPco.diasEnGestion", filtro.getProDiasGestion()));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigosEstado())) {
@@ -420,7 +420,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDiasGestion())) {
-				where.add(Restrictions.eq("solicitud.diasEnGestion", filtro.getDocDiasGestion()));
+				where.add(Restrictions.ge("solicitud.diasEnGestion", filtro.getDocDiasGestion()));
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDespacho()) && !StringUtils.emtpyString(filtro.getDocGestor())) {
@@ -464,7 +464,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getLiqDiasGestion())) {
-			where.add(Restrictions.eq("liquidacion.diasGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
+			where.add(Restrictions.ge("liquidacion.diasGestion", Integer.valueOf(filtro.getLiqDiasGestion())));
 		}
 
 		where.addAll(floatRangeFilter("liquidacion.total", filtro.getLiqTotalDesde(), filtro.getLiqTotalHasta()));

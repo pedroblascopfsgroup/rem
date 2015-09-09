@@ -20,7 +20,7 @@
 
 	var filtroTabPanel = new Ext.TabPanel({
 		items: [filtrosTabDatosProcedimiento, filtrosTabPersonaContrato, filtrosTabDocumentos, filtrosTabLiquidacion, filtrosTabBurofax],
-		id: 'idTabFiltros',
+		id: 'idTabFiltrosEle',
 		layoutOnTabChange: true, 
 		autoScroll: true,
 		autoHeight: true,
@@ -63,14 +63,22 @@
 		dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle,
 		dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
 		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle]);
-		
+
+	var btnExportar = new Ext.Button({
+		text: '<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />',
+		iconCls: 'icon_exportar_csv',
+		handler: function() {
+			
+		}
+	});
+
 	var panelFiltros = new Ext.Panel({
 		autoHeight: true,
 		autoWidth: true,
 		title: '<s:message code="plugin.precontencioso.buscador.elementos.titulo" text="**Buscador Elementos Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
-		tbar: [btnBuscarEle, btnLimpiarEle],
+		tbar: [btnBuscarEle, btnLimpiarEle, btnExportar],
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
 		style: 'padding-bottom: 10px;',
 		items: [{

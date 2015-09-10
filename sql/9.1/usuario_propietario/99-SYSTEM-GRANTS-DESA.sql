@@ -1,6 +1,6 @@
+spool ./99-system-grants-desa-error.log
 begin
   
-
  
 
   --CONCESION DE PERMISOS A MINIREC_CONSULTA
@@ -60,6 +60,12 @@ for rs in (select table_name
     EXECUTE IMMEDIATE 'GRANT SELECT ON PFSRECOVERY.' || rs.table_name || ' TO BANK01';
   end loop;
 --Fin Joaquin
+
+
+end;
+/
+
+
 
 
 --##################################################################################################
@@ -422,7 +428,6 @@ end;
 --##################################################################################################
 
 
-end;
-/
-
+spool off
 exit
+

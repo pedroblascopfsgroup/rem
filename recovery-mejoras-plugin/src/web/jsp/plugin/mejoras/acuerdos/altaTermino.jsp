@@ -18,6 +18,7 @@
 	var idAsunto = '${asunto.id}';
 	var idTermino = '${termino.id}';
 	var contratosIncluidos = '${contratosIncluidos}';
+	var soloConsulta = '${soloConsulta}';
 	
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
@@ -566,7 +567,12 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		,items : [flujoFieldSetContenedor, bienesFieldSet, detalleFieldSetContenedor, informeFieldSet]
 		<c:choose>
 		    <c:when test="${termino != null && termino != ''}">
-		       ,bbar : [btnGuardar, btnCancelar]
+		       <c:if test="${soloConsulta == 'true'}">
+		       		,bbar : [btnCancelar]
+		       </c:if>
+		       <c:if test="${soloConsulta != 'true'}">
+		       		,bbar : [btnGuardar, btnCancelar]
+		       </c:if>		       
 		    </c:when>
 		    <c:otherwise>
 				,bbar : [btnGuardar,btnCancelar]

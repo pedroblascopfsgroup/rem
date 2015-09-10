@@ -180,7 +180,8 @@ public class MEJAcuerdoController {
 	@RequestMapping
 	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, 
 							@RequestParam(value = "idAsunto", required = true) Long idAsunto,
-							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo) {
+							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
+							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
 		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
 		// Sacamos los bienes que tiene asignado este termino
@@ -194,6 +195,8 @@ public class MEJAcuerdoController {
 		map.put("asunto", asunto);
 		
 		map.put("idAcuerdo", idAcuerdo);
+		
+		map.put("soloConsulta", soloConsulta);
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}

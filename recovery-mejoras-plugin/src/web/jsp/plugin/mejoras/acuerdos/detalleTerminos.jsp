@@ -206,7 +206,8 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	    			  ,params:{
 	     				  id:idTerminoSeleccionado,
 	     				  idAsunto:panel.getAsuntoId(),
-	     				  idAcuerdo : idAcuerdo	     				  
+	     				  idAcuerdo : idAcuerdo,
+	     				  soloConsulta : 'false'     				  
 	     				}
 		       });
 		       w.on(app.event.DONE, function(){
@@ -293,11 +294,12 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	          ,closable:false
 	          ,width: 900
 	          ,autoHeight: true
-	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
+	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />'
     			  ,params:{
      				  id:idTerminoSeleccionado,
      				  idAsunto:panel.getAsuntoId(),
-					  idAcuerdo : idAcuerdo     				  
+					  idAcuerdo : idAcuerdo,
+					  soloConsulta : 'true'   				  
 <!--      				  contratosIncluidos: contratosIncluidos, -->
 <!--      				  idAcuerdo : idAcuerdo -->
      				}

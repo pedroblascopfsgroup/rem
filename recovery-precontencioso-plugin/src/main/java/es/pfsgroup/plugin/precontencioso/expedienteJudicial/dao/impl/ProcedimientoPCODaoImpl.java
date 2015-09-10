@@ -32,11 +32,12 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		query.createCriteria("procedimiento", "procedimiento");
 		query.add(Restrictions.eq("procedimiento.id", idProcedimiento));
+		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		List<ProcedimientoPCO> procedimientosPco = query.list();
 
 		ProcedimientoPCO procedimientoPco = null;
-		if (procedimientosPco.size() == 1) {
+		if (procedimientosPco.size() >= 1) {
 			procedimientoPco = procedimientosPco.get(0);
 		}
 

@@ -32,11 +32,12 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		query.createCriteria("procedimiento", "procedimiento");
 		query.add(Restrictions.eq("procedimiento.id", idProcedimiento));
+		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		List<ProcedimientoPCO> procedimientosPco = query.list();
 
 		ProcedimientoPCO procedimientoPco = null;
-		if (procedimientosPco.size() == 1) {
+		if (procedimientosPco.size() >= 1) {
 			procedimientoPco = procedimientosPco.get(0);
 		}
 
@@ -69,7 +70,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
 		select.add(Projections.property("procedimientoPco.fechaInicioPreparacion").as("fechaInicioPreparacion"));
 		//select.add(Projections.property("procedimientoPco.diasEnPreparacion").as("diasEnPreparacion"));
-		//select.add(Projections.property("procedimientoPco.documentacionCompleta").as("documentacionCompleta"));
 		select.add(Projections.property("procedimientoPco.totalLiquidacion").as("totalLiquidacion"));
 		//select.add(Projections.property("procedimientoPco.notificadoClientes").as("notificadoClientes"));
 		select.add(Projections.property("procedimientoPco.fechaEnvioLetrado").as("fechaEnvioLetrado"));

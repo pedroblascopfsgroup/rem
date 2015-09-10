@@ -204,6 +204,7 @@ arrayCampos["solicitarAlquiler"]= new Ext.form.ComboBox({
 	fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.solicitarAlquiler" text="**Solicitar alquiler" />',
     triggerAction: 'all',
     mode: 'local',
+    editable: false,
     emptyText:'---',
     store: new Ext.data.ArrayStore({
         fields: [

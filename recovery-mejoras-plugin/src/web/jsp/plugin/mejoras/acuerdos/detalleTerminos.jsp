@@ -99,6 +99,10 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	terminosAcuerdoStore.on('load', function(){  
 		countTerminos = terminosAcuerdoStore.getCount();
    });
+   
+   	contratosAsuntoStore.on('load', function(){  
+		panel.el.unmask();
+   });
 
    
    function transformParamInc() {
@@ -204,7 +208,8 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	    			  ,params:{
 	     				  id:idTerminoSeleccionado,
 	     				  idAsunto:panel.getAsuntoId(),
-	     				  idAcuerdo : idAcuerdo	     				  
+	     				  idAcuerdo : idAcuerdo,
+	     				  soloConsulta : 'false'     				  
 	     				}
 		       });
 		       w.on(app.event.DONE, function(){
@@ -225,13 +230,14 @@ var crearTerminosAsuntos=function(noPuedeModificar){
    
    contratosAsuntoStore.webflow({idAsunto:panel.getAsuntoId()});
    terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});    
-   
+  
    var contratosAsuntoGrid = app.crearGrid(contratosAsuntoStore,contratosAsuntoCM,{
          title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.contratos.titulo" text="**Contratos/Asunto" />'
          ,style:'padding : 5px'
          ,autoHeight : true
          ,autoWidth:true
          ,cls:'cursor_pointer'
+         ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
          ,plugins:checkColumn
          ,bbar : [
@@ -239,6 +245,22 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	      ]         
    });
    
+   
+<%--   
+	var contratosAsuntoGrid=new Ext.grid.GridPanel({
+		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.contratos.titulo" text="**Contratos/Asunto" />'
+		,cm:contratosAsuntoCM
+		,store:contratosAsuntoStore
+        ,style:'padding : 5px'
+        ,autoHeight : true
+        ,autoWidth:true
+        ,cls:'cursor_pointer'		
+		,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
+		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+        ,plugins:checkColumn		
+		,bbar:[btnAltaTermino]
+	});   
+   --%>
    
    var terminosAcuerdoGrid = app.crearGrid(terminosAcuerdoStore,terminosAcuerdoCM,{
          title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.titulo" text="**Terminos/Acuerdo" />'
@@ -274,11 +296,12 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	          ,closable:false
 	          ,width: 900
 	          ,autoHeight: true
-	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
+	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />'
     			  ,params:{
      				  id:idTerminoSeleccionado,
      				  idAsunto:panel.getAsuntoId(),
-					  idAcuerdo : idAcuerdo     				  
+					  idAcuerdo : idAcuerdo,
+					  soloConsulta : 'true'   				  
 <!--      				  contratosIncluidos: contratosIncluidos, -->
 <!--      				  idAcuerdo : idAcuerdo -->
      				}

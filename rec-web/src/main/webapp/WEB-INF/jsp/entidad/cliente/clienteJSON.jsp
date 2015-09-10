@@ -183,11 +183,11 @@
 			</c:if>
 		</json:property>
 		<json:property name="fechaSituacionConcursal" value="${persona.fechaSituacionConcursal}"/>
-		<json:property name="flagExtra1">
-			<c:if test="${persona.flagExtra1}">
+		<json:property name="clienteReestructurado">
+			<c:if test="${persona.clienteReestructurado}">
 				<s:message code="mensajes.si"/>
 			</c:if>
-			<c:if test="${!persona.flagExtra1}">
+			<c:if test="${!persona.clienteReestructurado}">
 				<s:message code="mensajes.no"/>
 			</c:if>
 		</json:property>		

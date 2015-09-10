@@ -747,7 +747,7 @@ public class Persona implements Serializable, Auditable, Describible {
 			+ "SELECT ifx.dd_ifx_id FROM ext_dd_ifx_info_extra_cli ifx WHERE ifx.dd_ifx_codigo = '"
 			+ DDTipoInfoCliente.FLAG_EXTRA1
 			+ "'))")
-	private Boolean flagExtra1;
+	private Boolean clienteReestructurado;
 	
 	
 
@@ -3211,12 +3211,12 @@ public class Persona implements Serializable, Auditable, Describible {
 		this.fechaSituacionConcursal = fechaSituacionConcursal;
 	}
 
-	public Boolean getFlagExtra1() {
-		return flagExtra1;
+	public Boolean getClienteReestructurado() {
+		return clienteReestructurado;
 	}
 
-	public void setFlagExtra1(Boolean flagExtra1) {
-		this.flagExtra1 = flagExtra1;
+	public void setClienteReestructurado(Boolean clienteReestructurado) {
+		this.clienteReestructurado = clienteReestructurado;
 	}
 
 }

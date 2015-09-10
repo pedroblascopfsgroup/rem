@@ -86,7 +86,7 @@
    var ultimaActuacion =     label('ultimaActuacion','<s:message code="menu.clientes.consultacliente.datosTab.ultimaActuacion" text="**Última actuacion" />');
    var situacionConcursal =	label('situacionConcursal','<s:message code="menu.clientes.consultacliente.datosTab.situacionConcursal" text="**Situación concursal" />');
    var fechaSituacionConcursal = label('fechaSituacionConcursal','<s:message code="menu.clientes.consultacliente.datosTab.fechaSituacionConcursal" text="**Fecha situación concursal" />');
-   var flagExtra1 =			label('flagExtra1','<s:message code="menu.clientes.consultacliente.datosTab.flagExtra1" text="**Flag Extra1"/>');
+   var clienteReestructurado =			label('clienteReestructurado','<s:message code="menu.clientes.consultacliente.datosTab.clienteReestructurado" text="**Cliente Reestructurado"/>');
    var extra1 =             label('extra1','<s:message code="menu.clientes.consultacliente.datosTab.extra1" text="**Extra 1" />');
    var extra2 =             label('extra2','<s:message code="menu.clientes.consultacliente.datosTab.extra2" text="**Extra 2" />');
    var extra3 =             label('extra3','<s:message code="menu.clientes.consultacliente.datosTab.extra3" text="**Extra 3" />');
@@ -137,7 +137,7 @@
 			]}
 			, {items:[puntuacionAlerta,grupoCliente,ultimaOperacionConcedida,areaGestion,perfilGestor
 				<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-					,situacionConcursal,flagExtra1
+					,situacionConcursal,clienteReestructurado
 				</sec:authorize>			
 			]} ] );
 
@@ -198,7 +198,7 @@
 		entidad.setLabel("ultimaActuacion", d.ultimaActuacion);
 		entidad.setLabel("situacionConcursal",d.situacionConcursal);
 		entidad.setLabel('fechaSituacionConcursal',d.fechaSituacionConcursal);
-		entidad.setLabel('flagExtra1',d.flagExtra1);
+		entidad.setLabel('clienteReestructurado',d.clienteReestructurado);
 		entidad.setLabel("extra1", d.extra1);
 		entidad.setLabel("extra2", d.extra2);
 		entidad.setLabel("extra3", d.extra3);

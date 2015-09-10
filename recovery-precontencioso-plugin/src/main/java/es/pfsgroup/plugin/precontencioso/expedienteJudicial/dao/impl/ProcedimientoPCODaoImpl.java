@@ -228,7 +228,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		List<Criterion> where = new ArrayList<Criterion>();
 
 		if (!StringUtils.emtpyString(filtro.getProNombre())) {
-			where.add(Restrictions.eq("procedimientoPco.nombreExpJudicial", filtro.getProNombre()));
+			where.add(Restrictions.like("procedimientoPco.nombreExpJudicial", filtro.getProNombre(), MatchMode.ANYWHERE).ignoreCase());
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigo())) {

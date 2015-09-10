@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
@@ -20,7 +21,8 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
 	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
-
+	public static final String BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE = "plugin.precontencioso.cambiarEstadoExpediete";
+	
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -81,4 +83,12 @@ public interface ProcedimientoPcoApi {
 
     List<Nivel> getNiveles();
 
+    /**
+     * Cambia el estado del expediente incluyendo la entrada correspondiente en el histórico
+     * @param idProc
+     * @param codigoEstado
+     */
+	@BusinessOperationDefinition(BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE)
+	public void cambiarEstadoExpediente(Long idProc, String codigoEstado);
+    
 }

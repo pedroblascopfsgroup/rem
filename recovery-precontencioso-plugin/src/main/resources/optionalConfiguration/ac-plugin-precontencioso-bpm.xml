@@ -10,7 +10,10 @@
                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="15"/>
+	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"/>
+	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"/>
+	
+ 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="16"/>
 	
 <!-- 	<bean id="nodoEsperaRecobroActionHandler" class="es.pfsgroup.plugin.recobro.bpm.handlers.RecobroNodoEsperaActionHandler"></bean> -->
 

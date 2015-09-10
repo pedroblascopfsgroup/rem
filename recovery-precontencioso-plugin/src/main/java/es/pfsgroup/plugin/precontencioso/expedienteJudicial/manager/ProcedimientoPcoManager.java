@@ -187,4 +187,30 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	public List<Nivel> getNiveles(){
 		return nivelDao.getList();
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	@BusinessOperation(BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE)
+	public void cambiarEstadoExpediente(Long idProcedimiento, String codigoEstado) {
+		
+		Date fechaCambio = new Date();
+		
+		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		
+		if (!Checks.esNulo(procedimientoPco)) {
+			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
+			if (!Checks.esNulo(historico)) {
+				historico.setFechaFin(fechaCambio);
+				genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+			}
+	
+			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+			DDEstadoPreparacionPCO nuevoEstado = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, codigoEstado);
+			historicoNuevoRegistro.setEstadoPreparacion(nuevoEstado);
+			historicoNuevoRegistro.setFechaInicio(fechaCambio);
+			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
+		}
+		
+	}
 }

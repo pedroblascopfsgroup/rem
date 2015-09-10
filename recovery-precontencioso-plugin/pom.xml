@@ -70,12 +70,21 @@
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
+			<groupId>capgemini</groupId>
+			<artifactId>devon-bpm</artifactId>
+			<classifier>jdk16</classifier>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procedimientos-bpm</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -12,12 +12,12 @@
 		<transition to="PCO_PreTurnadoManualDecision" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -32,12 +32,12 @@
 		<transition to="PCO_RegistrarAceptacion" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -45,12 +45,12 @@
 	<state name="PCO_RegistrarAceptacion">
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 		<transition to="PCO_RegistrarAceptacionDecision" name="avanzaBPM" />
@@ -65,12 +65,12 @@
 		<transition to="PCO_RegistrarAceptacion" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -79,12 +79,12 @@
 		<transition to="PCO_PrepararExpediente" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -93,12 +93,12 @@
 		<transition to="PCO_PrepararExpedienteDecision" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -115,12 +115,12 @@
 		<transition to="PCO_RegistrarAceptacionPost" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -129,12 +129,12 @@
 		<transition to="PCO_RegistrarAceptacionPostDecision" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -148,12 +148,12 @@
 		<transition to="PCO_RegistrarAceptacionPost" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -162,12 +162,12 @@
 		<transition to="PCO_RegistrarTomaDec" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -176,12 +176,12 @@
 		<transition to="PCO_RegistrarTomaDecDecision" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -196,12 +196,12 @@
 		<transition to="PCO_RevisarSubsanacionDecision" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -210,12 +210,12 @@
 		<transition to="Fin" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -229,12 +229,12 @@
 		<transition to="PCO_EnviarExpedienteLetrado" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -243,12 +243,12 @@
 		<transition to="PCO_ValidarCambioProcDecision" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>
@@ -257,12 +257,12 @@
 		<transition to="PCO_EnviarExpedienteLetrado" name="avanzaBPM"/>
 		<event type="node-enter">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
+				<targetBean>precontenciosoEnterActionHandler</targetBean>
 			</action>
 		</event>
 		<event type="node-leave">
 			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>precontenciosoLeaveActionHandler</targetBean>
 			</action>
 		</event>
 	</state>

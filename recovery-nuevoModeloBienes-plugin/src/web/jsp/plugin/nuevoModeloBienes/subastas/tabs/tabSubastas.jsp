@@ -248,6 +248,7 @@
 		btnEditarInfoCierre.setDisabled(false);
 	   	btnGenerarInformeCierre.setDisabled(false);
 	   	btnEnviarCierre.setDisabled(false);
+	   	btnDescargarPlantillaInstrucciones.setDisabled(false);
 		
 		bienesSeleccionados = [];
 
@@ -559,6 +560,7 @@
 			text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnNuevaRelacionContratoBien" text="**Añadir Relación Contrato Bien" />'
 			,iconCls : 'icon_mas'
 			,cls: 'x-btn-text-icon'
+			,disabled:true
 			
 	});
 	
@@ -586,6 +588,7 @@
 			text : '<s:message code="plugin.nuevoModeloBienes.fichaBien.tabRelaciones.btnEliminarRelacionContratoBien" text="**Eliminar Relación Contrato Bien" />'
 			,iconCls : 'icon_cancel'
 			,cls: 'x-btn-text-icon'
+			,disabled:true
 			
 	});
 	
@@ -612,6 +615,7 @@
 			text : '<s:message code="plugin.nuevoModeloBienes.cargas.agregar" text="**Nueva Carga" />'
 			,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'
+			,disabled:true
 			
 	});
 	
@@ -639,6 +643,7 @@
 			text : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnRegistrarNoExistenciaCargas" text="**Registrar No existencia de cargas" />'
 			,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'
+			,disabled:true
 			
 	});
 	
@@ -661,17 +666,42 @@
 	
 	});
 	
+	<%-- 
 	var btnDescargarPlantillaInstrucciones = new Ext.Button({
-			text : '<s:message code="plugin.nuevoModeloBienes.cargas.agregarrr" text="**Plantilla Instrucciones" />'
-			,iconCls : 'icon_edit'
-			,cls: 'x-btn-text-icon'
-			
+	       text : '<s:message code="plugin.masivo.procesadoTareas.descargarExcel" text="**Descargar Excel" />' + '&nbsp;'
+	       ,iconCls:'icon_exportar_csv'
+	       ,height : 25
+	       ,handler:function(){
+				var flow='/pfs/msvprocesadotareasarchivo/descargarExcel';
+            	var params = {idTipoOperacion:1};
+            	app.openBrowserWindow(flow,params);	       
+	     	}
+	});
+	--%>
+	
+	var btnDescargarPlantillaInstrucciones = new Ext.Button({
+	       text : '<s:message code="plugin.masivo.procesadoTareas.descargarExcel" text="**Descargar Excel" />' + '&nbsp;'
+	       ,iconCls:'icon_exportar_csv'
+	       ,height : 25
+	       ,disabled:true
+	       ,handler:function(){
+	       		var numAutos=storeSubastas.data.items[0].data.numAutos;
+	       		var fechaSubasta=storeSubastas.data.items[0].data.fechaSenyalamiento;
+	       		var numLotes=[];
+	       		for(i=0;i<lotesStore.data.length;i++){
+					numLotes.push(lotesStore.data.items[i].data.idLote);	
+				}
+				
+				var flow='/pfs/subasta/descargarPlantillaInstrucciones';
+            	var params = {numAutos:numAutos,fechaSubasta:fechaSubasta,numLotes:numLotes};
+            	app.openBrowserWindow(flow,params);	       
+	     	}
 	});
 	
 	var btnAccionesSubasta = new Ext.Button({
       text    : '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.btnAccionesSobreSubastas" text="**Acciones sobre subastas" />',
       style   : 'position:absolute;right:10px;top:5px',
-      disabled : true,
+      disabled : false,
       menu : {
       	items: [btnDescargarPlantillaInstrucciones,btnAddRelacionContratoBien,btnBorrarRelacionContratoBien,btnAgregarBienCargas,btnEditarRevisionCargas
 
@@ -763,7 +793,11 @@
        	        		// Al seleccionar un bien, sino estamos en Sareb lo añadimos al saco de bienes, comprobando que no esté ya.			
 			            rowselect: function( sel, rowIndex, record ) {
 							//Habilitamos operaciones masivas
-							btnAccionesSubasta.setDisabled(false);
+							btnEditarRevisionCargas.setDisabled(false);
+							btnAgregarBienCargas.setDisabled(false);
+							btnBorrarRelacionContratoBien.setDisabled(false);
+							btnAddRelacionContratoBien.setDisabled(false);
+							
 			            	if(!isAsuntoPropiedadBankia()) {
 				            	var idBien = record.get("idBien");
 			            		var pos = bienesSeleccionados.indexOf(idBien);
@@ -784,7 +818,10 @@
 			            	//Si no hay bienes seleccionados desabilitamos operaciones masivas
 			            	
 			            	if(bienesSeleccionados.length == 0){
-			            		btnAccionesSubasta.setDisabled(true);
+								btnEditarRevisionCargas.setDisabled(true);
+								btnAgregarBienCargas.setDisabled(true);
+								btnBorrarRelacionContratoBien.setDisabled(true);
+								btnAddRelacionContratoBien.setDisabled(true);
 			            	}  
 
 			            }

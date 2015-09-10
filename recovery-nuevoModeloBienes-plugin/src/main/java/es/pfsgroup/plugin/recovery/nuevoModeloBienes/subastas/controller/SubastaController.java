@@ -1,19 +1,25 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
+import java.io.File;
+import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -903,6 +909,63 @@ public class SubastaController {
 			saveCarga(request,idBienes[i]);
 		}
 		return DEFAULT;
+	}
+	
+	/**
+	 * Metodo para generar el excel con las instrucciones de subasta
+	 * @param request
+	 * @param model
+	 * @param numAutos
+	 * @param fechaSubasta
+	 * @param numLotes
+	 * @return
+	 */
+	@RequestMapping
+	public String descargarPlantillaInstrucciones(WebRequest request,ModelMap model,@RequestParam(value = "numAutos", required = true) String numAutos,@RequestParam(value = "fechaSubasta", required = true) String fechaSubasta,
+			@RequestParam(value = "numLotes", required = true) String numLotes) {
+			
+			String[] idNumLotes=numLotes.split(",");
+		
+			List<String> cabeceras = new ArrayList<String>();
+			cabeceras.add("Num. Autos");
+			cabeceras.add("Fecha subasta");
+			cabeceras.add("Lote");
+			cabeceras.add("Puja sin postores");
+			cabeceras.add("Puja con postores DESDE");
+			cabeceras.add("Puja con postores HASTA");
+			cabeceras.add("Valor subasta");
+			cabeceras.add("Instrucciones");
+		    
+			
+			List<List<String>> listaValores = new ArrayList<List<String>>();
+			
+			for (int i=0;i<idNumLotes.length;i++) {
+
+					List<String> filaValores = new ArrayList<String>();
+			
+					filaValores.add(numAutos);
+					filaValores.add(fechaSubasta);
+					filaValores.add(idNumLotes[i]);
+					filaValores.add("");
+					filaValores.add("");
+					filaValores.add("");
+					filaValores.add("");
+					filaValores.add("");
+
+					listaValores.add(filaValores);
+				
+			}
+			
+			HojaExcel hojaExcel = new HojaExcel();
+			hojaExcel.crearNuevoExcel("plantilla_instrucciones.xls", cabeceras, listaValores);
+			
+			FileItem excelFileItem = new FileItem(hojaExcel.getFile());
+	        excelFileItem.setFileName("plantilla_instrucciones.xls");
+	        excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
+	        excelFileItem.setLength(hojaExcel.getFile().length());
+		    
+	        model.put("fileItem",excelFileItem);
+			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
 	}
 
 	/**

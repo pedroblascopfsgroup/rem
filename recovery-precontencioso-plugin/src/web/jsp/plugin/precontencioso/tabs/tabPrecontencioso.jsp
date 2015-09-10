@@ -32,18 +32,8 @@ var codigoTipoGestor='${codigoTipoGestor}';
 	        refrescarLiquidacionesGrid();
 	        refrescarBurofaxGrid();
 	        
-	        
-	        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
-	        if(tipoGestor == 'GEXT'){
-	        	refrescarDocumentosGrid();
-	        	gridBurofax.setVisible(false);
-	        	gridLiquidaciones.setVisible(false);
-	        }
-	        else if(tipoGestor == 'PREDOC'){
-	        	refrescarDocumentosGrid();
-	            refrescarLiquidacionesGrid();
-	            refrescarBurofaxGrid();
-	        }
+	        debugger;
+	        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado--%>
 	        
 	        if(data.supervisor.isSupervisor){
 	        	refrescarDocumentosGrid();
@@ -68,7 +58,7 @@ var codigoTipoGestor='${codigoTipoGestor}';
 		        	gridLiquidaciones.setVisible(false);
 		        }
 		    }
-		    --%>
+		    
 		    
 
 	}

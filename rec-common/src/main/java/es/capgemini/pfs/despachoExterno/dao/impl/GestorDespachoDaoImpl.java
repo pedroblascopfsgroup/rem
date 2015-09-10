@@ -47,7 +47,9 @@ public class GestorDespachoDaoImpl extends AbstractEntityDao<GestorDespacho,Long
 
 		query.createAlias("usuario", "usuario");
 		query.add(Restrictions.eq("usuario.id", usuId));
-	
+		
+		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
 		List<GestorDespacho> gestorDespachoList = query.list();
 
 		return gestorDespachoList;

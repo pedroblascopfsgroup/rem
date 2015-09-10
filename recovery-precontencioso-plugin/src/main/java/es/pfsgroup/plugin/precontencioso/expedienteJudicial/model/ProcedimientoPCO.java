@@ -196,20 +196,21 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		"        AND dd_pco_prc_estado_preparacion.dd_pco_pep_codigo != '" + DDEstadoPreparacionPCO.CANCELADO + "' ) ")
 	private Integer diasEnGestion;
 	
+	private static final String formulaFechaGeneralizada1 =
+	" (SELECT MAX(To_date(To_char(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio, 'yyyy-MM-dd'), 'yyyy-MM-dd')) " +
+	"        FROM   pco_prc_hep_histor_est_prep " +
+	"               inner join pco_prc_procedimientos " +
+	"                       ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+	"               inner join dd_pco_prc_estado_preparacion " +
+	"                       ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+	"        WHERE  pco_prc_procedimientos.borrado = 0 " +
+	"               AND pco_prc_hep_histor_est_prep.borrado = 0 " +
+	"               AND dd_pco_prc_estado_preparacion.borrado = 0 " +
+	"               AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
+	"               AND dd_pco_prc_estado_preparacion.dd_pco_pep_codigo = '";
 	
-	private static final String formulaFechaGeneralizada1 = 
-			" TO_DATE(TO_CHAR((SELECT pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio" +
-			" FROM   pco_prc_hep_histor_est_prep " +
-			" INNER JOIN pco_prc_procedimientos " +
-			" ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
-			" INNER JOIN dd_pco_prc_estado_preparacion " +
-			" ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
-			" WHERE pco_prc_procedimientos.borrado = 0 " +
-			" AND pco_prc_hep_histor_est_prep.borrado = 0 " +
-			" AND dd_pco_prc_estado_preparacion.borrado = 0 " +
-			" AND dd_pco_prc_estado_preparacion.DD_PCO_PEP_CODIGO = '";
-	
-	private static final String formulaFechaGeneralizada2 = "' AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID), 'yyyy-MM-dd'),'yyyy-MM-dd') ";
+	private static final String formulaFechaGeneralizada2 =
+	"')";
 	
 	@Formula(value = formulaFechaGeneralizada1 + DDEstadoPreparacionPCO.PREPARACION + formulaFechaGeneralizada2)
 	private Date fechaInicioPreparacion;

@@ -27,6 +27,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
@@ -340,5 +341,6 @@ public class DocumentoPCO implements Serializable, Auditable {
 	public void setEjecutivo(Long ejecutivo) {
 		this.ejecutivo = ejecutivo;
 	}
+
 
 }

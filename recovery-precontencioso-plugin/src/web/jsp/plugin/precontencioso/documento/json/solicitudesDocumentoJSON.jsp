@@ -27,6 +27,7 @@
             <json:property name="fechaRecepcion" value="${s.fechaRecepcion}" />
             <json:property name="resultado" value="${s.resultado}" />
             <json:property name="comentario" value="${s.comentario}" />
+            <json:property name="solicitante" value="${s.solicitante}" />
         </json:object>
     </json:array>
 </fwk:json> 

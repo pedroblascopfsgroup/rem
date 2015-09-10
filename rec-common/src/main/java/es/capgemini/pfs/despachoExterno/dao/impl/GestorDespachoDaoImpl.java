@@ -6,9 +6,12 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Implementación del dao de GestorDespacho.
@@ -37,4 +40,17 @@ public class GestorDespachoDaoImpl extends AbstractEntityDao<GestorDespacho,Long
 
 		return gestorDespacho;
 	}
+
+	@Override
+	public List<GestorDespacho> getGestorDespachoByUsuId(Long usuId) {
+		Criteria query = getSession().createCriteria(GestorDespacho.class);
+
+		query.createAlias("usuario", "usuario");
+		query.add(Restrictions.eq("usuario.id", usuId));
+	
+		List<GestorDespacho> gestorDespachoList = query.list();
+
+		return gestorDespachoList;
+	}
+	
 }

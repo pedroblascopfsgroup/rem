@@ -160,12 +160,25 @@ DECLARE
         /*usuariocrear,..............:*/ 'DD',
         /*fechacrear,................:*/ 'sysdate',
         /*borrado,...................:*/ '0' 
-        ) 
+        )
 
 	  ----------------------        
       -- **** TOMAS DE DECISION ****
 	  ----------------------        
 
+      ,T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'DGESHREIN',
+        /*dd_sta_descripcion,........:*/ 'Toma decisión gestor  concursal HRE insinuación',
+        /*dd_sta_descripcion_larga...:*/ 'Toma decisión gestor  concursal HRE insinuación',
+        /*dd_tge_id..................:*/ 'GESHREIN',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        ) 
         
 	  ----------------------        
       -- **** FIN TOMAS DE DECISION ***

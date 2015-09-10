@@ -19,6 +19,7 @@
 			<json:property name="estado" value="${burofax.estado}"/>
 			<json:property name="direccion" value="${burofax.direccion}"/>
 			<json:property name="tipo" value="${burofax.tipo}"/>
+			<json:property name="tipoIntervencion" value="${burofax.tipoIntervencion}"/>
 			<json:property name="fechaSolicitud" >
 				<fwk:date value="${burofax.fechaSolicitud}" />
 			</json:property>	

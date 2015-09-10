@@ -8,6 +8,7 @@
 		<json:object>
 			<json:property name="prcId" value="${p.prcId}" />
 			<json:property name="codigo" value="${p.codigo}" />
+			<json:property name="nombreProcedimiento" value="${p.nombreProcedimiento}" />
 			<json:property name="nombreExpediente" value="${p.nombreExpediente}" />
 			<json:property name="estadoExpediente" value="${p.estadoExpediente}" />
 			<json:property name="diasEnGestion" value="${p.diasEnGestion}" />

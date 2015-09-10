@@ -8,11 +8,8 @@
 
 
 <%-- Codigo --%>
-
-var fieldCodigoEle = new Ext.form.TextField({
-	name: 'codigo',
-	fieldLabel : '<s:message code="plugin.precontencioso.tab.expjudicial.codigo" text="** Código" />'
-});
+<pfsforms:numberfield name="fieldCodigoEle" labelKey="plugin.precontencioso.tab.expjudicial.codigo" label="** Código" 
+	value="" obligatory="false" allowDecimals="false" />
 
 <%-- Nombre Expediente Judicial --%>
 
@@ -88,7 +85,7 @@ var panelFechaPreparado = new Ext.Panel({
 
 var dateFieldEnviadoLetradoDesdeEle = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnviadoLetradoDesdeEle',
-	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparado" text="** F. Preparado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.envioLetrado" text="** F. enviado a letrado " />'
 });
 
 var dateFieldEnviadoLetradoHastaEle = new Ext.ux.form.XDateField({
@@ -246,13 +243,22 @@ var panelFechaParalizacion = new Ext.Panel({
 	});
 	
 	comboTipoBusqueda.on('select', function(combo, record, index) {
-	    if(comboTipoBusqueda.getValue() == documento) {
+		documentoPcoStore.removeAll();
+		liquidacionPcoStore.removeAll();
+		burofaxPcoStore.removeAll();
+		pagingBarDoc.hide();
+		pagingBarLiq.hide();
+		pagingBarBur.hide();
+	
+		if(comboTipoBusqueda.getValue() == documento) {
             filtrosTabDocumentos.enable();
             filtrosTabLiquidacion.disable();	            	
 			filtrosTabBurofax.disable();
 			gridDocumentoPco.show();
             gridLiquidacionPco.hide();
             gridBurofaxPco.hide();
+            limpiaPestanaLiquidaciones();
+            limpiaPestanaBurofaxes();
 		}else if(comboTipoBusqueda.getValue() == liquidacion) {
            	filtrosTabDocumentos.disable();
             filtrosTabLiquidacion.enable();
@@ -260,6 +266,8 @@ var panelFechaParalizacion = new Ext.Panel({
            	gridDocumentoPco.hide();
             gridLiquidacionPco.show();
             gridBurofaxPco.hide();
+            limpiaPestanaDocumentos();
+            limpiaPestanaBurofaxes();
         }else if(comboTipoBusqueda.getValue() == burofax) {
           	filtrosTabDocumentos.disable();
           	filtrosTabLiquidacion.disable();
@@ -267,6 +275,8 @@ var panelFechaParalizacion = new Ext.Panel({
 			gridDocumentoPco.hide();
             gridLiquidacionPco.hide();
             gridBurofaxPco.show();
+            limpiaPestanaDocumentos();
+            limpiaPestanaLiquidaciones();
 		}
 	});
 
@@ -616,4 +626,15 @@ var getParametrosFiltroProcedimiento = function() {
 	out.proDiasGestion = fieldDiasGestionEle.getValue();
 
 	return out;
+}
+
+var limpiaPestanaProcedimiento = function() {
+	app.resetCampos([comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, 
+	dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+	dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
+	dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
+	dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
+	comboTipoProcPropuestoEle, comboTipoPreparacionEle, filtroEstadoPreparacion, comboTiposGestorEle,
+	comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle,
+	comboDisponibleBurofaxesEle, fieldDiasGestionEle]);
 }

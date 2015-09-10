@@ -20,6 +20,7 @@ var OK_KO_Render = function(value, meta, record) {
 var procedimientoPcoRecord = Ext.data.Record.create([
 	{name: 'prcId'},
 	{name: 'codigo'},
+	{name: 'nombreProcedimiento'},
 	{name: 'nombreExpediente'},
 	{name: 'estadoExpediente'},
 	{name: 'diasEnGestion'},
@@ -34,7 +35,8 @@ var procedimientoPcoRecord = Ext.data.Record.create([
 	{name: 'fechaEnvioLetrado'},
 	{name: 'aceptadoLetrado'},
 	{name: 'todosDocumentos'},
-	{name: 'todasLiquidaciones'}
+	{name: 'todasLiquidaciones'},
+	{name: 'todosBurofaxes'}
 ]);
 
 var procedimientoPcoStore = page.getStore({
@@ -51,7 +53,7 @@ var procedimientoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'codigo', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.codigo" text="**Codigo"/>', sortable: false},
 	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
 	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
-	{dataIndex: 'diasEnGestion', header: '<s:message code="plugin.precontencioso.tab.expjudicial.dias.gestion" text="**Dias gestion"/>', sortable: false},
+	{dataIndex: 'diasEnGestion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.dias.gestion" text="**Dias gestion"/>', sortable: false},
 	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
 	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
@@ -63,7 +65,8 @@ var procedimientoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'fechaEnvioLetrado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.envio.letrado" text="**Fecha envio letrado"/>', sortable: false},
 	{dataIndex: 'aceptadoLetrado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.aceptado" text="**Aceptado"/>', renderer: OK_KO_Render, align:'center', sortable: false},
 	{dataIndex: 'todosDocumentos', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.doc" text="**Todos los documentos"/>', renderer: OK_KO_Render, align:'center', sortable: false},
-	{dataIndex: 'todasLiquidaciones', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.liquidaciones" text="**Todas las liquidaciones"/>', renderer: OK_KO_Render, align:'center', sortable: false}
+	{dataIndex: 'todasLiquidaciones', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.liquidaciones" text="**Todas las liquidaciones"/>', renderer: OK_KO_Render, align:'center', sortable: false},
+	{dataIndex: 'todosBurofaxes', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.todos.burofaxes" text="**Todos los burofaxes"/>', renderer: OK_KO_Render, align:'center', sortable: false}
 ]);
 
 var pagingBar = fwk.ux.getPaging(procedimientoPcoStore);
@@ -91,7 +94,7 @@ procedimientoPcoStore.on('load', function() {
 gridProcedimientosPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
-	var nombre_procedimiento = rec.get('nombreExpediente');
+	var nombre_procedimiento = rec.get('nombreProcedimiento');
 
    	if (id != null && id != ''){
    		app.abreProcedimiento(id, nombre_procedimiento);

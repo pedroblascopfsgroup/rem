@@ -4,18 +4,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.AsuntosManager;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -50,6 +53,148 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Autowired
 	UtilDiccionarioApi diccionarioApi;
 	
+	@Autowired
+	private AsuntosManager asuntosManager;
+	
+	
+	
+	private final Log logger = LogFactory.getLog(getClass());
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
+	/*
+	 * 
+	 * Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
+	 
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_IS_SUPERVISOR)
+	public boolean isSupervisor(Long prcId){
+		Boolean result = false;
+		String perfiles[] = {"Supervisores de letrado"};
+		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		for (int i = 0; i < perfiles.length; i++) {
+			result = this.tienePerfil(perfiles[i],usu);
+			if(result) return true;			
+		}
+		return result;
+		
+		
+	}
+	
+	 private Boolean tienePerfil(String descripcionPerfil, Usuario u) {
+
+	    	if (u == null || descripcionPerfil == null) {
+	            return false;
+	        }
+
+	        for (Perfil p : u.getPerfiles()) {
+	        	if(descripcionPerfil.equals(p.getDescripcion()))
+	        		return true;
+	        }
+
+	        return false;
+	    }
+	
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_OBTENER_TIPO_GESTOR)
+	public String getTipoGestor(Long prcId){
+		Procedimiento prc=null;
+		try{
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", prcId);
+			prc=(Procedimiento) genericDao.get(Procedimiento.class,filtro1);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		EXTGestorAdicionalAsunto gestorAdicionalAsunto=null;
+		GestorDespacho gestorDespacho=liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId()).get(0);
+		try{
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "asunto.id", prc.getAsunto().getId());
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gestor.id", gestorDespacho.getId());
+			gestorAdicionalAsunto=(EXTGestorAdicionalAsunto) genericDao.get(EXTGestorAdicionalAsunto.class,filtro1,filtro2);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		if(!Checks.esNulo(gestorAdicionalAsunto) && !Checks.esNulo(gestorAdicionalAsunto.getTipoGestor())){
+			return gestorAdicionalAsunto.getTipoGestor().getCodigo();
+		}
+		else{
+			return null;
+		}
+	}
+	
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_PREDOC)
+	public boolean isTipoDespachoPredoc(Long prcId){
+		Procedimiento prc=null;
+		boolean isPredoc=false;
+		try{
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", prcId);
+			prc=(Procedimiento) genericDao.get(Procedimiento.class,filtro1);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		EXTGestorAdicionalAsunto gestorAdicionalAsunto=null;
+		List<GestorDespacho> listaGestorDespacho=liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+		List<GestorDespacho> listaGestorDespachoPredoc=new ArrayList<GestorDespacho>();
+		for(GestorDespacho gestorDespacho : listaGestorDespacho){
+			if(gestorDespacho.getDespachoExterno().getTipoDespacho().getCodigo().equals("PREDOC")){
+				listaGestorDespachoPredoc.add(gestorDespacho);
+			}
+		}
+		for(GestorDespacho gestorDespacho : listaGestorDespachoPredoc){
+			try{
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "asunto.id", prc.getAsunto().getId());
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gestor.id", gestorDespacho.getId());
+				gestorAdicionalAsunto=(EXTGestorAdicionalAsunto) genericDao.get(EXTGestorAdicionalAsunto.class,filtro1,filtro2);
+				if(gestorAdicionalAsunto.getTipoGestor().getCodigo().equals("PREDOC")){
+					isPredoc=true;
+				}
+			}catch(Exception e){
+				logger.error(e);
+			}
+		}
+		
+		return isPredoc;
+	}
+	
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_GESTORIA)
+	public boolean isTipoDespachoGestoria(Long prcId){
+		Procedimiento prc=null;
+		boolean isGestoria=false;
+		try{
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", prcId);
+			prc=(Procedimiento) genericDao.get(Procedimiento.class,filtro1);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		
+		List<GestorDespacho> listaGestorDespacho=liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+	
+		for(GestorDespacho gestorDespacho : listaGestorDespacho){
+			if(gestorDespacho.getDespachoExterno().getTipoDespacho().getCodigo().equals("GESTORIA")){
+				isGestoria=true;
+			}
+		}
+		
+		
+		return isGestoria;
+	}
+	*/
+	
+	
+	//PREDOC
+	//Recorro liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId()) y almaceno en otra lista todos los que tienen un tipoDespacho
+	//Predoc y luego obtengo el gestor adicional asunto y si alguno tiene un tipo de gestor predoc devuelvo true
+	
+	//GESTORIA
+	//Recorro liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId()) Y si alguno tiene un tipo de despacho GESTORIA devuelvo true
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
@@ -77,6 +222,31 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		}			
 
 		return finalizar;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void devolverPreparacionPorProcedimientoId(Long idProcedimiento) {
+		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+
+		// Comprobacion que el estado actual del procedimiento sea preparado
+		if (procedimientoPco.getEstadoActual() != null && !DDEstadoPreparacionPCO.PREPARADO.equals(procedimientoPco.getEstadoActual().getCodigo())) {
+			throw new BusinessOperationException("Estado incorrecto");
+		}
+
+		// Actualizar fecha fin estado actual
+		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
+		historico.setFechaFin(new Date());
+		genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+
+		// Nuevo registro en historico con el nuevo estado
+		DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);
+
+		HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+		historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+		historicoNuevoRegistro.setEstadoPreparacion(estadoPreparacion);
+		historicoNuevoRegistro.setFechaInicio(new Date());
+		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);	
 	}
 
 	@Override

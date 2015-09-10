@@ -20,7 +20,7 @@
 
 	var filtroTabPanel = new Ext.TabPanel({
 		items: [filtrosTabDatosProcedimiento, filtrosTabPersonaContrato, filtrosTabDocumentos, filtrosTabLiquidacion, filtrosTabBurofax],
-		id: 'idTabFiltros',
+		id: 'idTabFiltrosEle',
 		layoutOnTabChange: true, 
 		autoScroll: true,
 		autoHeight: true,
@@ -29,11 +29,10 @@
 		activeItem: 0
 	});
 
-	var btnBuscar = new Ext.Button({
-		text: '<s:message code="plugin.precontencioso.button.buscar" text="**Buscar" />',
-		handler: function() {
-			if(comboTipoBusqueda.getValue() != '') {
-				panelFiltros.collapse(true);
+
+	var btnBuscarEle = app.crearBotonBuscar({
+		handler : function(){
+			panelFiltros.collapse(true);
 				var params = getParametros();
 				params.start = 0;
 				params.limit = 25;
@@ -45,13 +44,33 @@
 				} else if(comboTipoBusqueda.getValue() == burofax){
 					burofaxPcoStore.webflow(params);
 				}
-				pagingBar.show();
-			}
-		}
-	})
+		}});
+		
+	var btnLimpiarEle = app.crearBotonResetCampos([
+		comboTipoBusqueda, fieldCodigoEle, fieldNombreExpedienteJudicialEle, 
+		dateFieldInicioPreparacionDesdeEle, dateFieldInicioPreparacionHastaEle,
+		dateFieldPreparadoDesdeEle, dateFieldPreparadoHastaEle, dateFieldEnviadoLetradoDesdeEle, dateFieldEnviadoLetradoHastaEle,
+		dateFieldFinalizadoDesdeEle, dateFieldFinalizadoHastaEle, dateFieldUltimaSubsanacionDesdeEle, dateFieldUltimaSubsanacionHastaEle,
+		dateFieldCanceladoDesdeEle, dateFieldCanceladoHastaEle, dateFieldParalizacionDesdeEle, dateFieldParalizacionHastaEle,
+		comboTipoProcPropuestoEle, comboTipoPreparacionEle, filtroEstadoPreparacion, comboTiposGestorEle,
+		comboDespachosEle, comboGestorEle, comboJerarquiaEle, comboZonasEle, comboDisponibleDocumentosEle, comboDisponibleLiquidacionesEle,
+		comboDisponibleBurofaxesEle, fieldDiasGestionEle,fieldCodigoContratoEle, comboTiposProductoEle, fieldNifEle, 
+		fieldNombreEle, fieldApellidosEle, comboTipoDocumento, comboEstadoDocumento, comboRespuestaSolicitud, 
+		dateFieldSolicitudDocDesdeEle, dateFieldSolicitudDocHastaEle, dateFieldResultadoDocDesdeEle, dateFieldResultadoDocHastaEle,
+		dateFieldEnvioDocDesdeEle, dateFieldEnvioDocHastaEle, dateFieldRecepcionDocDesdeEle, dateFieldRecepcionDocHastaEle, 
+		comboAdjuntoDocEle, comboSolicitudPreviaDocEle, fieldDiasGestionDocEle, 
+		comboTiposGestorEleDoc, comboDespachosEleDoc, comboGestorEleDoc, comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, 
+		dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle,
+		dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, fieldTotalLiqHastaEle, fieldDiasGestionLiqEle, comboNotificadoEle, comboResultadoBurofax, dateFieldSolicitudBurDesdeEle, dateFieldSolicitudBurHastaEle,
+		dateFieldEnvioBurDesdeEle, dateFieldEnvioBurHastaEle, dateFieldAcuseBurDesdeEle, dateFieldAcuseBurHastaEle]);
 
-	var buttonsR = <app:includeArray files="${buttonsRight}" />;
-	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
+	var btnExportar = new Ext.Button({
+		text: '<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />',
+		iconCls: 'icon_exportar_csv',
+		handler: function() {
+			
+		}
+	});
 
 	var panelFiltros = new Ext.Panel({
 		autoHeight: true,
@@ -59,7 +78,7 @@
 		title: '<s:message code="plugin.precontencioso.buscador.elementos.titulo" text="**Buscador Elementos Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
-		tbar: [btnBuscar],
+		tbar: [btnBuscarEle, btnLimpiarEle, btnExportar],
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
 		style: 'padding-bottom: 10px;',
 		items: [{

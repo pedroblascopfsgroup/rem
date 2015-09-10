@@ -33,6 +33,27 @@ public class BurofaxDaoImpl extends AbstractEntityDao<BurofaxPCO, Long> implemen
 		return q.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<? extends Persona> getPersonasConContrato(String query) {
+		StringBuilder hql = new StringBuilder();
+		StringBuilder andHql = new StringBuilder();
+		
+		hql.append(" from Persona prcPer");
+		andHql.append(" and prcPer.contratosPersona IS NOT EMPTY");
+
+		hql.append(" where upper(concat(prcPer.docId, ' ', prcPer.nom50)) like '%"
+				+ query.toUpperCase() + "%' "
+				+ andHql);
+		
+		hql.append(" order by prcPer.docId, prcPer.nom50");
+
+		Query q = getSession().createQuery(hql.toString());
+		q.setMaxResults(20);
+
+		return q.list();
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override

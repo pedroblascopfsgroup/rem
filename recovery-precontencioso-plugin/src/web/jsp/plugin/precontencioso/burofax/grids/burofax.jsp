@@ -9,7 +9,8 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 
-	var limit=25;
+
+	var limit=50;
 	
 	var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
  		handleMouseDown : function(g, rowIndex, e){
@@ -186,6 +187,7 @@
       		this.items = {};
       		this.idArray = new Array();
       		this.idProperty = config.idProperty || 'id';
+      		
    		},
 
    		init: function(grid){
@@ -210,35 +212,49 @@
       		if (this.idArray.indexOf(rec.get(this.idProperty)) < 0){
       			this.idArray.push(rec.get(this.idProperty));
       		}
-      		btnPreparar.setDisabled(false);
-      		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
-			if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
-				btnEditar.setDisabled(false);
-			}
-			else{
-				btnEditar.setDisabled(true);
-			}
-			
-			
-			<%-- Comprobamos que se ha seleccionado un cliente --%>
-			if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
-				btnNuevaDir.setDisabled(false);
-			}
-			
-			<%--Si el resultado del envio es enviado y todavia no ha sido enviado habilitamos el boton de notificar --%>
-			if(gridBurofax.getSelectionModel().getSelected().get('idEnvio') != '' && gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') == ''){
-				btnNotificar.setDisabled(false);
-			}
-			
-			<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
-			btnEnviar.setDisabled(false);
-			
-			<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
-			if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
-				btnNotificar.setDisabled(false);
-			}
-			else{
-				btnNotificar.setDisabled(true);
+      		
+      		if(actualizarBotonesBurofax()){
+	      		btnPreparar.setDisabled(false);
+	      		<%-- Si el envio esta en estado preparado, habilitamos el boton editar --%>
+				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Preparado'){
+					btnEditar.setDisabled(false);
+				}
+				else{
+					btnEditar.setDisabled(true);
+				}
+				
+				
+				<%-- Comprobamos que se ha seleccionado un cliente --%>
+				if(gridBurofax.getSelectionModel().getSelected().get('idCliente') != ''){
+					btnNuevaDir.setDisabled(false);
+				}
+				
+				<%--Si el resultado del envio es enviado y todavia no ha sido enviado habilitamos el boton de notificar --%>
+				if(gridBurofax.getSelectionModel().getSelected().get('idEnvio') != '' && gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') == ''){
+					btnNotificar.setDisabled(false);
+				}
+				
+				<%-- Como se puede enviar sin estar preparado habilitamos el boton enviar--%>
+				btnEnviar.setDisabled(false);
+				
+				<%-- Si el Resultado es notificado habilitamos el boton de añadir notificacion --%>
+				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado'){
+					btnNotificar.setDisabled(false);
+				}
+				else{
+					btnNotificar.setDisabled(true);
+				}
+				
+				<%--Si ya se ha producido el envio y se ha añadido informacion de envio se desabilitan todos los botones menos añadir persona y añadir direccion --%>
+				if(gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') != ''){
+					//btnAddPersona.setDisabled(true);
+					btnEnviar.setDisabled(true);
+					//btnNuevaDir.setDisabled(true);
+					btnEditar.setDisabled(true);
+					btnPreparar.setDisabled(true);
+					btnCancelar.setDisabled(true);
+					btnNotificar.setDisabled(true);
+				}
 			}
 			
 			
@@ -309,6 +325,7 @@
 		,iconCls : 'icon_asuntos'
 		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar , new Ext.Toolbar.Fill(), botonRefresh ]
 		,autoWidth: true
+		,collapsible: true
 		
 		
 	});
@@ -420,8 +437,8 @@
 			  }
 		}
 		else{
-			 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios no preparados" />'
-                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooo" text="**Todos los envios tienen que estar preparados" />');
+			 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.noPreparados" text="**Envios no preparados" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.noPreparados" text="**Todos los envios tienen que estar preparados" />');
 		}
 	
 	});
@@ -460,8 +477,8 @@
 				w.on(app.event.CANCEL, function(){w.close();});
 		 }
 		 else{
-		 	 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Varios clientes seleccionados" />'
-                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooooo" text="**Debe seleccionar un unico cliente" />');
+		 	 Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.variosClientes" text="**Varios clientes seleccionados" />'
+                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.variosClientes" text="**Debe seleccionar un unico cliente" />');
 		 }		
 	
 	});	
@@ -475,7 +492,7 @@
 				  ,width:820
 				  ,autoWidth:true
 				  ,closable:true
-				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Agregar Persona" />'
+				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.agregar.persona" text="**Añadir Notificado" />'
 				  ,params:{idProcedimiento:idProcedimiento}
 				
 				});
@@ -560,8 +577,8 @@
 						}
 					  else{
 						//Mensaje de error
-							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios con tipos de burofax distinto" />'
-		                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooooo" text="**Debe seleccionar envios con el mismo tipo de burofax configurado por defecto" />');
+							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.tipoDistinto" text="**Envios con tipos de burofax distinto" />'
+		                 ,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoDefecto" text="**Debe seleccionar envios con el mismo tipo de burofax configurado por defecto" />');
 					  }	
 					 
 					}
@@ -598,8 +615,8 @@
 						}
 						else{
 							//Mensaje de error
-							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios con tipos de burofax distinto" />'
-		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooooo" text="**Debe seleccionar envios con el mismo tipo de burofax" />');
+							Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.tipoDistinto" text="**Envios con tipos de burofax distinto" />'
+		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.tipoDistinto" text="**Debe seleccionar envios con el mismo tipo de burofax" />');
 						}
 					    
 					  }
@@ -608,8 +625,8 @@
 				  
 				  }
 				  else{
-					Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.burofaxDistintooooo" text="**Envios con resultado distinto" />'
-		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.burofaxDistintoooooo" text="**Debe seleccionar envios con el mismo resultado" />');
+					Ext.MessageBox.alert('<s:message code="plugin.precontencioso.grid.burofax.mensajes.titulo.resultadoDistinto" text="**Envios con resultado distinto" />'
+		                 		,'<s:message code="plugin.precontencioso.grid.burofax.mensajes.resultadoDistinto" text="**Debe seleccionar envios con el mismo resultado" />');
 					}
 			}
 			else{
@@ -639,7 +656,7 @@
 	 		
 			var w = app.openWindow({
 				  flow : 'burofax/getPantallaInformacionEnvio'
-				  ,width:820
+				  ,width:400
 				  ,autoWidth:true
 				  ,closable:true
 				  ,title : '<s:message code="plugin.precontencioso.grid.burofax.añadir.informacion.envio" text="**Añadir Información de Envío" />'
@@ -660,8 +677,14 @@
 	var refrescarBurofaxGrid = function() {
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
 		idProcedimiento=data.precontencioso.id;
+		actualizarBotonesBurofax();
 		
-		/*if (data != null) {
+
+	}
+	
+	var actualizarBotonesBurofax = function() {
+	// Se comprueba que el procedimiento se encuentre en un estado que permita editar los burofaxes
+		if (data != null) {
 			var estadoActualCodigoProcedimiento = data.precontencioso.estadoActualCodigo;
 			if (estadoActualCodigoProcedimiento != 'PR'  && estadoActualCodigoProcedimiento != 'SU' && estadoActualCodigoProcedimiento != 'SC') {
 				btnAddPersona.setDisabled(true);
@@ -671,11 +694,16 @@
 				btnPreparar.setDisabled(true);
 				btnCancelar.setDisabled(true);
 				btnNotificar.setDisabled(true);
-				
+				return false;
 			}
-		}*/
-		
-		
+
+		}
+		return true;
+
 	}
+		
+		
+
+	
 	
 	

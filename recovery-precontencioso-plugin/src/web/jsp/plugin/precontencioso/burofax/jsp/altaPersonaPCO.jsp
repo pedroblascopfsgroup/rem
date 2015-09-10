@@ -13,8 +13,6 @@
 	var labelStyle='width:100px';
 	var idProcedimiento = '${idProcedimiento}';
 	
-	
-	
 
 	
 	var _handler =  function() {
@@ -58,7 +56,6 @@
 		
 		for (i=0; i<personasStore.getCount(); i++) {
 			auxId = personasStore.getAt(i).data.id;
-			//listaIdPersonas.setValue(listaIdPersonas.getValue() + auxId + ',');
 			arrayIdPersonas.push(auxId);
 			
 		}
@@ -249,25 +246,7 @@
 		]
 	});
 	
-	<%--
-	var panelEdicionExtendido = new Ext.form.FormPanel({
-		autoHeight : true
-        ,defaults : {layout:'form',border: false,bodyStyle:'padding-top:10px'} 
-		,border : true
-		,width:panelWidth
-		,items : [
-			{   autoHeight:true
-				,layout:'table'
-				,layoutConfig:{columns:1}
-				,border:false
-				,defaults : {xtype : 'fieldset',autoWidth : true, autoHeight : true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-				,items:[{items: [ panelEdicionPersonas ]}]
-			}
-		]
-		,bbar : [
-			btnGuardar, btnCancelar
-		]
-	});	--%>
+	
 
 	page.add(panelEdicionPersonas);
 	

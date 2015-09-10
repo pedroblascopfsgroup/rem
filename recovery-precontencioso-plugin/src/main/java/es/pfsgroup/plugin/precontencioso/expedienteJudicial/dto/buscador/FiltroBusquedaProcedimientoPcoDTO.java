@@ -110,9 +110,21 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 	 */
 	public Boolean filtroContratoInformado() {
 		Boolean filtroContratoInformado = Boolean.valueOf(!StringUtils.emtpyString(getConCodigo())
-				|| !StringUtils.emtpyString(getConTiposProducto()));
+				|| !StringUtils.emtpyString(getConTiposProducto())
+				|| !StringUtils.emtpyString(getProCentroContable()));
 
 		return filtroContratoInformado;
+	}
+
+	/**
+	 * Comprueba si está informado el filtro de gestor
+	 */
+	public Boolean filtroGestorInformado() {
+		Boolean filtroGestorInformado = Boolean.valueOf(!StringUtils.emtpyString(proTipoGestor)
+			&& !StringUtils.emtpyString(proDespacho)
+			&& !StringUtils.emtpyString(proGestor));
+
+		return filtroGestorInformado;
 	}
 
 	/**
@@ -141,6 +153,7 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 			|| !StringUtils.emtpyString(getDocFechaEnvioHasta())
 			|| !StringUtils.emtpyString(getDocFechaRecepcionDesde())
 			|| !StringUtils.emtpyString(getDocFechaRecepcionHasta())
+			|| (!StringUtils.emtpyString(docDespacho) && !StringUtils.emtpyString(docGestor))
 			|| !StringUtils.emtpyString(getDocDiasGestion()));
 		return filtroSolicitudInformado;
 	}

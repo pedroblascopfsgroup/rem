@@ -31,6 +31,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -51,6 +52,9 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienEntidad;
@@ -93,6 +97,9 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+    private UsuarioManager usuarioManager; 
 	
     private final Log logger = LogFactory.getLog(getClass());
     private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -318,9 +325,9 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		for (SolicitudDocumentoPCO sol : solicitudes) {
 			genericDao.deleteById(SolicitudDocumentoPCO.class, sol.getId());
 		}
-			
 		// Borramos el documento
 		genericDao.deleteById(DocumentoPCO.class, idDocumentoPCO);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -335,6 +342,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setEstadoDocumento(estadoDocumento);
 		
 		documentoPCODao.saveOrUpdate(documento);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -374,6 +382,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		if (documento.getSolicitudes().size() == 0){
 			cambiarEstadoDocumento(idDocumento, DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);			
 		}
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -406,6 +415,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setIdufir(docDto.getIdufir());
 
 		documentoPCODao.saveOrUpdate(documento);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -429,6 +439,15 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		solicitud.setFechaResultado(solDto.getFechaResultado());
 		solicitud.setFechaEnvio(solDto.getFechaEnvio());
 		solicitud.setFechaRecepcion(solDto.getFechaRecepcion());
+		
+		//Se registra el usd_id del solicitante
+		if(!Checks.esNulo(usuarioManager)){
+			List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+			if(!Checks.esNulo(listaGestorDespacho.get(0))){
+				solicitud.setSolicitante(listaGestorDespacho.get(0));
+			}
+		}
+		
 		if(!Checks.esNulo(solDto.getResultado())){ 
 			DDResultadoSolicitudPCO resSolPco = genericDao.get(DDResultadoSolicitudPCO.class, 
 					genericDao.createFilter(FilterType.EQUALS, "codigo", solDto.getResultado()));
@@ -443,7 +462,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		solicitud.setTipoActor(tipoActorPco);
 		
 		genericDao.save(SolicitudDocumentoPCO.class,solicitud);
-		
+		cambiarEstadoDocumento(documento.getId(), DDEstadoDocumentoPCO.SOLICITADO);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 		return solicitud;
 	}
 	
@@ -550,19 +570,17 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 				DDEstadoDocumentoPCO.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR)); 
 		documento.setEstadoDocumento(estadoDocumento);
 
-		///////////////////////////////////////////////
-		// TODO - DATOS PROVISIONALES	
+		ProcedimientoPCODTO procPCODto = proxyFactory.proxy(ProcedimientoPcoApi.class).getPrecontenciosoPorProcedimientoId(docDto.getIdProc());
+
 		ProcedimientoPCO procPCO = genericDao.get(
-				ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", new Long(1)));
+				ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "id", procPCODto.getId()));
 		
 		documento.setProcedimientoPCO(procPCO);
-		///////////////////// FIN DATOS PROVISIONALES //////////////
-	
 			
 		try {
 			genericDao.save(DocumentoPCO.class, documento);
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(procPCO.getProcedimiento().getId());
 		} catch (Exception e) {
-			// TODO: handle exception
 			System.out.println("Error: "+e);
 		}
 	}
@@ -613,8 +631,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	    
 	    solicitud.setFechaRecepcion(dto.getFechaRecepcion());
 		genericDao.save(SolicitudDocumentoPCO.class, solicitud);
-
-		
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -757,7 +774,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento", tipoDocumento),
 					genericDao.createFilter(FilterType.EQUALS, "unidadGestion", unidadGestion),
 					genericDao.createFilter(FilterType.EQUALS, "protocolo", protocolo),
-					genericDao.createFilter(FilterType.EQUALS, "notario", notario));
+					genericDao.createFilter(FilterType.EQUALS, "notario", notario),
+					genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		
 			if(listDocPco != null && listDocPco.size() > 0) {
 				return true;

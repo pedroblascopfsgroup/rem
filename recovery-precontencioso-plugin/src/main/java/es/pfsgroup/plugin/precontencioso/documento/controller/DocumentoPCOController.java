@@ -19,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
@@ -67,7 +68,58 @@ public class DocumentoPCOController {
 	List<DocumentosUGPCODto> documentosUG = null;
 	Long idProcPCO;
 	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	/*
+	 * 
+	Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
+	@RequestMapping
+	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO,boolean gestoria ,ModelMap model) {
 
+		idProcPCO = new Long(idProcedimientoPCO);
+	
+		boolean esDocumento;	
+		boolean tieneSolicitud;
+		
+		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
+		
+		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
+		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
+		List<SolicitudDocumentoPCO> solicitudes; 
+		int idIdentificativo = 1;
+		for (DocumentoPCO doc : documentos) {
+			solicitudes = doc.getSolicitudes();
+			esDocumento = true;
+			
+			// Si hay solicitudes
+			if (solicitudes != null && solicitudes.size()>0){
+				for (SolicitudDocumentoPCO sol : solicitudes) {
+					tieneSolicitud = true;
+					if(gestoria && sol.getActor().getUsuario().getId().equals(usuarioManager.getUsuarioLogado().getId())){
+						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, true, tieneSolicitud, idIdentificativo));
+					}
+					else if(!gestoria){
+						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud, idIdentificativo));
+					}
+					if (esDocumento) esDocumento = false;
+					idIdentificativo++;
+				}
+			}
+			else {
+				tieneSolicitud = false;
+				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud, idIdentificativo));
+				idIdentificativo++;
+			}
+			
+		}
+		
+		model.put("solicitudesDocumento", solicitudesDoc);
+
+		return SOLICITUDES_DOC_PCO_JSON;
+	}
+	*/
+	
 	@RequestMapping
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
@@ -520,9 +572,6 @@ public class DocumentoPCOController {
 			solDto.setIdDespachoExterno(new Long(idDespacho)); 
 	
 			documentoPCOApi.saveCrearSolicitudes(solDto);
-		
-			// Cambiar documento a estado SOLICITADO
-			documentoPCOApi.cambiarEstadoDocumento(new Long(idDoc), DDEstadoDocumentoPCO.SOLICITADO);
 		}
 			
 		return DEFAULT;

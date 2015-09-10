@@ -20,6 +20,7 @@ var OK_KO_Render = function(value, meta, record) {
 var burofaxesPcoRecord = Ext.data.Record.create([
 	{name: 'prcId'},
 	{name: 'codigo'},
+	{name: 'nombreProcedimiento'},
 	{name: 'nombreExpediente'},
 	{name: 'estadoExpediente'},
 	{name: 'fechaEstado'},
@@ -52,26 +53,26 @@ var burofaxPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
 	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
 	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
+	{dataIndex: 'fechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
 	{dataIndex: 'burEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.estado" text="**Estado"/>', sortable: false},
-	{dataIndex: 'fechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'burNif', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.nif" text="**NIF"/>', sortable: false},
 	{dataIndex: 'burNombre', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.nombre.apellidos" text="**Nombre apellidos"/>', sortable: false},
 	{dataIndex: 'burFechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'burFechaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.envio" text="**Fecha envio"/>', sortable: false},
 	{dataIndex: 'burFechaAcuse', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.acuse" text="**Fecha acuse"/>', sortable: false},
-	{dataIndex: 'burResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.resultado" text="**Resultado"/>', sortable: false}
+	{dataIndex: 'burResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.resultado" text="**Resultado"/>', renderer: OK_KO_Render, align:'center', sortable: false}
 ]);
 
-var pagingBar = fwk.ux.getPaging(burofaxPcoStore);
-pagingBar.hide();
+var pagingBarBur = fwk.ux.getPaging(burofaxPcoStore);
+pagingBarBur.hide();
 
 var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
 	title: '<s:message code="plugin.precontencioso.tab.burofax.listado" text="**Listado Burofaxes" />',
 	cls: 'cursor_pointer',
-	bbar : [pagingBar],
+	bbar : [pagingBarBur],
 	height: 250,
 	collapsible: true,
 	collapsed: true,
@@ -83,13 +84,13 @@ var gridBurofaxPco = app.crearGrid(burofaxPcoStore, burofaxPcoCm, {
 <%-- Events --%>
 burofaxPcoStore.on('load', function() {
 	gridBurofaxPco.expand(true)
-	pagingBar.show();
+	pagingBarBur.show();
 });
 
 gridBurofaxPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('prcId');
-	var nombre_procedimiento = rec.get('nombreExpediente');
+	var nombre_procedimiento = rec.get('nombreProcedimiento');
 
    	if (id != null && id != ''){
    		app.abreProcedimiento(id, nombre_procedimiento);

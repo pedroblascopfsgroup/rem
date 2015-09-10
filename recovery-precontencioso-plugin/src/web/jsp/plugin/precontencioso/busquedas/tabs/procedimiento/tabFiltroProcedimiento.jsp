@@ -8,11 +8,8 @@
 
 
 <%-- Codigo --%>
-
-var fieldCodigo = new Ext.form.TextField({
-	name: 'codigo',
-	fieldLabel : '<s:message code="plugin.precontencioso.tab.expjudicial.codigo" text="** Código" />'
-});
+<pfsforms:numberfield name="fieldCodigo" labelKey="plugin.precontencioso.tab.expjudicial.codigo" label="** Código" 
+	value="" obligatory="false" allowDecimals="false" />
 
 <%-- Nombre Expediente Judicial --%>
 
@@ -88,7 +85,7 @@ var panelFechaPreparado = new Ext.Panel({
 
 var dateFieldEnviadoLetradoDesde = new Ext.ux.form.XDateField({
 	name: 'dateFieldEnviadoLetradoDesde',
-	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.preparado" text="** F. Preparado" />'
+	fieldLabel: '<s:message code="plugin.precontencioso.tab.expjudicial.disponible.fecha.envioLetrado" text="** F. enviado a letrado " />'
 });
 
 var dateFieldEnviadoLetradoHasta = new Ext.ux.form.XDateField({

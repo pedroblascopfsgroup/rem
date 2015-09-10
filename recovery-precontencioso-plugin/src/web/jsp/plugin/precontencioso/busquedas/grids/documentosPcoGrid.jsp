@@ -20,6 +20,7 @@ var OK_KO_Render = function(value, meta, record) {
 var documentoPcoRecord = Ext.data.Record.create([
 	{name: 'prcId'},
 	{name: 'codigo'},
+	{name: 'nombreProcedimiento'},
 	{name: 'nombreExpediente'},
 	{name: 'estadoExpediente'},
 	{name: 'fechaEstado'},
@@ -27,7 +28,7 @@ var documentoPcoRecord = Ext.data.Record.create([
 	{name: 'tipoPreparacion'},
 	{name: 'diasEnPreparacion'},
 	{name: 'docEstado'},
-<!-- 	{name: 'fechaSolicitud'}, -->	
+ 	{name: 'fechaSolicitud'},
 	{name: 'docUltimaRespuesta'},
 	{name: 'docUltimoActor'},
 	{name: 'docFechaResultado'},
@@ -51,26 +52,26 @@ var documentoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
 	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
 	{dataIndex: 'fechaEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.fecha.estado" text="**Fecha estado"/>', sortable: false},
+	{dataIndex: 'fechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'tipoProcPropuesto', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.procedimiento" text="**Proc. propuesto"/>', sortable: false},
 	{dataIndex: 'tipoPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.tipo" text="**Tipo preparacion"/>', sortable: false},
 	{dataIndex: 'diasEnPreparacion', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.preparacion.dias" text="**Dias preparacion"/>', sortable: false},
 	{dataIndex: 'docEstado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.estado" text="**Estado"/>', sortable: false},
-	{dataIndex: 'fechaSolicitud', header: '<s:message code="plugin.precontencioso.grid.buscador.burofax.fecha.solicitud" text="**Fecha solicitud"/>', sortable: false},
 	{dataIndex: 'docUltimaRespuesta', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.respuesta" text="**Respuesta ultima solicitud"/>', sortable: false},
 	{dataIndex: 'docUltimoActor', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.ultsolicitud.actor" text="**Actor ultima solicitud"/>', sortable: false},
 	{dataIndex: 'docFechaResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.resultado" text="**Fecha resultado"/>', sortable: false},
 	{dataIndex: 'docFechaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.envio" text="**Fecha envio"/>', sortable: false},
 	{dataIndex: 'docFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
-	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', sortable: false}
+	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', renderer: OK_KO_Render, align:'center', sortable: false}
 ]);
 
-var pagingBar = fwk.ux.getPaging(documentoPcoStore);
-pagingBar.hide();
+var pagingBarDoc = fwk.ux.getPaging(documentoPcoStore);
+pagingBarDoc.hide();
 
 var gridDocumentoPco = app.crearGrid(documentoPcoStore, documentoPcoCm, {
 	title: '<s:message code="plugin.precontencioso.tab.documento.listado" text="**Listado Documentos" />',
 	cls: 'cursor_pointer',
-	bbar : [pagingBar],
+	bbar : [pagingBarDoc],
 	height: 250,
 	collapsible: true,
 	collapsed: true,
@@ -82,13 +83,13 @@ var gridDocumentoPco = app.crearGrid(documentoPcoStore, documentoPcoCm, {
 <%-- Events --%>
 documentoPcoStore.on('load', function() {
 	gridDocumentoPco.expand(true)
-	pagingBar.show();
+	pagingBarDoc.show();
 });
 
 gridDocumentoPco.addListener('rowdblclick', function(grid, rowIndex, e) {
 	var rec = grid.getStore().getAt(rowIndex);
 	var id = rec.get('codigo');
-	var nombre_procedimiento = rec.get('nombreExpediente');
+	var nombre_procedimiento = rec.get('nombreProcedimiento');
 
    	if (id != null && id != ''){
    		app.abreProcedimiento(id, nombre_procedimiento);

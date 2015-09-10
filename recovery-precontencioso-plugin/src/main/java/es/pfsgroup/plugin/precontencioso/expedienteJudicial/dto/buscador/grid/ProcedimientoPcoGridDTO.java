@@ -10,6 +10,7 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 
 	private String prcId;
 	private String codigo;
+	private String nombreProcedimiento;
 	private String nombreExpediente;
 	private String estadoExpediente;
 	private Integer diasEnGestion;
@@ -161,5 +162,11 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	}
 	public void setTodosBurofaxes(Boolean todosBurofaxes) {
 		this.todosBurofaxes = todosBurofaxes;
+	}
+	public String getNombreProcedimiento() {
+		return nombreProcedimiento;
+	}
+	public void setNombreProcedimiento(String nombreProcedimiento) {
+		this.nombreProcedimiento = nombreProcedimiento;
 	}
 }

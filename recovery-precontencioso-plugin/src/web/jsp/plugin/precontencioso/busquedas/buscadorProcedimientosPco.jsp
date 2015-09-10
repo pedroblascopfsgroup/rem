@@ -26,21 +26,37 @@
 		border: false,
 		activeItem: 0
 	});
-
-	var btnBuscar = new Ext.Button({
-		text: '<s:message code="plugin.precontencioso.button.buscar" text="**Buscar" />',
-		handler: function() {
+	
+	var btnBuscar = app.crearBotonBuscar({
+		handler : function(){
 			var params = getParametros();
 			params.start = 0;
 			params.limit = 25;
 			panelFiltros.collapse(true);
 			procedimientoPcoStore.webflow(params);
 			pagingBar.show();
-		}
-	})
+	}});
+	
+	var btnLimpiar = app.crearBotonResetCampos([fieldCodigo,fieldNombreExpedienteJudicial,dateFieldInicioPreparacionDesde,dateFieldInicioPreparacionHasta,
+				dateFieldPreparadoDesde,dateFieldPreparadoHasta,dateFieldEnviadoLetradoDesde,dateFieldEnviadoLetradoHasta,dateFieldFinalizadoDesde,
+				dateFieldFinalizadoHasta,dateFieldUltimaSubsanacionDesde,dateFieldUltimaSubsanacionHasta,dateFieldCanceladoDesde,dateFieldCanceladoHasta,
+				dateFieldParalizacionDesde,dateFieldParalizacionHasta,comboTipoProcPropuesto,comboTipoPreparacion,filtroEstadoPreparacion,comboTiposGestor,
+				comboDespachos,comboGestor,comboJerarquia,comboZonas,comboDisponibleDocumentos,comboDisponibleLiquidaciones,comboDisponibleBurofaxes,
+				fieldDiasGestion,fieldCodigoContrato,comboTiposProducto,fieldNif,fieldNombre,fieldApellidos,comboTipoDocumento,comboEstadoDocumento,
+				comboRespuestaSolicitud,dateFieldSolicitudDocDesde,dateFieldSolicitudDocHasta,dateFieldResultadoDocDesde,dateFieldResultadoDocHasta,dateFieldEnvioDocDesde,
+				dateFieldEnvioDocHasta,dateFieldRecepcionDocDesde,dateFieldRecepcionDocHasta,comboAdjuntoDoc,comboSolicitudPreviaDoc,fieldDiasGestionDoc,
+				comboTiposGestorDoc,comboDespachosDoc,comboGestorDoc,comboEstadoLiquidacion,dateFieldSolicitudLiqDesde,dateFieldSolicitudLiqHasta,dateFieldRecepcionLiqDesde,
+				dateFieldRecepcionLiqHasta,dateFieldConfirmacionLiqDesde,dateFieldConfirmacionLiqHasta,dateFieldCierreLiqDesde,dateFieldCierreLiqHasta,
+				fieldTotalLiqDesde,fieldTotalLiqHasta,fieldDiasGestionLiq,comboNotificado,comboResultadoBurofax,dateFieldSolicitudBurDesde,dateFieldSolicitudBurHasta,
+				dateFieldEnvioBurDesde,dateFieldEnvioBurHasta,dateFieldAcuseBurDesde,dateFieldAcuseBurHasta]);
 
-	var buttonsR = <app:includeArray files="${buttonsRight}" />;
-	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
+	var btnExportar = new Ext.Button({
+		text: '<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />',
+		iconCls: 'icon_exportar_csv',
+		handler: function() {
+			
+		}
+	});
 
 	var panelFiltros = new Ext.Panel({
 		autoHeight: true,
@@ -48,7 +64,7 @@
 		title: '<s:message code="plugin.precontencioso.buscador.expedientes.titulo" text="**Buscador Expedientes Judiciales" />',
 		titleCollapse: true,
 		collapsible: true,
-		tbar: [btnBuscar],
+		tbar: [btnBuscar, btnLimpiar, btnExportar],
 		defaults: {xtype: 'panel', cellCls: 'vtop', border: false},
 		style: 'padding-bottom: 10px;',
 		items: [{

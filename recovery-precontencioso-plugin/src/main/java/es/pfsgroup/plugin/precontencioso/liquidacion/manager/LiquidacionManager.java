@@ -23,7 +23,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
-import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -90,6 +90,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setFechaConfirmacion(new Date());
 
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -119,6 +120,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		}
 
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -144,13 +146,13 @@ public class LiquidacionManager implements LiquidacionApi {
 
 		//Se registra el usd_id del solicitante
 		if(!Checks.esNulo(usuarioManager)){
-			List<GestorDespacho> listaGestorDespacho = getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+			List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
 			if(!Checks.esNulo(listaGestorDespacho.get(0))){
 				liquidacion.setSolicitante(listaGestorDespacho.get(0));
 			}
 		}
-
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -162,6 +164,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setEstadoLiquidacion(estadoDescartada);
 
 		liquidacionDao.saveOrUpdate(liquidacion);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	/**
@@ -228,22 +231,6 @@ public class LiquidacionManager implements LiquidacionApi {
 		return liquidacion;
 	}
 	
-	@Override
-	@BusinessOperation(PRECONTENCIOSO_BO_OBRENER_GESTOR_DESPACHO)
-	public List<GestorDespacho> getGestorDespachoByUsuId(Long usuId){
-		List<GestorDespacho> listaGestorDespacho=null;
-		
-		try{
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuId);
-			listaGestorDespacho=(List<GestorDespacho>) genericDao.getList(GestorDespacho.class,filtro1);
-			
 	
-		}catch(Exception e){
-			logger.error(e);
-		}
-		
-		return listaGestorDespacho;
-		
-	}
 
 }

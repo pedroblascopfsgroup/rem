@@ -23,6 +23,8 @@ public class SolicitudDocumentoPCODto {
 	private boolean esDocumento;
 	private boolean tieneSolicitud;
 	private String codigoEstadoDocumento;
+	//Solicitante
+	private String solicitante;
 	
 	public Long getId() {
 		return id;
@@ -144,5 +146,11 @@ public class SolicitudDocumentoPCODto {
 	}
 	public void setIdIdentificativo(String idIdentificativo) {
 		this.idIdentificativo = idIdentificativo;
+	}
+	public String getSolicitante() {
+		return solicitante;
+	}
+	public void setSolicitante(String solicitante) {
+		this.solicitante = solicitante;
 	}
 }

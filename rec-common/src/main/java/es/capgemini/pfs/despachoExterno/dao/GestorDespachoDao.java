@@ -1,5 +1,7 @@
 package es.capgemini.pfs.despachoExterno.dao;
 
+import java.util.List;
+
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 
@@ -18,4 +20,11 @@ public interface GestorDespachoDao extends AbstractDao<GestorDespacho, Long> {
 	 * @return 
 	 */
 	GestorDespacho getGestorDespachoPorUsuarioyDespacho(Long usuarioId, Long despachoId);
+	
+	/**
+	 * Devuelve una lista de gestorDespacho a partur del usuId
+	 * @param usuId
+	 * @return
+	 */
+	List<GestorDespacho> getGestorDespachoByUsuId(Long usuId);
 }

@@ -17,11 +17,13 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Direccion;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 
 @Entity
 @Table(name = "PCO_BUR_ENVIO", schema = "${entity.schema}")
@@ -76,6 +78,8 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
+
+	
 
 	/*
 	 * GETTERS & SETTERS

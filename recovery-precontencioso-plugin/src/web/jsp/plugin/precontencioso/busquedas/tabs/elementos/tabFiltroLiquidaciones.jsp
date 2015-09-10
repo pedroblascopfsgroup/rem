@@ -194,3 +194,9 @@ var getParametrosFiltroLiquidaciones = function() {
 
 	return out;
 }
+
+var limpiaPestanaLiquidaciones = function() {
+	app.resetCampos([comboEstadoLiquidacion, dateFieldSolicitudLiqDesdeEle, dateFieldSolicitudLiqHastaEle, 
+	dateFieldRecepcionLiqDesdeEle, dateFieldRecepcionLiqHastaEle, dateFieldConfirmacionLiqDesdeEle, dateFieldConfirmacionLiqHastaEle,
+	dateFieldCierreLiqDesdeEle, dateFieldCierreLiqHastaEle, fieldTotalLiqDesdeEle, fieldTotalLiqHastaEle, fieldDiasGestionLiqEle]);
+}

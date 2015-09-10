@@ -266,6 +266,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.in("estadoPreparacion.codigo", filtro.getProCodigosEstado().split(",")));
 			where.add(Restrictions.isNull("estadosPreparacionProc.fechaFin"));
 		}
+		
+		where.addAll(dateRangeFilter("procedimientoPco.fechaInicioPreparacion", filtro.getProFechaInicioPreparacionDesde(), filtro.getProFechaInicioPreparacionHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaEnvioLetrado", filtro.getProFechaEnviadoLetradoDesde(), filtro.getProFechaEnviadoLetradoHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaPreparado", filtro.getProFechaPreparadoDesde(), filtro.getProFechaPreparadoHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaFinalizado", filtro.getProFechaFinalizadoDesde(), filtro.getProFechaFinalizadoHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaUltimaSubsanacion", filtro.getProFechaUltimaSubsanacionDesde(), filtro.getProFechaUltimaSubsanacionHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaCancelado", filtro.getProFechaCanceladoDesde(), filtro.getProFechaCanceladoHasta()));
 
 		return where;
 	}
@@ -515,7 +522,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	private List<Criterion> dateRangeFilter(String field, String dateFrom, String dateTo) {
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("yyyy-MM-dd");
 
 		try {
 

@@ -659,6 +659,9 @@ public class Persona implements Serializable, Auditable, Describible {
 
 	@Column(name = "PER_EMPLEADO")
 	private Boolean esEmpleado;
+	
+	@Column(name = "PER_SITUACION_CONCURSAL")
+	private Boolean situacionConcursal;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -731,6 +734,20 @@ public class Persona implements Serializable, Auditable, Describible {
 			+ DDTipoInfoCliente.CHAR_EXTRA1
 			+ "'))")
 	private String descripcionCnae;
+	
+	@Formula("(SELECT icc.icc_value FROM ext_icc_info_extra_cli icc WHERE icc.per_id = per_id "
+			+ " and icc.dd_ifx_id = ("
+			+ "SELECT ifx.dd_ifx_id FROM ext_dd_ifx_info_extra_cli ifx WHERE ifx.dd_ifx_codigo = '"
+			+ DDTipoInfoCliente.DATE_EXTRA1
+			+ "'))")
+	private String fechaSituacionConcursal;
+	
+	@Formula("(SELECT icc.icc_value FROM ext_icc_info_extra_cli icc WHERE icc.per_id = per_id "
+			+ " and icc.dd_ifx_id = ("
+			+ "SELECT ifx.dd_ifx_id FROM ext_dd_ifx_info_extra_cli ifx WHERE ifx.dd_ifx_codigo = '"
+			+ DDTipoInfoCliente.FLAG_EXTRA1
+			+ "'))")
+	private Boolean flagExtra1;
 	
 	
 
@@ -3176,6 +3193,30 @@ public class Persona implements Serializable, Auditable, Describible {
 
 	public void setDescripcionCnae(String descripcionCnae) {
 		this.descripcionCnae = descripcionCnae;
+	}
+
+	public Boolean getSituacionConcursal() {
+		return situacionConcursal;
+	}
+
+	public void setSituacionConcursal(Boolean situacionConcursal) {
+		this.situacionConcursal = situacionConcursal;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return fechaSituacionConcursal;
+	}
+
+	public void setFechaSituacionConcursal(String fechaSituacionConcursal) {
+		this.fechaSituacionConcursal = fechaSituacionConcursal;
+	}
+
+	public Boolean getFlagExtra1() {
+		return flagExtra1;
+	}
+
+	public void setFlagExtra1(Boolean flagExtra1) {
+		this.flagExtra1 = flagExtra1;
 	}
 
 }

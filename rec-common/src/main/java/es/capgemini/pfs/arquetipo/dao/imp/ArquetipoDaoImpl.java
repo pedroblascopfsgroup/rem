@@ -1,6 +1,8 @@
 package es.capgemini.pfs.arquetipo.dao.imp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -85,5 +87,34 @@ public class ArquetipoDaoImpl extends AbstractEntityDao<Arquetipo, Long> impleme
     	}
     	
     }
+
+	@Override
+	public List<Arquetipo> getListRecuperacion() {
+		List<Arquetipo> arquetipos = this.getList();
+		
+		List<Arquetipo> arquetiposRecup = new ArrayList<Arquetipo>();
+		
+		for (Arquetipo arquetipo : arquetipos) {
+			if (arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion() && !arquetipo.getAuditoria().isBorrado())
+				arquetiposRecup.add(arquetipo);
+		}
+		
+		return arquetiposRecup;
+		
+	}
+
+	@Override
+	public List<Arquetipo> getListSeguimiento() {
+		List<Arquetipo> arquetipos = this.getList();
+		
+		List<Arquetipo> arquetiposSeg = new ArrayList<Arquetipo>();
+		
+		for (Arquetipo arquetipo : arquetipos) {
+			if (arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento() && !arquetipo.getAuditoria().isBorrado())
+				arquetiposSeg.add(arquetipo);
+		}
+
+		return arquetiposSeg;
+	}
 
 }

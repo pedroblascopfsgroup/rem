@@ -11,6 +11,9 @@
 <pfslayout:tabpage titleKey="plugin.itinerarios.reglasElevacion.titulo" title="**Reglas de elevacion" 
 	items="panelCE,panelRE,panelDC" >
 	
+	var refrescoCompletarActivar = ${ceSiNo};
+	var refrescoRevisarActivar = ${reSiNo};
+	
 	var recargar = function (){
 		app.openTab('${itinerario.nombre}'
 					,'plugin.itinerarios.consultaItinerario'
@@ -84,8 +87,17 @@
 			page.webflow({
 				flow: 'plugin/itinerarios/plugin.itinerarios.marcaAutomatico'
 				,params:paramEstadoCE
-				,success:recargar
-			});			
+			});	
+			
+			if (!refrescoCompletarActivar) {
+				ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
+				btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
+				refrescoCompletarActivar = true;
+			 } else {
+				ceAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
+				btAutomaticoCE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
+				refrescoCompletarActivar = false;
+			}
 	</pfs:button>
 	
 	if (${ceSiNo}){
@@ -189,8 +201,17 @@
 			page.webflow({
 				flow: 'plugin/itinerarios/plugin.itinerarios.marcaAutomatico'
 				,params:paramEstadoRE
-				,success:recargar
 			});			
+			
+			if (!refrescoRevisarActivar) {
+				reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.activado" text="**Activado" />');
+				btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivar" text="**Desactivar" />');
+				refrescoRevisarActivar = true;
+			 } else {
+				reAutomatico.setValue('<s:message code="plugin.itinerarios.tabReglasElevacion.desactivado" text="**Desactivado" />');
+				btAutomaticoRE.setText('<s:message code="plugin.itinerarios.tabReglasElevacion.activar" text="**Activar" />');
+				refrescoRevisarActivar = false;
+			}
 	</pfs:button>
 	
 	if (${reSiNo}){

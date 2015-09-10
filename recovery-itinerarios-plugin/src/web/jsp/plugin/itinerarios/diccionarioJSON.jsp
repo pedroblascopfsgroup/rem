@@ -9,6 +9,7 @@
          	<json:property name="id" value="${d.id}"/>
             <json:property name="codigo" value="${d.codigo}"/>
             <json:property name="descripcion" value="${d.descripcion}"/>
+            <json:property name="descripcionLarga" value="${d.descripcionLarga}"/>
          </json:object>
    </json:array>
 </fwk:json>

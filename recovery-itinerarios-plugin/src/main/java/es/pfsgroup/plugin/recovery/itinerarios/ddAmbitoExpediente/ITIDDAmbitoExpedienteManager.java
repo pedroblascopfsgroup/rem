@@ -9,6 +9,9 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
+import es.capgemini.pfs.itinerario.model.DDTipoReglasElevacion;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.itinerarios.PluginItinerariosBusinessOperations;
 import es.pfsgroup.plugin.recovery.itinerarios.ddAmbitoExpediente.dao.ITIDDAmbitoExpedienteDao;
 import es.pfsgroup.plugin.recovery.itinerarios.ddTipoItinerario.dao.ITIDDTipoItinerarioDao;
@@ -21,6 +24,9 @@ public class ITIDDAmbitoExpedienteManager {
 	
 	@Autowired
 	ITIDDTipoItinerarioDao tipoItinerarioDao;
+	
+	@Autowired
+	GenericABMDao genericDAO;
 	
 	@BusinessOperation(PluginItinerariosBusinessOperations.AEX_MGR_LISTA)
 	public List<DDAmbitoExpediente> listaAmbitoExpediente(){
@@ -64,6 +70,19 @@ public class ITIDDAmbitoExpedienteManager {
 			resultado= this.listaAmbitosSeguimiento();
 		}
 		return resultado;
+	}
+	
+	@BusinessOperation(PluginItinerariosBusinessOperations.AEX_MGR_LISTA_BY_REGLA)
+	public List<DDAmbitoExpediente> listaAmbitoExpedienteByRegla(Long idRegla){
+		
+		DDTipoReglasElevacion tipoRegla; 
+		tipoRegla= genericDAO.get(DDTipoReglasElevacion.class, genericDAO.createFilter(FilterType.EQUALS, "id", idRegla ));
+		
+		if (tipoRegla!= null)
+			return tipoRegla.getListAmbitos();
+		else
+			return null;
+		
 	}
 
 }

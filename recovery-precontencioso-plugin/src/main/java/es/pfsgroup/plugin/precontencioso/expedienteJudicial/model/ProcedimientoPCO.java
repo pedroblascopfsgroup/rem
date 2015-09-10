@@ -159,7 +159,8 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 		"(SELECT SUM(pco_liq_liquidaciones.pco_liq_total) " +
 		" FROM   pco_prc_procedimientos " +
 		"       INNER JOIN pco_liq_liquidaciones ON pco_prc_procedimientos.pco_prc_id = pco_liq_liquidaciones.pco_prc_id " +
-		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID) ")
+		" WHERE  pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID " +
+		"		AND pco_liq_liquidaciones.borrado = 0 ) ")
 	private Float totalLiquidacion;
 
 	@Formula(value = 

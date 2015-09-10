@@ -193,6 +193,7 @@
 		          ,params : {idAcuerdo:acuerdoSeleccionado}
 		       });
 		       w.on(app.event.DONE, function(){
+		       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
 		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
 		          acuerdosStore.webflow({id:panel.getAsuntoId()});
 		          w.close();
@@ -214,7 +215,7 @@
        		
        		    deshabilitarBotones();
 	      	    page.webflow({
-	      			flow:"acuerdos/proponerAcuerdo"
+	      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
 	      			,params:{
 	      				idAcuerdo:acuerdoSeleccionado
 	   				}
@@ -316,7 +317,7 @@
        ,handler:function(){
       	    deshabilitarBotones();
       	    page.webflow({
-      			flow:"acuerdos/aceptarAcuerdo"
+      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.aceptarAcuerdo"
       			,params:{
       				idAcuerdo:acuerdoSeleccionado
    				}
@@ -325,6 +326,7 @@
            		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
            		 	btnAceptarAcuerdo.hide();
            		 	btnRechazarAcuerdo.hide();
+           		 	btnIncumplirAcuerdo.setVisible(false);
            		}	
 	      	});
 			habilitarBotones();	
@@ -340,7 +342,7 @@
        ,handler:function(){
       	    deshabilitarBotones();
       	    page.webflow({
-      			flow:"acuerdos/vigenteAcuerdo"
+      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.vigenteAcuerdo"
       			,params:{
       				idAcuerdo:acuerdoSeleccionado
    				}
@@ -349,6 +351,8 @@
            		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
            		 	btnAceptarAcuerdo.hide();
            		 	btnRechazarAcuerdo.hide();
+           		 	btnVigenteAcuerdo.hide();
+           		 	btnIncumplirAcuerdo.setVisible(false);
            		}	
 	      	});
 			habilitarBotones();	
@@ -382,6 +386,7 @@
 		   		 	btnRechazarAcuerdo.hide();
 		   		 	btnCerrarAcuerdo.hide();
 		   		 	btnIncumplirAcuerdo.hide();
+		   		 	btnVigenteAcuerdo.hide();
    		 		}
 	      	});	
       		habilitarBotones();
@@ -486,6 +491,7 @@
 				var userLogado = config.userLogado.id;
 				var tipoGestorLogado = config.userLogado.tipoGestorAsunto;
 				var noPuedeModificar = true;
+				
 
 				if(idUserProponente == userLogado && codigoEstado == app.codigoAcuerdoEnConformacion){
 					btnProponerAcuerdo.setVisible(true);
@@ -493,6 +499,15 @@
 					btnIncumplirAcuerdo.setVisible(true);
 					
 					noPuedeModificar = false;
+					
+					if(tipoGestorLogado == tipoGestorDecisorAcuerdo){
+						btnVigenteAcuerdo.setVisible(true);
+						btnProponerAcuerdo.setVisible(false);
+					}else if(tipoGestorLogado == tipoGestorValidadorAcuerdo){
+						btnAceptarAcuerdo.setVisible(true);
+						btnProponerAcuerdo.setVisible(false);
+					} 
+					
 				}
 				
 				if((tipoGestorLogado == tipoGestorValidadorAcuerdo || tipoGestorLogado == tipoGestorDecisorAcuerdo) && codigoEstado == app.codigoAcuerdoPropuesto){
@@ -509,15 +524,15 @@
 					noPuedeModificar = false;
 				}
 				
-				if(tipoGestorLogado == tipoGestorPropAcuerdo && codigoEstado == app.codigoAcuerdoVigente){
-					btnCumplimientoAcuerdo.setVisible(true);
-<!-- 					btnIncumplirAcuerdo.setVisible(true);	 -->
-<!-- 					btnCerrarAcuerdo.setVisible(true); -->
-					btnRegistrarFinalizacionAcuerdo.setVisible(true);
-					
-					noPuedeModificar = false;
-				}
+				var estadoVigente = false;
 				
+				if(tipoGestorLogado == tipoGestorPropAcuerdo && codigoEstado == app.codigoAcuerdoVigente){
+					
+					btnRegistrarFinalizacionAcuerdo.setVisible(true);
+					estadoVigente = true;
+					noPuedeModificar = false;
+					
+				}
 				
 				panel.remove(acuerdosTabs);	
 				panel.remove(panelAnterior);
@@ -557,6 +572,20 @@
 				//panel.add(panelAnterior);
 				panel.doLayout();
 				panel.show();
+				
+				var store = panelAnteriorTerminos.terminosAcuerdoGrid.getStore();
+				
+				btnCumplimientoAcuerdo.setVisible(false);
+				
+				store.on('load', function(){  
+					for (var i=0; i < store.data.length; i++) {
+						datos = store.getAt(i);
+						
+						if(datos.get('codigoTipoAcuerdo') == "17" && Boolean(estadoVigente)){
+							btnCumplimientoAcuerdo.setVisible(true);
+						}
+					}
+			   	});
 				
 			}
 			,error: function(){

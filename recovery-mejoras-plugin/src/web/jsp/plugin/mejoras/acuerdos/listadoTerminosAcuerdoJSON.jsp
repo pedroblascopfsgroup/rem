@@ -9,7 +9,8 @@
 	<json:array name="terminosAcuerdo" items="${listadoTerminosAcuerdo}" var="termino">
 		<json:object>
 			<json:property name="id" value="${termino.id}" />
-	        <json:property name="tipoAcuerdo" value="${termino.tipoAcuerdo.descripcion}" />   
+	        <json:property name="tipoAcuerdo" value="${termino.tipoAcuerdo.descripcion}" />
+	        <json:property name="codigoTipoAcuerdo" value="${termino.tipoAcuerdo.codigo}" />   
 	        <json:property name="subTipoAcuerdo" value="${termino.subTipoAcuerdo.descripcion}" />                
 	        <json:property name="importe" value="${termino.importe}" />
 	        <json:property name="comisiones" value="${termino.comisiones}" />  

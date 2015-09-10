@@ -42,6 +42,9 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_GET_TERMINO_ACUERDO = "mejacuerdo.getTerminoAcuerdo";	
 	public static final String BO_ACUERDO_MGR_GET_TIPOS_GESTORES_ACUERDO_ASUNTO = "mejacuerdo.getTiposGestoresAcuerdoAsunto";
 	public static final String BO_ACUERDO_MGR_GET_PUEDE_EDITAR_ACUERDO_ASUNTO = "mejacuerdo.puedeEditar";
+	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_PROPONENTE_ACUERDO_ASUNTO = "mejacuerdo.esProponenteAcuerdoAsunto";
+	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_VALIDADOR_ACUERDO_ASUNTO = "mejacuerdo.esValidadorAcuerdoAsunto";
+	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_DECISOR_ACUERDO_ASUNTO = "mejacuerdo.esDecisorAcuerdoAsunto";
 	
     
 	/**
@@ -113,6 +116,15 @@ public interface MEJAcuerdoApi {
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_PUEDE_EDITAR_ACUERDO_ASUNTO)
 	public boolean puedeEditar(Long idAcuerdo);
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_TIPO_GESTOR_PROPONENTE_ACUERDO_ASUNTO)
+	public boolean esProponenteAcuerdoAsunto(Long idTipoGestorAsunto);
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_TIPO_GESTOR_VALIDADOR_ACUERDO_ASUNTO)
+	public boolean esValidadorAcuerdoAsunto(Long idTipoGestorAsunto);
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_TIPO_GESTOR_DECISOR_ACUERDO_ASUNTO)
+	public boolean esDecisorAcuerdoAsunto(Long idTipoGestorAsunto);
 	
 
 }

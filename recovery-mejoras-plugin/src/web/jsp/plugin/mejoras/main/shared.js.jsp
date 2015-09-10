@@ -141,9 +141,12 @@ app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_MARCADO = '<fwk:const value="es.capgem
 app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK" />';
 app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO" />';
 
+app.subtipoTarea.CODIGO_ACEPTACION_ACUERDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_ACEPTACION_ACUERDO" />';
+app.subtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO" />';
+app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE" />';
+
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
-
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';

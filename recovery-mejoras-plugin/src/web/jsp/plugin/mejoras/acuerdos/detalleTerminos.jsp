@@ -44,7 +44,8 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	 	 ,{name : 'idContrato'}
 		 ,{name : 'cc'}
 		 ,{name : 'tipo'}
-		 ,{name : 'estadoFinanciero'}		 
+		 ,{name : 'estadoFinanciero'}		
+		 ,{name : 'codigoTipoAcuerdo'} 
         ]);        
 
    var contratosAsuntoCM = new Ext.grid.ColumnModel([
@@ -69,7 +70,8 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	  ,{dataIndex: 'idContrato', hidden:true, fixed:true }      
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.codigoContrato" text="**C&oacute;digo contrato" />', dataIndex : 'cc',width: 75}
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.producto" text="**Producto" />', dataIndex : 'tipo',width: 75}
-      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.estadoFinanciero" text="**Estado Financ" />', dataIndex : 'estadoFinanciero',width: 65}          
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.estadoFinanciero" text="**Estado Financ" />', dataIndex : 'estadoFinanciero',width: 65}    
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.codigoTipoAcuerdo" text="**Codigo Tipo acuerdo" />', dataIndex : 'codigoTipoAcuerdo',hidden:true}      
    ]);      
    
    var contratosAsuntoStore = page.getStore({

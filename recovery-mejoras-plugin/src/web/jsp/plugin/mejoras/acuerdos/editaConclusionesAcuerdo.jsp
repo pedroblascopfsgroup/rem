@@ -93,20 +93,20 @@
 	//es acuerdo null?: ${acuerdo==null}
 	//es gestor: ${esGestor}
 
-	var estado = <c:choose >
-					<c:when test="${esSupervisor && acuerdo==null}">
-						app.codigoAcuerdoVigente; //se est� dando de alta, y es un supervisor, se crea en estado vigente;
-					</c:when>
-					<c:when test="${esGestor && acuerdo==null}">
-						app.codigoAcuerdoEnConformacion; //se est� dando de alta, y es un gestor, se crea en conformaci�n;
-					</c:when>
-					<c:when test="${acuerdo!=null}">
-						"${acuerdo.estadoAcuerdo.codigo}"; //tomo el estado que est� cargado
-					</c:when>
-					<c:otherwise>
-						app.codigoAcuerdoEnConformacion;
-					</c:otherwise>
-				 </c:choose>
+<%-- 	var estado = <c:choose > --%>
+<%-- 					<c:when test="${esSupervisor && acuerdo==null}"> --%>
+<!-- 						app.codigoAcuerdoVigente; //se est� dando de alta, y es un supervisor, se crea en estado vigente; -->
+<%-- 					</c:when> --%>
+<%-- 					<c:when test="${esGestor && acuerdo==null}"> --%>
+<!-- 						app.codigoAcuerdoEnConformacion; //se est� dando de alta, y es un gestor, se crea en conformaci�n; -->
+<%-- 					</c:when> --%>
+<%-- 					<c:when test="${acuerdo!=null}"> --%>
+<%-- 						"${acuerdo.estadoAcuerdo.codigo}"; //tomo el estado que est� cargado --%>
+<%-- 					</c:when> --%>
+<%-- 					<c:otherwise> --%>
+<!-- 						app.codigoAcuerdoEnConformacion; -->
+<%-- 					</c:otherwise> --%>
+<%-- 				 </c:choose> --%>
 	
 	var estadoCombo = new Ext.form.ComboBox({
 			name:'estadoCombo'
@@ -120,7 +120,7 @@
 			,triggerAction: 'all'
 			,labelStyle:labelStyle
 			,disabled:true
-			,value:estado
+			,value:app.codigoAcuerdoEnConformacion
 			,fieldLabel : '<s:message code="acuerdo.conclusiones.estadoCombo" text="**Estado" />'
 	});
 	

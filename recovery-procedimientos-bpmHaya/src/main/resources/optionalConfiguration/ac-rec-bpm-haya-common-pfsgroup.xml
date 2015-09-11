@@ -716,6 +716,11 @@
 				def comprobarExisteDocumentoAULIQUI = { 
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AULIQUI");
+				}
+				
+				def comprobarExisteDocumentoINFTAVA = { 
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFTAVA");
 				}    		                       
         	            
   			 ]]>

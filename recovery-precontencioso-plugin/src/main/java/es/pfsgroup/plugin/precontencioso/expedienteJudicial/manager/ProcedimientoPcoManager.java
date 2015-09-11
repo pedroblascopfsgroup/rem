@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +20,16 @@ import es.capgemini.pfs.asunto.AsuntosManager;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
@@ -45,6 +53,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.Precontencio
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Service
@@ -74,10 +83,19 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	private LiquidacionManager liquidacionManager;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private GestorDespachoDao gestorDespachoDao;
+	
 	/*
 	 * 
 	 * Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
-	 
+	 */
 	@Override
 	@BusinessOperation(BO_PCO_EXPEDIENTE_IS_SUPERVISOR)
 	public boolean isSupervisor(Long prcId){
@@ -119,7 +137,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		}
 		
 		EXTGestorAdicionalAsunto gestorAdicionalAsunto=null;
-		GestorDespacho gestorDespacho=liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId()).get(0);
+		GestorDespacho gestorDespacho=gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId()).get(0);
 		try{
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "asunto.id", prc.getAsunto().getId());
 			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "gestor.id", gestorDespacho.getId());
@@ -149,7 +167,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		}
 		
 		EXTGestorAdicionalAsunto gestorAdicionalAsunto=null;
-		List<GestorDespacho> listaGestorDespacho=liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+		List<GestorDespacho> listaGestorDespacho=gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
 		List<GestorDespacho> listaGestorDespachoPredoc=new ArrayList<GestorDespacho>();
 		for(GestorDespacho gestorDespacho : listaGestorDespacho){
 			if(gestorDespacho.getDespachoExterno().getTipoDespacho().getCodigo().equals("PREDOC")){
@@ -185,7 +203,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		}
 		
 		
-		List<GestorDespacho> listaGestorDespacho=liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
+		List<GestorDespacho> listaGestorDespacho=gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
 	
 		for(GestorDespacho gestorDespacho : listaGestorDespacho){
 			if(gestorDespacho.getDespachoExterno().getTipoDespacho().getCodigo().equals("GESTORIA")){
@@ -196,7 +214,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		return isGestoria;
 	}
-	*/
+	
 	
 	
 	//PREDOC

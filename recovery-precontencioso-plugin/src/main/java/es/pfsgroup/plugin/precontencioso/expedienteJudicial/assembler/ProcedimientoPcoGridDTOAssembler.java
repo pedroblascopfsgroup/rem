@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.ObjectUtils;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.BurofaxGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.DocumentoGridDTO;
@@ -74,7 +75,14 @@ public class ProcedimientoPcoGridDTOAssembler {
 
 			docGridDto.setEstado(ObjectUtils.toString(documento.get("estado")));
 			docGridDto.setUltimaRespuesta(ObjectUtils.toString(documento.get("ultimaRespuesta")));
-			docGridDto.setUltimoActor(ObjectUtils.toString(documento.get("ultimoActor")));
+
+			if (documento.get("ultimoActor") != null) {
+				GestorDespacho actor = (GestorDespacho) documento.get("ultimoActor");
+				if (actor.getUsuario() != null) {
+					docGridDto.setUltimoActor(actor.getUsuario().getApellidoNombre());	
+				}
+			}
+			
 			docGridDto.setFechaResultado((Date) documento.get("fechaResultado"));
 			docGridDto.setFechaEnvio((Date) documento.get("fechaEnvio"));
 			docGridDto.setFechaRecepcion((Date) documento.get("fechaRecepcion"));

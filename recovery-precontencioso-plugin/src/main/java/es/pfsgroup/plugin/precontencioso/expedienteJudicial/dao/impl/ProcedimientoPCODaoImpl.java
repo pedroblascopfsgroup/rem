@@ -73,7 +73,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("procedimientoPco.totalLiquidacion").as("totalLiquidacion"));
 		//select.add(Projections.property("procedimientoPco.notificadoClientes").as("notificadoClientes"));
 		select.add(Projections.property("procedimientoPco.fechaEnvioLetrado").as("fechaEnvioLetrado"));
-		//select.add(Projections.property("procedimientoPco.aceptadoLetrado").as("aceptadoLetrado"));
+		select.add(Projections.property("procedimientoPco.aceptadoLetrado").as("aceptadoLetrado"));
 		select.add(Projections.property("procedimientoPco.todosDocumentos").as("todosDocumentos"));
 		select.add(Projections.property("procedimientoPco.todasLiquidaciones").as("todasLiquidaciones"));
 		select.add(Projections.property("procedimientoPco.todosBurofaxes").as("todosBurofaxes"));
@@ -95,8 +95,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		addDefaultProcedimientoProjection(select);
 
 		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
-		// Respuesta ultima solicitud
-		// Actor última solicitud
+		select.add(Projections.property("resultadoSolicitud.descripcion").as("ultimaRespuesta"));
+		select.add(Projections.property("solicitud.actor").as("ultimoActor"));
+		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
 		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
 		select.add(Projections.property("solicitud.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("solicitud.fechaRecepcion").as("fechaRecepcion"));
@@ -421,8 +422,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 				query.createAlias("documentos.solicitudes", "solicitud");
 			}
 
+			query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud", CriteriaSpecification.LEFT_JOIN);
+
 			if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
-				query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud");
 				where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
 			}
 

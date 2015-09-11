@@ -11,6 +11,21 @@
 	default-autowire="byName">
 	
  	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="15"/>
+ 	
+	<bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >
+  	<property name="contextScripts">
+  		<list>
+  			<value><![CDATA[
+  			
+  			def dameProcedimientoPropuesto = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameProcedimientoPropuesto(idProcedimiento);
+			}
+			
+			]]></value>
+  		</list>
+  	</property>
+  </bean> 
 	
 <!-- 	<bean id="nodoEsperaRecobroActionHandler" class="es.pfsgroup.plugin.recobro.bpm.handlers.RecobroNodoEsperaActionHandler"></bean> -->
 
@@ -27,5 +42,13 @@
 <!-- 	  	</property> -->
 <!--   	</bean>  -->
 	
-  
+  <!-- Diccionarios -->
+  <bean parent="clasesDiccionarioAnotadas">
+    <property name="sourceList">
+    	<list merge="true">    
+    		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoProblemaDocPco</value>
+    	</list>
+    </property>
+   </bean>
+   
 </beans>	

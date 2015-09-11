@@ -10,13 +10,10 @@
                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
-<<<<<<< HEAD
 	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"/>
 	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"/>
 	
  	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="16"/>
-=======
- 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="15"/>
  	
 	<bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >
   	<property name="contextScripts">
@@ -32,7 +29,6 @@
   		</list>
   	</property>
   </bean> 
->>>>>>> b4a6c0fc0c56260213a3feccaf20f27994590e9c
 	
 <!-- 	<bean id="nodoEsperaRecobroActionHandler" class="es.pfsgroup.plugin.recobro.bpm.handlers.RecobroNodoEsperaActionHandler"></bean> -->
 

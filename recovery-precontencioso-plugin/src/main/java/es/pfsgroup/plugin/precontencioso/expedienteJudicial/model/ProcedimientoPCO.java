@@ -230,6 +230,27 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	
 	@Formula(value = formulaFechaGeneralizada1 + DDEstadoPreparacionPCO.CANCELADO + formulaFechaGeneralizada2)
 	private Date fechaCancelado;
+	
+	@Formula(value = 
+			"(SELECT TEV.tev_valor " +
+			" FROM   tev_tarea_externa_valor TEV " +
+			"       join tex_tarea_externa TEX " +
+			"         ON TEV.tex_id = TEX.tex_id " +
+			"       join tap_tarea_procedimiento TAP " +
+			"         ON TEX.tap_id = TAP.tap_id " +
+			"       join dd_tpo_tipo_procedimiento TPO " +
+			"         ON TAP.dd_tpo_id = TPO.dd_tpo_id " +
+			"       join prc_procedimientos PRC " +
+			"         ON TPO.dd_tpo_id = PRC.dd_tpo_id " +
+			"       join tar_tareas_notificaciones TAR " +
+			"         ON PRC.prc_id = TAR.prc_id " +
+			"            AND TEX.tar_id = TAR.tar_id " +
+			" WHERE  TEV.tev_nombre = 'aceptacion' " +
+			"       AND ( TAP.tap_codigo = 'PCO_RegistrarAceptacion' " +
+			"              OR TAP.tap_codigo = 'PCO_RegistrarAceptacionPost' ) " +
+			"       AND TPO.dd_tpo_codigo = 'PCO' " +
+			"       AND PRC.prc_id = PRC_ID)  ")
+	private Boolean aceptadoLetrado;
 
 	/**
 	 * Devuelve el <DDEstadoPreparacionPCO> en el que se encuentra el procedimiento

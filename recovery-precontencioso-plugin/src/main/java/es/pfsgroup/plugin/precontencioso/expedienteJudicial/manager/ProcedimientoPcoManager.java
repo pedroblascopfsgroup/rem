@@ -437,6 +437,19 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			historicoNuevoRegistro.setFechaInicio(fechaCambio);
 			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
 		}
-		
+	}
+	
+	public String dameProcedimientoPropuesto(Long idProcedimiento) {
+		try {		
+			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+			if (procedimientoPco != null) {
+				return procedimientoPco.getTipoProcPropuesto().getCodigo();
+			} else {
+				return "";
+			}
+		} catch (Exception e) {
+			return "";
+		}
+
 	}
 }

@@ -72,7 +72,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("procedimientoPco.totalLiquidacion").as("totalLiquidacion"));
 		//select.add(Projections.property("procedimientoPco.notificadoClientes").as("notificadoClientes"));
 		select.add(Projections.property("procedimientoPco.fechaEnvioLetrado").as("fechaEnvioLetrado"));
-		//select.add(Projections.property("procedimientoPco.aceptadoLetrado").as("aceptadoLetrado"));
+		select.add(Projections.property("procedimientoPco.aceptadoLetrado").as("aceptadoLetrado"));
 		select.add(Projections.property("procedimientoPco.todosDocumentos").as("todosDocumentos"));
 		select.add(Projections.property("procedimientoPco.todasLiquidaciones").as("todasLiquidaciones"));
 		select.add(Projections.property("procedimientoPco.todosBurofaxes").as("todosBurofaxes"));

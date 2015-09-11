@@ -5,6 +5,7 @@ import java.util.Map;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -79,7 +80,7 @@ public interface SubastaApi {
 	public static final String BO_OBTENER_SITUACION_CARGA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getSituacionCarga";
 	public static final String BO_OBTENER_SITUACION_CARGA_ECONOMICA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getSituacionCargaEconomica";
 	public static final String BO_OBTENER_TIPO_CARGA = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.getTipoCarga";
-
+	public static final String BO_SUBIR_PLANTILLA_INSTRUCCIONES = "plugin.nuevoModeloBienes.subastas.manager.SubastaManager.upload";
 	
 	
 	
@@ -268,6 +269,9 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_OBTENER_TIPO_CARGA)
 	DDTipoCarga getTipoCarga(String tipoCarga);
+	
+	@BusinessOperationDefinition(BO_SUBIR_PLANTILLA_INSTRUCCIONES)
+	String upload(WebFileItem uploadForm);
 	
 
 }

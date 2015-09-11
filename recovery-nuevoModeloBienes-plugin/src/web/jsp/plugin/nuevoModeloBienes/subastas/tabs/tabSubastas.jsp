@@ -706,86 +706,7 @@
 	})
 	
 	btnSubirInstrucciones.on('click', function(){
-		
-		//Pruebas. Luego descomentar. var idField = upload.getForm().findField('id');
-		//idField.setValue(comboTiposOperacion.getValue());
-		//var obj = upload.getForm().findField('path');
-		creaVentanaUpload();
-		upload.getForm().reset();
-		win.show();
-		//controlador.subirFichero(comboTiposOperacion.getValue());
-	});	
-	
-	<%-- Controlador asincrono --%>
-	ControladorAsincrono = Ext.extend(Object,{  //Step 1  
-    
-	attrb: "att1",  
-	formulario: "form",
-      
-    constructor : function(options){    //Step 2
-    	if (options==undefined) options = {};
-        Ext.apply(this,options || {});  
-      
-//        console.debug("ControladorAsincrono constructor!");  
-    },
-    
-    nuevoProceso: function(idTipoOperacion, form, funcionCallBack){
-		this.formulario = form;
-		debugger;
-		//var idTipoOperacion = 1;//form.findField('id').getValue();
-		var nombreFichero = form.findField('path').getValue().replace("C:\\fakepath\\", "");
-		
-		Ext.Ajax.request({
-			url: '/pfs/subasta/validarFicheroInstrucciones.htm'
-				,params: {idTipoOperacion: idTipoOperacion, nombreFichero: nombreFichero}
-				,method: 'POST'
-				,fn: funcionCallBack
-				,success: function (result, request){
-				var r = Ext.util.JSON.decode(result.responseText);
-				//debugger;
-				request.fn(r);
-				//fn.apply(r);
-				//r.id;
-				//this.uploadExcel(r.id);	 
-				 }
-				 ,error : function (result, request){
-					alert("error nuevoProceso");
-					 }
-		});
-    }
-    
-});
-	
-	
-	
-	<%-- --%>
-	
-	
-	var controlador = new ControladorAsincrono();
-	
-	var fn_nuevoProcesoOk = function(r){
-		var idProceso = r.resultadoNuevoProceso.idProceso;
-		var idTipoOperacion = r.resultadoNuevoProceso.idTipoOperacion;
-		//alert(idProceso + "/" + idTipoOperacion);
-		//recargarGrid();
-		controlador.uploadExcelAjax(idTipoOperacion, idProceso, upload, fn_subirExcelOk, fn_subirExcelError);
-		//controlador.uploadFicheroAjax(upload, fn_subirExcelOk, fn_subirExcelError);
-		
-	}
-	
-	var fn_subirExcelOk = function(r){
-		
-		//var id = r.resultadoCambioEstado.idProceso;
-		win.hide();
-		
-	}
-	var fn_subirExcelError = function(r){
-		Ext.Msg.alert('Error al subir el fichero', 'El fichero no se ha podido subir para su procesado.');
-		
-	}
-	
-	var creaVentanaUpload = function(){
-	    upload = new Ext.FormPanel({
+		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
 		        ,autoWidth: true
@@ -795,18 +716,7 @@
 		            ,msgTarget: 'side'
 					,height:45
 		        }
-		        ,items: [
-		        		{
-						xtype:'hidden'
-						,name:'idProceso'
-						,hiddenName:'idProceso'
-						}
-						,{
-						xtype:'hidden'
-						,name:'idTipoOperacion'
-						,hiddenName:'idTipoOperacion'
-						}
-		        		,{
+		        ,items: [{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -817,29 +727,31 @@
 			                iconCls: 'icon_mas'
 			            }
 			            ,bodyStyle: 'width:50px;'
-			            ,listeners: {
-				            'fileselected': function(fb, v){
-				            	var node = Ext.DomQuery.selectNode('input[id='+fb.id+']');
-					        	node.value = v.replace("C:\\fakepath\\","");
-				            }
-			            }
-		        }]
+		        },{xtype: 'hidden', name:'id', value:0}]
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
-		            debugger;
-		            controlador.nuevoProceso(102,upload.getForm(), fn_nuevoProcesoOk);
-		            win.hide();
+		                if(upload.getForm().isValid()){
+			                upload.getForm().submit({
+			                    url:'/${appProperties.appName}/subastas/uploadInstruccionesSubastas.htm'
+			                    ,waitMsg: '<s:message code="fichero.upload.subiendo" text="**Subiendo fichero..." />'
+			                    ,success: function(upload, o){			                    
+			                    	win.close();
+			                        //comprobarAdjuntosStore.webflow();						
+									//recargarAdjuntos();
+			                    }
+			                });
+		                }
 		            }
 		        },{
 		            text: 'Cancelar',
 		            handler: function(){
-		                win.hide();
+		                win.close();
 		            }
 		        }]
 		    });
 
-		win =new Ext.Window({
+		var win =new Ext.Window({
 		         width:400
 				,minWidth:400
 		        ,height:125
@@ -852,9 +764,8 @@
 				,items:[upload]
 				,modal : true
 		});
-	}
-	
-	
+		win.show();
+	});	
 	
 	
 	var btnAccionesSubasta = new Ext.Button({

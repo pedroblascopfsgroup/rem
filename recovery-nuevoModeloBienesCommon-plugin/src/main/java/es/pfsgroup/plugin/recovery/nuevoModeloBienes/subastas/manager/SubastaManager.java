@@ -18,6 +18,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
@@ -26,9 +27,11 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -38,6 +41,7 @@ import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
@@ -1466,6 +1470,35 @@ public class SubastaManager implements SubastaApi {
 	    		logger.error(e);
 	    	}
 	    	return tipoCargaRes;
+	    }
+		
+		
+		/**
+	     * upload.
+	     * @param uploadForm upload
+	     * @return String
+	     */
+		@Override
+	    @BusinessOperation(BO_SUBIR_PLANTILLA_INSTRUCCIONES)
+	    @Transactional(readOnly = false)
+	    public String upload(WebFileItem uploadForm) {
+	        //FileItem fileItem = uploadForm.getFileItem();
+
+	        //En caso de que el fichero esté vacio, no subimos nada
+	       /* if (fileItem == null || fileItem.getLength() <= 0) { return null; }
+
+	        Integer max = getLimiteFichero();
+
+	        if (fileItem.getLength() > max) {
+	            AbstractMessageSource ms = MessageUtils.getMessageSource();
+	            return ms.getMessage("fichero.limite.tamanyo", new Object[] { (int) ((float) max / 1024f) }, MessageUtils.DEFAULT_LOCALE);
+	        }
+
+	        Asunto asunto = asuntoDao.get(Long.parseLong(uploadForm.getParameter("id")));
+	        asunto.addAdjunto(fileItem);
+	        asuntoDao.save(asunto);*/
+
+	        return null;
 	    }
 	    
 		

@@ -59,6 +59,10 @@
 						<!-- Cajamar -->
 						<value>DGERREC</value>
 						<value>DGESCON</value>
+						<value>DGESINC</value>
+						<value>DGESHRE</value>
+						<value>DGESHREIN</value>
+						
 					</set>
 				</entry>
 				<entry key="ABRIR_TAREA_PROCEDIMIENTO">
@@ -108,6 +112,7 @@
 						<value>TDIRCON</value>
 						<value>TDIRHRE</value>
 						<value>TGESHREIN</value>
+						
 					</set>
 				</entry>
 			</map>

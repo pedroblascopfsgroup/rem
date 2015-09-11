@@ -48,9 +48,10 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 </c:if>
 var bottomBar = [];
 
-
-var cb_modelo = items[1 + muestraBotonGuardar];
-cb_modelo.setDisabled(true);
+<c:if test="${form.errorValidacion==null}">
+	var cb_modelo = items[1 + muestraBotonGuardar];
+	cb_modelo.setDisabled(true);
+</c:if>
 
 
 

@@ -117,6 +117,7 @@ public class ARQModeloArquetipoManager {
 			modArq.setModelo(modelo);
 			modArq.setArquetipo(arquetipo);
 			modArq.setPrioridad(i);
+			modArq.setPlazoDisparo(arquetipo.getPlazoDisparo());
 			modeloArquetipoDao.save(modArq);
 		}
 		
@@ -213,11 +214,12 @@ public class ARQModeloArquetipoManager {
 			else
 				modArq.setItinerario(null);
 			modArq.setNivel((dto.getNivel()!=null)?dto.getNivel():0);
-			Long idArquetipo = modArq.getArquetipo().getId();
-			ARQListaArquetipo arquetipo = arquetipoDao.get(idArquetipo);
-			arquetipo.setPlazoDisparo(dto.getPlazoDisparo());	
+			modArq.setPlazoDisparo(dto.getPlazoDisparo());
+			//Long idArquetipo = modArq.getArquetipo().getId();
+			//ARQListaArquetipo arquetipo = arquetipoDao.get(idArquetipo);
+			//arquetipo.setPlazoDisparo(dto.getPlazoDisparo());	
 			modeloArquetipoDao.save(modArq);
-			arquetipoDao.save(arquetipo);
+			//arquetipoDao.save(arquetipo);
 		}
 		
 		ARQModelo modelo = modeloDao.get(idModelo);
@@ -236,6 +238,7 @@ public class ARQModeloArquetipoManager {
 			modArq.setItinerario(ma.getItinerario());
 			modArq.setPrioridad(ma.getPrioridad());
 			modArq.setNivel(ma.getNivel());
+			modArq.setPlazoDisparo(ma.getPlazoDisparo());
 			modArq.setModelo(copia);
 			modeloArquetipoDao.save(modArq);
 		}
@@ -255,7 +258,7 @@ public class ARQModeloArquetipoManager {
 			if (!Checks.esNulo(arq.getItinerario())){
 				dto.setItinerario(arq.getItinerario().getId());
 			}
-			dto.setPlazoDisparo(arq.getArquetipo().getPlazoDisparo());
+			dto.setPlazoDisparo(arq.getPlazoDisparo());
 			dtoArqsMod.add(dto);
 		}
 		return dtoArqsMod;

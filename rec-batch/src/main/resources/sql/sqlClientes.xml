@@ -280,7 +280,7 @@
 		SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.recuperacion} FROM (
   			SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
 	           FROM VARR arr
-	             JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
+	             LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
 	             JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado           
 	           /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
 	           WHERE (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))
@@ -391,7 +391,7 @@
 		SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.seguimiento} FROM (
   			SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
 		          FROM VARR arr
-		            JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
+		            LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
 		            JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado 
 		          WHERE 
 		          /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */

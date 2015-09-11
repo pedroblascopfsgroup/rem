@@ -37,6 +37,7 @@ import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -218,8 +219,9 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		expediente.setManual(false);
 
 		// Seteo el arquetipo del expediente
-		expediente.setArquetipo((Arquetipo) executor.execute(
-				ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo));
+		Arquetipo arq = (Arquetipo) executor.execute(
+				ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo);
+		expediente.setArquetipo(arq);
 
 		// Obtenemos la oficina del contrato de pase
 		// VRE
@@ -244,6 +246,14 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		// f�rmula
 		setearNombreExpediente(expediente);
 
+	  // Seteamos el tipo de expediente
+        DDTipoExpediente tipo = null;
+        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        else
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        expediente.setTipoExpediente(tipo); 
+	
 		
 		expedienteDao.saveOrUpdate(expediente);
 

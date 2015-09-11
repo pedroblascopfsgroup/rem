@@ -31,7 +31,11 @@ public class ElementoDinamicoPorFuncionYOperador extends DynamicElementAdapter {
     @Override
     public boolean valid(Object param) {
         if (StringUtils.isBlank(getPermission())) return true;
-        String[] permissions = getPermission().split(",");        
+        String[] permissions = getPermission().split(",");   
+        operador = operador.toUpperCase();
+        if (!((operador.compareTo(OPERADOR_OR) == 0) || operador.compareTo(OPERADOR_AND) == 0)) {
+        	operador = OPERADOR_OR;
+        }
         for (String permission : permissions) {        	
 			if (tienePerfil(permission)) {	
 				if (operador.compareTo(OPERADOR_OR)==0) {				

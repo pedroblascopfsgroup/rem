@@ -3,18 +3,25 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.AsuntosManager;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
@@ -24,6 +31,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPCOAssembler;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPcoGridDTOAssembler;
@@ -33,6 +41,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoP
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoBPMConstants;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -56,6 +65,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Autowired
 	private AsuntosManager asuntosManager;
 	
+    @Autowired
+    private Executor executor;
 	
 	
 	private final Log logger = LogFactory.getLog(getClass());
@@ -205,23 +216,50 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			if(DDEstadoDocumentoPCO.DISPONIBLE.equals(doc.getEstadoDocumento().getCodigo())) {
 				if(!doc.getAdjuntado()){
 					finalizar = false;
+					break;
 				}
 			}
 		}
 		if(finalizar) {
 			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			historico.setFechaFin(new Date());
-			genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
-			
-			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-			DDEstadoPreparacionPCO estadoPreparado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARADO);
-			historicoNuevoRegistro.setEstadoPreparacion(estadoPreparado);
-			historicoNuevoRegistro.setFechaInicio(new Date());
-			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
+			if (!DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {				
+				historico.setFechaFin(new Date());
+				genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+				
+				HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+				historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+				DDEstadoPreparacionPCO estadoPreparado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, 
+						DDEstadoPreparacionPCO.PREPARADO);
+				historicoNuevoRegistro.setEstadoPreparacion(estadoPreparado);
+				historicoNuevoRegistro.setFechaInicio(new Date());
+				genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
+			}	
+
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARADO);
+			avanzarTareaPrepararExpediente(procedimientoPco);		
 		}			
 
 		return finalizar;
+	}
+
+	private void avanzarTareaPrepararExpediente(ProcedimientoPCO procedimientoPco) {
+
+		// Avanzar el BPM
+		Set<TareaNotificacion> listaTars = procedimientoPco.getProcedimiento().getTareas();
+		for (TareaNotificacion tareaNotificacion : listaTars) {
+			if (!Checks.esNulo(tareaNotificacion) && 
+					PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(
+							tareaNotificacion.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+				
+				TareaExterna tex = tareaNotificacion.getTareaExterna();
+				if (!Checks.esNulo(tex) && !Checks.esNulo(tex.getTokenIdBpm())) {
+	                //Lanzamos el signal al token maestro
+	                executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, tex.getTokenIdBpm(), 
+	                		BPMContants.TRANSICION_AVANZA_BPM);
+				}
+			}
+		}
+
 	}
 
 	@Override

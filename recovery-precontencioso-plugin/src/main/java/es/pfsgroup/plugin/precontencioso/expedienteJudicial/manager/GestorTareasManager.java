@@ -22,12 +22,17 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.utils.JBPMProcessManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.GestorTareasDao;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.GestorTareasAccionPCODto;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.GestorTareasLineaConfigPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.recovery.api.PlazoTareaExternaPlazaApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 import es.pfsgroup.recovery.api.TareaProcedimientoApi;
@@ -61,6 +66,9 @@ public class GestorTareasManager implements GestorTareasApi {
     @Autowired
     protected TareaExternaManager tareaExternaManager;
 
+	@Autowired
+	private ProcedimientoPCODao procedimientoPcoDao;
+	
     private static List<GestorTareasLineaConfigPCO> lineasConfig = null;
     
     @BusinessOperation(BO_PCO_GESTOR_TAREAS_RECALCULAR)
@@ -78,7 +86,21 @@ public class GestorTareasManager implements GestorTareasApi {
     	
 	}
 
+    @BusinessOperation(BO_PCO_GESTOR_TAREAS_RECALCULAR_ESTADO)
+	@Override
+	@Transactional(readOnly = false)
+	public void recalcularTareasPreparacionDocumental(Long idProc, String nuevoEstado) {
 
+    	if (lineasConfig==null) {
+    		lineasConfig = obtenerLineasConfiguracion();
+    	}
+    	
+    	List<GestorTareasAccionPCODto> listaAcciones = evaluarTareasProcedimiento(idProc, lineasConfig, nuevoEstado);
+    	
+    	ejecutarAccionesTareas(idProc, listaAcciones);
+    	
+    }
+    
 	private List<GestorTareasLineaConfigPCO> obtenerLineasConfiguracion() {
 		return genericDao.getList(GestorTareasLineaConfigPCO.class);
 	}
@@ -90,6 +112,28 @@ public class GestorTareasManager implements GestorTareasApi {
 		List<GestorTareasAccionPCODto> listaAcciones = new ArrayList<GestorTareasAccionPCODto>();
 		for (GestorTareasLineaConfigPCO linea : lineasConfig) {
 			if (gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL())) {
+				GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
+				accion.setTipoAccion(linea.getCodigoAccion());
+				accion.setTipoTarea(linea.getCodigoTarea());
+				listaAcciones.add(accion);
+			}
+		}
+		return listaAcciones;
+		
+	}
+
+	private List<GestorTareasAccionPCODto> evaluarTareasProcedimiento(
+			Long idProc, List<GestorTareasLineaConfigPCO> lineasConfig, String nuevoEstado) {
+
+		boolean estadoEsPreparacion = DDEstadoPreparacionPCO.PREPARACION.equals(nuevoEstado);  
+		
+		List<GestorTareasAccionPCODto> listaAcciones = new ArrayList<GestorTareasAccionPCODto>();
+		for (GestorTareasLineaConfigPCO linea : lineasConfig) {
+			// Si estado proc es distinto de Preparacion y la acción es Cancelar, hay que ejecutar sin consultar la SQL 
+			boolean ejecutarCancelarPorEstado = !estadoEsPreparacion 
+					&& GestorTareasLineaConfigPCO.ACCION_CANCELAR.equals(linea.getCodigoAccion());
+			if (ejecutarCancelarPorEstado || 
+					(estadoEsPreparacion && gestorTareasDao.evaluaCondicion(idProc, linea.getCondicionHQL()))) {
 				GestorTareasAccionPCODto accion = new GestorTareasAccionPCODto();
 				accion.setTipoAccion(linea.getCodigoAccion());
 				accion.setTipoTarea(linea.getCodigoTarea());
@@ -223,6 +267,22 @@ public class GestorTareasManager implements GestorTareasApi {
                 logger.debug(TXT_CANCELA_TAREA + tareaExterna.getId());
             }
         }
+
+	}
+	
+	private String obtenerEstadoProcPco(long idProcedimiento) {
+
+		String estadoActual = "";
+		
+		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		
+		if (!Checks.esNulo(procedimientoPco)) {
+			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
+			if (!Checks.esNulo(historico) && !Checks.esNulo(historico.getEstadoPreparacion())) {
+				estadoActual = historico.getEstadoPreparacion().getCodigo();
+			}
+		}
+		return estadoActual;
 
 	}
 }

@@ -26,10 +26,8 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
 	public static final String BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID = "plugin.precontencioso.devolverPreparacionPorProcedimientoId";
 	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
-<<<<<<< HEAD
 	public static final String BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE = "plugin.precontencioso.cambiarEstadoExpediete";
 	
-=======
 	
 	/*
 	 * Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
@@ -46,7 +44,6 @@ public interface ProcedimientoPcoApi {
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_IS_SUPERVISOR)
 	boolean isSupervisor(Long prcId);
 	*/
->>>>>>> 85ce3cf305c1fd58e183257fe7d50accf3fb07c2
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 

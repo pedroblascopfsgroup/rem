@@ -57,6 +57,9 @@ public class ARQModeloArquetipo implements Serializable, Auditable{
 	@Column (name="MRA_PRIORIDAD")
 	private Long prioridad;
 	
+	@Column (name="MRA_PLAZO_DISPARO")
+	private Long plazoDisparo;
+	
 	@Version
     private Integer version;
 
@@ -126,5 +129,13 @@ public class ARQModeloArquetipo implements Serializable, Auditable{
 
 	public Auditoria getAuditoria() {
 		return auditoria;
+	}
+
+	public Long getPlazoDisparo() {
+		return plazoDisparo;
+	}
+
+	public void setPlazoDisparo(Long plazoDisparo) {
+		this.plazoDisparo = plazoDisparo;
 	}
 }

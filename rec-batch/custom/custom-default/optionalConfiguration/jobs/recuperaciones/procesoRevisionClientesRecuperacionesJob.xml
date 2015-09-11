@@ -156,9 +156,9 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="borrarCntCanceladosclientes.revisionClientes.cancelarContratos.${entity.dialect}" />
+												p:key="clientes.revisionClientes.cancelarContratos.${entity.dialect}" />
 										</entry>
-										<entry key="message" value="borrarCntCanceladosclientes.revisionClientes.cancelarContratos" />
+										<entry key="message" value="clientes.revisionClientes.cancelarContratos" />
 										<entry key="severidad" value="error" />
 									</map>
 				

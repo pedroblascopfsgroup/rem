@@ -121,6 +121,7 @@
 	<decision name="ConfirmarRequerimientoResultadoDecision" expression="#{H038_ConfirmarRequerimientoResultadoDecision}">
 		<transition to="H038_SalariosDecision" name="ConfirmadoNo"></transition>
 		<transition to="Espera" name="ConfirmadoSi"></transition>
+		<transition to="H038_ConfirmarRetenciones" name="ConfirmadoPositivo"></transition>
 	</decision>
 
 

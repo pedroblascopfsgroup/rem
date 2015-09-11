@@ -17,24 +17,7 @@
          </action>
       </event>
       <transition to="H042_ElaborarLiquidacion" name="activarAlerta"></transition>
-      <transition to="H042_ValidarLiquidacionIntereses" name="avanzaBPM"></transition>
-		<transition to="Fin" name="Fin"></transition>
-   </state>
-
-   <state name="H042_SolicitarLiquidacion">
-      <event type="node-enter">
-         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-            <targetBean>genericEnterActionHandler</targetBean>
-         </action>
-      </event>
-      <event type="node-leave">
-         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-            <targetBean>genericLeaveActionHandler</targetBean>
-         </action>
-      </event>
-      <transition to="H042_RegistrarResolucion" name="avanzaBPM"></transition>
-	  <transition to="H042_ValidarLiquidacionIntereses" name="vueltaAtras"></transition>
-		<transition to="H042_SolicitarLiquidacion" name="activarAlerta"></transition>
+      <transition to="H042_SolicitarLiquidacion" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
    </state>
 
@@ -50,9 +33,9 @@
          </action>
       </event>
       <transition to="H042_ConfirmarNotificacion" name="avanzaBPM"></transition>
-      <transition to="H042_SolicitarLiquidacion" name="vueltaAtras"></transition>
-	<transition to="H042_RegistrarResolucion" name="activarAlerta"></transition>
+      <transition to="H042_RegistrarResolucion" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
+		<transition to="H042_SolicitarLiquidacion" name="vueltaAtras"></transition>
    </state>
 
    <state name="H042_ConfirmarNotificacion">
@@ -125,16 +108,6 @@
       <transition to="H042_ResolucionFirme" name="NO"></transition>
    </decision>
 
-
-<!-- 
-   <node name="RegistrarImpugnacionDecision">
-       <action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-         <targetBean>genericDecisionHandler</targetBean>
-      </action>
-      <transition to="RegistrarVista" name="SI"></transition>
-      <transition to="Decision1" name="NO"></transition>
-   </node>
--->
    <node name="H042_InteresesDecision">
       <action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
          <targetBean>genericUserDecisionActionHandler</targetBean>
@@ -193,8 +166,8 @@
 		<transition to="Fin" name="Fin"></transition>
    </state>
 
-	<state name="H042_ValidarLiquidacionIntereses">
-      <event type="node-enter">
+	<state name="H042_SolicitarLiquidacion">
+		<event type="node-enter">
          <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
             <targetBean>genericEnterActionHandler</targetBean>
          </action>
@@ -204,10 +177,10 @@
             <targetBean>genericLeaveActionHandler</targetBean>
          </action>
       </event>
-		<transition to="H042_SolicitarLiquidacion" name="avanzaBPM"></transition>
+      <transition to="Fin" name="Fin"></transition>
+		<transition to="H042_SolicitarLiquidacion" name="activarAlerta"></transition>
+		<transition to="H042_RegistrarResolucion" name="avanzaBPM"></transition>
 		<transition to="H042_ElaborarLiquidacion" name="vueltaAtras"></transition>
-		<transition to="H042_ValidarLiquidacionIntereses" name="activarAlerta"></transition>
-		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 

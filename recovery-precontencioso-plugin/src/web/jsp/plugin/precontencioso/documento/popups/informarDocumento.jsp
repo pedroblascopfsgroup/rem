@@ -93,6 +93,7 @@
 				comboEstadosDocumento.setValue("PS");
 			}
 		} else {
+			debugger;
 			if(!${existeSolDisponible}){
 				if (fechaRecepcion.getValue() != "" && "01"==adjuntado.getValue()) {
 					comboEstadosDocumento.setValue("DI");
@@ -101,7 +102,7 @@
 				}else if (fechaResultado.getValue() != "" && "OK" != comboRespuestasSolicitud.getValue()) {
 					comboEstadosDocumento.setValue("PS");
 				}else if (fechaResultado.getValue() != "" && "OK" == comboRespuestasSolicitud.getValue()) {
-					comboEstadosDocumento.setValue("EN");
+					comboEstadosDocumento.setValue("SO");
 				} 
 			}else{
 				comboEstadosDocumento.setValue("DI");

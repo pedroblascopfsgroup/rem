@@ -32,11 +32,12 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 		query.createCriteria("procedimiento", "procedimiento");
 		query.add(Restrictions.eq("procedimiento.id", idProcedimiento));
+		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		List<ProcedimientoPCO> procedimientosPco = query.list();
 
 		ProcedimientoPCO procedimientoPco = null;
-		if (procedimientosPco.size() == 1) {
+		if (procedimientosPco.size() >= 1) {
 			procedimientoPco = procedimientosPco.get(0);
 		}
 
@@ -69,7 +70,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("tipoPreparacion.descripcion").as("tipoPreparacion"));
 		select.add(Projections.property("procedimientoPco.fechaInicioPreparacion").as("fechaInicioPreparacion"));
 		//select.add(Projections.property("procedimientoPco.diasEnPreparacion").as("diasEnPreparacion"));
-		//select.add(Projections.property("procedimientoPco.documentacionCompleta").as("documentacionCompleta"));
 		select.add(Projections.property("procedimientoPco.totalLiquidacion").as("totalLiquidacion"));
 		//select.add(Projections.property("procedimientoPco.notificadoClientes").as("notificadoClientes"));
 		select.add(Projections.property("procedimientoPco.fechaEnvioLetrado").as("fechaEnvioLetrado"));
@@ -95,8 +95,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		addDefaultProcedimientoProjection(select);
 
 		select.add(Projections.property("estadoDocumento.descripcion").as("estado"));
-		// Respuesta ultima solicitud
-		// Actor última solicitud
+		select.add(Projections.property("resultadoSolicitud.descripcion").as("ultimaRespuesta"));
+		select.add(Projections.property("solicitud.actor").as("ultimoActor"));
+		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
 		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
 		select.add(Projections.property("solicitud.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("solicitud.fechaRecepcion").as("fechaRecepcion"));
@@ -228,7 +229,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		List<Criterion> where = new ArrayList<Criterion>();
 
 		if (!StringUtils.emtpyString(filtro.getProNombre())) {
-			where.add(Restrictions.eq("procedimientoPco.nombreExpJudicial", filtro.getProNombre()));
+			where.add(Restrictions.like("procedimientoPco.nombreExpJudicial", filtro.getProNombre(), MatchMode.ANYWHERE).ignoreCase());
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigo())) {
@@ -266,6 +267,13 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			where.add(Restrictions.in("estadoPreparacion.codigo", filtro.getProCodigosEstado().split(",")));
 			where.add(Restrictions.isNull("estadosPreparacionProc.fechaFin"));
 		}
+		
+		where.addAll(dateRangeFilter("procedimientoPco.fechaInicioPreparacion", filtro.getProFechaInicioPreparacionDesde(), filtro.getProFechaInicioPreparacionHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaEnvioLetrado", filtro.getProFechaEnviadoLetradoDesde(), filtro.getProFechaEnviadoLetradoHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaPreparado", filtro.getProFechaPreparadoDesde(), filtro.getProFechaPreparadoHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaFinalizado", filtro.getProFechaFinalizadoDesde(), filtro.getProFechaFinalizadoHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaUltimaSubsanacion", filtro.getProFechaUltimaSubsanacionDesde(), filtro.getProFechaUltimaSubsanacionHasta()));
+		where.addAll(dateRangeFilter("procedimientoPco.fechaCancelado", filtro.getProFechaCanceladoDesde(), filtro.getProFechaCanceladoHasta()));
 
 		return where;
 	}
@@ -414,8 +422,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 				query.createAlias("documentos.solicitudes", "solicitud");
 			}
 
+			query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud", CriteriaSpecification.LEFT_JOIN);
+
 			if (!StringUtils.emtpyString(filtro.getDocUltimaRespuesta())) {
-				query.createAlias("solicitud.resultadoSolicitud", "resultadoSolicitud");
 				where.add(Restrictions.in("resultadoSolicitud.codigo", filtro.getDocUltimaRespuesta().split(",")));
 			}
 
@@ -515,7 +524,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	private List<Criterion> dateRangeFilter(String field, String dateFrom, String dateTo) {
 		List<Criterion> where = new ArrayList<Criterion>();
 
-		SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("yyyy-MM-dd");
 
 		try {
 

@@ -137,7 +137,7 @@ public class LiquidacionPCO implements Serializable, Auditable {
 	 */
 
 	@Formula(value = 
-		" (SELECT TRUNC(SYSDATE) - TRUNC(pco_liq_liquidaciones.pco_liq_fecha_solicitud) " +
+		" (SELECT TRUNC(SYSDATE) - TRUNC(pco_liq_liquidaciones.FECHACREAR) " +
 		" FROM   pco_liq_liquidaciones " +
 		"        INNER JOIN dd_pco_liq_estado " +
 		"                ON dd_pco_liq_estado.dd_pco_liq_id = pco_liq_liquidaciones.dd_pco_liq_id " +

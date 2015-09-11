@@ -673,6 +673,10 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,height: 250
 		,autoWidth: true	
 		,resizable:true	
+		,collapsed : false
+		,titleCollapse : false
+		,autoHeight: false
+		,monitorResize: true
 		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
 	}); 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteFaseLiquidacion" width="1090" height="1321">
+<root-container name="haya_tramiteFaseLiquidacion" width="1214" height="1333">
   <node name="Inicio" x="30" y="23" width="132" height="36">
     <edge>
       <label x="-82" y="-35"/>
@@ -101,14 +101,14 @@
   </node>
   <node name="H033_regResolucionAprovacion" x="213" y="586" width="206" height="36">
     <edge>
-      <label x="-1" y="5"/>
+      <label x="-46" y="-24"/>
       <bendpoint w1="554" h1="-1" w2="-119" h2="173"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="3" y="-16"/>
     </edge>
   </node>
   <node name="H033_regInformeTrimestral1" x="219" y="717" width="196" height="36">
@@ -141,8 +141,7 @@
   </node>
   <node name="H033_regInformeTrimestral2Decision" x="207" y="940" width="236" height="36">
     <edge>
-      <label x="-244" y="-19"/>
-      <bendpoint w1="374" h1="-2" w2="10" h2="276"/>
+      <label x="-26" y="-20"/>
     </edge>
     <edge>
       <label x="25" y="16"/>
@@ -153,10 +152,12 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H033_LiquidacionDecision" x="545" y="662" width="210" height="36">
+  <node name="H033_LiquidacionDecision" x="14" y="1043" width="210" height="36">
     <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="307" h1="-1" w2="7" h2="249"/>
+      <label x="-1030" y="-188"/>
+      <bendpoint w1="-59" h1="269" w2="-804" h2="460"/>
+      <bendpoint w1="975" h1="271" w2="230" h2="462"/>
+      <bendpoint w1="980" h1="-200" w2="235" h2="-9"/>
     </edge>
   </node>
   <node name="H033_separacionAdministradores" x="211" y="1150" width="235" height="36">
@@ -169,8 +170,7 @@
     </edge>
     <edge>
       <label x="-68" y="-12"/>
-      <bendpoint w1="-142" h1="0" w2="-142" h2="0"/>
-      <bendpoint w1="-142" h1="-21" w2="-142" h2="-21"/>
+      <bendpoint w1="85" h1="20" w2="85" h2="20"/>
     </edge>
   </node>
   <node name="H033_presentarSeparacion" x="516" y="1151" width="179" height="36">
@@ -186,9 +186,7 @@
       <bendpoint w1="194" h1="-124" w2="-65" h2="175"/>
     </edge>
     <edge>
-      <label x="17" y="-20"/>
-      <bendpoint w1="-111" h1="0" w2="-111" h2="0"/>
-      <bendpoint w1="-111" h1="-23" w2="-111" h2="-23"/>
+      <label x="10" y="-1"/>
     </edge>
   </node>
   <node name="H033_registrarResolucion" x="787" y="1152" width="173" height="36">
@@ -201,9 +199,7 @@
       <label x="-9" y="-6"/>
     </edge>
     <edge>
-      <label x="13" y="-24"/>
-      <bendpoint w1="-111" h1="0" w2="-111" h2="0"/>
-      <bendpoint w1="-111" h1="-23" w2="-111" h2="-23"/>
+      <label x="3" y="-1"/>
     </edge>
   </node>
   <node name="H033_separacionAdministradoresDecision" x="318" y="1284" width="274" height="36">
@@ -211,9 +207,8 @@
       <label x="-23" y="27"/>
     </edge>
     <edge>
-      <label x="-477" y="285"/>
-      <bendpoint w1="634" h1="-1" w2="225" h2="431"/>
-      <bendpoint w1="610" h1="-609" w2="380" h2="70"/>
+      <label x="161" y="-20"/>
+      <bendpoint w1="-341" h1="-4" w2="-5" h2="237"/>
     </edge>
   </node>
   <node name="fork2" x="237" y="374" width="148" height="24">
@@ -224,11 +219,25 @@
       <label x="4" y="-38"/>
     </edge>
   </node>
-  <node name="Fin" x="798" y="852" width="132" height="36"/>
-  <node name="Fin2" x="923" y="412" width="132" height="36"/>
   <node name="H033_ObsDecision" x="520" y="455" width="168" height="36">
     <edge>
       <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="798" y="852" width="132" height="36"/>
+  <node name="Fin2" x="923" y="412" width="132" height="36"/>
+  <node name="fork1" x="451" y="662" width="105" height="24">
+    <edge>
+      <label x="-41" y="-19"/>
+    </edge>
+    <edge>
+      <label x="-19" y="-23"/>
+    </edge>
+  </node>
+  <node name="H033_BPMTramiteSubastaConcursal" x="710" y="683" width="253" height="36">
+    <edge>
+      <label x="-49" y="31"/>
+      <bendpoint w1="152" h1="-93" w2="-1" h2="178"/>
     </edge>
   </node>
 </root-container>

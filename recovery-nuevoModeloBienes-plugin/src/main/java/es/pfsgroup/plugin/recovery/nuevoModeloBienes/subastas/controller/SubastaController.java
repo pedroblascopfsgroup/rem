@@ -967,6 +967,12 @@ public class SubastaController {
 	        model.put("fileItem",excelFileItem);
 			return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
 	}
+	
+	@RequestMapping
+	public String validarFicheroInstrucciones(WebRequest request,Long idTipoOperacion,String nombreFichero){
+		
+		return DEFAULT;
+	}
 
 	/**
 	 * Salvar la carga de un bien

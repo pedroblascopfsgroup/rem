@@ -11,7 +11,7 @@ array['dos']=2;
 array['tres']=3;
 var tipo_wf='${tipoWf}'
 
-<%@ include file="/WEB-INF/jsp/plugin/cajamar/elementos.jsp" %>
+<%@ include file="/WEB-INF/jsp/plugin/procedimientos-bpmHaya-plugin/elementos.jsp" %>
 
 var items=[];
 var muestraBotonGuardar = 0;
@@ -48,41 +48,14 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 </c:if>
 var bottomBar = [];
 
-<c:if test="${form.errorValidacion==null}">
-
-var cb_subastaCelebrada = items[1 + muestraBotonGuardar];
-var cb_postores = items[2 + muestraBotonGuardar];
-var cb_otorgamiento = items[3 + muestraBotonGuardar];
-var cb_decisionSuspension = items[4 + muestraBotonGuardar];
-var cb_motivo = items[5 + muestraBotonGuardar];
-
-cb_subastaCelebrada.on('select', function(){
-	//Borramos todos los combos dependientes ante cualquier cambio
-	cb_postores.setValue('');
-	cb_otorgamiento.setValue('');
-	cb_decisionSuspension.setValue('');
-	cb_motivo.setValue('');
-	
-	if(cb_subastaCelebrada.getValue() == '01') {//si
-		cb_postores.setDisabled(false);	
-		cb_otorgamiento.setDisabled(false);	
-		cb_decisionSuspension.setDisabled(true);
-		cb_motivo.setDisabled(true);
-	}
-	else if(cb_subastaCelebrada.getValue() == '02') {//no
-		cb_postores.setDisabled(true);
-		cb_otorgamiento.setDisabled(true);
-		cb_decisionSuspension.setDisabled(false);
-		cb_motivo.setDisabled(false);
-	}
-});
-
-
+var offset=0;
+<c:if test="${form.errorValidacion!=null}">
+	offset=1;
 </c:if>
+var instrucciones = items[1 + offset];
+instrucciones.setDisabled(true);
 
-
-
-//mostramos el botÛn guardar cuando la tarea no est· terminada y cuando no hay errores de validacion
+//mostramos el bot√≥n guardar cuando la tarea no est√° terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -101,7 +74,7 @@ cb_subastaCelebrada.on('select', function(){
 		}
 	});
 	
-	//Si tiene m·s items que el propio label de descripciÛn se crea el botÛn guardar
+	//Si tiene m√°s items que el propio label de descripci√≥n se crea el bot√≥n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -126,13 +99,11 @@ if (muestraBotonGuardar==1){
 		}
 	});
 	
-	//Si tiene m·s items que el propio label de descripciÛn se crea el botÛn guardar
+	//Si tiene m√°s items que el propio label de descripci√≥n se crea el bot√≥n guardar
 	if (items.length > 1)	{
 		bottomBar.push(btnGuardar);
 	}
 }
-
-
 
 var btnCancelar= new Ext.Button({
 	text : '<s:message code="app.cancelar" text="**Cancelar" />'
@@ -141,7 +112,6 @@ var btnCancelar= new Ext.Button({
 		page.fireEvent(app.event.CANCEL);
 	}
 });
-
 bottomBar.push(btnCancelar);
 <c:if test="${form.tareaExterna.tareaProcedimiento.descripcion=='Dictar Instrucciones'}">
 	bottomBar.push(btnExportarPDF);
@@ -231,9 +201,8 @@ var anyadirFechaFaltante = function(response){
 
 
 var panelEdicion=new Ext.form.FormPanel({
-	height:520
+	autoHeight:true
 	,width:700
-	,autoScroll:true
 	,bodyStyle:'padding:10px;cellspacing:20px'
 	//,xtype:'fieldset'
 	,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}

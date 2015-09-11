@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=VARIAS
 --## PRODUCTO=NO
 --##
---## Finalidad: Resolución de varias incidencias de Litigios
+--## Finalidad: Ocultar los procedimientos de litigios usados para conectividad por MENSAJES
 --## INSTRUCCIONES: Relanzable
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -32,12 +32,24 @@ DECLARE
     
 BEGIN	
 
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-730');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Limpia tipos de procedimientos');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.Dd_Tpo_Tipo_Procedimiento' ||
+		' SET BORRADO=1,USUARIOBORRAR=''GONZALO'' WHERE DD_TPO_CODIGO IN ' || 
+		' (''H016'',''H018'',''H020'',''H001'',''H022'',''H024'',''H026'',''H028'',''H005'',''HC100'',''H030'',''HC101'',''H006'' '||
+		' ,''H064'',''H032'',''H007'',''H034'',''H036'',''H038'',''H040'',''H066'',''H042'',''H044'',''HC102'',''H046'',''H011'',''P400'' '||
+		' ,''H048'',''H015'',''H050'',''HC103'',''H008'',''HC104'',''H002'',''H004'',''H052'',''H065'',''H054'',''H058'',''H062'',''HC105'',''HC106'', ''P420'', ''H067'' '||
+		' ,''P404'',''H010'',''H012'',''H037'', ''H019'', ''H060'')';
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Limpia tipos de actuación');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.Dd_Tac_Tipo_Actuacion' ||
+		' SET BORRADO=1,USUARIOBORRAR=''GONZALO'' WHERE DD_TAC_ID IN ' || 
+		' (select dd_tac_id from '||V_ESQUEMA||'.Dd_Tac_Tipo_Actuacion tac where borrado=0 and not exists (select 1 from '||V_ESQUEMA||'.Dd_Tpo_Tipo_Procedimiento prc where prc.dd_Tac_id=tac.dd_tac_id and prc.borrado=0))';
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-730');
 	
-	
-	
-	
-	
-	COMMIT;
+COMMIT;
  
 EXCEPTION
      WHEN OTHERS THEN

@@ -195,7 +195,7 @@ BEGIN
 			  ' SET DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SSDE'')' ||
 	          ' ,DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''805'')' ||
 	          ' ,TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''H002_CumplimentarParteEconomica''''][''''comboDelegada''''] == DDSiNo.SI ? (comprobarExisteDocumentoINS() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Informe de subasta al procedimiento.</div>'''') : (comprobarExisteDocumentoPSSB() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Plantilla de Subasta Sareb</div>'''')'' ' ||
-			  ' ,TAP_VIEW = ''plugin/procedimientos-bpmHaya-plugin/tramiteSubasta/cumplimentarParteEconomica'' '
+			  ' ,TAP_VIEW = ''plugin/procedimientos-bpmHaya-plugin/tramiteSubasta/cumplimentarParteEconomica'' ' ||
 	          ' WHERE TAP_CODIGO = ''H002_CumplimentarParteEconomica''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;

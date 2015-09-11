@@ -73,7 +73,7 @@ public class DocumentoPCOController {
 	private UsuarioManager usuarioManager;
 	/*
 	 * 
-	Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
+	Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado*/
 	@RequestMapping
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO,boolean gestoria ,ModelMap model) {
 
@@ -118,8 +118,8 @@ public class DocumentoPCOController {
 
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
-	*/
 	
+	/*
 	@RequestMapping
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
@@ -158,7 +158,7 @@ public class DocumentoPCOController {
 		model.put("solicitudesDocumento", solicitudesDoc);
 
 		return SOLICITUDES_DOC_PCO_JSON;
-	}
+	}*/
 
 	/**
 	 * Agreaar documentos de las unidades de gestion seleccionadas

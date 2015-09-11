@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteIntereses" width="1486" height="962">
+<root-container name="hcj_tramiteIntereses" width="1113" height="952">
   <node name="Inicio" x="12" y="11" width="132" height="36">
     <edge>
       <label x="-60" y="-8"/>
     </edge>
   </node>
-  <node name="H042_ElaborarLiquidacion" x="290" y="4" width="200" height="36">
+  <node name="H042_ElaborarLiquidacion" x="259" y="14" width="200" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -18,22 +18,13 @@
       <bendpoint w1="479" h1="-36" w2="-26" h2="-304"/>
     </edge>
   </node>
-  <node name="H042_SolicitarLiquidacion" x="283" y="216" width="213" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-24" y="-20"/>
-      <bendpoint w1="-216" h1="-72" w2="-217" h2="21"/>
-    </edge>
+  <node name="H042_RegistrarResolucion" x="246" y="248" width="227" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="H042_RegistrarResolucion" x="285" y="317" width="227" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -41,14 +32,8 @@
       <label x="-18" y="-31"/>
       <bendpoint w1="-127" h1="-42" w2="-125" h2="35"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
   </node>
-  <node name="H042_ConfirmarNotificacion" x="280" y="391" width="233" height="36">
+  <node name="H042_ConfirmarNotificacion" x="242" y="357" width="233" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -160,20 +145,20 @@
       <bendpoint w1="542" h1="-1" w2="-257" h2="538"/>
     </edge>
   </node>
-  <node name="H042_ValidarLiquidacionIntereses" x="264" y="123" width="252" height="36">
+  <node name="Fin" x="963" y="330" width="132" height="36"/>
+  <node name="H042_SolicitarLiquidacion" x="253" y="132" width="213" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="8" y="-39"/>
-      <bendpoint w1="-201" h1="-57" w2="-198" h2="56"/>
-    </edge>
-    <edge>
-      <label x="-14" y="-9"/>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-188" h1="-58" w2="-188" h2="60"/>
     </edge>
   </node>
-  <node name="Fin" x="963" y="330" width="132" height="36"/>
 </root-container>

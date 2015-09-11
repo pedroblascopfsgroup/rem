@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OUTPUT }
-     * 
-     */
-    public OUTPUT createOUTPUT() {
-        return new OUTPUT();
-    }
-
-    /**
      * Create an instance of {@link INPUT }
      * 
      */
     public INPUT createINPUT() {
         return new INPUT();
+    }
+
+    /**
+     * Create an instance of {@link OUTPUT }
+     * 
+     */
+    public OUTPUT createOUTPUT() {
+        return new OUTPUT();
     }
 
 }

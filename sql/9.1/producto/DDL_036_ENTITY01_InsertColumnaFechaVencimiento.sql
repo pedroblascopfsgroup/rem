@@ -20,13 +20,29 @@ DECLARE
     V_MSQL VARCHAR2(4000 CHAR);
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    
 BEGIN
-	
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.CRE_PRC_CEX '
+	DBMS_OUTPUT.PUT_LINE('******** CRE_PRC_CEX ********'); 
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.CRE_PRC_CEX... Comprobaciones previas'); 
+
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME=''CRE_FECHA_VENCIMIENTO'' AND TABLE_NAME=''CRE_PRC_CEX'' AND OWNER = ''' || V_ESQUEMA || '''';
+
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+    -- Si existe los valores
+    IF V_NUM_TABLAS > 0 THEN	  
+		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.CRE_PRC_CEX...no se modifica nada.');
+	ELSE
+
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.CRE_PRC_CEX '
 				|| ' ADD CRE_FECHA_VENCIMIENTO TIMESTAMP(6) ';
  
-	DBMS_OUTPUT.PUT_LINE(V_MSQL);
-    EXECUTE IMMEDIATE V_MSQL; 
+		DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    	EXECUTE IMMEDIATE V_MSQL;
+    END IF;
+		
 	COMMIT;
  
 EXCEPTION

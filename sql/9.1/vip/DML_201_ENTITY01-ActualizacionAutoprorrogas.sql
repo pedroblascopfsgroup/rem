@@ -188,7 +188,7 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','1','3')
 ,T_TIPO_VALOR('H038','H038_ConfirmarRetenciones','1','3')
 ,T_TIPO_VALOR('H038','H038_GestionarProblemas','1','3')
 ,T_TIPO_VALOR('H038','H038_SolicitarNotificacion','1','3')
-,T_TIPO_VALOR('H038','H043_SalariosDecision','0','0')
+,T_TIPO_VALOR('H038','H038_SalariosDecision','0','0')
 ,T_TIPO_VALOR('H040','H040_RecepcionLlavesDecision','0','0')
 ,T_TIPO_VALOR('H040','H040_RegistrarCambioCerradura','0','0')
 ,T_TIPO_VALOR('H040','H040_RegistrarEnvioLlaves','0','0')
@@ -413,6 +413,7 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','1','3')
 ,T_TIPO_VALOR('HC105','HC105_ConfirmaFechaVista','1','3')
 ,T_TIPO_VALOR('HC105','HC105_CelebracionVista','1','3')
 ,T_TIPO_VALOR('HC105','HC105_RegistrarResolucion','1','3')
+
 ); 
 V_TMP_TIPO T_TIPO_VALOR;
 

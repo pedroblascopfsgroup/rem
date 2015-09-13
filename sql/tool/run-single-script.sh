@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#####################################################################################
+#                                    FUNCTIONS                                      #
+#####################################################################################
+
 function print_banner() {
     echo '******************************************************************************************'
     echo '******************************************************************************************'
@@ -18,74 +22,29 @@ function print_banner() {
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     echo ""
+    echo " EJECUTA UN ÚNICO SCRIPT"
+    echo ""
+    echo "******************************************************************************************"
+    echo ""
 }
-
-
-if [ "$ORACLE_HOME" == "" ] ; then
-    print_banner
-    echo ""
-    echo "Defina su variable de entorno ORACLE_HOME"
-    echo ""
-    exit
-fi
 
 function usoCorrecto() {
     print_banner
-    echo "Uso 0: $0 fichero_sql password_esquema_principal@sid [BANKIA|HAYA|-]"
-    echo "Uso 1: $0 fichero_sql password_esquema_principal@sid [BANKIA|HAYA|-] -v"
-    echo "Uso 2: $0 -p fichero_sql [BANKIA|HAYA|-]"
-    echo -e "   El tercer parámetro (proyecto) sólo acepta estos posibles valores:"
-    echo -e "      BANKIA (para que se use ~/setEnvGlobalBANKIA.sh)"
-    echo -e "      HAYA   (para que se use ~/setEnvGlobalHAYA.sh)"
-    echo -e "      -      (para que se use ~/setEnvGlobal.sh)"
-    echo "Uso 3: $0 fichero_sql password_esquema_principal@sid"
-    echo -e "      (se usará ~/setEnvGlobal.sh)"
-    echo "Uso 4: $0 -p fichero_sql [BANKIA|HAYA|-]"
-    echo -e "      (se usará ~/setEnvGlobal.sh)"
-}
-
-if [[ "$#" -eq 4 ]] && [[ "$4" == "-v" ]] ; then
-    export VERBOSE=1
-else
-    export VERBOSE=0
-fi
-
-export SETENVGLOBAL=~/setEnvGlobal.sh
-if [[ "$#" -lt 2 ]] ; then
-    usoCorrecto
-    exit 1
-else 
-  if [ "$#" -gt 2 ] ; then
-    if [[ "$3" != "BANKIA" ]] && [[ "$3" != "HAYA" ]] && [[ "$3" != "-" ]] ; then
-      usoCorrecto
-      exit 1
+    if [ "$ORACLE_SID" == "" ] ; then
+        echo "Uso 0: $0 fichero_sql password_esquemas@sid [CLIENTE|-]"
+        echo "Uso 1: $0 fichero_sql password_esquemas@sid [CLIENTE|-] -v"
     else
-      if [[ "$3" == "BANKIA" ]] || [[ "$3" == "HAYA" ]] ; then
-        if [ -f ~/setEnvGlobal${3}.sh ] ; then
-          export SETENVGLOBAL=~/setEnvGlobal${3}.sh
-        fi
-      fi
+        echo "Uso 0: $0 fichero_sql password_esquemas [CLIENTE|-]"
+        echo "Uso 1: $0 fichero_sql password_esquemas [CLIENTE|-] -v"
     fi
-  fi
-fi
-
-if [ ! -f $SETENVGLOBAL ]; then
-    echo "No existe el fichero: $SETENVGLOBAL"
-    echo "Consulta las plantillas que hay en sql/tool/templates"
-    exit 1
-fi
-
-if [ "$1" = "-p" ] ; then
-   export FICHERO=$2
-   export PRINT=SI
-   export PW=-
-else
-   export FICHERO=$1
-   export PRINT=NO   
-   export PW=$2
-fi
-
-BASEDIR=$(dirname $0)
+    echo -e ""
+    echo -e "   El tercer parámetro:"
+    echo -e "      CLIENTE  (para que se use ~/setEnvGlobalCLIENTE.sh)" 
+    echo -e "      -        (para que se use ~/setEnvGlobal.sh)"
+    echo -e ""
+    echo -e "   -v Para modo verbose"
+    echo ""
+}
 
 function obtenerSetEnv() {
   export nombreFichero=`basename $1`
@@ -181,6 +140,52 @@ function transformaDosFile() {
   fi
 }
 
+#####################################################################################
+#                                      MAIN                                         #
+#####################################################################################
+
+if [ "$ORACLE_HOME" == "" ] ; then
+    print_banner
+    echo ""
+    echo "Defina su variable de entorno ORACLE_HOME"
+    echo ""
+    exit
+fi
+
+if [[ "$#" -lt 3 ]] ; then
+    usoCorrecto
+    exit 1
+fi
+
+if [[ "$#" -eq 4 ]] && [[ "$4" == "-v" ]] ; then
+    export VERBOSE=1
+else
+    export VERBOSE=0
+fi
+if [[ "$#" -eq 4 ]] && [[ "$4" == "-p" ]] ; then
+    export PACKAGE=1
+else
+    export PACKAGE=0
+fi
+
+export SETENVGLOBAL=~/setEnvGlobal.sh
+if [[ "$3" != "-" ]] ; then
+  if [ -f ~/setEnvGlobal${3}.sh ] ; then
+    export SETENVGLOBAL=~/setEnvGlobal${3}.sh
+  fi
+fi
+
+if [ ! -f $SETENVGLOBAL ]; then
+    echo "No existe el fichero: $SETENVGLOBAL"
+    echo "Consulta las plantillas que hay en sql/tool/templates"
+    exit 1
+fi
+
+export FICHERO=$1
+export PW=$2
+
+BASEDIR=$(dirname $0)
+
 if [ ! -f $FICHERO ] ; then
   echo "Fichero $FICHERO no encontrado."
   exit 1
@@ -191,6 +196,13 @@ transformaDosFile $FICHERO
 nombreFicheroSinDir=`basename $FICHERO`
 nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
+
+if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
+    echo ""
+    echo "El nombre del script $nombreFicheroSinDir no sigue la nomenclatura definida"
+    echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
+    exit 1
+fi
 
 if [ ! -f $BASEDIR/tmp/$nombreSetEnv ] ; then
    obtenerSetEnv $FICHERO
@@ -213,21 +225,12 @@ cp $1 $BASEDIR/tmp/
 if [[ $VERBOSE == 1 ]]; then
     echo "Ejecutando:"
 fi
-if [ $PRINT = "SI" ] ; then
-    $BASEDIR/tmp/$nombreSinDirSinExt.sh -p
-else
-    if [[ $VERBOSE == 1 ]]; then
-        echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
-        $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
-    else
-        $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
-    fi
-fi
 
 if [[ $VERBOSE == 1 ]]; then
-    echo "Ejecutado! Revise el fichero de log"
+    echo $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
+    $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -v
+elif [[ $PACKAGE == 1 ]]; then
+    $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW -p
+else
+    $BASEDIR/tmp/$nombreSinDirSinExt.sh $PW
 fi
-
-#rm -f `date +%Y`*.sql
-#rm -f reg*
-#rm -f $nombreSinDirSinExt.sh

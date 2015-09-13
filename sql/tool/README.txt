@@ -28,4 +28,8 @@ Lo que se puede probar ahora mismo es:
 
     run-single-script.sh 
 
+    package-scripts-from-tag.sh
+
+    list-operational-scripts.sh
+
 Ejecútalos sin más para que te diga qué parámetros necesita.

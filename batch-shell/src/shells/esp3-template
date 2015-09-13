@@ -1,0 +1,4 @@
+
+CMD=(java -jar batch-shell.jar - - - =${ENTIDAD} "${WAIT_FOR_JOBS}")
+"${CMD[@]}"
+exit $?

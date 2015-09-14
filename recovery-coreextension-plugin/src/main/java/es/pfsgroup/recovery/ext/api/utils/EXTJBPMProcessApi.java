@@ -11,9 +11,10 @@ public interface EXTJBPMProcessApi extends JBPMProcessApi{
 	
 	public static final String EXT_JBPMAPI_GET_CURRENT_NODES = "es.pfsgroup.recovery.ext.api.utils.getCurrentNodes";
 	public static final String EXT_JBPMAPI_BORRAR_TIMERS_TAREA = "es.pfsgroup.recovery.ext.api.utils.borraTimersTarea";
+	public static final String EXT_JBPMAPI_BORRAR_TIMERS_EXPEDIENTE = "es.pfsgroup.recovery.ext.api.utils.borraTimersExpediente";
 
 	/**
-     * Obtiene los nodos actuales del proceso. Este método es útil en los casos que se ha llegado a un Fork
+     * Obtiene los nodos actuales del proceso. Este mï¿½todo es ï¿½til en los casos que se ha llegado a un Fork
      * @param idProcess id del proceso
      * @return Lista con los nombre de los nodos
      */
@@ -22,5 +23,9 @@ public interface EXTJBPMProcessApi extends JBPMProcessApi{
     
     @BusinessOperationDefinition(EXT_JBPMAPI_BORRAR_TIMERS_TAREA)
     public void borraTimersTarea(final Long idTareaExterna);
+    
+    @BusinessOperationDefinition(EXT_JBPMAPI_BORRAR_TIMERS_EXPEDIENTE)
+    public void borraTimersExpediente(final Long idExpediente);
+    
 
 }

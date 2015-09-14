@@ -32,7 +32,7 @@ var codigoTipoGestor='${codigoTipoGestor}';
 	        refrescarLiquidacionesGrid();
 	        refrescarBurofaxGrid();
 	        
-	        debugger;
+	        //debugger;
 	        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado--%>
 	        
 	        if(data.supervisor.isSupervisor){
@@ -59,6 +59,10 @@ var codigoTipoGestor='${codigoTipoGestor}';
 		        }
 		    }
 		    
+		    //Incorporado por Pedro, hasta que validemos su funcionamiento OK
+		        	gridDocumentos.setVisible(true);
+		        	gridBurofax.setVisible(true);
+		        	gridLiquidaciones.setVisible(true);
 		    
 
 	}

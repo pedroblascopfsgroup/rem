@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName">
+	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="-1"/>
+	
+	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
+	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
+ 	
+	<bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >
+  	<property name="contextScripts">
+  		<list>
+  			<value><![CDATA[
+  			
+  			def dameProcedimientoPropuesto = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameProcedimientoPropuesto(idProcedimiento);
+			}
+			
+			]]></value>
+  		</list>
+  	</property>
+  </bean> 
+	
+<!-- 	<bean id="nodoEsperaRecobroActionHandler" class="es.pfsgroup.plugin.recobro.bpm.handlers.RecobroNodoEsperaActionHandler"></bean> -->
+
+<!-- 	<bean id="jbpmUtilRecobro" class="es.pfsgroup.plugin.recobro.bpm.utils.JBPMProcessRecobroManager" > -->
+<!-- 		<property name="contextScripts"> -->
+<!-- 	  		<list> -->
+<!-- 	  			<value><![CDATA[ -->
+<!-- 					def comprobarMetaVolante() { -->
+<!-- 						def recobroManagerBPM = ctx.getBean("RecobroManagerBPM"); -->
+<!-- 					 	return recobroManagerBPM.comprobarMetaVolante(idExpediente); -->
+<!-- 					} -->
+<!-- 	  			 ]]></value> -->
+<!-- 	  		</list> -->
+<!-- 	  	</property> -->
+<!--   	</bean>  -->
+	
+  <!-- Diccionarios -->
+  <bean parent="clasesDiccionarioAnotadas">
+    <property name="sourceList">
+    	<list merge="true">    
+    		<value>es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoProblemaDocPco</value>
+    	</list>
+    </property>
+   </bean>
+   
+</beans>	

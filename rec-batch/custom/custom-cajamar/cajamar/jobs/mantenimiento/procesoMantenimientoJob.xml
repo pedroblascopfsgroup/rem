@@ -8,28 +8,6 @@
   <bean id="procesoMantenimientoJob" parent="batch.simpleJob" scope="prototype">
     <property name="steps">
       <list>
-      <!-- Comentamos para no ejecutar nada y que pase al siguiente job
-      	<bean id="mantenimiento.historificarMovimientos" parent="batch.taskletStep" scope="prototype">
-          <property name="tasklet">
-            <bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
-              <property name="scripts">
-              	<list>
-              		<map>
-              			<entry key="sql"><bean parent="sql" p:key="movimientos.historificarMovimientosQuery"/></entry>
-              			<entry key="message" value="movimientos.historificarMovimientosQuery"/>
-              			<entry key="severidad" value="error"/>
-              		</map>
-              		<map>
-              			<entry key="sql"><bean parent="sql" p:key="movimientos.eliminarMovimientosHistorificadosQuery"/></entry>
-              			<entry key="message" value="movimientos.eliminarMovimientosHistorificadosQuery"/>
-              			<entry key="severidad" value="error"/>
-              		</map>
-              	</list>
-              </property>
-            </bean>
-          </property>
-        </bean>
-         -->
       </list>
     </property>
   </bean>

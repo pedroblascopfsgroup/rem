@@ -548,6 +548,7 @@
 					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Términos"/>'
 					,id:'asunto-terminosTabs-${asunto.id}'
 					,autoHeight:true
+					,autoWidth: true
 				});
 		
 				acuerdosTabs = new Ext.TabPanel({

@@ -120,8 +120,8 @@ public class TerminoOperaciones implements Serializable, Auditable{
     @Column(name = "OP_PLAN_PGS_FECHA")
     private Date fechaPlanPago;
     
-    @Column(name = "OP_PLAN_PGS_FRECUENCIA_DIAS")
-    private Integer frecuenciaPlanpago;
+    @Column(name = "OP_PLAN_PGS_FRECUENCIA")
+    private String frecuenciaPlanpago;
     
     @Column(name = "OP_PLAN_PGS_NUM_PAGOS")
     private Integer numeroPagosPlanpago;
@@ -350,11 +350,11 @@ public class TerminoOperaciones implements Serializable, Auditable{
 		this.fechaPlanPago = fechaPlanPago;
 	}
 
-	public Integer getFrecuenciaPlanpago() {
+	public String getFrecuenciaPlanpago() {
 		return frecuenciaPlanpago;
 	}
 
-	public void setFrecuenciaPlanpago(Integer frecuenciaPlanpago) {
+	public void setFrecuenciaPlanpago(String frecuenciaPlanpago) {
 		this.frecuenciaPlanpago = frecuenciaPlanpago;
 	}
 

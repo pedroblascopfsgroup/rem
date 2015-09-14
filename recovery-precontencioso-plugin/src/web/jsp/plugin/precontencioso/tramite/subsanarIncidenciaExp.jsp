@@ -24,10 +24,10 @@ var bottomBar = [];
 </c:if>
 
 var observacionesLetrado = items[1];
-var fechaEnvio = items[2];
+var fechaExpSub = items[2];
 
 observacionesLetrado.setDisabled(true);
-fechaEnvio.setDisabled(true);
+fechaExpSub.setDisabled(true);
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 

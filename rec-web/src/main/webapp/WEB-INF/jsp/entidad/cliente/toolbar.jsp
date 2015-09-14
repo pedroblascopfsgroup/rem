@@ -2,7 +2,7 @@
 
 function(entidad,page){
 
-	var labelStyle='font-weight:normal;font-height:6px;margin-bottom:1px;margin-top:1px;width:120px;border:false';
+	var labelStyle='font-weight:normal;font-size:11px;margin-bottom:1px;margin-top:1px;width:120px;border:false';
 
 	var toolbar=new Ext.Toolbar();
 	
@@ -91,6 +91,7 @@ function(entidad,page){
               
 	var panel1=new Ext.Panel({
 		autoHeight:true
+		,style:labelStyle
 		,border:false
 		,layoutConfig: { columns: 2}
 		,layout: 'table'
@@ -126,7 +127,7 @@ function(entidad,page){
 	});    
 	
 	var wArq = new Ext.Window({
-		width: 400
+		width: 330
 		,closable:false
 		,title:'<s:message code="expedientes.creacion.selArquetipoTitle" text="**Selección Arquetipo" />'
 		,modal: true

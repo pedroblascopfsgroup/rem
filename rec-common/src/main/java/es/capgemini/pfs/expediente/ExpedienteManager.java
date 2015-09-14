@@ -1129,9 +1129,14 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
             for (Cliente cliente : clientes) {
                 if (cliente.getProcessBPM() != null && !cliente.getProcessBPM().equals(idInvocacion)) {
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, cliente.getProcessBPM());
-                } else if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
+                } else {
+                	//Ahora se eliminan todos los clientes (MANUALES/AUTOMATICOS) ya que en el job de creación de clientes se volverá a crear en caso necesario
+                	//if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
                     //En caso de que se hayan generado manualmente
-                    executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                	
+                	// Ahora se borran todos los clientes en la creación de expedientes:  PRODUCTO-215
+                    	executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                    //}
                 }
             }
         }
@@ -1143,9 +1148,12 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
             if (cliente != null) {
                 if (cliente.getProcessBPM() != null && !cliente.getProcessBPM().equals(idInvocacion)) {
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, cliente.getProcessBPM());
-                } else if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
+                } else {
+                	//Ahora se eliminan todos los clientes (MANUALES/AUTOMATICOS) ya que en el job de creación de clientes se volverá a crear en caso necesario
+                	//if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
                     //En caso de que se hayan generado manualmente
-                    executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                    	executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                    //}
                 }
             }
         }
@@ -1686,9 +1694,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         //	expedienteContratoDao.delete(ec);
         //}
         saveOrUpdate(exp);
-        //Borrar todas las tareas asociadas y bpms
+        //Manda a fin el Bpm
         if (exp.getProcessBpm() != null) {
-            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, exp.getProcessBpm());
+            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_MANDAR_A_FIN_PROCESS, exp.getProcessBpm());
         }
 
         executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_TAREAS_ASOCIADAS_EXPEDIENTE, exp.getId());
@@ -2086,7 +2094,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         Persona per = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, dto.getIdPersona());
         
         //Cambiamos el arquetipo del cliente según el seleccionado en la primera ventana del wizzard
-        //Pensado por Carlos (04/09/2015) que no se cambia, porque luego no se borran los clientes automaticos
         /*Cliente cliente = per.getClienteActivo();
         if (cliente!=null) {
         	Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
@@ -2094,6 +2101,27 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         		cliente.setArquetipo(arquetipo);
         }*/
         
+        Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
+        
+        //Primero asignamos a sus clientes el arquetipo seleccionado
+        for (ExpedienteContrato expContrato : exp.getContratos()) {
+        	Long idContrato = expContrato.getContrato().getId();
+        	List<Cliente> clientes = (List<Cliente>) executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO, idContrato);
+        	for (Cliente cliente: clientes) {
+        		cliente.setArquetipo(arquetipo);
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_SAVE_OR_UPDATE, cliente);
+        	}
+        }
+        
+        //Y ahora a los clientes por persona
+        for (ExpedientePersona expPersona : exp.getPersonas()) {
+        	Cliente cliente = expPersona.getPersona().getClienteActivo();
+        	
+        	if (cliente!=null) {
+        		cliente.setArquetipo(arquetipo);
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_SAVE_OR_UPDATE, cliente);
+        	}
+        }
         
         if (!dto.getIsSupervisor()) {
             //Proponiendo

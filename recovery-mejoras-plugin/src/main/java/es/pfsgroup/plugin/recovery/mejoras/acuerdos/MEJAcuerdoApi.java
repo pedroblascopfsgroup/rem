@@ -45,6 +45,8 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_PROPONENTE_ACUERDO_ASUNTO = "mejacuerdo.esProponenteAcuerdoAsunto";
 	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_VALIDADOR_ACUERDO_ASUNTO = "mejacuerdo.esValidadorAcuerdoAsunto";
 	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_DECISOR_ACUERDO_ASUNTO = "mejacuerdo.esDecisorAcuerdoAsunto";
+	public static final String BO_ACUERDO_MGR_CONTINUAR_ACUERDO = "mejacuerdo.continuarAcuerdo";
+	public static final String BO_ACUERDO_MGR_ACUERDO_CERRAR = "mejacuerdo.cerrarAcuerdo";
 	
     
 	/**
@@ -125,6 +127,12 @@ public interface MEJAcuerdoApi {
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_TIPO_GESTOR_DECISOR_ACUERDO_ASUNTO)
 	public boolean esDecisorAcuerdoAsunto(Long idTipoGestorAsunto);
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_CONTINUAR_ACUERDO)
+	public void continuarAcuerdo(Long id);
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_ACUERDO_CERRAR)
+	public void cerrarAcuerdo(Long id);
 	
 
 }

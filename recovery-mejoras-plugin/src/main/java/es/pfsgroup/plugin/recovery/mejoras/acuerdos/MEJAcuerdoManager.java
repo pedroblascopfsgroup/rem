@@ -953,7 +953,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		Acuerdo acuerdo = acuerdoDao.get(id);
 		for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
 			if (SubtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE.equals(tarea
-					.getSubtipoTarea().getCodigoSubtarea())) {
+					.getSubtipoTarea().getCodigoSubtarea()) && (tarea.getTareaFinalizada()==null || !tarea.getTareaFinalizada())) {
 
 				String codigo = PlazoTareasDefault.CODIGO_CIERRE_ACUERDO;
 				

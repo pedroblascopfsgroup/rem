@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -64,11 +65,15 @@ import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
@@ -193,8 +198,10 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			if(!Checks.esNulo(motivo)) observaciones.append(" Debido a " + motivo);
 			
 			try {
-				crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones.toString(), userValidador.getId(), true, EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION, null,"Rechazado del acuerdo por parte del decisor");
-				crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones.toString(), userProponente.getId(), true, EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION, null,"Rechazado del acuerdo por parte del decisor");
+					crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones.toString(), userValidador.getId(), true, EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION, null,"Rechazado del acuerdo por parte del decisor");
+				if(!userValidador.equals(userProponente)){
+					crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones.toString(), userProponente.getId(), true, EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION, null,"Rechazado del acuerdo por parte del decisor");
+				}
 			} catch (EXTCrearTareaException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -373,7 +380,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_ACUERDOS_BY_ASU_ID)
     public List<EXTAcuerdo> getAcuerdosDelAsunto(Long id) {
         logger.debug("Obteniendo acuerdos del asunto" + id);
-        return (List<EXTAcuerdo>) genericDao.getList(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", id));
+        Order order = new Order(OrderType.ASC, "id");
+        return (List<EXTAcuerdo>) genericDao.getListOrdered(EXTAcuerdo.class,order, genericDao.createFilter(FilterType.EQUALS, "asunto.id", id));
     }
     
 	/**

@@ -37,9 +37,10 @@ BEGIN
 
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_RegistrarTomaDec nueva_preparacion');
-    V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL=''valores[''PCO_RegistrarTomaDec''][''correcto'']'' WHERE  TAP_ID IN  ' || 
+    V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL=''valores[''''PCO_RegistrarTomaDec''''][''''correcto'''']'' WHERE  TAP_ID IN  ' || 
       '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_RegistrarTomaDec'')) AND TFI_NOMBRE = ''nueva_preparacion''';
-    EXECUTE IMMEDIATE V_SQL;
+    DBMS_OUTPUT.PUT_LINE(V_SQL);
+      EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... DELETE DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp fecha_envio');
@@ -52,7 +53,7 @@ BEGIN
     V_SQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS ' || 
       '(TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' || 
       'VALUES (s_tfi_tareas_form_items.nextval, (select tap_id from tap_tarea_procedimiento where tap_codigo=''PCO_SubsanarIncidenciaExp''), ' || 
-      '2, ''combo'', ''tipo_problema'', ''Tipo de problema en expediente'', ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', ''valor != null && valor != '''' ? true : false', 0, ''DD'', sysdate, 0)';
+      '2, ''combo'', ''tipo_problema'', ''Tipo de problema en expediente'', ''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'', ''valor != null && valor != '''' ? true : false'', 0, ''DD'', sysdate, 0)';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... DELETE DEL CAMPO TFI_TIPO,  TFI_BUSINESS_OPERATIONDE TFI_TAREAS_FORM_ITEMS');
 
@@ -89,7 +90,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TAP_TAREA_PROCEDIMIENTO ' );
 
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_SubsanarIncidenciaExp tipo_problema');
-    V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL=''valores[''PCO_RegistrarTomaDec''][''tipo_problema'']'' WHERE  TAP_ID IN  ' || 
+    V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL=''valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema'''']'' WHERE  TAP_ID IN  ' || 
       '(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO IN (''PCO_SubsanarIncidenciaExp'')) AND TFI_NOMBRE = ''tipo_problema''';
     EXECUTE IMMEDIATE V_SQL;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );

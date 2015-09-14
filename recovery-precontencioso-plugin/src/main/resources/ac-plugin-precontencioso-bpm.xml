@@ -12,8 +12,8 @@
 	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="-1"/>
 	
-	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
-	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.procedimientos.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
+	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
+	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
  	
 	<bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >
   	<property name="contextScripts">

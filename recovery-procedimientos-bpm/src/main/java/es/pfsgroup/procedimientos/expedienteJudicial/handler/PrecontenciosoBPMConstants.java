@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
+package es.pfsgroup.procedimientos.expedienteJudicial.handler;
 
 public class PrecontenciosoBPMConstants {
 
@@ -18,5 +18,16 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_SubsanarIncidenciaExp = "PCO_SubsanarIncidenciaExp";
 	public static final String PCO_ValidarCambioProc = "PCO_ValidarCambioProc";
 	public static final String PCO_SubsanarCambioProc = "PCO_SubsanarCambioProc";
+	
+
+	public static final String PCO_PRETURNADO = "PT";
+	public static final String PCO_PREPARACION = "PR";
+	public static final String PCO_PREPARADO = "PP";
+	public static final String PCO_ENVIADO = "EN";
+	public static final String PCO_FINALIZADO = "FI";
+	public static final String PCO_SUBSANAR = "SU";
+	public static final String PCO_SUBSANAR_POR_CAMBIO = "SC";
+	public static final String PCO_PARALIZADO = "PA";
+	public static final String PCO_CANCELADO = "CA";
 	
 }

@@ -22,8 +22,8 @@ public class DDTipoProblemaDocPco implements Dictionary, Auditable {
 
 	@Id
 	@Column(name = "DD_TPD_PCO_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoPreparacionPCOGenerator")
-	@SequenceGenerator(name = "DDTipoPreparacionPCOGenerator", sequenceName = "S_DD_PCO_PRC_TIPO_PREPARA")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoProblemaDocPcoGenerator")
+	@SequenceGenerator(name = "DDTipoProblemaDocPcoGenerator", sequenceName = "S_DD_TPD_PCO_TIPO_PRM_DOC")
 	private Long id;
 
 	@Column(name = "DD_TPD_PCO_CODIGO")

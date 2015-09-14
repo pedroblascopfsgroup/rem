@@ -1,4 +1,4 @@
-package es.pfsgroup.procedimientos.expedienteJudicial.handler;
+package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
 public class PrecontenciosoBPMConstants {
 

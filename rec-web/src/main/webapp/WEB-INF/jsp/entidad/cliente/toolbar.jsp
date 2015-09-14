@@ -2,8 +2,10 @@
 
 function(entidad,page){
 
-	var toolbar=new Ext.Toolbar();
+	var labelStyle='font-weight:normal;font-size:11px;margin-bottom:1px;margin-top:1px;width:120px;border:false';
 
+	var toolbar=new Ext.Toolbar();
+	
 	var tituloCreacionExpedienteRecuperacion='<s:message code="expedientes.creacion.recuperacion" text="**Expediente de Recuperación" />';
 	var tituloCreacionExpedienteSeguimiento='<s:message code="expedientes.creacion.seguimiento" text="**Expediente de Seguimiento" />';
 	var proponer=true;
@@ -54,44 +56,139 @@ function(entidad,page){
 			w.on(app.event.CANCEL, function(){ w.close(); });
 		}
 	});
-
+	
+	var labelHelp = new Ext.form.Label({
+		text: 'Seleccione el arquetipo con el cual se creará el nuevo expediente'
+		,style:labelStyle
+	});
+	
+	var labelcmbArq = new Ext.form.Label({
+		text:'<s:message code="expedientes.creacion.cmbArquetipoLabel" text="**Arquetipo: " />'
+			,style:labelStyle
+		});
+	
+	
+	var arqStore = new Ext.data.JsonStore({
+		fields: ['id','nombre']
+	});	
+	
+	var cmbArq = new Ext.form.ComboBox({
+				name:'cmbArq'
+				,store: arqStore
+				,displayField:'nombre'
+				,valueField:'id'
+				,mode: 'local'
+				,emptyText:'----'
+				,style:'margin:0px'
+				,triggerAction: 'all'
+				//,labelStyle:labelStyle
+				,fieldLabel : '<s:message code="expedientes.creacion.cmbArquetipoLabel" text="**Arquetipo" />'
+				,editable: false
+				,forceSelection:true
+				,itemId: 'cmbArqRecuId'
+	});
+	cmbArq.on('select', function() { btnNext.setDisabled(false); });              
+              
+	var panel1=new Ext.Panel({
+		autoHeight:true
+		,style:labelStyle
+		,border:false
+		,layoutConfig: { columns: 2}
+		,layout: 'table'
+		,items:[ {items: [labelHelp], colspan: 2, border: false},
+				 {items: [], height: 20, colspan: 2, border: false},
+				 {layout: 'hbox', border: false, items : [labelcmbArq,cmbArq]}]
+	});              
+              
+	var btnCancelar= new Ext.Button({
+		text : '<s:message code="app.cancelar" text="**Cancelar" />'
+		,iconCls:'icon_cancel'
+	});
+    
+    
+	var btnNext=new Ext.Button({
+		text:'<s:message code="app.botones.siguiente" text="**Siguiente"/>'
+		,iconCls:'icon_siguiente'
+		,disabled: true
+	});    
+              
+	var botonesPanelArq=new Ext.Panel({
+		layout:'card'
+		,id:'botonesPanel'
+		,bodyStyle:'padding:10px'
+		,layoutConfig:{
+			deferredRender : true
+		}
+		,border : false
+		,activeItem:0
+		,autoHeight:true
+		,tbar:[btnCancelar,'->',btnNext]
+		,items:[panel1]
+	});    
+	
+	var wArq = new Ext.Window({
+		width: 330
+		,closable:false
+		,title:'<s:message code="expedientes.creacion.selArquetipoTitle" text="**Selección Arquetipo" />'
+		,modal: true
+		,items: [botonesPanelArq]
+	});
+           
 	var creacionExpedienteButton = new Ext.menu.Item({
 		text : tituloCreacionExpedienteRecuperacion
 		,iconCls : 'icon_expediente_manual'
 		,handler : function(){
-			var w = app.openWindow({
-				flow:'expedientes/creacionManualExpediente_GV'
-				,width:870
-				,closable:false
-				,title : tituloCreacionExpedienteRecuperacion
-				,params:{idPersona:toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer}
+			var data = toolbar.getArquetiposRecup();
+			cmbArq.reset();
+			arqStore.loadData(data);
+			wArq.show();
+			btnNext.on('click',function() {
+				var tmpArqId = cmbArq.getValue();
+				wArq.hide();
+				var w = app.openWindow({
+					flow:'expedientes/creacionManualExpediente_GV'
+					,width:870
+					,closable:false
+					,title : tituloCreacionExpedienteRecuperacion
+					,params:{idPersona:toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId}
+				});
+				w.on(app.event.DONE, function(){
+					entidad.refrescar();
+					w.close();
+					//recargarTab();
+				});
+				w.on(app.event.CANCEL, function(){ w.close();});
 			});
-			w.on(app.event.DONE, function(){
-				entidad.refrescar();
-				w.close();
-				//recargarTab();
-			});
-			w.on(app.event.CANCEL, function(){ w.close(); });
+			btnCancelar.on('click', function() { wArq.hide() });				
 		}
 	});
-
+	
 	var creacionExpedienteSeguimientoButton = new Ext.menu.Item({
 		text : tituloCreacionExpedienteSeguimiento
 		,iconCls : 'icon_expediente_manual'
 		,handler : function(){
-			var w = app.openWindow({
-				flow:'expedientes/creacionManualExpedienteSeguimiento'
-				,width:870
-				,closable:false
-				,title : tituloCreacionExpedienteSeguimiento
-				,params:{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer}
+			var data = toolbar.getArquetiposSeg();
+			cmbArq.reset();
+			arqStore.loadData(data);
+			wArq.show();
+			btnNext.on('click',function() {
+				var tmpArqId = cmbArq.getValue();
+				wArq.hide();	
+				var w = app.openWindow({
+					flow:'expedientes/creacionManualExpedienteSeguimiento'
+					,width:870
+					,closable:false
+					,title : tituloCreacionExpedienteSeguimiento
+					,params:{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId}
+				});
+				w.on(app.event.DONE, function(){
+					entidad.refrescar();
+					w.close();
+					//recargarTab();
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
 			});
-			w.on(app.event.DONE, function(){
-				entidad.refrescar();
-				w.close();
-				//recargarTab();
-			});
-			w.on(app.event.CANCEL, function(){ w.close(); });
+			btnCancelar.on('click', function() {wArq.hide() });
 		}
 	});
 
@@ -278,6 +375,16 @@ function(entidad,page){
 		var data = entidad.get("data");
 		return data.descripcionTareaPendiente;
 	}
+	toolbar.getArquetiposRecup = function(){
+		var data = entidad.get("data");
+		return data.arquetiposRecup;
+	}
+	toolbar.getArquetiposSeg = function() {
+		var data = entidad.get("data");
+		return data.arquetiposSeg;
+	}
+	
+
 
 	var permiso_SOLICITAR_EXP_MANUAL_SEG  = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL_SEG"> || true </sec:authorize>;
 	var permiso_SOLICITAR_EXP_MANUAL  = false <sec:authorize ifAllGranted="SOLICITAR_EXP_MANUAL"> || true </sec:authorize>;
@@ -306,15 +413,11 @@ function(entidad,page){
 				,['x-cliente-menuTelecobro', exclusionTelecobro || decisionTelecobro]
 			</sec:authorize>
 		];
-
+		
 		var esEnabled =[
 			[botonResponder, data.idTareaPendiente!=''] 
-			,[creacionExpedienteButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
-					&& !(data.arquetipoRecuperacion.isNull)
-					&& !(data.arquetipoRecuperacion.isSeguimiento || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)]
-			,[creacionExpedienteSeguimientoButton, !(data.tieneExpedienteSeguimiento || data.tieneExpedienteRecuperacion)
-					&& !(data.arquetipoRecuperacion.isNull)
-					&& !(data.arquetipoRecuperacion.isRecuperacion || !data.arquetipoRecuperacion.isArquetipoGestion || !data.tieneContratosParaCliente)] 
+			,[creacionExpedienteButton, ((!data.tieneExpedienteRecuperacion) && data.tieneContratosLibres)]
+			,[creacionExpedienteSeguimientoButton, ((!data.tieneExpedienteSeguimiento) && data.tieneContratosActivos)] 
 			,[creacionExpedienteRecobroButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 
 					&&  !(data.arquetipoPersona.isSeguimiento || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)]
 		];
@@ -332,7 +435,7 @@ function(entidad,page){
 				esVisible.push([buttonsR_cliente[i], condition]);
 			}
 		}
-
+		
 		return { esVisible : esVisible, esEnabled : esEnabled };
 
 	}

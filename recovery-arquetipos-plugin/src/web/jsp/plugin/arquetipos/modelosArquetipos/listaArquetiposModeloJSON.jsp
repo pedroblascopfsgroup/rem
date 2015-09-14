@@ -26,7 +26,7 @@
 			<json:property name="itinerario" value="${a.itinerario.id}" />
 			<json:property name="itinerario_nombre" value="${a.itinerario.nombre}" />
 			<json:property name="nivel" value="${a.nivel}" />
-			<json:property name="plazoDisparo" value="${a.arquetipo.plazoDisparo}" /> 
+			<json:property name="plazoDisparo" value="${a.plazoDisparo}" /> 
 			<json:property name="tipoSaltoNivel" value="${a.arquetipo.tipoSaltoNivel.descripcion}" />
 		</json:object>
 	</json:array>

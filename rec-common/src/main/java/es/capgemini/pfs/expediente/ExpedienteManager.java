@@ -559,7 +559,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         expediente.setManual(false);
 
         //Seteo el arquetipo del expediente
-        expediente.setArquetipo((Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo));
+        Arquetipo arq = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo);
+        expediente.setArquetipo(arq);
 
         //Obtenemos la oficina del contrato de pase
         // VRE
@@ -579,6 +580,15 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
 
         //Le seteamos el nombre ya que ahora no se obtiene a trav�s de una f�rmula
         setearNombreExpediente(expediente);
+        
+        // Seteamos el tipo de expediente
+        DDTipoExpediente tipo = null;
+        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        else
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        expediente.setTipoExpediente(tipo); 
+	
 
         saveOrUpdate(expediente);
 
@@ -728,10 +738,23 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
      * @param idPersona Long
      * @return Expediente
      */
-    @SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO)
     @Transactional(readOnly = false)
     public Expediente crearExpedienteManualSeg(Long idPersona) {
+    	return this.crearExpedienteManualSeg(idPersona,null);
+    	
+    }
+    
+    /**
+     * Crear un Expediente Manual de Seguimiento (con políticas) con un arquetipo indicado
+     * @param idPersona
+     * @param idArquetipo
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO_ARQ)
+    @Transactional(readOnly = false)
+    public Expediente crearExpedienteManualSeg(Long idPersona, Long idArquetipo) {
         // Se asigna como contrato de pase el de mayor riesgo de la persona de pase (artf554001)
         List<Contrato> contratos = (List<Contrato>) executor.execute(
                 PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
@@ -746,14 +769,15 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
 	            }
 	        }
 	        // Creamos el expediente
-	        Expediente expediente = crearExpedienteManual(idPersona, contratoMax.getId());
+	        Expediente expediente = crearExpedienteManual(idPersona, contratoMax.getId(),idArquetipo);
 	       
 	        return expediente;
         } else {
         	return null;
         }
     }
-
+    
+    
     /**
      * Crea un Expediente Manual de Recuperaciones.
      * @param idPersona id de la persona
@@ -763,6 +787,21 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL)
     @Transactional(readOnly = false)
     public Expediente crearExpedienteManual(Long idPersona, Long idContrato) {
+    	return this.crearExpedienteManual(idPersona, idContrato, null);
+    }
+    	
+
+
+    /**
+     * Crea un Expediente Manual de Recuperaciones con un arquetipo determinado
+     * @param idPersona
+     * @param idContrato
+     * @param idArquetipo
+     * @return
+     */
+    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_ARQ)
+    @Transactional(readOnly = false)
+    public Expediente crearExpedienteManual(Long idPersona, Long idContrato, Long idArquetipo) {
         Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
         //Validamos que alguien mas no haya creado un expediente concurrentemente
         Boolean sinExpedientesActivos = this.sinExpedientesActivosDeUnaPersona(idPersona);
@@ -770,16 +809,20 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         if (!sinExpedientesActivos) { throw new BusinessOperationException("expediente.creacionManual.existente", persona.getApellidoNombre()); }
 
         Cliente cliente = persona.getClienteActivo();
-        Long idArquetipo = null;
         if (cliente == null) {
         	//Ahora esto está deprecated
         	//idArquetipo = persona.getArquetipoCalculado();
-        	Arquetipo arquetipo = arquetipoDao.getArquetipoPorPersona(persona.getId());
-        	if (arquetipo!= null)
-        		idArquetipo = arquetipo.getId();
+        	
+        	//Ahora el arquetipo viene previamente seleccionado, pero sino, lo cogemos de la persona
+        	if (idArquetipo==null) {
+        		Arquetipo arquetipo = arquetipoDao.getArquetipoPorPersona(persona.getId());
+        		if (arquetipo!= null)
+        			idArquetipo = arquetipo.getId();
+        	}
             executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE, idPersona, null, idArquetipo, true);
         } else {
-            idArquetipo = cliente.getArquetipo().getId();
+        	if (idArquetipo==null)
+        		idArquetipo = cliente.getArquetipo().getId();
         }
 
         Expediente expediente = new Expediente();
@@ -1086,9 +1129,14 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
             for (Cliente cliente : clientes) {
                 if (cliente.getProcessBPM() != null && !cliente.getProcessBPM().equals(idInvocacion)) {
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, cliente.getProcessBPM());
-                } else if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
+                } else {
+                	//Ahora se eliminan todos los clientes (MANUALES/AUTOMATICOS) ya que en el job de creación de clientes se volverá a crear en caso necesario
+                	//if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
                     //En caso de que se hayan generado manualmente
-                    executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                	
+                	// Ahora se borran todos los clientes en la creación de expedientes:  PRODUCTO-215
+                    	executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                    //}
                 }
             }
         }
@@ -1100,9 +1148,12 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
             if (cliente != null) {
                 if (cliente.getProcessBPM() != null && !cliente.getProcessBPM().equals(idInvocacion)) {
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, cliente.getProcessBPM());
-                } else if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
+                } else {
+                	//Ahora se eliminan todos los clientes (MANUALES/AUTOMATICOS) ya que en el job de creación de clientes se volverá a crear en caso necesario
+                	//if (cliente.getProcessBPM() == null && EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente.getEstadoCliente().getCodigo())) {
                     //En caso de que se hayan generado manualmente
-                    executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                    	executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+                    //}
                 }
             }
         }
@@ -2041,6 +2092,37 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     public void proponerActivarExpediente(DtoCreacionManualExpediente dto) {
         Expediente exp = getExpediente(dto.getIdExpediente());
         Persona per = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, dto.getIdPersona());
+        
+        //Cambiamos el arquetipo del cliente según el seleccionado en la primera ventana del wizzard
+        /*Cliente cliente = per.getClienteActivo();
+        if (cliente!=null) {
+        	Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
+        	if (arquetipo!=null)
+        		cliente.setArquetipo(arquetipo);
+        }*/
+        
+        Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
+        
+        //Primero asignamos a sus clientes el arquetipo seleccionado
+        for (ExpedienteContrato expContrato : exp.getContratos()) {
+        	Long idContrato = expContrato.getContrato().getId();
+        	List<Cliente> clientes = (List<Cliente>) executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO, idContrato);
+        	for (Cliente cliente: clientes) {
+        		cliente.setArquetipo(arquetipo);
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_SAVE_OR_UPDATE, cliente);
+        	}
+        }
+        
+        //Y ahora a los clientes por persona
+        for (ExpedientePersona expPersona : exp.getPersonas()) {
+        	Cliente cliente = expPersona.getPersona().getClienteActivo();
+        	
+        	if (cliente!=null) {
+        		cliente.setArquetipo(arquetipo);
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_SAVE_OR_UPDATE, cliente);
+        	}
+        }
+        
         if (!dto.getIsSupervisor()) {
             //Proponiendo
             PropuestaExpedienteManual propuesta = new PropuestaExpedienteManual();

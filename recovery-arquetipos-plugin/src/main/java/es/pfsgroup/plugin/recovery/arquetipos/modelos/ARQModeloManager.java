@@ -172,7 +172,7 @@ public class ARQModeloManager {
 				nuevoArquetipo.setNombre(arqModeloArquetipo.getArquetipo().getNombre());
 				nuevoArquetipo.setNivel(arqModeloArquetipo.getNivel());
 				nuevoArquetipo.setGestion(arqModeloArquetipo.getArquetipo().getGestion());
-				nuevoArquetipo.setPlazoDisparo(arqModeloArquetipo.getArquetipo().getPlazoDisparo());
+				nuevoArquetipo.setPlazoDisparo(arqModeloArquetipo.getPlazoDisparo());
 				nuevoArquetipo.setTipoSaltoNivel(arqModeloArquetipo.getArquetipo().getTipoSaltoNivel());
 				nuevoArquetipo.setRule(arqModeloArquetipo.getArquetipo().getRule());
 				nuevoArquetipo.setModeloArquetipo(arqModeloArquetipo);

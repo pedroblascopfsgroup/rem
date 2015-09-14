@@ -66,7 +66,7 @@
 		      AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		    WHERE 
 		      CLI.BORRADO   = 0
-		      AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/YY') <= vFechas.fecha  --Que estén fuera de plazo del itinerario
+		      AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que estén fuera de plazo del itinerario
 		      /* Ordenamos por prioridad del arquetipo para crear primero expedientes a los clientes con arq. más prioritarios 
 		      	 y desechar a las personas relacionadas menos prioritarias*/
 		  ORDER BY arq_prioridad 		
@@ -81,7 +81,7 @@
   		<![CDATA[
   		INSERT INTO TMP_EXP_REVISION
 		(
-		  SELECT e.exp_id EXP_ID, cex.cnt_id CNT_ID, cex.cex_pase PASE, e.EXP_PROCESS_BPM PROCESS_BPM, e.exp_manual MANUAL      
+		  SELECT e.exp_id EXP_ID, cex.cnt_id CNT_ID, cex.cex_pase PASE, e.EXP_PROCESS_BPM PROCESS_BPM, e.exp_manual MANUAL --Se deja el campo "MANUAL" por si lo necesitamos a posteriori, en ese caso quitar el filtro del where exp_manual=0     
 		      FROM exp_expedientes e
 		          JOIN ${master.schema}.dd_eex_estado_expediente eex ON e.dd_eex_id = eex.dd_eex_id AND eex.dd_eex_codigo in (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
 		          JOIN cex_contratos_expediente cex ON cex.exp_id = e.exp_id
@@ -91,7 +91,7 @@
 		               (mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion 
 		               OR ${estadoContrato.Cancelado.codigo} = (SELECT esc.dd_esc_codigo FROM ${master.schema}.dd_esc_estado_cnt esc WHERE cnt.dd_esc_id = esc.dd_esc_id))
 		          JOIN dd_tpe_tipo_prod_entidad t ON cnt.dd_tpe_id = t.dd_tpe_id
-		      WHERE e.borrado = 0      
+		      WHERE e.borrado = 0  and e.exp_manual = 0 --Solo se revisan los expedientes automáticos     
 		      AND NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE e.EXP_ID = EXR.EXP_ID)
 		)
   		]]>
@@ -212,7 +212,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes..antecedentes.incrementar.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar.Oracle9iDialect">
     <![CDATA[
     /***************************
 	SI LOS CONTRATOS ESTÁN SALDADOS SE ACTUALIZAN LOS ANTECEDENTES
@@ -276,6 +276,12 @@ AND tmp.CNT_ID = C.CNT_ID
         values (s_ain_antecedenteinternos.nextVal, ORIGEN.CNT_ID, ORIGEN.IMPORTEANTERIOR, ORIGEN.DIAS_DESCUBIERTO, ORIGEN.FECHAEXTRACCION, 'REV-JOB', SYSDATE)
     ]]>
     </entry>
+    
+    <entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar.Oracle9iDialect">
+    <![CDATA[	     
+  		TRUNCATE TABLE TMP_EXP_A_CANCELAR
+  	]]>
+  	</entry>
     
     <entry key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados.Oracle9iDialect">
     <![CDATA[

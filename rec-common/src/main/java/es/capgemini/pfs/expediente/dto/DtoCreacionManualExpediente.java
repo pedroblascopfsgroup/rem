@@ -12,6 +12,7 @@ public class DtoCreacionManualExpediente {
     private String observaciones;
     private Boolean isSupervisor;
     private Long idPropuesta;
+    private Long idArquetipo;
 
 
     /**
@@ -86,4 +87,10 @@ public class DtoCreacionManualExpediente {
     public void setIdPropuesta(Long idPropuesta) {
         this.idPropuesta = idPropuesta;
     }
+	public Long getIdArquetipo() {
+		return idArquetipo;
+	}
+	public void setIdArquetipo(Long idArquetipo) {
+		this.idArquetipo = idArquetipo;
+	}
 }

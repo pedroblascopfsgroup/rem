@@ -22,6 +22,8 @@
 	<json:property name="tieneExpedienteSeguimiento" value="${tieneExpedienteSeguimiento}" />
 	<json:property name="tieneExpedienteRecuperacion" value="${tieneExpedienteRecuperacion}" />
 	<json:property name="tieneContratosParaCliente" value="${tieneContratos==true}" />
+	<json:property name="tieneContratosActivos" value="${tieneContratosActivos}" />
+	<json:property name="tieneContratosLibres" value="${tieneContratosLibres}" />
 	<json:property name="idCliente" value="${persona.clienteActivo.id}" />
 	<json:property name="fechaCreacion" >
 		<fwk:date value="${persona.fechaCreacion}"/>
@@ -43,6 +45,18 @@
 	<json:property name="noHayExpedientes" value="${noHayExpedientes}" />
 	<json:property name="clienteExceptuado" value="${clienteExceptuado}" />
 	<json:property name="nombreTab" value="${nombreTab}" />
+	<json:array name="arquetiposRecup" items="${arquetiposRecup}" var="aRecu">
+		<json:object>
+			<json:property name="id" value="${aRecu.id}" />
+			<json:property name="nombre" value="${aRecu.nombre}" />
+		</json:object>
+	</json:array>
+	<json:array name="arquetiposSeg" items="${arquetiposSeg}" var="aSec">
+		<json:object>
+			<json:property name="id" value="${aSec.id}" />
+			<json:property name="nombre" value="${aSec.nombre}" />
+		</json:object>
+	</json:array>	
 	<json:object name="cabecera">
 		<json:property name="codigo" value="${persona.codClienteEntidad}" />
 		<json:property name="entidadPropietaria" value="${persona.propietario.descripcion}" />

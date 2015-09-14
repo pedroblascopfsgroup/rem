@@ -280,7 +280,7 @@
 		SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.recuperacion} FROM (
   			SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
 	           FROM VARR arr
-	             JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
+	             LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
 	             JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado           
 	           /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
 	           WHERE (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))
@@ -391,7 +391,7 @@
 		SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.seguimiento} FROM (
   			SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
 		          FROM VARR arr
-		            JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
+		            LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
 		            JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado 
 		          WHERE 
 		          /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
@@ -641,7 +641,7 @@
 		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
 		  WHERE CLI.BORRADO                               = 0
-		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/YY') <= vFechas.fecha  --Que no haya pasado el plazo del itinerario
+		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que no haya pasado el plazo del itinerario
 		) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
 		WHEN MATCHED THEN
 		  UPDATE
@@ -656,15 +656,6 @@
 		    CLI_FECHA_EST_ID = SYSDATE --Fecha que cambió el estado
 	  ]]>
   </entry>
-  
-     <entry key="clientes.procedure.revisionClientes.Oracle9iDialect">
-    <![CDATA[
-      	BEGIN
-		  PKG_REVISION_CLIENTES.PC_REVISION_CLIENTES();
-		END;
-    ]]>
-  </entry>
-  
   
   <entry key="clientes.revisionClientes.limpiarTMPCliPerArq.Oracle9iDialect">
     <![CDATA[
@@ -691,7 +682,7 @@
       FROM CLI_CLIENTES cli             
         inner join HAYAMASTER.DD_ECL_ESTADO_CLIENTE ecl on cli.DD_ECL_ID = ecl.DD_ECL_ID AND ecl.DD_ECL_CODIGO = 1
         inner join arr on cli.per_id = arr.per_id          
-        inner join arq_arquetipos arq on cli.arq_id = arq.arq_id            
+        inner join arq_arquetipos arq on arr.arq_id = arq.arq_id            
       WHERE cli.BORRADO = 0                
     )
   
@@ -772,7 +763,7 @@
 		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
 		  WHERE CLI.BORRADO                               = 0
-		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/YY') <= vFechas.fecha  --Que no haya pasado el plazo del itinerario
+		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') <= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que no haya pasado el plazo del itinerario
 		) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
 		WHEN MATCHED THEN
 		  UPDATE
@@ -825,7 +816,7 @@
 		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
 		  WHERE CLI.BORRADO                               = 0
-		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/YY') >= vFechas.fecha  --Que haya pasado el plazo del itinerario
+		    AND TO_DATE(CLI.CLI_FECHA_CREACION,'DD/MM/RR') >= TO_DATE(vFechas.fecha,'DD/MM/RR')  --Que haya pasado el plazo del itinerario
 	) ORIGEN ON (CLI.CLI_ID = ORIGEN.CLI_ID)
 		WHEN MATCHED THEN
 		  UPDATE
@@ -1107,11 +1098,16 @@ AND V.CNT_ID = C.CNT_ID
     <entry key="clientes.revisionClientes.eliminarCliConCntsEnExp.Oracle9iDialect">
     <![CDATA[   
 	 
-	/*******************************************
+	/*******************************************	
 	Para asegurarnos que la bd esta ok	
 	Eliminamos los clientes que tengan contratos 
 	en expedientes ya creados 
-	*******************************************/   
+	*******************************************/
+	
+	/*****
+	TODO - Habrá que eliminar los clientes que estén en un exp. de seguimiento activo
+	y los contratos que estén en un exp. de recuperación activo o en un asunto.
+	****/  
     
     INSERT INTO TMP_CLI_A_CANCELAR  
 	 (SELECT cli.cli_id FROM CLI_CLIENTES CLI INNER JOIN CCL_CONTRATOS_CLIENTE CCL ON CLI.CLI_ID = CCL.CLI_ID 

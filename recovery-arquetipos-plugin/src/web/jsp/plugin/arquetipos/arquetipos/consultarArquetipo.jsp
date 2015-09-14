@@ -11,7 +11,7 @@
 
 
 <fwk:page>
-	
+
 	<pfsforms:textfield name="nombre" labelKey="plugin.arquetipos.modelo.nombre" label="**Nombre" value="${arquetipo.nombre}" readOnly="true"/>
 	<pfsforms:textfield name="paquete" labelKey="plugin.arquetipos.consulta.paquetes" label="**Paquete Asociado" value="${arquetipo.rule.name}" readOnly="true"/>
 	<pfsforms:textfield name="gestion" labelKey="plugin.arquetipos.listado.gestion" label="**Gestión" value="${arquetipo.gestion}" readOnly="true"/>
@@ -20,7 +20,19 @@
 	
 	<pfs:hidden name="idArquetipo" value="${arquetipo.id}"/>
 	<pfs:defineParameters name="parametros" paramId="${arquetipo.id}" idArquetipo="idArquetipo"/>
-	<pfs:buttonedit flow="arquetipos/ARQeditarArquetipo" name="btEditar" windowTitleKey="plugin.arquetipos.busqueda.modificar" parameters="parametros" windowTitle="**Modificar"/>
+
+	var recargar = function (){
+		app.openTab('${arquetipo.nombre}'
+					,'arquetipos/ARQconsultaArquetipo'
+					,{id:${arquetipo.id}}
+					,{id:'ArquetipoRT'+${arquetipo.id}
+					,iconCls:'icon_arquetipo'});	
+	};
+	
+	
+
+
+	<pfs:buttonedit flow="arquetipos/ARQeditarArquetipo" name="btEditar" windowTitleKey="plugin.arquetipos.busqueda.modificar" parameters="parametros" windowTitle="**Modificar" on_success="recargar"/>
 	
 	<pfs:panel name="panel1" columns="2" collapsible="false" bbar="btEditar">
 		<pfs:items items="nombre, paquete, gestion " width="300" />

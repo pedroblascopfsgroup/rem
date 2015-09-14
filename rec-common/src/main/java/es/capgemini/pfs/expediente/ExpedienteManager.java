@@ -1694,9 +1694,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         //	expedienteContratoDao.delete(ec);
         //}
         saveOrUpdate(exp);
-        //Borrar todas las tareas asociadas y bpms
+        //Manda a fin el Bpm
         if (exp.getProcessBpm() != null) {
-            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, exp.getProcessBpm());
+            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_MANDAR_A_FIN_PROCESS, exp.getProcessBpm());
         }
 
         executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_TAREAS_ASOCIADAS_EXPEDIENTE, exp.getId());

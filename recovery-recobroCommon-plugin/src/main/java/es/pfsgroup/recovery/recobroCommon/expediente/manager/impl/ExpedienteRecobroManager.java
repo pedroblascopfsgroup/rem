@@ -962,8 +962,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		executor.execute(InternaBusinessOperation.BO_EXP_MGR_SAVE_OR_UPDATE, exp);
 		// Borrar todas las tareas asociadas y bpms
 		if (exp.getProcessBpm() != null) {
-			executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, exp.getProcessBpm());
-			proxyFactory.proxy(EXTJBPMProcessApi.class).borraTimersExpediente(exp.getId());
+			executor.execute(ComunBusinessOperation.BO_JBPM_MGR_MANDAR_A_FIN_PROCESS, exp.getProcessBpm());
 		}
 
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_TAREAS_ASOCIADAS_EXPEDIENTE, exp.getId());

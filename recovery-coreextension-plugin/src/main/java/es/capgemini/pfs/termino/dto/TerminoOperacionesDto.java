@@ -38,7 +38,7 @@ public class TerminoOperacionesDto extends WebDto{
     private Float importeCesion;
     private String fechaPago;
     private String fechaPlanPago;
-    private Integer frecuenciaPlanpago;
+    private String frecuenciaPlanpago;
     private Integer numeroPagosPlanpago;
     private Integer importePlanpago;
     private String analisiSolvencia;
@@ -255,11 +255,11 @@ public class TerminoOperacionesDto extends WebDto{
 		this.fechaPlanPago = fechaPlanPago;
 	}
 
-	public Integer getFrecuenciaPlanpago() {
+	public String getFrecuenciaPlanpago() {
 		return frecuenciaPlanpago;
 	}
 
-	public void setFrecuenciaPlanpago(Integer frecuenciaPlanpago) {
+	public void setFrecuenciaPlanpago(String frecuenciaPlanpago) {
 		this.frecuenciaPlanpago = frecuenciaPlanpago;
 	}
 

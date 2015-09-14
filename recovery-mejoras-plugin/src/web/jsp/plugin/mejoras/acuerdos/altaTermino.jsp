@@ -248,7 +248,26 @@ arrayCampos["fechaPlanPago"]=new Ext.form.DateField({
 	,autoWidth:true
 	 ,fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.fecha" text="**Fecha" />'
 });
-arrayCampos["frecuenciaPlanpago"]=app.creaNumber('frecuenciaPlanpago', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.frecuencia" text="**Frecuencia" />' , '', {id:'frecuenciaPlanpago'});
+<%--arrayCampos["frecuenciaPlanpago"]=app.creaNumber('frecuenciaPlanpago', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.frecuencia" text="**Frecuencia" />' , '', {id:'frecuenciaPlanpago'});--%>
+arrayCampos["frecuenciaPlanpago"]= new Ext.form.ComboBox({
+	id: 'frecuenciaPlanpago',
+	name : 'frecuenciaPlanpago',
+	fieldLabel: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.frecuencia" text="**Frecuencia" />',
+    triggerAction: 'all',
+    mode: 'local',
+    editable: false,
+    emptyText:'---',
+    store: new Ext.data.ArrayStore({
+        fields: [
+            'myIdFreq',
+            'displayTextFreq'
+        ],
+        data: [['ANY', 'ANUAL'], ['SEI', 'SEMESTRAL'], ['TRI', 'TRIMESTRAL'], ['BI', 'BIMESTRAL'], ['MES', 'MENSUAL'], ['SEM', 'SEMANAL'], ['UNI', 'UNICO']]
+    }),
+    valueField: 'myIdFreq',
+    displayField: 'displayTextFreq'
+});
+
 arrayCampos["numeroPagosPlanpago"]=app.creaNumber('numeroPagosPlanpago', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.numeroPagos" text="**Número pagos" />' , '', {id:'numeroPagosPlanpago'});
 arrayCampos["importePlanpago"]=app.creaNumber('importePlanpago', '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.detalles.importe" text="**Importe" />' , '', {id:'importePlanpago'});
 
@@ -442,6 +461,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	       		var params = detalleFieldSet.getForm().getValues();
 	       		
 	       		Ext.apply(params, {solicitarAlquiler : Ext.getCmp('solicitarAlquiler').getValue() });
+				Ext.apply(params, {frecuenciaPlanpago : Ext.getCmp('frecuenciaPlanpago').getValue() });	       		
 	       		Ext.apply(params, {idAcuerdo : '${idAcuerdo}' });
 	       		Ext.apply(params, {idTipoAcuerdo : comboTipoAcuerdo.getValue()});
 	       		Ext.apply(params, {idSubTipoAcuerdo : comboSubTipoAcuerdo.getValue()});

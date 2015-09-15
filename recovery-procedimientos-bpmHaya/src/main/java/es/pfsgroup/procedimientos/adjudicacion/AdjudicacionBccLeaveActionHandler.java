@@ -72,7 +72,7 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
         	NMBBien bien = getBien(prc);
         	boolean adjudicadoEntidad = (bien.getAdjudicacion() != null 
         			&& bien.getAdjudicacion().getEntidadAdjudicataria() != null 
-        			&& bien.getAdjudicacion().getEntidadAdjudicataria().equals(DDEntidadAdjudicataria.ENTIDAD));
+        			&& bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().equals(DDEntidadAdjudicataria.ENTIDAD));
         	boolean cargasPrevias = false;
         	if (adjudicadoEntidad) {
         		cargasPrevias = hayaProcManager.existenCargasPreviasActivas(prc.getId());

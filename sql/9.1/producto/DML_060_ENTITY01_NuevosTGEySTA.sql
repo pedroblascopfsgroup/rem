@@ -93,7 +93,9 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;      
         IF V_NUM_TABLAS > 0 THEN        
           V_MSQL := 'UPDATE  '||V_ESQUEMA_MASTER||'.' || VAR_TABLENAME || ' SET DD_STA_DESCRIPCION='''||TRIM(V_TMP_TIPO_LINEA2(2))||''', ' ||
-            'DD_STA_DESCRIPCION_LARGA='''||TRIM(V_TMP_TIPO_LINEA2(2))||''' ' ||
+            'DD_STA_DESCRIPCION_LARGA='''||TRIM(V_TMP_TIPO_LINEA2(2))||''' , DD_STA_GESTOR=null, DD_TAR_ID=1, ' ||
+            'DTYPE=''EXTSubtipoTarea'', ' || 
+            'DD_TGE_ID=(SELECT DD_TGE_ID FROM HAYAMASTER.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || V_TMP_TIPO_LINEA2(3) || ''') ' ||
             '  WHERE DD_STA_CODIGO='''||TRIM(V_TMP_TIPO_LINEA2(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_MASTER || '.' || VAR_TABLENAME || ' Actualizado DD_STA_CODIGO = '''||TRIM(V_TMP_TIPO_LINEA2(1))||'''');
@@ -106,7 +108,6 @@ BEGIN
                     '(SELECT DD_TGE_ID FROM HAYAMASTER.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(3)),'''','''''') || ''') ,''EXTSubtipoTarea''' || 
                     ' FROM DUAL'; 
             DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''  || V_TMP_TIPO_LINEA2(1) ||''','''||TRIM(V_TMP_TIPO_LINEA2(2))||'''');
-            DBMS_OUTPUT.PUT_LINE(V_MSQL);
             EXECUTE IMMEDIATE V_MSQL;
         END IF;
     END LOOP;

@@ -510,13 +510,10 @@
 		<module>recovery-cambiosMasivosAsunto-plugin</module>
 		<module>recovery-recobro-bpm</module>
 		<module>recovery-controlcalidad-plugin</module>
-<<<<<<< HEAD
 		<module>recovery-precontencioso-plugin</module>
-=======
 		<module>recovery-comites-plugin</module>
 		<module>recovery-editor-plugin</module>
-		<module>recovery-arquetipos-plugin</module>				
->>>>>>> origin/haya-fusion
+		<module>recovery-arquetipos-plugin</module>
 	</modules>
 
 	<profiles>

@@ -232,7 +232,7 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Date fechaCancelado;
 	
 	@Formula(value = 
-			"(SELECT TEV.tev_valor " +
+			"(SELECT MIN(TEV.tev_valor) " +
 			" FROM   tev_tarea_externa_valor TEV " +
 			"       join tex_tarea_externa TEX " +
 			"         ON TEV.tex_id = TEX.tex_id " +

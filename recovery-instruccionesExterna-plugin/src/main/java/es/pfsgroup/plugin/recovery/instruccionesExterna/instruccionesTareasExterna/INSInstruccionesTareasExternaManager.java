@@ -39,7 +39,7 @@ public class INSInstruccionesTareasExternaManager {
 	
 	@BusinessOperation(PluginInstruccionesExternaBusinessOperations.INS_MGR_LISTAPROCEDIMIENTOS)
 	public List<TipoProcedimiento> listaProcedimientos(){
-		List<TipoProcedimiento> lista = genericDao.getList(TipoProcedimiento.class);
+		List<TipoProcedimiento> lista = genericDao.getList(TipoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		return lista;
 	}
 	

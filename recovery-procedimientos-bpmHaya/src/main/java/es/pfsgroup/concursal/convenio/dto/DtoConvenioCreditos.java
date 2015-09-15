@@ -29,8 +29,4 @@ public class DtoConvenioCreditos extends WebDto{
 	public List<ConvenioCredito> getConvenioCreditos() {
 		return convenioCreditos;
 	}
-
-
-
-
 }

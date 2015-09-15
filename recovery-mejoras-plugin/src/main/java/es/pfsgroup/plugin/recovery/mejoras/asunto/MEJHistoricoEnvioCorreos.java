@@ -25,7 +25,7 @@ import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 @Component
 public class MEJHistoricoEnvioCorreos implements HistoricoAsuntoBuilder{
 
-	public static final String NOMBRE_TAREA = "Envío de correo al gestor externo";
+	public static final String NOMBRE_TAREA = "Envï¿½o de correo al gestor externo";
 
 	protected static final long ID_TIPO_ENTIDAD_INFORMACION = 3L;
 

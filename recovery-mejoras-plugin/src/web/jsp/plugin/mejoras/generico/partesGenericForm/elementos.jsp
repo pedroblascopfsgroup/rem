@@ -7,7 +7,7 @@ var creaElemento = function(nombre,index,type,label,value,values){
 	var name='values['+(index)+']';
 	switch(type) {
 		case 'textarea' :
-			return app.crearTextArea(label, value, isDisable, null, name, {width:'440px'} );
+			return app.crearTextArea(label, value, isDisable, value, name, {width:'440px'} );
 			break;
 		case 'text' :
 			return app.creaText(name, label, value, {disabled:isDisable});
@@ -21,7 +21,7 @@ var creaElemento = function(nombre,index,type,label,value,values){
 			return app.creaNumber(name, label, value, {disabled:isDisable}); 
 			break;
 		case 'date' :
-			value = value.replace(/(\d*)-(\d*)-(\d*)/,"$3/$2/$1");  //conversión de yyyy-MM-dd a dd/MM/yyyy
+			value = value.replace(/(\d*)-(\d*)-(\d*)/,"$3/$2/$1");  //conversiï¿½n de yyyy-MM-dd a dd/MM/yyyy
 			return new Ext.ux.form.XDateField({fieldLabel:label, name:name, value:value,style:'margin:0px', disabled:isDisable});
 			break;
 		case 'combo' :

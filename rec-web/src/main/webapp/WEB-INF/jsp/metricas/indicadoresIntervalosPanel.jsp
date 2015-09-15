@@ -7,9 +7,9 @@ labelNumIntervalos = new Ext.form.Label({
 	,style: 'font-size:11;padding:10px;font-weight:bolder;'
 });
 
-var txtNumIntervalos = new Ext.form.Label({
+var txtNumIntervalos = new Ext.form.DisplayField({
 	name: 'numeroIntervalos.valor'
-	,text: '${numeroIntervalos.valor}'
+	,value: '${numeroIntervalos.valor}'
 	,width: 50
 	,style: 'font-size:11;padding:10px;font-weight:bolder;'
 });

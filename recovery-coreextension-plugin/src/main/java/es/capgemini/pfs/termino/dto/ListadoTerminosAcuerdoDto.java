@@ -5,7 +5,6 @@ import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
-import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 
 public class ListadoTerminosAcuerdoDto extends WebDto{

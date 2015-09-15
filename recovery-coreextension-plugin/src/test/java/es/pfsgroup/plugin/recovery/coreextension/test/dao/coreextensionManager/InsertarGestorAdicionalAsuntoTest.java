@@ -20,7 +20,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 /**
- * Tests del método {@link es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager#insertarGestorAdicionalAsunto(Long, Long, Long, Long)}
+ * Tests del mï¿½todo {@link es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager#insertarGestorAdicionalAsunto(Long, Long, Long, Long)}
  * @author manuel
  *
  */
@@ -67,7 +67,12 @@ public class InsertarGestorAdicionalAsuntoTest extends AbstractCoreextensionMana
 		
 		when(mockProxyFactory.proxy(AsuntoApi.class).get(idAsunto)).thenReturn(mockAsunto);
 
-		coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		try {
+			coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		verify(mockGestorAdicionalAsuntoDao, times(1)).save(any(EXTGestorAdicionalAsunto.class));
 		verify(mockGestorAdicionalAsuntoHistoricoDao, times(1)).save(any(EXTGestorAdicionalAsuntoHistorico.class));
@@ -96,7 +101,12 @@ public class InsertarGestorAdicionalAsuntoTest extends AbstractCoreextensionMana
 		when(gestor.getUsuario()).thenReturn(usuario);
 		when(usuario.getId()).thenReturn(RandomUtils.nextLong());
 		
-		coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		try {
+			coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		verify(mockGestorAdicionalAsuntoDao, times(1)).saveOrUpdate(any(EXTGestorAdicionalAsunto.class));
 		verify(mockGestorAdicionalAsuntoHistoricoDao, times(1)).actualizaFechaHasta(idAsunto, idTipoGestor);
@@ -126,7 +136,12 @@ public class InsertarGestorAdicionalAsuntoTest extends AbstractCoreextensionMana
 		when(gestor.getUsuario()).thenReturn(usuario);
 		when(usuario.getId()).thenReturn(idUsuario);
 		
-		coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		try {
+			coreextensionManager.insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		verify(mockGestorAdicionalAsuntoDao, times(1)).saveOrUpdate(any(EXTGestorAdicionalAsunto.class));
 		verify(mockGestorAdicionalAsuntoHistoricoDao, never()).actualizaFechaHasta(idAsunto, idTipoGestor);

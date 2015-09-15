@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<var name="formArquetiposModelo" class="es.pfsgroup.plugin.recovery.arquetipos.modelos.web.ARQFormArquetiposModelo" />
+	<input name="id" type="java.lang.Long" required="true" />
+
+	<end-state id="listado" view="plugin/arquetipos/modelosArquetipos/listaArquetiposModeloJSON">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.arquetipos.modelosArquetipos.listaArquetiposModelo',id)" result="formArquetiposModelo.arquetipos"/>
+			<set name="flowScope.formArquetiposModelo" value="formArquetiposModelo" />
+		</on-entry>
+	</end-state>
+</flow>
+

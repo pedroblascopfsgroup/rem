@@ -29,6 +29,7 @@ import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.ingreso.model.Ingreso;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;

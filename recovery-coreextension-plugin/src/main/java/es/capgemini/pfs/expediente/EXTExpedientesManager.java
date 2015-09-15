@@ -37,6 +37,7 @@ import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -55,6 +56,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.api.contrato.EXTContratoApi;
 import es.pfsgroup.recovery.ext.api.contrato.model.EXTInfoAdicionalContratoInfo;
 import es.pfsgroup.recovery.ext.api.expediente.EXTExpedienteApi;
@@ -170,8 +172,8 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	}
 	
 	/**
-	 * Crea un expediente. Sobreescribe la operación de negocio original para
-	 * que tenga en cuenta un nuevo ámbito de expediente del itinerario
+	 * Crea un expediente. Sobreescribe la operaciï¿½n de negocio original para
+	 * que tenga en cuenta un nuevo ï¿½mbito de expediente del itinerario
 	 * 
 	 * @param idContrato
 	 *            id del contrato principal
@@ -191,7 +193,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	public Expediente crearExpedienteAutomatico(Long idContrato,
 			Long idPersona, Long idArquetipo, Long idBPMExpediente,
 			Long idBPMCliente) {
-		validarContratoPase(idContrato);
+			validarContratoPase(idContrato);
 
 		Expediente expediente = new Expediente();
 		expediente.setExpProcessBpm(idBPMExpediente);
@@ -218,8 +220,9 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		expediente.setManual(false);
 
 		// Seteo el arquetipo del expediente
-		expediente.setArquetipo((Arquetipo) executor.execute(
-				ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo));
+		Arquetipo arq = (Arquetipo) executor.execute(
+				ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo);
+		expediente.setArquetipo(arq);
 
 		// Obtenemos la oficina del contrato de pase
 		// VRE
@@ -240,10 +243,18 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		// Anular Clientes relacionados
 		eliminarProcesosClientesRelacionados(expediente, idBPMCliente);
 
-		// Le seteamos el nombre ya que ahora no se obtiene a través de una
-		// fórmula
+		// Le seteamos el nombre ya que ahora no se obtiene a travï¿½s de una
+		// fï¿½rmula
 		setearNombreExpediente(expediente);
 
+	  // Seteamos el tipo de expediente
+        DDTipoExpediente tipo = null;
+        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        else
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        expediente.setTipoExpediente(tipo); 
+	
 		
 		expedienteDao.saveOrUpdate(expediente);
 
@@ -346,6 +357,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		Expediente exp = expedienteDao
 				.buscarExpedientesParaContrato(idContrato);
 		if (exp != null) {
+			logger.error("expediente.contrato.invalido.otroExpediente: "+idContrato);
 			throw new NonRollbackException(
 					"expediente.contrato.invalido.otroExpediente", idContrato);
 		}
@@ -384,7 +396,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		HashMap<String, List<Long>> hContratos;
 		HashMap<String, List<Long>> hPersonas;
 
-		// Dependiendo de si la generación es de recuperación de seguimiento
+		// Dependiendo de si la generaciï¿½n es de recuperaciï¿½n de seguimiento
 		if (expedienteRecuperacion) {
 			hContratos = obtenerContratosGeneracionExpediente(idContrato,
 					idPersona, ambitoExpediente.getCodigo(), limiteContratos,
@@ -413,7 +425,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	}
 	
 	/**
-	 * Recupera el máximo de personas adicionales para un expediente. Si no
+	 * Recupera el mï¿½ximo de personas adicionales para un expediente. Si no
 	 * existe valor en la BBDD informa el error y usa el valor 20 por defecto
 	 * 
 	 * @return Integer
@@ -462,25 +474,21 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		// Borramos clientes por contrato
 		for (ExpedienteContrato expContrato : expediente.getContratos()) {
 			Long idContrato = expContrato.getContrato().getId();
-			List<Cliente> clientes = (List<Cliente>) executor
-					.execute(
-							PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO,
-							idContrato);
+			List<Cliente> clientes = (List<Cliente>) executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_BUSCAR_CLIENTES_POR_CONTRATO, idContrato);
 			for (Cliente cliente : clientes) {
-				if (cliente.getProcessBPM() != null
+				// AHORA EN NINGÃšN CASO SE CREA BPM PARA EL CLIENTE
+				/*
+				if (!Checks.esNulo(idInvocacion) && !Checks.esNulo(cliente.getProcessBPM())
 						&& !cliente.getProcessBPM().equals(idInvocacion)) {
-					executor.execute(
-							ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,
-							cliente.getProcessBPM());
-				} else if (cliente.getProcessBPM() == null
-						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
-								.getEstadoCliente().getCodigo())) {
+					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,cliente.getProcessBPM());
+				} else if (cliente.getProcessBPM() == null) {
+				
+//						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
+//								.getEstadoCliente().getCodigo())) {
 					// En caso de que se hayan generado manualmente
-					executor
-							.execute(
-									PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,
-									cliente.getId());
-				}
+					executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
+				}*/
+				executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE, cliente.getId());
 			}
 		}
 
@@ -489,11 +497,11 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 			Cliente cliente = expPersona.getPersona().getClienteActivo();
 
 			if (cliente != null) {
-				if (cliente.getProcessBPM() != null
+				// AHORA EN NINGÃšN CASO SE CREA BPM PARA EL CLIENTE
+				/*
+				if (!Checks.esNulo(idInvocacion) && !Checks.esNulo(cliente.getProcessBPM())
 						&& !cliente.getProcessBPM().equals(idInvocacion)) {
-					executor.execute(
-							ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS,
-							cliente.getProcessBPM());
+					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, cliente.getProcessBPM());
 				} else if (cliente.getProcessBPM() == null
 						&& EstadoCliente.ESTADO_CLIENTE_MANUAL.equals(cliente
 								.getEstadoCliente().getCodigo())) {
@@ -503,12 +511,14 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 									PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,
 									cliente.getId());
 				}
+				*/
+				executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_ELIMINAR_CLIENTE,cliente.getId());
 			}
 		}
 	}
 	
 	/**
-	 * Método para setearle el nombre a un expediente en función del nombre del
+	 * Mï¿½todo para setearle el nombre a un expediente en funciï¿½n del nombre del
 	 * primer titular.
 	 * 
 	 * @param expediente
@@ -527,7 +537,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	}
 	
 	/**
-	 * Recupera el máximo de contratos adicionales para un expediente. Si no
+	 * Recupera el mï¿½ximo de contratos adicionales para un expediente. Si no
 	 * existe valor en la BBDD informa el error y usa el valor 20 por defecto
 	 * 
 	 * @return Integer
@@ -555,7 +565,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	 * @param idPersona
 	 *            Long con el id de la persona de pase
 	 * @param ambitoExpediente
-	 *            String con el código del ámbito del expediente
+	 *            String con el cï¿½digo del ï¿½mbito del expediente
 	 * @return List
 	 */
 	private HashMap<String, List<Long>> obtenerContratosGeneracionExpediente(
@@ -571,13 +581,13 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		hContratos.put(MAP_CONTRATOS_PASE, contratosPase);
 
 		try {
-			// Si debemos de insertar sólamente los contratos marcados
+			// Si debemos de insertar sï¿½lamente los contratos marcados
 			if ((contratosExpediente.size() < cantidadMaxima)
 					&& EXTExpedienteApi.AMBITO_EXPEDIENTE_CONTRATOS_MARCADOS
 							.equals(ambitoExpediente)) {
 				if (Checks.esNulo(marca)) {
 					throw new BusinessOperationException(
-							"no hay marca de acumulación de contratos para este itinerario");
+							"no hay marca de acumulaciï¿½n de contratos para este itinerario");
 				} else {
 					EXTInfoAdicionalContratoInfo iac = proxyFactory.proxy(
 							EXTContratoApi.class).getInfoAdicionalContratoByTipo(
@@ -614,7 +624,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 						contratosExpediente);
 			}
 
-			// Si debemos recuperar los contratos de la primera generación
+			// Si debemos recuperar los contratos de la primera generaciï¿½n
 			if ((contratosExpediente.size() < cantidadMaxima)
 					&& (DDAmbitoExpediente.CONTRATOS_PRIMERA_GENERACION
 							.equals(ambitoExpediente) || DDAmbitoExpediente.CONTRATOS_SEGUNDA_GENERACION
@@ -629,7 +639,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 						contratosExpediente);
 			}
 
-			// Si debemos recuperar los contratos de la segunda generación
+			// Si debemos recuperar los contratos de la segunda generaciï¿½n
 			if ((contratosExpediente.size() < cantidadMaxima)
 					&& (DDAmbitoExpediente.CONTRATOS_SEGUNDA_GENERACION
 							.equals(ambitoExpediente))) {
@@ -737,7 +747,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	 * @param idPersona
 	 *            Long con el id de la persona de pase
 	 * @param ambitoExpediente
-	 *            String con el código del ámbito del expediente
+	 *            String con el cï¿½digo del ï¿½mbito del expediente
 	 * @return List
 	 */
 	private HashMap<String, List<Long>> obtenerPersonasGeneracionExpediente(
@@ -770,7 +780,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 						personasExpediente);
 			}
 
-			// Si debemos recuperar las personas de la primera generación
+			// Si debemos recuperar las personas de la primera generaciï¿½n
 			if ((personasExpediente.size() < cantidadMaxima)
 					&& (DDAmbitoExpediente.PERSONAS_PRIMERA_GENERACION
 							.equals(ambitoExpediente) || DDAmbitoExpediente.PERSONAS_SEGUNDA_GENERACION
@@ -785,7 +795,7 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 						personasExpediente);
 			}
 
-			// Si debemos recuperar las personas de la segunda generación
+			// Si debemos recuperar las personas de la segunda generaciï¿½n
 			if ((personasExpediente.size() < cantidadMaxima)
 					&& (DDAmbitoExpediente.PERSONAS_SEGUNDA_GENERACION
 							.equals(ambitoExpediente))) {
@@ -970,12 +980,12 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 			Long personaPrincipal, HashMap<String, List<Long>> hPersonas,
 			Expediente expediente, Integer cantidadMaxima) {
 		/*
-		 * En este mé½todo es necesario crear explícitamente un objeto de
-		 * auditoría porque los objetos ExpedientePersona se salvan
+		 * En este mï¿½todo es necesario crear explï¿½citamente un objeto de
+		 * auditorï¿½a porque los objetos ExpedientePersona se salvan
 		 * indirectamente al salvar el expediente, por lo tanto nunca se ejecuta
-		 * el save de su dao, que es el que debería crear el obj de auditoría.
+		 * el save de su dao, que es el que deberï¿½a crear el obj de auditorï¿½a.
 		 * No se puede llamar al save del dao de ExpedientePersona porque
-		 * todavía no existe el Expediente al cual asociarlo.
+		 * todavï¿½a no existe el Expediente al cual asociarlo.
 		 */
 		List<Long> personasPase = new ArrayList<Long>(1);
 		List<Long> personasPaseAux = hPersonas.get(MAP_PERSONAS_PASE);
@@ -1093,8 +1103,8 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	}
 	
 	/**
-	 * Añade al vectorDestino los contratos del vectorOrigen que no estén en el
-	 * 'controlDuplicados'. A esos contratos les pondrá un ambito definido
+	 * Aï¿½ade al vectorDestino los contratos del vectorOrigen que no estï¿½n en el
+	 * 'controlDuplicados'. A esos contratos les pondrï¿½ un ambito definido
 	 * 
 	 * @param controlDuplicados
 	 * @param vectorOrigen
@@ -1143,8 +1153,8 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 	}
 	
 	/**
-	 * Añade al vectorDestino las personas del vectorOrigen que no estén en el
-	 * 'controlDuplicados'. A esas personas les pondrá un ambito definido
+	 * Aï¿½ade al vectorDestino las personas del vectorOrigen que no estï¿½n en el
+	 * 'controlDuplicados'. A esas personas les pondrï¿½ un ambito definido
 	 * 
 	 * @param controlDuplicados
 	 * @param vectorOrigen
@@ -1243,5 +1253,12 @@ public class EXTExpedientesManager implements EXTExpedientesApi{
 		exp.setOficina(ofi);
 		expedienteDao.saveOrUpdate(exp);
 	}
+
+	public ExpedienteContrato getExpedienteContratoByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		ExpedienteContrato cex = genericDao.get(ExpedienteContrato.class, filtro);
+		return cex;
+	}
+	
 	
 }

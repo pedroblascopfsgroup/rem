@@ -87,7 +87,8 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
-import groovy.swing.factory.ModelFactory;
+import es.pfsgroup.recovery.integration.Guid;
+
 @Component
 public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionManager implements TareaNotificacionApi {
 
@@ -700,8 +701,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         }
         // Seteo la entidad en el campo que corresponda
         decodificarEntidadInformacion(idEntidad, codigoTipoEntidad, notificacionTarea);
-        return genericDao.save(EXTTareaNotificacion.class, notificacionTarea).getId();
-
+        EXTTareaNotificacion tarea = genericDao.save(EXTTareaNotificacion.class, notificacionTarea);
+        return tarea.getId();
     }
 
     private void decodificarEntidadInformacion(Long idEntidad, String codigoTipoEntidad, TareaNotificacion tareaNotificacion) {
@@ -726,7 +727,11 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
             tareaNotificacion.setAsunto(asu);
             tareaNotificacion.setEstadoItinerario(asu.getEstadoItinerario());
-            tareaNotificacion.setEmisor(asu.getGestor().getUsuario().getApellidoNombre());
+            if (Checks.esNulo(asu.getGestor())) {
+            	tareaNotificacion.setEmisor("Automático");
+            } else {
+            	tareaNotificacion.setEmisor(asu.getGestor().getUsuario().getApellidoNombre());
+            }
         }
         if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(codigoTipoEntidad)) {
             Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idEntidad);
@@ -735,6 +740,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             tareaNotificacion.setEstadoItinerario(proc.getAsunto().getEstadoItinerario());
             if (proc.getAsunto().getGestor() != null) {
                 tareaNotificacion.setEmisor(proc.getAsunto().getGestor().getUsuario().getApellidoNombre());
+            } else {
+            	tareaNotificacion.setEmisor("Automático");
             }
         }
         if (DDTipoEntidad.CODIGO_ENTIDAD_NOTIFICACION.equals(codigoTipoEntidad)) {
@@ -1293,5 +1300,22 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         // saveOrUpdate(tarea);
     }
 
+	public EXTTareaNotificacion getTareaNoficiacionByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTTareaNotificacion tareaNotif = genericDao.get(EXTTareaNotificacion.class, filtro);
+		return tareaNotif;
+	}
+
+	
+	@Transactional(readOnly=false)
+	public EXTTareaNotificacion prepareGuid(TareaNotificacion tareaNotif) {
+		EXTTareaNotificacion extTareaNotif = EXTTareaNotificacion.instanceOf(tareaNotif); 
+		if (tareaNotif == null) return null;
+		if (Checks.esNulo(extTareaNotif.getGuid())) {
+			extTareaNotif.setGuid(Guid.getNewInstance().toString());
+			genericDao.save(EXTTareaNotificacion.class, extTareaNotif);
+		}
+		return extTareaNotif;
+	}
 	
 }

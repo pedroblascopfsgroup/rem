@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="hcj_tramiteVigilanciaCaducidadEmbargos"
+	xmlns="urn:jbpm.org:jpdl-3.2">
+
+	<start-state name="Inicio">
+		<transition to="H062_confirmarAnotacionRegistro"></transition>
+	</start-state>
+
+	<state name="H062_confirmarAnotacionRegistro">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H062_confirmarAnotacionRegistro" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H062_confirmarAnotacionRegistroDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H062_revisarRegistroEmbargo">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="H062_revisarRegistroEmbargoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H062_revisarRegistroEmbargo" name="activarAlerta"></transition>
+	</state>
+
+	<decision name="H062_revisarRegistroEmbargoDecision" expression="#{H062_revisarRegistroEmbargoDecision}">
+		<transition to="Fin" name="terminar"></transition>
+		<transition to="H062_espera" name="mantenerAlerta"></transition>
+	</decision>
+
+	<state name="H062_espera">
+        <event type="node-enter">
+			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
+				<name>Timer de espera 42 meses</name>
+				<duration>42 months</duration>
+				<transicion>avanzaBPM</transicion>
+			</action>
+		</event>
+		<transition to="H062_revisarRegistroEmbargo" name="avanzaBPM"></transition>
+		<transition to="H062_confirmarAnotacionRegistro" name="vueltaAtras"></transition>
+		<transition to="H062_espera" name="activarAlerta"></transition>
+	</state>
+
+	<decision name="H062_confirmarAnotacionRegistroDecision" expression="#{H062_confirmarAnotacionRegistroDecision}">
+		<transition to="H062_espera" name="siAlerta"></transition>
+		<transition to="Fin" name="noAlerta"></transition>
+	</decision>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

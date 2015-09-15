@@ -6,6 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import org.hibernate.proxy.HibernateProxy;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -57,6 +60,9 @@ public class EXTAcuerdo extends Acuerdo {
 		this.importeCostas = importeCostas;
 	}
 
+	@Column(name = "SYS_GUID")
+	private String guid;
+	
 	public String getMotivo() {
 		return motivo;
 	}
@@ -73,6 +79,26 @@ public class EXTAcuerdo extends Acuerdo {
 		this.fechaLimite = fechaLimite;
 	}
 
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 	
+	@Transient
+	public static EXTAcuerdo instanceOf(Acuerdo acuerdo) {
+		EXTAcuerdo extAcuerdo = null;
+		if (acuerdo == null) return null;
+	    if (acuerdo instanceof HibernateProxy) {
+	    	extAcuerdo = (EXTAcuerdo) ((HibernateProxy) acuerdo).getHibernateLazyInitializer()
+	                .getImplementation();
+	    } else if (acuerdo instanceof EXTAcuerdo){
+	    	extAcuerdo = (EXTAcuerdo) acuerdo;
+		}
+		return extAcuerdo;
+	}
 	
+
 }

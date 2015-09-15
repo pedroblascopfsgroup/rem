@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.recovery.mejoras.api.revisionProcedimientos.RevisionPr
 import es.pfsgroup.plugin.recovery.mejoras.revisionProcedimiento.dto.RevisionProcedimientoDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Controller
 public class MEJAcuerdoController {
@@ -59,6 +60,9 @@ public class MEJAcuerdoController {
 	static final String JSON_LIST_CAMPOS_DINAMICOS_TERMINOS_POR_TIPO_ACUERDO  ="plugin/mejoras/acuerdos/camposTerminosPorTipoAcuerdoJSON";
 	static final String JSON_CONFIG_USERS_ACUERDO_ASUNTOS = "plugin/mejoras/acuerdos/configUsersAcuerdoAsuntoJSON";
 	static final String JSP_FINALIZACION_ACUERDO = "plugin/mejoras/acuerdos/finalizacionAcuerdo";
+	
+	@Autowired
+	IntegracionBpmService integracionBpmService;
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -378,10 +382,10 @@ public class MEJAcuerdoController {
 			}
 			crearBienesTermino(taSaved, bienesIncluidos);
 		}
-		
-		return "default";
 
-		
+		integracionBpmService.enviarDatos(taSaved);
+
+		return "default";
 	}	
 	
 
@@ -567,6 +571,8 @@ public class MEJAcuerdoController {
 		TerminoAcuerdo ta = genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idTerminoAcuerdo)));
 		
 		proxyFactory.proxy(MEJAcuerdoApi.class).deleteTerminoAcuerdo(ta);	
+		
+		integracionBpmService.enviarDatos(ta);
 		
 		return "default";
 		

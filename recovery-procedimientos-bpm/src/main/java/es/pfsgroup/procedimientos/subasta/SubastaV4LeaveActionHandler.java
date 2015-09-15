@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 
@@ -52,6 +53,9 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
 	
+    @Autowired
+    private IntegracionBpmService bpmIntegracionService;
+    
 	private ExecutionContext executionContext;
 
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
@@ -198,10 +202,10 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 		}
 
 		genericDao.save(Subasta.class, sub);
+		bpmIntegracionService.enviarDatos(sub);
 	}
 
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
-
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			sub.setEstadoSubasta(esu);

@@ -1,6 +1,7 @@
 <%@page pageEncoding="iso-8859-1" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
@@ -99,19 +100,27 @@
 		
 	/*Jerarquía*/
 	var zonas=<app:dict value="${zonas}" />;
-	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
 	
-	var comboJerarquia = app.creaCombo({
-		triggerAction: 'all'
-		,disabled:cambioGestor||cambioSupervisor
-		,labelStyle:labelStyle
-		,autoWidth:true
-		,style:style 
-		,data:jerarquia
-		,value:jerarquia.diccionario[0].codigo
-		,name : 'jerarquia'
-		,fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'});
-	              
+	var listaJerarquia = <fwk:json>
+							<json:array name="jerarquia" items="${niveles}" var="s">
+								<json:object>
+									<json:property name="id" value="${s.id}" />
+									<json:property name="descripcion" value="${s.descripcion}" />
+								</json:object>
+							</json:array>
+						</fwk:json>;
+	
+	<pfsforms:combo name="comboJerarquia" 
+		dict="listaJerarquia" 
+		displayField="descripcion" 
+		root="jerarquia" 
+		labelKey="menu.clientes.listado.filtro.jerarquia"
+		label="**Jerarquia"
+		value="0" 
+		valueField="id"/>
+		
+	comboJerarquia.disabled=cambioGestor||cambioSupervisor;	
+	
     var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd" start-state="listado">
+	
+	<var name="formArquetiposModelo" class="es.pfsgroup.plugin.recovery.arquetipos.modelos.web.ARQFormArquetiposModelo" />
+	<input name="id" type="java.lang.Long"/>
+
+	<view-state id="listado" view="plugin/arquetipos/modelosArquetipos/editarGridArquetiposModelo" model="formArquetiposModelo">
+		<on-render>
+			<evaluate expression="executor.execute('plugin.arquetipos.modelos.getModelo',id)" result="flowScope.modelo"/>
+			<evaluate expression="executor.execute('plugin.arquetipos.itinerario.listaItinerario')" result="flowScope.itinerarios"/>
+			<evaluate expression="executor.execute('plugin.arquetipos.ddTipoSalto.lista')" result="flowScope.ddTipoSalto"/>
+			<evaluate expression="executor.execute('plugin.arquetipos.modelosArquetipos.listaArquetiposModelo',id)" result="flowScope.formArquetiposModelo.arquetipos"/>
+			<evaluate expression="executor.execute('plugin.arquetipos.modelosArquetipos.listaDtoArquetiposModelo',id)" result="flowScope.formArquetiposModelo.dtoArquetipos"/>
+		</on-render>
+		<transition on="getData" to="getData1"/>
+		<transition on="update" to="update"/>	
+		<transition on="fin1" to="fin"/>
+	</view-state>
+	
+	<view-state id="getData1" view="plugin/arquetipos/modelosArquetipos/listaArquetiposModeloJSON" model="formArquetiposModelo">
+		<transition on="update" to="update"/>
+		<transition on="getData" to="getData1"/>
+		<transition on="fin1" to="fin"/>
+		 <exception-handler bean="swfExceptionHandler" /> 
+	</view-state>
+	
+	<action-state id="update">
+		<evaluate expression="executor.execute('plugin.arquetipos.modelosArquetipos.editarArqMod', id, flowScope.formArquetiposModelo.dtoArquetipos)"></evaluate>
+		<transition to="fin"/>
+	</action-state>    
+	
+	<end-state id="fin" view="default"></end-state>
+	<exception-handler bean="swfExceptionHandler" />
+	
+</flow>
+

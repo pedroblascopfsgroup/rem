@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramitePrecinto" width="1013" height="877">
+  <node name="Inicio" x="63" y="9" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H050_SolicitarPrecinto" x="27" y="96" width="208" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H050_AcuerdoPrecinto" x="34" y="204" width="204" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-111" h1="-55" w2="-106" h2="53"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H050_PrecintoDecision" x="407" y="319" width="164" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H050_ConfirmarFechaPrecintoEfectivo" x="37" y="318" width="255" height="46">
+    <edge>
+      <label x="-34" y="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-143" h1="-54" w2="-115" h2="60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="258" h1="91" w2="-266" h2="110"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="641" y="300" width="132" height="36"/>
+</root-container>

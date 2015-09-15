@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteTributacionBienesSareb" width="896" height="644">
+  <node name="Inicio" x="284" y="41" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H054_ValidaBienesTributacion" x="229" y="155" width="247" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="285" h1="2" w2="-59" h2="-174"/>
+    </edge>
+  </node>
+  <node name="H054_EmisionInformeFiscal" x="231" y="285" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="223" h1="3" w2="-118" h2="-56"/>
+    </edge>
+    <edge>
+      <label x="12" y="15"/>
+      <bendpoint w1="-189" h1="1" w2="-186" h2="217"/>
+      <bendpoint w1="-189" h1="-135" w2="-183" h2="-5"/>
+    </edge>
+  </node>
+  <node name="H054_EmisionInformeFiscalDecision" x="226" y="469" width="263" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-120" y="3"/>
+      <bendpoint w1="278" h1="1" w2="-61" h2="40"/>
+    </edge>
+  </node>
+  <node name="H054_PresentarEscritoJuzgado" x="240" y="601" width="241" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="185" h1="-1" w2="5" h2="257"/>
+    </edge>
+    <edge>
+      <label x="-37" y="-40"/>
+      <bendpoint w1="300" h1="12" w2="120" h2="270"/>
+    </edge>
+    <edge>
+      <label x="2" y="58"/>
+      <bendpoint w1="-216" h1="2" w2="-211" h2="232"/>
+      <bendpoint w1="-213" h1="-304" w2="-211" h2="12"/>
+    </edge>
+  </node>
+  <node name="Fin" x="630" y="430" width="132" height="36"/>
+</root-container>

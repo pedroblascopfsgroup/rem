@@ -147,6 +147,7 @@ app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE = '<fwk:const value="es.capgemi
 
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO" />';
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -195,13 +196,13 @@ app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDE
 
 
 /**
- * Abre una pestaña con la información del cliente
+ * Abre una pestaï¿½a con la informaciï¿½n del cliente
  */
 app.abreCliente = function(id, nombre){
 	app.abreClienteTab(id, nombre, '');
 };
 /**
- * Abre una pestaña con la información del cliente, seleccionando un tab en particular
+ * Abre una pestaï¿½a con la informaciï¿½n del cliente, seleccionando un tab en particular
  */
 app.abreClienteTab = function(id, nombre,nombreTab){
 	this.openTab(nombre||'Cliente', 'clientes/consultaCliente', {id : id,nombreTab:nombreTab}, {id:'cliente'+id,iconCls:'icon_cliente'} );
@@ -210,7 +211,7 @@ app.abreClienteTab = function(id, nombre,nombreTab){
 };
 
 /**
- * Abre una pestaña con la información del expediente
+ * Abre una pestaï¿½a con la informaciï¿½n del expediente
  */
 app.abreExpediente = function(id, nombre){
 	
@@ -218,7 +219,7 @@ app.abreExpediente = function(id, nombre){
 };
 
 /**
- * Abre una pestaña con la información del expediente en un tab determinado
+ * Abre una pestaï¿½a con la informaciï¿½n del expediente en un tab determinado
  */
 app.abreExpediente = function(id, nombre, nombreTab){
 	this.openTab(nombre||'<s:message code="expedientes.consulta.titulo" text="**Expediente" />', 'expedientes/consultaExpediente', {id : id,'nombreTab':nombreTab} , {id:'exp'+id,iconCls:'icon_expedientes'});
@@ -228,14 +229,14 @@ app.abreExpediente = function(id, nombre, nombreTab){
 };
 
 /**
- * Abre una pestaña con la información del expediente
+ * Abre una pestaï¿½a con la informaciï¿½n del expediente
  */
 app.abreContrato = function(id, nombre){
 	app.abreContratoTab(id, nombre, '');
 };
 
 /**
- * Abre una pestaña con la información del expediente
+ * Abre una pestaï¿½a con la informaciï¿½n del expediente
  */
 app.abreContratoTab = function(id, nombre, nombreTab){
 	this.openTab(nombre||'<s:message code="contrato.consulta.titulo" text="**Contrato" />', 'contratos/consultaContrato', {id : id, nombreTab:nombreTab} , {id:'cnt'+id,iconCls:'icon_contratos'});
@@ -245,7 +246,7 @@ app.abreContratoTab = function(id, nombre, nombreTab){
 
 
 /**
- * Abre una pestaña con la información del cliente
+ * Abre una pestaï¿½a con la informaciï¿½n del cliente
  */
 app.abreAsunto= function(id, nombre,tabAceptacion,acuerdos){
 	acepta = tabAceptacion?true:false;
@@ -275,7 +276,7 @@ app.abreProcedimientoTab= function(id, nombre, nombreTab){
 
 
 
-//añade a favoritos un nuevo registro
+//aï¿½ade a favoritos un nuevo registro
 app.addFavorite=function(id, nombre, tipo){
 	this.clientesFav.fireEvent('addfav', {
 		id : id
@@ -289,7 +290,7 @@ app.reloadFav=function(){
 	this.clientesFav.fireEvent('reloadFav');
 }
 /**
- * función de conveniencia para crear un StaticTextField con el label en negrita
+ * funciï¿½n de conveniencia para crear un StaticTextField con el label en negrita
  */
 app.creaLabel = function(label, value, config){
 	var config = config || {};
@@ -327,14 +328,14 @@ app.creaFieldSet = function(items, config){
 };
 
 /**
- * función de conveniencia para crear un textField
+ * funciï¿½n de conveniencia para crear un textField
  */
 app.creaText = function(name, label, value, config){
 	var cfg = config || {};
 	cfg.name = name;
 	cfg.value = value;
 	cfg.fieldLabel = label;
-	//Ya se ha hecho una copia en la primera línea del método, ¿para que copiar más?
+	//Ya se ha hecho una copia en la primera lï¿½nea del mï¿½todo, ï¿½para que copiar mï¿½s?
 	//fwk.js.copyProperties(cfg, config, ['style']);
 	
 	//margen para IE
@@ -357,7 +358,7 @@ app.creaProcedimientoText = function(name, label, value, config){
 	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';	
 	cfg.maxLength=10
 	cfg.validator = function(v) {
-      		return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : '<s:message code="genericForm.validacionProcedimiento" text="**Debe introducir 			un número con formato xxxxx/xxxx" />';
+      		return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : '<s:message code="genericForm.validacionProcedimiento" text="**Debe introducir 			un nï¿½mero con formato xxxxx/xxxx" />';
     }	
 	return new Ext.form.TextField(cfg);
 };
@@ -376,7 +377,7 @@ app.creaNumber = function(name, label, value, config){
 	}
 
 	/*
-		Ya se ha hecho una copia en la primera línea del método, ¿para que copiar más?
+		Ya se ha hecho una copia en la primera lï¿½nea del mï¿½todo, ï¿½para que copiar mï¿½s?
 		fwk.js.copyProperties(cfg, config, ['width','style','labelStyle']);
 	*/
 	return new Ext.form.NumberField(cfg);
@@ -408,7 +409,7 @@ app.creaInteger = function(name, label, value, config){
 };
 
 /*
- * función de ayuda para crear un combo. como mínimo necesitamos
+ * funciï¿½n de ayuda para crear un combo. como mï¿½nimo necesitamos
  *
  * app.creaCombo( {name : xx, data : xxx, fieldLable : xx } );
  */
@@ -439,10 +440,10 @@ app.getConfigCombo = function(config){
 	//margen para IE
 	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';
 
-	// ** Modificación para que el combo sea autocompletable **
+	// ** Modificaciï¿½n para que el combo sea autocompletable **
 	cfg.editable = true;
 	cfg.forceSelection = true;
-	// ** Modificación para que el combo sea autocompletable **
+	// ** Modificaciï¿½n para que el combo sea autocompletable **
 
 	cfg.triggerAction = 'all';
 	cfg.maxHeight = 140;
@@ -456,7 +457,7 @@ app.getConfigCombo = function(config){
 
 
 /*
- * función de ayuda para crear un combo con offset para el popup
+ * funciï¿½n de ayuda para crear un combo con offset para el popup
  *
  * app.creaComboOffset( {name : xx, data : xxx, fieldLable : xx } );
  */
@@ -474,7 +475,7 @@ app.creaComboOffset = function(config){
 * control.fromStore
 *
 * parametros
-* @label String etiqueta que acompaña al control
+* @label String etiqueta que acompaï¿½a al control
 * @data Array datos para cargar el combo
 */
 app.creaDblSelect = function(data,label, config){
@@ -512,7 +513,7 @@ app.creaDblSelect = function(data,label, config){
 	}
 
 
-	//modificación al itemSelector porque no tiene un método setValue. Si se cambia de versión se tendrá que revisar la validez de este método
+	//modificaciï¿½n al itemSelector porque no tiene un mï¿½todo setValue. Si se cambia de versiï¿½n se tendrï¿½ que revisar la validez de este mï¿½todo
 	itemSelector.setValue =  function(val) {
         if(!val) {
             return;
@@ -597,11 +598,11 @@ app.creaPanelHz = function(config, items){
 };
 
 /*
-* Crea un botón para añadir un nuevo registro, necesita los siguientes parámetros
+* Crea un botï¿½n para aï¿½adir un nuevo registro, necesita los siguientes parï¿½metros
 * @flow : el flow a llamar para la ventana de detalle
-* @title : título de la ventana de detalle, por defecto clave app.nuevoRegistro
-* @text : texto del botón, por defecto clave app.agregar
-* @params : parámetros a pasar al flow
+* @title : tï¿½tulo de la ventana de detalle, por defecto clave app.nuevoRegistro
+* @text : texto del botï¿½n, por defecto clave app.agregar
+* @params : parï¿½metros a pasar al flow
 * @success : callback a ejecutar cuando se cierra la ventana
 */
 app.crearBotonAgregar = function(config){
@@ -632,12 +633,12 @@ app.crearBotonAgregar = function(config){
 };
 
 /*
-* Crea un botón para editar un registro, necesita los siguientes parámetros
-* @grid : el grid del que obtendrá el id del registro a editar. Sólo editará si hay un registro seleccionado
+* Crea un botï¿½n para editar un registro, necesita los siguientes parï¿½metros
+* @grid : el grid del que obtendrï¿½ el id del registro a editar. Sï¿½lo editarï¿½ si hay un registro seleccionado
 * @flow : el flow a llamar para la ventana de detalle
-* @title : título de la ventana de detalle, por defecto clave app.editarRegistro
-* @text : texto del botón, por defecto clave app.agregar
-* @params : parámetros a pasar al flow
+* @title : tï¿½tulo de la ventana de detalle, por defecto clave app.editarRegistro
+* @text : texto del botï¿½n, por defecto clave app.agregar
+* @params : parï¿½metros a pasar al flow
 * @success : callback a ejecutar cuando se cierra la ventana
 */
 app.crearBotonEditar = function(config){
@@ -675,12 +676,12 @@ app.crearBotonEditar = function(config){
 };
 
 /*
-* Crea un botón para borrar un registro, necesita los siguientes parámetros
-* @grid : el grid del que obtendrá el id del registro a editar. Sólo editará si hay un registro seleccionado
+* Crea un botï¿½n para borrar un registro, necesita los siguientes parï¿½metros
+* @grid : el grid del que obtendrï¿½ el id del registro a editar. Sï¿½lo editarï¿½ si hay un registro seleccionado
 * @flow : el flow a llamar para el borrado
 * @confirmText : texto de la pregunta para borrar, por defecto app.borrarRegistro
-* @text : texto del botón, por defecto clave app.borrar
-* @params : parámetros a pasar al flow
+* @text : texto del botï¿½n, por defecto clave app.borrar
+* @params : parï¿½metros a pasar al flow
 * @success : callback a ejecutar cuando se cierra la ventana
 */
 app.crearBotonBorrar = function(config){
@@ -693,7 +694,7 @@ app.crearBotonBorrar = function(config){
 			var grid=fwk.dom.findParentPanel(this.id);
 			var rec = grid.getSelectionModel().getSelected();
 			if (rec){
-				Ext.Msg.confirm(fwk.constant.confirmar, config.confirmText || '<s:message code="app.borrarRegistro" text="**¿Seguro que desea borrar el registro?" />', this.decide, this);
+				Ext.Msg.confirm(fwk.constant.confirmar, config.confirmText || '<s:message code="app.borrarRegistro" text="**ï¿½Seguro que desea borrar el registro?" />', this.decide, this);
 			}
 		}
 		,decide : function(boton){
@@ -765,7 +766,7 @@ app.crearBotonResetCampos=function(campos){
 }
 
 /**
- * Abre una ventana con el título y contenido que se le pasa
+ * Abre una ventana con el tï¿½tulo y contenido que se le pasa
  */
 app.openWindow=function(config){
 	config = config || {};
@@ -839,7 +840,7 @@ app.openPDF=function(flow,tipo,params){
 };
 
 /**
-abre una nueva ventana del navegador con el flow y parámetros que se le pasan
+abre una nueva ventana del navegador con el flow y parï¿½metros que se le pasan
 */
 app.openBrowserWindow = function(flow, params){
 	var url=flow+'.htm';
@@ -888,7 +889,7 @@ app.crearTextArea = function(label, value, isReadOnly, labelStyle, textName,conf
 				,name: textName || ''
 			};
 		}
-		//Ya se ha hecho una copia en la primera línea del método, ¿para que copiar más?
+		//Ya se ha hecho una copia en la primera lï¿½nea del mï¿½todo, ï¿½para que copiar mï¿½s?
 		//fwk.js.copyProperties(cfg, config, ['width']);
 		return new Ext.form.TextArea(cfg);
 	}
@@ -1008,7 +1009,7 @@ app.crearABMWindowConsulta=function(page,items){
 }
 
 /*
-* crea un par de controles numéricos para introducir un mínimo y un máximo.
+* crea un par de controles numï¿½ricos para introducir un mï¿½nimo y un mï¿½ximo.
 * Ojo, que devuelve un objeto con 3 objetos dentro min/max y el panel que contiene a ambos
 */
 app.creaMinMax = function(label, name, config){
@@ -1040,7 +1041,7 @@ app.creaMinMax = function(label, name, config){
 
 
 /*
-* crea un par de controles numéricos para introducir un mínimo y un máximo.
+* crea un par de controles numï¿½ricos para introducir un mï¿½nimo y un mï¿½ximo.
 * Ojo, que devuelve un objeto con 3 objetos dentro min/max y el panel que contiene a ambos
 */
 app.creaMinMaxMoneda = function(label, name, config){
@@ -1079,7 +1080,7 @@ app.creaMinMaxMoneda = function(label, name, config){
 
 
 /*
-* crea un par de controles numéricos para introducir un mínimo y un máximo.
+* crea un par de controles numï¿½ricos para introducir un mï¿½nimo y un mï¿½ximo.
 * Ojo, que devuelve un objeto con 3 objetos dentro min/max y el panel que contiene a ambos
 */
 app.creaMinMaxPorcentaje = function(label, name, config){
@@ -1164,15 +1165,15 @@ app.creaMoneda = function(name, label, value, config){
 	}
 
 	/*
-		Ya se ha hecho una copia en la primera línea del método, ¿para que copiar más?
+		Ya se ha hecho una copia en la primera lï¿½nea del mï¿½todo, ï¿½para que copiar mï¿½s?
 		fwk.js.copyProperties(cfg, config, ['width','style','labelStyle']);
 	*/
-	// Por ahora dejamos comentado el MoneyField porque la mascara es engañosa
+	// Por ahora dejamos comentado el MoneyField porque la mascara es engaï¿½osa
 	//return new Ext.ux.MoneyField(cfg);
 	return new Ext.form.NumberField(cfg);
 };
 /*
-* función que verifica si el usuario logueado
+* funciï¿½n que verifica si el usuario logueado
 * tiene un perfil de gestor determinado.
 */
 function permisosVisibilidadGestorSupervisor(perfilGestor){
@@ -1235,7 +1236,7 @@ Ext.ToolTip.prototype.onMouseMove =
 app.crearGrid=	function(myStore,columnModel, config){
 		config = config || {};
 
-		//añado tooltips a las columnas (sólo si tienen header)
+		//aï¿½ado tooltips a las columnas (sï¿½lo si tienen header)
 		var ccfg = columnModel.config;
 		for(var i=0;i < ccfg.length;i++){
 			if (ccfg[i].header){
@@ -1346,7 +1347,7 @@ app.crearGrid=	function(myStore,columnModel, config){
 app.crearEditorGrid=	function(myStore,columnModel, config){
 		config = config || {};
 
-		//añado tooltips a las columnas (sólo si tienen header)
+		//aï¿½ado tooltips a las columnas (sï¿½lo si tienen header)
 		var ccfg = columnModel.config;
 		for(var i=0;i < ccfg.length;i++){
 			if (ccfg[i].header){
@@ -1557,7 +1558,7 @@ app.crearRangoFechasPanel=function(cfg){
  * Ventana Modal simil a un Ext.Msg.prompt
  * @param {Object} title
  * @param {Object} msg
- * @return (Object) handler: recibe parametros btn: el nombre del boton que se pulsó (ok,cancelar),y text:el texto ingresado
+ * @return (Object) handler: recibe parametros btn: el nombre del boton que se pulsï¿½ (ok,cancelar),y text:el texto ingresado
  */
 app.prompt=function(title,msg,handler){
 	var texto=new Ext.form.TextArea({width:590
@@ -1616,7 +1617,7 @@ app.prompt=function(title,msg,handler){
  * Ventana Modal simil a un app.prompt pero con tipo de input password
  * @param {Object} title
  * @param {Object} msg
- * @return (Object) handler: recibe parametros btn: el nombre del boton que se pulsó (ok,cancelar),y text:el texto ingresado
+ * @return (Object) handler: recibe parametros btn: el nombre del boton que se pulsï¿½ (ok,cancelar),y text:el texto ingresado
  */
 app.promptPw=function(title,msg,handler){
     var p = app.creaText('p','Password','',

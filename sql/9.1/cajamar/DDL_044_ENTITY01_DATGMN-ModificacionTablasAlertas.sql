@@ -23,11 +23,13 @@ DECLARE
  V_ESQUEMA VARCHAR(25) := 'CM01';
  V_ESQUEMA_M VARCHAR(25) := 'CMMASTER'; 
  TABLA1 VARCHAR(30) := 'TMP_ALE_ALERTAS_REJECTS';
+ TABLA2 VARCHAR(30) := 'ALE_ALERTAS'; 
  TABLE_SPACE VARCHAR(25)  := 'DRECOVERYONL8M';
  
  err_num NUMBER;
  err_msg VARCHAR2(2048); 
  V_MSQL1 VARCHAR2(1500 CHAR);
+ V_MSQL2 VARCHAR2(1500 CHAR); 
  V_EXISTE NUMBER (1):=null;
 
 
@@ -57,9 +59,27 @@ BEGIN
               PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
               TABLESPACE '||TABLE_SPACE||' ';
 
-                               
+
+  V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA2||'  ADD
+             (
+               ALE_CHAR_EXTRA1 VARCHAR2(50 BYTE), 
+               ALE_CHAR_EXTRA2 VARCHAR2(50 BYTE), 
+               ALE_FLAG_EXTRA1 VARCHAR2(1 BYTE), 
+               ALE_FLAG_EXTRA2 VARCHAR2(1 BYTE), 
+               ALE_DATE_EXTRA1 DATE, 
+               ALE_DATE_EXTRA2 DATE, 
+               ALE_DATE_EXTRA3 DATE, 
+               ALE_NUM_EXTRA1 NUMBER(14,2), 
+               ALE_NUM_EXTRA2 NUMBER(14,2), 
+               ALE_NUM_EXTRA3 NUMBER(14,2)
+            )';              
+              
          EXECUTE IMMEDIATE V_MSQL1;
-         DBMS_OUTPUT.PUT_LINE(''||TABLA1||' Modificada');
+         DBMS_OUTPUT.PUT_LINE(''||TABLA1||' Creada');
+                  
+         
+         EXECUTE IMMEDIATE V_MSQL2;
+         DBMS_OUTPUT.PUT_LINE(''||TABLA2||' Modificada');         
          
 EXCEPTION
 WHEN OTHERS THEN  

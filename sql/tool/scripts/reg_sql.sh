@@ -114,6 +114,19 @@ do
     CADENAS_SUSTITUCION="$CADENAS_SUSTITUCION""$CADENA "
 done
 
+executionFile=""
+if [[ $NOMBRE_SCRIPT =~ ^DML ]]; then
+    executionFile=$BASEDIR/DML-scripts.sh
+else
+    executionFile=$BASEDIR/DDL-scripts.sh
+fi
+executionPass=""
+if [[ $ESQUEMA_EJECUCION =~ MASTER$ ]]; then
+    executionPass="\$1"
+else
+    executionPass="\$$((${ESQUEMA_EJECUCION: -1} + 1))"
+fi
+
 #Invocar PASO1
 export PASO1=reg1.sql
 sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO1}" > $BASEDIR/${FECHA_CREACION}-${PASO1}
@@ -131,19 +144,6 @@ else
     cp $BASEDIR/${FECHA_CREACION}-${PASO1} $BASEDIR/DDL_000_$ESQUEMA_REGISTRO.sql
 fi
 
-executionFile=""
-if [[ $NOMBRE_SCRIPT =~ ^DML ]]; then
-    executionFile=$BASEDIR/DML-scripts.sh
-else
-    executionFile=$BASEDIR/DDL-scripts.sh
-fi
-executionPass=""
-if [[ $ESQUEMA_EJECUCION =~ MASTER$ ]]; then
-    executionPass="\$1"
-else
-    executionPass="\$$((${ESQUEMA_EJECUCION: -1} + 1))"
-fi
-
 #Invocar PASO2
 export PASO2=reg2.sql
 cat "$BASEDIR/${PASO2}" > $BASEDIR/${nombreSinExt}-${PASO2}
@@ -154,7 +154,7 @@ if [[ $PACKAGE == 0 ]]; then
     exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null
     export RESULTADO=$?
 else
-    echo "sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION" >> $executionFile
+    echo "exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION" >> $executionFile
     echo 'export RESULTADO=$?' >> $executionFile
 fi
 if [[ $PACKAGE == 0 ]]; then
@@ -202,7 +202,7 @@ fi
 if [[ $PACKAGE == 0 ]]; then
     exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO3} "$NOMBRE_SCRIPT" "$ESQUEMA_EJECUCION" "$AUTOR" "$ARTEFACTO" "$VERSION_ARTEFACTO" "$FECHA_CREACION" "$INCIDENCIA_LINK" "$PRODUCTO" >> $BASEDIR/$nombreLog
 else
-    echo "  sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO3} \"$NOMBRE_SCRIPT\" \"$ESQUEMA_EJECUCION\" \"$AUTOR\" \"$ARTEFACTO\"  \"$VERSION_ARTEFACTO\" \"$FECHA_CREACION\" \"$INCIDENCIA_LINK\" \"$PRODUCTO\"" >> $executionFile
+    echo "  exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO3} \"$NOMBRE_SCRIPT\" \"$ESQUEMA_EJECUCION\" \"$AUTOR\" \"$ARTEFACTO\"  \"$VERSION_ARTEFACTO\" \"$FECHA_CREACION\" \"$INCIDENCIA_LINK\" \"$PRODUCTO\"" >> $executionFile
 fi
 
 #Ejecución del script en sí mismo
@@ -215,7 +215,7 @@ if [[ $PACKAGE == 0 ]]; then
     exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-reg3.1.sql >> $BASEDIR/$nombreLog
     export RESULTADO=$?
 else
-    echo "  sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-reg3.1.sql > ${nombreSinExt}.log" >> $executionFile
+    echo "  exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-reg3.1.sql > ${nombreSinExt}.log" >> $executionFile
     echo '  export RESULTADO=$?' >> $executionFile
 fi
 
@@ -266,11 +266,11 @@ if [[ $PACKAGE == 0 ]]; then
     exit $RESULTADO
 else
     echo '  if [ $RESULTADO != 0 ] ; then' >> $executionFile
-    echo "      sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"KO\" \"$RESULTADO\"" >> $executionFile
+    echo "      exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"KO\" \"$RESULTADO\"" >> $executionFile
     echo "      echo \"@KO@: $NOMBRE_SCRIPT\"" >> $executionFile
     echo "      exit 1" >> $executionFile
     echo '  else' >> $executionFile
-    echo "      sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"OK\" \"$RESULTADO\"" >> $executionFile
+    echo "      exit | sqlplus -s -l $ESQUEMA_REGISTRO/\$2 @./scripts/${nombreSinExt}-${PASO4} \"$NOMBRE_SCRIPT\" \"$FECHA_CREACION\" \"$ESQUEMA_EJECUCION\" \"OK\" \"$RESULTADO\"" >> $executionFile
     echo "      echo \" OK : $NOMBRE_SCRIPT\"" >> $executionFile
     echo '  fi' >> $executionFile
     echo 'fi' >> $executionFile

@@ -9,7 +9,6 @@
     <property name="transactionManager" ref="entityTransactionManager"/>
     <property name="steps">
       <list>
-        <!-- Se deja este job vacío, se puede ver el contenido previo en pasajePCRProduccionJob.xml.old -->
       </list>
     </property>
   </bean>

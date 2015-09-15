@@ -159,11 +159,19 @@ BEGIN
 	/* ------------------- --------------------------------- */
 	/* --------------  ACTUALIZACIONES TAREAS--------------- */
 	/* ------------------- --------------------------------- */
+	
+	 V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET TAP_SCRIPT_VALIDACION = ''comprobarMinimoBienLote() ? (comprobarBienesSolitudSubasta() ? (comprobarExisteDocumentoESRAS() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Edicto de subasta y resoluci&oacute;n acordando se&ntilde;alamiento</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Se deben cumplimentar los datos de cargas, vivienda habitual y situaci&oacute,n posesoria de todos los bienes incluidos en la subasta</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Al menos un bien debe estar asignado a un lote</div>''''  '' ' ||
+			  ' WHERE TAP_CODIGO = ''H003_SenyalamientoSubasta''';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_SenyalamientoSubasta actualizada.');
     
      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
 			  ' SET DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''SSUBC'')' ||
 	          ' ,DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''849'')' ||
-			  ' WHERE TAP_CODIGO = ''H003_ActualizarTasacion''';
+			  ' ,TAP_SCRIPT_VALIDACION = ''comprobarBienesTasacion() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe informar los campos "Fecha valor tasaci&oacute;n" y "valor tasaci&oacute;n" en la pesta&ntilde;a del bien, por cada bien de la subasta</div>'''' '' ' ||
+	          ' WHERE TAP_CODIGO = ''H003_ActualizarTasacion''';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_ActualizarTasacion actualizada.');
@@ -305,9 +313,32 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_ValidarInformeDeSubastaYPrepararCuadroDePujas actualizada.');
     
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_LABEL = ''Necesario actualizar Nota Simple'' ' ||
+			  ' WHERE TFI_NOMBRE = ''comboNotaSimple'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H003_ValidarInformeDeSubastaYPrepararCuadroDePujas'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_ValidarInformeDeSubastaYPrepararCuadroDePujas actualizada.');
+    
      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 			  ' SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea, el gestor de Soporte Deuda deber&aacute; cumplimentar los datos econ&oacute;micos de la subasta.</p><p style="margin-bottom: 10px; margin-left: 40px;">- Si la propuesta de Subasta es Delegada, debe cumplimentar los datos economicos desde el informe de subasta. Este informe lo podr&aacute; descargar desde la pesta&ntilde;a de Adjuntos de la actuaci&oacute;n y rellenar el apartado de datos economicos y una vez cumplimentados volver a adjuntar el inform de subasta.</p><p style="margin-bottom: 10px; margin-left: 40px;">- Si la propuesta de Subasta es No Delegada, debe cumplimentar la carga de activos del Workflow. Para ello, deber&aacute; descargar la plantilla de workflow de la pesta&ntilde;a de Adjuntos de la actuaci&oacute;n, cumplimentar los datos relativos a la carga de activos y volver a adjuntar  la plantilla a Recovery.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en este punto.</p></div>''' ||
 			  ' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H003_CumplimentarParteEconomica'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_CumplimentarParteEconomica actualizada.');
+         
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_VALIDACION = null ' ||
+			  ' ,TFI_ERROR_VALIDACION = null ' ||
+			  ' WHERE TFI_NOMBRE = ''comboDelegada'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H003_CumplimentarParteEconomica'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_CumplimentarParteEconomica actualizada.');
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_VALIDACION = null ' ||
+			  ' ,TFI_ERROR_VALIDACION = null ' ||
+			  ' WHERE TFI_NOMBRE = ''numPropuestaSareb'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H003_CumplimentarParteEconomica'')';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_CumplimentarParteEconomica actualizada.');

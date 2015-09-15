@@ -59,10 +59,8 @@
 	</bean> 
 	<bean id="crearExpedienteActionHandler" class="es.pfsgroup.procedimientos.PROCrearExpedienteActionHandler">
 	</bean>
-	<!--
-	<bean id="decisionComiteAutomaticaActionHandler" class="es.pfsgroup.procedimientos.PRODecisionComiteAutomaticaActionHandler" scope="prototype">
-	</bean>
-	-->
+	<bean id="decisionComiteAutomaticaActionHandler" class="es.pfsgroup.procedimientos.PRODecisionComiteAutomaticaActionHandler">
+	</bean>	
 	<bean id="desicionComiteActionHandler" class="es.pfsgroup.procedimientos.PRODesicionComiteActionHandler">
 	</bean>
 	<bean id="devolverCompletarActionHandler" class="es.pfsgroup.procedimientos.PRODevolverCompletarActionHandler">

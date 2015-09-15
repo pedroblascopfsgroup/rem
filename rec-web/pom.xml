@@ -453,6 +453,18 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-arquetipos-plugin</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
 			<groupId>es.pfs</groupId>
 			<artifactId>pfs-rec-core</artifactId>
 			<type>jar</type>

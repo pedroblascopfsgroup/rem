@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="idContrato" type="java.lang.Long"/>
+	<input name="idPersona" type="java.lang.Long"/>
+	<input name="idExpediente" type="java.lang.Long"/>
+	<input name="isGestor" type="java.lang.Boolean"/>
+	<input name="isSupervisor" type="java.lang.Boolean"/>
+	<input name="proponer" type="java.lang.Boolean"/>
+	<input name="idArquetipo" type="java.lang.Long"/>
+
+	<decision-state id="newOrEdit">
+		<if test="idExpediente==null" then="crearExpedienteManual" else="obtenerExpedienteManual"/>
+	</decision-state>
+
+	<action-state id="crearExpedienteManual">
+			<evaluate expression="executor.execute('expedienteManager.crearExpedienteManualArq', idPersona, idContrato, idArquetipo)" result="flowScope.expediente"/>
+			<transition to="formulario" />
+	</action-state>
+	
+	<action-state id="obtenerExpedienteManual">
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"/>
+			<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}">
+
+    	<on-entry>
+    		<evaluate expression="executor.execute('dictionaryManager.getList', 'DDMotivoExpedienteManual')" result="flowScope.motivos"/>
+    		<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona"/>
+    		<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', expediente.id)" result="flowScope.propuesta"/>
+    		<set name="flowScope.idArquetipo" value="idArquetipo" />
+			<set name="flowScope.view" value="'expedientes/creacionExpediente_2'" />
+
+    	</on-entry>
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default' -->
+			<set name="flowScope.view" value="'default'"/>
+		</on-render>
+		<!--
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="cancelar"/>
+		-->
+		<transition to="close" />
+    </view-state>
+
+	<action-state id="cancelar">
+		<!--
+    	<evaluate expression="executor.execute('expedienteManager.cancelacionExp', expediente.id, false)" />
+    	-->
+		<transition to="close" />
+	</action-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

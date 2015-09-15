@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+	
+	<!-- renderiza el formulario -->
+    <end-state id="listado" view="plugin/comites/buscaComites" >
+	    <secured attributes="ROLE_CONFCOMITE" match="any" />
+		<on-entry>
+			<!-- <evaluate expression="executor.execute('plugin.comites.zona.listaZonas')" result="flowScope.zonas" /> -->
+			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+	 		<evaluate expression="executor.execute('plugin.comites.itinerario.listaItinerarios')" result="flowScope.itinerarios" />
+	 		<evaluate expression="executor.execute('plugin.comites.perfil.listaPerfiles')" result="flowScope.perfiles" />
+	 		<evaluate expression="executor.execute('plugin.comites.web.buttons.right')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('plugin.comites.web.buttons.left')" result="flowScope.buttonsLeft"/>
+	 	</on-entry>
+		
+    </end-state> 	
+    
+</flow>

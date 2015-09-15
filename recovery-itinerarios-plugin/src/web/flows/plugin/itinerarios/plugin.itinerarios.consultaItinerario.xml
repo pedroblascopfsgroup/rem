@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<input name="id" type="java.lang.Long"/>
+
+	<end-state id="listado" view="plugin/itinerarios/consultarItinerario">
+		<secured attributes="ROLE_CONFITI" match="any" />
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.itinerarios.itinerario.getItinerario',id)" result="flowScope.itinerario"/> 
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getTelecobroItinerario',id)" result="flowScope.telecobro"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getTelecobroItinerarioSiNo',id)" result="flowScope.siNo"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getDCA',id)" result="flowScope.dca"/> 
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getDCASiNo',id)" result="flowScope.dcaSiNo"/>		 
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getAutoRESiNo',id)" result="flowScope.reSiNo"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getAutoCESiNo',id)" result="flowScope.ceSiNo"/> 
+			 
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getEstadoCompletarExpediente',id)" result="flowScope.estadoCE"/> 
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getEstadoRevisarExpediente',id)" result="flowScope.estadoRE"/>
+			
+			<evaluate expression="executor.execute('plugin.itinerarios.estado.getReglasConsensoCE',id)" result="flowScope.reglaConsensoCE"/> 
+			<evaluate expression="executor.execute('plugin.itinerarios.estado.getReglasConsensoRE',id)" result="flowScope.reglaConsensoRE"/> 
+			
+			<evaluate expression="executor.execute('plugin.itinerarios.estado.getReglasExclusionCE',id)" result="flowScope.reglasExclusionCE"/> 
+			<evaluate expression="executor.execute('plugin.itinerarios.estado.getReglasExclusionRE',id)" result="flowScope.reglasExclusionRE"/> 
+			 <!-- -->      
+			 
+		</on-entry>
+	</end-state>
+</flow>
+
+

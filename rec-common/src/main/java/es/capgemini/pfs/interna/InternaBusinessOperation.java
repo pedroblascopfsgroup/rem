@@ -57,7 +57,9 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_CREAR_DATOS_PARA_DECISION_COMITE_AUTO = "expedienteManager.crearDatosParaDecisionComiteAutomatica";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_AUTO = "expedienteManager.crearExpedienteAutomatico";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL = "expedienteManager.crearExpedienteManual";
+    public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_ARQ = "expedienteManager.crearExpedienteManualArq";
     public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO = "expedienteManager.crearExpedienteManualSeg";
+    public static final String BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO_ARQ = "expedienteManager.crearExpedienteManualSegArq";
     public static final String BO_EXP_MGR_DELETE_ADJUNTO = "expedienteManager.deleteAdjunto";
     public static final String BO_EXP_MGR_DESCONGELAR_EXPEDIENTE = "expedienteManager.desCongelarExpediente";
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_COMPLETAR = "expedienteManager.devolverExpedienteACompletar";
@@ -112,6 +114,8 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_GET_PERSONAS_POLITICAS_DEL_EXPEDIENTE = "expedienteManager.getPersonasPoliticasDelExpediente";
 	public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO = "expedienteManager.findExpedientesPaginatedDinamico";
 	public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
+	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_SEGUIMIENTO = "expedienteManager.tieneExpedienteSeguimiento";
+	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_RECUPERACION = "expedienteManager.tieneExpedienteRecuperacion";
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/
@@ -134,6 +138,7 @@ public final class InternaBusinessOperation {
     public static final String BO_POL_MGR_CANCELAR_POLITICA = "politicaManager.cancelarPolitica";
     public static final String BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS = "politicaManager.deshacerUltimasPoliticas";
     public static final String BO_POL_MGR_BUSCAR_POLITICAS_PARA_PERSONA_EXP = "politicaManager.buscarPoliticasParaPersonaExpediente";
+    public static final String BO_POL_MGR_GET_TIPOS_POLITICA = "politicaManager.getTiposPolitica";
 
     /*****************************************************************************
      ** ObjetivoManager.

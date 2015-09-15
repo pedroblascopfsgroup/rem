@@ -43,7 +43,6 @@ public class CrearExpedienteActionHandler extends JbpmActionHandler implements E
         //Invocar a la creación del expediente
         Long idBPMExpediente = executionContext.getProcessInstance().getId();
         logger.debug("Id de proceso creado: " + idBPMExpediente);
-
         Long idContrato = (Long) executionContext.getVariable(CONTRATO_ID);
         Long idBPMCliente = (Long) executionContext.getVariable(IDBPMCLIENTE);
         Long idArquetipo = (Long) executionContext.getVariable(ARQUETIPO_ID);

@@ -56,13 +56,13 @@ public class DataContainerPayloadService<T extends DataContainerPayload> {
 			transactionManager.commit(transaction);
 			doAfterCommit(message);
 		} catch (IntegrationDataException ex) {
-			doOnError(message, ex);
-			transactionManager.rollback(transaction);
 			logger.error("[INTEGRACION] Error de datos en consumer integración.", ex);
-		} catch (Exception ex) {
-			doOnError(message, ex);
 			transactionManager.rollback(transaction);
+			doOnError(message, ex);
+		} catch (Exception ex) {
 			logger.error("[INTEGRACION] Error ejecutando consumer integración.", ex);
+			transactionManager.rollback(transaction);
+			doOnError(message, ex);
 		}
 		return message;
 	}

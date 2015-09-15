@@ -18,10 +18,7 @@
 				recovery-api-plugin
 				recovery-ayuda-plugin
 				recovery-burofax-plugin
-				recovery-comites-plugin
 				recovery-diccionarios-plugin
-				recovery-editor-plugin
-				recovery-itinerarios-plugin
 				recovery-liquidaciones-plugin
 				recovery-plazasJuzgados-plugin
 				recovery-plazosExterna-plugin
@@ -30,11 +27,9 @@
 			-->
 
 		<!-- OTROS -->
-		<editor.version>1.0.1-rc-01</editor.version>
 		<diccionarios.version>1.0.2_rc2</diccionarios.version>
 		<plugin.ayuda.version>1.2.0_rc2</plugin.ayuda.version>
 		<plugin.burofax.version>1.1.0</plugin.burofax.version>
-		<plugin.comites.version>1.2.0-rc-01</plugin.comites.version>
 		<plugin.liquidaciones.version>2.0.2</plugin.liquidaciones.version>
 		<plugin.plazasJuzgados.version>1.2.0-rc-01</plugin.plazasJuzgados.version>
 		<plugin.plazosExterna.version>1.1.0</plugin.plazosExterna.version>
@@ -51,10 +46,6 @@
 		<repository>
 			<id>pfsNexusFramework</id>
 			<url>http://192.168.0.16:8081/nexus/content/repositories/framework</url>
-		</repository>
-		<repository>
-			<id>pfsrepo</id>
-			<url>http://interecovery.pfsgroup.es:8086</url>
 		</repository>
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>
@@ -170,7 +161,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-comites-plugin</artifactId>
-				<version>${plugin.comites.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -185,7 +176,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-itinerarios-plugin</artifactId>
-				<version>1.3.0-rc-01</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -295,7 +286,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-editor-plugin</artifactId>
-				<version>${editor.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -330,6 +321,11 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-precontencioso-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-arquetipos-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -496,7 +492,7 @@
 		<module>recovery-panelcontrol-plugin</module>
 		<module>recovery-geninformes-plugin</module>
 		<module>recovery-bpmframework-plugin</module>
-		<!--module>recovery-itinerarios-plugin</module-->
+		<module>recovery-itinerarios-plugin</module>
 		<module>recovery-mejoras-plugin</module>
 		<module>recovery-calendario-plugin</module>
 		<module>recovery-nuevoModeloBienesCommon-plugin</module>
@@ -514,7 +510,13 @@
 		<module>recovery-cambiosMasivosAsunto-plugin</module>
 		<module>recovery-recobro-bpm</module>
 		<module>recovery-controlcalidad-plugin</module>
+<<<<<<< HEAD
 		<module>recovery-precontencioso-plugin</module>
+=======
+		<module>recovery-comites-plugin</module>
+		<module>recovery-editor-plugin</module>
+		<module>recovery-arquetipos-plugin</module>				
+>>>>>>> origin/haya-fusion
 	</modules>
 
 	<profiles>

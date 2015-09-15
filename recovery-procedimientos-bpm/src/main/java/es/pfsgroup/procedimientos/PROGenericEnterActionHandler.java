@@ -86,7 +86,7 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 			generaTransicionesAutomaticas(executionContext);
 			
 			Long idTarea = procesarTarea(executionContext);
-			
+
 			generarTimerTareaProcedimiento(idTarea, executionContext);
 
 			TareaExterna tareaExterna = tareaExternaManager.get(idTarea);
@@ -96,15 +96,15 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 				// No se quiere ver la tarea de lanzado un BPM externo
 				tareaExternaManager.borrar(tareaExterna);
 			}
-
+			
+			// Sincroniza con el envío de tareas.
+			bpmIntegrationService.notificaInicioTarea(tareaExterna);
+			
 			generaTrancisionesDeAlerta(executionContext); // Necesita de la
 															// fecha de
 															// vencimiento de la
 															// tarea
 			//generaTransicionRetrasar(executionContext);
-			
-			// Sincroniza con el envío de tareas.
-			bpmIntegrationService.notificaInicioTarea(tareaExterna);
 		}
 
 		// Llamamos al nodo gen�rico de transici�n

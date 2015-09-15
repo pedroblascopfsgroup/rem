@@ -1203,10 +1203,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     	for(Expediente e: expedientes){
     		Arquetipo arquetipo = e.getArquetipo();
     		
-    		if(arquetipo !=null 
-    				&& arquetipo.getItinerario()!=null 
-    				&& arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
-    				&& !e.getEstaCancelado()){
+    		//Si el arquetipo del expediente es de seguimiento
+    		//y
+    		//el expediente esta (Activo/Bloqueado/Congelado)
+    		if(arquetipo !=null && arquetipo.getItinerario()!=null && arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
+    				&& (e.getEstaEstadoActivo() || e.getEstaBloqueado() || e.getEstaCongelado())) {
     			resultado = true;
     			break;
     		}
@@ -1231,10 +1232,13 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     	for(Expediente e: expedientes){
     		Arquetipo arquetipo = e.getArquetipo();
     		
+    		//Si el arquetipo del expediente es de recuperacion
+    		//y
+    		//el expediente esta (Activo/Bloqueado/Congelado)    		
     		if(arquetipo !=null 
     				&& arquetipo.getItinerario()!=null 
     				&& arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()
-    				&& !e.getEstaCancelado()){
+    				&& (e.getEstaEstadoActivo() || e.getEstaBloqueado() || e.getEstaCongelado())) {
     			resultado = true;
     			break;
     		}

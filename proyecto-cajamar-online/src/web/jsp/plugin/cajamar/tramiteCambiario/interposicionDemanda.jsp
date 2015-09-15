@@ -6,8 +6,6 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <fwk:page>
 
-debugger;
-
 array = [];
 array['uno']=1;
 array['dos']=2;
@@ -234,7 +232,8 @@ var comboPlaza = new Ext.form.ComboBox ({
 	resizable: true,
 	pageSize: 10,
 	triggerAction: 'all',
-	mode: 'local'
+	mode: 'local',
+	disabled: isDisable
 });	
 
 Ext.onReady(function() {

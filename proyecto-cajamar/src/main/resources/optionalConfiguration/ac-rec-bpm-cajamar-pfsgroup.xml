@@ -300,6 +300,12 @@
 					def bpmManager = ctx.getBean("BPMManager");
 					return bpmManager.existenCreditosContingentes(idProcedimiento);
 				}
+				
+				def cuentaCreditosInsinuados = {
+               		def concursoManager = ctx.getBean("concursoManager");
+               		
+               		return String.valueOf(concursoManager.dameCreditosInsinuados(idProcedimiento).size());
+            	}
   			 ]]>
   			</value>
   		</list>

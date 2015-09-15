@@ -4,6 +4,8 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
@@ -26,6 +28,7 @@ import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 
 	public static final String PROPIEDAD_INTEGRACION_ACTIVA = "integracion.activa";
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired(required=false)
 	private NotificarEventosBPMGateway notificacionGateway;
@@ -53,16 +56,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío notificaTarea...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.notificaTarea(tareaNotificacion, TIPO_TAREA_NOTIFICACION, DbIdContextHolder.getDbSchema());		
+	    			logger.info("[INTEGRACION] Enviado notificaTarea!!!");
 	    		}
 			});
     	} else {
 			notificacionGateway.notificaTarea(tareaNotificacion, TIPO_TAREA_NOTIFICACION, DbIdContextHolder.getDbSchema());		
+			logger.info("[INTEGRACION] Enviado notificaTarea!!!");
     	}
 	}
 
@@ -71,16 +77,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío notificaInicioTarea...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.inicioTarea(tareaExterna, TIPO_INICIO_TAREA, DbIdContextHolder.getDbSchema());		
+	    			logger.info("[INTEGRACION] Enviado notificaInicioTarea!!!");
 	    		}    		
 			});
     	} else {
     		notificacionGateway.inicioTarea(tareaExterna, TIPO_INICIO_TAREA, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado notificaInicioTarea!!!");
     	}
     }
     
@@ -88,17 +97,20 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}	
+    	logger.info("[INTEGRACION] Preparando para envío notificaFinTarea...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.finTarea(tareaExterna, TIPO_FINALIZACION_TAREA, DbIdContextHolder.getDbSchema(), transicion);		
+	    			logger.info("[INTEGRACION] Enviado notificaFinTarea!!!");
 	    		}
 	    		
 			});
     	} else {
     		notificacionGateway.finTarea(tareaExterna, TIPO_FINALIZACION_TAREA, DbIdContextHolder.getDbSchema(), transicion);
+			logger.info("[INTEGRACION] Enviado notificaFinTarea!!!");
     	}
     }
 
@@ -107,16 +119,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío notificaCancelarTarea...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.cancelacionTarea(tareaExterna, TIPO_CANCELACION_TAREA, DbIdContextHolder.getDbSchema());		
+	    			logger.info("[INTEGRACION] Enviado notificaCancelarTarea!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.cancelacionTarea(tareaExterna, TIPO_CANCELACION_TAREA, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado notificaCancelarTarea!!!");
     	}
 	}
 
@@ -125,16 +140,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío notificaFinBPM...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.finBPM(procedimiento, TIPO_FIN_BPM, DbIdContextHolder.getDbSchema(), tarGuidOrigen, transicion);
+	    			logger.info("[INTEGRACION] Enviado notificaFinBPM!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.finBPM(procedimiento, TIPO_FIN_BPM, DbIdContextHolder.getDbSchema(), tarGuidOrigen, transicion);
+			logger.info("[INTEGRACION] Enviado notificaFinBPM!!!");
     	}
 	}
 
@@ -143,16 +161,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío notificaParalizarTarea...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.paralizarTarea(tareaExterna, TIPO_PARALIZAR_TAREA, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado notificaParalizarTarea!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.paralizarTarea(tareaExterna, TIPO_PARALIZAR_TAREA, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado notificaParalizarTarea!!!");
     	}
 	}
 
@@ -161,16 +182,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío notificaActivarTarea...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.activarTarea(tareaExterna, TIPO_ACTIVAR_TAREA, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado notificaActivarTarea!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.activarTarea(tareaExterna, TIPO_ACTIVAR_TAREA, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado notificaActivarTarea!!!");
     	}
 	}
 
@@ -179,16 +203,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío finalizarBPM...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado finalizarBPM!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.finalizarBPM(procedimiento, TIPO_FINALIZAR_BPM, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado finalizarBPM!!!");
     	}
 	}
 
@@ -197,16 +224,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío paralizarBPM...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado paralizarBPM!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado paralizarBPM!!!");
     	}
     	
 	}
@@ -216,16 +246,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío activarBPM...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado activarBPM!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.finalizarBPM(procedimiento, TIPO_ACTIVAR_BPM, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado activarBPM!!!");
     	}
 	}
 
@@ -234,16 +267,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío enviarDatos-Recurso...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	        		notificacionGateway.enviar(recurso, TIPO_DATOS_RECURSO, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado enviarDatos-Recurso!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.enviar(recurso, TIPO_DATOS_RECURSO, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado enviarDatos-Recurso!!!");
     	}
     }
 
@@ -252,16 +288,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío enviarDatos-Subasta...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.enviar(subasta, TIPO_DATOS_SUBASTA, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado enviarDatos-Subasta!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.enviar(subasta, TIPO_DATOS_SUBASTA, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado enviarDatos-Subasta!!!");
     	}
 	}
 	
@@ -270,16 +309,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío enviarDatos-Acuerdo...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.enviar(acuerdo, TIPO_DATOS_ACUERDO, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.enviar(acuerdo, TIPO_DATOS_ACUERDO, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo!!!");
     	}
 	}
 
@@ -288,16 +330,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío cambioEstado-Acuerdo...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.enviar(acuerdo, String.format("%s-%s", TIPO_DATOS_ACUERDO, acuerdo.getEstadoAcuerdo().getCodigo()), DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado cambioEstado-Acuerdo!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.enviar(acuerdo, String.format("%s-%s", TIPO_DATOS_ACUERDO, acuerdo.getEstadoAcuerdo().getCodigo()), DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado cambioEstado-Acuerdo!!!");
     	}
 	}
 	
@@ -306,16 +351,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío enviarDatos-Acuerdo-Actuaciones-Realizadas...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.enviar(actuacionRealizada, TIPO_DATOS_ACUERDO_ACT_REALIZAR, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo-Actuaciones-Realizadas!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.enviar(actuacionRealizada, TIPO_DATOS_ACUERDO_ACT_REALIZAR, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo-Actuaciones-Realizadas!!!");
     	}
 	}
 
@@ -324,16 +372,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío enviarDatos-Acuerdo-Actuaciones-Explorar...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.enviar(actuacionAExplorar, TIPO_DATOS_ACUERDO_ACT_A_EXP, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo-Actuaciones-Explorar!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.enviar(actuacionAExplorar, TIPO_DATOS_ACUERDO_ACT_A_EXP, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo-Actuaciones-Explorar!!!");
     	}
 	}
 
@@ -342,16 +393,19 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
+    	logger.info("[INTEGRACION] Preparando para envío enviarDatos-Acuerdo-Termino...");
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
 	    			notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO, DbIdContextHolder.getDbSchema());
+	    			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo-Actuaciones-Termino!!!");
 	    		}
 			});
     	} else {
     		notificacionGateway.enviar(terminoAcuerdo, TIPO_DATOS_ACUERDO_TERMINO, DbIdContextHolder.getDbSchema());
+			logger.info("[INTEGRACION] Enviado enviarDatos-Acuerdo-Actuaciones-Termino!!!");
     	}
 	}
 

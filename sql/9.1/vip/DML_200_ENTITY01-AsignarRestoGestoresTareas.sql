@@ -31,7 +31,7 @@ DECLARE
     TYPE T_ARRAY_TFA IS TABLE OF T_TIPO_VALOR;
     V_TIPO_VALOR T_ARRAY_TFA := T_ARRAY_TFA(
 
-	T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
+T_TIPO_VALOR('HC103','HC103_SolicitarProvision','CJ-814','GCONPR')
 ,T_TIPO_VALOR('HC103','HC103_RevisarSolicitud','CJ-811','CJ-SAREO')
 ,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudFondos','TGCON','GCONPR')
 ,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudInsc','TGCON','GCONPR')
@@ -281,8 +281,8 @@ DECLARE
 ,T_TIPO_VALOR('H002','H002_BPMTramiteSubasta','CJ-814','GCONGE')
 ,T_TIPO_VALOR('H002','H002_BPMTramiteCesionRemate','CJ-814','GCONGE')
 ,T_TIPO_VALOR('H002','H002_BPMTramiteAdjudicacion','CJ-814','GCONGE')
-,T_TIPO_VALOR('H002','H002_SuspenderDecision','CJ-814','GCONGE')
-,T_TIPO_VALOR('H002','H002_CelebracionDecision','CJ-814','GCONGE')
+,T_TIPO_VALOR('H002','H002_SuspenderDecision','CJ-819','')
+,T_TIPO_VALOR('H002','H002_CelebracionDecision','CJ-819','')
 ,T_TIPO_VALOR('HC100','HC100_ComunicarCalculoDeudaAFecha','CJ-814','GCONGE')
 ,T_TIPO_VALOR('HC100','HC100_RealizarCalculoDeuda','CJ-814','GCONGE')
 ,T_TIPO_VALOR('HC100','HC100_RegistrarPeticionCalculoDeuda','CJ-814','GCONGE')

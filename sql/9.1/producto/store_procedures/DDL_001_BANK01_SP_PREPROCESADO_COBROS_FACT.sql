@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20150915
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1.13
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=BKREC-901
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           

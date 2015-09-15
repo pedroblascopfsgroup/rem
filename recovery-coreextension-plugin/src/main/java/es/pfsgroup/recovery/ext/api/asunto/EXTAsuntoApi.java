@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.asunto.dto.DtoProcedimiento;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -63,7 +63,7 @@ public interface EXTAsuntoApi {
 	public List<EXTDDTipoGestor> getListTiposGestorAsuntoUsuarioLogado(Long idAsunto);
 
 	@BusinessOperationDefinition(BO_ASU_MGR_OBTENER_ACTUACIONES_ASUNTO_OPTIMIZADO)
-	List<DtoProcedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId);
+	List<Procedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId);
 
 	@BusinessOperationDefinition(EXT_BO_ASU_MGR_FIND_ASUNTOS_PAGINATED_DINAMICO_COUNT)
 	public Page findAsuntosPaginatedDinamicoCount(EXTDtoBusquedaAsunto dto, String params);

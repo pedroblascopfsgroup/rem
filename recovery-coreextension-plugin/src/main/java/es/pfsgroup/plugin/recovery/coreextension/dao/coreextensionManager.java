@@ -20,6 +20,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.despachoExterno.DespachoExternoManager;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
@@ -45,6 +46,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.despachoExterno.EXTDespachoExternoComparator;
 import es.pfsgroup.recovery.ext.impl.multigestor.comparator.EXTUsuarioComparatorByApellidosNombre;
@@ -55,6 +58,8 @@ import es.pfsgroup.recovery.ext.impl.multigestor.comparator.EXTUsuarioComparator
 public class coreextensionManager implements coreextensionApi {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
+	
+	
 
 	@Autowired
 	GenericABMDao genericDao;
@@ -369,9 +374,19 @@ public class coreextensionManager implements coreextensionApi {
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_POR_TIPO_ACTUACION)
 	public List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacion(String codigoActuacion) {
-		return tipoProcedimientoDao.getListTipoProcedimientosPorTipoActuacion(codigoActuacion);		
+		
+		List<TipoProcedimiento> listado = tipoProcedimientoDao.getListTipoProcedimientosPorTipoActuacion(codigoActuacion);
+		listado = eliminarOpcionTramiteSubastaByPropiedadAsunto(listado);
+		
+		return listado;		
 	}
 	
+	private List<TipoProcedimiento> eliminarOpcionTramiteSubastaByPropiedadAsunto(List<TipoProcedimiento> listado) {
+		
+		
+		return null;
+	}
+
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_MENOS_TIPO_ACTUACION)
 	public List<TipoProcedimiento> getListTipoProcedimientosMenosTipoActuacion(String codigoActuacion) {
@@ -519,6 +534,41 @@ public class coreextensionManager implements coreextensionApi {
 		return listaUsuarios;
 		
 		
+	}
+
+	@Override
+	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO)
+	public List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(String codigoTipoAct, Long prcId) {
+		if (codigoTipoAct != null) {
+			Filter fIdTipoActuacion = genericDao.createFilter(FilterType.EQUALS, "tipoActuacion.codigo", codigoTipoAct);
+			Filter fIdTipoActuacion2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<TipoProcedimiento> list = (ArrayList<TipoProcedimiento>) genericDao.getList(TipoProcedimiento.class, fIdTipoActuacion, fIdTipoActuacion2);
+
+			if (!Checks.estaVacio(list) && "AP".equals(codigoTipoAct)) {
+				String propiedad = null;
+				MEJProcedimiento prc = (MEJProcedimiento) proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId);
+				if (!Checks.esNulo(prc)) {
+					EXTAsunto asu = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", prc.getAsunto().getId()));
+					String eliminar;
+					if(!Checks.esNulo(asu.getPropiedadAsunto())){
+						propiedad = asu.getPropiedadAsunto().getCodigo();
+						if (DDPropiedadAsunto.PROPIEDAD_BANKIA.equals(propiedad)) {
+							eliminar = "P409";
+						} else {
+							eliminar = "P401";
+						}
+						for (TipoProcedimiento tipo : list){
+							if (eliminar.equals(tipo.getCodigo())) {
+								list.remove(tipo);
+								break;
+							}
+						}
+					}
+				}
+			}
+			return list;
+		}
+		return null;
 	}
 
 }

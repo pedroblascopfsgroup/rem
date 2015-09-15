@@ -26,6 +26,7 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Esquemas
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_NUM_SEQ  NUMBER(16); -- Vble. para validar la existencia de una secuencia.
@@ -88,7 +89,6 @@ EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD
   FECHABORRAR               TIMESTAMP(6),
   BORRADO                   NUMBER(1)           DEFAULT 0                     NOT NULL
 )
-TABLESPACE '||V_ESQUEMA||'
 PCTUSED    0
 PCTFREE    10
 INITRANS   1
@@ -111,7 +111,7 @@ MONITORING';
 EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.PK_DD_RVC_RES_VALIDACION_CDD ON '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD
 (DD_RVC_ID)
 LOGGING
-TABLESPACE '||V_ESQUEMA||'
+TABLESPACE '||V_TS_INDEX||'
 PCTFREE    10
 INITRANS   2
 MAXTRANS   255
@@ -131,7 +131,7 @@ EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.DD_RVC_RES_VALIDACION_CDD ADD (
  PRIMARY KEY
  (DD_RVC_ID)
     USING INDEX 
-    TABLESPACE '||V_ESQUEMA||'
+    TABLESPACE '||V_TS_INDEX||'
     PCTFREE    10
     INITRANS   2
     MAXTRANS   255

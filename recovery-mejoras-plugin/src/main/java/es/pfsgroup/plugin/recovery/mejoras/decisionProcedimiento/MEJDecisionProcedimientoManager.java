@@ -24,7 +24,6 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
-import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
@@ -33,11 +32,9 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.decisionProcedimiento.dao.DecisionProcedimientoDao;
-import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecision;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionParalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision;
@@ -76,6 +73,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoProce
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 
 @Component
@@ -112,6 +110,9 @@ public class MEJDecisionProcedimientoManager extends
 	
 	@Autowired
 	private CoreProjectContext coreProjectContext;
+	
+	@Autowired
+	private IntegracionBpmService integracionBpmService;
     
     
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
@@ -674,7 +675,10 @@ public class MEJDecisionProcedimientoManager extends
                     jbpmUtil.finalizarProcedimiento(p.getId());
                     p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
             				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
-                    
+
+                    // Integración con mensajería
+                    integracionBpmService.finalizarBPM(p);
+
                     cancelarSubastaActiva(p);
                     
                 } catch (Exception e) {
@@ -693,6 +697,8 @@ public class MEJDecisionProcedimientoManager extends
 				p.setFechaUltimaParalizacion(new Date());
 				genericDao.save(MEJProcedimiento.class, p);
 
+				// Paralizamos el BPM
+				integracionBpmService.paralizarBPM(p);
 			}
 		}
 		
@@ -750,6 +756,10 @@ public class MEJDecisionProcedimientoManager extends
 			if(!Checks.esNulo(sub)){
 				sub.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.CAN)));
 				genericDao.save(Subasta.class, sub);
+				
+				// Mensaje de integración para notificar fin de BPM.
+				integracionBpmService.enviarDatos(sub);
+				
 			}
 		}
 	}

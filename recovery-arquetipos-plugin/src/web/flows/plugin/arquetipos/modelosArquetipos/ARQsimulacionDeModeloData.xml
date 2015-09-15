@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="event" type="java.lang.String" required="true"/>
+	<input name="id" type="java.lang.Long"/>
+	
+	<decision-state id="decision">
+		<if test="event=='muestraModeloVigente'" then="muestraModeloVigente"/>
+		<if test="event=='muestraModelo'" then="muestraModelo"/>
+		<if test="event=='simulaModeloVigente'" then="simulaModeloVigente"/>
+		<if test="event=='simulaModelo'" then="simulaModelo"/>
+	</decision-state>
+
+	<end-state id="muestraModeloVigente" view="plugin/arquetipos/modelosArquetipos/simulacionDeModeloJSON">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.arquetipos.simulacion.muestraModeloVigente')" result="flowScope.resultado"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="muestraModelo" view="plugin/arquetipos/modelosArquetipos/simulacionDeModeloJSON">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.arquetipos.simulacion.muestraModelo',id)" result="flowScope.resultado"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="simulaModeloVigente" view="plugin/arquetipos/modelosArquetipos/simulacionDeModeloJSON">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.arquetipos.simulacion.simulaModeloVigente')" result="flowScope.resultado"/>
+		</on-entry>
+	</end-state>
+	
+	<end-state id="simulaModelo" view="plugin/arquetipos/modelosArquetipos/simulacionDeModeloJSON">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.arquetipos.simulacion.simulaModelo',id)" result="flowScope.resultado"/>
+		</on-entry>
+	</end-state>
+	
+</flow>
+

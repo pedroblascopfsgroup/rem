@@ -44,7 +44,7 @@
             return;
         }
         page.webflow({
-            flow: 'expedientes/creacionManualExpediente_3'
+            flow: 'expedientes/creacionManualExpediente_3_GV'
             ,params: {
                     idExpediente:'${expediente.id}'
                     ,idPersona:'${idPersona}'

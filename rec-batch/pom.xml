@@ -185,6 +185,22 @@
 					<artifactId>recovery-domain</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+			<artifactId>com.springsource.org.hibernate</artifactId>
+			<version>UNKNOWN</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>es.pfsgroup</groupId>
+					<artifactId>recovery-domain</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>capgemini</groupId>
 					<artifactId>devon-batch</artifactId>
 				</exclusion>

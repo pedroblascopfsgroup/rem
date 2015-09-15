@@ -25,7 +25,7 @@ public class MEJProcedimientoContratoExpedienteDaoImpl extends AbstractEntityDao
     @Override
     @Transactional(readOnly = true)
     public void actualizaCEXProcedimiento(List<ProcedimientoContratoExpediente> list, Long idProcedimiento) {
-        //borraTodosExpedienteContrato(idProcedimiento);
+        borraTodosExpedienteContrato(idProcedimiento);
         saveExpedienteContrato(list);
     }
 
@@ -47,7 +47,7 @@ public class MEJProcedimientoContratoExpedienteDaoImpl extends AbstractEntityDao
      * PBO: Deprecado (ya no hace falta)
      * @param idProcedimiento, idContratoExpediente
      */
-    @Deprecated
+    //@Deprecated
     @Transactional(readOnly = true)
     private void borraTodosExpedienteContrato(Long idProcedimiento) {
 //    	String hqlPrevio = "from Credito cre where cre.idProcedimiento = ?";

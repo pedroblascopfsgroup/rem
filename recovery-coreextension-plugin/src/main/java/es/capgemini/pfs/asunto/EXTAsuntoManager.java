@@ -1685,7 +1685,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		List<Procedimiento> procedimientos = asunto.getProcedimientos();
 		for (Procedimiento p : procedimientos){
 			MEJProcedimiento mejp = proxyFactory.proxy(EXTProcedimientoApi.class).getInstanceOf(p);
-			if (!mejp.isEstaParalizado()) {
+			if (!Checks.esNulo(mejp) && !mejp.isEstaParalizado()) {				
 				if(tiposProcedimientos.contains(p.getTipoProcedimiento().getCodigo())) {
 					return true;
 				}

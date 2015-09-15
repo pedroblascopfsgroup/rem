@@ -807,7 +807,9 @@
         ,[btnAltaProcedimiento, congelado]
         ,[btnEditProcedimiento, congelado]
         ,[btnBorraProcedimiento, congelado]
+        <sec:authorize ifAllGranted="CERRAR_DECISION">
         ,[btnCerrarDecision, congelado]
+        </sec:authorize>
         ,[btnEditarObs, congelado]
     ]
 

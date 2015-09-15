@@ -1,0 +1,11 @@
+## Mostrar la busqueda de arquetipos
+app.openTab("Busqueda de arquetipos","plugin/arquetipos/arquetipos/ARQbusquedaArquetipos");
+
+## Mostrar la búsqueda de modelos de arquetipos
+app.openTab("Busqueda modelos","plugin/arquetipos/modelosArquetipos/ARQbusquedaModelos");
+
+## Mostrar la búsqueda de itinerarios
+app.openTab("Busqueda itinerarios","plugin/itinerarios/plugin.itinerarios.buscaItinerarios");
+
+## probar grid editable
+app.openTab("gridEditable","admin/editarUsuarios");

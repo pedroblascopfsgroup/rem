@@ -25,6 +25,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
+import es.capgemini.pfs.politica.model.DDTipoPolitica;
 
 /**
  * Modelo de la tabla de itinerarios.
@@ -58,7 +59,11 @@ public class Itinerario implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "DD_AEX_ID ")
     private DDAmbitoExpediente ambitoExpediente;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "TPL_ID")
+    private DDTipoPolitica prePolitica;
+    
     @Transient
     private Map<String, Estado> estadosByCodigo;
 
@@ -180,5 +185,13 @@ public class Itinerario implements Serializable, Auditable {
     public DDAmbitoExpediente getAmbitoExpediente() {
         return ambitoExpediente;
     }
+
+	public DDTipoPolitica getPrePolitica() {
+		return prePolitica;
+	}
+
+	public void setPrePolitica(DDTipoPolitica prePolitica) {
+		this.prePolitica = prePolitica;
+	}
 
 }

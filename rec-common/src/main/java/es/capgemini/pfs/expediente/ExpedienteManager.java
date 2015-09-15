@@ -2091,20 +2091,14 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
      * <li>isSupervisor isSupervisor</li>
      * </ul>
      */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PROPONER_ACTIVAR_EXPEDIENTE)
+    @SuppressWarnings("unchecked")
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PROPONER_ACTIVAR_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void proponerActivarExpediente(DtoCreacionManualExpediente dto) {
         Expediente exp = getExpediente(dto.getIdExpediente());
         Persona per = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, dto.getIdPersona());
         
         //Cambiamos el arquetipo del cliente según el seleccionado en la primera ventana del wizzard
-        /*Cliente cliente = per.getClienteActivo();
-        if (cliente!=null) {
-        	Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
-        	if (arquetipo!=null)
-        		cliente.setArquetipo(arquetipo);
-        }*/
-        
         Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
         
         //Primero asignamos a sus clientes el arquetipo seleccionado
@@ -2126,6 +2120,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_SAVE_OR_UPDATE, cliente);
         	}
         }
+        
+        //Y al expediente
+        exp.setArquetipo(arquetipo);
         
         if (!dto.getIsSupervisor()) {
             //Proponiendo

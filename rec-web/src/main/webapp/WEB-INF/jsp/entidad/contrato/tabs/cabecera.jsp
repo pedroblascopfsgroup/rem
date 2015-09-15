@@ -169,7 +169,9 @@
 	var charextra6    = label('charextra6','<s:message code="contrato.consulta.tabcabecera.charextra6" text="**Charextra6"/>');
 	var charextra7    = label('charextra7','<s:message code="contrato.consulta.tabcabecera.charextra7" text="**Charextra7"/>');
 	var charextra8    = label('charextra8','<s:message code="contrato.consulta.tabcabecera.charextra8" text="**Charextra8"/>');
-	
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">	
+	charextra8 = label('charextra8','<s:message code="contrato.consulta.tabOtrosDatos.charExtra8" text="**Número de contrato en formato CCC"/>');
+</sec:authorize>	
 	var flagextra1    = label('flagextra1','<s:message code="contrato.consulta.tabcabecera.flagextra1" text="**Flagextra1"/>');
 	var flagextra2    = label('flagextra2','<s:message code="contrato.consulta.tabcabecera.flagextra2" text="**Flagextra2"/>');
 	var flagextra3    = label('flagextra3','<s:message code="contrato.consulta.tabcabecera.flagextra3" text="**Flagextra3"/>');

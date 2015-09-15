@@ -327,11 +327,11 @@ public class EntityToPayloadTransformer {
 	public Message<DataContainerPayload> transformACU(Message<Acuerdo> message) {
 		logger.info("[INTEGRACION] Transformando Acuerdo...");
 		Acuerdo acuerdo = message.getPayload();
-		mejAcuerdoManager.prepareGuid(acuerdo);
+		//mejAcuerdoManager.prepareGuid(acuerdo);
 		
 		List<TerminoAcuerdo> listadoTerminos = mejAcuerdoManager.getTerminosAcuerdo(acuerdo.getId());
 		for (TerminoAcuerdo terminoAcuerdo : listadoTerminos) {
-			mejAcuerdoManager.prepareGuid(terminoAcuerdo);
+			//mejAcuerdoManager.prepareGuid(terminoAcuerdo);
 		}
 			
 		DataContainerPayload data = getNewPayload(message);
@@ -404,7 +404,7 @@ public class EntityToPayloadTransformer {
 	public Message<DataContainerPayload> transformAcuerdoTermino(Message<TerminoAcuerdo> message) {
 		logger.info("[INTEGRACION] Transformando Término Acuerdo...");
 		TerminoAcuerdo termino = message.getPayload();
-		mejAcuerdoManager.prepareGuid(termino);
+		//mejAcuerdoManager.prepareGuid(termino);
 		
 		DataContainerPayload data = getNewPayload(message);
 		TerminoAcuerdoPayload payload = new TerminoAcuerdoPayload(data, termino);

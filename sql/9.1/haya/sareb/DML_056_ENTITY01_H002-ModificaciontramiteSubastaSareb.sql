@@ -253,6 +253,13 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_RegistrarRespuestaSareb actualizada.');
     
+     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			  ' SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''817'')' ||
+			  ' WHERE TAP_CODIGO = ''H002_ValidarPropuesta''';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H002_ValidarPropuesta actualizada.');
+    
     /* ------------------- --------------------------------- */
 	/* --------------  ACTUALIZACIONES CAMPOS--------------- */
 	/* ------------------- --------------------------------- */

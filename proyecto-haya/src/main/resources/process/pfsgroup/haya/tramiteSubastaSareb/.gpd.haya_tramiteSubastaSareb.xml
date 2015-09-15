@@ -227,6 +227,10 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-242" h1="31" w2="402" h2="-249"/>
+    </edge>
   </node>
   <node name="H002_ElevarPropuestaAComite" x="1039" y="851" width="235" height="36">
     <edge>
@@ -249,6 +253,10 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-273" h1="41" w2="119" h2="45"/>
     </edge>
   </node>
   <node name="H002_CelebracionSubasta" x="-36" y="552" width="221" height="36">
@@ -343,6 +351,9 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="H002_IndicesDecision" x="631" y="1893" width="161" height="36">
     <edge>
@@ -367,11 +378,13 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-97" h1="69" w2="-160" h2="-87"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="-138" h1="-84" w2="-128" h2="86"/>
+    </edge>
+    <edge>
+      <label x="152" y="-46"/>
     </edge>
   </node>
   <node name="H002_RegistrarRespuestaSarebDecision" x="1806" y="1153" width="271" height="36">
@@ -394,6 +407,9 @@
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="-30" h1="-83" w2="207" h2="-7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -518,6 +534,7 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-251" h1="-206" w2="146" h2="229"/>
     </edge>
   </node>
   <node name="H002_ElevarAComite" x="1307" y="832" width="204" height="36">

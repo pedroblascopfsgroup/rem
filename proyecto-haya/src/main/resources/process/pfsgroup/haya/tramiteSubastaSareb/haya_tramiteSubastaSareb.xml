@@ -336,6 +336,7 @@
 		<transition to="H002_ElevarPropuestaASareb" name="activarAlerta"></transition>
 		<transition to="H002_ValidarPropuesta" name="vueltaAtras"></transition>		
 		<transition to="H002_RegistrarRespuestaSareb" name="avanzaBPM"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<state name="H002_ElevarPropuestaAComite">
@@ -380,6 +381,7 @@
 		</event>	
 		<transition to="Fin4" name="avanzaBPM"></transition>
 		<transition to="H002_LecturaAceptacionInstrucciones" name="activarAlerta"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<state name="H002_CelebracionSubasta">
@@ -566,6 +568,7 @@
 		<transition to="H002_RegistrarRespuestaSarebIndices" name="avanzaBPM"></transition>
 		<transition to="H002_SolicitarServicioIndices" name="vueltaAtras"></transition>
 		<transition to="H002_ElevarPropuestaASarebIndices" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 	<node name="H002_IndicesDecision">
@@ -601,8 +604,9 @@
 			</action>
 		</event>	
 		<transition to="H002_RegistrarRespuestaSarebDecision" name="avanzaBPM"></transition>
-		<transition to="H002_RegistrarRespuestaSarebDecision" name="activarAlerta"></transition>
-		<transition to="H002_ElevarPropuestaASareb" name="vueltaAtras"></transition>		
+		<transition to="H002_RegistrarRespuestaSareb" name="activarAlerta"></transition>
+		<transition to="H002_ElevarPropuestaASareb" name="vueltaAtras"></transition>
+		<transition to="Fin4" name="Fin"></transition>		
 	</state>
 
 	<decision name="H002_RegistrarRespuestaSarebDecision" expression="#{H002_RegistrarRespuestaSarebDecision}">
@@ -631,6 +635,7 @@
 		<transition to="H002_IndicesDecision" name="avanzaBPM"></transition>
 		<transition to="H002_ElevarPropuestaASarebIndices" name="vueltaAtras"></transition>
 		<transition to="H002_RegistrarRespuestaSarebIndices" name="activarAlerta"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<fork name="forkCelebracion">
@@ -734,7 +739,7 @@
 		</event>
 		<transition to="H002_CumplimentarParteEconomica" name="avanzaBPM"></transition>
 		<transition to="H002_InformarTipoPropuesta" name="activarAlerta"></transition>
-		<transition to="Fin2" name="to Fin2"></transition>
+		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
 	<state name="H002_ElevarAComite">

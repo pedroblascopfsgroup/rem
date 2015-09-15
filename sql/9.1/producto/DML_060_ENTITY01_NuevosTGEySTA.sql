@@ -100,10 +100,10 @@ BEGIN
         ELSE
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA_MASTER ||'.' || VAR_TABLENAME || ' (' ||
                     'DD_STA_ID,DD_TAR_ID,DD_STA_CODIGO,DD_STA_DESCRIPCION,DD_STA_DESCRIPCION_LARGA,USUARIOCREAR,FECHACREAR,DD_STA_GESTOR,DD_TGE_ID,DTYPE) ' ||
-                    'SELECT '||V_ESQUEMA_MASTER||'.' || 'S_' || VAR_TABLENAME || '.NEXTVAL, 3, ' ||
+                    'SELECT '||V_ESQUEMA_MASTER||'.' || 'S_' || VAR_TABLENAME || '.NEXTVAL, 1, ' ||
                     '''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(1)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(2)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(2)),'''','''''') || ''', ''PCO'',sysdate, 1, ' || 
-                    '(SELECT DD_TGE_ID FROM HAYAMASTER.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(3)),'''','''''') || ''') ,''EXTSUBTIPOTAREA''' || 
+                    '''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(2)),'''','''''') || ''', ''PCO'',sysdate, null, ' || 
+                    '(SELECT DD_TGE_ID FROM HAYAMASTER.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''' || REPLACE(TRIM(V_TMP_TIPO_LINEA2(3)),'''','''''') || ''') ,''EXTSubtipoTarea''' || 
                     ' FROM DUAL'; 
             DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''  || V_TMP_TIPO_LINEA2(1) ||''','''||TRIM(V_TMP_TIPO_LINEA2(2))||'''');
             DBMS_OUTPUT.PUT_LINE(V_MSQL);

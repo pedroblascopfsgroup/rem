@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
-import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -65,15 +64,13 @@ import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
@@ -90,6 +87,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	static final String CODIGO_CIERRE_ACUERDO_BIMESTRAL ="BI";
 	static final String CODIGO_CIERRE_ACUERDO_SEMANAL = "SEM";
 	static final String CODIGO_CIERRE_ACUERDO_UNICO ="UNI";
+	
+	static final String CODIGO_TIPO_ACUERDO_PLAN_PAGO = "PLAN_PAGO";
 
 	public static final String BO_ACUERDO_MGR_UGAS_GUARDAR_ACUERDO = "mejacuerdomanager.guardarAcuerdo";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_ACUERDOS_BY_ASU_ID = "mejacuerdomanager.getListadoAcuedosByAsuId";
@@ -954,10 +953,19 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		Acuerdo acuerdo = acuerdoDao.get(id);
 		for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
 			if (SubtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE.equals(tarea
-					.getSubtipoTarea().getCodigoSubtarea())) {
+					.getSubtipoTarea().getCodigoSubtarea()) && (tarea.getTareaFinalizada()==null || !tarea.getTareaFinalizada())) {
 
-				String codigo = buscaCodigoPorPeriodo(acuerdo
-						.getPeriodicidadAcuerdo());
+				String codigo = PlazoTareasDefault.CODIGO_CIERRE_ACUERDO;
+				
+				///Obtenemos el plan de pago
+				List<TerminoAcuerdo> plansDePago = terminoAcuerdoDao.buscarTerminosPorTipo(acuerdo.getId(), CODIGO_TIPO_ACUERDO_PLAN_PAGO);
+				
+				if(!Checks.esNulo(plansDePago.get(0)) && !Checks.esNulo(plansDePago.get(0).getOperaciones().getFrecuenciaPlanpago())){
+					codigo = plansDePago.get(0).getOperaciones().getFrecuenciaPlanpago();
+				}
+//						
+//						buscaCodigoPorPeriodo(acuerdo
+//						.getPeriodicidadAcuerdo());
 				Filter filtroCodigo = genericDao.createFilter(
 						FilterType.EQUALS, "codigo", codigo);
 				PlazoTareasDefault plazoTarea = genericDao.get(
@@ -1010,30 +1018,30 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		EventFactory.onMethodStop(this.getClass());
 	}
 	
-	private String buscaCodigoPorPeriodo(
-			DDPeriodicidadAcuerdo periodicidadAcuerdo) {
-		String codigo = PlazoTareasDefault.CODIGO_CIERRE_ACUERDO;
-		if(!Checks.esNulo(periodicidadAcuerdo)){
-			String periodo = periodicidadAcuerdo.getCodigo();
-			if (periodo.equals("01")) {
-				codigo = CODIGO_CIERRE_ACUERDO_ANUAL;
-			} else if (periodo.equals("02")) {
-				codigo = CODIGO_CIERRE_ACUERDO_MENSUAL;
-			} else if (periodo.equals("03")) {
-				codigo = CODIGO_CIERRE_ACUERDO_SEMESTRAL;
-			} else if (periodo.equals("04")) {
-				codigo = CODIGO_CIERRE_ACUERDO_TRIMESTRAL;
-			} else if (periodo.equals("05")) {
-				codigo = CODIGO_CIERRE_ACUERDO_BIMESTRAL;
-			} else if (periodo.equals("06")) {
-				codigo = CODIGO_CIERRE_ACUERDO_SEMANAL;
-			} else if (periodo.equals("07")) {
-				codigo = CODIGO_CIERRE_ACUERDO_UNICO;
-			}
-		}
-
-		return codigo;
-	}
+//	private String buscaCodigoPorPeriodo(
+//			DDPeriodicidadAcuerdo periodicidadAcuerdo) {
+//		String codigo = PlazoTareasDefault.CODIGO_CIERRE_ACUERDO;
+//		if(!Checks.esNulo(periodicidadAcuerdo)){
+//			String periodo = periodicidadAcuerdo.getCodigo();
+//			if (periodo.equals("01")) {
+//				codigo = CODIGO_CIERRE_ACUERDO_ANUAL;
+//			} else if (periodo.equals("02")) {
+//				codigo = CODIGO_CIERRE_ACUERDO_MENSUAL;
+//			} else if (periodo.equals("03")) {
+//				codigo = CODIGO_CIERRE_ACUERDO_SEMESTRAL;
+//			} else if (periodo.equals("04")) {
+//				codigo = CODIGO_CIERRE_ACUERDO_TRIMESTRAL;
+//			} else if (periodo.equals("05")) {
+//				codigo = CODIGO_CIERRE_ACUERDO_BIMESTRAL;
+//			} else if (periodo.equals("06")) {
+//				codigo = CODIGO_CIERRE_ACUERDO_SEMANAL;
+//			} else if (periodo.equals("07")) {
+//				codigo = CODIGO_CIERRE_ACUERDO_UNICO;
+//			}
+//		}
+//
+//		return codigo;
+//	}
 	
     protected GestorDespacho  getUsuarioDestinatarioTarea(EXTAcuerdo acuerdo, String tipoUser){
     	

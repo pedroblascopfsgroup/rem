@@ -6,3 +6,12 @@ export DEVON_HOME=recovery/batch-server
 export LANG=es_ES.UTF-8
 export ORACLE_HOME=/ora11g/instantclient
 export PATH=$PATH:$ORACLE_HOME/bin:/recovery/batch-server/shells
+
+# Código de la entidad
+export ENTIDAD=0240
+
+# Datos de conexión para las shells JMX
+export JMX_HOST=localhost
+export JMX_PORT=2099
+export JMX_USER=jmx_admin
+export JMX_PW="IMYzS4aO1q6jg1q1cXFevw==38047741"

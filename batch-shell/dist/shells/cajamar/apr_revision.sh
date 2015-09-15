@@ -1,18 +1,27 @@
 #!/bin/bash
 # Generado manualmente.
- 
-LAUNCH_JOB=<ptedefinir>
-ENTIDAD=<ptedefinir>
-WAIT_FOR_JOBS=<ptedefinir>
+if [[ "x$ENTIDAD" == "x" ]]; then
+	echo "ERROR: Código de ENTIDAD desconocido. ¿Se ha cargado el setBatchEnv.sh"
+	exit 1
+fi
+if [[ "x$JMX_HOST" == "x" ]]; then
+	echo "ERROR: Código de JMX_HOST desconocido. ¿Se ha cargado el setBatchEnv.sh"
+	exit 1
+fi
+if [[ "x$JMX_USER" == "x" ]]; then
+	echo "ERROR: Código de JMX_USER desconocido. ¿Se ha cargado el setBatchEnv.sh"
+	exit 1
+fi
+if [[ "x$JMX_PORT" == "x" ]]; then
+	echo "ERROR: Código de JMX_PORT desconocido. ¿Se ha cargado el setBatchEnv.sh"
+	exit 1
+fi
 
-JMX_ADMIN=jmx_admin
-JMX_PW=IMYzS4aO1q6jg1q1cXFevw==46794765
-JMX_HOST=localhost
-JMX_PORT=<ptedefinir>
-JMX_TYPE=<ptedefinir>
+LAUNCH_JOB=ejecutarProcesoArquetipado
+WAIT_FOR_JOBS=procesoArquetipadoRecuperacionesJob,procesoRevisionExpedientesRecuperacionesJob,procesoRevisionClientesRecuperacionesJob,procesoCreacionClientesRecuperacionesJob,procesoCreacionClientesRecuperacionesJob
+JMX_TYPE=BatchRecuperaciones
 
-#java -jar batch-shell.jar $JMX_ADMIN:$JMX_PW $JMX_HOST:$JMX_PORT devon:type=$JMX_TYPE $LAUNCH_JOB=$ENTIDAD $WAIT_FOR_JOBS
-echo "Realizando conexión por JMX al batch-server"
+java -jar batch-shell.jar $JMX_USER:$JMX_PW $JMX_HOST:$JMX_PORT devon:type=$JMX_TYPE $LAUNCH_JOB=$ENTIDAD $WAIT_FOR_JOBS
 
 exit $?
 

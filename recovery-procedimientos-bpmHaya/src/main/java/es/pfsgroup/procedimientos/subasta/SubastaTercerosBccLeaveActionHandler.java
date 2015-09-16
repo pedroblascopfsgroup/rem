@@ -22,9 +22,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
-import es.pfsgroup.plugin.recovery.coreextension.model.DDResultadoComiteConcursal;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
@@ -329,8 +327,6 @@ public class SubastaTercerosBccLeaveActionHandler extends
 
 		boolean celebrada = false;
 		boolean cesionRemate = false;
-		boolean suspendidaTerceros = false;
-		boolean suspendidaEntidad = false;
 		boolean bienAdjuEntidad = false;
 		boolean bienAdjuTerceroFondo = false;
 
@@ -342,15 +338,6 @@ public class SubastaTercerosBccLeaveActionHandler extends
 			if ("comboCelebrada".equals(val.getNombre())) {
 				if (DDSiNo.SI.equals(val.getValor())) {
 					celebrada = true;
-				}
-			} else if ("comboDecisionSuspension".equals(val.getNombre())) {
-				// A - suspendida terceros
-				if (DDDecisionSuspension.TERCEROS.equals(val.getValor())) {
-					suspendidaTerceros = true;
-				}
-				// B - suspendida entidad
-				else if (DDDecisionSuspension.ENTIDAD.equals(val.getValor())) {
-					suspendidaEntidad = true;
 				}
 			}
 		}
@@ -434,8 +421,7 @@ public class SubastaTercerosBccLeaveActionHandler extends
 	
 	public Boolean[] bpmGetValoresRamasDocumentacion(TareaExterna tex) {
 
-		List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
-
+		
 		// Inicio todos los valores a false
 		Boolean[] resultado = {false, false, false, false};
 		resultado[0] = false;
@@ -448,8 +434,10 @@ public class SubastaTercerosBccLeaveActionHandler extends
 		boolean informeFiscal = false;
 
 		// Obtenemos la lista de valores de esa tarea
-		listadoValores = tex.getValores();
-		for (TareaExternaValor val : listadoValores) {
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class))
+				.obtenerValoresTareaByTexId(tex.getId());
+		for (TareaExternaValor val : listado) {
 
 			if ("comboNota".equals(val.getNombre())) {
 				if (DDSiNo.SI.equals(val.getValor())) {

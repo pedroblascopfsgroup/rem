@@ -9,7 +9,7 @@
 	 	 
 	<view-state id="formulario" view="${view}">
     	<on-entry>
-     		<evaluate expression="requestParameters.idExpediente" result="flowScope.idExpediente"></evaluate>
+     		<evaluate expression="requestParameters.idExpediente" result="idExpediente"></evaluate>
             <evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"></evaluate>
     		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
 			<evaluate expression="executor.execute('zonaManager.getAllNiveles')" result="flowScope.niveles" />

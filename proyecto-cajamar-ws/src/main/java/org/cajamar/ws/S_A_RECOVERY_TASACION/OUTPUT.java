@@ -18,9 +18,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;all>
- *         &lt;element name="DESC_ESTADO" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="DOC_SOLICITUD" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="ESTADO" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="IDTA" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="TASA" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="COD_ERROR" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="TXT_ERROR" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/all>
@@ -38,40 +39,18 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "OUTPUT")
 public class OUTPUT {
 
-    @XmlElement(name = "DESC_ESTADO", required = true)
-    protected String descestado;
     @XmlElement(name = "DOC_SOLICITUD", required = true)
     protected String docsolicitud;
     @XmlElement(name = "ESTADO", required = true)
     protected String estado;
+    @XmlElement(name = "IDTA", required = true)
+    protected String idta;
+    @XmlElement(name = "TASA", required = true)
+    protected String tasa;
     @XmlElement(name = "COD_ERROR", required = true)
     protected String coderror;
     @XmlElement(name = "TXT_ERROR", required = true)
     protected String txterror;
-
-    /**
-     * Gets the value of the descestado property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getDESCESTADO() {
-        return descestado;
-    }
-
-    /**
-     * Sets the value of the descestado property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setDESCESTADO(String value) {
-        this.descestado = value;
-    }
 
     /**
      * Gets the value of the docsolicitud property.
@@ -119,6 +98,54 @@ public class OUTPUT {
      */
     public void setESTADO(String value) {
         this.estado = value;
+    }
+
+    /**
+     * Gets the value of the idta property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getIDTA() {
+        return idta;
+    }
+
+    /**
+     * Sets the value of the idta property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setIDTA(String value) {
+        this.idta = value;
+    }
+
+    /**
+     * Gets the value of the tasa property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTASA() {
+        return tasa;
+    }
+
+    /**
+     * Sets the value of the tasa property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTASA(String value) {
+        this.tasa = value;
     }
 
     /**

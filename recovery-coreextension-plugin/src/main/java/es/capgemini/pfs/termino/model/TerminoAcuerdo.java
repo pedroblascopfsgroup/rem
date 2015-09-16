@@ -1,15 +1,20 @@
 package es.capgemini.pfs.termino.model;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -19,6 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -53,6 +59,10 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 	@ManyToOne
 	@JoinColumn(name = "DD_TPA_ID")
 	private DDTipoAcuerdo tipoAcuerdo;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_SBT_ID")
+	private DDSubTipoAcuerdo subtipoAcuerdo;
 	
     @ManyToOne
     @JoinColumn(name = "DD_TPR_ID")
@@ -87,7 +97,17 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 
     @Column(name = "TEA_INFORME_LETRADO")
     private String informeLetrado;
-	
+    
+    @OneToMany(mappedBy = "termino", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "BIE_TEA_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<TerminoBien> bienes;
+    
+    @OneToOne(mappedBy = "termino", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "OP_TERM_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private TerminoOperaciones operaciones;
+
 	@Version
     private Integer version;
 
@@ -119,6 +139,14 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 
 	public void setTipoAcuerdo(DDTipoAcuerdo tipoAcuerdo) {
 		this.tipoAcuerdo = tipoAcuerdo;
+	}
+	
+	public DDSubTipoAcuerdo getSubtipoAcuerdo() {
+		return subtipoAcuerdo;
+	}
+
+	public void setSubtipoAcuerdo(DDSubTipoAcuerdo subtipoAcuerdo) {
+		this.subtipoAcuerdo = subtipoAcuerdo;
 	}
 
 	public DDTipoProducto getTipoProducto() {
@@ -224,7 +252,23 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-    
+
+	public List<TerminoBien> getBienes() {
+		return bienes;
+	}
+
+	public void setBienes(List<TerminoBien> bienes) {
+		this.bienes = bienes;
+	}
+	
+    public TerminoOperaciones getOperaciones() {
+		return operaciones;
+	}
+
+	public void setOperaciones(TerminoOperaciones operaciones) {
+		this.operaciones = operaciones;
+	}
+
 	public String getGuid() {
 		return guid;
 	}

@@ -394,7 +394,14 @@
 	}
 
 	panel.setVisibleTab = function(data){
-		return true;
+	
+	    //Solo se mostrará la pestaña en los expedientes de recobro "REC"
+		if(data.cabecera.tipoExpediente=="REC"){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
   
 	return panel;

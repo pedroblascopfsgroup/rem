@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd" start-state="listado">
+	
+	<var name="formItinerariosComite" class="es.pfsgroup.plugin.recovery.comites.comite.web.CMTFormItinerariosComite" />
+	<input name="id" type="java.lang.Long"/>
+    
+	<!--a partir de este momento solo enviamos ajax -->
+	<view-state id="listado" view="plugin/comites/modificarItinerariosComite" model="formItinerariosComite">
+		<on-render>
+			<evaluate expression="executor.execute('plugin.comites.comite.listaDtoItinerarios',id)" result="flowScope.formItinerariosComite.dtoItinerario"/>
+		</on-render>
+		<transition on="getData" to="getData1"/>	
+		<transition on="fin1" to="fin"/>
+	</view-state>
+    
+	<view-state id="getData1" view="plugin/comites/itinerariosComiteJSON" model="formItinerariosComite">
+		<transition on="update" to="update"/>
+		<transition on="getData" to="getData1"/>
+		<transition on="fin1" to="fin"/>
+		<!-- <exception-handler bean="swfExceptionHandler" /> -->
+	</view-state>
+	
+	<action-state id="update">
+		<evaluate expression="executor.execute('plugin.comites.comite.guardaItinerarios',formItinerariosComite.dtoItinerario)"></evaluate>
+		<transition to="fin"/>
+	</action-state>    
+	
+	<end-state id="fin" view="default"></end-state>
+	<exception-handler bean="swfExceptionHandler" />
+</flow>
+

@@ -222,6 +222,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-api-plugin</artifactId>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>es.pfsgroup</groupId>
+					<artifactId>recovery-domain</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<!-- Java Mail API -->
 		<dependency>
 			<groupId>javax.mail</groupId>

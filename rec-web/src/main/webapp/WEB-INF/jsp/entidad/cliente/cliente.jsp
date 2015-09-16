@@ -19,10 +19,14 @@ app.abreClienteTab = function(id, nombre,nombreTab){
 		if (!app.cliente){
 			app.cliente = new app.entidad('cliente', clienteTabs, clienteToolbar, '/pfs/clientes/consultaClienteFast.htm');
 		}
-		app.cliente.abrir(id,nombre);
-	}else{
+		var params = {id:id,nombreTab:nombreTab};
+        app.cliente.abrir(id,nombre,params);
+		
+	}
+	else{
 		this.openTab(nombre||'Cliente', 'clientes/consultaCliente', {id : id,nombreTab:nombreTab}, {id:'cliente'+id,iconCls:'icon_cliente'} );
 	}
+	
 	this.addFavorite(id, nombre, this.constants.FAV_TIPO_CLIENTE);
 };
 

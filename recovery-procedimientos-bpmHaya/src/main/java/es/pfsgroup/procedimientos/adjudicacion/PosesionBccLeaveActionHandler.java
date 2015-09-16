@@ -41,6 +41,13 @@ public class PosesionBccLeaveActionHandler extends AdjudicacionHayaLeaveActionHa
 			List<EXTTareaExternaValor> campos = camposTarea(tex);
 			String viviendaHabitual = dameValorTarea(campos, "comboViviendaHab");
         	this.setVariable("op_viviendaHabitual", (viviendaHabitual.equals(DDSiNo.SI) ? "Si" : "No"), executionContext);
+        	
+        	tex = getTareaExternaPorCodigo("H015_RegistrarPosesionYLanzamiento", executionContext);
+			campos = camposTarea(tex);
+			String lanzamiento = dameValorTarea(campos, "comboLanzamiento");
+			if(lanzamiento != null) {
+				this.setVariable("op_lanzamiento", (lanzamiento.equals(DDSiNo.SI) ? "hayLanzamiento" : "noHayLanzamiento"), executionContext);
+			}
 		}
 		
 		super.setDecisionVariable(executionContext);

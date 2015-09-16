@@ -90,22 +90,37 @@ var crearActuacionesRealizadas=function(){
    </c:if>
    
    //var actuacionesGrid = app.crearGrid(actuacionesStore,cmActuaciones,{
-   var actuacionesGrid = app.crearGrid(actuacionesStore,cmActuaciones,{
-         title : '&nbsp;'
-         <app:test id="actuacionesGrid" addComa="true" />
-         ,style:'padding:50px'
-         ,autoHeight : true
-		 ,border:true
-		 ,frame:false
-         ,cls:'cursor_pointer'
-		 ,margin:90
-         ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-         ,bbar : [
-         	<c:if test="${puedeEditar}">
-	        	btnAltaActuacion,btnEditActuacion
-	        </c:if>
-	     ]
-   }); 
+<!--    var actuacionesGrid = app.crearGrid(actuacionesStore,cmActuaciones,{ -->
+<!--          title : '&nbsp;' -->
+<%--          <app:test id="actuacionesGrid" addComa="true" /> --%>
+<!--          ,style:'padding:50px' -->
+<!--          ,autoHeight : true -->
+<!-- 		 ,border:true -->
+<!-- 		 ,frame:false -->
+<!--          ,cls:'cursor_pointer' -->
+<!-- 		 ,margin:90 -->
+<!--          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true}) -->
+<!--          ,bbar : [ -->
+<%--          	<c:if test="${puedeEditar}"> --%>
+<!-- 	        	btnAltaActuacion,btnEditActuacion -->
+<%-- 	        </c:if> --%>
+<!-- 	     ] -->
+<!--    });  -->
+   
+   	var actuacionesGrid = new Ext.grid.GridPanel({
+   	 	title : '&nbsp;'<app:test id="actuacionesGrid" addComa="true" /> 
+		,store:actuacionesStore
+		,cm:cmActuaciones 
+		,cls:'cursor_pointer'
+		,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"}
+		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+		,style:'padding:50px;'
+		,autoWidth:true
+		,autoHeight : true
+		,bbar : [<c:if test="${puedeEditar}"> 
+ 	        	btnAltaActuacion,btnEditActuacion 
+ 	        </c:if>]
+	});
 
 
 	var fieldSetActuaciones = new Ext.form.FieldSet({

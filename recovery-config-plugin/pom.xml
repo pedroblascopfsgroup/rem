@@ -9,7 +9,6 @@
 
 	<groupId>es.pfsgroup.plugin</groupId>
 	<artifactId>recovery-config-plugin</artifactId>
-	<name>recovery-config-plugin</name>
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>

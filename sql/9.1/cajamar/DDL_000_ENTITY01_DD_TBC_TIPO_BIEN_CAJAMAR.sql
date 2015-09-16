@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alberto Campos
---## FECHA_CREACION=20150716
+--## AUTOR=Gonzalo E
+--## FECHA_CREACION=20150916
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=CMREC-381
+--## VERSION_ARTEFACTO=9.1.5-hy
+--## INCIDENCIA_LINK=-
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -42,7 +42,7 @@ DECLARE
 		' FROM '||V_ESQUEMA||'.Dd_Tbi_Tipo_Bien ' ||
 		' WHERE DD_TBI_CODIGO IN (''7'',''34'',''6'',''4'',''5'',''31'',''8'',''80'',''79'',''82'',''77'',''78'',''81'',''28'',''27'',''15'',''21'',''20'',' ||
 		' ''72'',''67'',''76'',''14'',''26'',''13'',''66'',''30'',''32'',''58'',''17'',''16'',''12'',''19'',''18'',''36'',''3'',''2'',''1'',' ||
-		' ''11'',''35'',''55'',''25'',''24'',''23'',''71'',''33'',''70'',''22'',''9'',''10'',''69'',''68'' '||
+		' ''11'',''35'',''55'',''25'',''24'',''23'',''71'',''33'',''70'',''22'',''9'',''10'',''69'',''68'', '||
 		' ''01'',''02'',''03'',''04'',''05'',''06'')'; -- QUITAR LA ULTIMA LINEA, SON LOS LOS DE LA BD ORIGINAL!!!!!!!
     EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_TBC_TIPO_BIEN_CAJAMAR... Vista creada');

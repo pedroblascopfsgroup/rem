@@ -43,6 +43,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="SITUACIONBIEN" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="SOLICITANTE" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="TBIEN" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="TELFNCONTAS" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="TENC_RELA" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="TINMU" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="TIPOPER" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="TLF1" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -113,6 +115,10 @@ public class INPUT {
     protected String solicitante;
     @XmlElement(name = "TBIEN", required = true)
     protected String tbien;
+    @XmlElement(name = "TELFNCONTAS", required = true)
+    protected String telfncontas;
+    @XmlElement(name = "TENC_RELA", required = true)
+    protected String tencrela;
     @XmlElement(name = "TINMU", required = true)
     protected String tinmu;
     @XmlElement(name = "TIPOPER", required = true)
@@ -722,6 +728,54 @@ public class INPUT {
      */
     public void setTBIEN(String value) {
         this.tbien = value;
+    }
+
+    /**
+     * Gets the value of the telfncontas property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTELFNCONTAS() {
+        return telfncontas;
+    }
+
+    /**
+     * Sets the value of the telfncontas property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTELFNCONTAS(String value) {
+        this.telfncontas = value;
+    }
+
+    /**
+     * Gets the value of the tencrela property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTENCRELA() {
+        return tencrela;
+    }
+
+    /**
+     * Sets the value of the tencrela property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTENCRELA(String value) {
+        this.tencrela = value;
     }
 
     /**

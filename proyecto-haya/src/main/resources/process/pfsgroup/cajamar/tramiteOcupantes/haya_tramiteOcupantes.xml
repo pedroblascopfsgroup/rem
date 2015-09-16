@@ -230,8 +230,8 @@
 	
 	<decision name="H048_ResolucionFirmeDecision" expression="#{H048_ResolucionFirmeDecision}">
 		<transition to="FinPosesion" name="favorable"></transition>
-		<transition to="H048_ResolucionDecision" name="desfavorable"></transition>
-		<transition to="FinPosesion" name="desfavorableTP"></transition>
+		<transition to="H048_ResolucionDecision" name="desfavorableNTP"></transition>
+		<transition to="FinPosesion" name="desfavorable"></transition>
 	</decision>
 	
 	<node name="H048_ResolucionDecision">

@@ -21,8 +21,8 @@ public class BienHayaManager implements BienHayaApi {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	@Autowired
-	SolicitarTasacionWSApi tasacionWSApi;
+	@Autowired(required=false)
+	private SolicitarTasacionWSApi tasacionWSApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;	

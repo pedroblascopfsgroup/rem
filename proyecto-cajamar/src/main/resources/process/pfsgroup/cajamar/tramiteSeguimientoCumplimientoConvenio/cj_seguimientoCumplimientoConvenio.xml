@@ -87,7 +87,7 @@
 	<state name="H041_espera">
 		<event type="node-enter">
 			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
-				<name>Timer espera - TEJ</name>
+				<name>Timer Seguimiento Convenio - Informe semestral</name>
 				<duration>6 months</duration>
 				<transicion>avanzaBPM</transicion>
 			</action>

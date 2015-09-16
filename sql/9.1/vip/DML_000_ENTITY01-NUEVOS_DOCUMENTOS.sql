@@ -55,7 +55,6 @@ DECLARE
       ,T_TIPO_TFA('DTCCE', 'Decreto de Tasación de Costas (Costas contra entidad)', 'Decreto de Tasación de Costas (Costas contra entidad)', 'CO') -- Trámite de costras contra entidad
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
-    DTC	Decreto de Tasación de Costas	Decreto de Tasación de Costas
     
 BEGIN	
   

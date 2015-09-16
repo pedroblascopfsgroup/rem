@@ -281,7 +281,7 @@ public class SubastaConcursalCjLeaveActionHandler extends
 		
 		
 		
-		List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
+		//List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
 
 		// Inicio todos los valores a false
 		Boolean[] resultado = {false, false, false, false, false, false};
@@ -301,7 +301,10 @@ public class SubastaConcursalCjLeaveActionHandler extends
 
 
 		// Obtenemos la lista de valores de esa tarea
-		listadoValores = tex.getValores();
+		//listadoValores = tex.getValores();
+		List<EXTTareaExternaValor> listadoValores = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class))
+				.obtenerValoresTareaByTexId(tex.getId());		
 		for (TareaExternaValor val : listadoValores) {
 
 			if ("comboCelebrada".equals(val.getNombre())) {
@@ -405,7 +408,7 @@ public class SubastaConcursalCjLeaveActionHandler extends
 	
 	public Boolean[] bpmGetValoresRamasDocumentacion(TareaExterna tex) {
 
-		List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
+		//List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
 
 		// Inicio todos los valores a false
 		Boolean[] resultado = {false, false, false, false};
@@ -419,7 +422,10 @@ public class SubastaConcursalCjLeaveActionHandler extends
 		boolean informeFiscal = false;
 
 		// Obtenemos la lista de valores de esa tarea
-		listadoValores = tex.getValores();
+		//listadoValores = tex.getValores();
+		List<EXTTareaExternaValor> listadoValores = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class))
+				.obtenerValoresTareaByTexId(tex.getId());		
 		for (TareaExternaValor val : listadoValores) {
 
 			if ("comboOficina".equals(val.getNombre())) {

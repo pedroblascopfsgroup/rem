@@ -359,4 +359,16 @@
     ]]>
   </entry>  
   
+  <entry key="personas.historizarArquetiposPersonas.insert.Oracle9iDialect">
+  	<![CDATA[
+  		INSERT INTO H_ARR_ARQ_RECUPERACION_PERSONA 
+		SELECT * FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < trunc(sysdate)
+	]]>
+  </entry>
+  
+  <entry key="personas.historizarArquetiposPersonas.delete.Oracle9iDialect">
+  	<![CDATA[
+  		DELETE FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < trunc(sysdate)
+  	]]>
+  </entry>
 </properties>

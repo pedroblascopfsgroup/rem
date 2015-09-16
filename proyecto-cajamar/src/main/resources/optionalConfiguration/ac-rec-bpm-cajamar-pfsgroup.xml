@@ -252,7 +252,17 @@
 	            def plazoCumplido = {
 				
 					def bpmManager = ctx.getBean("BPMManager");
-					return bpmManager.compruebaPlazoCumplido(dameFechaPago(), 90);
+					def fecha = dameFechaPago();
+					if(fecha == null) {
+						if(valores['CJ002_RegistrarCumplimiento'] != null) {
+							fecha = valores['CJ002_RegistrarCumplimiento']['fechaPago'];
+						}
+						else {
+							fecha = valores['H041_registrarCumplimiento']['fechaPago'];
+						}
+					}
+					
+					return bpmManager.compruebaPlazoCumplido(fecha, 90);
 	            }
 				
 				def dameSiguienteFechaVencimiento = {

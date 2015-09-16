@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="expediente" width="1391" height="899">
+<root-container name="expediente" width="1111" height="886">
   <node name="Inicio Expediente" x="456" y="16" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -123,6 +123,10 @@
   <node name="DecisionComiteAutomatica" x="703" y="630" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="-53" w2="223" h2="1"/>
     </edge>
   </node>
   <node name="Fin Expediente" x="480" y="766" width="132" height="36"/>

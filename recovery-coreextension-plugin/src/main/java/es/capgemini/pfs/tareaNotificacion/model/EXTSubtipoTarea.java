@@ -69,6 +69,12 @@ public class EXTSubtipoTarea extends SubtipoTarea {
     public static final String CODIGO_ACUERDO_CERRADO_POR_GESTOR = "52";
     public static final String CODIGO_ACUERDO_CERRADO_POR_SUPERVISOR = "56";
     
+    // PRECONTENCIOSO
+    public static final String CODIGO_PRECONTENCIOSO_SUPERVISOR = "PCO_SUP";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTORIA = "PCO_GEST";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTOR = "PCO_PREDOC";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_LETRADO = "PCO_LET";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     @JoinColumn(name = "DD_TGE_ID")

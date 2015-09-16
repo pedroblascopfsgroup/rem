@@ -19,6 +19,8 @@
 	var idTermino = '${termino.id}';
 	var contratosIncluidos = '${contratosIncluidos}';
 	var soloConsulta = '${soloConsulta}';
+	var idTipoAcuerdoPlanPago ='${idTipoAcuerdoPlanPago}';
+	var yaHayPlanPago = '${yaHayPlanPago}';
 	
     var tipoAcu = Ext.data.Record.create([
 		 {name:'id'}
@@ -457,6 +459,14 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
        		var formulario = flujoFieldSet.getForm();
        		
        		if(formulario.isValid()){
+       			if (yaHayPlanPago=='true' && comboTipoAcuerdo.getValue()==idTipoAcuerdoPlanPago){
+	        		Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.planPago" text="**Este acuerdo ya tiene asignado un Plan de Pago" />',
+				   		buttons: Ext.Msg.OK
+					});       			
+       			}
+       			else {
        		
 	       		var params = detalleFieldSet.getForm().getValues();
 	       		
@@ -525,7 +535,7 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 						page.fireEvent(app.event.CANCEL);
 					}       				
 				});	
-			
+			}
 			}	
        		
      	}		

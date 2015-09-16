@@ -431,12 +431,22 @@ public class TerminoOperacionesManager implements TerminoOperacionesApi {
     	
     	if(nombreCampo.equals("fechaPago")){
     		map.put("nombre","fechaPago");
-    		map.put("valor",df.format(terminoOperaciones.getFechaPago()));
+    		if (terminoOperaciones.getFechaPago()==null){
+    			map.put("valor", null);
+    		}
+    		else {
+    			map.put("valor",df.format(terminoOperaciones.getFechaPago()));
+    		}
     	} 
     	
     	if(nombreCampo.equals("fechaPlanPago")){
     		map.put("nombre","fechaPlanPago");
-    		map.put("valor",df.format(terminoOperaciones.getFechaPlanPago()));
+    		if (terminoOperaciones.getFechaPlanPago()==null){
+    			map.put("valor", null);
+    		}
+    		else {
+    			map.put("valor",df.format(terminoOperaciones.getFechaPlanPago()));
+    		}
     	}
     	
     	if(nombreCampo.equals("frecuenciaPlanpago")){

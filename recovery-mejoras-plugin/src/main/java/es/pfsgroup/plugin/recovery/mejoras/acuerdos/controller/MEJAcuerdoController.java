@@ -195,6 +195,23 @@ public class MEJAcuerdoController {
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
 		
+		// Obtenemos el tipo de acuerdo para PLAN_PAGO
+		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
+		
+		// Obtenemos la lista de Terminos del acuerdo
+		List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
+		boolean yaHayPlanPago = false;
+		// y comprobamos si ya hay un plan de pago
+		for (ListadoTerminosAcuerdoDto ta : listadoTerminosAcuerdo){
+			if (ta.getTipoAcuerdo().getId() == tipoAcuerdoPlanPago.getId()){
+				yaHayPlanPago = true;
+				break;
+			}		
+		}
+		
+		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
+		map.put("yaHayPlanPago", yaHayPlanPago);
+		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}	
 	
@@ -226,6 +243,27 @@ public class MEJAcuerdoController {
 		map.put("idAcuerdo", idAcuerdo);
 		
 		map.put("soloConsulta", soloConsulta);
+		
+		// Obtenemos el tipo de acuerdo para PLAN_PAGO
+		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
+		
+		// Si estamos editando el plan de pago --> no cambiarmos el flag yaHayPlanPago = false para
+		// que se puedan hacer las modificaciones
+		boolean yaHayPlanPago = false;
+		if (!termino.getTipoAcuerdo().getCodigo().equals(DDTipoAcuerdo.CODIGO_PLAN_PAGO)){
+			// Obtenemos la lista de Terminos del acuerdo
+			List<ListadoTerminosAcuerdoDto> listadoTerminosAcuerdo = proxyFactory.proxy(MEJAcuerdoApi.class).obtenerListadoTerminosAcuerdoByAcuId(idAcuerdo);
+			// y comprobamos si ya hay un plan de pago
+			for (ListadoTerminosAcuerdoDto ta : listadoTerminosAcuerdo){
+				if (ta.getTipoAcuerdo().getId() == tipoAcuerdoPlanPago.getId()){
+					yaHayPlanPago = true;
+					break;
+				}		
+			}
+		}
+		
+		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
+		map.put("yaHayPlanPago", yaHayPlanPago);		
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}

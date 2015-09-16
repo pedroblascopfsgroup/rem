@@ -1,12 +1,12 @@
 ﻿--/*
 --##########################################
---## AUTOR=AGUSTIN MOMPO
---## FECHA_CREACION=20150916
+--## AUTOR=JAVIER RUIZ
+--## FECHA_CREACION=20150827
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=ACUERDOS
+--## INCIDENCIA_LINK=PRODUCTO-192
 --## PRODUCTO=SI
---## Finalidad: DDL Para hacer join con la parte nueva de ACUERDOS
+--## Finalidad: DDL Para hacer join con la parte nueva de objetivos
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -261,9 +261,7 @@ BEGIN
 		UNION
       SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_EXPE
 		UNION
-	  SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_OBJ 
-        UNION
-      SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_ACUERDOS 
+      SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_OBJ 
     ) V
     JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON V.TAR_ID = TAR.TAR_ID
     JOIN '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION EIN ON TAR.DD_EIN_ID = EIN.DD_EIN_ID

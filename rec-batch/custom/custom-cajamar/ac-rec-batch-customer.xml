@@ -32,4 +32,11 @@
 	<import resource="classpath:cajamar/jobs/carga/gcl/loadGruposClientesStarterJob.xml" />
 	<import resource="classpath:cajamar/jobs/carga/gcl/validacionesGruposClientesJob.xml" />
 
+	<import resource="classpath:cajamar/jobs/carga/alertas/analizeAlertasProduccionJob.xml" />
+	<import resource="classpath:cajamar/jobs/carga/alertas/loadAlertasStarterJob.xml" />
+	<import resource="classpath:cajamar/jobs/carga/alertas/pasajeAlertasProduccionJob.xml" />
+	<import resource="classpath:cajamar/jobs/carga/alertas/validacionesAlertasJob.xml" />
+
+
+
 </beans>

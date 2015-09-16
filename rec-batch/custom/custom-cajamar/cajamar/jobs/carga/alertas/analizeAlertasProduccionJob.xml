@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="analizeAlertasProduccionJob" parent="batch.simpleJob">
+    <property name="steps">
+      <list>
+        <!-- Dejamos este job vacío ya que esto lo vamos a realizar mediante un ETL -->
+      </list>
+    </property>
+  </bean>
+
+</beans>

@@ -48,40 +48,21 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 </c:if>
 var bottomBar = [];
 
-<c:if test="${form.errorValidacion==null}">
-
-
-var cb_oposicion = items[1 + muestraBotonGuardar];
-var fecha_oposicion = items[2 + muestraBotonGuardar];
-var cb_vista = items[3 + muestraBotonGuardar];
-var fecha_vista = items[4 + muestraBotonGuardar];
-
-cb_oposicion.on('select', function(){
-	fecha_oposicion.setValue('');
-	cb_vista.setValue('');
-	if(cb_oposicion.getValue() == '01') {    //si
-		fecha_oposicion.setDisabled(false);
-		cb_vista.setDisabled(false);
-	}
-	else{   //no
-		fecha_oposicion.setDisabled(true);
-		cb_vista.setDisabled(true);
-	}
-});
-
-cb_vista.on('select', function(){
-	fecha_vista.setValue('');
-	if(cb_vista.getValue() == '01') {    //si
-		fecha_vista.setDisabled(false);
-	}
-	else{   //no
-		fecha_vista.setDisabled(true);
-	}
-});
-
+var offset=0;
+<c:if test="${form.errorValidacion!=null}">
+	offset=1;
 </c:if>
+var cb_resultado = items[2 + offset];
+var tx_importe = items[3 + offset];
 
-
+cb_resultado.on('select', function(){
+	tx_importe.setValue('');
+	if(cb_resultado.getValue() == 'CON_OFE') { //contraoferta
+		tx_importe.setDisabled(false);
+	} else { //resto
+		tx_importe.setDisabled(true);
+	}
+});
 
 //mostramos el bot�n guardar cuando la tarea no est� terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">

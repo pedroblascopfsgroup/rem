@@ -197,12 +197,12 @@
 
 	<decision name="H015_BPMTramiteOcupantesDecision" expression="#{H048_BPMTramiteOcupadosResultado}">
 		<transition to="H015_RegistrarSenyalamientoPosesion" name="favorable"></transition>
-		<transition to="Fin2" name="desfavorableTP"></transition>
+		<transition to="Fin2" name="desfavorable"></transition>
 	</decision>
 
 	<decision name="H015_BPMTramiteOcupantesDecision2" expression="#{H048_BPMTramiteOcupadosResultado}">
 		<transition to="H015_RegistrarPosesionYLanzamiento" name="favorable"></transition>
-		<transition to="Fin2" name="desfavorableTP"></transition>
+		<transition to="Fin2" name="desfavorable"></transition>
 	</decision>
 
 	<state name="H015_ConfirmarNotificacionDeudor">

@@ -311,11 +311,6 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ACTJUNACR");
 	            }
 	            
-	            def comprobarExisteDocumentoINSUFI = {
-					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INSUFI");
-				}
-				
 				def esTodosViviendaHabitualAdjTerceros = {
 					def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
 					return !subastaProcedimientoManager.isNotViviendaHabitualAdjTerceros(idProcedimiento);
@@ -396,6 +391,40 @@
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H001'));
 				}
 
+<<<<<<< HEAD
+=======
+				def comprobarBienesSolitudSubasta = {
+	                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
+	                def listadoBienes = subastaProcedimientoManager.getBienesSubastaByPrcId(idProcedimiento);
+	                def resultado = true; 
+	  				for (bien in listadoBienes) {
+	  					def viviendaHabitual = (bien.getViviendaHabitual() != null);
+	  					def sitPosesoria = (bien.getSituacionPosesoria() != null);
+	  					def cargasInformadas = false;
+	  					def cargas = cargas = bien.getBienCargas();
+						if (cargas == null || (cargas != null && cargas.size() == 0)) {
+							def adicionalBien = bien.getAdicional();
+							cargasInformadas =  (adicionalBien.getSinCargas() != null && adicionalBien.getSinCargas());
+						} else {
+							def verificadasCargas = false;
+							for (carga in cargas) {
+								if (carga.getRegistral() && carga.getSituacionCarga() != null) {
+									verificadasCargas = true;
+								} else if (carga.isEconomica() && carga.getSituacionCargaEconomica() != null) {
+									verificadasCargas = true;
+								} else {
+									return false;
+								}
+							}
+							cargasInformadas = verificadasCargas;
+						}
+
+						resultado = (resultado && viviendaHabitual && sitPosesoria && cargasInformadas); 
+	  				}
+	  				return resultado;
+				}
+
+>>>>>>> haya-integracion
 				def comprobarCargasBienesProcedimiento = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarCargasBienesProcedimiento(idProcedimiento);

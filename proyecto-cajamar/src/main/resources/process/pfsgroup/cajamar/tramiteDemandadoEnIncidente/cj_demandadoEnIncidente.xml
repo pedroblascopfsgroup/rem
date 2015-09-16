@@ -142,7 +142,7 @@
 				</targetBean>
 			</action>
 		</event>			
-		<transition to="H025_resolucionFirmeDecision" name="avanzaBPM"></transition>
+		<transition to="fork1" name="avanzaBPM"></transition>
 		<transition to="H025_resolucionFirme" name="activarAlerta"></transition>
 		<transition to="Fin2" name="Fin"></transition>
 		<transition to="H025_registrarResolucion" name="vueltaAtras"></transition>
@@ -167,7 +167,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericLeaveActionHandler
+				<targetBean>leaveDemandadoIncidenteRegistrarResolucion
 				</targetBean>
 			</action>
 		</event>
@@ -175,14 +175,6 @@
 		<transition to="H025_registrarResolucion" name="activarAlerta"></transition>
 		<transition to="H025_resolucionFirme" name="avanzaBPM"></transition>
 	</state>
-
-	<decision name="H025_resolucionFirmeDecision" expression="#{H025_resolucionFirmeDecision}">
-		<transition to="H025_registrarImporteCuotasAbonar" name="condena"></transition>
-		<transition to="H025_BPMTramiteCostas" name="favorable"></transition>
-		<transition to="H025_ElaborarInformeCancelacion" name="cancelacion"></transition>
-		<transition to="H025_ActualizarInsinuacionCreditos" name="perdida"></transition>
-		<transition to="Fin2" name="otros"></transition>
-	</decision>
 
 	<state name="H025_registrarImporteCuotasAbonar">
 		<event type="node-enter">
@@ -347,6 +339,28 @@
       	</action>
 		<transition to="Fin2" name="Fin"></transition>
 	</node>
+
+	<fork name="fork1">
+		<transition to="H025_BPMTramiteCostas" name="tramCostas"></transition>
+		<transition to="CondenaCostas" name="aCondenaCostas"></transition>
+		<transition to="CancelaOperacion" name="aCancelaOperacion"></transition>
+		<transition to="PerdidaGarantia" name="aPerdidaGarantia"></transition>
+	</fork>
+
+	<decision name="PerdidaGarantia" expression="#{decision_garantia}">
+		<transition to="H025_ActualizarInsinuacionCreditos" name="si"></transition>
+		<transition to="Fin2" name="no"></transition>
+	</decision>
+
+	<decision name="CancelaOperacion" expression="#{decision_operacion}">
+		<transition to="H025_ElaborarInformeCancelacion" name="si"></transition>
+		<transition to="Fin2" name="no"></transition>
+	</decision>
+
+	<decision name="CondenaCostas" expression="#{decision_condena}">
+		<transition to="H025_registrarImporteCuotasAbonar" name="si"></transition>
+		<transition to="Fin2" name="no"></transition>
+	</decision>
 
 	<end-state name="Fin">
 		<event type="node-enter">

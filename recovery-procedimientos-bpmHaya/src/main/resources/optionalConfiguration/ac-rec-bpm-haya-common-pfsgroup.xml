@@ -729,7 +729,7 @@
 	                def listadoBienes = subastaProcedimientoManager.getBienesSubastaByPrcId(idProcedimiento);
 	                def resultado = true; 
 	  				for (bien in listadoBienes) {
-	  					def viviendaHabitual = (bien.getViviendaHabitual() != null && bien.getViviendaHabitual()=="1");
+	  					def viviendaHabitual = (bien.getViviendaHabitual() != null);
 	  					def sitPosesoria = (bien.getSituacionPosesoria() != null);
 	  					def cargasInformadas = false;
 	  					def cargas = cargas = bien.getBienCargas();
@@ -773,6 +773,11 @@
 	  				return resultado;
 				}  		   	                       
         	            
+	            def comprobarExisteDocumentoINSUFI = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INSUFI");
+				}
+
   			 ]]>
   			</value>
   		</list>

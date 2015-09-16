@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteOcupantes" width="1526" height="1453">
+<root-container name="hcj_tramiteOcupantes" width="1492" height="1453">
   <node name="inicio" x="654" y="16" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -169,7 +169,7 @@
       <bendpoint w1="194" h1="4" w2="2" h2="-173"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-39" y="-8"/>
     </edge>
     <edge>
       <label x="-47" y="-9"/>

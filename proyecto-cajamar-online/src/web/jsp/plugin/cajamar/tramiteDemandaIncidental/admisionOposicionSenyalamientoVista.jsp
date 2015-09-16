@@ -49,38 +49,29 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
-
-
 var cb_admision = items[1 + muestraBotonGuardar];
 var fecha_admision = items[2 + muestraBotonGuardar];
 var cb_vista = items[3 + muestraBotonGuardar];
 var fecha_vista = items[4 + muestraBotonGuardar];
 
 cb_admision.on('select', function(){
+	fecha_admision.setValue('');
+	cb_vista.setValue('');
+	fecha_vista.setValue('');
 	if(cb_admision.getValue() == '01') {    //si
 		fecha_admision.setDisabled(false);
 		cb_vista.setDisabled(false);
-		if(cb_vista.getValue() != '02') {    //distinto de no
-			fecha_vista.setDisabled(false);
-		}
-		
-	}
-	else{   //no
-		fecha_admision.setValue('');
+	} else {   //no
 		fecha_admision.setDisabled(true);
-		cb_vista.setValue('');
 		cb_vista.setDisabled(true);
-		fecha_vista.setValue('');
-		fecha_vista.setDisabled(true);
 	}
 });
 
 cb_vista.on('select', function(){
+	fecha_vista.setValue('');
 	if(cb_vista.getValue() == '01') {    //si
 		fecha_vista.setDisabled(false);
-	}
-	else{   //no
-		fecha_vista.setValue('');
+	} else {   //no
 		fecha_vista.setDisabled(true);
 	}
 });
@@ -89,7 +80,7 @@ cb_vista.on('select', function(){
 
 
 
-//mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
+//mostramos el botï¿½n guardar cuando la tarea no estï¿½ terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -108,7 +99,7 @@ cb_vista.on('select', function(){
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -133,7 +124,7 @@ if (muestraBotonGuardar==1){
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)	{
 		bottomBar.push(btnGuardar);
 	}

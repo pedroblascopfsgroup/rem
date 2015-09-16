@@ -332,7 +332,6 @@ public class SubastaBccLeaveActionHandler extends
 	public Boolean[] bpmGetValoresRamasCelebracion(Procedimiento prc,
 			TareaExterna tex) {
 
-		List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
 
 		// Inicio todos los valores a false
 		Boolean[] resultado = {false, false, false, false, false, false};
@@ -352,7 +351,10 @@ public class SubastaBccLeaveActionHandler extends
 
 
 		// Obtenemos la lista de valores de esa tarea
-		listadoValores = tex.getValores();
+		List<EXTTareaExternaValor> listadoValores = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class))
+				.obtenerValoresTareaByTexId(tex.getId());
+		
 		for (TareaExternaValor val : listadoValores) {
 
 			if ("comboCelebrada".equals(val.getNombre())) {

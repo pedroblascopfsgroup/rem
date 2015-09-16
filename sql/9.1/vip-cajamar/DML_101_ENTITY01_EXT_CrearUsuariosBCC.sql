@@ -36,7 +36,7 @@ DECLARE
     TYPE T_ARRAY_TFA IS TABLE OF T_TIPO_TFA;
     V_TIPO_TFA T_ARRAY_TFA := T_ARRAY_TFA(  
       T_TIPO_TFA(
-      	/*codigo tde.......*/ 'D-GEHREIN',
+      	/*codigo tde.......*/ 'D-GESHREIN',
       	/*username.........*/ 'CJ_GEHREIN',
       	/*password.........*/ '1234',
       	/*nombre usuario ..*/ 'CJ_GEHREIN',

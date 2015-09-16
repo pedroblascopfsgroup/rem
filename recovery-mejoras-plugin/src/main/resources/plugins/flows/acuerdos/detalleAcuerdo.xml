@@ -9,7 +9,7 @@
 	    <on-entry>
 	    	<evaluate expression="executor.execute('acuerdoManager.getActuacionesAExplorarAcuerdo',id)" result="flowScope.actuacionesAExplorar" />
 	    	<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById',id)" result="flowScope.acuerdo" />
-	    	<evaluate expression="executor.execute('acuerdoManager.puedeEditar',id)" result="flowScope.puedeEditar" />
+	    	<evaluate expression="executor.execute('mejacuerdo.puedeEditar',id)" result="flowScope.puedeEditar" />
 	    	<evaluate expression="executor.execute('asuntosManager.esGestor',idAsunto)" result="flowScope.esGestor"/>
 	    </on-entry>
     </end-state> 

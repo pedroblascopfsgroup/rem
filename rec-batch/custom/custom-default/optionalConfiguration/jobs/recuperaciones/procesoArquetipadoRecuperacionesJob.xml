@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <bean id="procesoArquetipadoRecuperacionesJob" parent="batch.simpleJob" scope="prototype">
+    <property name="steps">
+      <list>
+      
+		<bean id="batch.recobro.taskletArquetipacion" parent="batch.taskletStep" scope="prototype">
+			<property name="tasklet">
+				<bean class="es.capgemini.pfs.batch.revisar.arquetipos.RevisionGenericaArquetiposTasklet" scope="prototype">
+					<property name="ruleExecutor">
+						<bean class="es.capgemini.pfs.batch.revisar.arquetipos.engine.ExtendedRuleExecutor">
+							<property name="engine">
+								<bean class="es.capgemini.pfs.ruleengine.RuleExecutor"/>
+							</property>
+							<property name="config">
+								<bean id="arquetiposRuleExecutorConf" class="es.capgemini.pfs.batch.revisar.arquetipos.ExtendedRuleExecutorConfig">
+									<!--  Política de arquetipación: INSERT | UPDATE(deprecated) -->
+									<property name="policy" value="INSERT"/>
+									<!-- Formato de la definición de la regla XML | JSON -->
+									<property name="ruleDefinitionType" value="XML"/>
+									<!-- Tabla desde la que consultamos en busca de variables -->
+									<!--  OJO. En versiones anteriores usábamos TMP_REC_DATA_RULE_ENGINE -->
+									<property name="tableFrom" value="DATA_RULE_ENGINE"/>
+									<property name="columnFromRef" value="PER_ID"/>
+									
+									<!-- Tabla en la que escribimos el resultado de la arquetipación -->
+									<property name="tableToInsert" value="ARR_ARQ_RECUPERACION_PERSONA" />
+									<property name="pkColumn" value="ARR_ID" />
+									<property name="pkSequence" value="S_ARR_ARQ_RECUPERACION_PERSONA" />
+									<property name="columnToRef" value="PER_ID" />
+									<property name="columnArqId" value="ARQ_ID" />
+									<property name="columnArqName" value="ARQ_NAME" />
+									<property name="columnArqPriority" value="ARQ_PRIO" />
+									<property name="columnArqDate" value="ARQ_DATE" />									
+									
+									<!-- Indicamos que vistas materializadas queremos refrescar al empezar el proceso -->
+									<!-- <property name="refreshViews"><value>TMP_REC_DATA_RULE_ENGINE</value></property>  -->
+								</bean>
+							</property>
+						</bean>
+					</property>
+					<property name="arquetiposRepo">
+						<bean class="es.capgemini.pfs.batch.revisar.arquetipos.repo.RepositorioArquetiposGenerico">
+							<property name="dataSource" ref="entityDataSource"/>
+							<property name="repoConfig">
+								<bean class="es.capgemini.pfs.batch.revisar.arquetipos.repo.RepositorioConfig">
+									<property name="query">
+										<value><![CDATA[
+											SELECT arq.arq_id, arq.arq_prioridad, arq.arq_nombre, rd.rd_definition
+												FROM arq_arquetipos arq INNER JOIN rule_definition rd ON rd.rd_id = arq.rd_id
+												WHERE NOT arq.arq_prioridad IS NULL AND arq.borrado=0
+										]]></value>
+									</property>
+									<property name="columnForValue" value="ARQ_ID"/>
+									<property name="columnForPriority" value="ARQ_PRIORIDAD"/>
+									<property name="columnForName" value="ARQ_NOMBRE"/>
+									<property name="columnForRuleDefinition" value="RD_DEFINITION"/>
+								</bean>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</property>
+		</bean>    
+      </list>
+    </property>
+  </bean>
+</beans>

@@ -52,10 +52,13 @@
 		
 	]);
 	
+	var pagingBar=fwk.ux.getPaging(politicaStore);
+	
 	var grid = app.crearGrid(politicaStore,politicasCm,{
 		title:'<s:message code="politicasgestor.grid.titulo" text="**Objetivos Pendientes"/>'
 		,iconCls:'icon_objetivos_pendientes'
 		,style:'padding-right: 10px'
+		,bbar:[pagingBar]
 		,cls:'cursor_pointer'
 		,frame:false
 		//,autoHeight:true

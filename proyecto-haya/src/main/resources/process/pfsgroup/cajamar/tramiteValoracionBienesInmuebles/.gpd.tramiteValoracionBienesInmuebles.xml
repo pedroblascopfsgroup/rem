@@ -51,7 +51,7 @@
     </edge>
     <edge>
       <label x="14" y="10"/>
-      <bendpoint w1="-294" h1="-2" w2="-2" h2="-114"/>
+      <bendpoint w1="-216" h1="0" w2="3" h2="-194"/>
     </edge>
   </node>
   <node name="H058_ObtencionAvaluo" x="67" y="505" width="166" height="36">
@@ -60,13 +60,13 @@
       <bendpoint w1="0" h1="49" w2="-206" h2="2"/>
     </edge>
     <edge>
-      <label x="-2" y="-24"/>
-    </edge>
-    <edge>
       <label x="4" y="-381"/>
       <bendpoint w1="-142" h1="0" w2="-555" h2="-282"/>
       <bendpoint w1="-138" h1="342" w2="-1335" h2="181"/>
       <bendpoint w1="409" h1="344" w2="-788" h2="183"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="H058_ObtencionTasacionInterna" x="743" y="211" width="219" height="36">
@@ -75,15 +75,15 @@
       <bendpoint w1="0" h1="53" w2="186" h2="-1"/>
     </edge>
     <edge>
-      <label x="-60" y="-21"/>
-    </edge>
-    <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="163" h1="-4" w2="147" h2="-293"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="331" h1="-56" w2="252" h2="63"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="H058_EstConformidadOAlegacion" x="585" y="558" width="242" height="36">
@@ -192,4 +192,9 @@
     </edge>
   </node>
   <node name="Fin" x="1281" y="666" width="132" height="36"/>
+  <node name="node1" x="648" y="347" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

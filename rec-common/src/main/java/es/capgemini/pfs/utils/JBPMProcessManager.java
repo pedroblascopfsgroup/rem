@@ -162,6 +162,35 @@ public class JBPMProcessManager implements BPMContants {
             }
         });
     }
+    
+    /**
+     * Manda al nodo FIN el proceso especificado
+     * @param idProcess id de proceso
+     */
+    @BusinessOperation(ComunBusinessOperation.BO_JBPM_MGR_MANDAR_A_FIN_PROCESS)
+    public void mandarAFinProcess(final Long idProcess) {
+        processManager.execute(new JbpmCallback() {
+            @Override
+            public Object doInJbpm(JbpmContext context) {
+                // Obtener la última instancia conocida
+                ProcessInstance processInstance = context.getGraphSession().getProcessInstance(idProcess);
+                if (processInstance == null) return null;
+
+                Node nodoActual = processInstance.getRootToken().getNode();
+                Transition transition = transicionAFin(nodoActual);
+
+                if (transition != null) {
+                    processInstance.getRootToken().signal(transition);
+                } else {
+                    logger.warn("No hay transición de Fin en el nodo " + nodoActual.getName() + " token=" + processInstance.getRootToken().getId());
+                    logger.warn("Ejecutamos processInstance.end()");
+                    processInstance.end();
+                }
+
+                return null;
+            }
+        });
+    }
 
     /**
      * hace avanzar un proceso.

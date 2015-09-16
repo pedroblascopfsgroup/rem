@@ -333,9 +333,36 @@ public class Persona implements Serializable, Auditable, Describible {
 	@Column(name = "PER_EXTRA_6")
 	private Date extra6;
 
+	/**
+	 * Ahora se utiliza la tabla ARR_ARQ_RECUPERACION_PERSONA<BR><BR>
+	 *  <i>SELECT DISTINCT PER_ID, ARQ_ID FROM (<br>
+          SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD<br>
+          FROM ARR_ARQ_RECUPERACION_PERSONA<br>
+        ) WHERE ORD = 1</i>
+	 */
+	@Deprecated
 	@Column(name = "ARQ_ID")
 	private Long arquetipo;
 
+	/**
+	 * Ahora se utiliza la tabla ARR_ARQ_RECUPERACION_PERSONA<br><br>
+	 * 
+	 * <i>WITH ARR_TMP AS (<br>
+		  SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (<br>
+		              SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD<br>
+		              FROM ARR_ARQ_RECUPERACION_PERSONA<br>
+		            ) WHERE ORD <=2<br>
+		)<br>
+		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)<br>
+		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)<br>
+		, VARR AS (<br>
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID<br>
+				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID<br>
+				inner join per_personas p on a1.per_id = p.per_id<br>
+		)</i>
+	 * 
+	 */
+	@Deprecated
 	@Column(name = "ARQ_ID_CALCULADO")
 	private Long arquetipoCalculado;
 

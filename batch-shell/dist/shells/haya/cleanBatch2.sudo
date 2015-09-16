@@ -1,0 +1,15 @@
+#!/bin/sh
+################################
+### Autor: PPMM - EPT        ###
+### Fecha: 20141210          ###
+### Nombre: cleanBatch2.sudo ###
+### Cambio: 2001072          ###
+################################
+### Descripci▒n:  Ejecuta shell script seg▒n  indicaciones ###
+###  No hay cluster, solo balanceo por F5 o similar        ###
+##############################################################
+
+##Comando de ejeuci▒n:
+sudo -u ops-haya /aplicaciones/ops-haya/shells/cleanBatch2.sh
+
+##Fin

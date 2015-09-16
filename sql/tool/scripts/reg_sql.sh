@@ -208,6 +208,7 @@ else
 fi
 
 #Ejecución del script en sí mismo
+dos2unix -q "$BASEDIR/${NOMBRE_SCRIPT}"
 sed $CADENAS_SUSTITUCION "$BASEDIR/${NOMBRE_SCRIPT}" > $BASEDIR/${nombreSinExt}-reg3.1.sql
 if [[ $VERBOSE == 1 ]]; then
     echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-reg3.1.sql >> $BASEDIR/$nombreLog"

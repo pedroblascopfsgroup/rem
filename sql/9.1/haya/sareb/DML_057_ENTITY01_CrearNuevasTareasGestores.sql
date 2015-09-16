@@ -146,7 +146,7 @@ BEGIN
 
                 VAR_CURR_ROWARRAY := I;
                 DBMS_OUTPUT.PUT_LINE(V_MSQL);
-                DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TGE(1) ||''','''||TRIM(V_TMP_TIPO_TGE(2))||'''');
+                DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_STB(1) ||''','''||TRIM(V_TMP_TIPO_STB(2))||'''');
                 EXECUTE IMMEDIATE V_MSQL;
         END IF;
     END LOOP;

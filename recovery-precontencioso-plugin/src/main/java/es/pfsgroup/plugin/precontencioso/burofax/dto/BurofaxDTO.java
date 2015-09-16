@@ -21,6 +21,7 @@ public class BurofaxDTO extends WebDto{
 	private String estado;
 	private String direccion;
 	private String tipo;
+	private String tipoDescripcion;
 	private Date fechaSolicitud;
 	private Date fechaEnvio;
 	private Date fechaAcuse;
@@ -127,7 +128,13 @@ public class BurofaxDTO extends WebDto{
 	public void setTipoIntervencion(String tipoIntervencion) {
 		this.tipoIntervencion = tipoIntervencion;
 	}
-	
+	public String getTipoDescripcion() {
+		return tipoDescripcion;
+	}
+	public void setTipoDescripcion(String tipoDescripcion) {
+		this.tipoDescripcion = tipoDescripcion;
+	}
+
 	
 
 }

@@ -93,6 +93,9 @@ public class LiquidacionManagerTest {
 		assertEquals(null, liquidacionYaSolicitada.getCapitalNoVencido());
 		assertEquals(null, liquidacionYaSolicitada.getInteresesOrdinarios());
 		assertEquals(null, liquidacionYaSolicitada.getInteresesDemora());
+		assertEquals(null, liquidacionYaSolicitada.getComisiones());
+		assertEquals(null, liquidacionYaSolicitada.getGastos());
+		assertEquals(null, liquidacionYaSolicitada.getImpuestos());
 		assertEquals(null, liquidacionYaSolicitada.getTotal());
 	}
 

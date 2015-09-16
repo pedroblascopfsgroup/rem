@@ -71,6 +71,8 @@ public class LiquidacionController {
 		LiquidacionDTO liquidacionDto = liquidacionApi.getLiquidacionPorId(id);
 		EXTDDTipoGestor tipoGestorApoderado = (EXTDDTipoGestor) diccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, CODIGO_TIPO_GESTOR_APODERADO);
 
+		Parametrizacion visibleBtnSolicitar = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.VISIBLE_BOTON_SOLICITAR_LIQUIDACION);
+		model.put("ocultarBtnSolicitar", ("1".equals(visibleBtnSolicitar.getValor()) ? true : false));
 		model.put("liquidacion", liquidacionDto);
 		model.put("tipoGestorApoderado", tipoGestorApoderado);
 
@@ -113,7 +115,7 @@ public class LiquidacionController {
 	}
 
 	@RequestMapping
-	public String editar(WebRequest request, ModelMap model) {
+	public String editar(WebRequest request, ModelMap model) throws ParseException {
 
 		Long id = Long.valueOf(request.getParameter("id"));
 		Float capitalVencido = Float.valueOf(request.getParameter("capitalVencido"));
@@ -125,6 +127,12 @@ public class LiquidacionController {
 		Float comisiones = Float.valueOf(request.getParameter("comisiones"));
 		Float gastos = Float.valueOf(request.getParameter("gastos"));
 		Float impuestos = Float.valueOf(request.getParameter("impuestos"));
+
+		Date fechaCierre = null;
+		if (request.getParameter("fechaCierre") != null) {
+			SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			fechaCierre = webDateFormat.parse(request.getParameter("fechaCierre"));
+		}
 
 		String usuario = request.getParameter("apoderadoUsuarioId");
 
@@ -153,6 +161,7 @@ public class LiquidacionController {
 		liquidacionDto.setComisiones(comisiones);
 		liquidacionDto.setGastos(gastos);
 		liquidacionDto.setImpuestos(impuestos);
+		liquidacionDto.setFechaCierre(fechaCierre);
 
 		liquidacionApi.editarValoresCalculados(liquidacionDto);
 

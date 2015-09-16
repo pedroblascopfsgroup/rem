@@ -122,6 +122,7 @@ public class BurofaxController {
 			    				DDTipoBurofaxPCO tipoBurofax=burofaxManager.getTipoBurofaxPorDefecto(idProcedimiento,burofax.getContrato().getId());
 			    				if(!Checks.esNulo(tipoBurofax) && !Checks.esNulo(tipoBurofax.getCodigo())){
 			    					dto.setTipo(tipoBurofax.getCodigo());
+			    					dto.setTipoDescripcion(tipoBurofax.getDescripcion());
 			    					dto.setIdTipoBurofax(tipoBurofax.getId());
 			    				}
 
@@ -143,7 +144,7 @@ public class BurofaxController {
 				    						dto.setDireccion(envioBurofax.getDireccion().getDomicilio());
 				    					}
 				    					dto.setTipo(envioBurofax.getTipoBurofax().getCodigo());
-				    					dto.setTipo(envioBurofax.getTipoBurofax().getCodigo());
+				    					dto.setTipoDescripcion(envioBurofax.getTipoBurofax().getDescripcion());
 				    					dto.setFechaSolicitud(envioBurofax.getFechaSolicitud());
 				    					dto.setFechaEnvio(envioBurofax.getFechaEnvio());
 				    					dto.setFechaAcuse(envioBurofax.getFechaAcuse());

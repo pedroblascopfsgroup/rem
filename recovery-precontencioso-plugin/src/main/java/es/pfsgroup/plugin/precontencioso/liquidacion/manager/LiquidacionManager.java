@@ -108,6 +108,10 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setGastos(liquidacionDto.getGastos());
 		liquidacion.setImpuestos(liquidacionDto.getImpuestos());
 
+		if (liquidacionDto.getFechaCierre() != null) {
+			liquidacion.setFechaCierre(liquidacionDto.getFechaCierre());
+		}
+
 		GestorDespacho apoderado = obtenerApoderado(liquidacionDto);
 		if (apoderado != null) {
 			liquidacion.setApoderado(apoderado);
@@ -142,6 +146,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setInteresesDemora(null);
 		liquidacion.setComisiones(null);
 		liquidacion.setGastos(null);
+		liquidacion.setImpuestos(null);
 		liquidacion.setTotal(null);
 
 		//Se registra el usd_id del solicitante

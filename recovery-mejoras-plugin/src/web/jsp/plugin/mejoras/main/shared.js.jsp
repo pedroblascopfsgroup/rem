@@ -141,6 +141,11 @@ app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_MARCADO = '<fwk:const value="es.capgem
 app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_OK" />';
 app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO" />';
 
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO" />';
+
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
 

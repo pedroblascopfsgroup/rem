@@ -77,6 +77,24 @@ DECLARE
     
 BEGIN	
 
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-764');
+	V_TAREA:='H025_resolucionFirme';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+		' TAP_SCRIPT_DECISION=NULL WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-764');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-757');
+	V_TAREA:='H023_confirmarOposicion';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H023_confirmarOposicion''''][''''comboOposicion'''']==DDSiNo.SI && (valores[''''H023_confirmarOposicion''''][''''comboVista'''']==null || valores[''''H023_confirmarOposicion''''][''''fechaOposicion'''']==null) ? ''''Es necesario indicar la fecha de oposici&oacute;n y si hay vista o no.'''' : (valores[''''H023_confirmarOposicion''''][''''comboVista'''']==DDSiNo.SI && valores[''''H023_confirmarOposicion''''][''''fechaVista'''']==null ? ''''Debe indicar la fecha de la vista'''' : null)'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-757');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-758');
+	V_TAREA:='H023_admisionOposicionYSenalamientoVista';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H023_admisionOposicionYSenalamientoVista''''][''''comboAdmision'''']==DDSiNo.SI && (valores[''''H023_admisionOposicionYSenalamientoVista''''][''''comboVista'''']==null || valores[''''H023_admisionOposicionYSenalamientoVista''''][''''fecha'''']==null) ? ''''Es necesario indicar la fecha de adminisi&oacute;n y si hay vista o no.'''' : (valores[''''H023_admisionOposicionYSenalamientoVista''''][''''comboVista'''']==DDSiNo.SI && valores[''''H023_admisionOposicionYSenalamientoVista''''][''''fechaVista'''']==null ? ''''Debe indicar la fecha de la vista'''' : null)'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-758');
+	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-741');
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
 			' SET TAP_SCRIPT_VALIDACION = ''comprobarMinimoBienLote() ? (comprobarExisteDocumentoESRAS() ? (comprobarProvLocFinBien() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Los bienes con lote deben tener informado el tipo de inmueble, provincia, localidad y n&uacute;mero de finca.</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento "Diligencia de se&ntilde;alamiento Edicto de subasta".</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Al menos un bien debe estar asignado a un lote</div>'''''' ' ||
@@ -122,6 +140,7 @@ BEGIN
 	' TAP_SCRIPT_VALIDACION = NULL' ||
 	' ,TAP_SCRIPT_VALIDACION_JBPM=''valores[''''CJ001_AdmisionJuzgado''''][''''comboAdmision'''']==DDSiNo.SI && !comprobarExisteDocumentoAUTO() ? ''''Para completar esta tarea debe adjuntar el documento "Auto" al procedimiento.'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-759');
+	
 	
 	
     -- LOOP Insertando valores en TAP_TAREA_PROCEDIMIENTO

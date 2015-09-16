@@ -9,6 +9,7 @@
     default-autowire="byName">
 
 	<!-- Beans,handlers,Managers ... --> 
+	<bean id="leaveDemandadoIncidenteRegistrarResolucion" class="es.pfsgroup.procedimientos.handlers.LeaveDemandadoIncidenteRegistrarResolucion" />
 	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
 	<bean id="subastaConcursalCjLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalCjLeaveActionHandler" />
 	<bean id="siguientePagoHandler" class="es.pfsgroup.procedimientos.seguimientoCumplimientoAcuerdo.SiguientePagoHandler"></bean>

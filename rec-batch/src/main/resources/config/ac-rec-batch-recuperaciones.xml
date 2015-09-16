@@ -71,6 +71,17 @@
 		<property name="methodName" value="handle" />
 	</bean>
 	
+	<!-- Definimos el bean de Historización Arquetipado de recuperaciones -->	
+	<bean id="procesoHistorizarArquetipadoRecuperacionesHandler"	class="es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoHistorizarArquetipadoRecuperacionesJobLauncher" scope="prototype">
+		 <property name="channel" value="procesoHistorizarArquetipadoRecuperacionesChannel" /> 
+	</bean>
+	
+	<bean id="procesoHistorizarArquetipadoRecuperacionesQueueSubscriptor" parent="batch.QueueSubscriptorByFolderGenerator">
+		<property name="channel" value="procesoHistorizarArquetipadoRecuperacionesChannel" />
+		<property name="beanName" value="procesoHistorizarArquetipadoRecuperacionesHandler" />
+		<property name="methodName" value="handle" />
+	</bean>
+	
 	
  	<bean id="securityDefaultUserId" class="java.lang.Long">
         <constructor-arg value="1" />

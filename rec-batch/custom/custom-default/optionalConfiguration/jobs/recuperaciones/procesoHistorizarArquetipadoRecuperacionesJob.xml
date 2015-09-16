@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byName" default-merge="true">
+
+	<bean id="procesoHistorizarArquetipadoRecuperacionesJob" parent="batch.simpleJob"
+		scope="prototype">
+		<property name="steps">
+			<list>
+
+				<bean parent="batch.taskletStep" scope="prototype">
+					<property name="tasklet">
+						<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+							<property name="scripts">
+								<!-- Lista de scripts SQL ha ejecutar -->
+								<list>									
+									
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="personas.historizarArquetiposPersonas.insert.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="personas.historizarArquetiposPersonas.insert" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="personas.historizarArquetiposPersonas.delete.${entity.dialect}" />
+										</entry>
+										<entry key="message" value="personas.historizarArquetiposPersonas.delete" />
+										<entry key="severidad" value="error" />
+									</map>
+								</list>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+
+</beans>

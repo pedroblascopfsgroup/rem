@@ -15,11 +15,13 @@ import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConsta
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoArquetipadoRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionClientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoCreacionExpedientesRecuperaciones;
+import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoHistorizarArquetipadoRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoRevisionClientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.constantes.RecuperacionesConstantes.ProcesoRevisionExpedientesRecuperaciones;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoArquetipadoRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionClientesRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoCreacionExpedientesRecuperacionesJobLauncher;
+import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoHistorizarArquetipadoRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoRevisionClientesRecuperacionesJobLauncher;
 import es.pfsgroup.recovery.batch.recuperaciones.launcher.ProcesoRevisionExpedientesRecuperacionesJobLauncher;
 
@@ -108,6 +110,21 @@ public class BatchConsoleJMXRecuperaciones {
     	revisionExpedientesJobLauncher.handle(workingCode,new Date());
     	
     	logger.debug(ProcesoRevisionExpedientesRecuperaciones.PROCESO_REVISION_EXPEDIENTES_RECUPERACIONES_HANDLER + " ya se ha encolado");
+		
+	}
+	
+	@ManagedOperation(description = "Ejecuta el proceso de Historización de arquetipado para el batch de Recuperaciones. Se debe indicar el workingCode")
+	public void ejecutarProcesoHistorizarArquetipado(String workingCode) {
+		
+		logger.debug("Encolando " + ProcesoHistorizarArquetipadoRecuperaciones.PROCESO_HISTORIZAR_ARQUETIPADO_RECUPERACIONES_HANDLER);
+		
+		ProcesoHistorizarArquetipadoRecuperacionesJobLauncher historizarArquetipadoJobLauncher = (ProcesoHistorizarArquetipadoRecuperacionesJobLauncher)ApplicationContextUtil.
+    			getApplicationContext().getBean(ProcesoHistorizarArquetipadoRecuperaciones.PROCESO_HISTORIZAR_ARQUETIPADO_RECUPERACIONES_HANDLER);
+		
+		
+    	historizarArquetipadoJobLauncher.handle(workingCode,new Date());
+    	
+    	logger.debug(ProcesoHistorizarArquetipadoRecuperaciones.PROCESO_HISTORIZAR_ARQUETIPADO_RECUPERACIONES_HANDLER + " ya se ha encolado");
 		
 	}
 

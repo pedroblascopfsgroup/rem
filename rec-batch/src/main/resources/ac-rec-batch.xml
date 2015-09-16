@@ -498,6 +498,16 @@
                         </value>                       
                     </property>
                 </bean>
+                 <bean parent="events.router.groovyStrategy">
+ 					<property name="script">
+                        <value>
+                            if (sourceChannel =~ /^procesoCreacionExpedientesRecuperacionesChannel\[${batch.files.workingcode.pattern}\]$/) { 
+                                matcher = (sourceChannel =~/procesoCreacionExpedientesRecuperacionesChannel/) 
+                                return matcher.replaceAll(/procesoHistorizarArquetipadoRecuperacionesChannel/) 
+                            }
+                        </value>                       
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>

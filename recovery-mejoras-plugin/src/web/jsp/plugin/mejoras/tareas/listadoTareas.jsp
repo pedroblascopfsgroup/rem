@@ -1388,6 +1388,7 @@
 		case app.subtipoTarea.CODIGO_ACEPTACION_ACUERDO:
 		case app.subtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO:
 		case app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE:
+		case app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO:
 				app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'acuerdos');
 		break;
 		

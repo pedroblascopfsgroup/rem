@@ -30,6 +30,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -53,16 +54,16 @@ public class AcuerdoConfigAsuntoUsers implements Serializable, Auditable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "DD_TGE_ID_PROPONENTE")
-    private EXTDDTipoGestor proponente;
+    @JoinColumn(name = "DD_TDE_ID_PROPONENTE")
+    private DDTipoDespachoExterno proponente;
     
     @ManyToOne
-    @JoinColumn(name = "DD_TGE_ID_VALIDADOR")
-    private EXTDDTipoGestor validador;
+    @JoinColumn(name = "DD_TDE_ID_VALIDADOR")
+    private DDTipoDespachoExterno validador;
     
     @ManyToOne
-    @JoinColumn(name = "DD_TGE_ID_DECISOR")
-    private EXTDDTipoGestor decisor;
+    @JoinColumn(name = "DD_TDE_ID_DECISOR")
+    private DDTipoDespachoExterno decisor;
 
 
     @Version
@@ -95,29 +96,29 @@ public class AcuerdoConfigAsuntoUsers implements Serializable, Auditable {
     }
     
 	
-    public EXTDDTipoGestor getProponente() {
+    public DDTipoDespachoExterno getProponente() {
 		return proponente;
 	}
 
-	public void setProponente(EXTDDTipoGestor proponente) {
+	public void setProponente(DDTipoDespachoExterno proponente) {
 		this.proponente = proponente;
 	}
 
 	
-	public EXTDDTipoGestor getValidador() {
+	public DDTipoDespachoExterno getValidador() {
 		return validador;
 	}
 
-	public void setValidador(EXTDDTipoGestor validador) {
+	public void setValidador(DDTipoDespachoExterno validador) {
 		this.validador = validador;
 	}
 
 	
-	public EXTDDTipoGestor getDecisor() {
+	public DDTipoDespachoExterno getDecisor() {
 		return decisor;
 	}
 
-	public void setDecisor(EXTDDTipoGestor decisor) {
+	public void setDecisor(DDTipoDespachoExterno decisor) {
 		this.decisor = decisor;
 	}
 

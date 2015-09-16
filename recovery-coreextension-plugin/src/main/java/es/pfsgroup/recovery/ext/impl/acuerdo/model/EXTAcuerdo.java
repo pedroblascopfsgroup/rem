@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 
@@ -32,6 +33,18 @@ public class EXTAcuerdo extends Acuerdo {
     @ManyToOne
     @JoinColumn(name = "TIPO_GESTOR_PROPONENTE")
 	private EXTDDTipoGestor tipoGestorProponente;
+    
+    @ManyToOne
+    @JoinColumn(name = "USD_ID")
+	private GestorDespacho gestorDespacho;
+    
+	public GestorDespacho getGestorDespacho() {
+		return gestorDespacho;
+	}
+
+	public void setGestorDespacho(GestorDespacho gestorDespacho) {
+		this.gestorDespacho = gestorDespacho;
+	}
 
 	public EXTDDTipoGestor getTipoGestorProponente() {
 		return tipoGestorProponente;

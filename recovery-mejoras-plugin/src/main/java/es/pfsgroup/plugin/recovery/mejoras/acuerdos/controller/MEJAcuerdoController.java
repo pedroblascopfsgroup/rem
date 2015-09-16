@@ -24,6 +24,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
@@ -38,7 +39,9 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.revisionProcedimientos.RevisionProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.revisionProcedimiento.dto.RevisionProcedimientoDto;
@@ -113,30 +116,56 @@ public class MEJAcuerdoController {
      * @param idAcuerdo el id del acuerdo
      */
 	@RequestMapping
-    public String getConfigUsersAcuerdoAsunto(ModelMap model, Long idTipoGestorProponente, Long idAsunto) {
+    public String getConfigUsersAcuerdoAsunto(ModelMap model, Long idTipoDespachoProponente, Long idAsunto) {
 
-		model.put("map",mejAcuerdoApi.getTiposGestoresAcuerdoAsunto(idTipoGestorProponente));
+		model.put("map",mejAcuerdoApi.getTiposDespachoAcuerdoAsunto(idTipoDespachoProponente));
 		
 		Usuario user = usuarioManager.getUsuarioLogado();
 		model.put("idUsuario",user.getId());
 		
-		List<EXTGestorAdicionalAsunto> gestoresAsunto = genericDao.getList(EXTGestorAdicionalAsunto.class, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",idAsunto));
+//		List<EXTGestorAdicionalAsunto> gestoresAsunto = genericDao.getList(EXTGestorAdicionalAsunto.class, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",idAsunto));
+//		
+//		if(gestoresAsunto.size()==1){
+//			
+//			model.put("tipoGestorAsunto",gestoresAsunto.get(0).getTipoGestor());
+//			
+//		}else if(gestoresAsunto.size()>1){
+//			
+//			EXTGestorAdicionalAsunto gestorAsunto = gestoresAsunto.get(0);
+//			for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
+//				if(gaa.getGestor().getGestorPorDefecto()){
+//					gestorAsunto = gaa;
+//					break;
+//				}
+//			}
+//			model.put("tipoGestorAsunto",gestorAsunto.getTipoGestor());
+//		}
 		
-		if(gestoresAsunto.size()==1){
+    	GestorDespacho gestorDespacho = null;
+    	Order order = new Order(OrderType.ASC, "id");
+    	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
+    	
+    	if(usuariosDespacho.size()==1){
 			
-			model.put("tipoGestorAsunto",gestoresAsunto.get(0).getTipoGestor());
+    		gestorDespacho = usuariosDespacho.get(0);
 			
-		}else if(gestoresAsunto.size()>1){
+		}else if(usuariosDespacho.size()>1){
 			
-			EXTGestorAdicionalAsunto gestorAsunto = gestoresAsunto.get(0);
-			for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
-				if(gaa.getGestor().getGestorPorDefecto()){
-					gestorAsunto = gaa;
+			gestorDespacho = usuariosDespacho.get(0);
+			
+			for(GestorDespacho gesDes : usuariosDespacho){
+				if(gesDes.getGestorPorDefecto()){
+					gestorDespacho = gesDes;
 					break;
 				}
 			}
-			model.put("tipoGestorAsunto",gestorAsunto.getTipoGestor());
+			
 		}
+    	
+    	if(gestorDespacho != null){
+    		model.put("idTipoDespacho",gestorDespacho.getDespachoExterno().getTipoDespacho().getId());
+    	}
+		
 		
 		
 		

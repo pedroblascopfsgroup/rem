@@ -11,6 +11,7 @@ import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
@@ -40,7 +41,7 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_BIEN = "mejacuerdo.deleteTerminoBien";	
 	public static final String BO_ACUERDO_MGR_DELETE_TERMINO_OPERACIONES = "mejacuerdo.deleteTerminoOperaciones";		
 	public static final String BO_ACUERDO_MGR_GET_TERMINO_ACUERDO = "mejacuerdo.getTerminoAcuerdo";	
-	public static final String BO_ACUERDO_MGR_GET_TIPOS_GESTORES_ACUERDO_ASUNTO = "mejacuerdo.getTiposGestoresAcuerdoAsunto";
+	public static final String BO_ACUERDO_MGR_GET_TIPOS_DESPACHO_ACUERDO_ASUNTO = "mejacuerdo.getTiposDespachoAcuerdoAsunto";
 	public static final String BO_ACUERDO_MGR_GET_PUEDE_EDITAR_ACUERDO_ASUNTO = "mejacuerdo.puedeEditar";
 	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_PROPONENTE_ACUERDO_ASUNTO = "mejacuerdo.esProponenteAcuerdoAsunto";
 	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_VALIDADOR_ACUERDO_ASUNTO = "mejacuerdo.esValidadorAcuerdoAsunto";
@@ -113,8 +114,8 @@ public interface MEJAcuerdoApi {
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_TERMINO_ACUERDO)
 	public TerminoAcuerdo getTerminoAcuerdo(Long idTermino);  
 	
-	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_TIPOS_GESTORES_ACUERDO_ASUNTO)
-	public Map<String, EXTDDTipoGestor> getTiposGestoresAcuerdoAsunto(Long idTipoGestorProponente);
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_TIPOS_DESPACHO_ACUERDO_ASUNTO)
+	public Map<String, DDTipoDespachoExterno> getTiposDespachoAcuerdoAsunto(Long idTipoGestorProponente);
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_PUEDE_EDITAR_ACUERDO_ASUNTO)
 	public boolean puedeEditar(Long idAcuerdo);

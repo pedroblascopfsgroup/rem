@@ -90,6 +90,7 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_ACEPTACION_ACUERDO = "ACP_ACU";
     public static final String CODIGO_REVISION_ACUERDO_ACEPTADO = "REV_ACU";
     public static final String CODIGO_ACUERDO_GESTIONES_CIERRE = "GST_CIE_ACU";
+    public static final String CODIGO_CUMPLIMIENTO_ACUERDO = "CUMPLI_ACU";
 
     public static final String CODIGO_TAREA_UMBRAL = "53";
 

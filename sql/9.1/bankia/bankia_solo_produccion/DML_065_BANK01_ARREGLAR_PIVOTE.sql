@@ -1,3 +1,20 @@
+--/*
+--##########################################
+--## AUTOR=OSCAR DORADO
+--## FECHA_CREACION=20150914
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1.15-bk
+--## INCIDENCIA_LINK=no_tiene
+--## PRODUCTO=NO
+--## Finalidad: DML
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
 MERGE INTO bank01.cnv_aux_ccdd_pr_conv_cierr_dd dd
    USING (SELECT cdd.id_acuerdo_cierre, hijo1.prc_id nuevo
             FROM bank01.cnv_aux_ccdd_pr_conv_cierr_dd cdd JOIN bank01.prc_procedimientos prc ON cdd.prc_id = prc.prc_id AND prc.borrado = 0

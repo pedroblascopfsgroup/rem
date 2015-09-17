@@ -3,8 +3,8 @@
  
 ENTIDAD=3058
 
-DIR_INPUT=/recovery/transferencia/aprov_troncal/
-export DIR_TXT=/recovery/batch-server/control/etl/input/
+DIR_INPUT=/aplicaciones/recovecb/transferencia/aprov_troncal/
+export DIR_TXT=/aplicaciones/recovecb/batch-server/control/etl/input/
 
 MAX_WAITING_MINUTES=10
 ficheros=PCR

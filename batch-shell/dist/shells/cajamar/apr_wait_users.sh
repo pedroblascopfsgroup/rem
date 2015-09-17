@@ -2,13 +2,13 @@
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
 ENTIDAD=3058
-DIR_INPUT=/recovery/transferencia/aprov_troncal/
+DIR_INPUT=/aplicaciones/recovecb/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
 ficheros=USUARIOS,ZONPEFUSU
 
 #echo $(basename $0)
 
-DIR_DESTINO=/recovery/batch-server/control/etl/input/
+DIR_DESTINO=/aplicaciones/recovecb/batch-server/control/etl/input/
 
 mascara='_'$ENTIDAD'_'????????
 extensionSem=".sem"

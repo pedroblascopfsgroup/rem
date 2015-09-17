@@ -31,10 +31,6 @@ public class EXTAcuerdo extends Acuerdo {
 	private Usuario proponente;
     
     @ManyToOne
-    @JoinColumn(name = "TIPO_GESTOR_PROPONENTE")
-	private EXTDDTipoGestor tipoGestorProponente;
-    
-    @ManyToOne
     @JoinColumn(name = "USD_ID")
 	private GestorDespacho gestorDespacho;
     
@@ -44,14 +40,6 @@ public class EXTAcuerdo extends Acuerdo {
 
 	public void setGestorDespacho(GestorDespacho gestorDespacho) {
 		this.gestorDespacho = gestorDespacho;
-	}
-
-	public EXTDDTipoGestor getTipoGestorProponente() {
-		return tipoGestorProponente;
-	}
-
-	public void setTipoGestorProponente(EXTDDTipoGestor tipoGestorProponente) {
-		this.tipoGestorProponente = tipoGestorProponente;
 	}
 
 	public Usuario getProponente() {

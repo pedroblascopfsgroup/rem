@@ -62,6 +62,7 @@ import es.capgemini.pfs.exceptions.ParametrizationException;
 import es.capgemini.pfs.exclusionexpedientecliente.dao.ExclusionExpedienteClienteDao;
 import es.capgemini.pfs.exclusionexpedientecliente.dto.DtoExclusionExpedienteCliente;
 import es.capgemini.pfs.exclusionexpedientecliente.model.ExclusionExpedienteCliente;
+import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.expediente.dao.AdjuntoExpedienteDao;
 import es.capgemini.pfs.expediente.dao.ExpedienteContratoDao;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
@@ -86,6 +87,7 @@ import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.itinerario.model.DDTipoReglasElevacion;
 import es.capgemini.pfs.itinerario.model.Estado;
 import es.capgemini.pfs.itinerario.model.Itinerario;
@@ -93,9 +95,11 @@ import es.capgemini.pfs.itinerario.model.ReglasElevacion;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.politica.dao.CicloMarcadoPoliticaDao;
 import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaExpediente;
 import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaUlt;
 import es.capgemini.pfs.politica.model.CicloMarcadoPolitica;
+import es.capgemini.pfs.politica.model.DDEstadoPolitica;
 import es.capgemini.pfs.politica.model.Politica;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
@@ -116,7 +120,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
  * Clase manager de la entidad Expediente.
  */
 @Service
-public class ExpedienteManager implements ExpedienteBPMConstants {
+public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteManagerApi {
 
     private static final String MAP_CONTRATOS_PASE = "contratosPase";
     private static final String MAP_CONTRATOS_GRUPO = "contratosGrupo";
@@ -164,18 +168,17 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     private ArquetipoDao arquetipoDao;
     
     @Autowired
+    private CicloMarcadoPoliticaDao cicloMarcadoPoliticaDao; 
+    
+    @Autowired
 	GenericABMDao genericDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    /**
-     * Busca expedientes para un filtro.
-     *
-     * @param expedientes
-     *            DtoBuscarExpedientes el filtro
-     * @return List la lista
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED)
     public Page findExpedientesPaginated(DtoBuscarExpedientes expedientes) {
     	EventFactory.onMethodStart(this.getClass());
         if (expedientes.getCodigoZona() != null && expedientes.getCodigoZona().trim().length() > 0) {
@@ -194,14 +197,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return expedienteDao.buscarExpedientesPaginado(expedientes);
     }
     
-    /**
-     * Busca expedientes para un filtro.
-     *
-     * @param expedientes
-     *            DtoBuscarExpedientes el filtro
-     * @return List la lista
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO)
     public Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params) {
     	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
     	expedientes.setLimit(2000);
@@ -222,31 +221,28 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return expedienteDao.buscarExpedientesPaginadoDinamico(expedientes,usuario,params);
     }
 
-    @SuppressWarnings("unchecked")
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO)
     public List<Expediente> findExpedientesParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
         Page p = this.findExpedientesPaginatedDinamico(dto, params);
         return (List<Expediente>) p.getResults();
     }
     
-    /**
-     * Busca expedientes para un contrato determinado.
-     *
-     * @param idExpediente El id del expediente
-     * @return List
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_CONTRATO_POR_ID)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_CONTRATO_POR_ID)
     public List<ExpedienteContrato> findExpedientesContratoPorId(Long idExpediente) {
         return expedienteDao.findContratosExpediente(idExpediente);
     }
 
     /**
-     * Devuelve los contratos de un expediente sin paginar, si en el dto se especifica
-     * un procedimiento, se marca en el check 'seleccionado' si ya estaba inclu�do en �l.
-     * @param dto DtoBuscarContrato
-     * @return List DtoExpedienteContrato: lista de contratos de un expediente.
+     * {@inheritDoc}
      */
-    @BusinessOperation(InternaBusinessOperation.CONTRATOS_DE_UN_EXPEDIENET_SIN_PAGINAR)
+	@BusinessOperation(InternaBusinessOperation.CONTRATOS_DE_UN_EXPEDIENET_SIN_PAGINAR)
     public List<DtoExpedienteContrato> contratosDeUnExpedienteSinPaginar(DtoBuscarContrato dto) {
         // Lista de contratos del expediente
         List<ExpedienteContrato> expedienteContratosExpediente = expedienteDao.findContratosExpediente(dto.getIdExpediente());
@@ -274,12 +270,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return dtoExpedienteContratos;
     }
 
-    /**
-     * Busca los clientes relacionados con los contratos del expediente.
-     * @param idExpediente Long
-     * @return List
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_PERSONAS_BY_EXPEDIENET_ID)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_PERSONAS_BY_EXPEDIENET_ID)
     public List<Persona> findPersonasByExpedienteId(Long idExpediente) {
         return expedienteDao.findPersonasContratosExpediente(idExpediente);
     }
@@ -473,35 +467,27 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
 
     }
 
-    /**
-     *
-     * @param expediente DtoBuscarExpedientes
-     * @return List
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTEER_SUPERVISOR_GENERACION_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTEER_SUPERVISOR_GENERACION_EXPEDIENTE)
     public List<String> obtenerSupervisorGeneracionExpediente(DtoBuscarExpedientes expediente) {
         return expedienteDao.obtenerSupervisorGeneracionExpediente(expediente);
     }
 
-    /**
-     * Devuelve un expediente a partir de su id.
-     *
-     * @param idExpediente el id del expediente
-     * @return El expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE)
     public Expediente getExpediente(Long idExpediente) {
     	EventFactory.onMethodStart(this.getClass());
         return expedienteDao.get(idExpediente);
     }
 
-    /**
-     * Salva un expediente.
-     *
-     * @param exp el expediente a salvar
-     *
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SAVE_OR_UPDATE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SAVE_OR_UPDATE)
     @Transactional(readOnly = false)
     public void saveOrUpdate(Expediente exp) {
         expedienteDao.saveOrUpdate(exp);
@@ -521,17 +507,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * Crea un expediente.
-     *
-     * @param idContrato id del contrato principal
-     * @param idArquetipo id del arquetipo del cliente
-     * @param idBPMExpediente proceso BPM asociado
-     * @param idPersona id
-     * @param idBPMCliente proceso bpm del cliente?
-     * @return Expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_AUTO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_AUTO)
     @Transactional(readOnly = false)
     public Expediente crearExpedienteAutomatico(Long idContrato, Long idPersona, Long idArquetipo, Long idBPMExpediente, Long idBPMCliente) {
 
@@ -734,24 +713,19 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * Crea un Expediente Manual de Seguimiento (con pol�ticas).
-     * @param idPersona Long
-     * @return Expediente
+     * {@inheritDoc}
      */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO)
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO)
     @Transactional(readOnly = false)
     public Expediente crearExpedienteManualSeg(Long idPersona) {
     	return this.crearExpedienteManualSeg(idPersona,null);
     	
     }
     
-    /**
-     * Crear un Expediente Manual de Seguimiento (con políticas) con un arquetipo indicado
-     * @param idPersona
-     * @param idArquetipo
-     * @return
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_SEGUIMIENTO_ARQ)
     @Transactional(readOnly = false)
     public Expediente crearExpedienteManualSeg(Long idPersona, Long idArquetipo) {
@@ -778,13 +752,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
     
     
-    /**
-     * Crea un Expediente Manual de Recuperaciones.
-     * @param idPersona id de la persona
-     * @param idContrato id del contrato
-     * @return expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL)
     @Transactional(readOnly = false)
     public Expediente crearExpedienteManual(Long idPersona, Long idContrato) {
     	return this.crearExpedienteManual(idPersona, idContrato, null);
@@ -792,14 +763,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     	
 
 
-    /**
-     * Crea un Expediente Manual de Recuperaciones con un arquetipo determinado
-     * @param idPersona
-     * @param idContrato
-     * @param idArquetipo
-     * @return
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_ARQ)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_ARQ)
     @Transactional(readOnly = false)
     public Expediente crearExpedienteManual(Long idPersona, Long idContrato, Long idArquetipo) {
         Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
@@ -871,11 +838,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return expediente;
     }
 
-    /**
-     * confirma la creaci�n de un expediente automatico.
-     * @param idExpediente id expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CONFIRMAR_EXPEDIENTE_AUTOMATICO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CONFIRMAR_EXPEDIENTE_AUTOMATICO)
     @Transactional(readOnly = false)
     public void confirmarExpedienteAutomatico(Long idExpediente) {
         Expediente exp = this.getExpediente(idExpediente);
@@ -1160,11 +1126,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-      * cambia el estado del itinerario del expediente.
-      * @param idExpediente id del expediente
-      * @param estadoItinerario estado
-      */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CAMBIAR_ESTADO_ITINERARIO_EXPEDIENTE)
+     * {@inheritDoc}
+     */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CAMBIAR_ESTADO_ITINERARIO_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void cambiarEstadoItinerarioExpediente(Long idExpediente, String estadoItinerario) {
         DDEstadoItinerario ddEstadoItinerario = (DDEstadoItinerario) executor.execute(ConfiguracionBusinessOperation.BO_EST_ITI_MGR_FIND_BY_CODE,
@@ -1174,12 +1138,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         this.saveOrUpdate(expediente);
     }
 
-    /**
-     * Retorna los expedientes de una persona no borrados (pero si los cancelados).
-     * @param idPersona id de un cliente
-     * @return expedientes
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTENER_EXPEDIENTE_DE_UNA_PERSONA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTENER_EXPEDIENTE_DE_UNA_PERSONA)
     public List<Expediente> obtenerExpedientesDeUnaPersona(Long idPersona) {
         List<Expediente> expedientes = null;
         Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
@@ -1187,12 +1149,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return expedientes;
     }
     
-    /**
-     * Devuelve si la persona que se pasa como parámetro tiene expedientes de seguimiento activos.
-     * @param idPersona id de una persona
-     * @return boolean
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_SEGUIMIENTO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_SEGUIMIENTO)
     public Boolean tieneExpedienteDeSeguimiento(Long idPersona){
     	
     	Boolean resultado = false;
@@ -1216,12 +1176,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     	return resultado;
     } 
     
-    /**
-     * Devuelve si la persona que se pasa como parámetro tiene expedientes de recuperación activos.
-     * @param idPersona id de una persona
-     * @return boolean
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_RECUPERACION)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_RECUPERACION)
     public Boolean tieneExpedienteDeRecuperacion(Long idPersona){
     	
     	Boolean resultado = false;
@@ -1247,22 +1205,18 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     	return resultado;
     } 
     
-    /**
-     * Retorna los expedientes de una persona no borrados (pero si los cancelados).
-     * @param idPersona id de un cliente
-     * @return expedientes
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTENER_EXPEDIENTE_DE_UNA_PERSONA_PAGINADOS)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTENER_EXPEDIENTE_DE_UNA_PERSONA_PAGINADOS)
     public Page obtenerExpedientesDeUnaPersonaPaginados(DtoListadoExpedientes dto) {
         return expedienteDao.obtenerExpedientesDeUnaPersonaPaginados(dto);
     }
 
-    /**
-     * Retorna los expedientes de una persona no borrados ni cancelados.
-     * @param idPersona id de un cliente
-     * @return expedientes
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTENER_EXPEDIENTES_DE_UNA_PERSONA_NO_CANCELADOS)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_OBTENER_EXPEDIENTES_DE_UNA_PERSONA_NO_CANCELADOS)
     public List<Long> obtenerExpedientesDeUnaPersonaNoCancelados(Long idPersona) {
         List<Long> expedientes = null;
         Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
@@ -1270,11 +1224,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return expedientes;
     }
 
-    /**
-     * Setea el instante en que cambi� el estado de un expediente.
-     * @param idExpediente el id del expediente.
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SET_INSTANCE_CAMBIO_ESTADO_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SET_INSTANCE_CAMBIO_ESTADO_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void setInstanteCambioEstadoExpediente(Long idExpediente) {
         Expediente exp = expedienteDao.get(idExpediente);
@@ -1282,12 +1235,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         expedienteDao.saveOrUpdate(exp);
     }
 
-    /**
-     * Devuelve los titulos de un expediente.
-     * @param idExpediente el id del expediente
-     * @return los titulos.
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_TITULOS_EXPEDIENTE)
     public List<Titulo> findTitulosExpediente(Long idExpediente) {
         Expediente exp = expedienteDao.get(idExpediente);
@@ -1322,11 +1273,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * Eleva un expediente a revision.
-     * @param idExpediente id del expediente
-     * @param isSupervisor isSupervisor
+     * {@inheritDoc}
      */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_REVISION)
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_REVISION)
     @Transactional(readOnly = false)
     public void elevarExpedienteARevision(Long idExpediente, Boolean isSupervisor) {
         Expediente exp = expedienteDao.get(idExpediente);
@@ -1378,11 +1327,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * Devuelve un expediente a completar.
-     * @param idExpediente id del expediente
-     * @param respuesta String
+     * {@inheritDoc}
      */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_COMPLETAR)
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_COMPLETAR)
     @Transactional(readOnly = false)
     public void devolverExpedienteACompletar(Long idExpediente, String respuesta) {
         Expediente exp = expedienteDao.get(idExpediente);
@@ -1415,12 +1362,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * Eleva un expediente a DECISION comite.
-     * @param idExpediente id del expediente
-     * @param isSupervisor boolean
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_DECISION_COMITE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_DECISION_COMITE)
     @Transactional(readOnly = false)
     public void elevarExpedienteADecisionComite(Long idExpediente, Boolean isSupervisor) {
 
@@ -1451,12 +1396,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * Devuelve un expediente a revision.
-     * @param idExpediente id del expediente
-     * @param respuesta String
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_REVISION)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_REVISION)
     @Transactional(readOnly = false)
     public void devolverExpedienteARevision(Long idExpediente, String respuesta) {
         Expediente exp = expedienteDao.get(idExpediente);
@@ -1492,11 +1435,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * calcular el comite del expediente.
-     * @param idExpediente id del expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CALCULAR_COMITE_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CALCULAR_COMITE_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void calcularComiteExpediente(Long idExpediente) {
         Expediente exp = expedienteDao.get(idExpediente);
@@ -1607,33 +1549,25 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * Indica si se puede mostrar la pesta�a de decisi�n de comit� de la consulta de expediente.
-     * Cumple con los campos de precondiciones y activaci�n del CU WEB-30,
-     * los permisos a nivel de funciones de perfil los maneja la vista con los tags.
-     * @param idExpediente el id del expediente que se quiere ver.
-     * @return un Boolean indicando si se puede o no ver el tab de DC.
+     * {@inheritDoc}
      */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_SOLAPA_DECISION_COMITE)
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_SOLAPA_DECISION_COMITE)
     public Boolean puedeMostrarSolapaDecisionComite(Long idExpediente) {
         return puedeMostrarSolapasDecision(idExpediente, true);
     }
 
-    /**
-     * Indica si se puede mostrar la pesta�a de marcado de pol�ticas de la consulta de expediente.
-     * Los permisos a nivel de funciones de perfil los maneja la vista con los tags.
-     * @param idExpediente el id del expediente que se quiere ver.
-     * @return un Boolean indicando si se puede o no ver el tab.
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_SOLAPA_MARCADO_POLITICA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_SOLAPA_MARCADO_POLITICA)
     public Boolean puedeMostrarSolapaMarcadoPoliticas(Long idExpediente) {
         return puedeMostrarSolapasDecision(idExpediente, false);
     }
 
-    /**
-     * solicita una cancelacion de un expediente.
-     * @param idExpediente id expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SOLICITAR_CANCELACION_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SOLICITAR_CANCELACION_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void solicitarCancelacionExpediente(Long idExpediente) {
         DtoGenerarTarea dto = new DtoGenerarTarea(idExpediente, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE,
@@ -1648,11 +1582,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         this.saveOrUpdate(exp);
     }
 
-    /**
-     * solicita una cancelacion de un expediente.
-     * @param idExpediente id tarea original
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_RECHAZAR_CANCELACION_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_RECHAZAR_CANCELACION_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void rechazarCancelacionExpediente(Long idExpediente) {
         Expediente exp = this.getExpediente(idExpediente);
@@ -1680,12 +1613,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         //Desbloquea el expediente
     }
 
-    /**
-     * Se cancela el expediente.
-     * @param idExpediente id
-     * @param conNotificacion conNotificacion
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CANCELACION_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CANCELACION_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void cancelacionExp(Long idExpediente, boolean conNotificacion) {
         Expediente exp = this.getExpediente(idExpediente);
@@ -1702,6 +1633,21 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         if (exp.getProcessBpm() != null) {
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_MANDAR_A_FIN_PROCESS, exp.getProcessBpm());
         }
+        
+        //Si el expediente es de itinerario Seguimiento
+        if (exp.getTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO) 
+        			|| exp.getTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO)) {
+	        //Cancelamos sus políticas
+	        List<CicloMarcadoPolitica> ciclos = cicloMarcadoPoliticaDao.getCiclosMarcadoExpediente(exp.getId());
+	        for (CicloMarcadoPolitica ciclo : ciclos) {
+	        	for (Politica politica : ciclo.getPoliticas()) {
+	        		if (politica.getEstadoPolitica().getCodigo().equals(DDEstadoPolitica.ESTADO_PROPUESTA)) {
+	        			executor.execute(InternaBusinessOperation.BO_POL_MGR_CANCELAR_POLITICA, politica.getId());
+	        		}
+	        	}
+			}
+        }
+        
 
         executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_TAREAS_ASOCIADAS_EXPEDIENTE, exp.getId());
 
@@ -1714,12 +1660,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
                 DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
     }
 
-    /**
-     * Se cancela el expediente generado manualmente a partir de un cliente.
-     * @param idExpediente Long: id del expediente propuesto
-     * @param idPersona Long: id de la persona con la que se gener� el expediente (y el cliente manual)
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CANCELACION_EXPEDIENTE_MANUAL)
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CANCELACION_EXPEDIENTE_MANUAL)
     @Transactional(readOnly = false)
     public void cancelacionExpManual(Long idExpediente, Long idPersona) {
         Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
@@ -1746,11 +1691,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * Congela un expediente.
-     * @param idExpediente id
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CONGELAR_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CONGELAR_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void congelarExpediente(Long idExpediente) {
         Expediente exp = this.getExpediente(idExpediente);
@@ -1762,11 +1706,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         //Generacion del PDF
     }
 
-    /**
-     * Congela un expediente.
-     * @param idExpediente id
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DESCONGELAR_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DESCONGELAR_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void desCongelarExpediente(Long idExpediente) {
         Expediente exp = this.getExpediente(idExpediente);
@@ -1779,33 +1722,29 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         //Borrar PDS
     }
 
-    /**
-     * Busca aaa.
-     * @param idAAA Long
-     * @return ActitudAptitudActuacion
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BUSCAR_AAA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BUSCAR_AAA)
     public ActitudAptitudActuacion buscarAAA(Long idAAA) {
 
         return actitudAptitudActuacionDao.get(idAAA);
 
     }
 
-    /**
-     * Actualiza ActitudAptitudActuacion.
-     * @param dtoAAA DtoActitudAptitudActuacion
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_AAA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_AAA)
     @Transactional(readOnly = false)
     public void updateActitudAptitudActuacion(DtoActitudAptitudActuacion dtoAAA) {
         actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
     }
 
-    /**
-     * Actualiza ActitudAptitudActuacion.
-     * @param dtoAAA DtoActitudAptitudActuacion
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_AAA_REVISION)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_AAA_REVISION)
     @Transactional(readOnly = false)
     public void updateActitudAptitudActuacionRevision(DtoActitudAptitudActuacion dtoAAA) {
         String revision = dtoAAA.getAaa().getRevision();
@@ -1814,44 +1753,38 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
     }
 
-    /**
-     * @param id Long: id del expediente
-     * @return Todas las personas titulares de los contratos relacionados del expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_PERSONAS_TIT_CONTRATOS_EXPEDIENTES)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_PERSONAS_TIT_CONTRATOS_EXPEDIENTES)
     @Transactional(readOnly = true)
     public List<Persona> findPersonasTitContratosExpediente(Long id) {
         return expedienteDao.findPersonasTitContratosExpediente(id);
     }
 
-    /**
-     * @param idExpediente Long
-     * @return Todas las personas de los contratos relacionados del expediente,
-     * con archivos adjuntos
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_PERSONAS_CONTRATOS_CON_ADJUNTOS)
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_PERSONAS_CONTRATOS_CON_ADJUNTOS)
     @Transactional(readOnly = true)
     public List<Persona> findPersonasContratosConAdjuntos(Long idExpediente) {
         return expedienteDao.findPersonasContratosConAdjuntos(idExpediente);
     }
 
-    /**
-     * @param idExpediente Long
-     * @return Todos los contratos relacionados del expediente,
-     * con archivos adjuntos
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_CONTRATOS_CON_ADJUNTOS)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_CONTRATOS_CON_ADJUNTOS)
     @Transactional(readOnly = true)
     public List<Persona> findContratosConAdjuntos(Long idExpediente) {
         return expedienteDao.findContratosConAdjuntos(idExpediente);
     }
 
-    /**
-     * Devuelve los contratos y títulos de un expediente.
-     * @param idExpediente el id del expediente
-     * @return los titulos.
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_CONTRATOS_RIESGO_EXPEDIENTES)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_CONTRATOS_RIESGO_EXPEDIENTES)
     public List<Contrato> findContratosRiesgoExpediente(Long idExpediente) {
         List<ExpedienteContrato> cex = expedienteDao.findContratosExpediente(idExpediente, null);
 
@@ -1864,25 +1797,20 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return contratos;
     }
 
-    /**
-     * cierre de la toma de decision de un expediente.
-     * @param idExpediente expediente
-     * @param observaciones observaciones de la decision
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TOMAR_DECISION_COMITE)
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TOMAR_DECISION_COMITE)
     @Transactional(readOnly = false)
     public void tomarDecisionComite(Long idExpediente, String observaciones) {
         tomarDecisionComite(idExpediente, observaciones, false, true);
     }
 
-    /**
-     * cierre de la toma de decision de un expediente.
-     * @param idExpediente expediente
-     * @param observaciones observaciones de la decision
-     * @param automatico automatico
-     * @param generaNotificacion generaNotificacion
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TOMAR_DECISION_COMITE_COMPLETO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TOMAR_DECISION_COMITE_COMPLETO)
     @Transactional(readOnly = false)
     public void tomarDecisionComite(Long idExpediente, String observaciones, boolean automatico, boolean generaNotificacion) {
         Expediente exp = getExpediente(idExpediente);
@@ -1986,11 +1914,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return true;
     }
 
-    /**
-     * libera los contratos que no tienen asociado un asunto o procedimiento.
-     * @param idExpediente expediente
-     */
-    public void liberarContratosSinActuacion(Long idExpediente) {
+	public void liberarContratosSinActuacion(Long idExpediente) {
         Expediente exp = getExpediente(idExpediente);
         if (!exp.getEstaDecidido()) { throw new BusinessOperationException("expediente.tomarDecision.decisionNoTomada"); }
         if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(exp.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
@@ -2001,12 +1925,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * upload.
-     * @param uploadForm upload
-     * @return String
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPLOAD)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPLOAD)
     @Transactional(readOnly = false)
     public String upload(WebFileItem uploadForm) {
         FileItem fileItem = uploadForm.getFileItem();
@@ -2045,11 +1967,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * delete un adjunto.
-     * @param expedienteId exp
-     * @param adjuntoId adjunto
+     * {@inheritDoc}
      */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DELETE_ADJUNTO)
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DELETE_ADJUNTO)
     @Transactional(readOnly = false)
     public void deleteAdjunto(Long expedienteId, Long adjuntoId) {
         Expediente expediente = getExpediente(expedienteId);
@@ -2059,52 +1979,33 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         expedienteDao.save(expediente);
     }
 
-    /**
-     * bajar un adjunto.
-     * @param adjuntoId adjunto
-     * @return file
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BAJAR_ADJUNTO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BAJAR_ADJUNTO)
     public FileItem bajarAdjunto(Long adjuntoId) {
         return adjuntoExpedienteDao.get(adjuntoId).getAdjunto().getFileItem();
     }
 
-    /**
-     * obtiene la propuesta de expediente manual activa.
-     * @param idExpediente id expediente
-     * @return propuesta
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_PROPUESTA_EXPEDIENTE_MANUAL)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_PROPUESTA_EXPEDIENTE_MANUAL)
     public PropuestaExpedienteManual getPropuestaExpedienteManual(Long idExpediente) {
         return propuestaExpedienteManualDao.getPropuestaDelExpediente(idExpediente);
     }
 
-    /**
-     * propone un expediente o lo activa en caso de que sea supervisor.
-     * @param dto DtoCreacionManualExpediente:
-     * <ul>
-     * <li>idExpediente id del expediente</li>
-     * <li>idPersona id de la persona titular del contrato que se seleccion� para generar el pase</li>
-     * <li>codigoMotivo motivo</li>
-     * <li>observaciones observaciones</li>
-     * <li>idPropuesta id propuesta manual</li>
-     * <li>isSupervisor isSupervisor</li>
-     * </ul>
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PROPONER_ACTIVAR_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PROPONER_ACTIVAR_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void proponerActivarExpediente(DtoCreacionManualExpediente dto) {
         Expediente exp = getExpediente(dto.getIdExpediente());
         Persona per = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, dto.getIdPersona());
         
         //Cambiamos el arquetipo del cliente según el seleccionado en la primera ventana del wizzard
-        /*Cliente cliente = per.getClienteActivo();
-        if (cliente!=null) {
-        	Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
-        	if (arquetipo!=null)
-        		cliente.setArquetipo(arquetipo);
-        }*/
-        
         Arquetipo arquetipo = arquetipoDao.get(dto.getIdArquetipo());
         
         //Primero asignamos a sus clientes el arquetipo seleccionado
@@ -2126,6 +2027,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_SAVE_OR_UPDATE, cliente);
         	}
         }
+        
+        //Y al expediente
+        exp.setArquetipo(arquetipo);
         
         if (!dto.getIsSupervisor()) {
             //Proponiendo
@@ -2215,30 +2119,27 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * Obtiene la solicitud de exclusi�n de clientes en un expediente.
-     * @param idExpediente Long: expediente asociado a la exclusi�n
-     * @return ExclusionExpedienteCliente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXCLUSION_EXPEDIENTE_CLIENTE_BY_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXCLUSION_EXPEDIENTE_CLIENTE_BY_EXPEDIENTE)
     public ExclusionExpedienteCliente findExclusionExpedienteClienteByExpedienteId(Long idExpediente) {
         return exclusionExpedienteClienteDao.findByExpedienteId(idExpediente);
     }
 
-    /**
-     * @param see ExclusionExpedienteCliente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SAVE_OR_UPDATE_EXCLUSION_EXPEDIENTE_CLIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SAVE_OR_UPDATE_EXCLUSION_EXPEDIENTE_CLIENTE)
     @Transactional(readOnly = false)
     public void saveOrUpdateExclusionExpedienteCliente(ExclusionExpedienteCliente see) {
         exclusionExpedienteClienteDao.saveOrUpdate(see);
     }
 
-    /**
-     * @param dto DtoExclusionExpedienteCliente
-     * @param idExpediente Long
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SAVE_EXCLUSION_EXPEDIENTE_CLIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SAVE_EXCLUSION_EXPEDIENTE_CLIENTE)
     @Transactional(readOnly = false)
     public void saveExclusionExpedienteCliente(DtoExclusionExpedienteCliente dto, Long idExpediente) {
         Expediente expediente;
@@ -2271,33 +2172,26 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         saveOrUpdateExclusionExpedienteCliente(exclExpCli);
     }
 
-    /**
-     * Devuelve la solicitud de creaci�n.
-     * @param id el id de la solicitud.
-     * @return la solicitud.
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BUSCAR_SOLICITUD_CANCELACION)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BUSCAR_SOLICITUD_CANCELACION)
     public SolicitudCancelacion buscarSolicitudCancelacion(Long id) {
         return solicitudCancelacionDao.get(id);
     }
 
-    /**
-     * Busca una solicitud de cancelaci�n de expediente por el id de la tarea asociada.
-     * @param idTarea el id de la tarea.
-     * @return la solicitud.
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BUSCAR_SOLICITUD_CANCELACION_POR_TAREA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_BUSCAR_SOLICITUD_CANCELACION_POR_TAREA)
     public SolicitudCancelacion buscarSolCancPorTarea(Long idTarea) {
         return solicitudCancelacionDao.buscarSolicitudPorTarea(idTarea);
     }
 
-    /**
-     * Toma la decision sobre una solicitud de cancelaci�n del expediente.
-     * @param idExpediente el id del expediente sobre el que se toma la decision.
-     * @param idSolicitud el id de la solicitud de cancelaci�n.
-     * @param aceptar la decision.
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TOMAR_DECISION_CANCELACION)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TOMAR_DECISION_CANCELACION)
     @Transactional(readOnly = false)
     public void tomarDecisionCancelacion(Long idExpediente, Long idSolicitud, boolean aceptar) {
         Expediente expediente = getExpediente(idExpediente);
@@ -2350,13 +2244,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         }
     }
 
-    /**
-     * Genera todos los datos necesarios para tomar un decision de comite automatica.
-     * @param idExpediente Long
-     * @param dca DecisionComiteAutomatico
-     * @return idAsunto
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_DATOS_PARA_DECISION_COMITE_AUTO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_DATOS_PARA_DECISION_COMITE_AUTO)
     @Transactional(readOnly = false)
     public Long crearDatosParaDecisionComiteAutomatica(Long idExpediente, DecisionComiteAutomatico dca) {
         Expediente e = getExpediente(idExpediente);
@@ -2460,10 +2351,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * Incluye los contratos al expediente.
-     * @param dto DtoExclusionContratoExpediente
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_INCLUIR_CONTRATOS_AL_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void incluirContratosAlExpediente(DtoInclusionExclusionContratoExpediente dto) {
@@ -2499,11 +2389,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         expedienteDao.save(expediente);
     }
 
-    /**
-     * Excluye el contrato del expediente.
-     * @param dto DtoExclusionContratoExpediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_EXCLUIR_CONTRATOS_AL_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_EXCLUIR_CONTRATOS_AL_EXPEDIENTE)
     @Transactional(readOnly = false)
     public void excluirContratosAlExpediente(DtoInclusionExclusionContratoExpediente dto) {
         Long idContrato = Long.parseLong(dto.getContratos());
@@ -2511,25 +2400,19 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         expedienteContratoDao.delete(expedienteContrato);
     }
 
-    /**
-     * Lanza una excepci�n si el expediente fue decidido o se est� decidiendo en comit�.
-     * @param idExpediente Long
-     * @throws BusinessOperationException
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_EXISTE_DECISION_INICIADA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_EXISTE_DECISION_INICIADA)
     public void existeDecisionIniciada(Long idExpediente) {
         if (expedienteDao.get(idExpediente).getCantidadAsuntos() > 0) { throw new BusinessOperationException(
                 "expedientes.excluirIncluirContratos.error"); }
     }
 
-    /**
-     * Actualiza el timer y el vencimiento tras la aceptaci�n de la prorroga.
-     * @param idProcessInstance ID del BPM
-     * @param idTareaAsociada ID TareaNotificacion asociada
-     * @param fechaPropuesta Fecha de la prorroga
-     * @param nombreTimer Nombre del timer a actualizar
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PRORROGA_EXTRA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PRORROGA_EXTRA)
     public void prorrogaExtra(Long idProcessInstance, Long idTareaAsociada, Date fechaPropuesta, String nombreTimer) {
         TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
         tarea.setFechaVenc(fechaPropuesta);
@@ -2541,12 +2424,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
                 GENERAR_NOTIFICACION);
     }
 
-    /**
-     * Hace la b�squeda de expedientes para mostrar en excel.
-     * @param dto los par�metros de b�squeda
-     * @return la lista de expedientes
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL)
     public List<Expediente> findExpedientesParaExcel(DtoBuscarExpedientes dto) {
         dto.setLimit(Integer.MAX_VALUE - 1);
@@ -2567,12 +2448,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return (List<Expediente>) p.getResults();
     }
 
-    /**
-     * Devuelve las reglas de elevaci�n del expediente y dice adem�s si est� o no cumplida.
-     * @param idExpediente long
-     * @return List
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_REGLAS_ELEVACION_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_REGLAS_ELEVACION_EXPEDIENTE)
     public List<ReglasElevacion> getReglasElevacionExpediente(Long idExpediente) {
         //Recuperamos las reglas del estado del itinerario en el que se encuentra el expediente
         Expediente expediente = expedienteDao.get(idExpediente);
@@ -2590,13 +2469,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return listadoReglas;
     }
 
-    /**
-     * Devuelve las reglas de elevaci�n del expediente y dice adem�s si est� o no cumplida.
-     * @param idExpediente long
-     * @param idReglaElevacion long
-     * @return idReglaElevacion long
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_ENTIDADES_REGLA_ELEVACON_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_ENTIDADES_REGLA_ELEVACON_EXPEDIENTE)
     public List<ObjetoEntidadRegla> getEntidadReglaElevacionExpediente(Long idExpediente, Long idReglaElevacion) {
         //Recuperamos las reglas del estado del itinerario en el que se encuentra el expediente
         Expediente expediente = expedienteDao.get(idExpediente);
@@ -2605,6 +2481,20 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
 
         return listadoEntidades;
     }
+    
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_IS_RECOBRO)
+    public boolean isRecobro(Long idExpediente) {
+    	Expediente expediente = this.getExpediente(idExpediente);
+    	if (expediente!=null)
+    		return expediente.getTipoExpediente().getCodigo().equals(DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO);
+    	else
+    		return false;
+    }
+
 
     /**
      * Devuelve un listado de objetosEntidad (cliente o contrato) que est�n involucrados en con la regla que se le pasa, indicando
@@ -2811,13 +2701,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * Devuelve una lista con las personas pertenecientes al contrato que, seg�n
-     * las reglas definidas, deben tener una pol�tica marcada obligatoriamente.
-     * @param idExpediente
-     *            Long
-     * @return Lista de las personas
+     * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_PERSONAS_MARCADO_OBLIGATORIO)
     public List<DtoPersonaPoliticaUlt> getPersonasMarcadoObligatorio(Long idExpediente) {
         // Obtenermos el expediente correspondiente
@@ -2852,14 +2738,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return personas;
     }
 
-    /**
-     * Devuelve una lista con las personas pertenecientes al contrato que, seg�n
-     * las reglas definidas, deben tener una pol�tica marcada obligatoriamente.
-     * @param idExpediente
-     *            Long
-     * @return Lista de las personas
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_PERSONAS_MARCADO_OPCIONAL)
     public List<DtoPersonaPoliticaUlt> getPersonasMarcadoOpcional(Long idExpediente) {
 
@@ -2904,12 +2786,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return personasOpcionales;
     }
 
-    /**
-     * Cierra una decisi�n de pol�tica desde un expediente de seguimiento.
-     * @param idExpediente long
-     * @return Boolean devuelve si se cerr� correctamente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CERRAR_DECISION_POLITICA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CERRAR_DECISION_POLITICA)
     @Transactional(readOnly = false)
     public Boolean cerrarDecisionPolitica(Long idExpediente) {
         Expediente expediente = expedienteDao.get(idExpediente);
@@ -2969,11 +2849,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     }
 
     /**
-     * Cierra una decisi�n de pol�tica de un superusuario.
-     * @param idPolitica long
-     * @return Boolean devuelve si se cerr� correctamente
+     * {@inheritDoc}
      */
-    @BusinessOperation
+	@BusinessOperation
     @Transactional(readOnly = false)
     public Boolean cerrarDecisionPoliticaSuperusuario(Long idPolitica) {
 
@@ -2989,14 +2867,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return true;
     }
 
-    /**
-     * Obtiene todas las personas del expediente con su poltica vigente asociada o la ltima
-     * del estado actual de expediente (CE/RE/DC). Si el expediente no es de seguimiento se
-     * retorna una lista vaca.
-     * @param idExpediente Long
-     * @return List DtoPersonaPoliticaExpediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_PERSONAS_POLITICAS_DEL_EXPEDIENTE)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_PERSONAS_POLITICAS_DEL_EXPEDIENTE)
     public List<DtoPersonaPoliticaExpediente> getPersonasPoliticasDelExpediente(Long idExpediente) {
         Expediente expediente = expedienteDao.get(idExpediente);
         List<DtoPersonaPoliticaExpediente> list = new ArrayList<DtoPersonaPoliticaExpediente>();
@@ -3025,41 +2899,35 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
         return list;
     }
 
-    /**
-     * Actualiza un expediente contrato.
-     * @param ec el expcnt.
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_EXPEDIENTE_CONTRATO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_EXPEDIENTE_CONTRATO)
     @Transactional(readOnly = false)
     public void updateExpedienteContrato(ExpedienteContrato ec) {
         expedienteContratoDao.update(ec);
     }
 
-    /**
-     * Recupera el expedienteContrato indicado.
-     * @param ecId Long.
-     * @return ExpedienteContrato
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDINTE_CONTRATO)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDINTE_CONTRATO)
     public ExpedienteContrato getExpedienteContrato(Long ecId) {
         return expedienteContratoDao.get(ecId);
     }
 
-    /**
-     * Guarda una solicitud de cancelaci�n
-     * @param solicitudCancelacion Solicitud a guardar
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GUARDAR_SOLICITUD_CANCELACION)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_GUARDAR_SOLICITUD_CANCELACION)
     public void guardarSolicitudCancelacion(SolicitudCancelacion solicitudCancelacion) {
         solicitudCancelacionDao.save(solicitudCancelacion);
     }
 
-    /**
-     * Devuelve si una persona No tiene ning�n expediente activo para la creaci�n de cliente
-     * @param idPersona
-     * @return True en caso de que no tenga ningun expediente
-     */
-    @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SIN_EXPEDIENTES_ACTIVOS_DE_UNA_PERSONA)
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_SIN_EXPEDIENTES_ACTIVOS_DE_UNA_PERSONA)
     @Transactional(readOnly = false)
     public Boolean sinExpedientesActivosDeUnaPersona(Long idPersona) {
         Long nExp = 0L;

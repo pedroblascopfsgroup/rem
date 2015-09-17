@@ -72,22 +72,23 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		
 		// Se selecciona el contrato que tiene mayor importe garantizado
 		String numeroContrato = "";
+		float importeGarantizado = 0;
+		float secuenciaGarantia = 0; 
+		
 		for(NMBContratoBien contratoBien : contratosBien) {
 			
-			float importeGarantizado = 0;
 			if(contratoBien.getContrato().getNroContrato() != null && contratoBien.getImporteGarantizado() != null && contratoBien.getImporteGarantizado() > importeGarantizado ) {
 				numeroContrato = contratoBien.getContrato().getNroContrato();
 				importeGarantizado = contratoBien.getImporteGarantizado();
+				secuenciaGarantia = contratoBien.getSecuenciaGarantia();
 			}
 		}
 		
 		logger.info("NCTA: " + numeroContrato);
 		input.setNCTA(numeroContrato);
 
-		/*
-		logger.info("NSEC: " + bien.getSecuencia());
-		input.setNSECUENCIA(bien.getSecuencia());
-		*/
+		logger.info("NSEC: " + secuenciaGarantia);
+		input.setNSECUENCIA(String.valueOf(secuenciaGarantia));
 		
 		// Se selecciona la persona que tiene una mayor participación. En caso de igualdad, el primer registro
 		Long nPersona = null;
@@ -147,17 +148,15 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		logger.info("CODC: " + codTipoVia);
 		input.setCODDIR(codTipoVia);
 		
-		/*
 		String nombreVia = "";
 		if(bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getNombreVia() != null) {
 			nombreVia = bien.getLocalizacionActual().getNombreVia();
 		}
 		logger.info("NOMC: " + nombreVia);
-		input.setNOMC(nombreVia);
-		*/
+		//input.setNOMC(nombreVia);
 		
-		//logger.info("NUMC: " + numeroVia);
-		//input.setNUMC(numeroVia);
+		logger.info("NUMC: " + bien.getNumDomicilio());
+		//input.setNUMC(bien.getNumDomicilio());
 		
 		String poblacion = "";
 		if(bien.getLocalizacionActual() != null && bien.getLocalizacionActual().getPoblacion() != null) {
@@ -208,11 +207,11 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		logger.info("TLF2: " + null);
 		input.setTLF2(null);
 		
-		/*logger.info("OBSE: " + null);
-		input.setOBSE(null);*/
+		logger.info("OBSE: " + null);
+		//input.setOBSE(null);
 
-		/*logger.info("NRPR: " + null);
-		input.setNRPR(null);*/
+		logger.info("NRPR: " + null);
+		//input.setNRPR(null);
 		
 		logger.info("INSC: " + null);
 		input.setINSCRIP(null);
@@ -220,25 +219,23 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		logger.info("CAUT: " + null);
 		input.setCOMAUT(null);
 
-		/*logger.info("IDTA: " + null);
-		input.setIDTA(null);*/
+		logger.info("IDTA: " + null);
+		//input.setIDTA(null);
 		
-		/*logger.info("FECH: " + null);
-		input.setFECH(null);*/
+		logger.info("FECH: " + null);
+		//input.setFECH(null);
 		
-		/*logger.info("SECU: " + null);
-		input.setSECU(null);*/
+		logger.info("SECU: " + null);
+		//input.setSECU(null);
 		
-		/*logger.info("MODI: " + null);
-		input.setMODI(null);*/
+		logger.info("MODI: " + null);
+		//input.setMODI(null);
 		
-		/*
 		logger.info("OPER: " + null);
-		input.setTIPOPER(null);
-		*/
+		//input.setOPER(null);
 		
-		/*logger.info("TASA: " + bien.getTasadora());
-		input.setTASA(bien.getTasadora());*/
+		logger.info("TASA: " + null);
+		//input.setTASA(null);
 
 		logger.info("INCO: " + INCO);
 		input.setINCO(INCO);
@@ -246,19 +243,15 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		logger.info("TENC: " + TENC);
 		input.setTIPOPER(TENC);
 		
-		/*
 		logger.info("ADJU: " + ADJU);
-		input.setADJU(ADJU); 
-		*/
+		//input.setADJU(ADJU); 
 		
 		logger.info("IMPO: " + null);
 		input.setIMPORIESGVIV(null);
 		
-		/*
-		logger.info("PRET");
-		input.setPRET(null);
-		*/
-		
+		logger.info("PRET: " + null);
+		//input.setPRET(null);
+				
 		String tinmu = null;
 		if(bien.getTipoBien() != null) {
 			tinmu = mapaTIMN.get(bien.getTipoBien().getCodigo());
@@ -270,23 +263,17 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		logger.info("OBSE2: " + observaciones);
 		input.setOBSERV(observaciones);			
 
-		/*
-		logger.info("RINM: " + bien.getRinm());
-		input.setRINM(bien.getRinm());
-		*/
+		logger.info("RINM: " + bien.getIdDireccion());
+		//input.setRINM(bien.getIdDireccion());
 		
 		logger.info("CKCA: " + CKCA);
 		input.setSOLICITANTE(CKCA);
 		
-		/*
 		logger.info("NPCE: " + null);
-		input.setNPCE(null);
-		*/
+		//input.setNPCE(null);
 		
-		/*
 		logger.info("CTCE: " + null);
-		input.setCTCE(null);
-		*/
+		//input.setCTCE(null);
 	}
 
 

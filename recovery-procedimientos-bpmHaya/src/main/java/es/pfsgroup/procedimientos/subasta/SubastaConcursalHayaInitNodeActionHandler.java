@@ -51,7 +51,7 @@ public class SubastaConcursalHayaInitNodeActionHandler extends PROGenericEnterAc
 			subastaCalculoManager.crearSubasta(procedimiento);
 			
 			//Avanzamos BPM
-	        getExecutionContext().getToken().signal();
+			executionContext.getToken().signal();
 
 	}
 

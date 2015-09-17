@@ -42,12 +42,13 @@ create or replace package OPERACION_DDL as
                          , tipo_index IN VARCHAR2 DEFAULT NULL);
 
     -- Operativa sobre vistas materializadas
-    procedure DDL_Materialized_View  ( operacion     IN VARCHAR2 --BORRAR/CREAR
-                                     , nombre        IN VARCHAR2 --NOMBRE
-                                     , consulta      IN VARCHAR2 DEFAULT NULL --SENTENCIA
-                                     , refresh_b     IN CHAR DEFAULT NULL --opcional
-                                     , primary_key_b IN CHAR DEFAULT NULL --opcional
-                                     , logging_b     IN CHAR DEFAULT NULL --opcional
-                                     );
+    procedure DDL_Materialized_View ( --operacion     IN VARCHAR2 --BORRAR/CREAR
+                                  --, esquema       IN VARCHAR2, --OWNER
+                                      nombre        IN VARCHAR2 --NOMBRE
+                                  --, consulta      IN VARCHAR2  DEFAULT NULL --SENTENCIA
+                                  --, refresh_b     IN CHAR DEFAULT NULL
+                                  --, primary_key_b IN CHAR DEFAULT NULL
+                                  --, logging_b     IN CHAR DEFAULT NULL 
+                                    );
 
 end OPERACION_DDL;

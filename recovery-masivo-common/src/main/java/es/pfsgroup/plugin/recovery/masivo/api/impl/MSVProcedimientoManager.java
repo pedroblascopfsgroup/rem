@@ -43,7 +43,7 @@ public class MSVProcedimientoManager implements MSVProcedimientoApi {
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	//TODO - Este código está duplicado en mejoras, pero el plugin no se copia al batch por lo extenso que es. 
+	//TODO - Este cï¿½digo estï¿½ duplicado en mejoras, pero el plugin no se copia al batch por lo extenso que es. 
 	@Override
 	@BusinessOperation(MSV_BO_CREA_PROCEDIMIENTO_HIJO)
 	public Procedimiento creaProcedimientoHijoMasivo(TipoProcedimiento tipoProcedimiento, Procedimiento procPadre) {
@@ -53,7 +53,7 @@ public class MSVProcedimientoManager implements MSVProcedimientoApi {
 			
 			MEJProcedimiento procHijo = new MEJProcedimiento();
 
-			/*TODO-Obtener la configuración de las derivaciones de la entity
+			/*TODO-Obtener la configuraciï¿½n de las derivaciones de la entity
 			 * Para ello, se ha de mover esta entity al corextension
 			 */
 //			Filter filtroProcOr = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoOrigen", procPadre.getTipoProcedimiento().getCodigo());
@@ -114,7 +114,7 @@ public class MSVProcedimientoManager implements MSVProcedimientoApi {
 			dto.setNumeroCasoNova(Long.parseLong(nroContrato));
 			dto.setTipoProcedimiento(tipoProcedimiento);
 		} catch (Exception e) {
-			throw new BusinessOperationException("El número del contrato no es válido");
+			throw new BusinessOperationException("El nï¿½mero del contrato no es vï¿½lido");
 		}
 		
 		return buscaProcedimientoDelContrato(dto);
@@ -132,7 +132,7 @@ public class MSVProcedimientoManager implements MSVProcedimientoApi {
 		List<Procedimiento> listaProcedimientosActivos = getListaProcedimientosActivos(dto.getNumeroCasoNova());
 		
 		for(Procedimiento proc : listaProcedimientosActivos){
-			//Se utiliza un proc. bak por si en el caso de que no cumpla ningún requisito, por lo menos devolver el último.
+			//Se utiliza un proc. bak por si en el caso de que no cumpla ningï¿½n requisito, por lo menos devolver el ï¿½ltimo.
 			if (Checks.esNulo(pBak) || pBak.getId() < proc.getId()) {
 					pBak = proc;
 			}

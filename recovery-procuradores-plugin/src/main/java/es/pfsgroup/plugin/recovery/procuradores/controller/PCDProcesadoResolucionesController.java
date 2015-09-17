@@ -43,7 +43,7 @@ import es.capgemini.pfs.prorroga.model.CausaProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
-import es.capgemini.pfs.web.genericForm.GenericFormItem;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;

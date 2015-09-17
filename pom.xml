@@ -373,10 +373,41 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-haya</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-procedimientos-bpmHaya-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<!-- 	CAJAMAR LIBRARIES -->
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-cajamar</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-cajamar-ws</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-cajamar-online</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<!-- STANDARD LIBRARIES -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>2.0.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.0.5</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -520,11 +551,30 @@
 			<modules>
 				<module>recovery-integracionuvem-plugin</module>
 				<module>recovery-procedimientos-bpmHaya</module>
+				<module>proyecto-cajamar-ws</module>
+				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
 
 				<module>rec-web</module>
 				<module>rec-batch</module>
 			</modules>
 		</profile>
+
+		<profile>
+			<id>cajamar</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>recovery-procedimientos-bpmHaya</module>
+				<module>proyecto-cajamar-ws</module>
+				<module>proyecto-cajamar</module>
+				<module>proyecto-cajamar-online</module>
+
+				<module>rec-web</module>
+				<module>rec-batch</module>
+			</modules>
+		</profile>
+
 	</profiles>
 </project>

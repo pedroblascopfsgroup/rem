@@ -1,6 +1,7 @@
 package es.pfsgroup.concursal.credito.dto;
 
 import javax.validation.constraints.NotNull;
+
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoAgregarCredito extends WebDto{
@@ -28,6 +29,8 @@ public class DtoAgregarCredito extends WebDto{
 	private Double definitivoPrincipal;
 	
 	private Long estadoCredito;	
+	
+	private String fechaVencimiento;
 	
 	public Long getIdProcedimiento() {
 		return idProcedimiento;
@@ -109,4 +112,11 @@ public class DtoAgregarCredito extends WebDto{
 		return externoPrincipal;
 	}
 
+	public String getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+
+	public void setFechaVencimiento(String fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
+	}
 }

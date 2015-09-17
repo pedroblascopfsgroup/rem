@@ -23,7 +23,6 @@ import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
-import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 
 /**
  * 
@@ -95,6 +94,9 @@ public class TerminoAcuerdo implements Serializable, Auditable{
     @Embedded
     private Auditoria auditoria;
 
+	@Column(name = "SYS_GUID")
+	private String guid;
+    
 	public Long getId() {
 		return id;
 	}
@@ -223,6 +225,12 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 		this.auditoria = auditoria;
 	}
     
-    
+	public String getGuid() {
+		return guid;
+	}
 
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
 }

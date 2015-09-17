@@ -239,6 +239,7 @@ public class SubastaController {
 			informe.setIdSubasta(idSubasta);
 			informe.setProxyFactory(proxyFactory);
 			informe.setSubastaApi(subastaApi);
+			informe.setNmbCommonProjectContext(nmbProjectContext);
 			List<Object> array = informe.create();
 			Map<String, Object> mapaValores = null;
 			FileItem resultado = proxyFactory.proxy(GENINFInformesApi.class)

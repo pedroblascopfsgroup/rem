@@ -32,6 +32,7 @@ import es.pfsgroup.procedimientos.exception.CampoTareaNoEncontradaException;
 import es.pfsgroup.procedimientos.listener.GenerarTransicionListener;
 import es.pfsgroup.procedimientos.requisitoTarea.api.RequisitoTareaApi;
 import es.pfsgroup.procedimientos.requisitoTarea.model.RequisitoTarea;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 	/**
@@ -50,6 +51,9 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 	@Autowired
 	private List<GenerarTransicionListener> listeners;
 
+	@Autowired
+	IntegracionBpmService bpmIntegrationService;
+	
 	/**
 	 * PONER JAVADOC FO.
 	 * 
@@ -85,11 +89,12 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 			
 			generarTimerTareaProcedimiento(idTarea, executionContext);
 
+			TareaExterna tareaExterna = tareaExternaManager.get(idTarea);
 			if (tieneProcesoBpmAsociado(executionContext) && !isTramitesExcluidos(executionContext)) {
 				lanzaNuevoBpmHijo(executionContext);
 
 				// No se quiere ver la tarea de lanzado un BPM externo
-				tareaExternaManager.borrar(tareaExternaManager.get(idTarea));
+				tareaExternaManager.borrar(tareaExterna);
 			}
 
 			generaTrancisionesDeAlerta(executionContext); // Necesita de la
@@ -97,6 +102,9 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 															// vencimiento de la
 															// tarea
 			//generaTransicionRetrasar(executionContext);
+			
+			// Sincroniza con el envío de tareas.
+			bpmIntegrationService.notificaInicioTarea(tareaExterna);
 		}
 
 		// Llamamos al nodo gen�rico de transici�n
@@ -350,10 +358,11 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 
 		EXTDtoCrearTareaExterna dto = DynamicDtoUtils.create(EXTDtoCrearTareaExterna.class, valores);
 		Long idTarea = tareaExternaManager.crearTareaExternaDto(dto);
-
+		TareaExterna tareaExterna = tareaExternaManager.get(idTarea);
+		
 		// Si el BPM está detenido, detenemos la nueva tarea creada
 		if (isBPMDetenido(executionContext)) {
-			tareaExternaManager.detener(tareaExternaManager.get(idTarea));
+			tareaExternaManager.detener(tareaExterna);
 		}
 
 		// Guardamos el id de la tarea externa de este nodo por si

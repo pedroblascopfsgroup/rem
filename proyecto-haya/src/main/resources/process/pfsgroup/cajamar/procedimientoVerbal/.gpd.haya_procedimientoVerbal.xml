@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_procedimientoVerbal" width="1290" height="931">
+  <node name="Inicio" x="59" y="22" width="132" height="36">
+    <edge>
+      <label x="-34" y="-16"/>
+    </edge>
+  </node>
+  <node name="H026_InterposicionDemanda" x="24" y="99" width="210" height="36">
+    <edge>
+      <label x="-2" y="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="549" h1="6" w2="-7" h2="-468"/>
+    </edge>
+  </node>
+  <node name="H026_ConfirmarAdmisionDemanda" x="14" y="380" width="230" height="36">
+    <edge>
+      <label x="5" y="2"/>
+    </edge>
+    <edge>
+      <label x="-38" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-7" y="-22"/>
+      <bendpoint w1="506" h1="-2" w2="-51" h2="-208"/>
+    </edge>
+  </node>
+  <node name="H026_ConfirmarAdmisionDemandaDecision" x="-14" y="478" width="285" height="36">
+    <edge>
+      <label x="-9" y="-20"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H026_VerbalDecision" x="359" y="480" width="179" height="36">
+    <edge>
+      <label x="-12" y="-24"/>
+      <bendpoint w1="185" h1="-1" w2="-75" h2="-94"/>
+    </edge>
+  </node>
+  <node name="H026_ConfirmarNotifiDemanda" x="25" y="571" width="210" height="36">
+    <edge>
+      <label x="1" y="4"/>
+    </edge>
+    <edge>
+      <label x="-40" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-22"/>
+    </edge>
+    <edge>
+      <label x="20" y="-53"/>
+      <bendpoint w1="-194" h1="-92" w2="-193" h2="99"/>
+    </edge>
+  </node>
+  <node name="H026_ConfirmarNotifiDemandaDecision" x="0" y="660" width="258" height="36">
+    <edge>
+      <label x="-4" y="-21"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H026_BPMtramiteNotificacion" x="349" y="659" width="222" height="36">
+    <edge>
+      <label x="1" y="-2"/>
+    </edge>
+  </node>
+  <node name="H026_RegistrarJuicio" x="25" y="754" width="210" height="36">
+    <edge>
+      <label x="0" y="-5"/>
+    </edge>
+    <edge>
+      <label x="-40" y="-15"/>
+    </edge>
+    <edge>
+      <label x="-20" y="-22"/>
+      <bendpoint w1="420" h1="-16" w2="-136" h2="152"/>
+    </edge>
+    <edge>
+      <label x="5" y="-49"/>
+      <bendpoint w1="-167" h1="-95" w2="-167" h2="88"/>
+    </edge>
+  </node>
+  <node name="H026_RegistrarResolucion" x="35" y="860" width="186" height="36">
+    <edge>
+      <label x="-87" y="9"/>
+    </edge>
+    <edge>
+      <label x="-31" y="4"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-19"/>
+      <bendpoint w1="463" h1="-83" w2="-90" h2="191"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-31"/>
+      <bendpoint w1="-158" h1="-53" w2="-155" h2="53"/>
+    </edge>
+  </node>
+  <node name="H026_ResolucionFirme" x="301" y="854" width="167" height="36">
+    <edge>
+      <label x="-41" y="8"/>
+    </edge>
+    <edge>
+      <label x="-33" y="3"/>
+      <bendpoint w1="381" h1="-3" w2="340" h2="371"/>
+      <bendpoint w1="379" h1="-354" w2="338" h2="20"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-19"/>
+      <bendpoint w1="260" h1="-49" w2="-42" h2="219"/>
+    </edge>
+    <edge>
+      <label x="20" y="-14"/>
+      <bendpoint w1="-121" h1="56" w2="130" h2="50"/>
+    </edge>
+  </node>
+  <node name="Fin" x="619" y="573" width="132" height="36"/>
+  <node name="H026_InterposicionDemandaDecision" x="7" y="200" width="246" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-11" y="-57"/>
+      <bendpoint w1="-176" h1="-4" w2="-175" h2="-186"/>
+      <bendpoint w1="-175" h1="184" w2="-174" h2="2"/>
+    </edge>
+  </node>
+  <node name="ForkInterposicionDemanda" x="4" y="289" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-72" y="-8"/>
+    </edge>
+  </node>
+  <node name="H026_BPMProvisionFondos" x="409" y="286" width="204" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-111" y="-98"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+</root-container>

@@ -63,6 +63,9 @@ public class NMBContratoBien implements  Serializable, Auditable, NMBContratoBie
 	@Column(name = "BIE_CNT_FECHA_CIERRE")
     private Date fechaCierre;
 	
+	@Column(name = "NUM_EXTRA1")
+    private Float secuenciaGarantia;
+	
 	@Embedded
     private Auditoria auditoria;
 
@@ -147,4 +150,17 @@ public class NMBContratoBien implements  Serializable, Auditable, NMBContratoBie
 		this.auditoria = auditoria;
 	}
 
+	/**
+	 * @return the secuenciaGarantia
+	 */
+	public Float getSecuenciaGarantia() {
+		return secuenciaGarantia;
+	}
+
+	/**
+	 * @param secuenciaGarantia the secuenciaGarantia to set
+	 */
+	public void setSecuenciaGarantia(Float secuenciaGarantia) {
+		this.secuenciaGarantia = secuenciaGarantia;
+	}
 }

@@ -29,9 +29,11 @@ public class BienHayaManager implements BienHayaApi {
 	
 	@Override
 	@BusinessOperation(SOLICITAR_TASACION)
-	public void solicitarTasacion(Long idBien, Long cuenta, String personaContacto,
+	public boolean solicitarTasacion(Long idBien, Long cuenta, String personaContacto,
 			Long telefono, String observaciones) {
 	
+		boolean res = false;
+		
 		if(tasacionWSApi != null) {
 			
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", idBien);
@@ -43,7 +45,9 @@ public class BienHayaManager implements BienHayaApi {
 			
 			List<NMBContratoBien> contratosBien = genericDao.getList(NMBContratoBien.class, filter, filterAuditoria);
 			
-			tasacionWSApi.altaSolicitud(bien, personasBien, contratosBien, cuenta, personaContacto, telefono, observaciones);
+			res = tasacionWSApi.altaSolicitud(bien, personasBien, contratosBien, cuenta, personaContacto, telefono, observaciones);
 		}
+		
+		return res;
 	}
 }

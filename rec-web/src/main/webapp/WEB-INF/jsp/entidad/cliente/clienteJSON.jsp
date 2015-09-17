@@ -196,6 +196,23 @@
 		<json:property name="ratingExterno" value="${persona.ratingExterno.descripcion}" />
 		<json:property name="servicioNominaPension" value="${persona.servicioNominaPension}" />
 		<json:property name="ultimaActuacion" value="${persona.ultimaActuacion}" />
+		<json:property name="situacionConcursal">
+			<c:if test="${persona.situacionConcursal}">
+				<s:message code="mensajes.si"/>
+			</c:if>
+			<c:if test="${!persona.situacionConcursal}">
+				<s:message code="mensajes.no"/>
+			</c:if>
+		</json:property>
+		<json:property name="fechaSituacionConcursal" value="${persona.fechaSituacionConcursal}"/>
+		<json:property name="clienteReestructurado">
+			<c:if test="${persona.clienteReestructurado}">
+				<s:message code="mensajes.si"/>
+			</c:if>
+			<c:if test="${!persona.clienteReestructurado}">
+				<s:message code="mensajes.no"/>
+			</c:if>
+		</json:property>		
 		<json:property name="tipoPersona" value="${persona.tipoPersona.codigo}" />
 		<json:property name="tipoGestorEntidad" value="${persona.tipoGestorEntidad.descripcion}" />
 		<json:property name="areaGestion" value="${persona.areaGestion.descripcion}" />

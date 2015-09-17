@@ -9,7 +9,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBPersonasBien;
 
 public interface SolicitarTasacionWSApi {
 	
-	public void altaSolicitud(NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones);
+	public boolean altaSolicitud(NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones);
 	
 	public Map<String, String> getMapaTIMN();
 }

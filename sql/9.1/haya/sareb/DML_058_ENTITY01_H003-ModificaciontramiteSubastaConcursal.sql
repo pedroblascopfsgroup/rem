@@ -144,8 +144,8 @@ DECLARE
 		T_TIPO_TFI('H003_ElevarAComite','1','date','fecha','Fecha que se eleva la propuesta','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
 		T_TIPO_TFI('H003_ElevarAComite','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
 		T_TIPO_TFI('H003_ActualizarTasacion','1','date','fecha','Fecha recepción','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-		T_TIPO_TFI('H003_CumplimentarParteEconomica','1','combo','comboDelegada','Propuesta Subasta Delegada','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','valores[''H002_InformarTipoPropuesta''][''comboDelegada'']','DDSiNo','0','DD'),
-		T_TIPO_TFI('H003_CumplimentarParteEconomica','2','number','numPropuestaSareb','Núm. Propuesta Sareb',null,null,'valores[''H002_InformarTipoPropuesta''][''numPropuestaSareb'']',null,'0','DD'),
+		T_TIPO_TFI('H003_CumplimentarParteEconomica','1','combo','comboDelegada','Propuesta Subasta Delegada',null,null,'valores[''H003_InformarTipoPropuesta''][''comboDelegada'']','DDSiNo','0','DD'),
+		T_TIPO_TFI('H003_CumplimentarParteEconomica','2','number','numPropuestaSareb','Núm. Propuesta Sareb',null,null,'valores[''H003_InformarTipoPropuesta''][''numPropuestaSareb'']',null,'0','DD'),
 		T_TIPO_TFI('H003_CumplimentarParteEconomica','3','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD')
 		
 		); 

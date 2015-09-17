@@ -54,6 +54,9 @@
 										<entry key="message" value="clientes.revisionClientes.asignarNuevosArquetipos" />
 										<entry key="severidad" value="error" />
 									</map>
+									<!-- Estas dos sqls se mueven al job de creación de clientes para que ordene correctamente
+									los estados de itinerario del cliente y así sólo se hará una vez -->
+									<!-- 
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
@@ -70,7 +73,7 @@
 										<entry key="message" value="clientes.revisionClientes.gestionVencidosToCarencia" />
 										<entry key="severidad" value="error" />
 									</map>
-									
+									 -->
 									
 									
 									<map>

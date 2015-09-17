@@ -25,7 +25,8 @@
  	<bean id="subastaSolicitarNumActivoHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarNumActivoHandler"></bean>
  	<bean id="subastaSolicitarTasacionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarTasacionHandler"></bean> 	
  	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
-
+	<bean id="subastaConcursalHayaInitNodeActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalHayaInitNodeActionHandler"></bean>
+	
 	<!-- BPM activos -->
 	
 	<!-- Groovy's -->
@@ -717,7 +718,61 @@
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AULIQUI");
 				}
+				
+				def comprobarExisteDocumentoINFTAVA = { 
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INFTAVA");
+				} 
+				
+				def comprobarBienesSolitudSubasta = {
+	                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
+	                def listadoBienes = subastaProcedimientoManager.getBienesSubastaByPrcId(idProcedimiento);
+	                def resultado = true; 
+	  				for (bien in listadoBienes) {
+	  					def viviendaHabitual = (bien.getViviendaHabitual() != null);
+	  					def sitPosesoria = (bien.getSituacionPosesoria() != null);
+	  					def cargasInformadas = false;
+	  					def cargas = cargas = bien.getBienCargas();
+						if (cargas == null || (cargas != null && cargas.size() == 0)) {
+							def adicionalBien = bien.getAdicional();
+							cargasInformadas =  (adicionalBien.getSinCargas() != null && adicionalBien.getSinCargas());
+						} else {
+							def verificadasCargas = false;
+							for (carga in cargas) {
+								if (carga.getRegistral() && carga.getSituacionCarga() != null) {
+									verificadasCargas = true;
+								} else if (carga.isEconomica() && carga.getSituacionCargaEconomica() != null) {
+									verificadasCargas = true;
+								} else {
+									return false;
+								}
+							}
+							cargasInformadas = verificadasCargas;
+						}
 
+						resultado = (resultado && viviendaHabitual && sitPosesoria && cargasInformadas); 
+	  				}
+	  				return resultado;
+				}
+				
+				def comprobarBienesTasacion = {
+	                def subastaProcedimientoManager = ctx.getBean("subastaProcedimientoManager");
+	                def listadoBienes = subastaProcedimientoManager.getBienesSubastaByPrcId(idProcedimiento);
+	                def resultado = true; 
+	  				for (bien in listadoBienes) {
+	  					def valoracionActiva = bien.getValoracionActiva();
+						if (valoracionActiva != null) {
+							def valorTasacion = valoracionActiva.getImporteValorTasacion();
+							if(valorTasacion == null || !(valorTasacion > 0.0)){
+								return false;
+							}
+						} else {
+							return false;
+						} 
+	  				}
+	  				return resultado;
+				}  		   	                       
+        	            
 	            def comprobarExisteDocumentoINSUFI = {
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INSUFI");

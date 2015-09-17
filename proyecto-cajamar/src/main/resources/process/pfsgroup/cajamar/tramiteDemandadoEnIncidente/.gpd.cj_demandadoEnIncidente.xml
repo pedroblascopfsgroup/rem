@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_demandadoEnIncidente" width="1618" height="1269">
+<root-container name="cj_demandadoEnIncidente" width="1618" height="1749">
   <node name="Inicio" x="42" y="12" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -130,24 +130,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H025_resolucionFirmeDecision" x="512" y="880" width="213" height="36">
-    <edge>
-      <label x="-20" y="-9"/>
-    </edge>
-    <edge>
-      <label x="-36" y="-9"/>
-    </edge>
-    <edge>
-      <label x="115" y="-92"/>
-    </edge>
-    <edge>
-      <label x="-128" y="-24"/>
-    </edge>
-    <edge>
-      <label x="-176" y="37"/>
-      <bendpoint w1="266" h1="-75" w2="-233" h2="788"/>
-    </edge>
-  </node>
   <node name="H025_registrarImporteCuotasAbonar" x="72" y="874" width="255" height="42">
     <edge>
       <label x="-159" y="18"/>
@@ -183,7 +165,7 @@
       <bendpoint w1="-152" h1="-40" w2="168" h2="-40"/>
     </edge>
   </node>
-  <node name="H025_BPMTramiteCostas" x="874" y="880" width="197" height="36">
+  <node name="H025_BPMTramiteCostas" x="806" y="928" width="197" height="36">
     <edge>
       <label x="-115" y="375"/>
     </edge>
@@ -251,4 +233,45 @@
   <node name="Fin" x="22" y="263" width="132" height="36"/>
   <node name="Fin2" x="1051" y="17" width="132" height="36"/>
   <node name="Fin3" x="97" y="1232" width="132" height="36"/>
+  <node name="fork1" x="562" y="837" width="122" height="24">
+    <edge>
+      <label x="-46" y="-9"/>
+      <bendpoint w1="198" h1="5" w2="-299" h2="-53"/>
+    </edge>
+    <edge>
+      <label x="-36" y="-13"/>
+    </edge>
+    <edge>
+      <label x="-39" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-29"/>
+    </edge>
+  </node>
+  <node name="CancelaOperacion" x="562" y="968" width="132" height="36">
+    <edge>
+      <label x="12" y="-17"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="354" h1="-197" w2="-192" h2="789"/>
+    </edge>
+  </node>
+  <node name="CondenaCostas" x="413" y="947" width="126" height="36">
+    <edge>
+      <label x="-20" y="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="401" h1="-147" w2="-255" h2="757"/>
+    </edge>
+  </node>
+  <node name="PerdidaGarantia" x="712" y="1020" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

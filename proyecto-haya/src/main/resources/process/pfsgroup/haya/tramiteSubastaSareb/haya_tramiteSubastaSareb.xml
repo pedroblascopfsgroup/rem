@@ -24,7 +24,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="H002_SenyalamientoSubasta" name="avanzaBPM"></transition>
+		<transition to="fork4" name="avanzaBPM"></transition>
 		<transition to="Fin2" name="Fin"></transition>
 		<transition to="H002_SolicitudSubasta" name="activarAlerta"></transition>
 	</state>
@@ -49,7 +49,6 @@
 		<transition to="fork1" name="avanzaBPM"></transition>
 		<transition to="Fin2" name="Fin"></transition>
 		<transition to="H002_SenyalamientoSubasta" name="activarAlerta"></transition>
-		<transition to="H002_SolicitudSubasta" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H002_AdjuntarInformeSubasta">
@@ -117,7 +116,6 @@
 		<transition to="H002_RegistrarResultadoDueDiligence" name="avanzaBPM"></transition>
 		<transition to="Fin2" name="Fin"></transition>
 		<transition to="H002_SolicitarDueDiligence" name="activarAlerta"></transition>
-		<transition to="H002_ValidarInformeDeSubastaYPrepararCuadroDePujas" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H002_RegistrarResultadoDueDiligence">
@@ -140,12 +138,10 @@
 		<transition to="Fin2" name="avanzaBPM"></transition>
 		<transition to="H002_RegistrarResultadoDueDiligence" name="activarAlerta"></transition>
 		<transition to="H002_SolicitarDueDiligence" name="vueltaAtras"></transition>
+		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
 	<fork name="fork1">
-		<transition to="H002_BPMTramiteTributacion" name="tramiteTributacion"></transition>
-		<transition to="H002_ContactarConDeudorYPrepararInformeSubastaFisc" name="contactarConDeudorYPrepararInformeSubastaFiscal"></transition>
-		<transition to="H002_CumplimentarParteEconomica" name="cumplimentarParteEconomica"></transition>
 		<transition to="H002_PrepararPropuestaSubasta" name="prepararPropuestaSubasta"></transition>
 		<transition to="H002_CelebracionSubasta" name="celebracionDeSubasta"></transition>
 		<transition to="H002_AdjuntarInformeSubasta" name="adjuntarInformeDeSubasta"></transition>
@@ -174,40 +170,10 @@
 	</state>
 
 	<decision name="H002_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision" expression="#{H002_ValidarInformeDeSubastaYPrepararCuadroDePujasDecision}">
-		<transition to="fork2" name="SolicitarDueDiligence"></transition>
 		<transition to="H002_SuspenderSubasta" name="SuspenderSubasta"></transition>
-		<transition to="Fin3" name="Fin"></transition>
-		<transition to="fork3" name="Finalizar"></transition>
+		<transition to="fork2" name="tipoDue"></transition>
+		<transition to="H002_InformarTipoPropuesta" name="tipo"></transition>
 	</decision>
-	
-	<fork name="fork2">
-		<transition to="H002_SolicitarDueDiligence" name="SolicitarDueDiligence"></transition>
-		<transition to="fork3" name="SolicitarNumActivoTasacion"></transition>
-	</fork>
-	
-	<fork name="fork3">
-		<transition to="H002_SolicitarNumActivo" name="SolicitarNumActivo"></transition>
-		<transition to="H002_SolicitarTasacion" name="SolicitarTasacion"></transition>
-	</fork>
-	
-	<node name="H002_SolicitarNumActivo">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>subastaSolicitarNumActivoHandler
-			</targetBean>
-		</action>
-		<transition to="Fin3" name="avanzaBPM"></transition>
-	</node>
-	
-	<node name="H002_SolicitarTasacion">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>subastaSolicitarTasacionHandler
-			</targetBean>
-		</action>
-		<transition to="Fin3" name="Fin"></transition>
-		<transition to="H002_ActualizarTasacion" name="actualizarTasacion"></transition>
-	</node>
 	
 	<state name="H002_ActualizarTasacion">
 		<event type="node-enter">
@@ -226,8 +192,10 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="H002_SolicitarTasacion" name="avanzaBPM"></transition>
-		<transition to="Fin4" name="Fin"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+		<transition to="H002_SolicitarTasacion" name="vueltaAtras"></transition>
+		<transition to="H002_ActualizarTasacion" name="activarAlerta"></transition>
+		<transition to="Fin2" name="avanzaBPM"></transition>
 	</state>
 
 	<state name="H002_BPMTramiteTributacion">
@@ -269,6 +237,7 @@
 		</event>	
 		<transition to="Fin2" name="avanzaBPM"></transition>
 		<transition to="H002_ContactarConDeudorYPrepararInformeSubastaFisc" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
 	<state name="H002_CumplimentarParteEconomica">
@@ -290,6 +259,8 @@
 		</event>	
 		<transition to="Fin3" name="avanzaBPM"></transition>
 		<transition to="H002_CumplimentarParteEconomica" name="activarAlerta"></transition>
+		<transition to="H002_InformarTipoPropuesta" name="vueltaAtras"></transition>
+		<transition to="Fin3" name="Fin"></transition>
 	</state>
 
 	<state name="H002_PrepararPropuestaSubasta">
@@ -312,7 +283,6 @@
 		<transition to="H002_ValidarPropuesta" name="avanzaBPM"></transition>
 		<transition to="Fin3" name="Fin"></transition>
 		<transition to="H002_PrepararPropuestaSubasta" name="activarAlerta"></transition>
-		<transition to="H002_ElevarPropuestaAComite" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H002_ValidarPropuesta">
@@ -341,7 +311,7 @@
 	<decision name="H002_ValidarPropuestaDecision" expression="#{H002_ValidarPropuestaDecision}">
 		<transition to="H002_ElevarPropuestaASareb" name="NoDelegada"></transition>
 		<transition to="H002_SuspenderSubasta" name="Rechazada"></transition>
-		<transition to="H002_ElevarPropuestaAComite" name="DelegadaSinAtribuciones"></transition>
+		<transition to="H002_ElevarAComite" name="DelegadaSinAtribuciones"></transition>
 		<transition to="H002_LecturaAceptacionInstrucciones" name="DelegadaConAtribuciones"></transition>
 		<transition to="H002_PrepararPropuestaSubasta" name="PrepararPropuestaSubasta"></transition>
 	</decision>
@@ -366,6 +336,7 @@
 		<transition to="H002_ElevarPropuestaASareb" name="activarAlerta"></transition>
 		<transition to="H002_ValidarPropuesta" name="vueltaAtras"></transition>		
 		<transition to="H002_RegistrarRespuestaSareb" name="avanzaBPM"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<state name="H002_ElevarPropuestaAComite">
@@ -387,7 +358,7 @@
 		</event>	
 		<transition to="Fin4" name="Fin"></transition>
 		<transition to="H002_ElevarPropuestaAComite" name="activarAlerta"></transition>
-		<transition to="H002_ValidarPropuesta" name="vueltaAtras"></transition>
+		<transition to="H002_ElevarAComite" name="vueltaAtras"></transition>
 		<transition to="H002_ElevarPropuestaAComiteDecision" name="avanzaBPM"></transition>
 	</state>
 
@@ -410,6 +381,7 @@
 		</event>	
 		<transition to="Fin4" name="avanzaBPM"></transition>
 		<transition to="H002_LecturaAceptacionInstrucciones" name="activarAlerta"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<state name="H002_CelebracionSubasta">
@@ -596,6 +568,7 @@
 		<transition to="H002_RegistrarRespuestaSarebIndices" name="avanzaBPM"></transition>
 		<transition to="H002_SolicitarServicioIndices" name="vueltaAtras"></transition>
 		<transition to="H002_ElevarPropuestaASarebIndices" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 	<node name="H002_IndicesDecision">
@@ -631,8 +604,9 @@
 			</action>
 		</event>	
 		<transition to="H002_RegistrarRespuestaSarebDecision" name="avanzaBPM"></transition>
-		<transition to="H002_RegistrarRespuestaSarebDecision" name="activarAlerta"></transition>
-		<transition to="H002_ElevarPropuestaASareb" name="vueltaAtras"></transition>		
+		<transition to="H002_RegistrarRespuestaSareb" name="activarAlerta"></transition>
+		<transition to="H002_ElevarPropuestaASareb" name="vueltaAtras"></transition>
+		<transition to="Fin4" name="Fin"></transition>		
 	</state>
 
 	<decision name="H002_RegistrarRespuestaSarebDecision" expression="#{H002_RegistrarRespuestaSarebDecision}">
@@ -661,6 +635,7 @@
 		<transition to="H002_IndicesDecision" name="avanzaBPM"></transition>
 		<transition to="H002_ElevarPropuestaASarebIndices" name="vueltaAtras"></transition>
 		<transition to="H002_RegistrarRespuestaSarebIndices" name="activarAlerta"></transition>
+		<transition to="Fin4" name="Fin"></transition>
 	</state>
 
 	<fork name="forkCelebracion">
@@ -710,6 +685,85 @@
 		</action>
 		<transition to="Fin3" name="Fin"></transition>	
 	</node>
+
+	<fork name="fork4">
+		<transition to="H002_BPMTramiteTributacion" name="tramiteTributacion"></transition>
+		<transition to="H002_SenyalamientoSubasta" name="senyalamiento"></transition>
+		<transition to="H002_ContactarConDeudorYPrepararInformeSubastaFisc" name="contactarConDeudorYPrepararInformeSubastaFiscal"></transition>
+		<transition to="H002_SolicitarTasacion" name="solitarTasacion"></transition>
+	</fork>
+
+	<state name="H002_SolicitarTasacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H002_ActualizarTasacion" name="avanzaBPM"></transition>
+		<transition to="H002_SolicitarTasacion" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<fork name="fork2">
+		<transition to="H002_InformarTipoPropuesta" name="Tipo"></transition>
+		<transition to="H002_SolicitarDueDiligence" name="Due"></transition>
+	</fork>
+
+	<state name="H002_InformarTipoPropuesta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H002_CumplimentarParteEconomica" name="avanzaBPM"></transition>
+		<transition to="H002_InformarTipoPropuesta" name="activarAlerta"></transition>
+		<transition to="Fin2" name="Fin"></transition>
+	</state>
+
+	<state name="H002_ElevarAComite">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H002_ValidarPropuesta" name="vueltaAtras"></transition>
+		<transition to="H002_ElevarAComite" name="activarAlerta"></transition>
+		<transition to="H002_ElevarPropuestaAComite" name="avanzaBPM"></transition>
+		<transition to="Fin4" name="Fin"></transition>
+	</state>
 
 
 	<end-state name="Fin">

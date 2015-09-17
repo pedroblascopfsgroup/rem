@@ -11,7 +11,7 @@ array['dos']=2;
 array['tres']=3;
 var tipo_wf='${tipoWf}'
 
-<%@ include file="/WEB-INF/jsp/plugin/procedimientos-bpmHaya-plugin/elementos.jsp" %>
+<%@ include file="/WEB-INF/jsp/plugin/cajamar/elementos.jsp" %>
 
 var items=[];
 var muestraBotonGuardar = 0;
@@ -48,14 +48,24 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 </c:if>
 var bottomBar = [];
 
-<c:if test="${form.errorValidacion==null}">
-	var cb_modelo = items[1 + muestraBotonGuardar];
-	cb_modelo.setDisabled(true);
+var offset=0;
+<c:if test="${form.errorValidacion!=null}">
+	offset=1;
 </c:if>
+var cb_rectificar = items[1 + offset];
+var tx_numCreditos = items[2 + offset];
 
+cb_rectificar.on('select', function(){
+	tx_numCreditos.setValue('');
+	if(cb_rectificar.getValue() == '01') { //si
+		tx_numCreditos.setDisabled(false);
+		tx_numCreditos.allowBlank = false;
+	} else { //no
+		tx_numCreditos.setDisabled(true);
+	}
+});
 
-
-//mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
+//mostramos el botï¿½n guardar cuando la tarea no estï¿½ terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -74,7 +84,7 @@ var bottomBar = [];
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -99,7 +109,7 @@ if (muestraBotonGuardar==1){
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)	{
 		bottomBar.push(btnGuardar);
 	}
@@ -204,8 +214,9 @@ var anyadirFechaFaltante = function(response){
 
 
 var panelEdicion=new Ext.form.FormPanel({
-	autoHeight:true
-	,width:900
+	height:520
+	,width:700
+	,autoScroll:true
 	,bodyStyle:'padding:10px;cellspacing:20px'
 	//,xtype:'fieldset'
 	,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}

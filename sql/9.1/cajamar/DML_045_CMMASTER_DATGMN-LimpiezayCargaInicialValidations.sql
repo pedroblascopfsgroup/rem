@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUSTAVO MORA
---## FECHA_CREACION=20150914
+--## FECHA_CREACION=20150917
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-532

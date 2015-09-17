@@ -76,7 +76,7 @@ public class FileIntegrationAdapter {
 	private String getHeaderLine(Message<String> message, String key) {
 		String value = "";
 		if (message.getHeaders().containsKey(key)) {
-			logger.info("[INTEGRACION] " + key + ":" + getHeaderLine(message, MessageHeaders.ID));
+			logger.info(String.format("[INTEGRACION] writing key: %s value:%s", key, message.getHeaders().get(key)));
 			value=String.format("%s:%s\n", key, message.getHeaders().get(key));
 		}
 		return value;

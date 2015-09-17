@@ -109,6 +109,7 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL = "expedienteManager.findExpedientesParaExcel";
     public static final String BO_EXP_MGR_GET_REGLAS_ELEVACION_EXPEDIENTE = "expedienteManager.getReglasElevacionExpediente";
     public static final String BO_EXP_MGR_GET_ENTIDADES_REGLA_ELEVACON_EXPEDIENTE = "expedienteManager.getEntidadReglaElevacionExpediente";
+    public static final String BO_EXP_MGR_IS_RECOBRO = "expedienteManager.isRecobro";
     public static final String BO_EXP_MGR_GET_PERSONAS_MARCADO_OBLIGATORIO = "expedienteManager.getPersonasMarcadoObligatorio";
     public static final String BO_EXP_MGR_GET_PERSONAS_MARCADO_OPCIONAL = "expedienteManager.getPersonasMarcadoOpcional";
     public static final String BO_EXP_MGR_GET_PERSONAS_POLITICAS_DEL_EXPEDIENTE = "expedienteManager.getPersonasPoliticasDelExpediente";

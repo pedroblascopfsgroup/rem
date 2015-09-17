@@ -49,7 +49,9 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.SolicitudCancelacion;
 import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
@@ -124,6 +126,9 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     
     @Autowired
     private EXTModelClassFactory modelClassFactory;
+    
+    @Autowired
+    private ExpedienteManagerApi expedienteManager;
 
     @Override
     @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_MGR_GET)
@@ -367,7 +372,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             setearEmisorExpediente(notificacion, exp);
             saveOrUpdate(notificacion);
         } else {
-            executor.execute(InternaBusinessOperation.BO_EXP_MGR_CANCELACION_EXPEDIENTE, exp.getId(), true);
+        	if (exp.getTipoExpediente().getCodigo().equals(DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO))
+        		executor.execute(InternaBusinessOperation.BO_EXP_MGR_CANCELACION_EXPEDIENTE, exp.getId(), true); //La BO está sobreescrita y lleva al plugin de recobro
+        	else
+        		expedienteManager.cancelacionExp(idExpediente, true); //Así ejecuta el método de Expediente
         }
 
     }

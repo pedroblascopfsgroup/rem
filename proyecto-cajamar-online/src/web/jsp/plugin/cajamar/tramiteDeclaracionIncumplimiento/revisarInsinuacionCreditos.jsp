@@ -11,7 +11,7 @@ array['dos']=2;
 array['tres']=3;
 var tipo_wf='${tipoWf}'
 
-<%@ include file="/WEB-INF/jsp/plugin/procedimientos-bpmHaya-plugin/elementos.jsp" %>
+<%@ include file="/WEB-INF/jsp/plugin/cajamar/elementos.jsp" %>
 
 var items=[];
 var muestraBotonGuardar = 0;
@@ -49,11 +49,25 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
-	var cb_modelo = items[1 + muestraBotonGuardar];
-	cb_modelo.setDisabled(true);
+
+var cb_rectificacion = items[1 + muestraBotonGuardar];
+var n_creditos = items[2 + muestraBotonGuardar];
+
+n_creditos.setDisabled(true);
+
+cb_rectificacion.on('select', function(){
+	if(cb_rectificacion.getValue() == '01') {//si
+		n_creditos.setDisabled(false);
+		n_creditos.allowBlank = false;
+	}
+	else if(cb_rectificacion.getValue() == '02') {//no
+		n_creditos.setDisabled(true);
+		n_creditos.setValue('');
+		n_creditos.allowBlank = true;
+	}
+});	
+
 </c:if>
-
-
 
 //mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
@@ -204,8 +218,9 @@ var anyadirFechaFaltante = function(response){
 
 
 var panelEdicion=new Ext.form.FormPanel({
-	autoHeight:true
-	,width:900
+	height:520
+	,width:700
+	,autoScroll:true
 	,bodyStyle:'padding:10px;cellspacing:20px'
 	//,xtype:'fieldset'
 	,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}

@@ -35,13 +35,13 @@ if [ "$0" != "./sql/tool/$(basename $0)" ]; then
     exit
 fi
 
-if [ "$#" -lt 2 ]; then
+if [ "$#" -lt 3 ]; then
     print_banner
-    echo "   Uso: $0 <tag> CLIENTE"
+    echo "   Uso: $0 <tag> CLIENTE nombre_directorio"
     echo ""
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     exit
 fi
 
-./sql/tool/run-scripts-from-tag.sh $1 $2 null package! 
+./sql/tool/run-scripts-from-tag.sh $1 $2 $3 package! 

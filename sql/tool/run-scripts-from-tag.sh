@@ -121,8 +121,13 @@ source $SETENVGLOBAL
 
 rm -rf $BASEDIR/tmp/*.txt $BASEDIR/tmp/*.log $BASEDIR/tmp/*.sh $BASEDIR/tmp/*.sql $BASEDIR/tmp/**/*
 
+DIRECTORIO=""
+if [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]] && [[ "$3" != "null" ]]; then
+    DIRECTORIO="$3/"
+fi
+
 #PRODUCTO
-for file in `git diff $1 --name-only sql/**/producto/*.sql`
+for file in `git diff $1 --name-only sql/**/producto/$DIRECTORIO*.sql`
 do
     if [ "$MULTIENTIDAD" != "" ] ; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
@@ -137,7 +142,7 @@ do
 done
 
 #CLIENTE
-for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/*.sql`
+for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$DIRECTORIO*.sql`
 do
     if [ "$MULTIENTIDAD" != "" ] ; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
@@ -219,13 +224,47 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     fi
     sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DML/DML-scripts.sh
     cp $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
-    cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
-    cat $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
-    cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
-    cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
-    cd $BASEDIR/tmp/package/
-    zip scripts.zip -r *
-    echo "GENERADO ZIP PARA SOLICITUD DE DESPLIEGUE: $BASEDIR/tmp/package/scripts.zip"
+    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
+    if [ -f $BASEDIR/tmp/DDL-scripts.sh ] ; then 
+
+        # Herramientas de Pitertul (actualización)
+        VARIABLES_SUSTITUCION=`echo -e "${VARIABLES_SUSTITUCION}" | tr -d '[[:space:]]'`
+        IFS=',' read -a array <<< "$VARIABLES_SUSTITUCION"
+        for index in "${!array[@]}"
+        do
+            KEY=`echo ${array[index]} | cut -d\; -f1`
+            VALUE=`echo ${array[index]} | cut -d\; -f2`
+            if [[ $KEY == '#ESQUEMA#' ]]; then
+               ESQUEMA=$VALUE
+                echo "exit | sqlplus -s -l $ESQUEMA/\$2 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+                echo "exit | sqlplus -s -l \$1 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+            fi
+        done
+        cp $BASEDIR/tmp/DDL_000_$ESQUEMA.sql $BASEDIR/tmp/package/DDL/scripts/
+
+        cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+        cat $BASEDIR/tmp/DDL-scripts-one-user.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+        cp -r $BASEDIR/tmp/DDL*reg*.sql $BASEDIR/tmp/package/DDL/scripts/
+        cd $BASEDIR/tmp/package/DDL
+        zip DDL-scripts.zip -r *
+        cd -
+    fi
+    if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
+        cat $BASEDIR/tmp/DML-scripts.sh >> $BASEDIR/tmp/package/DML/DML-scripts.sh
+        cat $BASEDIR/tmp/DML-scripts-one-user.sh >> $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
+        cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
+        cd $BASEDIR/tmp/package/DML
+        zip DML-scripts.zip -r *
+        cd -
+    fi      
+    echo ""
+    echo "---------------------------------------------------"
+    echo "---- EMPAQUETADOS PARA SOLICITUD DE DESPLIEGUE ----" 
+    echo "---------------------------------------------------"
+    echo ""
+    echo `ls $BASEDIR/tmp/package/**/*.zip` 
+    echo "---------------------------------------------------"
 
 else
 

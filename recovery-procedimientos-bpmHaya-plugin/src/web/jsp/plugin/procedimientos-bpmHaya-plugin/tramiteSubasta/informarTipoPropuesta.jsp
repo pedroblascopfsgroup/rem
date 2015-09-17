@@ -49,8 +49,21 @@ items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:mes
 var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
-	var cb_modelo = items[1 + muestraBotonGuardar];
-	cb_modelo.setDisabled(true);
+
+var cb_delegada = items[1 + muestraBotonGuardar];
+var num_prop = items[2 + muestraBotonGuardar];
+
+
+cb_delegada.on('select', function(){	
+	if(cb_delegada.getValue() == '01') {//si
+		num_prop.allowBlank = true;		
+	}
+	else if(cb_delegada.getValue() == '02') {//no
+		num_prop.allowBlank = false;		
+	}
+});
+
+
 </c:if>
 
 
@@ -204,8 +217,9 @@ var anyadirFechaFaltante = function(response){
 
 
 var panelEdicion=new Ext.form.FormPanel({
-	autoHeight:true
-	,width:900
+	height:520
+	,width:700
+	,autoScroll:true
 	,bodyStyle:'padding:10px;cellspacing:20px'
 	//,xtype:'fieldset'
 	,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}

@@ -13,13 +13,14 @@ import es.pfsgroup.recovery.haya.bienes.api.BienHayaApi;
 @Controller
 public class BienHayaController {
 
-	private static final String DEFAULT = "default";
+	private static final String SOLICITAR_TASACION_JSON = "plugin/cajamar/bienes/solicitarTasacionJSON";
 	
 	@Autowired
 	private BienHayaApi hayaBienManager;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String solicitarTasacion(
 			@RequestParam(value = "idBien", required = true) Long idBien,
@@ -29,9 +30,10 @@ public class BienHayaController {
 			@RequestParam(value = "observaciones", required = false) String observaciones,
 			ModelMap map) 
 	{
-		hayaBienManager.solicitarTasacion(idBien, cuenta, persona, telefono, observaciones);
+		Boolean res = hayaBienManager.solicitarTasacion(idBien, cuenta, persona, telefono, observaciones);
+		map.put("solicitudRealizada", res);
 		
-		return DEFAULT;
+		return SOLICITAR_TASACION_JSON;
 	}
 
 	/**

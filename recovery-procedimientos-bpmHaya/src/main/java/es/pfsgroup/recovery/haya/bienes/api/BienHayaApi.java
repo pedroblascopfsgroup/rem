@@ -10,8 +10,9 @@ public interface BienHayaApi {
 	 * @param idBien Identificador del bien
 	 * 
 	 * Método para solicitar la tasación de un bien
+	 * @return 
 	 * 
 	 * */
 	@BusinessOperationDefinition(SOLICITAR_TASACION)
-	public void solicitarTasacion(Long idBien, Long cuenta, String persona, Long telefono, String observaciones);
+	public boolean solicitarTasacion(Long idBien, Long cuenta, String persona, Long telefono, String observaciones);
 }

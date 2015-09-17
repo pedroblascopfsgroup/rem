@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.tasacion;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,10 +13,16 @@ import org.cajamar.ws.S_A_RECOVERY_TASACION.OUTPUT;
 import org.cajamar.ws.S_A_RECOVERY_TASACION.ObjectFactory;
 import org.cajamar.ws.S_A_RECOVERY_TASACION.SARECOVERYTASACION;
 import org.cajamar.ws.S_A_RECOVERY_TASACION.SARECOVERYTASACIONType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBPersonasBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.recovery.haya.bienes.manager.SolicitarTasacionWSApi;
 
 public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
@@ -33,8 +40,12 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 	
 	private Map<String, String> mapaTIMN;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+		
 	@Override
-	public void altaSolicitud(NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones) {
+	@Transactional(readOnly = false)
+	public boolean altaSolicitud(NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones) {
 		
 		logger.info("Inicio del método altaSolicitud");
 		
@@ -46,17 +57,21 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 			input.setOPCION(ALTA_SOLICITUD);
 			
 			completaSolicitud(input, bien, personasBien, contratosBien, cuenta, personaContacto, telefono, observaciones);
-			ejecutaServicio(input);
+			ejecutaServicio(input, bien);
+			
+			
 		}
 		catch(Exception e) {
 			logger.error("Error en el método altaSolicitud: " + e.getMessage());
+			return false;
 		}
 		
 		logger.info("Fin del método altaSolicitud");
+		
+		return true;
 	}
 
-
-	private void ejecutaServicio(INPUT input) {
+	private void ejecutaServicio(INPUT input, NMBBien bien) {
 		SARECOVERYTASACION service = new SARECOVERYTASACION();
 		SARECOVERYTASACIONType servicePort = service.getSARECOVERYTASACIONPort();
 		OUTPUT output = servicePort.sARECOVERYTASACION(input);
@@ -65,7 +80,39 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		logger.info("TXTERROR: " + output.getTXTERROR());
 		logger.info("DESCESTADO: " + output.getDESCESTADO());
 		logger.info("ESTADO: " + output.getESTADO());
-		logger.info("DOCSOLICITUD: " + output.getDOCSOLICITUD());		
+		logger.info("DOCSOLICITUD: " + output.getDOCSOLICITUD());	
+		
+		if(output.getESTADO().equals("1")) {
+			logger.error("Error en la ejecución del WS de Alta Tasación: " + output.getCODERROR() + " - " + output.getTXTERROR());
+		}
+		else {
+			guardarRespuesta(output, bien);
+		}
+	}
+
+	private void guardarRespuesta(OUTPUT output, NMBBien bien) {
+		List<NMBValoracionesBien> valoraciones = bien.getValoraciones();
+		NMBValoracionesBienInfo valoracionActiva = bien.getValoracionActiva();
+		NMBValoracionesBien nueva = new NMBValoracionesBien();
+		if(valoracionActiva != null){
+			for (NMBValoracionesBien val : valoraciones) {
+				if (val.getId() == valoracionActiva.getId() ) 
+					nueva = val;
+					nueva.setCodigoNuita(new Integer(output.getDOCSOLICITUD()));
+					nueva.setFechaSolicitudTasacion(new Date());
+					Auditoria auditoria = Auditoria.getNewInstance();
+					nueva.setAuditoria(auditoria);
+					break;
+	        }
+		} else {
+			nueva.setCodigoNuita(new Integer(output.getDOCSOLICITUD()));
+			nueva.setBien(bien);
+			Auditoria auditoria = Auditoria.getNewInstance();
+			nueva.setAuditoria(auditoria);
+		}
+		valoraciones.add(nueva);
+		bien.setValoraciones(valoraciones);
+		genericDao.update(NMBBien.class, bien);	
 	}
 
 	private void completaSolicitud(INPUT input, NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones) {
@@ -275,7 +322,6 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		logger.info("CTCE: " + null);
 		//input.setCTCE(null);
 	}
-
 
 	/**
 	 * @return the mapaTIMN

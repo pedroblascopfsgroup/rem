@@ -24,9 +24,9 @@ var bottomBar = [];
 </c:if>
 
 var anteriorLetrado = items[2];
-var asignacionCorrecta = items[4];
+var letradoAsignado = items[3];
 anteriorLetrado.setDisabled(true);
-asignacionCorrecta.setDisabled(true);
+letradoAsignado.setDisabled(true);
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 

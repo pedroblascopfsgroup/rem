@@ -20,8 +20,10 @@ import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
@@ -111,6 +113,9 @@ public class LiquidacionController {
 		
 		liquidacionApi.solicitar(liquidacionDto);
 
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
+
 		return DEFAULT;
 	}
 
@@ -164,7 +169,10 @@ public class LiquidacionController {
 		liquidacionDto.setFechaCierre(fechaCierre);
 
 		liquidacionApi.editarValoresCalculados(liquidacionDto);
-
+		
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
+		
 		return DEFAULT;
 	}
 
@@ -172,9 +180,11 @@ public class LiquidacionController {
 	public String confirmar(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 		liquidacionDto.setId(id);
-
 		liquidacionApi.confirmar(liquidacionDto);
-
+		
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
+		
 		return DEFAULT;
 	}
 
@@ -184,6 +194,9 @@ public class LiquidacionController {
 		liquidacionDto.setId(id);
 
 		liquidacionApi.descartar(liquidacionDto);
+		
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 
 		return DEFAULT;
 	}

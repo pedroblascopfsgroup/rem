@@ -171,7 +171,7 @@
 		comboUsuario.reset();
 		comboTipoDespacho.setDisabled(false);
 		comboUsuario.setDisabled(true);
-
+		debugger;
 		tipoDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()});
 	});
 

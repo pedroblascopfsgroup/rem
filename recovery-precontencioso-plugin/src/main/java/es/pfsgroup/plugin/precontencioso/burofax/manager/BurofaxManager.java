@@ -289,7 +289,6 @@ public class BurofaxManager implements BurofaxApi {
 				
 				//Guardamos nuevo envio
 				genericDao.save(EnvioBurofaxPCO.class,envio);
-//				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(burofax.getProcedimientoPCO().getProcedimiento().getId());
 				listaEnvioBurofax.add(envio);
 			}	
 			
@@ -327,19 +326,14 @@ public class BurofaxManager implements BurofaxApi {
 	@Override
 	@BusinessOperation(CONFIGURAR_CONTENIDO_BUROFAX)
 	public void configurarContenidoBurofax(Long idEnvio,String contenido){
-		
 		try{
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			EnvioBurofaxPCO envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
-			
 			envioBurofax.setContenidoBurofax(contenido);
-			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
-			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 		}catch(Exception e){
 			logger.error(e);
 		}
-		
 	}
 	
 	@Override
@@ -381,7 +375,6 @@ public class BurofaxManager implements BurofaxApi {
 				burofax.setEstadoBurofax(estado);
 				burofax.setContrato(contratoPersona.getContrato());
 				burofaxDao.save(burofax);
-				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(burofax.getProcedimientoPCO().getProcedimiento().getId());				
 			}
 			
 			
@@ -447,7 +440,6 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setCertificado(certificado);
 				
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
-				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 			}
 		
 		}catch(Exception e){
@@ -532,7 +524,6 @@ public class BurofaxManager implements BurofaxApi {
 				envio.setFechaEnvio(fechaEnvio);
 				
 				genericDao.save(EnvioBurofaxPCO.class,envio);
-				proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envio.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 			}
 		}catch(Exception e){
 			logger.error(e);

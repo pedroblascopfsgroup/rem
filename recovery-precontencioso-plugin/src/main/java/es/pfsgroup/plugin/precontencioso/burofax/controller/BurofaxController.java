@@ -2,8 +2,8 @@ package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,12 +22,14 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
 import es.pfsgroup.plugin.precontencioso.burofax.manager.BurofaxManager;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 
 @Controller
 public class BurofaxController {
@@ -270,11 +272,13 @@ public class BurofaxController {
 	private String editarBurofax(WebRequest request, ModelMap map,String contenidoBurofax){
 		
 		String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").split(",");
-		
+		Long idEnvio = 1L;
 		for(int i=0;i<arrayIdEnvios.length;i++){
 			burofaxManager.configurarContenidoBurofax(Long.valueOf(arrayIdEnvios[i]), contenidoBurofax);
+			idEnvio = Long.valueOf(arrayIdEnvios[i]);
 		}
-		
+		EnvioBurofaxPCO envio = burofaxManager.getEnvioBurofaxById(idEnvio);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envio.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
 		
 		return DEFAULT;
 	}
@@ -347,7 +351,7 @@ public class BurofaxController {
 			burofaxManager.guardaPersonaCreandoBurofax(arrayIdPersonas[i],idProcedimiento);
 		}
 		
-		
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento);				
 		
 		return DEFAULT;
 	}
@@ -447,7 +451,7 @@ public class BurofaxController {
     	}
     	
 		burofaxManager.guardarEnvioBurofax(certificado,listaEnvioBurofaxPCO);
-
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(listaEnvioBurofaxPCO.get(0).getBurofax().getProcedimientoPCO().getProcedimiento().getId());			
     		
     	return DEFAULT;
     }
@@ -489,8 +493,10 @@ public class BurofaxController {
     		logger.error(e);
     	}
     	burofaxManager.guardaInformacionEnvio(arrayIdEnvios, idEstadoBurofax, fecEnvio, fecAcuse);
-
-    	
+    
+		EnvioBurofaxPCO envio = proxyFactory.proxy(BurofaxApi.class).getEnvioBurofaxById(Long.valueOf(arrayIdEnvios[0]));			
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(envio.getBurofax().getProcedimientoPCO().getProcedimiento().getId());
+    	    	
     	return DEFAULT;
     }
 

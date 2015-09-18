@@ -113,6 +113,32 @@ DECLARE
         /*TAP_EVITAR_REORG.............:*/ null,
         /*DD_TSUP_ID(FK)...............:*/ 'SUCO',
         /*TAP_BUCLE_BPM................:*/ null        
+        ),
+        
+        T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ V_COD_PROCEDIMIENTO,
+        /*TAP_CODIGO...................:*/ 'H003_SuspenderDecision',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*DD_TPO_ID_BPM(FK)............:*/ null,
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Tarea toma de decisión',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ '819',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ 'GUCO',
+        /*TAP_BUCLE_BPM................:*/ null        
         )
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
@@ -265,15 +291,6 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_ElevarPropuestaASareb actualizada.');
-    
-     V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-			  ' SET TAP_CODIGO = ''H003_SuspenderDecision'' ' ||
-	          ' ,DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''819'')' ||
-	          ' ,TAP_MAX_AUTOP = 1 ' ||
-			  ' WHERE TAP_CODIGO = ''H003_ConcursalDecision''';
-    DBMS_OUTPUT.PUT_LINE(V_MSQL);
-    EXECUTE IMMEDIATE V_MSQL;
-    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_SuspenderDecision actualizada.');
     
     
     /* ------------------- --------------------------------- */

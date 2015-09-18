@@ -52,6 +52,7 @@
                     ,observaciones:observaciones.getValue()
                     ,idPropuesta:'${propuesta.id}' || -1
                     ,isSupervisor:isSupervisor
+                    ,idArquetipo:${idArquetipo}
                 }
             ,success: function(){
                 page.fireEvent(app.event.DONE);

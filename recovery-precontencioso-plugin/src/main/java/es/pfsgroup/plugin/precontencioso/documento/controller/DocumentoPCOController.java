@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -350,13 +351,15 @@ public class DocumentoPCOController {
 	
 		// Tratamos los documentos a excluir	
 		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");
-		Long idDocUG;
+		Long idDocUG=1l;
 		while (stIdDoc.hasMoreElements()){
 			idDocUG = new Long(stIdDoc.nextToken());		
 		
 			documentoPCOApi.excluirDocumentosPorIdDocumentoPCO(idDocUG);
 		}
-
+		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(idDocUG);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());	
+		
 		return DEFAULT;
 	}
 		
@@ -379,12 +382,15 @@ public class DocumentoPCOController {
 	
 		// Tratamos los documentos a descartar	
 		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");
-		Long idDocUG;
+		Long idDocUG=1L;
 		while (stIdDoc.hasMoreElements()){
 			idDocUG = new Long(stIdDoc.nextToken());
 			
 			documentoPCOApi.descartarDocumentos(idDocUG);
 		}
+		
+		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(idDocUG);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());	
 		
 		return DEFAULT;
 	}
@@ -413,13 +419,16 @@ public class DocumentoPCOController {
 		stIdSol = new StringTokenizer(arrayIdSolicitudes,",");
 		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");		
 		Long idSolicitud;
-		Long idDocumento;
+		Long idDocumento=1L;
 		while (stIdSol.hasMoreElements()){
 			idSolicitud = new Long(stIdSol.nextToken());	
 			idDocumento = new Long(stIdDoc.nextToken());
 			
 			documentoPCOApi.anularSolicitudes(idSolicitud, idDocumento);			
 		}
+		
+		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(idDocumento);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());	
 		
 		return DEFAULT;
 	}
@@ -453,6 +462,9 @@ public class DocumentoPCOController {
 		docDto.setIdufir(webRequest.getParameter("idufir"));
 		
 		documentoPCOApi.editarDocumento(docDto);
+		
+		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(idDoc);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());	
 		
 		return DEFAULT;
 	}
@@ -516,6 +528,8 @@ public class DocumentoPCOController {
 			
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}
+		
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcPCO);	
 
 		return DEFAULT;
 	}
@@ -559,7 +573,7 @@ public class DocumentoPCOController {
 	
 		// Tratamos los documentos a descartar	
 		stIdDoc = new StringTokenizer(arrayIdDocumentos,",");
-		Long idDoc;
+		Long idDoc=1L;
 		while (stIdDoc.hasMoreElements()){
 			idDoc = new Long(stIdDoc.nextToken());		
 			SolicitudPCODto solDto;	
@@ -573,7 +587,8 @@ public class DocumentoPCOController {
 	
 			documentoPCOApi.saveCrearSolicitudes(solDto);
 		}
-			
+		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(idDoc);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());
 		return DEFAULT;
 	}
 
@@ -627,12 +642,12 @@ public class DocumentoPCOController {
         dto.setResultado(request.getParameter("resultado"));
         dto.setFechaEnvio(parseaFecha(request.getParameter("fechaEnvio")));
         dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaRecepcion")));
-        if(Checks.esNulo(request.getParameter("fechaRecepcion")) && !Checks.esNulo(request.getParameter("fechaEnvio"))) {
-        	dto.setFechaRecepcion(parseaFecha(request.getParameter("fechaEnvio")));
-        }
         dto.setComentario(request.getParameter("comentario"));
      
         documentoPCOApi.saveInformarSolicitud(dto);
+        
+		DocumentoPCO doc = proxyFactory.proxy(DocumentoPCOApi.class).getDocumentoPCOById(new Long(request.getParameter("idDoc")));
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(doc.getProcedimientoPCO().getProcedimiento().getId());
         
         return DEFAULT;
 	}

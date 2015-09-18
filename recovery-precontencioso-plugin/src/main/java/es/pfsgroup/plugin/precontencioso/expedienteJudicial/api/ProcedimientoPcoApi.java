@@ -2,18 +2,14 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 
 public interface ProcedimientoPcoApi {
@@ -27,6 +23,8 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID = "plugin.precontencioso.devolverPreparacionPorProcedimientoId";
 	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
 	public static final String BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE = "plugin.precontencioso.cambiarEstadoExpediete";
+	public static final String BO_PCO_EXPEDIENTE_BY_PRC_ID = "plugin.precontencioso.getPCOByProcedimientoId";
+	public static final String BO_PCO_EXPEDIENTE_UPDATE = "plugin.precontencioso.update";
 	
 	
 	/*
@@ -118,5 +116,11 @@ public interface ProcedimientoPcoApi {
      */
 	@BusinessOperationDefinition(BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE)
 	public void cambiarEstadoExpediente(Long idProc, String codigoEstado);
+	
+	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_BY_PRC_ID)
+	public ProcedimientoPCO getPCOByProcedimientoId(Long idProc);
+	
+	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_UPDATE)
+	public void update(ProcedimientoPCO pco);
     
 }

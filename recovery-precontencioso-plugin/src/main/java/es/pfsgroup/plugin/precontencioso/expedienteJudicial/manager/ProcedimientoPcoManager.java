@@ -259,8 +259,6 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				historicoNuevoRegistro.setFechaInicio(new Date());
 				genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
 			}	
-
-			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARADO);
 			avanzarTareaPrepararExpediente(procedimientoPco);		
 		}			
 
@@ -317,11 +315,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		Long idProc = procedimientoPco.getProcedimiento().getId();
 		
 		//Crear tarea Preparar Expediente
-		proxyFactory.proxy(GestorTareasApi.class).crearTareaEspecial(idProc, PrecontenciosoBPMConstants.PCO_PrepararExpediente);
-		
-		//Recalcular tareas especiales
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProc, DDEstadoPreparacionPCO.PREPARACION);
-		
+		proxyFactory.proxy(GestorTareasApi.class).crearTareaEspecial(idProc, PrecontenciosoBPMConstants.PCO_PrepararExpediente);		
 	}
 
 	private void cancelarTareaActual(ProcedimientoPCO procedimientoPco) {
@@ -500,5 +494,17 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			return "";
 		}
 
+	}
+	
+	@BusinessOperation(BO_PCO_EXPEDIENTE_BY_PRC_ID)
+	@Override
+	public ProcedimientoPCO getPCOByProcedimientoId(Long idProcedimiento) {
+		return procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+	}
+	
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_UPDATE)
+	public void update(ProcedimientoPCO pco) {
+		procedimientoPcoDao.update(pco);
 	}
 }

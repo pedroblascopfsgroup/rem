@@ -1830,6 +1830,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 					if (!Checks.esNulo(fechaAlta) && !Checks.esNulo(plazoGestion)) {
 						
 						Calendar calendar = new GregorianCalendar();
+						calendar.setTime(fechaAlta);
 						calendar.add(Calendar.DAY_OF_YEAR, Integer.parseInt(plazoGestion.toString()));								
 						dto.setFechaMaxEnAgencia(Timestamp.valueOf(df.format(calendar.getTime())));
 					}

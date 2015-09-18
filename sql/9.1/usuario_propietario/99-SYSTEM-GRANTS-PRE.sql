@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 spool ./99-system-grants-pre-error.log
 begin
   for rs in (select table_name 

@@ -1,12 +1,12 @@
 --##########################################
 --## AUTOR=JAVIER DIAZ
---## FECHA_CREACION=20150918
+--## FECHA_CREACION=20150919
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-447
 --## PRODUCTO=NO
 --## 
---## Finalidad: Eliminar CONSTRAINT  de tabla Temporal Oficinas --> APR_AUX_OFI_OFICINAS
+--## Finalidad: Eliminar ÍNDICE de tabla Temporal Oficinas --> APR_AUX_OFI_OFICINAS
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -30,17 +30,17 @@ BEGIN
 
 --Validamos si la tabla existe antes de crearla
   SELECT COUNT(*) INTO V_EXISTE
-  FROM ALL_CONSTRAINTS
-  WHERE CONSTRAINT_NAME = 'PK_APR_AUX_OFI_OFICINAS';
+  FROM all_indexes
+  WHERE INDEX_NAME = 'PK_APR_AUX_OFI_OFICINAS';
 
-  V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  DROP CONSTRAINT PK_APR_AUX_OFI_OFICINAS';
+  V_MSQL := 'DROP INDEX PK_APR_AUX_OFI_OFICINAS';
 
 
  IF V_EXISTE > 0 THEN   
      EXECUTE IMMEDIATE V_MSQL;
      DBMS_OUTPUT.PUT_LINE(''||TABLA||' Modificada');
   ELSE   
-     DBMS_OUTPUT.PUT_LINE('CONSTRAINT NO EXISTENTE EN TABLA '||TABLA||'');     
+     DBMS_OUTPUT.PUT_LINE('ÍNDICE NO EXISTENTE EN LA TABLA '||TABLA||'');     
   END IF;   
 
 

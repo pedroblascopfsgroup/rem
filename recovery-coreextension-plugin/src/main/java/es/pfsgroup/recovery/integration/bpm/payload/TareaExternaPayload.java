@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.integration.bpm;
+package es.pfsgroup.recovery.integration.bpm.payload;
 
 import java.util.Date;
 
@@ -7,6 +7,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
+import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 
 public class TareaExternaPayload {
 	
@@ -41,7 +42,11 @@ public class TareaExternaPayload {
 		this.usuario = new UsuarioPayload(data, tareaExterna);
 		build(tareaExterna);
 	}
-	
+
+	public DataContainerPayload getData() {
+		return data;
+	}
+
 	public ProcedimientoPayload getProcedimiento() {
 		return procedimiento;
 	}

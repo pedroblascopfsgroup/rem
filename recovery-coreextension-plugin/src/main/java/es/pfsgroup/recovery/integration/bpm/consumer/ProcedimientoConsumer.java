@@ -45,9 +45,9 @@ import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.ProcedimientoBienPayload;
-import es.pfsgroup.recovery.integration.bpm.ProcedimientoPayload;
-import es.pfsgroup.recovery.integration.bpm.TareaExternaPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoBienPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaExternaPayload;
 
 public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> {
 
@@ -95,7 +95,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 	private boolean crearNuevo = false;
 	private boolean iniciarBPM = false;
 	private String forzarTipoProcedimiento = null;
-	
+
 	public ProcedimientoConsumer(Rule<DataContainerPayload> rules) {
 		super(rules);
 	}
@@ -158,39 +158,44 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 	}
 	
 	
+	
 	protected EXTProcedimientoDto buildProcedimientoDto(ProcedimientoPayload procedimiento) {
+		String asuntoUUID = procedimiento.getAsunto().getGuid();
 		String prcPadreUUID = getGuidProcedimientoPadre(procedimiento);
 		String prcUUID = getGuidProcedimiento(procedimiento);
 		String codigoTipoProcedimiento = getCodigoTipoProcedimiento(procedimiento);
-		String asuntoUUID = procedimiento.getAsunto().getGuid();
 		String valor;
 		
-		logger.debug(String.format("[INTEGRACION] PRC [%s] Montando dto para guardar procedimiento", prcUUID));
-		
+		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Preparando datos para guardar procedimiento...", asuntoUUID, prcUUID));
 		Procedimiento prc = (Checks.esNulo(prcUUID)) 
 				? null 
 				: extProcedimientoManager.getProcedimientoByGuid(prcUUID);
 		
 		EXTProcedimientoDto procDto = new EXTProcedimientoDto();
 		if (prc!=null) {
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Procedimiento encontrado, actualizando...", asuntoUUID, prcUUID));
 			procDto.setIdProcedimiento(prc.getId());
 		} else {
-
+			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Procedimiento no encontrado, creando uno nuevo...", asuntoUUID, prcUUID));
 			procDto.setGuid(prcUUID);
 
 			// Asunto
-			logger.debug(String.format("[INTEGRACION] PRC [%s] Asignando asunto %s", prcUUID, asuntoUUID));
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] Asignando asunto...", asuntoUUID, prcUUID));
 			EXTAsunto asunto = extAsuntoManager.getAsuntoByGuid(asuntoUUID);
 			if (asunto==null) {
-				throw new IntegrationDataException(String.format("[INTEGRACION] Asunto con guid %s no existe, no se puede crear el procedimiento", asuntoUUID));
+				String logMsg = String.format("[INTEGRACION] ASU[%s] Asunto no encontrado!!!!, no se puede crear el procedimiento!!", asuntoUUID);
+				logger.error(logMsg);
+				throw new IntegrationDataException(logMsg);
 			}
 			procDto.setAsunto(asunto);
 
 			// Tipo
-			logger.debug(String.format("[INTEGRACION] PRC [%s] Asignando tipo procedimiento %s", prcUUID, codigoTipoProcedimiento));
+			logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TPO[%s] Asignando tipo procedimiento...", asuntoUUID, prcUUID, codigoTipoProcedimiento));
 			TipoProcedimiento tipoProcedimiento = tipoProcedimientoManager.getByCodigo(codigoTipoProcedimiento);
 			if (tipoProcedimiento==null) {
-				throw new IntegrationDataException(String.format("[INTEGRACION] El tipo de procedimiento %s no existe, NO SE CREA EL PROCEDIMIENTO %s.", codigoTipoProcedimiento, prcUUID));
+				String logMsg = String.format("[INTEGRACION] PRC[%s] TPO[%s] El tipo de procedimiento no existe!!, NO SE CREA EL PROCEDIMIENTO!!", prcUUID, codigoTipoProcedimiento);
+				logger.error(logMsg);
+				throw new IntegrationDataException(logMsg);
 			}
 			procDto.setTipoProcedimiento(tipoProcedimiento);
 			
@@ -202,8 +207,6 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 			
 			procDto.setDecidido(procedimiento.getDecidido());
 		}
-
-		procDto.setFechaRecopilacion(procedimiento.getFechaRecopilacion());
 
 		// DD tipoReclamacion
 		valor = procedimiento.getTipoReclamacion();
@@ -218,10 +221,12 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 		// DD juzgado
 		valor = procedimiento.getJuzgado();
 		if (!Checks.esNulo(valor)) {
+			logger.debug(String.format("[INTEGRACION] ASU[%s] PRC[%s] JUZ[%s] Asignando juzgado...", asuntoUUID, prcUUID, valor));
 			TipoJuzgado juzgado = (TipoJuzgado)diccionarioApi.dameValorDiccionarioByCod(TipoJuzgado.class, valor);
 			procDto.setJuzgado(juzgado);
 		}
 		
+		procDto.setFechaRecopilacion(procedimiento.getFechaRecopilacion());
 		procDto.setCodigoProcedimientoEnJuzgado(procedimiento.getCodigoProcedimientoEnJuzgado());
 		procDto.setObservacionesRecopilacion(procedimiento.getObservacionesRecopilacion());
 		procDto.setPlazoRecuperacion(procedimiento.getPlazoRecuperacion());
@@ -230,14 +235,17 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 		procDto.setSaldoOriginalVencido(procedimiento.getSaldoOriginalVencido());
 		procDto.setSaldoRecuperacion(procedimiento.getSaldoRecuperacion());
 		
-		
+		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Asignando lista contrados-expediente...", asuntoUUID, prcUUID));
 		List<ExpedienteContrato> expContratoList = mergeExpedienteContratos(procedimiento, prc);
 		procDto.setExpedienteContratos(expContratoList);
+		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Asignando lista personas...", asuntoUUID, prcUUID));
 		List<Persona> personaList = mergePersonas(procedimiento, prc);
 		procDto.setPersonas(personaList);
 		List<ProcedimientoBien> prcBienList = mergeProcedimientoBienes(procedimiento, prc);
 		procDto.setBienes(prcBienList);
-		
+
+		//
+		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] Datos preparados para guardar procedimiento!!", asuntoUUID, prcUUID));
 		return procDto;
 	}
 	
@@ -359,50 +367,46 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 	}
 	
 	protected void iniciarBPM(DataContainerPayload payload, Procedimiento prc) {
-
 		TareaExternaPayload tareaExternaPayload = new TareaExternaPayload(payload);
 		String tarUUID = getGuidTareaNotificacion(tareaExternaPayload);
 
 		// Lanzar los JBPM para cada procedimiento
-		logger.debug(String.format("[INTEGRACION] PRC [%d] Iniciando BPM...", prc.getId()));
+		logger.info(String.format("[INTEGRACION] PRC[%d] TAR[%s] Iniciando BPM...", prc.getId(), tarUUID));
         String nombreJBPM = prc.getTipoProcedimiento().getXmlJbpm();
         Map<String, Object> param = new HashMap<String, Object>();
         param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, prc.getId());
         param.put(ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN, tarUUID);
         Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
-        
         //
         prc.setProcessBPM(idBPM);
         suplantarUsuario(prc);
         procedimientoManager.saveOrUpdateProcedimiento(prc);
-        
-		logger.debug(String.format("[INTEGRACION] PRC [%d] BPM creado...", prc.getId()));
+		logger.info(String.format("[INTEGRACION] PRC[%d] TAR[%s] BPM iniciado!!", prc.getId(), tarUUID));
 	}
 
 	private void suplantarUsuario(Auditable auditable) {
 		Auditoria auditoria = auditable.getAuditoria();
-		auditoria.setSuplantarUsuario("PEPITO");
-		auditoria.setUsuarioCrear("PEPITO");
+		//auditoria.setSuplantarUsuario("PEPITO");
+		//auditoria.setUsuarioCrear("PEPITO");
 	}
 	
 	
 	@Override
 	protected void doAction(DataContainerPayload payload) {
 		ProcedimientoPayload procedimiento = new ProcedimientoPayload(payload);
-		logger.debug("[INTEGRACION] Construyendo Dto procedimiento...");
+		String prcUUID = getGuidProcedimiento(procedimiento);
+		//
+		logger.info(String.format("[INTEGRACION] PRC[%s] Guardando procedimiento...", prcUUID));
 		EXTProcedimientoDto procDto = buildProcedimientoDto(procedimiento);
-
-		// suplantar usuario
 		procDto.setUsuarioSuplantado(procedimiento.getUsuario().getNombre());
-		
-		logger.debug("[INTEGRACION] Dto procedimiento construido!");
+		//
 		Procedimiento prc = extProcedimientoManager.guardaProcedimiento(procDto);
-		logger.debug(String.format("[INTEGRACION] PRC %d actualizado...", prc.getId()));
+		logger.info(String.format("[INTEGRACION] PRC[%s] actualizado...", prcUUID));
 		
 		if (this.isIniciarBPM()) {
 			iniciarBPM(payload, prc);
 		}
-		
+
 	}
 
 }

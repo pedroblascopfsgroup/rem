@@ -255,14 +255,13 @@
 				</bean>
 
 				<!-- Paralizar un BPM -->
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarBPM">
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ParalizarBPM">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
 							<property name="tipo" value="DO-PARALIZAR-BPM"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Paraliza un BPM"/>
-					<property name="forzarTransicion" value="paralizarTareas"/>
 				</bean>
 
 				<!-- Activar un BPM paralizado-->

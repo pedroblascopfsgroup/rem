@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.integration.bpm;
 
+import java.util.Date;
+
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -122,9 +124,8 @@ public interface IntegracionBpmService {
 	 * Genera una transicion de Paralizar un BPM
 	 * 
 	 * @param tipoProcedimiento
-	 * @param procPadre
 	 */
-	void paralizarBPM(Procedimiento procedimiento);
+	void paralizarBPM(Procedimiento procedimiento, Date fechaActivacion);
 
 	/**
 	 * Genera una transicion de Activar un BPM

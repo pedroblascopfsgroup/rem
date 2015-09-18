@@ -25,8 +25,8 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
-import es.pfsgroup.recovery.integration.bpm.TareaNotificacionPayload;
-import es.pfsgroup.recovery.integration.bpm.UsuarioPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaNotificacionPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.UsuarioPayload;
 
 /**
  * 

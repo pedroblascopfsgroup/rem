@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.integration.bpm;
+package es.pfsgroup.recovery.integration.bpm.payload;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
+import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 
 public class ProcedimientoPayload {
 	
@@ -24,6 +25,22 @@ public class ProcedimientoPayload {
 	
 	public final static String KEY_PROCEDIMIENTO = "@prc";
 	public final static String KEY_PROCEDIMIENTO_PADRE = "@prc.padre";
+	
+	private static final String CAMPO_DECIDIDO = String.format("%s.decidido", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_FECHA_RECOPILACION = String.format("%s.recopilacion", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_TIPO_RECLAMACION = String.format("%s.tipoReclamacion", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_ESTADO = String.format("%s.estado", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_JUZGADO = String.format("%s.juzgado", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_COD_PROC_EN_JUZGADO = String.format("%s.codProcEnJuzgado", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_OBSERVACIONES = String.format("%s.observaciones", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_PLAZO_RECUPERACION = String.format("%s.plazoRecuperacion", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_PORCENTAJE_RECUPERACION = String.format("%s.porcentajeRecuperacion", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_SALDO_ORIG_NO_VENCIDO = String.format("%s.saldoOriginalNoVencido", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_SALDO_ORIG_VENCIDO = String.format("%s.saldoOriginalVencido", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_SALDO_RECUPERACION = String.format("%s.saldoRecuperacion", KEY_PROCEDIMIENTO);
+	private static final String RELACION_PERSONAS = String.format("%s.per", KEY_PROCEDIMIENTO);
+	private static final String RELACION_CONTRATOS_EXPEDIENTES = String.format("%s.cex", KEY_PROCEDIMIENTO);
+	private static final String CAMPO_TIPO_ACTUACION = String.format("%s.tipoActuacion", KEY_PROCEDIMIENTO);
 
 	private final DataContainerPayload data;
 	public DataContainerPayload getData() {
@@ -63,30 +80,30 @@ public class ProcedimientoPayload {
 			throw new IntegrationDataException(String.format("[INTEGRACION] El procedimiento ID: %d no tiene referencia de sincronización", procedimiento.getId()));
 		}
 		
-		data.addSourceId(KEY_PROCEDIMIENTO, procedimiento.getId());
+		setIdOrigen(procedimiento.getId());
 		setTipoProcedimiento(procedimiento.getTipoProcedimiento().getCodigo());
-		data.addGuid(KEY_PROCEDIMIENTO, procedimiento.getGuid());
+		setGuid(procedimiento.getGuid());
 		if (procedimiento.getTipoActuacion()!=null) {
-			data.addCodigo(String.format("%s.tipoActuacion", KEY_PROCEDIMIENTO), procedimiento.getTipoActuacion().getCodigo()); 
+			setTipoActuacion(procedimiento.getTipoActuacion().getCodigo()); 
 		}
 		if (procedimiento.getTipoReclamacion()!=null) {
-			data.addCodigo(String.format("%s.tipoReclamacion", KEY_PROCEDIMIENTO), procedimiento.getTipoReclamacion().getCodigo()); 
+			setTipoReclamacion(procedimiento.getTipoReclamacion().getCodigo()); 
 		}
 		if (procedimiento.getEstadoProcedimiento()!=null) {
-			data.addCodigo(String.format("%s.estado", KEY_PROCEDIMIENTO), procedimiento.getEstadoProcedimiento().getCodigo());
+			setEstado(procedimiento.getEstadoProcedimiento().getCodigo());
 		}
-		data.addFlag(String.format("%s.decidido", KEY_PROCEDIMIENTO), procedimiento.getDecidido());
-		data.addNumber(String.format("%s.porcentajeRecuperacion", KEY_PROCEDIMIENTO), procedimiento.getPorcentajeRecuperacion());
-		data.addNumber(String.format("%s.plazoRecuperacion", KEY_PROCEDIMIENTO), procedimiento.getPlazoRecuperacion());
-		data.addNumber(String.format("%s.saldoOriginalVencido", KEY_PROCEDIMIENTO), procedimiento.getSaldoOriginalVencido());
-		data.addNumber(String.format("%s.saldoOriginalNoVencido", KEY_PROCEDIMIENTO), procedimiento.getSaldoOriginalNoVencido());
-		data.addNumber(String.format("%s.saldoRecuperacion", KEY_PROCEDIMIENTO), procedimiento.getSaldoRecuperacion());
-		data.addExtraInfo(String.format("%s.codProcEnJuzgado", KEY_PROCEDIMIENTO), procedimiento.getCodigoProcedimientoEnJuzgado());
+		setDecidido(procedimiento.getDecidido());
+		setPorcentajeRecuperacion(procedimiento.getPorcentajeRecuperacion());
+		setPlazoRecuperacion(procedimiento.getPlazoRecuperacion());
+		setSaldoOriginalVencido(procedimiento.getSaldoOriginalVencido());
+		setSaldoOriginalNoVencido(procedimiento.getSaldoOriginalNoVencido());
+		setSaldoRecuperacion(procedimiento.getSaldoRecuperacion());
+		setCodigoProcedimientoEnJuzgado(procedimiento.getCodigoProcedimientoEnJuzgado());
 		if (procedimiento.getJuzgado()!=null) {
-			data.addCodigo(String.format("%s.juzgado", KEY_PROCEDIMIENTO), procedimiento.getJuzgado().getCodigo());
+			setJuzgado(procedimiento.getJuzgado().getCodigo());
 		}
-		data.addFecha(String.format("%s.recopilacion", KEY_PROCEDIMIENTO), procedimiento.getFechaRecopilacion());
-		data.addExtraInfo(String.format("%s.observaciones", KEY_PROCEDIMIENTO), procedimiento.getObservacionesRecopilacion());
+		setFechaRecopilacion(procedimiento.getFechaRecopilacion());
+		setObservacionesRecopilacion(procedimiento.getObservacionesRecopilacion());
 
 		// PERSONAS relacionadas con el procedimiento codClienteEntidad
 		List<Persona> personas = procedimiento.getPersonasAfectadas();
@@ -94,7 +111,7 @@ public class ProcedimientoPayload {
 			if (per.getAuditoria().isBorrado()) {
 				continue;
 			}
-			data.addRelacion(String.format("%s.per", KEY_PROCEDIMIENTO), per.getCodClienteEntidad().toString());
+			data.addRelacion(RELACION_PERSONAS, per.getCodClienteEntidad().toString());
 		}
 
 		// CONTRATOS relacionadas con el procedimiento
@@ -103,7 +120,7 @@ public class ProcedimientoPayload {
 			if (prcCntExp.getExpedienteContrato().getAuditoria().isBorrado()) {
 				continue;
 			}
-			data.addRelacion(String.format("%s.cex", KEY_PROCEDIMIENTO), prcCntExp.getExpedienteContrato().getGuid());
+			data.addRelacion(RELACION_CONTRATOS_EXPEDIENTES, prcCntExp.getExpedienteContrato().getGuid());
 		}
 		
 		// BIENES relacionadas con el procedimiento 
@@ -129,7 +146,7 @@ public class ProcedimientoPayload {
 			}
 			data.addSourceId(KEY_PROCEDIMIENTO_PADRE, procedimientoPadre.getId());
 			data.addCodigo(KEY_PROCEDIMIENTO_PADRE, procedimientoPadre.getTipoProcedimiento().getCodigo());
-			data.addGuid(KEY_PROCEDIMIENTO_PADRE, mejProcedimientoPadre.getGuid());
+			setGuidProcedimientoPadre(mejProcedimientoPadre.getGuid());
 		}
 		
 	}
@@ -147,6 +164,10 @@ public class ProcedimientoPayload {
 		valor = diccionarioCodigos.getCodigoProcedimientoFinal(valor);
 		setTipoProcedimientoPadre(valor);
 	}
+
+	public void setIdOrigen(Long id) {
+		data.addSourceId(KEY_PROCEDIMIENTO, id);
+	}
 	
 	public Long getIdOrigen() {
 		return data.getIdOrigen(KEY_PROCEDIMIENTO);
@@ -163,6 +184,14 @@ public class ProcedimientoPayload {
 	public void setTipoProcedimiento(String valor) {
 		data.addCodigo(KEY_PROCEDIMIENTO, valor);
 	}
+
+	public String getTipoActuacion() {
+		return data.getCodigo(CAMPO_TIPO_ACTUACION);
+	}
+
+	public void setTipoActuacion(String valor) {
+		data.addCodigo(CAMPO_TIPO_ACTUACION, valor);
+	}
 	
 	public String getTipoProcedimientoPadre() {
 		return data.getCodigo(KEY_PROCEDIMIENTO_PADRE);
@@ -172,60 +201,115 @@ public class ProcedimientoPayload {
 		data.addCodigo(KEY_PROCEDIMIENTO_PADRE, valor);
 	}
 	
+	public void setGuid(String guid) {
+		data.addGuid(KEY_PROCEDIMIENTO, guid);
+	}
 	public String getGuid() {
 		return data.getGuid(KEY_PROCEDIMIENTO);
 	}
 
+	public void setGuidProcedimientoPadre(String guid) {
+		data.addGuid(KEY_PROCEDIMIENTO_PADRE, guid);
+	}
+	
 	public String getGuidProcedimientoPadre() {
 		return data.getGuid(KEY_PROCEDIMIENTO_PADRE);
 	}
 
+	public void setDecidido(Boolean decidido) {
+		data.addFlag(CAMPO_DECIDIDO, decidido);
+	}
+	
 	public Boolean getDecidido() {
-		return data.getFlag(String.format("%s.decidido", KEY_PROCEDIMIENTO));
+		return data.getFlag(CAMPO_DECIDIDO);
 	}
 
+	public void setFechaRecopilacion(Date fecha) {
+		data.addFecha(CAMPO_FECHA_RECOPILACION, fecha);
+	}
+	
 	public Date getFechaRecopilacion() {
-		return data.getFecha(String.format("%s.recopilacion", KEY_PROCEDIMIENTO));
+		return data.getFecha(CAMPO_FECHA_RECOPILACION);
 	}
 
+	public void setTipoReclamacion(String tipo) {
+		data.addCodigo(CAMPO_TIPO_RECLAMACION, tipo);
+	}
+	
 	public String getTipoReclamacion() {
-		 return data.getCodigo(String.format("%s.tipoReclamacion", KEY_PROCEDIMIENTO));
+		 return data.getCodigo(CAMPO_TIPO_RECLAMACION);
 	}
 
+	public void setEstado(String estado) {
+		data.addCodigo(CAMPO_ESTADO, estado);
+	}
+	
 	public String getEstado() {
-		return data.getCodigo(String.format("%s.estado", KEY_PROCEDIMIENTO));		
+		return data.getCodigo(CAMPO_ESTADO);		
+	}
+
+	public void setJuzgado(String juzgado) {
+		data.addCodigo(CAMPO_JUZGADO, juzgado);
 	}
 
 	public String getJuzgado() {
-		return data.getCodigo(String.format("%s.juzgado", KEY_PROCEDIMIENTO));		
+		return data.getCodigo(CAMPO_JUZGADO);		
+	}
+
+	public void setCodigoProcedimientoEnJuzgado(String codProcEnJuzgado) {
+		data.addExtraInfo(CAMPO_COD_PROC_EN_JUZGADO, codProcEnJuzgado);
 	}
 
 	public String getCodigoProcedimientoEnJuzgado() {
-		return data.getExtraInfo(String.format("%s.codProcEnJuzgado", KEY_PROCEDIMIENTO));
+		return data.getExtraInfo(CAMPO_COD_PROC_EN_JUZGADO);
+	}
+
+	public void setObservacionesRecopilacion(String valor) {
+		data.addExtraInfo(CAMPO_OBSERVACIONES, valor);
 	}
 
 	public String getObservacionesRecopilacion() {
-		return data.getExtraInfo(String.format("%s.observaciones", KEY_PROCEDIMIENTO));
+		return data.getExtraInfo(CAMPO_OBSERVACIONES);
+	}
+
+	public void setPlazoRecuperacion(Integer valor) {
+		data.addNumber(CAMPO_PLAZO_RECUPERACION, valor);
 	}
 
 	public Integer getPlazoRecuperacion() {
-		return data.getValInt(String.format("%s.plazoRecuperacion", KEY_PROCEDIMIENTO));
+		return data.getValInt(CAMPO_PLAZO_RECUPERACION);
+	}
+
+	public void setPorcentajeRecuperacion(Integer valor) {
+		data.addNumber(CAMPO_PORCENTAJE_RECUPERACION, valor);
 	}
 
 	public Integer getPorcentajeRecuperacion() {
-		return data.getValInt(String.format("%s.porcentajeRecuperacion", KEY_PROCEDIMIENTO));
+		return data.getValInt(CAMPO_PORCENTAJE_RECUPERACION);
+	}
+
+	public void setSaldoOriginalNoVencido(BigDecimal valor) {
+		data.addNumber(CAMPO_SALDO_ORIG_NO_VENCIDO, valor);
 	}
 
 	public BigDecimal getSaldoOriginalNoVencido() {
-		return data.getValBDec(String.format("%s.saldoOriginalNoVencido", KEY_PROCEDIMIENTO));
+		return data.getValBDec(CAMPO_SALDO_ORIG_NO_VENCIDO);
+	}
+
+	public void setSaldoOriginalVencido(BigDecimal valor) {
+		data.addNumber(CAMPO_SALDO_ORIG_VENCIDO, valor);
 	}
 
 	public BigDecimal getSaldoOriginalVencido() {
-		return data.getValBDec(String.format("%s.saldoOriginalVencido", KEY_PROCEDIMIENTO));
+		return data.getValBDec(CAMPO_SALDO_ORIG_VENCIDO);
+	}
+
+	public void setSaldoRecuperacion(BigDecimal valor) {
+		data.addNumber(CAMPO_SALDO_RECUPERACION, valor);
 	}
 
 	public BigDecimal getSaldoRecuperacion() {
-		return data.getValBDec(String.format("%s.saldoRecuperacion", KEY_PROCEDIMIENTO));
+		return data.getValBDec(CAMPO_SALDO_RECUPERACION);
 	}
 
 	private void addProcedimientoBien(ProcedimientoBienPayload valor) {
@@ -247,11 +331,11 @@ public class ProcedimientoPayload {
 	}
 	
 	public List<String> getGuidContratos() {
-		return data.getRelaciones(String.format("%s.cex", KEY_PROCEDIMIENTO));
+		return data.getRelaciones(RELACION_CONTRATOS_EXPEDIENTES);
 	}
 
 	public List<String> getGuidPersonas() {
-		return data.getRelaciones(String.format("%s.per", KEY_PROCEDIMIENTO));
+		return data.getRelaciones(RELACION_PERSONAS);
 	}
 
 	public String getTransicionBPM() {

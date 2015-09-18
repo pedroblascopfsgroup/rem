@@ -42,12 +42,12 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.ActuacionesAExplorarPayload;
-import es.pfsgroup.recovery.integration.bpm.ActuacionesRealizadasPayload;
-import es.pfsgroup.recovery.integration.bpm.AcuerdoPayload;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.pfsgroup.recovery.integration.bpm.TerminoAcuerdoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesAExplorarPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesRealizadasPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TerminoAcuerdoPayload;
 
 /**
  * 

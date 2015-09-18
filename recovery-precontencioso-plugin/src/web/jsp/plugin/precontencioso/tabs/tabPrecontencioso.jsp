@@ -31,10 +31,6 @@ var codigoTipoGestor='${codigoTipoGestor}';
 
         <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado--%>
 
-       	gridDocumentos.setVisible(false);
-       	gridBurofax.setVisible(false);
-       	gridLiquidaciones.setVisible(false);
-
         if (data.supervisor.isSupervisor || data.isTipoDespachoPredoc.isTipoDespachoPredoc || data.isTipoDespachoLetrado) {
             gridDocumentos.setVisible(true);
 	       	gridBurofax.setVisible(true);

@@ -203,6 +203,13 @@ if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
     echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
     exit 1
 fi
+grep -Fqi "WHENEVER SQLERROR" $FICHERO
+if [[ $? != 0 ]] ; then
+    echo ""
+    echo "El script no contiene la primera línea de control de errores: WHENEVER SQLERROR ..."
+    echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
+    exit 1
+fi
 
 if [ ! -f $BASEDIR/tmp/$nombreSetEnv ] ; then
    obtenerSetEnv $FICHERO

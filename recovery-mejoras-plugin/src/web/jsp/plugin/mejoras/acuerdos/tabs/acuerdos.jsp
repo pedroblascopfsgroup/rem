@@ -190,23 +190,64 @@
 		,cls: 'x-btn-text-icon'
 		,hidden:true
 		,handler:function(){
-      		var w = app.openWindow({
-		          flow : 'mejacuerdo/openFinalizacionAcuerdo'
-		          ,closable:false
-		          ,width : 750
-		          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
-		          ,params : {idAcuerdo:acuerdoSeleccionado}
-		       });
-		       w.on(app.event.DONE, function(){
-		       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
-		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
-		          acuerdosStore.webflow({id:panel.getAsuntoId()});
-		          w.close();
-		          cargarUltimoAcuerdo();
-		       });
-		       w.on(app.event.CANCEL, function(){
-		        w.close();
-		       });
+		
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('mejacuerdo/obtenerListadoValidacionTramiteCorrespondienteDerivaciones')
+				,method: 'POST'
+				,params:{
+							idAcuerdo : acuerdoSeleccionado
+						}
+				,success: function (result, request){
+											
+					var derivacionesConfig = Ext.util.JSON.decode(result.responseText);
+					
+					var tramiteRestrictivosinResolver = false;
+					<!-- Primero mostramos tramitres restrictivos que no permiten guardar -->
+					for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
+							if(derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivo){
+								tramiteRestrictivosinResolver = true;
+								Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivoTexto );
+							}
+					}
+					
+					<!-- Si no tenemos tramites restrictivos sin resolver mostramos los posibles tramites sin resolver no restrictivos y abrimos la ventana -->
+					if(!tramiteRestrictivosinResolver){
+					
+						for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
+								if(!derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivo){
+									tramiteRestrictivosinResolver = true;
+									Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivoTexto );
+								}
+						}
+					
+						var w = app.openWindow({
+				       	   flow : 'mejacuerdo/openFinalizacionAcuerdo'
+				          ,closable:false
+				          ,width : 750
+				          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
+				          ,params : {idAcuerdo:acuerdoSeleccionado}
+				       	});
+				       	w.on(app.event.DONE, function(){
+				       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
+				          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
+				          acuerdosStore.webflow({id:panel.getAsuntoId()});
+				          w.close();
+				          cargarUltimoAcuerdo();
+				       	});
+				       	w.on(app.event.CANCEL, function(){
+				        	w.close();
+				       	});
+				       	
+					}
+
+					
+				}
+				,error: function(){
+	
+				}       				
+			});
+
      	}
 	});
    

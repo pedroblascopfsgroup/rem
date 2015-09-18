@@ -75,7 +75,9 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
 
 @Component
@@ -1229,5 +1231,53 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     	}
     	
 	}
+
+    @BusinessOperation(BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE)
+    @Transactional(readOnly = false)
+	@Override
+	public List<ACDAcuerdoDerivaciones> getValidacionTramiteCorrespondiente(EXTAcuerdo acuerdo, boolean soloTramitesSinIniciar){
+    	
+    	List<ACDAcuerdoDerivaciones> acuerdosDerivaciones = new ArrayList<ACDAcuerdoDerivaciones>();
+    	List<TerminoAcuerdo> terminos = terminoAcuerdoDao.buscarTerminosPorTipo(acuerdo.getId(), null);
+    	for(TerminoAcuerdo ta : terminos){
+    		ACDAcuerdoDerivaciones acudev = genericDao.get(ACDAcuerdoDerivaciones.class, genericDao.createFilter(FilterType.EQUALS, "tipoAcuerdo.id", ta.getTipoAcuerdo().getId()));
+    		if(!Checks.esNulo(acudev)){
+    			if(soloTramitesSinIniciar){
+    				/////Obtenemos los activos
+    				if(!tramiteIniciado(acuerdo.getAsunto().getId(),acudev.getTipoProcedimiento().getCodigo())){
+    					acuerdosDerivaciones.add(acudev);
+    				}
+    			}else{
+    				acuerdosDerivaciones.add(acudev);	
+    			}
+    			
+    		}
+    	}
+    	
+		return acuerdosDerivaciones;
+	}
+    
+    protected boolean tramiteIniciado(Long idAsunto, String codigoTipoProcedmiento){
+    	
+    	if(Checks.esNulo(codigoTipoProcedmiento)){throw new IllegalArgumentException("El codigo de procedimiento no puede ser nulo");}
+    	if(Checks.esNulo(idAsunto)){throw new IllegalArgumentException("El codigo de procedimiento no puede ser nulo");}
+    	
+    	EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
+    	
+    	if(!Checks.esNulo(asunto)){
+    		
+        	for(Procedimiento pr : asunto.getProcedimientos()){
+        		if(codigoTipoProcedmiento.equals(pr.getTipoProcedimiento().getCodigo()) && pr.getEstaAceptado()){
+        			return true;
+        		}
+        	}
+        	
+    	}else{
+    		if(Checks.esNulo(idAsunto)){throw new IllegalArgumentException("El asunto "+idAsunto+" no existe");}
+    	}
+
+    	
+    	return false;
+    }
 
 }

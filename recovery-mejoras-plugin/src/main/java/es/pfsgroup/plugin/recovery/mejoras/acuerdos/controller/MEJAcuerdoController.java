@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.revisionProcedimientos.RevisionProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.revisionProcedimiento.dto.RevisionProcedimientoDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 @Controller
@@ -62,6 +63,7 @@ public class MEJAcuerdoController {
 	static final String JSON_LIST_CAMPOS_DINAMICOS_TERMINOS_POR_TIPO_ACUERDO  ="plugin/mejoras/acuerdos/camposTerminosPorTipoAcuerdoJSON";
 	static final String JSON_CONFIG_USERS_ACUERDO_ASUNTOS = "plugin/mejoras/acuerdos/configUsersAcuerdoAsuntoJSON";
 	static final String JSP_FINALIZACION_ACUERDO = "plugin/mejoras/acuerdos/finalizacionAcuerdo";
+	static final String JSON_LISTADO_DERIVACIONES = "plugin/mejoras/acuerdos/listadoDerivacionesAcuerdoJSON";	
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -109,6 +111,24 @@ public class MEJAcuerdoController {
 		model.put("listadoTerminosAcuerdo", listadoTerminosAcuerdo);
 		
 		return JSON_LISTADO_TERMINOS;
+	}
+	
+	
+	 /**
+     * Obtiene la lista de Derivaciones de los terminos de una acuerdo
+     * @param idAcuerdo el id del acuerdo
+     */
+	@RequestMapping
+    public String obtenerListadoValidacionTramiteCorrespondienteDerivaciones(ModelMap model, Long idAcuerdo) {
+		
+		EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+		if(!Checks.esNulo(acuerdo)){
+			List<ACDAcuerdoDerivaciones> listadoDerivaciones = proxyFactory.proxy(MEJAcuerdoApi.class).getValidacionTramiteCorrespondiente(acuerdo,true);
+			model.put("derivacionesTerminos", listadoDerivaciones);	
+		}
+		
+		
+		return JSON_LISTADO_DERIVACIONES;
 	}
 	
 	 /**

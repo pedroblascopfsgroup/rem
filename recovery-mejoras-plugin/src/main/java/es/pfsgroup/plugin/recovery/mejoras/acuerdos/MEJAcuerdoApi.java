@@ -19,6 +19,8 @@ import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.termino.model.TerminoOperaciones;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 public interface MEJAcuerdoApi {
 	
@@ -48,6 +50,7 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_TIPO_GESTOR_DECISOR_ACUERDO_ASUNTO = "mejacuerdo.esDecisorAcuerdoAsunto";
 	public static final String BO_ACUERDO_MGR_CONTINUAR_ACUERDO = "mejacuerdo.continuarAcuerdo";
 	public static final String BO_ACUERDO_MGR_ACUERDO_CERRAR = "mejacuerdo.cerrarAcuerdo";
+	public static final String BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE = "mejacuerdo.validacionTramiteCorrespondiente";
 	
     
 	/**
@@ -134,6 +137,9 @@ public interface MEJAcuerdoApi {
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_ACUERDO_CERRAR)
 	public void cerrarAcuerdo(Long id);
+	
+	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE)
+	public List<ACDAcuerdoDerivaciones> getValidacionTramiteCorrespondiente(EXTAcuerdo acuerdo, boolean soloTramitesSinIniciar);
 	
 
 }

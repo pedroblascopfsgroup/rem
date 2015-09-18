@@ -47,9 +47,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 			procedimientoGridDto.setTipoPreparacion(ObjectUtils.toString(procedimiento.get("tipoPreparacion")));
 			procedimientoGridDto.setFechaInicioPreparacion((Date) procedimiento.get("fechaInicioPreparacion"));
 			procedimientoGridDto.setDiasEnPreparacion((Integer) procedimiento.get("diasEnPreparacion"));
-			procedimientoGridDto.setDocumentacionCompleta(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("documentacionCompleta"))));
 			procedimientoGridDto.setTotalLiquidacion((Float) procedimiento.get("totalLiquidacion"));
-			procedimientoGridDto.setNotificadoClientes(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("notificadoClientes"))));
 			procedimientoGridDto.setFechaEnvioLetrado((Date) procedimiento.get("fechaEnvioLetrado"));
 			procedimientoGridDto.setAceptadoLetrado(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("aceptadoLetrado"))));
 			procedimientoGridDto.setTodosDocumentos(Boolean.valueOf(ObjectUtils.toString(procedimiento.get("todosDocumentos"))));

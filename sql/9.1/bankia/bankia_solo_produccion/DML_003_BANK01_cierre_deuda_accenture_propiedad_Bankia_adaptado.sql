@@ -22,7 +22,7 @@ SET DEFINE OFF;
 
 DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
@@ -152,7 +152,7 @@ V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS WHERE usu
 
     
     
-V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO WHERE usd_id = (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'') and 
+V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO WHERE usd_id = (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'' AND USD.BORRADO=0) and 
             dd_tge_id = (select dd_tge_id from '||V_ESQUEMA_M||'.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTCDD'')';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;    
     DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....5'); 
@@ -161,7 +161,7 @@ V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO WHER
     ELSE   
         V_SQL := 'insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
         select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id, 
-               (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'') usd_id,
+               (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'' AND USD.BORRADO=0) usd_id,
                (select dd_tge_id from '||V_ESQUEMA_M||'.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTCDD''), ''SAG'', sysdate
         from 
          (
@@ -174,11 +174,13 @@ V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO WHER
                                  '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id 
                             where pas.dd_pas_codigo = ''BANKIA'')                    
           ) aux ';
+          DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro '||V_SQL);
+          
            EXECUTE IMMEDIATE V_SQL ; 
         DBMS_OUTPUT.put_line('[INFO] Se ha añadido el registro');
    END IF;
   
- V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO WHERE GAH_GESTOR_ID = (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'') and 
+ V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO WHERE GAH_GESTOR_ID = (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'' AND USD.BORRADO=0) and 
             GAH_TIPO_GESTOR_ID = (select dd_tge_id from '||V_ESQUEMA_M||'.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTCDD'')';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;    
     DBMS_OUTPUT.PUT_LINE('[INFO] Verificando existencia del registro....6'); 
@@ -187,7 +189,7 @@ V_SQL := ' SELECT COUNT(1) FROM '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO WHER
     ELSE   
         V_SQL := 'insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
         select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id, 
-       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'') usd_id,
+       (select usd_id from '||V_ESQUEMA||'.usd_usuarios_despachos usd inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = ''BPO1ACCEN'' AND USD.BORRADO=0) usd_id,
        sysdate, (select dd_tge_id from '||V_ESQUEMA_M||'.dd_tge_tipo_gestor where dd_tge_codigo = ''GESTCDD''), ''SAG'', sysdate
         from 
          (select asu_id
@@ -304,7 +306,7 @@ V_SQL := 'update  '||V_ESQUEMA_M||'.dd_sta_subtipo_tarea_base set dd_sta_codigo 
     DBMS_OUTPUT.put_line('[INFO] Se ha actualizado el registro');
     
     
-commit;
+--commit;
 
 EXCEPTION
      WHEN OTHERS THEN

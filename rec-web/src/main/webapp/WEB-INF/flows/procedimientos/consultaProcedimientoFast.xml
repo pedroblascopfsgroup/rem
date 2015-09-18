@@ -26,6 +26,7 @@
 			<evaluate expression="executor.execute('plugin.precontencioso.getTipoGestor',id)" result="flowScope.codigoTipoGestor" />
 			<evaluate expression="executor.execute('plugin.precontencioso.isTipoDespachoPredoc',id)" result="flowScope.isPredoc" />
 			<evaluate expression="executor.execute('plugin.precontencioso.isTipoDespachoGestoria',id)" result="flowScope.isGestoria" />
+			<evaluate expression="executor.execute('plugin.precontencioso.isTipoDespachoLetrado',id)" result="flowScope.isLetrado" />
 			<evaluate expression="executor.execute('plugin.precontencioso.isSupervisor',id)" result="flowScope.isSupervisor" />
 	    </on-entry>
     </end-state>     

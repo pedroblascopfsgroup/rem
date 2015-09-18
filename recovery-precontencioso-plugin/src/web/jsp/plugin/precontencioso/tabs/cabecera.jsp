@@ -318,6 +318,7 @@
 
 	function refreshPrecontenciosoFields() 
 	{
+		Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
 		if (data.hayPrecontencioso) {
 			storeHistoricoEstados.webflow({idProcedimiento: panel.getProcedimientoId()});
 						 
@@ -337,7 +338,11 @@
 
 			procedimientoInterno.label.update('<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
 			procedimientoJuzgado.label.update('<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');
-			Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
+
+			if (data.supervisor.isSupervisor || data.isTipoDespachoPredoc.isTipoDespachoPredoc) {
+				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
+			}
+
 		} else {
 			panelProcedimientoPrecontencioso.hide();
 			nExpedienteInterno.hide();
@@ -348,7 +353,6 @@
 			procedimientoJuzgado.label.update('<s:message code="procedimiento.tabcabecera.procjuzgado" text="**Nro. Proc. en Juzgado"/>');
 			procedimientoInterno.setValue();
 			entidad.setLabel('procedimientoInterno', entidad.get("data").cabecera.procedimientoInterno);
-			Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
 		}
 	}
 	

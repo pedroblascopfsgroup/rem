@@ -21,6 +21,7 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_EXPEDIENTE_OBTENER_TIPO_GESTOR = "plugin.precontencioso.getTipoGestor";
 	public static final String BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_PREDOC = "plugin.precontencioso.isTipoDespachoPredoc";
 	public static final String BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_GESTORIA = "plugin.precontencioso.isTipoDespachoGestoria";
+	public static final String BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_LETRADO = "plugin.precontencioso.isTipoDespachoLetrado";
 	public static final String BO_PCO_EXPEDIENTE_IS_SUPERVISOR = "plugin.precontencioso.isSupervisor";
 	public static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
@@ -43,6 +44,9 @@ public interface ProcedimientoPcoApi {
 	
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_IS_SUPERVISOR)
 	boolean isSupervisor(Long prcId);
+	
+	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_LETRADO)
+	boolean isTipoDespachoLetrado(Long prcId);
 	
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.

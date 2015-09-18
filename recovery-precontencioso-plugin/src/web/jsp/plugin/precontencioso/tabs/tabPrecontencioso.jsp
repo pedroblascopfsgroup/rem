@@ -26,44 +26,31 @@ var codigoTipoGestor='${codigoTipoGestor}';
 	panel.getValue = function() {}
 
 	panel.setValue = function(){
-	        var data = entidad.get("data");
-	        var tipoGestor=data.tipoGestor.codigo;
-	        refrescarDocumentosGrid();
-	        refrescarLiquidacionesGrid();
-	        refrescarBurofaxGrid();
-	        
-	        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado--%>
-	        
-	        if(data.supervisor.isSupervisor){
-	        	refrescarDocumentosGrid();
-	            refrescarLiquidacionesGrid();
-	            refrescarBurofaxGrid();
-	        }
-	        else{
-	        
-		        if(data.isTipoDespachoGestoria.isTipoDespachoGestoria){
-		        	refrescarDocumentosGrid();
-		        	gridBurofax.setVisible(false);
-		        	gridLiquidaciones.setVisible(false);
-		        }
-		        else if(data.isTipoDespachoPredoc.isTipoDespachoPredoc){
-		        	refrescarDocumentosGrid();
-		            refrescarLiquidacionesGrid();
-		            refrescarBurofaxGrid();
-		        }
-		        else{
-		        	gridDocumentos.setVisible(false);
-		        	gridBurofax.setVisible(false);
-		        	gridLiquidaciones.setVisible(false);
-		        }
-		    }
-		    
-		    //Incorporado por Pedro, hasta que validemos su funcionamiento OK
-		        	gridDocumentos.setVisible(true);
-		        	gridBurofax.setVisible(true);
-		        	gridLiquidaciones.setVisible(true);
-		    
+        var data = entidad.get("data");
+        var tipoGestor = data.tipoGestor.codigo;
 
+        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado--%>
+
+       	gridDocumentos.setVisible(false);
+       	gridBurofax.setVisible(false);
+       	gridLiquidaciones.setVisible(false);
+debugger;
+        if (data.supervisor.isSupervisor || data.isTipoDespachoPredoc.isTipoDespachoPredoc || data.isTipoDespachoLetrado) {
+            gridDocumentos.setVisible(true);
+	       	gridBurofax.setVisible(true);
+	       	gridLiquidaciones.setVisible(true);
+
+        	refrescarDocumentosGrid();
+            refrescarLiquidacionesGrid();
+            refrescarBurofaxGrid();
+        } else {
+	        if(data.isTipoDespachoGestoria.isTipoDespachoGestoria) {
+	        	gridDocumentos.setVisible(true);
+	        	gridBurofax.setVisible(false);
+	        	gridLiquidaciones.setVisible(false);
+	        	refrescarDocumentosGrid();
+	        }
+	    }
 	}
 
  	panel.setVisibleTab = function(data) {

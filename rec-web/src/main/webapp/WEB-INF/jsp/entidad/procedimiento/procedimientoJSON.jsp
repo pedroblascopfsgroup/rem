@@ -102,7 +102,7 @@
 	<json:property name="numExpExterno" value="${precontencioso.numExpExterno}" />
 	<json:property name="cntPrincipal" value="${precontencioso.cntPrincipal}" />
   </json:object>
-  <!-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado 
+  <!-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado   -->
   <json:object name="tipoGestor">
   	<json:property name="codigo" value="${codigoTipoGestor}" />
   </json:object>
@@ -115,5 +115,5 @@
   <json:object name="supervisor">
   	<json:property name="isSupervisor" value="${isSupervisor}" />
   </json:object>
-  -->
+  <json:property name="isTipoDespachoLetrado" value="${isLetrado}" />
 </fwk:json>

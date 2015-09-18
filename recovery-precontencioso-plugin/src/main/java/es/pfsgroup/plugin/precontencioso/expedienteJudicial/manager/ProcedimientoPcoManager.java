@@ -17,13 +17,16 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.AsuntosManager;
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -59,12 +62,16 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoP
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 @Service
 public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
+	
+	@Autowired
+	private ProcedimientoDao procedimientoDao;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -98,7 +105,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
     @Autowired
     protected TareaExternaManager tareaExternaManager;
-	
+    
 	/*
 	 * 
 	 * Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
@@ -196,34 +203,37 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		return isPredoc;
 	}
-	
+
 	@Override
 	@BusinessOperation(BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_GESTORIA)
-	public boolean isTipoDespachoGestoria(Long prcId){
-		Procedimiento prc=null;
-		boolean isGestoria=false;
-		try{
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", prcId);
-			prc=(Procedimiento) genericDao.get(Procedimiento.class,filtro1);
-		}catch(Exception e){
-			logger.error(e);
-		}
-		
-		
-		List<GestorDespacho> listaGestorDespacho=gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
-	
-		for(GestorDespacho gestorDespacho : listaGestorDespacho){
-			if(gestorDespacho.getDespachoExterno().getTipoDespacho().getCodigo().equals("GESTORIA")){
-				isGestoria=true;
+	public boolean isTipoDespachoGestoria(Long prcId) {
+		Usuario userLogged = usuarioManager.getUsuarioLogado(); 
+
+		List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuIdAndTipoDespacho(userLogged.getId(), DDTipoDespachoExterno.CODIGO_GESTORIA_PCO);
+
+		return !listaGestorDespacho.isEmpty();
+	}
+
+	@Override
+	@BusinessOperation(BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_LETRADO)
+	public boolean isTipoDespachoLetrado(Long prcId) {
+		Procedimiento procedimiento = procedimientoDao.get(prcId);
+		Usuario userLogged = usuarioManager.getUsuarioLogado();
+
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", procedimiento.getAsunto().getId());
+		EXTAsunto asunto = genericDao.get(EXTAsunto.class, filtro1);
+
+		List<EXTGestorAdicionalAsunto> gaas = asunto.getGestoresAsunto();
+
+		for (EXTGestorAdicionalAsunto gaa : gaas) {
+			if (EXTDDTipoGestor.CODIGO_TIPO_LETRADO.equals(gaa.getTipoGestor().getCodigo()) && userLogged.getId().equals(gaa.getGestor().getUsuario().getId())) {
+				return true;
 			}
 		}
-		
-		
-		return isGestoria;
+
+		return false;
 	}
-	
-	
-	
+
 	//PREDOC
 	//Recorro liquidacionManager.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId()) y almaceno en otra lista todos los que tienen un tipoDespacho
 	//Predoc y luego obtengo el gestor adicional asunto y si alguno tiene un tipo de gestor predoc devuelvo true

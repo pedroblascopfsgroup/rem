@@ -36,8 +36,8 @@ DECLARE
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-		T_TIPO_TFI('H017_realizarValoracionConcurso','3','label','lblInforme','Informe',null,null,null,null,'0','DD'),	
-		T_TIPO_TFI('H017_PreparaPropInstSareb','2','label','lblInstrucciones','Propuesta instrucciones',null,null,null,null,'0','DD')
+		T_TIPO_TFI('H017_realizarValoracionConcurso','3','label','lblInforme','<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Informe:</div>',null,null,null,null,'0','DD'),	
+		T_TIPO_TFI('H017_PreparaPropInstSareb','2','label','lblInstrucciones','<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Propuesta instrucciones:</div>',null,null,null,null,'0','DD')
 	); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     

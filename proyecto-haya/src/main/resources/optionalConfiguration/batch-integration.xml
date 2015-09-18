@@ -7,11 +7,11 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 			http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/integration
-			http://www.springframework.org/schema/integration/spring-integration.xsd
+			http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
 			http://www.springframework.org/schema/integration/jms
-			http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+			http://www.springframework.org/schema/integration/jms/spring-integration-jms-1.0.xsd
 			http://www.springframework.org/schema/integration/file
-			http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
 
 	<!-- CONFIGURACION GENERICA E/S -->
 	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">

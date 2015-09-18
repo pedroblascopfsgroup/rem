@@ -34,7 +34,7 @@ var codigoTipoGestor='${codigoTipoGestor}';
        	gridDocumentos.setVisible(false);
        	gridBurofax.setVisible(false);
        	gridLiquidaciones.setVisible(false);
-debugger;
+
         if (data.supervisor.isSupervisor || data.isTipoDespachoPredoc.isTipoDespachoPredoc || data.isTipoDespachoLetrado) {
             gridDocumentos.setVisible(true);
 	       	gridBurofax.setVisible(true);

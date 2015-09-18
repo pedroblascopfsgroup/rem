@@ -161,8 +161,15 @@ public class ClienteManager {
 	@SuppressWarnings("unchecked")    
     public Boolean tieneContratosActivos(Long idPersona) {
     	
+    	Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
     	List<Contrato> contratos = (List<Contrato>)executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
-    	return (contratos!=null && contratos.size()>0);
+    	//return (contratos!=null && contratos.size()>0);
+    	
+    	//Pero la persona debe ser titular en alguno de ellos
+    	for (Contrato contrato : contratos) {
+			if (contrato.getTitulares().contains(persona))
+				return true;
+		}
     	
     	/*Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
     	if (persona == null) return false;
@@ -170,9 +177,9 @@ public class ClienteManager {
     	for (Contrato contrato : persona.getContratos()) {
 			if (contrato.getEstadoContrato().getCodigo().equals(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO))
 				return true;
-		}
+		}*/
     	
-    	return false;*/
+    	return false;
     }
     
     /**
@@ -201,12 +208,15 @@ public class ClienteManager {
     	List<Contrato> contratos = (List<Contrato>)executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
     	
     	for (Contrato contrato : contratos) {
-    		//Confirmamos que el contrato no tiene asuntos activos
-			if (contrato.getAsuntosActivos() == null || contrato.getAsuntosActivos().size() == 0) {
-				//Buscamos si entre sus expedientes hay alguno de tipo recuperacion
-				if (!estaContratoEnAlgunExpedienteDeRecuperacion(contrato))
-					return true;
-			}
+    		//Si el contrato es del titular
+    		if (contrato.getTitulares().contains(persona)) {
+	    		//Confirmamos que el contrato no tiene asuntos activos
+				if (contrato.getAsuntosActivos() == null || contrato.getAsuntosActivos().size() == 0) {
+					//Buscamos si entre sus expedientes hay alguno de tipo recuperacion
+					if (!estaContratoEnAlgunExpedienteDeRecuperacion(contrato))
+						return true;
+				}
+    		}
 		}
    	
     	

@@ -383,8 +383,19 @@ public class PoliticaManager {
                 prepolitica.setTipoPolitica(politicaPersona);
             }**/
             //Nueva forma de obtener el tipo de política
+            
+            
             DDTipoPolitica tipoPolitica = null;
-            Arquetipo arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_RECUPERACION_BY_PERSONA, persona.getId());
+            Arquetipo arquetipo = null;
+            
+            //Si el expediente es automático se obtiene el arquetipo de la persona, de la tabla ARR
+            if (!expediente.isManual()) {
+            	arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_RECUPERACION_BY_PERSONA, persona.getId());
+            } else {
+            	//Si no el arquetipo se preselecciona en la creación del expedietne manual
+            	arquetipo = expediente.getArquetipo();
+            }
+            	
             
             if( arquetipo!=null && arquetipo.getItinerario()!=null){
             	tipoPolitica = arquetipo.getItinerario().getPrePolitica();

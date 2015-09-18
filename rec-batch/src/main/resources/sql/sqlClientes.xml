@@ -243,14 +243,6 @@
     ]]>
   </entry>
    
-   <entry key="clientes.procedure.creacionClientes.Oracle9iDialect">
-    <![CDATA[
-      	BEGIN
-			CREACION_CLIENTES();
-		END;
-    ]]>
-  </entry>
-  
   
    <entry key="clientes.creacionClientes.01.truncateTmpPER.Oracle9iDialect">
     <![CDATA[

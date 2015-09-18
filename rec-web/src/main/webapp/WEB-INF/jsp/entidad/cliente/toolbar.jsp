@@ -58,7 +58,7 @@ function(entidad,page){
 	});
 	
 	var labelHelp = new Ext.form.Label({
-		text: 'Seleccione el arquetipo con el cual se creará el nuevo expediente'
+		text:'<s:message code="expedientes.creacion.lblHelpSelArquetipo" text="**Seleccione el arquetipo deseado para el expediente manual, el cual determinará el itinerario de gestión a seguir por el nuevo expediente." />'
 		,style:labelStyle
 	});
 	

@@ -255,7 +255,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProDiasGestion())) {
-			where.add(Restrictions.ge("procedimientoPco.diasEnGestion", filtro.getProDiasGestion()));
+			where.add(Restrictions.ge("procedimientoPco.diasEnGestion", Integer.valueOf(filtro.getProDiasGestion())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigosEstado())) {
@@ -427,7 +427,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDiasGestion())) {
-				where.add(Restrictions.ge("solicitud.diasEnGestion", filtro.getDocDiasGestion()));
+				where.add(Restrictions.ge("solicitud.diasEnGestion", Integer.valueOf(filtro.getDocDiasGestion())));
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDespacho()) && !StringUtils.emtpyString(filtro.getDocGestor())) {

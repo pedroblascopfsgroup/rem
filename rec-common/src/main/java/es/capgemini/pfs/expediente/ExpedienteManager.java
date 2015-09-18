@@ -193,8 +193,14 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
      */
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO)
     public Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params) {
+    	int limit = 25;
+    	return this.findExpedientesPaginatedDinamico(expedientes, params, limit);
+    }
+    
+    private Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params, int limit) {
+    	
     	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-    	expedientes.setLimit(25);
+    	expedientes.setLimit(limit);
     	EventFactory.onMethodStart(this.getClass());
         if (expedientes.getCodigoZona() != null && expedientes.getCodigoZona().trim().length() > 0) {
             StringTokenizer tokens = new StringTokenizer(expedientes.getCodigoZona(), ",");
@@ -215,7 +221,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants {
     @SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO)
     public List<Expediente> findExpedientesParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
-        Page p = this.findExpedientesPaginatedDinamico(dto, params);
+        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000);
         return (List<Expediente>) p.getResults();
     }
     

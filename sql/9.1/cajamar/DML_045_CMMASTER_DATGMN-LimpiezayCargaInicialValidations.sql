@@ -13,8 +13,9 @@
 --## 0.1 Versión inicial
 --##########################################
 --*/
-
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
+SET DEFINE OFF;
 DECLARE
   
  TYPE T_JVI IS TABLE OF VARCHAR2(250);
@@ -388,6 +389,10 @@ BEGIN
  
  --sacamos la el codigo entidad de la tabla ENTIDAD.
   V_ENTIDAD:=1;
+
+UPDATE CMMASTER.ENTIDAD SET DESCRIPCION = 'CAJAMAR' WHERE ROWNUM < 2;
+
+COMMIT;
  
  select ID INTO V_ENTIDAD
  from CMMASTER.ENTIDAD

@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
 CREATE OR REPLACE PROCEDURE REFRESH_DATA_RULE_ENGINE AS
 
  CURSOR CUR IS

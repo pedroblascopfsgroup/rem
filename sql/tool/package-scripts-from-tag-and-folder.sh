@@ -18,63 +18,30 @@ function print_banner() {
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     echo ""
+    echo "              EMPAQUETO LOS SCRIPTS DE BD DESDE UN TAG DETERMINADO"
+    echo ""
+    echo "******************************************************************************************"
 }
-
-print_banner
-echo "En construcción..."
-echo ""
-exit
 
 clear
 
-if [[ "$#" -ne 1 ]] && [[ "$#" -ne 2 ]]; then
+if [ "$0" != "./sql/tool/$(basename $0)" ]; then
     print_banner
-    echo "Uso 1: $0 <numeroPeticion>"
-    echo "Uso 2: $0 <numeroPeticion> [BANKIA|HAYA]"
+    echo ""
+    echo "AUCH!! No me ejecutes desde aquí, por favor, que me electrocuto... sal a la raiz del repositorio RECOVERY y ejecútame como:"
+    echo ""
+    echo "    ./sql/tool/$(basename $0)"
+    echo ""
+    exit
+fi
+
+if [ "$#" -lt 3 ]; then
+    print_banner
+    echo "   Uso: $0 <tag> CLIENTE nombre_directorio"
     echo ""
     echo "******************************************************************************************"
     echo "******************************************************************************************"
     exit
 fi
 
-if [[ "$2" != "" ]] && [[ "$2" != "BANKIA" ]] && [[ "$2" != "HAYA" ]] ; then
-    print_banner
-    echo "Uso 1: $0 <numeroPeticion>"
-    echo "Uso 2: $0 <numeroPeticion> [BANKIA|HAYA]"
-    echo "El segundo parámetro debe tener uno de estos valores: BANKIA o HAYA"
-    echo ""
-    echo "******************************************************************************************"
-    echo "******************************************************************************************"
-    exit  
-fi
-
-function generar_fichero() {
-   numero=$1
-   tipo=$2
-   nombre=$3
-   proyecto=$4
-
-   fichero=$numero-$nombre-$tipo.sh
-
-   echo -e ".\nGenerando $fichero para el proyecto $proyecto"
-   $BASEDIR/scripts/create-run-scripts.sh $tipo $proyecto > $BASEDIR/tmp/$fichero
-   chmod +x $BASEDIR/tmp/$fichero
-   longitud=`cat $BASEDIR/tmp/$fichero | grep ^./ | wc -l`
-   if [ $longitud -le 0 ] ; then
-      echo "--- Fichero $fichero no generado porque no hay scripts de tipo $tipo"
-      #rm tmp/$fichero
-   fi
-
-}
-
-print_banner
-echo "Comenzando generación de todos los scripts de la petición $1"
-
-BASEDIR=$(dirname $0)
-
-generar_fichero 01 DDL $1 $2
-generar_fichero 02 DML $1 $2
-generar_fichero 03 Grant $1 $2
-generar_fichero 04 DML_PFSRECOVERY $1 $2
-
-echo "Generados todos los scripts de la petición $1 para el proyecto $2"
+./sql/tool/run-scripts-from-tag.sh $1 $2 $3 package! 

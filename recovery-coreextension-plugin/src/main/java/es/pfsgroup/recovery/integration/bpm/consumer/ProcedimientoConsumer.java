@@ -131,24 +131,24 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 	protected String getGuidProcedimientoPadre(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
 				? procedimiento.getGuid() //String.format("%d-EXT", procedimiento.getIdOrigen()) 
-				: procedimiento.getGuidProcedimientoPadre(); 
+				: procedimiento.getGuidProcedimientoPadre(); // String.format("%d-EXT", procedimiento.getIdOrigenProcedimientoPadre());
 	}
 	
 	protected String getGuidProcedimiento(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
 				? Guid.getNewInstance().toString()
-				: procedimiento.getGuid(); //String.format("%d-EXT", procedimiento.getIdOrigen());
+				: procedimiento.getGuid(); // String.format("%d-EXT", procedimiento.getIdOrigen());
 	}
 
 
 	protected String getGuidProcedimientoBien(ProcedimientoBienPayload procedimientoBien) {
 		return (this.isCrearNuevo()) 
 				? Guid.getNewInstance().toString()
-				: procedimientoBien.getGuid(); // String.format("%d-EXT", procedimientoBien.getIdOrigen());
+				: String.format("%d-EXT", procedimientoBien.getIdOrigen()); // procedimientoBien.getGuid();
 	}
 
 	protected String getGuidTareaNotificacion(TareaExternaPayload tareaExternaPayload) {
-		return tareaExternaPayload.getGuidTARTarea(); //String.format("%d-EXT", tareaExternaPayload.getIdTARTarea()); 
+		return String.format("%d-EXT", tareaExternaPayload.getIdTARTarea()); // tareaExternaPayload.getGuidTARTarea(); 
 	}
 
 	protected String getCodigoTipoProcedimiento(ProcedimientoPayload procedimiento) {
@@ -401,7 +401,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 		procDto.setUsuarioSuplantado(procedimiento.getUsuario().getNombre());
 		//
 		Procedimiento prc = extProcedimientoManager.guardaProcedimiento(procDto);
-		logger.info(String.format("[INTEGRACION] PRC[%s] actualizado...", prcUUID));
+		logger.info(String.format("[INTEGRACION] PRC[%s] Procedimiento guardado!!!", prcUUID));
 		
 		if (this.isIniciarBPM()) {
 			iniciarBPM(payload, prc);

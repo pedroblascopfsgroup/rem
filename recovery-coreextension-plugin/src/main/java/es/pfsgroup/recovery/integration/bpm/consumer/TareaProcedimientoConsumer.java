@@ -115,24 +115,24 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	}
 
 	private String getGuidTareaNotificacion(TareaExternaPayload tareaExtenaPayload) {
-		return tareaExtenaPayload.getGuidTARTarea(); //String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea());
+		return tareaExtenaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea());
 	}
 	
 	@Transactional(readOnly = false)
 	private MEJProcedimiento getProcedimiento(TareaExternaPayload tareaExtenaPayload) {
 		String prcUUID = getGuidProcedimiento(tareaExtenaPayload);
-		logger.debug(String.format("[INTEGRACION] PRC [%s] Configurando procedimiento", prcUUID));
+		logger.debug(String.format("[INTEGRACION] PRC[%s] Configurando procedimiento", prcUUID));
 		MEJProcedimiento prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
-		if (prc==null) {
-			if (procedimientoConsumer != null) {
-				String errorMsg = String.format("[INTEGRACION] El procedimiento con guid %s no existe, se intenta crear uno nuevo.", prcUUID);
+		if (prc==null && procedimientoConsumer != null) {
+				String errorMsg = String.format("[INTEGRACION] PRC[%s] El procedimiento no existe!, se intenta crear uno nuevo.", prcUUID);
 				logger.warn(errorMsg);
 				procedimientoConsumer.doAction(tareaExtenaPayload.getData());
-			} else {
-				String errorMsg = String.format("[INTEGRACION] El procedimiento con guid %s no existe.", prcUUID);
-				logger.error(errorMsg);
-				throw new IntegrationDataException(errorMsg);
-			}
+				prc = extProcedimientoManager.getProcedimientoByGuid(prcUUID);
+		}
+		if (prc==null) {
+			String errorMsg = String.format("[INTEGRACION] PRC[%s] El procedimiento no existe!!, no podemos continuar!.", prcUUID);
+			logger.error(errorMsg);
+			throw new IntegrationDataException(errorMsg);
 		}
 		return prc;
 	}
@@ -168,20 +168,23 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 
 	@Transactional(readOnly = false)
 	private EXTTareaNotificacion crearTarea(TareaExternaPayload tareaExtenaPayload, Procedimiento procedimiento) {
+		String prcUUID = getGuidProcedimiento(tareaExtenaPayload);
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 		String codTAPTarea = tareaExtenaPayload.getCodigoTAPTarea();
-		logger.info(String.format("[INTEGRACION] TAR [%s] Creando tarea...", tarUUID));
+		logger.info(String.format("[INTEGRACION] TAR[%s] Creando tarea...", tarUUID));
 
 		TareaProcedimiento tareaProcedimiento = proxyFactory.proxy(TareaProcedimientoApi.class)
 				.getByCodigoTareaIdTipoProcedimiento(procedimiento.getTipoProcedimiento().getId(), codTAPTarea);
 		if (tareaProcedimiento==null) {
-			String errorMsg = String.format("[INTEGRACION] TAP [%s] La tarea procedimiento no existe para el procedimiento %s, NO SE INICIA LA TAREA."
+			String errorMsg = String.format("[INTEGRACION] PRC[%s] TAR[%s] TAP[%s] La tarea procedimiento no existe para el tipo de procedimiento [%s]!!!! NO SE INICIA LA TAREA."
+					, prcUUID
+					, tarUUID
 					, codTAPTarea
 					, procedimiento.getTipoProcedimiento().getCodigo());
 			logger.error(errorMsg);
 			throw new IntegrationDataException(errorMsg);
 		}
-		logger.debug(String.format("[INTEGRACION] TAP [%s] Tarea procedimiento encontrada", tareaProcedimiento.getCodigo()));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] TAP[%s] Tarea procedimiento encontrada", tarUUID, tareaProcedimiento.getCodigo()));
 		
 		String subtipoTarea = getSubTipoTarea(tareaProcedimiento);
 		HashMap<String, Object> valores = new HashMap<String, Object>();
@@ -192,15 +195,15 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		valores.put("idTareaProcedimiento", tareaProcedimiento.getId());
 		valores.put("tokenIdBpm", null);
 
-		logger.info(String.format("[INTEGRACION] TAR [%s] Guardando datos de la tarea", tarUUID));
+		logger.info(String.format("[INTEGRACION] TAR[%s] Guardando datos de la tarea", tarUUID));
 		EXTDtoCrearTareaExterna dto = DynamicDtoUtils.create(EXTDtoCrearTareaExterna.class, valores);
 		Long idTarea = proxyFactory.proxy(TareaExternaApi.class).crearTareaExternaDto(dto);
 
-		logger.info(String.format("[INTEGRACION] TAR [%s] Gguardando datos adicionales...", tarUUID));
+		logger.info(String.format("[INTEGRACION] TAR[%s] Gguardando datos adicionales...", tarUUID));
 		TareaExterna tex = tareaExternaManager.get(idTarea);
 		EXTTareaNotificacion tareaNotif = (EXTTareaNotificacion)tex.getTareaPadre(); 
 		postCrearTarea(tareaExtenaPayload, tareaNotif);
-		logger.info(String.format("[INTEGRACION] TAR [%s] Tarea creada correctamente!!!", tarUUID));
+		logger.info(String.format("[INTEGRACION] TAR[%s] Tarea creada correctamente!!!", tarUUID));
 		return tareaNotif;
 	}
 	
@@ -224,7 +227,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		suplantarUsuario(tareaExtenaPayload.getUsuario(), tareaNotif);
 		
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tareaNotif);
-		logger.debug(String.format("[INTEGRACION] TAR [%s] Actualizando post crear tarea finalizado", tareaNotif.getGuid()));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Actualizando post crear tarea finalizado", tareaNotif.getGuid()));
 	}
 	
 	@Transactional(readOnly = false)
@@ -238,9 +241,10 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 
 		EXTTareaNotificacion tareaNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(tarUUID);
 		if (tareaNotif==null) {
-			logMsg = String.format("[INTEGRACION] TAR[%s] Ups, La tarea no existe!! se intenta crear una nueva...");
+			logMsg = String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Ups, La tarea no existe!! se intenta crear una nueva...", refAsunto, prcUUID, tarUUID);
 			logger.info(logMsg);
 			tareaNotif = crearTarea(tareaExtenaPayload, procedimiento);
+			tareaNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(tarUUID);
 /*	Se quita para ser nemos restrictivos...  tarea que no existe se crea...
   			throw new IntegrationDataException(
 					String.format("[INTEGRACION] La tarea procedimiento %s no existe para el procedimiento %s, NO SE FINALIZA LA TAREA."
@@ -253,7 +257,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 
 	@Transactional(readOnly = false)
 	protected void finTarea(TareaExternaPayload tareaExtenaPayload, EXTTareaNotificacion tareaNotif) {
-		TareaExterna tex = tareaNotif.getTareaExterna();
+		TareaExterna tex = tareaExternaManager.getByIdTareaNotificacion(tareaNotif.getId());
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 		//
 		String logMsg = String.format("[INTEGRACION] TAR[%s] TEX[%d] Cerrando tarea externa...", tarUUID, tex.getId());
@@ -271,7 +275,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 
 	@Transactional(readOnly = false)
 	protected void cancelarTarea(TareaExternaPayload tareaExtenaPayload, EXTTareaNotificacion tareaNotif) {
-		TareaExterna tex = tareaNotif.getTareaExterna();
+		TareaExterna tex = tareaExternaManager.getByIdTareaNotificacion(tareaNotif.getId());
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 		//
 		String logMsg = String.format("[INTEGRACION] TAR[%s] TEX[%d] Cancelando tarea externa...", tarUUID, tex.getId());
@@ -289,7 +293,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	@Transactional(readOnly = false)
 	private void activarTarea(TareaExternaPayload tareaExtenaPayload, EXTTareaNotificacion tareaNotif) {
 		MEJProcedimiento prc = MEJProcedimiento.instanceOf(tareaNotif.getProcedimiento());
-		TareaExterna tex = tareaNotif.getTareaExterna();
+		TareaExterna tex = tareaExternaManager.getByIdTareaNotificacion(tareaNotif.getId());
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 		//
 		String logMsg = String.format("[INTEGRACION] TAR[%s] TEX[%d] Activando tarea externa...", tarUUID, tex.getId());
@@ -309,7 +313,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	@Transactional(readOnly = false)
 	private void paralizarTarea(TareaExternaPayload tareaExtenaPayload, EXTTareaNotificacion tareaNotif) {
 		MEJProcedimiento prc = MEJProcedimiento.instanceOf(tareaNotif.getProcedimiento());
-		TareaExterna tex = tareaNotif.getTareaExterna();
+		TareaExterna tex = tareaExternaManager.getByIdTareaNotificacion(tareaNotif.getId());
 		//
 		String logMsg = String.format("[INTEGRACION] TEX[%d] Paralizando tarea y procedimiento...", tex.getId());
 		logger.info(logMsg);
@@ -365,7 +369,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 
 		//
-		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando procedimiento...", asuGUID, prcUUID));
+		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando procedimiento...", asuGUID, prcUUID, tarUUID));
 		MEJProcedimiento procedimiento = getProcedimiento(tareaExtenaPayload);
 
 		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando Tarea...", asuGUID, prcUUID, tarUUID));

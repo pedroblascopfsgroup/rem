@@ -82,7 +82,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 	}
 
 	private String getGuidTareaNotificacion(TareaNotificacionPayload tareaPayload) {
-		return tareaPayload.getGuid(); //String.format("%d-EXT", tareaPayload.getId());
+		return tareaPayload.getGuid(); // String.format("%d-EXT", tareaPayload.getId()); 
 	}
 
 	private void suplantarUsuario(UsuarioPayload usuarioPayload, Auditable auditable) {
@@ -107,15 +107,20 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE,
 				tareaNotif);
-		logger.debug(String.format("[INTEGRACION] TAR [%s] Actualizando post crear tarea finalizado", tareaNotif.getGuid()));
+		logger.debug(String.format("[INTEGRACION] TAR[%s] Post crear tarea actualizado!!", tareaNotif.getGuid()));
 	}
 	
 	@Override
 	protected void doAction(DataContainerPayload payload) {
 		TareaNotificacionPayload tareaPayload = new TareaNotificacionPayload(payload);
+		String tarUID = getGuidTareaNotificacion(tareaPayload);
+
+		logger.info(String.format("[INTEGRACION] TAR[%s] Guardando Tarea Notificación...", tarUID));
+		
 		String guid = getGuidTareaNotificacion(tareaPayload);
 		EXTTareaNotificacion tarNotif = extTareaNotifificacionManager.getTareaNoficiacionByGuid(guid);
 		if (tarNotif==null) {
+			logger.info(String.format("[INTEGRACION] TAR[%s] Tarea no existe, se crea una nueva...", tarUID));
 			Long idEntidad = tareaPayload.getIdEntidadInformacion();
 			String codigoTipoEntidad = tareaPayload.getTipoEntidad();
 			String sta = tareaPayload.getCodigoSTA();
@@ -128,7 +133,9 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 			TareaNotificacion tareaN = extTareaNotifificacionManager.get(idTarea); 
 			tarNotif = EXTTareaNotificacion.instanceOf(tareaN);
 		}
+		logger.info(String.format("[INTEGRACION] TAR[%s] Guardando adicionales de Tarea Notificación...", tarUID));
 		postCrearTarea(tareaPayload, tarNotif);
+		logger.info(String.format("[INTEGRACION] TAR[%s] Tarea Notificación guardada!!", tarUID));
 	}
 	
 }

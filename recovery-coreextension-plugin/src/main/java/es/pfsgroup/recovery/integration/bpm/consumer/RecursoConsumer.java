@@ -2,6 +2,8 @@ package es.pfsgroup.recovery.integration.bpm.consumer;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.procesosJudiciales.model.DDResultadoResolucion;
@@ -24,6 +26,8 @@ import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.payload.RecursoPayload;
 
 public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 	
 	public RecursoConsumer(Rule<DataContainerPayload> rules) {
 		super(rules);
@@ -49,11 +53,11 @@ public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
 	private UtilDiccionarioApi diccionarioApi;
 
 	private String getMEJRecursoGuid(RecursoPayload recurso) {
-		return recurso.getGuid(); // String.format("%s-EXT", recurso.getIdOrigen());
+		return recurso.getGuid(); // String.format("%s-EXT", recurso.getIdOrigen()); 
 	}
 
 	private String getMEJProcedimientoGuid(RecursoPayload recurso) {
-		return recurso.getProcedimiento().getGuid(); //String.format("%s-EXT", recurso.getProcedimiento().getIdOrigen());
+		return recurso.getProcedimiento().getGuid(); // String.format("%s-EXT", recurso.getProcedimiento().getIdOrigen()); 
 	}
 	
 	
@@ -133,6 +137,10 @@ public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
 	@Override
 	protected void doAction(DataContainerPayload payLoad) {
 		RecursoPayload recurso = new RecursoPayload(payLoad);
+		String recursoUID = getMEJRecursoGuid(recurso);
+		String prcUID = getMEJProcedimientoGuid(recurso);
+		
+		logger.info(String.format("[INTEGRACION] PRC[%] REC[%s] Guardando recurso...", prcUID, recursoUID));
 		
 		MEJDtoRecurso dtoRecurso = new MEJDtoRecurso();
 		
@@ -146,6 +154,7 @@ public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
 		
 		// BO negocio
 		mejRecursoManager.createOrUpdateUserInfo(dtoRecurso, esGestor, esSupervisor);
+		logger.info(String.format("[INTEGRACION] PRC[%] REC[%s] Recurso guardado!!", prcUID, recursoUID));
 	}
 
 }

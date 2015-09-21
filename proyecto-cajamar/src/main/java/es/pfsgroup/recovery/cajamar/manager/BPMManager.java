@@ -93,7 +93,7 @@ public class BPMManager {
 		}	
 	}
 	
-	public boolean existenCreditosContingentes(Long idProcedimiento) 
+	public boolean existenCreditosContingentesReconocidos(Long idProcedimiento) 
 	{
 		try {
 			boolean enc = false;
@@ -106,7 +106,8 @@ public class BPMManager {
 						if(contrato.getCreditos() != null) {
 							for (Credito credito : contrato.getCreditos()) {
 								
-								if(credito.getTipoDefinitivo() != null && credito.getTipoDefinitivo().getCodigo().equals("7")) {
+								if(credito.getTipoDefinitivo() != null && credito.getTipoDefinitivo().getCodigo().equals("7") 
+										&& credito.getEstadoCredito() != null && credito.getEstadoCredito().getCodigo().equals("2")) {
 									enc = true;
 									break;
 								}								
@@ -119,7 +120,7 @@ public class BPMManager {
 			return enc;	
 		}
 		catch(Exception e) {
-			logger.error("Error en el método existenCreditosContingentes de la clase BPMManager: " + e.getMessage());
+			logger.error("Error en el método existenCreditosContingentesReconocidos de la clase BPMManager: " + e.getMessage());
 			throw new FrameworkException(e); 
 		}
 	}

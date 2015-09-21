@@ -3,6 +3,8 @@ package es.pfsgroup.recovery.integration.bpm.consumer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
@@ -34,6 +36,8 @@ import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 import es.pfsgroup.recovery.integration.bpm.payload.SubastaPayload;
 
 public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 	
 	public SubastaConsumer(Rule<DataContainerPayload> rules) {
 		super(rules);
@@ -213,11 +217,12 @@ public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
 	@Override
 	protected void doAction(DataContainerPayload payLoad) {
 		SubastaPayload subastaPayload = new SubastaPayload(payLoad);
-		
+		String subGUID = getSubastaGuid(subastaPayload);
+		logger.info(String.format("[INTEGRACION] SUB[%s] Guardando subasta...", subGUID));
 		// Datos del recurso.
 		SubastaDto subastaDto = load(subastaPayload);
-		
 		extSubastaManager.guardar(subastaDto);
+		logger.info(String.format("[INTEGRACION] SUB[%s] Subasta guardada!!", subGUID));
 	}
 
 }

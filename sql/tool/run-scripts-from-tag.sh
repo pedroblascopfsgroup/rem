@@ -45,6 +45,14 @@ function registerSQLScript() {
             echo "  Consulta sql/tool/templates para ver un ejemplo de plantilla"
             exit 1
         fi
+        grep -Fqi 'WHENEVER SQLERROR' $1
+        if [[ $? != 0 ]] ; then
+            echo ""
+            echo $1
+            echo "El script no contiene la primera línea de control de errores: WHENEVER SQLERROR ..."
+            echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
+            exit 1
+        fi
         printf "%s %s\n" $1 $3 >> $2
     fi
 }

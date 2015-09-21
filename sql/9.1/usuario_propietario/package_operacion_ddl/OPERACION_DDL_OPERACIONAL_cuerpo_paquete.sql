@@ -130,7 +130,11 @@ create or replace package body OPERACION_DDL  as
 
     if V_OPERACION = 'DROP' then
      If OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
+<<<<<<< HEAD
       then OPERACION_DDL.ejecuta_str('BEGIN DROP_TEMP_TABLES ('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;');
+=======
+      then execute immediate 'BEGIN DROP_TEMP_TABLES ('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;';
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
            --**Log
            execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
              using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
@@ -142,9 +146,15 @@ create or replace package body OPERACION_DDL  as
     if V_OPERACION = 'TRUNCATE' then
       If OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
           Then --**Recovery
+<<<<<<< HEAD
                --OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE);
                --**Bankia
                OPERACION_DDL.ejecuta_str('BEGIN TRUNCATE_TABLE  ('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;');
+=======
+                --OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+               --**Bankia
+               execute immediate 'BEGIN TRUNCATE_TABLE  ('''||V_ESQUEMA||''', '''||V_NOMBRE||'''); END;';
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
                --**Log
                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
@@ -158,7 +168,11 @@ create or replace package body OPERACION_DDL  as
           Then --**Recovery
                 --OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' (' || V_PARAMETROS || ')');
                --**Bankia
+<<<<<<< HEAD
                 OPERACION_DDL.ejecuta_str('BEGIN CREA_TEMP_TABLES('''||V_ESQUEMA||''', '''||V_NOMBRE ||' (' || V_PARAMETROS ||')''); END;');
+=======
+               --  execute immediate 'BEGIN CREA_TEMP_TABLES('''||V_ESQUEMA||''', '''||V_NOMBRE ||' (' || V_PARAMETROS ||')''); END;';
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
                --**Log
                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
                using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
@@ -174,6 +188,10 @@ create or replace package body OPERACION_DDL  as
       
       If OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
           --**Recovery 
+<<<<<<< HEAD
+=======
+           --Then OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' COMPUTE STATISTICS');
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
            --Then SYS.DBMS_STATS.GATHER_TABLE_STATS (ownname => V_ESQUEMA, tabname => V_NOMBRE, estimate_percent => V_EST_PERC);
           --**Bankia
           Then --ESTADISTICAS(V_ESQUEMA, V_NOMBRE, V_EST_PERC, 'STATS');
@@ -246,12 +264,20 @@ create or replace package body OPERACION_DDL  as
        Then
           If V_DESACTIVAR = 'S'
            then --OPERACION_DDL.ejecuta_str('ALTER INDEX ' || v_esquema || '.' || v_nombre || ' UNUSABLE');
+<<<<<<< HEAD
                 OPERACION_DDL.ejecuta_str('BEGIN ALTER_INDEX('''||v_esquema||''', '''||v_nombre||''', ''UNUSABLE''); END;');
+=======
+                ALTER_INDEX(v_esquema, v_nombre, 'UNUSABLE');
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
                 --**LOG
                 execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
                 using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
            else --OPERACION_DDL.ejecuta_str('DROP INDEX ' || v_esquema || '.' || v_nombre||'');
+<<<<<<< HEAD
                 OPERACION_DDL.ejecuta_str('BEGIN CREA_DROP_INDEX('''||V_ESQUEMA||''', '''||V_NOMBRE||''', null, ''DROP''); END;');
+=======
+                CREA_DROP_INDEX(V_ESQUEMA, V_NOMBRE, null, 'DROP');
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
                 --**LOG
                 execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
                 using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
@@ -265,7 +291,11 @@ create or replace package body OPERACION_DDL  as
        Then
           If OPERACION_DDL.Existe_Objeto('INDEX', v_esquema, v_nombre)
            Then --OPERACION_DDL.ejecuta_str('ALTER INDEX ' || v_esquema || '.' || v_nombre || ' REBUILD PARALLEL');
+<<<<<<< HEAD
                 OPERACION_DDL.ejecuta_str('BEGIN ALTER_INDEX('''||v_esquema||''', '''||v_nombre||''', ''REBUILD''); END;');
+=======
+                ALTER_INDEX(v_esquema, v_nombre, 'REBUILD');
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
                 --**LOG
                 execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
                 using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
@@ -274,7 +304,11 @@ create or replace package body OPERACION_DDL  as
        Else
           If not OPERACION_DDL.Existe_Objeto('INDEX', v_esquema, v_nombre)
              Then --OPERACION_DDL.ejecuta_str('CREATE '|| v_tipo_index ||' INDEX ' || v_esquema || '.' || v_nombre || ' on ' || v_esquema || '.' || v_parametros ||'');
+<<<<<<< HEAD
                   OPERACION_DDL.ejecuta_str('BEGIN CREA_DROP_INDEX('''||v_esquema||''', '''||v_nombre||''', '''||v_parametros||''', ''CREA''); END;');
+=======
+                  CREA_DROP_INDEX(v_esquema, v_nombre, v_parametros, 'CREA');
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
                   --**LOG
                   execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
                   using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
@@ -396,7 +430,11 @@ create or replace package body OPERACION_DDL  as
                  --**Recovery
                   --OPERACION_DDL.ejecuta_str('BEGIN DBMS_MVIEW.REFRESH('''||v_nombre||''', ''C''); END;');
                  --**Bankia                  
+<<<<<<< HEAD
                 OPERACION_DDL.ejecuta_str('BEGIN REFRESCAR_MVIEW('''||v_nombre||'''); END;');
+=======
+                 Execute Immediate 'BEGIN REFRESCAR_MVIEW('''||v_nombre||'''); END;';
+>>>>>>> adf9326b01141da9cf5f6449093ea926d13c70bb
                  select nvl(to_char(last_refresh_date,'DD/MM/YYYY'),'Null') into V_FC_STAT from ALL_MVIEWS where mview_name = V_NOMBRE;
                  DBMS_OUTPUT.PUT_LINE('Nueva fecha de refresco: '||V_FC_STAT);
                  --**LOG

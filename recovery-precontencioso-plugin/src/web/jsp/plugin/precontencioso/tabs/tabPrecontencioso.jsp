@@ -20,8 +20,19 @@ var codigoTipoGestor='${codigoTipoGestor}';
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'
-		,items: [gridDocumentos, gridLiquidaciones, gridBurofax]
-	}); 
+	});
+
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+		panel.add(gridDocumentos);
+	</sec:authorize>
+
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+		panel.add(gridLiquidaciones);
+	</sec:authorize>
+
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+		panel.add(gridBurofax);
+	</sec:authorize>
 
 	panel.getValue = function() {}
 
@@ -29,28 +40,17 @@ var codigoTipoGestor='${codigoTipoGestor}';
         var data = entidad.get("data");
         var tipoGestor = data.tipoGestor.codigo;
 
-        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado--%>
-        gridDocumentos.setVisible(false);
-       	gridBurofax.setVisible(false);
-       	gridLiquidaciones.setVisible(false);
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+			refrescarDocumentosGrid();
+		</sec:authorize>
 
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+			refrescarLiquidacionesGrid();
+		</sec:authorize>
 
-        if (data.supervisor.isSupervisor || data.isTipoDespachoPredoc.isTipoDespachoPredoc || data.isTipoDespachoLetrado) {
-            gridDocumentos.setVisible(true);
-	       	gridBurofax.setVisible(true);
-	       	gridLiquidaciones.setVisible(true);
-
-        	refrescarDocumentosGrid();
-            refrescarLiquidacionesGrid();
-            refrescarBurofaxGrid();
-        } else {
-	        if(data.isTipoDespachoGestoria.isTipoDespachoGestoria) {
-	        	gridDocumentos.setVisible(true);
-	        	gridBurofax.setVisible(false);
-	        	gridLiquidaciones.setVisible(false);
-	        	refrescarDocumentosGrid();
-	        }
-	    }
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+			refrescarBurofaxGrid();
+		</sec:authorize>
 	}
 
  	panel.setVisibleTab = function(data) {

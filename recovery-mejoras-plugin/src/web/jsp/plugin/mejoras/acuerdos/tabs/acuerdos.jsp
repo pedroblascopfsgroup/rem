@@ -34,7 +34,6 @@
 	var acuerdo = Ext.data.Record.create([
           {name : 'idAcuerdo'}
          ,{name : 'fechaPropuesta'}
-         ,{name : 'tipoAcuerdo'}
          ,{name : 'solicitante'}
          ,{name : 'estado'}
          ,{name : 'fechaEstado'}
@@ -48,7 +47,6 @@
    var cmAcuerdos = new Ext.grid.ColumnModel([
       {header : '<s:message code="acuerdos.codigo" text="**C&oacute;digo" />', dataIndex : 'idAcuerdo',width: 35}
       ,{header : '<s:message code="acuerdos.fechaPropuesta" text="**Fecha Propuesta" />', dataIndex : 'fechaPropuesta',width: 65}
-	  ,{header : '<s:message code="acuerdos.tipoAcuerdo" text="**Tipo Acuerdo" />', dataIndex : 'tipoAcuerdo',width: 100}
       ,{header : '<s:message code="acuerdos.solicitante" text="**Solicitante" />', dataIndex : 'solicitante',width: 75}
       ,{header : '<s:message code="acuerdos.estado" text="**Estado" />', dataIndex : 'estado',width: 75}
       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Codigo Estado" />',dataIndex : 'codigoEstado', hidden:true, fixed:true,width: 75}
@@ -85,6 +83,7 @@
 	    	btnAltaAcuerdo.setDisabled(false);
 	    }
 	    
+	    
 	    if (panel != null){
 		    if (acuerdosTabs != null){
 		    	panel.remove(acuerdosTabs);
@@ -98,15 +97,18 @@
 			if(cumplimientoAcuerdo != null){
 				panel.remove(cumplimientoAcuerdo);
 			}
+			despuesDeNuevoAcuerdo();
 			ocultarBotones();
 		}
 	});
    
    var despuesDeNuevoAcuerdo = function(){
    		var ultimoRegistro = acuerdosStore.getCount();
-		acuerdosGrid.getSelectionModel().selectRow((ultimoRegistro-1));
-		acuerdosGrid.fireEvent('rowclick', acuerdosGrid, (ultimoRegistro-1));
-		acuerdosStore.un('load',despuesDeNuevoAcuerdo);
+   		if(ultimoRegistro > 0){
+   			acuerdosGrid.getSelectionModel().selectRow((ultimoRegistro-1));
+			acuerdosGrid.fireEvent('rowclick', acuerdosGrid, (ultimoRegistro-1));
+			acuerdosStore.un('load',despuesDeNuevoAcuerdo);
+   		}
    }
    
    var despuesDeEvento = function(){
@@ -174,10 +176,10 @@
 		          ,params : {idAcuerdo:acuerdoSeleccionado}
 		       });
 		       w.on(app.event.DONE, function(){
-		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
-		          acuerdosStore.webflow({id:panel.getAsuntoId()});
+<!-- 		          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
+		          	acuerdosStore.webflow({id:panel.getAsuntoId()});
 		          w.close();
-		          cargarUltimoAcuerdo();
+<!-- 		          cargarUltimoAcuerdo(); -->
 		       });
 		       w.on(app.event.CANCEL, function(){ w.close(); });
      	}
@@ -230,7 +232,7 @@
 				       	});
 				       	w.on(app.event.DONE, function(){
 				       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
-				          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
+<!-- 				          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
 				          acuerdosStore.webflow({id:panel.getAsuntoId()});
 				          w.close();
 				          cargarUltimoAcuerdo();
@@ -408,7 +410,7 @@
 	      				idAcuerdo:acuerdoSeleccionado
 	   				}
 	      			,success: function(){
-	           		 	acuerdosStore.on('load',despuesDeEvento);
+<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
 	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
 	           		 	btnAceptarAcuerdo.hide();
 	           		 	btnRechazarAcuerdo.hide();
@@ -540,6 +542,9 @@
 		panel.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando" />','x-mask-loading');
 		//Muestro o no los botones que corresponden
 		var codigoEstado = rec.get('codigoEstado');
+		
+		///Ocultamos todos los botones
+		ocultarBotones();
 	
 		/////Llamada ajax para obtener el proponente, validador y decisor del acuerdo y el id y tipo de gestor del usuario logado
        	
@@ -649,10 +654,13 @@
 					for (var i=0; i < store.data.length; i++) {
 						datos = store.getAt(i);
 						
-						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO" && Boolean(estadoVigente)){
-							btnCumplimientoAcuerdo.setVisible(true);
+						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
+							if(Boolean(estadoVigente)){
+								btnCumplimientoAcuerdo.setVisible(true);
+							}
 							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
 							terminosTab.add(cumplimientoAcuerdo);
+							
 						}
 					}
 					

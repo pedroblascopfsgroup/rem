@@ -232,10 +232,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	private void cancelarTareasAcuerdo(Acuerdo acuerdo) {
 		for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
-			if (SubtipoTarea.CODIGO_ACEPTACION_ACUERDO.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
-				Long idBPM = acuerdo.getIdJBPM();
-				if(idBPM!=null){
-					EXTTareaNotificacion tareaNot = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idBPM));
+			if ( SubtipoTarea.CODIGO_ACEPTACION_ACUERDO.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
+				if(tarea.getTareaFinalizada()==null || !tarea.getTareaFinalizada()){
+					EXTTareaNotificacion tareaNot = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", tarea.getId()));
 					tareaNot.setTareaFinalizada(true);
 					tareaNot.setFechaFin(new Date());
 					tareaNotificacionDao.save(tareaNot);

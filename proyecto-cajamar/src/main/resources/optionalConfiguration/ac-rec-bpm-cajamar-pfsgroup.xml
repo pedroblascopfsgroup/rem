@@ -298,9 +298,9 @@
 					}
 				}
 				
-				def existenCreditosContingentes = {
+				def existenCreditosContingentesReconocidos = {
 					def bpmManager = ctx.getBean("BPMManager");
-					return bpmManager.existenCreditosContingentes(idProcedimiento);
+					return bpmManager.existenCreditosContingentesReconocidos(idProcedimiento);
 				}
 				
 				def cuentaCreditosInsinuados = {

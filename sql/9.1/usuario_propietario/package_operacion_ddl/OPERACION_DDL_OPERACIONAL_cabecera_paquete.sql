@@ -1,4 +1,22 @@
 create or replace package OPERACION_DDL as
+------------------------------------------------------------------------------------------------------
+-- OPERACION DDL v.0.5
+-- 17/09/2015
+-- Luis Ruiz Carlavilla
+--
+-- Descripción:
+-- Paquete PLSQL que actúa como capa intermedia para la ejecución de operaciones DDL restringidas
+-- para los usuarios transaccionales en el área operacional de Recovery.
+-- Versión adaptada a entornos Bankia.
+--
+-- Uso:
+-- 1.- Truncado de tablas:
+-- 2.- Creación de tablas temporales:
+-- 3.- Borrado de tablas temporales:
+-- 4.- Activación y desactivación de índices:
+-- 5.- Creación y borrado de índices:
+-- 6.- Refresco de vistas materializadas:
+------------------------------------------------------------------------------------------------------
 
   --** Declaramos Variables, Constantes, Excepciones
     OBJECTEXISTS      EXCEPTION;
@@ -42,12 +60,13 @@ create or replace package OPERACION_DDL as
                          , tipo_index IN VARCHAR2 DEFAULT NULL);
 
     -- Operativa sobre vistas materializadas
-    procedure DDL_Materialized_View  ( operacion     IN VARCHAR2 --BORRAR/CREAR
-                                     , nombre        IN VARCHAR2 --NOMBRE
-                                     , consulta      IN VARCHAR2 DEFAULT NULL --SENTENCIA
-                                     , refresh_b     IN CHAR DEFAULT NULL --opcional
-                                     , primary_key_b IN CHAR DEFAULT NULL --opcional
-                                     , logging_b     IN CHAR DEFAULT NULL --opcional
-                                     );
+    procedure DDL_Materialized_View ( --operacion     IN VARCHAR2 --BORRAR/CREAR
+                                  --, esquema       IN VARCHAR2, --OWNER
+                                      nombre        IN VARCHAR2 --NOMBRE
+                                  --, consulta      IN VARCHAR2  DEFAULT NULL --SENTENCIA
+                                  --, refresh_b     IN CHAR DEFAULT NULL
+                                  --, primary_key_b IN CHAR DEFAULT NULL
+                                  --, logging_b     IN CHAR DEFAULT NULL 
+                                    );
 
 end OPERACION_DDL;

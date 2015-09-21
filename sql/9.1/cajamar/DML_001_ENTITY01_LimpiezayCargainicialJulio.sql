@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JAVIER DIAZ RAMOS
---## FECHA_CREACION=20150810
+--## FECHA_CREACION=20150921
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=EXIM-12383
@@ -98,7 +98,7 @@ DECLARE
                         T_TABLAS('CM01','CNT_PRECALCULO_PERSISTENCIA'),
                         T_TABLAS('CM01','CNV_AUX_ACUERDOS'),
                         T_TABLAS('CM01','CNV_AUX_EXCLUIDOS'),
-                        T_TABLAS('CM01','CPA_COBROS_PAGOS'),ZON_PEF_USU
+                        T_TABLAS('CM01','CPA_COBROS_PAGOS'),
                         T_TABLAS('CM01','CPE_CONTRATOS_PERSONAS'),
                         T_TABLAS('CM01','CPP_CODIGO_POSTAL_PLAZA'),
                         T_TABLAS('CM01','CRC_CICLO_RECOBRO_CNT'),
@@ -191,7 +191,7 @@ DECLARE
                         T_TABLAS('CM01','TMP_CRP_NUEVOS'),
                         T_TABLAS('CM01','TMP_DIRECCIONES'),
                         T_TABLAS('CM01','TMP_GAE_GAGER'),
-                        T_TABLAS('CM01','TMP_GCL_GRUPOS_CLIENTES'),ZON_PEF_USU
+                        T_TABLAS('CM01','TMP_GCL_GRUPOS_CLIENTES'),
                         T_TABLAS('CM01','TMP_PER_ARQUETIPO'),
                         T_TABLAS('CM01','TMP_PER_FILTRADAS'),
                         T_TABLAS('CM01','TMP_PER_GCL'),
@@ -204,7 +204,7 @@ DECLARE
                         T_TABLAS('CM01','TMP_REC_CNT_LIBRES_DES_ARQ_OR'),
                         T_TABLAS('CM01','TMP_REC_CNT_LIBRES_DES_ARQ_RE'),
                         T_TABLAS('CM01','TMP_REC_CNT_LIBRES_PER_ARQ'),
-                        T_TABLAS('CM01','TMP_REC_CONTRATOS_BAJA'),DES_DESPACHO_EXTERNO
+                        T_TABLAS('CM01','TMP_REC_CONTRATOS_BAJA'),
                         T_TABLAS('CM01','TMP_REC_CONTRATOS_BAJA_MOT'),
                         T_TABLAS('CM01','TMP_REC_CONTRATOS_CONS_BAJA'),
                         T_TABLAS('CM01','TMP_REC_DATA_RULE_ENGINE'),
@@ -232,7 +232,7 @@ DECLARE
                         T_TABLAS('CM01','TMP_REC_EXP_SIN_CONTRATOS'),
                         T_TABLAS('CM01','TMP_REC_EXP_SIN_CONTRATOS_SUB'),
                         T_TABLAS('CM01','TMP_REC_EXP_SIN_PERSONAS'),
-                        T_TABLAS('CM01','TMP_REC_EXP_SIN_PERSONAS_SUB'),DES_DESPACHO_EXTERNO
+                        T_TABLAS('CM01','TMP_REC_EXP_SIN_PERSONAS_SUB'),
                         T_TABLAS('CM01','TMP_REC_EXP_SIN_RIESGOS'),
                         T_TABLAS('CM01','TMP_REC_EXP_SIN_RIESGOS_SUB'),
                         T_TABLAS('CM01','TMP_REC_FICHERO_CONTRATOS'),
@@ -270,7 +270,7 @@ DECLARE
                         T_TABLAS('CM01','RSP_RESITUAR_PROCEDIMIENTO_BK'),
                         T_TABLAS('CM01','SCD_SEGUIMIENTO_CAMPANYA_DIC'),
                         T_TABLAS('CM01','SIDHI_REL_CABECERA_TPO'),
-                        T_TABLAS('CM01','SINC_CONTRATO_LETRADO_PFS'),ZON_PEF_USU
+                        T_TABLAS('CM01','SINC_CONTRATO_LETRADO_PFS'),
                         T_TABLAS('CM01','TER_TAREA_EXTERNA_RECUPERACION'),
                         T_TABLAS('CM01','TEX_TAREA_EXTERNA'),
 			T_TABLAS('CM01','TEV_TAREA_EXTERNA_VALOR'),
@@ -322,7 +322,7 @@ DECLARE
 			T_TABLAS('CM01','MIG_BIENES_PERSONAS'),
 			T_TABLAS('CM01','BIE_ADICIONAL_OLD'),
 			T_TABLAS('CM01','MIG_BIENES'),
-			T_TABLAS('CM01','MIG_PROCEDIMIENTOS_SUBASTAS'),ZON_PEF_USU
+			T_TABLAS('CM01','MIG_PROCEDIMIENTOS_SUBASTAS'),
 			T_TABLAS('CM01','MIG_TMP_PER_ID'),
 			T_TABLAS('CM01','MIG_PROCEDIMIENTOS_DEMANDADOS'),
 			T_TABLAS('CM01','H_REC_FICHERO_CONTRATOS_PERSON'),
@@ -351,7 +351,7 @@ DECLARE
 			T_TABLAS('CM01','ANC_ANALISIS_CONTRATOS'),
 			T_TABLAS('CM01','EST_ESTADOS'),
 			T_TABLAS('CM01','REE_REGLAS_ELEVACION_ESTADO'),
-			T_TABLAS('CM01','COV_CONVENIOS_CREDITOS'),
+			T_TABLAS('CM01','COV_CONVENIOS_CREDITOS')
                         );
 						
 
@@ -570,7 +570,7 @@ dbms_output.enable(1000000);
       -- Limpiamos la tabla de carteras
       DBMS_OUTPUT.PUT_LINE('---Borrando la tabla RCF_CAR_CARTERA');
       DELETE FROM RCF_CAR_CARTERA;
-      CMMASTER.USU_USUARIOS
+      
       -- Limpiamos la tabla de variables de ranking
       DBMS_OUTPUT.PUT_LINE('---Borrando la tabla RCF_MRV_MODELO_RANKING_VARS');
       DELETE FROM RCF_MRV_MODELO_RANKING_VARS;

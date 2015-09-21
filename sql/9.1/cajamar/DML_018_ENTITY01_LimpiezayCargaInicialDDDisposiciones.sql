@@ -31,8 +31,8 @@ DECLARE
     
 
    --Tipo Relación Entre Efecto Y Personas
-   TYPE T_TDI IS TABLE OF VARCHAR2(150);
-   TYPE T_ARRAY_TDI IS TABLE OF T_TDI;
+   TYPE T_DTI IS TABLE OF VARCHAR2(150);
+   TYPE T_ARRAY_DTI IS TABLE OF T_DTI;
 
    TYPE T_STD IS TABLE OF VARCHAR2(150);
    TYPE T_ARRAY_STD IS TABLE OF T_STD;
@@ -43,8 +43,8 @@ DECLARE
     V_USUARIO_CREAR VARCHAR2(10) := 'INICIAL';    
    
    -- Tipo Disposición                                    
-   V_TDI T_ARRAY_TDI := T_ARRAY_TDI(
-                                    T_TDI('COMEX','Comercio Exterior','Comercio Exterior')
+   V_DTI T_ARRAY_DTI := T_ARRAY_DTI(
+                                    T_DTI('COME','Comercio Exterior','Comercio Exterior')
                                    );
    -- Subtipo de disposición 
    V_STD T_ARRAY_STD := T_ARRAY_STD(
@@ -75,12 +75,12 @@ DECLARE
    
     V_TMP_STD T_STD;
     V_TMP_SDI T_SDI;
-    V_TMP_TDI T_TDI;
+    V_TMP_DTI T_DTI;
 
  BEGIN
 
     DBMS_OUTPUT.PUT_LINE('Se borra la configuración de TIPO DISPOSICION.');
-    EXECUTE IMMEDIATE('TRUNCATE TABLE '|| V_ESQUEMA ||'.DD_TDI_TIPO_DISPOSICION');
+    EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA ||'.DD_DTI_TIPO_DISPOSICION');
 
     DBMS_OUTPUT.PUT_LINE('Se borra la configuración de SUBTIPO_DISPOSICION.');
     EXECUTE IMMEDIATE('DELETE FROM '|| V_ESQUEMA ||'.DD_DST_SUBTIPO_DISPOSICION');
@@ -93,14 +93,14 @@ DECLARE
     
     SELECT count(*) INTO V_ENTIDAD_ID
     FROM all_sequences
-    WHERE sequence_name = 'S_DD_TDI_TIPO_DISPOSICION' and sequence_owner=V_ESQUEMA;
+    WHERE sequence_name = 'S_DD_DTI_TIPO_DISPOSICION' and sequence_owner=V_ESQUEMA;
     
     if V_ENTIDAD_ID is not null and V_ENTIDAD_ID = 1 then
 	     DBMS_OUTPUT.PUT_LINE('Contador 1');
-       EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA || '.S_DD_TDI_TIPO_DISPOSICION');
+       EXECUTE IMMEDIATE('DROP SEQUENCE '|| V_ESQUEMA || '.S_DD_DTI_TIPO_DISPOSICION');
     end if;
     
-    EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA || '.S_DD_TDI_TIPO_DISPOSICION
+    EXECUTE IMMEDIATE('CREATE SEQUENCE '|| V_ESQUEMA || '.S_DD_DTI_TIPO_DISPOSICION
                       START WITH 1
 	                    MAXVALUE 999999999999999999999999999
                       MINVALUE 1
@@ -147,27 +147,27 @@ DECLARE
                       );
 
 
-   DBMS_OUTPUT.PUT_LINE('Creando DD_TDI_TIPO_DISPOSICION......');
+   DBMS_OUTPUT.PUT_LINE('Creando DD_DTI_TIPO_DISPOSICION......');
    
-   FOR I IN V_TDI.FIRST .. V_TDI.LAST
+   FOR I IN V_DTI.FIRST .. V_DTI.LAST
    LOOP
-     	V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DD_TDI_TIPO_DISPOSICION.NEXTVAL FROM DUAL';
+     	V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DD_DTI_TIPO_DISPOSICION.NEXTVAL FROM DUAL';
    	  
       EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
    
-      V_TMP_TDI := V_TDI(I);
-      DBMS_OUTPUT.PUT_LINE('Creando TDI: '||V_TMP_TDI(1));   
+      V_TMP_DTI := V_DTI(I);
+      DBMS_OUTPUT.PUT_LINE('Creando DTI: '||V_TMP_DTI(1));   
 
-      V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TDI_TIPO_DISPOSICION (DD_TDI_ID, DD_TDI_CODIGO, DD_TDI_DESCRIPCION,' ||
-	            	'DD_TDI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_TDI(1)||''','''||V_TMP_TDI(2)||''','''
-                ||V_TMP_TDI(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
+      V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_DTI_TIPO_DISPOSICION (DD_DTI_ID, DD_DTI_CODIGO, DD_DTI_DESCRIPCION,' ||
+	            	'DD_DTI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_DTI(1)||''','''||V_TMP_DTI(2)||''','''
+                ||V_TMP_DTI(3)||''',0,'''||V_USUARIO_CREAR||''',SYSDATE,0)';
       
       EXECUTE IMMEDIATE V_MSQL;
    
    END LOOP; --LOOP TIPO_DISPOSICION
    
-   V_TMP_TDI := NULL;
+   V_TMP_DTI := NULL;
    DBMS_OUTPUT.PUT_LINE('Creando DD_DST_SUBTIPO_DISPOSICION......');
    
    FOR I IN V_STD.FIRST .. V_STD.LAST

@@ -1,6 +1,6 @@
 --##########################################
 --## AUTOR=JAVIER DIAZ
---## FECHA_CREACION=20150919
+--## FECHA_CREACION=20150921
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-447
@@ -10,6 +10,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 GMN:> Borramos la PK en lugar del índice
 --##########################################
 --*/
 
@@ -28,19 +29,19 @@ DECLARE
 
 BEGIN 
 
---Validamos si la tabla existe antes de crearla
+--Validamos si la CONSTRAINT existe antes de crearla y si existe borramos la PK.
   SELECT COUNT(*) INTO V_EXISTE
-  FROM all_indexes
-  WHERE INDEX_NAME = 'PK_APR_AUX_OFI_OFICINAS';
+  FROM ALL_CONSTRAINTS
+  WHERE CONSTRAINT_NAME = 'PK_APR_AUX_OFI_OFICINAS';
 
-  V_MSQL := 'DROP INDEX PK_APR_AUX_OFI_OFICINAS';
+  V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||'  DROP PRIMARY KEY';
 
 
  IF V_EXISTE > 0 THEN   
      EXECUTE IMMEDIATE V_MSQL;
      DBMS_OUTPUT.PUT_LINE(''||TABLA||' Modificada');
   ELSE   
-     DBMS_OUTPUT.PUT_LINE('ÍNDICE NO EXISTENTE EN LA TABLA '||TABLA||'');     
+     DBMS_OUTPUT.PUT_LINE('CONSTRAINT NO EXISTENTE EN TABLA');     
   END IF;   
 
 

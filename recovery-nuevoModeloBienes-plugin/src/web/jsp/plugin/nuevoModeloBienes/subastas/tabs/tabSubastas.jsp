@@ -700,12 +700,13 @@
 	
 	
 	var btnSubirInstrucciones = new Ext.Button({
-	       text : '<s:message code="plugin.masivo.procesadoTareas.descargarExceleee" text="**Subir instrucciones" />' + '&nbsp;'
+	       text : '<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="**Subida masiva de instrucciones" />' + '&nbsp;'
 	       ,iconCls:'icon_exportar_csv'
 	       ,height : 25
 	})
 	
 	btnSubirInstrucciones.on('click', function(){
+      if (gridSubastas.getSelectionModel().getCount()>0){
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -731,14 +732,25 @@
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
+		            	//var idSubasta=storeSubastas.data.items[0].data.id;
+						var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
+		            	var params = {idSubasta:idSubasta};            	
 		                if(upload.getForm().isValid()){
 			                upload.getForm().submit({
 			                    url:'/${appProperties.appName}/subastas/uploadInstruccionesSubastas.htm'
-			                    ,waitMsg: '<s:message code="fichero.upload.subiendo" text="**Subiendo fichero..." />'
-			                    ,success: function(upload, o){			                    
+			                    ,waitMsg: '<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.procesando" text="**Procesando la información..." />'
+			                    ,params:params
+			                    ,success: function(upload, o){	
+			                    	var resultado = o.result.resultado;
+			                    	if (resultado != "ok") {
+			                    		Ext.Msg.alert('<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="*** Subida masiva de instrucciones" />',
+			                    			'<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.error" text="** Se ha producido algun error al procesar el fichero de Instrucciones" /><br/><br/>' + resultado);
+			                    	} else {
+			                    		Ext.Msg.alert('<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="*** Subida masiva de instrucciones" />',
+			                    			'<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.ok" text="*** Se ha procesado correctamente la información." />');
+			                    	}
 			                    	win.close();
-			                        //comprobarAdjuntosStore.webflow();						
-									//recargarAdjuntos();
+			                    	recargarSubastas();
 			                    }
 			                });
 		                }
@@ -751,20 +763,24 @@
 		        }]
 		    });
 
-		var win =new Ext.Window({
-		         width:400
-				,minWidth:400
-		        ,height:125
-				,minHeight:125
-		        ,layout:'fit'
-		        ,border:false
-		        ,closable:true
-		        ,title:'<s:message code="adjuntos.nuevo" text="**Agregar fichero" />'
-				,iconCls:'icon-upload'
-				,items:[upload]
-				,modal : true
-		});
-		win.show();
+			var win =new Ext.Window({
+			         width:400
+					,minWidth:400
+			        ,height:125
+					,minHeight:125
+			        ,layout:'fit'
+			        ,border:false
+			        ,closable:true
+			        ,title:'<s:message code="adjuntos.nuevo" text="**Agregar fichero" />'
+					,iconCls:'icon-upload'
+					,items:[upload]
+					,modal : true
+			});
+			win.show();
+		} else {
+			Ext.Msg.alert('<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas" text="*** Subida masiva de instrucciones" />',
+	        	'<s:message code="plugin.nuevoModeloBienes.instruccionesMasivas.debeSeleccionarSubasta" text="** Debe seleccionar una subasta" />');		
+		}
 	});	
 	
 	

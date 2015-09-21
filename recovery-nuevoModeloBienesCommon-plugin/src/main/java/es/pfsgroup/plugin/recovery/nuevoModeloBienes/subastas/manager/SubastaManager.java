@@ -18,11 +18,11 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
@@ -31,7 +31,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -41,7 +40,6 @@ import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.oficina.dao.OficinaDao;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
@@ -57,7 +55,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -81,6 +78,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
@@ -97,6 +95,8 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.BienSubastaDTO
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.EditarInformacionCierreDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.GuardarInstruccionesDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.dto.LoteSubastaMasivaDTO;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.masivas.SubastaInstMasivasValidacionDto;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.masivas.SubastanInstMasivasUtils;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
@@ -138,6 +138,9 @@ public class SubastaManager implements SubastaApi {
 
 	@Resource
     private MessageService messageService;	
+
+	@Autowired
+	private SubastanInstMasivasUtils masivasUtils;
 	
 	@Override
 	public List<Subasta> getSubastasAsunto(Long idAsunto) {
@@ -1482,25 +1485,56 @@ public class SubastaManager implements SubastaApi {
 	    @BusinessOperation(BO_SUBIR_PLANTILLA_INSTRUCCIONES)
 	    @Transactional(readOnly = false)
 	    public String upload(WebFileItem uploadForm) {
-	        //FileItem fileItem = uploadForm.getFileItem();
 
-	        //En caso de que el fichero esté vacio, no subimos nada
-	       /* if (fileItem == null || fileItem.getLength() <= 0) { return null; }
+			try {
+				if (uploadForm != null) {
 
-	        Integer max = getLimiteFichero();
+					ExcelFileBean efb = new ExcelFileBean();
+					
+					FileItem fileItem = uploadForm.getFileItem();
+					efb.setFileItem(fileItem);
 
-	        if (fileItem.getLength() > max) {
-	            AbstractMessageSource ms = MessageUtils.getMessageSource();
-	            return ms.getMessage("fichero.limite.tamanyo", new Object[] { (int) ((float) max / 1024f) }, MessageUtils.DEFAULT_LOCALE);
-	        }
+					//Comprobar tipo de fichero
+					if (!masivasUtils.tipoFicheroCorrecto(efb.getFileItem().getContentType())){
+						String mensajeError = masivasUtils.obtenerMensajeErrorTipoIncorrecto();
+						logger.error(mensajeError);
+						throw new BusinessOperationException(mensajeError);
+					}
+					
+					//Comprobaciones sintácticas
+					HojaExcel exc = masivasUtils.obtenerExcel(fileItem);
+					
+					SubastaInstMasivasValidacionDto dto = masivasUtils.validarFormatoFichero(exc);
+					if (dto.getFicheroTieneErrores()) {
+						String mensajeError = masivasUtils.transformarListaAString(dto.getListaErrores());
+						logger.error(mensajeError);
+						throw new BusinessOperationException(mensajeError);
+					}
+					
+					//Recuperar los valores de cada uno de los lotes en una lista de Dtos para hacer las validaciones y la operación
+					exc.setFile(fileItem.getFile());
+					exc.setRuta(fileItem.getFile().getAbsolutePath());
+					List<SubastaInstMasivasLoteDto> listaLotes = masivasUtils.recuperarLotes(exc);
 
-	        Asunto asunto = asuntoDao.get(Long.parseLong(uploadForm.getParameter("id")));
-	        asunto.addAdjunto(fileItem);
-	        asuntoDao.save(asunto);*/
-
-	        return null;
+					//Comprobaciones de negocio (hay que recibir el id de subasta)
+					Long idSubasta = Long.parseLong(uploadForm.getParameter("idSubasta"));
+					List<String> listaErroresNegocio = masivasUtils.validacionesNegocio(idSubasta, listaLotes);
+					if (listaErroresNegocio.size() > 0) {
+						String mensajeError = masivasUtils.transformarListaAString(listaErroresNegocio);
+						logger.error(mensajeError);
+						throw new BusinessOperationException(mensajeError);
+					}
+					
+					//Recorrer filas y lanzar función de negocio para cada fila (guardarInstruccionesLoteSubasta)
+					for (SubastaInstMasivasLoteDto lote : listaLotes) {
+						GuardarInstruccionesDto dtoLoteSubasta = masivasUtils.obtenerDtoGuardaInstruccionesLoteSubasta(lote);
+						guardaInstruccionesLoteSubasta(dtoLoteSubasta);
+					}
+				}
+			}catch (Exception e) {
+				return e.getMessage();
+			}
+			return "ok";
 	    }
-	    
-		
 
 }

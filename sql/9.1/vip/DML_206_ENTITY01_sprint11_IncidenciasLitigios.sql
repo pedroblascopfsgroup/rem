@@ -31,6 +31,13 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-603');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-603');
+	V_TAREA:='H002_SolicitarSuspenderSubasta';
+	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = ''valores[''''H002_ObtenerValidacionComite''''] != null ? valores[''''H002_ObtenerValidacionComite''''][''''comboMotivo''''] : null'' WHERE TFI_NOMBRE = ''comboMotivo'' AND TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''|| V_TAREA ||''')';
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-603');
+	
 COMMIT;
  
 EXCEPTION

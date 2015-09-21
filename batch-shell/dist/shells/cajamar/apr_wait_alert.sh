@@ -3,7 +3,7 @@
  
 DIR_INPUT=/recovery/transferencia/aprov_troncal/
 MAX_WAITING_MINUTES=10
-ficheros=OFICINAS,ZONAS
+ficheros=ALERTAS
 
 #echo $(basename $0)
 

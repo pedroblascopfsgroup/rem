@@ -63,9 +63,11 @@ if [[ -f $DUMP_FILE_PATH  ]]; then
 	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/DML-00-CMMASTER-update.sql
 
 	echo "<Docker [$CONTAINER_NAME]>: Ejecutando scripts..."
-	cd /sql-package/DDL
 	export PATH=$PATH:$ORACLE_HOME/bin
+	cd /sql-package/DDL
 	./DDL-scripts.sh admin@orcl admin@orcl
+	cd /sql-package/DML
+	./DML-scripts.sh admin@orcl admin@orcl
 else
 	echo "*************************** WARNING *******************************"
 	echo "<Docker [$CONTAINER_NAME]>: $DUMP_FILE_PATH: No existe el fichero no se va a importar el DUMP"

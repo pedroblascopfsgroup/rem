@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -63,6 +64,7 @@ public class NMBContratoBien implements  Serializable, Auditable, NMBContratoBie
 	@Column(name = "BIE_CNT_FECHA_CIERRE")
     private Date fechaCierre;
 	
+	@Transient
 	@Column(name = "NUM_EXTRA1")
     private Float secuenciaGarantia;
 	

@@ -688,7 +688,7 @@ public class Persona implements Serializable, Auditable, Describible {
 	private Boolean esEmpleado;
 
 	@Column(name = "PER_SITUACION_CONCURSAL")
-	private Boolean situacionConcursal;
+	private String situacionConcursal;
 	
 	@OneToOne(fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -3220,11 +3220,11 @@ public class Persona implements Serializable, Auditable, Describible {
 		this.descripcionCnae = descripcionCnae;
 	}
 
-	public Boolean getSituacionConcursal() {
+	public String getSituacionConcursal() {
 		return situacionConcursal;
 	}
 
-	public void setSituacionConcursal(Boolean situacionConcursal) {
+	public void setSituacionConcursal(String situacionConcursal) {
 		this.situacionConcursal = situacionConcursal;
 	}
 

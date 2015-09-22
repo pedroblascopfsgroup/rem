@@ -1,6 +1,6 @@
 #########################################################################
 # RECOVERY- PLATAFORMA PRODUCTO
-# Plantilla ejemplo de entorno Web
+# Entorno Bankia (on-line)
 # 
 #------------------------------------------------------------------------
 # Este fichero representa un ejemplo de generación de un entorno web usando
@@ -27,12 +27,12 @@
 # Debemos ejecutar el siguiente comando desde el mismo directorio de este
 #    fichero. Hay que especificar el nombre del cliente donde se indica.
 #
-# $ docker build --no-cache=true -t <cliente>/app-server .
+# $ docker build --no-cache=true -t bankia/app-server .
 #
 # Paso 2. Arranque del contenedor, inicialización.
 # 
 #
-# $ docker run -d -p=22 -p=<WEB_HTTP_PORT> -v ${HOME}/container-info:/container-info -h <cliente>-web --name  <cliente>-web <cliente>/app-server 
+# $ docker run -d -p=22 -p=8080 -v ${HOME}/container-info:/container-info -h bankia-web --name  bankia-web bankia/app-server 
 #
 # A continuación explicamos cuales són los parámetros que le pasamos a docker run
 #   -d indicamos que se ejemcute en segundo plano
@@ -48,17 +48,17 @@
 FROM producto/plataforma-app-server
 
 # Nombre del proyecto.
-ENV PROJECT ejemplo
+ENV PROJECT Bankia
 
 # Tag de la configuración. Este tag se puede usar indicar, por ejemplo
 #    si la imágen es para un entorno de desarrollo, integracion, etc ...
 ENV RECOVERY_CFG_TAG intebankia
 
 # Versión de Recovery que desplegaremos
-ENV RECOVERY_VERSION gestionVencidos-rc03
+ENV RECOVERY_VERSION 9.1.15-bk-rc02
 
 # URL de descarga para el WAR de Recovery
-ENV WEB_ZIP_URL http://192.168.0.16:8086/jenkins/job/RECWEB-DeployGIT-unificado-RELEASE/44/artifact/ficheros_generados/pfs-gestionVencidos-rc03.war
+ENV WEB_ZIP_URL http://192.168.0.16:8081/nexus/content/repositories/releases/BANKIA/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war
 
 # 
 # Configuración de la conexión a BBDD

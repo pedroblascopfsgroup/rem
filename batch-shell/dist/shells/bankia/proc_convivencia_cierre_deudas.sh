@@ -34,7 +34,7 @@ END_OF_SESSION
 	export DIR_ETL=$DIR_BASE_ETL/$nameETL
 	export DIR_CONFIG=$DIR_BASE_ETL/config/
 	export CFG_FILE=config.ini
-	export MAINSH="$nameETL"_run.sh
+	export MAINSH="$nameETL"_run.sh 
 	
 	cd "$DIR_ETL" &> null
 	if [ $? = 1 ] ; then

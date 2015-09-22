@@ -14,8 +14,7 @@
 	<bean p:entity="menu" p:name="analisis/recoveryBIconnection" 
 		p:order="100"
 		p:fileName="/WEB-INF/jsp/plugin/bi/menuButton.jsp"
-		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
-		p:permission="ROLE_RECOVERY_BI" />
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
 	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.jsLibraries" p:name="recoveryBIconnect" 
 		p:order="1"

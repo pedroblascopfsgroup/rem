@@ -54,6 +54,13 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-765');	
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-760');
+	V_TAREA:='CJ001_RegistrarRespuestaComite';
+	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''CJ001_RegistrarRespuestaComite''''][''''comboResultado''''] == ''''REC'''' ? ''''rechazado'''' : valores[''''CJ001_RegistrarRespuestaComite''''][''''comboResultado''''] == ''''CON_OFE'''' ? ''''contraoferta'''' : ''''aceptado'''''' WHERE TAP_CODIGO = ''CJ001_RegistrarRespuestaComite''';
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-760');	
+	
 COMMIT;
  
 EXCEPTION

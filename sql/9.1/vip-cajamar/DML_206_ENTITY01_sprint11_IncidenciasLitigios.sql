@@ -45,6 +45,13 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-786');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-638');
+	V_TAREA:='H058_EstConformidadOAlegacion';
+	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''valores[''''H058_ObtencionAvaluo''''] != null && valores[''''H058_ObtencionAvaluo''''][''''fecha''''] != null ? comprobarExisteDocumentoTVAPJ() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Para continuar debe adjuntar al procedimiento el documento de "Tasaci&oacute;n de verificaci&oacute;n del aval&uacute;o realizado por perito judicial (Valoraci&oacute;n de Bienes Inmuebles)"</div>'''' : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe completar la tarea Obtenci&oacute;n aval&uacute;o antes de continuar</div>'''''' WHERE TAP_CODIGO = '''|| V_TAREA ||'''';
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-638');
+	
 COMMIT;
  
 EXCEPTION

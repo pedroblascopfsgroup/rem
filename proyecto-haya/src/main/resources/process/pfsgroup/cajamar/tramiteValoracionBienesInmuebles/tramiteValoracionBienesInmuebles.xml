@@ -11,10 +11,6 @@
 		<transition to="H058_SolitarTasacionInterna" name="Supervisor"></transition>
 	</fork>
 
-	<join name="join1">
-		<transition to="H058_EstConformidadOAlegacion" name="avanzaBPM"></transition>
-	</join>
-
 	<state name="H058_SolicitarAvaluo">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -61,7 +57,7 @@
 
 	<decision name="SolitarTasacionInternaDecision" expression="#{H058_SolitarTasacionInternaDecision}">
 		<transition to="H058_ObtencionTasacionInterna" name="SI"></transition>
-		<transition to="node1" name="NO"></transition>
+		<transition to="H058_EstConformidadOAlegacion" name="NO"></transition>
 	</decision>
 	
 	<state name="H058_ObtencionAvaluo">
@@ -83,7 +79,7 @@
 		</event>
 		<transition to="H058_ObtencionAvaluo" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="join1" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 
 	<state name="H058_ObtencionTasacionInterna">
@@ -106,7 +102,7 @@
 		<transition to="H058_ObtencionTasacionInterna" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H058_SolitarTasacionInterna" name="vueltaAtras"></transition>
-		<transition to="node1" name="avanzaBPM"></transition>
+		<transition to="H058_EstConformidadOAlegacion" name="avanzaBPM"></transition>
 	</state>
 
 	<state name="H058_EstConformidadOAlegacion">
@@ -243,10 +239,6 @@
 		<transition to="Fin" name="hcj_provisionFondos"></transition>
 		<transition to="H058_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
-
-	<node name="node1">
-		<transition to="join1" name="avanzaBPM"></transition>
-	</node>
 
 	<end-state name="Fin">
 		<event type="node-enter">

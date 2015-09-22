@@ -46,6 +46,12 @@ DECLARE
       ,T_TIPO_TFA('AUTO', 'Auto', 'Auto', 'CO') -- Trámite de venta directa
       ,T_TIPO_TFA('PROPLAPAG', 'Propuesta de plan de pagos', 'Propuesta de plan de pagos', 'CO') -- Trámite de acuerdo extrajudicial de pagos
       ,T_TIPO_TFA('INFCON', 'Informe concursal', 'Informe concursal', 'CO') -- Trámite de acuerdo extrajudicial de pagos
+      ,T_TIPO_TFA('LIBARR', 'Certificado de Libertad de arrendamientos', 'Certificado de Libertad de arrendamientos', 'TR') -- Trámite de certificado de libertad de arrendamiento
+      ,T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
+      ,T_TIPO_TFA('CAS', 'Contrato de alquiler social', 'Contrato de alquiler social', 'AP') -- Trámite de posesión
+      ,T_TIPO_TFA('SCBCCR', 'Documento acreditativo de la cancelación de cargas registrales', 'Documento acreditativo de la cancelación de cargas registrales', 'AP') -- Saneamiento de cargas
+      ,T_TIPO_TFA('SCBCPC', 'Carta de pago o documentación acreditativa de cancelación', 'Carta de pago o documentación acreditativa de cancelación', 'AP') -- Saneamiento de cargas
+      
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

@@ -42,6 +42,7 @@ public class EXTDDTipoGestor implements Dictionary, Auditable{
 	public static final String CODIGO_TIPO_SUPERVISOR_PROMOTORES_CARACTERIZADAS= "SUPPRO";
 	public static final String CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO="GAGER";
 	public static final String CODIGO_TIPO_SUPERVISOR_AGENCIA_RECOBRO="SAGER";
+	public static final String CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO="PROPACU";
 	/**
 	 * 
 	 */

@@ -7,6 +7,7 @@ DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
 DUMP_DIRECTORY=$(pwd)/DUMP
 ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
+SET_ENV_FILE=~/setEnvGlobal$CLIENTE.sh
 
 # Estado de la BBDD
 CURRENT_DUMP_NAME=export_cajamar_13Ago2015.dmp
@@ -27,6 +28,11 @@ function show_help () {
 	echo "                  por defecto $ORADATA_HOST_DIR"
 	echo ""
 }
+
+if [[ ! -f $SET_ENV_FILE ]]; then
+	echo "No se ha encontrado $SET_ENV_FILE, no puedo continuar"
+	exit 1
+fi
 
 if [[ "x$@" != "x" ]]; then
 	for op in $@; do
@@ -148,6 +154,7 @@ function show_install_info () {
 
 
 INSTALL_CMD="$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME"
+
 
 if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe

@@ -202,12 +202,15 @@ public class NMBBien extends Bien implements NMBBienInfo{
     @JoinColumn(name = "DD_IPR_ID")
 	private DDSiNo inversionPorRenuncia;
 	
+	@Transient
 	@Column(name = "NUM_DOMICILIO")
 	private String numDomicilio;
 	
+	@Transient
 	@Column(name = "CHAR_EXTRA2")
 	private String idDireccion;
 	
+	@Transient
 	@Column(name = "CHAR_EXTRA3")
 	private String destinoUso;
 	

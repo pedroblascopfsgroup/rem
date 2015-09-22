@@ -163,36 +163,6 @@
 	<bean id="bpmConsumerActionMgr" class="es.pfsgroup.recovery.integration.ConsumerActionManager">
 		<constructor-arg>
 			<list>
-
-				<!-- ***** QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaProcedimientoConsumer">
-					<constructor-arg index="0">
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-.+"/>
-						</bean>
-					</constructor-arg>
-					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
-					<property name="description" value="Gestión de una tarea"/>
-					<property name="procedimientoConsumer">
-						<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
-							<constructor-arg>
-								<bean class="es.pfsgroup.recovery.integration.AllowAllRule"/>
-							</constructor-arg>
-							<property name="description" value="Actualización de un procedimiento, lo crea si no existe"/>
-						</bean>
-					</property>
-				</bean>
-				<!-- ***** FIN QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** FIN QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** FIN QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** FIN QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** FIN QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** FIN QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				<!-- ***** FIN QUITAR PARA PRUEBAS !!!!!!!!!!  ********* -->
-				
 				<!-- Transicionar tarea -->
 				<!-- RESPUESTA DE CAJAMAR A BPMs que esperan respuesta, cuando finalizan transicionan la tarea -->
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarTareaBPM">

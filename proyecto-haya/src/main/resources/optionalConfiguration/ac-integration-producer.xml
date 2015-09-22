@@ -90,9 +90,6 @@
 					<property name="entidad" value="${integracion.producer.filtro.entidad}" />	<!-- DEJAMOS PASAR MENSAJES DE LA ENTIDAD CAJAMAR -->
 					<property name="tipo" value="BPM-TAREA-.+|DATOS-RECURSO|DATOS-SUBASTA|DATOS-ACUERDO.+" />
 				</bean>
-				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
-					<property name="tipo" value="DO-FINALIZAR-BPM|DO-PARALIZAR-BPM" />
-				</bean>
 				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
 			</list>
 		</constructor-arg>

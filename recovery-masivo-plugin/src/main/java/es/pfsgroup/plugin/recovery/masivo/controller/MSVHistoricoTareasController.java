@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.recovery.masivo.dto.MSVHistoricoResolucionDto;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVHistoricoTareaAsuntoDto;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVHistoricoTareaDto;
 import es.pfsgroup.plugin.recovery.masivo.factories.MSVCodigoPostalPlazaFactory;
+import es.pfsgroup.plugin.recovery.mejoras.procuradores.MEJProcuradoresApi;
 import es.pfsgroup.recovery.bpmframework.input.RecoveryBPMfwkInputApi;
 import es.pfsgroup.recovery.bpmframework.input.model.RecoveryBPMfwkInput;
 
@@ -155,6 +156,8 @@ public class MSVHistoricoTareasController {
 		model.put("idInput", idInput);
 		model.put("codigoTipoProc", prc.getTipoProcedimiento().getCodigo());
 		model.put("codigoPlaza", codigoPlaza);
+		model.put("tieneProcurador", proxyFactory.proxy(MEJProcuradoresApi.class).pluginProcuradoresIsInstall());
+		
 		
 		return JSP_VENTANA_RESOLUCION_DESDE_TAREA;
 	}

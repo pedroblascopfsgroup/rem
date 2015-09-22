@@ -23,6 +23,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionTipoEventoRegistro;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoMostrarAnotacion;
+import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
+import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
@@ -194,6 +196,16 @@ public class ListadoTareaAnotacionTareaAbrirDetalle implements
 							AgendaMultifuncionTipoEventoRegistro.EventoRespuesta.RESPUESTA_TAREA,
 							null));
 			Contador.printFinal();
+			
+			MSVResolucion resolucion = proxyFactory.proxy(MSVResolucionApi.class).getResolucionByTareaNotificacion(idTarea);
+			if(resolucion != null && resolucion.getAdjuntoFinal()!=null){
+				result.setIdArchivoAdjunto(resolucion.getAdjuntoFinal().getId());
+				result.setNombreAdjunto(resolucion.getNombreFichero());
+				result.setIdResolucion(resolucion.getId());
+			}
+			if(resolucion != null){
+				result.setIdTipoResolucion(resolucion.getTipoResolucion().getId());
+			}
 		}
 		return result;
 	}

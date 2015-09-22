@@ -432,6 +432,26 @@
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procuradores-plugin</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procuradores-common</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-sidhi-api</artifactId>
 			<scope>compile</scope>
 			<exclusions>

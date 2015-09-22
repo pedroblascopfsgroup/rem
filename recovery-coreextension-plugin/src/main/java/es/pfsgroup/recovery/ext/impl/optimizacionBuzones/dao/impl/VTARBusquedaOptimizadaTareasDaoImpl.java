@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -29,7 +30,7 @@ import es.pfsgroup.recovery.ext.factory.dao.HQLQueryCallback;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 
-@Repository("VTARBusquedaOptimizadaTareasDao")
+@Component
 public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<TareaNotificacion, Long> implements VTARBusquedaOptimizadaTareasDao {
     
     @Autowired
@@ -70,6 +71,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
      * @param modelClass
      * @return
      */
+    @Override
     public final HQLBuilderReutilizable createHQLBbuscarTareasPendiente(DtoBuscarTareaNotificacion dto, Usuario u, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass){
     	dto.setSort(reescribeParametro(dto.getSort()));
 

@@ -77,7 +77,7 @@ public interface SubastaProcedimientoDelegateApi {
 	//BANKIA
 	@BusinessOperationDefinition(BO_SUBASTA_VALIDACIONES_CONFIRMAR_TESTIMONIO_POST)
 	public String validacionesConfirmarTestimonioPOST(Long prcId);
-	
+
 	//HAYA
 	@BusinessOperationDefinition(BO_SUBASTA_VALIDACIONES_CELEBRACION_SUBASTA_ADJUDICACION)
 	boolean comprobarAdjudicacionBienesCelebracionSubasta(Long prcId);

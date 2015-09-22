@@ -157,6 +157,12 @@
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-masivo-common</artifactId>
+			<version>1.5.0_procuradores_rc6</version>
+			<type>jar</type>
+		</dependency> 
 	</dependencies>
 
 	<build>

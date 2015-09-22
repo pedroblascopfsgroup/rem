@@ -30,15 +30,6 @@ DECLARE
     VAR_TABLENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
     VAR_SEQUENCENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
     
-    --Insertando valores en TFI_TAREAS_FORM_ITEMS
-    TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
-    TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
-    V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-        T_TIPO_TFI('H054_EmisionInformeFiscal','1','combo','comboInformeFiscal','Informe Fiscal Válido','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
-        T_TIPO_TFI('H054_EmisionInformeFiscal','3','combo','comboPresentar','Presentar Escrito Juzgado',null,null,null,'DDSiNo','0','DD'),
-        T_TIPO_TFI('H054_PresentarEscritoJuzgado','1','combo','comboModelo','Modelo de escrito a presentar',null,null,'valores[''H054_EmisionInformeFiscal''][''comboModelo'']','DDModeloEscrito','0','DD')
-    ); 
-    V_TMP_TIPO_TFI T_TIPO_TFI;
     
     V_TAREA VARCHAR(30 CHAR);
     
@@ -169,26 +160,7 @@ BEGIN
 	/* ------------------- -------------------------- */
 	/* ------------------- -------------------------- */
 
-    -- LOOP Insertando valores en TFI_TAREAS_FORM_ITEMS
-    VAR_TABLENAME := 'TFI_TAREAS_FORM_ITEMS';
-    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar Campos de tareas');
-    FOR I IN V_TIPO_TFI.FIRST .. V_TIPO_TFI.LAST
-      LOOP
-        V_TMP_TIPO_TFI := V_TIPO_TFI(I);
-        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || VAR_TABLENAME || 
-                    '(TFI_ID,TAP_ID,TFI_ORDEN,TFI_TIPO,TFI_NOMBRE,TFI_LABEL,TFI_ERROR_VALIDACION,TFI_VALIDACION,TFI_VALOR_INICIAL,TFI_BUSINESS_OPERATION,VERSION,USUARIOCREAR,FECHACREAR,BORRADO)' ||
-                    'SELECT ' ||
-                    'S_TFI_TAREAS_FORM_ITEMS.NEXTVAL, ' ||
-                    '(SELECT TAP_ID FROM ' || V_ESQUEMA || '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_TFI(1)) || '''), ' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(2)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(3)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(4)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(5)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(6)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(7)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(8)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(9)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(10)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TFI(11)),'''','''''') || ''',sysdate,0 FROM DUAL'; 
-            DBMS_OUTPUT.PUT_LINE(V_MSQL);
-            DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TFI(1) ||''','''||TRIM(V_TMP_TIPO_TFI(4))||'''');
-            EXECUTE IMMEDIATE V_MSQL;
-      END LOOP;
+    
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Campos');
 

@@ -50,8 +50,11 @@ echo "<Docker [$CONTAINER_NAME]>: BBDD disponible: OK"
 DUMP_FILE_PATH=$INNER_DUMP_DIRECTORY/$CURRENT_DUMP_NAME
 
 if [[ -f $DUMP_FILE_PATH  ]]; then
+	echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."
+	rm -f /oradata/*
 	echo "<Docker [$CONTAINER_NAME]>: creando tablespaces y directorios..."
 	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/script.sql
+	chmod go+rw /oradata/*
 	
 	echo "<Docker [$CONTAINER_NAME]>: Importando dump de la bbdd.."
 	$ORACLE_HOME/bin/impdp system/admin@localhost:1521/orcl DIRECTORY=scripts dumpfile=$CURRENT_DUMP_NAME logfile=SYSTMP:$CURRENT_DUMP_NAME.import.log schemas=CM01,CMMASTER remap_tablespace=BANK01:DRECOVERYONL8M,TEMPORAL:TEMP

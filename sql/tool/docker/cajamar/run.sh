@@ -6,6 +6,7 @@ IMAGE_NAME=filemon/oracle_11g
 DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
 DUMP_DIRECTORY=$(pwd)/DUMP
+ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
 
 # Estado de la BBDD
 CURRENT_DUMP_NAME=export_cajamar_13Ago2015.dmp
@@ -58,6 +59,19 @@ function package_sql () {
 
 
 function run_and_install () {
+	if [[ ! -d $DUMP_DIRECTORY ]]; then
+		echo "[INFO]: Se ha creado el directorio requerido $DUMP_DIRECTORY"
+		mkdir -p $DUMP_DIRECTORY
+	fi
+	if [[ ! -d $SQL_PACKAGE_DIR ]]; then
+		echo "[INFO]: Se ha creado el directorio requerido $SQL_PACKAGE_DIR"
+		mkdir -p $SQL_PACKAGE_DIR
+	fi
+	if [[ ! -d $ORADATA_HOST_DIR ]]; then
+		echo "[INFO]: Se ha creado el directorio requerido $ORADATA_HOST_DIR"
+		mkdir -p $ORADATA_HOST_DIR
+		chmod go+w $ORADATA_HOST_DIR
+	fi
 	if [[ -f $DUMP_PATH ]]; then
 		package_sql $STARTING_TAG $CLIENTE
 		chmod -R go+w $SQL_PACKAGE_DIR/*
@@ -70,6 +84,7 @@ function run_and_install () {
 				-v $(pwd):/setup \
 				-v $DUMP_DIRECTORY:/DUMP \
 				-v $SQL_PACKAGE_DIR:/sql-package \
+				-v $ORADATA_HOST_DIR:/oradata \
 				-h $CONTAINER_NAME --name $CONTAINER_NAME $IMAGE_NAME \
 	 && $INSTALL_CMD
 

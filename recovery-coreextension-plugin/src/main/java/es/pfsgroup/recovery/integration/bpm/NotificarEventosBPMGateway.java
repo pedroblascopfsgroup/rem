@@ -59,6 +59,11 @@ public interface NotificarEventosBPMGateway {
 			);
 
 	@Gateway
+	void prorrogaTarea(TareaExterna tareaExterna
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+			, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad);
+	
+	@Gateway
 	void finBPM(Procedimiento procedimiento
 			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
@@ -130,5 +135,5 @@ public interface NotificarEventosBPMGateway {
 			, @Header(TypePayload.HEADER_MSG_TYPE) String type
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
 			);
-	
+
 }

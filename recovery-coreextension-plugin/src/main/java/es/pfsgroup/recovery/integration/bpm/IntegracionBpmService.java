@@ -21,6 +21,7 @@ public interface IntegracionBpmService {
 	public static final String TIPO_CANCELACION_TAREA = "BPM-TAREA-CANCEL";
 	public static final String TIPO_PARALIZAR_TAREA = "BPM-TAREA-PARALIZAR";
 	public static final String TIPO_ACTIVAR_TAREA = "BPM-TAREA-ACTIVAR";
+	public static final String TIPO_PRORROGA_TAREA = "BPM-TAREA-PRORROGA";
 	public static final String TIPO_FIN_BPM = "BPM-FIN";
 	
 	public static final String TIPO_FINALIZAR_BPM = "DO-FINALIZAR-BPM";
@@ -163,5 +164,6 @@ public interface IntegracionBpmService {
 	void enviarDatos(ActuacionesRealizadasAcuerdo actuacionRealizada);
 	void enviarDatos(ActuacionesAExplorarAcuerdo actuacionAExplorar);
 	void enviarDatos(TerminoAcuerdo terminoAcuerdo);
+
 
 }

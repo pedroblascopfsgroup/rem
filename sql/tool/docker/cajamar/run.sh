@@ -16,6 +16,18 @@ STARTING_TAG=cj-dmp-13ago
 OPTION_REMOVE=no
 OPTION_IGNORE_DUMP=no
 
+function show_help () {
+	echo "Uso: $0 [-help] [-remove] [-ignoredmp] [-dmpdir=<directorio dumps>] [-oradata=<directorio datafiles>]"
+	echo "    -help: Sólo imprime un mensaje de ayuda"
+	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor"
+	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
+	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
+	echo "                  por defecto $DUMP_DIRECTORY"
+	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
+	echo "                  por defecto $ORADATA_HOST_DIR"
+	echo ""
+}
+
 if [[ "x$@" != "x" ]]; then
 	for op in $@; do
 		if [[ "x$op" == "x-remove" ]]; then
@@ -24,18 +36,19 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_IGNORE_DUMP=yes
 		elif [[ "x$op" == x-dmpdir=* ]]; then
 			DUMP_DIRECTORY=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-oradata=* ]]; then
+			ORADATA_HOST_DIR=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == "x-help" ]]; then
+			show_help
+			exit 0
 		fi
 	done
 else
-	echo "(Re)iniciando entorno $CONTAINER_NAME"
-	echo "Uso: $0 [-remove] [-ignoredmp] [-dmpdir=<directorio dumps>]"
-	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor"
-	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
-	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
-	echo "                  por defecto $DUMP_DIRECTORY"
-	echo ""
+	echo "[INFO]: Mostramos el mensaje de ayuda al no especificar parámetros."
+	show_help
 fi
 
+echo "[INFO]: (Re)iniciando entorno $CONTAINER_NAME"
 
 cd $(pwd)/$(dirname $0)
 
@@ -130,6 +143,7 @@ function show_install_info () {
 	echo "[INFO]: Se va a restaurar la BBDD. Esto implica un borrado de la BBDD y una re-generación"
 	echo "[INFO]: Dump de partida = $CURRENT_DUMP_NAME"
 	echo "[INFO]: Tag (Git) de partida = $STARTING_TAG"
+	echo "[INFO]: Almacenamiento de los datafiles = $ORADATA_HOST_DIR"
 }
 
 

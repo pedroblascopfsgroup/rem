@@ -42,7 +42,9 @@ function package_sql () {
 	local current_dir=$(pwd)
 	cd ../../../..
 	echo -n "[INFO]: Pitertul - Empaquetando desde $(pwd): "
-	ORACLE_HOME=no_oracle_home_4_package
+	if [[ "x$ORACLE_HOME" == "x" ]]; then
+		export ORACLE_HOME=empty
+	fi
 	./sql/tool/package-scripts-from-tag.sh $1 $2 >/dev/null
 	if [[ $? -eq 0 ]]; then
 		echo "OK"

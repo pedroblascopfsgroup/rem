@@ -329,10 +329,7 @@
 		}
 		
 	  	//Si es un gestor o (es supervisor y se trata de una tarea de supervisor) activamos el botón de editar
-		if (!panel.esSupervisor() || (panel.esSupervisor() && rec.get('subtipoTarea') == app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR))
-			btnEditar.enable();
-		else
-			btnEditar.setDisabled(true);
+		btnEditar.enable();
 	});
 
      //Solo puede acceder a la tarea si es gestor o supervisor de ella 
@@ -340,9 +337,7 @@
 		if(panel.esGestor() || panel.esSupervisor()){
 			var rec = grid.getStore().getAt(rowIndex);
 			//Si es un gestor o (es supervisor y se trata de una tarea de supervisor) puede editar la tarea
-			if (!panel.esSupervisor() || (panel.esSupervisor() && rec.get('subtipoTarea') == app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR)){
-				funcionEditaTareaExterna();
-		    }
+			funcionEditaTareaExterna();
 		}
     });
 

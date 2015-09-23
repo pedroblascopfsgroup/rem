@@ -678,7 +678,7 @@ var gridDocumentos = new Ext.grid.GridPanel({
 		,autoHeight: false
 		,monitorResize: true
 		,bbar : [ incluirDocButton, excluirDocButton, descartarDocButton, editarDocButton, separadorButtons, anularSolicitudesButton, solicitarDocButton, informarDocButton, botonRefresh]
-	}); 
+}); 
 
 gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 		var rec = gridDocumentos.getStore().getAt(rowIndex);
@@ -687,13 +687,5 @@ gridDocumentos.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 });
 
 var refrescarDocumentosGrid = function() {
-	//storeDocumentos.webflow({idProcedimientoPCO: data.id});
-	
-	<%--Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado --%>
-	if(data.isTipoDespachoGestoria.isTipoDespachoGestoria){
-		storeDocumentos.webflow({idProcedimientoPCO: data.id,gestoria:true});	
-	}
-	else{
-		storeDocumentos.webflow({idProcedimientoPCO: data.id,gestoria:false});
-	}
+	storeDocumentos.webflow({idProcedimientoPCO: data.id});
 }

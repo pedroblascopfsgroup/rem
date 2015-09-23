@@ -17,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
@@ -69,19 +73,21 @@ public class DocumentoPCOController {
 	List<DocumentosUGPCODto> documentosUG = null;
 	Long idProcPCO;
 	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	
+
 	@Autowired
 	private UsuarioManager usuarioManager;
-	/*
-	 * 
-	Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado*/
+
+	@Autowired
+	private GestorDespachoDao gestorDespachoDao;
+
 	@RequestMapping
-	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO,boolean gestoria ,ModelMap model) {
+	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
 		idProcPCO = new Long(idProcedimientoPCO);
 	
 		boolean esDocumento;	
 		boolean tieneSolicitud;
+		boolean gestoria = isTipoDespachoGestoria(idProcedimientoPCO);
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
@@ -119,47 +125,14 @@ public class DocumentoPCOController {
 
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
-	
-	/*
-	@RequestMapping
-	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
 
-		idProcPCO = new Long(idProcedimientoPCO);
-	
-		boolean esDocumento;	
-		boolean tieneSolicitud;
-		
-		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
-		
-		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
-		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
-		List<SolicitudDocumentoPCO> solicitudes; 
-		int idIdentificativo = 1;
-		for (DocumentoPCO doc : documentos) {
-			solicitudes = doc.getSolicitudes();
-			esDocumento = true;
-			
-			// Si hay solicitudes
-			if (solicitudes != null && solicitudes.size()>0){
-				for (SolicitudDocumentoPCO sol : solicitudes) {
-					tieneSolicitud = true;
-					solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud, idIdentificativo));
-					if (esDocumento) esDocumento = false;
-					idIdentificativo++;
-				}
-			}
-			else {
-				tieneSolicitud = false;
-				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud, idIdentificativo));
-				idIdentificativo++;
-			}
-			
-		}
-		
-		model.put("solicitudesDocumento", solicitudesDoc);
+	public boolean isTipoDespachoGestoria(Long prcId) {
+		Usuario userLogged = usuarioManager.getUsuarioLogado(); 
 
-		return SOLICITUDES_DOC_PCO_JSON;
-	}*/
+		List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuIdAndTipoDespacho(userLogged.getId(), DDTipoDespachoExterno.CODIGO_GESTORIA_PCO);
+
+		return !listaGestorDespacho.isEmpty();
+	}
 
 	/**
 	 * Agreaar documentos de las unidades de gestion seleccionadas

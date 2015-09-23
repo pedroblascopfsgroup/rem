@@ -24,7 +24,6 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -37,7 +36,6 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.DDResultadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -479,7 +477,7 @@ public class BurofaxManager implements BurofaxApi {
 	}
 	
 	@Override
-	@BusinessOperationDefinition(OBTENER_ENVIO_BY_ID)
+	@BusinessOperation(OBTENER_ENVIO_BY_ID)
 	public EnvioBurofaxPCO getEnvioBurofaxById(Long idEnvio){
 		EnvioBurofaxPCO envioBurofax=null;
 		try{

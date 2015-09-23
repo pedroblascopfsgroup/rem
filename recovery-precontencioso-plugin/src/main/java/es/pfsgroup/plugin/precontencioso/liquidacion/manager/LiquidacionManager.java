@@ -227,7 +227,7 @@ public class LiquidacionManager implements LiquidacionApi {
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
+	@BusinessOperation(LIQUIDACION_PRECONTENCIOSO_BY_ID)
 	public LiquidacionPCO getLiquidacionPCOById(Long idLiquidacion) {
 		return liquidacionDao.get(idLiquidacion);
 	}

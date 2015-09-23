@@ -17,12 +17,13 @@ var bottomBar = [];
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/items.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/botonExportar.jsp" %>
 
-//mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
+//mostramos el botï¿½n guardar cuando la tarea no estï¿½ terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
+			debugger;
 			if(tipoProblema.getValue() == cambioProcedimiento) {
 				if(procedimientoPropuesto.getValue() == procedimientoIniciar.getValue()) {
 					Ext.Msg.alert('sTATUS', 'Si tipo de problema es Cambio de procedimiento, no pueden coincidir procedimiento propuesto por la entidad y procedimiento a iniciar.');
@@ -41,7 +42,7 @@ var bottomBar = [];
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -64,7 +65,7 @@ if (muestraBotonGuardar==1){
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)	{
 		bottomBar.push(btnGuardar);
 	}

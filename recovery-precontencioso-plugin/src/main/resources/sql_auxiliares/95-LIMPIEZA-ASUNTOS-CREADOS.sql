@@ -96,32 +96,32 @@ DELETE FROM HAC_HISTORICO_ACCESOS WHERE PRC_ID IN
       (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')));
     
 DELETE FROM PRD_PROCEDIMIENTOS_DERIVADOS WHERE 
-usuariocrear = 'A118468';
+usuariocrear IN ('A118468', 'PREDOC');
 --DPR_ID IN
 --  (SELECT DPR_ID FROM DPR_DECISIONES_PROCEDIMIENTOS where PRC_ID in 
 --     (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
 --       (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')));
 
 delete from DPR_DECISIONES_PROCEDIMIENTOS where 
-usuariocrear = 'A118468';
+usuariocrear IN ('A118468', 'PREDOC');
 --  (SELECT DPR_ID FROM DPR_DECISIONES_PROCEDIMIENTOS where PRC_ID in 
 --     (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
 --       (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')));
 
 DELETE FROM PRC_CEX WHERE PRC_ID IN
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear = 'A118468' or 
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear IN ('A118468', 'PREDOC') or 
   PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
     (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')));
 
 DELETE FROM PRC_PER WHERE PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear = 'A118468' or 
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear IN ('A118468', 'PREDOC') or 
   PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
     (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')));
 
 DELETE FROM SUB_SUBASTA WHERE PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear = 'A118468' or 
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear IN ('A118468', 'PREDOC') or 
   PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
     (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')));
@@ -129,44 +129,44 @@ DELETE FROM SUB_SUBASTA WHERE PRC_ID IN
 DELETE FROM TER_TAREA_EXTERNA_RECUPERACION WHERE TEX_ID IN
   (SELECT TEX_ID FROM TEX_TAREA_EXTERNA WHERE TAR_ID IN 
   (SELECT TAR_ID FROM TAR_TAREAS_NOTIFICACIONES WHERE PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear = 'A118468' or 
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear IN ('A118468', 'PREDOC') or 
   PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
     (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')))));
 
 DELETE FROM TEV_TAREA_EXTERNA_VALOR WHERE TEX_ID IN (SELECT TEX_ID FROM TEX_TAREA_EXTERNA WHERE TAR_ID IN 
   (SELECT TAR_ID FROM TAR_TAREAS_NOTIFICACIONES WHERE PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear = 'A118468' or 
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear IN ('A118468', 'PREDOC') or 
   PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
     (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')))));
     
 DELETE FROM TEX_TAREA_EXTERNA WHERE TAR_ID IN 
   (SELECT TAR_ID FROM TAR_TAREAS_NOTIFICACIONES WHERE PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear = 'A118468' or 
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear IN ('A118468', 'PREDOC') or 
   PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
     (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO'))));
     
 DELETE FROM TAR_TAREAS_NOTIFICACIONES WHERE PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear = 'A118468' or 
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS where usuariocrear='CARGA_PCO' or usuariocrear IN ('A118468', 'PREDOC') or 
   PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
     (select prc_id from prc_procedimientos where usuariocrear='CARGA_PCO')));
 
 DELETE FROM hac_historico_accesos WHERE PRC_ID IN 
   (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS WHERE PRC_PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468','CARGA_PCO')))
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468', 'PREDOC', 'CARGA_PCO')))
   OR PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468','CARGA_PCO'));
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468', 'PREDOC', 'CARGA_PCO'));
     
 DELETE FROM PRC_PROCEDIMIENTOS WHERE PRC_PRC_ID IN 
-  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468','CARGA_PCO', 'LET_PCO'));
+  (SELECT PRC_ID FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468', 'PREDOC', 'CARGA_PCO', 'LET_PCO'));
   
 DELETE FROM PRB_PRC_BIE WHERE PRC_ID IN 
-(SELECT prc_id FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468','CARGA_PCO'));
+(SELECT prc_id FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468', 'PREDOC', 'CARGA_PCO'));
 
-DELETE FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468','CARGA_PCO');
+DELETE FROM PRC_PROCEDIMIENTOS WHERE usuariocrear IN ('A118468', 'PREDOC', 'CARGA_PCO');
     
 DELETE FROM PRC_PROCEDIMIENTOS WHERE PRC_PRC_ID IN 
   (SELECT PRC_ID from PRC_PROCEDIMIENTOS where prc_prc_id in 
@@ -190,10 +190,14 @@ delete from BIE_TEA where TEA_ID in
   (select acu_id from ACU_ACUERDO_PROCEDIMIENTOS where ASU_ID in 
   (select asu_id from ASU_ASUNTOS where usuariocrear='CARGA_PCO')));
 
+WHENEVER SQLERROR CONTINUE;
+
 delete from ACU_OPERACIONES_TERMINOS where tea_id in 
   (select tea_id from TEA_TERMINOS_ACUERDO where ACU_ID in 
   (select acu_id from ACU_ACUERDO_PROCEDIMIENTOS where ASU_ID in 
   (select asu_id from ASU_ASUNTOS where usuariocrear='CARGA_PCO')));
+
+WHENEVER SQLERROR EXIT ROLLBACK;
 
 delete from TEA_TERMINOS_ACUERDO where ACU_ID in 
   (select acu_id from ACU_ACUERDO_PROCEDIMIENTOS where ASU_ID in 

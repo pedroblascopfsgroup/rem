@@ -9,14 +9,16 @@
     default-autowire="byName">
 
 	<!-- Beans,handlers,Managers ... --> 
-	<bean id="bccAdjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionBccLeaveActionHandler" />
-	<bean id="bccCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateBccLeaveActionHandler" />
+	<bean id="adjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionLeaveActionHandler" />
+	<bean id="cajamarCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateCajamarLeaveActionHandler" />
 	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
 	<bean id="leaveDemandadoIncidenteRegistrarResolucion" class="es.pfsgroup.procedimientos.handlers.LeaveDemandadoIncidenteRegistrarResolucion" />
-	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
+	<bean id="subastaCajamarEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaCajamarEnterActionHandler" />
 	<bean id="subastaConcursalCjLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalCjLeaveActionHandler" />
 	<bean id="siguientePagoHandler" class="es.pfsgroup.procedimientos.seguimientoCumplimientoAcuerdo.SiguientePagoHandler"></bean>
 	<bean id="creditosContingentesLeaveActionHandler" class="es.pfsgroup.procedimientos.creditosContingentes.CreditosContingentesLeaveActionHandler"></bean>
+	<bean id="ocupantesEndActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.OcupantesEndActionHandler"></bean>
+	<bean id="ocupantesLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.OcupantesLeaveActionHandler"></bean>
 	<bean id="genericLeaveActionHandler" class="es.pfsgroup.procedimientos.PROGenericLeaveActionHandler">
 		<property name="configuracionEmails">
 			<bean class="es.pfsgroup.plugin.recovery.configuracionEmails.ConfiguracionEmailsManager"></bean>
@@ -55,8 +57,9 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/cj_tramiteDePosesion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubsanacionEmbargo/cj_tramiteSubsanacionEmbargo.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/cj_tramiteAdjudicacion.xml" p:version="-1"/>
-	
-			
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/cj_tramiteCesionRemate.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/cj_tramiteSaneamientoCargas.xml" p:version="-1"/>
+					
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
@@ -321,66 +324,12 @@
                		return String.valueOf(concursoManager.dameCreditosInsinuados(idProcedimiento).size());
             	}
             	
-            	def comprobarExisteDocumentoLIBARR = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LIBARR");
-	            }
-            	
-            	def comprobarExisteDocumentoPRVFND = {
-					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PRVFND");
-				}
-	            
-	            def bienConCesionRemate = {
-	  				def entidad = '';
-	                def nMBProcedimientoManager = ctx.getBean("nmbProcedimientoManager");
-	                def listadoBienes = nMBProcedimientoManager.getBienesDeUnProcedimiento(idProcedimiento); 
-	  				for (bien in listadoBienes) {
-	  					if (bien.getAdjudicacion() != null 
-	  						&& bien.getAdjudicacion().getCesionRemate() != null
-	  						&& bien.getAdjudicacion().getCesionRemate()) {
-	  						return true;
-	  					}
-	  				}
-	  				return false;
-	  			}
-				
-				def comprobarExisteDocumentoCAS = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
-	            }
-	            
-	            def comprobarExisteDocumentoSCBCCR = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCCR");
-	            }
-	            
 	            def vieneDeTCesionRemateTAdjudicacion = {
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
-						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005' || 
-						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H006'));
+						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ105' || 
+						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ106'));
 				}
 				
-				def comprobarExisteDocumentoSCBCPC = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCPC");
-	            }
-	            
-	            def comprobarExisteDocumentoCRSOLADJ = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRSOLADJ");
-	            }
-	            
-	            def comprobarExisteDocumentoCRACCES = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRACCES");
-	            }
-	            
-	            def comprobarExisteDocumentoCRRESTRA = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRRESTRA");
-	            }
-	            	            
   			 ]]>
   			</value>
   		</list>

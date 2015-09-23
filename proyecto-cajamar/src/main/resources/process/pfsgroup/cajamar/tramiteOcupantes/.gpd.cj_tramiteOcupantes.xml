@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_tramiteOcupantes" width="1531" height="1192">
+<root-container name="cj_tramiteOcupantes" width="1108" height="1192">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

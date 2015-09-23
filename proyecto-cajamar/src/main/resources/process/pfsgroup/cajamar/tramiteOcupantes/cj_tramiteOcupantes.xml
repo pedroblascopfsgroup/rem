@@ -218,7 +218,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>ocupantesHayaLeaveActionHandler
+				<targetBean>ocupantesLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -258,7 +258,7 @@
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-				<targetBean>ocupantesHayaEndActionHandler</targetBean>
+				<targetBean>ocupantesEndActionHandler</targetBean>
 			</action>
 		</event>
 	</end-state>

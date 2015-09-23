@@ -69,7 +69,7 @@
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
 				<targetBean>
-					bccAdjudicacionLeaveActionHandler
+					adjudicacionLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -118,7 +118,7 @@
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
 				<targetBean>
-					bccAdjudicacionLeaveActionHandler
+					adjudicacionLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>	

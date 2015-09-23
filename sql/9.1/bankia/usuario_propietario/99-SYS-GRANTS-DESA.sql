@@ -67,6 +67,29 @@ end;
 
 
 
+-- Funciones especiales de SYS para todos usuarios propietarios Recovery + Batch + BI+++++++++++++++
+
+--FUNCIONES: EXECUTE
+---------------------------------------------------
+-- De funciones SYS a usuarios propietarios BANK01, BANKMASTER, RECOVERY_BANKIA_DWH, 
+-- RECOVERY_BANKIA_DATASTAGE y RECOVERY_BANKIA_MD
+
+begin
+  FOR RS IN (SELECT USERNAME AS USER_OWNER  FROM ALL_USERS  WHERE UPPER(USERNAME) IN ('BANK01', 'BANKMASTER', 'MINIREC', 'RECOVERY_BANKIA_DWH', 'RECOVERY_BANKIA_DATASTAGE', 'RECOVERY_BANKIA_MD') ) LOOP
+
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.TRUNCATE_TABLE' || ' TO ' || rs.USER_OWNER);
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.REFRESCAR_MVIEW' || ' TO ' || rs.USER_OWNER);
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.CREA_TEMP_TABLES' || ' TO ' || rs.USER_OWNER);
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.CREA_DROP_INDEX' || ' TO ' || rs.USER_OWNER);
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.ALTER_INDEX' || ' TO ' || rs.USER_OWNER);
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.ESTADISTICAS' || ' TO ' || rs.USER_OWNER);
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.ALTER_TABLE' || ' TO ' || rs.USER_OWNER);
+    EXECUTE IMMEDIATE ('GRANT EXECUTE ON ' || 'SYSTEM.PROCEDURE_COMPILE' || ' TO ' || rs.USER_OWNER);
+
+  END LOOP;
+end;
+/
+
 
 --##################################################################################################
 --Permisos para Usuarios Transaccionales - Usuario Propietario
@@ -420,6 +443,7 @@ begin
   END LOOP;
 end;
 /
+
 
 
 --++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

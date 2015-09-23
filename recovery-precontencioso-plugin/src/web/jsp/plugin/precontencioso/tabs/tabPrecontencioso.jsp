@@ -13,7 +13,6 @@
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/documento/grids/documentoGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/liquidacion/grids/liquidacionGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/burofax/grids/burofax.jsp" %>
-var codigoTipoGestor='${codigoTipoGestor}';
 
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.precontencioso.expedienteJudicial" text="**Precontencioso"/>'
@@ -38,7 +37,6 @@ var codigoTipoGestor='${codigoTipoGestor}';
 
 	panel.setValue = function(){
         var data = entidad.get("data");
-        var tipoGestor = data.tipoGestor.codigo;
 
 		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
 			refrescarDocumentosGrid();

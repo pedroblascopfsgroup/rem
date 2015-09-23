@@ -112,6 +112,27 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="H004_SolicitarNumActivo" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H004_SolicitarTasacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H004_ActualizarTasacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="H004_BPMTramiteTributacion" x="689" y="392" width="238" height="36">
     <edge>
       <label x="-209" y="34"/>
@@ -226,7 +247,7 @@
   </node>
   <node name="H004_BPMTramiteCesionRemate" x="639" y="1084" width="253" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-109" y="-18"/>
     </edge>
   </node>
   <node name="H004_BPMTramiteAdjudicacion" x="-364" y="1288" width="312" height="36">
@@ -324,7 +345,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H004_RegistrarRespuestaSarebDecision" x="0" y="0" width="132" height="36">
+  <node name="H004_RegistrarRespuestaSarebDecision" x="469" y="802" width="278" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -335,7 +356,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H004_RegistrarRespuestaSarebIndices" x="0" y="0" width="132" height="36">
+  <node name="H004_RegistrarRespuestaSarebIndices" x="122" y="913" width="262" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -346,93 +367,18 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H004_SuspensionDecision" x="0" y="0" width="132" height="36">
+  <node name="H004_SuspensionDecision" x="-238" y="537" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="forkCelebracion" x="0" y="0" width="252" height="24">
+  <node name="forkCelebracion" x="371" y="108" width="252" height="24">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="A" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="D" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="C" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="F" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="G" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H004_BPMTramiteConsignacion" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="fork2" x="0" y="0" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H004_RegistrarResolucionSolicitudSuspension" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -446,7 +392,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H004_RegistrarResolucionSolicitudSuspensionDecision" x="0" y="0" width="132" height="36">
+  <node name="A" x="-154" y="768" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -454,9 +400,125 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="0" y="0" width="132" height="36"/>
-  <node name="Fin2" x="0" y="0" width="132" height="36"/>
-  <node name="Fin3" x="0" y="0" width="132" height="36"/>
-  <node name="Fin4" x="0" y="0" width="132" height="36"/>
-  <node name="Fin5" x="0" y="0" width="132" height="36"/>
+  <node name="H" x="-371" y="97" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="D" x="-345" y="291" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="C" x="-325" y="208" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="F" x="-281" y="356" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="G" x="-16" y="428" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H004_BPMTramiteConsignacion" x="-240" y="45" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork2" x="1134" y="167" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="3" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork3" x="1617" y="265" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork4" x="1436" y="63" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork5" x="1316" y="12" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H004_RegistrarResolucionSolicitudSuspension" x="1773" y="317" width="288" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H004_RegistrarResolucionSolicitudSuspensionDecision" x="1489" y="451" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H004_ElevarAComite" x="835" y="792" width="265" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="-157" y="117" width="132" height="36"/>
+  <node name="Fin2" x="531" y="22" width="132" height="36"/>
+  <node name="Fin3" x="1872" y="422" width="132" height="36"/>
+  <node name="Fin4" x="1142" y="1134" width="132" height="36"/>
+  <node name="Fin5" x="-402" y="894" width="132" height="36"/>
 </root-container>

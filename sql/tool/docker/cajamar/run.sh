@@ -2,6 +2,7 @@
 
 CLIENTE=CAJAMAR
 CONTAINER_NAME=cajamar-bbdd
+CUSTOM_NLS_LANG=SPANISH_SPAIN.WE8MSWIN1252
 IMAGE_NAME=filemon/oracle_11g
 DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
@@ -153,7 +154,7 @@ function show_install_info () {
 }
 
 
-INSTALL_CMD="$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME"
+INSTALL_CMD="$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG"
 
 
 if [[ "x$DOCKER_PS" == "x" ]]; then

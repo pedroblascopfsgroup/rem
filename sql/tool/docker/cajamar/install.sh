@@ -3,10 +3,11 @@
 CURRENT_DUMP_NAME=$1
 STARTING_TAG=$2
 CONTAINER_NAME=$3
+CUSTOM_NLS_LANG=$4
 
-if [[ "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" ]]; then
+if [[ "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" || "x$CUSTOM_NLS_LANG" == "x" ]]; then
 	echo "ERROR: No se puede continuar con la instalación de la BBDD"
-	echo "ERROR: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME"
+	echo "ERROR: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME CUSTOM_NLS_LANG"
 	exit 1
 fi
 
@@ -17,7 +18,7 @@ INNER_DUMP_DIRECTORY=/DUMP
 # OUTSIDE DOCKER
 DUMP_FILE_OUT_DOCKER=DUMP/$CURRENT_DUMP_NAME
 if [[ "x$(hostname)" != "x$CONTAINER_NAME" ]]; then
-	docker exec -ti $CONTAINER_NAME /setup/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME
+	docker exec -ti $CONTAINER_NAME /setup/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG
 	exit 0
 fi
 
@@ -67,6 +68,9 @@ if [[ -f $DUMP_FILE_PATH  ]]; then
 
 	echo "<Docker [$CONTAINER_NAME]>: Ejecutando scripts..."
 	export PATH=$PATH:$ORACLE_HOME/bin
+	export NLS_LANG=$CUSTOM_NLS_LANG
+	echo "export NLS_LANG=$NLS_LANG" >> /home/oracle/.bashrc
+	echo "<Docker [$CONTAINER_NAME]>: NLS_LANG=$NLS_LANG"
 	cd /sql-package/DDL
 	./DDL-scripts.sh admin@orcl admin@orcl
 	cd /sql-package/DML

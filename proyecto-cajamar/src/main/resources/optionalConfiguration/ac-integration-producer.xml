@@ -103,7 +103,7 @@
 		<constructor-arg>
 			<list>
 				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
-					<property name="tipo" value="DO-FINALIZAR-BPM|DO-PARALIZAR-BPM|DO-ACTIVAR-BPM" />
+					<property name="tipo" value="DO-FINALIZAR-BPM|DO-PARALIZAR-BPM" />
 				</bean>
 				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 					<property name="tipo" value="BPM-FIN" />

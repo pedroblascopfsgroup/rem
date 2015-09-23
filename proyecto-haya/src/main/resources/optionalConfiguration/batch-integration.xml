@@ -163,71 +163,6 @@
 	<bean id="bpmConsumerActionMgr" class="es.pfsgroup.recovery.integration.ConsumerActionManager">
 		<constructor-arg>
 			<list>
-
-				<!-- ACTUALIZACION DE CABECERA PROCEDIMIENTO -->
-				<!-- NO SE USA 
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
-					<constructor-arg>
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-INICIO"/>
-						</bean>
-					</constructor-arg>
-					<property name="description" value="Actualización de un procedimiento, lo crea si no existe"/>
-				</bean -->
-
-				<!-- FIN TAREA -->
-				<!-- NO SE USA
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaProcedimientoConsumer">
-					<constructor-arg index="0">
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-FIN"/>
-							<property name="tarea" value="SUBASTA|SUBASTA2|EJECUCION_NOTARIAL"/>
-						</bean>
-					</constructor-arg>
-					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
-					<property name="description" value="Gestión de una tarea"/>
-				</bean>
-				-->
-				
-				<!-- NOTIFICACIONES: INICIO / CANCEL / FIN TAREA / BPM-FIN / BPM-TAREA-ACTIVAR ... -->
-				<!-- NO SE USA --> 
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaProcedimientoConsumer">
-					<constructor-arg index="0">
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-.+"/>
-						</bean>
-					</constructor-arg>
-					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
-					<property name="description" value="Gestión de una tarea"/>
-				</bean>
-
-				<!-- NOTIFICACIONES: ACUERDOS ... -->
-				<!-- NO SE USA 
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.AcuerdoConsumer">
-					<constructor-arg index="0">
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="DATOS-ACUERDO.*"/>
-						</bean>
-					</constructor-arg>
-					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
-					<property name="description" value="Gestión de un acuerdo"/>
-				</bean -->
-
-				<!-- INICIO BPM -->
-				<!-- NO SE USA 
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
-					<constructor-arg index="0">
-						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-FIN"/>
-							<property name="codigoTarea" value="H040_RegistrarCambioCerradura"/>
-						</bean>
-					</constructor-arg>
-					<property name="description" value="Inicio de BPM Gestión de Llaves"/>
-					<property name="iniciarBPM" value="true"/>
-					<property name="crearNuevo" value="true"/>
-					<property name="forzarTipoProcedimiento" value="H040"/>
-				</bean -->
-
 				<!-- Transicionar tarea -->
 				<!-- RESPUESTA DE CAJAMAR A BPMs que esperan respuesta, cuando finalizan transicionan la tarea -->
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarTareaBPM">
@@ -255,14 +190,13 @@
 				</bean>
 
 				<!-- Paralizar un BPM -->
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarBPM">
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ParalizarBPM">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
 							<property name="tipo" value="DO-PARALIZAR-BPM"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Paraliza un BPM"/>
-					<property name="forzarTransicion" value="paralizarTareas"/>
 				</bean>
 
 				<!-- Activar un BPM paralizado-->
@@ -275,52 +209,6 @@
 					<property name="description" value="Activa un BPM paralizado"/>
 					<property name="forzarTransicion" value="activarTareas"/>
 				</bean>
-
-				<!-- ACTUALIZACION DE CABECERA RECURSO -->
-				<!-- NO SE USA 
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.RecursoConsumer">
-					<constructor-arg>
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="DATOS-RECURSO"/>
-						</bean>
-					</constructor-arg>
-					<property name="description" value="Actualización de un recurso"/>
-				</bean-->
-
-				<!-- ACTUALIZACION DE CABECERA SUBASTA -->
-				<!-- NO SE USA 
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.SubastaConsumer">
-					<constructor-arg>
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="DATOS-SUBASTA"/>
-						</bean>
-					</constructor-arg>
-					<property name="description" value="Actualización de una subasta"/>
-				</bean-->
-				
-				<!-- CONVENIOS -->
-				<!-- NO SE USA 
-				<bean class="es.pfsgroup.recovery.haya.integration.bpm.consumer.ConvenioConsumer">
-					<constructor-arg>
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="DATOS-CONVENIO"/>
-						</bean>
-					</constructor-arg>
-					<property name="description" value="Actualización de un convenio"/>
-				</bean-->
-
-				<!-- NOTIFICACIONES DE TAREA ... -->
-				<!-- NO SE USA 
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaNotificacionConsumer">
-					<constructor-arg index="0">
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="TAREA-NOTIF"/>
-						</bean>
-					</constructor-arg>
-					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
-					<property name="description" value="Gestión de tarea notificaciones"/>
-				</bean -->
-				
 
 			</list>
 		</constructor-arg>

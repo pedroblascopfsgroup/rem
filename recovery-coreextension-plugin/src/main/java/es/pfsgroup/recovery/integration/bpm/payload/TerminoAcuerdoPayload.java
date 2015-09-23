@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.integration.bpm;
+package es.pfsgroup.recovery.integration.bpm.payload;
 
 import java.util.ArrayList;
 import java.util.List;

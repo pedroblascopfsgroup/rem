@@ -9,7 +9,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.pfsgroup.recovery.integration.bpm.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 
 /**

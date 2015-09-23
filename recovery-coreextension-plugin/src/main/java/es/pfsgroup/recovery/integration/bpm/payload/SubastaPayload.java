@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.integration.bpm;
+package es.pfsgroup.recovery.integration.bpm.payload;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +7,7 @@ import java.util.List;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
+import es.pfsgroup.recovery.integration.bpm.LoteSubastaPayload;
 
 public class SubastaPayload {
 	

@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.integration.bpm;
+package es.pfsgroup.recovery.integration.bpm.payload;
 
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;

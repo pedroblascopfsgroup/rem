@@ -146,6 +146,11 @@ app.subtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO = '<fwk:const value="es.capgem
 app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE" />';
 app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO" />';
 
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO" />';
+
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
 

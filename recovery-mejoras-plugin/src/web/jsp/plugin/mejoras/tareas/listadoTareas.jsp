@@ -1136,6 +1136,11 @@
 			case '100':
 			case '101':			
 			case '105':
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 			break;
 			

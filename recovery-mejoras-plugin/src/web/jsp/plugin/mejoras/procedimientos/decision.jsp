@@ -57,7 +57,17 @@
 	})
 	//Tipo Actuacion
 	var dictTipoActuacion = <app:dict value="${tiposActuacion}" />;
-	
+
+	// PBO: De momento, quitamos el tipo de actuacion PCO para impedir que se pueda derivar hacia Precontencioso
+	var buscaPCO=function() {
+		for (var i=0; i<dictTipoActuacion.diccionario.length; i++) {
+			if (dictTipoActuacion.diccionario[i].codigo=="PCO") {
+				return i;
+			}
+		}
+	}
+	dictTipoActuacion.diccionario.splice(buscaPCO(),1);
+		
 	var optionsTipoActuacionStore = new Ext.data.JsonStore({
 	       fields: ['codigo', 'descripcion']
 	       ,data : dictTipoActuacion
@@ -84,8 +94,7 @@
 	    //,value : 'actual'
 	});
 	
-	tipoActuacion.on('select',function(){
-		var codigo=tipoActuacion.getValue();
+	tipoActuacion.on('select',function(){		
 		optionsTipoProcedimientoStore.webflow({codigoTipoAct:codigo, prcId: '${idProcedimiento}'})
 		comboTipoProcedimiento.reset();
 	});
@@ -468,7 +477,7 @@
 			if(!saldoARecuperar.validate())
 				errores+="<br><s:message code="decisionProcedimiento.validacion.saldoARecuperar" text="**Validar saldo a recuperar"/>";			
 			if(!recuperacion.validate())
-				errores+="<br><s:message code="decisionProcedimiento.validacion.recuperacion" text="**Validar recuperación"/>";
+				errores+="<br><s:message code="decisionProcedimiento.validacion.recuperacion" text="**Validar recuperaciï¿½n"/>";
 			if(!meses.validate())
 				errores+="<br><s:message code="decisionProcedimiento.validacion.plazo" text="**Validar plazo"/>";
 				
@@ -549,7 +558,7 @@
 	
 	var compruebaUnicoBien = function(funcion) {
 		//Comprueba en caso de no haber introducido demandados que el procedimiento tenga marcado el flag unicoBien, 
-		// si es así, se le permitirá agregar la decisión sin demandados.
+		// si es asï¿½, se le permitirï¿½ agregar la decisiï¿½n sin demandados.
 		
 		var demandados=comboPersonas.getValue();
 		if(demandados=='') {
@@ -563,7 +572,7 @@
 			
 			if (unicoBien) {
 				//Si el tipo de procedimiento tiene marcado el flag unico bien, se le permite que no tenga demandados
-				Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="decisionProcedimiento.validacion.sinDemandados" text="**No se ha añadido ningún demandado ¿Desea continuar?" />', function(btn){
+				Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="decisionProcedimiento.validacion.sinDemandados" text="**No se ha aï¿½adido ningï¿½n demandado ï¿½Desea continuar?" />', function(btn){
     				if (btn == 'yes'){
     					if (funcion == 'addProcedimiento') {
     						addProcedimiento(true);
@@ -886,8 +895,8 @@
 			if (validarDatosFormulario()){			
 				if(activarComprobacionSubasta && mensaje){
 					Ext.Msg.show({
-					   title:'Confirmación',
-					   msg: '¿Está seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarán activas.',
+					   title:'Confirmaciï¿½n',
+					   msg: 'ï¿½Estï¿½ seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarï¿½n activas.',
 					   buttons: Ext.Msg.YESNO,
 					   animEl: 'elId',
 					   width:450,
@@ -1049,13 +1058,13 @@
 						}
 						, --%>
 						new Ext.form.Label({
-							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar" text="**La decisión está aceptada/cancelada y no se puede editar" />'
+							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar" text="**La decisiï¿½n estï¿½ aceptada/cancelada y no se puede editar" />'
 							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
 							,hidden: faltaPermisos || !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
 							})
 						,
 						new Ext.form.Label({
-							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar.propuesto" text="**La decisión está propuesta y no se puede editar" />'
+							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar.propuesto" text="**La decisiï¿½n estï¿½ propuesta y no se puede editar" />'
 							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
 							,hidden: faltaPermisos || !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' != '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
 							})

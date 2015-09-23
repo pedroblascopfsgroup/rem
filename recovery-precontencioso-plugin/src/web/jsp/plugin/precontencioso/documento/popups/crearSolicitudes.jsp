@@ -38,6 +38,7 @@
 							method: 'POST',
 							success: function ( result, request ) {
 								mask.hide();
+								insertGestorAdicional();
 								page.fireEvent(app.event.DONE);
 							}
 					});
@@ -46,8 +47,19 @@
 				}
 	     }
 	});
-	
 
+	var insertGestorAdicional = function() {
+		Ext.Ajax.request({
+			url: page.resolveUrl('coreextension/insertarGestorAdicionalAsuto'),
+			params: {
+				idTipoGestor: comboTipoGestor.getValue(),
+				idAsunto: data.cabecera.asuntoId,
+				idUsuario: comboUsuario.getValue(),
+				idTipoDespacho: comboTipoDespacho.getValue()
+			},
+			success: function(){}
+		})
+	}
 
 	var getParametros = function() {
 		
@@ -61,7 +73,6 @@
 	 	if(fechaSolicitud.getValue()!=null && fechaSolicitud.getValue()!= '') parametros.fechaSolicitud = fechaSolicitud.getValue().format('d/m/Y');
 	 	parametros.tipogestor = comboTipoGestor.getValue();
 	 	parametros.idDespacho = comboTipoDespacho.getValue();
-	 	
 	 	
 	 	return parametros;
 	 }	

@@ -1825,7 +1825,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 				if (!Checks.esNulo(cicloRecobroExpediente.getSubcartera()) && !Checks.esNulo(cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes())) {
 					dto.setItinerarioMV(cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes());
 					
-					Date fechaAlta = cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes().getFechaAlta();
+					Date fechaAlta = cicloRecobroExpediente.getFechaAlta();
 					Long plazoGestion = cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes().getPlazoMaxGestion();
 					if (!Checks.esNulo(fechaAlta) && !Checks.esNulo(plazoGestion)) {
 						

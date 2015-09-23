@@ -42,9 +42,9 @@ DECLARE
       T_FUNCION('Puede ver el tab precontencioso', 'TAB_PRECONTENCIOSO'),
       T_FUNCION('Puede ver las acciones precontencioso', 'ACCIONES_PRECONTENCIOSO'),
       T_FUNCION('Puede ver la busqueda precontencioso', 'BUSQUEDA_PRECONTENCIOSO'),
-      T_FUNCION('Puede el grid de documentos del tab de precontencioso', 'TAB_PRECONTENCIOSO_DOCUMENTOS'),
-      T_FUNCION('Puede el grid de liquidaciones del tab de precontencioso', 'TAB_PRECONTENCIOSO_LIQUIDACIONES'),
-      T_FUNCION('Puede el grid de burofaxes del tab de precontencioso', 'TAB_PRECONTENCIOSO_BUROFAXES')
+      T_FUNCION('Puede ver el grid de documentos del tab de precontencioso', 'TAB_PRECONTENCIOSO_DOCUMENTOS'),
+      T_FUNCION('Puede ver el grid de liquidaciones del tab de precontencioso', 'TAB_PRECONTENCIOSO_LIQUIDACIONES'),
+      T_FUNCION('Puede ver el grid de burofaxes del tab de precontencioso', 'TAB_PRECONTENCIOSO_BUROFAXES')
 
     ); 
     V_TMP_FUNCION T_FUNCION;

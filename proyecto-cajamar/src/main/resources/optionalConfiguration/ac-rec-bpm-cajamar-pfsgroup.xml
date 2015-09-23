@@ -326,12 +326,7 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LIBARR");
 	            }
             	
-            	def comprobarExisteDocumentoREOC = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "REOC");
-	            }	
-	            
-	            def comprobarExisteDocumentoPRVFND = {
+            	def comprobarExisteDocumentoPRVFND = {
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PRVFND");
 				}
@@ -350,30 +345,10 @@
 	  				return false;
 	  			}
 				
-				def comprobarExisteDocumentoECM = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ECM");
-	            }
-	            
-	            def comprobarExisteDocumentoILCRLM = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ILCRLM");
-	            }      	  
-	            
-	            def comprobarExisteDocumentoREM = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "REM");
-	            }	  
-	            
-	            def comprobarExisteDocumentoCAS = {
+				def comprobarExisteDocumentoCAS = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
 	            }
-	            
-	            def comprobarExisteDocumentoDSSDA = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "DSSDA");
-	            }	  
 	            
 	            def comprobarExisteDocumentoSCBCCR = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
@@ -386,20 +361,25 @@
 						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H006'));
 				}
 				
-				def obtenerTipoCargaBien = {
-	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionHayaProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.obtenerTipoCargaBien(idProcedimiento);
-	            }
-            
-            	def comprobarExisteDocumentoSCBCPC = {
+				def comprobarExisteDocumentoSCBCPC = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCPC");
 	            }
 	            
-	            def comprobarExisteDocumentoNOSI = {
+	            def comprobarExisteDocumentoCRSOLADJ = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "NOSI");
-	            }        
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRSOLADJ");
+	            }
+	            
+	            def comprobarExisteDocumentoCRACCES = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRACCES");
+	            }
+	            
+	            def comprobarExisteDocumentoCRRESTRA = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRRESTRA");
+	            }
 	            	            
   			 ]]>
   			</value>

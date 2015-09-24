@@ -15,7 +15,7 @@
 	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
 	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
  	
-	<bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >
+	<bean id="jbpmUtilPrecontencioso" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.JBPMProcessPrecontenciosoManager" >
   	<property name="contextScripts">
   		<list>
   			<value><![CDATA[
@@ -29,22 +29,7 @@
   		</list>
   	</property>
   </bean> 
-	
-<!-- 	<bean id="nodoEsperaRecobroActionHandler" class="es.pfsgroup.plugin.recobro.bpm.handlers.RecobroNodoEsperaActionHandler"></bean> -->
-
-<!-- 	<bean id="jbpmUtilRecobro" class="es.pfsgroup.plugin.recobro.bpm.utils.JBPMProcessRecobroManager" > -->
-<!-- 		<property name="contextScripts"> -->
-<!-- 	  		<list> -->
-<!-- 	  			<value><![CDATA[ -->
-<!-- 					def comprobarMetaVolante() { -->
-<!-- 						def recobroManagerBPM = ctx.getBean("RecobroManagerBPM"); -->
-<!-- 					 	return recobroManagerBPM.comprobarMetaVolante(idExpediente); -->
-<!-- 					} -->
-<!-- 	  			 ]]></value> -->
-<!-- 	  		</list> -->
-<!-- 	  	</property> -->
-<!--   	</bean>  -->
-	
+		
   <!-- Diccionarios -->
   <bean parent="clasesDiccionarioAnotadas">
     <property name="sourceList">

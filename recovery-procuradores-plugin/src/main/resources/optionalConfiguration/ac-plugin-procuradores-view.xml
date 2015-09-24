@@ -24,10 +24,10 @@
 	p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 	p:permission="MANTENIMIENTO_CATEGORIAS" />
 
- 	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"   
-    p:fileName="/WEB-INF/jsp/plugin/procuradores/main/openNothingProcFn.jsp" 
-    p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
-    />
+<!--  	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"    -->
+<!--     p:fileName="/WEB-INF/jsp/plugin/procuradores/main/openNothingProcFn.jsp"  -->
+<!--     p:priority="1"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  -->
+<!--     /> -->
     	
  	<bean p:entity="plugin.mejoras.mainpage.dynamicelements.openInitTabFuncition" p:name="default"  p:order="1"   
     p:fileName="/WEB-INF/jsp/plugin/procuradores/main/openResolucionesFn.jsp" 

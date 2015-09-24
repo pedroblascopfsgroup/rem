@@ -99,8 +99,8 @@ public class ConfiguracionDespachoExternoManager implements ConfiguracionDespach
     public List<GestorDespacho> buscaDespachosPorUsuarioYTipo(Long idUsuario, String ddTipoDespachoExterno) {
 		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", idUsuario);
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Filter filtroTipoDespacho = genericDao.createFilter(FilterType.EQUALS, "despachoExterno.tipoDespacho.codigo", ddTipoDespachoExterno);
-		return genericDao.getList(GestorDespacho.class, filtroUsuario, filtroBorrado, filtroTipoDespacho);
+		//Filter filtroTipoDespacho = genericDao.createFilter(FilterType.EQUALS, "despachoExterno.tipoDespacho.codigo", ddTipoDespachoExterno);
+		return genericDao.getList(GestorDespacho.class, filtroUsuario, filtroBorrado);
     	
     	//return despachoExternoDao.buscaDespachosPorUsuarioYTipo(idUsuario, ddTipoDespachoExterno);
     }	

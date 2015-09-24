@@ -15,6 +15,7 @@ import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.procedimiento.ActualizarProcedimientoDtoInfo;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
@@ -25,6 +26,7 @@ import es.pfsgroup.plugin.recovery.procuradores.procurador.dao.RelacionProcurado
 import es.pfsgroup.plugin.recovery.procuradores.procurador.dto.ProcuradorDto;
 import es.pfsgroup.plugin.recovery.procuradores.procurador.model.Procurador;
 import es.pfsgroup.plugin.recovery.procuradores.procurador.model.RelacionProcuradorProcedimiento;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 /**
  * Implementación de la api de {@link Procurador}
@@ -69,7 +71,8 @@ public class ProcuradorManager  implements ProcuradorApi {
 	@BusinessOperation(BO_PROCURADORES_GET_PROCURADOR_REAL)
 	public String getProcuradorReal(Long idProcedimiento) {
 
-		Long idUsuario = procedimientoDao.get(idProcedimiento).getAsunto().getGestor().getUsuario().getId();
+		Long idUsuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getId();
+		//Long idUsuario = procedimientoDao.get(idProcedimiento).getAsunto().getGestor().getUsuario().getId();
 		if(!Checks.esNulo(idUsuario)){
 			List<GestorDespacho> gestorDespacho = configuracionDespachoExternoApi.buscaDespachosPorUsuarioYTipo(idUsuario, DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO);
 			if((!Checks.esNulo(gestorDespacho) && gestorDespacho.size()>0)){

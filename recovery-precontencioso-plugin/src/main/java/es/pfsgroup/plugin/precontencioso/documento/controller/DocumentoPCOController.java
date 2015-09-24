@@ -70,8 +70,6 @@ public class DocumentoPCOController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	List<DocumentosUGPCODto> documentosUG = null;
-	Long idProcPCO;
 	private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Autowired
@@ -82,51 +80,47 @@ public class DocumentoPCOController {
 
 	@RequestMapping
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
-
-		idProcPCO = new Long(idProcedimientoPCO);
 	
 		boolean esDocumento;	
 		boolean tieneSolicitud;
-		boolean gestoria = isTipoDespachoGestoria(idProcedimientoPCO);
+		boolean isGestoria = esUsuarioTipoDespachoGestoria();
 		
 		List<SolicitudDocumentoPCODto> solicitudesDoc = new ArrayList<SolicitudDocumentoPCODto>();
 		
 		List<DocumentoPCO> listDocumentos = documentoPCOApi.getDocumentosPorIdProcedimientoPCO(idProcedimientoPCO);
 		List<DocumentoPCO> documentos = documentoPCOApi.getDocumentosOrdenadosByUnidadGestion(listDocumentos);
-		List<SolicitudDocumentoPCO> solicitudes; 
 		int idIdentificativo = 1;
+
 		for (DocumentoPCO doc : documentos) {
-			solicitudes = doc.getSolicitudes();
+			List<SolicitudDocumentoPCO> solicitudes = doc.getSolicitudes();
 			esDocumento = true;
-			
+
 			// Si hay solicitudes
-			if (solicitudes != null && solicitudes.size()>0){
+			if (solicitudes != null && solicitudes.size() > 0) {
 				for (SolicitudDocumentoPCO sol : solicitudes) {
 					tieneSolicitud = true;
-					if(gestoria && sol.getActor().getUsuario().getId().equals(usuarioManager.getUsuarioLogado().getId())){
-						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, true, tieneSolicitud, idIdentificativo));
+					
+					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
+					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
+						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud, idIdentificativo));
 					}
-					else if(!gestoria){
-						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc,sol, esDocumento, tieneSolicitud, idIdentificativo));
-					}
+
 					if (esDocumento) esDocumento = false;
 					idIdentificativo++;
 				}
-			}
-			else {
+			} else if (!isGestoria) {
 				tieneSolicitud = false;
 				solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, null, esDocumento, tieneSolicitud, idIdentificativo));
 				idIdentificativo++;
 			}
-			
 		}
-		
+
 		model.put("solicitudesDocumento", solicitudesDoc);
 
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
 
-	public boolean isTipoDespachoGestoria(Long prcId) {
+	public boolean esUsuarioTipoDespachoGestoria() {
 		Usuario userLogged = usuarioManager.getUsuarioLogado(); 
 
 		List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuIdAndTipoDespacho(userLogged.getId(), DDTipoDespachoExterno.CODIGO_GESTORIA_PCO);
@@ -142,8 +136,7 @@ public class DocumentoPCOController {
 	 * @return
 	 */
 	@RequestMapping
-	public String agregarDocumentosUG(
-			@RequestParam(value = "uniGestionIds", required = true) String uniGestionIds,ModelMap model) {
+	public String agregarDocumentosUG(@RequestParam(value = "uniGestionIds", required = true) String uniGestionIds, @RequestParam(value = "idPrc", required = true) Long idPrc, ModelMap model) {
 
 		List<DocumentosUGPCODto> ugsDto = new ArrayList<DocumentosUGPCODto>();
 		StringTokenizer st;
@@ -152,7 +145,7 @@ public class DocumentoPCOController {
 		String codUG;
 		while (st.hasMoreElements()){
 			codUG = st.nextToken();
-			ugsDto.addAll(documentoPCOApi.getDocumentosUG(idProcPCO, codUG));
+			ugsDto.addAll(documentoPCOApi.getDocumentosUG(idPrc, codUG));
 		}
 				
 		// Devolvemos los documentos asociados
@@ -449,10 +442,11 @@ public class DocumentoPCOController {
 	 * @return
 	 */
 	@RequestMapping	
-	private String saveIncluirDocumentos(WebRequest request ,ModelMap model) {
+	public String saveIncluirDocumentos(WebRequest request ,ModelMap model) {
 		
 		String arrayIdDocumentos=request.getParameter("arrayIdDocumentos");
 		String arrayIdUG=request.getParameter("arrayIdUG");
+		Long prcId = Long.valueOf(request.getParameter("idPrc"));
 		
 		// Las cadenas de los arrays vienen con formato [1,2,...] - Quitaremos los corchetes para procesar esta cadenas.
 		arrayIdDocumentos = arrayIdDocumentos.substring(1, arrayIdDocumentos.length()-1);		
@@ -494,7 +488,7 @@ public class DocumentoPCOController {
 			docDto.setPlaza(request.getParameter("plaza"));
 			docDto.setFechaEscritura(request.getParameter("fechaEscritura"));					
 			docDto.setTipoUG(tipoUG);
-			docDto.setIdProc(idProcPCO);
+			docDto.setIdProc(prcId);
 			docDto.setEstado(DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);
 			docDto.setContrato(contrato);
 			docDto.setId(idDocUG);
@@ -502,7 +496,7 @@ public class DocumentoPCOController {
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}
 		
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcPCO);	
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(prcId);	
 
 		return DEFAULT;
 	}

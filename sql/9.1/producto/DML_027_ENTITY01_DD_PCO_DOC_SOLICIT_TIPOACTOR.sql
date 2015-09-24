@@ -48,12 +48,12 @@ IF V_NUM_TABLAS = 0 THEN
     EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''PREDOC'', ''Preparador Documental'', ''Preparador Documental'', 0, ''INICIAL'', sysdate) ';
 END IF;
 
-V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''GEST''';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''GESTORIA_PREDOC''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
-    DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor GESTORIA');
-    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''GEST'', ''Gestoria'', ''Gestoria'', 0, ''INICIAL'', sysdate) ';
+    DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor GESTORIA_PREDOC');
+    EXECUTE IMMEDIATE V_INSERT || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''GESTORIA_PREDOC'', ''Gestoria'', ''Gestoria'', 0, ''INICIAL'', sysdate) ';
 END IF;
 
 V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''NOTARI''';

@@ -21,7 +21,7 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 /**
  * Transiciona un BPM según la transición desde el token que llega. 

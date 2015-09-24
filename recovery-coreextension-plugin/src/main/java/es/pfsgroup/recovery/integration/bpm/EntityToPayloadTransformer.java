@@ -43,6 +43,16 @@ import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.TypePayload;
+import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
+import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesAExplorarPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesRealizadasPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.RecursoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.SubastaPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaExternaPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaNotificacionPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TerminoAcuerdoPayload;
 
 public class EntityToPayloadTransformer {
 
@@ -236,29 +246,45 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}	
 
+	private ProcedimientoPayload prepararProcedimiento(Message<?> mensaje, Procedimiento procedimiento) {
+		// Persistencia de IDs de sincronización
+		extProcedimientoManager.prepareGuid(procedimiento);
+		DataContainerPayload data = getNewPayload(mensaje);
+		ProcedimientoPayload procPayload = new ProcedimientoPayload(data, procedimiento);
+		procPayload.translate(diccionarioCodigos);
+		postProcessDataContainer(data);
+		return procPayload;
+	}
+	
+	public Message<DataContainerPayload> transformParalizarBPM(Message<ParalizarBPMMsg> message) {
+		logger.info("[INTEGRACION] Transformando paralizarBPM...");
+		ParalizarBPMMsg paralizarBPMMsg = message.getPayload();
+		
+		ProcedimientoPayload procPayload = prepararProcedimiento(message, paralizarBPMMsg.getProcedimiento());
+		DataContainerPayload data = procPayload.getData();
+		logger.debug(String.format("[INTEGRACION] Procedimiento Transformado %s!", procPayload.getGuid()));
+
+		data.addFecha(BPMContants.FECHA_APLAZAMIENTO_TAREAS, paralizarBPMMsg.getFechaActivacion());
+		
+		//translateValues(message);
+		String grpId = procPayload.getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+		
+		return newMessage;
+	}
+	
+
 	public Message<DataContainerPayload> transformPRC(Message<Procedimiento> message) {
 		logger.info("[INTEGRACION] Transformando Procedimiento...");
 		Procedimiento procedimiento = message.getPayload();
 
-		// Persistencia de IDs de sincronización
-		extProcedimientoManager.prepareGuid(procedimiento);
-		
-		DataContainerPayload data = getNewPayload(message);
-		ProcedimientoPayload procPayload = new ProcedimientoPayload(data, procedimiento);
-		procPayload.translate(diccionarioCodigos);
-		postProcessDataContainer(data);
-		
+		ProcedimientoPayload procPayload = prepararProcedimiento(message, procedimiento);
+		DataContainerPayload data = procPayload.getData();
 		logger.debug(String.format("[INTEGRACION] Procedimiento Transformado %s!", procPayload.getGuid()));
 		
 		//translateValues(message);
 		String grpId = procPayload.getAsunto().getGuid();
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
-/*		Message<DataContainerPayload> newMessage = MessageBuilder
-				.withPayload(data)
-				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, procPayload.getAsunto().getGuid())
-				.build();
-*/
 		return newMessage;
 	}	
 

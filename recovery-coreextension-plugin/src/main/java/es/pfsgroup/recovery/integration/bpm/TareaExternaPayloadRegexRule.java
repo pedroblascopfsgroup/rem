@@ -7,6 +7,7 @@ import org.springframework.integration.core.Message;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.TypePayloadRegexRule;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaExternaPayload;
 
 public class TareaExternaPayloadRegexRule extends TypePayloadRegexRule<DataContainerPayload> {
 

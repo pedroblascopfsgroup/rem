@@ -144,8 +144,8 @@ DECLARE
 		T_TIPO_TFI('H003_ElevarAComite','1','date','fecha','Fecha que se eleva la propuesta','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
 		T_TIPO_TFI('H003_ElevarAComite','2','textarea','observaciones','Observaciones',null,null,null,null,'0','DD'),
 		T_TIPO_TFI('H003_ActualizarTasacion','1','date','fecha','Fecha recepción','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
-		T_TIPO_TFI('H003_CumplimentarParteEconomica','1','combo','comboDelegada','Propuesta Subasta Delegada','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','valores[''H002_InformarTipoPropuesta''][''comboDelegada'']','DDSiNo','0','DD'),
-		T_TIPO_TFI('H003_CumplimentarParteEconomica','2','number','numPropuestaSareb','Núm. Propuesta Sareb',null,null,'valores[''H002_InformarTipoPropuesta''][''numPropuestaSareb'']',null,'0','DD'),
+		T_TIPO_TFI('H003_CumplimentarParteEconomica','1','combo','comboDelegada','Propuesta Subasta Delegada',null,null,'valores[''H003_InformarTipoPropuesta''][''comboDelegada'']','DDSiNo','0','DD'),
+		T_TIPO_TFI('H003_CumplimentarParteEconomica','2','number','numPropuestaSareb','Núm. Propuesta Sareb',null,null,'valores[''H003_InformarTipoPropuesta''][''numPropuestaSareb'']',null,'0','DD'),
 		T_TIPO_TFI('H003_CumplimentarParteEconomica','3','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD')
 		
 		); 
@@ -363,6 +363,13 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_ElevarPropuestaAComite actualizada.');
+    
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
+			  ' SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea deber&aacute; de revisar y dictaminar sobre la propuesta de informe de subasta e informar si la propuesta es delegada si o no.</p><p style="margin-bottom: 10px; margin-left: 40px;">-En caso de seguir con la subasta y la propuesta est&eacute; delegada internamente  y disponga de atribuciones, se lanzar&aacute; la tarea de  "Lectura y aceptaci&oacute;n  de Instrucciones" y en el caso que no tenga atribuciones suficientes, se lanzar&aacute; la tarea de "Elevar Propuesta a Comit&eacute;" para  la aprobaci&oacute;n por el Comite.</p><p style="margin-bottom: 10px; margin-left: 40px;">-En caso que se dictamine la suspensi&oacute;n de la subasta, se lanzar&aacute; la tarea  de "Solicitar suspensi&oacute;n de subasta" a realizar por el letrado.</p><p style="margin-bottom: 10px; margin-left: 40px;">-Preparar propuesta informe de subasta. En caso de haber requerido al supervisor la modificaci&oacute;n de las instrucciones para la subasta.</p><p style="margin-bottom: 10px; margin-left: 40px;">-En caso de que indique que no dispone de atribuci&oacute;n para decidir sobre la subasta, se lanzar&aacute; la tarea "Elevar propuesta a Sareb" para obtener instrucciones desde Sareb.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p></div>''' ||
+			  ' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H003_ValidarPropuesta'')';
+    DBMS_OUTPUT.PUT_LINE(V_MSQL);
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H003_ValidarPropuesta actualizada.');
     
     /* ------------------- --------------------------------- */
 	/* --------------  ACTUALIZACIONES PLAZOS--------------- */

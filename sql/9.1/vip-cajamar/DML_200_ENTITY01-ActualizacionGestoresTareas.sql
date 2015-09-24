@@ -208,6 +208,16 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGESCHRE','SUCHRE')
 ,T_TIPO_VALOR('H033','H033_RegistrarAutoPlanLiquidacion','TGESCON','SUCON')
 ,T_TIPO_VALOR('H033','H033_RendimientoCuentas','TGESCON','SUCON')
 ,T_TIPO_VALOR('H033','H033_ResolucionJuzgado','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ007','CJ007_AutoAprobacionCostas','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ007','CJ007_AutoDecision','DGESCON','')
+,T_TIPO_VALOR('CJ007','CJ007_AutoFirme','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ007','CJ007_ConfirmarNotificacion','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ007','CJ007_Impugnacion','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ007','CJ007_JBPMTramiteNotificacion','','')
+,T_TIPO_VALOR('CJ007','CJ007_RegistrarCelebracionVista','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ007','CJ007_SolicitudTasacion','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ007','CJ007_TasacionCostas','TGESCON','SUCON')
+,T_TIPO_VALOR('P400','P400_GestionarNotificaciones','TGESCON','SUCON')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

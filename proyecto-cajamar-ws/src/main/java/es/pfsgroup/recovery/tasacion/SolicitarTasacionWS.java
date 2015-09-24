@@ -1,8 +1,11 @@
 package es.pfsgroup.recovery.tasacion;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -16,9 +19,15 @@ import org.cajamar.ws.S_A_RECOVERY_TASACION.SARECOVERYTASACIONType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import javax.xml.namespace.QName;
+
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBValoracionesBienInfo;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBPersonasBien;
@@ -28,6 +37,9 @@ import es.pfsgroup.recovery.haya.bienes.manager.SolicitarTasacionWSApi;
 public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 
 	protected final Log logger = LogFactory.getLog(getClass());
+	
+	@Resource
+	private Properties appProperties;
 	
 	// Corresponde a la funcionalidad alta de solicitud
 	private final static String ALTA_SOLICITUD = "1";
@@ -57,9 +69,7 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 			input.setOPCION(ALTA_SOLICITUD);
 			
 			completaSolicitud(input, bien, personasBien, contratosBien, cuenta, personaContacto, telefono, observaciones);
-			ejecutaServicio(input, bien);
-			
-			
+			ejecutaServicio(input, bien);			
 		}
 		catch(Exception e) {
 			logger.error("Error en el método altaSolicitud: " + e.getMessage());
@@ -71,24 +81,37 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		return true;
 	}
 
-	private void ejecutaServicio(INPUT input, NMBBien bien) {
-		SARECOVERYTASACION service = new SARECOVERYTASACION();
-		SARECOVERYTASACIONType servicePort = service.getSARECOVERYTASACIONPort();
-		OUTPUT output = servicePort.sARECOVERYTASACION(input);
+	private void ejecutaServicio(INPUT input, NMBBien bien) throws MalformedURLException {
 		
-		logger.info("CODERROR: " + output.getCODERROR());
-		logger.info("TXTERROR: " + output.getTXTERROR());
-		//logger.info("DESCESTADO: " + output.getDESCESTADO());  QUITADO: YA NO ESTA EN LA INTERFACE
-		// TASA nuevas
-		// IDTA nuevas 
-		logger.info("ESTADO: " + output.getESTADO());
-		logger.info("DOCSOLICITUD: " + output.getDOCSOLICITUD());	
+		String urlWSDL = appProperties.getProperty("wsTasacion.wsdlLocation");
+		String targetNamespace = appProperties.getProperty("wsTasacion.targetNamespace");
+		String name = appProperties.getProperty("wsTasacion.name");
 		
-		if(output.getESTADO().equals("1")) {
-			logger.error("Error en la ejecución del WS de Alta Tasación: " + output.getCODERROR() + " - " + output.getTXTERROR());
+		if(urlWSDL == null || targetNamespace == null || name == null) {
+			logger.error("Error en la ejecución del WS de Alta Tasación: no se han configurado correctamente las propiedades para la llamada al WS");
 		}
 		else {
-			guardarRespuesta(output, bien);
+		
+			URL wsdlLocation = new URL(urlWSDL);
+			QName qName = new QName(targetNamespace, name);
+			
+			SARECOVERYTASACION service = new SARECOVERYTASACION(wsdlLocation, qName);
+			SARECOVERYTASACIONType servicePort = service.getSARECOVERYTASACIONPort();
+			OUTPUT output = servicePort.sARECOVERYTASACION(input);
+			
+			logger.info("CODERROR: " + output.getCODERROR());
+			logger.info("TXTERROR: " + output.getTXTERROR());
+			logger.info("TASA: " + output.getTASA());
+			logger.info("IDTA: " + output.getIDTA()); 
+			logger.info("ESTADO: " + output.getESTADO());
+			logger.info("DOCSOLICITUD: " + output.getDOCSOLICITUD());	
+			
+			if(output.getESTADO().equals("1")) {
+				logger.error("Error en la ejecución del WS de Alta Tasación: " + output.getCODERROR() + " - " + output.getTXTERROR());
+			}
+			else {
+				guardarRespuesta(output, bien);
+			}
 		}
 	}
 
@@ -96,25 +119,35 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 		List<NMBValoracionesBien> valoraciones = bien.getValoraciones();
 		NMBValoracionesBienInfo valoracionActiva = bien.getValoracionActiva();
 		NMBValoracionesBien nueva = new NMBValoracionesBien();
+		
 		if(valoracionActiva != null){
 			for (NMBValoracionesBien val : valoraciones) {
 				if (val.getId() == valoracionActiva.getId() ) 
 					nueva = val;
-					nueva.setCodigoNuita(new Integer(output.getDOCSOLICITUD()));
+					nueva.setCodigoNuita(new Integer(output.getIDTA()));
 					nueva.setFechaSolicitudTasacion(new Date());
 					Auditoria auditoria = Auditoria.getNewInstance();
 					nueva.setAuditoria(auditoria);
 					break;
 	        }
 		} else {
-			nueva.setCodigoNuita(new Integer(output.getDOCSOLICITUD()));
+			nueva.setCodigoNuita(new Integer(output.getIDTA()));
 			nueva.setBien(bien);
 			Auditoria auditoria = Auditoria.getNewInstance();
 			nueva.setAuditoria(auditoria);
 		}
+		
+		String codigoTasadora = output.getTASA();
+		if(codigoTasadora != null) {
+			Filter filtroTasadora = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTasadora);
+			DDTasadora tasadora = genericDao.get(DDTasadora.class, filtroTasadora);
+			nueva.setTasadora(tasadora);
+		}
+		
 		valoraciones.add(nueva);
+		
 		bien.setValoraciones(valoraciones);
-		genericDao.update(NMBBien.class, bien);	
+		genericDao.update(NMBBien.class, bien);		
 	}
 
 	private void completaSolicitud(INPUT input, NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones) {

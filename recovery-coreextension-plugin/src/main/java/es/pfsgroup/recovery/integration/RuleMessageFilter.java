@@ -35,6 +35,9 @@ public class RuleMessageFilter<T> implements Rule<T> {
 				break;
 			}
 		}
+		if (!found) {
+			logger.debug("[INTEGRACION] Mensaje descartado!");
+		}
 		return found;
 	}
 

@@ -95,6 +95,7 @@ public class TareaExternaPayload {
 		setFechaFin(tarNotif.getFechaFin());
 		setFechaVencimiento(tarNotif.getFechaVenc());
 		setFechaVencimientoReal(tarNotif.getFechaVencReal());
+
 	}
 	
 	public void translate(DiccionarioDeCodigos diccionarioCodigos) {
@@ -168,5 +169,5 @@ public class TareaExternaPayload {
 	public UsuarioPayload getUsuario() {
 		return usuario;
 	}
-	
+
 }

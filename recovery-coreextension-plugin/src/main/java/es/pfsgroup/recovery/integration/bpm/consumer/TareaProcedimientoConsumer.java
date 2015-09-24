@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -24,6 +25,10 @@ import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.prorroga.model.CausaProrroga;
+import es.capgemini.pfs.prorroga.model.Prorroga;
+import es.capgemini.pfs.prorroga.model.RespuestaProrroga;
 import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
@@ -34,6 +39,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.api.TareaProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
@@ -65,9 +71,10 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	private final DiccionarioDeCodigos diccionarioCodigos;
+	private final String staDefecto;
 	
 	private ProcedimientoConsumer procedimientoConsumer;
-	
+
 	@Autowired
 	private EXTTareaNotificacionManager extTareaNotifificacionManager;
 
@@ -92,14 +99,16 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	@Autowired
 	private Executor executor;
 
-	public TareaProcedimientoConsumer(Rule<DataContainerPayload> rule, DiccionarioDeCodigos diccionarioCodigos) {
+	public TareaProcedimientoConsumer(Rule<DataContainerPayload> rule, DiccionarioDeCodigos diccionarioCodigos, String staDefecto) {
 		super(rule);
+		this.staDefecto = staDefecto;
 		this.diccionarioCodigos = diccionarioCodigos; 
 	}
 	
-	public TareaProcedimientoConsumer(List<Rule<DataContainerPayload>> rules, DiccionarioDeCodigos diccionarioCodigos) {
+	public TareaProcedimientoConsumer(List<Rule<DataContainerPayload>> rules, DiccionarioDeCodigos diccionarioCodigos, String staDefecto) {
 		super(rules);
 		this.diccionarioCodigos = diccionarioCodigos; 
+		this.staDefecto = staDefecto;
 	}
 
 	public ProcedimientoConsumer getProcedimientoConsumer() {
@@ -115,7 +124,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	}
 
 	private String getGuidTareaNotificacion(TareaExternaPayload tareaExtenaPayload) {
-		return tareaExtenaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea());
+		return tareaExtenaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea()); 
 	}
 	
 	@Transactional(readOnly = false)
@@ -186,7 +195,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		}
 		logger.debug(String.format("[INTEGRACION] TAR[%s] TAP[%s] Tarea procedimiento encontrada", tarUUID, tareaProcedimiento.getCodigo()));
 		
-		String subtipoTarea = getSubTipoTarea(tareaProcedimiento);
+		String subtipoTarea = this.staDefecto; //getSubTipoTarea(tareaProcedimiento);
 		HashMap<String, Object> valores = new HashMap<String, Object>();
 		valores.put("codigoSubtipoTarea", subtipoTarea);
 		valores.put("plazo", 1);					// Luego se modificará con los valores que llegan
@@ -214,6 +223,8 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		}
 		auditoria.setSuplantarUsuario(usuarioPayload.getNombre());
 		auditoria.setUsuarioCrear(usuarioPayload.getNombre());
+		auditoria.setUsuarioModificar(usuarioPayload.getNombre());
+		auditoria.setUsuarioBorrar(usuarioPayload.getNombre());
 	}
 
 	private void postCrearTarea(TareaExternaPayload tareaExtenaPayload, EXTTareaNotificacion tareaNotif) {
@@ -368,6 +379,15 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		String prcUUID = getGuidProcedimiento(tareaExtenaPayload);
 		String tarUUID = getGuidTareaNotificacion(tareaExtenaPayload);
 
+		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Guardando tarea externa...", asuGUID, prcUUID, tarUUID));
+		
+		SubtipoTarea subtipoTarea = genericDao.get(SubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", this.staDefecto));
+		if (subtipoTarea==null) {
+			String errorMsg = String.format("[INTEGRACION] El código STA [%s] proporcionado no es correcto o no existe!!.", this.staDefecto);
+			logger.error(errorMsg);
+			throw new IntegrationDataException(errorMsg);
+		}
+		
 		//
 		logger.info(String.format("[INTEGRACION] ASU[%s] PRC[%s] TAR[%s] Recuperando procedimiento...", asuGUID, prcUUID, tarUUID));
 		MEJProcedimiento procedimiento = getProcedimiento(tareaExtenaPayload);

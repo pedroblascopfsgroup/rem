@@ -92,6 +92,18 @@ DECLARE
         /*dd_tge_editable_web........:*/ '1'
         )
 
+      , T_TIPO_TGE(
+        /*dd_tge_id..................:*/ 's_dd_tge_tipo_gestor.nextval',
+        /*dd_tge_codigo,.............:*/ 'GESEXHRE',
+        /*dd_tge_descripcion,........:*/ 'CJ - Gestor externo HRE',
+        /*dd_tge_descripcion_larga,..:*/ 'CJ - Gestor externo HRE',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0',
+        /*dd_tge_editable_web........:*/ '1'
+        )
+        
     ); 
     V_TMP_TIPO_TGE T_TIPO_TGE;
 
@@ -162,6 +174,20 @@ DECLARE
         /*borrado,...................:*/ '0' 
         )
 
+     ,T_TIPO_STB(
+        /*dd_sta_id..................:*/ 's_dd_sta_subtipo_tarea_base.nextval',
+        /*dd_tar_id..................:*/ '1',
+        /*dd_sta_codigo,.............:*/ 'TGESEXHRE',
+        /*dd_sta_descripcion,........:*/ 'Tarea Gestor externo HRE',
+        /*dd_sta_descripcion_larga...:*/ 'Tarea Gestor externo HRE',
+        /*dd_tge_id..................:*/ 'GESEXHRE',
+        /*dtype......................:*/ 'EXTSubtipoTarea',
+        /*version,...................:*/ '0',
+        /*usuariocrear,..............:*/ 'DD',
+        /*fechacrear,................:*/ 'sysdate',
+        /*borrado,...................:*/ '0' 
+        )
+        
 	  ----------------------        
       -- **** TOMAS DE DECISION ****
 	  ----------------------        

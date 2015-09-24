@@ -7,76 +7,75 @@
     ]]>
   </entry>
   <entry key="facturacion.cuentaControlCobrosEntreDiasQuery">
-  	<![CDATA[
-  		SELECT COUNT(*) FROM CCR_CONTROL_COBROS_RECOBRO WHERE CCR_FECHA BETWEEN ? AND ?
-  	]]>
+    <![CDATA[
+        SELECT COUNT(*) FROM CCR_CONTROL_COBROS_RECOBRO WHERE CCR_FECHA BETWEEN ? AND ?
+    ]]>
   </entry>
   <entry key="facturacion.obtenerDistintasSubcarterasEntreDiasQuery">
-  	<![CDATA[
-		SELECT DISTINCT CPR.RCF_SCA_ID FROM CPR_COBROS_PAGOS_RECOBRO CPR
-		WHERE CPR.CPA_FECHA BETWEEN ? AND ?  	
-  	]]>
+    <![CDATA[
+        SELECT DISTINCT CPR.RCF_SCA_ID FROM CPR_COBROS_PAGOS_RECOBRO CPR
+        WHERE CPR.CPA_FECHA BETWEEN ? AND ?
+    ]]>
   </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.deleteAllQuery">
-  	<![CDATA[
-  		DELETE FROM TMP_RECOBRO_DETALLE_FACTURA
-  	]]>
+    <![CDATA[
+        DELETE FROM TMP_RECOBRO_DETALLE_FACTURA
+    ]]>
   </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.procesaProceso">
-  	<![CDATA[
-  		BEGIN
-  			PROCESA_PROCESO_FACT();
-		END;
-  	]]>
+    <![CDATA[
+        BEGIN
+            PROCESA_PROCESO_FACT();
+        END;
+    ]]>
   </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporalCo.deleteAllQuery">
-  	<![CDATA[
-  		DELETE FROM TMP_RECOBRO_DETALLE_FACTURA_CO
-  	]]>
+    <![CDATA[
+        DELETE FROM TMP_RECOBRO_DETALLE_FACTURA_CO
+    ]]>
   </entry>
   <entry key="facturacion.recobroDetalleFactura.deleteAllQuery">
-  	<![CDATA[
-  		DELETE FROM RDF_RECOBRO_DETALLE_FACTURA
-  	]]>
-  </entry>  
+    <![CDATA[
+        DELETE FROM RDF_RECOBRO_DETALLE_FACTURA
+    ]]>
+  </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.obtenerSubcarterasDetallesFactura">
-  	<![CDATA[
-  		SELECT DISTINCT * FROM RCF_SCA_SUBCARTERA SCA WHERE SCA.RCF_SCA_ID IN (SELECT DISTINCT TMP.RCF_SCA_ID FROM TMP_RECOBRO_DETALLE_FACTURA TMP)
-  	]]>
-  </entry> 
+    <![CDATA[
+        SELECT DISTINCT * FROM RCF_SCA_SUBCARTERA SCA WHERE SCA.RCF_SCA_ID IN (SELECT DISTINCT TMP.RCF_SCA_ID FROM TMP_RECOBRO_DETALLE_FACTURA TMP)
+    ]]>
+  </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.obteneDetallesFacturaPorSubcartera">
-  	<![CDATA[
-  		SELECT DISTINCT * FROM TMP_RECOBRO_DETALLE_FACTURA WHERE RCF_SCA_ID = ?
-  	]]>
-  </entry> 
+    <![CDATA[
+        SELECT DISTINCT * FROM TMP_RECOBRO_DETALLE_FACTURA WHERE RCF_SCA_ID = ?
+    ]]>
+  </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.insertarDetalleTemporalCorregido">
-  	<![CDATA[
-  		INSERT INTO TMP_RECOBRO_DETALLE_FACTURA_CO (PFS_ID, CPA_ID, CNT_ID, EXP_ID, RCF_SCA_ID, RCF_AGE_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU)
-  		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  	]]>
+    <![CDATA[
+        INSERT INTO TMP_RECOBRO_DETALLE_FACTURA_CO (PFS_ID, CPA_ID, CNT_ID, EXP_ID, RCF_SCA_ID, RCF_AGE_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ]]>
   </entry>
   <entry key="facturaction.recobroDetalleFacturaTemporal.insertarDetalleTemporal">
-  	<![CDATA[
-		INSERT INTO TMP_RECOBRO_DETALLE_FACTURA (PFS_ID, CPA_ID, CNT_ID, EXP_ID, RCF_SCA_ID, RCF_AGE_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU)
-  		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  	]]>
-  </entry>     
+    <![CDATA[
+        INSERT INTO TMP_RECOBRO_DETALLE_FACTURA (PFS_ID, CPA_ID, CNT_ID, EXP_ID, RCF_SCA_ID, RCF_AGE_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ]]>
+  </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.transferirDetallesTemporalesCorregidos">
-  	<![CDATA[
-  		INSERT INTO RDF_RECOBRO_DETALLE_FACTURA(RDF_ID, CPA_ID, PFS_ID, CNT_ID, EXP_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, 
-  			RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU, RCF_SCA_ID, RCF_AGE_ID, CPR_ID, 
-  			USUARIOCREAR, FECHACREAR, BORRADO, VERSION) 
-  		SELECT S_RDF_RECOBRO_DETALLE_FACTURA.nextVal, CPA_ID, PFS_ID, CNT_ID, EXP_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE, 
-  			RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU, RCF_SCA_ID, RCF_AGE_ID, CPR_ID, 
-  			'BATCH-FAC', sysdate, 0, 0 FROM TMP_RECOBRO_DETALLE_FACTURA
-  	]]>
+    <![CDATA[
+        INSERT INTO RDF_RECOBRO_DETALLE_FACTURA(RDF_ID, CPA_ID, PFS_ID, CNT_ID, EXP_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE,
+            RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU, RCF_SCA_ID, RCF_AGE_ID, CPR_ID,
+            USUARIOCREAR, FECHACREAR, BORRADO, VERSION)
+        SELECT S_RDF_RECOBRO_DETALLE_FACTURA.nextVal, CPA_ID, PFS_ID, CNT_ID, EXP_ID, RDF_FECHA_COBRO, RDF_PORCENTAJE,
+            RDF_IMPORTE_A_PAGAR, RCF_TCC_ID, RDF_IMP_CONCEP_FACTU, RDF_IMP_REAL_FACTU, RCF_SCA_ID, RCF_AGE_ID, CPR_ID,
+            'BATCH-FAC', sysdate, 0, 0 FROM TMP_RECOBRO_DETALLE_FACTURA
+    ]]>
   </entry>
   <entry key="facturacion.recobroDetalleFacturaTemporal.moveDetallesTemporalesSinCorrectoresQuery">
-  	<![CDATA[
-		INSERT INTO TMP_RECOBRO_DETALLE_FACTURA_CO
-		SELECT * FROM TMP_RECOBRO_DETALLE_FACTURA  	
-		WHERE RCF_SCA_ID = ?
-  	]]>
-  </entry>      
+    <![CDATA[
+        INSERT INTO TMP_RECOBRO_DETALLE_FACTURA_CO
+        SELECT * FROM TMP_RECOBRO_DETALLE_FACTURA
+        WHERE RCF_SCA_ID = ?
+    ]]>
+  </entry>
  </properties>
- 

@@ -89,7 +89,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
     @JoinColumn(name = "BIE_ID")
     private NMBBienEntidad bienEntidad;
     
-    @OneToMany
+    @OneToMany(mappedBy = "bien", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "BIE_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)    
     private List<NMBBienCargas> bienCargas;

@@ -881,14 +881,20 @@ public class SubastaController {
 		List<DDSituacionCarga> situacionCargaEconomica = (List<DDSituacionCarga>) executor
 				.execute("dictionaryManager.getList", "DDSituacionCarga");
 		
-		List<DDTipoCarga> tipoCarga = (List<DDTipoCarga>) executor
+		List<DDTipoCarga> listTipoCarga = (List<DDTipoCarga>) executor
 				.execute("dictionaryManager.getList", "DDTipoCarga");
 	
+		List<DDTipoCarga> tiposCarga = new ArrayList<DDTipoCarga>();
+		for(DDTipoCarga tipoCarga : listTipoCarga) {
+			if(DDTipoCarga.ANTERIORES_HIPOTECA.equals(tipoCarga.getCodigo()) || DDTipoCarga.POSTERIORES_HIPOTECA.equals(tipoCarga.getCodigo())){
+				tiposCarga.add(tipoCarga);
+			}
+		}
 		
 		model.put("idBienes", idBienes);
 		model.put("situacionCarga", situacionCarga);
 		model.put("situacionCargaEconomica", situacionCargaEconomica);
-		model.put("tipoCarga", tipoCarga);
+		model.put("tipoCarga", tiposCarga);
 		
 		
 		return ADD_BIEN_CARGAS;

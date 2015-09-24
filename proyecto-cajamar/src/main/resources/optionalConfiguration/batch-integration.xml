@@ -27,6 +27,7 @@
 		</property>
 		<property name="sessionCacheSize" value="10"/>
 		<property name="cacheProducers" value="false"/>
+		<property name="cacheConsumers" value="false"/>
 	</bean>
 	<bean id="integracionProducerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.producer.cola}"/>

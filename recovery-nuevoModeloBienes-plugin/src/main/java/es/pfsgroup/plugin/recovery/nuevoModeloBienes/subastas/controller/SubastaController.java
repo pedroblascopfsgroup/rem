@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelMasivoSubastas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.EditBienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.NMBBienManager;
@@ -931,7 +932,8 @@ public class SubastaController {
 			cabeceras.add("Puja sin postores");
 			cabeceras.add("Puja con postores DESDE");
 			cabeceras.add("Puja con postores HASTA");
-			cabeceras.add("Valor subasta");
+			cabeceras.add("Tipo subasta");
+			cabeceras.add("Deuda judicial");
 			cabeceras.add("Instrucciones");
 		    
 			
@@ -949,12 +951,13 @@ public class SubastaController {
 					filaValores.add("");
 					filaValores.add("");
 					filaValores.add("");
+					filaValores.add("");
 
 					listaValores.add(filaValores);
 				
 			}
 			
-			HojaExcel hojaExcel = new HojaExcel();
+			HojaExcelMasivoSubastas hojaExcel = new HojaExcelMasivoSubastas();
 			hojaExcel.crearNuevoExcel("plantilla_instrucciones.xls", cabeceras, listaValores);
 			
 			FileItem excelFileItem = new FileItem(hojaExcel.getFile());

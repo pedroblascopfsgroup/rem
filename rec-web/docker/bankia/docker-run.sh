@@ -9,6 +9,11 @@ SHAPSHOT_WAR="$(pwd)/../../target/pfs-9.1-SNAPSHOT.war"
 
 IMAGE_ID=$(docker images | grep "$PLATFORM_N3" | awk '{print $3}')
 
+if [[ ! -f $SHAPSHOT_WAR ]]; then
+	echo "ERROR: $(basename $SHAPSHOT_WAR) No se ha encontrado. ¿Has empaquetado?"
+	exit 1
+fi
+
 if [[ "x$1" == "x-remove" || "x$IMAGE_ID" == "x" ]]; then
 	OPTION_REGENERA=yes
 else
@@ -20,14 +25,22 @@ echo "Validando instalación de la Plataforma Producto de Recovery"
 if [ "x$(docker images | grep $PLATFORM_N2)" != "x" ]; then
 	echo  "$PLATFORM_N2: Se ha encontrado la imagen requerida"
 else
-	echo "ERROR: No se han encontrado las imágenes correspondientes a la plataforma base. Consulta con Arquitectura para su generación."
+	echo "Falta algunas imágenes de la platarforma. Se van a reconstruir"
+	if [ "x$(docker images | grep $PLATFORM_N1)" != "x" ]; then
+		echo "$PLATFORM_N1: Se ha encontrado la imágen"
+	else
+		echo "Generando imágen $PLATFORM_N1"
+		sleep 1
+		docker build --no-cache=true -t $PLATFORM_N1 plataforma/$PLATFORM_N1/.
+		[ $? -ne 0 ] && exit 1
+		echo -e "\n\n"
+	fi
+	echo "Generando imágen $PLATFORM_N2"
+	sleep 1
+	docker build --no-cache=true -t $PLATFORM_N2 plataforma/$PLATFORM_N2/.
+	[ $? -ne 0 ] && exit 1
+	echo -e "\n\n"
 fi
-
-if [[ ! -f $SHAPSHOT_WAR ]]; then
-	echo "ERROR: $(basename $SHAPSHOT_WAR) No se ha encontrado. ¿Has empaquetado?"
-	exit 1
-fi
-
 
 echo "Comprobando si $CONTAINER está arrancado"
 if [ "x$(docker ps | grep $CONTAINER)" != "x" ]; then

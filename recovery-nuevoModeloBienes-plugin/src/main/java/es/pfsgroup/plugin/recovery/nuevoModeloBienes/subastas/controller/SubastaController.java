@@ -1,30 +1,23 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
-import java.io.File;
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
@@ -32,7 +25,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.DatosLoteCDD;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InfoBienesCDD;
@@ -888,14 +880,20 @@ public class SubastaController {
 		List<DDSituacionCarga> situacionCargaEconomica = (List<DDSituacionCarga>) executor
 				.execute("dictionaryManager.getList", "DDSituacionCarga");
 		
-		List<DDTipoCarga> tipoCarga = (List<DDTipoCarga>) executor
+		List<DDTipoCarga> listTipoCarga = (List<DDTipoCarga>) executor
 				.execute("dictionaryManager.getList", "DDTipoCarga");
 	
+		List<DDTipoCarga> tiposCarga = new ArrayList<DDTipoCarga>();
+		for(DDTipoCarga tipoCarga : listTipoCarga) {
+			if(DDTipoCarga.ANTERIORES_HIPOTECA.equals(tipoCarga.getCodigo()) || DDTipoCarga.POSTERIORES_HIPOTECA.equals(tipoCarga.getCodigo())){
+				tiposCarga.add(tipoCarga);
+			}
+		}
 		
 		model.put("idBienes", idBienes);
 		model.put("situacionCarga", situacionCarga);
 		model.put("situacionCargaEconomica", situacionCargaEconomica);
-		model.put("tipoCarga", tipoCarga);
+		model.put("tipoCarga", tiposCarga);
 		
 		
 		return ADD_BIEN_CARGAS;

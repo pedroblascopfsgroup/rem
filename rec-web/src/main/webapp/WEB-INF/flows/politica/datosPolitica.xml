@@ -17,7 +17,7 @@
         </binder>
         <on-render>
           <evaluate expression="executor.execute('politicaManager.getDtoPolitica', idPolitica, idPersona)" result="flowScope.dtoPolitica" />
-          <evaluate expression="executor.execute('politicaManager.getTipoPoliticaList')" result="flashScope.tiposPolitica" />
+          <evaluate expression="executor.execute('politicaManager.getTipoPoliticaPersonaList', idPersona)" result="flashScope.tiposPolitica" />
           <evaluate expression="executor.execute('usuarioManager.getPerfiList')" result="flashScope.perfiles" />
         </on-render>
         <transition on="update" to="update" />

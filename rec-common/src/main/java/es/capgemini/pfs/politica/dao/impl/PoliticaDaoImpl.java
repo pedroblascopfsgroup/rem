@@ -13,6 +13,7 @@ import es.capgemini.pfs.politica.dao.PoliticaDao;
 import es.capgemini.pfs.politica.model.CicloMarcadoPolitica;
 import es.capgemini.pfs.politica.model.DDEstadoItinerarioPolitica;
 import es.capgemini.pfs.politica.model.DDEstadoPolitica;
+import es.capgemini.pfs.politica.model.DDTipoPolitica;
 import es.capgemini.pfs.politica.model.Politica;
 
 /**

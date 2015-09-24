@@ -53,6 +53,7 @@ DECLARE
       ,T_TIPO_TFA('DECADM', 'Decreto de admisión', 'Decreto de admisión', 'TR') -- Trámite de posesión interina
       ,T_TIPO_TFA('SOLCONS', 'Solicitud de consignación', 'Solicitud de consignación', 'AP') -- Trámite de consignación
       ,T_TIPO_TFA('DTCCE', 'Decreto de Tasación de Costas (Costas contra entidad)', 'Decreto de Tasación de Costas (Costas contra entidad)', 'CO') -- Trámite de costras contra entidad
+      ,T_TIPO_TFA('ESCSUS', 'Escrito de suspensión', 'Escrito de suspensión', 'AP') -- Trámite de subasta
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

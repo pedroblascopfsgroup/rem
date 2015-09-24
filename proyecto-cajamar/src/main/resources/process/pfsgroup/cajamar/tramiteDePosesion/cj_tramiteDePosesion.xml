@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2"
+	name="cj_tramiteDePosesion">
+
+	<start-state name="inicio">
+		<transition to="CJ015_RegistrarSolicitudPosesion"></transition>
+	</start-state>
+
+
+	<state name="CJ015_RegistrarSolicitudPosesion">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>adjudicacionHayaLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="CJ015_RegistrarSolicitudPosesion" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ015_RegistrarSolicitudPosesionDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="CJ015_RegistrarSolicitudPosesionDecision" expression="#{CJ015_RegistrarSolicitudPosesionDecision}">
+		<transition to="CJ015_BPMTramiteMoratoriaLanzamiento" name="solicitudMoratoriaLanzamiento"></transition>
+		<transition to="CJ015_BPMTramiteOcupantes" name="posesionConOcupantes"></transition>
+		<transition to="CJ015_RegistrarSolicitudDecision" name="noRequierePosesion"></transition>
+		<transition to="CJ015_RegistrarSenyalamientoPosesion" name="posesionSinOcupantes"></transition>
+		<transition to="CJ015_ConfirmarNotificacionDeudor" name="contratoValido"></transition>
+	</decision>
+
+	<state name="CJ015_BPMTramiteMoratoriaLanzamiento">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="CJ015_RegistrarSolicitudPosesion" name="cj_tramiteMoratoriaLanzamiento"></transition>
+	</state>
+
+	<state name="CJ015_BPMTramiteOcupantes">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="CJ015_BPMTramiteOcupantesDecision" name="cj_tramiteOcupantes"></transition>
+	</state>
+
+	<state name="CJ015_RegistrarSenyalamientoPosesion">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>adjudicacionHayaLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ015_RegistrarSenyalamientoPosesion" name="activarAlerta"></transition>
+		<transition to="CJ015_RegistrarPosesionYLanzamiento" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="CJ015_RegistrarPosesionYLanzamiento">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>bccPosesionLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ015_RegistrarPosesionYLanzamiento" name="activarAlerta"></transition>
+		<transition to="CJ015_RegistrarPosesionYLanzamientoDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="CJ015_RegistrarPosesionYLanzamientoDecision" expression="#{CJ015_RegistrarPosesionYLanzamientoDecision}">
+		<transition to="CJ015_BPMTramiteOcupantes2" name="conOcupantes"></transition>
+		<transition to="ForkRegistrarPosesionLanzamiento" name="sinOcupantes"></transition>
+	</decision>
+
+	<state name="CJ015_RegistrarSenyalamientoLanzamiento">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>adjudicacionHayaLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="CJ015_RegistrarLanzamientoEfectuado" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ015_RegistrarSenyalamientoLanzamiento" name="activarAlerta"></transition>
+	</state>
+
+	<state name="CJ015_RegistrarLanzamientoEfectuado">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>adjudicacionHayaLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ015_RegistrarLanzamientoEfectuado" name="activarAlerta"></transition>
+		<transition to="CJ015_RegistrarSenyalamientoLanzamiento" name="vueltaAtras"></transition>
+		<transition to="CJ015_RegistrarDecisionLlaves" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="CJ015_RegistrarDecisionLlaves">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>adjudicacionHayaLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="CJ015_RegistrarDecisionLlaves" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ015_RegistrarDecisionLlavesDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<node name="CJ015_RegistrarSolicitudDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="Fin"></transition>
+	</node>
+
+	<node name="CJ015_LlavesDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="Fin2"></transition>
+	</node>
+
+	<state name="CJ015_BPMTramiteGestionLlaves">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="CJ015_LlavesDecision" name="cj_tramiteDeGestionDeLlaves"></transition>
+	</state>
+
+	<decision name="CJ015_RegistrarDecisionLlavesDecision" expression="#{CJ015_RegistrarDecisionLlavesDecision}">
+		<transition to="CJ015_BPMTramiteGestionLlaves" name="requiereLlaves"></transition>
+		<transition to="CJ015_LlavesDecision" name="noRequiereLlaves"></transition>
+	</decision>
+
+	<state name="CJ015_BPMTramiteOcupantes2">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="CJ015_BPMTramiteOcupantesDecision2" name="cj_tramiteOcupantes"></transition>
+	</state>
+
+	<decision name="CJ015_BPMTramiteOcupantesDecision" expression="#{H048_BPMTramiteOcupadosResultado}">
+		<transition to="CJ015_RegistrarSenyalamientoPosesion" name="favorable"></transition>
+		<transition to="Fin2" name="desfavorable"></transition>
+	</decision>
+
+	<decision name="CJ015_BPMTramiteOcupantesDecision2" expression="#{H048_BPMTramiteOcupadosResultado}">
+		<transition to="CJ015_RegistrarPosesionYLanzamiento" name="favorable"></transition>
+		<transition to="Fin2" name="desfavorable"></transition>
+	</decision>
+
+	<state name="CJ015_ConfirmarNotificacionDeudor">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<transition to="Fin" name="Fin"></transition>
+      	<transition to="CJ015_ConfirmarNotificacionDeudor" name="activarAlerta"></transition>
+      	<transition to="CJ015_RegistrarSolicitudPosesion" name="vueltaAtras"></transition>
+      	<transition to="CJ015_ConfirmarNotificacionDeudorDecision" name="avanzaBPM"></transition>
+    </state>
+
+	<decision name="CJ015_ConfirmarNotificacionDeudorDecision" expression="#{CJ015_ConfirmarNotificacionDeudorDecision}">
+		<transition to="Fin" name="Si"></transition>
+		<transition to="CJ015_PresentarSolicitudSenyalamientoPosesion" name="No"></transition>
+	</decision>
+
+	<state name="CJ015_PresentarSolicitudSenyalamientoPosesion">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<transition to="Fin" name="Fin"></transition>
+      	<transition to="CJ015_PresentarSolicitudSenyalamientoPosesion" name="activarAlerta"></transition>
+      	<transition to="CJ015_ConfirmarNotificacionDeudor" name="vueltaAtras"></transition>
+      	<transition to="CJ015_RegistrarSenyalamientoPosesion" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="CJ015_SolicitarAlquilerSocial">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<transition to="Fin2" name="Fin"></transition>
+      	<transition to="CJ015_SolicitarAlquilerSocial" name="activarAlerta"></transition>
+      	<transition to="CJ015_SolicitarAlquilerSocialDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="CJ015_SolicitarAlquilerSocialDecision" expression="#{CJ015_SolicitarAlquilerSocialDecision}">
+		<transition to="Fin2" name="No"></transition>
+		<transition to="CJ015_FormalizacionAlquilerSocial" name="Si"></transition>
+	</decision>
+
+	<state name="CJ015_FormalizacionAlquilerSocial">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<transition to="Fin2" name="Fin"></transition>
+      	<transition to="CJ015_FormalizacionAlquilerSocial" name="activarAlerta"></transition>
+      	<transition to="CJ015_SolicitarAlquilerSocial" name="vueltaAtras"></transition>
+      	<transition to="CJ015_FormalizacionAlquilerSocialDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="CJ015_FormalizacionAlquilerSocialDecision" expression="#{CJ015_FormalizacionAlquilerSocialDecision}">
+		<transition to="Fin2" name="No"></transition>
+		<transition to="CJ015_SuspensionLanzamiento" name="Si"></transition>
+	</decision>
+
+	<state name="CJ015_SuspensionLanzamiento">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<transition to="Fin2" name="Fin"></transition>
+      	<transition to="Fin2" name="avanzaBPM"></transition>
+      	<transition to="CJ015_SuspensionLanzamiento" name="activarAlerta"></transition>
+      	<transition to="CJ015_FormalizacionAlquilerSocial" name="vueltaAtras"></transition>
+	</state>
+
+	<fork name="ForkRegistrarPosesionLanzamiento">
+		<transition to="lanzamientoDecision" name="decisionLanzamiento"></transition>
+		<transition to="esViviendaHabitualDecision" name="decisionViviendaHabitual"></transition>
+	</fork>
+
+	<decision name="esViviendaHabitualDecision" expression="#{op_viviendaHabitual}">
+		<transition to="CJ015_SolicitarAlquilerSocial" name="Si"></transition>
+		<transition to="Fin2" name="No"></transition>
+	</decision>
+
+	<decision name="lanzamientoDecision" expression="#{op_lanzamiento}">
+		<transition to="CJ015_RegistrarDecisionLlaves" name="noHayLanzamiento"></transition>
+		<transition to="CJ015_RegistrarSenyalamientoLanzamiento" name="hayLanzamiento"></transition>
+	</decision>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>	
+	</end-state>
+
+	<end-state name="Fin2">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+	
+</process-definition>

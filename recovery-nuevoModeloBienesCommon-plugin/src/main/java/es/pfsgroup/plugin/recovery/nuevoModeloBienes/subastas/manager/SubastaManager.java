@@ -1412,14 +1412,7 @@ public class SubastaManager implements SubastaApi {
 		@Override
 		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_CONTRATO)
 		public Contrato getContratoByNroContrato(String nroContrato){
-			Contrato contrato=null;
-			try{
-				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "nroContrato", nroContrato);
-				contrato=(Contrato) genericDao.get(Contrato.class,filtro1);
-			}catch(Exception e){
-				logger.error(e);
-			}
-			return contrato;
+			return subastaDao.getContratoByNroContrato(nroContrato);
 		}
 		
 		@BusinessOperation(BO_NMB_SUBASTA_OBTENER_RELACION_BIENES_CONTRATOS)

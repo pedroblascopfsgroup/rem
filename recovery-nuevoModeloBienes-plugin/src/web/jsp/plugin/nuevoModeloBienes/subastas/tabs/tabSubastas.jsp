@@ -798,7 +798,7 @@
 
     var lotesCM = new Ext.grid.ColumnModel([
     		expanderLote,
-    		{header: 'id',dataIndex:'idLote',hidden:'true', renderer : coloredRender,css: colorFondo},
+    		{header: 'Id. Lote',width:55, dataIndex:'idLote',renderer : coloredRender,css: colorFondo},
 			{header: '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.lote" text="**Lote"/>', width: 60, dataIndex : 'numLote', renderer : coloredRender,css: colorFondo},
 	        {header: '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.pujaSinPostores" text="**Puja sin postores"/>', width: 180,  dataIndex: 'pujaSin', renderer : moneyColoredRender,align:'right',css: colorFondo },
 		    {header: '<s:message code="plugin.nuevoModeloBienes.subastas.gridLotes.pujaConPostoresDesde" text="**Puja con postores desde"/>', width: 120,  dataIndex: 'pujaConDesde',renderer : moneyColoredRender,align:'right',css: colorFondo},

@@ -87,7 +87,7 @@ public class SubastanInstMasivasUtils {
 			MSVExcelValidator.CODIFICACION_NUMERICA + OBL, 
 			MSVExcelValidator.CODIFICACION_IMPORTE + OBL, MSVExcelValidator.CODIFICACION_IMPORTE + OBL,
 			MSVExcelValidator.CODIFICACION_IMPORTE + OBL, MSVExcelValidator.CODIFICACION_IMPORTE + OBL,
-			MSVExcelValidator.CODIFICACION_STRING});
+			MSVExcelValidator.CODIFICACION_IMPORTE + OBL, MSVExcelValidator.CODIFICACION_STRING});
 	
 	private DecimalFormat format;
 	private SimpleDateFormat df;
@@ -327,6 +327,8 @@ public class SubastanInstMasivasUtils {
 			} else if (columna==6) {
 				lote.setValorSubasta(format.parse(valor).floatValue());
 			} else if (columna==7) {
+				lote.setDeudaJudicial(format.parse(valor).floatValue());
+			} else if (columna==8) {
 				lote.setInstrucciones(valor);
 			}
 		} catch (NumberFormatException e) {
@@ -409,7 +411,7 @@ public class SubastanInstMasivasUtils {
 		String cero = "0.0"				;
 		
 		GuardarInstruccionesDto dto = new GuardarInstruccionesDto();
-		dto.setDeudaJudicial(cero);
+		dto.setDeudaJudicial(lote.getDeudaJudicial().toString());
 		dto.setIdLote(lote.getIdLote().toString());
 		dto.setObservaciones(lote.getInstrucciones());
 		dto.setPujaPostoresDesde(lote.getPujaPostoresDesde().toString());

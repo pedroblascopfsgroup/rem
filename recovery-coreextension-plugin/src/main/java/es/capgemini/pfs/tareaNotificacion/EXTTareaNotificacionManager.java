@@ -90,6 +90,7 @@ import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimiz
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
 import es.pfsgroup.recovery.integration.Guid;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
 public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionManager implements TareaNotificacionApi {
@@ -131,6 +132,9 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
     @Autowired
     private ExpedienteManagerApi expedienteManager;
 
+	@Autowired
+	private IntegracionBpmService integracionBPMService;
+    
     @Override
     @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_MGR_GET)
     @Transactional
@@ -198,8 +202,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
         // Si se acepta la prorroga
         // se deja traza del evento
+        Long idTareaAComunicar = null;
         if (("on".equals(dto.getAceptada())) || ("true".equals(dto.getAceptada()))) {
             TareaNotificacion tareaAsociada = prorroga.getTareaAsociada();
+            idTareaAComunicar = tareaAsociada.getId();
             tareaAsociada.setAlerta(false);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put(AceptarProrrogaListener.CLAVE_ID_TAREA_NOTIFICACION, tareaAsociada.getId());
@@ -222,6 +228,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                     l.fireEvent(map);
                 }
             }
+            
             // Si acepto la prorroga, se cambia la fecha fin de la tarea
             // asociada
             if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad.getCodigo())) {
@@ -249,7 +256,13 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         } else {
             // Si se rechaza la prorroga
             // Se rechaza y se notifica
-            this.crearNotificacion(dto.getIdEntidadInformacion(), tipoEntidad.getCodigo(), subtipoTarea, dto.getDescripcionCausa());
+        	idTareaAComunicar = this.crearNotificacion(dto.getIdEntidadInformacion(), tipoEntidad.getCodigo(), subtipoTarea, dto.getDescripcionCausa());
+        }
+
+        // Comunicación de la tarea creada a mensajería.
+        if (!Checks.esNulo(idTareaAComunicar)) {
+	        TareaNotificacion tarea = this.get(idTareaAComunicar);
+	    	integracionBPMService.notificaTarea(tarea);
         }
 
     }

@@ -777,7 +777,61 @@
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INSUFI");
 				}
-
+				
+				def comprobarExisteDocumentoCRRESTRA = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRRESTRA");
+	            }
+	            
+	            def comprobarExisteDocumentoCRACCES = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRACCES");
+	            }
+	            
+	            def comprobarExisteDocumentoCRSOLADJ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRSOLADJ");
+	            }
+	            
+				def comprobarExisteDocumentoSCBCPC = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCPC");
+	            }
+	            
+	            def comprobarExisteDocumentoSCBCCR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCCR");
+	            }
+	            
+				def comprobarExisteDocumentoCAS = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
+	            }
+	            
+	            def bienConCesionRemate = {
+	  				def entidad = '';
+	                def nMBProcedimientoManager = ctx.getBean("nmbProcedimientoManager");
+	                def listadoBienes = nMBProcedimientoManager.getBienesDeUnProcedimiento(idProcedimiento); 
+	  				for (bien in listadoBienes) {
+	  					if (bien.getAdjudicacion() != null 
+	  						&& bien.getAdjudicacion().getCesionRemate() != null
+	  						&& bien.getAdjudicacion().getCesionRemate()) {
+	  						return true;
+	  					}
+	  				}
+	  				return false;
+	  			}
+				
+            	def comprobarExisteDocumentoPRVFND = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PRVFND");
+				}
+	            
+            	def comprobarExisteDocumentoLIBARR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LIBARR");
+	            }
+            	
   			 ]]>
   			</value>
   		</list>

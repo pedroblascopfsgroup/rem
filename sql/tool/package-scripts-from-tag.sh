@@ -44,4 +44,4 @@ if [ "$#" -lt 2 ]; then
     exit
 fi
 
-./sql/tool/run-scripts-from-tag.sh $1 $2 lala package! 
+./sql/tool/run-scripts-from-tag.sh $1 $2 null package! 

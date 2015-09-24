@@ -208,6 +208,16 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','0','0')
 ,T_TIPO_VALOR('H033','H033_RegistrarAutoPlanLiquidacion','1','3')
 ,T_TIPO_VALOR('H033','H033_RendimientoCuentas','1','3')
 ,T_TIPO_VALOR('H033','H033_ResolucionJuzgado','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_AutoAprobacionCostas','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_AutoDecision','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_AutoFirme','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_ConfirmarNotificacion','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_Impugnacion','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_JBPMTramiteNotificacion','0','0')
+,T_TIPO_VALOR('CJ007','CJ007_RegistrarCelebracionVista','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_SolicitudTasacion','1','3')
+,T_TIPO_VALOR('CJ007','CJ007_TasacionCostas','1','3')
+,T_TIPO_VALOR('P400','P400_GestionarNotificaciones','0','0')
 
 ); 
 V_TMP_TIPO T_TIPO_VALOR;

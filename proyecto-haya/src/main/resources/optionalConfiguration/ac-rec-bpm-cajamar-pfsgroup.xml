@@ -341,12 +341,6 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarCargasBienesProcedimiento(idProcedimiento);
 				}
-				
-				def comprobarExisteDocumento = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, it);
-	            }					            
-
   			 ]]>
   			</value>
   		</list>

@@ -1,30 +1,23 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.controller;
 
-import java.io.File;
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
@@ -32,7 +25,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.DatosLoteCDD;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InfoBienesCDD;
@@ -49,6 +41,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelMasivoSubastas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.EditBienApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.NMBBienManager;
@@ -888,14 +881,20 @@ public class SubastaController {
 		List<DDSituacionCarga> situacionCargaEconomica = (List<DDSituacionCarga>) executor
 				.execute("dictionaryManager.getList", "DDSituacionCarga");
 		
-		List<DDTipoCarga> tipoCarga = (List<DDTipoCarga>) executor
+		List<DDTipoCarga> listTipoCarga = (List<DDTipoCarga>) executor
 				.execute("dictionaryManager.getList", "DDTipoCarga");
 	
+		List<DDTipoCarga> tiposCarga = new ArrayList<DDTipoCarga>();
+		for(DDTipoCarga tipoCarga : listTipoCarga) {
+			if(DDTipoCarga.ANTERIORES_HIPOTECA.equals(tipoCarga.getCodigo()) || DDTipoCarga.POSTERIORES_HIPOTECA.equals(tipoCarga.getCodigo())){
+				tiposCarga.add(tipoCarga);
+			}
+		}
 		
 		model.put("idBienes", idBienes);
 		model.put("situacionCarga", situacionCarga);
 		model.put("situacionCargaEconomica", situacionCargaEconomica);
-		model.put("tipoCarga", tipoCarga);
+		model.put("tipoCarga", tiposCarga);
 		
 		
 		return ADD_BIEN_CARGAS;
@@ -933,7 +932,8 @@ public class SubastaController {
 			cabeceras.add("Puja sin postores");
 			cabeceras.add("Puja con postores DESDE");
 			cabeceras.add("Puja con postores HASTA");
-			cabeceras.add("Valor subasta");
+			cabeceras.add("Tipo subasta");
+			cabeceras.add("Deuda judicial");
 			cabeceras.add("Instrucciones");
 		    
 			
@@ -951,12 +951,13 @@ public class SubastaController {
 					filaValores.add("");
 					filaValores.add("");
 					filaValores.add("");
+					filaValores.add("");
 
 					listaValores.add(filaValores);
 				
 			}
 			
-			HojaExcel hojaExcel = new HojaExcel();
+			HojaExcelMasivoSubastas hojaExcel = new HojaExcelMasivoSubastas();
 			hojaExcel.crearNuevoExcel("plantilla_instrucciones.xls", cabeceras, listaValores);
 			
 			FileItem excelFileItem = new FileItem(hojaExcel.getFile());

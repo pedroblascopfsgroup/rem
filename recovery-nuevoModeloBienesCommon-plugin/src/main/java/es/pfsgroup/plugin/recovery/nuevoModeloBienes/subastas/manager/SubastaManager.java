@@ -1157,7 +1157,7 @@ public class SubastaManager implements SubastaApi {
 						// necesitamos y nos quedamos con el último
 						if (!Checks.esNulo(hp.getCodigoTarea()) &&  nombreNodo.equals(hp.getCodigoTarea())) {
 							hPrc = hp;
-							break;
+							//break;
 						}
 					}
 				}

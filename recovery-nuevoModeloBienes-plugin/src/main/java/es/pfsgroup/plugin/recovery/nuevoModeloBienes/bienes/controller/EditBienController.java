@@ -4174,4 +4174,24 @@ public class EditBienController {
 			throw e;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isFondoTitulizado(String codigoFondo, ModelMap model) {
+
+		if(!Checks.esNulo(codigoFondo)){
+			DDTipoFondo fondo = genericDao.get(DDTipoFondo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoFondo), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	
+			if (!Checks.esNulo(fondo.getCesionRemate()) && fondo.getCesionRemate()){
+				model.put("okko","OK");
+			}else{
+				model.put("okko","KO");
+			}
+		}
+		else{
+			model.put("okko","OK");
+		}
+		
+		return OK_KO_RESPUESTA_JSON;
+	}
 }

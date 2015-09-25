@@ -1700,7 +1700,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	public List<Procedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId) {
 
 		//List<DtoProcedimiento> listado = new ArrayList<DtoProcedimiento>();
-		List<Procedimiento> list = genericdDao.getList(Procedimiento.class, genericdDao.createFilter(FilterType.EQUALS, "asunto.id", asuId));
+		List<Procedimiento> list = genericdDao.getList(Procedimiento.class, 
+				genericdDao.createFilter(FilterType.EQUALS, "asunto.id", asuId),
+				genericdDao.createFilter(FilterType.EQUALS, "borrado", false));
 		for (Procedimiento p : list) {
 			p.setActivo(isProcedimientoActivo(p));
 		}

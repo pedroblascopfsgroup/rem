@@ -1,2 +1,0 @@
-update bank01.TAP_TAREA_PROCEDIMIENTO set TAP_SCRIPT_VALIDACION = 'comprobarGestoriaAsignadaPrc() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe asignar la Gestor&'||'iacute;a encargada de tramitar el saneamiento de las cargas.</div>'''
-where tap_codigo = 'P413_RegistrarInscripcionDelTitulo';

@@ -371,6 +371,7 @@ BEGIN
      /*
      * Desactivamos trámites antiguos si existen
      */
+    VAR_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';
     V_CODIGO_TPO := 'DD_TPO_CODIGO';
     V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||VAR_TABLENAME||' WHERE '||V_CODIGO_TPO||' = '''||CODIGO_PROCEDIMIENTO_ANTIGUO_1||''' AND BORRADO=0 ';
         

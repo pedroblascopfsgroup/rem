@@ -220,6 +220,7 @@
 					<property name="crearNuevo" value="true"/>
 					<property name="forzarTipoProcedimiento" value="HCJ001"/>
 				</bean>
+				
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
@@ -231,6 +232,19 @@
 					<property name="iniciarBPM" value="true"/>
 					<property name="crearNuevo" value="true"/>
 					<property name="forzarTipoProcedimiento" value="HCJ002"/>
+				</bean>
+				
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+							<property name="tipo" value="BPM-TAREA-INICIO"/>
+							<property name="codigoTarea" value="HC103_ConfirmarSolicitud"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Inicio de Autorización"/>
+					<property name="iniciarBPM" value="true"/>
+					<property name="crearNuevo" value="true"/>
+					<property name="forzarTipoProcedimiento" value="HCJ003"/>
 				</bean>
 
 				<!-- ACTUALIZACION DE CABECERA RECURSO -->

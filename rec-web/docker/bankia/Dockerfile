@@ -52,7 +52,7 @@ ENV PROJECT Bankia
 
 # Tag de la configuración. Este tag se puede usar indicar, por ejemplo
 #    si la imágen es para un entorno de desarrollo, integracion, etc ...
-ENV RECOVERY_CFG_TAG intebankia
+ENV RECOVERY_CFG_TAG intebankia.IBD13
 
 # Versión de Recovery que desplegaremos
 ENV RECOVERY_VERSION 9.1.15-bk-rc02
@@ -68,17 +68,17 @@ ENV WEB_MASTER_DSNAME 'jdbc/bankmaster_Oracle9iDialect'
 ENV WEB_ENTITY_DSNAME 'jdbc/bank01_Oracle9iDialect'
 
 # Datos de conexión
-ENV WEB_DBHOST 192.168.0.148
-ENV WEB_DBPORT 1521
-ENV WEB_DBSID inte1bankia
+ENV WEB_DBHOST 192.168.0.152
+ENV WEB_DBPORT 1523
+ENV WEB_DBSID ibd013
 
 # Datos de acceso para Recovery
 ENV WEB_MASTER_SCHEMA BANKMASTER
-ENV WEB_MASTERUSER BANKMASTER
+ENV WEB_MASTERUSER BANKMASTER_TX
 ENV WEB_MASTERENCPASSWD j0b3d2CHe3I=04045316
 ENV WEB_MASTEPLAINPASSWD admin
 
-ENV WEB_ENTITY1USER BANK01
+ENV WEB_ENTITY1USER BANK01_TX
 ENV WEB_ENTITY1ENCPASSWD j0b3d2CHe3I=04045316
 ENV WEB_ENTITY1LAINPASSWD admin
 

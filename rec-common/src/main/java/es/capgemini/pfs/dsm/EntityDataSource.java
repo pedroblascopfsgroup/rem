@@ -127,7 +127,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	 *             Si falta por configurar cualquier cosa en devon.properties
 	 */
 	private void cambiaCurrentSchema(Connection cnx) throws SQLException {
-		Long dbId = DbIdContextHolder.getDbId();
+		Long dbId = (Long) determineCurrentLookupKey();
 		if (!DataSourceManager.NO_DATASOURCE_ID.equals(dbId)) {
 			Statement st = cnx.createStatement();
 			if (DataSourceManager.MASTER_DATASOURCE_ID.equals(dbId)) {

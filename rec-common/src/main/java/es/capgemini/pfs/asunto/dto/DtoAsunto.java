@@ -35,6 +35,8 @@ public class DtoAsunto extends WebDto {
     private String observaciones;
 
     private Long idProcurador;
+    
+    private String codigoEstadoAsunto;
 
     /**
      * @return the idGestor
@@ -170,5 +172,13 @@ public class DtoAsunto extends WebDto {
     public void setIdProcurador(Long idProcurador) {
         this.idProcurador = idProcurador;
     }
+
+	public String getCodigoEstadoAsunto() {
+		return codigoEstadoAsunto;
+	}
+
+	public void setCodigoEstadoAsunto(String codigoEstadoAsunto) {
+		this.codigoEstadoAsunto = codigoEstadoAsunto;
+	}
 
 }

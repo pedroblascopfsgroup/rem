@@ -338,14 +338,19 @@
 			procedimientoInterno.label.update('<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
 			procedimientoJuzgado.label.update('<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');
 
-			Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
+			<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
+				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
+			</sec:authorize>
 
 		} else {
 			panelProcedimientoPrecontencioso.hide();
 			nExpedienteInterno.hide();
 			recuperacion.show();
 			meses.show();
-			Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
+
+			<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
+				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
+			</sec:authorize>
 
 			procedimientoInterno.label.update('<s:message code="procedimiento.tabcabecera.procinterno" text="**Nro. Proc. Interno"/>');
 			procedimientoJuzgado.label.update('<s:message code="procedimiento.tabcabecera.procjuzgado" text="**Nro. Proc. en Juzgado"/>');

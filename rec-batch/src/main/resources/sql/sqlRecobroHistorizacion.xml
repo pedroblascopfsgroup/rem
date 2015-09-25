@@ -1,75 +1,75 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-  <entry key="recobro.historizar_tablas.Oracle9iDialect">
+  <entry key="recobro.historizar_tablas.Oracle10gDialect">
     <![CDATA[
-		-- SET SERVEROUTPUT ON;
-		DECLARE
-		  TYPE T_NTABLAS IS TABLE OF VARCHAR2(100);
-		  
-		  V_TABLAS_HISTORIFICAR T_NTABLAS := T_NTABLAS('TMP_REC_EXP_AGE_CNT_EXC','REC_FICHERO_CONTRATOS','REC_FICHERO_PERSONAS','REC_FICHERO_CONTRATOS_PERSONAS',
-		                                                'REC_FICHERO_CONTRATOS_BAJAS','REC_FICHERO_DIRECCIONES','REC_FICHERO_TELEFONOS', 'REC_FICHERO_ADECUACIONES',
-		                                                'REC_FICHERO_DISPOSICIONES', 'REC_FICHERO_EFECTOS', 'REC_FICHERO_EFECTOS_PERSONAS', 'REC_FICHERO_PALANCAS',
-		                                                'REC_FICHERO_RECIBOS');
-		
-		  V_TABLA_HISTORIFICAR VARCHAR(30);
-		  V_TABLA_HISTORICO VARCHAR(30);
-		  V_FECHA_HIST TIMESTAMP(6) := SYSDATE;
-		  V_COUNT_TABLE INT;
-		  V_SQL VARCHAR(2000);
-		BEGIN
-		  FOR I IN V_TABLAS_HISTORIFICAR.FIRST .. V_TABLAS_HISTORIFICAR.LAST
-		  LOOP
-		    V_TABLA_HISTORIFICAR := V_TABLAS_HISTORIFICAR(I);
-		    -- Los nombres de tabla no pueden tener mas de 30 caracteres
-		    V_TABLA_HISTORICO := 'H_'||SUBSTR(V_TABLAS_HISTORIFICAR(I),1,28);
-		    DBMS_OUTPUT.PUT_LINE('');
-		    DBMS_OUTPUT.PUT_LINE('HISTORIFICACION TABLA: '||V_TABLA_HISTORIFICAR);
-		    DBMS_OUTPUT.PUT_LINE('============================================================');
-		    
-		    -- Buscamos si existe la tabla de historico
-		    SELECT COUNT(*) INTO V_COUNT_TABLE FROM USER_TABLES WHERE TABLE_NAME = UPPER(V_TABLA_HISTORICO);
-		    IF V_COUNT_TABLE = 0 THEN
-		      -- Si no existe la tabla de historico, la creamos a la vez que insertamos los registros
-		      V_SQL := 'CREATE TABLE '||V_TABLA_HISTORICO||' AS
-		                SELECT TO_TIMESTAMP('''||V_FECHA_HIST||''') AS FECHA_HIST,T.* FROM '||V_TABLA_HISTORIFICAR||' T';
-		      DBMS_OUTPUT.PUT_LINE(V_SQL);
-		      EXECUTE IMMEDIATE V_SQL;
-		    ELSE
-		      -- Si existe, insertamos los registros
-		      V_SQL := 'INSERT INTO '||V_TABLA_HISTORICO||' 
-		                SELECT TO_TIMESTAMP('''||V_FECHA_HIST||''') AS FECHA_HIST,T.* FROM '||V_TABLA_HISTORIFICAR||' T';
-		      DBMS_OUTPUT.PUT_LINE(V_SQL);
-		      EXECUTE IMMEDIATE V_SQL;
-		    END IF;
-		  END LOOP; --LOOP TABLAS
-		  COMMIT;
-		  FOR I IN V_TABLAS_HISTORIFICAR.FIRST .. V_TABLAS_HISTORIFICAR.LAST
-		  LOOP
-		    V_TABLA_HISTORIFICAR := V_TABLAS_HISTORIFICAR(I);
-		    -- Los nombres de tabla no pueden tener mas de 30 caracteres
-		    V_TABLA_HISTORICO := 'H_'||SUBSTR(V_TABLAS_HISTORIFICAR(I),1,28);
-		    DBMS_OUTPUT.PUT_LINE('');
-		    DBMS_OUTPUT.PUT_LINE('ACTUALIZAMOS ESTADISTICAS: '||V_TABLA_HISTORIFICAR);
-		    DBMS_OUTPUT.PUT_LINE('============================================================');
-		    SYS.DBMS_STATS.GATHER_TABLE_STATS (ownname => 'BANK01', tabname => V_TABLA_HISTORIFICAR, estimate_percent => 20);
-		  END LOOP;
-		END;
+        -- SET SERVEROUTPUT ON;
+        DECLARE
+          TYPE T_NTABLAS IS TABLE OF VARCHAR2(100);
+
+          V_TABLAS_HISTORIFICAR T_NTABLAS := T_NTABLAS('TMP_REC_EXP_AGE_CNT_EXC','REC_FICHERO_CONTRATOS','REC_FICHERO_PERSONAS','REC_FICHERO_CONTRATOS_PERSONAS',
+                                                        'REC_FICHERO_CONTRATOS_BAJAS','REC_FICHERO_DIRECCIONES','REC_FICHERO_TELEFONOS', 'REC_FICHERO_ADECUACIONES',
+                                                        'REC_FICHERO_DISPOSICIONES', 'REC_FICHERO_EFECTOS', 'REC_FICHERO_EFECTOS_PERSONAS', 'REC_FICHERO_PALANCAS',
+                                                        'REC_FICHERO_RECIBOS');
+
+          V_TABLA_HISTORIFICAR VARCHAR(30);
+          V_TABLA_HISTORICO VARCHAR(30);
+          V_FECHA_HIST TIMESTAMP(6) := SYSDATE;
+          V_COUNT_TABLE INT;
+          V_SQL VARCHAR(2000);
+        BEGIN
+          FOR I IN V_TABLAS_HISTORIFICAR.FIRST .. V_TABLAS_HISTORIFICAR.LAST
+          LOOP
+            V_TABLA_HISTORIFICAR := V_TABLAS_HISTORIFICAR(I);
+            -- Los nombres de tabla no pueden tener mas de 30 caracteres
+            V_TABLA_HISTORICO := 'H_'||SUBSTR(V_TABLAS_HISTORIFICAR(I),1,28);
+            DBMS_OUTPUT.PUT_LINE('');
+            DBMS_OUTPUT.PUT_LINE('HISTORIFICACION TABLA: '||V_TABLA_HISTORIFICAR);
+            DBMS_OUTPUT.PUT_LINE('============================================================');
+
+            -- Buscamos si existe la tabla de historico
+            SELECT COUNT(*) INTO V_COUNT_TABLE FROM USER_TABLES WHERE TABLE_NAME = UPPER(V_TABLA_HISTORICO);
+            IF V_COUNT_TABLE = 0 THEN
+              -- Si no existe la tabla de historico, la creamos a la vez que insertamos los registros
+              V_SQL := 'CREATE TABLE '||V_TABLA_HISTORICO||' AS
+                        SELECT TO_TIMESTAMP('''||V_FECHA_HIST||''') AS FECHA_HIST,T.* FROM '||V_TABLA_HISTORIFICAR||' T';
+              DBMS_OUTPUT.PUT_LINE(V_SQL);
+              EXECUTE IMMEDIATE V_SQL;
+            ELSE
+              -- Si existe, insertamos los registros
+              V_SQL := 'INSERT INTO '||V_TABLA_HISTORICO||'
+                        SELECT TO_TIMESTAMP('''||V_FECHA_HIST||''') AS FECHA_HIST,T.* FROM '||V_TABLA_HISTORIFICAR||' T';
+              DBMS_OUTPUT.PUT_LINE(V_SQL);
+              EXECUTE IMMEDIATE V_SQL;
+            END IF;
+          END LOOP; --LOOP TABLAS
+          COMMIT;
+          FOR I IN V_TABLAS_HISTORIFICAR.FIRST .. V_TABLAS_HISTORIFICAR.LAST
+          LOOP
+            V_TABLA_HISTORIFICAR := V_TABLAS_HISTORIFICAR(I);
+            -- Los nombres de tabla no pueden tener mas de 30 caracteres
+            V_TABLA_HISTORICO := 'H_'||SUBSTR(V_TABLAS_HISTORIFICAR(I),1,28);
+            DBMS_OUTPUT.PUT_LINE('');
+            DBMS_OUTPUT.PUT_LINE('ACTUALIZAMOS ESTADISTICAS: '||V_TABLA_HISTORIFICAR);
+            DBMS_OUTPUT.PUT_LINE('============================================================');
+
+            OPERACION_DDL.DDL_TABLE('REFRESH',V_TABLA_HISTORIFICAR);
+          END LOOP;
+        END;
     ]]>
-  </entry>   
-     
-  <!-- Renombramos la tabla de ARP_ARQ_RECOBRO_PERSONA de hoy a la del dia anterior -->        
-  <entry key="recobro.mantenimiento_arp_arq_recobro_persona.Oracle9iDialect">
+  </entry>
+
+  <!-- Renombramos la tabla de ARP_ARQ_RECOBRO_PERSONA de hoy a la del dia anterior -->
+  <entry key="recobro.mantenimiento_arp_arq_recobro_persona.Oracle10gDialect">
     <![CDATA[
-			DELETE FROM ARP_ARQ_RECOBRO_PERSONA WHERE ARP_ID IN (
-	  		WITH ARP AS (
-	    		SELECT ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) N, ARP.*
-	  		FROM ARP_ARQ_RECOBRO_PERSONA ARP
-	  		)
-	  		SELECT ARP_ID FROM ARP WHERE N > 5
-			)
+            DELETE FROM ARP_ARQ_RECOBRO_PERSONA WHERE ARP_ID IN (
+            WITH ARP AS (
+                SELECT ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) N, ARP.*
+            FROM ARP_ARQ_RECOBRO_PERSONA ARP
+            )
+            SELECT ARP_ID FROM ARP WHERE N > 5
+            )
     ]]>
-  </entry>            
-      
+  </entry>
+
  </properties>
- 

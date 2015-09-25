@@ -142,7 +142,11 @@
 		});	
 		
 	var validateForm = function(){
-	
+		if(tipoCarga.getValue() == ''){
+                 Ext.MessageBox.alert('<s:message code="plugin.nuevoModeloBienes.cargas.validar.warning" text="**Aviso" />'
+                 ,'<s:message code="plugin.nuevoModeloBienes.cargas.validar.msgTipoCarga" text="**Debe seleccionar un valor de Tipo Carga" />');
+                 return false;
+        }
 	  	if(situacionCarga.getValue() == '' && registral.checked == true){
                  Ext.MessageBox.alert('<s:message code="plugin.nuevoModeloBienes.cargas.validar.warning" text="**Aviso" />'
                  ,'<s:message code="plugin.nuevoModeloBienes.cargas.validar.msgSituacionCarga" text="**Seleccionar una Situacion de Carga Registral" />');
@@ -179,7 +183,7 @@
 			,cls: 'x-btn-text-icon'
 			,style:'margin-left:2px;padding-top:0px'
 		    ,handler:function(){
-				if (validateForm()) {		    
+				if (validateForm()) {	
 			    	var p = getParametros();
 			    	Ext.Ajax.request({
 							url : page.resolveUrl('subasta/saveCargaMultiple'), 

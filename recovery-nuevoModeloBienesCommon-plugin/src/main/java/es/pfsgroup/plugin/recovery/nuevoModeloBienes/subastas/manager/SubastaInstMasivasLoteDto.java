@@ -12,6 +12,7 @@ public class SubastaInstMasivasLoteDto {
 	private Float pujaPostoresHasta;
 	private Float valorSubasta;
 	private String instrucciones;
+	private Float deudaJudicial;
 	
 	public String getNumAutos() {
 		return numAutos;
@@ -60,6 +61,12 @@ public class SubastaInstMasivasLoteDto {
 	}
 	public void setInstrucciones(String instrucciones) {
 		this.instrucciones = instrucciones;
+	}
+	public Float getDeudaJudicial() {
+		return deudaJudicial;
+	}
+	public void setDeudaJudicial(Float deudaJudicial) {
+		this.deudaJudicial = deudaJudicial;
 	}
 	
 }

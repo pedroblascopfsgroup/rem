@@ -40,8 +40,6 @@ BEGIN
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta pantalla deberá informar de la fecha en la que se toma una decisión sobre la solicitud de provisión de fondos y el resultado de dicha decisión.</p><p style="margin-bottom: 10px">En caso de no tener atribuciones para confirmar la provisión por la cuantía solicitada, deberá indicarlo en el campo "Requiere confirmación".</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellena esta pantalla, el siguiente paso será:</p><p style="margin-bottom: 10px">-En caso de no tener atribuciones, se lanzará una tarea a la Entidad para autorizar la provisión de fondos solicitada.</p><p style="margin-bottom: 10px">-En caso de que se apruebe la solicitud con atribuciones, se lanzará la tarea "Realizar transferencia".</p><p style="margin-bottom: 10px">-En caso de error en la solicitud, volveremos a la tarea anterior para que el gestor que la envió para que subsane lo comentado en la aprobación de la solicitud.</p><p style="margin-bottom: 10px">-En caso de rechazo, se le abrirá una tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</p></div>'' WHERE TFI_NOMBRE = ''titulo'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''HC103_AprobarSolicitudFondos'')';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Tarea HC103_AprobarSolicitudFondos actualizada.');
 	
-	
-		
 	COMMIT;
  
 EXCEPTION

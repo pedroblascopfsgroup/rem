@@ -253,14 +253,13 @@ BEGIN
     * LOOP ARRAY BLOCK-CODE: DD_TPO_TIPO_PROCEDIMIENTO
     *---------------------------------------------------------------------
     */
-	VAR PAR_TABLENAME_TPROC := 'DD_TPO_TIPO_PROCEDIMIENTO';
-    VAR_CURR_TABLE := PAR_TABLENAME_TPROC;
-    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || PAR_TABLENAME_TPROC || '......');
+	VAR_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';
+    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || VAR_TABLENAME || '......');
     FOR I IN V_TIPO_TPO.FIRST .. V_TIPO_TPO.LAST
       LOOP
         V_TMP_TIPO_TPO := V_TIPO_TPO(I);
         
-        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || PAR_TABLENAME_TPROC || ' (' ||
+        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || VAR_TABLENAME || ' (' ||
                     'DD_TPO_ID,DD_TPO_CODIGO,DD_TPO_DESCRIPCION,DD_TPO_DESCRIPCION_LARGA,' ||
                     'DD_TPO_HTML,DD_TPO_XML_JBPM,VERSION,USUARIOCREAR,' ||
                     'FECHACREAR,BORRADO,DD_TAC_ID,DD_TPO_SALDO_MIN,'||

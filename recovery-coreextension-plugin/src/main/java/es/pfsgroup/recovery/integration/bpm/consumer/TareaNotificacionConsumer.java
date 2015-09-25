@@ -107,15 +107,15 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 	}
 
 	private String getGuidTareaNotificacion(TareaNotificacionPayload tareaPayload) {
-		return tareaPayload.getGuid(); // String.format("%d-EXT", tareaPayload.getId()); 
+		return tareaPayload.getGuid(); // String.format("%d-EXT", tareaPayload.getId());
 	}
 
 	private String getGuidEntidad(TareaNotificacionPayload tareaPayload) {
-		return tareaPayload.getGuidEntidad(); // String.format("%d-EXT", tareaPayload.getIdEntidadInformacion()); 
+		return tareaPayload.getGuidEntidad(); // String.format("%d-EXT", tareaPayload.getIdEntidadInformacion());
 	}
 
 	private String getGuidTareaAsociadaAProrroga(TareaNotificacionPayload tareaPayload) {
-		return tareaPayload.getGuidTareaAsociadaProrroga(); // String.format("%d-EXT", tareaPayload.getIdTareaAsociadaProrroga());  
+		return tareaPayload.getGuidTareaAsociadaProrroga(); // String.format("%d-EXT", tareaPayload.getIdTareaAsociadaProrroga());
 	}
 
 	

@@ -2,6 +2,7 @@ package es.pfsgroup.recovery.integration.bpm.payload;
 
 import java.util.Date;
 
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.integration.IntegrationClassCastException;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -24,7 +25,7 @@ public class TareaExternaPayload {
 
 	private final DataContainerPayload data;
 	private final ProcedimientoPayload procedimiento;
-	private final UsuarioPayload usuario;
+	private UsuarioPayload usuario;
 
 	public TareaExternaPayload(DataContainerPayload data) {
 		this.data = data;
@@ -168,6 +169,10 @@ public class TareaExternaPayload {
 
 	public UsuarioPayload getUsuario() {
 		return usuario;
+	}
+
+	public void setUsuario(Auditable usuario) {
+		this.usuario = new UsuarioPayload(data, usuario);
 	}
 
 }

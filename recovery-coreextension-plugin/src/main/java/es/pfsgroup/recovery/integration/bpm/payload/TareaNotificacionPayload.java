@@ -12,6 +12,8 @@ import es.pfsgroup.recovery.integration.DataContainerPayload;
 
 public class TareaNotificacionPayload {
 	
+	public final static String JBPM_CONTEXT_USUARIO_REMOTO = "remoto.usuario";
+
 	public final static String KEY = "@tar";
 	
 	private static final String CAMPO_FECHAINICIO = String.format("%s.fechaIni", KEY);

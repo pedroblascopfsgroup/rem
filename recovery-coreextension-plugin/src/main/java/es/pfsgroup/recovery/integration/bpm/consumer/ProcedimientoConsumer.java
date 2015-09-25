@@ -51,6 +51,8 @@ import es.pfsgroup.recovery.integration.bpm.payload.TareaExternaPayload;
 
 public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> {
 
+	public final static String JBPM_CONTEXT_SOLICITUD_REMOTA = "solicitud.remota";
+
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
@@ -130,8 +132,8 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 
 	protected String getGuidProcedimientoPadre(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
-				? procedimiento.getGuid() // String.format("%d-EXT", procedimiento.getIdOrigen())   
-				: procedimiento.getGuidProcedimientoPadre(); //String.format("%d-EXT", procedimiento.getIdOrigenProcedimientoPadre()); 
+				? procedimiento.getGuid() // String.format("%d-EXT", procedimiento.getIdOrigen())
+				: procedimiento.getGuidProcedimientoPadre(); //String.format("%d-EXT", procedimiento.getIdOrigenProcedimientoPadre());
 	}
 	
 	protected String getGuidProcedimiento(ProcedimientoPayload procedimiento) {
@@ -147,7 +149,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 	}
 
 	protected String getGuidTareaNotificacion(TareaExternaPayload tareaExternaPayload) {
-		return tareaExternaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExternaPayload.getIdTARTarea()); 
+		return tareaExternaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExternaPayload.getIdTARTarea());
 	}
 
 	protected String getCodigoTipoProcedimiento(ProcedimientoPayload procedimiento) {
@@ -373,6 +375,7 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
         Map<String, Object> param = new HashMap<String, Object>();
         param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, prc.getId());
         param.put(ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN, tarUUID);
+        param.put(ProcedimientoConsumer.JBPM_CONTEXT_SOLICITUD_REMOTA, true);
         Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
         //
         prc.setProcessBPM(idBPM);

@@ -124,7 +124,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	}
 
 	private String getGuidTareaNotificacion(TareaExternaPayload tareaExtenaPayload) {
-		return tareaExtenaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea()); 
+		return tareaExtenaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea());
 	}
 	
 	@Transactional(readOnly = false)

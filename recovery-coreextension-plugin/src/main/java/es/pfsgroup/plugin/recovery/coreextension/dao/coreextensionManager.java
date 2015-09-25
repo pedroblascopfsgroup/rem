@@ -384,7 +384,7 @@ public class coreextensionManager implements coreextensionApi {
 	private List<TipoProcedimiento> eliminarOpcionTramiteSubastaByPropiedadAsunto(List<TipoProcedimiento> listado) {
 		
 		
-		return null;
+		return listado;
 	}
 
 	@Override

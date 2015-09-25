@@ -373,7 +373,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             setearEmisorExpediente(notificacion, exp);
             saveOrUpdate(notificacion);
         } else {
-        	if (exp.getTipoExpediente().getCodigo().equals(DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO))
+        	if ((!Checks.esNulo(exp.getTipoExpediente())) && exp.getTipoExpediente().getCodigo().equals(DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO))
         		executor.execute(InternaBusinessOperation.BO_EXP_MGR_CANCELACION_EXPEDIENTE, exp.getId(), true); //La BO está sobreescrita y lleva al plugin de recobro
         	else
         		expedienteManager.cancelacionExp(idExpediente, true); //Así ejecuta el método de Expediente

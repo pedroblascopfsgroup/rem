@@ -10,6 +10,7 @@ import es.capgemini.devon.utils.BPMUtils;
 import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 
@@ -33,8 +34,8 @@ public class PROEnviarARevisionActionHandler extends PROBaseActionHandler implem
         return JBPMProcessManager.getFixeBooleanValue(executionContext, GENERAALERTA);
     }
 
-    private boolean esAvanceAutomatico(ExecutionContext executionContext) {
-    	return JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO);
+    private boolean esAvanceAutomatico(ExecutionContext executionContext) {    	
+    	return Checks.esNulo(JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO)) ? false : JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO) ;
     }
     /**Este metodo debe llamar a la creacion del expediente.
      *

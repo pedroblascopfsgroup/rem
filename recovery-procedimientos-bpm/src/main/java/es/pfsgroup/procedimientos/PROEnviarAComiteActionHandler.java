@@ -11,6 +11,7 @@ import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 
@@ -35,7 +36,7 @@ public class PROEnviarAComiteActionHandler extends PROBaseActionHandler implemen
     }
     
     private boolean esAvanceAutomatico(ExecutionContext executionContext) {
-    	return JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO);
+    	return Checks.esNulo(JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO)) ? false : JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO);
     }
 
     /**Este metodo debe llamar a la creacion del expediente.

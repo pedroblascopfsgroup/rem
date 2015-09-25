@@ -253,13 +253,14 @@ BEGIN
     * LOOP ARRAY BLOCK-CODE: DD_TPO_TIPO_PROCEDIMIENTO
     *---------------------------------------------------------------------
     */
+	VAR PAR_TABLENAME_TPROC := 'DD_TPO_TIPO_PROCEDIMIENTO';
     VAR_CURR_TABLE := PAR_TABLENAME_TPROC;
-    DBMS_OUTPUT.PUT('    [INSERT] '||PAR_ESQUEMA||'.' || PAR_TABLENAME_TPROC || '......');
+    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || PAR_TABLENAME_TPROC || '......');
     FOR I IN V_TIPO_TPO.FIRST .. V_TIPO_TPO.LAST
       LOOP
         V_TMP_TIPO_TPO := V_TIPO_TPO(I);
         
-        V_MSQL := 'INSERT INTO '|| PAR_ESQUEMA ||'.' || PAR_TABLENAME_TPROC || ' (' ||
+        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || PAR_TABLENAME_TPROC || ' (' ||
                     'DD_TPO_ID,DD_TPO_CODIGO,DD_TPO_DESCRIPCION,DD_TPO_DESCRIPCION_LARGA,' ||
                     'DD_TPO_HTML,DD_TPO_XML_JBPM,VERSION,USUARIOCREAR,' ||
                     'FECHACREAR,BORRADO,DD_TAC_ID,DD_TPO_SALDO_MIN,'||
@@ -275,7 +276,7 @@ BEGIN
                     '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(7)),'''','''''') || ''',
                          sysdate,' ||
                     '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(8)),'''','''''') || ''',' ||
-                         '(SELECT DD_TAC_ID FROM '|| PAR_ESQUEMA ||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO=''' || TRIM(V_TMP_TIPO_TPO(9)) || '''),' ||
+                         '(SELECT DD_TAC_ID FROM '|| V_ESQUEMA ||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO=''' || TRIM(V_TMP_TIPO_TPO(9)) || '''),' ||
                     '''' || TRIM(V_TMP_TIPO_TPO(10)) || ''',''' 
                          || TRIM(V_TMP_TIPO_TPO(11)) || ''',''' 
                          || TRIM(V_TMP_TIPO_TPO(12)) || ''',' ||
@@ -284,12 +285,12 @@ BEGIN
                          || TRIM(V_TMP_TIPO_TPO(15)) 
                     || ''' FROM DUAL'; 
 
-            VAR_CURR_ROWARRAY := I;
+            --VAR_CURR_ROWARRAY := I;
             --DBMS_OUTPUT.PUT_LINE(V_MSQL);
             --DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TPO(1) ||''','''||TRIM(V_TMP_TIPO_TPO(2))||'''');
             EXECUTE IMMEDIATE V_MSQL;
     END LOOP;
-    DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
+    DBMS_OUTPUT.PUT_LINE('DD_TPO OK]');
 
 
     -- LOOP Insertando valores en TAP_TAREA_PROCEDIMIENTO

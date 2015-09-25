@@ -25,7 +25,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-
+	V_CODIGO_TPO VARCHAR2(30 CHAR);
     V_COD_PROCEDIMIENTO VARCHAR (20 CHAR) := 'H068';
     CODIGO_PROCEDIMIENTO_ANTIGUO_1 VARCHAR2(10 CHAR) := 'P420'; -- Variable con el código (DD_TPO_ID) del procedimiento antiguo para poder desactivarlo
     

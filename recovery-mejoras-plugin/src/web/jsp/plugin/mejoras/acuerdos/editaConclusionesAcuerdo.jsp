@@ -10,10 +10,10 @@
 	var labelStyle='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:120px'
 	var labelStyleTextField='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:160px'	
 	var style='margin-bottom:1px;margin-top:1px';
-	var sinTipoAcuerdo = false;
-	<sec:authorize ifAllGranted="OCULTA_TIPO_ACUERDO">
-		sinTipoAcuerdo = true;
-	</sec:authorize>
+<!-- 	var sinTipoAcuerdo = false; -->
+<%-- 	<sec:authorize ifAllGranted="OCULTA_TIPO_ACUERDO"> --%>
+<!-- 		sinTipoAcuerdo = true; -->
+<%-- 	</sec:authorize> --%>
 
 	//TIPO ACUERDO
 
@@ -26,26 +26,6 @@
 	       ,data : dictTipoAcuerdo
 	});
 	
-	var tipoAcuerdoCombo = new Ext.form.ComboBox({
-				name:'tipoAcuerdoCombo'
-				<app:test id="editTipoAcuerdoCombo" addComa="true" />
-				,hiddenName:'tipoAcuerdoCombo'
-				,store:tipoAcuerdoStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,mode: 'local'
-				,emptyText:'----'
-				,style:'margin:0px'
-				,triggerAction: 'all'
-				,labelStyle:labelStyle
-				,readOnly:${readOnly}
-				,disabled:${esGestor && acuerdo.estaVigente}
-				,hidden: sinTipoAcuerdo
-				,fieldLabel : '<s:message code="acuerdo.conclusiones.tipoAcuerdoCombo" text="**Tipo Acuerdo" />'
-				<c:if test="${acuerdo!=null}">
-	      		,value:"${acuerdo.tipoAcuerdo.codigo}" 
-	      		</c:if>
-	});
 
 	//SOLICITANTE
 	var dictSolicitante = <app:dict value="${solicitantes}"/>;
@@ -177,16 +157,9 @@
 	
 	var validarEnvio = function(){
 		<c:if test="${!(esGestor && acuerdo.estaVigente)}">
-		if (sinTipoAcuerdo || (tipoAcuerdoCombo.getValue()!= null && !(tipoAcuerdoCombo.getValue()===''))){
 			if (solicitanteCombo.getValue()!= null && !(solicitanteCombo.getValue()==='')){
-				return true;
-			}
-		}		
-		</c:if>
-		<c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-			if (fechaCierre.getValue()!=null && !(fechaCierre.getValue()==="")){
-				return true;
-			}
+					return true;
+			}	
 		</c:if>
 		return false;
 	}
@@ -210,16 +183,13 @@
 				      			<c:if test="${idExpediente!=null}">
 				      				idExpediente:${idExpediente},
 				      			</c:if>
-		      				   tipoAcuerdo:tipoAcuerdoCombo.getValue()
-		      				   ,solicitante:solicitanteCombo.getValue()
+<!-- 		      				   tipoAcuerdo:tipoAcuerdoCombo.getValue() -->
+		      				   solicitante:solicitanteCombo.getValue()
 		      				   ,estado:estadoCombo.getValue()
 		      				   ,observaciones:app.resolverSiNulo(observacionesConclusion.getValue())
 								,importeCostas:app.resolverSiNulo(importeCostas.getValue())
 		      				   <c:if test="${acuerdo!=null}">
 		      				   ,idAcuerdo:${acuerdo.id}
-		      				   </c:if>
-		      				   <c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-		      				   ,fechaCierre:app.format.dateRenderer(fechaCierre.getValue())
 		      				   </c:if>
 		      				   ,fechaLimite:app.format.dateRenderer(fechaLimite.getValue())
 		      				}
@@ -229,11 +199,12 @@
 		      		});
 	      		}else{
 	      			<c:if test="${!(esGestor && acuerdo.estaVigente)}">
-	      				if (sinTipoAcuerdo) {
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>');
-						} else {
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatos" text="**Debe rellenar los datos"/>');
-						}
+	      				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>');
+<!-- 	      				if (sinTipoAcuerdo) { -->
+<%-- 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>'); --%>
+<!-- 						} else { -->
+<%-- 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatos" text="**Debe rellenar los datos"/>'); --%>
+<!-- 						} -->
 	      			</c:if>
 	      			<c:if test="${esGestor && acuerdo.estaVigente}">
 	      				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.conclusioes.faltaFechaCierre"/>');
@@ -251,16 +222,6 @@
 	      		page.fireEvent(app.event.CANCEL);
 	     	}
 	});
-
-	<c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-		var fechaCierre = new Ext.ux.form.XDateField({
-			fieldLabel:'<s:message code="acuerdos.fechaCierre" text="**Fecha Cierre" />'
-			,name:'fechaCierre'
-			,style:'margin:0px'
-			,labelStyle:labelStyleTextField
-		});
-		//app.format.dateRenderer(fechaCreacionDesde.getValue());
-	</c:if>
 
 
 	var bottomBar = [];
@@ -289,15 +250,8 @@
 		 		,layoutConfig:{columns:2}
 		 		,defaults:{border:false,xtype:'fieldset',autoHeight:true,width:350}
 		 		,items:[
-		 			{items:[tipoAcuerdoCombo,solicitanteCombo,estadoCombo,fechaLimite,importeCostas]}
+		 			{items:[solicitanteCombo,estadoCombo,fechaLimite,importeCostas]}
 				 	,{items:[
-<!-- 						tipoPagoCombo -->
-<!-- 						,importePago -->
-<!-- 				 		,periodicidadCombo -->
-<!-- 				 		periodo -->
-				 		<c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-				 		,fechaCierre
-				 		</c:if>
 				 	]}
 					,{colspan:2,width:700,items:[tituloobservaciones,{items:observacionesConclusion,border:false,style:'margin-top:5px'}]}
 		 		]

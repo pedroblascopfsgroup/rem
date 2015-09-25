@@ -56,16 +56,15 @@
       ,{header : '<s:message code="acuerdos.codigo.tipoDespachoProponente" text="**tipo despacho" />',dataIndex : 'tipoDespachoProponente', hidden:true}
       ,{header : '<s:message code="acuerdos.codigo.idTipoAcuerdo" text="**id tipo acuerdo" />',dataIndex : 'idTipoAcuerdo', hidden:true}
    ]);
- 
    var acuerdosStore = page.getStore({
-        flow: 'plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.acuerdosAsunto'
+        flow: 'propuestas/getPropuestasByExpedienteId'
         ,storeId : 'acuerdosStore'
         ,reader : new Ext.data.JsonReader(
             {root:'acuerdos'}
             , acuerdo
         )
    });  
-   
+
    
    <!--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado -->
    acuerdosStore.on('load', function () {

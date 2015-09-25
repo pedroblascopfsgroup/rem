@@ -43,6 +43,7 @@ import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
@@ -74,11 +75,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.recovery.api.ExpedienteApi;
+import es.pfsgroup.recovery.ext.api.expediente.EXTExpedienteApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
 
 @Component
@@ -143,6 +147,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	private TareaNotificacionDao tareaNotificacionDao;
+	
 	
 	
 	/**
@@ -319,7 +324,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 				acuerdo.setGestorDespacho(gestorAsunto.getGestor());
 			}
 		}else{
-			//acuerdo.setExpediente(expediente);
+			Expediente exp = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
+			if(!Checks.esNulo(exp)) acuerdo.setExpediente(exp);
 		}
 
 		

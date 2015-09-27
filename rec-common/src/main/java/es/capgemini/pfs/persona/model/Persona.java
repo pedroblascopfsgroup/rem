@@ -510,7 +510,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<Telefono> telefonos;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, optional=true)
 	@JoinColumn(name = "PER_ID", updatable= false)
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
@@ -894,7 +894,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 * @return situacion
 	 */
 	public String getSituacion() {
-		return this.getFormulas().getSituacion();
+		return this.getFormulas() == null ? null :this.getFormulas() == null ? null :this.getFormulas().getSituacion();
 	}
 
 	/**
@@ -1658,25 +1658,25 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 * @return the numExpedientesActivos
 	 */
 	public Integer getNumExpedientesActivos() {
-		return this.getFormulas().getNumExpedientesActivos();
+		return this.getFormulas() == null ? null :this.getFormulas().getNumExpedientesActivos();
 	}
 
 	/**
 	 * @return the numAsuntosActivos
 	 */
 	public Integer getNumAsuntosActivos() {
-		return this.getFormulas().getNumAsuntosActivos();
+		return this.getFormulas() == null ? null :this.getFormulas().getNumAsuntosActivos();
 	}
 
 	public Integer getNumAsuntosActivosPorPrc() {
-		return this.getFormulas().getNumAsuntosActivosPorPrc();
+		return this.getFormulas() == null ? null :this.getFormulas().getNumAsuntosActivosPorPrc();
 	}
 
 	/**
 	 * @return the diasVencido
 	 */
 	public Integer getDiasVencido() {
-		return this.getFormulas().getDiasVencido();
+		return this.getFormulas() == null ? null :this.getFormulas().getDiasVencido();
 	}
 
 	/**
@@ -2569,7 +2569,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 * @return the relacionExpediente
 	 */
 	public String getRelacionExpediente() {
-		return this.getFormulas().getRelacionExpediente();
+		return this.getFormulas() == null ? null :this.getFormulas().getRelacionExpediente();
 	}
 
 	/**
@@ -2795,28 +2795,28 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	}
 
 	public Integer getDiasVencidoRiegoDirecto() {
-		return this.getFormulas().getDiasVencidoRiegoDirecto();
+		return this.getFormulas() == null ? null :this.getFormulas().getDiasVencidoRiegoDirecto();
 	}
 
 
 	public Integer getDiasVencidoRiegoIndirecto() {
-		return this.getFormulas().getDiasVencidoRiegoIndirecto();
+		return this.getFormulas() == null ? null :this.getFormulas().getDiasVencidoRiegoIndirecto();
 	}
 
 	public Float getRiesgoTot() {
-		return this.getFormulas().getRiesgoTot();
+		return this.getFormulas() == null ? null :this.getFormulas().getRiesgoTot();
 	}
 
 	public Float getRiesgoTotalDirecto() {
-		return this.getFormulas().getRiesgoTotalDirecto();
+		return this.getFormulas() == null ? null :this.getFormulas().getRiesgoTotalDirecto();
 	}
 
 	public Float getRiesgoTotalIndirecto() {
-		return this.getFormulas().getRiesgoTotalIndirecto();
+		return this.getFormulas() == null ? null :this.getFormulas().getRiesgoTotalIndirecto();
 	}
 
 	public String getSituacionCliente() {
-		return this.getFormulas().getSituacionCliente();
+		return this.getFormulas() == null ? null :this.getFormulas().getSituacionCliente();
 	}
 
 	public boolean getNoTieneFincabilidad() {
@@ -3030,11 +3030,11 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	}
 
 	public String getServicioNominaPension() {
-		return this.getFormulas().getServicioNominaPension();
+		return this.getFormulas() == null ? null :this.getFormulas().getServicioNominaPension();
 	}
 
 	public String getUltimaActuacion() {
-		return this.getFormulas().getUltimaActuacion();
+		return this.getFormulas() == null ? null :this.getFormulas().getUltimaActuacion();
 	}
 
 	public String getDispuestoNoVencido() {
@@ -3049,12 +3049,12 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	}
 
 	public String getEstadoCicloVida() {
-		return this.getFormulas().getEstadoCicloVida();
+		return this.getFormulas() == null ? null :this.getFormulas().getEstadoCicloVida();
 	}
 
 
 	public String getDescripcionCnae() {
-		return this.getFormulas().getDescripcionCnae();
+		return this.getFormulas() == null ? null :this.getFormulas().getDescripcionCnae();
 	}
 
 	@Override

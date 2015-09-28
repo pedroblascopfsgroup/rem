@@ -66,6 +66,6 @@ fi
 
 docker run --rm -ti -p=22 -p=8080 -p=1044 \
 	-v ${HOME}/container-info:/container-info \
-	-v $(pwd)/../../../rec-batch/src/config/bankia/inte/devon.properties:/recovery/app-server/devon.properties \
+	-v $(pwd)/../../src/main/config/Bankia/INTE/devon.properties:/recovery/app-server/devon.properties \
 	-v $SHAPSHOT_WAR:/recovery/app-server/pfs.war \
 	-h $CONTAINER --name  $CONTAINER $PLATFORM_N3

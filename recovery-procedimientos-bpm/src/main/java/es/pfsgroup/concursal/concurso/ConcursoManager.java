@@ -14,6 +14,7 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
+import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -312,6 +313,11 @@ public class ConcursoManager {
 					.getEstadoCredito()));
 		else
 			credito.setEstadoCredito(null);
+		
+		if(dto.getFechaVencimiento() != null) {		
+			credito.setFechaVencimiento(FormatUtils.strADate(dto.getFechaVencimiento(), "yyyy-MM-dd"));
+		}
+		
 		creditoDao.save(credito);
 		agregarCreditoAconvenio(credito);
 	}
@@ -409,6 +415,10 @@ public class ConcursoManager {
 			credito.setEstadoCredito(estadoCreditoDao.get(dto
 					.getEstadoCredito()));
 
+		if(dto.getFechaVencimiento() != null) {		
+			credito.setFechaVencimiento(FormatUtils.strADate(dto.getFechaVencimiento(), "yyyy-MM-dd"));
+		}
+		
 		creditoDao.save(credito);
 
 		agregarCreditoAconvenio(credito);

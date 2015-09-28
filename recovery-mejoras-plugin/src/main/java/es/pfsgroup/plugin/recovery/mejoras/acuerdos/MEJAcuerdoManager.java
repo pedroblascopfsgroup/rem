@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -21,14 +22,17 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.acuerdo.dao.ActuacionesAExplorarAcuerdoDao;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDPeriodicidadAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSolicitante;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoPagoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -96,6 +100,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_UGAS_GUARDAR_ACUERDO = "mejacuerdomanager.guardarAcuerdo";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_ACUERDOS_BY_ASU_ID = "mejacuerdomanager.getListadoAcuedosByAsuId";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_ACUERDOS_BY_EXPEDIENTE_ID = "mejacuerdomanager.getListadoAcuedosByExpId";
+	public static final String BO_ACUERDO_MGR_GET_ACTUALIZACIONES_A_EXPLORAR_EXPEDIENTE = "mejacuerdomanager.getActuacionesAExplorarExpediente";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_CONTRATOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoContratosAcuerdoByAsuId";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TERMINOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoTerminosAcuerdoByAcuId";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO = "mejacuerdo.getListTipoAcuerdo";	
@@ -143,6 +148,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	private TareaNotificacionDao tareaNotificacionDao;
+	
+	@Autowired
+    private ActuacionesAExplorarAcuerdoDao actuacionesAExplorarAcuerdoDao;
 	
 	
 	/**
@@ -423,9 +431,55 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
      * @return Acuerdo
      */
     @BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_ACUERDOS_BY_EXPEDIENTE_ID)
-    public EXTAcuerdo getAcuerdosDelExpediente(Long id) {
+    public List<EXTAcuerdo> getAcuerdosDelExpediente(Long id) {
         logger.debug("Obteniendo acuerdos del expediente" + id);
-        return genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", id));
+        Order order = new Order(OrderType.ASC, "id");
+        return (List<EXTAcuerdo>) genericDao.getListOrdered(EXTAcuerdo.class,order, genericDao.createFilter(FilterType.EQUALS, "expediente.id", id));
+    }
+    
+    @BusinessOperation(BO_ACUERDO_MGR_GET_ACTUALIZACIONES_A_EXPLORAR_EXPEDIENTE)
+    public List<ActuacionesAExplorarAcuerdo> getActuacionesAExplorarAcuerdo(Long idExpediente) {
+    
+    	List<EXTAcuerdo> listAcuerdos = getAcuerdosDelExpediente(idExpediente);
+    	List<ActuacionesAExplorarAcuerdo> todasLasActuacionesAExplorar = new ArrayList<ActuacionesAExplorarAcuerdo>();
+
+    	for(EXTAcuerdo acuerdo : listAcuerdos) {
+	        // Obtengo la lista de las actuaciones marcadas
+	        List<ActuacionesAExplorarAcuerdo> actuacionesAExplorarMarcadasByAcuerdo = actuacionesAExplorarAcuerdoDao
+	                .getActuacionesAExplorarMarcadasByAcuerdo(acuerdo.getId());
+	        // y de todos los tipos y subtipos aunque no hayan sido marcados, excepto los inactivos
+	        List<DDSubtipoSolucionAmistosaAcuerdo> subtiposActivosOMarcadosByAcuerdo = actuacionesAExplorarAcuerdoDao
+	                .getSubtiposActivosOMarcadosByAcuerdo(acuerdo.getId());
+	
+	        // y unificamos ambas listas en una
+	
+	        todasLasActuacionesAExplorar.addAll(actuacionesAExplorarMarcadasByAcuerdo);
+	
+	        boolean estaEnLista;
+	        for (DDSubtipoSolucionAmistosaAcuerdo subtipo : subtiposActivosOMarcadosByAcuerdo) {
+	            estaEnLista = false;
+	            for (ActuacionesAExplorarAcuerdo actuacion : actuacionesAExplorarMarcadasByAcuerdo) {
+	                if (actuacion.getDdSubtipoSolucionAmistosaAcuerdo().equals(subtipo)) {
+	                    estaEnLista = true;
+	                    break;
+	                }
+	            }
+	            if (!estaEnLista) {
+	                ActuacionesAExplorarAcuerdo actuacionSinExplorar = new ActuacionesAExplorarAcuerdo();
+	                actuacionSinExplorar.setAcuerdo(acuerdo);
+	                actuacionSinExplorar.setDdSubtipoSolucionAmistosaAcuerdo(subtipo);
+	                actuacionSinExplorar.setDdValoracionActuacionAmistosa(null);
+	                actuacionSinExplorar.setObservaciones(null);
+	                actuacionSinExplorar.setId(null);
+	                todasLasActuacionesAExplorar.add(actuacionSinExplorar);
+	            }
+	        }
+    	}
+
+        // Ordena la lista por tipos
+        Collections.sort(todasLasActuacionesAExplorar);
+
+        return todasLasActuacionesAExplorar;
     }
     
 	/**

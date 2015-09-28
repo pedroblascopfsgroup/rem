@@ -12,6 +12,7 @@
 (function(page,entidad){
     
 	var actuacionesRealizadas = <json:object name="actuaciones">
+		<json:array name="actuaciones" items="${acuerdos}" var="acuerdo">	
 			<json:array name="actuaciones" items="${acuerdo.actuacionesRealizadas}" var="actuacion">	
 					<json:object>
 						<json:property name="id" value="${actuacion.id}" />
@@ -23,6 +24,7 @@
 				 	 	<json:property name="actitud" value="${actuacion.tipoAyudaActuacion.descripcion}" />
 				 	 	<json:property name="observaciones" value="${actuacion.observaciones}"/>
 				 	</json:object>
+				</json:array>
 			</json:array>
 		</json:object>;
 	
@@ -45,7 +47,7 @@
       ,{header : '<s:message code="acuerdos.actuaciones.observaciones" text="**Observaciones" />', dataIndex : 'observaciones'}
    ]);
 
-   <c:if test="${puedeEditar}">	
+   <sec:authorize ifAllGranted="EDITAR_GYA">
 	   var btnEditActuacion = new Ext.Button({
 	       text:  '<s:message code="app.editar" text="**Editar" />'
 	       <app:test id="EditActuacionBtn" addComa="true" />
@@ -91,7 +93,7 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });
 	      }
 	   });
-   </c:if>
+   </sec:authorize>
    
    	var actuacionesRealizadasGrid = new Ext.grid.GridPanel({
    	 	title : '&nbsp;'<app:test id="actuacionesGrid" addComa="true" /> 
@@ -103,9 +105,9 @@
 		,style:'padding:50px;'
 		,autoWidth:true
 		,autoHeight : true
-		,bbar : [<c:if test="${puedeEditar}"> 
+		,bbar : [<sec:authorize ifAllGranted="EDITAR_GYA"> 
  	        	btnAltaActuacion,btnEditActuacion 
- 	        </c:if>]
+ 	        </sec:authorize>]
 	});
 
 
@@ -178,12 +180,6 @@
 				 	</json:object>
 			</json:array>
 		</json:object>;
-
-    var actuacionesStore = new Ext.data.JsonStore({
-		data : actuaciones
-		,root : 'actuaciones'
-		,fields : ['id','codTipoSolucionAmistosa','tipoSolucionAmistosa','codSubtipoSolucion','subtipoSolucion','valoracion','observaciones', 'isActivo']
-	});
 	
 	var actuacionesStore = page.getStore({
 		limit:25
@@ -206,7 +202,8 @@
       ,{header : '<s:message code="acuerdos.actuacionesAExplorar.observaciones" text="**Observaciones" />', dataIndex : 'observaciones'}
    	  ,{dataIndex: 'isActivo', hidden:true, fixed:true}
    ]);
-   <c:if test="${puedeEditar}">
+   
+   <sec:authorize ifAllGranted="EDITAR_GYA">
 	   var btnEditActuacionAExplorar = new Ext.Button({
 	       text:  '<s:message code="app.editar" text="**Editar" />'
 	       <app:test id="btnEditActuacionAExplorar" addComa="true" />
@@ -231,7 +228,7 @@
 				}
 	       }
 	   });
-   </c:if>
+   </sec:authorize>
    
    var actuacionesAExplorarGrid = new Ext.grid.GridPanel({
             title : '&nbsp;'
@@ -306,6 +303,22 @@
 		,'comentariosSituacion'
 		,{width:300,height:70}
 	);
+	
+	labelObs = new Ext.form.Label({
+	   	text:'<s:message code="expedientes.consulta.tabgestion.revision.observaciones" text="**Observaciones:"/>'
+		,style:'font-weight:bolder;font-family:tahoma,arial,helvetica,sans-serif;font-size:11px;'
+	});
+
+	var revision = new Ext.form.TextArea({
+		name: 'revision'
+		,value: ''
+		,width: 280
+		,height: 340
+		,labelStyle: labelStyle
+		,style:'margin-top:5px'
+		,readOnly: true
+		,hideLabel: true
+	});
 
 	var panelGyA = new Ext.Panel({
 		style:'padding: 5px'
@@ -323,6 +336,12 @@
 		,autoHeight:true
 		,items:[tipoAyuda, descAyuda, causasImpago, comentarios]
 	});
+	
+	var formRevision = new Ext.form.FormPanel({
+		border:false
+		,autoHeight:true
+		,items:[labelObs,revision]
+	});
 
 	var panelGestion = new Ext.form.FieldSet({
 		title:'<s:message code="expedientes.consulta.tabgestion.revision" text="**Revisión"/>'
@@ -334,8 +353,19 @@
 		,monitorResize: true
 		,items:[formGestion]
 	});
+	
+	var panelRevision = new Ext.form.FieldSet({
+		title:'<s:message code="expedientes.consulta.tabgestion.revision" text="**Revisión"/>'
+		,border:true
+		,style:'padding:5px'
+		,height:427
+		,width:300
+		,defaults : {border:false }
+		,monitorResize: true
+		,items:[formRevision]
+	});
 
-	var panel = new Ext.Panel({
+	var panelSuperior = new Ext.Panel({
 			autoHeight:true
 			,autoWidth:true
 			,layout:'table'
@@ -354,14 +384,126 @@
 			,nombreTab : 'tabGestionyAnalisis'
 	});
 	
+	var panel = new Ext.Panel({
+			autoHeight:true
+			,autoWidth:true
+			,layout:'table'
+			,title:'<s:message code="expedientes.consulta.tabgestion.titulo" text="**Gestion y Analisis"/>'
+			,layoutConfig:{columns:1}
+			,titleCollapse:true
+			,style:'margin-right:20px;margin-left:10px'
+			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
+			,items:[{layout:'form'
+						,bodyStyle:'padding:5px;cellspacing:10px'
+						,items:[panelSuperior]}
+					,{layout:'form'
+						,bodyStyle:'padding:5px;cellspacing:10px'
+						,items:[panelRevision]}
+			]
+			,nombreTab : 'tabGestionyAnalisis'
+	});
+	
 	panel.getCodExpediente = function(){
 		return entidad.get("data").cabecera.codExpediente;
 	}
 	
+	<sec:authorize ifAllGranted="EDITAR_GYA">
+	var btnEditarGyA = new Ext.Button({
+           	text: '<s:message code="app.editar" text="**Editar" />'
+           	,style:'margin-left:375px;'
+           	,border:false
+           	,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+           	,handler:function(){
+                var w = app.openWindow({
+                    flow : 'expedientes/editaGestionyAnalisis'
+                    ,width:650
+                    ,title : '<s:message code="expedientes.consulta.tabgestion.edicion" text="**Editar Gestion Analisis y Propuesta" />' 
+                    ,params : {id:entidad.getData("gestion").aaa}
+                  });
+                  w.on(app.event.DONE, function(){
+                    w.close();
+                    refrescarGestionyAnalisis();
+                  });
+                  w.on(app.event.CANCEL, function(){ w.close(); });
+             }
+	});	
+	</sec:authorize>
+	
+	var btnEditarRevision;
+	<sec:authorize ifAllGranted="EDITAR_GYA_REV">
+		btnEditarRevision = new Ext.Button({
+				text: '<s:message code="app.editar" text="**Editar" />'
+				,style:'margin-left:200px;'
+				,border:false
+				,iconCls : 'icon_edit'
+			,cls: 'x-btn-text-icon'
+				,handler:function(){
+				var w = app.openWindow({
+				  flow : 'expedientes/editaGestionyAnalisisRevision'
+				  ,width:650
+				  ,title : '<s:message code="expedientes.consulta.tabgestion.revision.edicion" text="**Editar Revisión de Gestion Analisis y Propuesta" />' 
+				  ,params : {id:entidad.getData("gestion.aaa")}
+				});
+				w.on(app.event.DONE, function(){
+				  w.close();
+				  refrescarGestionyAnalisisRev();
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+		   }
+		});
+	</sec:authorize>
+	
+	<sec:authorize ifAllGranted="EDITAR_GYA">
+    	panelGestion.items.add(btnEditarGyA);
+	</sec:authorize>
+	
+	<sec:authorize ifAllGranted="EDITAR_GYA_REV">
+		panelRevision.items.add(btnEditarRevision);
+	</sec:authorize>
+	
  	panel.getValue = function(){};
 	panel.setValue = function(){
+    	entidad.cacheOrLoad(data,actuacionesRealizadasStore, {id : panel.getCodExpediente()});
     	entidad.cacheOrLoad(data,actuacionesStore, {id : panel.getCodExpediente()});
+    	
+		causasImpago.setValue(entidad.getData("gestion.causaImpago"));
+		comentarios.setValue(entidad.getData("gestion.comentariosSituacion"));
+		tipoAyuda.setValue(entidad.getData("gestion.tipoAyuda"));
+    	descAyuda.setValue(entidad.getData("gestion.descripcionTipoAyudaActuacion"));
+    	revision.setValue(entidad.getData("gestion.revision"));
+    	
+    	var perfilGestor = entidad.getData('gestion.idGestorActual');
+		var perfilSupervisor = entidad.getData('gestion.idSupervisorActual');
+		var estadoExpediente = entidad.getData('gestion.estadoExpediente');
+		var estadoItinerario = entidad.getData('gestion.estadoItinerario');
+
+		<sec:authorize ifAllGranted="EDITAR_GYA">
+			if ((estadoExpediente == app.estExpediente.ESTADO_ACTIVO) &&
+			   (permisosVisibilidadGestorSupervisor(perfilGestor) || permisosVisibilidadGestorSupervisor(perfilSupervisor) ) ) {
+				btnEditarGyA.show();
+			}else{
+				btnEditarGyA.hide();
+			}
+		</sec:authorize>
+
+		<sec:authorize ifAllGranted="EDITAR_GYA_REV">
+			if (estadoExpediente != app.estExpediente.ESTADO_CONGELADO && estadoExpediente != app.estExpediente.ESTADO_CANCELADO){
+				if ((estadoExpediente != app.estExpediente.ESTADO_CANCELADO && estadoExpediente != app.estExpediente.ESTADO_BLOQUEADO) && 
+					(estadoItinerario==app.estItinerario.ESTADO_RE) && (permisosVisibilidadGestorSupervisor(perfilGestor) || permisosVisibilidadGestorSupervisor(perfilSupervisor) ) ){
+					btnEditarRevision.show(); 
+				}else{
+					btnEditarRevision.hide(); 
+				}
+			}else{
+				btnEditarRevision.hide();
+			}
+		</sec:authorize>
 	}
+	
+	panel.setVisibleTab = function(data){
+		return entidad.get("data").toolbar.tipoExpediente != 'REC';
+   	}
 	
 	return panel;
 })

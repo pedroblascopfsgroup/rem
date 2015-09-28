@@ -6,7 +6,9 @@
 	<!-- renderiza el formulario -->
     <end-state id="acuerdos" view="entidad/expediente/tabs/gestionYAnalisisPropuesta">
 	    <on-entry>
-	    	<evaluate expression="executor.execute('mejacuerdomanager.getListadoAcuedosByExpId',id)" result="flowScope.acuerdo" />
+	    	<evaluate expression="executor.execute('mejacuerdomanager.getListadoAcuedosByExpId',id)" result="flowScope.acuerdos" />
+	    	<evaluate expression="executor.execute('mejacuerdomanager.getActuacionesAExplorarExpediente',id)" result="flowScope.actuacionesAExplorar" />
+	    	<evaluate expression="executor.execute('mejacuerdo.puedeEditar',id)" result="flowScope.puedeEditar" />
 	    </on-entry>
     </end-state> 
 

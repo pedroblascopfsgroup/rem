@@ -224,8 +224,22 @@
 				<value>comboSuspension</value>
 			</list>
 		</property>
+		<property name="procedimientosPestanyaFaseComun">
+			<set>
+				<value>H009</value> <!-- fase comun abreviadoV4  -->
+				<value>H024</value> <!-- fase comun ordinario  -->
+				<value>H017</value> <!-- fase convenio  -->
+				<value>H021</value> <!-- P. solicitud de concurso necesario  -->
+				<value>H029</value> <!-- T. Registrar resolución de interés  -->
+				<value>H041</value> <!-- T. seguimiento cumplimiento de convenio  -->
+				<value>H039</value> <!-- T. conclusión de concurso  -->
+				<value>P420</value> <!-- T. de aceptación y decisión Concursal  -->
+				<value>P404</value> <!-- T. de aceptación y decisión Litigios  -->
+				<value>H019</value> <!-- T. de solicitud de actuaciones o pronunciamientos -->
+				<value>H033</value> <!-- fase liquidacion  -->
+			</set>
+		</property>
 	</bean>	
-
 
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		

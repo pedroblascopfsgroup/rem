@@ -43,6 +43,7 @@ import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
@@ -74,11 +75,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.recovery.api.ExpedienteApi;
+import es.pfsgroup.recovery.ext.api.expediente.EXTExpedienteApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.expediente.EXTExpedienteManager;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
 
 @Component
@@ -143,6 +147,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	private TareaNotificacionDao tareaNotificacionDao;
+	
 	
 	
 	/**
@@ -255,65 +260,74 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		}
 		
 		Usuario user = usuarioManager.getUsuarioLogado();
-		Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, dto.getIdAsunto());
 		
-		Order order = new Order(OrderType.ASC, "id");
-		List<EXTGestorAdicionalAsunto> gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()));
-		
-		if(gestoresAsunto.size()==0){
-			///No esta asignado el usuario como proponente al asunto
-	        
-			///Obtenemos el tipo de gestor
-			EXTDDTipoGestor tipoGestorProponente = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));
-			
-			///Obtenemos el despacho externo
-			Order orderGestDes = new Order(OrderType.ASC, "id");
-			List<GestorDespacho> gestdesp = genericDao.getListOrdered(GestorDespacho.class,orderGestDes, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
-	        
-	        try {
-	        	///Asignamos el gestor al asunto
-				if(gestdesp!=null && gestdesp.size()>0){
-					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(tipoGestorProponente.getId(),asunto.getId(),user.getId(), gestdesp.get(0).getDespachoExterno().getId());
-					gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()));
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		EXTGestorAdicionalAsunto gestorAsunto = null;
-		
-		if(gestoresAsunto.size()==1){
-			
-			gestorAsunto = gestoresAsunto.get(0);
-			
-		}else if(gestoresAsunto.size()>1){
-			
-			gestorAsunto = gestoresAsunto.get(0);
-			for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
-				if(gaa.getGestor().getGestorPorDefecto()){
-					gestorAsunto = gaa;
-					break;
-				}
-			}
-			
-		}
-		
-
 		EXTAcuerdo acuerdo;
 		if (dto.getIdAcuerdo() == null) {
 			acuerdo = new EXTAcuerdo();
 			acuerdo.setFechaPropuesta(new Date());
-			acuerdo.setAsunto(asunto);
 			acuerdo.setProponente(user);
-			
-			if(gestorAsunto != null){
-				acuerdo.setGestorDespacho(gestorAsunto.getGestor());
-			}
 			
 		} else {
 			acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdAcuerdo()));
 		}
+		
+		
+		if(!dto.esPropuesta()){
+			
+			Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, dto.getIdAsunto());
+			
+			acuerdo.setAsunto(asunto);
+			
+			Order order = new Order(OrderType.ASC, "id");
+			List<EXTGestorAdicionalAsunto> gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()));
+			
+			if(gestoresAsunto.size()==0){
+				///No esta asignado el usuario como proponente al asunto
+		        
+				///Obtenemos el tipo de gestor
+				EXTDDTipoGestor tipoGestorProponente = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));
+				
+				///Obtenemos el despacho externo
+				Order orderGestDes = new Order(OrderType.ASC, "id");
+				List<GestorDespacho> gestdesp = genericDao.getListOrdered(GestorDespacho.class,orderGestDes, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
+		        
+		        try {
+		        	///Asignamos el gestor al asunto
+					if(gestdesp!=null && gestdesp.size()>0){
+						proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(tipoGestorProponente.getId(),asunto.getId(),user.getId(), gestdesp.get(0).getDespachoExterno().getId());
+						gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			EXTGestorAdicionalAsunto gestorAsunto = null;
+			
+			if(gestoresAsunto.size()==1){
+				
+				gestorAsunto = gestoresAsunto.get(0);
+				
+			}else if(gestoresAsunto.size()>1){
+				
+				gestorAsunto = gestoresAsunto.get(0);
+				for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
+					if(gaa.getGestor().getGestorPorDefecto()){
+						gestorAsunto = gaa;
+						break;
+					}
+				}
+				
+			}
+			
+			if(gestorAsunto != null){
+				acuerdo.setGestorDespacho(gestorAsunto.getGestor());
+			}
+		}else{
+			Expediente exp = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
+			if(!Checks.esNulo(exp)) acuerdo.setExpediente(exp);
+		}
+
 		
 		
 		DDEstadoAcuerdo estadoAcuerdo = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoAcuerdo.class, dto.getEstado());
@@ -343,34 +357,34 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 
 		// Si se ha cancelado el acuerdo O se ha cerrado se deben matar las
 		// tareas
-		if (DDEstadoAcuerdo.ACUERDO_CANCELADO.equals(dto.getEstado()) || DDEstadoAcuerdo.ACUERDO_FINALIZADO.equals(dto.getEstado()) || DDEstadoAcuerdo.ACUERDO_RECHAZADO.equals(dto.getEstado())
-				|| (dto.getFechaCierre() != null)) {
-
-			for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
-				if (SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
-					Long idBPM = acuerdo.getIdJBPM();
-					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
-				}
-			}
-			executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION, acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, SubtipoTarea.CODIGO_ACUERDO_CERRADO, null);
-
-		}
+//		if (DDEstadoAcuerdo.ACUERDO_CANCELADO.equals(dto.getEstado()) || DDEstadoAcuerdo.ACUERDO_FINALIZADO.equals(dto.getEstado()) || DDEstadoAcuerdo.ACUERDO_RECHAZADO.equals(dto.getEstado())
+//				|| (dto.getFechaCierre() != null)) {
+//
+//			for (TareaNotificacion tarea : acuerdo.getAsunto().getTareas()) {
+//				if (SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
+//					Long idBPM = acuerdo.getIdJBPM();
+//					executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
+//				}
+//			}
+//			executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_NOTIFICACION, acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, SubtipoTarea.CODIGO_ACUERDO_CERRADO, null);
+//
+//		}
 
 		// VEO SI ESTAN CERRANDO EL ACUERDO
-		if (!Checks.esNulo(dto.getFechaCierre())) {
-			// Esta fecha solo viene cuando el estado es vigente y el gestor la
-			// carga
-			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
-			try {
-				acuerdo.setFechaCierre(sdf1.parse(dto.getFechaCierre()));
-			} catch (ParseException e) {
-				logger.error("Error parseando la fecha", e);
-			}
-			DDEstadoAcuerdo estadoAcuerdoFinalizado = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_FINALIZADO);
-
-			acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
-		} else if (DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(dto.getEstado())) {
-			
+//		if (!Checks.esNulo(dto.getFechaCierre())) {
+//			// Esta fecha solo viene cuando el estado es vigente y el gestor la
+//			// carga
+//			SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+//			try {
+//				acuerdo.setFechaCierre(sdf1.parse(dto.getFechaCierre()));
+//			} catch (ParseException e) {
+//				logger.error("Error parseando la fecha", e);
+//			}
+//			DDEstadoAcuerdo estadoAcuerdoFinalizado = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_FINALIZADO);
+//
+//			acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
+//		} else if (DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(dto.getEstado())) {
+//			
 //			//Si tiene el permiso CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA entonces NO DEBE generar la tarea
 //			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
 //			if (!funcionManager.tieneFuncion(usuarioLogado, "CIERRE_ACUERDO_LIT_DESDE_APP_EXTERNA")){
@@ -378,8 +392,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 //					SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO, PlazoTareasDefault.CODIGO_CIERRE_ACUERDO);
 //				acuerdo.setIdJBPM(idJBPM);
 //			}
-
-		}
+//
+//		}
 		
 		// Fecha limite
 		SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy");

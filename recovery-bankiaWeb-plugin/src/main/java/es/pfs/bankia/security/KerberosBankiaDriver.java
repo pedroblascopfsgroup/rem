@@ -34,6 +34,10 @@ public class KerberosBankiaDriver implements KerberosDriver {
 			GestionSSA ssa = new GestionSSA();
 			Asignacion[] asignaciones = ssa.funcionesUsuario(username);
 			//Asignacion[] asignaciones = ssa.funcionesUsuario(username, TIPO_FUNCION_CLASICA, TIPO_APLICACION_PFS);
+                        //Se comenta esta funcionalidad porque Bankia nos comunica que Recovery es la única aplicación que lo utiliza
+                        // y hubo un fallo en producción con LDAP que solo afectó a Recovery (no al resto de apps) y achacan el 
+                        // problema al uso de esa versión sobreescrita del método "funcionesUsuario" 
+                        
 			for (Asignacion asignacion : asignaciones) {
 				listaAutorizaciones.add(asignacion.getFuncion());
 			}

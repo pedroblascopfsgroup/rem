@@ -78,5 +78,29 @@ public interface NMBProjectContext {
 	String getComboPostoresCelebracionSubasta();
 
 	Map<String, String> getMapaSubastas();
+
+	String getValorHonorarios();
+
+	String getValorDerechosSuplidos();
+
+	String getFechaDemandaHipotecario();
+
+	String getFechaDemandaOrdinario();
+
+	List<String> getCodigosTareasSenyalamiento();
+
+	String getCodigoTareaDemandaHipotecario();
+
+	String getCodigoTareaDemandaMonitorio();
+
+	String getCodigoTareaDemandaOrdinario();
+
+	String getCodigoHipotecario();
+
+	String getCodigoMonitorio();
+
+	String getCodigoOrdinario();
+
+	String getFechaDemandaMonitorio();
 	
 }

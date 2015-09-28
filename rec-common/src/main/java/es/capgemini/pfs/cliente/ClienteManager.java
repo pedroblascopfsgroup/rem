@@ -31,7 +31,11 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
+import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.persona.model.Persona;
@@ -153,6 +157,92 @@ public class ClienteManager {
         clienteDao.saveOrUpdate(cliente);
     }
 
+    @BusinessOperation(PrimariaBusinessOperation.BO_CLI_MGR_TIENE_CONTRATOS_ACTIVOS)
+	@SuppressWarnings("unchecked")    
+    public Boolean tieneContratosActivos(Long idPersona) {
+    	
+    	Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
+    	List<Contrato> contratos = (List<Contrato>)executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
+    	//return (contratos!=null && contratos.size()>0);
+    	
+    	//Pero la persona debe ser titular en alguno de ellos
+    	for (Contrato contrato : contratos) {
+			if (contrato.getTitulares().contains(persona))
+				return true;
+		}
+    	
+    	/*Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
+    	if (persona == null) return false;
+    	
+    	for (Contrato contrato : persona.getContratos()) {
+			if (contrato.getEstadoContrato().getCodigo().equals(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO))
+				return true;
+		}*/
+    	
+    	return false;
+    }
+    
+    /**
+     * Devuelve si la persona/cliente tiene contratos activos que ni estan en un expediente de recuperacion, ni en un asunto 
+     * @param idPersona
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	@BusinessOperation(PrimariaBusinessOperation.BO_CLI_MGR_TIENE_CONTRATOS_LIBRES)
+    public Boolean tieneContratosLibres(Long idPersona) {
+    	//Obtenemos los datos de la persona, pera obtener sus expedientes
+    	Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
+    	if (persona == null) return false;
+    	
+    	/*for (Contrato contrato : persona.getContratos()) {
+    		if (contrato.getEstadoContrato().getCodigo().equals(DDEstadoContrato.ESTADO_CONTRATO_ACTIVO)) {
+    			//Confirmamos que el contrato no tiene asuntos activos
+    			if (contrato.getAsuntosActivos() == null || contrato.getAsuntosActivos().size() == 0) {
+	    			//Buscamos si entre sus expedientes hay alguno de tipo recuperacion
+    				if (!estaContratoEnAlgunExpedienteDeRecuperacion(contrato))
+    					return true;
+    			}
+    		}
+    	}*/
+
+    	List<Contrato> contratos = (List<Contrato>)executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
+    	
+    	for (Contrato contrato : contratos) {
+    		//Si el contrato es del titular
+    		if (contrato.getTitulares().contains(persona)) {
+	    		//Confirmamos que el contrato no tiene asuntos activos
+				if (contrato.getAsuntosActivos() == null || contrato.getAsuntosActivos().size() == 0) {
+					//Buscamos si entre sus expedientes hay alguno de tipo recuperacion
+					if (!estaContratoEnAlgunExpedienteDeRecuperacion(contrato))
+						return true;
+				}
+    		}
+		}
+   	
+    	
+    	//Si ningún contrato ha pasado las validaciones, devolvemos false
+    	return false;
+    }
+    
+    /**
+     * Devuelve true, si algun expediente activo es de tipo recuperacion
+     * @param contrato
+     * @return
+     */
+    private boolean estaContratoEnAlgunExpedienteDeRecuperacion(Contrato contrato) {
+    	//Validamos si algún expediente activo del contrato es de tipo recuperacion
+    	
+		for (ExpedienteContrato cex : contrato.getExpedienteContratos()) {
+			if (cex.getExpediente().getEstaEstadoActivo() && cex.getExpediente().getRecuperacion()) {
+				//Si el expediente es de tiop recuperacion devolvemos true
+				return true;
+			}
+		}
+		
+		//Sino se ha encontrado ningun expediente activo de recuperación, devolvemos false
+		return false;
+    }
+    
     /**
      * 
      * @param idPersona
@@ -166,8 +256,8 @@ public class ClienteManager {
         //Si tiene un cliente es porque tiene algún contrato de pase
         if (persona.getClienteActivo() != null) return true;
 
-        Long nContratos = (Long) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_OBTENER_NUMERO_CONTRATOS_PARA_FUTUROS_CLIENTES, persona
-                .getId());
+        Long nContratos = (Long) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_OBTENER_NUMERO_CONTRATOS_PARA_FUTUROS_CLIENTES, 
+        		persona.getId());
 
         return nContratos.longValue() > 0;
     }
@@ -434,8 +524,12 @@ public class ClienteManager {
 		logger.debug("Creando cliente para la persona con id: " + personaId);
 
         Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET_WITH_CONTRATOS, personaId);
-
-        Arquetipo arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, arquetipoId);
+        
+        Arquetipo arquetipo = null;
+        
+        if(arquetipoId != null)
+        	arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, arquetipoId);
+        
         Boolean isRecuperacion = true;
         //Boolean isRecuperacion = arquetipo.getItinerario().getRecuperacion();
 
@@ -487,7 +581,12 @@ public class ClienteManager {
         }
         cliente.setArquetipo(arquetipo);
 
-        persona.setArquetipo(arquetipo.getId());
+        //Daba error si el arquetipo es null. 
+        // Además el atributo arquetipo en persona está desactualizado, hay que ver si hace falta hacer esto
+        // pero utilizando las tablas ARR_ARQ_RECUPERACION_PERSONA y ARP_ARQ_RECOBRO_PERSONA
+        if (arquetipo!=null)
+        	persona.setArquetipo(arquetipo.getId());
+        
         executor.execute(PrimariaBusinessOperation.BO_PER_MGR_SAVE_OR_UPDATE, persona);
         save(cliente);
 

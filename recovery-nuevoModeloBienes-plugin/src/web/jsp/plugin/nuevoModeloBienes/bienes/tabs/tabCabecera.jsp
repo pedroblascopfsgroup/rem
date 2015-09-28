@@ -173,6 +173,10 @@
 	var tiposFinancieros	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tiposFinaciero" text="**Tipo Financiero"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoProdBancario.descripcion}" />',{labelStyle:labelStyle});
 	var valorProdBancario	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoraciï¿½n"/>',app.format.moneyRenderer('${NMBbien.adicional.valoracion}'),{labelStyle:labelStyle});
 	
+	// OTROS DATOS
+	var numDomicilio = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.numDomicilio" text="**Número del domicilio del bien"/>', '<s:message javaScriptEscape="true" text="${NMBbien.numDomicilio}" />',{labelStyle:labelStyle});
+	var idDireccion = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.idDireccion" text="**Identificador de dirección unívoca que tiene dado de alta el bien en la garantía"/>', '<s:message javaScriptEscape="true" text="${NMBbien.idDireccion}" />',{labelStyle:labelStyle});
+	var destinoUso = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.destinoUso" text="**Destino uso del bien."/>', '<s:message javaScriptEscape="true" text="${NMBbien.destinoUso}" />',{labelStyle:labelStyle});
 	
 	var direccion = new Ext.form.TextArea({
 		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.direccion" text="**Direcciï¿½n" />'
@@ -369,6 +373,22 @@
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 		,items : [{items:[pais, provincia, localidad, unidadPoblacional, codPostal, tipoVia]},
 				  {items:[nombreVia, numeroDomicilio, portal, bloque, escalera, piso, puerta, barrio, direccion]}
+				 ]
+	});
+	
+	var pestanaOtros = new Ext.form.FieldSet({
+		autoHeight:true
+		,width:770
+		,style:'padding:0px'
+  	   	,border:true
+		,layout : 'table'
+		,border : true
+		,layoutConfig:{
+			columns:2
+		}
+		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.titulo" text="**Otros datos"/>'
+		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
+		,items : [{items:[numDomicilio, idDireccion, destinoUso]}
 				 ]
 	});
 	

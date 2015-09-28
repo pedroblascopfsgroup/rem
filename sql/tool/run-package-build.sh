@@ -20,6 +20,11 @@ function print_banner() {
     echo ""
 }
 
+print_banner
+echo "En construcción..."
+echo ""
+exit
+
 clear
 
 if [[ "$#" -ne 1 ]] && [[ "$#" -ne 2 ]]; then

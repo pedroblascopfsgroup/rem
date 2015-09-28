@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteInvestigacionJudicial" width="1486" height="877">
+  <node name="Inicio" x="376" y="42" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H044_SolicitudInvestigacionJudicial" x="308" y="145" width="269" height="36">
+    <edge>
+      <label x="-90" y="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-20" y="-204"/>
+      <bendpoint w1="497" h1="1" w2="507" h2="-423"/>
+      <bendpoint w1="495" h1="423" w2="505" h2="-1"/>
+    </edge>
+  </node>
+  <node name="H044_RegistrarResultadoInvestigacion" x="309" y="221" width="268" height="36">
+    <edge>
+      <label x="2" y="5"/>
+    </edge>
+    <edge>
+      <label x="-70" y="-13"/>
+    </edge>
+    <edge>
+      <label x="-20" y="-159"/>
+      <bendpoint w1="477" h1="0" w2="488" h2="-348"/>
+      <bendpoint w1="475" h1="346" w2="486" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-35"/>
+      <bendpoint w1="-229" h1="-41" w2="-228" h2="35"/>
+    </edge>
+  </node>
+  <node name="H044_RegistrarResultadoInvestigacionDecision" x="310" y="300" width="268" height="36">
+    <edge>
+      <label x="-18" y="-19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H044_InvestigacionDecision" x="710" y="303" width="198" height="36">
+    <edge>
+      <label x="-46" y="-35"/>
+      <bendpoint w1="1" h1="140" w2="337" h2="-1"/>
+    </edge>
+  </node>
+  <node name="H044_RevisarInvestigacionYActualizacionDatos" x="311" y="366" width="265" height="36">
+    <edge>
+      <label x="-79" y="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="24" y="-22"/>
+      <bendpoint w1="-268" h1="2" w2="-257" h2="-201"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-43"/>
+      <bendpoint w1="-209" h1="-72" w2="-209" h2="73"/>
+    </edge>
+  </node>
+  <node name="H044_RevisarDecision" x="367" y="469" width="171" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="366" y="569" width="154" height="36"/>
+</root-container>

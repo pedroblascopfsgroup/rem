@@ -28,6 +28,7 @@ import es.capgemini.pfs.embargoProcedimiento.EmbargoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.JuzgadoDao;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;

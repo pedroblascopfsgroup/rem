@@ -11,6 +11,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.concursal.concurso.dto.DtoConcurso;
 import es.pfsgroup.concursal.concurso.dto.DtoContratoConcurso;
@@ -99,6 +100,10 @@ public class CreditoManager implements CreditoApi {
 	public void setGenericDao(GenericABMDao genericDao) {
 		this.genericDao = genericDao;
 	}
-
 	
+	public Credito getCreditoByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		Credito credito = genericDao.get(Credito.class, filtro);
+		return credito;
+	}	
 }

@@ -21,7 +21,7 @@
 	<!-- renderiza el formulario -->
     <view-state id="editaProcedimiento" view="expedientes/editaProcedimiento" >
 	    <on-entry>
-	    	<evaluate expression="requestParameters.idExpediente" result="flowScope.idExpediente" />
+	    	<evaluate expression="requestParameters.idExpediente" result="idExpediente" />
             <evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnExpediente',idExpediente)" result="flowScope.asuntos" />
 	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento" />
 	    	<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />

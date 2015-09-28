@@ -19,6 +19,7 @@
             <json:property name="propuesta" value="${c.ultimaPolitica.esPropuesta}" />
             <json:property name="propuestaSuperusuario" value="${c.ultimaPolitica.esPropuestaSuperusuario}" />
 			<json:property name="idAnalisis" value="${c.analisisPersonaPolitica.id}"/>
+			<json:property name="idExpediente" value="${c.expediente.id}" />
         </json:object>
     </json:array>
 </fwk:json>  

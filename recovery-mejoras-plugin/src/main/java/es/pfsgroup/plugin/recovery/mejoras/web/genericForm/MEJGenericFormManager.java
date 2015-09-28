@@ -19,13 +19,13 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.dao.JuzgadoDao;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
+import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
-import es.capgemini.pfs.web.genericForm.GenericFormItem;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 

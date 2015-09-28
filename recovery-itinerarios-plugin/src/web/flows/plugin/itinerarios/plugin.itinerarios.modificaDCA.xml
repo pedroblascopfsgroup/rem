@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="id" type="java.lang.Long"/>
+	
+	<end-state id="listado" view="plugin/itinerarios/editarDCA">
+		
+		<on-entry>  
+			<evaluate expression="executor.execute('plugin.itinerarios.itinerario.getItinerario',id)" result="flowScope.itinerario"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getDCA',id)" result="flowScope.dca"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getDCASiNo',id)" result="flowScope.dcaSiNo"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getEstadoDC',id)" result="flowScope.estado"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.gestorDespacho.listaGestores')" result="flowScope.gestores"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.gestorDespacho.listaSupervisores')" result="flowScope.supervisores" />
+			<evaluate expression="executor.execute('plugin.itinerarios.comite.listaComites')" result="flowScope.comites" />
+			<evaluate expression="executor.execute('plugin.itinerarios.tipoActuacion.listaTiposActuacion')" result="flowScope.tiposActuacion" />
+			<evaluate expression="executor.execute('plugin.itinerarios.tipoProcedimiento.listaTiposProcedimiento')" result="flowScope.tiposProcedimiento" />
+			<evaluate expression="executor.execute('plugin.itinerarios.ddTipoReclamacion.listaTiposReclamacion')" result="flowScope.tiposReclamacion" />
+		</on-entry>
+		 
+	</end-state>
+</flow>
+
+
+

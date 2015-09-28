@@ -110,7 +110,12 @@
 	var tiposFinancieros	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tiposFinaciero" text="**Tipo Financiero"/>', '<s:message javaScriptEscape="true" text="${NMBbien.bienEntidad.tipoProdBancario.descripcion}" />',{labelStyle:labelStyle});
 	var valorProdBancario	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoración"/>',app.format.moneyRenderer('${NMBbien.bienEntidad.valoracion}'),{labelStyle:labelStyle});
 	
-	
+	// OTROS DATOS
+	var numDomicilio = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.numDomicilio" text="**Número del domicilio del bien"/>', '<s:message javaScriptEscape="true" text="${NMBbien.numDomicilio}" />',{labelStyle:labelStyle});
+	var idDireccion = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.idDireccion" text="**Identificador de dirección unívoca que tiene dado de alta el bien en la garantía"/>', '<s:message javaScriptEscape="true" text="${NMBbien.idDireccion}" />',{labelStyle:labelStyle});
+	var destinoUso = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.destinoUso" text="**Destino uso del bien."/>', '<s:message javaScriptEscape="true" text="${NMBbien.destinoUso}" />',{labelStyle:labelStyle});
+	//var secGarantia = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.secGarantia" text="**Secuencia de la Garantía de la operación"/>','<fwk:date value="${NMBbien.adicional.fechaMatricula}"/>', {labelStyle:labelStyleAjusteColumnas});
+		
 	var direccion = new Ext.form.TextArea({
 		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.direccion" text="**Dirección" />'
 		,value:'<s:message javaScriptEscape="true" text="${NMBbien.bienEntidad.direccion}" />'
@@ -276,6 +281,22 @@
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[provincia, poblacion, codPostal]},
 				  {items:[direccion]}
+				 ]
+	});
+	
+	var pestanaOtros = new Ext.form.FieldSet({
+		autoHeight:true
+		,width:770
+		,style:'padding:0px'
+  	   	,border:true
+		,layout : 'table'
+		,border : true
+		,layoutConfig:{
+			columns:2
+		}
+		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.titulo" text="**Otros datos"/>'
+		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
+		,items : [{items:[numDomicilio, idDireccion, destinoUso]}
 				 ]
 	});
 	

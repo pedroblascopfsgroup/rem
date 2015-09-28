@@ -109,6 +109,8 @@ public class Convenio implements Serializable, Auditable{
 	@Column(name = "COV_PORCENTAJE_ORD")
 	private Float porcentajeOrd;
 
+	@Column(name="SYS_GUID")
+	private String guid;
 	
 	@Embedded
     private Auditoria auditoria;
@@ -298,5 +300,13 @@ public class Convenio implements Serializable, Auditable{
 
 	public Float getPorcentajeOrd() {
 		return porcentajeOrd;
+	}
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
 	}
 }

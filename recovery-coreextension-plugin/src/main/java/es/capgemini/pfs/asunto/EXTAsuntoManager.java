@@ -123,7 +123,6 @@ import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 
-
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
 
@@ -1109,7 +1108,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		if (Checks.esNulo(dtoAsunto.getIdAsunto())) // CREAR EXTASUNTO
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
-			id = asuntoDao.crearAsunto(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones());
+			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto());
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
@@ -1686,7 +1685,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		List<Procedimiento> procedimientos = asunto.getProcedimientos();
 		for (Procedimiento p : procedimientos){
 			MEJProcedimiento mejp = proxyFactory.proxy(EXTProcedimientoApi.class).getInstanceOf(p);
-			if (!mejp.isEstaParalizado()) {
+			if (!Checks.esNulo(mejp) && !mejp.isEstaParalizado()) {				
 				if(tiposProcedimientos.contains(p.getTipoProcedimiento().getCodigo())) {
 					return true;
 				}
@@ -1868,7 +1867,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			return esUsuarioGestorDecision(id);
 			
 		} catch (Exception e) {
-			logger.fatal("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id);
+			logger.error("No se ha podido comprobar si el usuario puede ver el botón de tomar una decisión en el asunto: "+id, e);
 			return false;
 			//throw new BusinessOperationException(e);
 		}
@@ -1897,11 +1896,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		for (String st : staC) {
 			
 			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
-			listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
-			
+			if (extSubtipoTarea!=null) {
+				listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
+			}
 		}
-		
-		
 		
 		boolean gestor = false;
 
@@ -1915,8 +1913,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}*/
 
 		return gestor;
-		
-		
 	}
 
 	@Override
@@ -1947,6 +1943,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 	}
 	
+
+	public EXTAsunto getAsuntoByGuid(String guid) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+
+	public EXTAsunto getAsuntoById(Long id) {
+		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "id", id);
+		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		return extAsunto;
+	}
+
 	@BusinessOperation(EXT_BO_ES_TIPO_GESTOR_ASIGNADO)
 	public Boolean esTipoGestorAsignado(Long idAsunto, String codigoTipoGestor){
 		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(idAsunto);

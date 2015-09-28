@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="haya_tramiteSolicitudActuacionesPronunciamientos">
+
+	<start-state name="Inicio">
+		<transition to="H019_presentarSolicitud"></transition>
+	</start-state>
+
+
+	<state name="H019_presentarSolicitud">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="H019_RegistrarResultadoSolicitud" name="avanzaBPM"></transition>
+		<transition to="H019_presentarSolicitud" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H019_RegistrarResultadoSolicitud">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="H019_PronunciamientoDecision" name="avanzaBPM"></transition>
+		<transition to="H019_RegistrarResultadoSolicitud" name="activarAlerta"></transition>
+		<transition to="H019_presentarSolicitud" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<node name="H019_PronunciamientoDecision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>	
+      	<transition to="Fin"></transition>
+	</node>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

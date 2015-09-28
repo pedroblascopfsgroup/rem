@@ -211,7 +211,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		// VISIBILIDAD
 		// Se suma la visibilidad por pertenencia al asunto + la visibilidad por
 		// zonas
-		// FIXME A�adir la visibilidad por zonas
+		// FIXME Aï¿½adir la visibilidad por zonas
 		/*
 		 * hql.append(" and (("); hql.append("(asu.gestor is not null and " +
 		 * filtroUsuarioMonogestor(usuarioLogado.getId().toString()) + ")");
@@ -456,7 +456,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			String comboTiposGestor) {
 		if (Checks.esNulo(comboTiposGestor) && Checks.esNulo(comboGestor)) {
 			throw new IllegalArgumentException(
-					"comboGestor y comboTiposGestor est�n vac�os.");
+					"comboGestor y comboTiposGestor están vacíos.");
 		}
 		StringBuilder subhql = new StringBuilder(
 				"select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu ");
@@ -619,7 +619,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		hql.append(" where a.id in ");
 
 		/***
-		 * La lista de los par�metros din�nmicos debe venir de la siguiente
+		 * La lista de los parï¿½metros dinï¿½nmicos debe venir de la siguiente
 		 * manera
 		 * 
 		 * _param_origen:plugin1;plugin1param1:valor1;plugin1param2:valor2;%
@@ -820,7 +820,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		//FILTRO ERROR CDD
 		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
                         hql.append(" and cdd.fechaEntrega is null ");
-                        //Si se buscan KOs de Pivote, se debe filtrar tambi�n por fechaEntrega vac�o
+                        //Si se buscan KOs de Pivote, se debe filtrar también por fechaEntrega vacío
                         
 			if("Todos".equals(dto.getComboErrorPreviCDD())){
                                 hql.append(" and cdd.resultadoValidacion <> 1");
@@ -883,7 +883,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		// VISIBILIDAD
 		// Se suma la visibilidad por pertenencia al asunto + la visibilidad por
 		// zonas
-		// FIXME A�adir la visibilidad por zonas
+		// FIXME Aï¿½adir la visibilidad por zonas
 		/*
 		 * hql.append(" and (("); hql.append("(asu.gestor is not null and " +
 		 * filtroUsuarioMonogestor(usuarioLogado.getId().toString()) + ")");
@@ -1186,7 +1186,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
             if (!q.list().isEmpty()){
                 if(!Checks.esNulo(q.list().get(0).toString()) || q.list().get(0).toString() != ""){
-                    msgErrorEnvioCDD = "Error validaci�n CDD: " + q.list().get(0).toString();
+                    msgErrorEnvioCDD = "Error validación CDD: " + q.list().get(0).toString();
                 }
             }
 

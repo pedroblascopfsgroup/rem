@@ -195,7 +195,7 @@
 <!-- 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> -->
 		
 	<bean p:entity="tabs.expediente.fast" p:name="gestionYanalisis"  p:order="500"
-		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/gestionyAnalisisPropuesta.jsp" 
+		p:fileName="/WEB-INF/jsp/entidad/expediente/tabs/gestionYAnalisisPropuesta.jsp" 
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
 	<bean p:entity="tabs.expediente.fast" p:name="decisionComite"  p:order="600"

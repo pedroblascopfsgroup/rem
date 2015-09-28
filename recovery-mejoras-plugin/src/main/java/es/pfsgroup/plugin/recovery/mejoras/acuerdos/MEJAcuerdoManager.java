@@ -40,7 +40,6 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
@@ -424,11 +423,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
      * @return Acuerdo
      */
     @BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_ACUERDOS_BY_EXPEDIENTE_ID)
-    public List<EXTAcuerdo> getAcuerdosDelExpediente(Long id) {
+    public EXTAcuerdo getAcuerdosDelExpediente(Long id) {
         logger.debug("Obteniendo acuerdos del expediente" + id);
-        Order order = new Order(OrderType.ASC, "id");
-        return (List<EXTAcuerdo>) genericDao.getListOrdered(EXTAcuerdo.class,order, 
-        		genericDao.createFilter(FilterType.EQUALS, "expediente.id", id));
+        return genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", id));
     }
     
 	/**

@@ -333,9 +333,36 @@ public class Persona implements Serializable, Auditable, Describible {
 	@Column(name = "PER_EXTRA_6")
 	private Date extra6;
 
+	/**
+	 * Ahora se utiliza la tabla ARR_ARQ_RECUPERACION_PERSONA<BR><BR>
+	 *  <i>SELECT DISTINCT PER_ID, ARQ_ID FROM (<br>
+          SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD<br>
+          FROM ARR_ARQ_RECUPERACION_PERSONA<br>
+        ) WHERE ORD = 1</i>
+	 */
+	@Deprecated
 	@Column(name = "ARQ_ID")
 	private Long arquetipo;
 
+	/**
+	 * Ahora se utiliza la tabla ARR_ARQ_RECUPERACION_PERSONA<br><br>
+	 * 
+	 * <i>WITH ARR_TMP AS (<br>
+		  SELECT DISTINCT PER_ID, ARQ_ID, ORD FROM (<br>
+		              SELECT PER_ID, ARQ_ID, ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY ARQ_DATE DESC) ORD<br>
+		              FROM ARR_ARQ_RECUPERACION_PERSONA<br>
+		            ) WHERE ORD <=2<br>
+		)<br>
+		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)<br>
+		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)<br>
+		, VARR AS (<br>
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID<br>
+				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID<br>
+				inner join per_personas p on a1.per_id = p.per_id<br>
+		)</i>
+	 * 
+	 */
+	@Deprecated
 	@Column(name = "ARQ_ID_CALCULADO")
 	private Long arquetipoCalculado;
 
@@ -660,6 +687,9 @@ public class Persona implements Serializable, Auditable, Describible {
 	@Column(name = "PER_EMPLEADO")
 	private Boolean esEmpleado;
 
+	@Column(name = "PER_SITUACION_CONCURSAL")
+	private String situacionConcursal;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	@JoinColumn(name = "DD_COS_ID")
@@ -732,8 +762,20 @@ public class Persona implements Serializable, Auditable, Describible {
 			+ "'))")
 	private String descripcionCnae;
 	
+	@Formula("(SELECT icc.icc_value FROM ext_icc_info_extra_cli icc WHERE icc.per_id = per_id "
+			+ " and icc.dd_ifx_id = ("
+			+ "SELECT ifx.dd_ifx_id FROM ext_dd_ifx_info_extra_cli ifx WHERE ifx.dd_ifx_codigo = '"
+			+ DDTipoInfoCliente.DATE_EXTRA1
+			+ "'))")
+	private String fechaSituacionConcursal;
 	
-
+	@Formula("(SELECT icc.icc_value FROM ext_icc_info_extra_cli icc WHERE icc.per_id = per_id "
+			+ " and icc.dd_ifx_id = ("
+			+ "SELECT ifx.dd_ifx_id FROM ext_dd_ifx_info_extra_cli ifx WHERE ifx.dd_ifx_codigo = '"
+			+ DDTipoInfoCliente.FLAG_EXTRA1
+			+ "'))")
+	private Boolean clienteReestructurado;
+	
 	/**
 	 * @return the id
 	 */
@@ -3176,6 +3218,30 @@ public class Persona implements Serializable, Auditable, Describible {
 
 	public void setDescripcionCnae(String descripcionCnae) {
 		this.descripcionCnae = descripcionCnae;
+	}
+
+	public String getSituacionConcursal() {
+		return situacionConcursal;
+	}
+
+	public void setSituacionConcursal(String situacionConcursal) {
+		this.situacionConcursal = situacionConcursal;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return fechaSituacionConcursal;
+	}
+
+	public void setFechaSituacionConcursal(String fechaSituacionConcursal) {
+		this.fechaSituacionConcursal = fechaSituacionConcursal;
+	}
+
+	public Boolean getClienteReestructurado() {
+		return clienteReestructurado;
+	}
+
+	public void setClienteReestructurado(Boolean clienteReestructurado) {
+		this.clienteReestructurado = clienteReestructurado;
 	}
 
 }

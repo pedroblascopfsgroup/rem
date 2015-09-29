@@ -362,5 +362,10 @@ public class TareaExternaManager {
     public void borrar(TareaExterna tareaExterna) {
         executor.execute(ComunBusinessOperation.BO_TAREA_MGR_DELETE, tareaExterna.getTareaPadre());
         tareaExternaDao.delete(tareaExterna);
+        
+// LLamada al executor.        
+        
+        
+        
     }
 }

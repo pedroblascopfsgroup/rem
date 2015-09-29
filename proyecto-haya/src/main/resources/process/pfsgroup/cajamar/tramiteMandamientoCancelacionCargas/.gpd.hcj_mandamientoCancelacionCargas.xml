@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_mandamientoCancelacionCargas" width="1044" height="945">
+  <node name="Inicio" x="423" y="27" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC102_SolicitudMandamiento" x="354" y="138" width="273" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-150"/>
+      <bendpoint w1="-275" h1="-23" w2="-289" h2="-472"/>
+      <bendpoint w1="-475" h1="-16" w2="-485" h2="-695"/>
+      <bendpoint w1="-475" h1="302" w2="-485" h2="-377"/>
+      <bendpoint w1="-476" h1="621" w2="-486" h2="-58"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC102_ObtencionMandamientoCancelacionCargas" x="317" y="265" width="347" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="6" y="-239"/>
+      <bendpoint w1="-467" h1="-23" w2="-477" h2="-575"/>
+      <bendpoint w1="-466" h1="223" w2="-476" h2="-329"/>
+      <bendpoint w1="-468" h1="484" w2="-478" h2="-68"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-253" h1="-130" w2="-253" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC102_EnvioMandamientoAdmision" x="355" y="383" width="273" height="36">
+    <edge>
+      <label x="10" y="-170"/>
+      <bendpoint w1="-459" h1="-4" w2="-468" h2="-438"/>
+      <bendpoint w1="-459" h1="350" w2="-468" h2="-84"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-283" h1="-116" w2="-282" h2="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ForkEnvioMandamientoAdmision" x="365" y="492" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC102_RecepcionMandamiento" x="217" y="565" width="247" height="36">
+    <edge>
+      <label x="9" y="-78"/>
+      <bendpoint w1="-301" h1="-17" w2="-461" h2="-269"/>
+      <bendpoint w1="-299" h1="162" w2="-459" h2="-90"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC102_EnvioMandamientoGestoria" x="211" y="687" width="259" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-187" h1="1" w2="-365" h2="-132"/>
+      <bendpoint w1="-188" h1="44" w2="-366" h2="-89"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-231" h1="-114" w2="-226" h2="4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC102_EnvioMandamientoAdmisionDecision" x="617" y="573" width="304" height="36">
+    <edge>
+      <label x="-2" y="-15"/>
+      <bendpoint w1="-164" h1="102" w2="105" h2="-142"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-2" y="-15"/>
+      <bendpoint w1="-164" h1="102" w2="105" h2="-142"/>
+    </edge>
+  </node>
+  <node name="Fin" x="431" y="908" width="132" height="36"/>
+  <node name="HC102_SolicitarArchivoProcedimiento" x="638" y="681" width="262" height="36">
+    <edge>
+      <label x="5" y="-118"/>
+      <bendpoint w1="238" h1="-4" w2="510" h2="-231"/>
+      <bendpoint w1="236" h1="236" w2="508" h2="9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC102_ResolucionFirme" x="654" y="807" width="227" height="36">
+    <edge>
+      <label x="5" y="-45"/>
+      <bendpoint w1="188" h1="4" w2="492" h2="-97"/>
+      <bendpoint w1="187" h1="101" w2="491" h2="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-59" y="-4"/>
+      <bendpoint w1="208" h1="-121" w2="206" h2="5"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+</root-container>

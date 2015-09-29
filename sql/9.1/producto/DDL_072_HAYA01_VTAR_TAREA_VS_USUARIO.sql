@@ -1,7 +1,7 @@
 ﻿--/*
 --##########################################
 --## AUTOR=AGUSTIN MOMPO
---## FECHA_CREACION=20150827
+--## FECHA_CREACION=20150916
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=ACUERDOS
@@ -55,282 +55,245 @@ BEGIN
     
     
     EXECUTE IMMEDIATE '
-CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_NOMBRE_VISTA||' (USU_PENDIENTES, USU_ESPERA, USU_ALERTA, DD_TGE_ID_PENDIENTE, 
-             DD_TGE_ID_ESPERA, DD_TGE_ID_ALERTA, TAR_ID, CLI_ID, EXP_ID, ASU_ID, TAR_TAR_ID, SPR_ID, SCX_ID, DD_EST_ID, DD_EIN_ID, DD_STA_ID, TAR_CODIGO, TAR_TAREA, TAR_DESCRIPCION,
-             TAR_FECHA_FIN, TAR_FECHA_INI, TAR_EN_ESPERA, TAR_ALERTA, TAR_TAREA_FINALIZADA, TAR_EMISOR, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR,
-             BORRADO, PRC_ID, CMB_ID, SET_ID, TAR_FECHA_VENC, OBJ_ID, TAR_FECHA_VENC_REAL, DTYPE, NFA_TAR_REVISADA, NFA_TAR_FECHA_REVIS_ALER, NFA_TAR_COMENTARIOS_ALERTA, DD_TRA_ID, CNT_ID,
-             TAR_DESTINATARIO, TAR_TIPO_DESTINATARIO, TAR_ID_DEST, PER_ID, RPR_REFERENCIA, TAR_TIPO_ENT_COD, TAR_DTYPE, TAR_SUBTIPO_COD, TAR_SUBTIPO_DESC, PLAZO, ENTIDADINFORMACION,
-             CODENTIDAD, GESTOR, TIPOSOLICITUDSQL, IDENTIDAD, FCREACIONENTIDAD, CODIGOSITUACION, IDTAREAASOCIADA, DESCRIPCIONTAREAASOCIADA, SUPERVISOR, DIASVENCIDOSQL, DESCRIPCIONENTIDAD, SUBTIPOTARCODTAREA,
-             FECHACREACIONENTIDADFORMATEADA, DESCRIPCIONEXPEDIENTE, DESCRIPCIONCONTRATO, IDENTIDADPERSONA, VOLUMENRIESGOSQL, TIPOITINERARIOENTIDAD, PRORROGAFECHAPROPUESTA, PRORROGACAUSADESCRIPCION,
-             CODIGOCONTRATO, CONTRATO) AS 
-  SELECT v.usu_pendientes , 
-    CASE 
-      WHEN (NVL(tar.tar_en_espera,0) = 1) 
-      THEN NVL(esp.usu_id,-1) 
-      ELSE                -1 
-    END usu_espera 
-    -- , CASE WHEN v.en_espera=1 THEN esp.usu_id ELSE 1 END usu_espera 
-    , 
-    v.usu_alerta, 
-    v.dd_tge_id_pendiente , 
-    -1 dd_tge_id_espera --DEPRECATED 
-    , 
-    v.dd_tge_id_alerta , 
-    tar.tar_id, 
-    tar.cli_id, 
-    tar.exp_id, 
-    tar.asu_id, 
-    tar.tar_tar_id, 
-    tar.spr_id, 
-    tar.scx_id , 
-    tar.dd_est_id, 
-    tar.dd_ein_id, 
-    tar.dd_sta_id, 
-    tar.tar_codigo, 
-    tar.tar_tarea , 
-    CASE tar.dd_ein_id 
-      WHEN 5 
-        THEN 
-          CASE 
-            WHEN tpo.dd_tpo_descripcion IS NOT NULL 
-              THEN asu.asu_nombre || ''-'' || tpo.dd_tpo_descripcion 
-            ELSE asu.asu_nombre 
-          END 
+	CREATE VIEW '||V_ESQUEMA||'.'||V_NOMBRE_VISTA||' AS
+	SELECT V.USU_PENDIENTES
+      , CASE WHEN (NVL(TAR.TAR_EN_ESPERA,0) = 1) THEN NVL(ESP.USU_ID,-1) ELSE -1 END USU_ESPERA
+		  -- , CASE WHEN v.en_espera=1 THEN esp.usu_id ELSE 1 END usu_espera
+		  , V.USU_ALERTA, V.DD_TGE_ID_PENDIENTE
+          , -1 DD_TGE_ID_ESPERA --DEPRECATED
+          , V.DD_TGE_ID_ALERTA
+          , TAR.TAR_ID, TAR.CLI_ID, TAR.EXP_ID, TAR.ASU_ID, TAR.TAR_TAR_ID, TAR.SPR_ID, TAR.SCX_ID
+          , TAR.DD_EST_ID, TAR.DD_EIN_ID, TAR.DD_STA_ID, TAR.TAR_CODIGO, TAR.TAR_TAREA
+          , CASE TAR.DD_EIN_ID
       WHEN 3 
-        THEN asu.asu_nombre 
-      WHEN 10 
-        THEN tar.tar_descripcion 
-      ELSE tar.tar_descripcion 
-    END tar_descripcion , 
-    tar.tar_fecha_fin, 
-    tar.tar_fecha_ini, 
-    tar.tar_en_espera, 
-    tar.tar_alerta, 
-    tar.tar_tarea_finalizada, 
-    tar.tar_emisor, 
-    tar.VERSION, 
-    tar.usuariocrear, 
-    tar.fechacrear, 
-    tar.usuariomodificar , 
-    tar.fechamodificar, 
-    tar.usuarioborrar, 
-    tar.fechaborrar, 
-    tar.borrado, 
-    tar.prc_id, 
-    tar.cmb_id, 
-    tar.set_id, 
-    tar.tar_fecha_venc, 
-    tar.obj_id, 
-    tar.tar_fecha_venc_real, 
-    tar.dtype, 
-    tar.nfa_tar_revisada , 
-    tar.nfa_tar_fecha_revis_aler, 
-    tar.nfa_tar_comentarios_alerta, 
-    tar.dd_tra_id, 
-    tar.cnt_id, 
-    tar.tar_destinatario, 
-    tar.tar_tipo_destinatario, 
-    tar.tar_id_dest, 
-    tar.per_id, 
-    tar.rpr_referencia, 
-    ein.dd_ein_codigo TAR_TIPO_ENT_COD , 
-    tar.dtype tar_dtype, 
-    STA.dd_sta_codigo TAR_SUBTIPO_COD, 
-    sta.dd_sta_descripcion TAR_SUBTIPO_DESC, 
-    '''' plazo -- TODO Sacar plazo para expediente y cliente 
-    ,CASE ein.dd_ein_codigo 
-       WHEN ''3''  --Asunto 
-          THEN ein.dd_ein_descripcion || '' ['' || tar.asu_id || '']'' 
-       WHEN ''5''  --Procedimiento 
-          THEN ein.dd_ein_descripcion || '' ['' || tar.prc_id || '']'' 
+		THEN ASU.ASU_NOMBRE
+      WHEN 5 
+        THEN CASE WHEN TPO.DD_TPO_DESCRIPCION IS NOT NULL THEN ASU.ASU_NOMBRE || ''-'' || TPO.DD_TPO_DESCRIPCION ELSE ASU.ASU_NOMBRE END 
+	  WHEN 10
+		THEN TAR.TAR_DESCRIPCION
+      ELSE TAR.TAR_DESCRIPCION
+    END TAR_DESCRIPCION
+	, TAR.TAR_FECHA_FIN, TAR.TAR_FECHA_INI, TAR.TAR_EN_ESPERA, TAR.TAR_ALERTA, TAR.TAR_TAREA_FINALIZADA, TAR.TAR_EMISOR, TAR.VERSION, TAR.USUARIOCREAR, TAR.FECHACREAR, TAR.USUARIOMODIFICAR
+	, TAR.FECHAMODIFICAR, TAR.USUARIOBORRAR, TAR.FECHABORRAR, TAR.BORRADO, TAR.PRC_ID, TAR.CMB_ID, TAR.SET_ID, TAR.TAR_FECHA_VENC, TAR.OBJ_ID, TAR.TAR_FECHA_VENC_REAL, TAR.DTYPE, TAR.NFA_TAR_REVISADA
+	, TAR.NFA_TAR_FECHA_REVIS_ALER, TAR.NFA_TAR_COMENTARIOS_ALERTA, TAR.DD_TRA_ID, TAR.CNT_ID, TAR.TAR_DESTINATARIO, TAR.TAR_TIPO_DESTINATARIO, TAR.TAR_ID_DEST, TAR.PER_ID, TAR.RPR_REFERENCIA, EIN.DD_EIN_CODIGO TAR_TIPO_ENT_COD
+	, TAR.DTYPE TAR_DTYPE, STA.DD_STA_CODIGO TAR_SUBTIPO_COD, STA.DD_STA_DESCRIPCION TAR_SUBTIPO_DESC, '''' PLAZO -- TODO Sacar plazo para expediente y cliente 
+    ,CASE EIN.DD_EIN_CODIGO 
        WHEN ''2''  --Expediente 
-          THEN ein.dd_ein_descripcion || '' ['' || tar.exp_id || '']'' 
+          THEN EIN.DD_EIN_DESCRIPCION || '' ['' || TAR.EXP_ID || '']'' 
+       WHEN ''3''  --Asunto 
+          THEN EIN.DD_EIN_DESCRIPCION || '' ['' || TAR.ASU_ID || '']'' 
+       WHEN ''5''  --Procedimiento 
+          THEN EIN.DD_EIN_DESCRIPCION || '' ['' || TAR.PRC_ID || '']'' 
+       WHEN ''7'' -- Objetivo
+          THEN EIN.DD_EIN_DESCRIPCION || '' ['' || TAR.OBJ_ID || '']''		
        WHEN ''9''  --Persona 
-          THEN ein.dd_ein_descripcion || '' ['' || tar.per_id || '']'' 
+          THEN EIN.DD_EIN_DESCRIPCION || '' ['' || TAR.PER_ID || '']'' 
        WHEN ''10'' --Notificacion 
-          THEN ein.dd_ein_descripcion || '' ['' || tar.tar_id || '']'' 
+          THEN EIN.DD_EIN_DESCRIPCION || '' ['' || TAR.TAR_ID || '']'' 
         -- TODO poner para el resto de unidades de gestion 
       ELSE '''' 
-    END entidadinformacion , 
-    CASE ein.dd_ein_codigo 
-      WHEN ''3''  --Asunto 
-        THEN tar.asu_id 
-      WHEN ''5''  --Procedimiento 
-        THEN tar.prc_id 
+    END ENTIDADINFORMACION
+	, CASE EIN.DD_EIN_CODIGO
       WHEN ''2''  --Expediente 
-        THEN tar.exp_id 
+        THEN TAR.EXP_ID  
+      WHEN ''3''  --Asunto 
+        THEN TAR.ASU_ID 
+      WHEN ''5''  --Procedimiento 
+        THEN TAR.PRC_ID 
+      WHEN ''7'' -- Objetivo
+        THEN TAR.OBJ_ID
       WHEN ''9''  --Persona 
-        THEN tar.per_id 
+        THEN TAR.PER_ID 
       WHEN ''10'' --Notificacion 
-        THEN tar.tar_id 
+        THEN TAR.TAR_ID 
         -- TODO poner para el resto de unidades de gestion 
       ELSE -1 
-    END codentidad , 
-    CASE 
-      WHEN sta.dd_sta_id NOT IN (700, 701) 
-        THEN 
-          CASE ein.dd_ein_codigo 
-            WHEN ''3''  --Asunto 
-              THEN ges.apellido_nombre 
-            WHEN ''5''  --Procedimiento 
-              THEN ges.apellido_nombre 
+    END CODENTIDAD
+	, CASE WHEN STA.DD_STA_ID NOT IN (700, 701) THEN CASE EIN.DD_EIN_CODIGO 
             WHEN ''2''  --Expediente 
-              THEN ges.apellido_nombre 
+              THEN GES.APELLIDO_NOMBRE 
+            WHEN ''3''  --Asunto 
+              THEN GES.APELLIDO_NOMBRE 
+            WHEN ''5''  --Procedimiento 
+              THEN GES.APELLIDO_NOMBRE 
+             WHEN ''7'' -- Objetivo
+                THEN GES.APELLIDO_NOMBRE                
             WHEN ''9''  --Persona 
-              THEN ges.apellido_nombre 
+              THEN GES.APELLIDO_NOMBRE 
             WHEN ''10'' --Notificacion 
-              THEN ges.apellido_nombre 
+              THEN GES.APELLIDO_NOMBRE 
               -- TODO poner para el resto de unidades de gestion 
             ELSE NULL 
-          END 
-      ELSE NULL 
-    END gestor , 
-    CASE 
-      WHEN sta.dd_sta_codigo IN (''5'', ''6'', ''54'', ''41'') 
-        THEN ''Prórroga'' 
-      WHEN sta.dd_sta_codigo IN (''17'') 
-        THEN ''Cancelación Expediente'' 
-      WHEN sta.dd_sta_codigo IN (''29'') 
-        THEN ''Expediente Manual'' 
-      WHEN sta.dd_sta_codigo IN (''16'', ''28'', ''24'', ''26'', ''27'', ''589'', ''590'', ''15'') 
-        THEN ''Comunicación'' 
-      WHEN sta.dd_sta_codigo IN (''NTGPS'') 
-        THEN ''Notificación automática'' 
+          END ELSE NULL END GESTOR 
+	, CASE
+      WHEN STA.DD_STA_CODIGO IN (''5'', ''6'', ''54'', ''41'') THEN ''Prórroga'' 
+      WHEN STA.DD_STA_CODIGO IN (''17'') THEN ''Cancelación Expediente'' 
+      WHEN STA.DD_STA_CODIGO IN (''29'') THEN ''Expediente Manual'' 
+      WHEN STA.DD_STA_CODIGO IN (''16'', ''28'', ''24'', ''26'', ''27'', ''589'', ''590'', ''15'') THEN ''Comunicación'' 
+      WHEN STA.DD_STA_CODIGO IN (''NTGPS'') THEN ''NOTIFICACIÓN AUTOMÁTICA'' 
       ELSE '''' 
-    END tiposolicitudsql , 
-    CASE ein.dd_ein_codigo 
-      WHEN ''3''  --Asunto 
-        THEN tar.asu_id 
-      WHEN ''5''  --Procedimiento 
-        THEN tar.prc_id 
+    END TIPOSOLICITUDSQL
+	, CASE EIN.DD_EIN_CODIGO 
       WHEN ''2''  --Expediente 
-        THEN tar.EXP_ID 
+        THEN TAR.EXP_ID 
+      WHEN ''3''  --Asunto 
+        THEN TAR.ASU_ID 
+      WHEN ''5''  --Procedimiento 
+        THEN TAR.PRC_ID
+      WHEN ''7'' -- Objetivo
+		THEN TAR.OBJ_ID 
       WHEN ''9''  --Persona 
-        THEN tar.PER_ID 
+        THEN TAR.PER_ID 
       WHEN ''10'' --Notificacion 
-        THEN tar.PRC_ID --Must be PRC_ID 
+        THEN TAR.PRC_ID --Must be PRC_ID 
         -- TODO poner para el resto de unidades de gestion 
       ELSE -1 
-    END identidad , 
-    CASE ein.dd_ein_codigo 
-      WHEN ''3''  --Asunto 
-        THEN asu.fechacrear 
-      WHEN ''5''  --Procedimiento 
-        THEN prc.fechacrear 
+    END IDENTIDAD 
+	, CASE EIN.DD_EIN_CODIGO 
       WHEN ''2''  --Expediente 
-        THEN exp.fechacrear 
+        THEN EXP.FECHACREAR 
+      WHEN ''3''  --Asunto 
+        THEN ASU.FECHACREAR 
+      WHEN ''5''  --Procedimiento 
+        THEN PRC.FECHACREAR 
+      WHEN ''7'' -- Objetivo
+        THEN OBJ.FECHACREAR
       WHEN ''9''  --Persona 
-        THEN per.fechacrear 
+        THEN PER.FECHACREAR 
       WHEN ''10'' --Notificacion 
-        THEN per.fechacrear 
+        THEN PER.FECHACREAR 
         -- TODO poner para el resto de unidades de gestion 
       ELSE NULL 
-    END fcreacionentidad , 
-    CASE ein.dd_ein_codigo 
+    END FCREACIONENTIDAD 
+	, CASE EIN.DD_EIN_CODIGO 
       WHEN ''3'' 
-      THEN est.dd_est_descripcion --asu.asu_situacion 
-        -- TODO poner para el resto de unidades de gestion 
-      ELSE '''' 
-    END codigosituacion , 
-    tar.tar_tar_id idtareaasociada, 
-    asoc.tar_descripcion descripciontareaasociada , 
-    CASE ein.dd_ein_codigo 
-      WHEN ''3''  --Asunto 
-        THEN sup.apellido_nombre 
-      WHEN ''5''  --Procedimiento 
-        THEN sup.apellido_nombre 
+      THEN EST.DD_EST_DESCRIPCION --asu.asu_situacion
+        -- TODO poner para el resto de unidades de gestion
+      ELSE ''''
+    END CODIGOSITUACION
+	, TAR.TAR_TAR_ID IDTAREAASOCIADA, ASOC.TAR_DESCRIPCION DESCRIPCIONTAREAASOCIADA
+	, CASE EIN.DD_EIN_CODIGO 
       WHEN ''2''  --Expediente 
-        THEN sup.apellido_nombre 
+        THEN SUP.APELLIDO_NOMBRE 
+      WHEN ''3''  --Asunto 
+        THEN SUP.APELLIDO_NOMBRE 
+      WHEN ''5''  --Procedimiento 
+        THEN SUP.APELLIDO_NOMBRE
+	  WHEN ''7'' -- Objetivo
+		THEN SUP.APELLIDO_NOMBRE 
       WHEN ''9''  --Persona 
-        THEN sup.apellido_nombre 
+        THEN SUP.APELLIDO_NOMBRE 
       WHEN ''10'' --Notificacion 
-        THEN sup.apellido_nombre 
+        THEN SUP.APELLIDO_NOMBRE 
         -- TODO poner para el resto de unidades de gestion 
       ELSE NULL 
-    END supervisor , 
-    CASE 
-      WHEN TRUNC (tar.tar_fecha_venc) >= TRUNC(sysdate) 
+    END SUPERVISOR 
+	, CASE 
+      WHEN TRUNC (TAR.TAR_FECHA_VENC) >= TRUNC(SYSDATE) 
         THEN NULL 
-      ELSE EXTRACT (DAY FROM (SYSTIMESTAMP - (TRUNC (tar.tar_fecha_venc)))) 
-    END diasvencidosql , 
-    CASE ein.dd_ein_codigo 
-      WHEN ''3''  --Asunto 
-        THEN asu.asu_nombre 
-      WHEN ''5''  --Procedimiento 
-        THEN 
-          CASE 
-            WHEN tpo.dd_tpo_descripcion IS NOT NULL 
-              THEN asu.asu_nombre || ''-'' || tpo.dd_tpo_descripcion 
-            ELSE asu.asu_nombre 
-          END 
+      ELSE EXTRACT (DAY FROM (SYSTIMESTAMP - (TRUNC (TAR.TAR_FECHA_VENC)))) 
+    END DIASVENCIDOSQL 
+	, CASE EIN.DD_EIN_CODIGO 
       WHEN ''2''  --Expediente 
         THEN EXP.EXP_DESCRIPCION 
+      WHEN ''3''  --Asunto 
+        THEN ASU.ASU_NOMBRE 
+      WHEN ''4''  --Tarea 
+        THEN TAR.TAR_DESCRIPCION 
+      WHEN ''5''  --Procedimiento 
+        THEN CASE WHEN TPO.DD_TPO_DESCRIPCION IS NOT NULL THEN ASU.ASU_NOMBRE || ''-'' || TPO.DD_TPO_DESCRIPCION ELSE ASU.ASU_NOMBRE END 
+      WHEN ''7'' --Objetivo
+		THEN CASE WHEN PEROBJ.PER_NOM50 IS NOT NULL THEN PEROBJ.PER_NOM50 ELSE TOB.TOB_DESCRIPCION END
       WHEN ''9''  --Persona 
         THEN PER.PER_NOM50 
-      WHEN ''4''  --Tarea 
-        THEN tar.tar_descripcion 
       WHEN ''10'' --Notificacion 
-        THEN tar.tar_descripcion 
+        THEN TAR.TAR_DESCRIPCION 
         -- TODO poner para el resto de unidades de gestion 
       ELSE NULL 
-    END descripcionentidad , 
-    sta.dd_sta_codigo subtipotarcodtarea, 
-    CASE ein.dd_ein_codigo 
-      WHEN ''3''  --Asunto 
-        THEN TO_CHAR (asu.fechacrear, ''dd/mm/yyyy'') 
-      WHEN ''5''  --Procedimiento 
-        THEN TO_CHAR (prc.fechacrear, ''dd/mm/yyyy'') 
+    END DESCRIPCIONENTIDAD
+	, STA.DD_STA_CODIGO SUBTIPOTARCODTAREA
+    ,CASE EIN.DD_EIN_CODIGO 
       WHEN ''2''  --Expediente 
-        THEN TO_CHAR (exp.fechacrear, ''dd/mm/yyyy'') 
+        THEN TO_CHAR (EXP.FECHACREAR, ''DD/MM/YYYY'') 
+      WHEN ''3''  --Asunto 
+        THEN TO_CHAR (ASU.FECHACREAR, ''DD/MM/YYYY'') 
+      WHEN ''5''  --Procedimiento 
+        THEN TO_CHAR (PRC.FECHACREAR, ''DD/MM/YYYY'') 
+      WHEN ''7'' --Objetivo
+        THEN TO_CHAR(OBJ.FECHACREAR,''DD/MM/YYYY'')
       WHEN ''9''  --Persona 
-        THEN TO_CHAR (per.fechacrear, ''dd/mm/yyyy'') 
+        THEN TO_CHAR (PER.FECHACREAR, ''DD/MM/YYYY'') 
       WHEN ''10'' --Notificacion 
-        THEN TO_CHAR (tar.fechacrear, ''dd/mm/yyyy'') 
+        THEN TO_CHAR (TAR.FECHACREAR, ''DD/MM/YYYY'') 
         -- TODO poner para el resto de unidades de gestion 
       ELSE NULL 
-    END fechacreacionentidadformateada , 
-    NULL descripcionexpediente -- TODO poner para expediente 
-    , 
-    NULL descripcioncontrato -- TODO poner para contrato 
-    , 
-    NULL identidadpersona -- TODO poner para objetivo y para cliente 
-    ,CASE ein.dd_ein_codigo 
-      WHEN ''5'' 
-        THEN NVL (vre_prc.vre, 0) --vre_via_prc 
+    END FECHACREACIONENTIDADFORMATEADA 
+	, EXP.EXP_DESCRIPCION DESCRIPCIONEXPEDIENTE
+    , NULL DESCRIPCIONCONTRATO -- TODO poner para contrato 
+    ,CASE EIN.DD_EIN_CODIGO
+ 		WHEN ''7'' --Objetivo
+                THEN CMP.PER_ID
+        ELSE NULL
+     END IDENTIDADPERSONA   -- TODO poner para cliente
+    ,CASE EIN.DD_EIN_CODIGO 
+      WHEN ''5'' --Procedimiento
+        THEN NVL (VRE_PRC.VRE, 0) --vre_via_prc 
           -- TODO poner para el resto de unidades de gestion 
       ELSE 0 
-    END volumenriesgosql , 
-    NULL tipoitinerarioentidad -- TODO sacar para cliente y expediente 
-    , 
-    NULL prorrogafechapropuesta -- TODO calcular la fecha prorroga propuesta 
-    , 
-    NULL prorrogacausadescripcion -- TODO calcular la causa de la prorroga 
-    , 
-    NULL codigocontrato -- TODO poner para contrato 
-    , 
-    NULL contrato -- TODO calcular 
+    END VOLUMENRIESGOSQL 
+    ,CASE
+    	WHEN EXP.EXP_ID IS NOT NULL THEN TITI_EXP.DD_TIT_DESCRIPCION
+        WHEN PER.PER_ID IS NOT NULL THEN TITI_PER.DD_TIT_DESCRIPCION
+		WHEN PEROBJ.PER_ID IS NOT NULL THEN TITARR.DD_TIT_DESCRIPCION
+        ELSE NULL
+    END TIPOITINERARIOENTIDAD
+    , NULL PRORROGAFECHAPROPUESTA -- TODO calcular la fecha prorroga propuesta 
+    , NULL PRORROGACAUSADESCRIPCION -- TODO calcular la causa de la prorroga 
+    , NULL CODIGOCONTRATO -- TODO poner para contrato 
+    , NULL CONTRATO -- TODO calcular 
+    ,V.ZON_COD
+    ,V.PEF_ID
   FROM 
     ( 
       SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_PART1 
         UNION 
       SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_PART2 
+		UNION
+      SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_EXPE
+		UNION
+	  SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_OBJ 
         UNION
       SELECT * FROM '||V_ESQUEMA||'.VTAR_TAREA_VS_USUARIO_ACUERDOS 
-    ) V 
-  JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON V.TAR_ID = TAR.TAR_ID 
-  JOIN '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION EIN ON TAR.DD_EIN_ID = EIN.DD_EIN_ID 
-  JOIN '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE STA ON TAR.DD_STA_ID = STA.DD_STA_ID 
-  LEFT JOIN '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC ON TAR.PRC_ID = PRC.PRC_ID AND PRC.BORRADO = 0 
-  LEFT JOIN '||V_ESQUEMA||'.ASU_ASUNTOS ASU ON TAR.ASU_ID = ASU.ASU_ID AND ASU.BORRADO = 0 
-  LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON PRC.DD_TPO_ID = TPO.DD_TPO_ID 
-  LEFT JOIN '||V_ESQUEMA||'.VTAR_NOMBRES_USUARIOS GES ON V.USU_PENDIENTES = GES.USU_ID 
-  LEFT JOIN '||V_ESQUEMA||'.VTAR_NOMBRES_USUARIOS SUP ON V.USU_SUPERVISOR = SUP.USU_ID 
-  LEFT JOIN '||V_ESQUEMA||'.VTAR_NOMBRES_USUARIOS ESP ON TAR.TAR_EMISOR = ESP.APELLIDO_NOMBRE
-  LEFT JOIN '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP ON TAR.EXP_ID = EXP.EXP_ID 
-  LEFT JOIN '||V_ESQUEMA||'.PER_PERSONAS PER ON TAR.PER_ID = PER.PER_ID 
-  LEFT JOIN '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS EST ON TAR.DD_EST_ID = EST.DD_EST_ID 
-  LEFT JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES ASOC ON TAR.TAR_TAR_ID = ASOC.TAR_ID 
-  LEFT JOIN '||V_ESQUEMA||'.VTAR_TAR_VRE_VIA_PRC VRE_PRC ON TAR.TAR_ID = VRE_PRC.TAR_ID
+    ) V
+    JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON V.TAR_ID = TAR.TAR_ID
+    JOIN '||V_ESQUEMA_M||'.DD_EIN_ENTIDAD_INFORMACION EIN ON TAR.DD_EIN_ID = EIN.DD_EIN_ID
+    JOIN '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE STA ON TAR.DD_STA_ID = STA.DD_STA_ID
+    LEFT JOIN '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC ON TAR.PRC_ID = PRC.PRC_ID AND PRC.BORRADO = 0
+    LEFT JOIN '||V_ESQUEMA||'.ASU_ASUNTOS ASU ON TAR.ASU_ID = ASU.ASU_ID AND ASU.BORRADO = 0
+    LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON PRC.DD_TPO_ID = TPO.DD_TPO_ID
+    LEFT JOIN '||V_ESQUEMA||'.VTAR_NOMBRES_USUARIOS GES ON V.USU_PENDIENTES = GES.USU_ID
+    LEFT JOIN '||V_ESQUEMA||'.VTAR_NOMBRES_USUARIOS SUP ON V.USU_SUPERVISOR = SUP.USU_ID
+    LEFT JOIN '||V_ESQUEMA||'.VTAR_NOMBRES_USUARIOS ESP ON TAR.TAR_EMISOR = ESP.APELLIDO_NOMBRE
+    LEFT JOIN '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP ON TAR.EXP_ID = EXP.EXP_ID
+      LEFT JOIN '||V_ESQUEMA||'.ARQ_ARQUETIPOS ARQ_EXP ON EXP.ARQ_ID = ARQ_EXP.ARQ_ID
+        LEFT JOIN '||V_ESQUEMA||'.ITI_ITINERARIOS ITI_EXP ON ARQ_EXP.ITI_ID = ITI_EXP.ITI_ID
+          LEFT JOIN '||V_ESQUEMA_M||'.DD_TIT_TIPO_ITINERARIOS TITI_EXP ON ITI_EXP.DD_TIT_ID = TITI_EXP.DD_TIT_ID
+    LEFT JOIN '||V_ESQUEMA||'.PER_PERSONAS PER ON TAR.PER_ID = PER.PER_ID
+      LEFT JOIN '||V_ESQUEMA||'.ARQ_ARQUETIPOS ARQ_PER ON PER.ARQ_ID = ARQ_PER.ARQ_ID
+        LEFT JOIN '||V_ESQUEMA||'.ITI_ITINERARIOS ITI_PER ON ARQ_PER.ITI_ID = ITI_PER.ITI_ID
+          LEFT JOIN '||V_ESQUEMA_M||'.DD_TIT_TIPO_ITINERARIOS TITI_PER ON ITI_PER.DD_TIT_ID = TITI_PER.DD_TIT_ID
+    LEFT JOIN '||V_ESQUEMA||'.OBJ_OBJETIVO OBJ ON TAR.OBJ_ID = OBJ.OBJ_ID
+      LEFT JOIN '||V_ESQUEMA||'.TOB_TIPO_OBJETIVO TOB ON OBJ.TOB_ID = TOB.TOB_ID
+      LEFT JOIN '||V_ESQUEMA||'.POL_POLITICA POL ON OBJ.POL_ID = POL.POL_ID
+        LEFT JOIN '||V_ESQUEMA||'.CMP_CICLO_MARCADO_POLITICA CMP ON POL.CMP_ID = CMP.CMP_ID
+			LEFT JOIN '||V_ESQUEMA||'.PER_PERSONAS PEROBJ ON CMP.PER_ID = PEROBJ.PER_ID
+        		LEFT JOIN '||V_ESQUEMA||'.ARR_ARQ_RECUPERACION_PERSONA ARR ON PEROBJ.PER_ID = ARR.PER_ID
+          			LEFT JOIN '||V_ESQUEMA||'.ARQ_ARQUETIPOS ARQARR ON ARR.ARQ_ID = ARQARR.ARQ_ID
+            			LEFT JOIN '||V_ESQUEMA||'.ITI_ITINERARIOS ITIARR ON ARQARR.ITI_ID = ITIARR.ITI_ID
+              				LEFT JOIN '||V_ESQUEMA_M||'.DD_TIT_TIPO_ITINERARIOS TITARR ON ITIARR.DD_TIT_ID = TITARR.DD_TIT_ID
+    LEFT JOIN '||V_ESQUEMA_M||'.DD_EST_ESTADOS_ITINERARIOS EST ON TAR.DD_EST_ID = EST.DD_EST_ID
+    LEFT JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES ASOC ON TAR.TAR_TAR_ID = ASOC.TAR_ID
+    LEFT JOIN '||V_ESQUEMA||'.VTAR_TAR_VRE_VIA_PRC VRE_PRC ON TAR.TAR_ID = VRE_PRC.TAR_ID
 ';
 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_NOMBRE_VISTA||' Creada');     

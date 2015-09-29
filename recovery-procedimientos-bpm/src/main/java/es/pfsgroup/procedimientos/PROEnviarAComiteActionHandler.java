@@ -11,6 +11,7 @@ import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
 
@@ -33,6 +34,10 @@ public class PROEnviarAComiteActionHandler extends PROBaseActionHandler implemen
     private boolean generaAlerta(ExecutionContext executionContext) {
         return JBPMProcessManager.getFixeBooleanValue(executionContext, GENERAALERTA);
     }
+    
+    private boolean esAvanceAutomatico(ExecutionContext executionContext) {
+    	return Checks.esNulo(JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO)) ? false : JBPMProcessManager.getFixeBooleanValue(executionContext, AVANCE_AUTOMATICO);
+    }
 
     /**Este metodo debe llamar a la creacion del expediente.
      *
@@ -48,13 +53,14 @@ public class PROEnviarAComiteActionHandler extends PROBaseActionHandler implemen
         //Borra el timer en caso de que no se haya ejecutado
         //BPMUtils.deleteTimer(executionContext);
 
-        //Comprobamos si viene de una transición automática (timer desde generar notificación) o viene de una transición manual (desde el estado anterior)
-        //Si es manual borramos los timers, si es automática no podemos borrar timers porque se está ejecutando uno de ellos y se embucla
-        if (generaAlerta(executionContext)) {
+        //Comprobamos si viene de una transiciï¿½n automï¿½tica (timer desde generar notificaciï¿½n) o viene de una transiciï¿½n manual (desde el estado anterior)
+        //Si es manual borramos los timers, si es automï¿½tica no podemos borrar timers porque se estï¿½ ejecutando uno de ellos y se embucla
+        if (!esAvanceAutomatico(executionContext)) {
             BPMUtils.deleteTimer(executionContext, TIMER_TAREA_CE);
             BPMUtils.deleteTimer(executionContext, TIMER_TAREA_RE);
-            BPMUtils.deleteTimer(executionContext, TIMER_TAREA_DC);
+            BPMUtils.deleteTimer(executionContext, TIMER_TAREA_DC);            
         }
+        executionContext.setVariable(AVANCE_AUTOMATICO, Boolean.FALSE);
 
         //Borra la tarea asociada a RE
         /*Long idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_RE);

@@ -12,26 +12,28 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 
 @Controller
 public class PropuestasController {
 	
 	static final String JSP_ALTA_PROPUESTA = "plugin/mejoras/acuerdos/editaConclusionesAcuerdo";
+	static final String LISTADO_PROPUESTAS_JSON =  "plugin/mejoras/acuerdos/acuerdosJSON";
 	
 	
 	@Autowired 
 	private DictionaryManager dictionaryManager; 
 	
 	@Autowired
-	private ExpedienteApi expedienteApi;
+	private PropuestaApi propuestaApi;
 	
 	
 	
 	
     /**
-     * Pasa un acuerdo a estado Rechazado con motivo.
-     * @param idAcuerdo el id del acuerdo a rechazar
+     * Abre la ventana para crear una nueva propuesta.
+     * @param idExpediente
      */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -52,6 +54,20 @@ public class PropuestasController {
 		
 		
 		return JSP_ALTA_PROPUESTA;
+	}
+	
+	
+    /**
+     * Obtiene un listado de las propuestas asignadas al expediente.
+     * @param idExpediente
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getPropuestasByExpedienteId(Long id,ModelMap model) {
+		
+		model.put("acuerdos",propuestaApi.listadoPropuestasByExpedienteId(id));
+		
+		return LISTADO_PROPUESTAS_JSON;
 	}
 	
 

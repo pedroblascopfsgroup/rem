@@ -8,10 +8,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.jbpm.JbpmContext;
-import org.jbpm.graph.def.Node;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
-import org.jbpm.graph.node.Fork;
 import org.jbpm.job.Timer;
 import org.jbpm.scheduler.SchedulerService;
 import org.jbpm.svc.Service;
@@ -28,14 +26,17 @@ import es.capgemini.devon.scripting.ScriptEvaluator;
 import es.capgemini.devon.utils.ApplicationContextUtil;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.expediente.ExpedienteManager;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bpm.ExtendedProcessManager;
 import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
+
 import org.apache.commons.lang.StringUtils;
+
 @Component
 public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
 		EXTJBPMProcessApi {
@@ -58,12 +59,19 @@ public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
 	@Autowired
 	private Executor executor;
 	
+	@Autowired
+	private ExpedienteManager expedienteManager;
+	
 	@Resource
     private List<String> clasesDiccionarioAnotadas;
 
     private Map<String, Object> clasesDiccionario;
     
     private List<String> contextScripts;
+    
+    private static final String TIMER_TAREA_CE = "TIMER_CE";
+    private static final String TIMER_TAREA_RE = "TIMER_RE";
+    private static final String TIMER_TAREA_DC = "TIMER_DC";
     
     
     public Service getJBPMServiceFactory(final String serviceName) {
@@ -89,7 +97,7 @@ public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
     }
 
 	/**
-	 * Obtiene los nodos actuales del proceso. Este método es útil en los casos
+	 * Obtiene los nodos actuales del proceso. Este mï¿½todo es ï¿½til en los casos
 	 * que se ha llegado a un Fork
 	 * 
 	 * @param idProcess
@@ -99,18 +107,18 @@ public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
 	@SuppressWarnings("unchecked")
 	@BusinessOperation(EXT_JBPMAPI_GET_CURRENT_NODES)
 	@Override
-	// FIXME: faltan los tests de este método.
+	// FIXME: faltan los tests de este mï¿½todo.
 	public List<String> getCurrentNodes(final Long idProcess) {
 		return (List<String>) processManager.execute(new JbpmCallback() {
 			@Override
 			public Object doInJbpm(JbpmContext context) {
-				// Obtener la última instancia conocida
+				// Obtener la ï¿½ltima instancia conocida
 				ProcessInstance processInstance = context.getGraphSession()
 						.getProcessInstance(idProcess);
 				if (processInstance == null)
 					return null;
 				
-				// Asegurarse que está donde corresponde
+				// Asegurarse que estï¿½ donde corresponde
 				Token rootToken = processInstance.getRootToken();
 				return getNodeNames(rootToken);
 			}
@@ -233,5 +241,36 @@ public class EXTJBPMProcessManager extends EXTBaseJBPMProcessManager implements
 	           System.out.println("Error al extraer el NVecesTareaExterna");
 	        }
 	        return resultado;
+	    }
+	 	
+	 	@BusinessOperation(EXT_JBPMAPI_BORRAR_TIMERS_EXPEDIENTE)
+	    @Transactional(readOnly = false)
+	    public void borraTimersExpediente(final Long idExpediente){
+	        
+	 		Expediente expediente = expedienteManager.getExpediente(idExpediente); 
+	 		
+	        ProcessInstance processInstance = processManager.getProcessInstance(expediente.getProcessBpm());
+	        SchedulerService schedulerService = (SchedulerService) getJBPMServiceFactory(Services.SERVICENAME_SCHEDULER);
+	        
+	        List<Timer> timers = null; 
+	        
+	        // Borramos los timers de Completar expediente
+	        timers = extendedProcessManager.getTimers(processInstance, TIMER_TAREA_CE);
+	        for (Timer t : timers){
+	            schedulerService.deleteTimersByName(t.getName(), t.getToken());
+	        }
+	        
+	        //Borramos los timers de RevisiÃ³n Expediente 
+	        timers = extendedProcessManager.getTimers(processInstance, TIMER_TAREA_RE);
+	        for (Timer t : timers){
+	            schedulerService.deleteTimersByName(t.getName(), t.getToken());
+	        }
+	        
+	        //Borramos los timers de DecisiÃ³n ComitÃ©
+	        timers = extendedProcessManager.getTimers(processInstance, TIMER_TAREA_DC);
+	        for (Timer t : timers){
+	            schedulerService.deleteTimersByName(t.getName(), t.getToken());
+	        }
+	       
 	    }
 }

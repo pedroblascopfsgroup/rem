@@ -21,7 +21,7 @@ import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 @Component
 public class MEJHistoricoModAsuntoBuilder {
 
-	public static final String NOMBRE_TAREA = "Modificación datos Asunto";
+	public static final String NOMBRE_TAREA = "Modificaciï¿½n datos Asunto";
 
 	protected static final long ID_TIPO_ENTIDAD_INFORMACION = 15 ;
 

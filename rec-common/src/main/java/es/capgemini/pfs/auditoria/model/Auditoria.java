@@ -5,9 +5,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 
 import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.auditoria.Auditable;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  *    USUARIOCREAR         VARCHAR(10) NOT NULL,
@@ -38,6 +40,9 @@ public class Auditoria implements Serializable {
     //@Where(clause = "borrado = 0")
     private boolean borrado;
 
+    @Transient
+    private String suplantarUsuario;
+    
     /**
      * @return the usuarioCrear
      */
@@ -136,13 +141,32 @@ public class Auditoria implements Serializable {
         this.borrado = borrado;
     }
 
+    /**
+     * Usuario que suplantará al usuario actual a la hora de realizar una operación.
+     * 
+     * @return
+     */
+	public String getSuplantarUsuario() {
+		return suplantarUsuario;
+	}
+
+    /**
+     * Establece el usuario que suplantará al usuario actual a la hora de realizar una operación.
+     * 
+     * @return
+     */
+	public void setSuplantarUsuario(String suplantarUsuario) {
+		this.suplantarUsuario = suplantarUsuario;
+	}
+    
     /** factory method para facilitar la creación de un objeto auditoría.
      * @return objecto auditable
      */
     public static Auditoria getNewInstance() {
         Auditoria auditoria = new Auditoria();
         //auditoria.setUsuarioCrear(SecurityUtils.getCurrentUser().getUsername());
-        auditoria.setUsuarioCrear(getCurrentUserName());
+        String usuario = (Checks.esNulo(auditoria.getSuplantarUsuario())) ? getCurrentUserName() : auditoria.getSuplantarUsuario();
+        auditoria.setUsuarioCrear(usuario);
         auditoria.setFechaCrear(new Date());
         return auditoria;
     }
@@ -153,9 +177,10 @@ public class Auditoria implements Serializable {
      */
     public static void delete(Auditable auditable) {
         Auditoria auditoria = auditable.getAuditoria();
+        String usuario = (Checks.esNulo(auditoria.getSuplantarUsuario())) ? getCurrentUserName() : auditoria.getSuplantarUsuario();
         auditoria.setFechaBorrar(new Date());
         //auditoria.setUsuarioBorrar(SecurityUtils.getCurrentUser().getUsername());
-        auditoria.setUsuarioBorrar(getCurrentUserName());
+        auditoria.setUsuarioBorrar(usuario);
         auditoria.setBorrado(true);
     }
 
@@ -168,8 +193,9 @@ public class Auditoria implements Serializable {
             auditoria = Auditoria.getNewInstance();
             auditable.setAuditoria(auditoria);
         } else {
+        	String usuario = (Checks.esNulo(auditoria.getSuplantarUsuario())) ? getCurrentUserName() : auditoria.getSuplantarUsuario();
             //auditoria.setUsuarioModificar(SecurityUtils.getCurrentUser().getUsername());
-            auditoria.setUsuarioModificar(getCurrentUserName());
+            auditoria.setUsuarioModificar(usuario);
             auditoria.setFechaModificar(new Date());
         }
     }
@@ -181,4 +207,5 @@ public class Auditoria implements Serializable {
         //Para Bath
         return DEFAULT_USER;
     }
+
 }

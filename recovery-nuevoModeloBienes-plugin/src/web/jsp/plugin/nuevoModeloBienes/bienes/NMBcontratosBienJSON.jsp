@@ -21,6 +21,7 @@
 			<json:property name="titular" value="${cb.contrato.primerTitular.apellidoNombre}"/>
 			<json:property name="saldoVencido" value="${cb.contrato.lastMovimiento.posVivaVencidaAbsoluta}"/>
 			<json:property name="estadoFinanciero" value="${cb.contrato.estadoFinanciero.descripcion}"/>
+			<json:property name="secuenciaGarantia" value="${cb.secuenciaGarantia}"/>
 			<c:if test="${cb.contrato.expedienteContratoActivo != null && cb.contrato.expedienteContratoActivo.sinActuacion == null && !cb.contrato.expedienteContratoActivo.auditoria.borrado}">
 				<json:property name="situacion">
 					<s:message code="situacion.expedimentado" text="**Expedientado" />

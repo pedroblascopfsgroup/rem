@@ -127,6 +127,7 @@
 			<targetBean>decisionComiteAutomaticaActionHandler</targetBean>
 		</action>
 		<transition to="ExpedienteDecidido" name="TomarDecision"></transition>
+		<transition to="DecisionComite" name="DecisionComite"></transition>
 	</node>
 
 	<end-state name="Fin Expediente"></end-state>

@@ -73,11 +73,22 @@ public class ExpedienteContrato implements Serializable, Auditable {
     @OneToMany(mappedBy = "expedienteContrato")
     private List<ProcedimientoContratoExpediente> procedimientosContratosExpedientes;
 
+    @Column(name = "SYS_GUID")
+    private String guid;
+    
     @Embedded
     private Auditoria auditoria;
 
     @Version
     private Integer version;
+
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
 
     /**
      * Se sobreescribe este método para que se puedan comparar

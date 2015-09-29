@@ -10,6 +10,7 @@ import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 public interface PropuestaApi {
 
 	public static final String BO_PROPUESTA_GET_LISTADO_PROPUESTAS = "mejacuerdo.listadoPropuestasByExpedienteId";
+	public static final String BO_PROPUESTA_ES_GESTOR_SUPERVISOR_ACTUAL = "propuestaApi.usuarioLogadoEsGestorSupervisorActual";
 	
 	@BusinessOperationDefinition(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
     @Transactional(readOnly = false)
@@ -21,6 +22,7 @@ public interface PropuestaApi {
 	 * @param idExpediente
 	 * @return
 	 */
+	@BusinessOperationDefinition(BO_PROPUESTA_ES_GESTOR_SUPERVISOR_ACTUAL)
 	public Boolean usuarioLogadoEsGestorSupervisorActual(Long idExpediente);
 
 	/**

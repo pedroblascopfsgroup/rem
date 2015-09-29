@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
@@ -53,6 +54,7 @@ public class PropuestaManager implements PropuestaApi {
         return  genericDao.getListOrdered(EXTAcuerdo.class,order, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
 	}
 
+	@BusinessOperation(BO_PROPUESTA_ES_GESTOR_SUPERVISOR_ACTUAL)
 	public Boolean usuarioLogadoEsGestorSupervisorActual(Long idExpediente) {
 		Expediente expediente = expedienteDao.get(idExpediente);
 
@@ -70,6 +72,7 @@ public class PropuestaManager implements PropuestaApi {
 		return propuesta.getProponente() != null && userlogged.getId().equals(propuesta.getProponente().getId());
 	}
 
+	@Transactional(readOnly = false)
 	public void proponer(Long idPropuesta) {
 		Acuerdo propuesta = acuerdoDao.get(idPropuesta);
 		Expediente expediente = propuesta.getExpediente();

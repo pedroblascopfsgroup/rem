@@ -172,4 +172,5 @@
 	</json:object>
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
+	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
 </fwk:json>

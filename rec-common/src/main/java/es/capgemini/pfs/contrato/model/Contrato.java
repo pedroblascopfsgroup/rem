@@ -37,6 +37,7 @@ import org.hibernate.annotations.Where;
 import org.hibernate.bytecode.javassist.FieldHandled;
 import org.hibernate.bytecode.javassist.FieldHandler;
 
+import bsh.This;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.APPConstants;
@@ -643,6 +644,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the zona to set
      */
     public void setZona(DDZona zona) {
+    	if(fieldHandler!=null)
+    			fieldHandler.writeObject(this, "zona", this.zona, zona);
         this.zona = zona;
     }
 
@@ -660,6 +663,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the moneda to set
      */
     public void setMoneda(DDMoneda moneda) {
+    	if(fieldHandler!=null)
+    			fieldHandler.writeObject(this, "moneda", this.moneda, moneda);
         this.moneda = moneda;
     }
 
@@ -667,6 +672,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the tipoProducto
      */
     public DDTipoProducto getTipoProducto() {
+    	if(fieldHandler!=null)
+    			return (DDTipoProducto) fieldHandler.readObject(this, "tipoProducto", tipoProducto);
         return tipoProducto;
     }
 
@@ -675,13 +682,18 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the tipoProducto to set
      */
     public void setTipoProducto(DDTipoProducto tipoProducto) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "tipoProducto", this.tipoProducto, tipoProducto);
         this.tipoProducto = tipoProducto;
     }
 
     /**
      * @return the contratoPersona
      */
-    public List<ContratoPersona> getContratoPersona() {
+    @SuppressWarnings("unchecked")
+	public List<ContratoPersona> getContratoPersona() {
+    	if(fieldHandler!=null)
+    			return (List<ContratoPersona>) fieldHandler.readObject(this, "contratoPersona", contratoPersona);
         return contratoPersona;
     }
 
@@ -722,13 +734,18 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the contratoPersona to set
      */
     public void setContratoPersona(List<ContratoPersona> contratoPersona) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "contratoPersona", this.contratoPersona, contratoPersona);
         this.contratoPersona = contratoPersona;
     }
 
     /**
      * @return the movimientos
      */
-    public List<Movimiento> getMovimientos() {
+    @SuppressWarnings("unchecked")
+	public List<Movimiento> getMovimientos() {
+    	if(fieldHandler!=null)
+    		return (List<Movimiento>) fieldHandler.readObject(this, "movimientos", movimientos);
         return movimientos;
     }
 
@@ -737,6 +754,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the movimientos to set
      */
     public void setMovimientos(List<Movimiento> movimientos) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "movimientos", this.movimientos, movimientos);
         this.movimientos = movimientos;
     }
 
@@ -744,6 +763,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the fechaExtraccion
      */
     public Date getFechaExtraccion() {
+    	
         return fechaExtraccion;
     }
 
@@ -752,6 +772,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the fechaExtraccion to set
      */
     public void setFechaExtraccion(Date fechaExtraccion) {
+    	
         this.fechaExtraccion = fechaExtraccion;
     }
 
@@ -759,6 +780,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the codigoEntidad
      */
     public Integer getCodigoEntidad() {
+    	
         return codigoEntidad;
     }
 
@@ -767,6 +789,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the codigoEntidad to set
      */
     public void setCodigoEntidad(Integer codigoEntidad) {
+    	
         this.codigoEntidad = codigoEntidad;
     }
 
@@ -774,6 +797,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the codigoOficina
      */
     public Long getCodigoOficina() {
+    	
         return codigoOficina;
     }
 
@@ -782,6 +806,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the codigoOficina to set
      */
     public void setCodigoOficina(Long codigoOficina) {
+    	
         this.codigoOficina = codigoOficina;
     }
 
@@ -789,6 +814,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the codigoCentro
      */
     public Long getCodigoCentro() {
+    	
         return codigoCentro;
     }
 
@@ -797,6 +823,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the codigoCentro to set
      */
     public void setCodigoCentro(Long codigoCentro) {
+    	
         this.codigoCentro = codigoCentro;
     }
 
@@ -804,6 +831,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the nroContrato
      */
     public String getNroContrato() {
+    
         return nroContrato;
     }
 
@@ -888,6 +916,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the estadoFinanciero
      */
     public DDEstadoFinanciero getEstadoFinanciero() {
+    	if(fieldHandler!=null)
+    		return (DDEstadoFinanciero) fieldHandler.readObject(this, "estadoFinanciero", estadoFinanciero);
         return estadoFinanciero;
     }
 
@@ -896,6 +926,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the estadoFinanciero to set
      */
     public void setEstadoFinanciero(DDEstadoFinanciero estadoFinanciero) {
+    	if(fieldHandler!=null)
+    			fieldHandler.writeObject(this, "estadoFinanciero", this.estadoFinanciero, estadoFinanciero);
         this.estadoFinanciero = estadoFinanciero;
     }
 
@@ -918,6 +950,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the estadoContrato
      */
     public DDEstadoContrato getEstadoContrato() {
+    	if(fieldHandler!=null)
+    			return (DDEstadoContrato) fieldHandler.readObject(this, "estadoContrato", estadoContrato);
         return estadoContrato;
     }
 
@@ -926,7 +960,9 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the estadoContrato to set
      */
     public void setEstadoContrato(DDEstadoContrato estadoContrato) {
-        this.estadoContrato = estadoContrato;
+    	if(fieldHandler!=null)
+    			fieldHandler.writeObject(this, "estadoContrato", this.estadoContrato, estadoContrato);
+    	this.estadoContrato = estadoContrato;
     }
 
     /**
@@ -993,6 +1029,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the auditoria
      */
     public Auditoria getAuditoria() {
+    	if(fieldHandler!=null)
+    		return (Auditoria) fieldHandler.readObject(this, "auditoria", auditoria);
         return auditoria;
     }
 
@@ -1001,6 +1039,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the auditoria to set
      */
     public void setAuditoria(Auditoria auditoria) {
+    	if(fieldHandler!=null)
+    			fieldHandler.writeObject(this, "auditoria", this.auditoria, auditoria);
         this.auditoria = auditoria;
     }
 
@@ -1017,6 +1057,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the antecendenteInterno
      */
     public AntecedenteInterno getAntecendenteInterno() {
+    	if(fieldHandler!=null)
+    		return (AntecedenteInterno) fieldHandler.readObject(this, "antecedenteIntero", antecendenteInterno);
         return antecendenteInterno;
     }
 
@@ -1025,6 +1067,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the antecendenteInterno to set
      */
     public void setAntecendenteInterno(AntecedenteInterno antecendenteInterno) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "antecedenteInterno", this.antecendenteInterno, antecendenteInterno);
         this.antecendenteInterno = antecendenteInterno;
     }
 
@@ -1113,7 +1157,10 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     /**
     * @return the expedienteContratos
     */
-    public List<ExpedienteContrato> getExpedienteContratos() {
+    @SuppressWarnings("unchecked")
+	public List<ExpedienteContrato> getExpedienteContratos() {
+    	if(fieldHandler!=null)
+    		return (List<ExpedienteContrato>) fieldHandler.readObject(this, "expedienteContratos", expedienteContratos);
         return expedienteContratos;
     }
 
@@ -1154,6 +1201,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param expedienteContratos the expedienteContratos to set
      */
     public void setExpedienteContratos(List<ExpedienteContrato> expedienteContratos) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "expedienteContratos", this.expedienteContratos, expedienteContratos);
         this.expedienteContratos = expedienteContratos;
     }
 
@@ -1169,6 +1218,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the estadoFinancieroAnterior
      */
     public DDEstadoFinanciero getEstadoFinancieroAnterior() {
+    	if(fieldHandler!=null)
+    		return (DDEstadoFinanciero) fieldHandler.readObject(this, "estadoFinancieroAnterior", estadoFinancieroAnterior);
         return estadoFinancieroAnterior;
     }
 
@@ -1176,6 +1227,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param estadoFinancieroAnterior the estadoFinancieroAnterior to set
      */
     public void setEstadoFinancieroAnterior(DDEstadoFinanciero estadoFinancieroAnterior) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "estadoFinancieroAnterior", this.estadoFinancieroAnterior, this.estadoFinancieroAnterior);
         this.estadoFinancieroAnterior = estadoFinancieroAnterior;
     }
 
@@ -1196,7 +1249,10 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     /**
      * @return the adjuntos
      */
-    public Set<AdjuntoContrato> getAdjuntos() {
+    @SuppressWarnings("unchecked")
+	public Set<AdjuntoContrato> getAdjuntos() {
+    	if(fieldHandler!=null)
+    		return (Set<AdjuntoContrato>) fieldHandler.readObject(this, "adjuntos", adjuntos);
         return adjuntos;
     }
 
@@ -1204,15 +1260,20 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param adjuntos the adjuntos to set
      */
     public void setAdjuntos(Set<AdjuntoContrato> adjuntos) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "adjuntos", this.adjuntos, adjuntos);
         this.adjuntos = adjuntos;
     }
 
     /**
-     * Devuelve los adjuntos (que est�n en un Set) como una lista
+     * Devuelve los adjuntos (que estan en un Set) como una lista
      * para que pueda ser accedido aleatoreamente.
      * @return List AdjuntoContrato
      */
-    public List<AdjuntoContrato> getAdjuntosAsList() {
+    @SuppressWarnings("unchecked")
+	public List<AdjuntoContrato> getAdjuntosAsList() {
+    	if(fieldHandler!=null)
+    		return (List<AdjuntoContrato>) fieldHandler.readObject(this, "adjuntos", adjuntos);
         return new ArrayList<AdjuntoContrato>(adjuntos);
     }
 
@@ -1293,6 +1354,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the finalidadContrato
      */
     public DDFinalidadContrato getFinalidadContrato() {
+    	if(fieldHandler!=null)
+    		return (DDFinalidadContrato) fieldHandler.readObject(this, "finalidadContrato", finalidadContrato);
         return finalidadContrato;
     }
 
@@ -1300,6 +1363,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param finalidadContrato the finalidadContrato to set
      */
     public void setFinalidadContrato(DDFinalidadContrato finalidadContrato) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "finalidadContrato", this.finalidadContrato, finalidadContrato);
         this.finalidadContrato = finalidadContrato;
     }
 
@@ -1307,6 +1372,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the finalidadAcuerdo
      */
     public DDFinalidadOficial getFinalidadAcuerdo() {
+    	if(fieldHandler!=null)
+    		return (DDFinalidadOficial) fieldHandler.readObject(this, "finalidadAcuerdo", finalidadAcuerdo);
         return finalidadAcuerdo;
     }
 
@@ -1314,6 +1381,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param finalidadAcuerdo the finalidadAcuerdo to set
      */
     public void setFinalidadAcuerdo(DDFinalidadOficial finalidadAcuerdo) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "finalidadAcuerdo", this.finalidadAcuerdo, finalidadAcuerdo);
         this.finalidadAcuerdo = finalidadAcuerdo;
     }
 
@@ -1321,6 +1390,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the garantia1
      */
     public DDGarantiaContrato getGarantia1() {
+    	if(fieldHandler!=null)
+    		return (DDGarantiaContrato) fieldHandler.readObject(this, "garantia1", garantia1);
         return garantia1;
     }
 
@@ -1328,6 +1399,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param garantia1 the garantia1 to set
      */
     public void setGarantia1(DDGarantiaContrato garantia1) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "garantia1", this.garantia1, garantia1);
         this.garantia1 = garantia1;
     }
 
@@ -1335,6 +1408,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the garantia2
      */
     public DDGarantiaContable getGarantia2() {
+    	if(fieldHandler!=null)
+    		return (DDGarantiaContable) fieldHandler.readObject(this, "garantia2", garantia2);
         return garantia2;
     }
 
@@ -1342,6 +1417,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param garantia2 the garantia2 to set
      */
     public void setGarantia2(DDGarantiaContable garantia2) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "garantia2", this.garantia2, garantia1);
         this.garantia2 = garantia2;
     }
 
@@ -1349,6 +1426,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo1
      */
     public DDCatalogo1 getCatalogo1() {
+    	if(fieldHandler!=null)
+    		return (DDCatalogo1) fieldHandler.readObject(this, "catalogo1", catalogo1);
         return catalogo1;
     }
 
@@ -1356,6 +1435,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo1 the catalogo1 to set
      */
     public void setCatalogo1(DDCatalogo1 catalogo1) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "catalogo1", this.catalogo1, catalogo1);
         this.catalogo1 = catalogo1;
     }
 
@@ -1363,6 +1444,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo2
      */
     public DDCatalogo2 getCatalogo2() {
+    	if(fieldHandler!=null)
+    		return (DDCatalogo2) fieldHandler.readObject(this, "catalogo2", catalogo2);
         return catalogo2;
     }
 
@@ -1370,6 +1453,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo2 the catalogo2 to set
      */
     public void setCatalogo2(DDCatalogo2 catalogo2) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "catalogo2", this.catalogo2, catalogo2);
         this.catalogo2 = catalogo2;
     }
 
@@ -1377,6 +1462,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo3
      */
     public DDCatalogo3 getCatalogo3() {
+    	if(fieldHandler!=null)
+    		return (DDCatalogo3) fieldHandler.readObject(this, "catalogo3", catalogo3);
         return catalogo3;
     }
 
@@ -1384,6 +1471,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo3 the catalogo3 to set
      */
     public void setCatalogo3(DDCatalogo3 catalogo3) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "catalogo3", this.catalogo3, catalogo3);
         this.catalogo3 = catalogo3;
     }
 
@@ -1391,6 +1480,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo4
      */
     public DDCatalogo4 getCatalogo4() {
+    	if(fieldHandler!=null)
+    		return (DDCatalogo4) fieldHandler.readObject(this, "catalogo4", catalogo4);
         return catalogo4;
     }
 
@@ -1398,6 +1489,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo4 the catalogo4 to set
      */
     public void setCatalogo4(DDCatalogo4 catalogo4) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "catalogo4", this.catalogo4, catalogo4);
         this.catalogo4 = catalogo4;
     }
 
@@ -1405,6 +1498,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo5
      */
     public DDCatalogo5 getCatalogo5() {
+    	if(fieldHandler!=null)
+    		return (DDCatalogo5) fieldHandler.readObject(this, "catalogo5", catalogo5);
         return catalogo5;
     }
 
@@ -1412,6 +1507,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo5 the catalogo5 to set
      */
     public void setCatalogo5(DDCatalogo5 catalogo5) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "catalogo5", this.catalogo5, catalogo5);
         this.catalogo5 = catalogo5;
     }
 
@@ -1419,6 +1516,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo6
      */
     public DDCatalogo6 getCatalogo6() {
+    	if(fieldHandler!=null)
+    		return (DDCatalogo6) fieldHandler.readObject(this, "catalogo6", catalogo6);
         return catalogo6;
     }
 
@@ -1426,6 +1525,8 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo6 the catalogo6 to set
      */
     public void setCatalogo6(DDCatalogo6 catalogo6) {
+    	if(fieldHandler!=null)
+    		fieldHandler.writeObject(this, "catalogo6", this.catalogo6, catalogo6);
         this.catalogo6 = catalogo6;
     }
 
@@ -1553,10 +1654,16 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public void setGestoresContrato(List<EXTGestorEntidad> gestoresContrato) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "gestoresContrato", this.gestoresContrato, gestoresContrato);
 		this.gestoresContrato = gestoresContrato;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<EXTGestorEntidad> getGestoresContrato() {
+		if(fieldHandler!=null)
+			return (List<EXTGestorEntidad>) fieldHandler.readObject(this, "gestoresContrato", gestoresContrato);
+		
 		return gestoresContrato;
 	}
 
@@ -1748,10 +1855,14 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public DDAplicativoOrigen getAplicativoOrigen() {
+		if(fieldHandler!=null)
+			return (DDAplicativoOrigen) fieldHandler.readObject(this, "aplicativoOrigen", aplicativoOrigen);
 		return aplicativoOrigen;
 	}
 
 	public void setAplicativoOrigen(DDAplicativoOrigen aplicativoOrigen) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "aplicativoOrigen", this.aplicativoOrigen, aplicativoOrigen);
 		this.aplicativoOrigen = aplicativoOrigen;
 	}
 
@@ -1788,18 +1899,26 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public DDSistemaAmortizContrato getSistemaAmortizacion() {
+		if(fieldHandler!=null)
+			return (DDSistemaAmortizContrato) fieldHandler.readObject(this, "sistemaAmortizacion", sistemaAmortizacion);
 		return sistemaAmortizacion;
 	}
 
 	public void setSistemaAmortizacion(DDSistemaAmortizContrato sistemaAmortizacion) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "sistemaAmortizacion", this.sistemaAmortizacion, sistemaAmortizacion);
 		this.sistemaAmortizacion = sistemaAmortizacion;
 	}
 
 	public DDTipoInteres getInteresFijoVariable() {
+		if(fieldHandler!=null)
+			return (DDTipoInteres) fieldHandler.readObject(this, "interesFijoVariable", interesFijoVariable);
 		return interesFijoVariable;
 	}
 
 	public void setInteresFijoVariable(DDTipoInteres interesFijoVariable) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "interesFijoVariable", this.interesFijoVariable, interesFijoVariable);
 		this.interesFijoVariable = interesFijoVariable;
 	}
 
@@ -1833,35 +1952,50 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public Oficina getOficinaContable() {
+		if(fieldHandler!=null)
+			return (Oficina) fieldHandler.readObject(this, "oficinaContable", oficinaContable);
 		return oficinaContable;
 	}
 
 	public void setOficinaContable(Oficina oficinaContable) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "oficinaContable", this.oficinaContable, oficinaContable);
 		this.oficinaContable = oficinaContable;
 	}
 
 	public Oficina getOficinaAdministrativa() {
+		if(fieldHandler!=null)
+			return (Oficina) fieldHandler.readObject(this, "oficinaAdministrativa", oficinaAdministrativa);
 		return oficinaAdministrativa;
 	}
 
 	public void setOficinaAdministrativa(Oficina oficinaAdministrativa) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "oficinaAdministrativa", oficinaAdministrativa, oficinaAdministrativa);
 		this.oficinaAdministrativa = oficinaAdministrativa;
 	}
 
 	public DDGestionEspecial getGestionEspecial() {
+		if(fieldHandler!=null)
+			return (DDGestionEspecial) fieldHandler.readObject(this, "gestionEspecial", gestionEspecial);
 		return gestionEspecial;
 	}
 
 	public void setGestionEspecial(DDGestionEspecial gestionEspecial) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "gestionEspecial", this.gestionEspecial, gestionEspecial);
 		this.gestionEspecial = gestionEspecial;
 	}
 
 	public DDCondicionesRemuneracion getRemuneracionEspecial() {
+		if(fieldHandler!=null)
+			return (DDCondicionesRemuneracion) fieldHandler.readObject(this, "RemuneracionEspecial", RemuneracionEspecial);
 		return RemuneracionEspecial;
 	}
 
-	public void setRemuneracionEspecial(
-			DDCondicionesRemuneracion remuneracionEspecial) {
+	public void setRemuneracionEspecial(DDCondicionesRemuneracion remuneracionEspecial) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "RemuneracionEspecial", this.RemuneracionEspecial, remuneracionEspecial);
 		RemuneracionEspecial = remuneracionEspecial;
 	}
 
@@ -1895,10 +2029,14 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public DDMotivoRenumeracion getMotivoRenumeracion() {
+		if(fieldHandler!=null)
+			return (DDMotivoRenumeracion) fieldHandler.readObject(this, "motivoRenumeracion", motivoRenumeracion);
 		return motivoRenumeracion;
 	}
 
 	public void setMotivoRenumeracion(DDMotivoRenumeracion motivoRenumeracion) {
+		if(fieldHandler!=null)
+			fieldHandler.writeObject(this, "motivoRenumeracion", this.motivoRenumeracion, motivoRenumeracion);
 		this.motivoRenumeracion = motivoRenumeracion;
 	}
 

@@ -6,8 +6,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-var crearTerminosAsuntos=function(noPuedeModificar){
-
+var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
    var panelTerminos=new Ext.Panel({
 		layout:'form'
 		,border : false
@@ -74,16 +73,32 @@ var crearTerminosAsuntos=function(noPuedeModificar){
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.codigoTipoAcuerdo" text="**Codigo Tipo acuerdo" />', dataIndex : 'codigoTipoAcuerdo',hidden:true}      
    ]);      
    
-   var contratosAsuntoStore = page.getStore({
-        flow: 'mejacuerdo/obtenerListadoContratosAcuerdoByAsuId'
-        ,storeId : 'contratosAsuntoStore'
-        ,params: {idAsunto:panel.getAsuntoId()}
-        ,reader : new Ext.data.JsonReader(
-            {root:'contratosAsunto'}
-            , contratosAsuntoRecord
-        )
-   });
-
+   
+   if(esPropuesta){
+   
+	     var contratosAsuntoStore = page.getStore({
+	        flow: 'propuestas/getContratosByExpedienteId'
+	        ,storeId : 'contratosAsuntoStore'
+	        ,params: {idExpediente:panel.getExpedienteId()}
+	        ,reader : new Ext.data.JsonReader(
+	            {root:'contratosAsunto'}
+	            , contratosAsuntoRecord
+	        )
+	   	});
+   
+   }else{
+   
+	    var contratosAsuntoStore = page.getStore({
+	        flow: 'mejacuerdo/obtenerListadoContratosAcuerdoByAsuId'
+	        ,storeId : 'contratosAsuntoStore'
+	        ,params: {idAsunto:panel.getAsuntoId()}
+	        ,reader : new Ext.data.JsonReader(
+	            {root:'contratosAsunto'}
+	            , contratosAsuntoRecord
+	        )
+	   	});
+	   	
+   }
 
    
   var terminosAcuerdoStore = page.getStore({
@@ -141,7 +156,7 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 			          ,autoHeight: true
 			          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.agregar" text="**Agregar Termino" />'
 	     			  ,params:{
-	      				  id:panel.getAsuntoId(),
+<!-- 	      				  id:panel.getAsuntoId(), -->
 	      				  contratosIncluidos: contratosIncluidos,
 	      				  idAcuerdo : idAcuerdo
 	      				}
@@ -207,7 +222,7 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editar" text="**Editar Termino" />'
 	    			  ,params:{
 	     				  id:idTerminoSeleccionado,
-	     				  idAsunto:panel.getAsuntoId(),
+<!-- 	     				  idAsunto:panel.getAsuntoId(), -->
 	     				  idAcuerdo : idAcuerdo,
 	     				  soloConsulta : 'false'     				  
 	     				}
@@ -228,7 +243,12 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	}); 
    
    
-   contratosAsuntoStore.webflow({idAsunto:panel.getAsuntoId()});
+    if(esPropuesta){
+    	contratosAsuntoStore.webflow({idExpediente:panel.getExpedienteId()});
+    }else{
+    	contratosAsuntoStore.webflow({idAsunto:panel.getAsuntoId()});
+    }
+   
    terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});    
   
    var contratosAsuntoGrid = app.crearGrid(contratosAsuntoStore,contratosAsuntoCM,{
@@ -299,7 +319,7 @@ var crearTerminosAsuntos=function(noPuedeModificar){
 	          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.ver" text="**Ver Termino" />'
     			  ,params:{
      				  id:idTerminoSeleccionado,
-     				  idAsunto:panel.getAsuntoId(),
+<!--      				  idAsunto:panel.getAsuntoId(), -->
 					  idAcuerdo : idAcuerdo,
 					  soloConsulta : 'true'   				  
 <!--      				  contratosIncluidos: contratosIncluidos, -->

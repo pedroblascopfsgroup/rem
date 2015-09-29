@@ -28,6 +28,7 @@
 	<bean id="subastaConcursalHayaInitNodeActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalHayaInitNodeActionHandler"></bean>
 	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
 	<bean id="subastaBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccLeaveActionHandler" />
+	<bean id="aceptacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.aceptacion.AceptacionHayaEnterActionHandler"></bean>
 	
 	<!-- BPM activos -->
 	
@@ -680,7 +681,7 @@
 	            def asuntoConLetrado = {
 	            	def extAsuntoManager = ctx.getBean("EXTAsuntoManager");
 					if (procedimientoManager.getProcedimiento(idProcedimiento).getAsunto() != null ) 
-						return extAsuntoManager.esTipoGestorAsignado(procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getId(), "LETR");
+						return extAsuntoManager.esTipoGestorAsignado(procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getId(), "GEXT");
 					else
 						{return false}
 				}

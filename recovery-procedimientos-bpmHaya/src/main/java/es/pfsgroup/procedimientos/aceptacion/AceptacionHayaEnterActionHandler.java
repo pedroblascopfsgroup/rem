@@ -1,4 +1,4 @@
-package es.pfsgroup.procedimientos.asignacion;
+package es.pfsgroup.procedimientos.aceptacion;
 
 import java.util.List;
 
@@ -22,13 +22,13 @@ import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
-public class AsignacionHayaEnterActionHandler extends PROBaseActionHandler{
+public class AceptacionHayaEnterActionHandler extends PROBaseActionHandler{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2156270993650719342L;
-	private static final String COMBO_PROCEDIMIENTO = "comboProcedimiento";
+	private static final String COMBO_PROCEDIMIENTO = "tipoProcedimiento";
 	private static final String NODO_SALIENTE = "NOMBRE_NODO_SALIENTE";
 	private static final String MASK_ULTIMA_TAREA = "id%s.%d";
 	
@@ -48,26 +48,22 @@ public class AsignacionHayaEnterActionHandler extends PROBaseActionHandler{
 		Long idTex = (Long) (Long)executionContext.getVariable(String.format(MASK_ULTIMA_TAREA,nombreNodo, executionContext.getToken().getId()));
 		//TareaExterna tex = proxyFactory.proxy(TareaExternaApi.class).get(idTex);
 		String codigoProcedimiento = null;
-		if(prc != null && prc.getAsunto() != null && prc.getAsunto().getTipoAsunto() != null){
-			if(DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())){
-				@SuppressWarnings("unchecked")
-				List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>)executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, idTex);
+		if(prc != null){
+			@SuppressWarnings("unchecked")
+			List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>)executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, idTex);
 		    	
-		    	TareaExternaValor valor = new TareaExternaValor();
-				for (TareaExternaValor tev : listado) {
-					try {
-						if (COMBO_PROCEDIMIENTO.equals(tev.getNombre())) {
-							valor = tev;
-							break;
-						}
-					} catch (Exception e) {
-						logger.error("Error al recuperar valor comboResultado", e);
+		    TareaExternaValor valor = new TareaExternaValor();
+			for (TareaExternaValor tev : listado) {
+				try{
+					if (COMBO_PROCEDIMIENTO.equals(tev.getNombre())) {
+						valor = tev;
+						break;
 					}
+				} catch (Exception e) {
+					logger.error("Error al recuperar valor tipoProcedimiento", e);
 				}
-				codigoProcedimiento = valor.getValor();
-			}else{
-				codigoProcedimiento = hayaProjectContext.getTareaAceptacionLitigios();
 			}
+			codigoProcedimiento = valor.getValor();
 			TipoProcedimiento tipoProcedimientoHijo = tipoProcedimientoManager.getByCodigo(codigoProcedimiento);
 			this.creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
 		}

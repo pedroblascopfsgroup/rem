@@ -306,7 +306,7 @@
 	<decision name="H004_ValidarPropuestaDecision" expression="#{H004_ValidarPropuestaDecision}">
 		<transition to="H004_ElevarPropuestaASareb" name="NoDelegada"></transition>
 		<transition to="H004_SuspenderSubasta" name="Rechazada"></transition>
-		<transition to="H004_ElevarPropuestaAComite" name="DelegadaSinAtribuciones"></transition>
+		<transition to="H004_ElevarAComite" name="DelegadaSinAtribuciones"></transition>
 		<transition to="H004_LecturaAceptacionInstrucciones" name="DelegadaConAtribuciones"></transition>
 		<transition to="H004_PrepararPropuestaSubasta" name="PrepararPropuestaSubasta"></transition>
 	</decision>
@@ -352,7 +352,7 @@
 		</event>	
 		<transition to="Fin4" name="Fin"></transition>
 		<transition to="H004_ElevarPropuestaAComite" name="activarAlerta"></transition>
-		<transition to="H004_ValidarPropuesta" name="vueltaAtras"></transition>
+		<transition to="H004_ElevarAComite" name="vueltaAtras"></transition>
 		<transition to="H004_ElevarPropuestaAComiteDecision" name="avanzaBPM"></transition>
 	</state>
 
@@ -735,6 +735,29 @@
 		<transition to="Fin3" name="Si"></transition>
 		<transition to="H004_CelebracionSubasta" name="No"></transition>
 	</decision>
+	
+	<state name="H004_ElevarAComite">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H004_ValidarPropuesta" name="vueltaAtras"></transition>
+		<transition to="H004_ElevarAComite" name="activarAlerta"></transition>
+		<transition to="H004_ElevarPropuestaAComite" name="avanzaBPM"></transition>
+		<transition to="Fin4" name="Fin"></transition>
+	</state>
 
 
 	<end-state name="Fin">

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_tramiteSubsanacionEmbargo" width="1045" height="554">
+  <node name="Inicio" x="251" y="-2" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ052_RegistrarPresentacionEscritoSub" x="184" y="129" width="301" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-260" h1="6" w2="-272" h2="-275"/>
+      <bendpoint w1="-271" h1="278" w2="-283" h2="-3"/>
+    </edge>
+  </node>
+  <node name="CJ052_EntregarNuevoDecreto" x="189" y="250" width="300" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-129" h1="-59" w2="-124" h2="62"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-226" h1="6" w2="-233" h2="-154"/>
+      <bendpoint w1="-234" h1="141" w2="-241" h2="-19"/>
+    </edge>
+  </node>
+  <node name="Fin" x="280" y="410" width="132" height="36"/>
+</root-container>

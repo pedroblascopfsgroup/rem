@@ -12,8 +12,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.pfsgroup.recovery.integration.bpm.ProcedimientoPayload;
 import es.pfsgroup.recovery.integration.bpm.TransformerHelper;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 /**
  * Ayuda a transformar los mensajes de salida.

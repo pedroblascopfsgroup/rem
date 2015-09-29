@@ -56,6 +56,7 @@ public class PROSolicitarTareaActionHandler extends JbpmActionHandler implements
         proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarea);
         executionContext.setVariable(ID_TAREA, idTarea);
 
+        // Envía la notificación para que sea informada
         integracionBPMService.notificaTarea(tarea);
         
         executionContext.getProcessInstance().signal(TRANSITION_TAREA_SOLICITADA);

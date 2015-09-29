@@ -155,7 +155,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin4" name="hcj_tramiteCesionRemate"></transition>
+		<transition to="Fin4" name="cj_tramiteCesionRemate"></transition>
 	</state>
 
 	<state name="CJ004_BPMTramiteAdjudicacion">
@@ -175,7 +175,7 @@
 				</targetBean>
 			</action>
 		</event>	
-		<transition to="Fin5" name="hcj_tramiteAdjudicacion"></transition>
+		<transition to="Fin5" name="cj_tramiteAdjudicacion"></transition>
 		<transition to="Fin5" name="Fin"></transition>
 	</state>
 

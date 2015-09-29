@@ -36,8 +36,8 @@ DECLARE
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-		T_TIPO_TFI('H017_realizarValoracionConcurso','3','label','lblInforme','Informe',null,null,null,null,'0','DD'),	
-		T_TIPO_TFI('H017_PreparaPropInstSareb','2','label','lblInstrucciones','Propuesta instrucciones',null,null,null,null,'0','DD')
+		T_TIPO_TFI('H017_realizarValoracionConcurso','3','label','lblInforme','<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Informe:</div>',null,null,null,null,'0','DD'),	
+		T_TIPO_TFI('H017_PreparaPropInstSareb','2','label','lblInstrucciones','<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Propuesta instrucciones:</div>',null,null,null,null,'0','DD')
 	); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
@@ -72,7 +72,7 @@ BEGIN
     
      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS' ||
 			  ' SET TFI_ORDEN = 3 ' ||
-			  ' WHERE TFI_NOMBRE = ''informe'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H017_PreparaPropInstSareb'')';
+			  ' WHERE TFI_NOMBRE = ''propInstrucciones'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H017_PreparaPropInstSareb'')';
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H017_PreparaPropInstSareb actualizada.');

@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -32,14 +31,18 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBPersonasBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
-import es.pfsgroup.recovery.haya.bienes.manager.SolicitarTasacionWSApi;
+import es.pfsgroup.recovery.cajamar.serviciosonline.SolicitarTasacionWSApi;
 
-public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
+public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSApi {
+
+	private static final String WEB_SERVICE_NAME = "S_A_RECOVERY_TASACION";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	@Resource
-	private Properties appProperties;
+	@Override
+	public String getWSName() {
+		return WEB_SERVICE_NAME;
+	}	
 	
 	// Corresponde a la funcionalidad alta de solicitud
 	private final static String ALTA_SOLICITUD = "1";
@@ -83,36 +86,40 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 
 	private void ejecutaServicio(INPUT input, NMBBien bien) throws MalformedURLException {
 		
-		String urlWSDL = appProperties.getProperty("wsTasacion.wsdlLocation");
-		String targetNamespace = appProperties.getProperty("wsTasacion.targetNamespace");
-		String name = appProperties.getProperty("wsTasacion.name");
+		String urlWSDL = getWSURL();
+		String targetNamespace = getWSNamespace();
+		String name = getWSName();
+		
+		logger.info("Invocando invocado al WS de tasación...");
+		logger.info(String.format("LLamada [%s] [%s] [%s]", targetNamespace, name, urlWSDL));
 		
 		if(urlWSDL == null || targetNamespace == null || name == null) {
 			logger.error("Error en la ejecución del WS de Alta Tasación: no se han configurado correctamente las propiedades para la llamada al WS");
+			return;
+		}
+
+		URL wsdlLocation = new URL(urlWSDL);
+		QName qName = new QName(targetNamespace, name);
+		
+		SARECOVERYTASACION service = new SARECOVERYTASACION(wsdlLocation, qName);
+		SARECOVERYTASACIONType servicePort = service.getSARECOVERYTASACIONPort();
+		OUTPUT output = servicePort.sARECOVERYTASACION(input);
+
+		logger.info("WS Solicitud de tasación invocado! Valores de respuesta:");
+		logger.info(String.format("CODERROR: %s", output.getCODERROR()));
+		logger.info(String.format("TXTERROR: %s", output.getTXTERROR()));
+		logger.info(String.format("TASA: %s", output.getTASA()));
+		logger.info(String.format("IDTA: %s", output.getIDTA()));
+		logger.info(String.format("ESTADO: %s", output.getESTADO()));
+		logger.info(String.format("DOCSOLICITUD: %s", output.getDOCSOLICITUD()));
+		
+		if(output.getESTADO().equals("1")) {
+			logger.error(String.format("Error en la ejecución del WS de Alta Tasación: [%s] - [%s]", output.getCODERROR(), output.getTXTERROR()));
 		}
 		else {
-		
-			URL wsdlLocation = new URL(urlWSDL);
-			QName qName = new QName(targetNamespace, name);
-			
-			SARECOVERYTASACION service = new SARECOVERYTASACION(wsdlLocation, qName);
-			SARECOVERYTASACIONType servicePort = service.getSARECOVERYTASACIONPort();
-			OUTPUT output = servicePort.sARECOVERYTASACION(input);
-			
-			logger.info("CODERROR: " + output.getCODERROR());
-			logger.info("TXTERROR: " + output.getTXTERROR());
-			logger.info("TASA: " + output.getTASA());
-			logger.info("IDTA: " + output.getIDTA()); 
-			logger.info("ESTADO: " + output.getESTADO());
-			logger.info("DOCSOLICITUD: " + output.getDOCSOLICITUD());	
-			
-			if(output.getESTADO().equals("1")) {
-				logger.error("Error en la ejecución del WS de Alta Tasación: " + output.getCODERROR() + " - " + output.getTXTERROR());
-			}
-			else {
-				guardarRespuesta(output, bien);
-			}
+			guardarRespuesta(output, bien);
 		}
+		
 	}
 
 	private void guardarRespuesta(OUTPUT output, NMBBien bien) {
@@ -371,5 +378,6 @@ public class SolicitarTasacionWS implements SolicitarTasacionWSApi {
 	 */
 	public void setMapaTIMN(Map<String, String> mapaTIMN) {
 		this.mapaTIMN = mapaTIMN;
-	}	
+	}
+
 }

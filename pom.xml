@@ -356,12 +356,18 @@
 				<artifactId>recovery-bankiaWeb-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<!-- HAYA LIBRARIES -->
+			<!-- HAYA-CAJAMAR COMUNES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-procedimientos-bpmHaya</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-cajamar-hre-online</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<!-- HAYA LIBRARIES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>proyecto-haya</artifactId>
@@ -544,6 +550,7 @@
 			<modules>
 				<module>recovery-integracionuvem-plugin</module>
 				<module>recovery-procedimientos-bpmHaya</module>
+				<module>proyecto-cajamar-hre-online</module>
 				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
@@ -560,6 +567,7 @@
 			</activation>
 			<modules>
 				<module>recovery-procedimientos-bpmHaya</module>
+				<module>proyecto-cajamar-hre-online</module>
 				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-cajamar</module>
 				<module>proyecto-cajamar-online</module>

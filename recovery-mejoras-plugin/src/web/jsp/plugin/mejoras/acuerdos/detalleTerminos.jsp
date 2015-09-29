@@ -11,8 +11,8 @@ var crearTerminosAsuntos=function(noPuedeModificar){
    var panelTerminos=new Ext.Panel({
 		layout:'form'
 		,border : false
-		,autoScroll:true
-		,bodyStyle:'padding:5px;margin:5px'
+		,autoScroll:false
+<!-- 		,bodyStyle:'padding:5px;margin:5px' -->
 		,autoHeight:true
 		,autoWidth : true
 		,nombreTab : 'terminos'

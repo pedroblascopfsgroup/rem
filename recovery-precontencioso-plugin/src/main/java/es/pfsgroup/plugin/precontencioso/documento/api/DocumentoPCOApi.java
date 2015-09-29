@@ -22,6 +22,7 @@ public interface DocumentoPCOApi {
 	static final String PCO_DOCUMENTO_GET_TIPOS_GESTORES_ACTORES = "es.pfsgroup.plugin.precontencioso.documento.getTiposGestorActores";
 	static final String PCO_DOCUMENTO_CREAR = "es.pfsgroup.plugin.precontencioso.documento.saveCrearDocumento";
 	static final String PCO_VALIDAR_DOCUMENTO_UNICO = "es.pfsgroup.plugin.precontencioso.documento.validarDocumentoUnico";
+	static final String PCO_DOCUMENTO_BY_ID = "es.pfsgroup.plugin.precontencioso.documento.getDocumentoPCOById";
 		
 	/**
 	 * Obtiene las solicitudes de los documentos de precontencioso de un procedimiento
@@ -176,4 +177,7 @@ public interface DocumentoPCOApi {
 	boolean validarDocumentoUnico(String undGest, String tipoDoc, String protocolo, String notario);
 
 	List<DocumentoPCO> getDocumentosOrdenadosByUnidadGestion(List<DocumentoPCO> listDocPco);
+	
+	@BusinessOperationDefinition(PCO_DOCUMENTO_BY_ID)
+	DocumentoPCO getDocumentoPCOById(Long idDocPCO);
 }

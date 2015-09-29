@@ -104,8 +104,10 @@
 		disabled: true,
 		allowDecimals: true
 	});
-	
-		
+
+	<c:if test="${ocultarBtnSolicitar}">
+		<pfsforms:datefield labelKey="plugin.precontencioso.grid.liquidacion.fechaCierre" label="**Fecha de cierre" name="fechaCierreField" obligatory="true"/>
+	</c:if>
 
 <%-- Apoderado --%>
 
@@ -301,7 +303,20 @@
 		bbar: [btnGuardar, btnCancelar],
 		items: [
 			{
-				items: [ capitalVencidoField, capitalNoVencidoField, interesesOrdinariosField, interesesDemoraField, totalField,comisionesField,gastosField,impuestosField , comboTipoGestor, comboTipoDespacho, comboUsuario ]
+				items: [ capitalVencidoField,
+						capitalNoVencidoField,
+						interesesOrdinariosField,
+						interesesDemoraField,
+						totalField,
+						comisionesField,
+						gastosField,
+						impuestosField,
+						<c:if test="${ocultarBtnSolicitar}">
+						fechaCierreField,
+						</c:if>
+						comboTipoGestor,
+						comboTipoDespacho,
+						comboUsuario ]
 			}, {
 				items: [ capitalVencidoOriginalField, capitalNoVencidoOriginalField, interesesOrdinariosOriginalField, interesesDemoraOriginalField, totalOriginalField,comisionesOriginalField,gastosOriginalField,impuestosOriginalField]
 			}
@@ -334,6 +349,11 @@
 		if (totalField.getActiveError() != '') {
 			mensaje = mensaje + totalField.getActiveError() + ' <s:message code="plugin.precontencioso.grid.liquidacion.total" /> \n'
 		}
+		<c:if test="${ocultarBtnSolicitar}">
+		if (fechaCierreField.getValue() == '' || fechaCierreField.getActiveError() != '') {
+			mensaje = mensaje + ' <s:message code="plugin.precontencioso.tab.liquidacion.error.fecha.cierre" /> \n'
+		}
+		</c:if>
 
 		return mensaje;
 	}
@@ -355,6 +375,10 @@
 			parametros.apoderadoDespachoId = comboTipoDespacho.getValue();
 			parametros.apoderadoUsuarioId = comboUsuario.getValue();
 		}
+
+		<c:if test="${ocultarBtnSolicitar}">
+			parametros.fechaCierre = fechaCierreField.getValue().format('d/m/Y');
+		</c:if>
 
 		return parametros;
 	}

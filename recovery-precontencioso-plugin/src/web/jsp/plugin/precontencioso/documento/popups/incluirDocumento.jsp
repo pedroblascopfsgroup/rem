@@ -79,7 +79,7 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	var agregarUnidadesGestion = function(funcion) {
 		// Agrega o quita las unidades de gestion		
 		var uniGestion=comboUnidadesGestion.getValue();
-		storeDocs.webflow({uniGestionIds:uniGestion});
+		storeDocs.webflow({uniGestionIds:uniGestion, idPrc:data.id});
 	};
 
 	var validateForm = function(){	
@@ -157,6 +157,8 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	 	parametros.plaza = plaza.getValue();
 	 	parametros.idufir = idufir.getValue();	 	
 	 	
+		parametros.idPrc = data.id;
+
 	 	return parametros;
 	 }	
 	

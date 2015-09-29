@@ -6,27 +6,9 @@
 
 <%-- Buttons --%>
 
-var ocultarBtnSolicitar = function(){
-	Ext.Ajax.request({
-		url : page.resolveUrl('liquidacion/getOcultarBotonSolicitar'), 
-		method: 'POST',
-		success: function ( result, request ) {
-			var resultado = Ext.decode(result.responseText);
-			if(resultado.ocultarBtnSolicitar) {
-				btnSolicitar.hide();
-				return true;
-			}else{
-				btnSolicitar.show();
-				return false;
-			}
-		} 
-	});
-}
-
 var btnSolicitar = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.solicitar" text="**Solicitar" />',
 	iconCls: 'icon_mas',
-	hidden: ocultarBtnSolicitar(),
 	cls: 'x-btn-text-icon',
 	handler: function() {
 		if (comprobarDatosCalculoRellenos()) {
@@ -292,6 +274,36 @@ var actualizarBotonesLiquidacion = function() {
 }
 
 <%-- Utils --%>
+
+
+
+var ocultarBtnSolicitar = function(){
+	Ext.Ajax.request({
+		url : page.resolveUrl('liquidacion/getOcultarBotonSolicitar'),
+		method: 'POST',
+		success: function ( result, request ) {
+			var resultado = Ext.decode(result.responseText);
+
+			var indexFechaSolicitud = gridLiquidaciones.getColumnModel().findColumnIndex('fechaSolicitud');
+			var indexFechaRecepcion = gridLiquidaciones.getColumnModel().findColumnIndex('fechaRecepcion');
+
+			if(resultado.ocultarBtnSolicitar) {
+				btnSolicitar.hide();
+
+				gridLiquidaciones.getColumnModel().setHidden(indexFechaSolicitud, true);
+				gridLiquidaciones.getColumnModel().setHidden(indexFechaRecepcion, true);
+
+				return true;
+			}else{
+				btnSolicitar.show();
+				return false;
+			}
+		}
+	});
+}
+
+<%-- Acciones a tomar cuando la entidad tiene configurado que no soporta solicitar las liquidaciones --%>
+ocultarBtnSolicitar();
 
 var comprobarDatosCalculoRellenos = function() {
 	var liquidacion = gridLiquidaciones.getSelectionModel().getSelected();

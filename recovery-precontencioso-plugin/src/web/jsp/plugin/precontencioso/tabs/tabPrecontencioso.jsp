@@ -13,58 +13,42 @@
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/documento/grids/documentoGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/liquidacion/grids/liquidacionGrid.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/burofax/grids/burofax.jsp" %>
-var codigoTipoGestor='${codigoTipoGestor}';
 
 	var panel = new Ext.Panel({
 		title:'<s:message code="procedimiento.precontencioso.expedienteJudicial" text="**Precontencioso"/>'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,nombreTab : 'precontencioso'
-		,items: [gridDocumentos, gridLiquidaciones, gridBurofax]
-	}); 
+	});
+
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+		panel.add(gridDocumentos);
+	</sec:authorize>
+
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+		panel.add(gridLiquidaciones);
+	</sec:authorize>
+
+	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+		panel.add(gridBurofax);
+	</sec:authorize>
 
 	panel.getValue = function() {}
 
 	panel.setValue = function(){
-	        var data = entidad.get("data");
-	        var tipoGestor=data.tipoGestor.codigo;
-	        refrescarDocumentosGrid();
-	        refrescarLiquidacionesGrid();
-	        refrescarBurofaxGrid();
-	        
-	        //debugger;
-	        <%-- Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado--%>
-	        
-	        if(data.supervisor.isSupervisor){
-	        	refrescarDocumentosGrid();
-	            refrescarLiquidacionesGrid();
-	            refrescarBurofaxGrid();
-	        }
-	        else{
-	        
-		        if(data.isTipoDespachoGestoria.isTipoDespachoGestoria){
-		        	refrescarDocumentosGrid();
-		        	gridBurofax.setVisible(false);
-		        	gridLiquidaciones.setVisible(false);
-		        }
-		        else if(data.isTipoDespachoPredoc.isTipoDespachoPredoc){
-		        	refrescarDocumentosGrid();
-		            refrescarLiquidacionesGrid();
-		            refrescarBurofaxGrid();
-		        }
-		        else{
-		        	gridDocumentos.setVisible(false);
-		        	gridBurofax.setVisible(false);
-		        	gridLiquidaciones.setVisible(false);
-		        }
-		    }
-		    
-		    //Incorporado por Pedro, hasta que validemos su funcionamiento OK
-		        	gridDocumentos.setVisible(true);
-		        	gridBurofax.setVisible(true);
-		        	gridLiquidaciones.setVisible(true);
-		    
+        var data = entidad.get("data");
 
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_DOCUMENTOS">
+			refrescarDocumentosGrid();
+		</sec:authorize>
+
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQUIDACIONES">
+			refrescarLiquidacionesGrid();
+		</sec:authorize>
+
+		<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_BUROFAXES">
+			refrescarBurofaxGrid();
+		</sec:authorize>
 	}
 
  	panel.setVisibleTab = function(data) {

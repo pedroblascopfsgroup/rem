@@ -10,9 +10,14 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -21,6 +26,9 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	 * 
 	 */
 	private static final long serialVersionUID = -5583230911255732281L;
+	
+	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_PROPUESTO = "proc_propuesto";
+	private static final String TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR = "proc_a_iniciar";
 
 	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -32,6 +40,9 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 
 	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	UtilDiccionarioApi diccionarioApi;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -83,6 +94,18 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_ENVIADO);
 
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarTomaDec.equals(tex.getTareaProcedimiento().getCodigo())) {
+			String procIniciar = "";
+			for(EXTTareaExternaValor valor : listado) {
+				if(TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR.equals(valor.getNombre())){
+					procIniciar = valor.getValor();
+				}
+			}
+			ProcedimientoPCO pco = proxyFactory.proxy(ProcedimientoPcoApi.class).getPCOByProcedimientoId(prc.getId());
+			if(!Checks.esNulo(procIniciar)) {
+				TipoProcedimiento tipoProcInic = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class, procIniciar);
+				pco.setTipoProcIniciado(tipoProcInic);
+			}
+			proxyFactory.proxy(ProcedimientoPcoApi.class).update(pco);
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarSubsanacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			

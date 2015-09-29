@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 import org.hibernate.proxy.HibernateProxy;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 
@@ -33,15 +34,15 @@ public class EXTAcuerdo extends Acuerdo {
 	private Usuario proponente;
     
     @ManyToOne
-    @JoinColumn(name = "TIPO_GESTOR_PROPONENTE")
-	private EXTDDTipoGestor tipoGestorProponente;
-
-	public EXTDDTipoGestor getTipoGestorProponente() {
-		return tipoGestorProponente;
+    @JoinColumn(name = "USD_ID")
+	private GestorDespacho gestorDespacho;
+    
+	public GestorDespacho getGestorDespacho() {
+		return gestorDespacho;
 	}
 
-	public void setTipoGestorProponente(EXTDDTipoGestor tipoGestorProponente) {
-		this.tipoGestorProponente = tipoGestorProponente;
+	public void setGestorDespacho(GestorDespacho gestorDespacho) {
+		this.gestorDespacho = gestorDespacho;
 	}
 
 	public Usuario getProponente() {

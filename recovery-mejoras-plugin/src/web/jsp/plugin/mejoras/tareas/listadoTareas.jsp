@@ -1136,6 +1136,11 @@
 			case '100':
 			case '101':			
 			case '105':
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 			break;
 			
@@ -1315,6 +1320,7 @@
 		case app.subtipoTarea.CODIGO_ACEPTACION_ACUERDO:
 		case app.subtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO:
 		case app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE:
+		case app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO:
 				app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'acuerdos');
 		break;
 		

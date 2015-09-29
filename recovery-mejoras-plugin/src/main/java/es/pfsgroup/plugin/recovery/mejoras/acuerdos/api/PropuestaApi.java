@@ -14,4 +14,25 @@ public interface PropuestaApi {
 	@BusinessOperationDefinition(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
     @Transactional(readOnly = false)
     public List<EXTAcuerdo> listadoPropuestasByExpedienteId(Long idExpediente);
+
+	/**
+	 * El usuario logado es Gestor o Supervisor de la fase en que se encuentra el Expediente
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public Boolean usuarioLogadoEsGestorSupervisorActual(Long idExpediente);
+
+	/**
+	 * El usuario logado es el que ha generado la propuesta
+	 * @param idPropuesta
+	 * @return
+	 */
+	public Boolean usuarioLogadoEsProponente(Long idPropuesta);
+
+	/**
+	 * 
+	 * @param idPropuesta
+	 */
+	public void proponer(Long idPropuesta);
 }

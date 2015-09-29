@@ -181,4 +181,22 @@ public class Auditoria implements Serializable {
         //Para Bath
         return DEFAULT_USER;
     }
+
+    /**
+     * Usuario que suplantará al usuario actual a la hora de realizar una operación.
+     * 
+     * @return
+     */
+    public String getSuplantarUsuario() {
+       return null;
+    }
+
+    /**
+     * Establece el usuario que suplantará al usuario actual a la hora de realizar una operación.
+     * 
+     * @return
+     */
+    public void setSuplantarUsuario(String suplantarUsuario) {
+    }
+
 }

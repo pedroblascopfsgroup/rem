@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="haya_tramiteAceDecLitigios" width="1230" height="646">
+  <node name="Inicio" x="357" y="4" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H068_registrarAceptacion" x="310" y="86" width="217" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="295" y="-284"/>
+      <bendpoint w1="-458" h1="-1" w2="-390" h2="-524"/>
+      <bendpoint w1="-454" h1="523" w2="-386" h2="0"/>
+    </edge>
+  </node>
+  <node name="H068_registrarAceptacionDecision" x="329" y="177" width="237" height="36">
+    <edge>
+      <label x="-148" y="13"/>
+    </edge>
+    <edge>
+      <label x="5" y="-32"/>
+    </edge>
+  </node>
+  <node name="H068_registrarProcedimiento" x="302" y="298" width="287" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-548" y="-172"/>
+      <bendpoint w1="713" h1="11" w2="808" h2="-300"/>
+      <bendpoint w1="709" h1="292" w2="804" h2="-19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H068_validarNoAceptacion" x="893" y="157" width="229" height="36">
+    <edge>
+      <label x="33" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-48" y="-248"/>
+      <bendpoint w1="182" h1="3" w2="839" h2="-449"/>
+      <bendpoint w1="177" h1="450" w2="834" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-86" y="8"/>
+      <bendpoint w1="-3" h1="-74" w2="586" h2="-3"/>
+    </edge>
+  </node>
+  <node name="H068_validarCambioProcedimiento" x="764" y="367" width="299" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-39" y="-130"/>
+      <bendpoint w1="213" h1="1" w2="776" h2="-241"/>
+      <bendpoint w1="207" h1="213" w2="770" h2="-29"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H068_validarCambioProcedimientoDecision" x="615" y="486" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-64" h1="-34" w2="233" h2="154"/>
+    </edge>
+    <edge>
+      <label x="32" y="-25"/>
+    </edge>
+  </node>
+  <node name="H068_registrarProcedimientoDecision" x="94" y="401" width="316" height="36">
+    <edge>
+      <label x="-164" y="15"/>
+    </edge>
+    <edge>
+      <label x="8" y="38"/>
+      <bendpoint w1="-192" h1="6" w2="-95" h2="254"/>
+      <bendpoint w1="-228" h1="-204" w2="-131" h2="44"/>
+    </edge>
+    <edge>
+      <label x="1" y="-21"/>
+    </edge>
+  </node>
+  <node name="H068_SubsanarErrDocumentacion" x="-7" y="153" width="324" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="8" y="-24"/>
+      <bendpoint w1="0" h1="144" w2="-290" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-240"/>
+      <bendpoint w1="-183" h1="7" w2="-378" h2="-449"/>
+      <bendpoint w1="-170" h1="442" w2="-365" h2="-14"/>
+    </edge>
+  </node>
+  <node name="node1" x="332" y="513" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-102" h1="28" w2="-54" h2="-68"/>
+    </edge>
+  </node>
+  <node name="Fin" x="284" y="609" width="132" height="36"/>
+</root-container>

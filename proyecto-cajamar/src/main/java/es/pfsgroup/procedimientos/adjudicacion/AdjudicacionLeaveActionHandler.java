@@ -19,9 +19,10 @@ import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionPr
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
-public class AdjudicacionLeaveActionHandler extends AdjudicacionHayaLeaveActionHandler {
+public class AdjudicacionLeaveActionHandler extends PROGenericLeaveActionHandler {
 
 	/**
 	 * Serial ID

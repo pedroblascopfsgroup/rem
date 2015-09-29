@@ -205,17 +205,10 @@ public class MEJAcuerdoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openAltaTermino(ModelMap map, 
-			@RequestParam(value = "id", required = true) Long id,
-			String contratosIncluidos, 
-			Long idAcuerdo) {
+			@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
+			String contratosIncluidos) {
 			
-		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
-			
-		map.put("termino", termino);
-		
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-			
-		map.put("asunto", asunto);
+
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
 		
@@ -249,7 +242,6 @@ public class MEJAcuerdoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, 
-							@RequestParam(value = "idAsunto", required = true) Long idAsunto,
 							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
 							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
@@ -260,9 +252,6 @@ public class MEJAcuerdoController {
 		map.put("termino", termino);
 		
 		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
-		
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
-		map.put("asunto", asunto);
 		
 		map.put("idAcuerdo", idAcuerdo);
 		

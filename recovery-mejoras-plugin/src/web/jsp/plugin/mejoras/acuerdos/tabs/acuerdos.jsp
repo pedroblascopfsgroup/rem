@@ -717,7 +717,7 @@
 		
 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/detalleTerminos.jsp" %>
 
-		var panTerminos = crearTerminosAsuntos(noPuedeModificar);
+		var panTerminos = crearTerminosAsuntos(noPuedeModificar,false);
 
 		return panTerminos;
 		

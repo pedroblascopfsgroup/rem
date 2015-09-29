@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos.manager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -13,12 +14,15 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
@@ -127,5 +131,20 @@ public class PropuestaManager implements PropuestaApi {
 			}
 		}
 		return false;
+	}
+
+	@BusinessOperation(BO_PROPUESTA_GET_LISTADO_CONTRATOS_DEL_EXPEDIENTE)
+	public List<Contrato> listadoContratosByExpedienteId(Long idExpediente) {
+		
+		List<ExpedienteContrato> listaContratosExpediente = genericDao.getList(ExpedienteContrato.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
+		List<Contrato> contratos = new ArrayList<Contrato>();
+		
+		if (!Checks.esNulo(listaContratosExpediente) && listaContratosExpediente.size()>0) {
+			for(ExpedienteContrato expCon : listaContratosExpediente){
+				contratos.add(expCon.getContrato());	
+			}
+			
+		}
+		return contratos;
 	}
 }

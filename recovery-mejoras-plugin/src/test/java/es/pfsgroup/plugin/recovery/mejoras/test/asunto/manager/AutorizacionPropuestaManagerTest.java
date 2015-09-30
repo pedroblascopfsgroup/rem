@@ -26,7 +26,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.manager.PropuestaManager;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AutorizacionPropuestaManagerTest {
@@ -52,53 +51,6 @@ public class AutorizacionPropuestaManagerTest {
 	private static final Long ID_PROPUESTA = RandomUtils.nextLong();
 	private static final Long ID_EXPEDIENTE = RandomUtils.nextLong();
 	private static final Long ID_USUARIO = RandomUtils.nextLong();
-
-	/**
-	 * El usuario logado ha creado la propuesta. 
-	 */
-	@Test
-	public void testElUsuarioLogadoEsProponente() {
-		// Mock methods
-		Usuario proponente = new Usuario();
-		proponente.setId(ID_USUARIO);
-
-		EXTAcuerdo propuesta = new EXTAcuerdo();
-		propuesta.setProponente(proponente);
-
-		// la propuesta contiene un proponente que es el mismo que el usuario logado
-		when(acuerdoDao.get(ID_PROPUESTA)).thenReturn(propuesta);
-		when(usuarioManager.getUsuarioLogado()).thenReturn(proponente);
-
-		// Method to test
-		Boolean esProponente = propuestaManager.usuarioLogadoEsProponente(ID_PROPUESTA);
-
-		assertEquals(true, esProponente);		
-	}
-
-	/**
-	 * El usuario logado NO ha creado la propuesta. 
-	 */
-	@Test
-	public void testElUsuarioLogadoNoEsProponente() {
-		// Mock methods
-		Usuario proponente = new Usuario();
-		proponente.setId(ID_USUARIO);
-
-		EXTAcuerdo propuesta = new EXTAcuerdo();
-		propuesta.setProponente(proponente);
-
-		// la propuesta contiene un proponente que es DIFERENTE que el usuario logado
-		when(acuerdoDao.get(ID_PROPUESTA)).thenReturn(propuesta);
-
-		Usuario usuarioLogado = new Usuario();
-		usuarioLogado.setId(RandomUtils.nextLong());
-		when(usuarioManager.getUsuarioLogado()).thenReturn(usuarioLogado);
-
-		// Method to test
-		Boolean esProponente = propuestaManager.usuarioLogadoEsProponente(ID_PROPUESTA);
-
-		assertEquals(false, esProponente);		
-	}
 
 	/**
 	 * El usuario logado tiene el mismo perfil que el gestor actual del estado del itinerario

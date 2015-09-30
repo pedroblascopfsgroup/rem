@@ -802,7 +802,7 @@
     var congelado = entidad.getData("decision.estaCongelado");
     var visible = [
       [btnActuacion, congelado ]
-				,[btnNuevo, congelado]
+		,[btnNuevo, congelado]
         ,[btnEditar, congelado]
         ,[btnBorrar, congelado]
         ,[btnAltaProcedimiento, congelado]

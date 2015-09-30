@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.tasacion;
+package es.pfsgroup.recovery.cajamar.ws;
 
 import java.util.Properties;
 

@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.tasacion;
+package es.pfsgroup.recovery.cajamar.ws;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,12 +10,14 @@ import org.cajamar.ws.S_C_RECOVERY_CUENTA_DAT_AV.OUTPUT;
 import org.cajamar.ws.S_C_RECOVERY_CUENTA_DAT_AV.ObjectFactory;
 import org.cajamar.ws.S_C_RECOVERY_CUENTA_DAT_AV.SCRECOVERYCUENTADATAV;
 import org.cajamar.ws.S_C_RECOVERY_CUENTA_DAT_AV.SCRECOVERYCUENTADATAVType;
+import org.springframework.stereotype.Component;
 
 import javax.xml.namespace.QName;
 
 import es.pfsgroup.recovery.cajamar.serviciosonline.ConsultaDeSaldosWSApi;
 
-public class ConsultaDeSaldosWS extends BaseWS implements ConsultaDeSaldosWSApi {
+@Component
+public class WSCSCuentaVista extends BaseWS implements WSConsultaSaldos {
 
 	private static final String WEB_SERVICE_NAME = "S_A_RECOVERY_TASACION";
 
@@ -25,8 +27,8 @@ public class ConsultaDeSaldosWS extends BaseWS implements ConsultaDeSaldosWSApi 
 	public String getWSName() {
 		return WEB_SERVICE_NAME;
 	}
-
 	
+
 	private void ejecutaServicio(INPUT input) throws MalformedURLException {
 		
 		String urlWSDL = getWSURL();

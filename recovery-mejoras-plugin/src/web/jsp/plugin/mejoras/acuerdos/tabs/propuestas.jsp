@@ -21,7 +21,7 @@
 		,autoHeight:true
 		,autoWidth : true
 		,nombreTab : 'acuerdos'
-		/*,items : [{items:acuerdosTabs
+		/*,items : [{items:acuerdosExpTabs
 				,border:false
 				,style:'margin-top: 7px; margin-left:5px'}
 			]*/
@@ -68,6 +68,7 @@
    
    <!--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado -->
    acuerdosStore.on('load', function () {
+   
    		var btnDisbled = false
 	    acuerdosStore.data.each(function() {
 	    	var codEstad = this.data['codigoEstado'];
@@ -84,35 +85,29 @@
 	    
 	    
 	    if (panel != null){
-		    if (acuerdosTabs != null){
-		    	panel.remove(acuerdosTabs);
+		    if (acuerdosExpTabs != null){
+		    	panel.remove(acuerdosExpTabs);
 		    }	
-			if (panelAnterior != null){
-				panel.remove(panelAnterior);
+			if (panelAnteriorExpTerminos != null){
+				panel.remove(panelAnteriorExpTerminos);
 			}
-			if (panelAnteriorTerminos != null){
-				panel.remove(panelAnteriorTerminos);
-			}
-			if(cumplimientoAcuerdo != null){
-				panel.remove(cumplimientoAcuerdo);
-			}
-			despuesDeNuevoAcuerdo();
 			ocultarBotones();
+			despuesDeNuevoAcuerdo();
 		}
 	});
    
    var despuesDeNuevoAcuerdo = function(){
    		var ultimoRegistro = acuerdosStore.getCount();
    		if(ultimoRegistro > 0){
-   			acuerdosGrid.getSelectionModel().selectRow((ultimoRegistro-1));
-			acuerdosGrid.fireEvent('rowclick', acuerdosGrid, (ultimoRegistro-1));
+   			propuestasGrid.getSelectionModel().selectRow((ultimoRegistro-1));
+			propuestasGrid.fireEvent('rowclick', propuestasGrid, (ultimoRegistro-1));
 			acuerdosStore.un('load',despuesDeNuevoAcuerdo);
    		}
    }
    
    var despuesDeEvento = function(){
-   		acuerdosGrid.getSelectionModel().selectRow(indexAcuerdoSeleccionado);
-		acuerdosGrid.fireEvent('rowclick', acuerdosGrid, indexAcuerdoSeleccionado);
+   		propuestasGrid.getSelectionModel().selectRow(indexAcuerdoSeleccionado);
+		propuestasGrid.fireEvent('rowclick', propuestasGrid, indexAcuerdoSeleccionado);
 		acuerdosStore.un('load',despuesDeEvento);
    }
 
@@ -129,13 +124,13 @@
 <!--      	} -->
 <!--    }); -->
  
-   var cargarUltimoAcuerdo = function(){
-   		analisisTab.remove(panelAnterior);
-		panelAnterior = recargarAcuerdo(-2);
-		analisisTab.add(panelAnterior);
-		panel.doLayout();
+<!--    var cargarUltimoAcuerdo = function(){ -->
+<!--    		analisisTab.remove(panelAnterior); -->
+<!-- 		panelAnterior = recargarAcuerdo(-2); -->
+<!-- 		analisisTab.add(panelAnterior); -->
+<!-- 		panel.doLayout(); -->
 		
-   };
+<!--    }; -->
 
 
    var btnAltaAcuerdo = new Ext.Button({
@@ -159,98 +154,8 @@
 		       w.on(app.event.CANCEL, function(){ w.close(); });
      	}
    });
-
-	var btnCumplimientoAcuerdo = new Ext.Button({
-		text:  '<s:message code="propuestas.cumplimiento" text="**Cumplimiento propuesta" />'
-		<app:test id="CumplimientoAcuerdoBtn" addComa="true" />
-		,iconCls : 'icon_edit'
-		,cls: 'x-btn-text-icon'
-		,hidden:true
-		,handler:function(){
-      		var w = app.openWindow({
-		          flow : 'editacuerdo/open'
-		          ,closable:false
-		          ,width : 750
-		          ,title : '<s:message code="propuestas.cumplimiento" text="**Cumplimiento propuesta" />'
-		          ,params : {idAcuerdo:acuerdoSeleccionado}
-		       });
-		       w.on(app.event.DONE, function(){
-<!-- 		          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
-		          	acuerdosStore.webflow({id:panel.getExpedienteId()});
-		          w.close();
-<!-- 		          cargarUltimoAcuerdo(); -->
-		       });
-		       w.on(app.event.CANCEL, function(){ w.close(); });
-     	}
-	});
 	
-	var btnRegistrarFinalizacionAcuerdo = new Ext.Button({
-		text:  '<s:message code="plugin.mejoras.acuerdo.registrarFinalizacion" text="**Registrar finalización acuerdo" />'
-		<app:test id="btnRegistrarFinalizacionAcuerdo" addComa="true" />
-		,iconCls : 'icon_edit'
-		,cls: 'x-btn-text-icon'
-		,hidden:true
-		,handler:function(){
-		
-		
-			Ext.Ajax.request({
-				url: page.resolveUrl('mejacuerdo/obtenerListadoValidacionTramiteCorrespondienteDerivaciones')
-				,method: 'POST'
-				,params:{
-							idAcuerdo : acuerdoSeleccionado
-						}
-				,success: function (result, request){
-											
-					var derivacionesConfig = Ext.util.JSON.decode(result.responseText);
-					
-					var tramiteRestrictivosinResolver = false;
-					<!-- Primero mostramos tramitres restrictivos que no permiten guardar -->
-					for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
-							if(derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivo){
-								tramiteRestrictivosinResolver = true;
-								Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivoTexto );
-							}
-					}
-					
-					<!-- Si no tenemos tramites restrictivos sin resolver mostramos los posibles tramites sin resolver no restrictivos y abrimos la ventana -->
-					if(!tramiteRestrictivosinResolver){
-					
-						for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
-								if(!derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivo){
-									tramiteRestrictivosinResolver = true;
-									Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivoTexto );
-								}
-						}
-					
-						var w = app.openWindow({
-				       	   flow : 'mejacuerdo/openFinalizacionAcuerdo'
-				          ,closable:false
-				          ,width : 750
-				          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
-				          ,params : {idAcuerdo:acuerdoSeleccionado}
-				       	});
-				       	w.on(app.event.DONE, function(){
-				       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
-<!-- 				          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
-				          acuerdosStore.webflow({id:panel.getExpedienteId()});
-				          w.close();
-				          cargarUltimoAcuerdo();
-				       	});
-				       	w.on(app.event.CANCEL, function(){
-				        	w.close();
-				       	});
-				       	
-					}
 
-					
-				}
-				,error: function(){
-	
-				}       				
-			});
-
-     	}
-	});
    
    var btnProponerAcuerdo = new Ext.Button({
        text:  '<s:message code="acuerdos.proponer" text="**Proponer" />'
@@ -264,15 +169,14 @@
        		
        		    deshabilitarBotones();
 	      	    page.webflow({
-	      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
+	      			flow:"propuestas/proponer"
 	      			,params:{
-	      				idAcuerdo:acuerdoSeleccionado
+	      				idPropuesta:acuerdoSeleccionado
 	   				}
 	      			,success: function(){
 	           		 	acuerdosStore.on('load',despuesDeEvento);
 	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
 	           		 	btnProponerAcuerdo.hide();
-	           		 	btnIncumplirAcuerdo.hide();
 	           		}	
 		      	});
 				habilitarBotones();	
@@ -286,29 +190,16 @@
    
    var deshabilitarBotones=function(){
    			btnProponerAcuerdo.disable();
-           	btnIncumplirAcuerdo.disable();
-           	btnRechazarAcuerdo.disable();
-           	btnVigenteAcuerdo.disable();
 			btnCerrarAcuerdo.disable();
-			btnRegistrarFinalizacionAcuerdo.disable();
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
-           	btnIncumplirAcuerdo.enable();
-           	btnRechazarAcuerdo.enable();
-           	btnVigenteAcuerdo.enable();
 			btnCerrarAcuerdo.enable();
-			btnRegistrarFinalizacionAcuerdo.enable();
    }
    
    var ocultarBotones=function(){
    			btnProponerAcuerdo.hide();
-           	btnIncumplirAcuerdo.hide();
-           	btnRechazarAcuerdo.hide();
-           	btnVigenteAcuerdo.hide();
 			btnCerrarAcuerdo.hide();
-			btnAceptarAcuerdo.hide();
-			btnRegistrarFinalizacionAcuerdo.hide();
    }
    
    
@@ -329,111 +220,14 @@
            		 	acuerdosStore.on('load',despuesDeEvento);
            		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
 					btnCerrarAcuerdo.hide();
-           		 	btnIncumplirAcuerdo.hide();
-					btnRechazarAcuerdo.hide();
            		}	
 	      	});	
 			habilitarBotones();
      	}
    });
-
-	var btnIncumplirAcuerdo = new Ext.Button({
-	       text:  '<s:message code="acuerdos.incumplido" text="**Incumplido" />'
-	       <app:test id="btnIncumplirAcuerdo" addComa="true" />
-	       ,iconCls : 'icon_menos'
-	       ,cls: 'x-btn-text-icon'
-	       ,hidden:true
-	       ,handler:function(){
-	      	    deshabilitarBotones();
-	      	    page.webflow({
-	      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.cancelarAcuerdo"
-	      			,params:{
-	      				idAcuerdo:acuerdoSeleccionado
-	   				}
-	      			,success: function(){
-	           		 	acuerdosStore.on('load',despuesDeEvento);
-	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-	           		 	ocultarBotones();
-	           		}
-		      	});
-				habilitarBotones();
-	     	}
-	});
-	
-
-	var btnAceptarAcuerdo = new Ext.Button({
-       text:  '<s:message code="app.aceptar" text="**Aceptar" />'
-       <app:test id="btnAceptarAcuerdo" addComa="true" />
-       ,iconCls : 'icon_ok'
-       ,cls: 'x-btn-text-icon'
-       ,hidden:true
-       ,handler:function(){
-       if (countTerminos > 0){
-            
-            deshabilitarBotones();
-      	    page.webflow({
-      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.aceptarAcuerdo"
-      			,params:{
-      				idAcuerdo:acuerdoSeleccionado
-   				}
-      			,success: function(){
-           		 	acuerdosStore.on('load',despuesDeEvento);
-           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-           		 	btnAceptarAcuerdo.hide();
-           		 	btnRechazarAcuerdo.hide();
-           		 	btnIncumplirAcuerdo.setVisible(false);
-           		}	
-	      	});
-			habilitarBotones();
-				
-       }else{
-       		Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
-	   		'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.AceptarAcuerdoSinTerminos" text="**No es posible aceptar un acuerdo sin terminos" />');
-       }
-     	}
-   });
    
-   	var btnVigenteAcuerdo = new Ext.Button({
-       text:  '<s:message code="acuerdos.aprobar" text="**Aprobar" />'
-       <app:test id="btnVigenteAcuerdo" addComa="true" />
-       ,iconCls : 'icon_ok'
-       ,cls: 'x-btn-text-icon'
-       ,hidden:true
-       ,handler:function(){
-	       if (countTerminos > 0){
-	            
-	            deshabilitarBotones();
-	      	    page.webflow({
-	      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.vigenteAcuerdo"
-	      			,params:{
-	      				idAcuerdo:acuerdoSeleccionado
-	   				}
-	      			,success: function(){
-<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
-	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-	           		 	btnAceptarAcuerdo.hide();
-	           		 	btnRechazarAcuerdo.hide();
-	           		 	btnVigenteAcuerdo.hide();
-	           		 	btnIncumplirAcuerdo.setVisible(false);
-	           		}	
-		      	});
-				habilitarBotones();	
-				
-	       }else{
-	       		Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
-		   		'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.VigenteAcuerdoSinTerminos" text="**No es posible aprobar un acuerdo sin terminos" />');
-	       }
-
-     	}
-   });
    
-	var btnRechazarAcuerdo = new Ext.Button({
-       text:  '<s:message code="acuerdos.rechazar" text="**Rechazar" />'
-       <app:test id="btnRechazarAcuerdo" addComa="true" />
-       ,iconCls : 'icon_menos'
-       ,cls: 'x-btn-text-icon'
-       ,hidden:true      
-	});
+
 
     function processResult(opt, text){
        if(opt == 'cancel'){
@@ -450,27 +244,17 @@
    				,success: function(){
 	   				acuerdosStore.on('load',despuesDeEvento);
 		   		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-		   		 	btnAceptarAcuerdo.hide();
-		   		 	btnRechazarAcuerdo.hide();
 		   		 	btnCerrarAcuerdo.hide();
-		   		 	btnIncumplirAcuerdo.hide();
-		   		 	btnVigenteAcuerdo.hide();
    		 		}
 	      	});	
       		habilitarBotones();
 	   }
 	}
-    
-	btnRechazarAcuerdo.on('click',function(){
-	
-		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult);
-       		
-	});
 	
 	
-	var acuerdosGrid = app.crearGrid(acuerdosStore,cmAcuerdos,{
+	var propuestasGrid = app.crearGrid(acuerdosStore,cmAcuerdos,{
          title : '<s:message code="propuestas.grid.titulo" text="**Propuestas" />'
-         <app:test id="acuerdosGrid" addComa="true" />
+         <app:test id="propuestasGrid" addComa="true" />
          ,style:'padding-right:10px'
          ,autoHeight : true
          ,cls:'cursor_pointer'
@@ -478,263 +262,146 @@
 
          ,bbar : [
          	btnAltaAcuerdo,
-          	<sec:authorize ifAllGranted="PROPONER-ACUERDO">
-	        	btnProponerAcuerdo,	
-	        </sec:authorize>
-        	btnIncumplirAcuerdo,
+          	btnProponerAcuerdo,
      	   	btnCerrarAcuerdo,
-        	btnAceptarAcuerdo,
-        	btnRechazarAcuerdo,
-			btnCumplimientoAcuerdo,
-			btnRegistrarFinalizacionAcuerdo,
-			btnVigenteAcuerdo,
 	      ]
 
 	}); 
 
-	var reload = function(){
-		if (analisisTab != null){
-			analisisTab.remove(panelAnterior);
-		}
-		panelAnterior = recargarAcuerdo(acuerdoSeleccionado);
+<!-- 	var reload = function(){ -->
+<!-- 		if (analisisTab != null){ -->
+<!-- 			analisisTab.remove(panelAnterior); -->
+<!-- 		} -->
+<!-- 		panelAnterior = recargarAcuerdo(acuerdoSeleccionado); -->
 		
-		if (analisisTab !=null) {
-			analisisTab.add(panelAnterior);
-		}
-		panel.doLayout();
-		acuerdosStore.webflow({id:panel.getExpedienteId()});
-	}
+<!-- 		if (analisisTab !=null) { -->
+<!-- 			analisisTab.add(panelAnterior); -->
+<!-- 		} -->
+<!-- 		panel.doLayout(); -->
+<!-- 		acuerdosStore.webflow({id:panel.getExpedienteId()}); -->
+<!-- 	} -->
 	
-	/*
-	var reloadTerminos = function(){
-		panel.remove(panelAnteriorTerminos);
+<!-- 	/* -->
+<!-- 	var reloadTerminos = function(){ -->
+<!-- 		panel.remove(panelAnteriorExpTerminos); -->
 
-		panelAnteriorTerminos = recargarAcuerdo(acuerdoSeleccionado);
-		panel.add(panelAnteriorTerminos);
-		panel.doLayout();
-		acuerdosStore.webflow({id:panel.getExpedienteId()});
-	}
-	*/
+<!-- 		panelAnteriorExpTerminos = recargarAcuerdo(acuerdoSeleccionado); -->
+<!-- 		panel.add(panelAnteriorExpTerminos); -->
+<!-- 		panel.doLayout(); -->
+<!-- 		acuerdosStore.webflow({id:panel.getExpedienteId()}); -->
+<!-- 	} -->
+<!-- 	*/ -->
 	
-	panel.add(acuerdosGrid);
+	panel.add(propuestasGrid);
 
 
 	// Variables para las pestañas de análisis y términos
 	var analisisTab;	
-	var terminosTab;
-	var acuerdosTabs;                                                                                                                                                       
+	var terminosExpTab;
+	var acuerdosExpTabs;                                                                                                                                                       
 
 	//Comienzan las 4 partes dependientes del acuerdo	
 	var panelAnterior;
-	var panelAnteriorTerminos;
+	var panelAnteriorExpTerminos;
 	var cumplimientoAcuerdo;
 	
 	
-	acuerdosGrid.on('rowclick', function(grid, rowIndex, e) {
-	   	var rec = grid.getStore().getAt(rowIndex);
-		var idAcuerdo = rec.get('idAcuerdo');
-		var idTipoDespacho = rec.get('tipoDespachoProponente');
-		var idUserProponente = rec.get('idProponente');
-		var idTipoAcuerdo = rec.get('idTipoAcuerdo');
-		acuerdoSeleccionado = idAcuerdo;
-		indexAcuerdoSeleccionado = rowIndex;
-		panel.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando" />','x-mask-loading');
-		//Muestro o no los botones que corresponden
-		var codigoEstado = rec.get('codigoEstado');
-		
-		///Ocultamos todos los botones
-		ocultarBotones();
-	
-		/////Llamada ajax para obtener el proponente, validador y decisor del acuerdo y el id y tipo de gestor del usuario logado
-       	
-       	Ext.Ajax.request({
-			url: page.resolveUrl('mejacuerdo/getConfigUsersAcuerdoAsunto')
-			,method: 'POST'
-			,params:{
-						idTipoDespachoProponente : idTipoDespacho
-						,idAsunto:panel.getExpedienteId()
-					}
-			,success: function (result, request){
-						
-				
-				var config = Ext.util.JSON.decode(result.responseText);
-				var tipoDespachoPropAcuerdo = config.tiposDespachosAcuerdoAsunto.proponente;
-				var tipoDespachoValidadorAcuerdo = config.tiposDespachosAcuerdoAsunto.validador;
-				var tipoDespachoDecisorAcuerdo = config.tiposDespachosAcuerdoAsunto.decisor;
-				var userLogado = config.userLogado.id;
-				var tipoDespachoLogado = config.userLogado.idTipoDespacho;
-				var noPuedeModificar = true;
-				
+	propuestasGrid.on('rowclick', function(grid, rowIndex, e) {
 
-				if(idUserProponente == userLogado && codigoEstado == app.codigoAcuerdoEnConformacion){
-					btnProponerAcuerdo.setVisible(true);
-					btnIncumplirAcuerdo.setText('<s:message code="acuerdos.cancelar" text="**Cancelar" />');
-					btnIncumplirAcuerdo.setVisible(true);
-					
-					noPuedeModificar = false;
-					
-					if(tipoDespachoLogado == tipoDespachoDecisorAcuerdo){
-						btnVigenteAcuerdo.setVisible(true);
-						btnProponerAcuerdo.setVisible(false);
-					}else if(tipoDespachoLogado == tipoDespachoValidadorAcuerdo){
-						btnAceptarAcuerdo.setVisible(true);
-						btnProponerAcuerdo.setVisible(false);
-					} 
-					
-				}
-				
-				if((tipoDespachoLogado == tipoDespachoValidadorAcuerdo || tipoDespachoLogado == tipoDespachoDecisorAcuerdo) && codigoEstado == app.codigoAcuerdoPropuesto){
-					btnAceptarAcuerdo.setVisible(true);
-					btnRechazarAcuerdo.setVisible(true);
-					
-					noPuedeModificar = false;
-				}
 
-				if(tipoDespachoLogado == tipoDespachoDecisorAcuerdo && codigoEstado == app.codigoAcuerdoAceptado){
-					btnVigenteAcuerdo.setVisible(true);
-					btnRechazarAcuerdo.setVisible(true);
-					
-					noPuedeModificar = false;
-				}
-				
-				var estadoVigente = false;
-				
-				btnRegistrarFinalizacionAcuerdo.setVisible(false);
-				if(tipoDespachoLogado == tipoDespachoPropAcuerdo && codigoEstado == app.codigoAcuerdoVigente){
-					
-					btnRegistrarFinalizacionAcuerdo.setVisible(true);
-					estadoVigente = true;
-					
-				}
-				
-				panel.remove(acuerdosTabs);	
-				panel.remove(panelAnterior);
-				panel.remove(panelAnteriorTerminos);
-				panel.remove(cumplimientoAcuerdo);
-		
-				analisisTab = new Ext.Panel({
-					title:'<s:message code="plugin.mejoras.acuerdos.tabAnalisis" text="**Análisis"/>'
-					,id:'asunto-analisisTabs-${asunto.id}'
-					,autoHeight:true
-				});
-			
-				terminosTab = new Ext.Panel({
+				panel.remove(acuerdosExpTabs);	
+				panel.remove(panelAnteriorExpTerminos); 
+
+				terminosExpTab = new Ext.Panel({
 					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Términos"/>'
-					,id:'asunto-terminosTabs-${asunto.id}'
+					,id:'expediente-terminosTabs-'+entidad.get("data").id
 					,autoHeight:true
 					,autoWidth: true
 				});
-		
-				acuerdosTabs = new Ext.TabPanel({
-					id:'asunto-acuerdosTabs-${asunto.id}'
+				
+				acuerdosExpTabs = new Ext.TabPanel({
+					id:'expediente-acuerdosTabs'+entidad.get("data").id
 					,items:[
-						terminosTab, analisisTab
+						terminosExpTab
 					]
 					,autoHeight:true
 					,autoWidth : true
 					,border: true
 				  });     
-				    
-		
-				panelAnterior = recargarAcuerdo(idAcuerdo);
-				panelAnteriorTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);
 				
-				analisisTab.add(panelAnterior);
-				terminosTab.add(panelAnteriorTerminos);
+				var rec = grid.getStore().getAt(rowIndex);
+				var idAcuerdo = rec.get('idAcuerdo');
+				var idProponente = rec.get('idProponente');
+				var codigoEstado = rec.get('codigoEstado');
+				var noPuedeModificar = true;
+				acuerdoSeleccionado = idAcuerdo;
 				
-				acuerdosTabs.setActiveTab(terminosTab);                                                                                                                                                           
-				acuerdosTabs.setHeight('auto');	
 				
-				var store = panelAnteriorTerminos.terminosAcuerdoGrid.getStore();
-				
-				btnCumplimientoAcuerdo.setVisible(false);
-				
-				store.on('load', function(){  
-					for (var i=0; i < store.data.length; i++) {
-						datos = store.getAt(i);
-						
-						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
-							if(Boolean(estadoVigente)){
-								btnCumplimientoAcuerdo.setVisible(true);
-							}
-							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
-							terminosTab.add(cumplimientoAcuerdo);
-							
-						}
-					}
-					
-					panel.add(acuerdosTabs);
-					//panel.add(panelAnterior);
-					panel.doLayout();
-					panel.show();
-			   	});
-				
+				if((idProponente == panel.getUsuarioLogado() || panel.esGestorSupervisorActual()) && codigoEstado == app.codigoAcuerdoEnConformacion){
+					btnProponerAcuerdo.setVisible(true);
+				}
 
+				if(panel.esGestorSupervisorActual() || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
+					noPuedeModificar = false;
+				}
 				
-			}
-			,error: function(){
-
-			}       				
-		});
-	
-	    
+				panelAnteriorExpTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);
+	    		terminosExpTab.add(panelAnteriorExpTerminos); 
+	    		
+	    		acuerdosExpTabs.setActiveTab(terminosExpTab);
+	    		acuerdosExpTabs.setHeight('auto');
+	    		
+	    		panel.add(acuerdosExpTabs);
+				panel.doLayout();
+				panel.show();
 		
 	});
    
 	//fin 4 partes
 
-	var recargarAcuerdo = function(idAcuerdo){
-		var url = '/${appProperties.appName}/acuerdos/detalleAcuerdo.htm',
-		config = config || {};
-		var autoLoad = {url : url+"?"+Math.random()
-				,scripts: true
-				,params: {id:idAcuerdo,idAsunto:panel.getExpedienteId()}
-				};
-		var cfg = {
-			autoLoad : autoLoad
-			,border:false
-			,bodyStyle:'padding:5px'
-			,defaults:{
-            	border:false            
-        		}
-		};
-		var panel2 = new Ext.Panel(cfg);
+<!-- 	var recargarAcuerdo = function(idAcuerdo){ -->
+<%-- 		var url = '/${appProperties.appName}/acuerdos/detalleAcuerdo.htm', --%>
+<!-- 		config = config || {}; -->
+<!-- 		var autoLoad = {url : url+"?"+Math.random() -->
+<!-- 				,scripts: true -->
+<!-- 				,params: {id:idAcuerdo,idAsunto:panel.getExpedienteId()} -->
+<!-- 				}; -->
+<!-- 		var cfg = { -->
+<!-- 			autoLoad : autoLoad -->
+<!-- 			,border:false -->
+<!-- 			,bodyStyle:'padding:5px' -->
+<!-- 			,defaults:{ -->
+<!--             	border:false             -->
+<!--         		} -->
+<!-- 		}; -->
+<!-- 		var panel2 = new Ext.Panel(cfg); -->
 
 
 
-		panel2.show();
-		panel2.on(app.event.DONE, function(){
-		          reload();
-		       });
-		return panel2
+<!-- 		panel2.show(); -->
+<!-- 		panel2.on(app.event.DONE, function(){ -->
+<!-- 		          reload(); -->
+<!-- 		       }); -->
+<!-- 		return panel2 -->
 
 
-	};
+<!-- 	}; -->
 
 	
 	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar){
 		
 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/detalleTerminos.jsp" %>
 
-		var panTerminos = crearTerminosAsuntos(noPuedeModificar);
+		var panTerminosExp = crearTerminosAsuntos(noPuedeModificar,true);
 
-		return panTerminos;
+		return panTerminosExp;
 		
 	};	
 	
 	
-	var recargarCumplimientoAcuerdo = function(idAcuerdo){
-		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/listadoCumplimientoAcuerdo.jsp" %>	
-		var cumplimiento = crearCumplimiento(idAcuerdo);
-		return cumplimiento;
-	};
-	
-
-	
-	
 	panel.getValue = function(){
 		var estado = entidad.get("acuerdos");
-		rowsSelected = acuerdosGrid.getSelectionModel().getSelections();
+		rowsSelected = propuestasGrid.getSelectionModel().getSelections();
 		if (rowsSelected != ''){
 			return { 
 				idAcuerdo : rowsSelected[0].get('idAcuerdo')
@@ -751,31 +418,6 @@
 	panel.setValue = function(){
 		var data = entidad.get("data");
 		entidad.cacheOrLoad(data,acuerdosStore, {id : data.id });
-		
-		<%--
-		var estado = entidad.get("acuerdos");
-		if (estado){
-			panel.remove(panelAnterior);
-
-			panelAnterior = recargarAcuerdo(estado.idAcuerdo);
-			panel.add(panelAnterior);
-			panel.doLayout();
-		} else {
-			// vaciar el grid
-			panel.remove(panelAnterior);
-		}
-		 --%>
-		
-<!-- 		var esVisible = [ -->
-<!-- 			 [btnAltaAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] -->
-<!-- 			,[btnCumplimientoAcuerdo, data.toolbar.esGestor || data.toolbar.esSupervisor] -->
-<!-- 		]; -->
-
-		//entidad.setVisible(esVisible);
-		//Por defecto establecemos el botón como no visible
-		btnCumplimientoAcuerdo.setVisible(false);
-		//terminosTab.hide();
-		//analisisTab.hide();
 	}
 
 	panel.getExpedienteId = function(){
@@ -788,6 +430,14 @@
 
 	panel.esGestor = function(){
 		return entidad.get("data").toolbar.esGestor;
+	}
+	
+	panel.getUsuarioLogado = function(){
+		return entidad.get("data").usuario.id;
+	}
+	
+	panel.esGestorSupervisorActual = function(){
+		return entidad.get("data").esGestorSupervisorActual;
 	}
 
 	return panel;

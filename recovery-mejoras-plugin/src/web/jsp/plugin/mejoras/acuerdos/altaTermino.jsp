@@ -15,7 +15,7 @@
 	var arrayCampos = new Array();
 	
 	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
-	var idAsunto = '${asunto.id}';
+<%-- 	var idAsunto = '${asunto.id}'; --%>
 	var idTermino = '${termino.id}';
 	var contratosIncluidos = '${contratosIncluidos}';
 	var soloConsulta = '${soloConsulta}';

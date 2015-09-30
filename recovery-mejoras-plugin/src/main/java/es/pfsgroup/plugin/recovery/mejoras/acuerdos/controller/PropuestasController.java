@@ -4,33 +4,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
-import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
-import es.pfsgroup.recovery.api.ExpedienteApi;
 
 @Controller
 public class PropuestasController {
-	
+
+	private static final String DEFAULT = "default";
 	static final String JSP_ALTA_PROPUESTA = "plugin/mejoras/acuerdos/editaConclusionesAcuerdo";
 	static final String LISTADO_PROPUESTAS_JSON =  "plugin/mejoras/acuerdos/acuerdosJSON";
-	
-	
+	static final String JSON_LISTADO_CONTRATOS = "plugin/mejoras/acuerdos/listadoContratosAsuntoJSON";
+
 	@Autowired 
 	private DictionaryManager dictionaryManager; 
-	
+
 	@Autowired
 	private PropuestaApi propuestaApi;
 	
-	
-	
-	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
     /**
      * Abre la ventana para crear una nueva propuesta.
      * @param idExpediente
@@ -55,8 +51,7 @@ public class PropuestasController {
 		
 		return JSP_ALTA_PROPUESTA;
 	}
-	
-	
+
     /**
      * Obtiene un listado de las propuestas asignadas al expediente.
      * @param idExpediente
@@ -69,6 +64,23 @@ public class PropuestasController {
 		
 		return LISTADO_PROPUESTAS_JSON;
 	}
-	
 
+	@RequestMapping
+    public String proponer(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, ModelMap model) {
+		propuestaApi.proponer(idPropuesta);
+		return DEFAULT;
+	}
+
+    /**
+     * Obtiene un listado de los contratos del expediente.
+     * @param idExpediente
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getContratosByExpedienteId(Long idExpediente,ModelMap model) {
+		
+		model.put("listadoContratosAsuntos",propuestaApi.listadoContratosByExpedienteId(idExpediente));
+		
+		return JSON_LISTADO_CONTRATOS;
+	}
 }

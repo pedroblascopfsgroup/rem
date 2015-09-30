@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_procedimientoOrdinario" width="1144" height="938">
+  <node name="Inicio" x="61" y="19" width="132" height="36">
+    <edge>
+      <label x="-39" y="-20"/>
+    </edge>
+  </node>
+  <node name="H024_InterposicionDemanda" x="289" y="20" width="220" height="36">
+    <edge>
+      <label x="2" y="-2"/>
+    </edge>
+    <edge>
+      <label x="-81" y="-16"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="404" h1="4" w2="-278" h2="-458"/>
+    </edge>
+  </node>
+  <node name="H024_ConfirmarAdmision" x="297" y="250" width="210" height="36">
+    <edge>
+      <label x="6" y="6"/>
+    </edge>
+    <edge>
+      <label x="-79" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="592" h1="0" w2="-90" h2="-379"/>
+    </edge>
+  </node>
+  <node name="H024_OrdinarioDecision" x="650" y="334" width="168" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H024_ConfirmarNotDemanda" x="286" y="412" width="224" height="36">
+    <edge>
+      <label x="2" y="7"/>
+    </edge>
+    <edge>
+      <label x="-87" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-37" y="-20"/>
+      <bendpoint w1="451" h1="0" w2="-232" h2="-224"/>
+    </edge>
+    <edge>
+      <label x="-38" y="-29"/>
+      <bendpoint w1="-186" h1="-83" w2="-187" h2="72"/>
+    </edge>
+  </node>
+  <node name="H024_BPMTramiteNotificacion" x="642" y="486" width="209" height="36">
+    <edge>
+      <label x="-117" y="-22"/>
+      <bendpoint w1="0" h1="72" w2="342" h2="0"/>
+    </edge>
+  </node>
+  <node name="H024_ConfirmarOposicion" x="288" y="558" width="218" height="36">
+    <edge>
+      <label x="-3" y="8"/>
+    </edge>
+    <edge>
+      <label x="-66" y="-12"/>
+    </edge>
+    <edge>
+      <label x="12" y="-19"/>
+    </edge>
+    <edge>
+      <label x="-30" y="-31"/>
+      <bendpoint w1="-190" h1="-71" w2="-191" h2="75"/>
+    </edge>
+  </node>
+  <node name="H024_RegistrarAudienciaPrevia" x="256" y="635" width="281" height="36">
+    <edge>
+      <label x="-77" y="9"/>
+    </edge>
+    <edge>
+      <label x="16" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-72" y="-19"/>
+    </edge>
+    <edge>
+      <label x="-31" y="-32"/>
+      <bendpoint w1="-187" h1="-39" w2="-188" h2="38"/>
+    </edge>
+  </node>
+  <node name="H024_RegistrarJuicio" x="278" y="790" width="238" height="36">
+    <edge>
+      <label x="0" y="8"/>
+    </edge>
+    <edge>
+      <label x="-68" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-2" y="-34"/>
+    </edge>
+    <edge>
+      <label x="-26" y="-27"/>
+      <bendpoint w1="195" h1="-65" w2="196" h2="90"/>
+    </edge>
+  </node>
+  <node name="H024_RegistrarResolucion" x="299" y="873" width="195" height="36">
+    <edge>
+      <label x="-36" y="8"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-23"/>
+    </edge>
+    <edge>
+      <label x="2" y="9"/>
+    </edge>
+  </node>
+  <node name="H024_ResolucionFirme" x="616" y="871" width="215" height="36">
+    <edge>
+      <label x="-45" y="7"/>
+    </edge>
+    <edge>
+      <label x="-54" y="-25"/>
+      <bendpoint w1="182" h1="-2" w2="13" h2="539"/>
+    </edge>
+    <edge>
+      <label x="39" y="-15"/>
+    </edge>
+    <edge>
+      <label x="-25" y="7"/>
+      <bendpoint w1="-163" h1="25" w2="164" h2="23"/>
+    </edge>
+  </node>
+  <node name="H024_ConfirmarNotAdmisionDecision" x="284" y="331" width="228" height="36">
+    <edge>
+      <label x="6" y="-18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H024_ConfirmarNotDemandaDecision" x="277" y="486" width="241" height="36">
+    <edge>
+      <label x="-2" y="-19"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H024_RegistrarAudienciaPreviaDecision" x="258" y="721" width="276" height="36">
+    <edge>
+      <label x="7" y="-19"/>
+      <bendpoint w1="-237" h1="3" w2="-237" h2="-149"/>
+      <bendpoint w1="-238" h1="153" w2="-238" h2="1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H024_InterposicionDemandaDecision" x="268" y="90" width="267" height="36">
+    <edge>
+      <label x="-36" y="-21"/>
+      <bendpoint w1="-224" h1="1" w2="-210" h2="-167"/>
+      <bendpoint w1="-224" h1="159" w2="-225" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ForkInterposicionDemanda" x="329" y="173" width="144" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-35" y="-6"/>
+    </edge>
+  </node>
+  <node name="H024_BPMProvisionFondos" x="626" y="172" width="195" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-158" y="-116"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1011" y="482" width="132" height="36"/>
+</root-container>

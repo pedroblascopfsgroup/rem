@@ -114,6 +114,9 @@ public class TerminoAcuerdo implements Serializable, Auditable{
     @Embedded
     private Auditoria auditoria;
 
+	@Column(name = "SYS_GUID")
+	private String guid;
+    
 	public Long getId() {
 		return id;
 	}
@@ -267,4 +270,12 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 	}
     
 
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
 }

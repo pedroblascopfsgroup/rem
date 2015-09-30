@@ -1,6 +1,8 @@
 package es.capgemini.pfs.acuerdo.dto;
 
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 /**
@@ -26,6 +28,9 @@ public class DtoAcuerdo extends WebDto {
 	private String fechaCierre;
 	private String fechaLimite;
 	private Long importeCostas;	
+	private String guid;
+	private Long idJBPM;
+	private Date fechaEstado;
 
 
 	/**
@@ -222,4 +227,33 @@ public class DtoAcuerdo extends WebDto {
 		this.importeCostas = importeCostas;
 	}
 	
+	public String getGuid() {
+		return guid;
+	}
+
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
+
+	public Long getIdJBPM() {
+		return idJBPM;
+	}
+
+
+	public void setIdJBPM(Long idJBPM) {
+		this.idJBPM = idJBPM;
+	}
+
+
+	public Date getFechaEstado() {
+		return fechaEstado;
+	}
+
+
+	public void setFechaEstado(Date fechaEstado) {
+		this.fechaEstado = fechaEstado;
+	}
+
 }

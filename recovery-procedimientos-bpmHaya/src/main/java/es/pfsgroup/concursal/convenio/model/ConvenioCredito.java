@@ -54,6 +54,9 @@ public class ConvenioCredito implements Serializable,Auditable{
     @JoinColumn(name = "DD_CC_ID")
 	private DDConformidadConvenio conformidadConvenio;
 	
+	@Column(name="SYS_GUID")
+	private String guid;
+	
 	@Embedded
     private Auditoria auditoria;
 
@@ -136,8 +139,15 @@ public class ConvenioCredito implements Serializable,Auditable{
 		return conformidadConvenio;
 	}
 
-
 	public void setConformidadConvenio(DDConformidadConvenio conformidadConvenio) {
 		this.conformidadConvenio = conformidadConvenio;
+	}
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
 	}
 }

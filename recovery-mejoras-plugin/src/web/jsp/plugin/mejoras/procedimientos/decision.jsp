@@ -530,11 +530,12 @@
 		
 			
 		if(validarDatos(saldoRec, permiteSinDemandados)){
+			var idx;
 			var arrayDemandados=demandados.split(',');
-			for(i=0;i < arrayDemandados.length;i++){
+			for(idx=0;idx < arrayDemandados.length;idx++){
 				var rec;
-				var demandado=arrayDemandados[i];
-				if(i==0){
+				var demandado=arrayDemandados[idx];
+				if(idx==0){
 					rec={
 						procedimientoPadre:procedimientoPadre
 						,tipoActuacion:tipoActu

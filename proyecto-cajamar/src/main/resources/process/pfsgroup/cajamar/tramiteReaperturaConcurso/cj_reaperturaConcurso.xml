@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="cj_reaperturaConcurso">
+
+	<start-state name="Inicio">
+		<transition to="H043_AutoDeclarandoConcurso"></transition>
+	</start-state>
+	
+	<state name="H043_AutoDeclarandoConcurso">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H043_AutoDeclarandoConcurso" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H043_ActualizarInsinuacionCreditos" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="H043_ActualizarInsinuacionCreditos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H043_ActualizarInsinuacionCreditos" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H043_AutoDeclarandoConcurso" name="vueltaAtras"></transition>
+		<transition to="H043_RevisarInsinuacionCreditos" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="H043_RevisarInsinuacionCreditos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H043_RevisarInsinuacionCreditos" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H043_ActualizarInsinuacionCreditos" name="vueltaAtras"></transition>
+		<transition to="H043_RevisarInsinuacionCreditosDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="H043_RevisarInsinuacionCreditosDecision" expression="#{H043_RevisarInsinuacionCreditosDecision}">
+		<transition to="H043_ReaperturaGesConDecision" name="no"></transition>
+		<transition to="H043_RectificarInsinuacionCreditos" name="si"></transition>
+	</decision>
+	
+	<state name="H043_RectificarInsinuacionCreditos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H043_RectificarInsinuacionCreditos" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H043_RevisarInsinuacionCreditos" name="vueltaAtras"></transition>
+		<transition to="H043_ReaperturaGesHREDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<node name="H043_ReaperturaGesConDecision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+	
+	<node name="H043_ReaperturaGesHREDecision">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+         	<targetBean>genericUserDecisionActionHandler</targetBean>
+      	</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

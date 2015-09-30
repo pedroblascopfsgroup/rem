@@ -3,6 +3,13 @@ var isDisable = true;
 	isDisable = false;
 </c:if>
 
+<c:if test="${form.errorValidacion!=null}">
+	var textError = '${form.errorValidacion}';
+	if (textError.indexOf('<div id="permiteGuardar">')>0) {
+		isDisable = false;
+	}
+</c:if>
+
 var creaElemento = function(nombre,index,type,label,value,values){
 	var name='values['+(index)+']';
 	switch(type) {

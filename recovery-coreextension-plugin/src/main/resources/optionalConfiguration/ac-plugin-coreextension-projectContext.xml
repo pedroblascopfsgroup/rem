@@ -30,6 +30,11 @@
 				<value>P417</value>
 			</list>
 		</property>
+		<property name="tiposGestorGestoria">
+			<list>
+				<value>GEST</value>
+			</list>
+		</property>
 	</bean>  
 	
 		<!-- Implementaciones por defecto-->

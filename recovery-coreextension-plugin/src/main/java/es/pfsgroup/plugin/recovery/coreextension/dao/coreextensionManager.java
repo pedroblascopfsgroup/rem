@@ -44,6 +44,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
@@ -87,6 +88,9 @@ public class coreextensionManager implements coreextensionApi {
 	
 	@Autowired
 	EXTDDTipoGestorManager tipoGestorManager;
+	
+	@Autowired
+	CoreProjectContext coreProjectContext;
 	
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_GESTOR)
@@ -482,7 +486,7 @@ public class coreextensionManager implements coreextensionApi {
 			// Si estamos hablando de datos adicionales "GEST" no se elimina
 			// TODO: Esto hay que mejorarlo porque está hardcodeado GEST
 			if (adicional &&
-					tipoGestor.getCodigo().equals("GEST") &&
+					coreProjectContext.getTiposGestorGestoria().contains(tipoGestor.getCodigo()) &&
 					!encontrados.contains(tipoGestor)) {
 				encontrados.add(tipoGestor);
 				continue;

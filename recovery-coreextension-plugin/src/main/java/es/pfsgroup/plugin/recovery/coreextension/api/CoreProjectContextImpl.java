@@ -11,6 +11,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	
 	private Map<String, Set<String>> categoriasSubTareas;
 	private List<String> tiposPrcAdjudicados;
+	private List<String> tiposGestorGestoria;
 
 	@Override
 	public Map<String, Set<String>> getCategoriasSubTareas() {
@@ -32,5 +33,19 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setTiposProcedimientosAdjudicados(List<String> tiposPrcAdjudicados) {
 		this.tiposPrcAdjudicados = tiposPrcAdjudicados;
 	}
+	
+	/**
+	 * Devuelve los tipos de gestor que son gestoria
+	 */
+	@Override
+	public List<String> getTiposGestorGestoria() {
+		return tiposGestorGestoria;
+	}
+
+	public void setTiposGestorGestoria(List<String> tiposGestorGestoria) {
+		this.tiposGestorGestoria = tiposGestorGestoria;
+	}
+	
+	
 	
 }

@@ -137,6 +137,12 @@
 						<value>816</value>
 						<value>817</value>
 						<value>818</value>
+						<value>826</value>
+						<value>827</value>
+						<value>828</value>
+						<value>829</value>
+						<value>849</value>
+						<value>850</value>
 						<value>1001</value>
 						<value>1011</value>
 						<value>1021</value>
@@ -180,6 +186,12 @@
 				<value>H008</value>
 				<value>H015</value>
 				<value>H040</value>
+			</list>
+		</property>
+		<property name="tiposGestorGestoria">
+			<list>
+				<value>GGADJ</value>
+				<value>GGSAN</value>
 			</list>
 		</property>
 	</bean>

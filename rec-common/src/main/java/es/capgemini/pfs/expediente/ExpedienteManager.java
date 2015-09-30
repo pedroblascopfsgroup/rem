@@ -1869,7 +1869,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         if (!automatico) {
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(), ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
-        } else {
+//        } else {
             //executor.execute(InternaBusinessOperation.BO_COMITE_MGR_CERRAR_SESION, comite.getId(), false);
         }
     }

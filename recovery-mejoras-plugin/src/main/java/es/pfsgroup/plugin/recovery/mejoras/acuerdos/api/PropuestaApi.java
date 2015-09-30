@@ -43,4 +43,10 @@ public interface PropuestaApi {
 	 * @param idPropuesta
 	 */
 	public void proponer(Long idPropuesta);
+	
+	/**
+	 * 
+	 * @param idPropuesta
+	 */
+	public void cancelar(Long idPropuesta);
 }

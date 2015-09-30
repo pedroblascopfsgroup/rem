@@ -147,4 +147,10 @@ public class PropuestaManager implements PropuestaApi {
 		}
 		return contratos;
 	}
+
+	@Transactional(readOnly = false)
+	public void cancelar(Long idPropuesta) {
+		Acuerdo propuesta = acuerdoDao.get(idPropuesta);
+		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_CANCELADO);
+	}
 }

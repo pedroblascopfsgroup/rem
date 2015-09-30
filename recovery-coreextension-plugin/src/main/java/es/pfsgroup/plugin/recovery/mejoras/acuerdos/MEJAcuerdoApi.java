@@ -68,6 +68,12 @@ public interface MEJAcuerdoApi {
     @BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_CONTRATOS_ACUERDO_ASUNTO)
     public List<Contrato> obtenerListadoContratosAcuerdoByAsuId(Long idAsunto) ;
     
+	public List<TerminoAcuerdo> getTerminosAcuerdo(Long idAcuerdo);
+	
+	public List<TerminoContrato> getTerminoAcuerdoContratos(Long idTermino);
+
+	public List<TerminoBien> getTerminoAcuerdoBienes(Long idTermino);
+	
     @BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_TERMINOS_ACUERDO_ASUNTO)
     public List<ListadoTerminosAcuerdoDto> obtenerListadoTerminosAcuerdoByAcuId(Long idAcuerdo) ;   
     
@@ -79,6 +85,7 @@ public interface MEJAcuerdoApi {
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_TIPO_PRODUCTO)
 	public List<DDTipoProducto> getListTipoProducto();    	
+	
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_SAVE_TERMINO_ACUERDO)
 	@Transactional(readOnly = false)

@@ -50,47 +50,6 @@ BEGIN
 	COMMIT;
 	
     
-    V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE PEF_CODIGO= ''FPFVALIDACU''';
-	
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS > 0 THEN    
-	  DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
-	  DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el FPFVALIDACU '||V_DDNAME||'.');
-	
-	ELSE
-	
-	  execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
-	  '(PEF_ID, PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, PEF_CODIGO, PEF_ES_CARTERIZADO, DTYPE) values '||
-	  '('||V_ESQUEMA||'.S_PEF_PERFILES.nextval,''Perfil usuario validador de acuerdos'',''Perfil usuario validador de acuerdos'',''0'',''PRODUCTO'',sysdate,''0'',''FPFVALIDACU'',''0'',''EXTPerfil'') ';
-	
-	  DBMS_OUTPUT.PUT_LINE('OK modificado');
-	
-	END IF;
-	
-	COMMIT;
-	
-	    V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE PEF_CODIGO= ''FPFDECISACU''';
-	
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS > 0 THEN    
-	  DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
-	  DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el FPFVALIDACU '||V_DDNAME||'.');
-	
-	ELSE
-	
-	  execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
-	  '(PEF_ID, PEF_DESCRIPCION_LARGA,PEF_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, PEF_CODIGO, PEF_ES_CARTERIZADO, DTYPE) values '||
-	  '('||V_ESQUEMA||'.S_PEF_PERFILES.nextval,''Perfil usuario decisor de acuerdos'',''Perfil usuario decisor de acuerdos'',''0'',''PRODUCTO'',sysdate,''0'',''FPFDECISACU'',''0'',''EXTPerfil'') ';
-	
-	  DBMS_OUTPUT.PUT_LINE('OK modificado');
-	
-	END IF;
-	
-	COMMIT;
-	
-    
     
 	DBMS_OUTPUT.PUT_LINE('[INFO] Fin.');
 

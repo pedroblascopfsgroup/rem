@@ -672,7 +672,7 @@
     (      
       SELECT cli.CLI_ID, cli.per_id, cli.arq_id arq_cliente, arr.arq_id arq_persona, arq.arq_gestion            
       FROM CLI_CLIENTES cli             
-        inner join HAYAMASTER.DD_ECL_ESTADO_CLIENTE ecl on cli.DD_ECL_ID = ecl.DD_ECL_ID AND ecl.DD_ECL_CODIGO = 1
+        inner join ${master.schema}.DD_ECL_ESTADO_CLIENTE ecl on cli.DD_ECL_ID = ecl.DD_ECL_ID AND ecl.DD_ECL_CODIGO = 1
         inner join arr on cli.per_id = arr.per_id          
         inner join arq_arquetipos arq on arr.arq_id = arq.arq_id            
       WHERE cli.BORRADO = 0                
@@ -732,14 +732,14 @@
 		    ON arq.iti_id = iti.iti_id
 		  INNER JOIN est_estados est
 		    ON iti.iti_id = est.iti_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
 		    ON est.dd_est_id         = dd_est.dd_est_id
 		    AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
 		      (SELECT DD_EST_ORDEN
-		      FROM HAYAMASTER.DD_EST_ESTADOS_ITINERARIOS
+		      FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
 		      WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
 		      )
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		  GROUP BY ARQ.ARQ_ID
@@ -748,10 +748,10 @@
 		  FROM cli_clientes cli
 		  INNER JOIN fechasEstados vFechas
 		    ON cli.arq_id = vFechas.arq_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
 		    ON cli.dd_est_id  = dd_est.dd_est_id
 		    AND dd_est.dd_est_codigo = 'CAR'
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
 		  WHERE CLI.BORRADO                               = 0
@@ -761,8 +761,8 @@
 		  UPDATE
 		  SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
 		    (SELECT dd_est.dd_est_id
-		    FROM HAYAMASTER.dd_est_estados_itinerarios dd_est
-		    INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+		    FROM ${master.schema}.dd_est_estados_itinerarios dd_est
+		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		    WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
@@ -785,14 +785,14 @@
 		    ON arq.iti_id = iti.iti_id
 		  INNER JOIN est_estados est
 		    ON iti.iti_id = est.iti_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
 		    ON est.dd_est_id         = dd_est.dd_est_id
 		    AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
 		      (SELECT DD_EST_ORDEN
-		      FROM HAYAMASTER.DD_EST_ESTADOS_ITINERARIOS
+		      FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
 		      WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
 		      )
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		  GROUP BY ARQ.ARQ_ID
@@ -801,10 +801,10 @@
 		  FROM cli_clientes cli
 		  INNER JOIN fechasEstados vFechas
 		    ON cli.arq_id = vFechas.arq_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
 		    ON cli.dd_est_id  = dd_est.dd_est_id
 		    AND dd_est.dd_est_codigo = 'GV'
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
 		  WHERE CLI.BORRADO                               = 0
@@ -814,8 +814,8 @@
 		  UPDATE
 		  SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
 		    (SELECT dd_est.dd_est_id
-		    FROM HAYAMASTER.dd_est_estados_itinerarios dd_est
-		    INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+		    FROM ${master.schema}.dd_est_estados_itinerarios dd_est
+		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		    WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
@@ -849,7 +849,7 @@
         INNER JOIN ccl_contratos_cliente ccl ON tmp.cli_id  = ccl.cli_id  AND tmp.es_arq_gestion = 1 and ccl.borrado = 0
         inner join arq_arquetipos arq on tmp.arq_cliente = arq.arq_id and arq.borrado=0
         inner join iti_itinerarios iti on arq.iti_id = iti.iti_id and iti.borrado=0
-        inner join HAYAMASTER.dd_tit_tipo_itinerarios dd_tit on iti.dd_tit_id = dd_tit.dd_tit_id and dd_tit.borrado=0      
+        inner join ${master.schema}.dd_tit_tipo_itinerarios dd_tit on iti.dd_tit_id = dd_tit.dd_tit_id and dd_tit.borrado=0      
       )
 (SELECT C.CNT_ID, v.CLI_ID, v.arq_persona, v.dd_tit_codigo, v.es_pase,     
 CASE 
@@ -877,7 +877,7 @@ FROM cnt_contratos c,
   dd_tpe_tipo_prod_entidad t,      
   mov_movimientos movAct,      
   mov_movimientos movAnt,      
-  HAYAMASTER.dd_esc_estado_cnt e,      
+  ${master.schema}.dd_esc_estado_cnt e,      
   VTMP_CNT V    
 WHERE c.dd_tpe_id = t.dd_tpe_id    
   --AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)          
@@ -1053,7 +1053,7 @@ AND V.CNT_ID = C.CNT_ID
           /* Que el contrato no esté en algún procedimiento en curso */
           AND NOT EXISTS (
               SELECT DISTINCT cex.cnt_id 
-              FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, HAYAMASTER.DD_EPR_ESTADO_PROCEDIMIENTO epr
+              FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
               WHERE cex.cnt_id = cnt.cnt_id
               and cex.cex_id = pce.cex_id
               and pce.prc_id = prc.prc_id
@@ -1070,7 +1070,7 @@ AND V.CNT_ID = C.CNT_ID
           /* Que el contrato no esté en algún expediente en curso */
           AND NOT EXISTS (
               SELECT DISTINCT cex.cnt_id 
-              FROM cex_contratos_expediente cex, HAYAMASTER.dd_eex_estado_expediente eex, exp_expedientes exp 
+              FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
               WHERE cnt.cnt_id = cnt.cnt_id 
               and exp.exp_id = cex.exp_id 
               and cex.borrado = 0 
@@ -1133,7 +1133,7 @@ AND V.CNT_ID = C.CNT_ID
           FECHABORRAR  =SYSDATE,        
           DD_ECL_ID    =        
             (SELECT DD_ECL_ID        
-            FROM HAYAMASTER.DD_ECL_ESTADO_CLIENTE        
+            FROM ${master.schema}.DD_ECL_ESTADO_CLIENTE        
             WHERE DD_ECL_CODIGO = ${ddEstadoCliente.cancelado.codigo})      
       WHERE EXISTS        
         (SELECT CLI_ID FROM TMP_CLI_A_CANCELAR TMP WHERE CLI.CLI_ID = TMP.CLI_ID)

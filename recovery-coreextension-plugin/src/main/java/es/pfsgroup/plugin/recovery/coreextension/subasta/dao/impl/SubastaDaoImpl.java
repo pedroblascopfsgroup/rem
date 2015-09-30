@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -110,7 +112,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		where.add(Restrictions.eq("auditoria.borrado", false));
 		where.add(Restrictions.eq("asunto.auditoria.borrado", false));
 
-		// Filtros Pestañas
+		// Filtros Pestaï¿½as
 		where.addAll(restriccionesPorUsuarioExterno(usuLogado, query));
 		where.addAll(restriccionesDatosSubasta(filtro));
 		where.addAll(restriccionesCliente(filtro, query));
@@ -118,7 +120,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		where.addAll(restriccionesJerarquia(filtro, query));
 		where.addAll(restriccionesAsunto(filtro));
 
-		// Añadir filtros a la consulta
+		// Aï¿½adir filtros a la consulta
 		for (Criterion condicion : where) {
 			query.add(condicion);
 		}
@@ -186,7 +188,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para aï¿½adir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesJerarquia(NMBDtoBuscarSubastas filtro, Criteria query) {
@@ -212,7 +214,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para aï¿½adir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesContrato(NMBDtoBuscarSubastas filtro, Usuario usuLogado, Criteria query) {
@@ -247,7 +249,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para aï¿½adir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesCliente(NMBDtoBuscarSubastas filtro, Criteria query) {
@@ -302,7 +304,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para aï¿½adir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesPorUsuarioExterno(Usuario usuLogado, Criteria query) {
@@ -368,7 +370,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	/**
 	 * Metodo de ayuda (buscarSubastasExcel)
 	 * @param filtro datos que vienen de la web
-	 * @param query objeto que contiene la consulta, se utiliza para añadir nuevas relaciones con tablas
+	 * @param query objeto que contiene la consulta, se utiliza para aï¿½adir nuevas relaciones con tablas
 	 * @return devuelve las restricciones aplicar a la consutla
 	 */
 	private List<Criterion> restriccionesDatosSubasta(NMBDtoBuscarSubastas filtro) {
@@ -460,7 +462,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	
 	public Page buscarSubastasPaginados(NMBDtoBuscarSubastas dto,
 			Usuario usuLogado) {
-		// Establece el orden de la búsqueda
+		// Establece el orden de la bï¿½squeda
 		setSortSubastas(dto);
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				generarHQLBuscarSubastasPaginados(dto, usuLogado), dto);
@@ -728,7 +730,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algún modo
+		 * la subasta de algï¿½n modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodRecibo())) {
 			hqlFrom.append(", Recibo recibo");
@@ -738,7 +740,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algún modo
+		 * la subasta de algï¿½n modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodEfecto())) {
 			hqlFrom.append(", EfectoContrato efecto ");
@@ -748,7 +750,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algún modo
+		 * la subasta de algï¿½n modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodDisposicion())) {
 			hqlFrom.append(" , Disposicion disp ");
@@ -869,8 +871,8 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 
 	/**
-	 * Este método nos dice si vamos a necesitar cruzar por Contratos en la
-	 * búsqueda
+	 * Este mï¿½todo nos dice si vamos a necesitar cruzar por Contratos en la
+	 * bï¿½squeda
 	 * 
 	 * @param dto
 	 * @param usuLogado
@@ -885,7 +887,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 	
 	/**
-	 * Nos dice si el usuario ha introducido algún filtro relativo a la Zonificación en el DTO
+	 * Nos dice si el usuario ha introducido algï¿½n filtro relativo a la Zonificaciï¿½n en el DTO
 	 * @param dto
 	 * @return
 	 */
@@ -895,7 +897,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 
 	/**
-	 * Nos dice si el usuario ha introducido algún filtro relativo al Contrato en el DTO
+	 * Nos dice si el usuario ha introducido algï¿½n filtro relativo al Contrato en el DTO
 	 * @param dto
 	 * @return
 	 */
@@ -958,7 +960,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	@Override
 	public Page buscarLotesSubastasPaginados(NMBDtoBuscarLotesSubastas dto,
 			Usuario usuLogado) {
-		// Establece el orden de la búsqueda
+		// Establece el orden de la bï¿½squeda
 		setSortLotesSubastas(dto);
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				generarHQLBuscarLotesSubastasPaginados(dto, usuLogado), dto);
@@ -1227,7 +1229,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		}
 		
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algún modo
+		 * la subasta de algï¿½n modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodRecibo())) {
 			hqlFrom.append(", Recibo recibo");
@@ -1237,7 +1239,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algún modo
+		 * la subasta de algï¿½n modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodEfecto())) {
 			hqlFrom.append(", EfectoContrato efecto ");
@@ -1247,7 +1249,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		*/
 
 		/* FIXME Volver a activar este filtro, para ello hay que relacionar esta entidad con 
-		 * la subasta de algún modo
+		 * la subasta de algï¿½n modo
 		 * 
 		if (!StringUtils.emtpyString(dto.getCodDisposicion())) {
 			hqlFrom.append(" , Disposicion disp ");
@@ -1448,8 +1450,8 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 	}
 
 	/**
-	 * Función que buscará un registro en BatchAcuerdoCierreDeuda que coincida con los filtros
-	 * añadidos a la consulta en función de los valores recibidos. El asunto es obligatorio.
+	 * Funciï¿½n que buscarï¿½ un registro en BatchAcuerdoCierreDeuda que coincida con los filtros
+	 * aï¿½adidos a la consulta en funciï¿½n de los valores recibidos. El asunto es obligatorio.
 	 * @param acuerdo
 	 * @return BatchAcuerdoCierreDeuda acuerdo
 	 */
@@ -1464,7 +1466,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 		// Siempre tendremos el asunto
 		hql.append(" where baccd.asunto.id = ").append(acuerdo.getAsunto().getId());
 		
-		// Añadimos filtros en función de los valores recibidos
+		// Aï¿½adimos filtros en funciï¿½n de los valores recibidos
 //		if(!Checks.esNulo(acuerdo.getId())) {
 //			hql.append(" and baccd.id = ").append(acuerdo.getId());
 //		}		
@@ -1488,6 +1490,14 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 
 		return hql.toString();
 
+	}
+
+	@Override
+	public Contrato getContratoByNroContrato(String nroContrato) {
+        String hql = "from Contrato where nroContrato like ?";
+        List<Contrato> lista = getHibernateTemplate().find(hql, new Object[] { "%" + nroContrato + "%" });
+        if (lista.size() > 0) { return lista.get(0); }
+        return null;
 	}
 	
 }

@@ -19,6 +19,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoProblemaDocPco implements Dictionary, Auditable {
 
 	private static final long serialVersionUID = 5392971820536499815L;
+	
+	public static final String TIPO_PROBLEMA_CAMBIO_PROCEDIMIENTO = "CPR";
 
 	@Id
 	@Column(name = "DD_TPD_PCO_ID")

@@ -2,48 +2,26 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.api;
 
 import java.util.List;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
-import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 
 public interface ProcedimientoPcoApi {
 
-	public static final String BO_PCO_EXPEDIENTE_OBTENER_TIPO_GESTOR = "plugin.precontencioso.getTipoGestor";
-	public static final String BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_PREDOC = "plugin.precontencioso.isTipoDespachoPredoc";
-	public static final String BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_GESTORIA = "plugin.precontencioso.isTipoDespachoGestoria";
-	public static final String BO_PCO_EXPEDIENTE_IS_SUPERVISOR = "plugin.precontencioso.isSupervisor";
 	public static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
 	public static final String BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID = "plugin.precontencioso.devolverPreparacionPorProcedimientoId";
 	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
 	public static final String BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE = "plugin.precontencioso.cambiarEstadoExpediete";
-	
-	
-	/*
-	 * Producto-234 Control de botones y rellenado de grids dependiendo del usuario logado
-	*/
-	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_OBTENER_TIPO_GESTOR)
-	String getTipoGestor(Long prcId);
-	
-	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_PREDOC)
-	boolean isTipoDespachoPredoc(Long prcId);
-	
-	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_IS_TIPO_DESPACHO_GESTORIA)
-	boolean isTipoDespachoGestoria(Long prcId);
-	
-	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_IS_SUPERVISOR)
-	boolean isSupervisor(Long prcId);
-	
+	public static final String BO_PCO_EXPEDIENTE_BY_PRC_ID = "plugin.precontencioso.getPCOByProcedimientoId";
+	public static final String BO_PCO_EXPEDIENTE_UPDATE = "plugin.precontencioso.update";
+
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -118,5 +96,11 @@ public interface ProcedimientoPcoApi {
      */
 	@BusinessOperationDefinition(BO_PCO_CAMBIAR_ESTADO_EXPEDIENTE)
 	public void cambiarEstadoExpediente(Long idProc, String codigoEstado);
+	
+	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_BY_PRC_ID)
+	public ProcedimientoPCO getPCOByProcedimientoId(Long idProc);
+	
+	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_UPDATE)
+	public void update(ProcedimientoPCO pco);
     
 }

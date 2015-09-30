@@ -21,9 +21,7 @@
 				<fwk:date value="${p.fechaInicioPreparacion}" />
 			</json:property>
 			<json:property name="diasEnPreparacion" value="${p.diasEnPreparacion}" />
-			<json:property name="documentacionCompleta" value="${p.documentacionCompleta}" />
 			<json:property name="totalLiquidacion" value="${p.totalLiquidacion}" />
-			<json:property name="notificadoClientes" value="${p.notificadoClientes}" />
 			<json:property name="fechaEnvioLetrado">
 				<fwk:date value="${p.fechaEnvioLetrado}" />
 			</json:property>

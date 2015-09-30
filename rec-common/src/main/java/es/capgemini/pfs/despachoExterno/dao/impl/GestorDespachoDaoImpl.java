@@ -54,5 +54,22 @@ public class GestorDespachoDaoImpl extends AbstractEntityDao<GestorDespacho,Long
 
 		return gestorDespachoList;
 	}
-	
+
+	@Override
+	public List<GestorDespacho> getGestorDespachoByUsuIdAndTipoDespacho(Long usuId, String tipoDespachoExterno) {
+		Criteria query = getSession().createCriteria(GestorDespacho.class);
+
+		query.createAlias("usuario", "usuario");
+		query.createAlias("despachoExterno", "despachoExterno");
+		query.createAlias("despachoExterno.tipoDespacho", "tipoDespacho");
+
+		query.add(Restrictions.eq("usuario.id", usuId));
+		query.add(Restrictions.eq("tipoDespacho.codigo", tipoDespachoExterno));
+
+		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		List<GestorDespacho> gestorDespachoList = query.list();
+
+		return gestorDespachoList;
+	}
 }

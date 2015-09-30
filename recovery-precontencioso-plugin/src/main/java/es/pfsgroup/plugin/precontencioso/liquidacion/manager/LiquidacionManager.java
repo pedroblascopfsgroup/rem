@@ -20,10 +20,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -75,7 +72,6 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Override
 	public LiquidacionDTO getLiquidacionPorId(Long id) {
 		LiquidacionPCO liquidacion = liquidacionDao.get(id);
-
 		LiquidacionDTO liquidacionDto = LiquidacionAssembler.entityToDto(liquidacion);
 		return liquidacionDto;
 	}
@@ -84,13 +80,10 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Transactional(readOnly = false)
 	public void confirmar(LiquidacionDTO liquidacionDto) {
 		DDEstadoLiquidacionPCO estadoConfirmada = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.CONFIRMADA);
-
 		LiquidacionPCO liquidacion = liquidacionDao.get(liquidacionDto.getId());
 		liquidacion.setEstadoLiquidacion(estadoConfirmada);
 		liquidacion.setFechaConfirmacion(new Date());
-
 		liquidacionDao.saveOrUpdate(liquidacion);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -108,6 +101,10 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setGastos(liquidacionDto.getGastos());
 		liquidacion.setImpuestos(liquidacionDto.getImpuestos());
 
+		if (liquidacionDto.getFechaCierre() != null) {
+			liquidacion.setFechaCierre(liquidacionDto.getFechaCierre());
+		}
+
 		GestorDespacho apoderado = obtenerApoderado(liquidacionDto);
 		if (apoderado != null) {
 			liquidacion.setApoderado(apoderado);
@@ -120,7 +117,6 @@ public class LiquidacionManager implements LiquidacionApi {
 		}
 
 		liquidacionDao.saveOrUpdate(liquidacion);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -142,6 +138,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setInteresesDemora(null);
 		liquidacion.setComisiones(null);
 		liquidacion.setGastos(null);
+		liquidacion.setImpuestos(null);
 		liquidacion.setTotal(null);
 
 		//Se registra el usd_id del solicitante
@@ -152,7 +149,6 @@ public class LiquidacionManager implements LiquidacionApi {
 			}
 		}
 		liquidacionDao.saveOrUpdate(liquidacion);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -164,7 +160,6 @@ public class LiquidacionManager implements LiquidacionApi {
 		liquidacion.setEstadoLiquidacion(estadoDescartada);
 
 		liquidacionDao.saveOrUpdate(liquidacion);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	/**
@@ -231,6 +226,10 @@ public class LiquidacionManager implements LiquidacionApi {
 		return liquidacion;
 	}
 	
-	
+	@Override
+	@BusinessOperation(LIQUIDACION_PRECONTENCIOSO_BY_ID)
+	public LiquidacionPCO getLiquidacionPCOById(Long idLiquidacion) {
+		return liquidacionDao.get(idLiquidacion);
+	}
 
 }

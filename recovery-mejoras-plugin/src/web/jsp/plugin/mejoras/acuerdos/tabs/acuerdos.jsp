@@ -34,28 +34,26 @@
 	var acuerdo = Ext.data.Record.create([
           {name : 'idAcuerdo'}
          ,{name : 'fechaPropuesta'}
-         ,{name : 'tipoAcuerdo'}
          ,{name : 'solicitante'}
          ,{name : 'estado'}
          ,{name : 'fechaEstado'}
          ,{name : 'codigoEstado'}
          ,{name : 'motivo'}
          ,{name : 'idProponente'}
-         ,{name : 'tipoGestorProponenteAsunto'}
+         ,{name : 'tipoDespachoProponente'}
          ,{name : 'idTipoAcuerdo'}
       ]);
 
    var cmAcuerdos = new Ext.grid.ColumnModel([
       {header : '<s:message code="acuerdos.codigo" text="**C&oacute;digo" />', dataIndex : 'idAcuerdo',width: 35}
       ,{header : '<s:message code="acuerdos.fechaPropuesta" text="**Fecha Propuesta" />', dataIndex : 'fechaPropuesta',width: 65}
-	  ,{header : '<s:message code="acuerdos.tipoAcuerdo" text="**Tipo Acuerdo" />', dataIndex : 'tipoAcuerdo',width: 100}
       ,{header : '<s:message code="acuerdos.solicitante" text="**Solicitante" />', dataIndex : 'solicitante',width: 75}
       ,{header : '<s:message code="acuerdos.estado" text="**Estado" />', dataIndex : 'estado',width: 75}
       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Codigo Estado" />',dataIndex : 'codigoEstado', hidden:true, fixed:true,width: 75}
       ,{header : '<s:message code="acuerdos.fechaEstado" text="**Fecha Estado" />', dataIndex : 'fechaEstado',width: 65}
       ,{header : '<s:message code="plugin.mejoras.acuerdos.motivo" text="**Motivo" />', dataIndex : 'motivo',width: 65}
       ,{header : '<s:message code="acuerdos.codigo.idProponente" text="**Id Proponente" />',dataIndex : 'idProponente', hidden:true}
-      ,{header : '<s:message code="acuerdos.codigo.tipoGestorAsunto" text="**tipo gestor" />',dataIndex : 'tipoGestorProponenteAsunto', hidden:true}
+      ,{header : '<s:message code="acuerdos.codigo.tipoDespachoProponente" text="**tipo despacho" />',dataIndex : 'tipoDespachoProponente', hidden:true}
       ,{header : '<s:message code="acuerdos.codigo.idTipoAcuerdo" text="**id tipo acuerdo" />',dataIndex : 'idTipoAcuerdo', hidden:true}
    ]);
  
@@ -67,6 +65,7 @@
             , acuerdo
         )
    });  
+   
    
    <!--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado -->
    acuerdosStore.on('load', function () {
@@ -84,6 +83,7 @@
 	    	btnAltaAcuerdo.setDisabled(false);
 	    }
 	    
+	    
 	    if (panel != null){
 		    if (acuerdosTabs != null){
 		    	panel.remove(acuerdosTabs);
@@ -94,15 +94,21 @@
 			if (panelAnteriorTerminos != null){
 				panel.remove(panelAnteriorTerminos);
 			}
+			if(cumplimientoAcuerdo != null){
+				panel.remove(cumplimientoAcuerdo);
+			}
+			despuesDeNuevoAcuerdo();
 			ocultarBotones();
 		}
 	});
    
    var despuesDeNuevoAcuerdo = function(){
    		var ultimoRegistro = acuerdosStore.getCount();
-		acuerdosGrid.getSelectionModel().selectRow((ultimoRegistro-1));
-		acuerdosGrid.fireEvent('rowclick', acuerdosGrid, (ultimoRegistro-1));
-		acuerdosStore.un('load',despuesDeNuevoAcuerdo);
+   		if(ultimoRegistro > 0){
+   			acuerdosGrid.getSelectionModel().selectRow((ultimoRegistro-1));
+			acuerdosGrid.fireEvent('rowclick', acuerdosGrid, (ultimoRegistro-1));
+			acuerdosStore.un('load',despuesDeNuevoAcuerdo);
+   		}
    }
    
    var despuesDeEvento = function(){
@@ -170,10 +176,10 @@
 		          ,params : {idAcuerdo:acuerdoSeleccionado}
 		       });
 		       w.on(app.event.DONE, function(){
-		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
-		          acuerdosStore.webflow({id:panel.getAsuntoId()});
+<!-- 		          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
+		          	acuerdosStore.webflow({id:panel.getAsuntoId()});
 		          w.close();
-		          cargarUltimoAcuerdo();
+<!-- 		          cargarUltimoAcuerdo(); -->
 		       });
 		       w.on(app.event.CANCEL, function(){ w.close(); });
      	}
@@ -186,23 +192,64 @@
 		,cls: 'x-btn-text-icon'
 		,hidden:true
 		,handler:function(){
-      		var w = app.openWindow({
-		          flow : 'mejacuerdo/openFinalizacionAcuerdo'
-		          ,closable:false
-		          ,width : 750
-		          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
-		          ,params : {idAcuerdo:acuerdoSeleccionado}
-		       });
-		       w.on(app.event.DONE, function(){
-		       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
-		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
-		          acuerdosStore.webflow({id:panel.getAsuntoId()});
-		          w.close();
-		          cargarUltimoAcuerdo();
-		       });
-		       w.on(app.event.CANCEL, function(){
-		        w.close();
-		       });
+		
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('mejacuerdo/obtenerListadoValidacionTramiteCorrespondienteDerivaciones')
+				,method: 'POST'
+				,params:{
+							idAcuerdo : acuerdoSeleccionado
+						}
+				,success: function (result, request){
+											
+					var derivacionesConfig = Ext.util.JSON.decode(result.responseText);
+					
+					var tramiteRestrictivosinResolver = false;
+					<!-- Primero mostramos tramitres restrictivos que no permiten guardar -->
+					for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
+							if(derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivo){
+								tramiteRestrictivosinResolver = true;
+								Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivoTexto );
+							}
+					}
+					
+					<!-- Si no tenemos tramites restrictivos sin resolver mostramos los posibles tramites sin resolver no restrictivos y abrimos la ventana -->
+					if(!tramiteRestrictivosinResolver){
+					
+						for (var i=0; i < derivacionesConfig.derivacionesTerminosAcuerdo.length; i++) {
+								if(!derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivo){
+									tramiteRestrictivosinResolver = true;
+									Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', derivacionesConfig.derivacionesTerminosAcuerdo[i].restrictivoTexto );
+								}
+						}
+					
+						var w = app.openWindow({
+				       	   flow : 'mejacuerdo/openFinalizacionAcuerdo'
+				          ,closable:false
+				          ,width : 750
+				          ,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
+				          ,params : {idAcuerdo:acuerdoSeleccionado}
+				       	});
+				       	w.on(app.event.DONE, function(){
+				       	  btnRegistrarFinalizacionAcuerdo.setVisible(false);
+<!-- 				          acuerdosStore.on('load',despuesDeNuevoAcuerdo); -->
+				          acuerdosStore.webflow({id:panel.getAsuntoId()});
+				          w.close();
+				          cargarUltimoAcuerdo();
+				       	});
+				       	w.on(app.event.CANCEL, function(){
+				        	w.close();
+				       	});
+				       	
+					}
+
+					
+				}
+				,error: function(){
+	
+				}       				
+			});
+
      	}
 	});
    
@@ -363,7 +410,7 @@
 	      				idAcuerdo:acuerdoSeleccionado
 	   				}
 	      			,success: function(){
-	           		 	acuerdosStore.on('load',despuesDeEvento);
+<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
 	           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
 	           		 	btnAceptarAcuerdo.hide();
 	           		 	btnRechazarAcuerdo.hide();
@@ -420,6 +467,7 @@
 		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult);
        		
 	});
+	
 	
 	var acuerdosGrid = app.crearGrid(acuerdosStore,cmAcuerdos,{
          title : '<s:message code="acuerdos.grid.titulo" text="**Acuerdos" />'
@@ -480,12 +528,13 @@
 	//Comienzan las 4 partes dependientes del acuerdo	
 	var panelAnterior;
 	var panelAnteriorTerminos;
+	var cumplimientoAcuerdo;
 	
 	
 	acuerdosGrid.on('rowclick', function(grid, rowIndex, e) {
 	   	var rec = grid.getStore().getAt(rowIndex);
 		var idAcuerdo = rec.get('idAcuerdo');
-		var idTipoGestor = rec.get('tipoGestorProponenteAsunto');
+		var idTipoDespacho = rec.get('tipoDespachoProponente');
 		var idUserProponente = rec.get('idProponente');
 		var idTipoAcuerdo = rec.get('idTipoAcuerdo');
 		acuerdoSeleccionado = idAcuerdo;
@@ -493,6 +542,9 @@
 		panel.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando" />','x-mask-loading');
 		//Muestro o no los botones que corresponden
 		var codigoEstado = rec.get('codigoEstado');
+		
+		///Ocultamos todos los botones
+		ocultarBotones();
 	
 		/////Llamada ajax para obtener el proponente, validador y decisor del acuerdo y el id y tipo de gestor del usuario logado
        	
@@ -500,18 +552,18 @@
 			url: page.resolveUrl('mejacuerdo/getConfigUsersAcuerdoAsunto')
 			,method: 'POST'
 			,params:{
-						idTipoGestorProponente : idTipoGestor
+						idTipoDespachoProponente : idTipoDespacho
 						,idAsunto:panel.getAsuntoId()
 					}
 			,success: function (result, request){
 						
 				
 				var config = Ext.util.JSON.decode(result.responseText);
-				var tipoGestorPropAcuerdo = config.tiposGestoresAcuerdoAsunto.proponente;
-				var tipoGestorValidadorAcuerdo = config.tiposGestoresAcuerdoAsunto.validador;
-				var tipoGestorDecisorAcuerdo = config.tiposGestoresAcuerdoAsunto.decisor;
+				var tipoDespachoPropAcuerdo = config.tiposDespachosAcuerdoAsunto.proponente;
+				var tipoDespachoValidadorAcuerdo = config.tiposDespachosAcuerdoAsunto.validador;
+				var tipoDespachoDecisorAcuerdo = config.tiposDespachosAcuerdoAsunto.decisor;
 				var userLogado = config.userLogado.id;
-				var tipoGestorLogado = config.userLogado.tipoGestorAsunto;
+				var tipoDespachoLogado = config.userLogado.idTipoDespacho;
 				var noPuedeModificar = true;
 				
 
@@ -522,24 +574,24 @@
 					
 					noPuedeModificar = false;
 					
-					if(tipoGestorLogado == tipoGestorDecisorAcuerdo){
+					if(tipoDespachoLogado == tipoDespachoDecisorAcuerdo){
 						btnVigenteAcuerdo.setVisible(true);
 						btnProponerAcuerdo.setVisible(false);
-					}else if(tipoGestorLogado == tipoGestorValidadorAcuerdo){
+					}else if(tipoDespachoLogado == tipoDespachoValidadorAcuerdo){
 						btnAceptarAcuerdo.setVisible(true);
 						btnProponerAcuerdo.setVisible(false);
 					} 
 					
 				}
 				
-				if((tipoGestorLogado == tipoGestorValidadorAcuerdo || tipoGestorLogado == tipoGestorDecisorAcuerdo) && codigoEstado == app.codigoAcuerdoPropuesto){
+				if((tipoDespachoLogado == tipoDespachoValidadorAcuerdo || tipoDespachoLogado == tipoDespachoDecisorAcuerdo) && codigoEstado == app.codigoAcuerdoPropuesto){
 					btnAceptarAcuerdo.setVisible(true);
 					btnRechazarAcuerdo.setVisible(true);
 					
 					noPuedeModificar = false;
 				}
 
-				if(tipoGestorLogado == tipoGestorDecisorAcuerdo && codigoEstado == app.codigoAcuerdoAceptado){
+				if(tipoDespachoLogado == tipoDespachoDecisorAcuerdo && codigoEstado == app.codigoAcuerdoAceptado){
 					btnVigenteAcuerdo.setVisible(true);
 					btnRechazarAcuerdo.setVisible(true);
 					
@@ -548,7 +600,8 @@
 				
 				var estadoVigente = false;
 				
-				if(tipoGestorLogado == tipoGestorPropAcuerdo && codigoEstado == app.codigoAcuerdoVigente){
+				btnRegistrarFinalizacionAcuerdo.setVisible(false);
+				if(tipoDespachoLogado == tipoDespachoPropAcuerdo && codigoEstado == app.codigoAcuerdoVigente){
 					
 					btnRegistrarFinalizacionAcuerdo.setVisible(true);
 					estadoVigente = true;
@@ -558,6 +611,7 @@
 				panel.remove(acuerdosTabs);	
 				panel.remove(panelAnterior);
 				panel.remove(panelAnteriorTerminos);
+				panel.remove(cumplimientoAcuerdo);
 		
 				analisisTab = new Ext.Panel({
 					title:'<s:message code="plugin.mejoras.acuerdos.tabAnalisis" text="**Análisis"/>'
@@ -580,20 +634,17 @@
 					,autoHeight:true
 					,autoWidth : true
 					,border: true
-				  });       
-				acuerdosTabs.setActiveTab(terminosTab);                                                                                                                                                           
-				acuerdosTabs.setHeight('auto');
+				  });     
+				    
 		
 				panelAnterior = recargarAcuerdo(idAcuerdo);
-				panelAnteriorTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);	
+				panelAnteriorTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);
 				
 				analisisTab.add(panelAnterior);
 				terminosTab.add(panelAnteriorTerminos);
 				
-				panel.add(acuerdosTabs);
-				//panel.add(panelAnterior);
-				panel.doLayout();
-				panel.show();
+				acuerdosTabs.setActiveTab(terminosTab);                                                                                                                                                           
+				acuerdosTabs.setHeight('auto');	
 				
 				var store = panelAnteriorTerminos.terminosAcuerdoGrid.getStore();
 				
@@ -603,11 +654,23 @@
 					for (var i=0; i < store.data.length; i++) {
 						datos = store.getAt(i);
 						
-						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO" && Boolean(estadoVigente)){
-							btnCumplimientoAcuerdo.setVisible(true);
+						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
+							if(Boolean(estadoVigente)){
+								btnCumplimientoAcuerdo.setVisible(true);
+							}
+							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
+							terminosTab.add(cumplimientoAcuerdo);
+							
 						}
 					}
+					
+					panel.add(acuerdosTabs);
+					//panel.add(panelAnterior);
+					panel.doLayout();
+					panel.show();
 			   	});
+				
+
 				
 			}
 			,error: function(){
@@ -659,6 +722,15 @@
 		return panTerminos;
 		
 	};	
+	
+	
+	var recargarCumplimientoAcuerdo = function(idAcuerdo){
+		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/listadoCumplimientoAcuerdo.jsp" %>	
+		var cumplimiento = crearCumplimiento(idAcuerdo);
+		return cumplimiento;
+	};
+	
+
 	
 	
 	panel.getValue = function(){

@@ -93,7 +93,6 @@
 				comboEstadosDocumento.setValue("PS");
 			}
 		} else {
-			debugger;
 			if(!${existeSolDisponible}){
 				if (fechaRecepcion.getValue() != "" && "01"==adjuntado.getValue()) {
 					comboEstadosDocumento.setValue("DI");

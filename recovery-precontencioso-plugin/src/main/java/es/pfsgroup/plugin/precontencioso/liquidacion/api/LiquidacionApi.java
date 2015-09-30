@@ -7,10 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.InclusionLiquidacionProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 
 public interface LiquidacionApi {
 
 	public static final String PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO = "es.pfsgroup.recovery.precontencioso.liquidacion.api.incluirLiquidacionAlProcedimiento";
+	public static final String LIQUIDACION_PRECONTENCIOSO_BY_ID = "es.pfsgroup.recovery.precontencioso.liquidacion.api.getLiquidacionPCOById";
 
 	/**
 	 * Obtiene las liquidaciones de un procedimientoPCO
@@ -75,5 +77,8 @@ public interface LiquidacionApi {
     @BusinessOperationDefinition(PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO)
     @Transactional(readOnly = false)
     public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto);
+    
+    @BusinessOperationDefinition(LIQUIDACION_PRECONTENCIOSO_BY_ID)
+    LiquidacionPCO getLiquidacionPCOById(Long id);
     
 }

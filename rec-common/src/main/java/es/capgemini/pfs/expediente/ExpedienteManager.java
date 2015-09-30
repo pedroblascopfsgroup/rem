@@ -1842,12 +1842,16 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 a.setComite(comite);
                 a.setSupervisorComite(sesion.getSupervisorSesionComite());
                 executor.execute(ExternaBusinessOperation.BO_ASU_MGR_SAVE_OR_UDPATE, a);
+                /* *********CPI - 30/09/2015*******
+                AHORA NACEN LOS ASUNTOS SIEMPRE ACEPTADOS                
                 if (generaNotificacion) {
                     executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GENERAR_TAREA_POR_CIERRE_DECISION, a);
                 } else {
                     executor.execute(ExternaBusinessOperation.BO_ASU_MGR_CREAR_TAREA_ACEPTAR_ASUNTO, a);
                 }
                 executor.execute(ExternaBusinessOperation.BO_ASU_MGR_MARCAR_PROCEDIMIENTOS_COMO_DECIDIDOS, a);
+                */
+                executor.execute(ExternaBusinessOperation.BO_ASU_MGR_ACEPTAR_ASUNTO, a.getId(), true);
             } else {
                 DDEstadoAsunto estadoAsuntoVacio = (DDEstadoAsunto) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                         DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_VACIO);

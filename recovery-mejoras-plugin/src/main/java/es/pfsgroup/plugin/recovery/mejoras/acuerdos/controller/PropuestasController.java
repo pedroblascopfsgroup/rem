@@ -96,6 +96,12 @@ public class PropuestasController {
 		return DEFAULT;
 	}
 
+	@RequestMapping
+    public String cancelar(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, ModelMap model) {
+		propuestaApi.cancelar(idPropuesta);
+		return DEFAULT;
+	}
+
     /**
      * Obtiene un listado de los contratos del expediente.
      * @param idExpediente

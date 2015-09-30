@@ -43,13 +43,6 @@ public interface PropuestaApi {
 	public Boolean usuarioLogadoEsGestorSupervisorActual(Long idExpediente);
 
 	/**
-	 * El usuario logado es el que ha generado la propuesta
-	 * @param idPropuesta
-	 * @return
-	 */
-	public Boolean usuarioLogadoEsProponente(Long idPropuesta);
-
-	/**
 	 * 
 	 * @param idPropuesta
 	 */
@@ -72,6 +65,7 @@ public interface PropuestaApi {
     
     @BusinessOperationDefinition(BO_PROPUESTA_SAVE_ACTUACION_EXPLORAR_EXPEDIENTE)
     public void saveActuacionesExplorarExpediente(DTOActuacionesExplorarExpediente dto);
-    
+
+	public void cancelar(Long idPropuesta);
 
 }

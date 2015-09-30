@@ -58,6 +58,7 @@ import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.termino.dao.TerminoAcuerdoDao;
 import es.capgemini.pfs.termino.dao.TerminoOperacionesDao;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
+import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
@@ -467,6 +468,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         	}
         	
         	dtoTerAcu.setContratosTermino(listaContratos);
+        	
+        	dtoTerAcu.setEstadoGestion(termino.getEstadoGestion());
         	
         	terminosAcuerdos.add(dtoTerAcu);
         }
@@ -1329,4 +1332,22 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		// TODO Auto-generated method stub
 		return null;
 	}
+<<<<<<< HEAD
+=======
+
+	@BusinessOperation(BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION)
+    @Transactional(readOnly = false)
+	@Override
+	public void guardarEstadoGestion(Long idTermino, Long nuevoEstadoGestion) {
+		
+		TerminoAcuerdo termino = genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idTermino));
+		if (!Checks.esNulo(termino)) {
+			DDEstadoGestionTermino nuevoEstado = genericDao.get(DDEstadoGestionTermino.class, genericDao.createFilter(FilterType.EQUALS, "id", nuevoEstadoGestion));
+			if (!Checks.esNulo(nuevoEstado)) {
+				termino.setEstadoGestion(nuevoEstado);
+				genericDao.save(TerminoAcuerdo.class, termino);
+			}
+		}
+	}
+>>>>>>> propuestas-expediente
 }

@@ -174,9 +174,11 @@
 	      				idPropuesta:acuerdoSeleccionado
 	   				}
 	      			,success: function(){
-	           		 	acuerdosStore.on('load',despuesDeEvento);
+	      				ocultarBotones();
+<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
 	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-	           		 	btnProponerAcuerdo.hide();
+<!-- 	           		 	btnProponerAcuerdo.hide(); -->
+<!-- 	           		 	btnCancelarAcuerdo.setVisible(false); -->
 	           		}	
 		      	});
 				habilitarBotones();	
@@ -188,43 +190,42 @@
      	}
    });
    
+   	var btnCancelarAcuerdo = new Ext.Button({
+	       text:  '<s:message code="acuerdos.cancelar" text="**Cancelar" />'
+	       <app:test id="btnCancelarAcuerdo" addComa="true" />
+	       ,iconCls : 'icon_menos'
+	       ,cls: 'x-btn-text-icon'
+	       ,hidden:true
+	       ,handler:function(){
+	      	    deshabilitarBotones();
+	      	    page.webflow({
+	      			flow:"propuestas/cancelar"
+	      			,params:{
+	      				idPropuesta:acuerdoSeleccionado
+	   				}
+	      			,success: function(){
+	           		 	ocultarBotones();
+<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
+	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
+	           		}
+		      	});
+				habilitarBotones();
+	     	}
+	});
+   
    var deshabilitarBotones=function(){
    			btnProponerAcuerdo.disable();
-			btnCerrarAcuerdo.disable();
+   			btnCancelarAcuerdo.disable();
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
-			btnCerrarAcuerdo.enable();
+   			btnCancelarAcuerdo.enable();
    }
    
    var ocultarBotones=function(){
    			btnProponerAcuerdo.hide();
-			btnCerrarAcuerdo.hide();
+   			btnCancelarAcuerdo.hide();
    }
-   
-   
-   var btnCerrarAcuerdo = new Ext.Button({
-       text:  '<s:message code="acuerdos.cerrar" text="**Cerrar" />'
-       <app:test id="btnCerrarAcuerdo" addComa="true" />
-       ,iconCls : 'icon_menos'
-       ,cls: 'x-btn-text-icon'
-       ,hidden:true
-       ,handler:function(){
-	   		deshabilitarBotones();
-      	    page.webflow({
-      			flow:"acuerdos/finalizarAcuerdo"
-      			,params:{
-      				idAcuerdo:acuerdoSeleccionado
-   				}
-      			,success: function(){
-           		 	acuerdosStore.on('load',despuesDeEvento);
-           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-					btnCerrarAcuerdo.hide();
-           		}	
-	      	});	
-			habilitarBotones();
-     	}
-   });
    
    
 
@@ -244,7 +245,6 @@
    				,success: function(){
 	   				acuerdosStore.on('load',despuesDeEvento);
 		   		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-		   		 	btnCerrarAcuerdo.hide();
    		 		}
 	      	});	
       		habilitarBotones();
@@ -263,7 +263,7 @@
          ,bbar : [
          	btnAltaAcuerdo,
           	btnProponerAcuerdo,
-     	   	btnCerrarAcuerdo,
+          	btnCancelarAcuerdo,
 	      ]
 
 	}); 
@@ -308,7 +308,6 @@
 	
 	propuestasGrid.on('rowclick', function(grid, rowIndex, e) {
 
-
 				panel.remove(acuerdosExpTabs);	
 				panel.remove(panelAnteriorExpTerminos); 
 
@@ -344,6 +343,11 @@
 				if(panel.esGestorSupervisorActual() || (idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion)){
 					noPuedeModificar = false;
 				}
+				
+				if(idProponente == panel.getUsuarioLogado() && codigoEstado == app.codigoAcuerdoEnConformacion){
+					btnCancelarAcuerdo.setVisible(true);
+				}
+				
 				
 				panelAnteriorExpTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);
 	    		terminosExpTab.add(panelAnteriorExpTerminos); 

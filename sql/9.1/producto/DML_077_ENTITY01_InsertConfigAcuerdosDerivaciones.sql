@@ -27,9 +27,13 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_SQL_TPA VARCHAR2(4000 CHAR); -- Vble. para la query de consultar el id del codigo TPA.
+    V_SQL_TPA_COUNT VARCHAR2(4000 CHAR); -- Vble. para la query de consultar el id del codigo TPA.
     V_SQL_TPO VARCHAR2(4000 CHAR); -- Vble. para la query de consultar el id del codigo TPA.  
+    V_SQL_TPO_COUNT VARCHAR2(4000 CHAR); -- Vble. para la query de consultar el id del codigo TPA COUNT.
     V_ID_TPA VARCHAR2(25 CHAR); --Vbla. para almacenar el id del TPA
+    V_ID_TPA_COUNT VARCHAR2(25 CHAR); --Vbla. para almacenar el id del TPA
     V_ID_TPO VARCHAR2(25 CHAR); --Vbla. para almacenar el id del TPA
+    V_ID_TPO_COUNT VARCHAR2(25 CHAR); --Vbla. para almacenar el id del TPA
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
@@ -55,33 +59,44 @@ BEGIN
       LOOP
             V_TMP_ACU_DERIV := V_ACU_DERIV(I);
             
-        --- Obtenemos el DD_TPA_ID
-        V_SQL_TPA := 'SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACUERDO WHERE DD_TPA_CODIGO = '''||V_TMP_ACU_DERIV(1)||'''';
-        EXECUTE IMMEDIATE V_SQL_TPA INTO V_ID_TPA;
-        
-        --- Obtenemos el DD_TPO_ID
-        V_SQL_TPO := 'SELECT DD_TPO_ID FROM '|| V_ESQUEMA ||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||V_TMP_ACU_DERIV(2)||'''';
-        EXECUTE IMMEDIATE V_SQL_TPO INTO V_ID_TPO;
+            V_SQL_TPO_COUNT := 'SELECT COUNT(1) FROM '|| V_ESQUEMA ||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||V_TMP_ACU_DERIV(2)||'''';
+			EXECUTE IMMEDIATE V_SQL_TPO_COUNT INTO V_ID_TPO_COUNT;
+			
+			V_SQL_TPA_COUNT := 'SELECT COUNT(1) FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACUERDO WHERE DD_TPA_CODIGO = '''||V_TMP_ACU_DERIV(1)||'''';
+			EXECUTE IMMEDIATE V_SQL_TPA_COUNT INTO V_ID_TPA_COUNT;
             
-        --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACU_CDE_DERIVACIONES WHERE ACU_CDE_ID = '''||V_ID_TPA||'''';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-        
-        IF V_NUM_TABLAS > 0 THEN				
-          DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_CDE_DERIVACIONES... Ya existe el ACU_CDE_DERIVACIONES con el DD_TPA_ID = '''|| V_ID_TPA ||'''');
-        ELSE
-        
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_ACU_CDE_DERIVACIONES.NEXTVAL FROM DUAL';
-          EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACU_CDE_DERIVACIONES (' ||
-                      'ACU_CDE_ID, DD_TPA_ID, DD_TPO_ID, ACU_CDE_RESTRICTIVO, ACU_CDE_RESTRICTIVO_TEXTO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR)' ||
-                      'SELECT '|| V_ENTIDAD_ID || ','''||V_ID_TPA||''','''||V_ID_TPO||''','''||V_TMP_ACU_DERIV(3)||''''||
-						','''||V_TMP_ACU_DERIV(4)||''','''||V_TMP_ACU_DERIV(5)||''','''||V_TMP_ACU_DERIV(6)||''''||
-						','''||V_TMP_ACU_DERIV(7)||''','''||V_TMP_ACU_DERIV(8)||''','''||V_TMP_ACU_DERIV(9)||''''||
-						','''||V_TMP_ACU_DERIV(10)||''','''||V_TMP_ACU_DERIV(11)||''','''||V_TMP_ACU_DERIV(12)||''' FROM DUAL';
-              DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_ACU_DERIV(2)||'''');
-          EXECUTE IMMEDIATE V_MSQL;
-        END IF;
+            IF (V_ID_TPO_COUNT > 0) AND (V_ID_TPA_COUNT > 0)  THEN				
+          		    --- Obtenemos el DD_TPA_ID
+			        V_SQL_TPA := 'SELECT DD_TPA_ID FROM '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACUERDO WHERE DD_TPA_CODIGO = '''||V_TMP_ACU_DERIV(1)||'''';
+			        EXECUTE IMMEDIATE V_SQL_TPA INTO V_ID_TPA;
+			        
+			        --- Obtenemos el DD_TPO_ID
+			        V_SQL_TPO := 'SELECT DD_TPO_ID FROM '|| V_ESQUEMA ||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||V_TMP_ACU_DERIV(2)||'''';
+			        EXECUTE IMMEDIATE V_SQL_TPO INTO V_ID_TPO;
+			            
+			        --Comprobamos el dato a insertar
+			        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACU_CDE_DERIVACIONES WHERE ACU_CDE_ID = '''||V_ID_TPA||'''';
+			        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+			        
+			        IF V_NUM_TABLAS > 0 THEN				
+			          DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_CDE_DERIVACIONES... Ya existe el ACU_CDE_DERIVACIONES con el DD_TPA_ID = '''|| V_ID_TPA ||'''');
+			        ELSE
+			        
+			          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_ACU_CDE_DERIVACIONES.NEXTVAL FROM DUAL';
+			          EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
+			          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACU_CDE_DERIVACIONES (' ||
+			                      'ACU_CDE_ID, DD_TPA_ID, DD_TPO_ID, ACU_CDE_RESTRICTIVO, ACU_CDE_RESTRICTIVO_TEXTO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR)' ||
+			                      'SELECT '|| V_ENTIDAD_ID || ','''||V_ID_TPA||''','''||V_ID_TPO||''','''||V_TMP_ACU_DERIV(3)||''''||
+									','''||V_TMP_ACU_DERIV(4)||''','''||V_TMP_ACU_DERIV(5)||''','''||V_TMP_ACU_DERIV(6)||''''||
+									','''||V_TMP_ACU_DERIV(7)||''','''||V_TMP_ACU_DERIV(8)||''','''||V_TMP_ACU_DERIV(9)||''''||
+									','''||V_TMP_ACU_DERIV(10)||''','''||V_TMP_ACU_DERIV(11)||''','''||V_TMP_ACU_DERIV(12)||''' FROM DUAL';
+			              DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_ACU_DERIV(2)||'''');
+			          EXECUTE IMMEDIATE V_MSQL;
+			        END IF;
+       		ELSE
+				DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_CDE_DERIVACIONES... No existe el DD_TPO_CODIGO = '''|| V_TMP_ACU_DERIV(2) ||'''');
+       		END IF;
+            
       END LOOP;
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.STA_SUBTIPO... Datos del subtipo de tarea insertado.');

@@ -39,9 +39,9 @@ DECLARE
     TYPE T_STA_SUBTIPO IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_STA IS TABLE OF T_STA_SUBTIPO;
     V_STA_SUBTIPO T_ARRAY_STA := T_ARRAY_STA(
-      T_STA_SUBTIPO(1, 'ACP_ACU', 'Aceptacion acuerdo', 'Aceptacion acuerdo', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'ACEPT_ACU', 'EXTSubtipoTarea'),
-      T_STA_SUBTIPO(1, 'REV_ACU', 'Revisión acuerdo aceptado', 'Revisión acuerdo aceptado', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'VALID_ACEPT_ACU', 'EXTSubtipoTarea'),
-      T_STA_SUBTIPO(1, 'GST_CIE_ACU', 'Gestiones para cierre acuerdo', 'Gestiones para cierre acuerdo', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, 'GEST_ACU', 'EXTSubtipoTarea')
+      T_STA_SUBTIPO(1, 'ACP_ACU', 'Aceptacion acuerdo', 'Aceptacion acuerdo', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, NULL, 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'REV_ACU', 'Revisión acuerdo aceptado', 'Revisión acuerdo aceptado', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, NULL, 'EXTSubtipoTarea'),
+      T_STA_SUBTIPO(1, 'GST_CIE_ACU', 'Gestiones para cierre acuerdo', 'Gestiones para cierre acuerdo', NULL, 0, 'DD', SYSDATE, NULL, NULL, NULL, NULL, 0, NULL, 'EXTSubtipoTarea')
     );   
     V_TMP_STA_SUBTIPO T_STA_SUBTIPO;
 
@@ -61,8 +61,8 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.DD_STA_SUBTIPO_TAREA_BASE... Ya existe el DD_STA_SUBTIPO_TAREA_BASE '''|| TRIM(V_TMP_STA_SUBTIPO(2)) ||'''');
         ELSE
         
-          V_SQL_TGE := 'SELECT DD_TGE_ID FROM '|| V_ESQUEMA_M ||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||V_TMP_STA_SUBTIPO(14)||'''';
-          EXECUTE IMMEDIATE V_SQL_TGE INTO V_ID_TGE;
+          --V_SQL_TGE := 'SELECT DD_TGE_ID FROM '|| V_ESQUEMA_M ||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||V_TMP_STA_SUBTIPO(14)||'''';
+          --EXECUTE IMMEDIATE V_SQL_TGE INTO V_ID_TGE;
         
           V_MSQL := 'SELECT '|| V_ESQUEMA_M ||'.S_DD_STA_SUBTIPO_TAREA_BASE.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
@@ -72,7 +72,7 @@ BEGIN
 						','''||V_TMP_STA_SUBTIPO(4)||''','''||V_TMP_STA_SUBTIPO(5)||''','''||V_TMP_STA_SUBTIPO(6)||''''||
 						','''||V_TMP_STA_SUBTIPO(7)||''','''||V_TMP_STA_SUBTIPO(8)||''','''||V_TMP_STA_SUBTIPO(9)||''''||
 						','''||V_TMP_STA_SUBTIPO(10)||''','''||V_TMP_STA_SUBTIPO(11)||''','''||V_TMP_STA_SUBTIPO(12)||''''||
-						','''||V_TMP_STA_SUBTIPO(13)||''','''||V_ID_TGE||''','''||V_TMP_STA_SUBTIPO(15)||''' FROM DUAL';
+						','''||V_TMP_STA_SUBTIPO(13)||''','''||V_TMP_STA_SUBTIPO(14)||''','''||V_TMP_STA_SUBTIPO(15)||''' FROM DUAL';
               DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_STA_SUBTIPO(2)||'''');
           EXECUTE IMMEDIATE V_MSQL;
         END IF;

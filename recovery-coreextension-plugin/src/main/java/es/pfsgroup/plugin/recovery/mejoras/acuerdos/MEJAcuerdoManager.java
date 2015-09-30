@@ -40,7 +40,6 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
@@ -58,6 +57,7 @@ import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.termino.dao.TerminoAcuerdoDao;
 import es.capgemini.pfs.termino.dao.TerminoOperacionesDao;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
+import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
@@ -457,6 +457,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         	}
         	
         	dtoTerAcu.setContratosTermino(listaContratos);
+        	
+        	dtoTerAcu.setEstadoGestion(termino.getEstadoGestion());
         	
         	terminosAcuerdos.add(dtoTerAcu);
         }
@@ -1320,4 +1322,18 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     	return false;
     }
 
+	@BusinessOperation(BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION)
+    @Transactional(readOnly = false)
+	@Override
+	public void guardarEstadoGestion(Long idTermino, Long nuevoEstadoGestion) {
+		
+		TerminoAcuerdo termino = genericDao.get(TerminoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idTermino));
+		if (!Checks.esNulo(termino)) {
+			DDEstadoGestionTermino nuevoEstado = genericDao.get(DDEstadoGestionTermino.class, genericDao.createFilter(FilterType.EQUALS, "id", nuevoEstadoGestion));
+			if (!Checks.esNulo(nuevoEstado)) {
+				termino.setEstadoGestion(nuevoEstado);
+				genericDao.save(TerminoAcuerdo.class, termino);
+			}
+		}
+	}
 }

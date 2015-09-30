@@ -33,7 +33,7 @@ public class EXTActuacionesAExplorarExpedienteDaoImpl extends AbstractEntityDao<
     public List<DDSubtipoSolucionAmistosaAcuerdo> getSubtiposActivosOMarcadosByExpediente(Long idExpediente) {
         String hql = "select ssa " + "from DDSubtipoSolucionAmistosaAcuerdo ssa, DDTipoSolucionAmistosa tsa "
                 + "where ssa.auditoria.borrado=false and tsa = ssa.ddTipoSolucionAmistosa " + "and (  (ssa.activo=true and tsa.activo=1) "
-                + "     or      " + "       ssa.id in ( " + "            select aea.ddSubtipoSolucionAmistosaAcuerdo.id "
+                + "     or      " + "       ssa.id in ( " + "            select aee.ddSubtipoSolucionAmistosaAcuerdo.id "
                 + "            from EXTActuacionesAExplorarExpediente aee " + "            where aee.expediente.id = ?" + "        )" + "    )";
         return getHibernateTemplate().find(hql, idExpediente);
     }

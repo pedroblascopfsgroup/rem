@@ -13,7 +13,7 @@
 	</decision-state>
 
 	<action-state id="buscar">
-			<evaluate expression="executor.execute('mejacuerdoManager.getActuacionExpediente', idActuacion)" result="flowScope.actuacion" />
+			<evaluate expression="executor.execute('propuestaApi.getActuacionRealizadasExpediente', idActuacion)" result="flowScope.actuacion" />
 			<transition to="formulario" />
 	</action-state>
 
@@ -43,7 +43,7 @@
     </view-state>
     
     <action-state id="update">
-    	<evaluate expression="executor.execute('mejacuerdoManager.saveActuacionesRealizadasExpediente', actRelExp)" />
+    	<evaluate expression="executor.execute('propuestaApi.saveActuacionesRealizadasExpediente', actRelExp)" />
         <transition to="close" />
     </action-state>
     

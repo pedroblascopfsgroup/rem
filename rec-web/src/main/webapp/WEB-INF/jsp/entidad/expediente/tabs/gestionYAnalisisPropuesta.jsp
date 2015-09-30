@@ -10,30 +10,24 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page,entidad){
+
+	var realizadas = Ext.data.Record.create([
+          {name : 'id'}
+         ,{name : 'tipoActuacion'}
+         ,{name : 'fecha'}
+         ,{name : 'resultado'}
+         ,{name : 'actitud'}
+         ,{name : 'observaciones'}
+      ]);
     
-	var actuacionesRealizadas = 
-		<json:object name="actuaciones">
-			<json:array name="actuaciones" items="${propuestas}" var="actuacion">	
-				<json:object>
-					<json:property name="id" value="${actuacion.id}" />
-					<json:property name="tipoActuacion" value="${actuacion.ddTipoActuacionAcuerdo.descripcion}" />
-					<json:property name="fecha">
-						<fwk:date value="${actuacion.fechaActuacion}" />
-					</json:property>
-			 		<json:property name="resultado" value="${actuacion.ddResultadoAcuerdoActuacion.descripcion}" />
-			 	 	<json:property name="actitud" value="${actuacion.tipoAyudaActuacion.descripcion}" />
-			 	 	<json:property name="observaciones" value="${actuacion.observaciones}"/>
-			 	</json:object>
-			</json:array>
-		</json:object>;
-	
 	var actuacionesRealizadasStore = page.getStore({
-		limit:25
-		,remoteSort : true
-		,storeId : 'actuacionesRealizadasStore'
-		,flow : 'acuerdos/detalleAcuerdoExpediente'
-		,reader : new Ext.data.JsonReader({root:'actuaciones'}, ['id','tipoActuacion','fecha','resultado','actitud','observaciones'])
-	});
+        flow: 'propuestas/getPropuestasRealizadasByExpedienteId'
+        ,storeId : 'actuacionesRealizadasStore'
+        ,reader : new Ext.data.JsonReader(
+            {root:'actuaciones'}
+            , realizadas
+        )
+   });  
 	
 	entidad.cacheStore(actuacionesRealizadasStore);
 
@@ -58,10 +52,10 @@
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.actuaciones.listado.sinSeleccion" text="**Debe seleccionar una actuación para editar." />');
 				} else {
 					var w = app.openWindow({
-						flow : 'acuerdos/editActuacionesRealizadasAcuerdo'
+						flow : 'acuerdos/editActuacionesRealizadasExpediente'
 						,width:600
 						,title : '<s:message code="app.agregar" text="**Agregar" />'
-						,params : {idAcuerdo:'${acuerdo.id}', idActuacion:rec.get('id')}
+						,params : {idExpediente:entidad.get("data").id, idActuacion:rec.get('id')}
 					});
 					w.on(app.event.DONE, function(){
 						w.close();
@@ -88,6 +82,7 @@
 				w.on(app.event.DONE, function(){
 					w.close();
 					page.fireEvent(app.event.DONE);
+					recargarActuacionesRealizadas();
 				});
 				w.on(app.event.CANCEL, function(){ w.close(); });
 	      }
@@ -130,64 +125,25 @@
 		}
 	});
 	
-	var actuaciones = <json:object name="actuaciones">
-			<json:array name="actuaciones" items="${actuacionesAExplorar}" var="actuacionAExplorar">	
-					<json:object>
-						<json:property name="id" value="${actuacionAExplorar.id}" />
-						<json:property name="codTipoSolucionAmistosa" value="${actuacionAExplorar.ddSubtipoSolucionAmistosaAcuerdo.ddTipoSolucionAmistosa.codigo}" />
-						<json:property name="tipoSolucionAmistosa" escapeXml="false">
-							<c:if test="${actuacionAExplorar.activo}">
-								${actuacionAExplorar.ddSubtipoSolucionAmistosaAcuerdo.ddTipoSolucionAmistosa.descripcion}
-							</c:if>
-							<c:if test="${!actuacionAExplorar.activo}">
-								<span style="color: gray;">${actuacionAExplorar.ddSubtipoSolucionAmistosaAcuerdo.ddTipoSolucionAmistosa.descripcion}</span>
-							</c:if>
-						</json:property>
-				 		<json:property name="codSubtipoSolucion" value="${actuacionAExplorar.ddSubtipoSolucionAmistosaAcuerdo.codigo}" />
-				 		<json:property name="subtipoSolucion" escapeXml="false">
-							<c:if test="${actuacionAExplorar.activo}">
-								${actuacionAExplorar.ddSubtipoSolucionAmistosaAcuerdo.descripcion}
-							</c:if>
-							<c:if test="${!actuacionAExplorar.activo}">
-								<span style="color: gray;">${actuacionAExplorar.ddSubtipoSolucionAmistosaAcuerdo.descripcion}</span>
-							</c:if>
-						</json:property>
-				 	 	<json:property name="valoracion" escapeXml="false">
-							<c:if test="${actuacionAExplorar.activo}">
-								${actuacionAExplorar.ddValoracionActuacionAmistosa.descripcion}
-							</c:if>
-							<c:if test="${!actuacionAExplorar.activo}">
-								<span style="color: gray;">${actuacionAExplorar.ddValoracionActuacionAmistosa.descripcion}</span>
-							</c:if>
-						</json:property>
-				 	 	<json:property name="observaciones" escapeXml="false">
-							<c:if test="${actuacionAExplorar.activo}">
-								${actuacionAExplorar.observaciones}
-							</c:if>
-							<c:if test="${!actuacionAExplorar.activo}">
-								<span style="color: gray;">${actuacionAExplorar.observaciones}</span>
-							</c:if>
-						</json:property>
-						<json:property name="isActivo" >
-							<c:if test="${actuacionAExplorar.activo}">
-								true
-							</c:if>
-							<c:if test="${!actuacionAExplorar.activo}">
-								false
-							</c:if>
-						</json:property>
-				 	</json:object>
-			</json:array>
-		</json:object>;
+	var explorar = Ext.data.Record.create([
+          {name : 'id'}
+         ,{name : 'codTipoSolucionAmistosa'}
+         ,{name : 'tipoSolucionAmistosa'}
+         ,{name : 'codSubtipoSolucion'}
+         ,{name : 'subtipoSolucion'}
+         ,{name : 'valoracion'}
+         ,{name : 'observaciones'}
+         ,{name : 'isActivo'}
+      ]);
 	
 	var actuacionesStore = page.getStore({
-		limit:25
-		,remoteSort : true
-		,storeId : 'actuacionesStore'
-		,flow : 'acuerdos/detalleAcuerdoExpediente'
-		,reader : new Ext.data.JsonReader({root:'actuaciones'}, ['id','codTipoSolucionAmistosa','tipoSolucionAmistosa','codSubtipoSolucion',
-		'subtipoSolucion','valoracion','observaciones','isActivo'])
-	});
+        flow: 'propuestas/getPropuestasExplorarByExpedienteId'
+        ,storeId : 'actuacionesStore'
+        ,reader : new Ext.data.JsonReader(
+            {root:'actuaciones'}
+            , explorar
+        )
+   });  
 	
 	entidad.cacheStore(actuacionesStore);
 
@@ -214,10 +170,10 @@
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.actuaciones.listado.sinSeleccion" text="**Debe seleccionar una actuación para editar." />');
 				} else {
 					var w = app.openWindow({
-						flow : 'acuerdos/editActuacionesAExplorarAcuerdo'
+						flow : 'acuerdos/editActuacionesAExplorarExpediente'
 						,width:570
 						,title : '<s:message code="app.agregar" text="**Agregar" />'
-						,params : {idAcuerdo:'${acuerdo.id}', idActuacion:rec.get('id'), codSubtipoSolucion:rec.get('codSubtipoSolucion')}
+						,params : {idExpediente:entidad.get("data").id, idActuacion:rec.get('id'), codSubtipoSolucion:rec.get('codSubtipoSolucion')}
 					});
 					w.on(app.event.DONE, function(){
 						w.close();
@@ -241,9 +197,9 @@
          ,cls:'cursor_pointer'
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
          ,bbar : [
-	        <c:if test="${puedeEditar}">
+	        <sec:authorize ifAllGranted="EDITAR_GYA">
 	        	btnEditActuacionAExplorar
-	        </c:if>
+	        </sec:authorize>
 	     ]
    });
 
@@ -499,6 +455,11 @@
 			}
 		</sec:authorize>
 	}
+	
+	var recargarActuacionesRealizadas = function (){
+		entidad.refrescar();
+    	entidad.cacheOrLoad(data,actuacionesRealizadasStore, {id : panel.getCodExpediente()});
+	};
 	
 	panel.setVisibleTab = function(data){
 		return entidad.get("data").toolbar.tipoExpediente != 'REC';

@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDPeriodicidadAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSolicitante;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
-import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoPagoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -76,15 +74,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
-import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
-import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesAExplorarExpedienteDao;
-import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesRealizadasExpedienteDao;
-import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesRealizadasExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesAExplorarExpediente;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesRealizadasExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
@@ -104,8 +96,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 
 	public static final String BO_ACUERDO_MGR_UGAS_GUARDAR_ACUERDO = "mejacuerdomanager.guardarAcuerdo";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_ACUERDOS_BY_ASU_ID = "mejacuerdomanager.getListadoAcuedosByAsuId";
-	public static final String BO_ACUERDO_MGR_GET_LISTADO_PROPUESTAS_BY_EXPEDIENTE_ID = "mejacuerdomanager.getListadoPropuestasByExpId";
-	public static final String BO_ACUERDO_MGR_GET_ACTUALIZACIONES_A_EXPLORAR_EXPEDIENTE = "mejacuerdomanager.getActuacionesAExplorarExpediente";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_CONTRATOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoContratosAcuerdoByAsuId";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TERMINOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoTerminosAcuerdoByAcuId";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO = "mejacuerdo.getListTipoAcuerdo";	
@@ -155,12 +145,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	private TareaNotificacionDao tareaNotificacionDao;
-		
-	@Autowired
-    private EXTActuacionesAExplorarExpedienteDao extActuacionesAExplorarExpedienteDao;
-	
-	@Autowired
-    private EXTActuacionesRealizadasExpedienteDao extActuacionesRealizadasExpedienteDao;
 	
 	/**
 	 * Pasa un acuerdo a estado Rechazado.
@@ -434,63 +418,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         logger.debug("Obteniendo acuerdos del asunto" + id);
         Order order = new Order(OrderType.ASC, "id");
         return (List<EXTAcuerdo>) genericDao.getListOrdered(EXTAcuerdo.class,order, genericDao.createFilter(FilterType.EQUALS, "asunto.id", id));
-    }
-    
-	/**
-     * @param id Long
-     * @return Acuerdo
-     */
-    @BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_PROPUESTAS_BY_EXPEDIENTE_ID)
-    public List<EXTActuacionesRealizadasExpediente> getPropuestasDelExpediente(Long id) {
-        logger.debug("Obteniendo acuerdos del expediente" + id);
-        Order order = new Order(OrderType.ASC, "id");
-        return (List<EXTActuacionesRealizadasExpediente>) genericDao.getListOrdered(EXTActuacionesRealizadasExpediente.class, order, 
-        		genericDao.createFilter(FilterType.EQUALS, "expediente.id", id));
-    }
-    
-    @BusinessOperation(BO_ACUERDO_MGR_GET_ACTUALIZACIONES_A_EXPLORAR_EXPEDIENTE)
-    public List<EXTActuacionesAExplorarExpediente> getActuacionesAExplorarExpediente(Long idExpediente) {
-//    	List<EXTAcuerdo> listAcuerdos = getAcuerdosDelExpediente(idExpediente);
-    	List<EXTAcuerdo> listAcuerdos = new ArrayList<EXTAcuerdo>();
-    	List<EXTActuacionesAExplorarExpediente> todasLasActuacionesAExplorar = new ArrayList<EXTActuacionesAExplorarExpediente>();
-
-    	for(EXTAcuerdo acuerdo : listAcuerdos) {
-	        // Obtengo la lista de las actuaciones marcadas
-	        List<EXTActuacionesAExplorarExpediente> actuacionesAExplorarMarcadasByAcuerdo = extActuacionesAExplorarExpedienteDao
-	                .getActuacionesAExplorarMarcadasByExpediente(idExpediente);
-	        // y de todos los tipos y subtipos aunque no hayan sido marcados, excepto los inactivos
-	        List<DDSubtipoSolucionAmistosaAcuerdo> subtiposActivosOMarcadosByAcuerdo = extActuacionesAExplorarExpedienteDao
-	                .getSubtiposActivosOMarcadosByExpediente(idExpediente);
-	
-	        // y unificamos ambas listas en una
-	
-	        todasLasActuacionesAExplorar.addAll(actuacionesAExplorarMarcadasByAcuerdo);
-	
-	        boolean estaEnLista;
-	        for (DDSubtipoSolucionAmistosaAcuerdo subtipo : subtiposActivosOMarcadosByAcuerdo) {
-	            estaEnLista = false;
-	            for (EXTActuacionesAExplorarExpediente actuacion : actuacionesAExplorarMarcadasByAcuerdo) {
-	                if (actuacion.getDdSubtipoSolucionAmistosaAcuerdo().equals(subtipo)) {
-	                    estaEnLista = true;
-	                    break;
-	                }
-	            }
-	            if (!estaEnLista) {
-	            	EXTActuacionesAExplorarExpediente actuacionSinExplorar = new EXTActuacionesAExplorarExpediente();
-	                actuacionSinExplorar.setExpediente(acuerdo.getExpediente());
-	                actuacionSinExplorar.setDdSubtipoSolucionAmistosaAcuerdo(subtipo);
-	                actuacionSinExplorar.setDdValoracionActuacionAmistosa(null);
-	                actuacionSinExplorar.setObservaciones(null);
-	                actuacionSinExplorar.setId(null);
-	                todasLasActuacionesAExplorar.add(actuacionSinExplorar);
-	            }
-	        }
-    	}
-
-        // Ordena la lista por tipos
-        Collections.sort(todasLasActuacionesAExplorar);
-
-        return todasLasActuacionesAExplorar;
     }
     
 	/**
@@ -1402,25 +1329,4 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-    @BusinessOperation(BO_ACUERDO_MGR_SAVE_ACTUACION_REALIZADA_EXPEDIENTE)
-    @Transactional
-    public void saveActuacionesRealizadasExpediente(DTOActuacionesRealizadasExpediente dto) {
-    	Expediente expediente = proxyFactory.proxy(ExpedienteApi.class).getExpediente(dto.getIdExpediente());
-    	EXTActuacionesRealizadasExpediente actRelExp = new EXTActuacionesRealizadasExpediente();
-    	actRelExp.setExpediente(expediente);
-    	actRelExp.setDdTipoActuacionAcuerdo(dto.getActuaciones().getDdTipoActuacionAcuerdo());
-    	actRelExp.setDdResultadoAcuerdoActuacion(dto.getActuaciones().getDdResultadoAcuerdoActuacion());
-    	actRelExp.setTipoAyudaActuacion(dto.getActuaciones().getTipoAyudaActuacion());
-    	actRelExp.setFechaActuacion(dto.getActuaciones().getFechaActuacion());
-    	actRelExp.setObservaciones(dto.getActuaciones().getObservaciones());
-    	extActuacionesRealizadasExpedienteDao.save(actRelExp);
-    }
-    
-    @BusinessOperation(BO_ACUERDO_MGR_ACTUALIZACIONES_REALIZADAS_EXPEDIENTE)
-    public EXTActuacionesRealizadasExpediente getActuacionExpediente(Long idActuacion) {
-        return extActuacionesRealizadasExpedienteDao.get(idActuacion);
-    }
-
-
 }

@@ -149,47 +149,47 @@ BEGIN
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'DEPRECUDE'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'HRELET'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'HRESUP'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'ASECON'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'HRE'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'DIRRIESGO'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'GESRIESGO'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'OFICINA'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_zon_pef_usu.nextval, (select max(zon_id) from ]' || V_ESQUEMA || 
 		q'[.zon_zonificacion where zon_cod = '01'),  (select pef_id from ]' || V_ESQUEMA || 
 		q'[.pef_perfiles where pef_codigo = 'FPFSRLETEXT'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'DIRTER'), 'SAG', sysdate)]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 
 	DBMS_OUTPUT.PUT_LINE('***** Inserción -- insertar usuarios despachos ******');
 
@@ -198,39 +198,39 @@ BEGIN
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'Departamento de Recuperación de Deuda'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'DEPRECUDE' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'Letrado HRE'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'HRELET' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'Supervisor HRE'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'HRESUP' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'Asesoría Concursal'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'ASECON' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'HRE'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'HRE' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'Director de Riesgos'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'DIRRIESGO' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'Gestor de Riesgos'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'GESRIESGO' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'OFICINA'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'OFICINA' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 	V_VALUES := q'[.s_usd_usuarios_despachos.nextval,  (select des_id from ]' || V_ESQUEMA || 
 		q'[.des_despacho_externo where borrado = 0 and des_despacho = 'Dirección territorial'), (select usu_id from ]' || V_ESQUEMA_M || 
 		q'[.usu_usuarios where usu_username = 'DIRTER' and borrado = 0), 1, 0, sysdate, 'SAG')]';
- 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
+ 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); -- EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 
 	COMMIT;
 	DBMS_OUTPUT.PUT_LINE('***** FIN DE LA INSERCIÓN DE CONFIGURACIÓN DE ACUERDOS POR DEFECTO ***');

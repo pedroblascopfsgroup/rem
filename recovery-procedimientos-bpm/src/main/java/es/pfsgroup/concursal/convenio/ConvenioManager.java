@@ -1,7 +1,6 @@
 package es.pfsgroup.concursal.convenio;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -47,9 +45,6 @@ import es.pfsgroup.concursal.convenio.model.DDTipoConvenio;
 import es.pfsgroup.concursal.credito.dao.CreditoDao;
 import es.pfsgroup.concursal.credito.model.Credito;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
-import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.integration.Guid;
 
 @Service("convenioManager")
@@ -160,8 +155,11 @@ public class ConvenioManager {
 				if ((idProceidmientoMin==null)||(p.getId()<idProceidmientoMin))
 					idProceidmientoMin=p.getId();
 		}
-		if (idProceidmientoMin == null ) return null;
-		convenios.addAll(convenioDao.findByProcedimiento(idProceidmientoMin));
+
+		if (idProceidmientoMin != null ){
+			convenios.addAll(convenioDao.findByProcedimiento(idProceidmientoMin));
+		}
+
 		return convenios;
 	}
 	
@@ -277,12 +275,23 @@ public class ConvenioManager {
 		if (dto.getInicio()!=null)convenio.setInicioConvenio(inicioConvenioDao.get(dto.getInicio()));
 		if (dto.getTipo()!=null)convenio.setTipoConvenio(tipoConvenioDao.get(dto.getTipo()));
 		if (dto.getAdherirse()!=null)convenio.setAdherirse(siNoDao.get(dto.getAdherirse()));
-		if (dto.getTipoAdhesion()!=null) convenio.setTipoAdhesion((DDTipoAdhesion) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDTipoAdhesion.class, dto.getTipoAdhesion().toString()));
-		else convenio.setTipoAdhesion(null);
+		
+		if (!Checks.esNulo(dto.getAlternativa())) {
+			DDTipoAlternativa tipoAlternativa = (DDTipoAlternativa) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoAlternativa.class, dto.getAlternativa());
+			convenio.setTipoAlternativa(tipoAlternativa);
+		}
+		
+		if (!Checks.esNulo(dto.getTipoAdhesion())) {
+			DDTipoAdhesion tipoAdhesion= (DDTipoAdhesion) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoAdhesion.class, dto.getTipoAdhesion());
+			convenio.setTipoAdhesion(tipoAdhesion);
+		}
 		
 		convenio.setNumProponentes(dto.getNumeroProponentes());
 		convenio.setTotalMasa(dto.getTotalMasa());
+		convenio.setTotalMasaOrd(dto.getTotalMasaOrd());
 		convenio.setPorcentaje(dto.getPorcentaje());
+		convenio.setPorcentajeOrd(dto.getPorcentajeOrd());
+		
 		try {
 			convenio.setFecha(DateFormat.toDate(dto.getFecha()));
 		} catch (ParseException e) {
@@ -292,11 +301,13 @@ public class ConvenioManager {
 		convenio.setDescripcionAdhesiones(dto.getDescripcionAdhesiones());
 		convenio.setDescripcionAnticipado(dto.getDescripcionAnticipado());
 		convenio.setDescripcionTerceros(dto.getDescripcionTerceros());
+		convenio.setDescripcionConvenio(dto.getDescripcionConvenio());
 		
 		convenioDao.save(convenio);
 		
 		// agregar los creditos con categoria definitiva en caso de que el convenio sea ordinario
 		//if(convenio.getTipoConvenio().getCodigo().equals("2")){
+			List<ConvenioCredito> convenioCreditos = new ArrayList<ConvenioCredito>();
 			Procedimiento p = convenio.getProcedimiento();
 			for (ExpedienteContrato ec : p.getExpedienteContratos()) {
 				List<Credito> listaCreditosDifinitivos = new ArrayList<Credito>();
@@ -306,17 +317,21 @@ public class ConvenioManager {
 					convenioCredito.setConvenio(convenio);
 					convenioCredito.setCredito(creditoInsertar);
 					convenioCreditoDao.save(convenioCredito);
+					
+					convenioCreditos.add(convenioCredito);
 				}
 			}
+			
+			convenio.setConvenioCreditos(convenioCreditos);
 		//}
 		// ---------------------------------------------------------------------------------------
-		
 	}
 	
 	@BusinessOperation("convenioManager.editarConvenioCredito")
 	@Transactional(readOnly = false)
 	public void editarConvenioCredito(DtoEditarConvenioCredito dto){
 		ConvenioCredito convenioCredito = convenioCreditoDao.get(dto.getIdConvenioCredito());
+		convenioCredito.setGuid(dto.getGuid());
 		convenioCredito.setQuita(dto.getQuita());
 		convenioCredito.setEspera(dto.getEspera());
 		convenioCredito.setComentario(dto.getComentario());
@@ -328,6 +343,7 @@ public class ConvenioManager {
 	@Transactional(readOnly = false)
 	public void editarConvenio(DtoAgregarConvenio dto){
 		Convenio convenio = convenioDao.get(dto.getIdConvenio());
+		convenio.setGuid(dto.getGuid());
 		Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO,dto.getIdProcedimiento());
 		
 		convenio.setProcedimiento(proc);
@@ -339,11 +355,14 @@ public class ConvenioManager {
 		}
 		convenio.setNumProponentes(dto.getNumeroProponentes());
 		convenio.setTotalMasa(dto.getTotalMasa());
+		convenio.setTotalMasaOrd(dto.getTotalMasaOrd());
 		convenio.setPorcentaje(dto.getPorcentaje());
+		convenio.setPorcentajeOrd(dto.getPorcentajeOrd());
 		convenio.setDescripcion(dto.getDescripcion());
 		convenio.setDescripcionAdhesiones(dto.getDescripcionAdhesiones());
 		convenio.setDescripcionAnticipado(dto.getDescripcionAnticipado());
 		convenio.setDescripcionTerceros(dto.getDescripcionTerceros());
+		convenio.setDescripcionConvenio(dto.getDescripcionConvenio());
 		
 		if (dto.getEstado()!=null) convenio.setEstadoConvenio(estadoConvenioDao.get(dto.getEstado()));
 		else convenio.setEstadoConvenio(null);
@@ -355,14 +374,22 @@ public class ConvenioManager {
 		else convenio.setTipoConvenio(null);
 		if (dto.getAdherirse()!=null) convenio.setAdherirse(siNoDao.get(dto.getAdherirse()));
 		else convenio.setAdherirse(null);
-		if (dto.getTipoAdhesion()!=null) convenio.setTipoAdhesion((DDTipoAdhesion) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDTipoAdhesion.class, dto.getTipoAdhesion().toString()));
-		else convenio.setTipoAdhesion(null);
 		
+		if (!Checks.esNulo(dto.getAlternativa())) {
+			DDTipoAlternativa tipoAlternativa = (DDTipoAlternativa) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoAlternativa.class, dto.getAlternativa());
+			convenio.setTipoAlternativa(tipoAlternativa);
+		}
+		
+		if (!Checks.esNulo(dto.getTipoAdhesion())) {
+			DDTipoAdhesion tipoAdhesion= (DDTipoAdhesion) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoAdhesion.class, dto.getTipoAdhesion());
+			convenio.setTipoAdhesion(tipoAdhesion);
+		}
 		
 		convenioDao.save(convenio);
 	}
 	
-	public void guardarConvenio(DtoAgregarConvenio convenioDto, List<DtoEditarConvenioCredito> convenioCreditosDto) {
+	public void guardarConvenio(DtoAgregarConvenio convenioDto, List<DtoEditarConvenioCredito> convenioCreditosDto) 
+	{	
 		Convenio convenio = new Convenio();
 		Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, convenioDto.getIdProcedimiento());
 		
@@ -450,11 +477,9 @@ public class ConvenioManager {
 	}
 	
 	@BusinessOperation("convenioManager.dameFechaPorDefecto")
-	public String dameFechaPorDefecto(){
+	public Date dameFechaPorDefecto(){
 		Date fechaSistema = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		String fecha = sdf.format(fechaSistema);
-		return fecha;
+		return fechaSistema;
 	}
 	
 	public boolean existeNumeroAutoEnProcedimiento(Long idProcedimiento){

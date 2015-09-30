@@ -44,6 +44,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
 		 ,{name : 'cc'}
 		 ,{name : 'tipo'}
 		 ,{name : 'estadoFinanciero'}		
+		 ,{name : 'estadoGestion'}		
 		 ,{name : 'codigoTipoAcuerdo'} 
         ]);        
 
@@ -70,6 +71,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.codigoContrato" text="**C&oacute;digo contrato" />', dataIndex : 'cc',width: 75}
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.producto" text="**Producto" />', dataIndex : 'tipo',width: 75}
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.estadoFinanciero" text="**Estado Financ" />', dataIndex : 'estadoFinanciero',width: 65}    
+      ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.estadoGestion" text="**Estado de gestion" />', dataIndex : 'estadoGestion',width: 65}    
       ,{header : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.codigoTipoAcuerdo" text="**Codigo Tipo acuerdo" />', dataIndex : 'codigoTipoAcuerdo',hidden:true}      
    ]);      
    
@@ -242,6 +244,39 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
 		}
 	}); 
    
+	var btnEditarEstado = new Ext.Button({
+		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editarEstadoGestion" text="**Editar Estado de Gestion" />',
+		iconCls: 'icon_edit',
+		hidden : noPuedeModificar,
+		handler: function(){
+			if (typeof idTerminoSeleccionado != 'undefined'){
+	     	   	var w = app.openWindow({
+		          flow : 'mejacuerdo/openEstadoGestion'
+		          ,closable:false
+		          ,width: 400
+		          ,autoHeight: true
+		          ,title : '<s:message code="plugin.mejoras.acuerdos.tabTerminos.editarEstadoGestion" text="**Editar Estado de Gestion" />'
+	    			  ,params:{
+	     				  id:idTerminoSeleccionado,
+	     				  idAcuerdo : idAcuerdo,
+	     				  soloConsulta : 'false'     				  
+	     				}
+		       });
+		       w.on(app.event.DONE, function(){
+		          w.close();
+				  terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});			          
+		       });
+		       w.on(app.event.CANCEL, function(){ 
+		       		w.close();
+		       });
+
+			}else{
+					Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.terminoNoSelec" text="**No ha seleccionado ningún contrato" />');
+	        }
+		}
+	}); 
+   
    
     if(esPropuesta){
     	contratosAsuntoStore.webflow({idExpediente:panel.getExpedienteId()});
@@ -290,7 +325,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
          ,cls:'cursor_pointer'
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
          ,bbar : [
-	        btnBorrarTermino, btnVerTermino
+	        btnBorrarTermino, btnVerTermino, btnEditarEstado
 	      ]   
    }); 
    
@@ -301,9 +336,11 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
 		if(idTerminoSeleccionado!='') {
 			btnBorrarTermino.enable();
 			btnVerTermino.enable();
+			btnEditarEstado.enable();
 		} else {
 			btnBorrarTermino.disable();
 			btnVerTermino.disable();
+			btnEditarEstado.disable();
 		}
 	});
 	

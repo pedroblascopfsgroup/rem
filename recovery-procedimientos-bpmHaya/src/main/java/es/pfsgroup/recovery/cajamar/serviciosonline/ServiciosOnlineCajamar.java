@@ -7,6 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.contrato.ContratoManager;
+import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDAplicativoOrigen;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -26,7 +29,10 @@ public class ServiciosOnlineCajamar implements ServiciosOnlineCajamarApi {
 	private ConsultaDeSaldosWSApi consultaDeSaldosWSApi;
 	
 	@Autowired
-	private GenericABMDao genericDao;	
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ContratoManager contratoManager;
 	
 	@Override
 	public boolean solicitarTasacion(Long idBien, Long cuenta, String personaContacto,
@@ -50,11 +56,24 @@ public class ServiciosOnlineCajamar implements ServiciosOnlineCajamarApi {
 	}
 
 	@Override
-	public void consultaDeSaldos(String numContrato) {
+	public ResultadoConsultaSaldo consultaDeSaldos(Long cntId) {
 		if(consultaDeSaldosWSApi == null) {
-			logger.warn("No encontrada implementación para el WS de consulta de saldos en Cajamar");
-			return;
+			String errorMsg = "No encontrada implementación para el WS de consulta de saldos en Cajamar"; 
+			ResultadoConsultaSaldo resultado = new ResultadoConsultaSaldo(); 
+			resultado.setError(true);
+			resultado.setMensajeError(errorMsg);
+			logger.warn(errorMsg);
+			return resultado;
 		}
-		consultaDeSaldosWSApi.consultaDeSaldo(numContrato);
+		
+		// Recuperamos el contrato
+		Contrato cnt = contratoManager.get(cntId);
+		String numContrato = cnt.getNroContrato();
+		DDAplicativoOrigen aplicativo = cnt.getAplicativoOrigen();
+		
+		// invocamos al servicio.
+		ResultadoConsultaSaldo resultado = consultaDeSaldosWSApi.consultar(numContrato, aplicativo);
+		return resultado;
 	}
+
 }

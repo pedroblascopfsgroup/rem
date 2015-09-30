@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.cajamar.ws;
 
+import es.pfsgroup.recovery.cajamar.serviciosonline.ResultadoConsultaSaldo;
+
 public interface WSConsultaSaldos {
 
 	/**
@@ -7,6 +9,6 @@ public interface WSConsultaSaldos {
 	 * 
 	 * @param numCuenta
 	 */
-	void ejecutar(String numCuenta);
+	ResultadoConsultaSaldo consultar(String numCuenta);
 
 }

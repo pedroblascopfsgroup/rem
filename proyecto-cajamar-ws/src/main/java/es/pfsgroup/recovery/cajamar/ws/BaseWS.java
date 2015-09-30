@@ -6,6 +6,8 @@ import javax.annotation.Resource;
 
 public abstract class BaseWS {
 
+	public static final Object ESTADO_ERROR = "1";
+	
 	@Resource
 	private Properties appProperties;
 	

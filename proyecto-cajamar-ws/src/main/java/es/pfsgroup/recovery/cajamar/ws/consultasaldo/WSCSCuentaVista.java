@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.cajamar.ws;
+package es.pfsgroup.recovery.cajamar.ws.consultasaldo;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,12 +14,14 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.namespace.QName;
 
-import es.pfsgroup.recovery.cajamar.serviciosonline.ConsultaDeSaldosWSApi;
+import es.pfsgroup.recovery.cajamar.serviciosonline.ResultadoConsultaSaldo;
+import es.pfsgroup.recovery.cajamar.ws.BaseWS;
+import es.pfsgroup.recovery.cajamar.ws.WSConsultaSaldos;
 
-@Component
+@Component(value = "wsCSCuentaAV")
 public class WSCSCuentaVista extends BaseWS implements WSConsultaSaldos {
 
-	private static final String WEB_SERVICE_NAME = "S_A_RECOVERY_TASACION";
+	private static final String WEB_SERVICE_NAME = "S_C_RECOVERY_CUENTA_DAT_AV";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -27,54 +29,69 @@ public class WSCSCuentaVista extends BaseWS implements WSConsultaSaldos {
 	public String getWSName() {
 		return WEB_SERVICE_NAME;
 	}
-	
 
-	private void ejecutaServicio(INPUT input) throws MalformedURLException {
-		
+	private ResultadoConsultaSaldo ejecutaServicio(INPUT input) throws MalformedURLException {
+
 		String urlWSDL = getWSURL();
 		String targetNamespace = getWSNamespace();
 		String name = getWSName();
-		
-		logger.info("LLamando al WS Consulta de saldo...");
+
+		ResultadoConsultaSaldo resultado = new ResultadoConsultaSaldo();
+
+		logger.info("LLamando al WS...");
 		logger.info(String.format("LLamada [%s] [%s] [%s]", targetNamespace, name, urlWSDL));
 		if(urlWSDL == null || targetNamespace == null || name == null) {
-			logger.error("Error en la ejecución del WS de Alta Tasación: no se han configurado correctamente las propiedades para la llamada al WS");
-			return;
+			logger.error("Error en la ejecución del WS: no se han configurado correctamente las propiedades");
+			resultado.setError(true);
+			return resultado;
 		}
 
 		URL wsdlLocation = new URL(urlWSDL);
 		QName qName = new QName(targetNamespace, name);
-		
+
 		SCRECOVERYCUENTADATAV service = new SCRECOVERYCUENTADATAV(wsdlLocation, qName);
 		SCRECOVERYCUENTADATAVType servicePort = service.getSCRECOVERYCUENTADATAVPort();
 		OUTPUT output = servicePort.sCRECOVERYCUENTADATAV(input);
-		logger.info("WS Consulta de saldo invocado! Valores de respuesta:");
-		
+		logger.info("WS invocado! Valores de respuesta:");
+
+		logger.info(String.format("ESTADO: %s", output.getESTADO()));
+		resultado.setEstado(output.getESTADO());
 		logger.info(String.format("CODERROR: %s", output.getCODERROR()));
+		resultado.setCodigoError(output.getCODERROR());
 		logger.info(String.format("TXTERROR: %s", output.getTXTERROR()));
+		resultado.setMensajeError(output.getTXTERROR());
 		logger.info(String.format("CLASEAPP: %s", output.getCLASEPP()));
+		resultado.setClaseApp(output.getCLASEPP());
 		logger.info(String.format("EXCEDIDO: %s", output.getEXCEDIDO()));
+		resultado.setExcedido(output.getEXCEDIDO());
 		logger.info(String.format("FECHAIMPAGO: %s", output.getFECHAIMPAGO()));
+		resultado.setFechaImpago(output.getFECHAIMPAGO());
 		logger.info(String.format("NUMCUENTA: %s", output.getNUMCUENTA()));
+		resultado.setNumCuenta(output.getNUMCUENTA());
 		logger.info(String.format("OFICINA: %s", output.getOFICINA()));
+		resultado.setOficina(output.getOFICINA());
 		logger.info(String.format("RIESGOGLOBAL: %s", output.getRIESGOGLOBAL()));
+		resultado.setRiesgoGlobal(output.getRIESGOGLOBAL());
 		logger.info(String.format("SALDOACT: %s", output.getSALDOACT()));
+		resultado.setSaldoAct(output.getSALDOACT());
 		logger.info(String.format("SALDOGASTOS: %s", output.getSALDOGASTOS()));
+		resultado.setSaldoGastos(output.getSALDOGASTOS());
 		logger.info(String.format("SALDORETENIDO: %s", output.getSALDORETENIDO()));
-		
-		if(output.getESTADO().equals("1")) {
-			logger.error(String.format("Error en la ejecución del WS de Consulta de Saldos: [%s] - [%s]", output.getCODERROR(), output.getTXTERROR()));
+		resultado.setSaldoRetenido(output.getSALDORETENIDO());
+
+		if(resultado.getEstado().equals(BaseWS.ESTADO_ERROR)) {
+			String logMsg = String.format("Error en la ejecución del WS: [%s] - [%s]", output.getCODERROR(), output.getTXTERROR());
+			resultado.setError(true);
+			logger.error(logMsg);
 		}
-		else {
-			// Prepara la respuesta
-		}
-		
+
+		return resultado;
 	}
 
 	@Override
-	public void consultaDeSaldo(String numContrato) {
-		logger.info("Inicio del método Consulta De Saldos en CAJAMAR...");
-		
+	public ResultadoConsultaSaldo consultar(String numContrato) {
+		logger.info("Llamada WS en CAJAMAR...");
+		ResultadoConsultaSaldo resultado = new ResultadoConsultaSaldo();
 		try {
 			ObjectFactory objectFactory = new ObjectFactory();
 			INPUT input = objectFactory.createINPUT();
@@ -82,14 +99,14 @@ public class WSCSCuentaVista extends BaseWS implements WSConsultaSaldos {
 			logger.info(String.format("NUMCUENTA: %", numContrato));
 			input.setNUMCUENTA(numContrato);
 			
-			ejecutaServicio(input);			
+			resultado = ejecutaServicio(input);			
 		} catch(Exception e) {
-			logger.error("Error en el método altaSolicitud", e);
+			logger.error("Error en el método al invocarServicio", e);
 		}
 		
-		logger.info("Fin del método Consulta de Saldo!!");
+		logger.info("Fin llamada WS!!");
 		
-		return;
+		return resultado;
 	}
 
 }

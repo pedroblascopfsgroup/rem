@@ -18,7 +18,6 @@ import org.cajamar.ws.S_A_RECOVERY_TASACION.SARECOVERYTASACIONType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.xml.namespace.QName;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;

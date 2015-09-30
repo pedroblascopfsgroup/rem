@@ -18,6 +18,6 @@ public interface ServiciosOnlineCajamarApi {
 	 * 
 	 * @param numContrato
 	 */
-	void consultaDeSaldos(String numContrato);
+	ResultadoConsultaSaldo consultaDeSaldos(Long cntId);
 
 }

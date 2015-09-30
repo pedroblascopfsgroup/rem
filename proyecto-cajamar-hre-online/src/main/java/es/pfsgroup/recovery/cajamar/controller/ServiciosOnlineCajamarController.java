@@ -8,13 +8,17 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.pfsgroup.recovery.cajamar.serviciosonline.ResultadoConsultaSaldo;
 import es.pfsgroup.recovery.cajamar.serviciosonline.ServiciosOnlineCajamarApi;
 
 @Controller
 public class ServiciosOnlineCajamarController {
 
-	private static final String SOLICITAR_TASACION_JSON = "plugin/cajamarhre/bienes/solicitarTasacionJSON";
 	private static final String VENTANA_SOLICITAR_TASACION = "plugin/cajamarhre/bienes/solicitarTasacion";
+	private static final String SOLICITAR_TASACION_JSON = "plugin/cajamarhre/bienes/solicitarTasacionJSON";
+	private static final String CONSULTA_DE_SALDO = "plugin/cajamarhre/bienes/consultaDeSaldoJSON";
+	
+	private static final String KEY_MAP_RESULTADO = "resultado";
 	
 	@Autowired
 	private ServiciosOnlineCajamarApi serviciosOnlineCajamar;
@@ -42,9 +46,10 @@ public class ServiciosOnlineCajamarController {
 	}
 
 	@RequestMapping
-	public void consultaDeSaldos(String numContrato) {
-		serviciosOnlineCajamar.consultaDeSaldos(numContrato);
-		return;
+	public String consultaDeSaldos(Long cntId, ModelMap map) {
+		ResultadoConsultaSaldo resultado = serviciosOnlineCajamar.consultaDeSaldos(cntId);
+		map.put(KEY_MAP_RESULTADO, resultado);
+		return CONSULTA_DE_SALDO;
 	}
 	
 }

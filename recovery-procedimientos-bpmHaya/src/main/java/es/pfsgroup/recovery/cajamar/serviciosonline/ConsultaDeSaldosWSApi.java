@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.cajamar.serviciosonline;
 
+import es.capgemini.pfs.contrato.model.DDAplicativoOrigen;
+
 public interface ConsultaDeSaldosWSApi {
 
 	/**
@@ -7,6 +9,6 @@ public interface ConsultaDeSaldosWSApi {
 	 * 
 	 * @param numContrato
 	 */
-	void consultaDeSaldo(String numContrato);
+	ResultadoConsultaSaldo consultar(String numCuenta, DDAplicativoOrigen aplicationOrigen);
 	
 }

@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=VARIAS
 --## PRODUCTO=NO
 --##
---## Finalidad: Resolución de varias incidencias de Litigios
+--## Finalidad: Resolución de varias incidencias de concurso
 --## INSTRUCCIONES: Relanzable
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -31,7 +31,11 @@ BEGIN
 	  ' ,TFI_VALIDACION=''valor != null && valor != '''''''' ? true : false''' ||
 	  ' WHERE TFI_NOMBRE=''comboAdministrador'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-761');
-
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-770');
+	V_TAREA:='H009_PresentacionAdenda';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''H009_PresentacionAdenda''''][''''comboAdenda''''] == DDSiNo.SI ? ''''si'''' : ''''no'''''' WHERE TAP_CODIGO = '''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-770');
 
 COMMIT;
  

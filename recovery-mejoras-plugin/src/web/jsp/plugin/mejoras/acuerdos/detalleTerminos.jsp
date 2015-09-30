@@ -278,11 +278,6 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
 	}); 
    
    
-    if(esPropuesta){
-    	contratosAsuntoStore.webflow({idExpediente:panel.getExpedienteId()});
-    }else{
-    	contratosAsuntoStore.webflow({idAsunto:panel.getAsuntoId()});
-    }
    
    terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});    
   
@@ -299,6 +294,16 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
 	        btnAltaTermino
 	      ]         
    });
+   
+   
+    if(esPropuesta){
+    	contratosAsuntoStore.webflow({idExpediente:panel.getExpedienteId()});
+    	contratosAsuntoGrid.setTitle('<s:message code="plugin.mejoras.propuestas.tabTerminos.contratos.titulo" text="**Contratos/Expediente" />');
+    }else{
+    	contratosAsuntoStore.webflow({idAsunto:panel.getAsuntoId()});
+    }
+   
+   
    
    
 <%--   

@@ -64,10 +64,16 @@ public class PropuestasController {
 		
 		return LISTADO_PROPUESTAS_JSON;
 	}
-
+	
 	@RequestMapping
     public String proponer(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, ModelMap model) {
 		propuestaApi.proponer(idPropuesta);
+		return DEFAULT;
+	}
+
+	@RequestMapping
+    public String cancelar(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, ModelMap model) {
+		propuestaApi.cancelar(idPropuesta);
 		return DEFAULT;
 	}
 

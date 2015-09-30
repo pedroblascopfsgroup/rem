@@ -10,7 +10,8 @@
 //----------------------------------------------------------------
 
 var crearAnalisis=function(){
-	var labelStyle='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:120px'
+	var labelStyle='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:120px;'
+	var labelStyleArea='font-weight:bolder;'
 	var labelStyleTextField='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:160px'	
 	var style='margin-bottom:1px;margin-top:1px';
 	
@@ -30,7 +31,7 @@ var crearAnalisis=function(){
 	var observacionesTitulos = new Ext.form.TextArea({
 		fieldLabel:'<s:message code="acuerdo.analisis.observaciones" text="**Observaciones"/>'
 		,width:250
-		,labelStyle:labelStyle
+		,labelStyle:labelStyleArea
 		,readOnly:true
 		<app:test id="observacionesTitulos" addComa="true"/>
 	});
@@ -46,8 +47,8 @@ var crearAnalisis=function(){
 		,viewConfig : { columns : 2 }
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false }
 		,items : [
-		 	{items:[conclusionCombo],width:300}
-		 	,{items:[observacionesTitulos],width:400}
+		 	{items:[conclusionCombo]}
+		 	,{items:[observacionesTitulos]}
 		]
 		,doLayout:function() {
 				var margin = 80;
@@ -81,7 +82,7 @@ var crearAnalisis=function(){
 		fieldLabel:'<s:message code="acuerdo.analisis.observaciones" text="**Observaciones"/>'
 		,width:250
 		,readOnly:true
-		,labelStyle:labelStyle
+		,labelStyle:labelStyleArea
 		<app:test id="observacionesCapPago" addComa="true"/>
 	});
 
@@ -96,8 +97,8 @@ var crearAnalisis=function(){
 		,viewConfig : { columns : 2 }
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false }
 		,items : [
-		 	{items:[cambioCombo, aumento],width:300}
-		 	,{items:[observacionesCapacidadDePago],width:400}
+		 	{items:[cambioCombo, aumento]}
+		 	,{items:[observacionesCapacidadDePago]}
 		]
 		,doLayout:function() {
 				var margin = 80;
@@ -130,7 +131,7 @@ var crearAnalisis=function(){
 		fieldLabel:'<s:message code="acuerdo.analisis.observaciones" text="**Observaciones"/>'
 		,width:250
 		,readOnly:true
-		,labelStyle:labelStyle
+		,labelStyle:labelStyleArea
 		<app:test id="observacionesSolvencia" addComa="true"/>
 	});
 
@@ -145,8 +146,8 @@ var crearAnalisis=function(){
 		,viewConfig : { columns : 2 }
 		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false }
 		,items : [
-		 	{items:[cambioSolvenciaCombo, aumentoSolvencia],width:300}
-		 	,{items:[observacionesSolvencia],width:400}
+		 	{items:[cambioSolvenciaCombo, aumentoSolvencia]}
+		 	,{items:[observacionesSolvencia]}
 		]
 		,doLayout:function() {
 				var margin = 80;
@@ -183,6 +184,7 @@ var crearAnalisis=function(){
 	return {
 		title:'<s:message code="acuerdos.actuaciones.analisis" text="**Analisis"/>'
 		,autoHeight:true
+		,autoWidth:true
 		,border:true
 		,xtype:'fieldset'
 		,bodyStyle:'padding:5px;cellspacing:20px;'

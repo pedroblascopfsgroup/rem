@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.arquetipo.dao.ArquetipoDao;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Dao de arquetipo.
@@ -95,8 +96,11 @@ public class ArquetipoDaoImpl extends AbstractEntityDao<Arquetipo, Long> impleme
 		List<Arquetipo> arquetiposRecup = new ArrayList<Arquetipo>();
 		
 		for (Arquetipo arquetipo : arquetipos) {
-			if (arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion() && !arquetipo.getAuditoria().isBorrado())
+			if ((!Checks.esNulo(arquetipo.getItinerario())) && 
+					(arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()) && 
+					(!arquetipo.getAuditoria().isBorrado())) {
 				arquetiposRecup.add(arquetipo);
+			}
 		}
 		
 		return arquetiposRecup;
@@ -110,8 +114,11 @@ public class ArquetipoDaoImpl extends AbstractEntityDao<Arquetipo, Long> impleme
 		List<Arquetipo> arquetiposSeg = new ArrayList<Arquetipo>();
 		
 		for (Arquetipo arquetipo : arquetipos) {
-			if (arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento() && !arquetipo.getAuditoria().isBorrado())
+			if ((!Checks.esNulo(arquetipo.getItinerario())) && 
+					(arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) && 
+					(!arquetipo.getAuditoria().isBorrado())) {
 				arquetiposSeg.add(arquetipo);
+			}
 		}
 
 		return arquetiposSeg;

@@ -81,7 +81,8 @@ public class PRORevisionExpedienteActionHandler extends PROBaseActionHandler imp
 
             expedienteManager.setInstanteCambioEstadoExpediente(idExpediente);
             executionContext.setVariable(TAREA_ASOCIADA_RE, idTareaRE);
-            if (estadoRE.getAutomatico() != null && estadoRE.getAutomatico()) {
+            //Si venimos de "devolver a revisión" se desactiva el avance automático en todos los casos.
+            if (!DEVOLVER_REVISION.equals(comeFrom) && estadoRE.getAutomatico() != null && estadoRE.getAutomatico()) {
                 executionContext.setVariable(GENERAALERTA, Boolean.TRUE);
                 executionContext.setVariable(WHERE_TO_GO, TRANSITION_ENVIARADECISIONCOMITE);
             } else {
@@ -128,7 +129,8 @@ public class PRORevisionExpedienteActionHandler extends PROBaseActionHandler imp
         if (fechaFin != null) { return fechaFin - now; }
         Long creacionExp = expedienteManager.getExpediente(idExpediente).getAuditoria().getFechaCrear().getTime();
         Long tiempoTranscurrido = now - creacionExp;
-        return plazo - tiempoTranscurrido;
+        Long tiempoRestante = plazo - tiempoTranscurrido;        
+        return (tiempoRestante<0) ? (24*60*60*1000L) : tiempoRestante;
     }
 
     /**

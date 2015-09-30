@@ -69,10 +69,20 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
         	boolean opE = (!Checks.esNulo(docAdicional) && docAdicional.equals(DDSiNo.SI));
         	
         	// Opción C, D
-        	NMBBien bien = getBien(prc);
-        	boolean adjudicadoEntidad = (bien.getAdjudicacion() != null 
-        			&& bien.getAdjudicacion().getEntidadAdjudicataria() != null 
-        			&& bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().equals(DDEntidadAdjudicataria.ENTIDAD));
+        	boolean adjudicadoEntidad = true;
+        	
+        	// Si procede del trámite de cesión de remate no se lanzan la tareas de la rama Adjudicado por la entidad
+        	Procedimiento prcPadre = prc.getProcedimientoPadre();
+        	if(prcPadre != null && prcPadre.getTipoProcedimiento().getCodigo().equals("H006")) {
+        		adjudicadoEntidad = false;
+        	}
+        	else {
+        		NMBBien bien = getBien(prc);
+	        	adjudicadoEntidad = (bien.getAdjudicacion() != null 
+	        			&& bien.getAdjudicacion().getEntidadAdjudicataria() != null 
+	        			&& bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().equals(DDEntidadAdjudicataria.ENTIDAD));
+        	}
+        	
         	boolean cargasPrevias = false;
         	if (adjudicadoEntidad) {
         		cargasPrevias = hayaProcManager.existenCargasPreviasActivas(prc.getId());

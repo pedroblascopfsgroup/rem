@@ -5,6 +5,6 @@
 	<input name="idBien" type="java.lang.Long"/>
 	
 	<!-- renderiza el formulario -->
-    <end-state id="solicitarTasacion" view="plugin/cajamar/bienes/solicitarTasacion">
+    <end-state id="solicitarTasacion" view="plugin/cajamarhre/bienes/solicitarTasacion">
     </end-state>        
 </flow>

@@ -25,16 +25,12 @@ var crearActuacionesRealizadas=function(){
 				 	</json:object>
 			</json:array>
 		</json:object>;
-	
-	var actuacionesStore = page.getStore({
-		limit:25
-		,remoteSort : true
-		,storeId : 'actuacionesStore'
-		,flow : 'acuerdos/detalleAcuerdoExpediente'
-		,reader : new Ext.data.JsonReader({root:'actuaciones'}, ['id','tipoActuacion','fecha','resultado','actitud','observaciones'])
+		
+	var actuacionesStore = new Ext.data.JsonStore({
+		data : actuaciones
+		,root : 'actuaciones'
+		,fields : ['id','tipoActuacion','fecha','resultado','actitud','observaciones']
 	});
-	
-	entidad.cacheStore(actuacionesStore);
 
    var cmActuaciones = new Ext.grid.ColumnModel([
    	   {dataIndex : 'id', hidden:true}
@@ -93,7 +89,7 @@ var crearActuacionesRealizadas=function(){
 	   });
    </c:if>
    
-<!--    //var actuacionesGrid = app.crearGrid(actuacionesStore,cmActuaciones,{ -->
+   //var actuacionesGrid = app.crearGrid(actuacionesStore,cmActuaciones,{
 <!--    var actuacionesGrid = app.crearGrid(actuacionesStore,cmActuaciones,{ -->
 <!--          title : '&nbsp;' -->
 <%--          <app:test id="actuacionesGrid" addComa="true" /> --%>

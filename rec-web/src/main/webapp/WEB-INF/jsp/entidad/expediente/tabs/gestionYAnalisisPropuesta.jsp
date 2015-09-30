@@ -11,20 +11,19 @@
 
 (function(page,entidad){
     
-	var actuacionesRealizadas = <json:object name="actuaciones">
-		<json:array name="actuaciones" items="${acuerdos}" var="acuerdo">	
-			<json:array name="actuaciones" items="${acuerdo.actuacionesRealizadas}" var="actuacion">	
-					<json:object>
-						<json:property name="id" value="${actuacion.id}" />
-						<json:property name="tipoActuacion" value="${actuacion.ddTipoActuacionAcuerdo.descripcion}" />
-						<json:property name="fecha">
-							<fwk:date value="${actuacion.fechaActuacion}" />
-						</json:property>
-				 		<json:property name="resultado" value="${actuacion.ddResultadoAcuerdoActuacion.descripcion}" />
-				 	 	<json:property name="actitud" value="${actuacion.tipoAyudaActuacion.descripcion}" />
-				 	 	<json:property name="observaciones" value="${actuacion.observaciones}"/>
-				 	</json:object>
-				</json:array>
+	var actuacionesRealizadas = 
+		<json:object name="actuaciones">
+			<json:array name="actuaciones" items="${propuestas}" var="actuacion">	
+				<json:object>
+					<json:property name="id" value="${actuacion.id}" />
+					<json:property name="tipoActuacion" value="${actuacion.ddTipoActuacionAcuerdo.descripcion}" />
+					<json:property name="fecha">
+						<fwk:date value="${actuacion.fechaActuacion}" />
+					</json:property>
+			 		<json:property name="resultado" value="${actuacion.ddResultadoAcuerdoActuacion.descripcion}" />
+			 	 	<json:property name="actitud" value="${actuacion.tipoAyudaActuacion.descripcion}" />
+			 	 	<json:property name="observaciones" value="${actuacion.observaciones}"/>
+			 	</json:object>
 			</json:array>
 		</json:object>;
 	
@@ -80,11 +79,11 @@
 	       ,iconCls : 'icon_mas'
 	       ,cls: 'x-btn-text-icon'
 	       ,handler:function(){
-				var w = app.openWindow({
-					flow : 'acuerdos/editActuacionesRealizadasAcuerdo'
+	       		var w = app.openWindow({
+					flow : 'acuerdos/editActuacionesRealizadasExpediente'
 					,width:600
 					,title : '<s:message code="app.agregar" text="**Agregar" />'
-					,params : {idAsunto:'${acuerdo.asunto.id}', idAcuerdo:'${acuerdo.id}'}
+					,params : {idExpediente:entidad.get("data").id}
 				});
 				w.on(app.event.DONE, function(){
 					w.close();

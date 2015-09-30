@@ -27,4 +27,11 @@ public interface GestorDespachoDao extends AbstractDao<GestorDespacho, Long> {
 	 * @return
 	 */
 	List<GestorDespacho> getGestorDespachoByUsuId(Long usuId);
+
+	/**
+	 * Obtiene los gestordespacho filtrando por usuario y tipo de despacho.
+	 * @param usuId
+	 * @return
+	 */
+	List<GestorDespacho> getGestorDespachoByUsuIdAndTipoDespacho(Long usuId, String tipoDespachoExterno);	
 }

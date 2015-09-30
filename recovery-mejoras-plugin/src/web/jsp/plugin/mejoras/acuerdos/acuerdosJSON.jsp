@@ -18,7 +18,7 @@
 			</json:property>			
 			<json:property name="motivo" value="${acuerdo.motivo}" />
 			<json:property name="idProponente" value="${acuerdo.proponente.id}" />
-			<json:property name="tipoGestorProponenteAsunto" value="${acuerdo.tipoGestorProponente.id}" />
+			<json:property name="tipoDespachoProponente" value="${acuerdo.gestorDespacho.despachoExterno.tipoDespacho.id}" />
 			<json:property name="idTipoAcuerdo" value="${acuerdo.tipoAcuerdo.id}" />
 		</json:object>
 	</json:array>

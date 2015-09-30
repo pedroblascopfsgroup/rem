@@ -304,7 +304,7 @@
 		entidad.setLabel('meses',d.meses + " <s:message code="procedimiento.tabcabecera.meses" text="**meses"/>");
 
 		entidad.setLabel('contratoPase',entidad.get("data").contratoPrincipal.codigoContrato);
-		
+
 		/*editarDatosProcedimiento.hide()
 		<sec:authorize ifAllGranted="ROLE_EDIT_CABECERA_PROCEDIMIENTO">
 			editarDatosProcedimiento.show();
@@ -320,7 +320,7 @@
 	{
 		if (data.hayPrecontencioso) {
 			storeHistoricoEstados.webflow({idProcedimiento: panel.getProcedimientoId()});
-						 
+
 			panelProcedimientoPrecontencioso.show();
 			nExpedienteInterno.show();
 			recuperacion.hide();
@@ -337,21 +337,27 @@
 
 			procedimientoInterno.label.update('<s:message code="plugin.precontencioso.cabecera.codigoExpediente" text="**Código expediente judicial"/>');
 			procedimientoJuzgado.label.update('<s:message code="plugin.precontencioso.cabecera.nAuto" text="**Número de Auto"/>');
-			Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
+
+			<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
+				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').show();
+			</sec:authorize>
+
 		} else {
 			panelProcedimientoPrecontencioso.hide();
 			nExpedienteInterno.hide();
 			recuperacion.show();
 			meses.show();
 
+			<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
+				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
+			</sec:authorize>
+
 			procedimientoInterno.label.update('<s:message code="procedimiento.tabcabecera.procinterno" text="**Nro. Proc. Interno"/>');
 			procedimientoJuzgado.label.update('<s:message code="procedimiento.tabcabecera.procjuzgado" text="**Nro. Proc. en Juzgado"/>');
 			procedimientoInterno.setValue();
 			entidad.setLabel('procedimientoInterno', entidad.get("data").cabecera.procedimientoInterno);
-			Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
 		}
 	}
-	
+
 	return panel;
-	
 })

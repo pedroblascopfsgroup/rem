@@ -20,8 +20,10 @@ import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
@@ -71,6 +73,8 @@ public class LiquidacionController {
 		LiquidacionDTO liquidacionDto = liquidacionApi.getLiquidacionPorId(id);
 		EXTDDTipoGestor tipoGestorApoderado = (EXTDDTipoGestor) diccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, CODIGO_TIPO_GESTOR_APODERADO);
 
+		Parametrizacion visibleBtnSolicitar = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.VISIBLE_BOTON_SOLICITAR_LIQUIDACION);
+		model.put("ocultarBtnSolicitar", ("1".equals(visibleBtnSolicitar.getValor()) ? true : false));
 		model.put("liquidacion", liquidacionDto);
 		model.put("tipoGestorApoderado", tipoGestorApoderado);
 
@@ -109,11 +113,14 @@ public class LiquidacionController {
 		
 		liquidacionApi.solicitar(liquidacionDto);
 
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
+
 		return DEFAULT;
 	}
 
 	@RequestMapping
-	public String editar(WebRequest request, ModelMap model) {
+	public String editar(WebRequest request, ModelMap model) throws ParseException {
 
 		Long id = Long.valueOf(request.getParameter("id"));
 		Float capitalVencido = Float.valueOf(request.getParameter("capitalVencido"));
@@ -125,6 +132,12 @@ public class LiquidacionController {
 		Float comisiones = Float.valueOf(request.getParameter("comisiones"));
 		Float gastos = Float.valueOf(request.getParameter("gastos"));
 		Float impuestos = Float.valueOf(request.getParameter("impuestos"));
+
+		Date fechaCierre = null;
+		if (request.getParameter("fechaCierre") != null) {
+			SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			fechaCierre = webDateFormat.parse(request.getParameter("fechaCierre"));
+		}
 
 		String usuario = request.getParameter("apoderadoUsuarioId");
 
@@ -153,9 +166,13 @@ public class LiquidacionController {
 		liquidacionDto.setComisiones(comisiones);
 		liquidacionDto.setGastos(gastos);
 		liquidacionDto.setImpuestos(impuestos);
+		liquidacionDto.setFechaCierre(fechaCierre);
 
 		liquidacionApi.editarValoresCalculados(liquidacionDto);
-
+		
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
+		
 		return DEFAULT;
 	}
 
@@ -163,9 +180,11 @@ public class LiquidacionController {
 	public String confirmar(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
 		LiquidacionDTO liquidacionDto = new LiquidacionDTO();
 		liquidacionDto.setId(id);
-
 		liquidacionApi.confirmar(liquidacionDto);
-
+		
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
+		
 		return DEFAULT;
 	}
 
@@ -175,6 +194,9 @@ public class LiquidacionController {
 		liquidacionDto.setId(id);
 
 		liquidacionApi.descartar(liquidacionDto);
+		
+		LiquidacionPCO liquidacion = proxyFactory.proxy(LiquidacionApi.class).getLiquidacionPCOById(liquidacionDto.getId());
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(liquidacion.getProcedimientoPCO().getProcedimiento().getId());
 
 		return DEFAULT;
 	}

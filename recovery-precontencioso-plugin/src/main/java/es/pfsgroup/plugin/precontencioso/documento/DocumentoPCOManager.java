@@ -52,7 +52,6 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ProcedimientoPCODTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -327,7 +326,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 		// Borramos el documento
 		genericDao.deleteById(DocumentoPCO.class, idDocumentoPCO);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -338,11 +336,8 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	public void descartarDocumentos(Long idDocumentoPCO){
 		DocumentoPCO documento = documentoPCODao.get(idDocumentoPCO);
 		DDEstadoDocumentoPCO estadoDocumento = (DDEstadoDocumentoPCO) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDEstadoDocumentoPCO.class, DDEstadoDocumentoPCO.DESCARTADO);
-
-		documento.setEstadoDocumento(estadoDocumento);
-		
+		documento.setEstadoDocumento(estadoDocumento);		
 		documentoPCODao.saveOrUpdate(documento);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -382,7 +377,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		if (documento.getSolicitudes().size() == 0){
 			cambiarEstadoDocumento(idDocumento, DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);			
 		}
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -415,7 +409,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setIdufir(docDto.getIdufir());
 
 		documentoPCODao.saveOrUpdate(documento);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 	
 	/**
@@ -463,7 +456,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 		genericDao.save(SolicitudDocumentoPCO.class,solicitud);
 		cambiarEstadoDocumento(documento.getId(), DDEstadoDocumentoPCO.SOLICITADO);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 		return solicitud;
 	}
 	
@@ -579,7 +571,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			
 		try {
 			genericDao.save(DocumentoPCO.class, documento);
-			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(procPCO.getProcedimiento().getId());
 		} catch (Exception e) {
 			System.out.println("Error: "+e);
 		}
@@ -631,7 +622,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 	    
 	    solicitud.setFechaRecepcion(dto.getFechaRecepcion());
 		genericDao.save(SolicitudDocumentoPCO.class, solicitud);
-		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(documento.getProcedimientoPCO().getProcedimiento().getId());
 	}
 
 	@Override
@@ -783,5 +773,10 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		}
 		return false;
 	}
-
+	
+	@Override
+	@BusinessOperation(PCO_DOCUMENTO_BY_ID)
+	public DocumentoPCO getDocumentoPCOById(Long idDocPCO){
+		return documentoPCODao.get(idDocPCO);
+	}
  }

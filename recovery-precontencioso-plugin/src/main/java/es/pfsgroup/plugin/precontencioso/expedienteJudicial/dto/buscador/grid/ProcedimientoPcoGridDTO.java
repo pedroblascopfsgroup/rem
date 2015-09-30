@@ -19,9 +19,7 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	private String tipoPreparacion;
 	private Date fechaInicioPreparacion;
 	private Integer diasEnPreparacion;
-	private Boolean documentacionCompleta;
 	private Float totalLiquidacion;
-	private Boolean notificadoClientes;
 	private Date fechaEnvioLetrado;
 	private Boolean aceptadoLetrado;
 	private Boolean todosDocumentos;
@@ -91,23 +89,11 @@ public class ProcedimientoPcoGridDTO extends WebDto {
 	public void setDiasEnPreparacion(Integer diasEnPreparacion) {
 		this.diasEnPreparacion = diasEnPreparacion;
 	}
-	public Boolean getDocumentacionCompleta() {
-		return documentacionCompleta;
-	}
-	public void setDocumentacionCompleta(Boolean documentacionCompleta) {
-		this.documentacionCompleta = documentacionCompleta;
-	}
 	public Float getTotalLiquidacion() {
 		return totalLiquidacion;
 	}
 	public void setTotalLiquidacion(Float totalLiquidacion) {
 		this.totalLiquidacion = totalLiquidacion;
-	}
-	public Boolean getNotificadoClientes() {
-		return notificadoClientes;
-	}
-	public void setNotificadoClientes(Boolean notificadoClientes) {
-		this.notificadoClientes = notificadoClientes;
 	}
 	public Date getFechaEnvioLetrado() {
 		return fechaEnvioLetrado;

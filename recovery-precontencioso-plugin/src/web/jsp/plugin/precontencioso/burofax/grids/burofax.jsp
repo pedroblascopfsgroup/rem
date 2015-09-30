@@ -47,7 +47,7 @@
 			dataIndex: 'direccion', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.tipo" text="**Tipo"/>',
-			dataIndex: 'tipo', sortable: false,autoWidth:true
+			dataIndex: 'tipoDescripcion', sortable: false,autoWidth:true
 		}, {
 			header: '<s:message code="plugin.precontencioso.grid.burofax.fechaSolicitud" text="**Fecha Solicitud"/>',
 			dataIndex: 'fechaSolicitud', sortable: false,autoWidth:true
@@ -92,6 +92,7 @@
 	   ,{name:'estado'}
 	   ,{name:'direccion'}
 	   ,{name:'tipo'}
+	   ,{name:'tipoDescripcion'}
 	   ,{name:'fechaSolicitud'}
 	   ,{name:'fechaEnvio'}
 	   ,{name:'fechaAcuse'}

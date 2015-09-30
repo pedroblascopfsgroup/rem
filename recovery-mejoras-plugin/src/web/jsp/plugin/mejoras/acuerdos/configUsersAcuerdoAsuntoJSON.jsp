@@ -6,14 +6,14 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 
 <fwk:json>
-		<json:object name="tiposGestoresAcuerdoAsunto">
+		<json:object name="tiposDespachosAcuerdoAsunto">
 			<json:property name="proponente" value="${map.proponente.id}"/>
 			<json:property name="validador" value="${map.validador.id}"/>
 			<json:property name="decisor" value="${map.decisor.id}"/>
 		</json:object>
 		<json:object name="userLogado">
 			<json:property name="id" value="${idUsuario}"/>
-			<json:property name="tipoGestorAsunto" value="${tipoGestorAsunto.id}"/>
+			<json:property name="idTipoDespacho" value="${idTipoDespacho}"/>
 		</json:object>
 </fwk:json>			
 

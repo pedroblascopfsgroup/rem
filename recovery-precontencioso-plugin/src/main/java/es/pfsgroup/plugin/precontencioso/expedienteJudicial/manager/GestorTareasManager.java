@@ -20,7 +20,8 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.prorroga.model.Prorroga;
-import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
+import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -174,11 +175,11 @@ public class GestorTareasManager implements GestorTareasApi {
 
         //Creamos una nueva tarea extendida con el idProcedimiento y el idTipoTarea y el timer asociado
         //Por defecto la tarea será para un gestor
-        String subtipoTarea = SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR;
+        String subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR;
 
         //Si está marcada como supervisor se cambia el subtipo tarea
         if (tareaProcedimiento.getSupervisor()) {
-            subtipoTarea = SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR;
+            subtipoTarea = EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR;
         }
 
         TipoJuzgado juzgado = null;
@@ -254,9 +255,14 @@ public class GestorTareasManager implements GestorTareasApi {
 	private void cancelaTarea(TareaExterna tareaExterna) {
 
 		if (tareaExterna != null) {
-            tareaExterna.setCancelada(true);
+            tareaExterna.setCancelada(false);
             tareaExterna.setDetenida(false);
             tareaExternaManager.borrar(tareaExterna);
+            
+            TareaNotificacion tarNotif = proxyFactory.proxy(TareaNotificacionApi.class).get(tareaExterna.getTareaPadre().getId());
+            tarNotif.setTareaFinalizada(true);
+            proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarNotif);
+            
             //Buscamos si tiene prorroga activa
             Prorroga prorroga = tareaExterna.getTareaPadre().getProrrogaAsociada();
             //Borramos (finalizamos) la prorroga si es que tiene

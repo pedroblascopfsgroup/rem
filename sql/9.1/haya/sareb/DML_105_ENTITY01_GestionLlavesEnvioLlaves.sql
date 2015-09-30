@@ -41,16 +41,16 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'242';
-    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_CAM_CERR';
-    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Comunicación cambio cerradura al letrado';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'243';
+    V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_REG_ENV_LLV';
+    V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Comunicación al letrado del envio llaves a la entidad';
     V_TJ_CODIGO VARCHAR2(20 CHAR):=			'GLL';
     V_TAC_CODIGO VARCHAR2(20 CHAR):=		'ADVANCE'; -- ADVANCE, INFO, etc.
     
-    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_CAM_CERR';
+    V_TIN_CODIGO VARCHAR2(50 CHAR):=		'I_REG_ENV_LLV';
     
     V_TPO_CODIGO VARCHAR2(20 CHAR):=		'H040';
-    V_NODO VARCHAR2(50 CHAR):=				'H040_RegistrarCambioCerradura';
+    V_NODO VARCHAR2(50 CHAR):=				'H040_RegistrarEnvioLlaves';
     
     TYPE T_INPUT IS TABLE OF VARCHAR2(50);
     TYPE T_ARRAY_INPUT IS TABLE OF T_INPUT;

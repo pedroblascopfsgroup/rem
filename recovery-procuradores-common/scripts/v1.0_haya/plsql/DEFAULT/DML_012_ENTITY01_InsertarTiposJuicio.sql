@@ -46,7 +46,7 @@ DECLARE
       T_TIPO_JUICIO('CES', 'T. de cesión de remate - HAYA', 'T. de cesión de remate - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H006'),
       T_TIPO_JUICIO('ADJ', 'T. de adjudicación - HAYA', 'T. de adjudicación - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H005'),
       T_TIPO_JUICIO('TCS', 'T. de costas - HAYA', 'T. de costas - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H007'),
-      T_TIPO_JUICIO('CCG', 'Certificación de cargas - HAYA', 'Certificación de cargas - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H030'),
+      /*T_TIPO_JUICIO('CCG', 'Certificación de cargas - HAYA', 'Certificación de cargas - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H030'),*/
       T_TIPO_JUICIO('INT', 'T. intereses - HAYA', 'T. intereses - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H042'),
       T_TIPO_JUICIO('GLL', 'T. Gestión de llaves - HAYA', 'T. Gestión de llaves - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H040'),
       T_TIPO_JUICIO('OCU', 'T. Ocupantes - HAYA', 'T. Ocupantes - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H048'),
@@ -63,7 +63,7 @@ DECLARE
       T_TIPO_JUICIO('VBM', 'T. Valoración de bienes muebles - HAYA', 'T. Valoración de bienes muebles - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H060'),
       T_TIPO_JUICIO('MEM', 'T. Mejora de embargo - HAYA', 'T. Mejora de embargo - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H046'),
       T_TIPO_JUICIO('PCM', 'P. Cambiario - HAYA', 'P. Cambiario - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H016'),
-      T_TIPO_JUICIO('PDD', 'P. De depósito - HAYA', 'P. De depósito - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H016'),
+      T_TIPO_JUICIO('PDD', 'P. De depósito - HAYA', 'P. De depósito - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H034'),
       T_TIPO_JUICIO('PNJ', 'P. Ejecución título no judicial - HAYA', 'P. Ejecución título no judicial - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H020'),
       T_TIPO_JUICIO('PTJ', 'P. Ejecución título judicial - HAYA', 'P. Ejecución título judicial - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H018'),
       T_TIPO_JUICIO('PRE', 'P. De precinto - HAYA', 'P. De precinto - HAYA', 0, 'MOD_PROC', SYSDATE, 0, 'H050'),

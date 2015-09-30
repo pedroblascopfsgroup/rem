@@ -68,14 +68,6 @@ public class PropuestaManager implements PropuestaApi {
 		return usuarioLogadoTienePerfil(idPerfilGestorActual) || usuarioLogadoTienePerfil(idPerfilSupervisorActual);
 	}
 
-	public Boolean usuarioLogadoEsProponente(Long idPropuesta) {
-		Usuario userlogged = usuarioManager.getUsuarioLogado();
-
-		EXTAcuerdo propuesta = (EXTAcuerdo) acuerdoDao.get(idPropuesta);
-
-		return propuesta.getProponente() != null && userlogged.getId().equals(propuesta.getProponente().getId());
-	}
-
 	@Transactional(readOnly = false)
 	public void proponer(Long idPropuesta) {
 		Acuerdo propuesta = acuerdoDao.get(idPropuesta);

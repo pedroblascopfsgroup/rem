@@ -32,13 +32,6 @@ public interface PropuestaApi {
 	public Boolean usuarioLogadoEsGestorSupervisorActual(Long idExpediente);
 
 	/**
-	 * El usuario logado es el que ha generado la propuesta
-	 * @param idPropuesta
-	 * @return
-	 */
-	public Boolean usuarioLogadoEsProponente(Long idPropuesta);
-
-	/**
 	 * 
 	 * @param idPropuesta
 	 */

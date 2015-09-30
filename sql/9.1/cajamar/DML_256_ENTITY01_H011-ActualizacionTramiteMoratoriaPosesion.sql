@@ -184,6 +184,9 @@ BEGIN
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_MASTER||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''CJ-811''), DD_TSUP_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''CJ-SAREO'') WHERE TAP_CODIGO = ''H011_RevisarInformeLetradoMoratoria''';
 	DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H011_RevisarInformeLetradoMoratoria actualizada.');
 	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_TIPO = ''combo'', TFI_LABEL = ''Presentar conformidad'', TFI_VALOR_INICIAL = ''valores[''''H011_RevisarInformeLetradoMoratoria''''][''''comboConformidad'''']'', TFI_BUSINESS_OPERATION = ''DDSiNo'' WHERE TFI_NOMBRE = ''presentarAlegaciones'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''H011_LecturaInstruccionesMoratoria'')';
+	DBMS_OUTPUT.PUT_LINE('[INFO] Tarea H011_LecturaInstruccionesMoratoria actualizada.');
+	
 	/*
     *---------------------------------------------------------------------------------------------------------
     *                                COMIENZO - BLOQUE DE CODIGO DEL SCRIPT

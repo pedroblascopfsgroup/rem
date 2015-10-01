@@ -73,29 +73,31 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 		super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 		this.executionContext = executionContext;
 
-		Boolean tareaTemporal = (executionContext.getTransition().getName().equals(BPMContants.TRANSICION_APLAZAR_TAREAS) 
-				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PARALIZAR_TAREAS)
-				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_ACTIVAR_TAREAS)
-				|| executionContext.getTransition().getName().equals(BPMContants.TRANSICION_PRORROGA));
-		
-		//Solo si el handle ha sido invocado por el guardado de la tarea, dentro del flujo BPM, realiza las acciones determinadas
-		//Si ha sido invocado por una acci�n de paralizar la tarea o por una acci�n autoprorroga, no realiza las acciones determinadas
-		if (!tareaTemporal) {
-			Procedimiento procedimiento = getProcedimiento(executionContext);
-			TareaExterna tareaExterna = getTareaExterna(executionContext);
-
-			if (tareaExterna!=null &&
-					tareaExterna.getTareaProcedimiento() != null && 
-					(
-					TAP_SOLICITUD_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-					TAP_SOLICITUD_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
-					TAP_SENYALAMIENTO_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-					TAP_SENYALAMIENTO_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo())
-					)) {
-				subastaCalculoManager.actualizarTipoSubasta(procedimiento);	
-			}
-			avanzamosEstadoSubasta();
+		String transition = executionContext.getTransition().getName();
+		Boolean transicionTemporal = (
+				transition.equals(BPMContants.TRANSICION_PRORROGA) || 
+				transition.equals(BPMContants.TRANSICION_FIN) || 
+				transition.equals(BPMContants.TRANSICION_APLAZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
+		if (transicionTemporal) {
+			return;
 		}
+		
+		Procedimiento procedimiento = getProcedimiento(executionContext);
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+
+		if (tareaExterna!=null &&
+				tareaExterna.getTareaProcedimiento() != null && 
+				(
+				TAP_SOLICITUD_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
+				TAP_SOLICITUD_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
+				TAP_SENYALAMIENTO_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
+				TAP_SENYALAMIENTO_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+				)) {
+			subastaCalculoManager.actualizarTipoSubasta(procedimiento);	
+		}
+		avanzamosEstadoSubasta();
 			
 	}
 

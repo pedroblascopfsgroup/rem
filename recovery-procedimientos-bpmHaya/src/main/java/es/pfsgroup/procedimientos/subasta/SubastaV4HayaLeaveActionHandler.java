@@ -84,12 +84,14 @@ public class SubastaV4HayaLeaveActionHandler extends
 		String transition = executionContext.getTransition().getName();
 		Boolean transicionTemporal = (
 				transition.equals(BPMContants.TRANSICION_PRORROGA) || 
+				transition.equals(BPMContants.TRANSICION_FIN) || 
 				transition.equals(BPMContants.TRANSICION_APLAZAR_TAREAS) || 
 				transition.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || 
 				transition.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
 		if (transicionTemporal) {
 			return;
 		}
+		
 		Procedimiento procedimiento = getProcedimiento(executionContext);
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
 		if (tareaExterna != null

@@ -96,8 +96,10 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 		if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
 				.equals(transactionalUsers)) {
 			cambiaCurrentSchema(cnwrap);
+			return cnwrap;
+		} else {
+			return cnx;
 		}
-		return cnx;
 	}
 
 	@Override

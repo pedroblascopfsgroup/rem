@@ -1534,8 +1534,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
-		if (usuarioLogado.getUsuarioExterno())
-			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idGrpsUsuario = extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado);
+			dto.setIdsUsuariosGrupos(idGrpsUsuario);
+		}
 		
 		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
 	}
@@ -1837,9 +1839,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
 		
-		List<Long> idsGruposUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
-		if (usuarioLogado.getUsuarioExterno())
+		if (usuarioLogado.getUsuarioExterno()) {
+			List<Long> idsGruposUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
 			dto.setIdsUsuariosGrupos(idsGruposUsuario);
+		}
 		
 		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		

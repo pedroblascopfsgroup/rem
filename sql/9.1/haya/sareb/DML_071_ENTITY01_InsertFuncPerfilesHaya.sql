@@ -24,13 +24,6 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 BEGIN	
-	-- ELIMINANDO PERMISOS --
-	V_MSQL_1 := 'DELETE FROM '||V_ESQUEMA||'.FUN_PEF ' ||
-					' WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''EDIT_GESTORES'') ' ||
-					' AND PEF_ID IN (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO IN (''HAYAGEST'',''HAYAGESTEXT''))';
-    	
-	EXECUTE IMMEDIATE V_MSQL_1;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Eliminados los permisos.');
 	
     -- INSERTANDO PERMISOS --
     DBMS_OUTPUT.PUT_LINE('******** FUN_PEF ********'); 

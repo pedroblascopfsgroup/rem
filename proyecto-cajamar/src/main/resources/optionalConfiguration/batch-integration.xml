@@ -27,6 +27,7 @@
 		</property>
 		<property name="sessionCacheSize" value="10"/>
 		<property name="cacheProducers" value="false"/>
+		<property name="cacheConsumers" value="false"/>
 	</bean>
 	<bean id="integracionProducerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.producer.cola}"/>
@@ -141,7 +142,7 @@
 		<integration:service-activator method="dispatchMessage">										<!-- PROCESA EL MENSAJE SEGUN LAS REGLAS -->
 			<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
 				<constructor-arg index="0" ref="bpmConsumerActionMgr" />
-				<constructor-arg index="1" value="2038"/>
+				<constructor-arg index="1" value="${entidad.id}"/>
 			</bean>
 		</integration:service-activator>
 	</integration:chain>
@@ -166,17 +167,6 @@
 		<constructor-arg>
 			<list>
 
-				<!-- ACTUALIZACION DE CABECERA PROCEDIMIENTO
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
-					<constructor-arg>
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-INICIO"/>
-						</bean>
-					</constructor-arg>
-					<property name="description" value="Actualización de un procedimiento, lo crea si no existe"/>
-				</bean>
-				 -->
-
 				<!-- NOTIFICACIONES: INICIO / CANCEL / FIN TAREA / BPM-FIN / BPM-TAREA-ACTIVAR ... -->
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaProcedimientoConsumer">
 					<constructor-arg index="0">
@@ -185,6 +175,7 @@
 						</bean>
 					</constructor-arg>
 					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
+					<constructor-arg index="2" value="${integracion.tareas.sta}"/>
 					<property name="description" value="Gestión de una tarea"/>
 					<property name="procedimientoConsumer">
 						<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
@@ -196,7 +187,7 @@
 					</property>
 				</bean>
 
-				<!-- NOTIFICACIONES: ACUERDOS ... -->
+				<!-- NOTIFICACIONES: ACUERDOS ... 
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.AcuerdoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
@@ -206,6 +197,7 @@
 					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
 					<property name="description" value="Gestión de un acuerdo"/>
 				</bean>
+				-->
 
 				<!-- INICIAR UN PROCEIDIENTO TRAS LA LLEGADA DE UNA TAREA -->
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
@@ -286,6 +278,7 @@
 						</bean>
 					</constructor-arg>
 					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
+					<constructor-arg index="2" value="${integracion.tareas.sta}"/>
 					<property name="description" value="Gestión de tarea notificaciones"/>
 				</bean>
 				

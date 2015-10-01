@@ -27,6 +27,7 @@
 		</property>
 		<property name="sessionCacheSize" value="10"/>
 		<property name="cacheProducers" value="false"/>
+		<property name="cacheConsumers" value="false"/>
 	</bean>
 	<bean id="integracionProducerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.producer.cola}"/>
@@ -139,7 +140,7 @@
 		<integration:service-activator method="dispatchMessage">										<!-- PROCESA EL MENSAJE SEGUN LAS REGLAS -->
 			<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
 				<constructor-arg index="0" ref="bpmConsumerActionMgr" />
-				<constructor-arg index="1" value="2039"/>
+				<constructor-arg index="1" value="${entidad.id}"/>
 			</bean>
 		</integration:service-activator>
 	</integration:chain>
@@ -163,6 +164,7 @@
 	<bean id="bpmConsumerActionMgr" class="es.pfsgroup.recovery.integration.ConsumerActionManager">
 		<constructor-arg>
 			<list>
+			
 				<!-- Transicionar tarea -->
 				<!-- RESPUESTA DE CAJAMAR A BPMs que esperan respuesta, cuando finalizan transicionan la tarea -->
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TransicionarTareaBPM">

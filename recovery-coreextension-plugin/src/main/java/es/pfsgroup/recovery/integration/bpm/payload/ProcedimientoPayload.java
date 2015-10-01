@@ -7,6 +7,7 @@ import java.util.List;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.integration.IntegrationClassCastException;
 import es.capgemini.pfs.persona.model.Persona;
@@ -48,7 +49,7 @@ public class ProcedimientoPayload {
 	}
 
 	private final AsuntoPayload asunto;
-	private final UsuarioPayload usuario;
+	private UsuarioPayload usuario;
 
 	public ProcedimientoPayload(DataContainerPayload data) {
 		this.data = data;
@@ -348,6 +349,10 @@ public class ProcedimientoPayload {
 
 	public UsuarioPayload getUsuario() {
 		return usuario;
+	}
+
+	public void setUsuario(Auditable usuario) {
+		this.usuario = new UsuarioPayload(data, usuario);
 	}
 	
 }

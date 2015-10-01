@@ -138,47 +138,6 @@
 		<transition to="Fin5" name="Fin"></transition>
 	</node>
 
-	<state name="CJ004_BPMTramiteCesionRemate">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>subastaBccEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>	
-		<transition to="Fin4" name="cj_tramiteCesionRemate"></transition>
-	</state>
-
-	<state name="CJ004_BPMTramiteAdjudicacion">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>subastaBccEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>	
-		<transition to="Fin5" name="cj_tramiteAdjudicacion"></transition>
-		<transition to="Fin5" name="Fin"></transition>
-	</state>
-
 	<state name="CJ004_SolicitarMandamientoPago">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -238,13 +197,13 @@
 	</decision>
 
 	<decision name="D" expression="#{DecisionRama_4}">
-		<transition to="CJ004_BPMTramiteAdjudicacion" name="si"></transition>
+		<transition to="CJ004_TareaExterna" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
 
 	<decision name="C" expression="#{DecisionRama_3}">
-		<transition to="CJ004_BPMTramiteCesionRemate" name="si"></transition>
-		<transition to="Fin4" name="no"></transition>
+		<transition to="CJ004_TareaExterna" name="si"></transition>
+		<transition to="Fin5" name="no"></transition>
 	</decision>
 
 	<decision name="F" expression="#{DecisionRama_5}">
@@ -415,6 +374,28 @@
 		<transition to="Fin" name="avanzaBPM"></transition>
 		<transition to="CJ004_CalcularDeudaActualizada" name="vueltaAtras"></transition>
 		<transition to="CJ004_ActualizarDeudaJuzgado" name="activarAlerta"></transition>
+	</state>
+
+	<state name="CJ004_TareaExterna">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ004_TareaExterna" name="activarAlerta"></transition>	
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 
 

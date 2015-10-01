@@ -24,11 +24,9 @@
  	<bean id="estamosADosMesesHandler" class="es.pfsgroup.procedimientos.moratoria.EstamosADosMesesHandler"></bean>
  	<bean id="subastaSolicitarNumActivoHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarNumActivoHandler"></bean>
  	<bean id="subastaSolicitarTasacionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarTasacionHandler"></bean> 	
- 	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
-	<bean id="subastaConcursalHayaInitNodeActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalHayaInitNodeActionHandler"></bean>
+ 	<bean id="subastaConcursalHayaInitNodeActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalHayaInitNodeActionHandler"></bean>
 	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
 	<bean id="subastaBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccLeaveActionHandler" />
-	<bean id="aceptacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.aceptacion.AceptacionHayaEnterActionHandler"></bean>
 	
 	<!-- BPM activos -->
 	

@@ -54,7 +54,7 @@ DECLARE
       ,T_TIPO_TFA('CRSOLADJ', 'Sol. de adj. con reserva de facultad de cesión de remate', 'Solicitud de adjudicación con reserva de facultad de cesión de remate', 'AP') -- Trámite de Cesión Remate
       ,T_TIPO_TFA('CRACCES', 'Acta de cesión', 'Acta de cesión', 'AP') -- Trámite de Cesión Remate
       ,T_TIPO_TFA('CRRESTRA', 'Resguardo trasferencia', 'Resguardo trasferencia', 'AP') -- Trámite de Cesión Remate
-      
+      ,T_TIPO_TFA('INSUFI', 'Informe Subasta Firmado', 'Informe Subasta Firmado', 'AP') -- T. Subasta concursal
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

@@ -117,7 +117,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- <dependency> <groupId>es.pfsgroup.recovery</groupId> <artifactId>rec-web-lib</artifactId> 
+		<!-- <dependency> <groupId>es.pfsgroup.recovery</groupId> <artifactId>rec-web-lib</artifactId>
 			<version>1.0.0</version> <optional>true</optional> </dependency> -->
 		<dependency>
 			<groupId>es.pfsgroup.recovery</groupId>
@@ -160,7 +160,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>2.3</version>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>

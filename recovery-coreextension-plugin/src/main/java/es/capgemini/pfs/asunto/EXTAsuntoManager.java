@@ -1836,8 +1836,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
+		
+		List<Long> idsGruposUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
 		if (usuarioLogado.getUsuarioExterno())
-			dto.setIdsUsuariosGrupos(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado));
+			dto.setIdsUsuariosGrupos(idsGruposUsuario);
 		
 		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS);		

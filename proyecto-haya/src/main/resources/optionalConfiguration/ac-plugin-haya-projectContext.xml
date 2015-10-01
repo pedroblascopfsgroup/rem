@@ -189,15 +189,15 @@
 			</list>
 		</property>
 		<property name="tiposGestorGestoria">
-			<Set>
+			<set>
 				<value>GGADJ</value>
 				<value>GGSAN</value>
-			</Set>
+			</set>
 		</property>
 		<property name="tiposGestorProcurador">
-			<Set>
+			<set>
 				<value>PROC</value>
-			</Set>
+			</set>
 		</property>
 	</bean>
 	

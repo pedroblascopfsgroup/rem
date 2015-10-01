@@ -322,7 +322,7 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 
 			// es Multigestor
 			Criterion multiGestor = null;
-			List<Long> idGrpsUsuario = extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuLogado);
+			List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuLogado);
 
 			if (idGrpsUsuario.size() > 0) {
 				StringBuilder listIds = new StringBuilder();

@@ -1535,7 +1535,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		dto.setCodigoZonas(getCodigosDeZona(dto));
 		dto.setTiposProcedimiento(getTiposProcedimiento(dto));
 		if (usuarioLogado.getUsuarioExterno()) {
-			List<Long> idGrpsUsuario = extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(usuarioLogado);
+			List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuarioLogado);
 			dto.setIdsUsuariosGrupos(idGrpsUsuario);
 		}
 		

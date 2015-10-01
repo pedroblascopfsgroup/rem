@@ -1013,8 +1013,8 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         StringBuilder hql = new StringBuilder();
         Boolean requiereRiesgoSaldo = false;
 
-        hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
-        //hql.append("select exp FROM Expediente exp ");
+        //hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
+        hql.append("select exp FROM Expediente exp ");
 
         if (dtoExpediente.getIdComite() != null) {
             hql.append(" left join exp.decisionComite dco left join dco.sesion sesion ");
@@ -1227,7 +1227,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 	        hql.append(" ) ");
         }
 
-        hql.append(")");
+        //hql.append(")");
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
 	}
 

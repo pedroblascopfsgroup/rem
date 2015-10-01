@@ -1,6 +1,8 @@
 package es.capgemini.pfs.multigestor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,18 @@ public class EXTDDTipoGestorManager implements EXTDDTipoGestorApi{
 	@BusinessOperation(EXT_BIO_TIPOGESTOR_GETBYCOD)
 	public EXTDDTipoGestor getByCod(String codigo) {
 		return genericDao.get(EXTDDTipoGestor.class,genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+	}
+	
+	@Override
+	@BusinessOperation(EXT_BIO_TIPOGESTORLIST_GETBYCOD)
+	public List<EXTDDTipoGestor> getByListCod(Set<String> codigos) {
+		List<EXTDDTipoGestor> listaTipos = new ArrayList<EXTDDTipoGestor>();
+		for(String codigo : codigos){
+			EXTDDTipoGestor tGestor = new EXTDDTipoGestor();
+			tGestor = getByCod(codigo);
+			listaTipos.add(tGestor);
+		}
+		return listaTipos;
 	}
 
 }

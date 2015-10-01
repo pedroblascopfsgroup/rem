@@ -22,6 +22,14 @@ public class ConsultaDeSaldosWS extends BaseWS implements ConsultaDeSaldosWSApi 
 
 	private Map<String, WSConsultaSaldos> configuracionServicios;
 	
+	public Map<String, WSConsultaSaldos> getConfiguracionServicios() {
+		return configuracionServicios;
+	}
+
+	public void setConfiguracionServicios(Map<String, WSConsultaSaldos> configuracionServicios) {
+		this.configuracionServicios = configuracionServicios;
+	}
+
 	@Override
 	public ResultadoConsultaSaldo consultar(String numCuenta, DDAplicativoOrigen aplicativoOrigenContrato) {
 		ResultadoConsultaSaldo resultado = new ResultadoConsultaSaldo();

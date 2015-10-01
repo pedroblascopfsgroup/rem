@@ -78,7 +78,8 @@ public class PROCompletarExpedienteActionHandler extends PROBaseActionHandler im
 
             expedienteManager.setInstanteCambioEstadoExpediente(idExpediente);
             executionContext.setVariable(TAREA_ASOCIADA_CE, idTareaCE);
-            if (estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
+            //Si venimos de "devolver a completar" se desactiva el avance automático en todos los casos.
+            if (!DEVOLVER_COMPLETAR.equals(comeFrom) && estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
                 executionContext.setVariable(GENERAALERTA, Boolean.TRUE);
                 executionContext.setVariable(WHERE_TO_GO, TRANSITION_ENVIARAREVISION);
             } else {
@@ -125,7 +126,8 @@ public class PROCompletarExpedienteActionHandler extends PROBaseActionHandler im
         if (fechaFin != null) { return fechaFin - now; }
         Long creacionExp = expedienteManager.getExpediente(idExpediente).getAuditoria().getFechaCrear().getTime();
         Long tiempoTranscurrido = now - creacionExp;
-        return plazo - tiempoTranscurrido;
+        Long tiempoRestante = plazo - tiempoTranscurrido;        
+        return (tiempoRestante<0) ? (24*60*60*1000L) : tiempoRestante;
     }
 
     /**

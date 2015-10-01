@@ -708,7 +708,8 @@
 					,idGestorConfeccionExpediente:comboGestoresCEXP.getValue() 
 					,idSupervisorConfeccionExpediente:comboSupervisoresCEXP.getValue()
 					,tipoDespacho: getStrTipoDespacho()
-					<%--  Emilio Fin --%>					
+					<%--  Emilio Fin --%>	
+					,codigoEstadoAsunto: '${codigoEstadoAsunto}'				
 				}
 				,success :  function(){ 
                   				page.fireEvent(app.event.DONE);

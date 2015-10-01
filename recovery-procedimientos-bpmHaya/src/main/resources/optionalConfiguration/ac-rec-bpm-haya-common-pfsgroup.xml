@@ -837,7 +837,45 @@
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, it);
 	            }
-            	
+	            
+	            def dameNumDocumentosTipo = {
+	            	
+	            	def numDocumentos = 0;
+	            	def adjuntos = procedimientoManager.getProcedimiento(idProcedimiento).getAdjuntos();
+					for (adjunto in adjuntos) {
+						if (!es.pfsgroup.commons.utils.Checks.esNulo(adjunto.getProcedimiento()) && adjunto.getProcedimiento().getId() == idProcedimiento) {
+								
+							def tipoAdjunto = adjunto.getTipoFichero();
+							if (tipoAdjunto == null) {
+								continue;
+							}
+							if (it.equals(tipoAdjunto.getCodigo())) {
+								numDocumentos++;
+							}
+						}
+					}
+					
+					return numDocumentos.toString();
+	            }
+	            
+	            def dameNumNotificadosNoEdictoNoExcluidos = {
+	            	def demandadosNotificados = 0;
+	            	def notificacionDemandadosManager = ctx.getBean("MSVNotificacionDemandadosManager");
+	            	
+	            	def listaMSVInfoResumen = notificacionDemandadosManager.getResumenNotificaciones(idProcedimiento);
+		
+					if (listaMSVInfoResumen != null && listaMSVInfoResumen.size() > 0) {
+						for (msvInfoResumen in listaMSVInfoResumen) {
+							if (!((msvInfoResumen.getExcluido() != null && msvInfoResumen.getExcluido())
+								|| ("POSITIVO".equals(msvInfoResumen.getResultadoReqEdicto())))) {
+						
+								demandadosNotificados++;
+							}
+						}
+					}
+			
+	            	return demandadosNotificados.toString();
+	            }            	
   			 ]]>
   			</value>
   		</list>

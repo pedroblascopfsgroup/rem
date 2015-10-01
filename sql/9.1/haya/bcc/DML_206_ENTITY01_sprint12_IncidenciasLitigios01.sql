@@ -34,6 +34,11 @@ BEGIN
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumento(''''DSPJ'''') ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><p>Debe adjuntar el documento "Documentaci&oacute;n con sello de presentaci&oacute;n en el Juzgado".</p></div>'''''' WHERE tap_codigo = '''||V_TAREA||'''';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-870');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-849');
+	V_TAREA:='HC103_SolicitarProvision';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET TFI_TIPO=''textproc'' WHERE TFI_NOMBRE = ''numAuto'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-849');
+	
 COMMIT;
  
 EXCEPTION

@@ -76,4 +76,12 @@ public interface PropuestaApi {
 	 * @param observaciones
 	 */
 	public void finalizar(Long idAcuerdo, Date fechaPago, Boolean cumplido, String observaciones);
+	
+	/**
+	 * 
+	 * @param idPropuesta
+	 * @param motivo
+	 */
+	public void rechazar(Long idPropuesta, String motivo);
+
 }

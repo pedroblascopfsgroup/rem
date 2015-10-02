@@ -6,7 +6,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
+var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEstadoGestion){
    var panelTerminos=new Ext.Panel({
 		layout:'form'
 		,border : false
@@ -247,7 +247,7 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta){
 	var btnEditarEstado = new Ext.Button({
 		text: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.boton.editarEstadoGestion" text="**Editar Estado de Gestion" />',
 		iconCls: 'icon_edit',
-		hidden : noPuedeModificar,
+		hidden : noPuedeEditarEstadoGestion,
 		handler: function(){
 			if (typeof idTerminoSeleccionado != 'undefined'){
 	     	   	var w = app.openWindow({

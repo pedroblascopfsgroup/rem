@@ -59,7 +59,7 @@
 					});
 					w.on(app.event.DONE, function(){
 						w.close();
-						page.fireEvent(app.event.DONE);
+						recargarActuacionesRealizadas();
 					});
 					w.on(app.event.CANCEL, function(){ w.close(); });
 				}
@@ -81,7 +81,6 @@
 				});
 				w.on(app.event.DONE, function(){
 					w.close();
-					page.fireEvent(app.event.DONE);
 					recargarActuacionesRealizadas();
 				});
 				w.on(app.event.CANCEL, function(){ w.close(); });
@@ -98,7 +97,7 @@
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 		,style:'padding:50px;'
 		,autoWidth:true
-		,autoHeight : true
+		,height:162
 		,bbar : [<sec:authorize ifAllGranted="EDITAR_GYA"> 
  	        	btnAltaActuacion,btnEditActuacion 
  	        </sec:authorize>]
@@ -108,7 +107,7 @@
 	var fieldSetActuacionesRealizadas = new Ext.form.FieldSet({
 		title:'<s:message code="acuerdos.actuaciones.titulo" text="**Actuaciones Realizadas"/>'
 		,autoHeight:true
-		//,border:true
+		,width:575
 		,bodyStyle:'padding:5px;cellspacing:20px;'
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%',border:true}
 		,items : [
@@ -148,17 +147,17 @@
 	entidad.cacheStore(actuacionesStore);
 
    var cmActuacionesAExplorar = new Ext.grid.ColumnModel([
-   	   {dataIndex: 'id', hidden:true, fixed:true}
-   	  ,{dataIndex: 'codTipoSolucionAmistosa', hidden:true, fixed:true}
-      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.tipoSolucionAmistosa" text="**Tipo Solición Amistosa" />', dataIndex : 'tipoSolucionAmistosa'}
-   	  ,{dataIndex: 'codSubtipoSolucion', hidden:true, fixed:true}
-      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.subtipoSolucion" text="**Subtipo Solución" />', dataIndex : 'subtipoSolucion'}
-      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.valoracion" text="**Valoración" />', dataIndex : 'valoracion'}
-      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.observaciones" text="**Observaciones" />', dataIndex : 'observaciones'}
-   	  ,{dataIndex: 'isActivo', hidden:true, fixed:true}
+   	   {dataIndex: 'id', hidden:true}
+   	  ,{dataIndex: 'codTipoSolucionAmistosa', hidden:true}
+      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.tipoSolucionAmistosa" text="**Tipo Solición Amistosa" />', dataIndex : 'tipoSolucionAmistosa', width:120}
+   	  ,{dataIndex: 'codSubtipoSolucion', hidden:true}
+      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.subtipoSolucion" text="**Subtipo Solución" />', dataIndex : 'subtipoSolucion', width:120}
+      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.valoracion" text="**Valoración" />', dataIndex : 'valoracion', width:140}
+      ,{header : '<s:message code="acuerdos.actuacionesAExplorar.observaciones" text="**Observaciones" />', dataIndex : 'observaciones', width:120}
+   	  ,{dataIndex: 'isActivo', hidden:true}
    ]);
    
-   <sec:authorize ifAllGranted="EDITAR_GYA">
+  <sec:authorize ifAllGranted="EDITAR_GYA">
 	   var btnEditActuacionAExplorar = new Ext.Button({
 	       text:  '<s:message code="app.editar" text="**Editar" />'
 	       <app:test id="btnEditActuacionAExplorar" addComa="true" />
@@ -177,7 +176,7 @@
 					});
 					w.on(app.event.DONE, function(){
 						w.close();
-						page.fireEvent(app.event.DONE);
+						recargarActuacionesExplorar();
 					});
 					w.on(app.event.CANCEL, function(){ w.close(); });
 				}
@@ -191,7 +190,11 @@
          ,store:actuacionesStore
 		 ,cm:cmActuacionesAExplorar 
          ,style:'padding-right:10px'
-         ,autoHeight : true
+         ,maxHeight:150
+         ,height:125
+         ,forceFit:true
+         ,autoWidth:true
+         ,autoHeight:true
 		 ,border:true
 		 ,margin:90
          ,cls:'cursor_pointer'
@@ -215,6 +218,7 @@
    var fieldSetActuaciones = new Ext.form.FieldSet({
 		title:'<s:message code="acuerdos.actuacionesAExplorar.titulo" text="**Actuaciones A Explorar"/>'
 		,autoHeight:true
+		,width:575
 		,border:true
 		,bodyStyle:'padding:5px;cellspacing:20px;'
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%'}
@@ -233,15 +237,24 @@
 		,labelStyle:labelStyle
 		,value:'${expediente.aaa.tipoAyudaActuacion.descripcion}'
 	});
-
-	var descAyuda= app.crearTextArea(
-		'<s:message code="expedientes.consulta.tabgestion.descayuda" text="**Descrcion Ayuda"/>'
-		,'<s:message text="${expediente.aaa.descripcionTipoAyudaActuacion}" javaScriptEscape="true" />'
-		,true
-		,labelStyle
-		,'descripcionTipoAyudaActuacion'
-		,{width:300}
-	);
+	
+	var titulotipoAyuda = new Ext.form.Label({ 
+   	text:'<s:message code="expedientes.consulta.tabgestion.descayuda" text="**Descripcion Ayuda"/>'
+	,style:'font-weight:bolder; font-size:11;'
+	});
+	
+	var descAyuda=new Ext.form.TextArea({
+		fieldLabel:'<s:message code="expedientes.consulta.tabgestion.descayuda" text="**Descripcion Ayuda"/>'
+		,width:435
+		,height:125
+		,hideLabel:true
+		,name:'descripcionTipoAyudaActuacion'
+		,maxLength: 1024
+		,value : '<s:message text="${expediente.aaa.descripcionTipoAyudaActuacion}" javaScriptEscape="true" />'
+		<app:test id="campoDescripcion" addComa="true"/> 
+	});
+	
+	
 	
 	var causasImpago=new Ext.ux.form.StaticTextField({
 		fieldLabel:'<s:message code="expedientes.consulta.tabgestion.causasimpago" text="**Causa Impago" />'
@@ -249,16 +262,23 @@
 		,labelStyle:labelStyle
 		,name:'causasImpago'
 	});
-		
-	var comentarios= app.crearTextArea(
-		'<s:message code="expedientes.consulta.tabgestion.comentarios" text="**Comentarios"/>'
-		,'<s:message text="${expediente.aaa.comentariosSituacion}" javaScriptEscape="true" />'
-		,true
-		,labelStyle
-		,'comentariosSituacion'
-		,{width:300,height:70}
-	);
 	
+	var titulocomentarios = new Ext.form.Label({
+   	text:'<s:message code="expedientes.consulta.tabgestion.comentarios" text="**Comentarios"/>'
+	,style:'font-weight:bolder; font-size:11;'
+	}); 
+	
+	var comentarios=new Ext.form.TextArea({
+		fieldLabel:'<s:message code="expedientes.consulta.tabgestion.comentarios" text="**Comentarios"/>'
+		,width:435
+		,height:125
+		,hideLabel:true
+		,maxLength: 1024
+		,name:'comentariosSituacion'
+		,value : '<s:message text="${expediente.aaa.comentariosSituacion}" javaScriptEscape="true" />'
+		 <app:test id="campoComentario" addComa="true"/> 
+	});
+
 	labelObs = new Ext.form.Label({
 	   	text:'<s:message code="expedientes.consulta.tabgestion.revision.observaciones" text="**Observaciones:"/>'
 		,style:'font-weight:bolder;font-family:tahoma,arial,helvetica,sans-serif;font-size:11px;'
@@ -267,29 +287,18 @@
 	var revision = new Ext.form.TextArea({
 		name: 'revision'
 		,value: ''
-		,width: 280
-		,height: 340
+		,width: 550
+		,height: 150
 		,labelStyle: labelStyle
 		,style:'margin-top:5px'
 		,readOnly: true
 		,hideLabel: true
 	});
-
-	var panelGyA = new Ext.Panel({
-		style:'padding: 5px'
-		,defaults:{
-		    style:'margin:5px'
-		}
-		,border : false
-		,autoHeight:true 
-		,autoWidth:true
-	      ,items:[fieldSetActuacionesRealizadas, fieldSetActuaciones]
-	   });
 	
 	var formGestion = new Ext.form.FormPanel({
 		border:false
 		,autoHeight:true
-		,items:[tipoAyuda, descAyuda, causasImpago, comentarios]
+		,items:[tipoAyuda, titulotipoAyuda, descAyuda, causasImpago, titulocomentarios, comentarios]
 	});
 	
 	var formRevision = new Ext.form.FormPanel({
@@ -302,7 +311,7 @@
 		title:'<s:message code="expedientes.consulta.tabgestion.revision" text="**Revisión"/>'
 		,border:true
 		,style:'padding:5px'
-		,height:427
+		,height:437
 		,width:450
 		,defaults : {border:false }
 		,monitorResize: true
@@ -313,47 +322,26 @@
 		title:'<s:message code="expedientes.consulta.tabgestion.revision" text="**Revisión"/>'
 		,border:true
 		,style:'padding:5px'
-		,height:427
-		,width:300
+		,height:200
 		,defaults : {border:false }
 		,monitorResize: true
 		,items:[formRevision]
 	});
 
-	var panelSuperior = new Ext.Panel({
-			autoHeight:true
-			,autoWidth:true
-			,layout:'table'
-			,title:'<s:message code="expedientes.consulta.tabgestion.titulo" text="**Gestion y Analisis"/>'
-			,layoutConfig:{columns:2}
-			,titleCollapse:true
-			,style:'margin-right:20px;margin-left:10px'
-			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-			,items:[{layout:'form'
-						,bodyStyle:'padding:5px;cellspacing:10px'
-						,items:[panelGyA]}
-					,{layout:'form'
-						,bodyStyle:'padding:5px;cellspacing:10px'
-						,items:[panelGestion]}
-			]
-			,nombreTab : 'tabGestionyAnalisis'
-	});
-	
 	var panel = new Ext.Panel({
 			autoHeight:true
 			,autoWidth:true
 			,layout:'table'
 			,title:'<s:message code="expedientes.consulta.tabgestion.titulo" text="**Gestion y Analisis"/>'
-			,layoutConfig:{columns:1}
-			,titleCollapse:true
+			,layoutConfig:{columns:2}
 			,style:'margin-right:20px;margin-left:10px'
 			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
 			,items:[{layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
-						,items:[panelSuperior]}
+						,items:[fieldSetActuacionesRealizadas, fieldSetActuaciones, panelRevision]}
 					,{layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
-						,items:[panelRevision]}
+						,items:[panelGestion]}
 			]
 			,nombreTab : 'tabGestionyAnalisis'
 	});
@@ -371,7 +359,7 @@
 			,cls: 'x-btn-text-icon'
            	,handler:function(){
                 var w = app.openWindow({
-                    flow : 'expedientes/editaGestionyAnalisis'
+                    flow : 'expedientes/editaGestionyAnalisisPropuesta'
                     ,width:650
                     ,title : '<s:message code="expedientes.consulta.tabgestion.edicion" text="**Editar Gestion Analisis y Propuesta" />' 
                     ,params : {id:entidad.getData("gestion").aaa}
@@ -395,7 +383,7 @@
 			,cls: 'x-btn-text-icon'
 				,handler:function(){
 				var w = app.openWindow({
-				  flow : 'expedientes/editaGestionyAnalisisRevision'
+				  flow : 'expedientes/editaGestionyAnalisisRevisionPropuesta'
 				  ,width:650
 				  ,title : '<s:message code="expedientes.consulta.tabgestion.revision.edicion" text="**Editar Revisión de Gestion Analisis y Propuesta" />' 
 				  ,params : {id:entidad.getData("gestion.aaa")}
@@ -408,6 +396,20 @@
 		   }
 		});
 	</sec:authorize>
+	
+	var refrescarGestionyAnalisis = function(){
+		formGestion.load({
+				url : app.resolveFlow('expedientes/tabGestionyAnalisisData')
+				,params : {id : entidad.getData("id")}
+			});
+	};
+
+	var refrescarGestionyAnalisisRev = function(){
+		formRevision.load({
+				url : app.resolveFlow('expedientes/tabGestionyAnalisisData')
+				,params : {id : entidad.getData("id")}
+			});
+	};
 	
 	<sec:authorize ifAllGranted="EDITAR_GYA">
     	panelGestion.items.add(btnEditarGyA);
@@ -436,8 +438,14 @@
 		<sec:authorize ifAllGranted="EDITAR_GYA">
 			if ((estadoExpediente == app.estExpediente.ESTADO_ACTIVO) &&
 			   (permisosVisibilidadGestorSupervisor(perfilGestor) || permisosVisibilidadGestorSupervisor(perfilSupervisor) ) ) {
+				btnAltaActuacion.show();
+				btnEditActuacion.show();
+				btnEditActuacionAExplorar.show();
 				btnEditarGyA.show();
 			}else{
+				btnAltaActuacion.hide();
+				btnEditActuacion.hide();
+				btnEditActuacionAExplorar.hide();
 				btnEditarGyA.hide();
 			}
 		</sec:authorize>
@@ -459,6 +467,11 @@
 	var recargarActuacionesRealizadas = function (){
 		entidad.refrescar();
     	entidad.cacheOrLoad(data,actuacionesRealizadasStore, {id : panel.getCodExpediente()});
+	};
+	
+	var recargarActuacionesExplorar = function (){
+		entidad.refrescar();
+    	entidad.cacheOrLoad(data,actuacionesStore, {id : panel.getCodExpediente()});
 	};
 	
 	panel.setVisibleTab = function(data){

@@ -1332,8 +1332,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		// TODO Auto-generated method stub
 		return null;
 	}
-<<<<<<< HEAD
-=======
 
 	@BusinessOperation(BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION)
     @Transactional(readOnly = false)
@@ -1349,5 +1347,4 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			}
 		}
 	}
->>>>>>> propuestas-expediente
 }

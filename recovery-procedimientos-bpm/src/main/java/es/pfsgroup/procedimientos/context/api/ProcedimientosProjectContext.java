@@ -1,6 +1,7 @@
 package es.pfsgroup.procedimientos.context.api;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -18,5 +19,6 @@ public interface ProcedimientosProjectContext {
 	public List<String> getCamposCostas();
 	public List<String> getCamposSuspensionSubasta();
 	public String getCodigoCargaAnterior();
+	public Set<String> getProcedimientosPestanyaFaseComun();
 	
 }

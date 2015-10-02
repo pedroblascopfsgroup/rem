@@ -282,7 +282,7 @@
 	           AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo})
 	           AND
 	           (
-	             CASE WHEN arq_per.dd_tsn_id is null THEN 1
+	             CASE WHEN (arq_per.dd_tsn_id is null or arq_per.arq_nivel = arq_per.arq_nivel) THEN 1
 	             ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.cualquierSalto.codigo}) THEN 1
 	                ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
 	                    ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1 
@@ -406,7 +406,7 @@
 		            /* O, si hay un salto suficientemente grande de nivel de arquetipo como indica el arquetipo actual*/
 		            OR 
 		            (
-		              CASE WHEN arq_per.dd_tsn_id is null THEN 1
+		              CASE WHEN (arq_per.dd_tsn_id is null or arq_per.arq_nivel = arq_per.arq_nivel) THEN 1
 		              ELSE CASE WHEN arq_cal.arq_nivel <> arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.cualquierSalto.codigo}) THEN 1
 		                 ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
 		                     ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1 

@@ -2053,6 +2053,20 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-hre-online</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
 				<!-- PASAR A DELIVERY UNICAMENTE -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
@@ -2241,6 +2255,21 @@
 				</dependency>
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
+					<artifactId>proyecto-cajamar-hre-online</artifactId>
+					<exclusions>
+						<exclusion>
+							<groupId>es.pfsgroup</groupId>
+							<artifactId>recovery-domain</artifactId>
+						</exclusion>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<!-- PONER EN DELIVERY !!! -->
+				<dependency>
+					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar-ws</artifactId>
 					<exclusions>
 						<exclusion>
@@ -2253,6 +2282,7 @@
 						</exclusion>
 					</exclusions>
 				</dependency>
+				<!-- FIN PONER EN DELIVERY !!! -->
 				<dependency>
 					<groupId>es.pfsgroup.plugin</groupId>
 					<artifactId>proyecto-cajamar</artifactId>

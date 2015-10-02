@@ -41,4 +41,6 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String RESPUESTA_DEVOLVER_CE = "respuestaDevolverCE";
     String RESPUESTA_DEVOLVER_RE = "respuestaDevolverRE";
     String AVANCE_AUTOMATICO = "AvanceAutomatico";
+    String DEVOLVER_COMPLETAR = "DevolverCompletar";
+    String DEVOLVER_REVISION = "DevolverRevision";
 }

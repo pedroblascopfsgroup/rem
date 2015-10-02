@@ -13,8 +13,6 @@
 	<bean id="bccCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateBccLeaveActionHandler" />
 	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
 	<bean id="endElevacionCajamarActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PROEndElevacionCajamarActionHandler" />
-	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
-	<bean id="subastaBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccLeaveActionHandler" />
 	<bean id="subastaTercerosBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaTercerosBccLeaveActionHandler" />
 	<bean id="subastaV4HayaEjecucionNotarialEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialEnterActionHandler"></bean>
  	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>

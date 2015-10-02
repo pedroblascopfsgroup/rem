@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos.api;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +39,15 @@ public interface PropuestaApi {
 	public void proponer(Long idPropuesta);
 	
 	/**
-	 * 
 	 * @param idPropuesta
 	 */
 	public void cancelar(Long idPropuesta);
+
+	/**
+	 * @param idAcuerdo
+	 * @param fechaEstado
+	 * @param cumplido
+	 * @param observaciones
+	 */
+	public void finalizar(Long idAcuerdo, Date fechaPago, Boolean cumplido, String observaciones);
 }

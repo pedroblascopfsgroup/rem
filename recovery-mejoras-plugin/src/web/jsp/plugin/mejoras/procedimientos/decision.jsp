@@ -969,19 +969,35 @@
 		text : '<s:message code="decisionProcedimiento.proponer" text="**Proponer" />'
 		,iconCls:'icon_elevar'
 		,handler : function(){
-			var params = transform();
-			params["idProcedimiento"]='${idProcedimiento}';
-			params["idDecision"]='${id}';
-			page.webflow({
-				flow: 'decisionprocedimiento/crearPropuesta'
-				,params: params
-				,success : function(){ 
-					page.fireEvent(app.event.DONE); 
-				}
-			});
+			if (validarDatosFormulario()){
+				var params = transform();
+				params["idProcedimiento"]='${idProcedimiento}';
+				params["idDecision"]='${id}';
+				page.webflow({
+					flow: 'decisionprocedimiento/crearPropuesta'
+					,params: params
+					,success : function(){ 
+						page.fireEvent(app.event.DONE); 
+					}
+				});
+			}
 
 		}
 	});
+	
+	var validarDatosProponer = function(){
+	
+		
+		if (chkFinalizarOrigen.getValue() && comboCausasFinalizar.getValue()){
+			return true;
+		} else if (chkParalizarOrigen.getValue() && comboCausasParalizar.getValue() && fechaHasta.getValue()){
+			return true;
+		} else {
+			return false;
+		}
+	
+	}
+	
 	var btnRechazar=new Ext.Button({
 		text:'<s:message code="decisionProcedimiento.rechazar" text="**Rechazar" />'
 		,iconCls:'icon_rechazar_decision'

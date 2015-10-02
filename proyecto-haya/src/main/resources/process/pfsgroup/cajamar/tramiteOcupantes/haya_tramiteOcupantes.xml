@@ -21,7 +21,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericLeaveActionHandler
+				<targetBean>ocupantesHayaLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>

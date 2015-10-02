@@ -17,6 +17,8 @@ public class PropuestasController {
 	static final String JSP_ALTA_PROPUESTA = "plugin/mejoras/acuerdos/editaConclusionesAcuerdo";
 	static final String LISTADO_PROPUESTAS_JSON =  "plugin/mejoras/acuerdos/acuerdosJSON";
 	static final String JSON_LISTADO_CONTRATOS = "plugin/mejoras/acuerdos/listadoContratosAsuntoJSON";
+	static final String LISTADO_PROPUESTAS_REALIZADAS_JSON =  "plugin/mejoras/acuerdos/propuestasRealizadasJSON";
+	static final String LISTADO_PROPUESTAS_EXPLORAR_JSON =  "plugin/mejoras/acuerdos/propuestasExplorarJSON";
 
 	@Autowired 
 	private DictionaryManager dictionaryManager; 
@@ -65,6 +67,29 @@ public class PropuestasController {
 		return LISTADO_PROPUESTAS_JSON;
 	}
 	
+	/**
+     * Obtiene un listado de las propuestas asignadas al expediente.
+     * @param idExpediente
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getPropuestasRealizadasByExpedienteId(Long id,ModelMap model) {
+		model.put("propuestas",propuestaApi.listadoPropuestasRealizadasByExpedienteId(id));
+		return LISTADO_PROPUESTAS_REALIZADAS_JSON;
+	}
+	
+	
+	/**
+     * Obtiene un listado de las propuestas asignadas al expediente.
+     * @param idExpediente
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getPropuestasExplorarByExpedienteId(Long id,ModelMap model) {
+		model.put("actuacionesAExplorar",propuestaApi.listadoActuacionesAExplorarExpediente(id));
+		return LISTADO_PROPUESTAS_EXPLORAR_JSON;
+	}
+
 	@RequestMapping
     public String proponer(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, ModelMap model) {
 		propuestaApi.proponer(idPropuesta);

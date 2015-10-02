@@ -114,6 +114,8 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_ACEPTAR_ACUERDO = "mejacuerdoManager.aceptarAcuerdo";
 	public static final String BO_ACUERDO_MGR_PROPONER_ACUERDO = "mejacuerdoManager.proponerAcuerdo";
 	public static final String BO_ACUERDO_MGR_CANCELAR_ACUERDO = "mejacuerdoManager.cancelarAcuerdo";
+	public static final String BO_ACUERDO_MGR_SAVE_ACTUACION_REALIZADA_EXPEDIENTE = "mejacuerdoManager.saveActuacionesRealizadasExpediente";
+    public static final String BO_ACUERDO_MGR_ACTUALIZACIONES_REALIZADAS_EXPEDIENTE = "mejacuerdoManager.getActuacionExpediente";
 	
 		
 	private final Log logger = LogFactory.getLog(getClass());
@@ -144,8 +146,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	@Autowired
 	private TareaNotificacionDao tareaNotificacionDao;
-	
-	
 	
 	/**
 	 * Pasa un acuerdo a estado Rechazado.

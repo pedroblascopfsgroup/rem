@@ -14,6 +14,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -155,6 +156,8 @@ public class MEJGenericFormManager extends
 			// Thread para que pueda recuperarlos
 			jbpmManager.signalToken(tarea.getTokenIdBpm(),
 					BPMContants.TRANSICION_AVANZA_BPM);
+		} catch (UserException ue){
+			throw ue;
 		} catch (Throwable t) {
 			logger.error("Esta excepción se traduce para HAYA en fase de implantación", t);
 			throw new BusinessOperationException("Problema con la migración de datos");

@@ -107,7 +107,7 @@ public interface NMBProjectContext {
 
 	String getFechaSolicitudRegistrarSolicitudMoratoria();
 	
-	String getCodigoRegistrarResolucion();
+	String getCodigoRegistrarResolucionMoratoria();
 
 	String getFechaFinMoratoriaRegistrarResolucion();
 

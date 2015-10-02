@@ -94,7 +94,7 @@
 				<value>fechaSolicitud</value>
 		</property>
 		
-		<property name="codigoRegistrarResolucion">
+		<property name="codigoRegistrarResolucionMoratoria">
 				<value>H011_RegistrarResolucion</value>
 		</property>
 		

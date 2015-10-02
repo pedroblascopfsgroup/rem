@@ -58,7 +58,7 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private String codigoOrdinario;
 	private String codigoRegistrarSolicitudMoratoria;
 	private String fechaSolicitudRegistrarSolicitudMoratoria;
-	private String codigoRegistrarResolucion;
+	private String codigoRegistrarResolucionMoratoria;
 	private String fechaFinMoratoriaRegistrarResolucion;
 	private String resultadoMoratoria;
 	
@@ -379,6 +379,15 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public void setFechaSolicitudRegistrarSolicitudMoratoria(String fechaSolicitudRegistrarSolicitudMoratoria) {
 		this.fechaSolicitudRegistrarSolicitudMoratoria = fechaSolicitudRegistrarSolicitudMoratoria;
 	}
+
+	@Override
+	public String getCodigoRegistrarResolucionMoratoria() {
+		return codigoRegistrarResolucionMoratoria;
+	}
+
+	public void setCodigoRegistrarResolucionMoratoria(String codigoRegistrarResolucionMoratoria) {
+		this.codigoRegistrarResolucionMoratoria = codigoRegistrarResolucionMoratoria;
+	}
 	
 	@Override
 	public String getFechaFinMoratoriaRegistrarResolucion() {
@@ -396,15 +405,6 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 
 	public void setResultadoMoratoria(String resultadoMoratoria) {
 		this.resultadoMoratoria = resultadoMoratoria;
-	}
-
-	@Override
-	public String getCodigoRegistrarResolucion() {
-		return codigoRegistrarResolucion;
-	}
-
-	public void setCodigoRegistrarResolucion(String codigoRegistrarResolucion) {
-		this.codigoRegistrarResolucion = codigoRegistrarResolucion;
 	}
 	
 }

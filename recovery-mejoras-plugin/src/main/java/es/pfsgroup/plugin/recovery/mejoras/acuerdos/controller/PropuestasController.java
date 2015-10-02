@@ -96,6 +96,12 @@ public class PropuestasController {
 		propuestaApi.cancelar(idPropuesta);
 		return DEFAULT;
 	}
+	
+	@RequestMapping
+    public String rechazar(@RequestParam(value = "idPropuesta", required = true) Long idPropuesta, String motivo) {
+		propuestaApi.rechazar(idPropuesta, motivo);
+		return DEFAULT;
+	}
 
 	@RequestMapping
     public String finalizar(WebRequest request, ModelMap model) throws ParseException {

@@ -100,6 +100,17 @@ public class PropuestaManager implements PropuestaApi {
 		DDEstadoAcuerdo nuevoEstado = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, nuevoCodigoEstado);
 		if (nuevoEstado != null) {
 			propuesta.setEstadoAcuerdo(nuevoEstado);
+			
+			if(DDEstadoAcuerdo.ACUERDO_PROPUESTO.equals(nuevoEstado.getCodigo())){
+					propuesta.setFechaPropuesta(new Date());
+				}else if(DDEstadoAcuerdo.ACUERDO_RECHAZADO.equals(nuevoEstado.getCodigo())){
+						propuesta.setFechaEstado(new Date());
+					}else if(DDEstadoAcuerdo.ACUERDO_CUMPLIDO.equals(nuevoEstado.getCodigo()) || DDEstadoAcuerdo.ACUERDO_INCUMPLIDO .equals(nuevoEstado.getCodigo())){
+							propuesta.setFechaResolucionPropuesta(new Date());
+						}else if(DDEstadoAcuerdo.ACUERDO_FINALIZADO .equals(nuevoEstado.getCodigo())){
+							propuesta.setFechaCierre(new Date());
+						}
+			
 			acuerdoDao.saveOrUpdate(propuesta);
 		} else {
 			throw new BusinessOperationException("PropuestaManager.cambiarEstadoPropuesta: No se encuentra el codigo del estado (DDEstadoAcuerdo)");
@@ -148,6 +159,7 @@ public class PropuestaManager implements PropuestaApi {
 		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_CANCELADO);
 	}
 
+
 	/**
 	 * Pasa una propuesta a estado Finalizado.
 	 * @param idAcuerdo el id del acuerdo a finalizar
@@ -163,5 +175,15 @@ public class PropuestaManager implements PropuestaApi {
 		propuesta.setFechaEstado(fechaPago);
 		propuesta.setObservaciones(observaciones);
 		acuerdoDao.save(propuesta);
+	}
+	
+	@Transactional(readOnly = false)
+	public void rechazar(Long idPropuesta, String motivo) {
+		
+		EXTAcuerdo propuesta = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idPropuesta));
+		propuesta.setMotivo(motivo);
+		acuerdoDao.save(propuesta);
+		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+		
 	}
 }

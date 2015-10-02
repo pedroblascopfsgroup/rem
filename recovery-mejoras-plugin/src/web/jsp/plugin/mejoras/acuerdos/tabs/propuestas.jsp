@@ -68,20 +68,13 @@
    
    <!--    Desactivamos el boton de proponer si esxisten acuerdos en conformacion, propuesto o aceptado -->
    acuerdosStore.on('load', function () {
-   
-   		var btnDisbled = false
-	    acuerdosStore.data.each(function() {
-	    	var codEstad = this.data['codigoEstado'];
-	    	if(codEstad == app.codigoAcuerdoEnConformacion || codEstad == app.codigoAcuerdoPropuesto || codEstad == app.codigoAcuerdoAceptado || codEstad == app.codigoAcuerdoVigente){
-	    		btnDisbled = true;
-	    	}
-	    });
-	    
-	    if(btnDisbled){
-	   		btnAltaAcuerdo.setDisabled(true);
-	    }else{
-	    	btnAltaAcuerdo.setDisabled(false);
-	    }
+		
+		if( (panel.getEstadoExpediente() != app.estExpediente.ESTADO_ACTIVO && panel.getEstadoExpediente() != app.estExpediente.ESTADO_CONGELADO)||
+			(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_DECISION_COMITE && !panel.esGestorSupervisorActual())||
+			(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA))
+		  {
+		  	btnAltaAcuerdo.setDisabled(true);
+		  }
 	    
 	    
 	    if (panel != null){
@@ -110,27 +103,6 @@
 		propuestasGrid.fireEvent('rowclick', propuestasGrid, indexAcuerdoSeleccionado);
 		acuerdosStore.un('load',despuesDeEvento);
    }
-
-  
-   <!-- entidad.cacheStore(acuerdosStore); -->
-   
-<!--    var btnEditAcuerdo = new Ext.Button({ -->
-<%--        text:  '<s:message code="app.editar" text="**Editar" />' --%>
-<%--        <app:test id="EditAcuerdoBtn" addComa="true" /> --%>
-<!--        ,iconCls : 'icon_edit' -->
-<!--        ,cls: 'x-btn-text-icon' -->
-<!--        ,handler:function(){ -->
-<!--       		alert("Edit"); -->
-<!--      	} -->
-<!--    }); -->
- 
-<!--    var cargarUltimoAcuerdo = function(){ -->
-<!--    		analisisTab.remove(panelAnterior); -->
-<!-- 		panelAnterior = recargarAcuerdo(-2); -->
-<!-- 		analisisTab.add(panelAnterior); -->
-<!-- 		panel.doLayout(); -->
-		
-<!--    }; -->
 
 
    var btnAltaAcuerdo = new Ext.Button({
@@ -214,6 +186,7 @@
 		<app:test id="btnRegistrarFinalizacionAcuerdo" addComa="true" />
 		,iconCls : 'icon_edit'
 		,cls: 'x-btn-text-icon'
+		,hidden:true
 		,handler:function() {
 			var w = app.openWindow({
 				flow : 'propuestas/abrirFinalizacion'
@@ -251,6 +224,14 @@
    			btnCancelarAcuerdo.hide();
 			btnRegistrarFinalizacionAcuerdo.hide();
    }
+	
+	var btnRechazarAcuerdo = new Ext.Button({
+       text:  '<s:message code="acuerdos.rechazar" text="**Rechazar" />'
+       <app:test id="btnRechazarAcuerdo" addComa="true" />
+       ,iconCls : 'icon_menos'
+       ,cls: 'x-btn-text-icon'
+       ,hidden:true      
+	});
 
     function processResult(opt, text){
        if(opt == 'cancel'){
@@ -259,20 +240,47 @@
 	   if(opt == 'ok'){
 	   	   deshabilitarBotones();
 	       page.webflow({
-      			flow:'mejacuerdo/rechazarAcuerdoMotivo'
+      			flow:'propuestas/rechazar'
       			,params:{
-      				idAcuerdo:acuerdoSeleccionado
+      				idPropuesta:acuerdoSeleccionado
       				,motivo: text
    				}
    				,success: function(){
-	   				acuerdosStore.on('load',despuesDeEvento);
-		   		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
+   					ocultarBotones();
+<!-- 	   				acuerdosStore.on('load',despuesDeEvento); -->
+		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
    		 		}
 	      	});	
       		habilitarBotones();
 	   }
 	}
 
+    
+	btnRechazarAcuerdo.on('click',function(){
+	
+		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult);
+       		
+	});
+   
+   var deshabilitarBotones=function(){
+   			btnProponerAcuerdo.disable();
+   			btnCancelarAcuerdo.disable();
+   			btnRechazarAcuerdo.disable();
+   }
+   var habilitarBotones=function(){
+   			btnProponerAcuerdo.enable();
+   			btnCancelarAcuerdo.enable();
+   			btnRechazarAcuerdo.enable();
+   }
+   
+   var ocultarBotones=function(){
+   			btnProponerAcuerdo.hide();
+   			btnCancelarAcuerdo.hide();
+   			btnRechazarAcuerdo.hide();
+   }
+   
+	
+	
 	var propuestasGrid = app.crearGrid(acuerdosStore,cmAcuerdos,{
          title : '<s:message code="propuestas.grid.titulo" text="**Propuestas" />'
          <app:test id="propuestasGrid" addComa="true" />
@@ -285,33 +293,10 @@
           	btnProponerAcuerdo,
           	btnCancelarAcuerdo,
      	   	btnRegistrarFinalizacionAcuerdo,
+          	btnRechazarAcuerdo,
 	      ]
 
 	}); 
-
-<!-- 	var reload = function(){ -->
-<!-- 		if (analisisTab != null){ -->
-<!-- 			analisisTab.remove(panelAnterior); -->
-<!-- 		} -->
-<!-- 		panelAnterior = recargarAcuerdo(acuerdoSeleccionado); -->
-		
-<!-- 		if (analisisTab !=null) { -->
-<!-- 			analisisTab.add(panelAnterior); -->
-<!-- 		} -->
-<!-- 		panel.doLayout(); -->
-<!-- 		acuerdosStore.webflow({id:panel.getExpedienteId()}); -->
-<!-- 	} -->
-	
-<!-- 	/* -->
-<!-- 	var reloadTerminos = function(){ -->
-<!-- 		panel.remove(panelAnteriorExpTerminos); -->
-
-<!-- 		panelAnteriorExpTerminos = recargarAcuerdo(acuerdoSeleccionado); -->
-<!-- 		panel.add(panelAnteriorExpTerminos); -->
-<!-- 		panel.doLayout(); -->
-<!-- 		acuerdosStore.webflow({id:panel.getExpedienteId()}); -->
-<!-- 	} -->
-<!-- 	*/ -->
 	
 	panel.add(propuestasGrid);
 
@@ -354,6 +339,7 @@
 				var idProponente = rec.get('idProponente');
 				var codigoEstado = rec.get('codigoEstado');
 				var noPuedeModificar = true;
+				var noPuedeEditarEstadoGestion = true;
 				acuerdoSeleccionado = idAcuerdo;
 				
 				
@@ -369,8 +355,23 @@
 					btnCancelarAcuerdo.setVisible(true);
 				}
 				
+				if(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA){
+					noPuedeEditarEstadoGestion = false;
+				}
 				
-				panelAnteriorExpTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar);
+				if((panel.getFaseActualExpediente() == app.estItinerario.ESTADO_REVISAR_EXPEDIENTE && codigoEstado == app.codigoAcuerdoPropuesto && panel.esGestorSupervisorActual()) ||
+				   (panel.getFaseActualExpediente() == app.estItinerario.ESTADO_DECISION_COMITE && codigoEstado == app.codigoAcuerdoAceptado && panel.esGestorSupervisorActual()))
+				{
+					btnRechazarAcuerdo.setVisible(true);
+				}
+				
+				if(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA && panel.esGestorSupervisorActual() && codigoEstado == app.codigoAcuerdoVigente){
+					btnRegistrarFinalizacionAcuerdo.setVisible(true);
+				}
+
+				
+				
+				panelAnteriorExpTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar, noPuedeEditarEstadoGestion);
 	    		terminosExpTab.add(panelAnteriorExpTerminos); 
 	    		
 	    		acuerdosExpTabs.setActiveTab(terminosExpTab);
@@ -381,43 +382,13 @@
 				panel.show();
 		
 	});
-   
-	//fin 4 partes
-
-<!-- 	var recargarAcuerdo = function(idAcuerdo){ -->
-<%-- 		var url = '/${appProperties.appName}/acuerdos/detalleAcuerdo.htm', --%>
-<!-- 		config = config || {}; -->
-<!-- 		var autoLoad = {url : url+"?"+Math.random() -->
-<!-- 				,scripts: true -->
-<!-- 				,params: {id:idAcuerdo,idAsunto:panel.getExpedienteId()} -->
-<!-- 				}; -->
-<!-- 		var cfg = { -->
-<!-- 			autoLoad : autoLoad -->
-<!-- 			,border:false -->
-<!-- 			,bodyStyle:'padding:5px' -->
-<!-- 			,defaults:{ -->
-<!--             	border:false             -->
-<!--         		} -->
-<!-- 		}; -->
-<!-- 		var panel2 = new Ext.Panel(cfg); -->
-
-
-
-<!-- 		panel2.show(); -->
-<!-- 		panel2.on(app.event.DONE, function(){ -->
-<!-- 		          reload(); -->
-<!-- 		       }); -->
-<!-- 		return panel2 -->
-
-
-<!-- 	}; -->
 
 	
-	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar){
+	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar,noPuedeEditarEstadoGestion){
 		
 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/detalleTerminos.jsp" %>
 
-		var panTerminosExp = crearTerminosAsuntos(noPuedeModificar,true);
+		var panTerminosExp = crearTerminosAsuntos(noPuedeModificar,true,noPuedeEditarEstadoGestion);
 
 		return panTerminosExp;
 		
@@ -463,6 +434,14 @@
 	
 	panel.esGestorSupervisorActual = function(){
 		return entidad.get("data").esGestorSupervisorActual;
+	}
+	
+	panel.getFaseActualExpediente = function(){
+		return entidad.get("data").gestion.estadoItinerario;
+	}
+	
+	panel.getEstadoExpediente = function(){
+		return entidad.get("data").toolbar.estadoExpediente;	
 	}
 
 	return panel;

@@ -25,6 +25,7 @@
 				<entry key="SANEAMIENTO" value="H008"/>
 				<entry key="POSESION" value="H015"/>
 				<entry key="GESTION-LLAVES" value="H040"/>
+				<entry key="MORATORIA" value="H011"/>
 			</map>
 		</property>
 		<property name="tareasCierreDeuda"> 
@@ -84,6 +85,27 @@
 		<property name="codigoOrdinario">
 				<value>H024</value>
 		</property>
+		
+		<property name="codigoRegistrarSolicitudMoratoria">
+				<value>H011_RegistrarSolicitudMoratoria</value>
+		</property>
+		
+		<property name="fechaSolicitudRegistrarSolicitudMoratoria">
+				<value>fechaSolicitud</value>
+		</property>
+		
+		<property name="codigoRegistrarResolucionMoratoria">
+				<value>H011_RegistrarResolucion</value>
+		</property>
+		
+		<property name="fechaFinMoratoriaRegistrarResolucion">
+				<value>fechaFinMoratoria</value>
+		</property>
+		
+		<property name="resultadoMoratoria">
+				<value>comboFavDesf</value>
+		</property>
+		
 		
 		<property name="codigosTareasSenyalamiento">
 			<list>

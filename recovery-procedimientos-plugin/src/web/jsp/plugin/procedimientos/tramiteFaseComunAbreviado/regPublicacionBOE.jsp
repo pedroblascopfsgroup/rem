@@ -30,7 +30,7 @@ var codPlaza = '';
 var juzgadoAsignado = '';
 <c:forEach items="${form.items}" var="item">
 	values = <app:dict value="${item.values}" />;
-	<c:if test="${item.nombre=='numJuzgado'}">
+	<c:if test="${item.nombre=='nJuzgado'}">
 		<c:if test="${item.value!=null}">
 			juzgadoAsignado = '${item.value}';
 		</c:if>
@@ -161,7 +161,7 @@ var Juzgado = Ext.data.Record.create([
 	 {name:'codigo'}
 	,{name:'descripcion'}
 ]);
-
+debugger;
 var juzgadosStore = page.getStore({
 	flow: 'bpm/buscarJuzgados'
 	,reader: new Ext.data.JsonReader({root : 'juzgados'} , Juzgado)

@@ -1,14 +1,14 @@
 --/*
 --##########################################
---## AUTOR=GUSTAVO MORA
---## FECHA_CREACION=20150917
+--## AUTOR=JAVIER DIAZ
+--## FECHA_CREACION=20151002
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-532
 --## PRODUCTO=NO
 --## 
---## Finalidad: Limpieza y carga inicial de tablas validaciones DD_JVI_JOB_VAL_INTERFAZ, DD_JVS_JOB_VAL_SEVERITY y BATCH_JOB_VALIDATION, esquema CMMASTER
---## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## Finalidad: validaciones Efectos Cnt y Efectos Personas
+--## INSTRUCCIONES:  validaciones Efectos Cnt y Efectos Personas
 --## VERSIONES:
 --## 0.1 Versión inicial
 --##########################################
@@ -92,6 +92,11 @@ DECLARE
 		   ,T_JBV('efe-17.perContratoValidator',1,'select efp.codigo_persona as ERROR_FIELD,to_char(efp.NUMERO_CONTRATO) AS ENTITY_CODE from APR_AUX_EFP_EFEC_PER efp where not exists(select 1 from CNT_CONTRATOS CNT where CNT.CNT_ID = efp.NUMERO_CONTRATO )',9,1,0)
 		   ,T_JBV('efe-18.insertperPropietarioValidator',1,'INSERT INTO DD_PRO_PROPIETARIOS  (DD_PRO_ID, DD_PRO_CODIGO, DD_PRO_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO) SELECT S_DD_PRO_PROPIETARIOS.NEXTVAL, PROX.DD_PRO_CODIGO, PROX.DD_PRO_DESCRIPCION,  0, #TOKEN_USR#,SYSTIMESTAMP, 0 FROM (       SELECT DISTINCT ERROR_FIELD as DD_PRO_CODIGO, ''''Propietario pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_PRO_DESCRIPCION from (  SELECT (''''''''||efp.CODIGO_PROPIETARIO) as ERROR_FIELD, (efp.CODIGO_ENTIDAD || efp.CODIGO_EFECTO) as ENTITY_CODE FROM APR_AUX_EFP_EFEC_PER efp  WHERE   efp.CODIGO_PROPIETARIO is not null and   not exists( SELECT 1 FROM DD_PRO_PROPIETARIOS WHERE DD_PRO_CODIGO = trim(efp.CODIGO_PROPIETARIO)) )) PROX',8,1,0)
 		   ,T_JBV('efe-18.perPropietarioValidator',1,'SELECT (EFP.CODIGO_PROPIETARIO) as ERROR_FIELD, (efP.CODIGO_ENTIDAD || EfP.CODIGO_EFECTO) as ENTITY_CODE FROM APR_AUX_EFP_EFEC_PER efp WHERE   EFP.CODIGO_PROPIETARIO is not null and   not exists( SELECT 1 FROM DD_PRO_PROPIETARIOS WHERE DD_PRO_CODIGO = trim(efp.CODIGO_PROPIETARIO))',9,1,0)
+		   
+		   ,T_JBV('efe-19.insertperTipoRelacionEfecValidator',1,'INSERT INTO DD_TIE_TIPO_INTERV_EFECTO  (DD_TIE_ID, DD_TIE_CODIGO, DD_TIE_DESCRIPCION,  VERSION, USUARIOCREAR, FECHACREAR, BORRADO) SELECT S_DD_TIE_TIPO_INTERV_EFECTO.NEXTVAL, PROX.DD_TIE_CODIGO, PROX.DD_TIE_DESCRIPCION,  0, #TOKEN_USR#,SYSTIMESTAMP, 0 FROM (       SELECT DISTINCT ERROR_FIELD as DD_TIE_CODIGO, ''''Tipo Relacion Efecto pendiente de definir (''''||ERROR_FIELD||'''')'''' as DD_TIE_DESCRIPCION from (  SELECT (''''''''||efp.TIPO_RELACION) as ERROR_FIELD, (efp.CODIGO_ENTIDAD || efp.CODIGO_EFECTO) as ENTITY_CODE  FROM APR_AUX_EFP_EFEC_PER efp WHERE   efp.TIPO_RELACION is not null and   not exists( SELECT 1  FROM DD_TIE_TIPO_INTERV_EFECTO  WHERE DD_TIE_CODIGO = trim(efp.TIPO_RELACION)) ) ) PROX',9,1,0)
+		   ,T_JBV('efe-19.perTipoRelacionEfecValidator',1,'SELECT (EFP.TIPO_RELACION) as ERROR_FIELD, (efP.CODIGO_ENTIDAD || EfP.CODIGO_EFECTO) as ENTITY_CODE FROM APR_AUX_EFP_EFEC_PER efp WHERE EFP.TIPO_RELACION is not null and not exists( SELECT 1 FROM DD_TIE_TIPO_INTERV_EFECTO WHERE DD_TIE_CODIGO = trim(efp.TIPO_RELACION))',9,1,0)
+
+		   
 		   
 		   
 		   /*

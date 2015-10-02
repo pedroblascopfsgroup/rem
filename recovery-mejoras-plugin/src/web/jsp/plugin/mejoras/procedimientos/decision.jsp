@@ -57,17 +57,7 @@
 	})
 	//Tipo Actuacion
 	var dictTipoActuacion = <app:dict value="${tiposActuacion}" />;
-
-	// PBO: De momento, quitamos el tipo de actuacion PCO para impedir que se pueda derivar hacia Precontencioso
-	var buscaPCO=function() {
-		for (var i=0; i<dictTipoActuacion.diccionario.length; i++) {
-			if (dictTipoActuacion.diccionario[i].codigo=="PCO") {
-				return i;
-			}
-		}
-	}
-	dictTipoActuacion.diccionario.splice(buscaPCO(),1);
-		
+	
 	var optionsTipoActuacionStore = new Ext.data.JsonStore({
 	       fields: ['codigo', 'descripcion']
 	       ,data : dictTipoActuacion
@@ -94,7 +84,8 @@
 	    //,value : 'actual'
 	});
 	
-	tipoActuacion.on('select',function(){		
+	tipoActuacion.on('select',function(){
+		var codigo=tipoActuacion.getValue();
 		optionsTipoProcedimientoStore.webflow({codigoTipoAct:codigo, prcId: '${idProcedimiento}'})
 		comboTipoProcedimiento.reset();
 	});
@@ -978,7 +969,7 @@
 		text : '<s:message code="decisionProcedimiento.proponer" text="**Proponer" />'
 		,iconCls:'icon_elevar'
 		,handler : function(){
-			if (validarDatosFormulario()){
+			if (validarDatosProponer()){
 				var params = transform();
 				params["idProcedimiento"]='${idProcedimiento}';
 				params["idDecision"]='${id}';

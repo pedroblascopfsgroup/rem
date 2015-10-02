@@ -31,7 +31,7 @@ import es.capgemini.pfs.expediente.model.Expediente;
  *
  */
 @Entity
-@Table(name = "ARE_ACTUACION_REALIZADAS_EXP", schema = "${entity.schema}")
+@Table(name = "ARE_ACT_REALIZADAS_EXP", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class EXTActuacionesRealizadasExpediente implements Serializable, Auditable {
 
@@ -40,7 +40,7 @@ public class EXTActuacionesRealizadasExpediente implements Serializable, Auditab
     @Id
     @Column(name = "ARE_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "EXTActuacionesRealizadasExpedienteGenerator")
-    @SequenceGenerator(name = "EXTActuacionesRealizadasExpedienteGenerator", sequenceName = "S_ARE_ACTUACION_REALIZADAS_EXP")
+    @SequenceGenerator(name = "EXTActuacionesRealizadasExpedienteGenerator", sequenceName = "S_ARE_ACT_REALIZADAS_EXP")
     private Long id;
 
     @ManyToOne

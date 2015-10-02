@@ -287,8 +287,8 @@
 	var revision = new Ext.form.TextArea({
 		name: 'revision'
 		,value: ''
-		,width: 550
-		,height: 150
+		,width: 1000
+		,height: 125
 		,labelStyle: labelStyle
 		,style:'margin-top:5px'
 		,readOnly: true
@@ -342,6 +342,7 @@
 					,{layout:'form'
 						,bodyStyle:'padding:5px;cellspacing:10px'
 						,items:[panelGestion]}
+					,{colspan:2,items:[panelRevision]}
 			]
 			,nombreTab : 'tabGestionyAnalisis'
 	});
@@ -353,7 +354,6 @@
 	<sec:authorize ifAllGranted="EDITAR_GYA">
 	var btnEditarGyA = new Ext.Button({
            	text: '<s:message code="app.editar" text="**Editar" />'
-           	,style:'margin-left:375px;'
            	,border:false
            	,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'
@@ -377,7 +377,6 @@
 	<sec:authorize ifAllGranted="EDITAR_GYA_REV">
 		btnEditarRevision = new Ext.Button({
 				text: '<s:message code="app.editar" text="**Editar" />'
-				,style:'margin-left:200px;'
 				,border:false
 				,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'

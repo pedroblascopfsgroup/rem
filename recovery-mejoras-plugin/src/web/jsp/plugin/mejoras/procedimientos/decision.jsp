@@ -259,6 +259,7 @@
 		}
 		//agrego el valor combo de causas que no se porque motivo viaja mal en la request
 		
+		param["strEstadoDecision"] = estadoDecision.getValue();
 		//param["causaDecision"]=comboCausas.getValue();
 		param["causaDecisionFinalizar"]=comboCausasFinalizar.getValue();
 		param["causaDecisionParalizar"]=comboCausasParalizar.getValue();
@@ -960,15 +961,16 @@
 		,iconCls:'icon_elevar'
 		,handler : function(){
 			var params = transform();
-			page.submit({
-	            eventName : 'update'
+			params["idProcedimiento"]='${idProcedimiento}';
+			params["idDecision"]='${id}';
+			page.webflow({
+				flow: 'decisionprocedimiento/crearPropuesta'
+				,params: params
 	            ,formPanel : panelEdicion
-	            ,success : 
-	               function(){ 
-	        			page.fireEvent(app.event.DONE);          
-	               }
-	            ,params: params
-	         });
+				,success : function(){ 
+					page.fireEvent(app.event.DONE); 
+				}
+			});
 	    }
 		
 	});
@@ -977,14 +979,14 @@
 		,iconCls:'icon_rechazar_decision'
 		,handler : function(){
 			page.submit({
-	            eventName : 'rechazar'
-	            ,formPanel : panelEdicion
-	            ,success: 
-	               function(){ 
-	        			page.fireEvent(app.event.DONE);          
-	               }
-	            ,params: {id:decisionId}
-	        });
+				page.webflow({
+					flow: 'decisionprocedimiento/rechazarPropuesta'
+					,params: {id:decisionId}
+		            ,formPanel : panelEdicion
+					,success : function(){ 
+						page.fireEvent(app.event.DONE); 
+					}
+				});
 		}
 	});
 

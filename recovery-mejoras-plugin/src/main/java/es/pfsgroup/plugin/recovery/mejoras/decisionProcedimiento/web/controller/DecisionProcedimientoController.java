@@ -63,7 +63,7 @@ public class DecisionProcedimientoController {
 
 		return "plugin/mejoras/procedimientos/procedimientoTSubastaJSON";
 	}
-	
+
 	@RequestMapping
     public String aceptarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, 
     		Long idProcedimiento, 
@@ -81,6 +81,31 @@ public class DecisionProcedimientoController {
 		mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
 		return "default";
 	}
+
+	@RequestMapping
+    public String crearPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento
+    		,Long idProcedimiento
+    		,@RequestParam(required=false) Long idDecision) throws Exception {
+		DecisionProcedimiento dec = null;
+		if (idDecision==null) {
+	        Procedimiento p = prcManager.getProcedimiento(idProcedimiento);
+	        dec = new DecisionProcedimiento();
+	        dec.setProcedimiento(p);
+		} else {
+			dec = decisionProcedimientoManager.get(idDecision);			
+		}
+        dtoDecisionProcedimiento.setDecisionProcedimiento(dec);
+        mejDecisionProcedimientoManager.crearPropuesta(dtoDecisionProcedimiento);
+		return "default";
+	}
 	
+	@RequestMapping
+	public String rechazarPropuesta(Long id) throws Exception {
+		MEJDtoDecisionProcedimiento dto = new MEJDtoDecisionProcedimiento();
+		DecisionProcedimiento dec = decisionProcedimientoManager.get(id);
+		dto.setDecisionProcedimiento(dec);
+        mejDecisionProcedimientoManager.rechazarPropuesta(dto);
+		return "default";
+	}
 	
 }

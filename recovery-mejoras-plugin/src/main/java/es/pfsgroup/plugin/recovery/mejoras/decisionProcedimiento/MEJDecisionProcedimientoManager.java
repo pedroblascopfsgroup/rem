@@ -595,7 +595,7 @@ public class MEJDecisionProcedimientoManager extends
         TareaNotificacion tarea = dp.getTareaAsociada();
         
         List<TareaNotificacion> vTareas = (List<TareaNotificacion>) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO,
-                dtoDecisionProcedimiento.getDecisionProcedimiento().getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
+                dp.getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
 
 
         if (vTareas != null && vTareas.size() > 0) {

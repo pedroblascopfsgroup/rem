@@ -887,8 +887,8 @@
 			if (validarDatosFormulario()){			
 				if(activarComprobacionSubasta && mensaje){
 					Ext.Msg.show({
-					   title:'Confirmaci�n',
-					   msg: '�Est� seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrar�n activas.',
+					   title:'Confirmación',
+					   msg: '¿Está seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarán activas.',
 					   buttons: Ext.Msg.YESNO,
 					   animEl: 'elId',
 					   width:450,
@@ -898,13 +898,15 @@
 				}
 				else{
 					var params = transform();
-						params["idProcedimiento"]='${idProcedimiento}';
-						page.submit({
-							eventName : 'aceptarPropuesta'
-							,formPanel : panelEdicion
-							,success :    function(){ page.fireEvent(app.event.DONE); }
-							,params:params
-				  });
+					params["idProcedimiento"]='${idProcedimiento}';
+					params["idDecision"]='${id}';
+					page.webflow({
+						flow: 'decisionprocedimiento/aceptarPropuesta'
+						,params: params
+						,success : function(){ 
+							page.fireEvent(app.event.DONE); 
+						}
+					});
 				}
 			}	
 		}

@@ -446,6 +446,7 @@
 				btnEditActuacion.hide();
 				btnEditActuacionAExplorar.hide();
 				btnEditarGyA.hide();
+				panelGestion.setHeight(393);
 			}
 		</sec:authorize>
 

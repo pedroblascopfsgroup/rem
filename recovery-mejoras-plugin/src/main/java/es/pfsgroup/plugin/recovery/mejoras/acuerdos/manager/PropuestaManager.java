@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos.manager;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -84,8 +86,8 @@ public class PropuestaManager implements PropuestaApi {
 	@BusinessOperation(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
 	public List<EXTAcuerdo> listadoPropuestasByExpedienteId(Long idExpediente) {
 
-        Order order = new Order(OrderType.ASC, "id");
-        return  genericDao.getListOrdered(EXTAcuerdo.class,order, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
+		Order order = new Order(OrderType.ASC, "id");
+		return  genericDao.getListOrdered(EXTAcuerdo.class,order, genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente));
 	}
 
 	@BusinessOperation(BO_PROPUESTA_ES_GESTOR_SUPERVISOR_ACTUAL)
@@ -277,4 +279,20 @@ public class PropuestaManager implements PropuestaApi {
 		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_CANCELADO);
 	}
 
+	/**
+	 * Pasa una propuesta a estado Finalizado.
+	 * @param idAcuerdo el id del acuerdo a finalizar
+	 * @throws ParseException 
+	 */
+	@Transactional(readOnly = false)
+	public void finalizar(Long idAcuerdo, Date fechaPago, Boolean cumplido, String observaciones) {
+		String codigoEstadoPropuesta = cumplido ? DDEstadoAcuerdo.ACUERDO_CUMPLIDO : DDEstadoAcuerdo.ACUERDO_INCUMPLIDO;
+		DDEstadoAcuerdo estadoFinalizacion = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, codigoEstadoPropuesta);
+
+		Acuerdo propuesta = acuerdoDao.get(idAcuerdo);
+		propuesta.setEstadoAcuerdo(estadoFinalizacion);
+		propuesta.setFechaEstado(fechaPago);
+		propuesta.setObservaciones(observaciones);
+		acuerdoDao.save(propuesta);
+	}
 }

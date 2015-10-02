@@ -257,7 +257,7 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
 	}
 
 	public void setFechaParalizacionStr(String fecha) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		if (!Checks.esNulo(fecha)) {
 			try {
 				this.setFechaParalizacion(sdf.parse(fecha));

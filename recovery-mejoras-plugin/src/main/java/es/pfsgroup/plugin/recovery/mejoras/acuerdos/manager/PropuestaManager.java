@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.mejoras.acuerdos.manager;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -12,10 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
+import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -25,19 +30,31 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
+import es.pfsgroup.recovery.api.ExpedienteApi;
+import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesAExplorarExpedienteDao;
+import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesRealizadasExpedienteDao;
+import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesExplorarExpediente;
+import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesRealizadasExpediente;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesAExplorarExpediente;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesRealizadasExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Service
 public class PropuestaManager implements PropuestaApi {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
+	@Autowired
+	private Executor executor;
+	
 	@Autowired
 	private UsuarioManager usuarioManager;
 
@@ -52,6 +69,19 @@ public class PropuestaManager implements PropuestaApi {
 
 	@Autowired
 	private AcuerdoDao acuerdoDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private IntegracionBpmService bpmIntegracionService;
+	
+	@Autowired
+	private EXTActuacionesAExplorarExpedienteDao extActuacionesAExplorarExpedienteDao;
+	
+	@Autowired
+	private EXTActuacionesRealizadasExpedienteDao extActuacionesRealizadasExpedienteDao;
+	
 
 	@BusinessOperation(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
 	public List<EXTAcuerdo> listadoPropuestasByExpedienteId(Long idExpediente) {
@@ -152,6 +182,107 @@ public class PropuestaManager implements PropuestaApi {
 		}
 		return contratos;
 	}
+	
+	@BusinessOperation(BO_PROPUESTA_GET_LISTADO_PROPUESTAS_REALIZADAS_BY_EXPEDIENTE_ID)
+    public List<EXTActuacionesRealizadasExpediente> listadoPropuestasRealizadasByExpedienteId(Long id) {
+        logger.debug("Obteniendo acuerdos del expediente" + id);
+        Order order = new Order(OrderType.ASC, "id");
+        return (List<EXTActuacionesRealizadasExpediente>) genericDao.getListOrdered(EXTActuacionesRealizadasExpediente.class, order, 
+        		genericDao.createFilter(FilterType.EQUALS, "expediente.id", id));
+    }
+	
+	@BusinessOperation(BO_PROPUESTA_GET_LISTADO_PROPUESTAS_EXPLORAR_BY_EXPEDIENTE_ID)
+    public List<EXTActuacionesAExplorarExpediente> listadoActuacionesAExplorarExpediente(Long idExpediente) {
+		Expediente expediente = proxyFactory.proxy(ExpedienteApi.class).getExpediente(idExpediente);
+    	List<EXTActuacionesAExplorarExpediente> todasLasActuacionesAExplorar = new ArrayList<EXTActuacionesAExplorarExpediente>();
+        // Obtengo la lista de las actuaciones marcadas
+        List<EXTActuacionesAExplorarExpediente> actuacionesAExplorarMarcadasByExpediente = extActuacionesAExplorarExpedienteDao
+                .getActuacionesAExplorarMarcadasByExpediente(idExpediente);
+        // y de todos los tipos y subtipos aunque no hayan sido marcados, excepto los inactivos
+        List<DDSubtipoSolucionAmistosaAcuerdo> subtiposActivosOMarcadosByExpediente = extActuacionesAExplorarExpedienteDao
+                .getSubtiposActivosOMarcadosByExpediente(idExpediente);
+
+        // y unificamos ambas listas en una
+
+        todasLasActuacionesAExplorar.addAll(actuacionesAExplorarMarcadasByExpediente);
+
+        boolean estaEnLista;
+        for (DDSubtipoSolucionAmistosaAcuerdo subtipo : subtiposActivosOMarcadosByExpediente) {
+            estaEnLista = false;
+            for (EXTActuacionesAExplorarExpediente actuacion : actuacionesAExplorarMarcadasByExpediente) {
+                if (actuacion.getDdSubtipoSolucionAmistosaAcuerdo().equals(subtipo)) {
+                    estaEnLista = true;
+                    break;
+                }
+            }
+            if (!estaEnLista) {
+            	EXTActuacionesAExplorarExpediente actuacionSinExplorar = new EXTActuacionesAExplorarExpediente();
+                actuacionSinExplorar.setExpediente(expediente);
+                actuacionSinExplorar.setDdSubtipoSolucionAmistosaAcuerdo(subtipo);
+                actuacionSinExplorar.setDdValoracionActuacionAmistosa(null);
+                actuacionSinExplorar.setObservaciones(null);
+                actuacionSinExplorar.setId(null);
+                todasLasActuacionesAExplorar.add(actuacionSinExplorar);
+            }
+        }
+
+        // Ordena la lista por tipos
+        Collections.sort(todasLasActuacionesAExplorar);
+
+        return todasLasActuacionesAExplorar;
+    }
+	
+	@Transactional
+	@BusinessOperation(BO_PROPUESTA_SAVE_ACTUACION_REALIZADA_EXPEDIENTE)
+    public void saveActuacionesRealizadasExpediente(DTOActuacionesRealizadasExpediente dto) {
+    	EXTActuacionesRealizadasExpediente actRelExp;
+    	if(dto.getActuaciones().getId() != null) {
+    		actRelExp = extActuacionesRealizadasExpedienteDao.get(dto.getActuaciones().getId());
+    	}else{
+    		actRelExp = new EXTActuacionesRealizadasExpediente();
+    		Expediente expediente = proxyFactory.proxy(ExpedienteApi.class).getExpediente(dto.getIdExpediente());
+    		actRelExp.setExpediente(expediente);
+    	}
+    	actRelExp.setDdTipoActuacionAcuerdo(dto.getActuaciones().getDdTipoActuacionAcuerdo());
+    	actRelExp.setDdResultadoAcuerdoActuacion(dto.getActuaciones().getDdResultadoAcuerdoActuacion());
+    	actRelExp.setTipoAyudaActuacion(dto.getActuaciones().getTipoAyudaActuacion());
+    	actRelExp.setFechaActuacion(dto.getActuaciones().getFechaActuacion());
+    	actRelExp.setObservaciones(dto.getActuaciones().getObservaciones());
+    	extActuacionesRealizadasExpedienteDao.save(actRelExp);
+	}
+    
+    @BusinessOperation(BO_PROPUESTA_GET_ACTUACION_REALIZADAS_EXPEDIENTE)
+    public EXTActuacionesRealizadasExpediente getActuacionRealizadasExpediente(Long idActuacion) {
+        return extActuacionesRealizadasExpedienteDao.get(idActuacion);
+    }
+    
+    @BusinessOperation(BO_PROPUESTA_GET_ACTUACION_EXPLORAR_EXPEDIENTE)
+    public EXTActuacionesAExplorarExpediente getActuacionExplorarExpediente(Long idActuacion) {
+        return extActuacionesAExplorarExpedienteDao.get(idActuacion);
+    }
+    
+    @Override
+    @Transactional
+    @BusinessOperation(BO_PROPUESTA_SAVE_ACTUACION_EXPLORAR_EXPEDIENTE)
+    public void saveActuacionesExplorarExpediente(DTOActuacionesExplorarExpediente dto) {
+        EXTActuacionesAExplorarExpediente actuacion;
+        if (dto.getIdActuacion() != null) {
+            actuacion = extActuacionesAExplorarExpedienteDao.get(dto.getIdActuacion());
+        } else {
+            actuacion = new EXTActuacionesAExplorarExpediente();
+            Expediente expediente = proxyFactory.proxy(ExpedienteApi.class).getExpediente(dto.getIdExpediente());
+            actuacion.setExpediente(expediente);
+        }
+        DDSubtipoSolucionAmistosaAcuerdo subtipoSolucionAmistosa = (DDSubtipoSolucionAmistosaAcuerdo) executor.execute(
+                ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDSubtipoSolucionAmistosaAcuerdo.class, dto.getDdSubtipoSolucionAmistosaAcuerdo());
+        actuacion.setDdSubtipoSolucionAmistosaAcuerdo(subtipoSolucionAmistosa);
+
+        DDValoracionActuacionAmistosa valoracionActuacionAmistosa = (DDValoracionActuacionAmistosa) executor.execute(
+                ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDValoracionActuacionAmistosa.class, dto.getDdValoracionActuacionAmistosa());
+        actuacion.setDdValoracionActuacionAmistosa(valoracionActuacionAmistosa);
+        actuacion.setObservaciones(dto.getObservaciones());
+        extActuacionesAExplorarExpedienteDao.save(actuacion);        
+    }  
 
 	@Transactional(readOnly = false)
 	public void cancelar(Long idPropuesta) {

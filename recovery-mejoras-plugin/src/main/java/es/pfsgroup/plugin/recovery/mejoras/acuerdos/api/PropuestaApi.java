@@ -7,6 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesExplorarExpediente;
+import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesRealizadasExpediente;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesAExplorarExpediente;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesRealizadasExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 public interface PropuestaApi {
@@ -14,6 +18,13 @@ public interface PropuestaApi {
 	public static final String BO_PROPUESTA_GET_LISTADO_PROPUESTAS = "mejacuerdo.listadoPropuestasByExpedienteId";
 	public static final String BO_PROPUESTA_ES_GESTOR_SUPERVISOR_ACTUAL = "propuestaApi.usuarioLogadoEsGestorSupervisorActual";
 	public static final String BO_PROPUESTA_GET_LISTADO_CONTRATOS_DEL_EXPEDIENTE = "mejacuerdo.listadoContratosByExpedienteId";
+	public static final String BO_PROPUESTA_GET_LISTADO_PROPUESTAS_REALIZADAS_BY_EXPEDIENTE_ID = "propuestaApi.listadoPropuestasRealizadasByExpedienteId";
+	public static final String BO_PROPUESTA_GET_LISTADO_PROPUESTAS_EXPLORAR_BY_EXPEDIENTE_ID = "propuestaApi.listadoPropuestasExplorarByExpedienteId";
+	public static final String BO_PROPUESTA_SAVE_ACTUACION_REALIZADA_EXPEDIENTE = "propuestaApi.saveActuacionesRealizadasExpediente";
+	public static final String BO_PROPUESTA_GET_ACTUACION_REALIZADAS_EXPEDIENTE = "propuestaApi.getActuacionRealizadasExpediente";
+	public static final String BO_PROPUESTA_GET_ACTUACION_EXPLORAR_EXPEDIENTE = "propuestaApi.getActuacionExplorarExpediente";
+	public static final String BO_PROPUESTA_SAVE_ACTUACION_EXPLORAR_EXPEDIENTE = "propuestaApi.saveActuacionesExplorarExpediente";
+	
 
 	@BusinessOperationDefinition(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
     @Transactional(readOnly = false)
@@ -38,9 +49,24 @@ public interface PropuestaApi {
 	 */
 	public void proponer(Long idPropuesta);
 	
-	/**
-	 * @param idPropuesta
-	 */
+    @BusinessOperationDefinition(BO_PROPUESTA_GET_LISTADO_PROPUESTAS_REALIZADAS_BY_EXPEDIENTE_ID)
+    public List<EXTActuacionesRealizadasExpediente> listadoPropuestasRealizadasByExpedienteId(Long id);
+    
+    @BusinessOperationDefinition(BO_PROPUESTA_GET_LISTADO_PROPUESTAS_EXPLORAR_BY_EXPEDIENTE_ID)
+    public List<EXTActuacionesAExplorarExpediente> listadoActuacionesAExplorarExpediente(Long idExpediente);
+    
+    @BusinessOperationDefinition(BO_PROPUESTA_SAVE_ACTUACION_REALIZADA_EXPEDIENTE)
+    public void saveActuacionesRealizadasExpediente(DTOActuacionesRealizadasExpediente dto);
+    
+    @BusinessOperationDefinition(BO_PROPUESTA_GET_ACTUACION_REALIZADAS_EXPEDIENTE)
+    public EXTActuacionesRealizadasExpediente getActuacionRealizadasExpediente(Long idActuacion);
+    
+    @BusinessOperationDefinition(BO_PROPUESTA_GET_ACTUACION_EXPLORAR_EXPEDIENTE)
+    public EXTActuacionesAExplorarExpediente getActuacionExplorarExpediente(Long idActuacion);
+    
+    @BusinessOperationDefinition(BO_PROPUESTA_SAVE_ACTUACION_EXPLORAR_EXPEDIENTE)
+    public void saveActuacionesExplorarExpediente(DTOActuacionesExplorarExpediente dto);
+
 	public void cancelar(Long idPropuesta);
 
 	/**

@@ -102,5 +102,13 @@ public interface NMBProjectContext {
 	String getCodigoOrdinario();
 
 	String getFechaDemandaMonitorio();
+
+	String getCodigoRegistrarSolicitudMoratoria();
+
+	String getFechaSolicitudRegistrarSolicitudMoratoria();
+
+	String getFechaFinMoratoriaRegistrarResolucion();
+
+	String getResultadoMoratoria();
 	
 }

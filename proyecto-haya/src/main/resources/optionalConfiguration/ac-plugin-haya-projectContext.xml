@@ -94,6 +94,10 @@
 				<value>fechaSolicitud</value>
 		</property>
 		
+		<property name="codigoRegistrarResolucion">
+				<value>H011_RegistrarResolucion</value>
+		</property>
+		
 		<property name="fechaFinMoratoriaRegistrarResolucion">
 				<value>fechaFinMoratoria</value>
 		</property>

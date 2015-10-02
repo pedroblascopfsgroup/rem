@@ -969,7 +969,7 @@
 		text : '<s:message code="decisionProcedimiento.proponer" text="**Proponer" />'
 		,iconCls:'icon_elevar'
 		,handler : function(){
-			if (validarDatosProponer()){
+			if (validarDatosFormulario()){
 				var params = transform();
 				params["idProcedimiento"]='${idProcedimiento}';
 				params["idDecision"]='${id}';

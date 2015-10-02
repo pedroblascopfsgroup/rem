@@ -745,10 +745,12 @@
 			if (isCheck){
 				comboCausasParalizar.setVisible(false);
 				comboCausasFinalizar.setVisible(true);
+				comboCausasFinalizar.allowBlank = false;
 			}
 			else{
 				comboCausasParalizar.setVisible(true);
 				comboCausasFinalizar.setVisible(false);
+				comboCausasFinalizar.allowBlank = true;
 			}			
 			
 	}); 
@@ -783,7 +785,6 @@
 			checkbox.setValue(isCheck);
 
 			if (isCheck){
-				fechaHasta.setDisabled(false);
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
 					btnProponer.enable();
@@ -801,10 +802,16 @@
 			if (isCheck){
 				comboCausasParalizar.setVisible(true);
 				comboCausasFinalizar.setVisible(false);
+				comboCausasParalizar.allowBlank = false;
+				fechaHasta.setDisabled(false);
+				fechaHasta.allowBlank = false;
 			}
 			else{
 				comboCausasParalizar.setVisible(false);
 				comboCausasFinalizar.setVisible(true);
+				comboCausasParalizar.allowBlank = true;
+				fechaHasta.setDisabled(true);
+				fechaHasta.allowBlank = true;
 			}			
 			
 	}); 
@@ -890,8 +897,8 @@
 			if (validarDatosFormulario()){			
 				if(activarComprobacionSubasta && mensaje){
 					Ext.Msg.show({
-					   title:'ConfirmaciÃ³n',
-					   msg: 'Â¿EstÃ¡ seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarÃ¡n activas.',
+					   title:'Confirmación',
+					   msg: '¿Está seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarÃ¡n activas.',
 					   buttons: Ext.Msg.YESNO,
 					   animEl: 'elId',
 					   width:450,

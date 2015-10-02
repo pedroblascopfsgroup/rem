@@ -175,10 +175,7 @@
 	   				}
 	      			,success: function(){
 	      				ocultarBotones();
-<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
 	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
-<!-- 	           		 	btnProponerAcuerdo.hide(); -->
-<!-- 	           		 	btnCancelarAcuerdo.setVisible(false); -->
 	           		}	
 		      	});
 				habilitarBotones();	
@@ -189,7 +186,7 @@
 	        }
      	}
    });
-   
+
    	var btnCancelarAcuerdo = new Ext.Button({
 	       text:  '<s:message code="acuerdos.cancelar" text="**Cancelar" />'
 	       <app:test id="btnCancelarAcuerdo" addComa="true" />
@@ -205,30 +202,55 @@
 	   				}
 	      			,success: function(){
 	           		 	ocultarBotones();
-<!-- 	           		 	acuerdosStore.on('load',despuesDeEvento); -->
 	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
 	           		}
 		      	});
 				habilitarBotones();
 	     	}
 	});
-   
+
+	var btnRegistrarFinalizacionAcuerdo = new Ext.Button({
+		text:  '<s:message code="plugin.mejoras.acuerdo.registrarFinalizacion" text="**Registrar finalización acuerdo" />'
+		<app:test id="btnRegistrarFinalizacionAcuerdo" addComa="true" />
+		,iconCls : 'icon_edit'
+		,cls: 'x-btn-text-icon'
+		,handler:function() {
+			var w = app.openWindow({
+				flow : 'propuestas/abrirFinalizacion'
+				,closable:false
+				,width : 750
+				,title : '<s:message code="mejoras.plugin.acuerdos.finalizarAcuerdo" text="**Finalizar acuerdo" />'
+				,params : {idAcuerdo: acuerdoSeleccionado}
+			});
+
+			w.on(app.event.DONE, function(){
+				acuerdosStore.webflow({id:panel.getExpedienteId()});
+				btnRegistrarFinalizacionAcuerdo.hide();
+				w.close();
+			});
+
+			w.on(app.event.CANCEL, function(){
+				w.close();
+			});
+		}
+	});
+
    var deshabilitarBotones=function(){
    			btnProponerAcuerdo.disable();
-   			btnCancelarAcuerdo.disable();
+			btnCancelarAcuerdo.disable();
+			btnRegistrarFinalizacionAcuerdo.disable();
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
-   			btnCancelarAcuerdo.enable();
+			btnCancelarAcuerdo.enable();
+			btnRegistrarFinalizacionAcuerdo.enable();
    }
    
    var ocultarBotones=function(){
    			btnProponerAcuerdo.hide();
    			btnCancelarAcuerdo.hide();
+			btnRegistrarFinalizacionAcuerdo.hide();
    }
-   
-   
-
 
     function processResult(opt, text){
        if(opt == 'cancel'){
@@ -250,8 +272,7 @@
       		habilitarBotones();
 	   }
 	}
-	
-	
+
 	var propuestasGrid = app.crearGrid(acuerdosStore,cmAcuerdos,{
          title : '<s:message code="propuestas.grid.titulo" text="**Propuestas" />'
          <app:test id="propuestasGrid" addComa="true" />
@@ -259,11 +280,11 @@
          ,autoHeight : true
          ,cls:'cursor_pointer'
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-
          ,bbar : [
          	btnAltaAcuerdo,
           	btnProponerAcuerdo,
           	btnCancelarAcuerdo,
+     	   	btnRegistrarFinalizacionAcuerdo,
 	      ]
 
 	}); 

@@ -22,5 +22,7 @@ public interface CoreProjectContext {
 
 	List<String> getTiposProcedimientosAdjudicados();
 	
-	List<String> getTiposGestorGestoria();
+	Set<String> getTiposGestorGestoria();
+	
+	Set<String> getTiposGestorProcurador();
 }

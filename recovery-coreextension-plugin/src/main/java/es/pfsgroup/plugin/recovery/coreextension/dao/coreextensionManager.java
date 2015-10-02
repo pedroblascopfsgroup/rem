@@ -420,17 +420,23 @@ public class coreextensionManager implements coreextensionApi {
 		// Todos los despachos
 		List<DespachoExterno> listaDespachos = getListDespachos(idTipoGestor);
 
-		// TODO: Esto hay que mejorarlo porque está hardcodeado GEST
+		
 		if (adicional) {
-			EXTDDTipoGestor tipoGestoria = tipoGestorManager.getByCod("GEST");
-			if (idTipoGestor.equals(tipoGestoria.getId())) 
-				return listaDespachos;
+			List<EXTDDTipoGestor> tiposGestorias = tipoGestorManager.getByListCod(coreProjectContext.getTiposGestorGestoria());
+			for(EXTDDTipoGestor gestoria : tiposGestorias){
+				if (gestoria.getId().equals(idTipoGestor)){
+					return listaDespachos;
+				}
+			}
 		}
 		
 		if (procuradorAdicional) {
-			EXTDDTipoGestor tipoGestoria = tipoGestorManager.getByCod("PROC");
-			if (idTipoGestor.equals(tipoGestoria.getId())) 
-				return listaDespachos;
+			List<EXTDDTipoGestor> tiposProcurador = tipoGestorManager.getByListCod(coreProjectContext.getTiposGestorProcurador());
+			for(EXTDDTipoGestor procurador : tiposProcurador){
+				if (procurador.getId().equals(idTipoGestor)){
+					return listaDespachos;
+				}
+			}
 		}
 		
 		// quitamos los que no puede ver.
@@ -493,7 +499,7 @@ public class coreextensionManager implements coreextensionApi {
 			}
 			// Si estamos hablando de datos procuradores adicionales "PROC" no se elimina
 			if (procuradorAdicional &&
-					tipoGestor.getCodigo().equals("PROC") &&
+					coreProjectContext.getTiposGestorProcurador().contains(tipoGestor.getCodigo()) &&
 					!encontrados.contains(tipoGestor)) {
 				encontrados.add(tipoGestor);
 				continue;

@@ -53,8 +53,14 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private String codigoTareaDemandaMonitorio;
 	private String codigoTareaDemandaOrdinario;
 	private String codigoHipotecario;
+	
 	private String codigoMonitorio;
 	private String codigoOrdinario;
+	private String codigoRegistrarSolicitudMoratoria;
+	private String fechaSolicitudRegistrarSolicitudMoratoria;
+	private String codigoRegistrarResolucionMoratoria;
+	private String fechaFinMoratoriaRegistrarResolucion;
+	private String resultadoMoratoria;
 	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -356,5 +362,49 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 		this.codigoOrdinario = codigoOrdinario;
 	}
 	
+	@Override
+	public String getCodigoRegistrarSolicitudMoratoria() {
+		return codigoRegistrarSolicitudMoratoria;
+	}
+
+	public void setCodigoRegistrarSolicitudMoratoria(String codigoRegistrarSolicitudMoratoria) {
+		this.codigoRegistrarSolicitudMoratoria = codigoRegistrarSolicitudMoratoria;
+	}
+
+	@Override
+	public String getFechaSolicitudRegistrarSolicitudMoratoria() {
+		return fechaSolicitudRegistrarSolicitudMoratoria;
+	}
+
+	public void setFechaSolicitudRegistrarSolicitudMoratoria(String fechaSolicitudRegistrarSolicitudMoratoria) {
+		this.fechaSolicitudRegistrarSolicitudMoratoria = fechaSolicitudRegistrarSolicitudMoratoria;
+	}
+
+	@Override
+	public String getCodigoRegistrarResolucionMoratoria() {
+		return codigoRegistrarResolucionMoratoria;
+	}
+
+	public void setCodigoRegistrarResolucionMoratoria(String codigoRegistrarResolucionMoratoria) {
+		this.codigoRegistrarResolucionMoratoria = codigoRegistrarResolucionMoratoria;
+	}
+	
+	@Override
+	public String getFechaFinMoratoriaRegistrarResolucion() {
+		return fechaFinMoratoriaRegistrarResolucion;
+	}
+
+	public void setFechaFinMoratoriaRegistrarResolucion(String fechaFinMoratoriaRegistrarResolucion) {
+		this.fechaFinMoratoriaRegistrarResolucion = fechaFinMoratoriaRegistrarResolucion;
+	}
+
+	@Override
+	public String getResultadoMoratoria() {
+		return resultadoMoratoria;
+	}
+
+	public void setResultadoMoratoria(String resultadoMoratoria) {
+		this.resultadoMoratoria = resultadoMoratoria;
+	}
 	
 }

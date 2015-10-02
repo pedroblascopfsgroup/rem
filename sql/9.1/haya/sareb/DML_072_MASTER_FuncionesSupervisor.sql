@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=NACHO ARCOS
---## FECHA_CREACION=20150929
+--## FECHA_CREACION=20151001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.6-hy
 --## INCIDENCIA_LINK=HR-1206
@@ -34,9 +34,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-      T_FUNCION('Únicamente permite agregar gestores del asunto entre usuaios de su mismo despacho.', 'ASU_GESTOR_SOLOPROPIAS'),
-      T_FUNCION('Únicamente permite agregar usuarios de gestorias.','ASU_GESTOR_SOLOPROPIAS_ADIC'),
-      T_FUNCION('Únicamente permite agregar procuradores del asunto entre usuarios de su mismo despacho.', 'ASU_PROCURADOR_SOLOPROPIAS_ADIC')
+      T_FUNCION('Permite agregar todos los gestores del asunto.', 'ASU_MULTIGESTOR_SUPERVISOR')
     ); 
     V_TMP_FUNCION T_FUNCION;
 

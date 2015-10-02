@@ -268,6 +268,9 @@
 		}
 		//agrego el valor combo de causas que no se porque motivo viaja mal en la request
 		
+		param["fechaParalizacionStr"] = fechaHasta.getValue();
+		param["comentarios"] = comentarios.getValue();
+		param["strEstadoDecision"] = estadoDecision.getValue();
 		//param["causaDecision"]=comboCausas.getValue();
 		param["causaDecisionFinalizar"]=comboCausasFinalizar.getValue();
 		param["causaDecisionParalizar"]=comboCausasParalizar.getValue();
@@ -751,10 +754,12 @@
 			if (isCheck){
 				comboCausasParalizar.setVisible(false);
 				comboCausasFinalizar.setVisible(true);
+				comboCausasFinalizar.allowBlank = false;
 			}
 			else{
 				comboCausasParalizar.setVisible(true);
 				comboCausasFinalizar.setVisible(false);
+				comboCausasFinalizar.allowBlank = true;
 			}			
 			
 	}); 
@@ -789,7 +794,6 @@
 			checkbox.setValue(isCheck);
 
 			if (isCheck){
-				fechaHasta.setDisabled(false);
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
 					btnProponer.enable();
@@ -807,10 +811,16 @@
 			if (isCheck){
 				comboCausasParalizar.setVisible(true);
 				comboCausasFinalizar.setVisible(false);
+				comboCausasParalizar.allowBlank = false;
+				fechaHasta.setDisabled(false);
+				fechaHasta.allowBlank = false;
 			}
 			else{
 				comboCausasParalizar.setVisible(false);
 				comboCausasFinalizar.setVisible(true);
+				comboCausasParalizar.allowBlank = true;
+				fechaHasta.setDisabled(true);
+				fechaHasta.allowBlank = true;
 			}			
 			
 	}); 
@@ -896,8 +906,8 @@
 			if (validarDatosFormulario()){			
 				if(activarComprobacionSubasta && mensaje){
 					Ext.Msg.show({
-					   title:'Confirmaciï¿½n',
-					   msg: 'ï¿½Estï¿½ seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarï¿½n activas.',
+					   title:'Confirmación',
+					   msg: '¿Está seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarÃ¡n activas.',
 					   buttons: Ext.Msg.YESNO,
 					   animEl: 'elId',
 					   width:450,
@@ -907,13 +917,15 @@
 				}
 				else{
 					var params = transform();
-						params["idProcedimiento"]='${idProcedimiento}';
-						page.submit({
-							eventName : 'aceptarPropuesta'
-							,formPanel : panelEdicion
-							,success :    function(){ page.fireEvent(app.event.DONE); }
-							,params:params
-				  });
+					params["idProcedimiento"]='${idProcedimiento}';
+					params["idDecision"]='${id}';
+					page.webflow({
+						flow: 'decisionprocedimiento/aceptarPropuesta'
+						,params: params
+						,success : function(){ 
+							page.fireEvent(app.event.DONE); 
+						}
+					});
 				}
 			}	
 		}
@@ -966,33 +978,48 @@
 		text : '<s:message code="decisionProcedimiento.proponer" text="**Proponer" />'
 		,iconCls:'icon_elevar'
 		,handler : function(){
-			var params = transform();
-			page.submit({
-	            eventName : 'update'
-	            ,formPanel : panelEdicion
-	            ,success : 
-	               function(){ 
-	        			page.fireEvent(app.event.DONE);          
-	               }
-	            ,params: params
-	         });
-	    }
-		
+			if (validarDatosFormulario()){
+				var params = transform();
+				params["idProcedimiento"]='${idProcedimiento}';
+				params["idDecision"]='${id}';
+				page.webflow({
+					flow: 'decisionprocedimiento/crearPropuesta'
+					,params: params
+					,success : function(){ 
+						page.fireEvent(app.event.DONE); 
+					}
+				});
+			}
+
+		}
 	});
+	
+	var validarDatosProponer = function(){
+	
+		
+		if (chkFinalizarOrigen.getValue() && comboCausasFinalizar.getValue()){
+			return true;
+		} else if (chkParalizarOrigen.getValue() && comboCausasParalizar.getValue() && fechaHasta.getValue()){
+			return true;
+		} else {
+			return false;
+		}
+	
+	}
+	
 	var btnRechazar=new Ext.Button({
 		text:'<s:message code="decisionProcedimiento.rechazar" text="**Rechazar" />'
 		,iconCls:'icon_rechazar_decision'
 		,handler : function(){
-			page.submit({
-	            eventName : 'rechazar'
-	            ,formPanel : panelEdicion
-	            ,success: 
-	               function(){ 
-	        			page.fireEvent(app.event.DONE);          
-	               }
-	            ,params: {id:decisionId}
-	        });
-		}
+
+			page.webflow({
+				flow: 'decisionprocedimiento/rechazarPropuesta'
+				,params: {id:decisionId}
+				,success : function(){ 
+					page.fireEvent(app.event.DONE); 
+				}
+			});
+	     }
 	});
 
 	var panelSuperior={

@@ -31,9 +31,14 @@
 			</list>
 		</property>
 		<property name="tiposGestorGestoria">
-			<list>
+			<set>
 				<value>GEST</value>
-			</list>
+			</set>
+		</property>
+		<property name="tiposGestorProcurador">
+			<set>
+				<value>PROC</value>
+			</set>
 		</property>
 	</bean>  
 	

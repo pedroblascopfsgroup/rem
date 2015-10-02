@@ -820,7 +820,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		//FILTRO ERROR CDD
 		if (!Checks.esNulo(dto.getComboErrorPreviCDD())) {
                         hql.append(" and cdd.fechaEntrega is null ");
-                        //Si se buscan KOs de Pivote, se debe filtrar también por fechaEntrega vacío
+                        //Si se buscan KOs de Pivote, se debe filtrar tambiï¿½n por fechaEntrega vacï¿½o
                         
 			if("Todos".equals(dto.getComboErrorPreviCDD())){
                                 hql.append(" and cdd.resultadoValidacion <> 1");
@@ -1216,7 +1216,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
             sql += " WHERE cnv.fecha_alta <= crn.crn_fecha_result ";
             sql += " AND rvn.dd_rvn_codigo <> '0' ";
             sql += " AND cnv.asu_id = " + idAsunto;
-            sql += " AND ROWNUM = 1 ";            
+            sql += " AND ROWNUM = 1 ";
 
             SQLQuery q = getSession().createSQLQuery(sql);
             
@@ -1245,7 +1245,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
                 }
             }
             
-            return null;
+            return new String();
         }
         
 }

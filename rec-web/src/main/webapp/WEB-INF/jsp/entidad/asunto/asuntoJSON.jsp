@@ -88,6 +88,7 @@
 		<json:property name="puedeVerTabSubasta" value="${puedeVerTabSubasta}" />
 		<json:property name="puedeVerTabAdjudicados" value="${puedeVerTabAdjudicados}" />		
 	    <json:property name="provision" value="${provision}" />
+	    <json:property name="puedeFinalizarAsunto" value="${puedeFinalizarAsunto}" />
 	</json:object>
 	<json:object name="concursal">
 		<json:property name="procedimientosConcursales" value="${procedimientosConcursales}" />

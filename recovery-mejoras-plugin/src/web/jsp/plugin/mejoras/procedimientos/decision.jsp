@@ -897,8 +897,8 @@
 			if (validarDatosFormulario()){	
 				if(activarComprobacionSubasta && mensaje && !chkFinalizarOrigen.getValue()){
 					Ext.Msg.show({
-					   title:'Confirmación',
-					   msg: '¿Está seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarán activas.',
+					   title:'Confirmaciï¿½n',
+					   msg: 'ï¿½Estï¿½ seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarï¿½n activas.',
 					   buttons: Ext.Msg.YESNO,
 					   animEl: 'elId',
 					   width:450,

@@ -894,11 +894,11 @@
 		,iconCls : 'icon_ok'
 		,handler : function(){
 			errores = "";
-			if (validarDatosFormulario()){			
-				if(activarComprobacionSubasta && mensaje){
+			if (validarDatosFormulario()){	
+				if(activarComprobacionSubasta && mensaje && !chkFinalizarOrigen.getValue()){
 					Ext.Msg.show({
-					   title:'Confirmaciï¿½n',
-					   msg: 'ï¿½Estï¿½ seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarÃ¡n activas.',
+					   title:'Confirmación',
+					   msg: '¿Está seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarán activas.',
 					   buttons: Ext.Msg.YESNO,
 					   animEl: 'elId',
 					   width:450,
@@ -918,12 +918,21 @@
 						}
 					});
 				}
-			}	
+			}
+			else{
+				btnAceptarPropuesta.enable();
+			}
 		}
 	});
 	
+	btnAceptarPropuesta.on('click',function(){
+		btnAceptarPropuesta.disable();
+	})
+	
+	
 	function processResult(opt){
 	   if(opt == 'no'){
+	   		btnAceptarPropuesta.enable();
 	      //page.fireEvent(app.event.CANCEL);
 	   }
 	   if(opt == 'yes'){
@@ -948,6 +957,7 @@
 		} else if(procedimientoStore.getCount() >= 1){
 			return true;
 		} else {
+			btnAceptarPropuesta.enable();
 			return false;
 		}
 	
@@ -983,9 +993,15 @@
 					}
 				});
 			}
-
+			else{
+				btnProponer.enable();
+			}
 		}
 	});
+	
+	btnProponer.on('click',function(){
+		btnProponer.disable();
+	})
 	
 	var validarDatosProponer = function(){
 	
@@ -995,6 +1011,7 @@
 		} else if (chkParalizarOrigen.getValue() && comboCausasParalizar.getValue() && fechaHasta.getValue()){
 			return true;
 		} else {
+			btnProponer.enable();
 			return false;
 		}
 	

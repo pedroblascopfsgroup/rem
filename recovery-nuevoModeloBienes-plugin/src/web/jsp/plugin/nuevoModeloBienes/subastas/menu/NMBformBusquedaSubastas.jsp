@@ -851,7 +851,7 @@ var formBusquedaSubastas=function(){
 	var subastasCm = new Ext.grid.ColumnModel([	    
 	    {header: '<s:message code="Asunto" text="Asunto"/>', dataIndex: 'nombreAsunto', sortable: false}
 	    ,{header: '<s:message code="idAsunto" text="idAsunto"/>', dataIndex: 'idAsunto', hidden: true}
-	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.numAutos" text="Nº Autos"/>', dataIndex: 'numAutos', sortable: true}	    
+	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.numAutos" text="Nº Autos"/>', dataIndex: 'numAutos'}	    
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.fechaSolicitud" text="F.Solicitud"/>', dataIndex: 'fechaSolicitud', sortable: true}
 		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.fechaAnuncio" text="F.Anuncio"/>', dataIndex: 'fechaAnuncio', sortable: true}	    	    
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.fechaSenyalamiento" text="F.Señalamiento"/>', dataIndex: 'fechaSenyalamiento', sortable: true}	    

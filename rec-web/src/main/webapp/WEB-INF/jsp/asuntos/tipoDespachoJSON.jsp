@@ -6,7 +6,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 
 <fwk:json>
-	<json:array name="listadoDespachos" items="${listadoDespachos}" var="rec">
+	<json:array name="listadoDespachos" items="${despachos}" var="rec">
 		<json:object>
 			<json:property name="cod" value="${rec.id}"/>
 			<json:property name="descripcion" value="${rec.despacho}"/>

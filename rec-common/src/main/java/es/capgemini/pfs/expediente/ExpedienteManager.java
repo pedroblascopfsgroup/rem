@@ -202,8 +202,14 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	 */
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PAGINATED_DINAMICO)
     public Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params) {
+    	int limit = 25;
+    	return this.findExpedientesPaginatedDinamico(expedientes, params, limit);
+    }
+	
+    private Page findExpedientesPaginatedDinamico(DtoBuscarExpedientes expedientes, String params, int limit) {
+    	
     	Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-    	expedientes.setLimit(2000);
+    	expedientes.setLimit(limit);
     	EventFactory.onMethodStart(this.getClass());
         if (expedientes.getCodigoZona() != null && expedientes.getCodigoZona().trim().length() > 0) {
             StringTokenizer tokens = new StringTokenizer(expedientes.getCodigoZona(), ",");
@@ -227,7 +233,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO)
     public List<Expediente> findExpedientesParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
-        Page p = this.findExpedientesPaginatedDinamico(dto, params);
+        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000);
         return (List<Expediente>) p.getResults();
     }
     
@@ -1335,7 +1341,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Expediente exp = expedienteDao.get(idExpediente);
         Long bpmProcess = exp.getProcessBpm();
         if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
-//        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, null);
         String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
         if (ExpedienteBPMConstants.STATE_REVISION_EXPEDIENTE.equals(node)) {
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVERACOMPLETAR);
@@ -1460,7 +1465,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         }
         
         //Evitamos los bucles infinitos si se ha configurado incorrectamente las zonas --> zona.getZonaPadre() == zona
-        if (zona.getZonaPadre() == null || zona.getZonaPadre() == zona ) {
+        if (zona.getZonaPadre() == null || zona.getZonaPadre() ==  zona) {
             logger.error("NO EXISTE COMITE ASOCIADO AL EXPEDIENTE");
             throw new GenericRollbackException("expediente.comiteInexistente");
         }
@@ -2778,7 +2783,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         for (ExpedientePersona expedientePersona : totalPersonas) {
             if (!personasObligatorias.contains(expedientePersona.getPersona())) {
-                
             	dto = new DtoPersonaPoliticaUlt();
                 dto.setPersona(expedientePersona.getPersona());
                 Politica pol = (Politica) executor.execute(InternaBusinessOperation.BO_POL_MGR_BUSCAR_ULTIMA_POLITICA, dto.getPersona().getId());

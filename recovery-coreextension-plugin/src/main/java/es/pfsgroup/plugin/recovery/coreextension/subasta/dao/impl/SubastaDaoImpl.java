@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -1489,6 +1491,14 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 
 		return hql.toString();
 
+	}
+
+	@Override
+	public Contrato getContratoByNroContrato(String nroContrato) {
+        String hql = "from Contrato where nroContrato like ?";
+        List<Contrato> lista = getHibernateTemplate().find(hql, new Object[] { "%" + nroContrato + "%" });
+        if (lista.size() > 0) { return lista.get(0); }
+        return null;
 	}
 	
 }

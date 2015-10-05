@@ -41,6 +41,7 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private Map<String, String> mapaSubastas;
 	private List<String> codigosSubastaValidacion;
 	private List<String> codigosSubastas;
+        private String tipoSubastaSareb;
 	private String comboPostoresCelebracionSubasta;
 	//Valores para generar informe de subasta
 	private String valorHonorarios;
@@ -233,6 +234,16 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public void setCodigosSubastas(List<String> codigosSubastas){
 		this.codigosSubastas = codigosSubastas ;
 	}
+        
+
+        @Override
+        public String getTipoSubastaSareb() {
+            return tipoSubastaSareb;
+        }
+
+        public void setTipoSubastaSareb(String tipoSubastaSareb) {
+            this.tipoSubastaSareb = tipoSubastaSareb;
+        }
 	
 	@Override
 	public String getComboPostoresCelebracionSubasta() {

@@ -100,7 +100,7 @@ public class MEJGenericFormManager extends
 	@Transactional(readOnly = false)
 	@BusinessOperation(overrides = "genericFormManager.saveValues")
 	public void saveValues(DtoGenericForm dto) throws Exception {
-		try {
+
 			String[] valores = dto.getValues();
 			TareaExterna tarea = dto.getForm().getTareaExterna();
 
@@ -156,12 +156,7 @@ public class MEJGenericFormManager extends
 			// Thread para que pueda recuperarlos
 			jbpmManager.signalToken(tarea.getTokenIdBpm(),
 					BPMContants.TRANSICION_AVANZA_BPM);
-		} catch (UserException ue){
-			throw ue;
-		} catch (Throwable t) {
-			logger.error("Esta excepción se traduce para HAYA en fase de implantación", t);
-			throw new BusinessOperationException("Problema con la migración de datos");
-		}
+			
 	}
 
 }

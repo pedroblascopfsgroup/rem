@@ -75,6 +75,13 @@ public interface NMBProjectContext {
 	 */
 	List<String> getCodigosSubastas();
 
+	/**
+	 * Devuelve el código de Subasta Sareb
+	 * 
+	 * @return Códgio Subasta Sareb
+	 */        
+        String getTipoSubastaSareb();
+        
 	String getComboPostoresCelebracionSubasta();
 
 	Map<String, String> getMapaSubastas();

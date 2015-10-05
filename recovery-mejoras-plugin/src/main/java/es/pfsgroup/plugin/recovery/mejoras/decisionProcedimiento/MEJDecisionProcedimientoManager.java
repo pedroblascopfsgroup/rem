@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -572,7 +573,7 @@ public class MEJDecisionProcedimientoManager extends
 		}catch(Exception exc){
 			throw new BusinessOperationException(exc);
 		}
-		
+			
 		//JZ
 		Boolean isDerivable = false;
         List<ProcedimientoDerivado> derivarA = decision.getProcedimientosDerivados();
@@ -595,7 +596,7 @@ public class MEJDecisionProcedimientoManager extends
         TareaNotificacion tarea = dp.getTareaAsociada();
         
         List<TareaNotificacion> vTareas = (List<TareaNotificacion>) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO,
-                dtoDecisionProcedimiento.getDecisionProcedimiento().getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
+                dp.getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
 
 
         if (vTareas != null && vTareas.size() > 0) {
@@ -672,15 +673,21 @@ public class MEJDecisionProcedimientoManager extends
             if (dp.getFinalizada()) {
                 // FINALIZADO:Parar definitivamente el procedimiento origen
                 try {
+                	
+                	//HibernateUtils.flush();
+                	//p = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", dp.getProcedimiento().getId()));
+                	//DDEstadoProcedimiento estadoCerrado = genericDao.get(DDEstadoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO));
+                	//p.setEstadoProcedimiento(estadoCerrado);
+                	//genericDao.save(MEJProcedimiento.class, p);
+                	//HibernateUtils.flush();
+                	
                     jbpmUtil.finalizarProcedimiento(p.getId());
-                    p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
-            				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
 
-                    // Integración con mensajería
+                	// Integración con mensajería
                     integracionBpmService.finalizarBPM(p);
 
                     cancelarSubastaActiva(p);
-                    
+
                 } catch (Exception e) {
                     logger.error("Error al finalizar el procedimiento " + p.getId(), e);
                 }
@@ -750,8 +757,15 @@ public class MEJDecisionProcedimientoManager extends
 		//generaNotificacion(dtoDecisionProcedimiento.getIdProcedimiento(), messageService.getMessage("decisionProcedimiento.resultado.aceptado", param));
 	}
 
+	@Transactional(readOnly = false)
 	private void cancelarSubastaActiva(MEJProcedimiento p) {
-		if("P401".equals(p.getTipoProcedimiento().getCodigo()) || "P409".equals(p.getTipoProcedimiento().getCodigo())){
+		Set<String> codigosSubasta = new HashSet<String>();
+		codigosSubasta.add("P401");
+		codigosSubasta.add("P409");
+		codigosSubasta.add("H002");
+		codigosSubasta.add("H003");
+		codigosSubasta.add("H004");
+		if(codigosSubasta.contains(p.getTipoProcedimiento().getCodigo())){
 			Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(p.getId());
 			if(!Checks.esNulo(sub)){
 				sub.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.CAN)));
@@ -759,7 +773,6 @@ public class MEJDecisionProcedimientoManager extends
 				
 				// Mensaje de integración para notificar fin de BPM.
 				integracionBpmService.enviarDatos(sub);
-				
 			}
 		}
 	}

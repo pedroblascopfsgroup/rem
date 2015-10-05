@@ -85,8 +85,7 @@ DECLARE
             /*USUARIOCREAR...........:*/ 'DD'
         )
     ); --Cerrar con ")," si no es la ultima fila. Cerrar con ")" si es ultima fila
-    V_TMP_TIPO_TFI T_TIPO_TFI;
-    
+    V_TMP_TIPO_TFI T_TIPO_TFI;    
     
 BEGIN		
 	
@@ -97,43 +96,15 @@ BEGIN
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumento(''''PCCSC'''') ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento "Propuesta de cancelaci&oacute;n de cargas"</div>'''''' WHERE TAP_CODIGO = ''H008_PropuestaCancelacionCargas''';
 	DBMS_OUTPUT.PUT_LINE('[INFO] H008_PropuestaCancelacionCargas actualizada.');
 	
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .TAP_TAREA_PROCEDIMIENTO SET DD_STA_ID=(select DD_STA_ID from HAYAMASTER.DD_STA_SUBTIPO_TAREA_BASE where DD_STA_CODIGO=''TGCONGE'') WHERE TAP_CODIGO=''H008_RevisarPropuestaCancelacionCargas''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET DD_STA_ID=(SELECT DD_STA_ID FROM '||V_ESQUEMA_MASTER||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''TGCONGE''), DD_TSUP_ID=(SELECT DD_TGE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=''SUCONGE'') WHERE TAP_CODIGO=''H008_RevisarPropuestaCancelacionCargas''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial;"><p style="margin-bottom: 10px;">Dado que se han adjuntado al procedimiento la propuesta de cancelaci&oacute;n de cargas econ&oacute;micas, para dar por finalizada esta tarea deber&aacute; revisar dicha propuesta e informar de la fecha en que queda aprobada. En caso de necesitar comunicarse con el usuario responsable de la propuesta, recuerde que dispone de la opci&oacute;n de crear anotaciones a trav&eacute;s de Recovery.</p><p style="margin-bottom: 10px;">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px;">Una vez complete esta pantalla la siguiente tarea ser&aacute; "Autorizar propuesta" que se lanzar&aacute; a la Entidad para su visto bueno.</p></div>'' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID=(select TAP_ID from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where TAP_CODIGO=''H008_RevisarPropuestaCancelacionCargas'')';
 	DBMS_OUTPUT.PUT_LINE('[INFO] H008_RevisarPropuestaCancelacionCargas actualizada.');
 	
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .TAP_TAREA_PROCEDIMIENTO SET DD_TSUP_ID=(select DD_TGE_ID from HAYAMASTER.DD_TGE_TIPO_GESTOR where DD_TGE_CODIGO=''SUCONGE'') WHERE TAP_CODIGO=''H008_RevisarPropuestaCancelacionCargas''';
-	DBMS_OUTPUT.PUT_LINE('[INFO] H008_RevisarPropuestaCancelacionCargas actualizada.');
-	
-	
-	/*
-	 updates para transformar la tarea Obtener aprobación propuesta en Autorizar propuesta
-	 Cambiamos la descripción, gestor y supervisor, plazos
-	 */
-	/* nombre de tarea y autoprorroga*/
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .TAP_TAREA_PROCEDIMIENTO SET TAP_DESCRIPCION=''Autorizar propuesta'', TAP_AUTOPRORROGA=1 WHERE TAP_CODIGO=''H008_ObtenerAprobPropuesta''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_DESCRIPCION=''Autorizar propuesta'', DD_STA_ID=(select DD_STA_ID from '||V_ESQUEMA_MASTER||'.DD_STA_SUBTIPO_TAREA_BASE where DD_STA_CODIGO=''TGCTRGE''), DD_TSUP_ID=(select DD_TGE_ID from '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR where DD_TGE_CODIGO=''DRECU''), TAP_SCRIPT_DECISION=''valores[''''H008_ObtenerAprobPropuesta''''][''''resultado''''] == ''''ACEPTADO'''' ? ''''aceptado'''' : ''''denegado'''''' WHERE TAP_CODIGO=''H008_ObtenerAprobPropuesta''';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS SET DD_PTP_PLAZO_SCRIPT=''3*24*60*60*1000L'' WHERE TAP_ID=(select TAP_ID from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where TAP_CODIGO=''H008_ObtenerAprobPropuesta'')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial;"><p style="margin-bottom: 10px;">En esta tarea, la Entidad deber&aacute; aceptar o denegar la propuesta de cancelaci&oacute;n de cargas realizada por el letrado.</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px;">Una vez rellene esa pantalla, y si la Entidad acepta la propuesta se lanzar&aacute; la tarea "Revisar propuesta de cancelaci&oacute;n y cargas". En caso contrario, la Entidad deber&aacute; indicar c&oacute;mo proceder.</p></div>'' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID=(select TAP_ID from '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO where TAP_CODIGO=''H008_ObtenerAprobPropuesta'')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ORDEN=3  WHERE TFI_NOMBRE=''observaciones'' AND TAP_ID=(select TAP_ID from TAP_TAREA_PROCEDIMIENTO where TAP_CODIGO=''H008_ObtenerAprobPropuesta'')';
 	DBMS_OUTPUT.PUT_LINE('[INFO] H008_ObtenerAprobPropuesta actualizada.');
-	
-	/* plazos*/
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .DD_PTP_PLAZOS_TAREAS_PLAZAS SET DD_PTP_PLAZO_SCRIPT=''3*24*60*60*1000L'' WHERE TAP_ID=(select TAP_ID from TAP_TAREA_PROCEDIMIENTO where TAP_CODIGO=''H008_ObtenerAprobPropuesta'')';
-	DBMS_OUTPUT.PUT_LINE('[INFO] H008_ObtenerAprobPropuesta actualizada.');
-	
-	/* gestor*/
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .TAP_TAREA_PROCEDIMIENTO SET DD_STA_ID=(select DD_STA_ID from HAYAMASTER.DD_STA_SUBTIPO_TAREA_BASE where DD_STA_CODIGO=''TGCTRGE'') WHERE TAP_CODIGO=''H008_ObtenerAprobPropuesta''';
-	DBMS_OUTPUT.PUT_LINE('[INFO] H008_ObtenerAprobPropuesta actualizada.');
-	
-	/* supervisor*/
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .TAP_TAREA_PROCEDIMIENTO SET DD_TSUP_ID=(select DD_TGE_ID from HAYAMASTER.DD_TGE_TIPO_GESTOR where DD_TGE_CODIGO=''DRECU'') WHERE TAP_CODIGO=''H008_ObtenerAprobPropuesta''';
-	DBMS_OUTPUT.PUT_LINE('[INFO] H008_ObtenerAprobPropuesta actualizada.');
-	
-	/* modificar las TFI*/
-	/* titulo*/
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .TFI_TAREAS_FORM_ITEMS SET TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial;"><p style="margin-bottom: 10px;">En esta tarea, la Entidad deberá aceptar o denegar la propuesta de cancelación de cargas realizada por el letrado.</p><p style="margin-bottom: 10px;">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento. </p><p style="margin-bottom: 10px;">Una vez rellene esa pantalla, y si la Entidad acepta la propuesta se lanzará la tarea "Revisar propuesta de cancelación y cargas". En caso contrario, la Entidad deberá indicar como proceder.</p></div>'' WHERE TFI_ORDEN=0 AND TAP_ID=(select TAP_ID from TAP_TAREA_PROCEDIMIENTO where TAP_CODIGO=''H008_ObtenerAprobPropuesta'')';
-	DBMS_OUTPUT.PUT_LINE('[INFO] H008_ObtenerAprobPropuesta actualizada.');
-	
-	/* cambiamos a observaciones el orden a 3*/
-	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||' .TFI_TAREAS_FORM_ITEMS SET TFI_ORDEN=3  WHERE TFI_NOMBRE=''observaciones'' AND TAP_ID=(select TAP_ID from TAP_TAREA_PROCEDIMIENTO where TAP_CODIGO=''H008_ObtenerAprobPropuesta'')';
-	DBMS_OUTPUT.PUT_LINE('[INFO] H008_ObtenerAprobPropuesta actualizada.');
-	
-	
 	
 	/*
     * LOOP ARRAY BLOCK-CODE: TFI_TAREAS_FORM_ITEMS
@@ -143,7 +114,7 @@ BEGIN
     V_CODIGO1_TFI := 'TAP_CODIGO';
     V_CODIGO2_TFI := 'TFI_NOMBRE';
     VAR_CURR_ROWARRAY := 0;
-    DBMS_OUTPUT.PUT('    [INSERT] '||PAR_ESQUEMA||'.' || PAR_TABLENAME_TFITE || '..........');
+    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || PAR_TABLENAME_TFITE || '..........');
     FOR I IN V_TIPO_TFI.FIRST .. V_TIPO_TFI.LAST
       LOOP
         V_TMP_TIPO_TFI := V_TIPO_TFI(I);
@@ -154,7 +125,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('[INFO] Array codigos '||V_CODIGO1_TFI||' = '''||V_TMP_TIPO_TFI(1)||''', '||V_CODIGO2_TFI||' = '''||V_TMP_TIPO_TFI(4)||''' Descripcion = '''||V_TMP_TIPO_TFI(5)||'''---------------------------------'); 
         DBMS_OUTPUT.PUT('[INFO] Verificando existencia de REGISTROS de la tabla '||VAR_CURR_TABLE||', con codigo '||V_CODIGO1_TFI||' = '''||V_TMP_TIPO_TFI(1)||''', '||V_CODIGO2_TFI||' = '''||V_TMP_TIPO_TFI(4)||'''...'); 
 
-        V_SQL := 'SELECT COUNT(1) FROM '||PAR_ESQUEMA||'.'||VAR_CURR_TABLE||' WHERE TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE '||V_CODIGO1_TFI||' = '''||V_TMP_TIPO_TFI(1)||''') AND '||V_CODIGO2_TFI||' = '''||V_TMP_TIPO_TFI(4)||''' ';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||VAR_CURR_TABLE||' WHERE TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE '||V_CODIGO1_TFI||' = '''||V_TMP_TIPO_TFI(1)||''') AND '||V_CODIGO2_TFI||' = '''||V_TMP_TIPO_TFI(4)||''' ';
         --DBMS_OUTPUT.PUT_LINE(V_SQL);
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
@@ -164,11 +135,11 @@ BEGIN
         ELSE
             DBMS_OUTPUT.PUT_LINE('OK - NO existe');
 
-            V_MSQL := 'INSERT INTO '|| PAR_ESQUEMA ||'.' || PAR_TABLENAME_TFITE || 
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || PAR_TABLENAME_TFITE || 
                         '(TFI_ID,TAP_ID,TFI_ORDEN,TFI_TIPO,TFI_NOMBRE,TFI_LABEL,TFI_ERROR_VALIDACION,TFI_VALIDACION,TFI_VALOR_INICIAL,TFI_BUSINESS_OPERATION,VERSION,USUARIOCREAR,FECHACREAR,BORRADO)' ||
                         'SELECT ' ||
                         'S_TFI_TAREAS_FORM_ITEMS.NEXTVAL, ' ||
-                        '(SELECT TAP_ID FROM ' || PAR_ESQUEMA || '.' || PAR_TABLENAME_TARPR || ' WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_TFI(1)) || '''), ' ||
+                        '(SELECT TAP_ID FROM ' || V_ESQUEMA || '.' || PAR_TABLENAME_TARPR || ' WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_TFI(1)) || '''), ' ||
                         '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(2)),'''','''''') || ''',''' 
                              || REPLACE(TRIM(V_TMP_TIPO_TFI(3)),'''','''''') || ''',' ||
                         '''' || REPLACE(TRIM(V_TMP_TIPO_TFI(4)),'''','''''') || ''',''' 

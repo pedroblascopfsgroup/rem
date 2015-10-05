@@ -28,6 +28,7 @@ import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -314,14 +315,14 @@ public class PropuestaManager implements PropuestaApi {
 
 		String descripcion = "La propuesta " + idAcuerdo + " ha sido cambiada al estado " + estadoFinalizacion.getDescripcion();
 
-		crearEvento(propuesta.getExpediente().getId(), descripcion, "PROP_EVENT", propuesta.getProponente().getId());
+		crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion, propuesta.getProponente().getId());
 	}
 
-	private void crearEvento(Long idUnidadGestion, String descripcion, String codigoSubtarea, Long usuarioDestino) {
+	private void crearEventoPropuesta(Long idUnidadGestion, String descripcion, Long usuarioDestino) {
 		DtoGenerarTarea tareaDto = new DtoGenerarTarea();
 		tareaDto.setIdEntidad(idUnidadGestion);
 		tareaDto.setDescripcion(descripcion);
-		tareaDto.setSubtipoTarea(codigoSubtarea);
+		tareaDto.setSubtipoTarea(SubtipoTarea.CODIGO_EVENTO_PROPUESTA);
 		tareaDto.setCodigoTipoEntidad(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
 
 		EXTDtoGenerarTareaIdividualizadaImpl tareaIndDto = new EXTDtoGenerarTareaIdividualizadaImpl();

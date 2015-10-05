@@ -58,6 +58,7 @@ DECLARE
       ,T_TIPO_TFA('PETPOS', 'Petición de la posesión', 'Petición de la posesión', 'TR') -- Trámite de posesión interina
       ,T_TIPO_TFA('PRECUE', 'Presentación de cuentas', 'Presentación de cuentas', 'TR') -- Trámite de posesión interina
       ,T_TIPO_TFA('ACUREC', 'Acuse de recibo', 'Acuse de recibo', 'TR') -- Trámite de notificación
+      ,T_TIPO_TFA('ESCPET', 'Escrito de petición', 'Escrito de petición', 'AP') -- Trámite de subsanación de decreto de adjudicación
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

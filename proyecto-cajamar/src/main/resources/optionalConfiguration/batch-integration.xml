@@ -204,7 +204,7 @@
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 							<property name="tipo" value="BPM-TAREA-INICIO"/>
-							<property name="codigoTarea" value="H005_declararIVAeIGIC"/>
+							<property name="codigoTarea" value="H005_DeclaracionIVAIGIC"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Inicio de BPM Declarar IVA/IGIC"/>

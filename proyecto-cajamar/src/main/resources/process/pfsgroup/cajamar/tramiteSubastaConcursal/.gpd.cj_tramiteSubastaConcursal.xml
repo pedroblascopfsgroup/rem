@@ -98,20 +98,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_BPMTramiteCesionRemate" x="639" y="1084" width="253" height="36">
-    <edge>
-      <label x="-133" y="-14"/>
-    </edge>
-  </node>
-  <node name="CJ004_BPMTramiteAdjudicacion" x="-364" y="1288" width="312" height="36">
-    <edge>
-      <label x="-66" y="43"/>
-    </edge>
-    <edge>
-      <label x="24" y="-24"/>
-      <bendpoint w1="-257" h1="0" w2="-31" h2="409"/>
-    </edge>
-  </node>
   <node name="CJ004_SolicitarMandamientoPago" x="549" y="1211" width="347" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -164,7 +150,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="D" x="-166" y="1198" width="132" height="36">
+  <node name="D" x="-143" y="1213" width="132" height="36">
     <edge>
       <label x="15" y="-26"/>
     </edge>
@@ -172,7 +158,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="C" x="467" y="976" width="132" height="36">
+  <node name="C" x="-399" y="1219" width="132" height="36">
     <edge>
       <label x="-10" y="-11"/>
     </edge>
@@ -309,9 +295,11 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-216" h1="0" w2="168" h2="-38"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="107" h1="-63" w2="113" h2="62"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -322,4 +310,16 @@
   <node name="Fin3" x="1939" y="183" width="132" height="36"/>
   <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
   <node name="Fin5" x="-500" y="879" width="132" height="36"/>
+  <node name="CJ004_TareaExterna" x="-302" y="1364" width="216" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="117" w2="-151" h2="-40"/>
+    </edge>
+  </node>
 </root-container>

@@ -57,6 +57,7 @@ DECLARE
       ,T_TIPO_TFA('MANCANCAR', 'Mandamiento de cancelación de cargas', 'Mandamiento de cancelación de cargas', 'AP') -- Trámite de Adjudicación
       ,T_TIPO_TFA('PETPOS', 'Petición de la posesión', 'Petición de la posesión', 'TR') -- Trámite de posesión interina
       ,T_TIPO_TFA('PRECUE', 'Presentación de cuentas', 'Presentación de cuentas', 'TR') -- Trámite de posesión interina
+      ,T_TIPO_TFA('ACUREC', 'Acuse de recibo', 'Acuse de recibo', 'TR') -- Trámite de notificación
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

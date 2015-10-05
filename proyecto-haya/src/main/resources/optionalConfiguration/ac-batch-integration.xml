@@ -13,6 +13,7 @@
 			http://www.springframework.org/schema/integration/file
 			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
 
+
 	<!-- CONFIGURACION GENERICA E/S -->
 	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">
 		<constructor-arg index="0">
@@ -141,6 +142,13 @@
 			<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
 				<constructor-arg index="0" ref="bpmConsumerActionMgr" />
 				<constructor-arg index="1" value="${entidad.id}"/>
+				<constructor-arg index="2">
+				    <bean class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+				        <property name="preAuthenticatedUserDetailsService">
+				            <bean class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService" />
+				        </property>
+				    </bean>
+				</constructor-arg>
 			</bean>
 		</integration:service-activator>
 	</integration:chain>
@@ -164,6 +172,26 @@
 	<bean id="bpmConsumerActionMgr" class="es.pfsgroup.recovery.integration.ConsumerActionManager">
 		<constructor-arg>
 			<list>
+			
+				<!-- NOTIFICACIONES: INICIO / CANCEL / FIN TAREA / BPM-FIN / BPM-TAREA-ACTIVAR ... -->
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaProcedimientoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
+							<property name="tipo" value="BPM-TAREA-.+"/>
+						</bean>
+					</constructor-arg>
+					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
+					<constructor-arg index="2" value="${integracion.tareas.sta}"/>
+					<property name="description" value="Gestión de una tarea"/>
+					<property name="procedimientoConsumer">
+						<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
+							<constructor-arg>
+								<bean class="es.pfsgroup.recovery.integration.AllowAllRule"/>
+							</constructor-arg>
+							<property name="description" value="Actualización de un procedimiento, lo crea si no existe"/>
+						</bean>
+					</property>
+				</bean>
 			
 				<!-- Transicionar tarea -->
 				<!-- RESPUESTA DE CAJAMAR A BPMs que esperan respuesta, cuando finalizan transicionan la tarea -->

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.expediente.gestorEntidad.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;

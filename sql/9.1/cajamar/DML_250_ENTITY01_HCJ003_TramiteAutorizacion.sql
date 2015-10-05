@@ -80,7 +80,7 @@ DECLARE
     		/*VERSION......................:*/ '0',
     		/*USUARIOCREAR.................:*/ 'DD',
     		/*BORRADO......................:*/ '0',
-    		/*DD_TAC_ID(FK)................:*/ 'TR',
+    		/*DD_TAC_ID(FK)................:*/ 'CO',
     		/*DD_TPO_SALDO_MIN.............:*/ null,
     		/*DD_TPO_SALDO_MAX.............:*/ null,
     		/*FLAG_PRORROGA................:*/ '1',

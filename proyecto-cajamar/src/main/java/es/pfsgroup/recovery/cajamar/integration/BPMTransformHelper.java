@@ -1,7 +1,8 @@
 package es.pfsgroup.recovery.cajamar.integration;
 
 import java.util.List;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,22 +23,29 @@ import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
  */
 public class BPMTransformHelper implements TransformerHelper {
 
-	private static final String CODIGO_TIPO_PROCEDIMIENTO = "HCJ002";
-	
 	@Autowired
 	private GenericABMDao genericDao;
 
     @Autowired
     private TareaExternaManager tareaExternaManager;
 	
-    private String tareaParaEnviar;
+    private Pattern tareaParaEnviar;
+    private Pattern codigoProcedimiento;
 			
-	public String getTareaParaEnviar() {
+	public Pattern getTareaParaEnviar() {
 		return tareaParaEnviar;
 	}
 
-	public void setTareaParaEnviar(String tareaParaEnviar) {
+	public void setTareaParaEnviar(Pattern tareaParaEnviar) {
 		this.tareaParaEnviar = tareaParaEnviar;
+	}
+	
+	public Pattern getCodigoProcedimiento() {
+		return codigoProcedimiento;
+	}
+
+	public void setCodigoProcedimiento(Pattern codigoProcedimiento) {
+		this.codigoProcedimiento = codigoProcedimiento;
 	}
 
 	@Override
@@ -51,7 +59,7 @@ public class BPMTransformHelper implements TransformerHelper {
 		ProcedimientoPayload proc = new ProcedimientoPayload(dataPayload);
 		
 		// No es el procedimiento que buscamos.
-		if (proc.getTipoProcedimiento()==null || !proc.getTipoProcedimiento().equals(CODIGO_TIPO_PROCEDIMIENTO)) {
+		if (proc.getTipoProcedimiento()==null || !match(codigoProcedimiento, proc.getTipoProcedimiento())) {
 			return;
 		}
 		
@@ -61,14 +69,13 @@ public class BPMTransformHelper implements TransformerHelper {
         if (tareas != null && !Checks.esNulo(tareaParaEnviar)) {
             for (TareaExterna tarea : tareas) {
                 String codigo = tarea.getTareaProcedimiento().getCodigo();
-                if (tareaParaEnviar.equals(codigo)) {
+                if (match(tareaParaEnviar, codigo)) {
                 	loadValores(dataPayload, tarea);
                     //List<TareaExternaValor> vValores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
                     break;
                 }
             }
-        }
-        
+        }        
 	}
 
 	protected void loadValores(DataContainerPayload payload, TareaExterna tareaExterna) {
@@ -77,6 +84,10 @@ public class BPMTransformHelper implements TransformerHelper {
 			String valorStr = valor.getValor();
 			payload.addExtraInfo(key, valorStr);
 		}
-	}
+	}	
 	
+	private boolean match(Pattern pattern, String value) {
+		Matcher matcher = pattern.matcher(value);
+		return matcher.matches();
+	}
 }

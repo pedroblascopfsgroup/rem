@@ -258,17 +258,20 @@
    			btnProponerAcuerdo.disable();
    			btnCancelarAcuerdo.disable();
    			btnRechazarAcuerdo.disable();
+   			btnRegistrarFinalizacionAcuerdo.disable();
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
    			btnCancelarAcuerdo.enable();
    			btnRechazarAcuerdo.enable();
+   			btnRegistrarFinalizacionAcuerdo.enable();
    }
    
    var ocultarBotones=function(){
    			btnProponerAcuerdo.hide();
    			btnCancelarAcuerdo.hide();
    			btnRechazarAcuerdo.hide();
+   			btnRegistrarFinalizacionAcuerdo.hide();
    }
    
 	

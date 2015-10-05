@@ -26,6 +26,8 @@ import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -38,6 +40,8 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 import es.pfsgroup.recovery.api.ExpedienteApi;
+import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
+import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesAExplorarExpedienteDao;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dao.EXTActuacionesRealizadasExpedienteDao;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesExplorarExpediente;
@@ -45,6 +49,7 @@ import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesRealizadasExpedie
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesAExplorarExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTActuacionesRealizadasExpediente;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
+import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Service
@@ -301,13 +306,36 @@ public class PropuestaManager implements PropuestaApi {
 		String codigoEstadoPropuesta = cumplido ? DDEstadoAcuerdo.ACUERDO_CUMPLIDO : DDEstadoAcuerdo.ACUERDO_INCUMPLIDO;
 		DDEstadoAcuerdo estadoFinalizacion = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, codigoEstadoPropuesta);
 
-		Acuerdo propuesta = acuerdoDao.get(idAcuerdo);
+		EXTAcuerdo propuesta = (EXTAcuerdo) acuerdoDao.get(idAcuerdo);
 		propuesta.setEstadoAcuerdo(estadoFinalizacion);
 		propuesta.setFechaEstado(fechaPago);
 		propuesta.setObservaciones(observaciones);
 		acuerdoDao.save(propuesta);
+
+		String descripcion = "La propuesta " + idAcuerdo + " ha sido cambiada al estado " + estadoFinalizacion.getDescripcion();
+
+		crearEvento(propuesta.getExpediente().getId(), descripcion, "PROP_EVENT", propuesta.getProponente().getId());
 	}
-	
+
+	private void crearEvento(Long idUnidadGestion, String descripcion, String codigoSubtarea, Long usuarioDestino) {
+		DtoGenerarTarea tareaDto = new DtoGenerarTarea();
+		tareaDto.setIdEntidad(idUnidadGestion);
+		tareaDto.setDescripcion(descripcion);
+		tareaDto.setSubtipoTarea(codigoSubtarea);
+		tareaDto.setCodigoTipoEntidad(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
+
+		EXTDtoGenerarTareaIdividualizadaImpl tareaIndDto = new EXTDtoGenerarTareaIdividualizadaImpl();
+		tareaIndDto.setTarea(tareaDto);
+		tareaIndDto.setDestinatario(usuarioDestino);
+
+		try {
+			proxyFactory.proxy(EXTTareasApi.class).crearTareaNotificacionIndividualizada(tareaIndDto);
+		} catch (EXTCrearTareaException e) {
+			logger.error(e);
+			throw new BusinessOperationException("PropuestaManager.crearEvento: error al intentar crear el evento ");
+		}
+	}
+
 	@Transactional(readOnly = false)
 	public void rechazar(Long idPropuesta, String motivo) {
 		

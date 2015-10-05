@@ -71,6 +71,12 @@ public class PersonaFormulas {
 	@Column(name = "DESC_CNAE")
 	private String descripcionCnae;
 
+	@Column(name = "DESC_FECHA_SIT_CONCURSAL")
+	private String fechaSituacionConcursal;
+	
+	@Column(name = "DESC_CLIENTE_REESTRUC")
+	private Boolean clienteReestructurado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -145,6 +151,22 @@ public class PersonaFormulas {
 
 	public String getDescripcionCnae() {
 		return descripcionCnae;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return fechaSituacionConcursal;
+	}
+
+	public void setFechaSituacionConcursal(String fechaSituacionConcursal) {
+		this.fechaSituacionConcursal = fechaSituacionConcursal;
+	}
+
+	public Boolean getClienteReestructurado() {
+		return clienteReestructurado;
+	}
+
+	public void setClienteReestructurado(Boolean clienteReestructurado) {
+		this.clienteReestructurado = clienteReestructurado;
 	}
 
 	

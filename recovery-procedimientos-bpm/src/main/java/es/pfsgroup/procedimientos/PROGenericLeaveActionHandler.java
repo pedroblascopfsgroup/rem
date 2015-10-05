@@ -145,6 +145,7 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 		String usuarioRemoto = (String)executionContext.getVariable(TareaNotificacionPayload.JBPM_CONTEXT_USUARIO_REMOTO);
 		if (!Checks.esNulo(usuarioRemoto)) {
 			tareaExterna.getAuditoria().setSuplantarUsuario(usuarioRemoto);
+			tareaExterna.getTareaPadre().getAuditoria().setSuplantarUsuario(usuarioRemoto);
 			executionContext.setVariable(TareaNotificacionPayload.JBPM_CONTEXT_USUARIO_REMOTO, null);
 		}
 

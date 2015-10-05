@@ -70,7 +70,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("procedimientoPco.fechaInicioPreparacion").as("fechaInicioPreparacion"));
 		//select.add(Projections.property("procedimientoPco.diasEnPreparacion").as("diasEnPreparacion"));
 		select.add(Projections.property("procedimientoPco.totalLiquidacion").as("totalLiquidacion"));
-		//select.add(Projections.property("procedimientoPco.notificadoClientes").as("notificadoClientes"));
 		select.add(Projections.property("procedimientoPco.fechaEnvioLetrado").as("fechaEnvioLetrado"));
 		select.add(Projections.property("procedimientoPco.aceptadoLetrado").as("aceptadoLetrado"));
 		select.add(Projections.property("procedimientoPco.todosDocumentos").as("todosDocumentos"));
@@ -256,7 +255,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProDiasGestion())) {
-			where.add(Restrictions.ge("procedimientoPco.diasEnGestion", filtro.getProDiasGestion()));
+			where.add(Restrictions.ge("procedimientoPco.diasEnGestion", Integer.valueOf(filtro.getProDiasGestion())));
 		}
 
 		if (!StringUtils.emtpyString(filtro.getProCodigosEstado())) {
@@ -428,7 +427,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDiasGestion())) {
-				where.add(Restrictions.ge("solicitud.diasEnGestion", filtro.getDocDiasGestion()));
+				where.add(Restrictions.ge("solicitud.diasEnGestion", Integer.valueOf(filtro.getDocDiasGestion())));
 			}
 
 			if (!StringUtils.emtpyString(filtro.getDocDespacho()) && !StringUtils.emtpyString(filtro.getDocGestor())) {

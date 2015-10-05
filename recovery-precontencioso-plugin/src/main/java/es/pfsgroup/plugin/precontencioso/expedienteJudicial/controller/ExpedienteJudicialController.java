@@ -68,6 +68,9 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		boolean finalizado = procedimientoPcoApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
+		if(finalizado) {
+			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARADO);
+		}
 		model.put("finalizado", finalizado);
 		return JSON_RESULTADO_FINALIZAR_PREPARACION;
 	}
@@ -75,6 +78,7 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String devolverPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		procedimientoPcoApi.devolverPreparacionPorProcedimientoId(idProcedimiento);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
 		return DEFAULT;
 	}
 

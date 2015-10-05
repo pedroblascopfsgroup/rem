@@ -144,6 +144,12 @@ app.subtipoTarea.CODIGO_TAREA_EXP_RECOBRO_META_VOLANTE_KO = '<fwk:const value="e
 app.subtipoTarea.CODIGO_ACEPTACION_ACUERDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_ACEPTACION_ACUERDO" />';
 app.subtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO" />';
 app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE" />';
+app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO" />';
+
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR" />';
+app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO" />';
 
 app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
@@ -166,6 +172,9 @@ app.estExpediente.ESTADO_BLOQUEADO = '<fwk:const value="es.capgemini.pfs.expedie
 
 app.estItinerario={};
 app.estItinerario.ESTADO_RE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
+app.estItinerario.ESTADO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
+app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA" />';
+app.estItinerario.ESTADO_REVISAR_EXPEDIENTE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
 
 app.tipoBien={};
 app.tipoBien.CODIGO_TIPOBIEN_PISO = '<fwk:const value="es.capgemini.pfs.bien.model.DDTipoBien.CODIGO_TIPOBIEN_PISO" />';

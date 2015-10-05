@@ -48,51 +48,7 @@ BEGIN
 	END IF;
 	
 	COMMIT;
-	
-    
-	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.'||V_DDNAME||' WHERE FUN_DESCRIPCION= ''VALIDAR-ACUERDO''';
-	
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS > 0 THEN    
-	  DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
-	  DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe VALIDAR-ACUERDO '||V_DDNAME||'.');
-	
-	ELSE
-	
-	  execute immediate 'Insert into '||V_ESQUEMA_M||'.'||V_DDNAME||' '||
-	  '(FUN_ID, FUN_DESCRIPCION_LARGA,FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) values '||
-	  '('||V_ESQUEMA_M||'.S_FUN_FUNCIONES.nextval,''Función que permite validar acuerdos'',''VALIDAR-ACUERDO'',''0'',''PRODUCTO'',sysdate,''0'') ';
-	
-	  DBMS_OUTPUT.PUT_LINE('OK modificado');
-	
-	END IF;
-	
-	COMMIT;
-	
-	
-	
-	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.'||V_DDNAME||' WHERE FUN_DESCRIPCION= ''DECIDIR-ACUERDO''';
-	
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS > 0 THEN    
-	  DBMS_OUTPUT.PUT_LINE('OK no se modifica nada.');
-	  DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe el DECIDIR-ACUERDO '||V_DDNAME||'.');
-	
-	ELSE
-	
-	  execute immediate 'Insert into '||V_ESQUEMA_M||'.'||V_DDNAME||' '||
-	  '(FUN_ID, FUN_DESCRIPCION_LARGA,FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) values '||
-	  '('||V_ESQUEMA_M||'.S_FUN_FUNCIONES.nextval,''Función que permite validar acuerdos'',''DECIDIR-ACUERDO'',''0'',''PRODUCTO'',sysdate,''0'') ';
-	
-	  DBMS_OUTPUT.PUT_LINE('OK modificado');
-	
-	END IF;
-	
-	COMMIT;
-	
-    
+	    
     
 	DBMS_OUTPUT.PUT_LINE('[INFO] Fin.');
 

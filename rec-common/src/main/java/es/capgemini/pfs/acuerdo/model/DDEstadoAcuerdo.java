@@ -28,7 +28,7 @@ public class DDEstadoAcuerdo implements Dictionary, Auditable {
     public static final String ACUERDO_PROPUESTO = "02";
     public static final String ACUERDO_ACEPTADO = "03";
     public static final String ACUERDO_RECHAZADO = "04";
-    public static final String ACUERDO_CANCELADO = "05";
+    public static final String ACUERDO_CANCELADO = "06";
     public static final String ACUERDO_FINALIZADO = "06";
     public static final String ACUERDO_ENVIADO = "07";
     public static final String ACUERDO_VIGENTE = "08";

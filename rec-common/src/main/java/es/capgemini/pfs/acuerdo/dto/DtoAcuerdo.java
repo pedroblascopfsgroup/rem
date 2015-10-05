@@ -17,6 +17,7 @@ public class DtoAcuerdo extends WebDto {
 
 	private Long idAcuerdo;
 	private Long idAsunto;
+	private Long idExpediente;
 	private String tipoAcuerdo;
 	private String solicitante;
 	private String estado;
@@ -224,6 +225,25 @@ public class DtoAcuerdo extends WebDto {
 	public void setImporteCostas(Long importeCostas) {
 		this.importeCostas = importeCostas;
 	}
+	
+	public Long getIdExpediente() {
+		return idExpediente;
+	}
+
+
+	public void setIdExpediente(Long idExpediente) {
+		this.idExpediente = idExpediente;
+	}
+
+	
+	public boolean esPropuesta(){
+		if (idExpediente!=null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	public String getGuid() {
 		return guid;
 	}
@@ -252,4 +272,5 @@ public class DtoAcuerdo extends WebDto {
 	public void setFechaEstado(Date fechaEstado) {
 		this.fechaEstado = fechaEstado;
 	}
+
 }

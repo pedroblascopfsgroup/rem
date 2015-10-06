@@ -1,3 +1,18 @@
+--/*
+--##########################################
+--## AUTOR=David González
+--## FECHA_CREACION=20151002
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
 create or replace PROCEDURE RERA_PRECAL_ARQUET_1 AS
 
   ql_stmt   VARCHAR2(2000);

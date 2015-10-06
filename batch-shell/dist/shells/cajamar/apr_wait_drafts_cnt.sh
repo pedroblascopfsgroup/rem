@@ -3,7 +3,7 @@
  
 DIR_INPUT=/recovery/transferencia/aprov_auxiliar/
 MAX_WAITING_MINUTES=10
-ficheros=EFECTOS_CONTRATOS,EFECTOS_PERSONAS
+ficheros=EFECTOS_CONTRATOS
 
 #echo $(basename $0)
 

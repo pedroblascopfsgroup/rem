@@ -108,7 +108,7 @@
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[ocupado,posiblePosesion,fechaSolicitudPosesion,fechaSenalamientoPosesion,fechaRealizacionPosesion,
 	ocupantesDiligencia,lanzamientoNecesario,fechaSolicitudLanzamiento,fechaSenalamientoLanzamiento,fechaRealizacionLanzamiento]},
-				  {items:[fechaSolicitudMoratoria,resolucionMoratoria,fechaResolucionMoratoria,necesariaFuerzaPublica,existeInquilino,fechaContratoArrendamiento,nombreArrendatario]}
+				  {items:[fechaSolicitudMoratoria,resolucionMoratoria,fechaResolucionMoratoria,necesariaFuerzaPublica,existeInquilino,fechaContratoArrendamiento,nombreArrendatario,entregaVoluntaria]}
 				 ]
 	});
 

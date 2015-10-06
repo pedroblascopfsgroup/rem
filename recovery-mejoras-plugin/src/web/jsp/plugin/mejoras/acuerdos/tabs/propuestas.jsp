@@ -85,7 +85,11 @@
 				panel.remove(panelAnteriorExpTerminos);
 			}
 			ocultarBotones();
-			despuesDeNuevoAcuerdo();
+			
+			///Primer carga de la pestaña o nuevo acuerdo
+			if(indexAcuerdoSeleccionado == null){
+				despuesDeNuevoAcuerdo();
+			}
 		}
 	});
    
@@ -119,8 +123,8 @@
 		          ,params : {idExpediente:panel.getExpedienteId(), readOnly:"false"}
 		       });
 		       w.on(app.event.DONE, function(){
-		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
 		          acuerdosStore.webflow({id:panel.getExpedienteId()});
+		          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
 		          w.close();
 		       });
 		       w.on(app.event.CANCEL, function(){ w.close(); });
@@ -148,6 +152,7 @@
 	      			,success: function(){
 	      				ocultarBotones();
 	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
+	           		 	acuerdosStore.on('load',despuesDeEvento);
 	           		}	
 		      	});
 				habilitarBotones();	
@@ -175,6 +180,7 @@
 	      			,success: function(){
 	           		 	ocultarBotones();
 	           		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
+	           		 	acuerdosStore.on('load',despuesDeEvento);
 	           		}
 		      	});
 				habilitarBotones();
@@ -198,6 +204,7 @@
 
 			w.on(app.event.DONE, function(){
 				acuerdosStore.webflow({id:panel.getExpedienteId()});
+				acuerdosStore.on('load',despuesDeEvento);
 				btnRegistrarFinalizacionAcuerdo.hide();
 				w.close();
 			});
@@ -208,22 +215,6 @@
 		}
 	});
 
-   var deshabilitarBotones=function(){
-   			btnProponerAcuerdo.disable();
-			btnCancelarAcuerdo.disable();
-			btnRegistrarFinalizacionAcuerdo.disable();
-   }
-   var habilitarBotones=function(){
-   			btnProponerAcuerdo.enable();
-			btnCancelarAcuerdo.enable();
-			btnRegistrarFinalizacionAcuerdo.enable();
-   }
-   
-   var ocultarBotones=function(){
-   			btnProponerAcuerdo.hide();
-   			btnCancelarAcuerdo.hide();
-			btnRegistrarFinalizacionAcuerdo.hide();
-   }
 	
 	var btnRechazarAcuerdo = new Ext.Button({
        text:  '<s:message code="acuerdos.rechazar" text="**Rechazar" />'
@@ -247,8 +238,8 @@
    				}
    				,success: function(){
    					ocultarBotones();
-<!-- 	   				acuerdosStore.on('load',despuesDeEvento); -->
-		   		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+						acuerdosStore.on('load',despuesDeEvento);
+		   		 	acuerdosStore.webflow({id:panel.getExpedienteId()});
    		 		}
 	      	});	
       		habilitarBotones();
@@ -261,22 +252,26 @@
 		  Ext.MessageBox.prompt('Motivo rechazo', 'Introduzca los motivos por los que rechaza el acuerdo:', processResult);
        		
 	});
+	
    
    var deshabilitarBotones=function(){
    			btnProponerAcuerdo.disable();
    			btnCancelarAcuerdo.disable();
    			btnRechazarAcuerdo.disable();
+   			btnRegistrarFinalizacionAcuerdo.disable();
    }
    var habilitarBotones=function(){
    			btnProponerAcuerdo.enable();
    			btnCancelarAcuerdo.enable();
    			btnRechazarAcuerdo.enable();
+   			btnRegistrarFinalizacionAcuerdo.enable();
    }
    
    var ocultarBotones=function(){
    			btnProponerAcuerdo.hide();
    			btnCancelarAcuerdo.hide();
    			btnRechazarAcuerdo.hide();
+   			btnRegistrarFinalizacionAcuerdo.hide();
    }
    
 	
@@ -313,6 +308,8 @@
 	
 	
 	propuestasGrid.on('rowclick', function(grid, rowIndex, e) {
+	
+				ocultarBotones();
 
 				panel.remove(acuerdosExpTabs);	
 				panel.remove(panelAnteriorExpTerminos); 
@@ -340,6 +337,7 @@
 				var codigoEstado = rec.get('codigoEstado');
 				var noPuedeModificar = true;
 				var noPuedeEditarEstadoGestion = true;
+				indexAcuerdoSeleccionado = rowIndex;
 				acuerdoSeleccionado = idAcuerdo;
 				
 				

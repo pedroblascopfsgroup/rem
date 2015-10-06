@@ -46,6 +46,15 @@ public class EXTGestorAdicionalAsuntoDaoImpl extends
 		return listUsuario;
 	}
 	
+	@Override
+	public List<EXTGestorAdicionalAsunto> findGestorAdicionalesByAsunto(Long idAsunto) {
+		HQLBuilder hb = new HQLBuilder("from EXTGestorAdicionalAsunto p");
+		hb.appendWhere("p.auditoria.borrado=false");
+		hb.appendWhere("asunto.id=" + idAsunto);
+		
+		return HibernateQueryUtils.list(this, hb);
+	}
+	
 	/**
 	 * getTipoDespachoExternoList
 	 * 

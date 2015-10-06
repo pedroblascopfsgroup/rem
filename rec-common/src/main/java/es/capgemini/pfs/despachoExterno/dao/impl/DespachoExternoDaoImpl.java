@@ -78,7 +78,7 @@ public class DespachoExternoDaoImpl extends AbstractEntityDao<DespachoExterno, L
         hql += " and dex.auditoria.borrado = false";
         return getHibernateTemplate().find(hql);
     }
-
+    
     @Override
     public List<GestorDespacho> buscaDespachosPorUsuario(Long idUsuario) {
     	 String hql = "select distinct ged from GestorDespacho ged where" +

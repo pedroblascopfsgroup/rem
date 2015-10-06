@@ -43,12 +43,10 @@ V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA_M || '.' || V_DDNAME || ' WHERE DD
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
-    V_SQL := 'SELECT MAX(DD_TGE_ID)+1 FROM ' || V_ESQUEMA_M || '.' || V_DDNAME;
-    EXECUTE IMMEDIATE V_SQL INTO V_ID_MAX;
 
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo gestor apoderado');
     EXECUTE IMMEDIATE 'INSERT INTO ' || V_ESQUEMA_M || '.' || V_DDNAME || ' (DD_TGE_ID, DD_TGE_CODIGO, DD_TGE_DESCRIPCION, DD_TGE_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR) 
-    VALUES  ( ' || V_ID_MAX || ',  ''APOD'', ''Apoderado'', ''Apoderado'', 0, ''PCO'', sysdate) ';
+    VALUES  ( ' || V_ESQUEMA_M || '.S_' || V_DDNAME || '.NEXTVAL,  ''APOD'', ''Apoderado'', ''Apoderado'', 0, ''PCO'', sysdate) ';
 END IF;
 
 

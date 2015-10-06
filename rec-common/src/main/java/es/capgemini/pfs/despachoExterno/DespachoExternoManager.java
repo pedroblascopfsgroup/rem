@@ -10,6 +10,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 
 /**
@@ -21,7 +22,7 @@ public class DespachoExternoManager {
 
     @Autowired
     private DespachoExternoDao despachoExternoDao;
-
+    
     /**
      * Devuelve la lista de despachos externos.
      * @return la lista de despachos externos.
@@ -117,8 +118,8 @@ public class DespachoExternoManager {
     public List<DespachoExterno> getDespachosPorTipoZona(String zonas, String tipoDespacho) {
         return despachoExternoDao.buscarDespachosPorTipoZona(zonas, tipoDespacho);
     }
-
     
+   
     /**
      * Recupera un despacho externo que concuerde con el Id que le pasamos
      * @param idDespacho

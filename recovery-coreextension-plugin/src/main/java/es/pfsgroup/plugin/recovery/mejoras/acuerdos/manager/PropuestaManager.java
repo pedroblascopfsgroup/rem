@@ -136,17 +136,17 @@ public class PropuestaManager implements PropuestaApi {
 		DDEstadoAcuerdo nuevoEstado = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, nuevoCodigoEstado);
 		if (nuevoEstado != null) {
 			propuesta.setEstadoAcuerdo(nuevoEstado);
-			
-			if(DDEstadoAcuerdo.ACUERDO_PROPUESTO.equals(nuevoEstado.getCodigo())){
-					propuesta.setFechaPropuesta(new Date());
-				}else if(DDEstadoAcuerdo.ACUERDO_RECHAZADO.equals(nuevoEstado.getCodigo())){
-						propuesta.setFechaEstado(new Date());
-					}else if(DDEstadoAcuerdo.ACUERDO_CUMPLIDO.equals(nuevoEstado.getCodigo()) || DDEstadoAcuerdo.ACUERDO_INCUMPLIDO .equals(nuevoEstado.getCodigo())){
-							propuesta.setFechaResolucionPropuesta(new Date());
-						}else if(DDEstadoAcuerdo.ACUERDO_FINALIZADO .equals(nuevoEstado.getCodigo())){
-							propuesta.setFechaCierre(new Date());
-						}
-			
+
+			if (DDEstadoAcuerdo.ACUERDO_PROPUESTO.equals(nuevoEstado.getCodigo())) {
+				propuesta.setFechaPropuesta(new Date());
+			} else if (DDEstadoAcuerdo.ACUERDO_RECHAZADO.equals(nuevoEstado.getCodigo())) {
+				propuesta.setFechaEstado(new Date());
+			} else if (DDEstadoAcuerdo.ACUERDO_CUMPLIDO.equals(nuevoEstado.getCodigo()) || DDEstadoAcuerdo.ACUERDO_INCUMPLIDO.equals(nuevoEstado.getCodigo())) {
+				propuesta.setFechaResolucionPropuesta(new Date());
+			} else if (DDEstadoAcuerdo.ACUERDO_FINALIZADO.equals(nuevoEstado.getCodigo())) {
+				propuesta.setFechaCierre(new Date());
+			}
+
 			acuerdoDao.saveOrUpdate(propuesta);
 		} else {
 			throw new BusinessOperationException("PropuestaManager.cambiarEstadoPropuesta: No se encuentra el codigo del estado (DDEstadoAcuerdo)");
@@ -296,31 +296,37 @@ public class PropuestaManager implements PropuestaApi {
 		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_CANCELADO);
 	}
 
-
 	/**
 	 * Pasa una propuesta a estado Finalizado.
-	 * @param idAcuerdo el id del acuerdo a finalizar
+	 * @param idPropuesta el id del acuerdo a finalizar
 	 * @throws ParseException 
 	 */
 	@Transactional(readOnly = false)
-	public void finalizar(Long idAcuerdo, Date fechaPago, Boolean cumplido, String observaciones) {
+	public void finalizar(Long idPropuesta, Date fechaPago, Boolean cumplido, String observaciones) {
 		String codigoEstadoPropuesta = cumplido ? DDEstadoAcuerdo.ACUERDO_CUMPLIDO : DDEstadoAcuerdo.ACUERDO_INCUMPLIDO;
 		DDEstadoAcuerdo estadoFinalizacion = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, codigoEstadoPropuesta);
 
-		EXTAcuerdo propuesta = (EXTAcuerdo) acuerdoDao.get(idAcuerdo);
+		EXTAcuerdo propuesta = (EXTAcuerdo) acuerdoDao.get(idPropuesta);
 		propuesta.setEstadoAcuerdo(estadoFinalizacion);
 		propuesta.setFechaEstado(fechaPago);
 		propuesta.setObservaciones(observaciones);
 		acuerdoDao.save(propuesta);
 
-		String descripcion = "La propuesta " + idAcuerdo + " ha sido cambiada al estado " + estadoFinalizacion.getDescripcion();
+		String descripcion = "La propuesta " + idPropuesta + " ha sido cambiada al estado " + estadoFinalizacion.getDescripcion();
 
 		crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion, propuesta.getProponente().getId());
 	}
 
-	private void crearEventoPropuesta(Long idUnidadGestion, String descripcion, Long usuarioDestino) {
+	/**
+	 * Crea una notificacion asociada al expediente y la revisa automaticamente para que no aparezca en las notificaciones del usuario.
+	 * 
+	 * @param idExpediente
+	 * @param descripcion
+	 * @param usuarioDestino
+	 */
+	private void crearEventoPropuesta(Long idExpediente, String descripcion, Long usuarioDestino) {
 		DtoGenerarTarea tareaDto = new DtoGenerarTarea();
-		tareaDto.setIdEntidad(idUnidadGestion);
+		tareaDto.setIdEntidad(idExpediente);
 		tareaDto.setDescripcion(descripcion);
 		tareaDto.setSubtipoTarea(SubtipoTarea.CODIGO_EVENTO_PROPUESTA);
 		tareaDto.setCodigoTipoEntidad(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
@@ -330,7 +336,8 @@ public class PropuestaManager implements PropuestaApi {
 		tareaIndDto.setDestinatario(usuarioDestino);
 
 		try {
-			proxyFactory.proxy(EXTTareasApi.class).crearTareaNotificacionIndividualizada(tareaIndDto);
+			Long idEvento = proxyFactory.proxy(EXTTareasApi.class).crearTareaNotificacionIndividualizada(tareaIndDto);
+			executor.execute(ComunBusinessOperation.BO_TAREA_MGR_FINALIZAR_NOTIF, idEvento);
 		} catch (EXTCrearTareaException e) {
 			logger.error(e);
 			throw new BusinessOperationException("PropuestaManager.crearEvento: error al intentar crear el evento ");

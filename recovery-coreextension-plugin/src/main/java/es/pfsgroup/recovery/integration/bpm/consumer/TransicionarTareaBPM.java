@@ -1,8 +1,6 @@
 package es.pfsgroup.recovery.integration.bpm.consumer;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +22,6 @@ import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
-import es.pfsgroup.recovery.integration.bpm.payload.TareaNotificacionPayload;
 
 /**
  * Transiciona un BPM según la transición desde el token que llega. 
@@ -103,13 +100,6 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 		}
 		logger.info(String.format("[INTEGRACION] TEX [%d] transicionando a través de %s", tex.getId(), transicionPropuesta));
 		saveFormValues(procedimiento.getData(), tex);
-
-		String usuario = procedimiento.getUsuario().getNombre();
-		if (!Checks.esNulo(usuario) && tex.getTareaPadre().getProcedimiento().getProcessBPM()!=null) {
-			Map<String, Object> variables = new HashMap<String, Object>();
-			variables.put(TareaNotificacionPayload.JBPM_CONTEXT_USUARIO_REMOTO, usuario);
-			jbpmUtil.addVariablesToProcess(tex.getTareaPadre().getProcedimiento().getProcessBPM(), variables);
-		}
 
 		jbpmUtil.signalToken(tex.getTokenIdBpm(), transicionPropuesta);
 	}

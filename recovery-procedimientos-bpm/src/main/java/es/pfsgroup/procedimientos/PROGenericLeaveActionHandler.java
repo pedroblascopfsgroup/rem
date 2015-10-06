@@ -141,14 +141,6 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 			}
 		}
 
-		// Para usuarios remotos que ejecutan esta tarea, lo suplantamos para que quede almacenado como el usaurio que la modifica.
-		String usuarioRemoto = (String)executionContext.getVariable(TareaNotificacionPayload.JBPM_CONTEXT_USUARIO_REMOTO);
-		if (!Checks.esNulo(usuarioRemoto)) {
-			tareaExterna.getAuditoria().setSuplantarUsuario(usuarioRemoto);
-			tareaExterna.getTareaPadre().getAuditoria().setSuplantarUsuario(usuarioRemoto);
-			executionContext.setVariable(TareaNotificacionPayload.JBPM_CONTEXT_USUARIO_REMOTO, null);
-		}
-
 		// La seteamos por si acaso avanza sin haber despertado el BPM
 		tareaExterna.setDetenida(false);
 		proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);

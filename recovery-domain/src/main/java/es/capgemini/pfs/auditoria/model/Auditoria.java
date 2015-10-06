@@ -18,7 +18,7 @@ import es.capgemini.pfs.auditoria.Auditable;
  *    FECHABORRAR          DATE,
  *    BORRADO              NUMERIC(1,0) NOT NULL DEFAULT 0.
  *
- * @author Nicolás Cornaglia
+ * @author Nicolï¿½s Cornaglia
  */
 @Embeddable
 public class Auditoria implements Serializable {
@@ -136,7 +136,7 @@ public class Auditoria implements Serializable {
         this.borrado = borrado;
     }
 
-    /** factory method para facilitar la creación de un objeto auditoría.
+    /** factory method para facilitar la creaciï¿½n de un objeto auditorï¿½a.
      * @return objecto auditable
      */
     public static Auditoria getNewInstance() {
@@ -159,7 +159,7 @@ public class Auditoria implements Serializable {
         auditoria.setBorrado(true);
     }
 
-    /** lógica que se llamará al guardar un objeto.
+    /** lï¿½gica que se llamarï¿½ al guardar un objeto.
      * @param auditable auditable
      */
     public static void save(Auditable auditable) {
@@ -180,23 +180,6 @@ public class Auditoria implements Serializable {
         }
         //Para Bath
         return DEFAULT_USER;
-    }
-
-    /**
-     * Usuario que suplantarÃ¡ al usuario actual a la hora de realizar una operaciÃ³n.
-     * 
-     * @return
-     */
-    public String getSuplantarUsuario() {
-       return null;
-    }
-
-    /**
-     * Establece el usuario que suplantarÃ¡ al usuario actual a la hora de realizar una operaciÃ³n.
-     * 
-     * @return
-     */
-    public void setSuplantarUsuario(String suplantarUsuario) {
     }
 
 }

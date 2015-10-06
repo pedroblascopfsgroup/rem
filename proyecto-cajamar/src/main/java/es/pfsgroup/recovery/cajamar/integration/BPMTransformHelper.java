@@ -15,6 +15,7 @@ import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 import es.pfsgroup.recovery.integration.bpm.TransformerHelper;
 import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.UsuarioPayload;
 
 /**
  * Ayuda a transformar los mensajes de salida.
@@ -72,6 +73,9 @@ public class BPMTransformHelper implements TransformerHelper {
                 if (match(tareaParaEnviar, codigo)) {
                 	loadValores(dataPayload, tarea);
                     //List<TareaExternaValor> vValores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
+                	// reemplaza el usaurio
+                	UsuarioPayload user = new UsuarioPayload(dataPayload);
+                	user.build(tarea.getTareaPadre());
                     break;
                 }
             }

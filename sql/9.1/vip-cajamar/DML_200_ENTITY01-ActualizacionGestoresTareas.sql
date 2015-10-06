@@ -219,7 +219,8 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGESCHRE','SUCHRE')
 ,T_TIPO_VALOR('CJ007','CJ007_SolicitudTasacion','TGESCON','SUCON')
 ,T_TIPO_VALOR('CJ007','CJ007_TasacionCostas','TGESCON','SUCON')
 ,T_TIPO_VALOR('P400','P400_GestionarNotificaciones','TGESCON','SUCON')
-
+,T_TIPO_VALOR('HCJ003','HCJ003_AutorizarPeticionPropuesta','TGESCHRE','DIRREC')
+,T_TIPO_VALOR('HCJ003','HCJ003_AutorizacionDecision','DGESCHRE','')
 ); 
     V_TMP_TIPO T_TIPO_VALOR;
     

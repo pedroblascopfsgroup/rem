@@ -55,7 +55,7 @@ ENV PROJECT Bankia
 ENV RECOVERY_CFG_TAG intebankia.IBD13
 
 # Versión de Recovery que desplegaremos
-ENV RECOVERY_VERSION 9.1.15-bk-rc02
+ENV RECOVERY_VERSION 9.1.16-bk-rc01
 
 # URL de descarga para el WAR de Recovery
 ENV WEB_ZIP_URL http://192.168.0.16:8081/nexus/content/repositories/releases/BANKIA/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war

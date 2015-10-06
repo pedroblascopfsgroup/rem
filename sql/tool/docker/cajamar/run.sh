@@ -25,6 +25,8 @@ function show_help () {
 	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
 	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
 	echo "                  por defecto $DUMP_DIRECTORY"
+	echo "    -dmppath=: Especifica la ruta del DUMP que queremos cargar. Mediante este comando ignoramos"
+	echo "                  el dump \"oficial\" que está configurado en este script"
 	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
 	echo "                  por defecto $ORADATA_HOST_DIR"
 	echo ""
@@ -45,6 +47,10 @@ if [[ "x$@" != "x" ]]; then
 			DUMP_DIRECTORY=$(echo $op | cut -f2 -d=)
 		elif [[ "x$op" == x-oradata=* ]]; then
 			ORADATA_HOST_DIR=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-dmppath=* ]]; then
+			param=$(echo $op | cut -f2 -d=)
+			DUMP_DIRECTORY=$(dirname $param)
+			CURRENT_DUMP_NAME=$(basename $param)
 		elif [[ "x$op" == "x-help" ]]; then
 			show_help
 			exit 0

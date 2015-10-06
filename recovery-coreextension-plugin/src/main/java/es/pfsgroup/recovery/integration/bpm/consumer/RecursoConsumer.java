@@ -140,7 +140,7 @@ public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
 		String recursoUID = getMEJRecursoGuid(recurso);
 		String prcUID = getMEJProcedimientoGuid(recurso);
 		
-		logger.info(String.format("[INTEGRACION] PRC[%] REC[%s] Guardando recurso...", prcUID, recursoUID));
+		logger.info(String.format("[INTEGRACION] PRC[%s] REC[%s] Guardando recurso...", prcUID, recursoUID));
 		
 		MEJDtoRecurso dtoRecurso = new MEJDtoRecurso();
 		
@@ -154,7 +154,7 @@ public class RecursoConsumer extends ConsumerAction<DataContainerPayload> {
 		
 		// BO negocio
 		mejRecursoManager.createOrUpdateUserInfo(dtoRecurso, esGestor, esSupervisor);
-		logger.info(String.format("[INTEGRACION] PRC[%] REC[%s] Recurso guardado!!", prcUID, recursoUID));
+		logger.info(String.format("[INTEGRACION] PRC[%s] REC[%s] Recurso guardado!!", prcUID, recursoUID));
 	}
 
 }

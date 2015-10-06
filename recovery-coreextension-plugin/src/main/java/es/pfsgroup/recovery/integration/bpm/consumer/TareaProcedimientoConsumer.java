@@ -7,22 +7,11 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.SecurityContext;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.AuthenticationProvider;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.security.ui.preauth.PreAuthenticatedGrantedAuthoritiesAuthenticationDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.procesosJudiciales.dto.EXTDtoCrearTareaExterna;
@@ -54,7 +43,6 @@ import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 import es.pfsgroup.recovery.integration.bpm.payload.TareaExternaPayload;
-import es.pfsgroup.recovery.integration.bpm.payload.UsuarioPayload;
 
 /**
  * 
@@ -218,18 +206,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		logger.info(String.format("[INTEGRACION] TAR[%s] Tarea creada correctamente!!!", tarUUID));
 		return tareaNotif;
 	}
-	/*
-	private void suplantarUsuario(UsuarioPayload usuarioPayload, Auditable auditable) {
-		Auditoria auditoria = auditable.getAuditoria();
-		if (auditoria==null) {
-			auditoria = Auditoria.getNewInstance();
-		}
-		auditoria.setSuplantarUsuario(usuarioPayload.getNombre());
-		auditoria.setUsuarioCrear(usuarioPayload.getNombre());
-		auditoria.setUsuarioModificar(usuarioPayload.getNombre());
-		auditoria.setUsuarioBorrar(usuarioPayload.getNombre());
-	}
-*/
+
 	private void postCrearTarea(TareaExternaPayload tareaExtenaPayload, EXTTareaNotificacion tareaNotif) {
 		// TODO: QUITAR ESTA LINEA (lo hace la línea anterior)
 		tareaNotif.setGuid(this.getGuidTareaNotificacion(tareaExtenaPayload));
@@ -238,7 +215,7 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		tareaNotif.setFechaFin(tareaExtenaPayload.getFechaFin());
 		tareaNotif.setFechaVenc(tareaExtenaPayload.getFechaVencimiento());
 		tareaNotif.setFechaVencReal(tareaExtenaPayload.getFechaVencimientoReal());
-		//suplantarUsuario(tareaExtenaPayload.getUsuario(), tareaNotif);
+		tareaNotif.getAuditoria().setUsuarioBorrar(tareaExtenaPayload.getData().getUsername());
 		
 		executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tareaNotif);
 		logger.debug(String.format("[INTEGRACION] TAR[%s] Actualizando post crear tarea finalizado", tareaNotif.getGuid()));

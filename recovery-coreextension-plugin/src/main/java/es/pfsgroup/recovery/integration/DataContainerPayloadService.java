@@ -21,10 +21,13 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.pfsgroup.commons.utils.Checks;
 
 public class DataContainerPayloadService<T extends DataContainerPayload> {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Object EMPTY_PASSWORD = "";
+
+	private final Log logger = LogFactory.getLog(getClass());
 
     @Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
@@ -57,14 +60,20 @@ public class DataContainerPayloadService<T extends DataContainerPayload> {
 	protected void doOnError(Message<T> message, Exception ex) {
 	}
 
-	protected SecurityContext doLogin(Message<T> message) {
+	protected SecurityContext doLogin(Message<T> message) { 
+		DataContainerPayload payload =  message.getPayload();
+		if (Checks.esNulo(payload.getUsername())) {
+			logger.warn("[INTEGRACION] No se ha proporcionado usuario en el mensaje");
+			return null;
+		}
 	    SecurityContext securityContext = SecurityContextHolder.getContext();
-		PreAuthenticatedAuthenticationToken authRequest = new PreAuthenticatedAuthenticationToken("userName", "password");
+		PreAuthenticatedAuthenticationToken authRequest = new PreAuthenticatedAuthenticationToken(payload.getUsername(), EMPTY_PASSWORD);
 		PreAuthenticatedGrantedAuthoritiesAuthenticationDetails details = new PreAuthenticatedGrantedAuthoritiesAuthenticationDetails(securityContext);
 		details.setGrantedAuthorities(new GrantedAuthorityImpl[0]);
 		authRequest.setDetails(details);
 		Authentication authentication = authprovider.authenticate(authRequest);
 		securityContext.setAuthentication(authentication);
+		logger.info(String.format("[INTEGRACION] Usuario autenticado [%s]!", authRequest.getName()));
 		return securityContext;
 	}
 	

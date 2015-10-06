@@ -7,7 +7,6 @@ import java.util.List;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
-import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.integration.IntegrationClassCastException;
 import es.capgemini.pfs.persona.model.Persona;
@@ -49,12 +48,10 @@ public class ProcedimientoPayload {
 	}
 
 	private final AsuntoPayload asunto;
-	private UsuarioPayload usuario;
 
 	public ProcedimientoPayload(DataContainerPayload data) {
 		this.data = data;
 		this.asunto = new AsuntoPayload(data);
-		this.usuario = new UsuarioPayload(data);
 	}
 	
 	public ProcedimientoPayload(String tipo, Procedimiento procedimiento) {
@@ -64,7 +61,6 @@ public class ProcedimientoPayload {
 	public ProcedimientoPayload(DataContainerPayload data, Procedimiento procedimiento) {
 		this.data = data;
 		this.asunto = new AsuntoPayload(data, procedimiento.getAsunto());
-		this.usuario = new UsuarioPayload(data, procedimiento);
 		build(procedimiento);
 	}
 
@@ -345,14 +341,6 @@ public class ProcedimientoPayload {
 
 	public String getTareaOrigenDelBPM() {
 		return data.getExtraInfo(JBPM_TAR_GUID_ORIGEN);
-	}
-
-	public UsuarioPayload getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Auditable usuario) {
-		this.usuario = new UsuarioPayload(data, usuario);
 	}
 	
 }

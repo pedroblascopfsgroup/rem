@@ -2,7 +2,6 @@ package es.pfsgroup.recovery.integration.bpm.payload;
 
 import java.util.Date;
 
-import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.integration.IntegrationClassCastException;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -25,12 +24,10 @@ public class TareaExternaPayload {
 
 	private final DataContainerPayload data;
 	private final ProcedimientoPayload procedimiento;
-	private UsuarioPayload usuario;
 
 	public TareaExternaPayload(DataContainerPayload data) {
 		this.data = data;
 		this.procedimiento = new ProcedimientoPayload(data);
-		this.usuario = new UsuarioPayload(data);
 	}
 	
 	public TareaExternaPayload(String tipo, TareaExterna tareaExterna) {
@@ -40,7 +37,6 @@ public class TareaExternaPayload {
 	public TareaExternaPayload(DataContainerPayload data, TareaExterna tareaExterna) {
 		this.data = data;
 		this.procedimiento = new ProcedimientoPayload(data, tareaExterna.getTareaPadre().getProcedimiento());
-		this.usuario = new UsuarioPayload(data, tareaExterna);
 		build(tareaExterna);
 	}
 
@@ -165,14 +161,6 @@ public class TareaExternaPayload {
 	
 	public void setValorCampoFormulario(String campo, String valor) {
 		data.addExtraInfo(String.format("%s.%s", CAMPO_PREFIJOCAMPOFORMULARIO, campo), valor); 
-	}
-
-	public UsuarioPayload getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Auditable usuario) {
-		this.usuario = new UsuarioPayload(data, usuario);
 	}
 
 }

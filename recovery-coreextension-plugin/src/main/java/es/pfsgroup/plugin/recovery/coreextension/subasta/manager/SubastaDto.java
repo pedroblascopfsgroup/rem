@@ -27,7 +27,6 @@ public class SubastaDto {
 	private Date fechaAnuncio;
 	private Float costasLetrado;
 	private Float deudaJudicial;
-	private String usuarioSuplantado;
 	
 	private List<LoteSubastaDto> lotes;
 
@@ -153,14 +152,6 @@ public class SubastaDto {
 
 	public void setDeudaJudicial(Float deudaJudicial) {
 		this.deudaJudicial = deudaJudicial;
-	}
-
-	public String getUsuarioSuplantado() {
-		return usuarioSuplantado;
-	}
-
-	public void setUsuarioSuplantado(String usuarioSuplantado) {
-		this.usuarioSuplantado = usuarioSuplantado;
 	}
 
 }

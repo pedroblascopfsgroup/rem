@@ -143,7 +143,6 @@ public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
 		subastaDto.setFechaAnuncio(subastaPayload.getFechaAnuncio());
 		subastaDto.setCostasLetrado(subastaPayload.getCostasLetrado());
 		subastaDto.setDeudaJudicial(subastaPayload.getDeudaJudicial());
-		subastaDto.setUsuarioSuplantado("PEPITO");
 		
 		// Carga los lotes de subasta
 		cargaLotes(subastaDto, subastaPayload.getLotesSubasta());
@@ -190,7 +189,6 @@ public class SubastaConsumer extends ConsumerAction<DataContainerPayload> {
 			loteDto.setObservaciones(lotePayload.getObservaciones());
 			loteDto.setRiesgoConsignacion(lotePayload.getRiesgoConsignacion());
 			loteDto.setDeudaJudicial(lotePayload.getDeudaJudicial());
-			loteDto.setUsuarioSuplantado("PEPITO");
 
 			subasta.getLotes().add(loteDto);
 			setBienes(loteDto, lotePayload);

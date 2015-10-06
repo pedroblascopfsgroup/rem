@@ -51,9 +51,9 @@ BEGIN
             )';
             
       
-  EXECUTE IMMEDIATE V_MSQL1;
+--  EXECUTE IMMEDIATE V_MSQL1;
 
-  DBMS_OUTPUT.PUT_LINE(''||TABLA1||' Modificada');
+--  DBMS_OUTPUT.PUT_LINE(''||TABLA1||' Modificada');
 
   
   V_MSQL2 := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA2||'  ADD

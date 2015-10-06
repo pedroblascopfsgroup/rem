@@ -312,7 +312,8 @@ public class InformeValidacionCDDBean {
 				sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Importe adjudicacion; ");
 			}
 
-			if(!nmbProjectContext.getTipoSubastaSareb().equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
+                        // Esta validación no debe hacerse si el CDD proviene de un Subasta Bankia. En el resto de T. subasta del resto de clientes, si debe hacerse.
+			if(!nmbProjectContext.getCodigoSubastaBankia().equals(loteSubasta.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())) {
 				infobien.setFechaTestimonioAdjudicacionSareb(getFechaTestimonioAdjudicacionSareb(nmbBien));
 				if (Checks.esNulo(infobien.getFechaTestimonioAdjudicacionSareb())) {
 					sb.append("Numero Lote:").append(loteSubasta.getNumLote()).append(", Bien Descripcion:").append(nmbBien.getDescripcionBien()).append(", Fecha testimonio adjudicacion sareb; ");

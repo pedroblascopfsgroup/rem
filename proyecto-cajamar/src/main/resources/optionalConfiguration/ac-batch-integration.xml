@@ -146,7 +146,9 @@
 				<constructor-arg index="2">
 				    <bean class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
 				        <property name="preAuthenticatedUserDetailsService">
-				            <bean class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService" />
+				            <bean class="es.pfsgroup.recovery.integration.AuthenticationPayloadService" >
+				            	<property name="userNameprefix" value="EXT-"/>
+				            </bean>
 				        </property>
 				    </bean>
 				</constructor-arg>

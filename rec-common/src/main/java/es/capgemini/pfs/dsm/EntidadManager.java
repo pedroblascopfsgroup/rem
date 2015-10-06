@@ -30,7 +30,8 @@ public class EntidadManager {
         return entidadDao.getList();
     }
     
-    public Entidad getEntidadById(Long id) {
-    	return entidadDao.get(id);
+    public Entidad findByWorkingCode(String workingCode) {
+    	return entidadDao.findByWorkingCode(workingCode);
     }
+    
 }

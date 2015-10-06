@@ -22,11 +22,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.security.GrantedAuthoritiesContainer;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
@@ -43,7 +41,7 @@ import es.capgemini.pfs.dsm.model.Entidad;
 @Entity
 @Table(name = "USU_USUARIOS", schema = "${master.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class UsuarioSecurity implements SecurityUserInfo, UserDetails, Serializable, Auditable, GrantedAuthoritiesContainer {
+public class UsuarioSecurity implements SecurityUserInfo, UserDetails, Serializable, Auditable {
 
     private static final long serialVersionUID = 1L;
 
@@ -386,16 +384,5 @@ public class UsuarioSecurity implements SecurityUserInfo, UserDetails, Serializa
     public void setRemoteAddress(String remoteAddress) {
         this.remoteAddress = remoteAddress;
     }
-
-	@Override
-	public GrantedAuthority[] getGrantedAuthorities() {
-		
-		if(authorities != null) {
-			return getAuthorities();
-		}
-		else {
-			return new GrantedAuthority[0];
-		}
-	}
 
 }

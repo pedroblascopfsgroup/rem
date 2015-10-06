@@ -29,4 +29,8 @@ public class EntidadManager {
     public List<Entidad> getListaEntidades() {
         return entidadDao.getList();
     }
+    
+    public Entidad getEntidadById(Long id) {
+    	return entidadDao.get(id);
+    }
 }

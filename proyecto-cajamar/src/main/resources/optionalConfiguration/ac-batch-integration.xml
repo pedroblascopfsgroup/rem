@@ -143,6 +143,13 @@
 			<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
 				<constructor-arg index="0" ref="bpmConsumerActionMgr" />
 				<constructor-arg index="1" value="${entidad.id}"/>
+				<constructor-arg index="2">
+				    <bean class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+				        <property name="preAuthenticatedUserDetailsService">
+				            <bean class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService" />
+				        </property>
+				    </bean>
+				</constructor-arg>
 			</bean>
 		</integration:service-activator>
 	</integration:chain>

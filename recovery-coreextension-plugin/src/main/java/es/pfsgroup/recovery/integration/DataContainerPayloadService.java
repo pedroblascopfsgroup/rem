@@ -5,7 +5,6 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.core.Message;
 import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -19,8 +18,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.utils.DbIdContextHolder;
+import es.capgemini.pfs.dsm.EntidadManager;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.pfsgroup.commons.utils.Checks;
 
 public class DataContainerPayloadService<T extends DataContainerPayload> {
@@ -34,6 +35,9 @@ public class DataContainerPayloadService<T extends DataContainerPayload> {
     
 	@Autowired
 	private EntidadDao entidadDao;
+	
+	@Autowired
+	private EntidadManager entidadManager;
     
 	private final ConsumerManager<T> consumerManager;
 	private final String entidadWorkingCode;
@@ -66,11 +70,16 @@ public class DataContainerPayloadService<T extends DataContainerPayload> {
 			logger.warn("[INTEGRACION] No se ha proporcionado usuario en el mensaje");
 			return null;
 		}
+		UsuarioSecurity usuarioSecurity = new UsuarioSecurity();
+		usuarioSecurity.setId(-1L);
+		usuarioSecurity.setUsername(payload.getUsername());
+		
+		Entidad entidad = entidadManager.getEntidadById(1L);
+		usuarioSecurity.setEntidad(entidad);
+		
 	    SecurityContext securityContext = SecurityContextHolder.getContext();
 		PreAuthenticatedAuthenticationToken authRequest = new PreAuthenticatedAuthenticationToken(payload.getUsername(), EMPTY_PASSWORD);
-		PreAuthenticatedGrantedAuthoritiesAuthenticationDetails details = new PreAuthenticatedGrantedAuthoritiesAuthenticationDetails(securityContext);
-		details.setGrantedAuthorities(new GrantedAuthorityImpl[0]);
-		authRequest.setDetails(details);
+		authRequest.setDetails(usuarioSecurity);
 		Authentication authentication = authprovider.authenticate(authRequest);
 		securityContext.setAuthentication(authentication);
 		logger.info(String.format("[INTEGRACION] Usuario autenticado [%s]!", authRequest.getName()));

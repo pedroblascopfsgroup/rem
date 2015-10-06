@@ -1,17 +1,15 @@
-#!/bin/bash
 PLATFORM_N1=producto/plataforma-base
 PLATFORM_N2=producto/plataforma-app-server
 PLATFORM_N3=bankia/bankia-web
 
-CONTAINER=bankia-web
-
-SHAPSHOT_WAR="$(pwd)/../../target/pfs-9.1-SNAPSHOT.war"
 
 IMAGE_ID=$(docker images | grep "$PLATFORM_N3" | awk '{print $3}')
 
-if [[ ! -f $SHAPSHOT_WAR ]]; then
-	echo "ERROR: $(basename $SHAPSHOT_WAR) No se ha encontrado. ¿Has empaquetado?"
-	exit 1
+if [[ "x$SHAPSHOT_WAR" != "x" ]]; then
+	if [[ ! -f $SHAPSHOT_WAR ]]; then
+		echo "ERROR: $(basename $SHAPSHOT_WAR) No se ha encontrado. ¿Has empaquetado?"
+		exit 1
+	fi
 fi
 
 if [[ "x$1" == "x-remove" || "x$IMAGE_ID" == "x" ]]; then
@@ -63,9 +61,3 @@ if [ "x$(docker ps -a | grep $CONTAINER)" != "x" ]; then
 	echo -n "Borrando conenedor: "
 	docker rm $CONTAINER
 fi
-
-docker run --rm -ti -p=22 -p=8080 -p=1044 \
-	-v ${HOME}/container-info:/container-info \
-	-v $(pwd)/../../src/main/config/Bankia/INTE/devon.properties:/recovery/app-server/devon.properties \
-	-v $SHAPSHOT_WAR:/recovery/app-server/pfs.war \
-	-h $CONTAINER --name  $CONTAINER $PLATFORM_N3

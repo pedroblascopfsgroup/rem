@@ -558,6 +558,19 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 	bienesStore.webflow({idAsunto:idAsunto});
 --%>
 
+if("${esPropuesta}" == "true"){
+		
+	var bienesStore = page.getStore({
+		eventName : 'listado'
+		,flow:'propuestas/obtenerListadoBienesPropuesta'
+		,reader: new Ext.data.JsonReader({
+	        root: 'bienes'
+		}, bienesRecord)
+	});	
+			
+	bienesStore.webflow({idExpediente:"${idExpediente}", contratosIncluidos:contratosIncluidos});
+}else{
+	
 	var bienesStore = page.getStore({
 		eventName : 'listado'
 		,flow:'mejacuerdo/obtenerListadoBienesContratosAcuerdo'
@@ -566,7 +579,8 @@ arrayCampos["descripcionAcuerdo"]=new Ext.form.HtmlEditor({
 		}, bienesRecord)
 	});	
 			
-	bienesStore.webflow({idTermino:idTermino, contratosIncluidos:contratosIncluidos});			
+	bienesStore.webflow({idTermino:idTermino, contratosIncluidos:contratosIncluidos});
+}			
 				
 	config.store = bienesStore;	
 	

@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.recovery.mejoras.acuerdos.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +31,7 @@ public class PropuestasController {
 	private static final String JSP_FINALIZACION_PROPUESTA = "plugin/mejoras/acuerdos/finalizacionPropuesta";
 	private static final String LISTADO_PROPUESTAS_REALIZADAS_JSON =  "plugin/mejoras/acuerdos/propuestasRealizadasJSON";
 	private static final String LISTADO_PROPUESTAS_EXPLORAR_JSON =  "plugin/mejoras/acuerdos/propuestasExplorarJSON";
+	private static final String JSON_LISTADO_BIENES_PROPUESTA = "plugin/mejoras/acuerdos/listadoBienesAcuerdoJSON";
 
 
 	@Autowired 
@@ -155,5 +158,18 @@ public class PropuestasController {
 		model.put("listadoContratosAsuntos",propuestaApi.listadoContratosByExpedienteId(idExpediente));
 		
 		return JSON_LISTADO_CONTRATOS;
+	}
+	
+	@RequestMapping
+    public String obtenerListadoBienesPropuesta(@RequestParam(value = "idExpediente", required = true) Long idExpediente, String contratosIncluidos, ModelMap model){
+		
+		List<Long> idsContrato = new ArrayList<Long>();
+		for(String contrato : contratosIncluidos.split(",")){
+			idsContrato.add(Long.parseLong(contrato));
+		}
+
+		model.put("listadoBienesAcuerdo", propuestaApi.getBienesDelExpedienteParaLaPropuesta(idExpediente,idsContrato));
+		
+		return JSON_LISTADO_BIENES_PROPUESTA;
 	}
 }

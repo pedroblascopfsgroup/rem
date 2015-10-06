@@ -20,12 +20,14 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
+import es.capgemini.pfs.expediente.model.ExpedientePersona;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
@@ -346,6 +348,44 @@ public class PropuestaManager implements PropuestaApi {
 		propuesta.setMotivo(motivo);
 		acuerdoDao.save(propuesta);
 		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+		DDEstadoAcuerdo estadoFinalizacion = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+		String descripcion = "La propuesta " + idPropuesta + " ha sido cambiada al estado " + estadoFinalizacion.getDescripcion();
+		
+		crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion, propuesta.getProponente().getId());
+		
+	}
+
+	@BusinessOperation(BO_PROPUESTA_GET_EXPEDIENTES)
+	public List<Bien> getBienesDelExpedienteParaLaPropuesta(Long idExpediente, List<Long> contratosIncluidos) {
+		
+		Expediente expediente = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
+		List<Bien> bienes = new ArrayList<Bien>();
+		
+		if(!Checks.esNulo(expediente)){
+			
+			for(ExpedienteContrato expCont : expediente.getContratos()){
+				if(contratosIncluidos.contains(expCont.getContrato().getId())){
+					for(Bien bienCont : expCont.getContrato().getBienes()){
+						if(!bienes.contains(bienCont)){
+							bienes.add(bienCont);
+						}
+					}	
+				}
+			}
+			
+			for(ExpedientePersona expPer : expediente.getPersonas()){
+				for(Bien bienPers : expPer.getPersona().getBienes()){
+					if(!bienes.contains(bienPers)){
+						bienes.add(bienPers);
+					}
+				}
+			}
+			
+		}else{
+			throw new BusinessOperationException("PropuestaManager.getBienesDelExpedienteParaLaPropuesta: No se encuentra el id de expediente "+idExpediente);	
+		}
+		
+		return bienes;
 		
 	}
 }

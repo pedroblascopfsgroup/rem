@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOActuacionesExplorarExpediente;
@@ -24,6 +25,7 @@ public interface PropuestaApi {
 	public static final String BO_PROPUESTA_GET_ACTUACION_REALIZADAS_EXPEDIENTE = "propuestaApi.getActuacionRealizadasExpediente";
 	public static final String BO_PROPUESTA_GET_ACTUACION_EXPLORAR_EXPEDIENTE = "propuestaApi.getActuacionExplorarExpediente";
 	public static final String BO_PROPUESTA_SAVE_ACTUACION_EXPLORAR_EXPEDIENTE = "propuestaApi.saveActuacionesExplorarExpediente";
+	public static final String BO_PROPUESTA_GET_EXPEDIENTES = "propuestaApi.getBienesDelExpedienteParaLaPropuesta";
 	
 
 	@BusinessOperationDefinition(BO_PROPUESTA_GET_LISTADO_PROPUESTAS)
@@ -83,5 +85,8 @@ public interface PropuestaApi {
 	 * @param motivo
 	 */
 	public void rechazar(Long idPropuesta, String motivo);
+	
+    @BusinessOperationDefinition(BO_PROPUESTA_GET_EXPEDIENTES)
+    public List<Bien> getBienesDelExpedienteParaLaPropuesta(Long idExpediente, List<Long> contratosIncluidos);
 
 }

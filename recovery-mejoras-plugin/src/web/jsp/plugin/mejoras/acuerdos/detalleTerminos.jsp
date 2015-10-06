@@ -160,7 +160,8 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 	     			  ,params:{
 <!-- 	      				  id:panel.getAsuntoId(), -->
 	      				  contratosIncluidos: contratosIncluidos,
-	      				  idAcuerdo : idAcuerdo
+	      				  idAcuerdo : idAcuerdo,
+	      				  esPropuesta : esPropuesta
 	      				}
 			       });
 			       w.on(app.event.DONE, function(){

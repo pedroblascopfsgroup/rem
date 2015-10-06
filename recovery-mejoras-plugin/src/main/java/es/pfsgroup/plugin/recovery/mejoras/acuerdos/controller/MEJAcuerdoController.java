@@ -25,6 +25,7 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
@@ -212,11 +213,19 @@ public class MEJAcuerdoController {
 	@RequestMapping
 	public String openAltaTermino(ModelMap map, 
 			@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
-			String contratosIncluidos) {
+			String contratosIncluidos, Boolean esPropuesta) {
 			
 
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
+		map.put("esPropuesta", esPropuesta);
+		
+		if(esPropuesta){
+			Acuerdo acuerdo = genericDao.get(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+			if(!Checks.esNulo(acuerdo)){
+				map.put("idExpediente", acuerdo.getExpediente().getId());	
+			}
+		}
 		
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));

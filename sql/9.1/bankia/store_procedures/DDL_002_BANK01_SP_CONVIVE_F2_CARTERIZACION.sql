@@ -13,6 +13,8 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CONVIVE_F2_CARTERIZACION AS
 BEGIN
 insert into #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)

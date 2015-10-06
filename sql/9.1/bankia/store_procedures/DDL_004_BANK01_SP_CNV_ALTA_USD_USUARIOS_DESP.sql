@@ -13,6 +13,8 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CNV_ALTA_USD_USUARIOS_DESP AS
   /*
    * CONSTANTES

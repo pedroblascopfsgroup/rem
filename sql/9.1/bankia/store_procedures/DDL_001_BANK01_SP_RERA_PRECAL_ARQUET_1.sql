@@ -13,6 +13,8 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE RERA_PRECAL_ARQUET_1 AS
 
   ql_stmt   VARCHAR2(2000);

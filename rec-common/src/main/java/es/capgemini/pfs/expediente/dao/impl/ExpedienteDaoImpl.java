@@ -174,8 +174,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         StringBuilder hql = new StringBuilder();
         Boolean requiereRiesgoSaldo = false;
 
-        hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
-        //hql.append("select exp FROM Expediente exp ");
+        //BKREC-943
+        //hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
+        hql.append("select exp FROM Expediente exp ");
 
         if (dtoExpediente.getIdComite() != null) {
             hql.append(" left join exp.decisionComite dco left join dco.sesion sesion ");
@@ -188,8 +189,11 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             requiereRiesgoSaldo = true;
         }
 
-        hql.append(" where exp.auditoria.borrado = 0 ");
+        hql.append(" where  ");
 
+        //BKREC-943
+        hql.append(" EXISTS (select true from Expediente exp1 where exp1.id = exp.id and exp1.auditoria.borrado = 0) ");
+        
         if (requiereRiesgoSaldo) {
             hql.append(" and expc.expediente.id = exp.id and expc.auditoria.borrado = 0");
             hql.append(" and expc.contrato.id = c.id ");
@@ -240,9 +244,11 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 
         //Numero de contrato
         if (!StringUtils.emtpyString(dtoExpediente.getNroContrato())) {
-            hql.append(" and exp.id IN ");
-            hql
-                    .append("(select ec.expediente.id from ExpedienteContrato ec where ec.auditoria.borrado = false and lower(ec.contrato.nroContrato) like '%'|| :nroCnt ||'%') ");
+            hql.append(" and EXISTS ");
+            hql.append("(select true from ExpedienteContrato ec ");
+            hql.append(" where ec.auditoria.borrado = false ");
+            hql.append(" and ec.expediente.id = exp.id ");
+            hql.append(" and ec.contrato.nroContrato like '%'|| :nroCnt ||'%') ");
             params.put("nroCnt", dtoExpediente.getNroContrato().toLowerCase());
         }
 
@@ -294,8 +300,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         Boolean segmentos = !StringUtils.emtpyString(dtoExpediente.getSegmentos());
 
         if (tipoPersona || segmentos) {
-            hql.append(" and exp.id IN (select pex.expediente.id FROM ExpedientePersona pex, Persona p ");
+            hql.append(" and EXISTS (select true FROM ExpedientePersona pex, Persona p ");
             hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 ");
+            hql.append(" and pex.expediente.id = exp.id ");
 
             if (tipoPersona) {
                 hql.append(" and p.tipoPersona.codigo = :tipoPer ");
@@ -1132,7 +1139,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             hql.deleteCharAt(hql.length() - 1);
             hql.deleteCharAt(hql.length() - 1);
             
-            hql.append(" or exp.id in ( ");
+            hql.append(" or EXISTS ( ");
             	hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
 	        hql.append(" ) ");
             
@@ -1140,7 +1147,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         }
         else{
         	 //GESTORES EXPEDIENTE
-	        hql.append(" and exp.id in ( ");
+	        hql.append(" and EXISTS ( ");
 	        	hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
 	        hql.append(" ) ");
         }
@@ -1169,7 +1176,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         Boolean segmentos = !StringUtils.emtpyString(dtoExpediente.getSegmentos());
 
         if (tipoPersona || segmentos) {
-            hql.append(" and exp.id IN (select pex.expediente.id FROM ExpedientePersona pex, Persona p ");
+            hql.append(" and EXISTS (select TRUE FROM ExpedientePersona pex, Persona p ");
             hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 ");
 
             if (tipoPersona) {
@@ -1194,6 +1201,8 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         }
 
         // ********* RIESGO Y SALDO TOTAL  ************** //
+        //BKREC-943
+        //Ver si se puede quitar el agrupador por exp.id
         if (requiereRiesgoSaldo) {
             hql.append(" group by exp.id ");
             if (dtoExpediente.getMaxSaldoVencido() == null || dtoExpediente.getMaxSaldoVencido().length() < 1) {
@@ -1222,7 +1231,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         // ********* QUE SON GESTORES DE RECOBRO , SOLO VERÁN LOS EXPEDIENTES QUE ACTUALMENTE PERTENCEN A SU AGENCIA
         if (usuarioLogueado.getUsuarioExterno() ){
         	 //GESTORES DE RECOBRO EXPEDIENTE
-	        hql.append(" and exp.id in ( ");
+	        hql.append(" and EXISTS ( ");
 	        	hql.append(generaFiltroExpedientesGestorRecobro(usuarioLogueado));
 	        hql.append(" ) ");
         }
@@ -1241,7 +1250,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 	 */
 	 private String generaFiltroExpedientesGestorRecobro(Usuario usuarioLogueado) {
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select exp.id from Expediente exp , GestorExpediente ge ");
+		hql.append(" select true from GestorExpediente ge ");
 		hql.append(" where exp.id = ge.expediente.id and ge.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
 		hql.append(" and ge.usuario.id in (");
 		hql.append(obtenerListaUsuariosDelGrupo(usuarioLogueado.getId()));
@@ -1274,7 +1283,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 		 * */
 		private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
 			StringBuffer hql = new StringBuffer();
-			hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
+			hql.append(" select true from  EXTGestorEntidad ge ");
 			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
 			hql.append(" and ge.gestor.id in (");
 			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));

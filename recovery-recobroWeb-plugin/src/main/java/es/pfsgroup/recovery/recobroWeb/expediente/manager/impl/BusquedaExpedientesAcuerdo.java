@@ -46,7 +46,10 @@ public class BusquedaExpedientesAcuerdo implements BusquedaExpedienteFiltroDinam
 
 	private StringBuilder calculaFiltro(BusquedaExpAcuerdoDto dto) {
 		StringBuilder filtro = new StringBuilder();
-		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
+
+//BKREC-943
+//                filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
+//		filtro.append(" WHERE expRec.id in( SELECT distinct acu.expediente.id FROM Acuerdo acu WHERE 1=1 ");
 		filtro.append(" WHERE expRec.id in( SELECT distinct acu.expediente.id FROM Acuerdo acu WHERE 1=1 ");
 		if (!Checks.esNulo(dto.getFechaDesdeAcuerdo())){			
 			if (dto.getFechaDesdeAcuerdo() != null
@@ -96,8 +99,9 @@ public class BusquedaExpedientesAcuerdo implements BusquedaExpedienteFiltroDinam
 		if ( !Checks.esNulo(dto.getMaxporcentajeQuita()) ) {
 			filtro.append(" AND acu.porcentajeQuita <= " + dto.getMaxporcentajeQuita() );
 		}
-		
-		filtro.append(" ) ");
+
+//BKREC-943
+//		filtro.append(" ) ");
 				
 		return filtro;
 	}

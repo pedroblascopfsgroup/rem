@@ -46,8 +46,10 @@ public class BusquedaExpedientesIncidencia implements BusquedaExpedienteFiltroDi
 
 	private StringBuilder calculaFiltro(BusquedaExpIncidenciaDto dto) {
 		StringBuilder filtro = new StringBuilder();
-		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
-		filtro.append(" WHERE expRec.id in( SELECT distinct ine.expediente.id FROM IncidenciaExpediente ine WHERE 1=1 ");
+//BKREC-943
+//		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
+//		filtro.append(" WHERE expRec.id in( SELECT distinct ine.expediente.id FROM IncidenciaExpediente ine WHERE 1=1 ");
+		filtro.append(" SELECT distinct ine.expediente.id FROM IncidenciaExpediente ine WHERE 1=1 ");
 		if (!Checks.esNulo(dto.getFechaDesdeIncidencia())){			
 			if (dto.getFechaDesdeIncidencia() != null
 					&& !"".equals(dto.getFechaDesdeIncidencia())) {
@@ -83,7 +85,8 @@ public class BusquedaExpedientesIncidencia implements BusquedaExpedienteFiltroDi
 		}
 
 		filtro.append(" AND ine.auditoria.borrado = 0 ");
-		filtro.append(" ) ");
+//BKREC-943
+//		filtro.append(" ) ");
 				
 		return filtro;
 	}

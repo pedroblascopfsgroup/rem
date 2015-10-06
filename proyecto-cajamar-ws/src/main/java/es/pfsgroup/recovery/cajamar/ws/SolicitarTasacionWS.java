@@ -62,6 +62,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 	public boolean altaSolicitud(NMBBien bien, List<NMBPersonasBien> personasBien, List<NMBContratoBien> contratosBien, Long cuenta, String personaContacto, Long telefono, String observaciones) {
 		
 		logger.info("Inicio del método altaSolicitud");
+		boolean resultado = true;
 		
 		try {
 			ObjectFactory objectFactory = new ObjectFactory();
@@ -71,19 +72,19 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 			input.setOPCION(ALTA_SOLICITUD);
 			
 			completaSolicitud(input, bien, personasBien, contratosBien, cuenta, personaContacto, telefono, observaciones);
-			ejecutaServicio(input, bien);			
+			resultado = ejecutaServicio(input, bien);			
 		}
 		catch(Exception e) {
 			logger.error("Error en el método altaSolicitud: " + e.getMessage());
-			return false;
+			resultado = false;
 		}
 		
 		logger.info("Fin del método altaSolicitud");
 		
-		return true;
+		return resultado;
 	}
 
-	private void ejecutaServicio(INPUT input, NMBBien bien) throws MalformedURLException {
+	private boolean ejecutaServicio(INPUT input, NMBBien bien) throws MalformedURLException {
 		
 		String urlWSDL = getWSURL();
 		String targetNamespace = getWSNamespace();
@@ -94,7 +95,7 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		
 		if(urlWSDL == null || targetNamespace == null || name == null) {
 			logger.error("Error en la ejecución del WS de Alta Tasación: no se han configurado correctamente las propiedades para la llamada al WS");
-			return;
+			return false;
 		}
 
 		URL wsdlLocation = new URL(urlWSDL);
@@ -114,11 +115,13 @@ public class SolicitarTasacionWS extends BaseWS implements SolicitarTasacionWSAp
 		
 		if(output.getESTADO().equals("1")) {
 			logger.error(String.format("Error en la ejecución del WS de Alta Tasación: [%s] - [%s]", output.getCODERROR(), output.getTXTERROR()));
+			return false;
 		}
 		else {
 			guardarRespuesta(output, bien);
 		}
 		
+		return true;
 	}
 
 	private void guardarRespuesta(OUTPUT output, NMBBien bien) {

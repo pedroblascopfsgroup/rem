@@ -16,18 +16,18 @@
 	var banderaOrigen = '${NMBbien.origen.codigo}';
 		
 	// DATOS PRINCIPALES
-	var codBien				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.CodigoBien" text="**C�digo"/>','${NMBbien.id}', {labelStyle:labelStyle});
-	var garantiaBien		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.garantiaBien" text="**Garantia Bien"/>','${NMBbien.sarebId}', {labelStyle:labelStyle});
-	var codigoInterno 		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codigoInterno" text="**C�digo interno"/>','${NMBbien.codigoInterno}', {labelStyle:labelStyle});
+	var codBien				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.CodigoBien" text="**C&oacute;digo"/>','${NMBbien.id}', {labelStyle:labelStyle});
+	var garantiaBien		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.garantiaBien" text="**Garant&iacute;a Bien"/>','${NMBbien.sarebId}', {labelStyle:labelStyle});
+	var codigoInterno 		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codigoInterno" text="**C&oacute;digo interno"/>','${NMBbien.codigoInterno}', {labelStyle:labelStyle});
 	var origen				= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.origenCarga" text="**Origen"/>','${NMBbien.origen.descripcion}', {labelStyle:labelStyle});
 	var valorActual			= app.creaLabel('<s:message code="bienesCliente.valorActual" text="**Valor actual"/>',app.format.moneyRenderer('${NMBbien.valorActual}'), {labelStyle:labelStyle});
 	var ValorTotalCargas	= app.creaLabel('<s:message code="bienesCliente.cargas" text="**Cargas"/>',app.format.moneyRenderer('${NMBbien.importeCargas}'), {labelStyle:labelStyle});
-	var fechaVerificacion	= app.creaLabel('<s:message code="bienesCliente.fechaverificacion" text="**Fecha verificaci�n"/>','<fwk:date value="${NMBbien.fechaVerificacion}"/>', {labelStyle:labelStyle});
+	var fechaVerificacion	= app.creaLabel('<s:message code="bienesCliente.fechaverificacion" text="**Fecha verificaci&oacute;n"/>','<fwk:date value="${NMBbien.fechaVerificacion}"/>', {labelStyle:labelStyle});
 	var tipoBien			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tipo" text="**Tipo"/>','<s:message javaScriptEscape="true" text="${NMBbien.tipoBien.descripcion}" />',{labelStyle:labelStyle});
 	//var participacion		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.participacion" text="**% Propiedad"/>','${NMBbien.participacion}',{labelStyle:labelStyle});
 
 	var situacionPosesoria  = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.situacionPosesoria" text="**situacionPosesoria"/>','${NMBbien.situacionPosesoria.descripcion}', {labelStyle:labelStyle});
-	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual==null ? '--':NMBbien.viviendaHabitual == '1' ? 'S�' : 'No'}', {labelStyle:labelStyle});
+	var viviendaHabitual    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.viviendaHabitual" text="**viviendaHabitual"/>','${NMBbien.viviendaHabitual==null ? '--':NMBbien.viviendaHabitual == '1' ? 'S&oacute;' : 'No'}', {labelStyle:labelStyle});
 	var tipoSubasta		    = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.tipoSubasta" text="**Tipo Subasta"/>',app.format.moneyRenderer('${NMBbien.tipoSubasta}'),{labelStyle:labelStyle});
 	var numeroActivo        = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.numeroActivo" text="**numeroActivo"/>','${NMBbien.numeroActivo}', {labelStyle:labelStyle});
 	var licenciaPrimeraOcupacion = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.licenciaPrimeraOcupacion" text="**licenciaPrimeraOcupacion"/>','${NMBbien.licenciaPrimeraOcupacion}', {labelStyle:labelStyle});
@@ -40,7 +40,7 @@
         
 	// DATOS DESCRIPCION
 	var Descripcion = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.descripcion" text="**Descripci�n" />'
+		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.descripcion" text="**Descripci&oacute;n" />'
 		,value:'<s:message javaScriptEscape="true" text="${NMBbien.descripcionBien}" />'
 		,name:'descripcion'
 		,width:240		
@@ -53,7 +53,7 @@
 
 	// DATOS OBSERVACIONES
 	var observaciones = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.observaciones" text="**Descripci�n" />'
+		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.observaciones" text="**Descripci&oacute;n" />'
 		,value:'<s:message javaScriptEscape="true" text="${NMBbien.observaciones}" />'
 		,name:'observaciones'
 		,hideLabel: true
@@ -65,10 +65,10 @@
 	//VALORACIONES
 	var fechaValSubjetivo	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaValorSubjetivo" text="**Fecha val. subjetivo"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaValorSubjetivo}"/>',{labelStyle:labelStyle});
 	var valorSubjetivo		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.importeValorSubjetivo" text="**Val. Subjetivo"/>',app.format.moneyRenderer('${NMBbien.valoracionActiva.importeValorSubjetivo}'),{labelStyle:labelStyle});
-	var fechaValApreciacion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaValorApreciacion" text="**Fecha val. apreciaci�n"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaValorApreciacion}"/>',{labelStyle:labelStyle});
-	var valorApreciacion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.importeValorApreciacion" text="**Val. Apreciaci�n"/>',app.format.moneyRenderer('${NMBbien.valoracionActiva.importeValorApreciacion}'),{labelStyle:labelStyle});
-	var fechaValTasacion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaValorTasacion" text="**Fecha val. tasaci�n"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaValorTasacion}"/>',{labelStyle:labelStyle});
-	var valorTasacion		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.importeValorTasacion" text="**Val. Tasaci�n"/>',app.format.moneyRenderer('${NMBbien.valoracionActiva.importeValorTasacion}'),{labelStyle:labelStyle});
+	var fechaValApreciacion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaValorApreciacion" text="**Fecha val. apreciaci&oacute;n"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaValorApreciacion}"/>',{labelStyle:labelStyle});
+	var valorApreciacion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.importeValorApreciacion" text="**Val. Apreciaci&oacute;n"/>',app.format.moneyRenderer('${NMBbien.valoracionActiva.importeValorApreciacion}'),{labelStyle:labelStyle});
+	var fechaValTasacion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaValorTasacion" text="**Fecha val. tasaci&oacute;n"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaValorTasacion}"/>',{labelStyle:labelStyle});
+	var valorTasacion		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.importeValorTasacion" text="**Val. Tasaci&oacute;n"/>',app.format.moneyRenderer('${NMBbien.valoracionActiva.importeValorTasacion}'),{labelStyle:labelStyle});
 	
 	var valorTasacionExterna = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.valorTasacionExterna" text="**valorTasacionExterna"/>',app.format.moneyRenderer('${NMBbien.valoracionActiva.valorTasacionExterna}'),{labelStyle:labelStyle});
     var fechaTasacionExterna = app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaTasacionExterna" text="**fechaTasacionExterna"/>','<fwk:date value="${NMBbien.valoracionActiva.fechaTasacionExterna}"/>',{labelStyle:labelStyle});
@@ -110,12 +110,12 @@
 	//var minicipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipoLibro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />',{labelStyle:labelStyle});
 	var municipioRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.municipioRegistro" text="**Municipio"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.localidad.descripcion}" />',{labelStyle:labelStyle});
 	var provinciaRegistro	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.provinciaRegistro" text="**"/>','<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.provincia.descripcion}" />',{labelStyle:labelStyle});	
-	var numRegistro			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**N� Registro"/>','${NMBbien.datosRegistralesActivo.numRegistro}',{labelStyle:labelStyle});
+	var numRegistro			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**N&oacute; Registro"/>','${NMBbien.datosRegistralesActivo.numRegistro}',{labelStyle:labelStyle});
 	var tipoRegistro		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.bienesNMB.codigoRegistro" text="**Tipo registro"/>','${NMBbien.datosRegistralesActivo.codigoRegistro}',{labelStyle:labelStyle});
 	var refCatastral		= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.referenciaCatastral" text="**Ref. Catastral"/>','${NMBbien.datosRegistralesActivo.referenciaCatastralBien}',{labelStyle:labelStyle});
-	var inscripcion			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.inscripcion" text="**Inscripci�n"/>','${NMBbien.datosRegistralesActivo.inscripcion}',{labelStyle:labelStyle});
-	var fechaInscripcion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaInscripcion" text="**Fecha Inscripci�n"/>','<fwk:date value="${NMBbien.datosRegistralesActivo.fechaInscripcion}"/>',{labelStyle:labelStyle});
-	var numFinca			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.numFinca" text="**N� Finca"/>','${NMBbien.datosRegistralesActivo.numFinca}',{labelStyle:labelStyle});
+	var inscripcion			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.inscripcion" text="**Inscripci&oacute;n"/>','${NMBbien.datosRegistralesActivo.inscripcion}',{labelStyle:labelStyle});
+	var fechaInscripcion	= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.fechaInscripcion" text="**Fecha Inscripci&oacute;n"/>','<fwk:date value="${NMBbien.datosRegistralesActivo.fechaInscripcion}"/>',{labelStyle:labelStyle});
+	var numFinca			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.numFinca" text="**N&oacute; Finca"/>','${NMBbien.datosRegistralesActivo.numFinca}',{labelStyle:labelStyle});
 
 	//LOCALIZACION
 	var provincia_valor = '';
@@ -126,7 +126,7 @@
 		localidad_valor = '${NMBbien.localizacionActual.localidad.descripcion}';
 		unidadPoblacional_valor = '${NMBbien.localizacionActual.unidadPoblacional.descripcion}';
 	</c:if>
-	var poblacion			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.poblacion" text="**Poblaci�n"/>', '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.poblacion}" />',{labelStyle:labelStyle});
+	var poblacion			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.poblacion" text="**Poblaci&oacute;n"/>', '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.poblacion}" />',{labelStyle:labelStyle});
 	var codPostal			= app.creaLabel('<s:message code="plugin.mejoras.bienesNMB.codPostal" text="**Cod. Postal"/>','${NMBbien.localizacionActual.codPostal}',{labelStyle:labelStyle});
 	var provincia			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.provincia" text="**Provincia"/>',provincia_valor,{labelStyle:labelStyle});
 	
@@ -150,18 +150,18 @@
 	var cifEmpresa			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.cifEmpresa" text="**CIF empresa"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.cifEmpresa}" />',{labelStyle:labelStyle});
 	
 	//cuenta propia
-	var codIAE				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.epigrafeIAE" text="**C�digo IAE"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.codIAE}" />',{labelStyle:labelStyle});
-	var desIAE				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.descripcionIAE" text="**Descripci�n IAE"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.desIAE}" />',{labelStyle:labelStyle});
+	var codIAE				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.epigrafeIAE" text="**C&oacute;digo IAE"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.codIAE}" />',{labelStyle:labelStyle});
+	var desIAE				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.descripcionIAE" text="**Descripci&oacute;n IAE"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.desIAE}" />',{labelStyle:labelStyle});
 	
 	//Cuenta bancaria
 	var entidad				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.entidad" text="**Entidad"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.entidad}" />',{labelStyle:labelStyle});
-	var numCuenta			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N� Cuenta"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.numCuenta}" />',{labelStyle:labelStyle});
+	var numCuenta			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N&oacute; Cuenta"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.numCuenta}" />',{labelStyle:labelStyle});
 	
 	//vehiculo
 	var marca				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.marca" text="**Marca"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.marca}" />',{labelStyle:labelStyle});
 	var modelo				= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.modelo" text="**Modelo"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.modelo}" />',{labelStyle:labelStyle});
 	var matricula			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.matricula" text="**Matricula"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.matricula}" />',{labelStyle:labelStyle});
-	var fechaMatricula		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fechaMatriculacion" text="**Fecha matriculaci�n"/>','<fwk:date value="${NMBbien.adicional.fechaMatricula}"/>', {labelStyle:labelStyleAjusteColumnas});
+	var fechaMatricula		= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fechaMatriculacion" text="**Fecha matriculaci&oacute;n"/>','<fwk:date value="${NMBbien.adicional.fechaMatricula}"/>', {labelStyle:labelStyleAjusteColumnas});
 	
 	var bastidor			= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.nBastidor" text="**N. Bastidor"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.bastidor}" />',{labelStyle:labelStyle});
 	
@@ -171,15 +171,15 @@
         
 	//activosFinancieros
 	var tiposFinancieros	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.tiposFinaciero" text="**Tipo Financiero"/>', '<s:message javaScriptEscape="true" text="${NMBbien.adicional.tipoProdBancario.descripcion}" />',{labelStyle:labelStyle});
-	var valorProdBancario	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoraci�n"/>',app.format.moneyRenderer('${NMBbien.adicional.valoracion}'),{labelStyle:labelStyle});
+	var valorProdBancario	= app.creaLabel('<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoraci&oacute;n"/>',app.format.moneyRenderer('${NMBbien.adicional.valoracion}'),{labelStyle:labelStyle});
 	
 	// OTROS DATOS
-	var numDomicilio = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.numDomicilio" text="**N�mero del domicilio del bien"/>', '<s:message javaScriptEscape="true" text="${NMBbien.numDomicilio}" />',{labelStyle:labelStyle});
-	var idDireccion = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.idDireccion" text="**Identificador de direcci�n un�voca que tiene dado de alta el bien en la garant�a"/>', '<s:message javaScriptEscape="true" text="${NMBbien.idDireccion}" />',{labelStyle:labelStyle});
+	var numDomicilio = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.numDomicilio" text="**N&oacute;mero del domicilio del bien"/>', '<s:message javaScriptEscape="true" text="${NMBbien.numDomicilio}" />',{labelStyle:labelStyle});
+	var idDireccion = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.idDireccion" text="**Identificador de direcci&oacute;n un&oacute;voca que tiene dado de alta el bien en la garant&oacute;a"/>', '<s:message javaScriptEscape="true" text="${NMBbien.idDireccion}" />',{labelStyle:labelStyle});
 	var destinoUso = app.creaLabel('<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.otrosDatos.destinoUso" text="**Destino uso del bien."/>', '<s:message javaScriptEscape="true" text="${NMBbien.destinoUso}" />',{labelStyle:labelStyle});
 	
 	var direccion = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.direccion" text="**Direcci�n" />'
+		fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.direccion" text="**Direcci&oacute;n" />'
 		,value:'<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.direccion}" />'
 		,name:'direccion'
 		,width:240
@@ -260,7 +260,7 @@
 		,layoutConfig:{
 			columns:2
 		}
-		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosEconomicos.titulo" text="**Datos econ�micos"/>'
+		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCabecera.datosEconomicos.titulo" text="**Datos econ&oacute;micos"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[fechaVerificacion, valorActual, ValorTotalCargas, fechaValSubjetivo, valorSubjetivo,tributacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">,imposicionCompra,tributacionVenta,imposicionVenta,inversionRenuncia</sec:authorize>,respuestaConsulta]},
 				  {items:[valorTasacionExterna,fechaTasacionExterna,tasadora,fechaSolicitudTasacion,fechaValApreciacion, valorApreciacion, fechaValTasacion, valorTasacion<sec:authorize ifAllGranted="PUEDE_VER_TRIBUTACION">, fechaSolicitudDueD, fechaDueD</sec:authorize> <sec:authorize ifNotGranted="PUEDE_VER_TRIBUTACION">, porcentajeImpuestoCompra, impuestoCompra</sec:authorize>]}
@@ -440,7 +440,7 @@
 			if(codigoTipoInmueble=='' || numFinca.getValue()=='' || localidad.getValue() == '' || provincia.getValue() == '' || numRegistro.getValue() == '' || numRegistro.getValue() == 0){
 				Ext.MessageBox.show({
 		           title: 'Campos obligatorios',
-		           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolNumActivoCamposObligatorios" text="**Los campos provincia, localidad, n�mero de finca y n�mero de registro son obligatorios para solicitar el n�mero de activo" />',
+		           msg: '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolNumActivoCamposObligatorios" text="**Los campos provincia, localidad, n&oacute;mero de finca y n&oacute;mero de registro son obligatorios para solicitar el n&oacute;mero de activo" />',
 		           width:300,
 		           buttons: Ext.MessageBox.OK
 		        });
@@ -466,7 +466,7 @@
 			      			,success: function(result,request){
 			      			   if(result.msgError=='1'){
 			      			   		Ext.Msg.show({
-									title:'Operaci�n realizada',
+									title:'Operaci&oacute;n realizada',
 									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.numeroActivo.ok"/>',
 									buttons: Ext.Msg.OK,
 									icon:Ext.MessageBox.INFO});
@@ -488,7 +488,7 @@
 	        }
 		});
 		
-		//flag que indica si se puede solicitar la tasaci�n
+		//flag que indica si se puede solicitar la tasaci&oacute;n
 		var solicitarTas = ${solicitarTasacion};
 		
 		var btnSolicitarTasacionHCJ = new Ext.Button({
@@ -501,13 +501,13 @@
          		var w = app.openWindow({
 					flow : 'serviciosonlinecajamar/ventanaSolicitudTasacion'
 					,width:770
-					,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarTasacion" text="**Solicitar tasaci�n" />'
+					,title : '<s:message code="plugin.nuevoModeloBienes.fichaBien.btnSolicitarTasacion" text="**Solicitar tasaci&oacute;n" />'
 					,params : {idBien:${NMBbien.id}}
 				});
 				w.on(app.event.DONE, function(){
 					w.close();
 					Ext.Msg.show({
-						title:'Operaci�n realizada',
+						title:'Operaci&oacute;n realizada',
 						msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ok"/>',
 						buttons: Ext.Msg.OK,
 						icon:Ext.MessageBox.INFO
@@ -588,7 +588,7 @@
 			      			,params:{id:${NMBbien.id}}
 			      			,success: function(){
 			      			   Ext.Msg.show({
-									title:'Operaci�n realizada',
+									title:'Operaci&oacute;n realizada',
 									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ok"/>',
 									buttons: Ext.Msg.OK,
 									icon:Ext.MessageBox.INFO

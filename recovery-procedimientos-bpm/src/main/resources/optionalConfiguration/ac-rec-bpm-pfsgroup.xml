@@ -128,6 +128,15 @@
 	<bean id="generarPropuestaNUSEHandler" class="es.pfsgroup.procedimientos.subasta.GenerarPropuestaNUSEHandler"></bean>
 	<bean id="generarPropuestaNUSEHandlerAdj" class="es.pfsgroup.procedimientos.adjudicacion.GenerarPropuestaNUSEHandler"></bean>
 
+	<bean id="enviarAFormalizarPropuestaActionHandler" class="es.pfsgroup.procedimientos.PROEnviarAFormalizarPropuestaActionHandler">
+	</bean>
+	<bean id="formalizarPropuestaActionHandler" class="es.pfsgroup.procedimientos.PROFormalizarPropuestaActionHandler">
+	</bean>
+	<bean id="devolverADecisionActionHandler" class="es.pfsgroup.procedimientos.PRODevolverADecisionActionHandler">
+	</bean>
+	<bean id="expedienteDecididoFPActionHandler" class="es.pfsgroup.procedimientos.PROExpedienteDecididoFPActionHandler">
+	</bean>
+
 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEjecucionNotarial/tramiteEjecucionNotariaV4.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteSubasta/tramiteSubastaV4.xml" p:version="-1"/>

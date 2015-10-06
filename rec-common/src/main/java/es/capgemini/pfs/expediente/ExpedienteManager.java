@@ -1304,6 +1304,71 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                     ExpedienteBPMConstants.TRANSITION_ENVIARAREVISION);
         }
     }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA)
+	@Override
+	public void elevarExpedienteAFormalizarPropuesta(Long idExpediente,
+			Boolean isSupervisor) {
+		 Expediente exp = expedienteDao.get(idExpediente);
+
+	        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_DECISION_COMITE, isSupervisor);
+	        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+
+	        Boolean politicasVigentes = (Boolean) executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
+
+	        //Si se ha marcado como vigente las pol�ticas, el expediente se decide
+	        if (politicasVigentes) {
+	            DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+	                    DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
+	            exp.setEstadoExpediente(estadoExpediente);
+	            saveOrUpdate(exp);
+
+	            //Si no se ha marcado como vigente, se siguie en la elevaci�n del expediente
+	        } else {
+	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_ENVIARAFORMALIZARPROPUESTA);
+	        }
+		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE)
+	@Override
+	public void devolverExpedienteADecisionComite(Long idExpediente,
+			String respuesta) {
+        Expediente exp = expedienteDao.get(idExpediente);
+        Long bpmProcess = exp.getProcessBpm();
+        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+        if (ExpedienteBPMConstants.STATE_FORMALIZAR_PROPUESTA.equals(node)) {
+            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVERADECISION);
+
+            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
+            Long idTareaAsociada = (Long) executor
+                    .execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_FP);
+            if (idTareaAsociada != null) {
+                TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
+                if (tarea != null) {
+                    SubtipoTarea subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+                            SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA);
+                    String descripcionTarea = subtipoTarea.getDescripcionLarga() + " - Devuelto por los motivos " + respuesta;
+                    tarea.setDescripcionTarea(descripcionTarea);
+                    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
+                }
+            }
+            // *** *** //
+
+            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+        } else {
+            logger.error("No se puede devoler a completar porque el expediente no esta en revision");
+            throw new BusinessOperationException("expediente.devolucionCompletar.errorJBPM");
+        }		
+	}
 
     /**
      * validar expediente aaa completo.
@@ -1345,7 +1410,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         if (ExpedienteBPMConstants.STATE_REVISION_EXPEDIENTE.equals(node)) {
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVERACOMPLETAR);
 
-            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripci�n y ponerle los motivos de devoluci�n ***
+            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
             Long idTareaAsociada = (Long) executor
                     .execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_CE);
             if (idTareaAsociada != null) {
@@ -1394,7 +1459,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             exp.setEstadoExpediente(estadoExpediente);
             saveOrUpdate(exp);
 
-            //Si no se ha marcado como vigente, se siguie en la elevaci�n del expediente
+            //Si no se ha marcado como vigente, se siguie en la elevación del expediente
         } else {
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
                     ExpedienteBPMConstants.TRANSITION_ENVIARADECISIONCOMITE);
@@ -1418,7 +1483,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             //variables.put(RESPUESTA_DEVOLVER_RE, respuesta);
             //jbpmUtil.addVariablesToProcess(bpmProcess, variables);
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVERAREVISION);
-            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripci�n y ponerle los motivos de devoluci�n ***
+            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
             Long idTareaAsociada = (Long) executor
                     .execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_RE);
             if (idTareaAsociada != null) {
@@ -1495,8 +1560,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     }
 
     /**
-     * Indica si se puede mostrar la pesta�a de decisi�n de comit� de la consulta de expediente.
-     * Cumple con los campos de precondiciones y activaci�n del CU WEB-30,
+     * Indica si se puede mostrar la PESTAÑA de decisión de comit� de la consulta de expediente.
+     * Cumple con los campos de precondiciones y activación del CU WEB-30,
      * los permisos a nivel de funciones de perfil los maneja la vista con los tags.
      * @param idExpediente Long: el id del expediente que se quiere ver.
      * @param tipoItinerario String: tipo de itinerario del expediente
@@ -1511,19 +1576,19 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
             nombreTab = "MARCADO DE POLITICAS";
         }
-        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTA�A " + nombreTab);
+        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
         //VALIDO PRECONDICIONES CU WEB-30
         if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)
                 || (exp.getComite() == null || exp.getComite().getSesiones() == null || exp.getComite().getSesiones().size() == 0)) {
-            //No est� en decisi�n de comit� o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTA�A " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE "
+            //No est� en decisión de comit� o no tiene sesiones abiertas.
+            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE "
                     + "O PORQUE NO HAY SESIONES ABIERTAS DE EL COMITE");
             return Boolean.FALSE;
         }
         if ((solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
                 || (!solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion())) {
-            //No est� en decisi�n de comit� o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTA�A " + nombreTab + " PORQUE EL EXPEDIENTE NO EST� EN EL ITINERARIO CORRESPONDIENTE ");
+            //No est� en decisión de comit� o no tiene sesiones abiertas.
+            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL EXPEDIENTE NO ESTÁ EN EL ITINERARIO CORRESPONDIENTE ");
             return Boolean.FALSE;
         }
         Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
@@ -1535,12 +1600,12 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 if (puestoComite.getComite().getId().equals(exp.getComite().getId()) && Comite.INICIADO.equals(exp.getComite().getEstado())) {
                     if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()
                             && !puestoComite.getComite().isComiteRecuperacion()) {
-                        logger.debug("NO SE PUEDE MOSTRAR LA PESTA�A " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
+                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
                                 + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE RECUPERACION");
                         return Boolean.FALSE;
                     } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
                             && !puestoComite.getComite().isComiteSeguimiento()) {
-                        logger.debug("NO SE PUEDE MOSTRAR LA PESTA�A " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
+                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
                                 + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE SEGUIMIENTO");
                         return Boolean.FALSE;
                     }
@@ -1549,7 +1614,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 }
             }
         }
-        logger.debug("NO SE PUEDE MOSTRAR LA PESTA�A " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
+        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
         return Boolean.FALSE;
     }
 
@@ -2959,4 +3024,5 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         return nExp.longValue() == 0;
 
     }
+
 }

@@ -117,6 +117,9 @@ public final class InternaBusinessOperation {
 	public static final String BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO = "expedienteManager.findExpedientesParaExcelDinamico";
 	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_SEGUIMIENTO = "expedienteManager.tieneExpedienteSeguimiento";
 	public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_RECUPERACION = "expedienteManager.tieneExpedienteRecuperacion";
+	public static final String BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA = "expedienteManager.elevarExpedienteAFormalizarPropuesta";
+    public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE = "expedienteManager.devolverExpedienteADecisionComite";
+    
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

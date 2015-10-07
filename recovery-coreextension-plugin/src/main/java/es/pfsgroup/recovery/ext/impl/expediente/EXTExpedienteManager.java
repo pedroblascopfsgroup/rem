@@ -236,4 +236,35 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         	throw new BusinessOperationException("expediente.elevar.falloEstadoPropuestas");
         }        
 	}
+	
+	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_REVISION)
+    @Transactional(readOnly = false)
+	@Override
+    public void devolverExpedienteARevision(Long idExpediente, String respuesta) {
+        //Validamos el estado de todas las propuestas (sea Elevadas o rechazado o incumplido o cumplido o cancelado )
+        List<String> codigosEstadosValidos = new ArrayList<String>();
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+        
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+		
+        List<EXTAcuerdo> propuestasExp = propuestaManager.listadoPropuestasByExpedienteId(idExpediente);
+        Boolean propuestasEstadoConforme = propuestaManager.estadoTodasPropuestas(propuestasExp, codigosEstadosValidos);
+        
+        if (propuestasEstadoConforme) {
+        	//Las propuestas en estado "Elevadas"/Aceptadas se vuelven a "Propuestas"
+        	for (EXTAcuerdo propuesta : propuestasExp) {
+        		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_ACEPTADO)) {
+        			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_PROPUESTO, true);
+        		}
+        	}
+        	
+        	expedienteManager.devolverExpedienteARevision(idExpediente, respuesta);
+        } else {
+        	throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas");
+        }
+
+	}
 }

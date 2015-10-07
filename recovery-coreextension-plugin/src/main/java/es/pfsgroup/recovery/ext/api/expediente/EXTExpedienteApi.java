@@ -60,4 +60,12 @@ public interface EXTExpedienteApi extends ExpedienteApi{
 	 */
 	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_DECISION_COMITE)
 	void elevarExpedienteADecisionComite(Long idExpediente, Boolean isSupervisor);
+
+	/**
+	 * Devuelve un expediente a revision.
+	 * @param idExpediente id del expediente
+	 * @param respuesta String
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_REVISION)
+	void devolverExpedienteARevision(Long idExpediente, String respuesta);
 }

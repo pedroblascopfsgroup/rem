@@ -237,7 +237,7 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteCE = function(params, rta){
+	var devolverExpedienteDC = function(params, rta){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDC'
 				,eventName: 'devolverExpediente'
@@ -269,7 +269,17 @@ function(entidad,page){
 					,handler:function(){
 						cambioEstado(tipoAccion.ELEVAR_COMITE)
 					}
-				}, {
+				},
+				 //Botn elevar FP
+				{
+					text:'<s:message code="expedientes.menu.elevarFormulacionPropuesta" text="**Elevar a Formalizar Propuesta" />'
+					,id : 'expediente-accion7-formulacionPropuesta'
+					,iconCls : 'icon_elevar_revision'
+					,handler:function(){
+						cambioEstado(tipoAccion.ELEVAR_FORMALIZAR_PROPUESTA)
+					}
+				},
+				{
 					text:'<s:message code="expedientes.menu.devolverrevision" text="**Devolver a Revisin" />'
 					,id : 'expediente-accion2-devolverRevision'
 					,iconCls : 'icon_revisar_expediente'
@@ -312,15 +322,6 @@ function(entidad,page){
 					}
 				},
 				
-				//Botn elevar FP
-				{
-					text:'<s:message code="expedientes.menu.elevarFormulacionPropuesta" text="**Elevar a Formalizar Propuesta" />'
-					,id : 'expediente-accion7-formulacionPropuesta'
-					,iconCls : 'icon_elevar_revision'
-					,handler:function(){
-						cambioEstado(tipoAccion.ELEVAR_FORMALIZAR_PROPUESTA)
-					}
-				},
 				{
 					text:'<s:message code="expedientes.menu.devolverComite" text="**Devolver a Decisión Comité" />'
 					,id : 'expediente-accion8-devolverComite'

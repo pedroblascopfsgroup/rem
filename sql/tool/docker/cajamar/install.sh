@@ -6,10 +6,13 @@ CONTAINER_NAME=$3
 CUSTOM_NLS_LANG=$4
 OPTION_RANDOM_DUMP=$5
 OPTION_REMOVE=$6
+DOCKER_INNER_ERROR_LOG=$7
 
-if [[ "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" || "x$CUSTOM_NLS_LANG" == "x" ]]; then
+if [[ "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" 
+		|| "x$CUSTOM_NLS_LANG" == "x" || "x$OPTION_RANDOM_DUMP" == "x" || "x$OPTION_REMOVE" == "x"
+		|| "x$DOCKER_INNER_ERROR_LOG" == "x" ]]; then
 	echo "ERROR: No se puede continuar con la instalación de la BBDD"
-	echo "ERROR: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME CUSTOM_NLS_LANG"
+	echo "ERROR: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME CUSTOM_NLS_LANG OPTION_RANDOM_DUMP OPTION_REMOVE DOCKER_INNER_ERROR_LOG"
 	exit 1
 fi
 
@@ -20,11 +23,13 @@ INNER_DUMP_DIRECTORY=/DUMP
 # OUTSIDE DOCKER
 DUMP_FILE_OUT_DOCKER=DUMP/$CURRENT_DUMP_NAME
 if [[ "x$(hostname)" != "x$CONTAINER_NAME" ]]; then
-	docker exec $CONTAINER_NAME /setup/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE
+	docker exec $CONTAINER_NAME /setup/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG
 	exit 0
 fi
 
 # INSIDE DOCKER
+echo "STARTING: $(date)" > $DOCKER_INNER_ERROR_LOG
+
 echo "<Docker [$CONTAINER_NAME]>: Instalador de la BBDD de Cajamar"
 
 cd $(pwd)/$(dirname $0)
@@ -80,9 +85,17 @@ if [[ -f $DUMP_FILE_PATH  ]]; then
 		echo "export NLS_LANG=$NLS_LANG" >> /home/oracle/.bashrc
 		echo "<Docker [$CONTAINER_NAME]>: NLS_LANG=$NLS_LANG"
 		cd /sql-package/DDL
-		./DDL-scripts.sh admin@orcl admin@orcl
+		./DDL-scripts.sh admin@orcl admin@orcl | tee -a $DOCKER_INNER_ERROR_LOG
+		if [[ $? -ne 0 ]]; then
+			echo "<Docker [$CONTAINER_NAME]>: Abortando por errores"
+			exit 1
+		fi
 		cd /sql-package/DML
-		./DML-scripts.sh admin@orcl admin@orcl
+		./DML-scripts.sh admin@orcl admin@orcl | tee -a $DOCKER_INNER_ERROR_LOG
+		if [[ $? -ne 0 ]]; then
+			echo "<Docker [$CONTAINER_NAME]>: Abortando por errores"
+			exit 1
+		fi
 	else
 		echo "<Docker [$CONTAINER_NAME]>: No se van a ejecutar scripts DDL ni DML"
 	fi

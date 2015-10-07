@@ -201,7 +201,10 @@ if [[ "x$DOCKER_PS" == "x" ]]; then
 	check_dump
 	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imágen."
 	echo "[INFO]: Si la imágen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
-	run_and_install
+	run_container
+	if [[ $? -eq 0 ]]; then
+		$INSTALL_CMD
+	fi
 else
 	# Si el contenedor ya existe
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then
@@ -219,8 +222,6 @@ else
 		if [[ $? -eq 0 ]]; then
 			$INSTALL_CMD
 		fi
-
-		run_and_install
 	fi
 
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then

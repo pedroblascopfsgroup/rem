@@ -1022,7 +1022,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         Boolean requiereRiesgoSaldo = false;
 
         //hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
-        hql.append("select exp e FROM Expediente exp ");
+        hql.append("select exp FROM Expediente exp ");
 
         if (dtoExpediente.getIdComite() != null) {
             hql.append(" left join exp.decisionComite dco left join dco.sesion sesion ");
@@ -1056,8 +1056,19 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                                                     //de la busqueda principal con expedientes,
                                                     //si no se busca por ningún parámetro que requiera Expediente
                                                     if (isBusquedaExpedientes(dtoExpediente)) {
-                                                        hql.append(" and exp.id in ( ");
+                                                        hql.append(" and EXISTS ( ");
                                                         hql.append(filtro.obtenerFiltro(paramDinamico));
+                                                        
+                                                        if (filtro.getOrigenFiltros().equals("recobro")){
+                                                            hql.append(" and exp.id = cre.expediente.id ");
+                                                        }                                                        
+                                                        if (filtro.getOrigenFiltros().equals("incidencia")){
+                                                            hql.append(" and exp.id = ine.expediente.id ");
+                                                        }
+                                                        if (filtro.getOrigenFiltros().equals("acuerdo")){
+                                                            hql.append(" and exp.id = acu.expediente.id ");
+                                                        }
+                                                        
                                                         hql.append(" ) ");
                                                     }else{
                                                         hql = new StringBuilder();

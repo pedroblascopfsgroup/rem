@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.exe.Token;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.capgemini.pfs.web.genericForm.dao.GenericFormDao;
 import es.capgemini.pfs.web.genericForm.dao.GenericFormItemDao;
+import es.pfsgroup.commons.utils.Checks;
 
 @Service
 public class GenericFormManager {
@@ -90,6 +92,11 @@ public class GenericFormManager {
         return jbpmManager.creaMapValores(idProcedimiento);
     }
 
+    @BusinessOperation
+    public GenericForm get(Long id) {
+    	return getForm(id, false);
+    }
+    
     /**
      * Obtiene un formulario dinamico a partir del id de una tarea Externa
      *
@@ -97,15 +104,17 @@ public class GenericFormManager {
      * @return GenericForm
      */
     @BusinessOperation
-    public GenericForm get(Long id) {
+    public GenericForm getForm(Long id, Boolean readOnly) {
         TareaExterna tareaExterna = tareaExternaManager.get(id);
-
-        ;
 
         GenericForm form = new GenericForm();
 
-        form.setView(tareaExterna.getTareaProcedimiento().getView());
-        form.setErrorValidacion(validacionPreviaDeLaTarea(tareaExterna));
+        // En modo consulta no ponemos vista, ni validación BPMs (para Hisorico)
+        if (Checks.esNulo(readOnly) || !readOnly) {
+            form.setView(tareaExterna.getTareaProcedimiento().getView());
+        	form.setErrorValidacion(validacionPreviaDeLaTarea(tareaExterna));
+        }
+        
         // cambiar el dao por un manager
         // TareaNotificacion tarea = notificacionManager.get(id);
         form.setTareaExterna(tareaExterna);

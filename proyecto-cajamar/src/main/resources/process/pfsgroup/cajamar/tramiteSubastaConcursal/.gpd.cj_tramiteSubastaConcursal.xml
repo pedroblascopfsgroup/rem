@@ -80,6 +80,10 @@
     <edge>
       <label x="-28" y="-8"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="22" h1="214" w2="183" h2="-209"/>
+    </edge>
   </node>
   <node name="CJ004_CelebracionSubasta" x="-36" y="552" width="221" height="36">
     <edge>
@@ -305,11 +309,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
-  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
-  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
-  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
-  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
   <node name="CJ004_TareaExterna" x="-302" y="1364" width="216" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -322,4 +321,9 @@
       <bendpoint w1="0" h1="117" w2="-151" h2="-40"/>
     </edge>
   </node>
+  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
+  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
+  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
+  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
+  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
 </root-container>

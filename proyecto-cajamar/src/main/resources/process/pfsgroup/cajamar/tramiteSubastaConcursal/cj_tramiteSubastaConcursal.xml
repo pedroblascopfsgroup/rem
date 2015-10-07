@@ -105,6 +105,7 @@
 		<transition to="CJ004_EnviarInstruccionesProcurador" name="activarAlerta"></transition>
 		<transition to="CJ004_ValidarInformeDeSubasta" name="vueltaAtras"></transition>
 		<transition to="Fin4" name="Fin"></transition>
+		<transition to="Fin4" name="avanzaBPM"></transition>
 	</state>
 
 	<state name="CJ004_CelebracionSubasta">

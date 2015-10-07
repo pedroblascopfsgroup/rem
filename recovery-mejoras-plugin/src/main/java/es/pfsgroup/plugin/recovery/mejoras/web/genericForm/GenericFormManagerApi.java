@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.recovery.mejoras.web.genericForm;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 

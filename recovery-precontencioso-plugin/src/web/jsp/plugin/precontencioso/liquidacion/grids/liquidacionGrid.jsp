@@ -268,7 +268,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnDescartar.setDisabled(true);
 			btnGenerar.setDisabled(true);
 	}
-
+	
 	btnConfirmar.setDisabled(btnConfirmar.disabled || !comprobarDatosCalculoRellenos());
 
 }

@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +59,6 @@ public class BurofaxController {
 	@Autowired
 	private BurofaxManager burofaxManager;
 	
-	private List<BurofaxDTO> listadoBurofax=null;
-	
-	boolean cambioEstado=false;
-	
 	@Autowired
 	private Executor executor;
 	
@@ -76,7 +71,7 @@ public class BurofaxController {
 	@RequestMapping
 	public String getListaBurofax(ModelMap model,Long idProcedimiento) {
 		
-			listadoBurofax=new ArrayList<BurofaxDTO>();
+		    List<BurofaxDTO> listadoBurofax=new ArrayList<BurofaxDTO>();
 			List<BurofaxPCO> listaBurofax=burofaxManager.getListaBurofaxPCO(idProcedimiento);
 			
 			
@@ -269,7 +264,23 @@ public class BurofaxController {
 	}
 	
 	@RequestMapping
-	private String editarBurofax(WebRequest request, ModelMap map,String contenidoBurofax){
+	private String editarBurofax(WebRequest request, ModelMap map,String contenidoBurofax) throws Exception{
+
+		//Comprobamos que las variables no han sido modificadas al editar su estilo con el HTMLEditor. Las variables son indivisibles 
+		String contenidoBurofaxAux=contenidoBurofax;
+		
+		while(contenidoBurofaxAux.length()>0 && contenidoBurofaxAux.indexOf("$") != -1){
+			int inicioVariable=contenidoBurofaxAux.indexOf("$");
+			int finalVariable=contenidoBurofaxAux.indexOf("}");
+			
+			String variable=contenidoBurofaxAux.substring(inicioVariable,finalVariable+1);
+			
+			if(variable.contains("<") || variable.contains("</")){
+				throw new Exception("La definición de las variables es incorrecta. Compruebe el estilo de las variables");
+			}
+			
+			contenidoBurofaxAux=contenidoBurofaxAux.substring(finalVariable+1);
+		}
 		
 		String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").split(",");
 		Long idEnvio = 1L;

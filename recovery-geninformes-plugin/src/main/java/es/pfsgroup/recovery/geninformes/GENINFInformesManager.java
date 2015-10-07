@@ -1,9 +1,11 @@
 package es.pfsgroup.recovery.geninformes;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +33,9 @@ import net.sf.jasperreports.engine.JRParameter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.docx4j.XmlUtils;
+import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -66,6 +71,10 @@ import es.pfsgroup.recovery.geninformes.model.GENINFCorreoPendiente;
 import es.pfsgroup.recovery.geninformes.model.GENINFInforme;
 import es.pfsgroup.recovery.geninformes.model.GENINFInformeConfig;
 import es.pfsgroup.recovery.geninformes.model.GENINFParrafo;
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 @Service
 public class GENINFInformesManager implements GENINFInformesApi {
@@ -845,6 +854,98 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		}
 
 		return fi;
-	}	
+	}
+	
+	
+	/**
+	 * Metodo para sustituir las variables de un fichero docx por su valor
+	 * @param envioBurofax
+	 * @param escrito
+	 * @param is
+	 * @return
+	 * @throws Throwable
+	 */
+	@Override
+	@BusinessOperation(MSV_GENERAR_ESCRITO_VARIABLES)
+	public FileItem generarEscritoConVariables(HashMap<String, String> mapaVariables, String escrito,InputStream is) throws Throwable {
+		File fileSalidaTemporal = null;
+		FileItem resultado = null;
+		OutputStream out = null;
+		
+		try{
+			// Comprobamos que exista la plantilla
+			if (escrito==null || escrito.equals("")) {
+				throw new IllegalStateException("Nombre de fichero de plantilla vacï¿½o");
+			}
+						
+			if (is == null) {
+				throw new IllegalStateException("No existe el fichero de plantilla " + escrito);
+			}			
+			
+			// Inicializamos el motor de generación de los escritos
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(is, TemplateEngineKind.Freemarker);		
+			IContext context = report.createContext();
+			
+			// Metemos los valores de las variables !! MUY IMPORTANTE: Si hay definidas variables y no se pueblan a continuación , NO FUNCIONA
+			for(Map.Entry<String, String> entry : mapaVariables.entrySet()){
+				context.put(entry.getKey(),entry.getValue());	
+			}
+			
+			// Preparamos el fichero temporal
+			fileSalidaTemporal = File.createTempFile("escrito", ".docx");
+			
+			fileSalidaTemporal.deleteOnExit();
+			if (fileSalidaTemporal.exists()) {
+				// Generamos el escrito
+				out = new FileOutputStream(fileSalidaTemporal);
+				report.process(context, out);
+			}
+			
+			resultado = new FileItem();
+			resultado.setFileName(escrito + (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + ".docx");
+			resultado.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			resultado.setFile(fileSalidaTemporal);
+			
+		}catch(Throwable e){
+			throw e;
+		}finally{
+			if(!Checks.esNulo(out)){
+				out.close();
+			}
+			if(!Checks.esNulo(is)){
+				is.close();
+			}
+		}
+		return resultado;
+	}
+	
+	
+	/**
+	 * Creamos .docx temporal y convertimos las etiquetas HTML a formato docx
+	 * @param envioBurofax
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	@BusinessOperation(MSV_GENERAR_ESCRITO_DOCX_FROM_HTML)
+	public InputStream createDocxFileFromHtmlText(String htmlText,String nombreFichero) throws Exception{
+		
+		File archivo = File.createTempFile(nombreFichero, ".docx");
+
+		WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+		XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordMLPackage);				
+		wordMLPackage.getMainDocumentPart().getContent().addAll( 
+					XHTMLImporter.convert( "<HTML>"+htmlText+"</HTML>", null) );
+		System.out.println(
+				XmlUtils.marshaltoString(wordMLPackage.getMainDocumentPart().getJaxbElement(), true, true));
+		wordMLPackage.save(archivo);
+		
+		InputStream is=new FileInputStream(archivo);
+		
+		return is;
+		
+	}
+	
+
     
 }

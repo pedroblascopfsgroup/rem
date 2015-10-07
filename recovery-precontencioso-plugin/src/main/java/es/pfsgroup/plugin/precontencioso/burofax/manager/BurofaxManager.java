@@ -1,9 +1,14 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
+import java.io.InputStream;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -22,6 +29,7 @@ import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -38,7 +46,9 @@ import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.ProcedimientoBurofaxTipoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
 
 @Service
 public class BurofaxManager implements BurofaxApi {
@@ -57,6 +67,9 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GENINFInformesManager informesManager;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -281,7 +294,7 @@ public class BurofaxManager implements BurofaxApi {
 				//Comun
 				envio.setBurofax(burofax);
 				envio.setDireccion(direccion);
-				envio.setTipoBurofax(tipoBurofax);
+				envio.setTipoBurofax(tipoBurofax);	
 				envio.setContenidoBurofax(tipoBurofax.getPlantilla());
 				envio.setResultadoBurofax(resultadoBurofaxPCO);
 				
@@ -328,6 +341,7 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "id", idEnvio);
 			EnvioBurofaxPCO envioBurofax=(EnvioBurofaxPCO) genericDao.get(EnvioBurofaxPCO.class,filtro1);
 			envioBurofax.setContenidoBurofax(contenido);
+			
 			genericDao.save(EnvioBurofaxPCO.class,envioBurofax);
 		}catch(Exception e){
 			logger.error(e);
@@ -400,8 +414,9 @@ public class BurofaxManager implements BurofaxApi {
 		return burofaxDao.getPersonasConContrato(query);
 	}
 	
-
+	@Override
 	@Transactional(readOnly = false)
+	@BusinessOperation(GUARDAR_ENVIO_BUROFAX)
 	public void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO){
 		
 		try{
@@ -434,8 +449,49 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setFechaSolicitud(new Date());
 				envioIntegracion.setFechaEnvio(new Date());
 				envioIntegracion.setFechaAcuse(new Date());
-				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 				envioIntegracion.setCertificado(certificado);
+				//Creamos un archivo docx a partir de texto html
+				InputStream is=informesManager.createDocxFileFromHtmlText(envioBurofax.getContenidoBurofax(),
+						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+				
+				String nombreFichero=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
+				
+				try {
+					HashMap<String, String> mapaVariables=new HashMap<String, String>();
+					if(!Checks.esNulo(envioBurofax.getBurofax().getContrato().getNroContratoFormat())){
+						mapaVariables.put("numcuenta", envioBurofax.getBurofax().getContrato().getNroContratoFormat());
+					}
+					else{
+						mapaVariables.put("numcuenta","[ERROR - No existe valor]");
+					}
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "contrato.id", envioBurofax.getBurofax().getContrato().getId());
+					LiquidacionPCO liquidacion = genericDao.get(LiquidacionPCO.class, filtro);
+					
+					if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getFechaConfirmacion())){
+						SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
+						mapaVariables.put("fechaliq",fechaFormat.format(liquidacion.getFechaConfirmacion()));
+					}
+					else{
+						mapaVariables.put("fechaliq","[ERROR - No existe valor]");
+					}
+					
+					if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getTotal())){
+						mapaVariables.put("totalliq",NumberFormat.getCurrencyInstance(new Locale("es","ES")).format(liquidacion.getTotal()));
+					}
+					else{
+						mapaVariables.put("totalliq","[ERROR - No existe valor]");
+					}
+					FileItem archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
+					
+					envioIntegracion.setArchivoBurofax(archivoBurofax);
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
+			
 				
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
 			}
@@ -445,6 +501,7 @@ public class BurofaxManager implements BurofaxApi {
 		}
 		
 	}
+	
 	
 	@Override
 	@BusinessOperation(OBTENER_TIPO_BUROFAX_BY_ENVIO)
@@ -545,8 +602,6 @@ public class BurofaxManager implements BurofaxApi {
 		
 		return estadoBurofax;
 	}
-	
-	
-	
+		
 	
 }

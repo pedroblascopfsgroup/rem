@@ -157,15 +157,6 @@ public interface BurofaxApi {
 	@BusinessOperationDefinition(OBTENER_PERSONAS_CON_CONTRATO)
 	Collection<? extends Persona> getPersonasConContrato(String query);
 	
-	/**
-	 * Guarda en BD los datos del envio del burofax
-	 * @param idEnvio
-	 * @param contrato
-	 */
-	/*
-	@BusinessOperationDefinition(GUARDAR_ENVIO_BUROFAX)
-	void guardarEnvioBurofax(Long idEnvio,String contrato,Boolean certificado);
-	*/
 	
 	/**
 	 * Devuelve el tipo de burofax para un envio dado
@@ -215,6 +206,14 @@ public interface BurofaxApi {
 	 */
 	@BusinessOperationDefinition(OBTENER_ESTADOS_BUROFAX)
 	List<DDEstadoBurofaxPCO> getEstadosBurofax();
+	
+	/**
+	 * Guarda toda la información cuando se realiza el envio de un burofax
+	 * @param certificado
+	 * @param listaEnvioBurofaxPCO
+	 */
+	@BusinessOperationDefinition(GUARDAR_ENVIO_BUROFAX)
+	void guardarEnvioBurofax(Boolean certificado,List<EnvioBurofaxPCO> listaEnvioBurofaxPCO);
 	
 	
 	

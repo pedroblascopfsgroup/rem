@@ -13,7 +13,7 @@
 	
     var contenidoBurofax='${textoBurofax}';
     var arrayIdEnvios="${arrayIdEnvios}";
-    
+    debugger;
 	
 	<%--	
 	var textoBurofax = new Ext.form.TextArea({
@@ -43,7 +43,7 @@
         	,enableLinks:false
         	,enableLists:false
         	,enableSourceEdit:true
-        	,value:'<s:message text='${textoBurofax}' javaScriptEscape="true" />'
+        	,value:'${textoBurofax}'
 	});
 
 	var bottomBar = [];
@@ -51,7 +51,7 @@
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
-		,handler : function(){	
+		,handler : function(){
 		    	Ext.Ajax.request({
 						url : page.resolveUrl('burofax/editarBurofax'), 
 						params : {contenidoBurofax:burofaxEditor.getValue(),arrayIdEnvios:arrayIdEnvios},

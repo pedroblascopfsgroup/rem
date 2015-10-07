@@ -16,6 +16,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -58,7 +59,13 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+	@Autowired
+	private ParametrizacionDao parametrizacionDao;
+	
 	private final Log logger = LogFactory.getLog(getClass());
+	
+    public static final String DIRECTORIO_PLANTILLAS_LIQUIDACION = "directorioPlantillasLiquidacion";
+
 
 
 	@Override
@@ -230,6 +237,11 @@ public class LiquidacionManager implements LiquidacionApi {
 	@BusinessOperation(LIQUIDACION_PRECONTENCIOSO_BY_ID)
 	public LiquidacionPCO getLiquidacionPCOById(Long idLiquidacion) {
 		return liquidacionDao.get(idLiquidacion);
+	}
+	
+	@Override
+	public String obtenerDirectorioDocumentos(){
+		return parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PLANTILLAS_LIQUIDACION).getValor();
 	}
 
 }

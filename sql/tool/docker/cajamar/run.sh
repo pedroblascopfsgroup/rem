@@ -34,9 +34,13 @@ OPTION_IGNORE_DUMP=no
 OPTION_RANDOM_DUMP=no
 OPTION_RESTART=no
 
+DOCKER_INNER_ERROR_LOG=/tmp/error.log
+VAR_OUTTER_ERROR_LOG=""
+
 function show_help () {
 	echo "Uso: "
 	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]"
+	echo "            [-errorlog=<fichero_logs>]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-help] [-oradata=<directorio datafiles>]"
 	echo "    -help: Sólo imprime un mensaje de ayuda"
 	echo "    -restart: Indicar para reiniciar la BBDD"
@@ -47,6 +51,7 @@ function show_help () {
 	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
 	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
 	echo "                  por defecto $DUMP_DIRECTORY"
+	echo "    -errorlog=: Fichero en el que queremos volcar la salida de los scripts DxL"
 	echo " MODO 2. Importar un dump aleatorio."
 	echo "    -impdp=: Realiza un import dle dump que le digamos. Esta opción implica un -remove."
 	echo "                  Este modo ignora los siguientes parámetros si se indican: -ignoredmp, -dmpdir"
@@ -71,6 +76,8 @@ if [[ "x$@" != "x" ]]; then
 			DUMP_DIRECTORY=$(echo $op | cut -f2 -d=)
 		elif [[ "x$op" == x-oradata=* ]]; then
 			ORADATA_HOST_DIR=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-errorlog=* ]]; then
+			VAR_OUTTER_ERROR_LOG=$(echo $op | cut -f2 -d=)
 		elif [[ "x$op" == x-impdp=* ]]; then
 			param=$(echo $op | cut -f2 -d=)
 			DUMP_DIRECTORY=$(dirname $param)
@@ -112,6 +119,17 @@ function package_sql () {
 
 
 function run_container () {
+	local errorlog_volume=""
+
+	if [[ "x$VAR_OUTTER_ERROR_LOG" ]]; then
+		errorlog_volume="-v ${VAR_OUTTER_ERROR_LOG}:${DOCKER_INNER_ERROR_LOG}:rw"
+		if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
+			mkdir -p $(dirname $VAR_OUTTER_ERROR_LOG)
+			touch $VAR_OUTTER_ERROR_LOG
+			chmod go+rw $VAR_OUTTER_ERROR_LOG
+		fi
+	fi
+
 	if [[ ! -d $DUMP_DIRECTORY ]]; then
 		echo "[INFO]: Se ha creado el directorio requerido $DUMP_DIRECTORY"
 		mkdir -p $DUMP_DIRECTORY
@@ -134,7 +152,7 @@ function run_container () {
 	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imágen [$IMAGE_NAME]: "
 	docker run -d -p=22 -p 1521:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
-				-v $(pwd):/setup \
+				-v $(pwd):/setup $errorlog_volume \
 				-v $DUMP_DIRECTORY:/DUMP \
 				-v $SQL_PACKAGE_DIR:/sql-package \
 				-v $ORADATA_HOST_DIR:/oradata \
@@ -192,7 +210,7 @@ function show_install_info () {
 }
 
 
-INSTALL_CMD="$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE"
+INSTALL_CMD="$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG"
 
 
 if [[ "x$DOCKER_PS" == "x" ]]; then
@@ -204,6 +222,10 @@ if [[ "x$DOCKER_PS" == "x" ]]; then
 	run_container
 	if [[ $? -eq 0 ]]; then
 		$INSTALL_CMD
+	fi
+	if [[ $? -ne 0 ]]; then
+		echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
+		exit 1
 	fi
 else
 	# Si el contenedor ya existe
@@ -222,6 +244,10 @@ else
 		if [[ $? -eq 0 ]]; then
 			$INSTALL_CMD
 		fi
+	fi
+	if [[ $? -ne 0 ]]; then
+		echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
+		exit 1
 	fi
 
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then

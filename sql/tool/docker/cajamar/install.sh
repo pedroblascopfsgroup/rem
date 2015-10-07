@@ -28,6 +28,15 @@ if [[ "x$(hostname)" != "x$CONTAINER_NAME" ]]; then
 fi
 
 # INSIDE DOCKER
+
+function log_script_output () {
+	for log in $(ls -ltr *.log | awk '{print $9}'); do 
+		echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
+		echo "$log" &>> $DOCKER_INNER_ERROR_LOG
+		echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
+		cat $log &>> $DOCKER_INNER_ERROR_LOG
+	done
+}
 echo "STARTING: $(date)" > $DOCKER_INNER_ERROR_LOG
 
 echo "<Docker [$CONTAINER_NAME]>: Instalador de la BBDD de Cajamar"
@@ -85,14 +94,18 @@ if [[ -f $DUMP_FILE_PATH  ]]; then
 		echo "export NLS_LANG=$NLS_LANG" >> /home/oracle/.bashrc
 		echo "<Docker [$CONTAINER_NAME]>: NLS_LANG=$NLS_LANG"
 		cd /sql-package/DDL
-		./DDL-scripts.sh admin@orcl admin@orcl | tee -a $DOCKER_INNER_ERROR_LOG
-		if [[ $? -ne 0 ]]; then
+		./DDL-scripts.sh admin@orcl admin@orcl
+		err_code=$?
+		log_script_output
+		if [[ $err_code -ne 0 ]]; then
 			echo "<Docker [$CONTAINER_NAME]>: Abortando por errores"
 			exit 1
 		fi
 		cd /sql-package/DML
-		./DML-scripts.sh admin@orcl admin@orcl | tee -a $DOCKER_INNER_ERROR_LOG
-		if [[ $? -ne 0 ]]; then
+		./DML-scripts.sh admin@orcl admin@orcl
+		err_code=$?
+		log_script_output
+		if [[ $err_code -ne 0 ]]; then
 			echo "<Docker [$CONTAINER_NAME]>: Abortando por errores"
 			exit 1
 		fi

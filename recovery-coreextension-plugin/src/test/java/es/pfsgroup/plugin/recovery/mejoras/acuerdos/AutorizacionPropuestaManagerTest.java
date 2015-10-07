@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.recovery.mejoras.test.asunto.manager;
+package es.pfsgroup.plugin.recovery.mejoras.acuerdos;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -48,7 +48,6 @@ public class AutorizacionPropuestaManagerTest {
 	/**
 	 * Generic Id used to test
 	 */
-	private static final Long ID_PROPUESTA = RandomUtils.nextLong();
 	private static final Long ID_EXPEDIENTE = RandomUtils.nextLong();
 	private static final Long ID_USUARIO = RandomUtils.nextLong();
 

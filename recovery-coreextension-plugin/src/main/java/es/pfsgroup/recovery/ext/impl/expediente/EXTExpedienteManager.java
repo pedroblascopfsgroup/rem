@@ -9,33 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.acuerdo.model.Acuerdo;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.dto.DtoBuscarExpedientes;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
-import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
-import es.capgemini.pfs.itinerario.model.DDTipoReglasElevacion;
-import es.capgemini.pfs.itinerario.model.Estado;
-import es.capgemini.pfs.itinerario.model.ReglasElevacion;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 import es.pfsgroup.recovery.ext.api.expediente.BaseExpedienteManager;
 import es.pfsgroup.recovery.ext.api.expediente.EXTExpedienteApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGestorInfo;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.expediente.dao.EXTExpedienteDao;
 import es.pfsgroup.recovery.ext.impl.perfil.model.EXTPerfil;
 
@@ -51,9 +41,6 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 	
 	@Autowired
 	private GenericABMDao genericDao;
-	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 
 	/**
 	 * Busca expedients que contengan un determinado contrato
@@ -181,63 +168,4 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 		}else
 			return true;
 	}
-	
-
-    private Boolean compruebaElevacion(Expediente expediente, String estadoParaElevar, Boolean isSupervisor) {
-        //Comprobaciones para ver si estamos en el estado correcto
-        Long bpmProcess = expediente.getProcessBpm();
-        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
-        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
-        if (estadoParaElevar == null || !estadoParaElevar.equals(node)) {
-            logger.error("No se puede enviar a revision/decisión porque el expediente no esta en completar/revisión");
-            throw new BusinessOperationException("expediente.elevarRevision.errorJBPM");
-        }
-
-        if (!isSupervisor) {
-            //Comprobaci�n de las reglas de elevaci�n
-            List<ReglasElevacion> listadoReglas = getReglasElevacionExpediente(expediente.getId());
-            for (ReglasElevacion regla : listadoReglas) {
-                if (!regla.getCumple()) { return false; }
-            }
-        }
-
-        return true;
-    }
-    
-    
-    private Boolean compruebaDevolucion(Expediente expediente, String estadoParaDevolver, String estadoNuevo){
-    	//Comprobaciones para ver si estamos en el estado correcto
-        Long bpmProcess = expediente.getProcessBpm();
-        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
-        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
-        if(estadoParaDevolver == null || !estadoParaDevolver.equals(node)){
-        	 logger.error("No se puede devolver a revision/decisión porque el expediente no esta en decisión a comité");
-             throw new BusinessOperationException("expediente.elevarRevision.errorJBPM");
-        }
-        DDEstadoItinerario estadoItinerario = expediente.getEstadoItinerario();
-        Estado estado = (Estado) executor.execute(ConfiguracionBusinessOperation.BO_EST_MGR_GET, expediente.getArquetipo().getItinerario(),
-                estadoItinerario);
-
-        List<ReglasElevacion> listadoReglas = expedienteDao.getReglasElevacion(estado);
-
-        //obtenemos los acuerdos del expediente para luego comprobar las reglas
-        List<EXTAcuerdo> acuerdos =  proxyFactory.proxy(PropuestaApi.class).listadoPropuestasByExpedienteId(expediente.getId());
-        
-        //Comprobamos una a una si las reglas se cumplen
-        for (ReglasElevacion regla : listadoReglas) {
-        	
-        	if(regla.getTipoReglaElevacion().getCodigo().equals(DDTipoReglasElevacion.MARCADO_GESTION_PROPUESTA)){
-        		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE)){
-        			regla.setCumple(cumplimientoReglaDCRE(expediente, acuerdos));
-        			if(!regla.getCumple()){ return false;}
-        		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
-        			regla.setCumple(cumplimiendoReglaFPDC(expediente, acuerdos));
-        			if(!regla.getCumple()){ return false;}
-        		}
-        	}
-        }
-    	
-    	return true;
-    }
-
 }

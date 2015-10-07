@@ -237,7 +237,7 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteCE = function(params, rta){
+	var devolverExpedienteDC = function(params, rta){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDC'
 				,eventName: 'devolverExpediente'

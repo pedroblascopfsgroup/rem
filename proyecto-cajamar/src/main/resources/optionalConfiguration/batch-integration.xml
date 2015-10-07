@@ -143,6 +143,15 @@
 			<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
 				<constructor-arg index="0" ref="bpmConsumerActionMgr" />
 				<constructor-arg index="1" value="${entidad.id}"/>
+				<constructor-arg index="2">
+				    <bean class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+				        <property name="preAuthenticatedUserDetailsService">
+				            <bean class="es.pfsgroup.recovery.integration.AuthenticationPayloadService" >
+				            	<property name="userNameprefix" value="EXT-"/>
+				            </bean>
+				        </property>
+				    </bean>
+				</constructor-arg>
 			</bean>
 		</integration:service-activator>
 	</integration:chain>
@@ -212,6 +221,7 @@
 					<property name="crearNuevo" value="true"/>
 					<property name="forzarTipoProcedimiento" value="HCJ001"/>
 				</bean>
+				
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
@@ -223,6 +233,19 @@
 					<property name="iniciarBPM" value="true"/>
 					<property name="crearNuevo" value="true"/>
 					<property name="forzarTipoProcedimiento" value="HCJ002"/>
+				</bean>
+				
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+							<property name="tipo" value="BPM-TAREA-INICIO"/>
+							<property name="codigoTarea" value="HC103_ConfirmarSolicitud|H064_resultadoSolicitudConsignacion|H032_AutorizarPago|H011_AutorizarPropuesta|H015_AutorizarSuspension|HC104_AutorizarPropuesta|H008_ObtenerAprobPropuesta"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Inicio de Autorización"/>
+					<property name="iniciarBPM" value="true"/>
+					<property name="crearNuevo" value="true"/>
+					<property name="forzarTipoProcedimiento" value="HCJ003"/>
 				</bean>
 
 				<!-- ACTUALIZACION DE CABECERA RECURSO -->

@@ -15,18 +15,14 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.procesosJudiciales.dto.EXTDtoCrearTareaExterna;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
-import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
-import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -61,7 +57,6 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	private final DiccionarioDeCodigos diccionarioCodigos;
 	private final String staDefecto;
 	
 	private ProcedimientoConsumer procedimientoConsumer;
@@ -93,12 +88,10 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	public TareaProcedimientoConsumer(Rule<DataContainerPayload> rule, DiccionarioDeCodigos diccionarioCodigos, String staDefecto) {
 		super(rule);
 		this.staDefecto = staDefecto;
-		this.diccionarioCodigos = diccionarioCodigos; 
 	}
 	
 	public TareaProcedimientoConsumer(List<Rule<DataContainerPayload>> rules, DiccionarioDeCodigos diccionarioCodigos, String staDefecto) {
 		super(rules);
-		this.diccionarioCodigos = diccionarioCodigos; 
 		this.staDefecto = staDefecto;
 	}
 
@@ -111,11 +104,11 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 	}
 	
 	private String getGuidProcedimiento(TareaExternaPayload tareaExtenaPayload) {
-		return String.format("%d-EXT", tareaExtenaPayload.getProcedimiento().getIdOrigen()); // tareaExtenaPayload.getProcedimiento().getGuid(); // String.format("%d-EXT", tareaExtenaPayload.getProcedimiento().getIdOrigen());
+		return tareaExtenaPayload.getProcedimiento().getGuid(); // String.format("%d-EXT", tareaExtenaPayload.getProcedimiento().getIdOrigen());
 	}
 
 	private String getGuidTareaNotificacion(TareaExternaPayload tareaExtenaPayload) {
-		return String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea()); // tareaExtenaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea());
+		return tareaExtenaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExtenaPayload.getIdTARTarea());
 	}
 	
 	@Transactional(readOnly = false)
@@ -137,35 +130,6 @@ public class TareaProcedimientoConsumer extends ConsumerAction<DataContainerPayl
 		return prc;
 	}
 	
-	private String getSubTipoTarea(TareaProcedimiento tareaProcedimiento) {
-		String subtipoTarea = SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR;
-
-		// Si está marcada como supervisor se cambia el subtipo tarea
-		if (tareaProcedimiento.getSupervisor()) {
-			subtipoTarea = SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR;
-		}
-
-		if (tareaProcedimiento instanceof EXTTareaProcedimiento) {
-			EXTTareaProcedimiento tp = (EXTTareaProcedimiento) tareaProcedimiento;
-
-			if (!Checks.esNulo(tp.getSubtipoTareaNotificacion())) {
-				subtipoTarea = tp.getSubtipoTareaNotificacion().getCodigoSubtarea();
-			} else {
-
-				if (!Checks.esNulo(tp.getTipoGestor())) {
-					if ((tp.getTipoGestor().getCodigo().equals(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_CONF_EXP))) {
-						subtipoTarea = EXTSubtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE;
-					}
-					if ((tp.getTipoGestor().getCodigo().equals(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP))) {
-						subtipoTarea = EXTSubtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE;
-					}
-
-				}
-			}
-		}
-		return subtipoTarea;
-	}
-
 	@Transactional(readOnly = false)
 	private EXTTareaNotificacion crearTarea(TareaExternaPayload tareaExtenaPayload, Procedimiento procedimiento) {
 		String prcUUID = getGuidProcedimiento(tareaExtenaPayload);

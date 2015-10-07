@@ -18,7 +18,6 @@ import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.DDSolvenciaGarantia;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
@@ -132,24 +131,24 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 
 	protected String getGuidProcedimientoPadre(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
-				? String.format("%d-EXT", procedimiento.getIdOrigen()) // procedimiento.getGuid() // String.format("%d-EXT", procedimiento.getIdOrigen())
-				: String.format("%d-EXT", procedimiento.getIdOrigenProcedimientoPadre()); // procedimiento.getGuidProcedimientoPadre(); //String.format("%d-EXT", procedimiento.getIdOrigenProcedimientoPadre());
+				? procedimiento.getGuid() // String.format("%d-EXT", procedimiento.getIdOrigen())
+				: procedimiento.getGuidProcedimientoPadre(); //String.format("%d-EXT", procedimiento.getIdOrigenProcedimientoPadre());
 	}
 	
 	protected String getGuidProcedimiento(ProcedimientoPayload procedimiento) {
 		return (this.isCrearNuevo()) 
 				? Guid.getNewInstance().toString()
-				: String.format("%d-EXT", procedimiento.getIdOrigen()); // procedimiento.getGuid(); // String.format("%d-EXT", procedimiento.getIdOrigen());
+				: procedimiento.getGuid(); // String.format("%d-EXT", procedimiento.getIdOrigen());
 	}
 
 	protected String getGuidProcedimientoBien(ProcedimientoBienPayload procedimientoBien) {
 		return (this.isCrearNuevo()) 
 				? Guid.getNewInstance().toString()
-				: String.format("%d-EXT", procedimientoBien.getIdOrigen()); // procedimientoBien.getGuid(); // String.format("%d-EXT", procedimientoBien.getIdOrigen());
+				: procedimientoBien.getGuid(); // String.format("%d-EXT", procedimientoBien.getIdOrigen());
 	}
 
 	protected String getGuidTareaNotificacion(TareaExternaPayload tareaExternaPayload) {
-		return String.format("%d-EXT", tareaExternaPayload.getIdTARTarea()); // tareaExternaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExternaPayload.getIdTARTarea());
+		return tareaExternaPayload.getGuidTARTarea(); // String.format("%d-EXT", tareaExternaPayload.getIdTARTarea());
 	}
 
 	protected String getCodigoTipoProcedimiento(ProcedimientoPayload procedimiento) {
@@ -383,13 +382,6 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
         procedimientoManager.saveOrUpdateProcedimiento(prc);
 		logger.info(String.format("[INTEGRACION] PRC[%d] TAR[%s] BPM iniciado!!", prc.getId(), tarUUID));
 	}
-/*
-	private void suplantarUsuario(Auditable auditable) {
-		Auditoria auditoria = auditable.getAuditoria();
-		//auditoria.setSuplantarUsuario("PEPITO");
-		//auditoria.setUsuarioCrear("PEPITO");
-	}
-	*/
 	
 	@Override
 	protected void doAction(DataContainerPayload payload) {

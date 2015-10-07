@@ -54,6 +54,11 @@ DECLARE
       ,T_TIPO_TFA('SOLCONS', 'Solicitud de consignación', 'Solicitud de consignación', 'AP') -- Trámite de consignación
       ,T_TIPO_TFA('DTCCE', 'Decreto de Tasación de Costas (Costas contra entidad)', 'Decreto de Tasación de Costas (Costas contra entidad)', 'CO') -- Trámite de costras contra entidad
       ,T_TIPO_TFA('ESCSUS', 'Escrito de suspensión', 'Escrito de suspensión', 'AP') -- Trámite de subasta
+      ,T_TIPO_TFA('MANCANCAR', 'Mandamiento de cancelación de cargas', 'Mandamiento de cancelación de cargas', 'AP') -- Trámite de Adjudicación
+      ,T_TIPO_TFA('PETPOS', 'Petición de la posesión', 'Petición de la posesión', 'TR') -- Trámite de posesión interina
+      ,T_TIPO_TFA('PRECUE', 'Presentación de cuentas', 'Presentación de cuentas', 'TR') -- Trámite de posesión interina
+      ,T_TIPO_TFA('ACUREC', 'Acuse de recibo', 'Acuse de recibo', 'TR') -- Trámite de notificación
+      ,T_TIPO_TFA('ESCPET', 'Escrito de petición', 'Escrito de petición', 'AP') -- Trámite de subsanación de decreto de adjudicación
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

@@ -505,29 +505,6 @@
 		<transition to="Fin2" name="Fin"></transition>
 	</state>
 
-	<state name="H005_BPMNotifNotarialOcupante">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>	
-		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="hcj_notifNotarialOcupantes"></transition>
-	</state>
-
 	<state name="H005_BPMCertfLibertadArrendamiento">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -557,7 +534,7 @@
 	</decision>
 
 	<decision name="conOcupantes" expression="#{op2_conOcupantes}">
-		<transition to="H005_BPMNotifNotarialOcupante" name="SI"></transition>
+		<transition to="Fin" name="SI"></transition>
 		<transition to="H005_BPMCertfLibertadArrendamiento" name="NO"></transition>
 	</decision>
 

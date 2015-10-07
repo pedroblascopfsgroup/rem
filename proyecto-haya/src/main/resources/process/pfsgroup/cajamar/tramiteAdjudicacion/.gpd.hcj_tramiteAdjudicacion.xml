@@ -315,14 +315,6 @@
       <bendpoint w1="-680" h1="127" w2="75" h2="455"/>
     </edge>
   </node>
-  <node name="H005_BPMNotifNotarialOcupante" x="975" y="1100" width="210" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
   <node name="H005_BPMCertfLibertadArrendamiento" x="935" y="1194" width="257" height="36">
     <edge>
       <label x="5" y="-10"/>

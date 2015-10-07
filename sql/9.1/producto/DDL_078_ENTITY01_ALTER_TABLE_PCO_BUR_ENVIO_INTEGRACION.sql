@@ -45,10 +45,17 @@ DECLARE
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''PCO_BUR_ENVIO_INTEGRACION'' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si existe la tabla procedemos a modificarla
-    IF V_NUM_TABLAS = 1 THEN 
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.PCO_BUR_ENVIO_INTEGRACION ADD PCO_BUR_FICHERO BLOB';
-            EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna PCO_BUR_FICHERO modificada');            
+    IF V_NUM_TABLAS = 1 THEN
+    		V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = ''PCO_BUR_ENVIO_INTEGRACION'' and owner = '''||V_ESQUEMA||''' and column_name = ''PCO_BUR_FICHERO''';
+    		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    		--si no existe la columna la creamos
+    		IF V_NUM_TABLAS = 0 THEN
+	            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.PCO_BUR_ENVIO_INTEGRACION ADD PCO_BUR_FICHERO BLOB';
+	            EXECUTE IMMEDIATE V_MSQL;
+	            DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna PCO_BUR_FICHERO modificada');
+	        ELSE
+	        	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION columna PCO_BUR_FICHERO ya existe');
+	        END IF;	
     ELSE	
 		    DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.PCO_BUR_ENVIO_INTEGRACION... La tabla NO existe.');
     END IF;

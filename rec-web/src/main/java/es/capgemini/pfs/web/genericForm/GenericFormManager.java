@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Check;
 import org.jbpm.JbpmContext;
 import org.jbpm.graph.exe.Token;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,25 +91,43 @@ public class GenericFormManager {
         return jbpmManager.creaMapValores(idProcedimiento);
     }
 
-    @BusinessOperation
-    public GenericForm get(Long id) {
-    	return getForm(id, false);
-    }
-    
-    /**
+	/**
      * Obtiene un formulario dinamico a partir del id de una tarea Externa
      *
      * @param id
      * @return GenericForm
      */
     @BusinessOperation
-    public GenericForm getForm(Long id, Boolean readOnly) {
+    public GenericForm get(Long id) {
+    	return getForm(id, false);
+    }
+    
+	/**
+     * Obtiene un formulario dinamico en SÓLO LECTURA a partir del id de una tarea Externa
+     *
+     * @param id
+     * @return GenericForm
+     */
+    @BusinessOperation
+    public GenericForm getReadOnly(Long id) {
+    	return getForm(id, true);
+    }
+    
+    /**
+     * Obtiene un formulario dinamico a partir del id de una tarea Externa, devuelve el modo de pintado solicitado.
+     *
+     * @param id
+     * @return GenericForm
+     */
+    @BusinessOperation
+    public GenericForm getForm(Long id, boolean readOnly) {
         TareaExterna tareaExterna = tareaExternaManager.get(id);
 
         GenericForm form = new GenericForm();
-
+        form.setReadOnly(readOnly);
+        
         // En modo consulta no ponemos vista, ni validación BPMs (para Hisorico)
-        if (Checks.esNulo(readOnly) || !readOnly) {
+        if (!form.isReadOnly()) {
             form.setView(tareaExterna.getTareaProcedimiento().getView());
         	form.setErrorValidacion(validacionPreviaDeLaTarea(tareaExterna));
         }

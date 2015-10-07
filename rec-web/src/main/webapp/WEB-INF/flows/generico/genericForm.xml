@@ -36,7 +36,7 @@
 
     <view-state id="formularioReadOnly" view="${view}" model="dtoGenericForm">
     	<on-entry>
-			<evaluate expression="executor.execute('genericFormManager.getForm',idTareaExterna, true)" result="flowScope.form" />
+			<evaluate expression="executor.execute('genericFormManager.getReadOnly',idTareaExterna)" result="flowScope.form" />
             <evaluate expression="executor.execute('genericFormManager.getValoresTareas',idProcedimiento)" result="flowScope.valores" />
     		<set name="dtoGenericForm.form" value="form" />
     		<set name="flowScope.view" value="form.view" />

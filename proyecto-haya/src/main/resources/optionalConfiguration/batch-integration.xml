@@ -13,13 +13,9 @@
 			http://www.springframework.org/schema/integration/file
 			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
 
-
+	<import resource="classpath:optionalConfiguration/ac-integration-producer.xml" />
+	
 	<!-- CONFIGURACION GENERICA E/S -->
-	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">
-		<constructor-arg index="0">
-			<bean class="es.pfsgroup.recovery.integration.JSONTranslator" />
-		</constructor-arg>
-	</bean>
 	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
 		<property name="targetConnectionFactory">
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -36,12 +32,10 @@
 	<bean id="integracionConsumerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.consumer.cola}"/>
 	</bean>
-	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
-		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
-	</bean>
 	<bean id="entradaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
 		<constructor-arg value="${integracion.input}/${integracion.consumer.cola}"/>
 	</bean>
+
 
 	<!-- CONFIGURACION DE LA SALIDA DE MENSAJES -->
 	<integration:channel id="integra.salida.fichero.in"/>
@@ -174,26 +168,6 @@
 	<bean id="bpmConsumerActionMgr" class="es.pfsgroup.recovery.integration.ConsumerActionManager">
 		<constructor-arg>
 			<list>
-			
-				<!-- NOTIFICACIONES: INICIO / CANCEL / FIN TAREA / BPM-FIN / BPM-TAREA-ACTIVAR ... -->
-				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.TareaProcedimientoConsumer">
-					<constructor-arg index="0">
-						<bean class="es.pfsgroup.recovery.integration.TypePayloadRegexRule">
-							<property name="tipo" value="BPM-TAREA-.+"/>
-						</bean>
-					</constructor-arg>
-					<constructor-arg index="1" ref="diccionarioCodigosConsumer"/>
-					<constructor-arg index="2" value="${integracion.tareas.sta}"/>
-					<property name="description" value="Gestión de una tarea"/>
-					<property name="procedimientoConsumer">
-						<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
-							<constructor-arg>
-								<bean class="es.pfsgroup.recovery.integration.AllowAllRule"/>
-							</constructor-arg>
-							<property name="description" value="Actualización de un procedimiento, lo crea si no existe"/>
-						</bean>
-					</property>
-				</bean>
 			
 				<!-- Transicionar tarea -->
 				<!-- RESPUESTA DE CAJAMAR A BPMs que esperan respuesta, cuando finalizan transicionan la tarea -->

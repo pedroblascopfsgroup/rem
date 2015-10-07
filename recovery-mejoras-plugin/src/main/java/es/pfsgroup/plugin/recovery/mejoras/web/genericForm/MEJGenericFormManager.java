@@ -62,6 +62,15 @@ public class MEJGenericFormManager extends BusinessOperationOverrider<GenericFor
 		return form;
 	}
 
+	@BusinessOperation(overrides = GET_GENERIC_FORM_READ_ONLY)
+	public GenericForm getReadOnly(Long id) {
+		GenericForm form = parent().getReadOnly(id);
+		if (form != null) {
+			form.setView(NEW_VIEW);
+		}
+		return form;
+	}
+	
 	@Override
 	public String managerName() {
 		return "genericFormManager";

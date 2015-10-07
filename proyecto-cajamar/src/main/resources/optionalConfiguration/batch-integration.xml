@@ -13,12 +13,9 @@
 			http://www.springframework.org/schema/integration/file
 			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
 
+	<import resource="classpath:optionalConfiguration/ac-integration-producer.xml" />
+
 	<!-- CONFIGURACION GENERICA E/S -->
-	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">
-		<constructor-arg index="0">
-			<bean class="es.pfsgroup.recovery.integration.JSONTranslator" />
-		</constructor-arg>
-	</bean>
 	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
 		<property name="targetConnectionFactory">
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -34,9 +31,6 @@
 	</bean>
 	<bean id="integracionConsumerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.consumer.cola}"/>
-	</bean>
-	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
-		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
 	</bean>
 	<bean id="entradaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
 		<constructor-arg value="${integracion.input}/${integracion.consumer.cola}"/>

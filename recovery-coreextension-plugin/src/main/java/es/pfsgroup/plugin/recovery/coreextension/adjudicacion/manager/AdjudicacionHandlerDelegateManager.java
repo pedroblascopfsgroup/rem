@@ -181,6 +181,12 @@ public class AdjudicacionHandlerDelegateManager implements AdjudicacionHandlerDe
 		//Este método se implementa en el nuevoModeloBienes
 	}
 	
+	@Override
+	@BusinessOperation(BO_ADJUDICACION_HANDLER_INSERT_POSESION_ENTREGA_VOLUNTARIA)
+	public void insertarPosesionComboEntregaVoluntaria(Long prcId, Boolean valor) {
+		//Este método se implementa en el nuevoModeloBienes
+	}
+	
 	
 	@Override
 	@BusinessOperation(BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_SOLICITUD_DECRETO)

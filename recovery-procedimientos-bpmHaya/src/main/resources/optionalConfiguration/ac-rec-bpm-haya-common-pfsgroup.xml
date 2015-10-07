@@ -733,7 +733,7 @@
 	  					def viviendaHabitual = (bien.getViviendaHabitual() != null);
 	  					def sitPosesoria = (bien.getSituacionPosesoria() != null);
 	  					def cargasInformadas = false;
-	  					def cargas = cargas = bien.getBienCargas();
+	  					def cargas = bien.getBienCargas();
 						if (cargas == null || (cargas != null && cargas.size() == 0)) {
 							def adicionalBien = bien.getAdicional();
 							cargasInformadas =  (adicionalBien.getSinCargas() != null && adicionalBien.getSinCargas());

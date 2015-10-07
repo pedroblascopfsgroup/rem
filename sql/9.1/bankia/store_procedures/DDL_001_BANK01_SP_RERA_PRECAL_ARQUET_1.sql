@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151002
+--## FECHA_CREACION=20151007
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=BKREC-1114
@@ -307,6 +307,7 @@ BEGIN
      RAISE empty_tb;
   END IF;
 
+COMMIT;
 EXCEPTION
 
   WHEN empty_tb THEN

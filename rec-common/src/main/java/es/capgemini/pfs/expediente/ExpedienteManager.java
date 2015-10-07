@@ -31,6 +31,9 @@ import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.actitudAptitudActuacion.dao.ActitudAptitudActuacionDao;
 import es.capgemini.pfs.actitudAptitudActuacion.dto.DtoActitudAptitudActuacion;
 import es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion;
+import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.arquetipo.dao.ArquetipoDao;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
 import es.capgemini.pfs.asunto.dto.DtoAsunto;
@@ -169,6 +172,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     
     @Autowired
     private CicloMarcadoPoliticaDao cicloMarcadoPoliticaDao; 
+    
+    @Autowired
+	private AcuerdoDao acuerdoDao;
     
     @Autowired
 	GenericABMDao genericDao;
@@ -1263,7 +1269,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
         String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
         if (estadoParaElevar == null || !estadoParaElevar.equals(node)) {
-            logger.error("No se puede enviar a revision/decisi�n porque el expediente no esta en completar/revisi�n");
+            logger.error("No se puede enviar a revision/decisión porque el expediente no esta en completar/revisión");
             throw new BusinessOperationException("expediente.elevarRevision.errorJBPM");
         }
 
@@ -1276,6 +1282,42 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         }
 
         return true;
+    }
+    
+    
+    private Boolean compruebaDevolucion(Expediente expediente, String estadoParaDevolver, String estadoNuevo){
+    	//Comprobaciones para ver si estamos en el estado correcto
+        Long bpmProcess = expediente.getProcessBpm();
+        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+        if(estadoParaDevolver == null || !estadoParaDevolver.equals(node)){
+        	 logger.error("No se puede devolver a revision/decisión porque el expediente no esta en decisión a comité");
+             throw new BusinessOperationException("expediente.elevarRevision.errorJBPM");
+        }
+        DDEstadoItinerario estadoItinerario = expediente.getEstadoItinerario();
+        Estado estado = (Estado) executor.execute(ConfiguracionBusinessOperation.BO_EST_MGR_GET, expediente.getArquetipo().getItinerario(),
+                estadoItinerario);
+
+        List<ReglasElevacion> listadoReglas = expedienteDao.getReglasElevacion(estado);
+
+        //obtenemos los acuerdos del expediente para luego comprobar las reglas
+        List<Acuerdo> acuerdos = acuerdoDao.getAcuerdosDelExpediente(expediente.getId());
+        
+        //Comprobamos una a una si las reglas se cumplen
+        for (ReglasElevacion regla : listadoReglas) {
+        	
+        	if(regla.getTipoReglaElevacion().getCodigo().equals(DDTipoReglasElevacion.MARCADO_GESTION_PROPUESTA)){
+        		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE)){
+        			regla.setCumple(cumplimientoReglaDCRE(expediente, acuerdos));
+        			if(!regla.getCumple()){ return false;}
+        		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
+        			regla.setCumple(cumplimiendoReglaFPDC(expediente, acuerdos));
+        			if(!regla.getCumple()){ return false;}
+        		}
+        	}
+        }
+    	
+    	return true;
     }
 
     /**
@@ -1475,6 +1517,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Expediente exp = expedienteDao.get(idExpediente);
         List<Asunto> asuntos = exp.getAsuntos();
         if (asuntos != null && asuntos.size() > 0) { throw new BusinessOperationException("expediente.devolucionRevision.invalida"); }
+        //comprobamos si se cumple la regla de validacion al devolver a revision
+        Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_DECISION_COMITE, DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
+        if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
         Long bpmProcess = exp.getProcessBpm();
         if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
         String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
@@ -2571,7 +2616,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
 
     /**
-     * Devuelve un listado de objetosEntidad (cliente o contrato) que est�n involucrados en con la regla que se le pasa, indicando
+     * Devuelve un listado de objetosEntidad (cliente o contrato) que estan involucrados en con la regla que se le pasa, indicando
      * en cada objetoEntidad si cumple o no con la regla.
      * @param expediente
      * @param regla
@@ -2591,6 +2636,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         List<ExpedienteContrato> listadoContratos = null;
         Boolean ambitoPersona = false;
         Boolean ambitoContrato = false;
+        
 
         if (ambitoExpediente != null) {
             if (ambitoExpediente.isAmbitoPersona()) {
@@ -2736,6 +2782,32 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
                                     listadoEntidades.add(oer);
                                 }
+                            } else{
+                            	
+                            	//Comprobamos si se cumple la regla Gestionar Propuesta 
+                            	if(DDTipoReglasElevacion.MARCADO_GESTION_PROPUESTA.equals(codigoTipoRegla)){
+                            		
+                            		//obtenemos todas las propuestas del expediente
+                            		List<Acuerdo> acuerdos = acuerdoDao.getAcuerdosDelExpediente(expediente.getId());
+                            		
+                            		//CE
+                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE)){
+                            			
+                            			//llamamos al metodo cumplimientoReglaCE para determinar si se cumple o no la regla.
+                            			regla.setCumple(cumplimientoReglaCERE(expediente, acuerdos));
+                            		}
+                            		//RE
+                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE)){
+                            			
+                            			//llamamos al mismo metodo que para el itinerario CE ya que la regla es la misma
+                            			regla.setCumple(cumplimientoReglaCERE(expediente, acuerdos));
+                            		}
+                            		
+                            		//de DC a FP
+//                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) && nuevoEstadoItinerario!= null &&  nuevoEstadoItinerario.equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA)){
+//                            			regla.setCumple(cumplimientoReglaDCFP(expediente, acuerdos));                            			
+//                            		}
+                            	}
                             }
                         }
                     }
@@ -2745,6 +2817,251 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         return listadoEntidades;
     }
+    
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario Finalizar Propuesta(FP) a Decision Comite (DC) la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una tenga el estado "vigente", "rechazada, "Cumplida" o "Incumplida"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimiendoReglaFPDC(Expediente expediente, List<Acuerdo> acuerdos){
+    	Boolean cumple = true;
+    	Boolean vigenteEncontrado=false;
+    	Boolean rechazadaEncontrado = false;
+    	Boolean cumplidaEncontrado = false;
+    	Boolean incumplidaEncontrado = false;
+    	
+    	if(acuerdos != null){
+    		//recorremos las propuestas del expediente
+	    	for(Acuerdo acuerdo: acuerdos){
+	    		//Booleano que controla si hemos encontrado una propuesta en estado vigente
+	    		if(acuerdo.getEstaVigente()){
+	    			vigenteEncontrado = true;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+	    			rechazadaEncontrado = true;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado cumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+	    			cumplidaEncontrado = true;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado incumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+	    			incumplidaEncontrado = true;
+	    		}
+	    	}
+	    	
+	    	//Comprobamos si las propuestas tienen el estado correcto (vigente, rechazado, cumplida, incumplida) para cumplir la regla
+	    	if(!vigenteEncontrado && !rechazadaEncontrado && !cumplidaEncontrado && !incumplidaEncontrado){
+	    		cumple = false;
+	    	}else{
+	    		cumple = true;
+	    	}
+	    		    	
+	    	/* Para una sola propuesta:
+	    	 * si no es vigente comprobamos si es rechazada
+	    	 * si no es rechazada comprobamos si es cumplida
+	    	 * si no es cumplida comprobamos si es incumplida
+	    	 * si no es incumplida no se cumple la regla
+	    	 * si es vigente se cumple la regla
+	    	 * si es rechazada se cumple la regla
+	    	 * si es cumplida se cumple la regla
+	    	 * si es incumpluida se cumple la regla
+	    	 */
+	    	if(acuerdos.size() == 1){
+	    		if(!vigenteEncontrado){
+	    			if(!rechazadaEncontrado){
+	    				if(!cumplidaEncontrado){
+	    					if(incumplidaEncontrado){
+	    						cumple = true;
+	    					}else{
+	    						cumple = false;
+	    					}
+	    				}else{
+	    					cumple = true;
+	    				}
+	    			}else{
+	    				cumple = true;
+	    			}
+	    		}else{
+	    			cumple = true;
+	    		}
+	    	}
+    	}    	
+    	
+    	return cumple;
+    }
+    
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario Decision comite (DC) a Finalizar Propuesta(FP) la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una es obligatorio que tenga el estado "elevada" y el resto en estado "elevada", "rechazada, "Cumplida" o "Incumplida"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimientoReglaDCFP(Expediente expediente, List<Acuerdo> acuerdos){
+    	Boolean cumple = true;
+    	Boolean elevadaEncontrada = false;
+    	int i = 0;
+    	if(acuerdos != null){
+    		//recorremos las propuestas del expediente
+    		for (Acuerdo acuerdo : acuerdos){
+    	
+	    		//Booleando que comprueba si hay una propuesta elevada (codigo aceptado)
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_ACEPTADO)){
+	    			elevadaEncontrada = true;
+	    			i++;
+	    		}
+	    		
+	    		//Booleano que comprueba si hay una propuesta en estado Rechazada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+	    			i++;
+	    		}
+	    		
+	    		//Booleano que comprueba si hay una propuesta en estado Cumplida
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+	    			i++;
+	    		}
+	    		
+	    		//Boolenado que comprueba si hay una propuesta en estado Incumplida
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+	    			i++;
+	    		}
+    		}
+    	
+	    	//Para el caso de una sola propuesta tiene que ser obligatoria en estado elevada, sino no se cumple la regla
+	    	if(acuerdos.size() == 1 && elevadaEncontrada){
+	    		cumple = true;
+	    	}else if(acuerdos.size() == 1 && !elevadaEncontrada){
+	    		cumple = false;
+	    	}
+	    	
+	    	//Para el caso de mas de una propuesta, obligatoriamente tiene que haber una en estado elevada y el resto en elevada, rechazada, cumplida o incumplida
+	    	//REVISAR
+	    	if(acuerdos.size() > 0 && acuerdos.size() == i && elevadaEncontrada){
+	    		cumple = true;
+	    	}else {
+	    		cumple = false;
+	    	} 	
+    	}
+    	
+    	return cumple;
+    }
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario Decision comite (DC) a Revisar Expediente (RE) la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una es obligatorio que tenga el estado "elevada" y el resto en estado "elevada" o "rechazada"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimientoReglaDCRE(Expediente expediente, List<Acuerdo> acuerdos){
+    	Boolean cumple = true;
+    	Boolean elevadaEncontrada = false;
+    	int i = 0;
+    	
+    	if(acuerdos != null){
+    		//recorremos las propuestas del expediente
+	    	for(Acuerdo acuerdo : acuerdos){
+	    		//Booleano que comprueba si hay una propuesta en estado Elevada (codigo aceptado)
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_ACEPTADO)){
+	    			elevadaEncontrada = true;
+	    			i++;
+	    		}
+	    		
+	    		//Booleano que comprueba si hay una propuesta en estado rechazada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+	    			i++;
+	    		}
+				  //Booleano que comprueba si hay una propuesta en estado cumplida
+	    		if(acuerdo.getEstadoAcuerdo().getClass().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+	    			i++;
+	    		}
+				  //Booleano que comprueba si hay una propuesta en estado incumplida
+	    		if(acuerdo.getEstadoAcuerdo().getClass().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+	    			i++;
+	    		}
+	    	}
+	    	
+	    	//Para el caso de una sola propuesta tiene que ser obligatoria en estado elevada, si no no se cumple la regla
+	    	if(acuerdos.size() == 1 && elevadaEncontrada){
+	    		cumple = true;
+	    	}else if (acuerdos.size() == 1 && !elevadaEncontrada){
+	    		cumple = false;
+	    	}
+	    	
+	    	//Para el caso de más de una propuesta tiene que haber minimo una en estado elevada y el resto en estado elevada, rechazada, cumplida o incumplida si 
+	   	    //hubiese en otro estado no se cumpliria la regla.
+	    	if(acuerdos.size() > 1 && acuerdos.size() == i && elevadaEncontrada){
+	    		cumple = true;
+	    	}else {
+	    		cumple = false;
+	    	}
+    	}
+       	
+    	return cumple;
+    }
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario Completar Expediente (CE), o Revisar expediente (RE), la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una es obligatorio que tenga el estado "propuesta" y el resto en estado "propuesta" o "rechazada"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimientoReglaCERE(Expediente expediente, List<Acuerdo> acuerdos){
+    	
+      Boolean propuestaEncontrada = false;
+      Boolean cumple = true;
+      int i = 0;
+      
+      if(acuerdos != null){
+		 //recorremos las propuestas del expediente
+		  for(Acuerdo acuerdo:acuerdos){
+			  //Booleano que comprueba si hay una propuesta en estado propuesto
+			  if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_PROPUESTO)){
+				  propuestaEncontrada = true;
+				  i++;
+			  }
+			  //Booleano que comprueba si hay una propuesta en estado rechazado                            				  
+			  if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+				  i++;
+			  }
+			  //Booleano que comprueba si hay una propuesta en estado cumplida
+			  if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+				  i++;
+			  }
+			  //Booleano que comprueba si hay una propuesta en estado incumplida
+			  if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+				  i++;
+			  }
+			  
+		  }
+		  
+		  //Para el caso de una sola propuesta tiene que ser obligatoria en estado propuesta, si no no se cumple la regla
+		  if(acuerdos.size() == 1 && propuestaEncontrada){
+			  cumple =  true;
+		  }else if(acuerdos.size() == 1 && !propuestaEncontrada){
+			  cumple =  false;
+		  }
+		  
+		//Para el caso de más de una propuesta tiene que haber minimo una en estado propuesta y el resto en estado propuesta, rechazada, cumplida o incumplida si 
+	   	    //hubiese en otro estado no se cumpliria la regla.
+		  if(acuerdos.size() > 1 && acuerdos.size() == i && propuestaEncontrada){
+			  cumple =  true;
+		  }else{
+			  cumple = false;
+		  }
+      }
+	  
+	  return cumple;
+	  
+    }
+    
 
     /**
      * Decide si la pol�tica es v�lida en contenido (cumple con las reglas de objetivos, etc.).

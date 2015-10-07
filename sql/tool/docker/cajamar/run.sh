@@ -105,7 +105,7 @@ function package_sql () {
 		if [[ "x$ORACLE_HOME" == "x" ]]; then
 			export ORACLE_HOME=empty
 		fi
-		./sql/tool/package-scripts-from-tag.sh $1 $2 >/dev/null
+		./sql/tool/package-scripts-from-tag.sh $1 $2 &>/dev/null
 		if [[ $? -eq 0 ]]; then
 			echo "OK"
 		else

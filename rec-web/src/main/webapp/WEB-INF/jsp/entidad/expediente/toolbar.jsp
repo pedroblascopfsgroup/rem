@@ -698,7 +698,10 @@ function(entidad,page){
 					showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion1-elevarComite','expediente-accion3-devolverComite');
 					break;
 				case 'DC' : 
-					showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion8-devolverComite', 'expediente-accion2-devolverRevision');
+					showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+					break;
+				case 'FP' :
+					showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion8-devolverComite');
 					break;
 				default : 
 					showHide(estadoExpediente == EXP_CONGELADO, 'expediente-accion2-devolverRevision' );

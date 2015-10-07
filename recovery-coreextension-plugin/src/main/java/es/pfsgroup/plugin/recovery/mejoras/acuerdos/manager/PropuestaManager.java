@@ -9,19 +9,24 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dao.DDEstadoAcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSubtipoSolucionAmistosaAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
@@ -314,7 +319,7 @@ public class PropuestaManager implements PropuestaApi {
 
 		String descripcion = "La propuesta " + idPropuesta + " ha sido cambiada al estado " + estadoFinalizacion.getDescripcion();
 
-		crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion, propuesta.getProponente().getId());
+		crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion);
 	}
 
 	/**
@@ -324,21 +329,17 @@ public class PropuestaManager implements PropuestaApi {
 	 * @param descripcion
 	 * @param usuarioDestino
 	 */
-	private void crearEventoPropuesta(Long idExpediente, String descripcion, Long usuarioDestino) {
+	private void crearEventoPropuesta(Long idExpediente, String descripcion) {
 		DtoGenerarTarea tareaDto = new DtoGenerarTarea();
 		tareaDto.setIdEntidad(idExpediente);
 		tareaDto.setDescripcion(descripcion);
 		tareaDto.setSubtipoTarea(SubtipoTarea.CODIGO_EVENTO_PROPUESTA);
 		tareaDto.setCodigoTipoEntidad(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
 
-		EXTDtoGenerarTareaIdividualizadaImpl tareaIndDto = new EXTDtoGenerarTareaIdividualizadaImpl();
-		tareaIndDto.setTarea(tareaDto);
-		tareaIndDto.setDestinatario(usuarioDestino);
-
 		try {
-			Long idEvento = proxyFactory.proxy(EXTTareasApi.class).crearTareaNotificacionIndividualizada(tareaIndDto);
+			Long idEvento = proxyFactory.proxy(TareaNotificacionApi.class).crearTarea(tareaDto);
 			executor.execute(ComunBusinessOperation.BO_TAREA_MGR_FINALIZAR_NOTIF, idEvento);
-		} catch (EXTCrearTareaException e) {
+		} catch (GenericRollbackException e) {
 			logger.error(e);
 			throw new BusinessOperationException("PropuestaManager.crearEvento: error al intentar crear el evento ");
 		}
@@ -351,6 +352,39 @@ public class PropuestaManager implements PropuestaApi {
 		propuesta.setMotivo(motivo);
 		acuerdoDao.save(propuesta);
 		cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+		
+	}
+	
+    /**
+     * {@inheritDoc}
+     */
+	public Boolean estadoTodasPropuestas(List<EXTAcuerdo> propuestas, List<String> codigosEstadosValidos) {
+		for (EXTAcuerdo propuesta : propuestas) {
+			if (!codigosEstadosValidos.contains(propuesta.getEstadoAcuerdo().getCodigo())) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento) {
+		this.cambiarEstadoPropuesta(propuesta, nuevoCodigoEstado);
+		
+		if (generarEvento) {
+			DDEstadoAcuerdo nuevoEstado = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, nuevoCodigoEstado);
+			
+			//String descripcion = "La propuesta " + propuesta.getId() + " ha sido cambiada al estado " + nuevoEstado.getDescripcion();
+            AbstractMessageSource ms = MessageUtils.getMessageSource();
+            String descripcion = ms.getMessage("propuesta.cambiarEstado.descripcionEvento", new Object[] { propuesta.getId(), nuevoEstado.getDescripcion() },
+                    MessageUtils.DEFAULT_LOCALE);
+			
+			
+			this.crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion);
+		}
 		
 	}
 }

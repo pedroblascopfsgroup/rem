@@ -50,7 +50,7 @@ public class BusquedaExpedientesAcuerdo implements BusquedaExpedienteFiltroDinam
 //BKREC-943
 //                filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
 //		filtro.append(" WHERE expRec.id in( SELECT distinct acu.expediente.id FROM Acuerdo acu WHERE 1=1 ");
-		filtro.append(" WHERE expRec.id in( SELECT distinct acu.expediente.id FROM Acuerdo acu WHERE 1=1 ");
+		filtro.append(" SELECT distinct acu.expediente.id FROM Acuerdo acu WHERE 1=1 ");
 		if (!Checks.esNulo(dto.getFechaDesdeAcuerdo())){			
 			if (dto.getFechaDesdeAcuerdo() != null
 					&& !"".equals(dto.getFechaDesdeAcuerdo())) {

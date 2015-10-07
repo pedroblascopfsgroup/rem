@@ -276,6 +276,23 @@ public interface ExpedienteManagerApi {
 	public void devolverExpedienteARevision(Long idExpediente, String respuesta);
 
 	/**
+	 * Eleva un expediente a formalizar propuesta.
+	 * @param idExpediente id del expediente
+	 * @param isSupervisor isSupervisor
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA)
+	public void elevarExpedienteAFormalizarPropuesta(Long idExpediente,
+			Boolean isSupervisor);
+
+	/**
+	 * Devuelve un expediente a decisión comité.
+	 * @param idExpediente id del expediente
+	 * @param respuesta String
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE)
+	public void devolverExpedienteADecisionComite(Long idExpediente, String respuesta);
+
+	/**
 	 * calcular el comite del expediente.
 	 * @param idExpediente id del expediente
 	 */

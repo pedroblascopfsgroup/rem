@@ -56,7 +56,10 @@ public class PROGenerarNotificacionExpedienteActionHandler extends PROBaseAction
                 } else if (whereToGo.equals(DECISION_COMITE)) {
                     //debo activar la alerta para la tarea de decision comite
                     idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_DC);
-                }
+                } else if (whereToGo.equals(FORMALIZAR_PROPUESTA)) {
+                    //debo activar la alerta para la tarea de formalizar propuesta
+                    idTarea = (Long) executionContext.getVariable(TAREA_ASOCIADA_FP);
+                } 
 
                 //Parche por si la tarea no existe (versi�n de Fase 1)
                 if (idTarea != null) {

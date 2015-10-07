@@ -1263,63 +1263,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         return titulos;
     }
 
-    private Boolean compruebaElevacion(Expediente expediente, String estadoParaElevar, Boolean isSupervisor) {
-        //Comprobaciones para ver si estamos en el estado correcto
-        Long bpmProcess = expediente.getProcessBpm();
-        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
-        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
-        if (estadoParaElevar == null || !estadoParaElevar.equals(node)) {
-            logger.error("No se puede enviar a revision/decisión porque el expediente no esta en completar/revisión");
-            throw new BusinessOperationException("expediente.elevarRevision.errorJBPM");
-        }
-
-        if (!isSupervisor) {
-            //Comprobaci�n de las reglas de elevaci�n
-            List<ReglasElevacion> listadoReglas = getReglasElevacionExpediente(expediente.getId());
-            for (ReglasElevacion regla : listadoReglas) {
-                if (!regla.getCumple()) { return false; }
-            }
-        }
-
-        return true;
-    }
-    
-    
-    private Boolean compruebaDevolucion(Expediente expediente, String estadoParaDevolver, String estadoNuevo){
-    	//Comprobaciones para ver si estamos en el estado correcto
-        Long bpmProcess = expediente.getProcessBpm();
-        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
-        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
-        if(estadoParaDevolver == null || !estadoParaDevolver.equals(node)){
-        	 logger.error("No se puede devolver a revision/decisión porque el expediente no esta en decisión a comité");
-             throw new BusinessOperationException("expediente.elevarRevision.errorJBPM");
-        }
-        DDEstadoItinerario estadoItinerario = expediente.getEstadoItinerario();
-        Estado estado = (Estado) executor.execute(ConfiguracionBusinessOperation.BO_EST_MGR_GET, expediente.getArquetipo().getItinerario(),
-                estadoItinerario);
-
-        List<ReglasElevacion> listadoReglas = expedienteDao.getReglasElevacion(estado);
-
-        //obtenemos los acuerdos del expediente para luego comprobar las reglas
-        List<Acuerdo> acuerdos = acuerdoDao.getAcuerdosDelExpediente(expediente.getId());
-        
-        //Comprobamos una a una si las reglas se cumplen
-        for (ReglasElevacion regla : listadoReglas) {
-        	
-        	if(regla.getTipoReglaElevacion().getCodigo().equals(DDTipoReglasElevacion.MARCADO_GESTION_PROPUESTA)){
-        		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE)){
-        			regla.setCumple(cumplimientoReglaDCRE(expediente, acuerdos));
-        			if(!regla.getCumple()){ return false;}
-        		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
-        			regla.setCumple(cumplimiendoReglaFPDC(expediente, acuerdos));
-        			if(!regla.getCumple()){ return false;}
-        		}
-        	}
-        }
-    	
-    	return true;
-    }
-
     /**
      * {@inheritDoc}
      */

@@ -128,7 +128,7 @@
 	<bean id="generarPropuestaNUSEHandler" class="es.pfsgroup.procedimientos.subasta.GenerarPropuestaNUSEHandler"></bean>
 	<bean id="generarPropuestaNUSEHandlerAdj" class="es.pfsgroup.procedimientos.adjudicacion.GenerarPropuestaNUSEHandler"></bean>
 
-	<bean id="enviarAFormalizarPropuestaActionHandler" class="es.pfsgroup.procedimientos.PROEnviarAFormalizarPropuestaActionHandler">
+	<bean id="enviarAFormalizarActionHandler" class="es.pfsgroup.procedimientos.PROEnviarAFormalizarActionHandler">
 	</bean>
 	<bean id="formalizarPropuestaActionHandler" class="es.pfsgroup.procedimientos.PROFormalizarPropuestaActionHandler">
 	</bean>

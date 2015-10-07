@@ -19,7 +19,7 @@ import es.pfsgroup.recovery.api.TareaNotificacionApi;
  * @author C.Perez
  *
  */
-public class PROEnviarAFormalizarPropuestaActionHandler extends PROBaseActionHandler implements ExpedienteBPMConstants {
+public class PROEnviarAFormalizarActionHandler extends PROBaseActionHandler implements ExpedienteBPMConstants {
 
     private final Log logger = LogFactory.getLog(getClass());
 

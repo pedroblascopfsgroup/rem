@@ -1,8 +1,8 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="recobro.generacionFicheros.Oracle9iDialect">
-		<![CDATA[
-			SELECT SYSDATE FROM DUAL
-		]]>
-	</entry>
+    <entry key="recobro.generacionFicheros.Oracle10gDialect">
+        <![CDATA[
+            SELECT SYSDATE FROM DUAL
+        ]]>
+    </entry>
 </properties>

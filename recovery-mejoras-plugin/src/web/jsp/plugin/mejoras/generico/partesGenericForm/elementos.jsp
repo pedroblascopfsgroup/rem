@@ -2,6 +2,7 @@ var isDisable = true;
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	isDisable = false;
 </c:if>
+var fechaMinima = new Date(1900,0,1);
 
 var creaElemento = function(nombre,index,type,label,value,values){
 	var name='values['+(index)+']';

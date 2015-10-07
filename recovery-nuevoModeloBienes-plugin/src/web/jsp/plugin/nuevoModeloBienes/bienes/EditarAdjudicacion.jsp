@@ -358,8 +358,9 @@
 			,value : '${NMBbien.adjudicacion.cesionRemate}' == '' ? '' : '${NMBbien.adjudicacion.cesionRemate}' == 'true' ? 'Si' : 'No'
 			,labelStyle:labelStyle
 			,width: 100		
-	});	
-		
+	});
+	
+			
 	//selector persona
 	var Gestor = Ext.data.Record.create([
 		 {name:'id'}
@@ -546,7 +547,7 @@
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[ocupado,posiblePosesion,fechaSolicitudPosesion,fechaSenalamientoPosesion,fechaRealizacionPosesion,
 	ocupantesDiligencia,lanzamientoNecesario,fechaSolicitudLanzamiento,fechaSenalamientoLanzamiento,fechaRealizacionLanzamiento]},
-				  {items:[fechaSolicitudMoratoria,resolucionMoratoria,fechaResolucionMoratoria,necesariaFuerzaPublica,existeInquilino,fechaContratoArrendamiento,nombreArrendatario]}
+				  {items:[fechaSolicitudMoratoria,resolucionMoratoria,fechaResolucionMoratoria,necesariaFuerzaPublica,existeInquilino,fechaContratoArrendamiento,nombreArrendatario,entregaVoluntaria]}
 				 ]
 	});
 
@@ -706,6 +707,7 @@
 	nombreDepositarioFinal.setDisabled(true);
 	fechaEnvioDepositario.setDisabled(true);
 	fechaRecepcionDepositarioFinal.setDisabled(true);
+	entregaVoluntaria.setDisabled(true);
 	
 	<%--<sec:authorize ifAllGranted="BIEN_ADJUDICACION_EDITAR">--%>
 		fechaDecretoNoFirme.setDisabled(false);
@@ -749,6 +751,7 @@
 		nombreDepositarioFinal.setDisabled(false);
 		fechaEnvioDepositario.setDisabled(false);
 		fechaRecepcionDepositarioFinal.setDisabled(false);
+		entregaVoluntaria.setDisabled(false);
 	<%--</sec:authorize>--%>	
 	
 	<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">

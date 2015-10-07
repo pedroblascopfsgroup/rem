@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import es.capgemini.pfs.dsm.DataSourceManager;
+import es.capgemini.pfs.DevonPropertiesConstants.DatabaseConfig;
 import es.pfsgroup.recovery.Encriptador;
 
 import javax.sql.DataSource;
@@ -27,9 +27,9 @@ public class PwDataSource extends BasicDataSource {
 
 	protected synchronized DataSource createDataSource() throws SQLException {
 		
-		if (appProperties.getProperty(DataSourceManager.CLAVE_PASSWORD,
-				DataSourceManager.PW_NO_CODIFICADA).equalsIgnoreCase(
-				DataSourceManager.PW_CODIFICADA)) {
+		if (appProperties.getProperty(DatabaseConfig.ENABLE_PASSWORD_ENCRYPT_KEY,
+				DatabaseConfig.ENABLE_PASSWORD_ENCRYPT_VALUE_NO).equalsIgnoreCase(
+				DatabaseConfig.ENABLE_PASSWORD_ENCRYPT_VALUE_SI)) {
 			String pw = super.getPassword();
 			if (Encriptador.isPwEncriptada(pw)) {
 				String pwDesencriptada = desencriptarPassword(pw);

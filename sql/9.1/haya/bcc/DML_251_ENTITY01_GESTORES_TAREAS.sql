@@ -3,8 +3,8 @@
 --## AUTOR=Gonzalo E
 --## FECHA_CREACION=20150715
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=
+--## VERSION_ARTEFACTO=9.1.7-hcj
+--## INCIDENCIA_LINK=-
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

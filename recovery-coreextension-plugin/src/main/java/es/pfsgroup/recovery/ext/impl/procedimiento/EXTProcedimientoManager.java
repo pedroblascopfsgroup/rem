@@ -172,20 +172,25 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 
 	public MEJProcedimiento prepareGuid(Procedimiento procedimiento) {
 		MEJProcedimiento mejProc = MEJProcedimiento.instanceOf(procedimiento);
+		boolean modificados = false;
 		if (Checks.esNulo(mejProc.getGuid())) {
 			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
 			mejProc.setGuid(Guid.getNewInstance().toString());
-			extProcedimientoDao.saveOrUpdate(mejProc);
+			modificados = true;
 		}
 		
 		// Prepara la relación con los bienes.
-		boolean modificados = false;
-		for (ProcedimientoBien prcBien : mejProc.getBienes()) {
-			if (Checks.esNulo(prcBien.getGuid())) {
+		if (mejProc.getBienes()!=null) {
+			for (ProcedimientoBien prcBien : mejProc.getBienes()) {
+				if (!Checks.esNulo(prcBien.getGuid())) {
+					continue;
+				}
 				prcBien.setGuid(Guid.getNewInstance().toString());
 				modificados = true;
 			}
 		}
+
+		// En caso de haber cambiado algo se guarda el estado
 		if (modificados) {
 			extProcedimientoDao.saveOrUpdate(mejProc);
 		}

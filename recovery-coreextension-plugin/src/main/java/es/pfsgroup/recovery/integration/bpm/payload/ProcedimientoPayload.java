@@ -122,17 +122,19 @@ public class ProcedimientoPayload {
 		
 		// BIENES relacionadas con el procedimiento 
 		List<ProcedimientoBien> prcBienes = procedimiento.getBienes();
-		for(ProcedimientoBien prcBien : prcBienes) {
-			NMBBien bien = NMBBien.instanceOf(prcBien.getBien());
-			ProcedimientoBienPayload prbPayload = new ProcedimientoBienPayload(ProcedimientoBienPayload.KEY_PROCEDIMIENTOBIEN);
-			prbPayload.setIdOrigen(prcBien.getId());
-			prbPayload.setGuid(prcBien.getGuid());
-			prbPayload.setCodigoInternoDelBien(bien.getCodigoInterno());
-			prbPayload.setBorrado(bien.getAuditoria().isBorrado());
-			if (prcBien.getSolvenciaGarantia()!=null) {
-				prbPayload.setSolvenciaGarantia(prcBien.getSolvenciaGarantia().getCodigo());
+		if (prcBienes!=null) {
+			for(ProcedimientoBien prcBien : prcBienes) {
+				NMBBien bien = NMBBien.instanceOf(prcBien.getBien());
+				ProcedimientoBienPayload prbPayload = new ProcedimientoBienPayload(ProcedimientoBienPayload.KEY_PROCEDIMIENTOBIEN);
+				prbPayload.setIdOrigen(prcBien.getId());
+				prbPayload.setGuid(prcBien.getGuid());
+				prbPayload.setCodigoInternoDelBien(bien.getCodigoInterno());
+				prbPayload.setBorrado(bien.getAuditoria().isBorrado());
+				if (prcBien.getSolvenciaGarantia()!=null) {
+					prbPayload.setSolvenciaGarantia(prcBien.getSolvenciaGarantia().getCodigo());
+				}
+				addProcedimientoBien(prbPayload);
 			}
-			addProcedimientoBien(prbPayload);
 		}
 		
 		Procedimiento procedimientoPadre = procedimiento.getProcedimientoPadre();

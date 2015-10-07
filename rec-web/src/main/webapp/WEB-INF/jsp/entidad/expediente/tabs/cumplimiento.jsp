@@ -236,10 +236,15 @@
 		var codigoCE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE" />';
 		var codigoRE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
 		var codigoDC = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
+		var codigoFP = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA" />';
 		var estadoExpediente = entidad.get("data").gestion.estadoItinerario;
 		if (estadoExpediente == codigoCE){
 			return ('Revisar Expediente');
 		}else if (estadoExpediente == codigoRE)	{
+			return ('Decisión de Comité');
+		}else if (estadoExpediente == codigoDC){
+			return ('Formalizar Propuesta');
+		}else if (estadoExpediente == codigoFP){
 			return ('Decisión de Comité');
 		}
 		return '';

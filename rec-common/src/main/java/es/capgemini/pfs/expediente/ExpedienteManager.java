@@ -1384,6 +1384,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	public void devolverExpedienteADecisionComite(Long idExpediente,
 			String respuesta) {
         Expediente exp = expedienteDao.get(idExpediente);
+        //comprobamos si se cumple la regla de validacion al devolver a revision
+        Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_FORMALIZAR_PROPUESTA, DDEstadoItinerario.ESTADO_DECISION_COMIT);
+        if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
         Long bpmProcess = exp.getProcessBpm();
         if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
         String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
@@ -2804,9 +2807,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                             		}
                             		
                             		//de DC a FP
-//                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) && nuevoEstadoItinerario!= null &&  nuevoEstadoItinerario.equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA)){
-//                            			regla.setCumple(cumplimientoReglaDCFP(expediente, acuerdos));                            			
-//                            		}
+                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
+                            			regla.setCumple(cumplimientoReglaDCFP(expediente, acuerdos));                            			
+                            		}
                             	}
                             }
                         }

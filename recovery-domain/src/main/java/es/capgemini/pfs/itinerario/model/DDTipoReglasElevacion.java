@@ -42,6 +42,7 @@ public class DDTipoReglasElevacion implements Dictionary, Auditable {
     public static final String MARCADO_ANTECEDENTES = "ANTECEDENTES";
     public static final String MARCADO_GESTION_ANALISIS = "GESTION_ANALISIS";
     public static final String MARCADO_DOCUMENTOS = "DOCUMENTOS";
+    public static final String MARCADO_GESTION_PROPUESTA = "GESTION_PROPUESTA";
 
     @Id
     @Column(name = "DD_TRE_ID")

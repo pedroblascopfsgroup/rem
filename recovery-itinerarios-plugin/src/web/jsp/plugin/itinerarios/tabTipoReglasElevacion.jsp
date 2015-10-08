@@ -9,7 +9,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 
 <pfslayout:tabpage titleKey="plugin.itinerarios.reglasElevacion.titulo" title="**Reglas de elevacion" 
-	items="panelCE,panelRE,panelDC" >
+	items="panelCE,panelRE,panelDC,panelFP" >
 	
 	var refrescoCompletarActivar = ${ceSiNo};
 	var refrescoRevisarActivar = ${reSiNo};
@@ -272,7 +272,53 @@
 	
 	<pfsforms:fieldset caption="**DECISIÓN DE COMITÉ" name="panelDC" captioneKey="plugin.itinerarios.reglasElevacion.decisionComite"
 		items="gridReglasDC" width="1000"/>
-			
+	
+	<pfs:buttonadd flow="plugin.itinerarios.nuevaReglaElevacionFP" 
+		name="btnAddReglaFP" 
+		windowTitleKey="plugin.itinerarios.reglasElevacion.nuevaCE"
+		windowTitle="**Añadir regla de elevación" 
+		parameters="itinerarioParams"  
+		store_ref="reglasElevacionDCFP"/>
+		
+	<pfs:buttonremove name="btEliminarFP"
+		flow="plugin.itinerarios.bajaReglaElevacionEstado"
+		novalueMsgKey="plugin.itinerarios.reglasElevacion.message.novalue"
+		novalueMsg="**Seleccione una regla de la lista"  
+		paramId="idRegla"  
+		datagrid="gridReglasFP" 
+		parameters="itinerarioParams"/>
+		
+	<pfs:remoteStore name="reglasElevacionDCFP" 
+		resultRootVar="reglasElevacion" 
+		recordType="ReglasElevacionRT" 
+		dataFlow="plugin.itinerarios.tipoReglasElevacionFPData"
+		parameters="itinerarioParams"
+		autoload="true"/>
+	
+	
+	<pfs:defineColumnModel name="reglasElevacionDMFP">
+		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.tipoRegla" sortable="false" 
+			dataIndex="ddTipoReglasElevacion" caption="**Tipo de Regla" firstHeader="true"/>
+		<pfs:defineHeader captionKey="plugin.itinerarios.reglasElevacion.ambitoExpediente" sortable="false" 
+			dataIndex="ambitoExpediente" caption="**Ámbito del Expediente" />
+	</pfs:defineColumnModel>
+	
+	
+	<pfs:grid name="gridReglasFP"
+		dataStore="reglasElevacionDCFP"
+		columnModel="reglasElevacionDMFP"
+		title="**Reglas de Elevación del Estado Formular Propuesta"
+		collapsible="false"
+		titleKey="plugin.itinerarios.tipoReglasElevacion.reglasFP"
+		bbar="btnAddReglaFP,btEliminarFP"
+		iconCls="icon_elevacion"
+		width="1050"/>
+	gridReglasFP.height = 200;
+	
+	<pfsforms:fieldset caption="**FORMALIZAR PROPUESTA" name="panelFP" captioneKey="plugin.itinerarios.reglasElevacion.formularPropuesta"
+		items="gridReglasFP" width="1000"/>
+	
+	
 	<%--
 	<pfs:panel titleKey="plugin.itinerarios.reglasElevacion.revisarExpediente" name="panelRE" columns="1" 
 		collapsible="true" title="**REVISAR EXPEDIENTE"  >

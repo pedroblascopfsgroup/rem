@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="expediente" width="1391" height="899">
+<root-container name="expediente" width="1098" height="1080">
   <node name="Inicio Expediente" x="456" y="16" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -26,6 +26,9 @@
     </edge>
     <edge>
       <label x="4" y="-241"/>
+      <bendpoint w1="-80" h1="-36" w2="-75" h2="-649"/>
+      <bendpoint w1="-559" h1="-38" w2="-554" h2="-651"/>
+      <bendpoint w1="-552" h1="773" w2="-550" h2="-9"/>
     </edge>
   </node>
   <node name="EnviarARevision" x="347" y="323" width="132" height="36">
@@ -50,6 +53,8 @@
     </edge>
     <edge>
       <label x="6" y="-124"/>
+      <bendpoint w1="463" h1="54" w2="480" h2="-477"/>
+      <bendpoint w1="472" h1="490" w2="489" h2="-41"/>
     </edge>
   </node>
   <node name="EnviarAComite" x="350" y="472" width="132" height="36">
@@ -59,7 +64,7 @@
   </node>
   <node name="DecisionComite" x="479" y="576" width="132" height="36">
     <edge>
-      <label x="-40" y="12"/>
+      <label x="-12" y="10"/>
     </edge>
     <edge>
       <label x="-37" y="-9"/>
@@ -72,6 +77,12 @@
     </edge>
     <edge>
       <label x="9" y="-69"/>
+      <bendpoint w1="214" h1="-40" w2="221" h2="-393"/>
+      <bendpoint w1="424" h1="-40" w2="431" h2="-393"/>
+      <bendpoint w1="427" h1="261" w2="434" h2="-92"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="DevolverRevision" x="707" y="469" width="132" height="36">
@@ -84,9 +95,10 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="ExpedienteDecidido" x="479" y="682" width="132" height="36">
+  <node name="ExpedienteDecidido" x="707" y="769" width="184" height="36">
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-34" h1="144" w2="171" h2="-110"/>
     </edge>
   </node>
   <node name="GenerarNotificacion" x="20" y="453" width="132" height="36">
@@ -109,6 +121,10 @@
     <edge>
       <label x="-15" y="-8"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="377" w2="-444" h2="10"/>
+    </edge>
   </node>
   <node name="SolicitarProrrogaExtra" x="923" y="382" width="161" height="36">
     <edge>
@@ -120,10 +136,46 @@
       <bendpoint w1="-221" h1="27" w2="182" h2="19"/>
     </edge>
   </node>
-  <node name="DecisionComiteAutomatica" x="703" y="630" width="132" height="36">
+  <node name="DecisionComiteAutomatica" x="703" y="630" width="197" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-1" h1="-53" w2="223" h2="1"/>
+    </edge>
+  </node>
+  <node name="FormalizarPropuesta" x="459" y="821" width="161" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-186" h1="28" w2="-201" h2="-168"/>
+      <bendpoint w1="-184" h1="163" w2="-199" h2="-33"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-384" h1="-68" w2="59" h2="299"/>
+    </edge>
+  </node>
+  <node name="EnviarAFormalizar" x="214" y="694" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin Expediente" x="480" y="766" width="132" height="36"/>
+  <node name="DevolverADecision" x="462" y="692" width="166" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="ExpedienteDecididoFP" x="474" y="915" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin Expediente" x="478" y="1016" width="132" height="36"/>
 </root-container>

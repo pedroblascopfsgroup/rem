@@ -555,11 +555,6 @@
 		</dependency>
 		<dependency>
 			<groupId>batch.libraries</groupId>
-			<artifactId>generic-form-item-1.0.0</artifactId>
-			<version>STABLE</version>
-		</dependency>
-		<dependency>
-			<groupId>batch.libraries</groupId>
 			<artifactId>itext-2.1.7</artifactId>
 			<version>STABLE</version>
 		</dependency>

@@ -33,6 +33,7 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_COMPLETAR_EXPEDIENTE = "2";
     public static final String CODIGO_REVISAR_EXPEDIENE = "3";
     public static final String CODIGO_DECISION_COMITE = "4";
+    public static final String CODIGO_FORMALIZAR_PROPUESTA = "FZAR_PPUESTA";    
     public static final String CODIGO_SOLICITAR_PRORROGA_CE = "5";
     public static final String CODIGO_SOLICITAR_PRORROGA_RE = "6";
     public static final String CODIGO_NOTIFICACION_CONTRATO_CANCELADO = "7";

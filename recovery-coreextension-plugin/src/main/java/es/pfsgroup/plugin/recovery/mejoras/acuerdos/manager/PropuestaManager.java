@@ -357,7 +357,7 @@ public class PropuestaManager implements PropuestaApi {
 		DDEstadoAcuerdo estadoFinalizacion = (DDEstadoAcuerdo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_RECHAZADO);
 		String descripcion = "La propuesta " + idPropuesta + " ha sido cambiada al estado " + estadoFinalizacion.getDescripcion();
 		
-		crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion, propuesta.getProponente().getId());
+		crearEventoPropuesta(propuesta.getExpediente().getId(), descripcion);
 		
 	}
 

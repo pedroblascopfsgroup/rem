@@ -2835,7 +2835,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     		//recorremos las propuestas del expediente
 	    	for(Acuerdo acuerdo: acuerdos){
 	    		//Booleano que controla si hemos encontrado una propuesta en estado vigente
-	    		if(acuerdo.getEstaVigente()){
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
 	    			i++;
 	    		}
 	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada

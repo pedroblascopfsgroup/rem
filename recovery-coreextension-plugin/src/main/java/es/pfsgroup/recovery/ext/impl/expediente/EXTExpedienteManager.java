@@ -185,6 +185,9 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 			return true;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_REVISION)
     @Transactional(readOnly = false)
 	@Override
@@ -207,6 +210,9 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         }
     }
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_DECISION_COMITE)
     @Transactional(readOnly = false)
 	@Override
@@ -224,23 +230,27 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         Boolean propuestasEstadoConforme = propuestaManager.estadoTodasPropuestas(propuestasExp, codigosEstadosValidos);
         
         if (propuestasEstadoConforme) {
+        	expedienteManager.elevarExpedienteADecisionComite(idExpediente, isSupervisor);        	
         	//Las propuestas en estado "Propuesto" se elevan/aceptan
         	for (EXTAcuerdo propuesta : propuestasExp) {
         		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_PROPUESTO)) {
         			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO, true);
         		}
-			}
-        	
-        	expedienteManager.elevarExpedienteADecisionComite(idExpediente, isSupervisor);
+			}        	
         } else {
         	throw new BusinessOperationException("expediente.elevar.falloEstadoPropuestas");
         }        
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_REVISION)
     @Transactional(readOnly = false)
 	@Override
     public void devolverExpedienteARevision(Long idExpediente, String respuesta) {
+		expedienteManager.devolverExpedienteARevision(idExpediente, respuesta);
+		
         //Validamos el estado de todas las propuestas (sea Elevadas o rechazado o incumplido o cumplido o cancelado )
         List<String> codigosEstadosValidos = new ArrayList<String>();
         codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
@@ -260,14 +270,15 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_PROPUESTO, true);
         		}
         	}
-        	
-        	expedienteManager.devolverExpedienteARevision(idExpediente, respuesta);
         } else {
         	throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas");
         }
 
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA)
 	@Transactional(readOnly = false)
 	@Override
@@ -290,14 +301,13 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         Boolean algunaPropuestaElevada = propuestaManager.estadoAlgunaPropuesta(propuestasExp, codigoEstadoElevado);
         
         if (propuestasEstadoConforme && algunaPropuestaElevada) {
+        	expedienteManager.elevarExpedienteAFormalizarPropuesta(idExpediente, isSupervisor);
         	//Las propuestas en estado "Elevada"/Aceptada se pasan a Vigente
         	for (EXTAcuerdo propuesta: propuestasExp) {
         		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_ACEPTADO)) {
         			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_VIGENTE, true);
         		}
         	}
-        	
-        	expedienteManager.elevarExpedienteAFormalizarPropuesta(idExpediente, isSupervisor);
         } else {
         	throw new BusinessOperationException("expediente.elevar.falloEstadoPropuestas");
         }
@@ -310,6 +320,8 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 	@Transactional(readOnly = false)
 	@Override
 	public void devolverExpedienteADecisionComite(Long idExpediente, String respuesta) {
+		expedienteManager.devolverExpedienteADecisionComite(idExpediente, respuesta);
+		
         //Validamos el estado de todas las propuestas (sea Elevadas o rechazado o incumplido o cumplido o cancelado )
         List<String> codigosEstadosValidos = new ArrayList<String>();
         codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
@@ -329,8 +341,6 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO, true);
         		}
         	}
-        	
-        	expedienteManager.devolverExpedienteADecisionComite(idExpediente, respuesta);
         } else {
         	throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas");
         }

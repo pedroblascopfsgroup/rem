@@ -1127,16 +1127,17 @@ public class PoliticaManager {
 
         for (CicloMarcadoPolitica cmp : listadoCiclos) {
             List<Politica> listadoPoliticas = cmp.getPoliticas();
-
-            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
-            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
-
-            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
-                    DDEstadoPolitica.ESTADO_PROPUESTA);
-            politicaProponer.setEstadoPolitica(estadoPropuesta);
-
-            politicaDao.delete(politicaBorrar);
-            politicaDao.update(politicaProponer);
+            if (listadoPoliticas.size()>1) {
+	            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
+	            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
+	
+	            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
+	                    DDEstadoPolitica.ESTADO_PROPUESTA);
+	            politicaProponer.setEstadoPolitica(estadoPropuesta);
+	
+	            politicaDao.delete(politicaBorrar);
+	            politicaDao.update(politicaProponer);
+            }
         }
     }
 

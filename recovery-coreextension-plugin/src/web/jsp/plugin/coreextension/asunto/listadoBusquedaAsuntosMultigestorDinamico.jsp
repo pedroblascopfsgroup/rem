@@ -165,7 +165,9 @@
                 botonesTabla.show();
 				
 				asuntosStore.webflow(parametros); 
-				parametrosTab = new Array();            
+				parametrosTab = new Array();          
+				panelFiltros.getTopToolbar().setDisabled(true);  
+				
                 
             } else {
             	if(!error){
@@ -327,6 +329,11 @@
     	var id=rec.get('id');
     	app.abreAsunto(id, nombre_asunto);
     });
+    
+    asuntosStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
+    
 	
 	var mainPanel = new Ext.Panel({
 		items : [

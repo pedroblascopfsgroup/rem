@@ -320,6 +320,8 @@
 	    }, procedimientoRecord)
 	       
 	}); 	
+	
+    
 	<pfsforms:dblselect name="filtroTipoProcedimiento" labelKey="plugin.busquedaProcedimientos.busca.tipoProcedimiento" 
 		label="**Tipo de procedimiento" dd="${procedimientos}" store="procedimientoStore" resetAll="true"/>
 		
@@ -1077,6 +1079,18 @@
 			/>
 						
 	</pfs:searchPage>
+	
+	btnBuscar.on('click', function(grid, rowIndex, e) {
+		debugger;
+		if(getParametros_validarForm()){
+			filtroForm.getTopToolbar().setDisabled(true);
+		}
+	});
+	
+	dataStore.on('load',function(){
+	       filtroForm.getTopToolbar().setDisabled(false);
+    });
+    
 	
 	filtroTabPanel.setActiveTab(0);
 	

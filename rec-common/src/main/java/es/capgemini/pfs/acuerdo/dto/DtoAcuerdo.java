@@ -27,9 +27,11 @@ public class DtoAcuerdo extends WebDto {
 	private Long periodo;
 	private String fechaCierre;
 	private String fechaLimite;
+	private Long importeCostas;	
 	private String guid;
 	private Long idJBPM;
 	private Date fechaEstado;
+
 
 	/**
 	 * @return the tipoAcuerdo
@@ -216,6 +218,15 @@ public class DtoAcuerdo extends WebDto {
 	}
 
 
+	public Long getImporteCostas() {
+		return importeCostas;
+	}
+
+
+	public void setImporteCostas(Long importeCostas) {
+		this.importeCostas = importeCostas;
+	}
+	
 	public String getGuid() {
 		return guid;
 	}

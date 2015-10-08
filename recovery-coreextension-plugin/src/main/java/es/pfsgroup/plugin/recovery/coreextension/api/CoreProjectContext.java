@@ -21,4 +21,8 @@ public interface CoreProjectContext {
 	public Map<String, Set<String>> getCategoriasSubTareas();	
 
 	List<String> getTiposProcedimientosAdjudicados();
+	
+	Set<String> getTiposGestorGestoria();
+	
+	Set<String> getTiposGestorProcurador();
 }

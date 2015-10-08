@@ -217,6 +217,7 @@
 				conversionOperadores();
 				tareasStore.webflow(getParametrosBusqueda());
 				tareasGrid.setTitle('${titulo}');
+				panelFiltros.getTopToolbar().setDisabled(true);
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="tareas.filtros.errores.fechasvenc" text="** La fecha desde debe ser menor a la fecha Hasta"/>')
 			}
@@ -950,6 +951,7 @@
 			codigoSubtipoTarea = app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_SUPERVISOR;
 		}
 
+
 		switch (codigoSubtipoTarea){
 			case app.subtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE:
 			case app.subtipoTarea.CODIGO_REVISAR_EXPEDIENE:
@@ -1135,6 +1137,11 @@
 			case '100':
 			case '101':			
 			case '105':
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_SUPERVISOR:
+			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
+		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		
 				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 			break;
 			
@@ -1310,10 +1317,19 @@
                 });
                 w.on(app.event.CANCEL, function(){ w.close(); });
 		break;
+		
+		case app.subtipoTarea.CODIGO_ACEPTACION_ACUERDO:
+		case app.subtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO:
+		case app.subtipoTarea.CODIGO_ACUERDO_GESTIONES_CIERRE:
+		case app.subtipoTarea.CODIGO_CUMPLIMIENTO_ACUERDO:
+				app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'acuerdos');
+		break;
+		
 			// Por default abre una notificacion standard
 			default:
 				//Seleccionarmos por tipo de Categoria Tarea
 				switch(categoriaTarea) {
+				
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION:
 						app.openTab(rec.get('descripcion'), 'procedimientos/consultaProcedimiento', {id:rec.get('idEntidad'),tarea:rec.get('id'),fechaVenc:rec.get('fechaVenc'),nombreTab:'decision'} , {id:'procedimiento'+rec.get('idEntidad'),iconCls:'icon_procedimiento'});
 						//app.addFavorite(rec.get('idEntidad'), rec.get('descripcion'), app.constants.FAV_TIPO_PROCEDIMIENTO);
@@ -1467,6 +1483,11 @@
 	Ext.onReady(function(){
 		tareasStore.fireEvent('beforeload');
 	});
+	
+	tareasStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
+	
 	
 	panelFiltros.collapse(true);
 		

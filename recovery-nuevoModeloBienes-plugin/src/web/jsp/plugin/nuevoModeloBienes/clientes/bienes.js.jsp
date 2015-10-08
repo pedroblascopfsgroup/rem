@@ -126,11 +126,11 @@
 		respuestaConsulta  = '${NMBbien.valoracionActiva.respuestaConsulta}';
 	</c:if>	
 	<c:if test="${NMBbien.localizacionActual!=null}">
-		poblacion_valor = '${NMBbien.localizacionActual.poblacion}';
+		poblacion_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.poblacion}" />';
 		codPostal_valor = '${NMBbien.localizacionActual.codPostal}';
 		provincia_valor = '${NMBbien.localizacionActual.provincia.codigo}';
 		tipoVia_valor 			= '${NMBbien.localizacionActual.tipoVia.codigo}';
-		nombreVia_valor 		= '${NMBbien.localizacionActual.nombreVia}';
+		nombreVia_valor 		= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.nombreVia}" />';
 		numeroDomicilio_valor 	= '${NMBbien.localizacionActual.numeroDomicilio}';
 		portal_valor 			= '${NMBbien.localizacionActual.portal}';
 		bloque_valor 			= '${NMBbien.localizacionActual.bloque}';

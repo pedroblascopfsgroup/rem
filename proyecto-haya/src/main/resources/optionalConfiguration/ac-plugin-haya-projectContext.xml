@@ -25,6 +25,7 @@
 				<entry key="SANEAMIENTO" value="H008"/>
 				<entry key="POSESION" value="H015"/>
 				<entry key="GESTION-LLAVES" value="H040"/>
+				<entry key="MORATORIA" value="H011"/>
 			</map>
 		</property>
 		<property name="tareasCierreDeuda"> 
@@ -85,6 +86,27 @@
 				<value>H024</value>
 		</property>
 		
+		<property name="codigoRegistrarSolicitudMoratoria">
+				<value>H011_RegistrarSolicitudMoratoria</value>
+		</property>
+		
+		<property name="fechaSolicitudRegistrarSolicitudMoratoria">
+				<value>fechaSolicitud</value>
+		</property>
+		
+		<property name="codigoRegistrarResolucionMoratoria">
+				<value>H011_RegistrarResolucion</value>
+		</property>
+		
+		<property name="fechaFinMoratoriaRegistrarResolucion">
+				<value>fechaFinMoratoria</value>
+		</property>
+		
+		<property name="resultadoMoratoria">
+				<value>comboFavDesf</value>
+		</property>
+		
+		
 		<property name="codigosTareasSenyalamiento">
 			<list>
 				<value>H002_SenyalamientoSubasta</value>
@@ -137,6 +159,12 @@
 						<value>816</value>
 						<value>817</value>
 						<value>818</value>
+						<value>826</value>
+						<value>827</value>
+						<value>828</value>
+						<value>829</value>
+						<value>849</value>
+						<value>850</value>
 						<value>1001</value>
 						<value>1011</value>
 						<value>1021</value>
@@ -182,6 +210,17 @@
 				<value>H040</value>
 			</list>
 		</property>
+		<property name="tiposGestorGestoria">
+			<set>
+				<value>GGADJ</value>
+				<value>GGSAN</value>
+			</set>
+		</property>
+		<property name="tiposGestorProcurador">
+			<set>
+				<value>PROC</value>
+			</set>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
@@ -225,9 +264,34 @@
 			</list>
 		</property>
 	</bean>	
+	
+	<bean id="hayaProjectContextDefault" 
+		class="es.pfsgroup.procedimientos.context.HayaProjectContextImpl" abstract="true">
+		<property name="tareasInicioConcursal">
+			<list>
+				<value>H009</value>
+			</list>
+		</property>
+		<property name="tareasInicioLitigios">
+			<list>
+				<value>H001</value>
+				<value>H016</value>
+				<value>H018</value>
+				<value>H020</value>
+				<value>H022</value>
+				<value>H024</value>
+				<value>H026</value>
+				<value>H028</value>
+			</list>
+		</property>
+		<property name="tareaAceptacionLitigios">
+			<value>H068</value>
+		</property>
+	</bean>  
 
 
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
+	<bean id="hayaProjectContext" parent="hayaProjectContextDefault"/>
 </beans>	

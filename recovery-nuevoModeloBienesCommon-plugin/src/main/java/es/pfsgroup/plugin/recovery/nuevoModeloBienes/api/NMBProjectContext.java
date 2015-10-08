@@ -75,6 +75,13 @@ public interface NMBProjectContext {
 	 */
 	List<String> getCodigosSubastas();
 
+	/**
+	 * Devuelve el código de Subasta Sareb
+	 * 
+	 * @return Códgio Subasta Sareb
+	 */        
+        String getCodigoSubastaBankia();
+        
 	String getComboPostoresCelebracionSubasta();
 
 	Map<String, String> getMapaSubastas();
@@ -102,5 +109,15 @@ public interface NMBProjectContext {
 	String getCodigoOrdinario();
 
 	String getFechaDemandaMonitorio();
+
+	String getCodigoRegistrarSolicitudMoratoria();
+
+	String getFechaSolicitudRegistrarSolicitudMoratoria();
+	
+	String getCodigoRegistrarResolucionMoratoria();
+
+	String getFechaFinMoratoriaRegistrarResolucion();
+
+	String getResultadoMoratoria();
 	
 }

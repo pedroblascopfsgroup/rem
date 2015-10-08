@@ -114,7 +114,7 @@ public class AcuerdoManager {
     }
 
     /**
-     * Pasa un acuerdo a estado Vigente.
+     * Pasa un acuerdo a estado Aceptado.
      * @param idAcuerdo el id del acuerdo a aceptar.
      */
     @BusinessOperation(ExternaBusinessOperation.BO_ACUERDO_MGR_ACEPTAR_ACUERDO)
@@ -125,7 +125,7 @@ public class AcuerdoManager {
         if (acuerdoDao.hayAcuerdosVigentes(acuerdo.getAsunto().getId(), idAcuerdo)) { throw new BusinessOperationException(
                 "acuerdos.hayOtrosVigentes"); }
         DDEstadoAcuerdo estadoAcuerdoVigente = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_VIGENTE);
+                DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_ACEPTADO);
 
         acuerdo.setEstadoAcuerdo(estadoAcuerdoVigente);
         acuerdo.setFechaEstado(new Date());
@@ -215,7 +215,7 @@ public class AcuerdoManager {
     public Long guardarAcuerdo(DtoAcuerdo dto) {
 
         //NO PUEDE HABER OTROS ACUERDOS VIGENTES.
-        if (DDEstadoAcuerdo.ACUERDO_VIGENTE.equals(dto.getEstado()) && acuerdoDao.hayAcuerdosVigentes(dto.getIdAsunto(), dto.getIdAcuerdo())) { throw new BusinessOperationException(
+        if (DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(dto.getEstado()) && acuerdoDao.hayAcuerdosVigentes(dto.getIdAsunto(), dto.getIdAcuerdo())) { throw new BusinessOperationException(
                 "acuerdos.hayOtrosVigentes"); }
 
         Acuerdo acuerdo;
@@ -284,7 +284,7 @@ public class AcuerdoManager {
                     DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_FINALIZADO);
 
             acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
-        } else if (DDEstadoAcuerdo.ACUERDO_VIGENTE.equals(dto.getEstado())) {
+        } else if (DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(dto.getEstado())) {
             Long idJBPM = (Long) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_CREAR_TAREA_CON_BPM, acuerdo.getAsunto().getId(),
                     DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO, PlazoTareasDefault.CODIGO_CIERRE_ACUERDO);
 
@@ -470,7 +470,7 @@ public class AcuerdoManager {
         Usuario u = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
         //SI ES EL SUPERVISOR
         if (acuerdo.getAsunto().getSupervisor().getUsuario().getId().longValue() == u.getId().longValue()
-                && DDEstadoAcuerdo.ACUERDO_VIGENTE.equals(acuerdo.getEstadoAcuerdo().getCodigo())
+                && DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(acuerdo.getEstadoAcuerdo().getCodigo())
                 || DDEstadoAcuerdo.ACUERDO_PROPUESTO.equals(acuerdo.getEstadoAcuerdo().getCodigo())) {
             //EL GESTOR SOLO PUEDE EDITAR EL ACUERDO SI ESTA EN ESTADOS EN CONFORMACION O PROPUESTOS
             return Boolean.TRUE;

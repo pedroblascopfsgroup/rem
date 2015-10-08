@@ -79,23 +79,29 @@ public class SubastaBccLeaveActionHandler extends
 				executionContext);
 		this.executionContext = executionContext;
 
-		Boolean tareaTemporal = (executionContext.getTransition().getName()
-				.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || executionContext
-				.getTransition().getName()
-				.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
-		if (!tareaTemporal) {
-			Procedimiento procedimiento = getProcedimiento(executionContext);
-			TareaExterna tareaExterna = getTareaExterna(executionContext);
-			if (tareaExterna != null
-					&& tareaExterna.getTareaProcedimiento() != null 
-					&& tareaExterna.getTareaProcedimiento().getCodigo() != null 
-					&& (tareaExterna.getTareaProcedimiento().getCodigo().contains(TAP_SOLICITUD_SUBASTA) 
-							|| tareaExterna.getTareaProcedimiento().getCodigo().contains(TAP_SENYALAMIENTO_SUBASTA))) 
-			{
-				subastaCalculoManager.actualizarTipoSubasta(procedimiento);
-			}
-			avanzamosEstadoSubasta();
+		String transition = executionContext.getTransition().getName();
+		Boolean transicionTemporal = (
+				transition.equals(BPMContants.TRANSICION_PRORROGA) || 
+				transition.equals(BPMContants.TRANSICION_FIN) || 
+				transition.equals(BPMContants.TRANSICION_APLAZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_PARALIZAR_TAREAS) || 
+				transition.equals(BPMContants.TRANSICION_ACTIVAR_TAREAS));
+		if (transicionTemporal) {
+			return;
 		}
+
+		Procedimiento procedimiento = getProcedimiento(executionContext);
+		TareaExterna tareaExterna = getTareaExterna(executionContext);
+		if (tareaExterna != null
+				&& tareaExterna.getTareaProcedimiento() != null 
+				&& tareaExterna.getTareaProcedimiento().getCodigo() != null 
+				&& (tareaExterna.getTareaProcedimiento().getCodigo().contains(TAP_SOLICITUD_SUBASTA) 
+						|| tareaExterna.getTareaProcedimiento().getCodigo().contains(TAP_SENYALAMIENTO_SUBASTA))) 
+		{
+			subastaCalculoManager.actualizarTipoSubasta(procedimiento);
+		}
+		avanzamosEstadoSubasta();
+		
 	}
 
 	@Transactional
@@ -332,7 +338,6 @@ public class SubastaBccLeaveActionHandler extends
 	public Boolean[] bpmGetValoresRamasCelebracion(Procedimiento prc,
 			TareaExterna tex) {
 
-		List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
 
 		// Inicio todos los valores a false
 		Boolean[] resultado = {false, false, false, false, false, false};
@@ -352,7 +357,10 @@ public class SubastaBccLeaveActionHandler extends
 
 
 		// Obtenemos la lista de valores de esa tarea
-		listadoValores = tex.getValores();
+		List<EXTTareaExternaValor> listadoValores = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class))
+				.obtenerValoresTareaByTexId(tex.getId());
+		
 		for (TareaExternaValor val : listadoValores) {
 
 			if ("comboCelebrada".equals(val.getNombre())) {

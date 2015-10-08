@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteDePosesion" width="1585" height="1242">
+<root-container name="hcj_tramiteDePosesion" width="1394" height="1242">
   <node name="inicio" x="494" y="21" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

@@ -10,11 +10,11 @@ import es.pfsgroup.recovery.integration.TypePayloadRegexRule;
 
 public class TareaExternaPayloadRegexRule extends TypePayloadRegexRule<DataContainerPayload> {
 
-	private Pattern tipoProcedimiento;
+	private Pattern codigoProcedimiento;
 	private Pattern codigoTarea;
 	
 	public void setCodigoProcedimiento(Pattern tipoProcedimiento) {
-		this.tipoProcedimiento = tipoProcedimiento;
+		this.codigoProcedimiento = tipoProcedimiento;
 	}
 
 	public void setCodigoTarea(Pattern codigoTarea) {
@@ -24,7 +24,7 @@ public class TareaExternaPayloadRegexRule extends TypePayloadRegexRule<DataConta
 	@Override
 	protected boolean isValidRule() {
 		return (super.isValidRule() 
-				|| !Checks.esNulo(this.tipoProcedimiento) 
+				|| !Checks.esNulo(this.codigoProcedimiento) 
 				|| !Checks.esNulo(this.codigoTarea));
 	}
 
@@ -36,8 +36,8 @@ public class TareaExternaPayloadRegexRule extends TypePayloadRegexRule<DataConta
 		}
 		DataContainerPayload payload = message.getPayload();
 		TareaExternaPayload tex = new TareaExternaPayload(payload);
-		if (!Checks.esNulo(tipoProcedimiento)) {
-			boolean matches = match(tipoProcedimiento, tex.getProcedimiento().getTipoProcedimiento());
+		if (!Checks.esNulo(codigoProcedimiento)) {
+			boolean matches = match(codigoProcedimiento, tex.getProcedimiento().getTipoProcedimiento());
 			if (!matches) {
 				return false;
 			}

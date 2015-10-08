@@ -9,6 +9,7 @@
     default-autowire="byName">
 
 	<!-- Beans,handlers,Managers ... --> 
+	<bean id="leaveDemandadoIncidenteRegistrarResolucion" class="es.pfsgroup.procedimientos.handlers.LeaveDemandadoIncidenteRegistrarResolucion" />
 	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
 	<bean id="subastaConcursalCjLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalCjLeaveActionHandler" />
 	<bean id="siguientePagoHandler" class="es.pfsgroup.procedimientos.seguimientoCumplimientoAcuerdo.SiguientePagoHandler"></bean>
@@ -300,6 +301,12 @@
 					def bpmManager = ctx.getBean("BPMManager");
 					return bpmManager.existenCreditosContingentes(idProcedimiento);
 				}
+				
+				def cuentaCreditosInsinuados = {
+               		def concursoManager = ctx.getBean("concursoManager");
+               		
+               		return String.valueOf(concursoManager.dameCreditosInsinuados(idProcedimiento).size());
+            	}
   			 ]]>
   			</value>
   		</list>

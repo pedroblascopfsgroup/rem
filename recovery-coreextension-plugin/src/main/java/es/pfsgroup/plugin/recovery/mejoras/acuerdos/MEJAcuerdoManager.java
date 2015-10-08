@@ -26,6 +26,7 @@ import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDPeriodicidadAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSolicitante;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
@@ -154,14 +155,18 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	@Override
 	@BusinessOperation(BO_ACUERDO_MGR_RECHAZAR_ACUERDO_MOTIVO)
 	@Transactional(readOnly = false)
-	public void rechazarAcuerdoMotivo(Long idAcuerdo, String motivo) {
+	public void rechazarAcuerdoMotivo(Long idAcuerdo, Long idMotivo, String observacionesMotivo) {
 
 		EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+		DDMotivoRechazoAcuerdo motivoRechazo = genericDao.get(DDMotivoRechazoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idMotivo));
 		DDEstadoAcuerdo estadoAcuerdoRechazado = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_RECHAZADO);
 
 		acuerdo.setEstadoAcuerdo(estadoAcuerdoRechazado);
 		acuerdo.setFechaEstado(new Date());
-		acuerdo.setMotivo(motivo);
+		acuerdo.setMotivo(observacionesMotivo);
+		if(!Checks.esNulo(motivoRechazo)){
+			acuerdo.setMotivoRechazo(motivoRechazo);
+		}
 		acuerdoDao.save(acuerdo);
 		// Cancelo las tareas del supervisor
 		
@@ -185,7 +190,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		if(userLogado.equals(userValidador)){
 			
 			observaciones.append(userValidador.getNombre()+" ");
-			if(!Checks.esNulo(motivo)) observaciones.append(" Debido a " + motivo);
+			if(!Checks.esNulo(observacionesMotivo)) observaciones.append(" Debido a " + observacionesMotivo);
 			
 			try {
 				crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones.toString(), userProponente.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Rechazado del acuerdo por parte del validador");
@@ -198,7 +203,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		if(userLogado.equals(userDecisor)){
 			
 			observaciones.append(userDecisor.getNombre()+" ");
-			if(!Checks.esNulo(motivo)) observaciones.append(" Debido a " + motivo);
+			if(!Checks.esNulo(observacionesMotivo)) observaciones.append(" Debido a " + observacionesMotivo);
 			
 			try {
 					crearNotificacion(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, observaciones.toString(), userValidador.getId(), true, EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS, null,"Rechazado del acuerdo por parte del decisor");

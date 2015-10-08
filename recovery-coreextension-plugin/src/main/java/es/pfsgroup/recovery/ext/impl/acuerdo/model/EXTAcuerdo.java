@@ -7,9 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+
 import org.hibernate.proxy.HibernateProxy;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -35,6 +37,10 @@ public class EXTAcuerdo extends Acuerdo {
     @ManyToOne
     @JoinColumn(name = "USD_ID")
 	private GestorDespacho gestorDespacho;
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_MTR_ID")
+	private DDMotivoRechazoAcuerdo motivoRechazo;
     
 	public GestorDespacho getGestorDespacho() {
 		return gestorDespacho;
@@ -87,6 +93,14 @@ public class EXTAcuerdo extends Acuerdo {
 		this.guid = guid;
 	}
 	
+	public DDMotivoRechazoAcuerdo getMotivoRechazo() {
+		return motivoRechazo;
+	}
+
+	public void setMotivoRechazo(DDMotivoRechazoAcuerdo motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
+	}
+	
 	@Transient
 	public static EXTAcuerdo instanceOf(Acuerdo acuerdo) {
 		EXTAcuerdo extAcuerdo = null;
@@ -99,6 +113,4 @@ public class EXTAcuerdo extends Acuerdo {
 		}
 		return extAcuerdo;
 	}
-	
-
 }

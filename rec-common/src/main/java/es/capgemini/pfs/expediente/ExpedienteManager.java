@@ -31,7 +31,6 @@ import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.actitudAptitudActuacion.dao.ActitudAptitudActuacionDao;
 import es.capgemini.pfs.actitudAptitudActuacion.dto.DtoActitudAptitudActuacion;
 import es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion;
-import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.arquetipo.dao.ArquetipoDao;
@@ -172,9 +171,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     
     @Autowired
     private CicloMarcadoPoliticaDao cicloMarcadoPoliticaDao; 
-    
-    @Autowired
-	private AcuerdoDao acuerdoDao;
     
     @Autowired
 	GenericABMDao genericDao;
@@ -1301,7 +1297,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         List<ReglasElevacion> listadoReglas = expedienteDao.getReglasElevacion(estado);
 
         //obtenemos los acuerdos del expediente para luego comprobar las reglas
-        List<Acuerdo> acuerdos = acuerdoDao.getAcuerdosDelExpediente(expediente.getId());
+        List<Acuerdo> acuerdos = genericDao.getList(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
         
         //Comprobamos una a una si las reglas se cumplen
         for (ReglasElevacion regla : listadoReglas) {
@@ -2792,7 +2788,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                             	if(DDTipoReglasElevacion.MARCADO_GESTION_PROPUESTA.equals(codigoTipoRegla)){
                             		
                             		//obtenemos todas las propuestas del expediente
-                            		List<Acuerdo> acuerdos = acuerdoDao.getAcuerdosDelExpediente(expediente.getId());
+                            		List<Acuerdo> acuerdos = genericDao.getList(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
                             		
                             		//CE
                             		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE)){

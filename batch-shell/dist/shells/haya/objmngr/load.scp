@@ -1,0 +1,3 @@
+﻿CONNECT SOURCE "Recovery_BI" USER "administrator" PASSWORD "";
+LOAD PROJECT "Recovery BI (Bankia)"; 
+DISCONNECT SERVER;

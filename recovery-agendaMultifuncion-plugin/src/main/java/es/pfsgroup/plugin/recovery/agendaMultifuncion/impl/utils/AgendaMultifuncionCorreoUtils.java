@@ -100,13 +100,14 @@ public class AgendaMultifuncionCorreoUtils {
 			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Construimos el mensaje]");
 			MimeMessage message = new MimeMessage(session);
 			
+                        //Carga el email FROM directamente del DEVON.PROP, si existe el parametro
 			if(Checks.esNulo(emailFrom)) {
 				emailFrom = appProperties.getProperty(FROM);
 				System.out.println(this.getClass() + " enviarCorreoAdjuntos: EMAIL FROM IS NULL: [NUEVO VALOR: "+emailFrom+" ]");
 			}
 			
-			message.setFrom(new InternetAddress(emailFrom));
-			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos emailFrom al from]");
+//			message.setFrom(new InternetAddress(emailFrom));
+//			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos emailFrom al from]");
 			
 			
 			for (String emailPara: mailsPara) {				
@@ -173,10 +174,20 @@ public class AgendaMultifuncionCorreoUtils {
 						Parametrizacion.ANOTACIONES_MAIL_SMTP_USER);
 				Parametrizacion passValuePropBBDD = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
 						Parametrizacion.ANOTACIONES_PWD_CORREO);
+				Parametrizacion mailFromPropBBDD = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+						Parametrizacion.ANOTACIONES_EMAIL_FROM);
 	
 				//Variables desde BBDD
 				usuarioBD = usuarioBBDD.getValor();
 				passValuePropBD = passValuePropBBDD.getValor().trim();
+                                
+                                //Si existe el parametro FROM en BBDD, sobreescribe el valor tomado del DEVON.PROP
+                                if(!Checks.esNulo(mailFromPropBBDD)) {
+                                    if(!Checks.esNulo(mailFromPropBBDD.getValor())){
+                                        emailFrom = mailFromPropBBDD.getValor().trim();
+                                        System.out.println(this.getClass() + " enviarCorreoAdjuntos: EMAIL FROM IS SETTED BY DDBB: [NUEVO VALOR: "+emailFrom+" ]");
+                                    }
+                                }
 			
 				String passValueParsed = passValueProp.replaceAll("\\\\", "");
 				pass = Encriptador.desencriptarPw(passValueParsed);
@@ -187,6 +198,10 @@ public class AgendaMultifuncionCorreoUtils {
 				logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
 			}
 
+                        //Settea Email From cargado de BBDD o del devon.prop, con esa prioridad en el origen del valor
+                        message.setFrom(new InternetAddress(emailFrom));
+			System.out.println(this.getClass() + " enviarCorreoAdjuntos: [Seteamos emailFrom al from]: "+emailFrom);
+                        
 			if (!Checks.esNulo(usuarioBD)) {
 				try {
 					String passValueParsed = passValuePropBD.replaceAll("\\\\", "");

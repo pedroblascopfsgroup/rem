@@ -2827,67 +2827,39 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      */
     private boolean cumplimiendoReglaFPDC(Expediente expediente, List<Acuerdo> acuerdos){
     	Boolean cumple = true;
-    	Boolean vigenteEncontrado=false;
-    	Boolean rechazadaEncontrado = false;
-    	Boolean cumplidaEncontrado = false;
-    	Boolean incumplidaEncontrado = false;
+    	int i = 0;
     	
     	if(acuerdos != null){
     		//recorremos las propuestas del expediente
 	    	for(Acuerdo acuerdo: acuerdos){
 	    		//Booleano que controla si hemos encontrado una propuesta en estado vigente
 	    		if(acuerdo.getEstaVigente()){
-	    			vigenteEncontrado = true;
+	    			i++;
 	    		}
 	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada
 	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
-	    			rechazadaEncontrado = true;
+	    			i++;
 	    		}
 	    		//Booleano que controla si hemos encontrado una propuesta en estado cumplido
 	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
-	    			cumplidaEncontrado = true;
+	    			i++;
 	    		}
 	    		//Booleano que controla si hemos encontrado una propuesta en estado incumplido
 	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
-	    			incumplidaEncontrado = true;
+	    			i++;
 	    		}
+	    		
+	    		//las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
+	    			i++;
+				}
 	    	}
 	    	
 	    	//Comprobamos si las propuestas tienen el estado correcto (vigente, rechazado, cumplida, incumplida) para cumplir la regla
-	    	if(!vigenteEncontrado && !rechazadaEncontrado && !cumplidaEncontrado && !incumplidaEncontrado){
-	    		cumple = false;
-	    	}else{
+	    	if(acuerdos.size() == i){
 	    		cumple = true;
-	    	}
-	    		    	
-	    	/* Para una sola propuesta:
-	    	 * si no es vigente comprobamos si es rechazada
-	    	 * si no es rechazada comprobamos si es cumplida
-	    	 * si no es cumplida comprobamos si es incumplida
-	    	 * si no es incumplida no se cumple la regla
-	    	 * si es vigente se cumple la regla
-	    	 * si es rechazada se cumple la regla
-	    	 * si es cumplida se cumple la regla
-	    	 * si es incumpluida se cumple la regla
-	    	 */
-	    	if(acuerdos.size() == 1){
-	    		if(!vigenteEncontrado){
-	    			if(!rechazadaEncontrado){
-	    				if(!cumplidaEncontrado){
-	    					if(incumplidaEncontrado){
-	    						cumple = true;
-	    					}else{
-	    						cumple = false;
-	    					}
-	    				}else{
-	    					cumple = true;
-	    				}
-	    			}else{
-	    				cumple = true;
-	    			}
-	    		}else{
-	    			cumple = true;
-	    		}
+	    	}else{
+	    		cumple = false;
 	    	}
     	}    	
     	
@@ -2930,6 +2902,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
 	    			i++;
 	    		}
+	    		
+	    		//las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
+				   i++;
+				}
     		}
     	
 	    	//Para el caso de una sola propuesta tiene que ser obligatoria en estado elevada, sino no se cumple la regla
@@ -2940,7 +2917,6 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	    	}
 	    	
 	    	//Para el caso de mas de una propuesta, obligatoriamente tiene que haber una en estado elevada y el resto en elevada, rechazada, cumplida o incumplida
-	    	//REVISAR
 	    	if(acuerdos.size() > 0 && acuerdos.size() == i && elevadaEncontrada){
 	    		cumple = true;
 	    	}else if(acuerdos.size() > 1 && acuerdos.size() != i){
@@ -2984,6 +2960,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	    		if(acuerdo.getEstadoAcuerdo().getClass().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
 	    			i++;
 	    		}
+	    		//las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
+				   i++;
+				}
 	    	}
 	    	
 	    	//Para el caso de una sola propuesta tiene que ser obligatoria en estado elevada, si no no se cumple la regla
@@ -3036,6 +3016,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 			  }
 			  //Booleano que comprueba si hay una propuesta en estado incumplida
 			  if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+				  i++;
+			  }
+			  //las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    	  if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
 				  i++;
 			  }
 			  

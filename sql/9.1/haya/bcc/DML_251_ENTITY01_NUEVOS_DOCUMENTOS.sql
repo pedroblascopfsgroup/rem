@@ -3,8 +3,8 @@
 --## AUTOR=Gonzalo E
 --## FECHA_CREACION=20150715
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=
+--## VERSION_ARTEFACTO=9.1.7-hcj
+--## INCIDENCIA_LINK=-
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -28,33 +28,37 @@ DECLARE
     TYPE T_TIPO_TFA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_TFA IS TABLE OF T_TIPO_TFA;
     V_TIPO_TFA T_ARRAY_TFA := T_ARRAY_TFA(
-      T_TIPO_TFA('PLALIQ', 'Plan de liquidación', 'Plan de liquidación', 'CO') -- Trámite de fase de liquidación
-      ,T_TIPO_TFA('AAPLIQ', 'Auto aprobando plan de liquidación', 'Auto aprobando plan de liquidación', 'CO') -- Trámite de fase de liquidación      
-      ,T_TIPO_TFA('INFRENCUE', 'Informe de rendición de cuentas', 'Informe de rendición de cuentas', 'CO') -- Trámite de fase de liquidación
-      ,T_TIPO_TFA('AUTCONCON', 'Auto de conclusión de concurso', 'Auto de conclusión de concurso', 'CO') -- Trámite de fase de liquidación
-      ,T_TIPO_TFA('INFPRO', 'Informe de la propuesta', 'Informe de la propuesta', 'CO') -- Trámite de propuesta anticipada
-      ,T_TIPO_TFA('RESJUD', 'Resolución judicial', 'Resolución judicial', 'CO') -- Trámite de propuesta anticipada
-      ,T_TIPO_TFA('INFADMCON', 'Informe del Adm. Concursal', 'Informe del Adm. Concursal', 'CO') -- Trámite de fase convenio
-      ,T_TIPO_TFA('ACTJUNACR', 'Acta de la junta de acreedores', 'Acta de la junta de acreedores', 'CO') -- Trámite de fase convenio
-      ,T_TIPO_TFA('RESADE', 'Resolución de la adenda', 'Resolución de la adenda', 'CO') -- Trámite de fase común
-      ,T_TIPO_TFA('RESJUZ', 'Resolución juzgado', 'Resolución juzgado', 'CO') -- Trámite de fase común
-      ,T_TIPO_TFA('BOE', 'BOE', 'BOE', 'CO') -- Trámite de fase común
-      ,T_TIPO_TFA('INTDEM', 'Interposición de la demanda', 'Interposición de la demanda', 'CO') -- Trámite de demanda incidental
-      ,T_TIPO_TFA('INFCANOPE', 'Informe de cancelación de operación', 'Informe de cancelación de operación', 'CO') -- Trámite de demandado en incidente
-      ,T_TIPO_TFA('OFEVEN', 'Oferta venta', 'Oferta venta', 'CO') -- Trámite de venta directa
-      ,T_TIPO_TFA('INFSOBVEN', 'Informe sobre oferta', 'Informe sobre oferta', 'CO') -- Trámite de venta directa
-      ,T_TIPO_TFA('AUTO', 'Auto', 'Auto', 'CO') -- Trámite de venta directa
-      ,T_TIPO_TFA('PROPLAPAG', 'Propuesta de plan de pagos', 'Propuesta de plan de pagos', 'CO') -- Trámite de acuerdo extrajudicial de pagos
-      ,T_TIPO_TFA('INFCON', 'Informe concursal', 'Informe concursal', 'CO') -- Trámite de acuerdo extrajudicial de pagos
-      ,T_TIPO_TFA('LIBARR', 'Certificado de Libertad de arrendamientos', 'Certificado de Libertad de arrendamientos', 'TR') -- Trámite de certificado de libertad de arrendamiento
+      T_TIPO_TFA('EDH', 'Escrito de demanda completo + copia sellada de la demanda', 'Escrito de demanda completo + copia sellada de la demanda', 'EJ') -- T. Hipotecario (modificado)
+      ,T_TIPO_TFA('HEDIMP', 'Escrito de impugnación', 'Escrito de impugnación', 'EJ') -- T. Hipotecario
+      ,T_TIPO_TFA('HRESOL', 'Resolución (Hipotecario)', 'Resolución (Hipotecario)', 'EJ') -- T. Hipotecario
       ,T_TIPO_TFA('PRVFND', 'Provisión de Fondos', 'Provisión de Fondos', 'TR') -- T. Provision de fondos
-      ,T_TIPO_TFA('CAS', 'Contrato de alquiler social', 'Contrato de alquiler social', 'AP') -- Trámite de posesión
+      ,T_TIPO_TFA('INFLIQ', 'Informe de liquidación', 'Informe de liquidación', 'TR') -- T. Calculo de deuda a fecha
+      ,T_TIPO_TFA('IFISCAL', 'Informe fiscal (T. Subasta)', 'Informe fiscal (T. Subasta)', 'AP') -- T. Subasta
+      ,T_TIPO_TFA('EDCSDE', 'Escrito de demanda completo + copia sellada de la demanda', 'Escrito de demanda completo + copia sellada de la demanda', 'DE') -- Trámites de Tipo de Actuación Declarativo 
+      ,T_TIPO_TFA('COMAD', 'Comunicación adicional', 'Comunicación adicional', 'AP') -- Trámites de Adjudicación 
+      ,T_TIPO_TFA('LIBARR', 'Certificado de Libertad de arrendamientos', 'Certificado de Libertad de arrendamientos', 'TR') -- Trámite de certificado de libertad de arrendamiento
+      ,T_TIPO_TFA('ASP', 'Resultado averiguación solvencia patrimonial', 'Resultado averiguación solvencia patrimonial', 'TR') -- Trámite de solicitud de solvencia patrimonial
+      ,T_TIPO_TFA('CRSOLADJ', 'Sol. de adj. con reserva de facultad de cesión de remate', 'Solicitud de adjudicación con reserva de facultad de cesión de remate', 'AP') -- Trámite de Cesión Remate
+      ,T_TIPO_TFA('CRRESTRA', 'Resguardo trasferencia', 'Resguardo trasferencia', 'AP') -- Trámite de Cesión Remate
+      ,T_TIPO_TFA('CRACCES', 'Acta de cesión', 'Acta de cesión', 'AP') -- Trámite de Cesión Remate
       ,T_TIPO_TFA('SCBCCR', 'Documento acreditativo de la cancelación de cargas registrales', 'Documento acreditativo de la cancelación de cargas registrales', 'AP') -- Saneamiento de cargas
       ,T_TIPO_TFA('SCBCPC', 'Carta de pago o documentación acreditativa de cancelación', 'Carta de pago o documentación acreditativa de cancelación', 'AP') -- Saneamiento de cargas
-      ,T_TIPO_TFA('CRSOLADJ', 'Sol. de adj. con reserva de facultad de cesión de remate', 'Solicitud de adjudicación con reserva de facultad de cesión de remate', 'AP') -- Trámite de Cesión Remate
-      ,T_TIPO_TFA('CRACCES', 'Acta de cesión', 'Acta de cesión', 'AP') -- Trámite de Cesión Remate
-      ,T_TIPO_TFA('CRRESTRA', 'Resguardo trasferencia', 'Resguardo trasferencia', 'AP') -- Trámite de Cesión Remate
-      ,T_TIPO_TFA('INSUFI', 'Informe Subasta Firmado', 'Informe Subasta Firmado', 'AP') -- T. Subasta concursal
+      ,T_TIPO_TFA('CAS', 'Contrato de alquiler social', 'Contrato de alquiler social', 'AP') -- Trámite de posesión
+      ,T_TIPO_TFA('DSPJ', 'Documentación con sello de presentación en el Juzgado', 'Documentación con sello de presentación en el Juzgado', 'TR') -- Trámite de mandamiento de cancelación de cargas
+      ,T_TIPO_TFA('MCC', 'Mandato de cancelación de cargas', 'Mandato de cancelación de cargas', 'TR') -- Trámite de mandamiento de cancelación de cargas
+      ,T_TIPO_TFA('SAP', 'Solicitud archivo procedimiento', 'Solicitud archivo procedimiento', 'TR') -- Trámite de mandamiento de cancelación de cargas
+      ,T_TIPO_TFA('INSUFI', 'Informe Subasta Firmado', 'Informe Subasta Firmado', 'AP') -- T. Subasta
+      ,T_TIPO_TFA('INSEXT', 'Informe de subasta', 'Informe de subasta', 'EX') -- Trámite de ejecución notarial
+      ,T_TIPO_TFA('INFSUBEXT', 'Informe Subasta firmada', 'Informe Subasta firmada', 'EX') -- Trámite de ejecución notarial
+      ,T_TIPO_TFA('DECADM', 'Decreto de admisión', 'Decreto de admisión', 'TR') -- Trámite de posesión interina
+      ,T_TIPO_TFA('SOLCONS', 'Solicitud de consignación', 'Solicitud de consignación', 'AP') -- Trámite de consignación
+      ,T_TIPO_TFA('DTCCE', 'Decreto de Tasación de Costas (Costas contra entidad)', 'Decreto de Tasación de Costas (Costas contra entidad)', 'CO') -- Trámite de costras contra entidad
+      ,T_TIPO_TFA('ESCSUS', 'Escrito de suspensión', 'Escrito de suspensión', 'AP') -- Trámite de subasta
+      ,T_TIPO_TFA('MANCANCAR', 'Mandamiento de cancelación de cargas', 'Mandamiento de cancelación de cargas', 'AP') -- Trámite de Adjudicación
+      ,T_TIPO_TFA('PETPOS', 'Petición de la posesión', 'Petición de la posesión', 'TR') -- Trámite de posesión interina
+      ,T_TIPO_TFA('PRECUE', 'Presentación de cuentas', 'Presentación de cuentas', 'TR') -- Trámite de posesión interina
+      ,T_TIPO_TFA('ACUREC', 'Acuse de recibo', 'Acuse de recibo', 'TR') -- Trámite de notificación
+      ,T_TIPO_TFA('ESCPET', 'Escrito de petición', 'Escrito de petición', 'AP') -- Trámite de subsanación de decreto de adjudicación
     ); 
     V_TMP_TIPO_TFA T_TIPO_TFA;
     

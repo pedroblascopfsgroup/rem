@@ -2,6 +2,8 @@ package es.pfsgroup.recovery.integration;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import es.capgemini.devon.security.SecurityUtils;
+
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public class TypePayload {
 
@@ -15,10 +17,16 @@ public class TypePayload {
 	private final String tipo;
 	private final String entidad;
 	private String descripcion;
+	private final String username;
 
 	public TypePayload(String tipo, String entidad) {
 		this.tipo = tipo;
 		this.entidad = entidad;
+
+		// Usuario
+		this.username  = (SecurityUtils.getCurrentUser() != null) 
+			? SecurityUtils.getCurrentUser().getUsername() 
+			: "NO_USER"; 
 	}
 
 	public String getTipo() {
@@ -35,6 +43,10 @@ public class TypePayload {
 
 	public String getEntidad() {
 		return entidad;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 }

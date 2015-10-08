@@ -3,8 +3,8 @@
 --## AUTOR=Gonzalo E
 --## FECHA_CREACION=20150715
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=
+--## VERSION_ARTEFACTO=9.1.7-hcj
+--## INCIDENCIA_LINK=-
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -178,6 +178,7 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','0','0')
 ,T_TIPO_VALOR('CJ004','CJ004_EnviarInstruccionesProcurador','1','3')
 ,T_TIPO_VALOR('CJ004','CJ004_CalcularDeudaActualizada','1','3')
 ,T_TIPO_VALOR('CJ004','CJ004_ActualizarDeudaJuzgado','1','3')
+,T_TIPO_VALOR('CJ004','CJ004_TareaExterna','0','0')
 ,T_TIPO_VALOR('CJ005','CJ005_RecepcionarComunicacionMediador','1','3')
 ,T_TIPO_VALOR('CJ005','CJ005_ActualizarCreditos','1','3')
 ,T_TIPO_VALOR('CJ005','CJ005_RegistrarFechaReunion','1','3')
@@ -218,6 +219,8 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','0','0')
 ,T_TIPO_VALOR('CJ007','CJ007_SolicitudTasacion','1','3')
 ,T_TIPO_VALOR('CJ007','CJ007_TasacionCostas','1','3')
 ,T_TIPO_VALOR('P400','P400_GestionarNotificaciones','0','0')
+,T_TIPO_VALOR('HCJ003','HCJ003_AutorizarPeticionPropuesta','0','0')
+,T_TIPO_VALOR('HCJ003','HCJ003_AutorizacionDecision','0','0')
 
 ); 
 V_TMP_TIPO T_TIPO_VALOR;

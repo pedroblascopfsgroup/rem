@@ -3,8 +3,8 @@
 --## AUTOR=Gonzalo E
 --## FECHA_CREACION=20150715
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=
+--## VERSION_ARTEFACTO=9.1.7-hcj
+--## INCIDENCIA_LINK=-
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -178,6 +178,7 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGESCHRE','SUCHRE')
 ,T_TIPO_VALOR('CJ004','CJ004_EnviarInstruccionesProcurador','TGESCON','SUCON')
 ,T_TIPO_VALOR('CJ004','CJ004_CalcularDeudaActualizada','TSUADMCON','SUCON')
 ,T_TIPO_VALOR('CJ004','CJ004_ActualizarDeudaJuzgado','TGESCON','SUCON')
+,T_TIPO_VALOR('CJ004','CJ004_TareaExterna','TGESCON','SUCON')
 ,T_TIPO_VALOR('CJ005','CJ005_RecepcionarComunicacionMediador','TGESINC','SUINC')
 ,T_TIPO_VALOR('CJ005','CJ005_ActualizarCreditos','TGESCHRE','SUCHRE')
 ,T_TIPO_VALOR('CJ005','CJ005_RegistrarFechaReunion','TGERREC','DIRREC')
@@ -218,6 +219,8 @@ T_TIPO_VALOR('HCJ001','HCJ001_DeclararIVAIGIC','TGESCHRE','SUCHRE')
 ,T_TIPO_VALOR('CJ007','CJ007_SolicitudTasacion','TGESCON','SUCON')
 ,T_TIPO_VALOR('CJ007','CJ007_TasacionCostas','TGESCON','SUCON')
 ,T_TIPO_VALOR('P400','P400_GestionarNotificaciones','TGESCON','SUCON')
+,T_TIPO_VALOR('HCJ003','HCJ003_AutorizarPeticionPropuesta','TGESCHRE','DIRREC')
+,T_TIPO_VALOR('HCJ003','HCJ003_AutorizacionDecision','DGESCHRE','')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

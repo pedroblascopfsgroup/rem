@@ -14,7 +14,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -173,20 +172,25 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 
 	public MEJProcedimiento prepareGuid(Procedimiento procedimiento) {
 		MEJProcedimiento mejProc = MEJProcedimiento.instanceOf(procedimiento);
+		boolean modificados = false;
 		if (Checks.esNulo(mejProc.getGuid())) {
 			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
 			mejProc.setGuid(Guid.getNewInstance().toString());
-			extProcedimientoDao.saveOrUpdate(mejProc);
+			modificados = true;
 		}
 		
 		// Prepara la relación con los bienes.
-		boolean modificados = false;
-		for (ProcedimientoBien prcBien : mejProc.getBienes()) {
-			if (Checks.esNulo(prcBien.getGuid())) {
+		if (mejProc.getBienes()!=null) {
+			for (ProcedimientoBien prcBien : mejProc.getBienes()) {
+				if (!Checks.esNulo(prcBien.getGuid())) {
+					continue;
+				}
 				prcBien.setGuid(Guid.getNewInstance().toString());
 				modificados = true;
 			}
 		}
+
+		// En caso de haber cambiado algo se guarda el estado
 		if (modificados) {
 			extProcedimientoDao.saveOrUpdate(mejProc);
 		}
@@ -223,23 +227,12 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 				}
 			}
 
-			if (!Checks.esNulo(procDto.getUsuarioSuplantado())) {
-				procedimiento.setAuditoria(Auditoria.getNewInstance());
-				procedimiento.getAuditoria().setUsuarioCrear(procDto.getUsuarioSuplantado());
-				procedimiento.getAuditoria().setSuplantarUsuario(procDto.getUsuarioSuplantado());
-			}
-		
-			
 		} else {
 			Procedimiento tmpProcedimiento = procedimientoDao.get(procDto.getIdProcedimiento());
 			if (tmpProcedimiento==null) {
 				throw new RuntimeException(String.format("Procedimiento no encontrado para actualizar: %d", procDto.getIdProcedimiento()));
 			}
 			procedimiento = MEJProcedimiento.instanceOf(tmpProcedimiento);
-			
-			if (!Checks.esNulo(procDto.getUsuarioSuplantado())) {
-				procedimiento.getAuditoria().setSuplantarUsuario(procDto.getUsuarioSuplantado());
-			}
 			
 		}
 		

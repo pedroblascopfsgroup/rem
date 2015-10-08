@@ -3,8 +3,8 @@
 --## AUTOR=Gonzalo E
 --## FECHA_CREACION=20150715
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1.3
---## INCIDENCIA_LINK=
+--## VERSION_ARTEFACTO=9.1.7-hcj
+--## INCIDENCIA_LINK=-
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -35,14 +35,14 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','1','3')
 ,T_TIPO_VALOR('HC103','HC103_RevisarSolicitud','1','3')
 ,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudFondos','1','3')
 ,T_TIPO_VALOR('HC103','HC103_AprobarSolicitudInsc','1','3')
-,T_TIPO_VALOR('HC103','HC103_ConfirmarSolicitud','1','3')
+,T_TIPO_VALOR('HC103','HC103_ConfirmarSolicitud','0','0')
 ,T_TIPO_VALOR('HC103','HC103_RealizarTransferencia','1','3')
 ,T_TIPO_VALOR('HC103','HC103_ConfirmarTransferencia','1','3')
 ,T_TIPO_VALOR('HC103','HC103_DecisionAprobFondos','0','0')
 ,T_TIPO_VALOR('HC103','HC103_DecisionAprobarSolcIns','0','0')
 ,T_TIPO_VALOR('H005','H005_SolicitudDecretoAdjudicacion','0','0')
 ,T_TIPO_VALOR('H005','H005_notificacionDecretoAdjudicacionAEntidad','1','3')
-,T_TIPO_VALOR('H005','H005_declararIVAeIGIC','0','0')
+,T_TIPO_VALOR('H005','H005_DeclaracionIVAIGIC','0','0')
 ,T_TIPO_VALOR('H005','H005_notificacionDecretoAdjudicacionAlContrario','1','3')
 ,T_TIPO_VALOR('H005','H005_SolicitudTestimonioDecretoAdjudicacion','1','3')
 ,T_TIPO_VALOR('H005','H005_ConfirmarTestimonio','1','3')
@@ -305,6 +305,8 @@ T_TIPO_VALOR('HC103','HC103_SolicitarProvision','1','3')
 ,T_TIPO_VALOR('H015','H015_SolicitarAlquilerSocial','1','3')
 ,T_TIPO_VALOR('H015','H015_FormalizacionAlquilerSocial','1','3')
 ,T_TIPO_VALOR('H015','H015_SuspensionLanzamiento','1','3')
+,T_TIPO_VALOR('H015','H015_AutorizarSuspension','0','0')
+,T_TIPO_VALOR('H015','H015_ConfirmarFormalizacion','1','3')
 ,T_TIPO_VALOR('H008','H008_RevisarEstadoCargas','0','0')
 ,T_TIPO_VALOR('H008','H008_RegistrarPresentacionInscripcion','0','0')
 ,T_TIPO_VALOR('H008','H008_SaneamientoDecision','0','0')

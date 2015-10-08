@@ -20,20 +20,20 @@ import es.capgemini.pfs.users.domain.Usuario;
 public class EXTAcuerdo extends Acuerdo {
 
 	private static final long serialVersionUID = 2075119525614504409L;
-	
+
 	@Column(name="ACU_MOTIVO")
 	private String motivo;
-	
+
 	@Column(name = "ACU_FECHA_LIMITE")
 	private Date fechaLimite;	
-	
+
 	@Column(name = "ACU_IMPORTE_COSTAS")
 	private Long importeCostas;	
-	
+
     @ManyToOne
     @JoinColumn(name = "ACU_USER_PROPONENTE")
 	private Usuario proponente;
-    
+
     @ManyToOne
     @JoinColumn(name = "USD_ID")
 	private GestorDespacho gestorDespacho;

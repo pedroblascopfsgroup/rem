@@ -481,6 +481,9 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@Column(name = "PER_EMPLEADO")
 	private Boolean esEmpleado;
 
+	@Column(name = "PER_SITUACION_CONCURSAL")
+	private String situacionConcursal;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	@JoinColumn(name = "DD_COS_ID")
@@ -514,8 +517,6 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@JoinColumn(name = "PER_ID", updatable= false)
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
-	
-
 	
 
 	/**
@@ -894,7 +895,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 * @return situacion
 	 */
 	public String getSituacion() {
-		return this.getFormulas() == null ? null :this.getFormulas() == null ? null :this.getFormulas().getSituacion();
+		return this.getFormulas() == null ? null : this.getFormulas().getSituacion();
 	}
 
 	/**
@@ -3057,6 +3058,22 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		return this.getFormulas() == null ? null :this.getFormulas().getDescripcionCnae();
 	}
 
+	public String getSituacionConcursal() {
+		return situacionConcursal;
+	}
+
+	public void setSituacionConcursal(String situacionConcursal) {
+		this.situacionConcursal = situacionConcursal;
+	}
+
+	public String getFechaSituacionConcursal() {
+		return this.getFormulas() == null ? null :this.getFormulas().getFechaSituacionConcursal();
+	}
+	
+	public Boolean getClienteReestructurado() {
+		return this.getFormulas() == null ? null :this.getFormulas().getClienteReestructurado();
+	}
+	
 	@Override
 	public void setFieldHandler(FieldHandler handler) {
 		this.fieldHandler = handler;

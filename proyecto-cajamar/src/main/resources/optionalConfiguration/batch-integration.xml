@@ -13,12 +13,9 @@
 			http://www.springframework.org/schema/integration/file
 			http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd">
 
+	<import resource="classpath:optionalConfiguration/ac-integration-producer.xml" />
+
 	<!-- CONFIGURACION GENERICA E/S -->
-	<bean id="jsonAsuntoPayloadTransformer" class="es.pfsgroup.recovery.integration.JsonDataContainerPayloadTransformer">
-		<constructor-arg index="0">
-			<bean class="es.pfsgroup.recovery.integration.JSONTranslator" />
-		</constructor-arg>
-	</bean>
 	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
 		<property name="targetConnectionFactory">
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -34,9 +31,6 @@
 	</bean>
 	<bean id="integracionConsumerQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${integracion.consumer.cola}"/>
-	</bean>
-	<bean id="salidaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
-		<constructor-arg value="${integracion.output}/${integracion.producer.cola}"/>
 	</bean>
 	<bean id="entradaIntegracionAdapter" class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
 		<constructor-arg value="${integracion.input}/${integracion.consumer.cola}"/>
@@ -143,6 +137,15 @@
 			<bean class="es.pfsgroup.recovery.integration.ConsumerActionService">
 				<constructor-arg index="0" ref="bpmConsumerActionMgr" />
 				<constructor-arg index="1" value="${entidad.id}"/>
+				<constructor-arg index="2">
+				    <bean class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+				        <property name="preAuthenticatedUserDetailsService">
+				            <bean class="es.pfsgroup.recovery.integration.AuthenticationPayloadService" >
+				            	<property name="userNameprefix" value="EXT-"/>
+				            </bean>
+				        </property>
+				    </bean>
+				</constructor-arg>
 			</bean>
 		</integration:service-activator>
 	</integration:chain>
@@ -204,7 +207,7 @@
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 							<property name="tipo" value="BPM-TAREA-INICIO"/>
-							<property name="codigoTarea" value="H005_declararIVAeIGIC"/>
+							<property name="codigoTarea" value="H005_DeclaracionIVAIGIC"/>
 						</bean>
 					</constructor-arg>
 					<property name="description" value="Inicio de BPM Declarar IVA/IGIC"/>
@@ -212,6 +215,7 @@
 					<property name="crearNuevo" value="true"/>
 					<property name="forzarTipoProcedimiento" value="HCJ001"/>
 				</bean>
+				
 				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
@@ -223,6 +227,19 @@
 					<property name="iniciarBPM" value="true"/>
 					<property name="crearNuevo" value="true"/>
 					<property name="forzarTipoProcedimiento" value="HCJ002"/>
+				</bean>
+				
+				<bean class="es.pfsgroup.recovery.integration.bpm.consumer.ProcedimientoConsumer">
+					<constructor-arg index="0">
+						<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
+							<property name="tipo" value="BPM-TAREA-INICIO"/>
+							<property name="codigoTarea" value="HC103_ConfirmarSolicitud|H064_resultadoSolicitudConsignacion|H032_AutorizarPago|H011_AutorizarPropuesta|H015_AutorizarSuspension|HC104_AutorizarPropuesta|H008_ObtenerAprobPropuesta"/>
+						</bean>
+					</constructor-arg>
+					<property name="description" value="Inicio de Autorización"/>
+					<property name="iniciarBPM" value="true"/>
+					<property name="crearNuevo" value="true"/>
+					<property name="forzarTipoProcedimiento" value="HCJ003"/>
 				</bean>
 
 				<!-- ACTUALIZACION DE CABECERA RECURSO -->

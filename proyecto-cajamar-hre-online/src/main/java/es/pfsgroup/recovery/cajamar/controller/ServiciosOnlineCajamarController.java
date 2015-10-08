@@ -25,8 +25,13 @@ public class ServiciosOnlineCajamarController {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String ventanaSolicitudTasacion() {
+	public String ventanaSolicitudTasacion(
+			@RequestParam(value = "idBien", required = true) Long idBien,
+			ModelMap map) {
+		
+		map.put("idBien", idBien);
 		return VENTANA_SOLICITAR_TASACION;
 	}
 	
@@ -45,6 +50,7 @@ public class ServiciosOnlineCajamarController {
 		return SOLICITAR_TASACION_JSON;
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String consultaDeSaldos(Long cntId, ModelMap map) {
 		ResultadoConsultaSaldo resultado = serviciosOnlineCajamar.consultaDeSaldos(cntId);

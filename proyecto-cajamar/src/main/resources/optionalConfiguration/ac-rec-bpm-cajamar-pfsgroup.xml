@@ -28,6 +28,7 @@
 	<!-- BPM activos -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteElevacionCajamar/hcj_elevacionCajamar.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAutorizacion/hcj_autorizacion.xml" p:version="-1"/>
 	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteFaseLiquidacion/cj_faseLiquidacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteConclusion/cj_conclusion.xml" p:version="-1"/>

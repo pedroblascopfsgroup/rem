@@ -58,7 +58,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificadoLibertadArrendamiento/hcj_certificadoLibertadArrendamiento.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSolicitudSolvenciaPatrimonial/hcj_solicitudSolvenciaPatrimonial.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/hcj_tramiteDePosesion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMandamientoCancelacionCargas/hcj_mandamientoCancelacionCargas.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
@@ -340,10 +340,26 @@
 	                return adjudicacionProcedimientoManager.comprobarCargasBienesProcedimiento(idProcedimiento);
 				}
 				
-				def comprobarExisteDocumento = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, it);
-	            }					            
+				def dameFechaFinTareaProcedimientoPadre = {
+	            	def fechaFin = null;
+	            	def procedimientoPadre = procedimientoManager.getProcedimiento(idProcedimiento).getProcedimientoPadre();
+	            	def tareaExternaManager = ctx.getBean("tareaExternaManager");
+	            	def tareas = tareaExternaManager.obtenerTareasPorProcedimiento(procedimientoPadre.getId());
+	            	
+	            	if (tareas != null) {
+            			for (tarea in tareas) {
+            				if(tarea != null) {
+	                			def codigo = tarea.getTareaProcedimiento().getCodigo();
+	                			if(codigo == it) {
+	                				fechaFin = new java.text.SimpleDateFormat('yyyy-MM-dd').format(tarea.getTareaPadre().getFechaFin());
+	                				break;
+	                			}
+	                		}
+                		}
+                	}
+                	
+                	return
+                }
 
   			 ]]>
   			</value>

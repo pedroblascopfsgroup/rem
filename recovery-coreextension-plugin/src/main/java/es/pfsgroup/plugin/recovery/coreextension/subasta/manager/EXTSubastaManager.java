@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.BienManager;
 import es.capgemini.pfs.bien.model.Bien;
 import es.pfsgroup.commons.utils.Checks;
@@ -57,18 +56,8 @@ public class EXTSubastaManager {
 			subasta.setAsunto(subastaDto.getProcedimiento().getAsunto());
 			subasta.setGuid(subastaDto.getGuid());
 			
-			if (!Checks.esNulo(subastaDto.getUsuarioSuplantado())) {
-				subasta.setAuditoria(Auditoria.getNewInstance());
-				subasta.getAuditoria().setUsuarioCrear(subastaDto.getUsuarioSuplantado());
-				subasta.getAuditoria().setSuplantarUsuario(subastaDto.getUsuarioSuplantado());
-			}
-			
 		} else {
 			subasta = getSubasta(subastaDto.getId());
-			
-			if (!Checks.esNulo(subastaDto.getUsuarioSuplantado())) {
-				subasta.getAuditoria().setSuplantarUsuario(subastaDto.getUsuarioSuplantado());
-			}
 			
 		}
 		
@@ -101,18 +90,8 @@ public class EXTSubastaManager {
 			loteSubasta.setGuid(dto.getGuid());
 			loteSubasta.setSubasta(dto.getSubasta());
 			
-			if (!Checks.esNulo(dto.getUsuarioSuplantado())) {
-				loteSubasta.setAuditoria(Auditoria.getNewInstance());
-				loteSubasta.getAuditoria().setUsuarioCrear(dto.getUsuarioSuplantado());
-				loteSubasta.getAuditoria().setSuplantarUsuario(dto.getUsuarioSuplantado());
-			}
-			
 		} else {
 			loteSubasta = this.getLoteSubasta(dto.getId());
-			
-			if (!Checks.esNulo(dto.getUsuarioSuplantado())) {
-				loteSubasta.getAuditoria().setSuplantarUsuario(dto.getUsuarioSuplantado());
-			}
 			
 		}
 		

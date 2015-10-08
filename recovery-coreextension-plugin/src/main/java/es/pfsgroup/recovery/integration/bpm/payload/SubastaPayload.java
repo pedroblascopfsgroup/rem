@@ -28,12 +28,10 @@ public class SubastaPayload {
 	
 	private final DataContainerPayload data;
 	private final ProcedimientoPayload procedimiento;
-	private final UsuarioPayload usuario;
 
 	public SubastaPayload(DataContainerPayload data) {
 		this.data = data;
 		this.procedimiento = new ProcedimientoPayload(data);
-		this.usuario = new UsuarioPayload(data);
 	}
 	
 	public SubastaPayload(String tipo, Subasta subasta) {
@@ -43,7 +41,6 @@ public class SubastaPayload {
 	public SubastaPayload(DataContainerPayload data, Subasta subasta) {
 		this.data = data;
 		this.procedimiento = new ProcedimientoPayload(data, subasta.getProcedimiento());
-		this.usuario = new UsuarioPayload(data, subasta);
 		build(subasta);
 	}
 	

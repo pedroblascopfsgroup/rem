@@ -9,11 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.prorroga.ProrrogaManager;
@@ -39,7 +36,6 @@ import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
 import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.payload.TareaNotificacionPayload;
-import es.pfsgroup.recovery.integration.bpm.payload.UsuarioPayload;
 
 /**
  * 
@@ -118,21 +114,8 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 		return tareaPayload.getGuidTareaAsociadaProrroga(); // String.format("%d-EXT", tareaPayload.getIdTareaAsociadaProrroga());
 	}
 
-	
-	private void suplantarUsuario(UsuarioPayload usuarioPayload, Auditable auditable) {
-		Auditoria auditoria = auditable.getAuditoria();
-		if (auditoria==null) {
-			auditoria = Auditoria.getNewInstance();
-		}
-		auditoria.setSuplantarUsuario(usuarioPayload.getNombre());
-		auditoria.setUsuarioCrear(usuarioPayload.getNombre());
-		auditoria.setUsuarioModificar(usuarioPayload.getNombre());
-		auditoria.setUsuarioBorrar(usuarioPayload.getNombre());
-	}
-	
 	private void postCrearTarea(TareaNotificacionPayload tareaPayload, EXTTareaNotificacion tareaNotif) {
 
-		suplantarUsuario(tareaPayload.getUsuario(), tareaNotif);
 		acualizarProrroga(tareaPayload, tareaNotif);
 		
 		if (tareaPayload.getBorrada()) {
@@ -148,7 +131,7 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 			tareaNotif.setFechaVenc(tareaPayload.getFechaVencimiento());
 			tareaNotif.setFechaVencReal(tareaPayload.getFechaVencimientoReal());
 			tareaNotif.setTarea(tareaPayload.getTarea());
-			
+
 			executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tareaNotif);
 			logger.debug(String.format("[INTEGRACION] TAR[%s] Post crear tarea, tarea actualizada!!", tareaNotif.getGuid()));
 		}
@@ -189,8 +172,6 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 			dtoProrroga.setIdTareaAsociada(tarNotifAsociada.getId());
 				
 			Prorroga prorroga = prorrogaManager.crearNuevaProrroga(dtoProrroga);
-			suplantarUsuario(tareaPayload.getUsuario(), prorroga);
-	        executor.execute(InternaBusinessOperation.BO_PRORR_MGR_SAVE_OR_UPDATE, prorroga);
 			tareaNotif.setProrroga(prorroga);
 			
 		} else {
@@ -276,7 +257,13 @@ public class TareaNotificacionConsumer extends ConsumerAction<DataContainerPaylo
 			Long idTarea = proxyFactory.proxy(TareaNotificacionApi.class).crearTarea(dto);
 			TareaNotificacion tareaN = extTareaNotifificacionManager.get(idTarea); 
 			tarNotif = EXTTareaNotificacion.instanceOf(tareaN);
+			
+			// Suplanta usuario pendiente de realizar la tarea (lo pone en el USAURIOBORRAR)
+			// para mostrarlo en el histórico
+			tarNotif.getAuditoria().setUsuarioBorrar(tareaPayload.getData().getUsername());
+			
 		}
+		
 		logger.info(String.format("[INTEGRACION] TAR[%s] Guardando adicionales de Tarea Notificación...", tarUID));
 		postCrearTarea(tareaPayload, tarNotif);
 		logger.info(String.format("[INTEGRACION] TAR[%s] Tarea Notificación guardada!!", tarUID));

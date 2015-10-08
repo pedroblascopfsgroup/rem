@@ -74,6 +74,8 @@
 			(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA))
 		  {
 		  	btnAltaAcuerdo.setDisabled(true);
+		  } else {
+		  	btnAltaAcuerdo.setDisabled(false);
 		  }
 	    
 	    

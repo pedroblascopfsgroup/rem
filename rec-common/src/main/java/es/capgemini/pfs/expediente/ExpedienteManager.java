@@ -2943,7 +2943,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	    	//REVISAR
 	    	if(acuerdos.size() > 0 && acuerdos.size() == i && elevadaEncontrada){
 	    		cumple = true;
-	    	}else {
+	    	}else if(acuerdos.size() > 1 && acuerdos.size() != i){
 	    		cumple = false;
 	    	} 	
     	}
@@ -2997,7 +2997,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	   	    //hubiese en otro estado no se cumpliria la regla.
 	    	if(acuerdos.size() > 1 && acuerdos.size() == i && elevadaEncontrada){
 	    		cumple = true;
-	    	}else {
+	    	}else if(acuerdos.size() > 1 && acuerdos.size() != i) {
 	    		cumple = false;
 	    	}
     	}
@@ -3052,7 +3052,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	   	    //hubiese en otro estado no se cumpliria la regla.
 		  if(acuerdos.size() > 1 && acuerdos.size() == i && propuestaEncontrada){
 			  cumple =  true;
-		  }else{
+		  }else if(acuerdos.size() > 1 && acuerdos.size() != i){
 			  cumple = false;
 		  }
       }

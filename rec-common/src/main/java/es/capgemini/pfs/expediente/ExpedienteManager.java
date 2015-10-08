@@ -1347,6 +1347,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	 * {@inheritDoc}
 	 */
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA)
+	@Transactional(readOnly = false)
 	@Override
 	public void elevarExpedienteAFormalizarPropuesta(Long idExpediente,
 			Boolean isSupervisor) {
@@ -1376,6 +1377,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	 * {@inheritDoc}
 	 */
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE)
+	@Transactional(readOnly = false)
 	@Override
 	public void devolverExpedienteADecisionComite(Long idExpediente,
 			String respuesta) {

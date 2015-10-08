@@ -112,6 +112,9 @@
 				<value>H002_SenyalamientoSubasta</value>
 			</list>
 		</property>
+		<property name = "plantillaReportPropuestaCancelacionCargas">
+			<value>reportPropuestaCancelacionCargasHaya.jrxml</value>
+		</property>
 	</bean>
 
 	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">

@@ -952,15 +952,29 @@
 	var validarDatosFormulario = function(){
 	
 		var saldoRec=saldoARecuperar.getValue();
-		if (chkFinalizarOrigen.getValue() || chkParalizarOrigen.getValue()){
-			return true;
+		if (chkFinalizarOrigen.getValue()){
+			if(comboCausasFinalizar.getValue()){
+				return true;
+			}else{
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisión." />');
+			}
+		} else if(chkParalizarOrigen.getValue()){
+			if(comboCausasParalizar.getValue()){
+				if(fechaHasta.getValue()){
+					return true;
+				}else{
+					Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.fechaNula" text="**Debe seleccionar una fecha de fin de paralización." />');
+				}
+			}else{
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisión." />');
+			}
 		} else if(procedimientoStore.getCount() >= 1){
 			return true;
 		} else {
 			btnAceptarPropuesta.enable();
 			return false;
 		}
-	
+		return false;
 	}
 
 	
@@ -981,7 +995,7 @@
 		text : '<s:message code="decisionProcedimiento.proponer" text="**Proponer" />'
 		,iconCls:'icon_elevar'
 		,handler : function(){
-			if (validarDatosProponer()){
+			if (validarDatosFormulario()){
 				var params = transform();
 				params["idProcedimiento"]='${idProcedimiento}';
 				params["idDecision"]='${id}';
@@ -1003,19 +1017,6 @@
 		btnProponer.disable();
 	})
 	
-	var validarDatosProponer = function(){
-	
-		
-		if (chkFinalizarOrigen.getValue() && comboCausasFinalizar.getValue()){
-			return true;
-		} else if (chkParalizarOrigen.getValue() && comboCausasParalizar.getValue() && fechaHasta.getValue()){
-			return true;
-		} else {
-			btnProponer.enable();
-			return false;
-		}
-	
-	}
 	
 	var btnRechazar=new Ext.Button({
 		text:'<s:message code="decisionProcedimiento.rechazar" text="**Rechazar" />'

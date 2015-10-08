@@ -246,9 +246,14 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     private Date parseaFecha(final String fecha, final String formato) {
         final SimpleDateFormat sdf = new SimpleDateFormat(formato);
         try {
-            return sdf.parse(fecha);
+        	if(!Checks.esNulo(fecha)){
+        		return sdf.parse(fecha);
+        	}else{
+        		return null;
+        	}
         } catch (ParseException e) {
             logger.error("No se ha podido parsear la fecha '" + fecha + "' al formato '" + formato + "'");
+            logger.error(e.getMessage(), e);
             return null;
         }
     }

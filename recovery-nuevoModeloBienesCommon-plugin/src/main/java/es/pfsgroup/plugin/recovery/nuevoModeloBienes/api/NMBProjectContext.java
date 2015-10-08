@@ -80,7 +80,7 @@ public interface NMBProjectContext {
 	 * 
 	 * @return Códgio Subasta Sareb
 	 */        
-        String getTipoSubastaSareb();
+        String getCodigoSubastaBankia();
         
 	String getComboPostoresCelebracionSubasta();
 

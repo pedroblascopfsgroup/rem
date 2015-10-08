@@ -41,6 +41,7 @@ BEGIN
 	IF V_NUM_TABLAS > 0 THEN
 		DBMS_OUTPUT.PUT_LINE('[INFO] El subtipo PROP_EVENT ya existe por lo tanto modificaremos el registro');
 		V_SQL := 'UPDATE '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE SET DD_TAR_ID=1 WHERE DD_STA_CODIGO = ''PROP_EVENT''';
+		EXECUTE IMMEDIATE V_SQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Subtipo PROP_EVENT modificado OK');
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] El subtipo PROP_EVENT no existe por lo tanto crearemos el registro');

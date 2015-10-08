@@ -99,5 +99,13 @@ public interface PropuestaApi {
 	 * @param nuevoCodigoEstado
 	 * @param generarEvento
 	 */
-	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento);	
+	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento);
+	
+	/**
+	 * Valida que AL MENOS UNA las propuestas pasadas cumplan con alguno de los Estados validos pasados
+	 * @param propuestas
+	 * @param codigosEstadosValidos
+	 * @return
+	 */	
+	public Boolean estadoAlgunaPropuesta(List<EXTAcuerdo> propuestas, List<String> codigosEstadosValidos);	
 }

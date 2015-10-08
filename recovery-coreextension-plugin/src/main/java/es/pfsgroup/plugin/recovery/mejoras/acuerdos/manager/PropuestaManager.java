@@ -361,11 +361,28 @@ public class PropuestaManager implements PropuestaApi {
 	public Boolean estadoTodasPropuestas(List<EXTAcuerdo> propuestas, List<String> codigosEstadosValidos) {
 		for (EXTAcuerdo propuesta : propuestas) {
 			if (!codigosEstadosValidos.contains(propuesta.getEstadoAcuerdo().getCodigo())) {
+				//Se ha encontrado una propuesta que no esta en ninguno de los estados validos
 				return false;
 			}
 		}
 		
+		//Todas las propuestas estan en un estado valido
 		return true;
+	}
+	
+    /**
+     * {@inheritDoc}
+     */	
+	public Boolean estadoAlgunaPropuesta(List<EXTAcuerdo> propuestas, List<String> codigosEstadosValidos) {
+		for (EXTAcuerdo propuesta : propuestas) {
+			if (codigosEstadosValidos.contains(propuesta.getEstadoAcuerdo().getCodigo())) {
+				//Hemos encontrado una propuesta en uno de los estados validos
+				return true;
+			}
+		}
+		
+		//No se ha encontrado ninguna propuesta en uno de los estados validos
+		return false;
 	}
 	
 	/**

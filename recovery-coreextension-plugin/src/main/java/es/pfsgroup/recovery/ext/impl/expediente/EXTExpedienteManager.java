@@ -267,4 +267,39 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         }
 
 	}
+	
+	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA)
+	@Transactional(readOnly = false)
+	@Override
+	public void elevarExpedienteAFormalizarPropuesta(Long idExpediente, Boolean isSupervisor) {
+        //Validamos el estado de todas las propuestas (sea Elevadas o rechazado o incumplido o cumplido o cancelado )
+        List<String> codigosEstadosValidos = new ArrayList<String>();
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+        
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+        
+        List<EXTAcuerdo> propuestasExp = propuestaManager.listadoPropuestasByExpedienteId(idExpediente);
+        Boolean propuestasEstadoConforme = propuestaManager.estadoTodasPropuestas(propuestasExp, codigosEstadosValidos);
+        
+    	//Comprobamos que al menos una propuesta está en estado Elevada
+        List<String> codigoEstadoElevado = new ArrayList<String>();
+        codigoEstadoElevado.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+        Boolean algunaPropuestaElevada = propuestaManager.estadoAlgunaPropuesta(propuestasExp, codigoEstadoElevado);
+        
+        if (propuestasEstadoConforme && algunaPropuestaElevada) {
+        	//Las propuestas en estado "Elevada"/Aceptada se pasan a Vigente
+        	for (EXTAcuerdo propuesta: propuestasExp) {
+        		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_ACEPTADO)) {
+        			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_VIGENTE, true);
+        		}
+        	}
+        	
+        	expedienteManager.elevarExpedienteAFormalizarPropuesta(idExpediente, isSupervisor);
+        } else {
+        	throw new BusinessOperationException("expediente.elevar.falloEstadoPropuestas");
+        }
+	}
 }

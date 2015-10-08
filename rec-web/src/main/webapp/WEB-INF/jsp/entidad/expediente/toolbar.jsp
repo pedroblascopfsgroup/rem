@@ -98,7 +98,7 @@ function(entidad,page){
 			
 			/*Accion devolver a comite*/
 			case tipoAccion.DEVOLVER_COMITE:
-			titulo='<s:message code="expedientes.menu.devolvercomite" text="**Devolver a Decisión Comité" />';
+			titulo='<s:message code="expedientes.menu.devolverComite" text="**Devolver a Decisión de Comité" />';
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();

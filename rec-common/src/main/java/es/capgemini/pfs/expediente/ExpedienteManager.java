@@ -2828,14 +2828,14 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      * @return
      */
     private boolean cumplimiendoReglaFPDC(Expediente expediente, List<Acuerdo> acuerdos){
-    	Boolean cumple = true;
+    	Boolean cumple = false;
     	int i = 0;
     	
     	if(acuerdos != null){
     		//recorremos las propuestas del expediente
 	    	for(Acuerdo acuerdo: acuerdos){
 	    		//Booleano que controla si hemos encontrado una propuesta en estado vigente
-	    		if(acuerdo.getEstaVigente()){
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
 	    			i++;
 	    		}
 	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada
@@ -2858,7 +2858,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	    	}
 	    	
 	    	//Comprobamos si las propuestas tienen el estado correcto (vigente, rechazado, cumplida, incumplida) para cumplir la regla
-	    	if(acuerdos.size() == i){
+	    	if(acuerdos.size() > 0 && acuerdos.size() == i){
 	    		cumple = true;
 	    	}else{
 	    		cumple = false;
@@ -2877,7 +2877,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      * @return
      */
     private boolean cumplimientoReglaDCFP(Expediente expediente, List<Acuerdo> acuerdos){
-    	Boolean cumple = true;
+    	Boolean cumple = false;
     	Boolean elevadaEncontrada = false;
     	int i = 0;
     	if(acuerdos != null){
@@ -2919,7 +2919,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	    	}
 	    	
 	    	//Para el caso de mas de una propuesta, obligatoriamente tiene que haber una en estado elevada y el resto en elevada, rechazada, cumplida o incumplida
-	    	if(acuerdos.size() > 0 && acuerdos.size() == i && elevadaEncontrada){
+	    	if(acuerdos.size() > 1 && acuerdos.size() == i && elevadaEncontrada){
 	    		cumple = true;
 	    	}else if(acuerdos.size() > 1 && acuerdos.size() != i){
 	    		cumple = false;
@@ -2937,7 +2937,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      * @return
      */
     private boolean cumplimientoReglaDCRE(Expediente expediente, List<Acuerdo> acuerdos){
-    	Boolean cumple = true;
+    	Boolean cumple = false;
     	Boolean elevadaEncontrada = false;
     	int i = 0;
     	
@@ -2997,7 +2997,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     private boolean cumplimientoReglaCERE(Expediente expediente, List<Acuerdo> acuerdos){
     	
       Boolean propuestaEncontrada = false;
-      Boolean cumple = true;
+      Boolean cumple = false;
       int i = 0;
       
       if(acuerdos != null){

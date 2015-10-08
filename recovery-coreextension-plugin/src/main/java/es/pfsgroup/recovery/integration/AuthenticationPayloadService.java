@@ -38,10 +38,15 @@ public class AuthenticationPayloadService implements AuthenticationUserDetailsSe
 		Assert.isInstanceOf(UsuarioSecurity.class, token.getDetails());
 		UsuarioSecurity ud = (UsuarioSecurity)token.getDetails();
 		if (!Checks.esNulo(this.userNameprefix)) {
-			String newUserName = String.format("%s%s", userNameprefix, ud.getUsername());
+			String username = clearUserName(ud.getUsername());
+			String newUserName = String.format("%s%s", userNameprefix, username);
 			ud.setUsername(newUserName);
 		}
 		return ud;
 	}
 	
+	private String clearUserName(String userName) {
+		if (userName==null || userNameprefix==null) return null;
+		return userName.replace(userNameprefix, ""); 
+	}
 }

@@ -66,9 +66,16 @@ public class ExpedienteJudicialController {
 	private GestorTareasApi gestorTareasApi;
 	
 	@RequestMapping
+	public String comprobarFinalizacionPosible(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
+		boolean finalizado = procedimientoPcoApi.comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
+		model.put("finalizado", finalizado);
+		return JSON_RESULTADO_FINALIZAR_PREPARACION;
+	}
+
+	@RequestMapping
 	public String finalizarPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		boolean finalizado = procedimientoPcoApi.finalizarPreparacionExpedienteJudicialPorProcedimientoId(idProcedimiento);
-		if(finalizado) {
+		if (finalizado) {
 			proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARADO);
 		}
 		model.put("finalizado", finalizado);

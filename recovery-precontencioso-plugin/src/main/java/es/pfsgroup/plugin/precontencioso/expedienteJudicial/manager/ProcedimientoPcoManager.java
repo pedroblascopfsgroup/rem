@@ -31,6 +31,7 @@ import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -92,9 +93,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
     @Autowired
     protected TareaExternaManager tareaExternaManager;
 
+	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
 	@Transactional(readOnly = false)
-	public boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
+	public boolean comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
 		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
 		boolean finalizar = true;
 
@@ -104,24 +106,39 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 					finalizar = false;
 					break;
 				}
+			} else {
+				finalizar = false;
+				break;
 			}
 		}
-		if(finalizar) {
-			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
-			if (!DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {				
-				historico.setFechaFin(new Date());
-				genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
-				
-				HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
-				historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
-				DDEstadoPreparacionPCO estadoPreparado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, 
-						DDEstadoPreparacionPCO.PREPARADO);
-				historicoNuevoRegistro.setEstadoPreparacion(estadoPreparado);
-				historicoNuevoRegistro.setFechaInicio(new Date());
-				genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
-			}	
-			avanzarTareaPrepararExpediente(procedimientoPco);		
-		}			
+		return finalizar;
+	}
+
+	@BusinessOperation(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
+	@Override
+	@Transactional(readOnly = false)
+	public boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
+
+		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		boolean finalizar = true;
+		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
+		if (!DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {				
+			historico.setFechaFin(new Date());
+			genericDao.update(HistoricoEstadoProcedimientoPCO.class, historico);
+			
+			HistoricoEstadoProcedimientoPCO historicoNuevoRegistro = new HistoricoEstadoProcedimientoPCO();
+			historicoNuevoRegistro.setProcedimientoPCO(procedimientoPco);
+			DDEstadoPreparacionPCO estadoPreparado = (DDEstadoPreparacionPCO)diccionarioApi.dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, 
+					DDEstadoPreparacionPCO.PREPARADO);
+			historicoNuevoRegistro.setEstadoPreparacion(estadoPreparado);
+			historicoNuevoRegistro.setFechaInicio(new Date());
+			genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);
+		} else {
+			finalizar = false;
+		}	
+		if (finalizar) {
+			avanzarTareaPrepararExpediente(procedimientoPco);
+		}
 
 		return finalizar;
 	}
@@ -193,9 +210,14 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private void cancelaTarea(TareaExterna tareaExterna) {
 
 		if (tareaExterna != null) {
-            tareaExterna.setCancelada(true);
+            tareaExterna.setCancelada(false);
             tareaExterna.setDetenida(false);
-            proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
+            tareaExternaManager.borrar(tareaExterna);
+            
+            TareaNotificacion tarNotif = proxyFactory.proxy(TareaNotificacionApi.class).get(tareaExterna.getTareaPadre().getId());
+            tarNotif.setTareaFinalizada(true);
+            proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarNotif);
+            
             //Buscamos si tiene prorroga activa
             Prorroga prorroga = tareaExterna.getTareaPadre().getProrrogaAsociada();
             //Borramos (finalizamos) la prorroga si es que tiene

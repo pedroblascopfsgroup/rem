@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoP
 public interface ProcedimientoPcoApi {
 
 	public static final String BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID = "plugin.precontencioso.getPrecontenciosoPorProcedimientoId";
+	public static final String BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE = "plugin.precontencioso.comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId";
 	public static final String BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID = "plugin.precontencioso.finalizarPreparacionExpedienteJudicialPorProcedimientoId";
 	public static final String BO_PCO_DEVOLVER_PREPARACION_POR_PRC_ID = "plugin.precontencioso.devolverPreparacionPorProcedimientoId";
 	public static final String BO_PCO_ACTUALIZAR_PROCEDIMIENTO_Y_PCO = "plugin.precontencioso.actualizaProcedimientoPco";
@@ -38,6 +39,9 @@ public interface ProcedimientoPcoApi {
 	 */
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID)
 	ProcedimientoPCODTO getPrecontenciosoPorProcedimientoId(Long idProcedimiento);
+
+	@BusinessOperationDefinition(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
+	boolean comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);
 
 	@BusinessOperationDefinition(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
 	boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento);

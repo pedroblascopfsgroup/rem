@@ -3,15 +3,52 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 
-	
+
 new Ext.Button({
 	id:'prc-btnAccionesPrecontencioso-padre',
 	text: '<s:message code="plugin.precontencioso.button.acciones.titulo" text="**Acciones" />',
 	menu: {
 		items: [{
-			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparación" />',
+			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparaciï¿½n" />',
 			icon:'/pfs/css/book_next.png',
 			handler: function() {
+
+				var mensajeFinalizacionCorrecto = function() {
+					Ext.Msg.show({
+						title: fwk.constant.alert,
+						msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.correcto"
+				 				text="**Se ha finalizado el expediente judicial" />',
+						buttons: Ext.Msg.OK,
+						icon:Ext.MessageBox.WARNING});
+				}
+				
+				var mensajeFinalizacionError = function(mensaje) {
+					Ext.Msg.show({
+						title: fwk.constant.alert,
+						msg: mensaje,
+						buttons: Ext.Msg.OK,
+						icon:Ext.MessageBox.WARNING});
+				}
+				
+				var finalizarPreparacion = function() {
+					Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/finalizarPreparacion'),
+						params: {idProcedimiento: data.id},
+						method: 'POST',
+						success: function (result, request){
+							var resultado = Ext.decode(result.responseText);
+							if(resultado.finalizado == true) {
+								mensajeFinalizacionCorrecto();
+							}else{
+								mensajeFinalizacionError('<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />');
+							}
+						}
+						,error: function(){
+							mensajeFinalizacionError('<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />');
+					    }
+					});	
+				}
+
 				var estado = data.estadoPrecontencioso;
 				var estadoPreparacion = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.PREPARACION" />';
 				var estadoSubsanar = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO.SUBSANAR" />';
@@ -23,44 +60,33 @@ new Ext.Button({
 					result = true;
 				}
 				if(result) {
-					Ext.Msg.show({
-						title: fwk.constant.alert,
-						msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.tipo"
-	             				text="**Podrï¿½n ser finalizados aquellos expedientes que se encuentren en estado Preparaciï¿½n, Subsanar o Subsanar por cambio de procedimiento." />',			             
-						buttons: Ext.Msg.OK,
-						icon:Ext.MessageBox.WARNING});
+					mensajeFinalizacionError('<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.tipo"
+	             				text="**Podrï¿½n ser finalizados aquellos expedientes que se encuentren en estado Preparaciï¿½n, Subsanar o Subsanar por cambio de procedimiento." />');
 				}else{
 					var page = new fwk.Page("pfs", "", "", "");
 					Ext.Ajax.request({
-						url: page.resolveUrl('expedientejudicial/finalizarPreparacion'),
+						url: page.resolveUrl('expedientejudicial/comprobarFinalizacionPosible'),
 						params: {idProcedimiento: data.id},
 						method: 'POST',
-	<!-- 					success: function ( result, request ) { } -->
 						success: function (result, request){
 							var resultado = Ext.decode(result.responseText);
 							if(resultado.finalizado == true){
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.correcto"
-				             				text="**Se ha finalizado el expediente judicial" />',
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
-							}else{
-								Ext.Msg.show({
-									title: fwk.constant.alert,
-									msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.faltanDocumentos"
-				             				text="**No es posible finalizar la preparaciï¿½n del expediente judicial hasta que todos los documentos disponibles estï¿½n adjuntos" />',			             
-									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.WARNING});
+								finalizarPreparacion();
+							} else {
+								Ext.Msg.confirm(
+								'<s:message code="app.confirmar" text="**Confirmar" />', 
+								'<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.faltanDocumentos"
+ 									text="**Alguno de los documentos no ha sido marcado como Disponible o no ha sido Adjuntado. Â¿Desea continuar con la FinalizaciÃ³n de la PreparaciÃ³n?" />', 
+									function(btn) {
+										if (btn == 'yes') {
+											finalizarPreparacion();
+										}
+									}
+								);
 							}
 						}
 						,error: function(){
-							Ext.MessageBox.show({
-					            title: 'Guardado',
-					            msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',
-					            width:300,
-					            buttons: Ext.MessageBox.OK
-					        });
+							mensajeFinalizacionError('<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />');
 						} 
 					});
 				}
@@ -75,7 +101,7 @@ new Ext.Button({
 					Ext.Msg.show({
 						title: fwk.constant.alert,
 						msg: '<s:message code="plugin.precontencioso.button.devolverPreparacion.error.estado"
-	             				text="**Podrán ser devueltos a preparación aquellos expedientes que se encuentren en estado preparado." />',			             
+	             				text="**Podrï¿½n ser devueltos a preparaciï¿½n aquellos expedientes que se encuentren en estado preparado." />',			             
 						buttons: Ext.Msg.OK,
 						icon: Ext.MessageBox.WARNING
 					});

@@ -105,7 +105,7 @@ function package_sql () {
 		if [[ "x$ORACLE_HOME" == "x" ]]; then
 			export ORACLE_HOME=empty
 		fi
-		./sql/tool/package-scripts-from-tag.sh $1 $2 >/dev/null
+		./sql/tool/package-scripts-from-tag.sh $1 $2 &>/dev/null
 		if [[ $? -eq 0 ]]; then
 			echo "OK"
 		else
@@ -222,10 +222,10 @@ if [[ "x$DOCKER_PS" == "x" ]]; then
 	run_container
 	if [[ $? -eq 0 ]]; then
 		$INSTALL_CMD
-	fi
-	if [[ $? -ne 0 ]]; then
-		echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
-		exit 1
+		if [[ $? -ne 0 ]]; then
+			echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
+			exit 1
+		fi
 	fi
 else
 	# Si el contenedor ya existe
@@ -243,11 +243,11 @@ else
 		fi
 		if [[ $? -eq 0 ]]; then
 			$INSTALL_CMD
+			if [[ $? -ne 0 ]]; then
+				echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
+				exit 1
+			fi
 		fi
-	fi
-	if [[ $? -ne 0 ]]; then
-		echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
-		exit 1
 	fi
 
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then

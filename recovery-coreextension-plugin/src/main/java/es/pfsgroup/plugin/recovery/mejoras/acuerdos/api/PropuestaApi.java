@@ -89,4 +89,28 @@ public interface PropuestaApi {
     @BusinessOperationDefinition(BO_PROPUESTA_GET_EXPEDIENTES)
     public List<Bien> getBienesDelExpedienteParaLaPropuesta(Long idExpediente, List<Long> contratosIncluidos);
 
+	
+	/**
+	 * Valida que TODAS las propuestas pasadas cumplan con alguno de los Estados validos pasados
+	 * @param propuestas
+	 * @param codigosEstadosValidos
+	 * @return
+	 */
+	public Boolean estadoTodasPropuestas(List<EXTAcuerdo> propuestas, List<String> codigosEstadosValidos);
+	
+	/**
+	 * Método público para cambiar de estado a una propuesta y generar si es requerido el correspondiente Evento
+	 * @param propuesta
+	 * @param nuevoCodigoEstado
+	 * @param generarEvento
+	 */
+	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento);
+	
+	/**
+	 * Valida que AL MENOS UNA las propuestas pasadas cumplan con alguno de los Estados validos pasados
+	 * @param propuestas
+	 * @param codigosEstadosValidos
+	 * @return
+	 */	
+	public Boolean estadoAlgunaPropuesta(List<EXTAcuerdo> propuestas, List<String> codigosEstadosValidos);	
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="expediente" width="1098" height="1080">
+<root-container name="expediente" width="1295" height="1080">
   <node name="Inicio Expediente" x="456" y="16" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

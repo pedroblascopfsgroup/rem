@@ -76,4 +76,12 @@ public interface EXTExpedienteApi extends ExpedienteApi{
 	 */	
 	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_A_FORMALIZAR_PROPUESTA)
 	void elevarExpedienteAFormalizarPropuesta(Long idExpediente, Boolean isSupervisor);
+	
+	/**
+	 * Devuelve un expediente a decisión comité.
+	 * @param idExpediente id del expediente
+	 * @param respuesta String
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_A_DECISION_COMITE)
+	public void devolverExpedienteADecisionComite(Long idExpediente, String respuesta);
 }

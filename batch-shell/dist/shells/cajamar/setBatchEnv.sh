@@ -4,7 +4,7 @@ export BATCH_INSTALL_DIR=/recovery/batch-server/programas/batch
 export BATCH_USER=recbatch
 export DEVON_HOME=recovery/batch-server
 export LANG=es_ES.UTF-8
-export ORACLE_HOME=/ora11g/instantclient
+export ORACLE_HOME=$ORACLE_BASE/product/11.2.0
 export PATH=$PATH:$ORACLE_HOME/bin:/recovery/batch-server/shells
 
 # Código de la entidad

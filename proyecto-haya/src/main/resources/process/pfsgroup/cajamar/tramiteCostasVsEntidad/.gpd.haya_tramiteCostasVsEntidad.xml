@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteCostasVsEntidad" width="1486" height="877">
+<root-container name="hcj_tramiteCostasVsEntidad" width="1486" height="887">
   <node name="Inicio" x="440" y="15" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -110,10 +110,9 @@
     <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="406" h1="-1" w2="133" h2="204"/>
-      <bendpoint w1="407" h1="-206" w2="134" h2="-1"/>
     </edge>
   </node>
-  <node name="H032_RegistrarPago" x="533" y="432" width="234" height="36">
+  <node name="H032_RegistrarPago" x="765" y="123" width="234" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -147,5 +146,25 @@
     </edge>
   </node>
   <node name="Fin2" x="15" y="434" width="132" height="36"/>
-  <node name="Fin" x="970" y="433" width="132" height="36"/>
+  <node name="Fin" x="1242" y="124" width="132" height="36"/>
+  <node name="H032_AutorizarPago" x="561" y="431" width="205" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="85" h1="-397" w2="-420" h2="-91"/>
+    </edge>
+    <edge>
+      <label x="-53" y="-11"/>
+    </edge>
+  </node>
+  <node name="H032_AutorizarPagoDecision" x="885" y="429" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

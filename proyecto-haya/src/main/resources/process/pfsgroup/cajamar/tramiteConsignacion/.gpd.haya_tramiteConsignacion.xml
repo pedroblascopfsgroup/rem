@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteConsignacion" width="1226" height="877">
+<root-container name="hcj_tramiteConsignacion" width="1045" height="568">
   <node name="Inicio" x="15" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -75,11 +75,6 @@
     </edge>
     <edge>
       <label x="-30" y="-23"/>
-    </edge>
-  </node>
-  <node name="H064_ConsignacionDecision" x="448" y="308" width="203" height="36">
-    <edge>
-      <label x="0" y="6"/>
     </edge>
   </node>
   <node name="Fin" x="655" y="208" width="132" height="36"/>

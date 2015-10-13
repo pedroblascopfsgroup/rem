@@ -25,11 +25,13 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoAcuerdoDto;
 import es.capgemini.pfs.termino.dto.TerminoOperacionesDto;
+import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
@@ -42,6 +44,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.revisionProcedimientos.RevisionProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.revisionProcedimiento.dto.RevisionProcedimientoDto;
@@ -65,6 +68,7 @@ public class MEJAcuerdoController {
 	static final String JSON_CONFIG_USERS_ACUERDO_ASUNTOS = "plugin/mejoras/acuerdos/configUsersAcuerdoAsuntoJSON";
 	static final String JSP_FINALIZACION_ACUERDO = "plugin/mejoras/acuerdos/finalizacionAcuerdo";
 	static final String JSON_LISTADO_DERIVACIONES = "plugin/mejoras/acuerdos/listadoDerivacionesAcuerdoJSON";	
+	static final String JSP_EDITAR_TERMINO_ESTADO_GESTION = "plugin/mejoras/acuerdos/edicionEstadoGestionTermino";
 	
 	@Autowired
 	IntegracionBpmService integracionBpmService;
@@ -75,6 +79,9 @@ public class MEJAcuerdoController {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private UtilDiccionarioApi diccionarioManager;
+
 	@Autowired TerminoOperacionesManager terminoOperacionesManager;
 	
 	@Autowired MEJAcuerdoApi mejAcuerdoApi;
@@ -205,19 +212,20 @@ public class MEJAcuerdoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openAltaTermino(ModelMap map, 
-			@RequestParam(value = "id", required = true) Long id,
-			String contratosIncluidos, 
-			Long idAcuerdo) {
+			@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
+			String contratosIncluidos, Boolean esPropuesta) {
 			
-		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
-			
-		map.put("termino", termino);
-		
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-			
-		map.put("asunto", asunto);
+
 		map.put("contratosIncluidos", contratosIncluidos);		
 		map.put("idAcuerdo", idAcuerdo);
+		map.put("esPropuesta", esPropuesta);
+		
+		if(esPropuesta){
+			Acuerdo acuerdo = genericDao.get(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+			if(!Checks.esNulo(acuerdo)){
+				map.put("idExpediente", acuerdo.getExpediente().getId());	
+			}
+		}
 		
 		// Obtenemos el tipo de acuerdo para PLAN_PAGO
 		DDTipoAcuerdo tipoAcuerdoPlanPago = genericDao.get(DDTipoAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAcuerdo.CODIGO_PLAN_PAGO));
@@ -249,7 +257,6 @@ public class MEJAcuerdoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openDetalleTermino(ModelMap map, @RequestParam(value = "id", required = true) Long id, 
-							@RequestParam(value = "idAsunto", required = true) Long idAsunto,
 							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
 							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
 		
@@ -260,9 +267,6 @@ public class MEJAcuerdoController {
 		map.put("termino", termino);
 		
 		map.put("operacionesPorTipo", terminoOperacionesManager.getOperacionesPorTipoAcuerdo(termino.getOperaciones()));
-		
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(idAsunto);
-		map.put("asunto", asunto);
 		
 		map.put("idAcuerdo", idAcuerdo);
 		
@@ -660,4 +664,44 @@ public class MEJAcuerdoController {
 		 }		
 	}	
 
+	/**
+	 * 
+	 * Muestra la ventana de modificación de Estado de Gestión del Término
+	 * 
+	 */
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String openEstadoGestion(ModelMap map, @RequestParam(value = "id", required = true) Long id,
+							@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo,
+							@RequestParam(value = "soloConsulta", required = true) String soloConsulta) {
+		
+		List<DDEstadoGestionTermino> listaEstados=diccionarioManager.dameValoresDiccionario(DDEstadoGestionTermino.class);
+
+		TerminoAcuerdo termino = proxyFactory.proxy(MEJAcuerdoApi.class).getTerminoAcuerdo(id);
+
+		map.put("termino", termino);		
+		map.put("idAcuerdo", idAcuerdo);
+		map.put("soloConsulta", soloConsulta);
+		map.put("listaEstados", listaEstados);		
+			
+		return JSP_EDITAR_TERMINO_ESTADO_GESTION;
+	}
+	
+	/**
+	 * Se realizan las acciones pertinentes para cambiar el estado de gestion del termino
+	 * @param request
+	 * @param map
+	 * @param idTermino
+	 * @param nuevoEstadoGestion
+	 * @return
+	 */
+	@RequestMapping
+	private String guardarEstadoGestion(WebRequest request, ModelMap map,Long idTermino,Long nuevoEstadoGestion){
+
+		proxyFactory.proxy(MEJAcuerdoApi.class).guardarEstadoGestion(idTermino, nuevoEstadoGestion);
+		
+		return "default";
+	}
+	
 }

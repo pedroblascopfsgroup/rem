@@ -228,6 +228,18 @@ public class ITIEstadoManager {
 		return estado;
 	}
 	
+	@BusinessOperation(PluginItinerariosBusinessOperations.EST_MGR_ESTADOFPITI)
+	public Estado dameEstadoFP(Long id){
+		List<Estado> estadosIti = estadoDao.getEstadosItienario(id);
+		Estado estado=null;
+		for(Estado est: estadosIti){
+			if (est.getCodigo().equals("FP") ){
+				estado=est;
+			}
+		}
+		return estado;
+	}
+	
 	@BusinessOperation(PluginItinerariosBusinessOperations.EST_MGR_ESTADOCEITI)
 	public Estado dameEstadoCE(Long id){
 		//return dameEstadoPorTipo(id, "DC");
@@ -298,7 +310,7 @@ public class ITIEstadoManager {
 	@BusinessOperation(PluginItinerariosBusinessOperations.EST_MGR_SETAUTOMATICO)
 	public void setEstadoAutomatico(Long id){
 		if(id== null){
-			throw new IllegalArgumentException("El atributo de entrada no es válido");
+			throw new IllegalArgumentException("El atributo de entrada no es vï¿½lido");
 		}
 		if(estadoDao.get(id)== null){
 			throw new BusinessOperationException("No existe el estado");

@@ -12,8 +12,6 @@ import es.pfsgroup.recovery.integration.DataContainerPayload;
 
 public class TareaNotificacionPayload {
 	
-	public final static String JBPM_CONTEXT_USUARIO_REMOTO = "remoto.usuario";
-
 	public final static String KEY = "@tar";
 	
 	private static final String CAMPO_FECHAINICIO = String.format("%s.fechaIni", KEY);
@@ -33,13 +31,16 @@ public class TareaNotificacionPayload {
 	private static final String CAMPO_PRORROGA_TAR_ASOCIADA = String.format("%s.prorroga.tarAsoc", KEY);
 	
 	private final DataContainerPayload data;
+
 	private final AsuntoPayload asunto;
-	private final UsuarioPayload usuario;
 
 	public TareaNotificacionPayload(DataContainerPayload data) {
 		this.data = data;
 		this.asunto = new AsuntoPayload(data);
-		this.usuario = new UsuarioPayload(data);
+	}
+
+	public DataContainerPayload getData() {
+		return data;
 	}
 	
 	public TareaNotificacionPayload(String tipo, TareaNotificacion tarea) {
@@ -49,7 +50,6 @@ public class TareaNotificacionPayload {
 	public TareaNotificacionPayload(DataContainerPayload data, TareaNotificacion tarea) {
 		this.data = data;
 		this.asunto = new AsuntoPayload(data, tarea.getAsunto());
-		this.usuario = new UsuarioPayload(data, tarea);
 		build(tarea);
 	}
 	
@@ -197,10 +197,6 @@ public class TareaNotificacionPayload {
 		return data.getFecha(CAMPO_FECHAVENCREAL);
 	}
 	
-	public UsuarioPayload getUsuario() {
-		return usuario;
-	}
-
 	private void setGuidTareaAsociadaProrroga(String valor) {
 		data.addGuid(CAMPO_PRORROGA_TAR_ASOCIADA, valor);
 	}

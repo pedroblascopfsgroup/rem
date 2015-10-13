@@ -179,8 +179,8 @@
 	</node>
 
 	<decision name="HC103_ConfirmarSolicitudDecision" expression="#{HC103_ConfirmarSolicitudDecision}">
-		<transition to="HC103_DecisionAprobFondos" name="RECHAZADO"></transition>
-		<transition to="HC103_RealizarTransferencia" name="ACEPTADO"></transition>
+		<transition to="HC103_RealizarTransferencia" name="aceptado"></transition>
+		<transition to="Fin" name="denegado"></transition>
 	</decision>
 
 	<state name="HC103_ConfirmarTransferencia">
@@ -206,7 +206,6 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
-
 	<end-state name="Fin">
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"
@@ -216,6 +215,5 @@
 			</action>
 		</event>
 	</end-state>
-
 
 </process-definition>

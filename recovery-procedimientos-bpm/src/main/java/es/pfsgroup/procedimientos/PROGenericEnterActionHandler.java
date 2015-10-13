@@ -396,7 +396,7 @@ public class PROGenericEnterActionHandler extends PROGenericActionHandler {
 		 * ya que existe otro método de asignar los bienes asociados
 		 * correspondientes
 		 */
-		if(executionContext.getNode().getName().contains("BPMTramiteAdjudicacionV4")){
+		if(executionContext.getNode().getName().contains("BPMTramiteAdjudicacion")){
 			return true;
 		}
 		

@@ -85,7 +85,8 @@ public class Evento implements Serializable {
         //Si se trata de una tarea CE, RE, DC, devolvemos la descripción larga
         if (SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
                 || SubtipoTarea.CODIGO_REVISAR_EXPEDIENE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
-                || SubtipoTarea.CODIGO_DECISION_COMITE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
+                || SubtipoTarea.CODIGO_DECISION_COMITE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
+                || SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
 
         			return tarea.getSubtipoTarea().getDescripcionLarga();
         }

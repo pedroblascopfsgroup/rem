@@ -11,7 +11,7 @@
 	var labelStyle='font-weight:bolder;width:150px'
 
 	var ctac = new Ext.form.NumberField({
-		fieldLabel:'<s:message code="plugin.cajamar.bienes.ctac" text="**Cuenta asociada al pr�stamo" />'
+		fieldLabel:'<s:message code="plugin.cajamar.bienes.ctac" text="**Cuenta asociada al pr&oacute;stamo" />'
 		<app:test id="ctac" addComa="true" />
 		, allowNegative:false
 		, allowDecimals:false
@@ -35,7 +35,7 @@
 	});
 
 	var nroTfno = new Ext.form.NumberField({
-		fieldLabel:'<s:message code="plugin.cajamar.bienes.telefono" text="**Tel�fono" />'
+		fieldLabel:'<s:message code="plugin.cajamar.bienes.telefono" text="**Tel&oacute;fono" />'
 		<app:test id="nroTelefono" addComa="true" />
 		,allowNegative:false
 		,allowDecimals:false
@@ -96,7 +96,7 @@
 						}
 						else {
 							Ext.Msg.show({
-								title:'Operaci�n no disponible',
+								title:'Operaci&oacute;n no disponible',
 								msg: '<s:message code="plugin.nuevoModeloBienes.cajamar.tasacion.ko"/>',
 								buttons: Ext.Msg.OK,
 								icon:Ext.MessageBox.INFO

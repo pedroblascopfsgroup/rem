@@ -1,4 +1,4 @@
-﻿<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+﻿	<%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
 <%@page import="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -22,19 +22,28 @@
 	    this.renderer = this.renderer.createDelegate(this);
 	};	
 
-	Ext.grid.CheckColumn.prototype ={
-    	init : function(grid){
-        	this.grid = grid;
-        	this.grid.on('render', function(){
-        	    var view = this.grid.getView();
-        	}, this);
-    	},
+	Ext.grid.CheckColumn.prototype = {
+	    init : function(grid) {
+	        this.grid = grid;
+	        this.grid.on('render', function(){
+	            var view = this.grid.getView();
+	            view.mainBody.on('mousedown', this.onMouseDown, this);
+	        }, this);
+	    },
+	    onMouseDown : function(e, t){
+	        if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){
+	            e.stopEvent();
+	            var index = this.grid.getView().findRowIndex(t);
+	            var record = this.grid.store.getAt(index);
+	            record.set(this.dataIndex, !record.data[this.dataIndex]);
+	        }
+	    },
 	    renderer : function(v, p, record){
-        	p.css += ' x-grid3-check-col-td'; 
-	       	return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'"> </div>';
-	   	}
-	};	
-		
+	        p.css += ' x-grid3-check-col-td'; 
+	        return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';
+	    }
+	};
+
 	// *********************************** //
 	// * Definimos el fieldset superior  * //
 	// *********************************** //
@@ -227,10 +236,15 @@
 		var codigoCE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE" />';
 		var codigoRE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
 		var codigoDC = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
+		var codigoFP = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA" />';
 		var estadoExpediente = entidad.get("data").gestion.estadoItinerario;
 		if (estadoExpediente == codigoCE){
 			return ('Revisar Expediente');
 		}else if (estadoExpediente == codigoRE)	{
+			return ('Decisión de Comité');
+		}else if (estadoExpediente == codigoDC){
+			return ('Formalizar Propuesta');
+		}else if (estadoExpediente == codigoFP){
 			return ('Decisión de Comité');
 		}
 		return '';

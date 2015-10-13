@@ -26,7 +26,14 @@ public class CMTPuestosComiteDaoImpl extends AbstractEntityDao<PuestosComite, Lo
 	@Override
 	public PuestosComite createNewPuestoComite() {
 		PuestosComite puesto = new PuestosComite();
-		puesto.setId(getLastId()+1);
+		//puesto.setId(getLastId()+1);
+		// si no existe ningun puesto en la bbdd el id devuelve nulo por tanto por defecto se pone 1
+		Long lastId = getLastId();
+		if(lastId != null){
+			puesto.setId(lastId +1);
+		}else{
+			puesto.setId(1L);
+		}
 		return puesto;
 		
 	}

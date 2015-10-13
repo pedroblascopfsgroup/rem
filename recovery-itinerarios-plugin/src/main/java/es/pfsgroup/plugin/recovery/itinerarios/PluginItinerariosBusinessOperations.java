@@ -29,9 +29,9 @@ public class PluginItinerariosBusinessOperations {
 	 */
 	public static final String AEX_MGR_LISTASEGUNTIPOITI="plugin.itinerarios.ambitoExpediente.buscaPorTipoItinerario";
 	/**
-	 * @param dto de búsqueda de itinerarios
+	 * @param dto de bï¿½squeda de itinerarios
 	 * @return devuelve una lista paginada de itinerarios que cumplen los criterios
-	 * de búsqueda
+	 * de bï¿½squeda
 	 */
 	public static final String ITI_MGR_BUSCA = "plugin.itinerarios.itinerario.findItinerario";
 	
@@ -44,21 +44,21 @@ public class PluginItinerariosBusinessOperations {
 	
 	/**
 	 * @param id del itinerario que se desea eliminar
-	 * elimana el itinerario cuyo id coincide con el que se le pasa como parámetro
+	 * elimana el itinerario cuyo id coincide con el que se le pasa como parï¿½metro
 	 * 
 	 */
 	public static final String ITI_MGR_BORRA ="plugin.itinerarios.itinerario.remove";
 	
 	/**
 	 * @param id
-	 * Devuelve el objeto de tipo Itinerario cuyo id coincide con el que se le pasa como parámetro
+	 * Devuelve el objeto de tipo Itinerario cuyo id coincide con el que se le pasa como parï¿½metro
 	 */
 	public static final String ITI_MGR_GET = "plugin.itinerarios.itinerario.getItinerario";
 	
 	/**
 	 * @param id
-	 * Crea una copia del itinerario cuyo id coincide con el que se le pasa como parámetro
-	 * Creará una copia tanto de sus datos como de lo sus estados
+	 * Crea una copia del itinerario cuyo id coincide con el que se le pasa como parï¿½metro
+	 * Crearï¿½ una copia tanto de sus datos como de lo sus estados
 	 */
 	public static final String ITI_MGR_COPIA ="plugin.itinerarios.itinerario.copiaItinerario";
 	
@@ -81,43 +81,44 @@ public class PluginItinerariosBusinessOperations {
 	
 	public static final String EST_MGR_ESTADOREITI = "plugin.itinerarios.estados.getEstadoRevisarExpediente";
 	
+	
 	/**
 	 * @param id del itinerario
-	 * Devuelve true si ese itinerario admite decisión de comité automática
+	 * Devuelve true si ese itinerario admite decisiï¿½n de comitï¿½ automï¿½tica
 	 */
 	public static final String EST_MGR_DCASINO = "plugin.itinerarios.estados.getDCASiNo";
 	
 	/**
 	 * @param id del itinerario
-	 * Devuelve true si el estado RE del itinerario es automático
+	 * Devuelve true si el estado RE del itinerario es automï¿½tico
 	 */
 	public static final String EST_MGR_REAUTO ="plugin.itinerarios.estados.getAutoRESiNo";
 	
 	
 	/**
 	 * @param id del itinerario
-	 * Devuelve true si el estado CE del itinerario es automático
+	 * Devuelve true si el estado CE del itinerario es automï¿½tico
 	 */
 	public static final String EST_MGR_CEAUTO="plugin.itinerarios.estados.getAutoCESiNo";
 	
 	/**
-	 * @param id del itinerario y código del tipo de estado que se quiere consultar
-	 * Devuelve true o false si el estado que coincide con el código de ese itinerario 
-	 * es automático
+	 * @param id del itinerario y cï¿½digo del tipo de estado que se quiere consultar
+	 * Devuelve true o false si el estado que coincide con el cï¿½digo de ese itinerario 
+	 * es automï¿½tico
 	 */
 	public static final String EST_MGR_AUTOSINO="plugin.itinerarios.estados.getAutoSiNo";
 	
 	
 	/**
 	 * @param id del itinerario
-	 * Devuelve la Decisión de comité automática que tiene asociada ese itinerario
+	 * Devuelve la Decisiï¿½n de comitï¿½ automï¿½tica que tiene asociada ese itinerario
 	 */
 	public static final String EST_MGR_GETDCAITINERARIO="plugin.itinerarios.estados.getDCA";
 	
 	/**
-	 * @param id del estado, automático, dtoAltaDCA
-	 * da de alta una decisión de comité automática en un estado
-	 * Si automático es cierto la guarda, si es falso no hace nada
+	 * @param id del estado, automï¿½tico, dtoAltaDCA
+	 * da de alta una decisiï¿½n de comitï¿½ automï¿½tica en un estado
+	 * Si automï¿½tico es cierto la guarda, si es falso no hace nada
 	 */
 	public static final String EST_MGR_GUARDADCA ="plugin.itinerarios.estados.saveDCA";
 	
@@ -139,21 +140,27 @@ public class PluginItinerariosBusinessOperations {
 	public static final String EST_MGR_GETESTADO="plugin.itinerarios.estados.get";
 	
 	/**
-	 * @param id del itinerarios y string con el código del tipo del estado
+	 * @param id del itinerarios y string con el cï¿½digo del tipo del estado
 	 * Devuelve el estado de tipo XX del itinerario que se le pasa como entrada
 	 */
 	public static final String EST_MGR_DAMEESTADOPORTIPO ="plugin.itinerarios.estados.dameEstadoPorTipo";
 	/**
 	 * @param id del itinerario
-	 * devuelve el estado del itinerario de tipo Gestión de Vencidos
+	 * devuelve el estado del itinerario de tipo Gestiï¿½n de Vencidos
 	 */
 	public static final String EST_MGR_ESTADOGVITI="plugin.itinerarios.estados.getEstadoGV";
 	
 	/**
 	 * @param id del itinerario
-	 * devuelve el estado del itinerario de tipo Decisión de Comité
+	 * devuelve el estado del itinerario de tipo Decisiï¿½n de Comitï¿½
 	 */
 	public static final String EST_MGR_ESTADODCITI="plugin.itinerarios.estados.getEstadoDC";
+	
+	/**
+	 * @param id del itinerario
+	 * devuelve el estado del itinerario de tipo FormalizarPropuesta
+	 */
+	public static final String EST_MGR_ESTADOFPITI="plugin.itinerarios.estados.getEstadoFP";
 	
 	/**
 	 * @param id del itinerario
@@ -169,13 +176,13 @@ public class PluginItinerariosBusinessOperations {
 	
 	/**
 	 * @param id del itinerario
-	 * devuelve la regla de exclusión del estado ce de ese itinerario
+	 * devuelve la regla de exclusiï¿½n del estado ce de ese itinerario
 	 */
 	public static final String EST_MGR_GETREGLASEXCLUSIONCE="plugin.itinerarios.estado.getReglasExclusionCE";
 	
 	/**
 	 * @param id del itinerario
-	 * devuelve la regla de exclusión del estado re de ese itinerario
+	 * devuelve la regla de exclusiï¿½n del estado re de ese itinerario
 	 */
 	public static final String EST_MGR_GETREGLASEXCLUSIONRE="plugin.itinerarios.estado.getReglasExclusionRE";
 	
@@ -203,7 +210,7 @@ public class PluginItinerariosBusinessOperations {
 
 	/**
 	 * @param dto de alta de telecobro
-	 * Guarda configuración de un telecobro con los datos que se le pasan en el dto
+	 * Guarda configuraciï¿½n de un telecobro con los datos que se le pasan en el dto
 	 */
 	public static final String TLC_MGR_GUARDA ="plugin.itinerarios.estadoTelecobro.save";
 	
@@ -211,7 +218,7 @@ public class PluginItinerariosBusinessOperations {
 	
 	/**
 	 * @param dto de alta de decision de comite automatico
-	 * Guarda configuración de una DecisionComiteAutomatico con los datos
+	 * Guarda configuraciï¿½n de una DecisionComiteAutomatico con los datos
 	 * que se le pasan en el dto
 	 */
 	public static final String DCA_MGR_NUEVODCA ="plugin.itinerarios.decisionComiteAutomatica.save";
@@ -236,7 +243,7 @@ public class PluginItinerariosBusinessOperations {
 	public static final String COM_MGR_GETCOMITES ="plugin.itinerarios.comite.listaComites";
 	
 	/**
-	 * Devuelve una lista de todos los posibles tipos de actuación
+	 * Devuelve una lista de todos los posibles tipos de actuaciï¿½n
 	 */
 	public static final String TPA_MGR_GETTIPOSACTUACION ="plugin.itinerarios.tipoActuacion.listaTiposActuacion";
 	
@@ -250,28 +257,32 @@ public class PluginItinerariosBusinessOperations {
 
 	/**
 	 * @param id del itinerario 
-	 * @return una lista de objetos tipoReglasElevación del estado Completar Expediente de ese itinerario
+	 * @return una lista de objetos tipoReglasElevaciï¿½n del estado Completar Expediente de ese itinerario
 	 */
 	public static final String TRE_MGR_REGLASELEVACIONITINERARIO_CE="plugin.itinerarios.reglasElevacion.listaReglasElevacionCE";
 
 	/**
 	 * @param id del itinerario 
-	 * @return una lista de objetos tipoReglasElevación del estado Revisar Expediente de ese itinerario
+	 * @return una lista de objetos tipoReglasElevaciï¿½n del estado Revisar Expediente de ese itinerario
 	 */
 	public static final String TRE_MGR_REGLASELVACION_RE="plugin.itinerarios.reglasElevacion.listaReglasElevacionRE";
 	
 	public static final String TRE_MGR_REGLASELEVACION_DC="plugin.itinerarios.reglasElevacion.listaReglasElevacionDC";
+
+	public static final String TRE_MGR_REGLASELEVACION_FP="plugin.itinerarios.reglasElevacion.listaReglasElevacionFP";
 	
 	/**
 	 * @param id del itinerario
-	 * @return devuelve una lista de todos los objetos de tipo ddTipoReglasElevación que no están asociadas
+	 * @return devuelve una lista de todos los objetos de tipo ddTipoReglasElevaciï¿½n que no estï¿½n asociadas
 	 * al estado CE de ese itinerario
 	 */
 	public static final String TRE_MGR_RESTOREGLAS_CE="plugin.itinerarios.reglasElevacion.getRestoReglasCE";
 	
+	public static final String TRE_MGR_RESTOREGLAS_FP="plugin.itinerarios.reglasElevacion.getRestoReglasFP";
+	
 	/**
 	 * @param id del itinerario
-	 * @return devuelve una lista de todos los objetos de tipo ddTipoReglasElevación que no están asociadas
+	 * @return devuelve una lista de todos los objetos de tipo ddTipoReglasElevaciï¿½n que no estï¿½n asociadas
 	 * al estado RE de ese itinerario
 	 */
 	public static final String TRE_MGR_RESTOREGLAS_RE="plugin.itinerarios.reglasElevacion.getRestoReglasRE";
@@ -308,7 +319,7 @@ public class PluginItinerariosBusinessOperations {
 	public static final String RVP_MGR_GETREGLASEXCLUSIONESTADO = "plugin.itinerarios.reglaVigenciaPolitica.getReglasExclusionEstado";
 
 	/**
-	 * @return devuelve una lista de objetos ddTipoReglaVigencia Políca
+	 * @return devuelve una lista de objetos ddTipoReglaVigencia Polï¿½ca
 	 * que son de tipo consenso
 	 */
 	public static final String RVP_MGR_GETDDREGLASCONSENSO="plugin.itinerarios.reglaVigenciaPolitica.getReglasConsenso";
@@ -320,7 +331,7 @@ public class PluginItinerariosBusinessOperations {
 	public static final String RVP_MGR_GETDDREGLASEXCLUSIONRE="plugin.itinerarios.reglaVigenciaPolitica.getReglasExclusionRE";
 
 	/**
-	 * @param dto de alta de regla de Vigencia política
+	 * @param dto de alta de regla de Vigencia polï¿½tica
 	 * 
 	 */
 	public static final String RVP_MGR_SAVE="plugin.itinerarios.reglasVigenciaPolitica.save";

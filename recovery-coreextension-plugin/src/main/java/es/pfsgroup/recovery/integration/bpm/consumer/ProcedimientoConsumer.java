@@ -18,7 +18,6 @@ import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.DDSolvenciaGarantia;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
@@ -379,17 +378,10 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
         Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
         //
         prc.setProcessBPM(idBPM);
-        suplantarUsuario(prc);
+        //suplantarUsuario(prc);
         procedimientoManager.saveOrUpdateProcedimiento(prc);
 		logger.info(String.format("[INTEGRACION] PRC[%d] TAR[%s] BPM iniciado!!", prc.getId(), tarUUID));
 	}
-
-	private void suplantarUsuario(Auditable auditable) {
-		Auditoria auditoria = auditable.getAuditoria();
-		//auditoria.setSuplantarUsuario("PEPITO");
-		//auditoria.setUsuarioCrear("PEPITO");
-	}
-	
 	
 	@Override
 	protected void doAction(DataContainerPayload payload) {
@@ -398,7 +390,6 @@ public class ProcedimientoConsumer extends ConsumerAction<DataContainerPayload> 
 		//
 		logger.info(String.format("[INTEGRACION] PRC[%s] Guardando procedimiento...", prcUUID));
 		EXTProcedimientoDto procDto = buildProcedimientoDto(procedimiento);
-		procDto.setUsuarioSuplantado(procedimiento.getUsuario().getNombre());
 		//
 		Procedimiento prc = extProcedimientoManager.guardaProcedimiento(procDto);
 		logger.info(String.format("[INTEGRACION] PRC[%s] Procedimiento guardado!!!", prcUUID));

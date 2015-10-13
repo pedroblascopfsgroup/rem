@@ -43,6 +43,11 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-898');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-897');
+	V_TAREA:='CJ004_CelebracionSubasta';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumento(''''ACS'''') ? null  :  ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Acta de subasta</div>'''''', TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''CJ004_CelebracionSubasta''''][''''comboCelebrada''''] == DDSiNo.NO ? (valores[''''CJ004_CelebracionSubasta''''][''''comboDecisionSuspension''''] == null ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">El campo Decisi&oacute;n suspensi&oacute;n es obligatorio</div>'''' : null) : (validarBienesDocCelebracionSubasta() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe rellenar en cada bien los datos de adjudicaci&oacute;n o de cesi&oacute;n remate</div>'''')'' WHERE TAP_CODIGO = '''||V_TAREA ||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-897');
+		
 	COMMIT;
  
 EXCEPTION

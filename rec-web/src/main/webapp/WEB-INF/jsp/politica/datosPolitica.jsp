@@ -14,6 +14,8 @@
         ,allowBlank: false
         ,fieldLabel: '<s:message code="politica.tipoPolitica" text="**Tipo de política" />'
         ,value: '${dtoPolitica.politica.tipoPolitica.codigo}'
+        ,valueNotFoundText : '---'
+        ,validator : function(value) {return (value!=this.valueNotFoundText); }
     });
 
     var estadoField = new Ext.ux.form.StaticTextField({

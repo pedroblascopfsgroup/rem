@@ -61,6 +61,17 @@ public class ITIReglasElevacionManager {
 		return reglasRE;
 	}
 	
+	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_REGLASELEVACION_FP)
+	public List<ITIReglasElevacion> listaReglasElevacionFP(Long idItinerario){
+		Estado estado = estadoManager.dameEstadoFP(idItinerario);
+		List<ITIReglasElevacion> reglasFP = null;
+		if(!Checks.esNulo(estado)){
+			reglasFP = reglasElevacionDao.buscaReglasEstado(estado.getId());
+		}
+		
+		return reglasFP;
+	}
+	
 	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_REGLASELEVACION_DC)
 	public List<ITIReglasElevacion> listaReglasElevacionDC(Long idItinerario){
 		Estado estado = estadoManager.dameEstadoDC(idItinerario);
@@ -73,6 +84,19 @@ public class ITIReglasElevacionManager {
 	
 	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_RESTOREGLAS_CE)
 	public List<DDTipoReglasElevacion> restoReglasCE(Long idItinerario){
+		List<DDTipoReglasElevacion> listaTipoReglas = ddTipoReglasElevacionDao.getList();
+		List<ITIReglasElevacion> listaReglasEstado = listaReglasElevacionEstado(idItinerario);
+		for(ITIReglasElevacion re: listaReglasEstado){
+			if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
+				listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+			}
+				
+		}
+		return listaTipoReglas;
+	}
+	
+	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_RESTOREGLAS_FP)
+	public List<DDTipoReglasElevacion> restoReglasFP(Long idItinerario){
 		List<DDTipoReglasElevacion> listaTipoReglas = ddTipoReglasElevacionDao.getList();
 		List<ITIReglasElevacion> listaReglasEstado = listaReglasElevacionEstado(idItinerario);
 		for(ITIReglasElevacion re: listaReglasEstado){
@@ -129,7 +153,7 @@ public class ITIReglasElevacionManager {
 		regla.setDdTipoReglasElevacion(tipoRegla);
 		if(!tipoRegla.getCodigo().equals("GESTION_ANALISIS") && Checks.esNulo(dto.getAmbitoExpediente())){
 			throw new IllegalArgumentException(
-					"Debe de seleccionar un ámbito para el expediente");
+					"Debe de seleccionar un ï¿½mbito para el expediente");
 		}else{
 			if (!Checks.esNulo(dto.getAmbitoExpediente())){
 				regla.setAmbitoExpediente(ambitoExpedienteDao.get(dto.getAmbitoExpediente()));

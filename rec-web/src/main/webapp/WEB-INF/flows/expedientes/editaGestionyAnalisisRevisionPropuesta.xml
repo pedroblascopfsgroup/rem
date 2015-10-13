@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="aaa" class="es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion" />
+	<var name="dtoActitudAptitudActuacion" class="es.capgemini.pfs.actitudAptitudActuacion.dto.DtoActitudAptitudActuacion" />
+	
+	<input name="id" type="java.lang.Long"/>
+	
+    <view-state id="formulario" view="expedientes/editaGestionyAnalisisRevisionPropuesta" model="dtoActitudAptitudActuacion">
+        <binder>
+    		<binding property="aaa.id" />
+    		<binding property="aaa.revision"/>
+    	</binder>
+ 		<on-entry>
+	 		<set name="dtoActitudAptitudActuacion.aaa" value="aaa" />
+	 		<set name="dtoActitudAptitudActuacion.aaa.id" value="id" />
+    		<evaluate expression="executor.execute('expedienteManager.buscarAAA', id)" result="flowScope.aaa"/>
+    	</on-entry>
+    	
+		<transition on="update" to="update"/>
+    </view-state> 	
+    
+ 	<end-state id="update" view="default">
+ 		<on-entry>
+	 		<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoActitudAptitudActuacion.aaa)" />
+	 		<!-- set name="dtoActitudAptitudActuacion.aaa" value="aaa" /-->
+	    	<evaluate expression="executor.execute('expedienteManager.updateActitudAptitudActuacionRevision', dtoActitudAptitudActuacion)" />
+	    </on-entry>
+	</end-state>
+	
+	<end-state id="close" view="default" />
+        
+</flow>

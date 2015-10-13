@@ -117,6 +117,10 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 	@Column(name = "SYS_GUID")
 	private String guid;
     
+    @ManyToOne
+    @JoinColumn(name = "DD_EGT_ID")
+    private DDEstadoGestionTermino estadoGestion;	
+    
 	public Long getId() {
 		return id;
 	}
@@ -277,4 +281,12 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 		this.guid = guid;
 	}
 	
+	public DDEstadoGestionTermino getEstadoGestion() {
+		return estadoGestion;
+	}
+
+	public void setEstadoGestion(DDEstadoGestionTermino estadoGestion) {
+		this.estadoGestion = estadoGestion;
+	}
+
 }

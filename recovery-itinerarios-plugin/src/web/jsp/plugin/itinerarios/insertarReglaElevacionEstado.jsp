@@ -52,7 +52,6 @@
 		
 	ddTipoReglasElevacion.on('select',function(combo, record, index){
 	
-		debugger;
 		var value = combo.getValue();
 		
 		if( value!=null && value!=""){

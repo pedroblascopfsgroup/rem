@@ -121,7 +121,7 @@ function package_sql () {
 function run_container () {
 	local errorlog_volume=""
 
-	if [[ "x$VAR_OUTTER_ERROR_LOG" ]]; then
+	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		errorlog_volume="-v ${VAR_OUTTER_ERROR_LOG}:${DOCKER_INNER_ERROR_LOG}:rw"
 		if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
 			mkdir -p $(dirname $VAR_OUTTER_ERROR_LOG)

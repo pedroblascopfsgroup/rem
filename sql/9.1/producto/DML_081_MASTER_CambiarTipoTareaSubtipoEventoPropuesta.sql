@@ -52,7 +52,7 @@ BEGIN
       	V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.DD_STA_SUBTIPO_TAREA_BASE (' ||
                   'DD_STA_ID, DD_TAR_ID, DD_STA_CODIGO, DD_STA_DESCRIPCION, DD_STA_DESCRIPCION_LARGA, DD_STA_GESTOR, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO, DD_TGE_ID, DTYPE)' ||
                   'VALUES (' ||
-                  	V_ENTIDAD_ID || ',1,''PROP_EVENT'',''Evento Propuesta'',''Evento Propuesta'',NULL,''PROP'',SYSDATE,NULL, NULL, NULL, NULL, 0, NULL, ''EXTSubtipoTarea'')';
+                  	V_ENTIDAD_ID || ',1,''PROP_EVENT'',''Evento Propuesta'',''Evento Propuesta'',NULL, 0,''PROP'',SYSDATE,NULL, NULL, NULL, NULL, 0, NULL, ''EXTSubtipoTarea'')';
 		EXECUTE IMMEDIATE V_MSQL;                  	
         DBMS_OUTPUT.PUT_LINE('[INFO] Subtipo PROP_EVENT creado OK');
           		

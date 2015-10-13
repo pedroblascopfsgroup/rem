@@ -631,7 +631,7 @@
 			        btnSolicitarNumActivo.hide();
 			    </c:when>    
     			<c:otherwise>
-        			panel.getBottomToolbar().addButton([btnSolicitarTasacion]);
+        			//panel.getBottomToolbar().addButton([btnSolicitarTasacion]);
     			</c:otherwise>
 			</c:choose>			
 		</sec:authorize>

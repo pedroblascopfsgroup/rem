@@ -28,11 +28,11 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-879');
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-          ' SET TAP_SCRIPT_VALIDACION = ''valores[''''CJ003_RevisarCreditosContingentes''''][''''comboSeguimiento''''] == DDSiNo.SI && !existeSiguienteFechaVencimiento() ? ''''No existen cr&eacute;ditos contingentes pr&oacute;ximos en el tiempo.'''' : null'' ' ||
+		  ' SET TAP_SCRIPT_VALIDACION = ''dameSiguienteFechaVencimiento() == null ? ''''<div align="justify" style="font-size: 8pt; font-family: Arial;"><p style="margin-bottom: 10px">No existen cr&eacute;ditos contingentes pr&oacute;ximos en el tiempo.</p></div>'''' : null'' ' ||
+          ' ,TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''CJ003_RevisarCreditosContingentes''''][''''comboSeguimiento''''] == DDSiNo.SI && !existeSiguienteFechaVencimiento() ? ''''No existen cr&eacute;ditos contingentes pr&oacute;ximos en el tiempo.'''' : null'' ' ||
           ' WHERE TAP_CODIGO = ''CJ003_RevisarCreditosContingentes'' ';
-
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
-          ' SET TAP_SCRIPT_VALIDACION = ''((valores[''''CJ007_Impugnacion''''][''''comboImpugnacion''''] == DDSiNo.SI) && ((valores[''''CJ007_Impugnacion''''][''''fechaImpugnacion''''] == ''''''''))) ? ''''tareaExterna.error.CJ007_Impugnacion.fechasOblgatorias'''' : ((valores[''''CJ007_Impugnacion''''][''''comboImpugnacion''''] == DDSiNo.SI) && (!comprobarExisteDocumentoEIC())) ? ''''Es necesario adjuntar el escrito de impugnaci&oacute;n (Costas)'''' : null'' ' ||
+          ' SET TAP_SCRIPT_VALIDACION_JBPM = ''((valores[''''CJ007_Impugnacion''''][''''comboImpugnacion''''] == DDSiNo.SI) && ((valores[''''CJ007_Impugnacion''''][''''fechaImpugnacion''''] == ''''''''))) ? ''''tareaExterna.error.CJ007_Impugnacion.fechasOblgatorias'''' : ((valores[''''CJ007_Impugnacion''''][''''comboImpugnacion''''] == DDSiNo.SI) && (!comprobarExisteDocumentoEIC())) ? ''''Es necesario adjuntar el escrito de impugnaci&oacute;n (Costas)'''' : null'' ' ||
           ' WHERE TAP_CODIGO = ''CJ007_Impugnacion'' ';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-879');
 	

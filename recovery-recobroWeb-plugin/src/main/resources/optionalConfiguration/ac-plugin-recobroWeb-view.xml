@@ -47,17 +47,20 @@
 	<bean p:entity="plugin.mejoras.web.expedientes.busqueda.tabs" p:name="filtroRecobroExpediente"
 		p:order="300"
 		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/busqueda/tabRecobro.jsp"
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />    
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_CICLORECOBRO_EXPEDIENTE"/>    
 	
 	<bean p:entity="plugin.mejoras.web.expedientes.busqueda.tabs" p:name="filtroIncidenciasExpediente"
 		p:order="400"
 		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/busqueda/tabIncidencias.jsp"
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_CICLORECOBRO_EXPEDIENTE" /> 
 		
 	<bean p:entity="plugin.mejoras.web.expedientes.busqueda.tabs" p:name="filtroAcuerdosExpediente"
 		p:order="500"
 		p:fileName="/WEB-INF/jsp/plugin/recobroWeb/expedientes/busqueda/tabAcuerdos.jsp"
-		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" /> 		
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="TAB_CICLORECOBRO_EXPEDIENTE" /> 		
 		
 		<!-- acciones extrajudiciales del cliente -->
 		

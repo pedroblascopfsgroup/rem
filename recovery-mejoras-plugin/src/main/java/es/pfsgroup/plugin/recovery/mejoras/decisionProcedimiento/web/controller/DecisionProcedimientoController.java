@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
-import es.capgemini.pfs.decisionProcedimiento.dto.DtoDecisionProcedimiento;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
@@ -19,6 +19,8 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 @Controller
 public class DecisionProcedimientoController {
 
+	private static final String VENTANA_DECISION = "plugin/mejoras/procedimientos/decision";
+	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
@@ -30,6 +32,12 @@ public class DecisionProcedimientoController {
 
 	@Autowired
 	private DecisionProcedimientoManager decisionProcedimientoManager;
+	
+	@Autowired
+	private DictionaryManager dictionaryManager;
+	
+	@Autowired
+	private ProcedimientoManager procedimientoManager;
 	
 	@RequestMapping
 	public String desparalizarProcedimiento(Long idProcedimiento){
@@ -106,6 +114,38 @@ public class DecisionProcedimientoController {
 		dto.setDecisionProcedimiento(dec);
         mejDecisionProcedimientoManager.rechazarPropuesta(dto);
 		return "default";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String ventanaDecision(
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "isConsulta", required = true) Boolean isConsulta,
+			@RequestParam(value = "id", required = false) Long idDecisionProcedimiento,
+			ModelMap map) {
+		
+		DecisionProcedimiento decisionProcedimiento = null;
+		if(idDecisionProcedimiento != null) {
+			decisionProcedimiento = decisionProcedimientoManager.get(idDecisionProcedimiento);
+		}
+		else {
+			decisionProcedimiento = decisionProcedimientoManager.getInstance(idProcedimiento);
+		}
+		
+		map.put("decisionProcedimiento", decisionProcedimiento);
+		map.put("causaDecisionFinalizar", dictionaryManager.getList("DDCausaDecisionFinalizar"));
+		map.put("causaDecisionParalizar", dictionaryManager.getList("DDCausaDecisionParalizar"));				
+		map.put("estadoDecision", dictionaryManager.getList("DDEstadoDecision"));
+		map.put("tiposActuacion", procedimientoManager.getTiposActuacion());
+		map.put("tiposProcedimientos", procedimientoManager.getTiposProcedimiento());
+		map.put("tiposReclamacion", procedimientoManager.getTiposReclamacion());
+		map.put("personas", procedimientoManager.getPersonasAfectadas(idProcedimiento));
+		map.put("esGestor", procedimientoManager.esGestor(idProcedimiento));
+		map.put("esSupervisor", procedimientoManager.esSupervisor(idProcedimiento));
+		map.put("isConsulta", isConsulta);
+		map.put("idProcedimiento", idProcedimiento);
+		
+		return VENTANA_DECISION;
 	}
 	
 }

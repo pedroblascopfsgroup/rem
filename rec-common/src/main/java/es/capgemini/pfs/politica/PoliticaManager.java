@@ -51,6 +51,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
@@ -266,9 +267,16 @@ public class PoliticaManager {
     	
     	//Si tenemos informado para la persona un tipo de politica de la entidad
     	//devolvemos el diccionario filtrado por los tipos que le corresponden
-    	return (List<DDTipoPolitica>)genericDao.getList(DDTipoPolitica.class,
-    			genericDao.createFilter(FilterType.EQUALS, "politicaEntidad.id", persona.getPoliticaEntidad().getId()),
-    			genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+    	List<DDTipoPolitica> politicas = (List<DDTipoPolitica>)genericDao.getList(DDTipoPolitica.class,
+    				genericDao.createFilter(FilterType.EQUALS, "politicaEntidad.id", persona.getPoliticaEntidad().getId()),
+    				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+    	
+    	//Si no hemos obtenido ninguna politica de la traducción, devolvemos todas
+    	if (Checks.estaVacio(politicas)) {
+    		return this.getTipoPoliticaList();
+    	} else {
+    		return politicas;
+    	}
     }
 
     /**

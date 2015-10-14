@@ -99,6 +99,7 @@ docCompleta.on('select', function() {
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = true;
 		procedimientoIniciar.setDisabled(true);
+		procedimientoIniciar.setValue("");
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;

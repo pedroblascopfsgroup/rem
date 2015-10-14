@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.cajamar.serviciosonline;
 
+import es.capgemini.pfs.contrato.model.DDAplicativoOrigen;
+
 public class ResultadoConsultaSaldo {
 
 	private boolean error = false;
@@ -39,6 +41,8 @@ public class ResultadoConsultaSaldo {
 	private String interesesRecibosOpen = "";
 	private String ivaRecibosOpen = "";
 	private String importePol = "";
+	//añadido
+	private DDAplicativoOrigen aplicativo=null;
 	
 	public boolean isError() {
 		return error;
@@ -261,6 +265,12 @@ public class ResultadoConsultaSaldo {
 	}
 	public void setImportePol(String importePol) {
 		this.importePol = importePol;
+	}
+	public DDAplicativoOrigen getAplicativo() {
+		return aplicativo;
+	}
+	public void setAplicativo(DDAplicativoOrigen aplicativo) {
+		this.aplicativo = aplicativo;
 	}
 
 }

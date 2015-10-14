@@ -73,6 +73,7 @@ public class ServiciosOnlineCajamar implements ServiciosOnlineCajamarApi {
 		
 		// invocamos al servicio.
 		ResultadoConsultaSaldo resultado = consultaDeSaldosWSApi.consultar(numContrato, aplicativo);
+		resultado.setAplicativo(aplicativo); //añadido para tener el codigo del aplicativo en el archivo ServiciosOnlineCajamarController.java
 		return resultado;
 	}
 

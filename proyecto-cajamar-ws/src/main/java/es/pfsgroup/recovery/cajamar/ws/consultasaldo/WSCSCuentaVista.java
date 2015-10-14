@@ -96,7 +96,7 @@ public class WSCSCuentaVista extends BaseWS implements WSConsultaSaldos {
 			ObjectFactory objectFactory = new ObjectFactory();
 			INPUT input = objectFactory.createINPUT();
 			
-			logger.info(String.format("NUMCUENTA: %", numContrato));
+			logger.info(String.format("NUMCUENTA: %s", numContrato));
 			input.setNUMCUENTA(numContrato);
 			
 			resultado = ejecutaServicio(input);			

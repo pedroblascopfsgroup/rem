@@ -14,6 +14,15 @@
 	<bean p:entity="bien.tabs" p:name="tabCabeceraBien" p:order="10"
 		p:fileName="/WEB-INF/jsp/plugin/cajamarhre/bienes/tabs/tabCabecera.jsp"
 		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
-	
-	
+		
+	<!--Para botón contratos-->
+		
+	<bean p:entity="tabs.contrato.fast" p:name="cabeceraContrato"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/plugin/cajamarhre/contratos/tabs/tabCabecera.jsp" 
+		p:priority="10"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.contrato" p:name="cabeceraContrato"  p:order="100" 
+		p:fileName="/WEB-INF/jsp/plugin/cajamarhre/contratos/tabs/tabCabecera.jsp" 
+		p:priority="10"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />	
+		
 </beans>

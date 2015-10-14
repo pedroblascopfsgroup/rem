@@ -66,6 +66,13 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-910');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-906');
+	V_TAREA:='HC103_RealizarTransferencia';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea, deberá hacer una transferencia por el importe aprobado y se generará una notificación al letrado.</p><p style="margin-bottom: 10px">En el campo Fecha indicar la fecha en la que realiza la transferencia.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellena esta pantalla, se lanzará la tarea Confirmar transferencia realizada.</p></div>'' ' ||
+	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-906');
+	
 	COMMIT;
  
 EXCEPTION

@@ -11,6 +11,7 @@
 	default-autowire="byName">
 	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="31"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosohaya/precontenciosohaya.xml" p:version="1"/>
 	
 	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
 	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
@@ -23,6 +24,16 @@
   			def dameProcedimientoPropuesto = {
 				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
 				 return procedimientoPcoManager.dameProcedimientoPropuesto(idProcedimiento);
+			}
+			
+  			def dameTipoAsunto = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameTipoAsunto(idProcedimiento);
+			}
+			
+  			def existenGestoresCorrectos = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.existenGestoresCorrectos(idProcedimiento);
 			}
 			
 			]]></value>

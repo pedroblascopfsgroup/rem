@@ -1356,21 +1356,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_DECISION_COMITE, isSupervisor);
 	        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
 
-	        Boolean politicasVigentes = (Boolean) executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
-
-	        //Si se ha marcado como vigente las pol�ticas, el expediente se decide
-	        if (politicasVigentes) {
-	            DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-	                    DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
-	            exp.setEstadoExpediente(estadoExpediente);
-	            saveOrUpdate(exp);
-
-	            //Si no se ha marcado como vigente, se siguie en la elevaci�n del expediente
-	        } else {
-	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
 	                    ExpedienteBPMConstants.TRANSITION_ENVIARAFORMALIZARPROPUESTA);
-	        }
-		
 	}
 
 	/**
@@ -1405,8 +1392,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 }
             }
             // *** *** //
-
-            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+            // Las politicas no se tocan cuando volvemos de FP a DC
+            //executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
         } else {
             logger.error("No se puede devoler a completar porque el expediente no esta en revision");
             throw new BusinessOperationException("expediente.devolucionCompletar.errorJBPM");

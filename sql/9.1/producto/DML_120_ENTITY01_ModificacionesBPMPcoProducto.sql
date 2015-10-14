@@ -175,7 +175,7 @@ BEGIN
 	    V_AUX1 := q'[DELETE from ]' || V_ESQUEMA || q'[.tfi_tareas_form_items where tap_id=(SELECT TAP_ID FROM ]' || V_ESQUEMA || 
 	        q'[.tap_tarea_procedimiento WHERE TAP_CODIGO = 'PCO_SubsanarIncidenciaExp') and TFI_NOMBRE = 'fecha_exp_sub' and tfi_id NOT IN (select max(tfi_id) from ]' 
 	        || V_ESQUEMA || q'[.tfi_tareas_form_items where tap_id=(SELECT TAP_ID FROM ]' || V_ESQUEMA || 
-	        q'[.tap_tarea_procedimiento WHERE TAP_CODIGO = 'PCO_SubsanarIncidenciaExp') and TFI_NOMBRE = 'fecha_exp_sub');]';
+	        q'[.tap_tarea_procedimiento WHERE TAP_CODIGO = 'PCO_SubsanarIncidenciaExp') and TFI_NOMBRE = 'fecha_exp_sub')]';
 	    DBMS_OUTPUT.PUT_LINE(V_AUX1);
 	    EXECUTE IMMEDIATE V_AUX1;		
     END IF;

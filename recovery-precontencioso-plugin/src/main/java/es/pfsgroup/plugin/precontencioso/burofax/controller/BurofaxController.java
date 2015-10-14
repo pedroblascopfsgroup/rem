@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
@@ -24,6 +26,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
 import es.pfsgroup.plugin.precontencioso.burofax.manager.BurofaxManager;
+import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
 import es.pfsgroup.plugin.precontencioso.burofax.model.DDTipoBurofaxPCO;
@@ -50,6 +53,8 @@ public class BurofaxController {
 	public static final String JSON_LISTA_PERSONAS = "direcciones/listaPersonasJSON";
 	
 	private static final String DEFAULT = "default";
+	
+	public static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -510,5 +515,19 @@ public class BurofaxController {
     	    	
     	return DEFAULT;
     }
+    
+    @RequestMapping
+	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
+		
+    	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
+		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getArchivoBurofax())){
+			burofaxEnvio.getArchivoBurofax().setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			burofaxEnvio.getArchivoBurofax().setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".docx");
+			model.put("fileItem", burofaxEnvio.getArchivoBurofax());
+		}
+
+		return JSP_DOWNLOAD_FILE;
+		
+	}
 
 }

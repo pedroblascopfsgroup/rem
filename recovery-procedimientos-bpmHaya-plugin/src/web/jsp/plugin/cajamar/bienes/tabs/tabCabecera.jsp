@@ -617,7 +617,7 @@
 		,bbar:new Ext.Toolbar()
 	});
 	
-	if (banderaOrigen=='01'){	
+		
 		<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
 			panel.getBottomToolbar().addButton([btnEditar]);
 		</sec:authorize>
@@ -639,7 +639,7 @@
 			panel.getBottomToolbar().addButton([btnSolicitarTasacionHCJ]);
 			btnSolicitarNumActivo.hide();
 		</sec:authorize>
-	}
+	
 	
 	return panel;
 })()

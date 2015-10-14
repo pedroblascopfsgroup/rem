@@ -4,8 +4,8 @@
 --## FECHA_CREACION=20151013
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=HR-1256
---## PRODUCTO=NO
+--## INCIDENCIA_LINK=PRODUCTO-308
+--## PRODUCTO=SI
 --##
 --## Finalidad: Inserción de nuevos tipos de gestor en la tabla DD_TGE_TIPO_GESTOR + DD_TDE_TIPO_DESPACHO + TGP_TIPO_GESTOR_PROPIEDAD
 --## INSTRUCCIONES:  Ejecutar y definir las variables
@@ -35,9 +35,11 @@ DECLARE
     TYPE T_LINEA IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_LINEA IS TABLE OF T_LINEA;
     V_TIPO_LINEA T_ARRAY_LINEA := T_ARRAY_LINEA(
-      T_LINEA('REGPROP_PCO', 'Registro de la propiedad'),
-      T_LINEA('ARCHIVO_PCO', 'Archivo'),
-      T_LINEA('NOTARI', 'Notaria')
+      T_LINEA('APOD', 'Apoderado'),
+      T_LINEA('NOTARI', 'Notaria'),
+      T_LINEA('PREDOC', 'Gestor expediente judicial'),
+      T_LINEA('GESTORIA_PREDOC', 'Gestoría preparación documental'),
+      T_LINEA('LET_PCO', 'Letrado de precontencioso')
     );
     V_TMP_TIPO_LINEA T_LINEA;
 
@@ -127,6 +129,8 @@ FOR I IN V_TIPO_LINEA.FIRST .. V_TIPO_LINEA.LAST
       V_MSQL := 'INSERT INTO ' || V_ESQUEMA || '.TGP_TIPO_GESTOR_PROPIEDAD tgp (tgp.TGP_ID, dd_tge_id, tgp_clave, tgp_valor, usuariocrear, fechacrear) ' || 'values (' 
         || V_ESQUEMA || q'[.s_TGP_TIPO_GESTOR_PROPIEDAD.nextval, (SELECT dd_tge_id from ]' || V_ESQUEMA_MASTER ||
         '.DD_TGE_TIPO_GESTOR where dd_tge_codigo = ''' || TRIM(V_TMP_TIPO_LINEA(1)) || '''), ''DES_VALIDOS'', ''' || TRIM(V_TMP_TIPO_LINEA(1)) || ''', ''PCO'', sysdate)';
+
+      DBMS_OUTPUT.PUT_LINE('INSERTANDO EN TGP_TIPO_GESTOR_PROPIEDAD: ' || TRIM(V_TMP_TIPO_LINEA(1)));
 
       EXECUTE IMMEDIATE V_MSQL;
     END IF;

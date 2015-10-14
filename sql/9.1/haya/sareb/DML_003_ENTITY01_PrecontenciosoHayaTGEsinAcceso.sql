@@ -32,13 +32,11 @@ DECLARE
     VAR_TABLENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
     VAR_SEQUENCENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
 
-    V_TGE_ID NUMBER(16); -- Vble. para validar la existencia de una tabla.
-
     TYPE T_LINEA IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_LINEA IS TABLE OF T_LINEA;
     V_TIPO_LINEA T_ARRAY_LINEA := T_ARRAY_LINEA(
-      T_LINEA('PCO_REGPROP', 'Registro de la propiedad'),
-      T_LINEA('PCO_ARCHIVO', 'Archivo'),
+      T_LINEA('REGPROP_PCO', 'Registro de la propiedad'),
+      T_LINEA('ARCHIVO_PCO', 'Archivo'),
       T_LINEA('NOTARI', 'Notaria')
     );
     V_TMP_TIPO_LINEA T_LINEA;

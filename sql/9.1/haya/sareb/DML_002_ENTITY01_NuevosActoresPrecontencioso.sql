@@ -44,26 +44,26 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] Poblar diccionario: ' || V_DDNAME || '...');
 -- tipo actor Registro de la propiedad
 
 DBMS_OUTPUT.PUT_LINE('[INFO] comprobar existencia tipo actor Registro de la propiedad');
-V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''PCO_REGPROP''';
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''REGPROP_PCO''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor Registro de la propiedad');
     EXECUTE IMMEDIATE 'INSERT INTO ' || V_ESQUEMA || '.' || V_DDNAME || ' (DD_PCO_DSA_ID, DD_PCO_DSA_CODIGO, DD_PCO_DSA_DESCRIPCION, DD_PCO_DSA_DESCRIPCION_LARGA, DD_PCO_DSA_ACCESO_RECOVERY, VERSION, USUARIOCREAR, FECHACREAR) VALUES '
-     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''PCO_REGPROP'', ''Registro de la propiedad'', ''Registro de la propiedad'', 0, 0, ''PCO'', sysdate) ';
+     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''REGPROP_PCO'', ''Registro de la propiedad'', ''Registro de la propiedad'', 0, 0, ''PCO'', sysdate) ';
 END IF;
 
 
--- tipo actor PCO_ARCHIVO
+-- tipo actor ARCHIVO_PCO
 
-DBMS_OUTPUT.PUT_LINE('[INFO] comprobar existencia tipo actor PCO_ARCHIVO');
-V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''PCO_ARCHIVO''';
+DBMS_OUTPUT.PUT_LINE('[INFO] comprobar existencia tipo actor ARCHIVO_PCO');
+V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE DD_PCO_DSA_CODIGO = ''ARCHIVO_PCO''';
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 IF V_NUM_TABLAS = 0 THEN
-    DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor PCO_Archivo');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Insertar tipo actor ARCHIVO_PCO');
     EXECUTE IMMEDIATE 'INSERT INTO ' || V_ESQUEMA || '.' || V_DDNAME || ' (DD_PCO_DSA_ID, DD_PCO_DSA_CODIGO, DD_PCO_DSA_DESCRIPCION, DD_PCO_DSA_DESCRIPCION_LARGA, DD_PCO_DSA_ACCESO_RECOVERY, VERSION, USUARIOCREAR, FECHACREAR) VALUES '
-     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''PCO_ARCHIVO'', ''Archivo'', ''Archivo'', 0, 0, ''PCO'', sysdate) ';
+     || ' ('||V_ESQUEMA||'.S_DD_PCO_DOC_SOLICIT_ACTOR.nextval, ''ARCHIVO_PCO'', ''Archivo'', ''Archivo'', 0, 0, ''PCO'', sysdate) ';
 END IF;
 
 

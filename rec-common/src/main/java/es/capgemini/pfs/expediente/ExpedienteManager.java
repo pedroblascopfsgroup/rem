@@ -1380,7 +1380,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
             // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
             Long idTareaAsociada = (Long) executor
-                    .execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_FP);
+                    .execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_DC);
             if (idTareaAsociada != null) {
                 TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
                 if (tarea != null) {

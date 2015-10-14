@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
@@ -74,7 +76,7 @@ public class GestorTareasManager implements GestorTareasApi {
     
     @BusinessOperation(BO_PCO_GESTOR_TAREAS_RECALCULAR)
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public void recalcularTareasPreparacionDocumental(Long idProc) {
 		
     	if (lineasConfig==null) {

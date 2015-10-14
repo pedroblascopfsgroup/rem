@@ -18,7 +18,15 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_SubsanarIncidenciaExp = "PCO_SubsanarIncidenciaExp";
 	public static final String PCO_ValidarCambioProc = "PCO_ValidarCambioProc";
 	public static final String PCO_SubsanarCambioProc = "PCO_SubsanarCambioProc";
+	public static final String PCO_RegResultadoDocG = "PCO_RegResultadoDocG";
 	
+	//Particulares de HAYA
+	public static final String PCO_DecTipoProcAutomatica = "PCO_DecTipoProcAutomatica";
+	public static final String PCO_AsignacionGestores = "PCO_AsignacionGestores";
+	public static final String PCO_RevisarExpDigCONC = "PCO_RevisarExpDigCONC";
+	public static final String PCO_RevisarSubsanacionCONC = "PCO_RevisarSubsanacionCONC";
+	public static final String PCO_ResolverIncidenciaExpCONC = "PCO_ResolverIncidenciaExpCONC";
+	public static final String PCO_Campo_ProcPropuesto = "procPropuesto";
 
 	public static final String PCO_PRETURNADO = "PT";
 	public static final String PCO_PREPARACION = "PR";

@@ -32,6 +32,7 @@ DECLARE
     V_TIPO_VALOR T_ARRAY_TFA := T_ARRAY_TFA(
 
 T_TIPO_VALOR('H011','H011_RevisarInformeLetradoMoratoria','CJ-811','CJ-SAREO')
+,T_TIPO_VALOR('HC103','HC103_ConfirmarTransferencia','CJ-814','GCONPR')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

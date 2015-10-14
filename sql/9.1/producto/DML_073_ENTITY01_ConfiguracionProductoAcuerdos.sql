@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PEDROBLASCOS
---## FECHA_CREACION=20150916
+--## FECHA_CREACION=20151014
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=PRODUCTO-174
@@ -36,12 +36,13 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('***** Inserción -- Nuevos tipos de gestor ******');
 
 	V_INSERT := 'Insert into ' || V_ESQUEMA_M || '.DD_TGE_TIPO_GESTOR (DD_TGE_ID,DD_TGE_CODIGO,DD_TGE_DESCRIPCION,DD_TGE_DESCRIPCION_LARGA,' || 
-		'VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,DD_TGE_EDITABLE_WEB) values ';
-	V_VALUES := q'[('550','PROPACU','Proponente acuerdo extrajudicial','Proponente acuerdo extrajudicial','0','DD',sysdate,null,null,null,null,'0','0')]';
+		'VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO,DD_TGE_EDITABLE_WEB) values ('||
+		V_ESQUEMA_M || '.S_DD_TGE_TIPO_GESTOR.nextval,';
+	V_VALUES := q'['PROPACU','Proponente acuerdo extrajudicial','Proponente acuerdo extrajudicial','0','DD',sysdate,null,null,null,null,'0','0')]';
 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
-	V_VALUES := q'[('560','VALIACU','Validador acuerdo extrajudicial','Validador acuerdo extrajudicial','0','DD',sysdate,null,null,null,null,'0','0')]';  
+	V_VALUES := q'['VALIACU','Validador acuerdo extrajudicial','Validador acuerdo extrajudicial','0','DD',sysdate,null,null,null,null,'0','0')]';  
 	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
-	V_VALUES := q'[('570','DECIACU','Decisor acuerdo extrajudicial','Decisor acuerdo extrajudicial','0','DD',sysdate,null,null,null,null,'0','0')]';
+	V_VALUES := q'['DECIACU','Decisor acuerdo extrajudicial','Decisor acuerdo extrajudicial','0','DD',sysdate,null,null,null,null,'0','0')]';
  	DBMS_OUTPUT.PUT_LINE(V_INSERT || V_VALUES); EXECUTE IMMEDIATE V_INSERT || V_VALUES;
 
 	DBMS_OUTPUT.PUT_LINE('***** Inserción -- Nuevos tipos de depacho ******');

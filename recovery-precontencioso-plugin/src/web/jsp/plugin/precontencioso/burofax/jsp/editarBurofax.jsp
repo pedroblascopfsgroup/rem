@@ -13,20 +13,7 @@
 	
     var contenidoBurofax='${textoBurofax}';
     var arrayIdEnvios="${arrayIdEnvios}";
-    debugger;
-	
-	<%--	
-	var textoBurofax = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="plugin.precontencioso.grid.burofax.contenido" text="**Contenido Burofax" />'
-		,name: 'prueba'
-		,value:'<s:message text='${textoBurofax}' javaScriptEscape="true" />'
-		,width: 400 
-		,height:400
-		, maxLength: 2000
-		,allowBlank: false
-	});	
-	--%>
-	
+   
 	var burofaxEditor = new Ext.form.HtmlEditor({
 			id:'htmlDescripcion'
 			,readOnly:false

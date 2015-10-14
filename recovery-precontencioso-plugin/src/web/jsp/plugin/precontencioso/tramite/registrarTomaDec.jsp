@@ -99,7 +99,7 @@ docCompleta.on('select', function() {
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = true;
 		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue("");
+		procedimientoIniciar.setValue('');
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
@@ -107,6 +107,7 @@ docCompleta.on('select', function() {
 		tipoProblema.allowBlank = true;
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = false;
+		procedimientoIniciar.setDisabled(false);
 	}
 });
 

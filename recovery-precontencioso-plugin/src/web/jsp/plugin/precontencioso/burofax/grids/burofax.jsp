@@ -175,7 +175,13 @@
 			text : '<s:message code="plugin.precontencioso.grid.burofax.añadir.informacion.envio" text="**Añadir Información de Envío" />'
 			,iconCls : 'icon_info'
 			,cls: 'x-btn-text-icon'
-	});	
+	});
+	
+	var btnDescargarBurofax = new Ext.Button({
+			text : '<s:message code="plugin.precontencioso.grid.burofax.descargar.burofax" text="**Descargar Burofax" />'
+			,iconCls : 'icon_download'
+			,cls: 'x-btn-text-icon'
+	});		
 	
 	Ext.namespace('Ext.ux.plugins');
 	
@@ -202,6 +208,7 @@
       		btnNuevaDir.disabled=true;
       		btnEnviar.disabled=true;
       		btnNotificar.disabled=true;
+      		btnDescargarBurofax.disabled=true;
       		
       		//this.store.sort('idCliente','DESC');
 	        //this.store.setDefaultSort('idCliente', 'DESC');
@@ -245,8 +252,16 @@
 				else{
 					btnNotificar.setDisabled(true);
 				}
+				<%-- Si hay un envio seleccionado y su estado es ENVIADO habilitamos el boton de descargar burofax --%>
+				if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Enviado' && myCboxSelModel.getCount() == 1){
+					btnDescargarBurofax.setDisabled(false);
+				}
+				else{
+					btnDescargarBurofax.setDisabled(true);
+				}
 				
-				<%--Si ya se ha producido el envio y se ha añadido informacion de envio se desabilitan todos los botones menos añadir persona y añadir direccion --%>
+				
+				<%--Si ya se ha producido el envio y se ha añadido informacion de envio se desabilitan todos los botones menos añadir persona ,añadir direccion y descargarBurofax --%>
 				if(gridBurofax.getSelectionModel().getSelected().get('fechaAcuse') != ''){
 					//btnAddPersona.setDisabled(true);
 					btnEnviar.setDisabled(true);
@@ -255,6 +270,7 @@
 					btnPreparar.setDisabled(true);
 					btnCancelar.setDisabled(true);
 					btnNotificar.setDisabled(true);
+					
 				}
 			}
 			
@@ -275,6 +291,7 @@
       			btnNuevaDir.setDisabled(true);
       			btnEnviar.setDisabled(true);
       			btnNotificar.setDisabled(true);
+      			btnDescargarBurofax.setDisabled(true);
       		}
    		},
 
@@ -324,7 +341,7 @@
        	,style:'padding-top:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar , new Ext.Toolbar.Fill(), botonRefresh ]
+		,bbar : [ botonesTabla,btnAddPersona,btnEnviar, btnNuevaDir, btnEditar, btnPreparar,btnCancelar, btnNotificar,btnDescargarBurofax , new Ext.Toolbar.Fill(), botonRefresh ]
 		,autoWidth: true
 		,collapsible: true
 		
@@ -674,6 +691,13 @@
 	
 	});
 	
+	btnDescargarBurofax.on('click', function(){
+		var flow='/pfs/burofax/descargarBurofax';
+		var params={idEnvio:gridBurofax.getSelectionModel().getSelected().get('idEnvio')};
+		app.openBrowserWindow(flow,params);
+		page.fireEvent(app.event.DONE);
+	});
+	
 	var idProcedimiento;
 	var refrescarBurofaxGrid = function() {
 		burofaxStore.webflow({idProcedimiento: data.precontencioso.id});
@@ -695,6 +719,7 @@
 				btnPreparar.setDisabled(true);
 				btnCancelar.setDisabled(true);
 				btnNotificar.setDisabled(true);
+				btnDescargarBurofax.setDisabled(true);
 				return false;
 			}
 

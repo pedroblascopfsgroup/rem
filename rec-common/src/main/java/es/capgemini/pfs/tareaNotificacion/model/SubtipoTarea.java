@@ -33,6 +33,7 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_COMPLETAR_EXPEDIENTE = "2";
     public static final String CODIGO_REVISAR_EXPEDIENE = "3";
     public static final String CODIGO_DECISION_COMITE = "4";
+    public static final String CODIGO_FORMALIZAR_PROPUESTA = "FZAR_PPUESTA";
     public static final String CODIGO_SOLICITAR_PRORROGA_CE = "5";
     public static final String CODIGO_SOLICITAR_PRORROGA_RE = "6";
     public static final String CODIGO_NOTIFICACION_CONTRATO_CANCELADO = "7";
@@ -86,6 +87,8 @@ public class SubtipoTarea implements Serializable, Auditable {
     public static final String CODIGO_ACUERDO_RECHAZADO = "50";
     public static final String CODIGO_GESTIONES_CERRAR_ACUERDO = "51";
     public static final String CODIGO_ACUERDO_CERRADO = "52";
+
+    public static final String CODIGO_EVENTO_PROPUESTA = "PROP_EVENT";
     
     public static final String CODIGO_ACEPTACION_ACUERDO = "ACP_ACU";
     public static final String CODIGO_REVISION_ACUERDO_ACEPTADO = "REV_ACU";

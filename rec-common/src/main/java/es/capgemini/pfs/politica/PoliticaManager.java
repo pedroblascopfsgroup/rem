@@ -29,6 +29,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.itinerario.model.DDTipoReglaVigenciaPolitica;
 import es.capgemini.pfs.itinerario.model.Estado;
 import es.capgemini.pfs.itinerario.model.ReglasVigenciaPolitica;
+import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.politica.dao.CicloMarcadoPoliticaDao;
 import es.capgemini.pfs.politica.dao.PoliticaDao;
@@ -50,6 +51,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
@@ -75,6 +77,9 @@ public class PoliticaManager {
     
     @Autowired
 	private GenericABMDao genericDao;
+    
+    @Autowired
+    private PersonaDao personaDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -244,6 +249,34 @@ public class PoliticaManager {
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_POLITICA_LIST)
     public List<DDTipoPolitica> getTipoPoliticaList() {
         return (List<DDTipoPolitica>) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_LIST, DDTipoPolitica.class.getName());
+    }
+    
+    @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_POLITICA_PERSONA_LIST)
+    public List<DDTipoPolitica> getTipoPoliticaPersonaList(Long idPersona) {
+    	//Si no podemos obtener la politica de la entidad para la persona
+    	//Devolvemos todos los tipos de politicas
+    	if (idPersona==null)
+    		return this.getTipoPoliticaList();
+    	
+    	Persona persona = personaDao.get(idPersona);
+    	if (persona==null)
+    		return this.getTipoPoliticaList();
+    	
+    	if (persona.getPoliticaEntidad()==null)
+    		return this.getTipoPoliticaList();
+    	
+    	//Si tenemos informado para la persona un tipo de politica de la entidad
+    	//devolvemos el diccionario filtrado por los tipos que le corresponden
+    	List<DDTipoPolitica> politicas = (List<DDTipoPolitica>)genericDao.getList(DDTipoPolitica.class,
+    				genericDao.createFilter(FilterType.EQUALS, "politicaEntidad.id", persona.getPoliticaEntidad().getId()),
+    				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+    	
+    	//Si no hemos obtenido ninguna politica de la traducción, devolvemos todas
+    	if (Checks.estaVacio(politicas)) {
+    		return this.getTipoPoliticaList();
+    	} else {
+    		return politicas;
+    	}
     }
 
     /**
@@ -1102,16 +1135,17 @@ public class PoliticaManager {
 
         for (CicloMarcadoPolitica cmp : listadoCiclos) {
             List<Politica> listadoPoliticas = cmp.getPoliticas();
-
-            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
-            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
-
-            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
-                    DDEstadoPolitica.ESTADO_PROPUESTA);
-            politicaProponer.setEstadoPolitica(estadoPropuesta);
-
-            politicaDao.delete(politicaBorrar);
-            politicaDao.update(politicaProponer);
+            if (listadoPoliticas.size()>1) {
+	            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
+	            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
+	
+	            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
+	                    DDEstadoPolitica.ESTADO_PROPUESTA);
+	            politicaProponer.setEstadoPolitica(estadoPropuesta);
+	
+	            politicaDao.delete(politicaBorrar);
+	            politicaDao.update(politicaProponer);
+            }
         }
     }
 

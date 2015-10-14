@@ -20,6 +20,10 @@
 			<json:property name="idProponente" value="${acuerdo.proponente.id}" />
 			<json:property name="tipoDespachoProponente" value="${acuerdo.gestorDespacho.despachoExterno.tipoDespacho.id}" />
 			<json:property name="idTipoAcuerdo" value="${acuerdo.tipoAcuerdo.id}" />
+			<c:if test="${f.editor != null}">
+				<json:property name="usuarioLogado" value="${usuarioLogado}" />
+			</c:if>
+			
 		</json:object>
 	</json:array>
 </fwk:json>

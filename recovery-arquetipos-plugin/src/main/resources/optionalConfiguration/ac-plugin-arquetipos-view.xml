@@ -23,5 +23,10 @@
 		p:fileName="/WEB-INF/jsp/plugin/arquetipos/menu/busquedaModelos-menu.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="ROLE_CONFMODELOS"/>
+		
+	<bean p:entity="menu" p:name="arqconfig/arquetipos" p:order="510" 
+		p:fileName="/WEB-INF/jsp/main/menus/configuracion/configuracion_arquetipos.jsp" 
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
+		p:permission="VER-CONFIGURACION"/>
 	
 </beans>

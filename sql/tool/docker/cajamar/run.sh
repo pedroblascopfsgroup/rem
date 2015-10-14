@@ -33,6 +33,7 @@ OPTION_REMOVE=no
 OPTION_IGNORE_DUMP=no
 OPTION_RANDOM_DUMP=no
 OPTION_RESTART=no
+OPTION_PITERDEBUG=no
 
 DOCKER_INNER_ERROR_LOG=/tmp/error.log
 VAR_OUTTER_ERROR_LOG=""
@@ -40,19 +41,22 @@ VAR_OUTTER_ERROR_LOG=""
 function show_help () {
 	echo "Uso: "
 	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]"
-	echo "            [-errorlog=<fichero_logs>]"
+	echo "            [-errorlog=<fichero_logs>] [-piterdebug]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-help] [-oradata=<directorio datafiles>]"
+	echo " -------------------------------------------------------------------------------------------------------------------"
+	echo " OPCIONES GENERALES"
 	echo "    -help: Sólo imprime un mensaje de ayuda"
 	echo "    -restart: Indicar para reiniciar la BBDD"
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
 	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
 	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove"
-	echo " MODO 1. Línea base."
+	echo " OPCIONES MODO 1. Línea base."
 	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
 	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
 	echo "                  por defecto $DUMP_DIRECTORY"
 	echo "    -errorlog=: Fichero en el que queremos volcar la salida de los scripts DxL"
-	echo " MODO 2. Importar un dump aleatorio."
+	echo "    -piterdebug: Habilita el modo debug al empaquetar con la Pitertul"
+	echo " OPCIONES MODO 2. Importar un dump aleatorio."
 	echo "    -impdp=: Realiza un import dle dump que le digamos. Esta opción implica un -remove."
 	echo "                  Este modo ignora los siguientes parámetros si se indican: -ignoredmp, -dmpdir"
 	echo ""
@@ -88,6 +92,8 @@ if [[ "x$@" != "x" ]]; then
 		elif [[ "x$op" == "x-help" ]]; then
 			show_help
 			exit 0
+		elif [[ "x$op" == "x-piterdebug" ]]; then
+			OPTION_PITERDEBUG=yes
 		fi
 	done
 else
@@ -101,17 +107,35 @@ function package_sql () {
 	if [[ "x$OPTION_RANDOM_DUMP" != "xyes" ]]; then
 		local current_dir=$(pwd)
 		cd ../../../..
-		echo -n "[INFO]: Pitertul - Empaquetando desde $(pwd): "
+		
 		if [[ "x$ORACLE_HOME" == "x" ]]; then
 			export ORACLE_HOME=empty
 		fi
-		./sql/tool/package-scripts-from-tag.sh $1 $2 &>/dev/null
-		if [[ $? -eq 0 ]]; then
-			echo "OK"
+
+		if [[ "x$OPTION_PITERDEBUG" == "xyes" ]]; then
+			echo "[INFO]: Pitertul - Empaquetando desde $(pwd): "
+			echo "<<<<<<<<<< PITERTUL DEBUG MODE ON >>>>>>>>>>>>>"
+			OLD_T=$TERM
+			export TERM=dumb
+			./sql/tool/package-scripts-from-tag.sh $1 $2
+			if [[ $? -eq 0 ]]; then
+				echo "<<<<<<<<<< PITERTUL DEBUG MODE OFF >>>>>>>>>>>>>"
+				TERM=$OLD_T
+			else
+				echo "<<<<<<<<<<    PITERTUL FAILURE    >>>>>>>>>>>>>"
+				exit 1
+			fi
 		else
-			echo "FALLO"
-			exit 1
+			echo -n "[INFO]: Pitertul - Empaquetando desde $(pwd): "
+			./sql/tool/package-scripts-from-tag.sh $1 $2 &>/dev/null
+			if [[ $? -eq 0 ]]; then
+				echo "OK"
+			else
+				echo "FALLO"
+				exit 1
+			fi
 		fi
+
 
 		cd $current_dir
 	fi
@@ -121,7 +145,7 @@ function package_sql () {
 function run_container () {
 	local errorlog_volume=""
 
-	if [[ "x$VAR_OUTTER_ERROR_LOG" ]]; then
+	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		errorlog_volume="-v ${VAR_OUTTER_ERROR_LOG}:${DOCKER_INNER_ERROR_LOG}:rw"
 		if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
 			mkdir -p $(dirname $VAR_OUTTER_ERROR_LOG)

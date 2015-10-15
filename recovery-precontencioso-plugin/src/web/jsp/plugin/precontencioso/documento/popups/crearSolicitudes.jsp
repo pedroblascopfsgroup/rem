@@ -50,7 +50,7 @@
 
 	var insertGestorAdicional = function() {
 		Ext.Ajax.request({
-			url: page.resolveUrl('coreextension/insertarGestorAdicionalAsuto'),
+			url: page.resolveUrl('documentopco/insertarGestorAdicionalAsuto'),
 			params: {
 				idTipoGestor: comboTipoGestor.getValue(),
 				idAsunto: data.cabecera.asuntoId,

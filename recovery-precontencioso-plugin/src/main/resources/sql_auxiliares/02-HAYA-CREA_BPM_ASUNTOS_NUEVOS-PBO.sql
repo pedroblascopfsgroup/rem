@@ -1,3 +1,5 @@
+WHENEVER SQLERROR EXIT ROLLBACK;
+
 /* Formatted on 2014/07/23 18:45 (Formatter Plus v4.8.8) */
 -- Preparar las tablas (Se ejecutará SOLO una vez en los scripts de base de datos)
 
@@ -30,8 +32,6 @@ UPDATE tmp_ugaspfs_bpm_input_con1
    SET t_referencia = ROWNUM;
 
 
-COMMIT ;
-
 -- Insert de la tarea
 
 INSERT INTO tar_tareas_notificaciones
@@ -54,8 +54,6 @@ INSERT INTO tar_tareas_notificaciones
           JOIN prc_procedimientos prc ON tmp.prc_id = prc.prc_id
           ;
 
-COMMIT ;
-
 INSERT INTO tex_tarea_externa
             (tex_id, tar_id, tap_id, tex_token_id_bpm, tex_detenida, VERSION,
              usuariocrear, fechacrear, borrado, dtype, t_referencia)
@@ -65,7 +63,6 @@ INSERT INTO tex_tarea_externa
           ON tmp.t_referencia = tar.t_referencia
           ;
 
-COMMIT ;
 
 INSERT INTO hayamaster.jbpm_processinstance
             (id_, version_, start_, end_, issuspended_, processdefinition_,
@@ -85,7 +82,7 @@ INSERT INTO hayamaster.jbpm_processinstance
            GROUP BY name_) maxpd ON tpo.dd_tpo_xml_jbpm = maxpd.name_
           ;
 
-COMMIT ;
+
 
 
 
@@ -105,7 +102,7 @@ MERGE INTO prc_procedimientos t1
       UPDATE
          SET t1.prc_process_bpm = q.nuevo;  
 
-COMMIT ;
+
 
 MERGE INTO prc_procedimientos t1
    USING (SELECT prc.prc_id, prc.dd_tpo_id viejo, tap.dd_tpo_id nuevo
@@ -122,7 +119,7 @@ MERGE INTO prc_procedimientos t1
       UPDATE
          SET t1.dd_tpo_id = q.nuevo;
          
-COMMIT ;
+
 
 INSERT INTO hayamaster.jbpm_token
             (id_, version_, start_, end_, nodeenter_, issuspended_, node_,
@@ -147,7 +144,7 @@ INSERT INTO hayamaster.jbpm_token
           ;
 
 
-COMMIT ;
+
 
 MERGE INTO hayamaster.jbpm_processinstance t1
    USING (SELECT pi.ID_, pi.roottoken_ viejo, tk.id_ nuevo
@@ -160,7 +157,7 @@ MERGE INTO hayamaster.jbpm_processinstance t1
          SET t1.roottoken_ = q.nuevo;
 
 
-COMMIT ;
+
 
 merge into tex_tarea_externa t1 
     using (SELECT tex.tex_id, tex.tex_token_id_bpm viejo, tk.id_ nuevo
@@ -173,7 +170,7 @@ merge into tex_tarea_externa t1
                             set t1.tex_token_id_bpm = q.nuevo;
    
 
-COMMIT ;
+
 
 -------------------- AQUI HAY QUE VOLVER A EMPEZAR
 
@@ -196,7 +193,7 @@ INSERT INTO hayamaster.jbpm_moduleinstance
                         FROM hayamaster.jbpm_moduleinstance
                        WHERE processinstance_ = prc.prc_process_bpm);
 
-COMMIT ;
+
 
 INSERT INTO hayamaster.jbpm_tokenvariablemap
             (id_, version_, token_, contextinstance_)
@@ -214,7 +211,7 @@ INSERT INTO hayamaster.jbpm_tokenvariablemap
                         FROM hayamaster.jbpm_tokenvariablemap
                        WHERE token_ = pi.roottoken_);
 
-COMMIT ;
+
 
 INSERT INTO hayamaster.jbpm_variableinstance
             (id_, class_, version_, name_, token_, tokenvariablemap_,
@@ -235,7 +232,7 @@ INSERT INTO hayamaster.jbpm_variableinstance
                        WHERE processinstance_ = pi.id_ AND name_ = 'DB_ID');
 
 
-COMMIT ;
+
 
 INSERT INTO hayamaster.jbpm_variableinstance
             (id_, class_, version_, name_, token_, tokenvariablemap_,
@@ -258,7 +255,7 @@ INSERT INTO hayamaster.jbpm_variableinstance
               WHERE processinstance_ = pi.id_
                 AND name_ = 'procedimientoTareaExterna');
 
-COMMIT ;
+
 
 INSERT INTO hayamaster.jbpm_variableinstance
             (id_, class_, version_, name_, token_, tokenvariablemap_,
@@ -280,7 +277,7 @@ INSERT INTO hayamaster.jbpm_variableinstance
                     WHERE processinstance_ = pi.id_
                           AND name_ = 'bpmParalizado');
 
-COMMIT ;
+
 
 INSERT INTO hayamaster.jbpm_variableinstance
             (id_, class_, version_, name_, token_, tokenvariablemap_,
@@ -306,7 +303,7 @@ INSERT INTO hayamaster.jbpm_variableinstance
                          AND name_ = 'id' || nd.name_)
       AND tex.usuariocrear = 'AUTOMATICA';
 
-COMMIT ;
+
 
 UPDATE HAYAMASTER.jbpm_token
    SET nextlogindex_ = 0
@@ -351,9 +348,9 @@ INSERT INTO HAYAMASTER.jbpm_transition
                 AND tr.id_ IS NULL
            GROUP BY nd.id_, nd.processdefinition_);
 
-COMMIT ;
 
-COMMIT ;
+
+
 
 --alter table tmp_ugaspfs_bpm_input_con1 drop column  t_referencia;
 --alter table tar_tareas_notificaciones drop column  t_referencia;
@@ -374,7 +371,7 @@ UPDATE HAYAMASTER.jbpm_processinstance
    SET t_referencia = NULL
  WHERE t_referencia IS NOT NULL;
 
-COMMIT ;
+
 
 -- Ponemos fechas de vencimiento 
 
@@ -385,8 +382,10 @@ UPDATE tar_tareas_notificaciones
    AND prc_id IS NOT NULL
    AND tar_tarea_finalizada IS NULL
    AND tar_tar_id IS NULL;
-COMMIT ;
+
 UPDATE tar_tareas_notificaciones
    SET tar_fecha_venc_real = tar_fecha_venc
  WHERE tar_fecha_venc IS NOT NULL AND tar_fecha_venc_real IS NULL;
-COMMIT ;
+
+
+COMMIT;

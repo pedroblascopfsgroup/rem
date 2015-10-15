@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MANUEL_MEJIAS
---## FECHA_CREACION=20151016
+--## FECHA_CREACION=20151015
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3-hy-master
 --## INCIDENCIA_LINK=PRODUCTO-180
@@ -36,12 +36,22 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS > 0 THEN
 		DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'... ACTUALIZACION DEL CAMPO TFI_TAREAS_FORM_ITEMS PCO_RegistrarTomaDec proc_a_iniciar');
-    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = '''' WHERE  TFI_NOMBRE = ''proc_a_iniciar'' AND TAP_ID =  ' || 
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = '''' WHERE  TFI_NOMBRE = ''cambio_proc'' AND TAP_ID =  ' || 
       		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'')';
     	EXECUTE IMMEDIATE V_SQL;
 
-    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''PCO_RegistrarTomaDec''''][''''correcto''''] == DDSiNo.SI ? ''''ok'''' : (valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema''''] == ''''CPR'''' ? ''''cambio_proc'''' : ''''requiere_subsanar'''')''
-					WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'' ';
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = '''' WHERE  TFI_NOMBRE = ''fecha_envio_doc'' AND TAP_ID =  ' || 
+      		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'')';
+
+		EXECUTE IMMEDIATE V_SQL;
+		
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = '''' WHERE  TFI_NOMBRE = ''tipo_problema'' AND TAP_ID =  ' || 
+      		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'')';
+
+		EXECUTE IMMEDIATE V_SQL;
+		
+		V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''Tipo de problema en expediente'' WHERE  TFI_NOMBRE = ''tipo_problema'' AND TAP_ID =  ' || 
+      		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'')';
 
 		EXECUTE IMMEDIATE V_SQL;
 		

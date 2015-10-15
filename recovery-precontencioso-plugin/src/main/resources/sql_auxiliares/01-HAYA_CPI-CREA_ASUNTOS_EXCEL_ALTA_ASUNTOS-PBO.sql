@@ -1,3 +1,5 @@
+WHENEVER SQLERROR EXIT ROLLBACK;
+
 /* Formatted on 2014/07/23 18:45 (Formatter Plus v4.8.8) */
 /***************************************/
 -- CREAR ASUNTOS LINDORFF
@@ -51,8 +53,6 @@ UPDATE lin_asuntos_nuevos
                                       FROM hayamaster.dd_eas_estado_asuntos eas6
                                      WHERE eas6.dd_eas_codigo IN ('05', '06')));
 
-COMMIT ;
-
 /***************************************************/
 /** CREAMOS LA TABLA INDICE PARA GENERAR ASUNTOS  **/
 /***************************************************/
@@ -60,7 +60,6 @@ COMMIT ;
 
 DROP TABLE lin_asuntos_para_crear;
 
-COMMIT ;
 
 CREATE TABLE lin_asuntos_para_crear AS
 SELECT tabla.*,
@@ -74,8 +73,6 @@ FROM lin_asuntos_nuevos lin
 JOIN cnt_contratos cnt ON lin.n_caso=cnt.cnt_contrato
 JOIN cpe_contratos_personas cpe ON cpe.cnt_id=cnt.cnt_id AND dd_tin_id in (SELECT dd_tin_id FROM dd_tin_tipo_intervencion WHERE (dd_tin_codigo = 10 or dd_tin_codigo = 15 or dd_tin_codigo = 20 or dd_tin_codigo = 21))
 WHERE lin.creado='N') tabla;
-
-COMMIT ;
 
 
 /***************************************/
@@ -94,7 +91,6 @@ INSERT INTO haya01.cli_clientes
            SYSDATE AS cli_fecha_creacion, 0 AS cli_telecobro, apc.ofi_id
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
 
 --OK
 /*************************************************/
@@ -109,7 +105,7 @@ INSERT INTO haya01.ccl_contratos_cliente
            'CARGA_PCO' AS usuariocrear, SYSDATE AS fechacrear, 0 AS borrado
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 --OK
 /*************************************************/
@@ -131,7 +127,7 @@ INSERT INTO haya01.exp_expedientes
                 WHERE per_id = apc.per_id) AS exp_descripcion
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 --OK
 /**********************************************/
@@ -147,7 +143,7 @@ INSERT INTO haya01.cex_contratos_expediente
            0 AS borrado, 9 AS dd_aex_id
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 --OK
 /*********************************************/
@@ -162,7 +158,7 @@ INSERT INTO haya01.pex_personas_expediente
            'CARGA_PCO' AS usuariocrear, SYSDATE AS fechacrear, 0 AS borrado
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 --OK
 /*********************************************/
@@ -193,7 +189,7 @@ INSERT INTO haya01.asu_asuntos
              (select DD_PAS_ID from dd_pas_propiedad_asunto where dd_pas_codigo = 'SAREB') AS DD_PAS_ID
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 --OK
 /********************************/
@@ -242,7 +238,7 @@ INSERT INTO haya01.prc_procedimientos
            0 AS borrado, 3 AS dd_epr_id, 'MEJProcedimiento' AS dtype
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 --OK
 /**********************/
@@ -254,7 +250,7 @@ INSERT INTO haya01.prc_per
    (SELECT apc.prc_id, apc.per_id, 0 AS VERSION
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 
 --OK
@@ -271,7 +267,7 @@ INSERT INTO haya01.prc_cex
            0 AS VERSION
       FROM lin_asuntos_para_crear apc);
 
-COMMIT ;
+
 
 /******************************************************************************/
 /** inserta las personas relacionadas en la demanda no incluidas previamente **/
@@ -297,7 +293,7 @@ INSERT INTO haya01.prc_per
                            JOIN cnt_contratos cnt ON cex.cnt_id = cnt.cnt_id
                            ) a) where prc_id is not null;
 
-COMMIT ;
+
 
 
 /*************************************/
@@ -305,7 +301,7 @@ COMMIT ;
 /*************************************/
 
 DROP TABLE tmp_ugaspfs_bpm_input_con1;
-COMMIT ;
+
 
 /*
 CREATE TABLE tmp_ugaspfs_bpm_input_con1 AS
@@ -327,7 +323,7 @@ SELECT prc_id,
 (select tap_id from haya01.tap_tarea_procedimiento tap where tap.tap_codigo='PCO_AsignacionGestores') AS tap_id
 FROM lin_asuntos_para_crear apc;
 
-COMMIT ;
+
 
 /*************************************/
 /** ASOCIAR GESTORES POR DEFECTO    **/
@@ -390,7 +386,7 @@ INSERT INTO gaa_gestor_adicional_asunto
                                     FROM gaa_gestor_adicional_asunto
                                    WHERE dd_tge_id = 2)) a);
 
-COMMIT ;
+
 
 -- SUPERVISOR
 
@@ -419,7 +415,7 @@ INSERT INTO gaa_gestor_adicional_asunto
                                     FROM gaa_gestor_adicional_asunto
                                    WHERE dd_tge_id = 3)) a);
 
-COMMIT ;
+
 
 -- procurador
 
@@ -459,7 +455,7 @@ INSERT INTO gaa_gestor_adicional_asunto
                                     FROM gaa_gestor_adicional_asunto
                                    WHERE dd_tge_id = 4)) a);
 
-COMMIT ;
+
 */
 
 --SUPERVISOR PCO
@@ -477,7 +473,6 @@ SELECT S_GAA_GESTOR_ADICIONAL_ASUNTO.NEXTVAL, asu.ASU_ID ,USD_USUARIOS_DESPACHOS
 						WHERE gaa.asu_id = asu.asu_id and gaa.dd_tge_id = 
 							(SELECT dd_tge_id FROM hayamaster.dd_tge_tipo_gestor WHERE dd_tge_codigo = 'SUP_PCO'));
 
-COMMIT;
 
 INSERT INTO GAH_GESTOR_ADICIONAL_HISTORICO gah 
 	(gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
@@ -491,7 +486,6 @@ SELECT s_GAH_GESTOR_ADIC_HISTORICO.NEXTVAL ,asu.ASU_ID ,USD_USUARIOS_DESPACHOS.U
 						WHERE gaa.gah_asu_id = asu.asu_id and gaa.GAH_TIPO_GESTOR_ID = 
 							(SELECT dd_tge_id FROM HAYAMASTER.dd_tge_tipo_gestor WHERE dd_tge_codigo = 'SUP_PCO'));
 
-COMMIT;
               
 /***********************************************************/
 /** ACTUALIZA DE NUEVO EL ESTADO DE LOS ASUNTOS CREADOS   **/
@@ -517,4 +511,4 @@ UPDATE lin_asuntos_nuevos
                                       FROM hayamaster.dd_eas_estado_asuntos eas6
                                      WHERE eas6.dd_eas_codigo IN ('05', '06')));
 
-COMMIT ;
+COMMIT;

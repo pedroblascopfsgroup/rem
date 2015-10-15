@@ -69,7 +69,9 @@ DUMP_FILE_PATH=$INNER_DUMP_DIRECTORY/$CURRENT_DUMP_NAME
 if [[ -f $DUMP_FILE_PATH  ]]; then
 	if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
 		echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."
-		rm -f /oradata/*
+		rm -Rf /oradata/*
+		mkdir -p /oradata/flash
+		mkdir -p /oradata/redo
 		$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/alter-system-user.sql &>/dev/null
 		echo "<Docker [$CONTAINER_NAME]>: creando tablespaces y directorios..."
 		$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/script.sql

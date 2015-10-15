@@ -33,6 +33,7 @@ DECLARE
 
 T_TIPO_VALOR('H011','H011_RevisarInformeLetradoMoratoria','CJ-811','CJ-SAREO')
 ,T_TIPO_VALOR('HC103','HC103_ConfirmarTransferencia','CJ-814','GCONPR')
+,T_TIPO_VALOR('H015','H015_RegistrarDecisionLlaves','CJ-104','SPGL')
 
 ); 
     V_TMP_TIPO T_TIPO_VALOR;

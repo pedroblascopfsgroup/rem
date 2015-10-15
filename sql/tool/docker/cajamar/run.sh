@@ -34,6 +34,7 @@ OPTION_IGNORE_DUMP=no
 OPTION_RANDOM_DUMP=no
 OPTION_RESTART=no
 OPTION_PITERDEBUG=no
+OPTION_FLASHBACK_MODE=no
 
 DOCKER_INNER_ERROR_LOG=/tmp/error.log
 VAR_OUTTER_ERROR_LOG=""
@@ -43,6 +44,7 @@ function show_help () {
 	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]"
 	echo "            [-errorlog=<fichero_logs>] [-piterdebug]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-help] [-oradata=<directorio datafiles>]"
+	echo " MODO 3: $0 -flashback"
 	echo " -------------------------------------------------------------------------------------------------------------------"
 	echo " OPCIONES GENERALES"
 	echo "    -help: Sólo imprime un mensaje de ayuda"
@@ -50,15 +52,21 @@ function show_help () {
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
 	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
 	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove"
+	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
 	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
 	echo "                  por defecto $DUMP_DIRECTORY"
 	echo "    -errorlog=: Fichero en el que queremos volcar la salida de los scripts DxL"
 	echo "    -piterdebug: Habilita el modo debug al empaquetar con la Pitertul"
+	echo ""
 	echo " OPCIONES MODO 2. Importar un dump aleatorio."
 	echo "    -impdp=: Realiza un import dle dump que le digamos. Esta opción implica un -remove."
 	echo "                  Este modo ignora los siguientes parámetros si se indican: -ignoredmp, -dmpdir"
+	echo ""
+	echo " OPCIONES MODO 3. Modo Flashback, punto de restauración"
+	echo "    -flashback: Pone la BBDD en modo flashback creando un punto de restauración. Se sale del modo"
+	echo "                  mediante Ctrl+C. Al salir se ofrecen dos opciones: restaurar o confirmar"
 	echo ""
 }
 
@@ -94,6 +102,8 @@ if [[ "x$@" != "x" ]]; then
 			exit 0
 		elif [[ "x$op" == "x-piterdebug" ]]; then
 			OPTION_PITERDEBUG=yes
+		elif [[ "x$op" == "x-flashback" ]]; then
+			OPTION_FLASHBACK_MODE=yes
 		fi
 	done
 else
@@ -234,18 +244,52 @@ function show_install_info () {
 }
 
 
-INSTALL_CMD="$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG"
+function do_install () {
+	$(pwd)/install.sh $CURRENT_DUMP_NAME $STARTING_TAG $CONTAINER_NAME $CUSTOM_NLS_LANG $OPTION_RANDOM_DUMP $OPTION_REMOVE $DOCKER_INNER_ERROR_LOG
+}
+
+function restore_or_confirm_flahsback () {
+	echo "[INFO] Saliendo del modo flashback"
+	echo "Por favor introduce una opción"
+	echo " 1: Confirmar"
+	echo " 2: Restaurar"
+	echo -n "flashback> "
+	read IN
+	case $IN in
+		1 )
+			echo "Al realizar esta operación los cambios realizados en BBDD serán permanentes"
+			echo -n "¿Estás seguro? [s/N] "; read IN 
+			if [[ "x$IN" == "xs" || "x$IN" == "xs" ]]; then
+				echo "[INFO] Confirmando estado de la BBDD"
+				$(pwd)/flashback.sh $CONTAINER_NAME confirm
+				exit $?
+			fi
+			;;
+		2)
+			echo "Al realizar esta operación se revertirán los cambios realizados en la BBDD Volviendo"
+			echo -n "¿Estás seguro? [s/N] "; read IN 
+			if [[ "x$IN" == "xs" || "x$IN" == "xs" ]]; then
+				echo "[INFO] Restaurando el estado de la BBDD"
+				$(pwd)/flashback.sh $CONTAINER_NAME restore
+				exit $?
+			fi
+			;;
+	esac
+	echo "[INFO] Volviendo al modo Flashback"
+	echo "Pulsa Ctrl + C para salir"
+}
 
 
 if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe
+	OPTION_REMOVE=yes
 	show_install_info
 	check_dump
 	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imágen."
 	echo "[INFO]: Si la imágen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
 	run_container
 	if [[ $? -eq 0 ]]; then
-		$INSTALL_CMD
+		do_install
 		if [[ $? -ne 0 ]]; then
 			echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
 			exit 1
@@ -266,12 +310,21 @@ else
 			run_container
 		fi
 		if [[ $? -eq 0 ]]; then
-			$INSTALL_CMD
+			do_install
 			if [[ $? -ne 0 ]]; then
 				echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
 				exit 1
 			fi
 		fi
+	fi
+
+	if [[ "x$OPTION_FLASHBACK_MODE" == "xyes" ]]; then
+		trap restore_or_confirm_flahsback SIGINT
+		echo "[INFO] Entrando en modo flashback"
+		echo "[INFO] Creando un punto de restauración de la BBDD"
+		$(pwd)/flashback.sh $CONTAINER_NAME create
+		echo "Pulsa Ctrl + C para salir del modo Flhasback"
+		while true; do sleep 5; done
 	fi
 
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then

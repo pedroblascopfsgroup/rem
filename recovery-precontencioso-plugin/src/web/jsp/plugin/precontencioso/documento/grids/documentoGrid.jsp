@@ -362,7 +362,7 @@ var editarDocButton = new Ext.Button({
 <%-- FUNCION: Control habilitar/deshabilitar los distintos botones --%>	
 var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, editarB, anularB, solicitarB, informarB){
 	incluirDocButton.setDisabled(incluirB);
-	excluirDocButton.setDisabled(false);
+	excluirDocButton.setDisabled(excluirB);
 	descartarDocButton.setDisabled(descartarB);
 	editarDocButton.setDisabled(editarB);	
 	anularSolicitudesButton.setDisabled(anularB);

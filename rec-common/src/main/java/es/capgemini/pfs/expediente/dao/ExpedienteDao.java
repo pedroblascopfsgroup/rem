@@ -74,6 +74,16 @@ public interface ExpedienteDao extends AbstractDao<Expediente, Long> {
     Page buscarExpedientesPaginadoDinamico(DtoBuscarExpedientes dtoExpediente,Usuario usuarioLogueado,String params);
 
     /**
+     * Realiza la Búsqueda paginada para buscador de expedientes de recobro, acuerdo a un filtro dinámico que se le pasa
+     * como parámetro.
+     * @param dtoExpediente
+     * @param usuarioLoguead
+     * @param params
+     * @return List lista de expedientes
+     */
+    Page buscarExpedientesRecobroPaginadoDinamico(DtoBuscarExpedientes dtoExpediente,Usuario usuarioLogueado,String params);
+
+    /**
      * Obtiene los expedientes de una persona que no estÃ¡n borrados (pero si trae los que estÃ¡n cancelados).
      * @param idPersona id Persona
      * @return expedientes

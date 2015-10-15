@@ -87,6 +87,7 @@
 	<bean p:entity="menu" p:name="busquedas/clientes" p:order="110" p:fileName="/WEB-INF/jsp/main/menus/busquedas/clientes.jsp" class="es.capgemini.pfs.web.menu.MenusNoExternos" p:permission="MENU-LIST-CLI"/>
 	<bean p:entity="menu" p:name="busquedas/expedientes" p:order="120" p:fileName="/WEB-INF/jsp/main/menus/busquedas/expedientes.jsp" class="es.capgemini.pfs.web.menu.MenusNoExternos"  p:permission="MENU-LIST-EXP"/>
 	<bean p:entity="menu" p:name="busquedas/expedientes" p:order="120" p:fileName="/WEB-INF/jsp/main/menus/busquedas/expedientes.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  p:permission="MENU-LIST-EXP-ALL-USERS"/>
+	<bean p:entity="menu" p:name="busquedas/expRecobro" p:order="125" p:fileName="/WEB-INF/jsp/main/menus/busquedas/expedientesRecobro.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  p:permission="MENU-LIST-EXP-ALL-USERS"/>
 	<bean p:entity="menu" p:name="busquedas/asuntos" p:order="130" p:fileName="/WEB-INF/jsp/main/menus/busquedas/asuntos.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  p:permission="MENU-LIST-ASU"/>
 	<bean p:entity="menu" p:name="busquedas/contratos" p:order="140" p:fileName="/WEB-INF/jsp/main/menus/busquedas/contratos.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"  p:permission="MENU-LIST-CNT"/>
 	<bean p:entity="menu" p:name="comite" p:order="200" p:fileName="/WEB-INF/jsp/main/menus/comite.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_COMITE"/>

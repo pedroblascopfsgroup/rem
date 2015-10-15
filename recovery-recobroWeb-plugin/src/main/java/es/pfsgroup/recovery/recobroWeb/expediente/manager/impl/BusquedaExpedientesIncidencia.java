@@ -36,7 +36,7 @@ public class BusquedaExpedientesIncidencia implements BusquedaExpedienteFiltroDi
 		return false;
 	}
 
-	@Override
+        @Override
 	public String obtenerFiltro(String paramsDinamicos) {
 		StringBuilder filtro = new StringBuilder();				
 		BusquedaExpIncidenciaDto dto = creaDtoParametros(paramsDinamicos);	
@@ -45,6 +45,85 @@ public class BusquedaExpedientesIncidencia implements BusquedaExpedienteFiltroDi
 	}
 
 	private StringBuilder calculaFiltro(BusquedaExpIncidenciaDto dto) {
+		StringBuilder filtro = new StringBuilder();
+		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
+		filtro.append(" WHERE expRec.id in( SELECT distinct ine.expediente.id FROM IncidenciaExpediente ine WHERE 1=1 ");
+		if (!Checks.esNulo(dto.getFechaDesdeIncidencia())){			
+			if (dto.getFechaDesdeIncidencia() != null
+					&& !"".equals(dto.getFechaDesdeIncidencia())) {
+				SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					sdf1.parse(dto.getFechaDesdeIncidencia());
+					filtro.append(" AND ine.auditoria.fechaCrear >= TO_DATE('"+dto.getFechaDesdeIncidencia() + "','dd/MM/rrrr')" );
+				
+				} catch (ParseException e) {
+					logger.error("Error parseando la fecha desde", e);
+				}
+				
+			}
+		}
+		if (!Checks.esNulo(dto.getFechaHastaIncidencia())){
+			if (dto.getFechaHastaIncidencia() != null
+					&& !"".equals(dto.getFechaHastaIncidencia())) {
+				SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					sdf1.parse(dto.getFechaHastaIncidencia());
+					filtro.append(" AND ine.auditoria.fechaCrear <= TO_DATE('"+dto.getFechaHastaIncidencia() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );
+				} catch (ParseException e) {
+					logger.error("Error parseando la fecha hasta", e);
+				}
+				
+			}
+		}
+		if (!Checks.esNulo(dto.getSituacionIncidencia())){
+			filtro.append(" AND ine.situacionIncidencia.id = " + dto.getSituacionIncidencia() );
+		}		
+		if (!Checks.esNulo(dto.getTipoIncidencia())) {
+			filtro.append(" AND ine.tipoIncidencia.id = " + dto.getTipoIncidencia() );
+		}
+
+		filtro.append(" AND ine.auditoria.borrado = 0 ");
+		filtro.append(" ) ");
+				
+		return filtro;
+	}
+
+	private BusquedaExpIncidenciaDto creaDtoParametros(String paramsDinamicos) {
+		BusquedaExpIncidenciaDto dto = new BusquedaExpIncidenciaDto();
+		
+		String[] parametros=paramsDinamicos.split(";");
+		if(parametros != null && parametros.length > 0){
+			for(String param:parametros){
+				String[] paramV = param.split(":");
+				if(paramV != null && paramV.length == 2 ){
+					if(paramV[0].equalsIgnoreCase("tipoIncidencia") && !paramV[1].equals("")){
+						dto.setTipoIncidencia(paramV[1]);
+					}
+					if(paramV[0].equalsIgnoreCase("situacionIncidencia") && !paramV[1].equals("")){
+						dto.setSituacionIncidencia(paramV[1]);
+					} 
+					if(paramV[0].equalsIgnoreCase("fechaDesdeIncidencia") && !paramV[1].equals("")){
+						dto.setFechaDesdeIncidencia(paramV[1]);
+					}
+					if(paramV[0].equalsIgnoreCase("fechaHastaIncidencia") && !paramV[1].equals("")){
+						dto.setFechaHastaIncidencia(paramV[1]);
+					}
+				}
+			}		
+		}
+		
+		return dto;
+	}
+        
+	@Override
+	public String obtenerFiltroRecobro(String paramsDinamicos) {
+		StringBuilder filtro = new StringBuilder();				
+		BusquedaExpIncidenciaDto dto = creaDtoParametros(paramsDinamicos);	
+		filtro= calculaFiltroRecobro(dto);		
+		return filtro.toString();
+	}
+
+	private StringBuilder calculaFiltroRecobro(BusquedaExpIncidenciaDto dto) {
 		StringBuilder filtro = new StringBuilder();
 //BKREC-943
 //		filtro.append(" SELECT distinct expRec.id FROM Expediente expRec ");		
@@ -89,33 +168,6 @@ public class BusquedaExpedientesIncidencia implements BusquedaExpedienteFiltroDi
 //		filtro.append(" ) ");
 				
 		return filtro;
-	}
-
-	private BusquedaExpIncidenciaDto creaDtoParametros(String paramsDinamicos) {
-		BusquedaExpIncidenciaDto dto = new BusquedaExpIncidenciaDto();
-		
-		String[] parametros=paramsDinamicos.split(";");
-		if(parametros != null && parametros.length > 0){
-			for(String param:parametros){
-				String[] paramV = param.split(":");
-				if(paramV != null && paramV.length == 2 ){
-					if(paramV[0].equalsIgnoreCase("tipoIncidencia") && !paramV[1].equals("")){
-						dto.setTipoIncidencia(paramV[1]);
-					}
-					if(paramV[0].equalsIgnoreCase("situacionIncidencia") && !paramV[1].equals("")){
-						dto.setSituacionIncidencia(paramV[1]);
-					} 
-					if(paramV[0].equalsIgnoreCase("fechaDesdeIncidencia") && !paramV[1].equals("")){
-						dto.setFechaDesdeIncidencia(paramV[1]);
-					}
-					if(paramV[0].equalsIgnoreCase("fechaHastaIncidencia") && !paramV[1].equals("")){
-						dto.setFechaHastaIncidencia(paramV[1]);
-					}
-				}
-			}		
-		}
-		
-		return dto;
 	}
 
 }

@@ -12,7 +12,6 @@ new Ext.Button({
 			text: '<s:message code="plugin.precontencioso.button.finalizarPreparacion" text="**Finalizar preparaci�n" />',
 			icon:'/pfs/css/book_next.png',
 			handler: function() {
-
 				var mensajeFinalizacionCorrecto = function() {
 					Ext.Msg.show({
 						title: fwk.constant.alert,
@@ -31,19 +30,25 @@ new Ext.Button({
 				}
 				
 				var finalizarPreparacion = function() {
+					var mask = new Ext.LoadMask(Ext.getBody(), {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+					mask.show();
 					Ext.Ajax.request({
 						url: page.resolveUrl('expedientejudicial/finalizarPreparacion'),
 						params: {idProcedimiento: data.id},
 						method: 'POST',
 						success: function (result, request){
+							mask.hide();
 							var resultado = Ext.decode(result.responseText);
 							if(resultado.finalizado == true) {
 								mensajeFinalizacionCorrecto();
 							}else{
 								mensajeFinalizacionError('<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />');
 							}
+
+							app.abreProcedimiento(data.id, data.nombreProcedimiento);
 						}
 						,error: function(){
+							mask.hide();
 							mensajeFinalizacionError('<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />');
 					    }
 					});	
@@ -107,20 +112,28 @@ new Ext.Button({
 					});
 					return;
 				}
+
+				var mask=new Ext.LoadMask(Ext.getBody(), {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+				mask.show();
+
 				var page = new fwk.Page("pfs", "", "", "");
 				Ext.Ajax.request({
 					url: page.resolveUrl('expedientejudicial/devolverPreparacion'),
 					params: {idProcedimiento: data.id},
 					method: 'POST',
 					success: function (result, request) {
+						mask.hide();
 						Ext.Msg.show({
 							title: fwk.constant.alert,
 							msg: '<s:message code="plugin.precontencioso.button.devolverPreparacion.correcto"
 		             				text="**El expediente judicial se ha devuelto a preparacion correctamente" />',
 							buttons: Ext.Msg.OK
 						});
+
+						app.abreProcedimiento(data.id, data.nombreProcedimiento);
 					},
-					error: function(){
+					error: function() {
+						mask.hide();
 						Ext.MessageBox.show({
 				            title: fwk.constant.alert,
 				            msg: '<s:message code="plugin.precontencioso.button.finalizarPreparacion.error.exception" text="**Se ha producido un error. Consulte con soporte" />',

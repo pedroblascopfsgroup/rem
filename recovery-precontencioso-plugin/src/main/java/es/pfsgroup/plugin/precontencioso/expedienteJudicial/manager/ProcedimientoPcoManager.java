@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,27 +18,41 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.AsuntosManager;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
+import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
+import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
+import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.burofax.model.DDEstadoBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.burofax.model.EnvioBurofaxPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.ConfigEntidadProcTipoFicheroPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPCOAssembler;
@@ -49,20 +65,36 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroB
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.grid.ProcedimientoPcoGridDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoBPMConstants;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.HistoricoEstadoProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
+import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 @Service
 public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
+
+	private static final String LITIGIO = "litigio";
+	private static final String CONCURSO = "concurso";
+
+	private static final String LET_PCO = "LETR";
+	private static final String SUP_PCO = "SUP_PCO";
+	private static final String DIRLIT_PCO = "DULI";
+	private static final String PREDOC = "PREDOC";
 
 	@Autowired
 	private ProcedimientoPCODao procedimientoPcoDao;
 	
 	@Autowired
 	private ProcedimientoDao procedimientoDao;
+	
+	@Autowired
+	private TareaExternaDao tareaExternaDao;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -93,6 +125,15 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
     @Autowired
     protected TareaExternaManager tareaExternaManager;
 
+	@Autowired
+	ProcedimientoManager procedimientoManager;
+
+	@Autowired
+	PrecontenciosoProjectContext precontenciosoContext;
+	
+	@Autowired
+	private GestorTareasManager gestorTareasManager;
+	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
 	@Transactional(readOnly = false)
@@ -378,6 +419,49 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		}
 
 	}
+
+	/**
+	 * Devuelve el tipo de asunto al que está asignado el procedimiento (litigio, concurso) para usarlo como transición del BPM
+	 * @param idProcedimiento
+	 * @return
+	 */
+	public String dameTipoAsunto(Long idProcedimiento) {
+		String resultado = "";
+		try {		
+			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+			if (procedimientoPco != null) {
+				String tipoAsunto = procedimientoPco.getProcedimiento().getAsunto().getTipoAsunto().getCodigo();
+				if (DDTiposAsunto.LITIGIO.equals(tipoAsunto)){
+					resultado = LITIGIO;
+				} else if (DDTiposAsunto.CONCURSAL.equals(tipoAsunto)){
+					resultado = CONCURSO;
+				}
+			}
+		} catch (Exception e) {}
+		return resultado;
+	}
+	
+	/**
+	 * Comprueba que el asunto correspondiente al procedimiento tenga los siguientes gestores asignados:
+	 * 	Letrado, Supervisor del asunto, Director unidad de litigio y Preparador documental.
+	 * @param idProcedimiento
+	 * @return
+	 */
+	public Boolean existenGestoresCorrectos(Long idProcedimiento) {
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(LET_PCO) && listaTiposGestores.contains(SUP_PCO) &&
+					listaTiposGestores.contains(DIRLIT_PCO) && listaTiposGestores.contains(PREDOC)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
 	
 	@BusinessOperation(BO_PCO_EXPEDIENTE_BY_PRC_ID)
 	@Override
@@ -390,4 +474,246 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	public void update(ProcedimientoPCO pco) {
 		procedimientoPcoDao.update(pco);
 	}
+	
+	@Override
+	@BusinessOperation(BO_PCO_INICIALIZAR)
+	@Transactional(readOnly = false)
+	public void inicializarPrecontencioso(Procedimiento procedimiento) {
+
+		try {		
+			Long idProc = procedimiento.getId();
+			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProc);
+			if (Checks.esNulo(procedimientoPco)) {
+				procedimientoPco = new ProcedimientoPCO();
+				procedimientoPco.setPreturnado(false);
+				procedimientoPco.setProcedimiento(procedimiento);
+				DDTipoPreparacionPCO tipoPrepDefecto = (DDTipoPreparacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+					dameValorDiccionarioByCod(DDTipoPreparacionPCO.class, DDTipoPreparacionPCO.SENCILLO);
+				procedimientoPco.setTipoPreparacion(tipoPrepDefecto);
+				procedimientoPco.setTipoProcPropuesto(obtenerProcedimientoPropuesto(procedimiento));
+				procedimientoPco.setTipoProcIniciado(null);
+				procedimientoPco.setNumExpInterno("");
+				procedimientoPco.setNumExpExterno("");
+				procedimientoPco.setNombreExpJudicial(procedimiento.getCodigoProcedimientoEnJuzgado());
+				genericDao.save(ProcedimientoPCO.class, procedimientoPco);
+				List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc = new ArrayList<HistoricoEstadoProcedimientoPCO>();
+				HistoricoEstadoProcedimientoPCO estadoInicial = new HistoricoEstadoProcedimientoPCO();
+				DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+					dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);;
+				estadoInicial.setEstadoPreparacion(estadoPreparacion);
+				estadoInicial.setFechaInicio(new Date());
+				estadoInicial.setFechaFin(null);
+				estadoInicial.setProcedimientoPCO(procedimientoPco);
+				genericDao.save(HistoricoEstadoProcedimientoPCO.class, estadoInicial);
+				estadosPreparacionProc.add(estadoInicial);
+				procedimientoPco.setEstadosPreparacionProc(estadosPreparacionProc);
+				genericDao.save(ProcedimientoPCO.class, procedimientoPco);
+			} else {
+				procedimiento = procedimientoPco.getProcedimiento();
+			}
+			List<Contrato> contratos = new ArrayList<Contrato>(procedimiento.getAsunto().getContratos());
+			Set<Persona> setPersonas = new HashSet<Persona>();
+			Set<ContratoPersona> setContratosPersonas = new HashSet<ContratoPersona>();
+			for (Contrato contrato : contratos) {
+				for (ContratoPersona cp : contrato.getContratoPersona()) {
+					setPersonas.add(cp.getPersona());
+					setContratosPersonas.add(cp);
+				}
+			}
+			List<Persona> personas = new ArrayList<Persona>(setPersonas);
+			List<ContratoPersona> contratosPersonas = new ArrayList<ContratoPersona>(setContratosPersonas);
+			List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(idProc);
+			
+			//Creamos un documento por cada una de las configuraciones correspondientes a contratos, personas y bienes
+			List<DocumentoPCO> documentos = obtenerNuevosDocumentos(procedimientoPco, contratos, personas, bienes);
+						
+			//Creamos una liquidación por cada contrato
+			List<LiquidacionPCO> liquidaciones = obtenerNuevasLiquidaciones(procedimientoPco, contratos);
+			
+			//Creamos un burofax por cada contrato-persona (si tipo de asuto es Litigio)
+			List<BurofaxPCO> burofaxes = new ArrayList<BurofaxPCO>();
+			if (DDTiposAsunto.LITIGIO.equals(procedimiento.getAsunto().getTipoAsunto().getCodigo())) {
+				burofaxes = obtenerNuevosBurofaxes(procedimientoPco, contratosPersonas);
+			}
+			
+			procedimientoPco.setDocumentos(documentos);
+			procedimientoPco.setLiquidaciones(liquidaciones);
+			procedimientoPco.setBurofaxes(burofaxes);
+			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
+			
+			if (documentos.size()>0) {
+				gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+			}
+			if (liquidaciones.size()>0) {
+				gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	
+	}
+	
+	private List<DocumentoPCO> obtenerNuevosDocumentos(ProcedimientoPCO procedimientoPco, 
+			List<Contrato> contratos, List<Persona> personas, List<Bien> bienes) {
+	
+		List<DocumentoPCO> documentos = procedimientoPco.getDocumentos();
+		if (documentos == null) {
+			documentos = new ArrayList<DocumentoPCO>();
+		}
+
+		DDEstadoDocumentoPCO estadoInicialDoc = (DDEstadoDocumentoPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+			dameValorDiccionarioByCod(DDEstadoDocumentoPCO.class, DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);
+
+		//Obtener tipo de procedimiento propuesto
+		String tipoProcProp = null;
+		try {
+			tipoProcProp = procedimientoPco.getTipoProcPropuesto().getCodigo();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		if (!Checks.esNulo(tipoProcProp)) {
+			//Insertar los documentos de contratos
+			DDUnidadGestionPCO ugContrato = (DDUnidadGestionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+					dameValorDiccionarioByCod(DDUnidadGestionPCO.class, DDUnidadGestionPCO.CONTRATOS);
+			List<ConfigEntidadProcTipoFicheroPCO> listaConfigDocsContratos = obtenerListaConfigDocs(tipoProcProp, DDUnidadGestionPCO.CONTRATOS);
+			for (Contrato contrato : contratos) {
+				for (ConfigEntidadProcTipoFicheroPCO config : listaConfigDocsContratos) {
+					DocumentoPCO documento = informarValores(procedimientoPco, config.getTipoFichero(), 
+						ugContrato, contrato.getNroContratoFormat(), contrato.getId(), estadoInicialDoc);
+					genericDao.save(DocumentoPCO.class, documento);
+					documentos.add(documento);
+				}
+			}
+			//Insertar los documentos de personas
+			DDUnidadGestionPCO ugPersona = (DDUnidadGestionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+					dameValorDiccionarioByCod(DDUnidadGestionPCO.class, DDUnidadGestionPCO.PERSONAS);
+			List<ConfigEntidadProcTipoFicheroPCO> listaConfigDocsPersonas = obtenerListaConfigDocs(tipoProcProp, DDUnidadGestionPCO.PERSONAS);
+			for (Persona persona : personas) {
+				for (ConfigEntidadProcTipoFicheroPCO config : listaConfigDocsPersonas) {
+					DocumentoPCO documento = informarValores(procedimientoPco, config.getTipoFichero(), 
+						ugPersona, persona.getNom50(), persona.getId(), estadoInicialDoc);
+					genericDao.save(DocumentoPCO.class, documento);
+					documentos.add(documento);
+				}				
+			}
+			//Insertar los documentos de bienes
+			DDUnidadGestionPCO ugBien = (DDUnidadGestionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+					dameValorDiccionarioByCod(DDUnidadGestionPCO.class, DDUnidadGestionPCO.BIENES);
+			List<ConfigEntidadProcTipoFicheroPCO> listaConfigDocsBienes = obtenerListaConfigDocs(tipoProcProp, DDUnidadGestionPCO.BIENES);
+			for (Bien bien : bienes) {
+				for (ConfigEntidadProcTipoFicheroPCO config : listaConfigDocsBienes) {
+					DocumentoPCO documento = 
+					informarValores(procedimientoPco, config.getTipoFichero(), 
+						ugBien, bien.getDescripcionBien(), bien.getId(), estadoInicialDoc);
+					genericDao.save(DocumentoPCO.class, documento);
+					documentos.add(documento);
+				}				
+			}
+		}
+		return documentos;
+	}
+
+	private DocumentoPCO informarValores(ProcedimientoPCO procedimientoPco,
+			DDTipoFicheroAdjunto tipoFichero, DDUnidadGestionPCO ug,
+			String descripcion, Long id, DDEstadoDocumentoPCO estadoInicialDoc) {
+		
+		DocumentoPCO documento = new DocumentoPCO();
+		documento.setAdjuntado(false);
+		documento.setProcedimientoPCO(procedimientoPco);
+		documento.setSolicitudes(new ArrayList<SolicitudDocumentoPCO>());
+		documento.setTipoDocumento(tipoFichero);
+		documento.setUnidadGestion(ug);
+		documento.setUgDescripcion(descripcion);
+		documento.setUnidadGestionId(id);
+		documento.setEstadoDocumento(estadoInicialDoc);
+		return documento;
+		
+	}
+
+	private List<LiquidacionPCO> obtenerNuevasLiquidaciones(
+			ProcedimientoPCO procedimientoPco, List<Contrato> contratos) {
+
+		List<LiquidacionPCO> liquidaciones = procedimientoPco.getLiquidaciones();
+		if (liquidaciones == null) {
+			liquidaciones = new ArrayList<LiquidacionPCO>();
+		}
+		DDEstadoLiquidacionPCO estadoInicialLiq = (DDEstadoLiquidacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+				dameValorDiccionarioByCod(DDEstadoLiquidacionPCO.class, DDEstadoLiquidacionPCO.PENDIENTE);
+		for (Contrato contrato : contratos) {
+			LiquidacionPCO liq = new LiquidacionPCO();
+			liq.setContrato(contrato);
+			liq.setEstadoLiquidacion(estadoInicialLiq);
+			liq.setProcedimientoPCO(procedimientoPco);
+			genericDao.save(LiquidacionPCO.class, liq);
+			liquidaciones.add(liq);
+		}
+		return liquidaciones;
+	}
+
+	private List<BurofaxPCO> obtenerNuevosBurofaxes(
+			ProcedimientoPCO procedimientoPco, List<ContratoPersona> contratosPersonas) {
+
+		List<BurofaxPCO> burofaxes = procedimientoPco.getBurofaxes();
+		if (burofaxes == null) {
+			burofaxes = new ArrayList<BurofaxPCO>();
+		}
+		DDEstadoBurofaxPCO estadoInicialBur = (DDEstadoBurofaxPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+				dameValorDiccionarioByCod(DDEstadoBurofaxPCO.class, DDEstadoBurofaxPCO.NO_NOTIFICADO);
+		for (ContratoPersona cp : contratosPersonas) {
+			BurofaxPCO bf = new BurofaxPCO();
+			bf.setContrato(cp.getContrato());
+			bf.setEnviosBurofax(new ArrayList<EnvioBurofaxPCO>());
+			bf.setEstadoBurofax(estadoInicialBur);
+			bf.setTipoIntervencion(cp.getTipoIntervencion());
+			bf.setProcedimientoPCO(procedimientoPco);
+			bf.setDemandado(cp.getPersona());
+			genericDao.save(BurofaxPCO.class, bf);
+			burofaxes.add(bf);
+		}
+		return burofaxes;
+	}
+
+
+	private List<ConfigEntidadProcTipoFicheroPCO> obtenerListaConfigDocs(
+			String tipoProcProp, String codigoEntidadContrato) {
+		
+		Filter codigoTipoProcFilter = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimiento.codigo", tipoProcProp);
+		Filter codigoEntidadFilter = genericDao.createFilter(FilterType.EQUALS, "tipoEntidad.codigo", codigoEntidadContrato);
+		List<ConfigEntidadProcTipoFicheroPCO> listaConfig = genericDao.getList(ConfigEntidadProcTipoFicheroPCO.class, codigoTipoProcFilter, codigoEntidadFilter);
+		return listaConfig;
+		
+	}
+
+
+	private TipoProcedimiento obtenerProcedimientoPropuesto(
+			Procedimiento procedimiento) {
+		
+		TipoProcedimiento tipoProc = null;
+		if (DDTiposAsunto.LITIGIO.equals(procedimiento.getAsunto().getTipoAsunto().getCodigo())) {
+			for (TareaExterna tarea : tareaExternaDao.obtenerTareasPorProcedimiento(procedimiento.getId())) {
+				if (PrecontenciosoBPMConstants.PCO_AsignacionGestores.equals(tarea.getTareaProcedimiento().getCodigo())) {
+					 List<EXTTareaExternaValor> listaValores = obtenerValoresTareaByTexId(tarea.getId());
+					 for (EXTTareaExternaValor valor : listaValores) {
+						if (PrecontenciosoBPMConstants.PCO_Campo_ProcPropuesto.equals(valor.getNombre())) {
+							tipoProc = (TipoProcedimiento)diccionarioApi.dameValorDiccionarioByCod(TipoProcedimiento.class,valor.getValor());						
+						}
+					}
+				}
+			}
+		} else {
+			String tipoProcFaseComun = precontenciosoContext.getCodigoFaseComun();
+			tipoProc = (TipoProcedimiento)diccionarioApi.
+					dameValorDiccionarioByCod(TipoProcedimiento.class, tipoProcFaseComun);
+		}
+		return tipoProc;
+	}
+
+	private List<EXTTareaExternaValor> obtenerValoresTareaByTexId(Long texId) {
+		return genericDao.getList(EXTTareaExternaValor.class, genericDao
+				.createFilter(FilterType.EQUALS, "tareaExterna.id", texId),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	}
+
 }

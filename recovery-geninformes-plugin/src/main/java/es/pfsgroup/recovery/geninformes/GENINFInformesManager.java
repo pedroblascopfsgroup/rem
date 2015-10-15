@@ -72,6 +72,7 @@ import es.pfsgroup.recovery.geninformes.model.GENINFInforme;
 import es.pfsgroup.recovery.geninformes.model.GENINFInformeConfig;
 import es.pfsgroup.recovery.geninformes.model.GENINFParrafo;
 import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.docx.preprocessor.dom.DOMFontsPreprocessor;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
@@ -889,8 +890,9 @@ public class GENINFInformesManager implements GENINFInformesApi {
 			// Metemos los valores de las variables !! MUY IMPORTANTE: Si hay definidas variables y no se pueblan a continuación , NO FUNCIONA
 			for(Map.Entry<String, String> entry : mapaVariables.entrySet()){
 				context.put(entry.getKey(),entry.getValue());	
+				
 			}
-			
+			context.put(DOMFontsPreprocessor.FONT_SIZE_KEY, "8");
 			// Preparamos el fichero temporal
 			fileSalidaTemporal = File.createTempFile("escrito", ".docx");
 			
@@ -935,7 +937,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
 		XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordMLPackage);				
 		wordMLPackage.getMainDocumentPart().getContent().addAll( 
-					XHTMLImporter.convert( "<HTML>"+htmlText+"</HTML>", null) );
+					XHTMLImporter.convert( "<HTML><BODY style='font-size:12px'>"+htmlText+"</BODY></HTML>", null) );
 		System.out.println(
 				XmlUtils.marshaltoString(wordMLPackage.getMainDocumentPart().getJaxbElement(), true, true));
 		wordMLPackage.save(archivo);
@@ -945,7 +947,5 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		return is;
 		
 	}
-	
-
     
 }

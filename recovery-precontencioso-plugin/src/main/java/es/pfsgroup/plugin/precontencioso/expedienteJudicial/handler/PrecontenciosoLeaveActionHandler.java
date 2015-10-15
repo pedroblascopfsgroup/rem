@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -117,7 +118,18 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_SubsanarCambioProc.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-		} 
+		} else if (PrecontenciosoBPMConstants.PCO_AsignacionGestores.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
+			executor.execute("plugin.precontencioso.inicializarPco", prc);
+			
+		} else if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(tex.getTareaProcedimiento().getCodigo())) {
+
+			//Si es CONCURSO invocar inicializacion
+			if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
+				executor.execute("plugin.precontencioso.inicializarPco", prc);
+			}
+			
+		}
 		
 	}
 

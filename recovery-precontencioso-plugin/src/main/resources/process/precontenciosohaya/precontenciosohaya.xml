@@ -193,17 +193,14 @@
 	<state name="PCO_AcuseReciboBurofax"></state>
 
 	<state name="PCO_DecTipoProcAutomatica">
-		<transition to="PCO_DecTipoProcAutomaticaDecision" name="avanzaBPM"/>
 		<event type="node-enter">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoEnterActionHandler</targetBean>
+			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
+				<name>Timer inicio-precontencioso</name>
+				<duration>1 minute</duration>
+				<transicion>avanzaBPM</transicion>
 			</action>
 		</event>
-		<event type="node-leave">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoLeaveActionHandler</targetBean>
-			</action>
-		</event>
+		<transition to="PCO_DecTipoProcAutomaticaDecision" name="avanzaBPM"/>
 	</state>
 
 	<decision name="PCO_DecTipoProcAutomaticaDecision" expression="#{PCO_DecTipoProcAutomaticaDecision}">

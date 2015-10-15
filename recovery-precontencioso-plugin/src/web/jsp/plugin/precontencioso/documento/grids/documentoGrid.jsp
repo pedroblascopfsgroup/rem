@@ -142,6 +142,7 @@ var excluirDocButton = new Ext.Button({
 									method: 'POST',
 									success: function ( result, request ) {
 										refrescarDocumentosGrid();
+										gridDocumentos.getSelectionModel().clearSelections();
 									}
 							});
 	    				}
@@ -361,7 +362,7 @@ var editarDocButton = new Ext.Button({
 <%-- FUNCION: Control habilitar/deshabilitar los distintos botones --%>	
 var habilitarDeshabilitarButtons = function (incluirB, excluirB, descartarB, editarB, anularB, solicitarB, informarB){
 	incluirDocButton.setDisabled(incluirB);
-	excluirDocButton.setDisabled(excluirB);
+	excluirDocButton.setDisabled(false);
 	descartarDocButton.setDisabled(descartarB);
 	editarDocButton.setDisabled(editarB);	
 	anularSolicitudesButton.setDisabled(anularB);

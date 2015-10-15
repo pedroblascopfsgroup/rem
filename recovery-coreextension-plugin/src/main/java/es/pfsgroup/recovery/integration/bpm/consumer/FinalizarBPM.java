@@ -14,7 +14,7 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 /**
  * Transiciona un BPM según la transición desde el token que llega. 
@@ -51,8 +51,7 @@ public class FinalizarBPM extends ConsumerAction<DataContainerPayload> {
 	protected void doAction(DataContainerPayload payload) {
 		ProcedimientoPayload procedimientoPayload = new ProcedimientoPayload(payload);
 		String guidPRC = getGuidProcedimiento(procedimientoPayload); 
-		
-		logger.debug(String.format("[INTEGRACION] PRC [%s] Finalizando procedimiento...", guidPRC));
+		logger.info(String.format("[INTEGRACION] PRC [%s] Finalizando procedimiento...", guidPRC));
 		
 		// OJO! El procediento padre del nuevo BPM será el procedimiento desde el que se genera (no el padre de este!).
 		MEJProcedimiento procedimiento = extProcedimientoManager.getProcedimientoByGuid(guidPRC);
@@ -61,7 +60,7 @@ public class FinalizarBPM extends ConsumerAction<DataContainerPayload> {
 		}
 		try {
 			jbpmUtil.finalizarProcedimiento(procedimiento.getId());
-			logger.debug(String.format("[INTEGRACION] PRC [%s] Transición realizada!", guidPRC));
+			logger.info(String.format("[INTEGRACION] PRC [%s] Transición realizada!", guidPRC));
 		} catch (Exception e) {
 			throw new IntegrationDataException(String.format("[INTEGRACION] PRC [%s] El procedimiento no se ha podido finalizar", guidPRC), e);
 		}

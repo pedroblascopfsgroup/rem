@@ -82,17 +82,17 @@
 			</action>
 		</event>
 		<transition to="HC104_RevisarSolvencia" name="activarAlerta"></transition>
-		<transition to="HC104_RevisarSolvenciaDecision" name="avanzaBPM"></transition>
+		<transition to="HC104_AutorizarPropuesta" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="HC104_RegistrarResultadoSolvencia" name="vueltaAtras"></transition>
 	</state>
 
-	<decision name="HC104_RevisarSolvenciaDecision" expression="#{HC104_RevisarSolvenciaDecision}">
-		<transition to="HC104_BPMEjecucionTituloNoJudicial" name="continuar"></transition>
-		<transition to="HC104_TrasladarPropuestaEntidad" name="noContinuar"></transition>
+	<decision name="HC104_AutorizarPropuestaDecision" expression="#{HC104_AutorizarPropuestaDecision}">
+		<transition to="Fin" name="denegado"></transition>
+		<transition to="HC104_DecisionGestorContencioso" name="aceptado"></transition>
 	</decision>
 	
-	<state name="HC104_BPMEjecucionTituloNoJudicial">
+	<state name="HC104_AutorizarPropuesta">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -109,33 +109,19 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_ejecucionTituloNoJudicial"></transition>
+		<transition to="HC104_AutorizarPropuesta" name="activarAlerta"></transition>
+		<transition to="HC104_AutorizarPropuestaDecision" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="HC104_BPMEjecucionTituloNoJudicial" name="activarAlerta"></transition>
 	</state>
-	
-	<state name="HC104_TrasladarPropuestaEntidad">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="HC104_TrasladarPropuestaEntidad" name="activarAlerta"></transition>
-		<transition to="Fin" name="avanzaBPM"></transition>
+
+	<node name="HC104_DecisionGestorContencioso">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="HC104_RevisarSolvencia" name="vueltaAtras"></transition>
-	</state>
+	</node>
 
 	<end-state name="Fin">
 		<event type="node-enter">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_faseComun" width="1409" height="1872">
+<root-container name="cj_faseComun" width="1486" height="2034">
   <node name="Inicio" x="257" y="-238" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -46,7 +46,8 @@
     <edge>
       <label x="130" y="-724"/>
       <bendpoint w1="-310" h1="-5" w2="-1185" h2="-1434"/>
-      <bendpoint w1="-311" h1="1426" w2="-1186" h2="-3"/>
+      <bendpoint w1="-312" h1="1735" w2="-1190" h2="203"/>
+      <bendpoint w1="373" h1="1733" w2="-505" h2="201"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -95,9 +96,6 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-162" y="-73"/>
     </edge>
   </node>
   <node name="H009_RectificarInsinuacionCreditos" x="606" y="395" width="255" height="36">
@@ -272,6 +270,12 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="-14" y="-71"/>
+    </edge>
+    <edge>
+      <label x="-49" y="-52"/>
+    </edge>
   </node>
   <node name="H009_BPMTramiteDemandaIncidental" x="1002" y="1396" width="282" height="36">
     <edge>
@@ -280,24 +284,17 @@
   </node>
   <node name="H009_BPMTramiteFaseLiquidacion" x="26" y="1485" width="252" height="36">
     <edge>
-      <label x="-212" y="-44"/>
-      <bendpoint w1="177" h1="71" w2="-870" h2="-17"/>
+      <label x="-327" y="-230"/>
+      <bendpoint w1="-8" h1="282" w2="-1055" h2="194"/>
+      <bendpoint w1="500" h1="284" w2="-547" h2="196"/>
     </edge>
   </node>
-  <node name="H009_BPMTramiteFaseConvenioV4" x="330" y="1482" width="271" height="36">
+  <node name="H009_BPMTramiteFaseConvenioV4" x="456" y="1481" width="271" height="36">
     <edge>
       <label x="-266" y="-33"/>
     </edge>
   </node>
-  <node name="H009_RectificarInsinuacionCreditosDecision" x="571" y="506" width="325" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-115" y="6"/>
-    </edge>
-  </node>
-  <node name="fork1" x="643" y="634" width="184" height="24">
+  <node name="fork1" x="155" y="1615" width="184" height="24">
     <edge>
       <label x="-46" y="-9"/>
     </edge>
@@ -305,12 +302,19 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H009_BPMCreditosContingentes" x="949" y="626" width="233" height="36">
+  <node name="H009_BPMCreditosContingentes" x="213" y="1738" width="233" height="36">
     <edge>
-      <label x="-190" y="-504"/>
+      <label x="-195" y="-7"/>
       <bendpoint w1="318" h1="0" w2="139" h2="-1044"/>
-      <bendpoint w1="316" h1="988" w2="137" h2="-56"/>
     </edge>
   </node>
   <node name="Fin" x="1133" y="1573" width="132" height="36"/>
+  <node name="fork2" x="369" y="1616" width="177" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

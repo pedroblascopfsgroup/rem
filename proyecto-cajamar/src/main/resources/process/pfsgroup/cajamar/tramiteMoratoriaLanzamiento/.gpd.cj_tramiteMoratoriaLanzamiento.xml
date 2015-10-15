@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_tramiteMoratoriaLanzamiento" width="1178" height="1351">
+  <node name="Inicio" x="169" y="10" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_RegistrarSolicitudMoratoria" x="70" y="94" width="300" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="670" h1="-7" w2="-221" h2="-614"/>
+    </edge>
+  </node>
+  <node name="CJ011_RegistrarAdmisionYEmplazamiento" x="121" y="218" width="313" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-193" h1="-37" w2="-164" h2="87"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_RegistrarInformeMoratoria" x="162" y="328" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-184" h1="-48" w2="-166" h2="62"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_RevisarInformeLetradoMoratoria" x="108" y="480" width="302" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-210" h1="-96" w2="-187" h2="78"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_LecturaInstruccionesMoratoria" x="118" y="629" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-94" h1="-78" w2="-93" h2="72"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_LecturaInstruccionesMoratoriaDecision" x="255" y="816" width="376" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-61" y="8"/>
+    </edge>
+  </node>
+  <node name="CJ011_CelebracionVista" x="69" y="1030" width="175" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="12" y="-324"/>
+      <bendpoint w1="-140" h1="-1" w2="-1095" h2="328"/>
+      <bendpoint w1="-146" h1="302" w2="-1101" h2="631"/>
+      <bendpoint w1="984" h1="295" w2="29" h2="624"/>
+    </edge>
+    <edge>
+      <label x="-72" y="23"/>
+      <bendpoint w1="-49" h1="-281" w2="-128" h2="120"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_RegistrarResolucion" x="310" y="1078" width="218" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="471" h1="21" w2="-221" h2="398"/>
+    </edge>
+    <edge>
+      <label x="-75" y="-105"/>
+      <bendpoint w1="-94" h1="-98" w2="25" h2="351"/>
+      <bendpoint w1="-271" h1="-286" w2="-109" h2="163"/>
+    </edge>
+    <edge>
+      <label x="-63" y="-11"/>
+    </edge>
+  </node>
+  <node name="CJ011_PresentarConformidadMoratoria" x="586" y="1019" width="268" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="99" h1="-141" w2="-292" h2="177"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-49" h1="-270" w2="430" h2="118"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_SolicitarInstrucciones" x="459" y="1234" width="198" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="445" h1="-48" w2="-108" h2="485"/>
+    </edge>
+    <edge>
+      <label x="3" y="-118"/>
+      <bendpoint w1="1" h1="44" w2="140" h2="200"/>
+      <bendpoint w1="-527" h1="43" w2="-388" h2="199"/>
+      <bendpoint w1="-525" h1="-158" w2="-386" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_InstruccionesDecision" x="941" y="1237" width="203" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="estamosADosMeses" x="90" y="1235" width="175" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ011_RegistrarResolucionDecision" x="204" y="1163" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-95" y="-19"/>
+      <bendpoint w1="641" h1="8" w2="-147" h2="470"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1045" y="701" width="132" height="36"/>
+</root-container>

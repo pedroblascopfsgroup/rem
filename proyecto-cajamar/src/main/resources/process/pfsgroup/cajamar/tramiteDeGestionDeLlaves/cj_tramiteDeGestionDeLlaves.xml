@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="cj_tramiteDeGestionDeLlaves">
+
+	<start-state name="Inicio">
+		<transition to="CJ040_RegistrarCambioCerradura" name="iniciarProceso"></transition>
+	</start-state>
+
+
+	<state name="CJ040_RegistrarCambioCerradura">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="comprobarBienDatosLlaves"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>		
+		<transition to="CJ040_RegistrarEnvioLlaves" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ040_RegistrarCambioCerradura" name="activarAlerta"></transition>
+	</state>
+
+	<state name="CJ040_RegistrarEnvioLlaves">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="comprobarBienDatosLlaves"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="CJ040_RegistrarRecepcionLlaves" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ040_RegistrarCambioCerradura" name="vueltaAtras"></transition>
+		<transition to="CJ040_RegistrarEnvioLlaves" name="activarAlerta"></transition>
+	</state>
+
+	<state name="CJ040_RegistrarRecepcionLlaves">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="comprobarBienDatosLlaves"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="CJ040_RecepcionLlavesDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ040_RegistrarEnvioLlaves" name="vueltaAtras"></transition>
+		<transition to="CJ040_RegistrarRecepcionLlaves" name="activarAlerta"></transition>
+	</state>
+
+	<node name="CJ040_RecepcionLlavesDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler</targetBean>
+		</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+	
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>	
+	</end-state>
+	
+	
+</process-definition>

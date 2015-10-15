@@ -36,6 +36,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.capgemini.pfs.web.genericForm.dao.GenericFormDao;
 import es.capgemini.pfs.web.genericForm.dao.GenericFormItemDao;
+import es.pfsgroup.commons.utils.Checks;
 
 @Service
 public class GenericFormManager {
@@ -90,7 +91,7 @@ public class GenericFormManager {
         return jbpmManager.creaMapValores(idProcedimiento);
     }
 
-    /**
+	/**
      * Obtiene un formulario dinamico a partir del id de una tarea Externa
      *
      * @param id
@@ -98,14 +99,39 @@ public class GenericFormManager {
      */
     @BusinessOperation
     public GenericForm get(Long id) {
+    	return getForm(id, false);
+    }
+    
+	/**
+     * Obtiene un formulario dinamico en SÓLO LECTURA a partir del id de una tarea Externa
+     *
+     * @param id
+     * @return GenericForm
+     */
+    @BusinessOperation
+    public GenericForm getReadOnly(Long id) {
+    	return getForm(id, true);
+    }
+    
+    /**
+     * Obtiene un formulario dinamico a partir del id de una tarea Externa, devuelve el modo de pintado solicitado.
+     *
+     * @param id
+     * @return GenericForm
+     */
+    @BusinessOperation
+    public GenericForm getForm(Long id, boolean readOnly) {
         TareaExterna tareaExterna = tareaExternaManager.get(id);
 
-        ;
-
         GenericForm form = new GenericForm();
-
-        form.setView(tareaExterna.getTareaProcedimiento().getView());
-        form.setErrorValidacion(validacionPreviaDeLaTarea(tareaExterna));
+        form.setReadOnly(readOnly);
+        
+        // En modo consulta no ponemos vista, ni validación BPMs (para Hisorico)
+        if (!form.isReadOnly()) {
+            form.setView(tareaExterna.getTareaProcedimiento().getView());
+        	form.setErrorValidacion(validacionPreviaDeLaTarea(tareaExterna));
+        }
+        
         // cambiar el dao por un manager
         // TareaNotificacion tarea = notificacionManager.get(id);
         form.setTareaExterna(tareaExterna);

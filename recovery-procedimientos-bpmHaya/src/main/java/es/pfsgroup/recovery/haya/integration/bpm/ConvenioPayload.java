@@ -12,7 +12,7 @@ import es.pfsgroup.concursal.convenio.model.ConvenioCredito;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
-import es.pfsgroup.recovery.integration.bpm.AsuntoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.AsuntoPayload;
 
 public class ConvenioPayload {
 	

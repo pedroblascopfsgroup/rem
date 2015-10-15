@@ -2,6 +2,7 @@ package es.pfsgroup.recovery.integration;
 
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageHandlingException;
+import org.springframework.security.providers.AuthenticationProvider;
 
 public class ConsumerActionService extends DataContainerPayloadService<DataContainerPayload> {
 
@@ -12,8 +13,9 @@ public class ConsumerActionService extends DataContainerPayloadService<DataConta
 	}
 	
 	public ConsumerActionService(ConsumerManager<DataContainerPayload> consumerManager
-			, String entidadWorkingCode) {
-		super(consumerManager, entidadWorkingCode);
+			, String entidadWorkingCode
+			,AuthenticationProvider authprovider) {
+		super(consumerManager, entidadWorkingCode, authprovider);
 	}
 
 }

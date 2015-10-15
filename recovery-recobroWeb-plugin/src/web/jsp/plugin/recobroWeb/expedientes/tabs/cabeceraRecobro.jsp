@@ -207,6 +207,10 @@
 		tipoExpediente.setVisible(false);
 		fechaMaxEnAgencia.setVisible(false);
 		fechaMaxCobroParcial.setVisible(false);
+		
+		diasVencido.setVisible(true);
+		comite.setVisible(true);
+		
 	}
 	
   };

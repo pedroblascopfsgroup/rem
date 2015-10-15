@@ -36,7 +36,7 @@ DECLARE
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_AUX1 VARCHAR2(1000) := q'[valores['PCO_RevisarExpDigCONC']['docCompleta'] == DDSiNo.SI ?  'ok' : 'requiere_subsanar']';
     V_AUX2 VARCHAR2(1000) := q'[valores['PCO_RevisarSubsanacionCONC']['subsanar'] == DDSiNo.SI ? 'subsanar' : 'devolver' ]';
-    V_AUX3 VARCHAR2(1000) := q'[<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">El asunto debe tener asignado Letrado, Supervisor del asunto, Director unidad de litigio y Preparador documental.</div>]';
+    V_AUX3 VARCHAR2(1000) := q'['<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">El asunto debe tener asignado Letrado, Supervisor del asunto, Director unidad de litigio y Preparador documental.</div>']';
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
        T_TIPO_TAP('PCO','PCO_DecTipoProcAutomatica','dameTipoAsunto()',null,null,null,null,'0','Decisión TipoProcedimiento',
             '0','DD','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_PREDOC',null,'PCO_SUP',null),

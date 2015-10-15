@@ -61,8 +61,8 @@ BEGIN
     , -1 usu_alerta, t.dd_tge_id_supervisor usu_supervisor 
     , t.dd_tge_id_alerta 
     , t.dd_tge_id_pendiente 
- 	, NULL ZON_COD
-  	, NULL PEF_ID
+ 	--, NULL ZON_COD
+  	--, NULL PEF_ID
   FROM ' ||V_ESQUEMA||'.VTAR_TAREA_VS_TGE t 
   WHERE t.dd_sta_id IN  (SELECT tarbs.DD_STA_ID FROM ' || V_ESQUEMA_M ||'.DD_STA_SUBTIPO_TAREA_BASE tarbs WHERE tarbs.DD_STA_CODIGO = ''ACP_ACU'' 
 			OR tarbs.DD_STA_CODIGO = ''REV_ACU'' OR tarbs.DD_STA_CODIGO = ''GST_CIE_ACU'' OR tarbs.DD_STA_CODIGO = ''CUMPLI_ACU'' OR tarbs.DD_STA_CODIGO = ''NOTIF_ACU'')';

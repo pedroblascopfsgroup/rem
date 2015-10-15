@@ -1,12 +1,13 @@
 /*
 --##########################################
 --## AUTOR=CARLOS GIL
---## FECHA_CREACION=20150922
+--## FECHA_CREACION=20151015
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=ACUERDOS
 --## PRODUCTO=SI
 --## Finalidad: DDL Crear vista que obtiene los ACUERDOS y las NOTIFICACIONES
+--##				faltaban 2 campos
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -54,13 +55,15 @@ BEGIN
     END IF;
         
     EXECUTE IMMEDIATE '
- CREATE OR REPLACE FORCE VIEW ' ||V_ESQUEMA||'.'||V_NOMBRE_VISTA|| '(TAR_ID, USU_PENDIENTES, USU_ALERTA, USU_SUPERVISOR, DD_TGE_ID_ALERTA, DD_TGE_ID_PENDIENTE) AS 
+ CREATE OR REPLACE FORCE VIEW ' ||V_ESQUEMA||'.'||V_NOMBRE_VISTA|| ' AS 
   SELECT TAR_ID  
     , t.tar_id_dest usu_pendientes 
     --, 0 usu_espera 
     , -1 usu_alerta, t.dd_tge_id_supervisor usu_supervisor 
     , t.dd_tge_id_alerta 
     , t.dd_tge_id_pendiente 
+    ,NULL ZON_COD
+  	,NULL PEF_ID  
   FROM ' ||V_ESQUEMA||'.VTAR_TAREA_VS_TGE t 
   WHERE t.dd_sta_id IN  (SELECT tarbs.DD_STA_ID FROM ' || V_ESQUEMA_M ||'.DD_STA_SUBTIPO_TAREA_BASE tarbs WHERE tarbs.DD_STA_CODIGO = ''ACP_ACU'' 
 			OR tarbs.DD_STA_CODIGO = ''REV_ACU'' OR tarbs.DD_STA_CODIGO = ''GST_CIE_ACU'' OR tarbs.DD_STA_CODIGO = ''NOTIF_ACU'')';

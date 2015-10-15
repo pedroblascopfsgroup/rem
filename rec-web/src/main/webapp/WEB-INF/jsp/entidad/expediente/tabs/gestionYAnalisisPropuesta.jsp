@@ -188,14 +188,15 @@
             title : '&nbsp;'
          <app:test id="actuacionesGrid" addComa="true" />
          ,store:actuacionesStore
-		 ,cm:cmActuacionesAExplorar 
-         ,style:'padding-right:10px'
+		 ,cm:cmActuacionesAExplorar
+		 ,cls:'cursor_pointer'
+		 ,loadMask: {msg: "Cargando...", msgCls: "x-mask-loading"} 
+         ,style:'padding:50px'
          ,maxHeight:150
          ,height:125
          ,forceFit:true
          ,autoWidth:true
          ,autoHeight:true
-		 ,border:true
 		 ,margin:90
          ,cls:'cursor_pointer'
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
@@ -205,6 +206,7 @@
 	        </sec:authorize>
 	     ]
    });
+     
 
    actuacionesAExplorarGrid.on('rowclick', function(grid, rowIndex, e) {
    		var rec = grid.getStore().getAt(rowIndex);
@@ -219,16 +221,13 @@
 		title:'<s:message code="acuerdos.actuacionesAExplorar.titulo" text="**Actuaciones A Explorar"/>'
 		,autoHeight:true
 		,width:575
-		,border:true
 		,bodyStyle:'padding:5px;cellspacing:20px;'
-		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%'}
+		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false, style:'margin:4px;width:97%',border:true}
 		,items : [
 		 	actuacionesAExplorarGrid
 		]
 	});
-   
-
-
+	
 	var labelStyle='font-weight:bolder;width:150px';
 	
 	var tipoAyuda = new Ext.ux.form.StaticTextField({

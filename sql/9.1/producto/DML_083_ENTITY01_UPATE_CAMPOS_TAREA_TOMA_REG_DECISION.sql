@@ -55,6 +55,12 @@ BEGIN
 
 		EXECUTE IMMEDIATE V_SQL;
 		
+		V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_LABEL = ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Una vez en disposición de toda la documentación requerida por el expediente de prelitigio, a través de esta pantalla deberá indicar la fecha en que procede al envío de dicha documentación al letrado correspondiente.</p><p style="margin-bottom: 10px">En el campo observaciones consignar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez complete esta tarea se dará por terminada la preparación documental del expediente de prelitigio, dando así inicio a la fase judicial.</p></div>'' WHERE  TFI_NOMBRE = ''titulo'' AND TAP_ID =  ' || 
+      		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_EnviarExpedienteLetrado'')';
+
+		EXECUTE IMMEDIATE V_SQL;		
+		
+		
     	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     END IF;
     

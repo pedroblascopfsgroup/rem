@@ -17,10 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -42,6 +46,7 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -77,6 +82,9 @@ public class DocumentoPCOController {
 
 	@Autowired
 	private GestorDespachoDao gestorDespachoDao;
+
+	@Autowired
+	private GestorAdicionalAsuntoApi gestorAdicionalAsuntoApi;
 
 	@RequestMapping
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
@@ -641,5 +649,27 @@ public class DocumentoPCOController {
 		model.put("listadoGestores", documentoPCOApi.getTiposGestorActores());
 		return TIPO_GESTOR_JSON;
 	}
-	
+
+	/**
+	 * Inserta un gestor en la tabla de gestores adicionales del asunto si no existe previamente
+	 * 
+	 * @param idTipoGestor id del tipo de gestor, {@link EXTDDTipoGestor}
+	 * @param idAsunto id del {@link Asunto}
+	 * @param idUsuario id del {@link Usuario}
+	 * @param idTipoDespacho id del tipo de despacho, {@link GestorDespacho}
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping
+	public String insertarGestorAdicionalAsuto(Long idTipoGestor, Long idAsunto, Long idUsuario, Long idTipoDespacho) throws Exception {
+
+		EXTGestorAdicionalAsunto gaa = gestorAdicionalAsuntoApi.findGaaByIds(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+
+		// Si existe gaa no inserta de nuevo el gestor adicional
+		if (gaa == null) {
+			proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(idTipoGestor, idAsunto, idUsuario, idTipoDespacho);
+		}
+
+		return "default";
+	}
  }

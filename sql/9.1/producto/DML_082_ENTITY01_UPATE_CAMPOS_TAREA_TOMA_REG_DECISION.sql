@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MANUEL_MEJIAS
---## FECHA_CREACION=20151015
+--## FECHA_CREACION=20151016
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3-hy-master
 --## INCIDENCIA_LINK=PRODUCTO-180
@@ -43,6 +43,8 @@ BEGIN
     	V_SQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_DECISION = ''valores[''''PCO_RegistrarTomaDec''''][''''correcto''''] == DDSiNo.SI ? ''''ok'''' : (valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema''''] == ''''CPR'''' ? ''''cambio_proc'''' : ''''requiere_subsanar'''')''
 					WHERE TAP_CODIGO = ''PCO_RegistrarTomaDec'' ';
 
+		EXECUTE IMMEDIATE V_SQL;
+		
     	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'... ACTUALIZACION DE TABLA TFI_TAREAS_FORM_ITEMS ' );
     END IF;
     

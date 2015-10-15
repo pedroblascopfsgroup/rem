@@ -131,6 +131,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Autowired
 	PrecontenciosoProjectContext precontenciosoContext;
 	
+	@Autowired
+	private GestorTareasManager gestorTareasManager;
+	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
 	@Transactional(readOnly = false)
@@ -478,7 +481,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	public void inicializarPrecontencioso(Procedimiento procedimiento) {
 
 		try {		
-			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(procedimiento.getId());
+			Long idProc = procedimiento.getId();
+			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProc);
 			if (Checks.esNulo(procedimientoPco)) {
 				procedimientoPco = new ProcedimientoPCO();
 				procedimientoPco.setPreturnado(false);
@@ -518,7 +522,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			}
 			List<Persona> personas = new ArrayList<Persona>(setPersonas);
 			List<ContratoPersona> contratosPersonas = new ArrayList<ContratoPersona>(setContratosPersonas);
-			List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(procedimiento.getId());
+			List<Bien> bienes = procedimientoManager.getBienesDeUnProcedimiento(idProc);
 			
 			//Creamos un documento por cada una de las configuraciones correspondientes a contratos, personas y bienes
 			List<DocumentoPCO> documentos = obtenerNuevosDocumentos(procedimientoPco, contratos, personas, bienes);
@@ -536,6 +540,13 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			procedimientoPco.setLiquidaciones(liquidaciones);
 			procedimientoPco.setBurofaxes(burofaxes);
 			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
+			
+			if (documentos.size()>0) {
+				gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+			}
+			if (liquidaciones.size()>0) {
+				gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+			}
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());

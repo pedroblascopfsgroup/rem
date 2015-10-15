@@ -100,13 +100,13 @@
 	<bean id="consultaDeSaldosWSCajamar" class="es.pfsgroup.recovery.cajamar.ws.ConsultaDeSaldosWS">
 		<property name="configuracionServicios">
 			<map>			
-				<!-- entry key="AV" ref="wsCSCuentaAV"/>
-				<entry key="CF" ref="wsCSCuentaCF"/>
-				<entry key="CR" ref="wsCSCuentaCR"/>
-				<entry key="FT" ref="wsCSCuentaFT"/>
-				<entry key="LS" ref="wsCSCuentaLS"/>
-				<entry key="PR" ref="wsCSCuentaPR"/>
-				<entry key="RF" ref="wsCSCuentaRF"/  -->
+				<entry key="AV" value-ref="wsCSCuentaAV"/>
+				<entry key="CF" value-ref="wsCSCuentaCF"/>
+				<entry key="CR" value-ref="wsCSCuentaCR"/>
+				<entry key="FT" value-ref="wsCSCuentaFT"/>
+				<entry key="LS" value-ref="wsCSCuentaLS"/>
+				<entry key="PR" value-ref="wsCSCuentaPR"/>
+				<entry key="RF" value-ref="wsCSCuentaRF"/>
 				<!-- DESCUENTOS, TARJETAS y COMERCIO EXTERIOR NO ASIGNADAS TODAVÍA  -->
 			</map>
 		</property>

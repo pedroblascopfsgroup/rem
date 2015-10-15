@@ -4,10 +4,10 @@
 --## FECHA_CREACION=20151008
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=CMREC-911
 --## PRODUCTO=NO
 --## 
---## Finalidad: 
+--## Finalidad: Insertar datos en tabla MIG_PARAM_HITOS
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial

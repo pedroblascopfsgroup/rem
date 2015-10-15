@@ -647,7 +647,7 @@
 					panel.getBottomToolbar().addButton([btnSolicitarNumActivo]);
 			</c:if>
 			<c:choose>
-    			<c:when test="${usuario.entidad.descripcion eq appProperties.entidadHayaCajamar}">
+    			<c:when test="${usuario.entidad.id eq appProperties.idEntidadCajamar}">
 			        panel.getBottomToolbar().addButton([btnSolicitarTasacionHCJ]);
 			        btnSolicitarNumActivo.hide();
 			    </c:when>    

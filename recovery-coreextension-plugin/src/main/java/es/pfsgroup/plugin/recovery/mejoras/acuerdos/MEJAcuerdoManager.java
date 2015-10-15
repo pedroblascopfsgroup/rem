@@ -395,7 +395,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		// Fecha limite
 		SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy");
 		try {
-			acuerdo.setFechaLimite(sdf2.parse(dto.getFechaLimite()));
+			if(dto.getFechaLimite()!= null && !"".equals(dto.getFechaLimite())){
+				acuerdo.setFechaLimite(sdf2.parse(dto.getFechaLimite()));
+			}
 		} catch (ParseException e) {
 			logger.error("Error parseando la fecha", e);
 		}		

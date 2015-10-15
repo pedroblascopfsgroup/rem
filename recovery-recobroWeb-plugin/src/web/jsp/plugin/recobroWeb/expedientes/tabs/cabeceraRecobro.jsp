@@ -101,12 +101,11 @@
 				  		,oficina
 				  		,oficinaDir
 				  		,oficinaTel]},
-				  {items:[// diasVencido,
-				  			gestor,volRiesgos,volRiesgosVenc
-				  			//,comite
-				  			, fechaMaxCobroParcial
-				  		    , fechaMaxEnAgencia
-				  			]}
+				  {items:[diasVencido,
+				  		  gestor,volRiesgos,volRiesgosVenc
+				  		  ,comite
+				  		  ,fechaMaxCobroParcial
+				  		  ,fechaMaxEnAgencia]}
 		]);
 		
 	var datosRecobroFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosRecobro" text="**Datos Recobro"/>'
@@ -200,11 +199,18 @@
 		gestor.setVisible(false);
 		situacion.setVisible(false);
 		supervisor.setVisible(false);
+		
+		diasVencido.setVisible(false);
+		comite.setVisible(false);
 	} else {
 		datosRecobroFieldSet.setVisible(false);
 		tipoExpediente.setVisible(false);
 		fechaMaxEnAgencia.setVisible(false);
 		fechaMaxCobroParcial.setVisible(false);
+		
+		diasVencido.setVisible(true);
+		comite.setVisible(true);
+		
 	}
 	
   };

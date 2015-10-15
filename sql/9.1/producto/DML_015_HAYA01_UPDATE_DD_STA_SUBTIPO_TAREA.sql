@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=JAVIER RUIZ
---## FECHA_CREACION=20150915
+--## FECHA_CREACION=20151015
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-247

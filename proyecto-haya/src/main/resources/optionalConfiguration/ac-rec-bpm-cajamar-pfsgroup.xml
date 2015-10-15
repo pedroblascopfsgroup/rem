@@ -97,21 +97,6 @@
 					}
 					return true;
 				}
-
-				def comprobarComboComunicacionAdicionalCONFTESTI = {
-					if (valores['H005_ConfirmarTestimonio']['comboSubsanacion']==DDSiNo.SI) {
-						return true;
-					}
-					if (valores['H005_ConfirmarTestimonio']['comboAdicional']==null ||
-						valores['H005_ConfirmarTestimonio']['comboOcupantes']==null) {
-					 	return false;
-					}
-					if (valores['H005_ConfirmarTestimonio']['comboAdicional']==DDSiNo.SI && 
-						valores['H005_ConfirmarTestimonio']['fechaLimite']==null) {
-						return false;
-					}
-					return true;
-				}
 				
 				def vieneDeTCesionRemateTAdjudicacion = {
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 

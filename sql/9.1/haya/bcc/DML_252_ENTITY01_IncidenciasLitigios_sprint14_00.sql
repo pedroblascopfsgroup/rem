@@ -73,6 +73,32 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-906');
 	
+	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-902');
+	V_TAREA:='H005_ConfirmarTestimonio';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ERROR_VALIDACION=''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboAdicional'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_VALIDACION=''valor != null && valor != ''''''''? true : false'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboAdicional'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ERROR_VALIDACION=''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboOcupantes'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_VALIDACION=''valor != null && valor != ''''''''? true : false'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboOcupantes'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+      ' SET TAP_SCRIPT_VALIDACION_JBPM = ''(valores[''''H005_ConfirmarTestimonio''''][''''comboAdicional'''']==DDSiNo.SI && valores[''''H005_ConfirmarTestimonio''''][''''fechaLimite'''']==null) ? ''''Si requiere comunicaci&oacute;n adicional debe indicar la fecha l&iacute;mite de comunicaci&oacute;n'''' : null'' ' ||
+      ' WHERE TAP_CODIGO = ''H005_ConfirmarTestimonio'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-902');
+	
+	
 	COMMIT;
  
 EXCEPTION

@@ -120,4 +120,11 @@ public interface NMBProjectContext {
 
 	String getResultadoMoratoria();
 	
+	/**
+	 * Devuelve el nombre del jrxml del informe de propuesta de cancelación de cargas.
+	 * 
+	 * @return plantillaReportPropuestaCancelacionCargas
+	 */
+	String getPlantillaReportPropuestaCancelacionCargas();
+	
 }

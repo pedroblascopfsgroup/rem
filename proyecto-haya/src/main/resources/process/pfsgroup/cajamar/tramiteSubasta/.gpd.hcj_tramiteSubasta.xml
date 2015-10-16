@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteSubasta" width="2897" height="2001">
+<root-container name="hcj_tramiteSubasta" width="2901" height="2001">
   <node name="Inicio" x="-121" y="134" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_SolicitudSubasta" x="-147" y="270" width="186" height="36">
+  <node name="H002_SolicitudSubasta" x="-148" y="349" width="186" height="36">
     <edge>
       <label x="-43" y="-24"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-111" h1="2" w2="-542" h2="418"/>
-      <bendpoint w1="-97" h1="-415" w2="-528" h2="1"/>
+      <bendpoint w1="-395" h1="19" w2="-16" h2="-511"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -149,6 +148,10 @@
   <node name="H002_BPMTramiteSubasta" x="-345" y="687" width="224" height="36">
     <edge>
       <label x="-48" y="-37"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-27" h1="111" w2="174" h2="-81"/>
     </edge>
   </node>
   <node name="H002_CelebracionDecision" x="-258" y="981" width="195" height="36">
@@ -303,11 +306,6 @@
       <bendpoint w1="-459" h1="-112" w2="329" h2="234"/>
     </edge>
   </node>
-  <node name="H002_SuspenderDecision" x="2149" y="530" width="176" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
   <node name="H002_BPMTramiteSolSolvenciaPatrimonial" x="164" y="1676" width="290" height="36">
     <edge>
       <label x="-99" y="-17"/>
@@ -361,7 +359,6 @@
   <node name="H002_RegistrarResSuspSubastaDecision" x="1862" y="750" width="281" height="36">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="240" h1="-2" w2="5" h2="218"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -542,4 +539,13 @@
   <node name="Fin3" x="1939" y="183" width="132" height="36"/>
   <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
   <node name="Fin5" x="-500" y="879" width="132" height="36"/>
+  <node name="H002_ComprobarProcedeSubastaSuspendida" x="-223" y="242" width="336" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-481" h1="1" w2="-490" h2="-1276"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
 </root-container>

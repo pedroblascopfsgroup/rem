@@ -116,6 +116,9 @@
 				<value>P409_SenyalamientoSubasta</value>
 			</list>
 		</property>
+		<property name = "plantillaReportPropuestaCancelacionCargas">
+			<value>reportPropuestaCancelacionCargas.jrxml</value>
+		</property>
 	</bean>	
 	
 	<!-- Implementaciones por defecto-->

@@ -19,6 +19,7 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -29,6 +30,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -39,10 +41,21 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.MEJRecursoManager;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
+import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.TypePayload;
+import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
+import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesAExplorarPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ActuacionesRealizadasPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.RecursoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.SubastaPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaExternaPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaNotificacionPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.TerminoAcuerdoPayload;
 
 public class EntityToPayloadTransformer {
 
@@ -72,6 +85,9 @@ public class EntityToPayloadTransformer {
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private VTARBusquedaOptimizadaTareasDao busquedaTareasOptimizadaDao;
+	
 	@Autowired
 	private EXTSubastaManager extSubastaManager;
 	
@@ -214,11 +230,20 @@ public class EntityToPayloadTransformer {
 		setup4sync(tex);
 		//MEJProcedimiento procedimientoFinal = MEJProcedimiento.instanceOf(tex.getTareaPadre().getProcedimiento());
 		extProcedimientoManager.prepareGuid(tex.getTareaPadre().getProcedimiento());
-		
+
 		// Carga los valores
 		DataContainerPayload data = getNewPayload(message);
 		TareaExternaPayload tareaPayload = new TareaExternaPayload(data, tex);
- 
+
+		// POne el usuario al que se le asigna la tarea cuando estÃ¡ pendiente (tarea nueva)
+		if (data.getTipo().equals(IntegracionBpmService.TIPO_INICIO_TAREA)) {
+			Usuario responsable = busquedaTareasOptimizadaDao.obtenerResponsableTarea(tex.getTareaPadre().getId());
+			if (responsable!=null) {
+				Auditoria auditoria = Auditoria.getNewInstance();
+				auditoria.setUsuarioCrear(responsable.getUsername());
+			}
+		}
+		
 		loadTareaFormItems(tareaPayload, tex);
 		tareaPayload.translate(diccionarioCodigos);
 		postProcessDataContainer(data);
@@ -236,29 +261,45 @@ public class EntityToPayloadTransformer {
 		return newMessage;
 	}	
 
+	private ProcedimientoPayload prepararProcedimiento(Message<?> mensaje, Procedimiento procedimiento) {
+		// Persistencia de IDs de sincronización
+		extProcedimientoManager.prepareGuid(procedimiento);
+		DataContainerPayload data = getNewPayload(mensaje);
+		ProcedimientoPayload procPayload = new ProcedimientoPayload(data, procedimiento);
+		procPayload.translate(diccionarioCodigos);
+		postProcessDataContainer(data);
+		return procPayload;
+	}
+	
+	public Message<DataContainerPayload> transformParalizarBPM(Message<ParalizarBPMMsg> message) {
+		logger.info("[INTEGRACION] Transformando paralizarBPM...");
+		ParalizarBPMMsg paralizarBPMMsg = message.getPayload();
+		
+		ProcedimientoPayload procPayload = prepararProcedimiento(message, paralizarBPMMsg.getProcedimiento());
+		DataContainerPayload data = procPayload.getData();
+		logger.debug(String.format("[INTEGRACION] Procedimiento Transformado %s!", procPayload.getGuid()));
+
+		data.addFecha(BPMContants.FECHA_APLAZAMIENTO_TAREAS, paralizarBPMMsg.getFechaActivacion());
+		
+		//translateValues(message);
+		String grpId = procPayload.getAsunto().getGuid();
+		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
+		
+		return newMessage;
+	}
+	
+
 	public Message<DataContainerPayload> transformPRC(Message<Procedimiento> message) {
 		logger.info("[INTEGRACION] Transformando Procedimiento...");
 		Procedimiento procedimiento = message.getPayload();
 
-		// Persistencia de IDs de sincronización
-		extProcedimientoManager.prepareGuid(procedimiento);
-		
-		DataContainerPayload data = getNewPayload(message);
-		ProcedimientoPayload procPayload = new ProcedimientoPayload(data, procedimiento);
-		procPayload.translate(diccionarioCodigos);
-		postProcessDataContainer(data);
-		
+		ProcedimientoPayload procPayload = prepararProcedimiento(message, procedimiento);
+		DataContainerPayload data = procPayload.getData();
 		logger.debug(String.format("[INTEGRACION] Procedimiento Transformado %s!", procPayload.getGuid()));
 		
 		//translateValues(message);
 		String grpId = procPayload.getAsunto().getGuid();
 		Message<DataContainerPayload> newMessage = createMessage(message,  data, grpId);
-/*		Message<DataContainerPayload> newMessage = MessageBuilder
-				.withPayload(data)
-				.copyHeaders(message.getHeaders())
-				.setHeaderIfAbsent(TypePayload.HEADER_MSG_GROUP, procPayload.getAsunto().getGuid())
-				.build();
-*/
 		return newMessage;
 	}	
 

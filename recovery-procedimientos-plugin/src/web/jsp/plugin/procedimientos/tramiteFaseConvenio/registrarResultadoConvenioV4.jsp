@@ -179,7 +179,7 @@ var fechaJunta = items[1 + offset];
 //var asistencia = items[2 + offset];
 //var observacionesSup = items[3 + offset];
 
-fechaJunta.setValue("${valores['P408_autoApertura']['fechaJunta']}");
+//fechaJunta.setValue("${valores['P408_autoApertura']['fechaJunta']}");
 //asistencia.setValue("${valores['P29_dictarInstrucciones']['comboAsistir']=='01'?'SI':'NO'}");
 //observacionesSup.setValue("${valores['P29_dictarInstrucciones']['observaciones']}");
 

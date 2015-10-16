@@ -983,7 +983,8 @@ public class EditBienController {
 	public String generarInformePropCancelacionCargas(
 			@RequestParam(value = "id", required = true) Long idBien,
 			ModelMap model) {
-		String plantilla = "reportPropuestaCancelacionCargas.jrxml";
+		
+		String plantilla = nmbProjectContext.getPlantillaReportPropuestaCancelacionCargas();
 
 		// Obtener datos para rellenar el informe
 		NMBBien bien = (NMBBien) proxyFactory.proxy(BienApi.class).get(idBien);
@@ -4188,5 +4189,25 @@ public class EditBienController {
 			logger.error("isBienAsociadoSubasta: " + e);
 			throw e;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String isFondoTitulizado(String codigoFondo, ModelMap model) {
+
+		if(!Checks.esNulo(codigoFondo)){
+			DDTipoFondo fondo = genericDao.get(DDTipoFondo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoFondo), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	
+			if (!Checks.esNulo(fondo.getCesionRemate()) && fondo.getCesionRemate()){
+				model.put("okko","OK");
+			}else{
+				model.put("okko","KO");
+			}
+		}
+		else{
+			model.put("okko","OK");
+		}
+		
+		return OK_KO_RESPUESTA_JSON;
 	}
 }

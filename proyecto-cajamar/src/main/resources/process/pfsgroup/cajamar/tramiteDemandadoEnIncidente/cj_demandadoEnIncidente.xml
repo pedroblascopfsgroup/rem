@@ -239,7 +239,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin2" name="cj_costas"></transition>		
+		<transition to="Fin2" name="cj_tramiteCostas"></transition>		
 	</state>
 
 	<state name="H025_ElaborarInformeCancelacion">

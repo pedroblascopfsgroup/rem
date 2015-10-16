@@ -37,7 +37,6 @@ public class EXTProcedimientoDto {
 	private DDTipoReclamacion tipoReclamacion;
 	private List<ProcedimientoBien> bienes;
 	private String guid;
-	private String usuarioSuplantado;
 	
 	public Long getIdProcedimiento() {
 		return idProcedimiento;
@@ -159,10 +158,5 @@ public class EXTProcedimientoDto {
 	public void setGuid(String guid) {
 		this.guid = guid;
 	}
-	public String getUsuarioSuplantado() {
-		return usuarioSuplantado;
-	}
-	public void setUsuarioSuplantado(String usuarioSuplantado) {
-		this.usuarioSuplantado = usuarioSuplantado;
-	}
+	
 }

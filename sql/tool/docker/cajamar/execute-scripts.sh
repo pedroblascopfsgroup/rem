@@ -35,6 +35,7 @@ export NLS_LANG=$CUSTOM_NLS_LANG
 echo "export NLS_LANG=$NLS_LANG" >> /home/oracle/.bashrc
 echo "<Docker [$CONTAINER_NAME]>: NLS_LANG=$NLS_LANG"
 cd /sql-package/DDL
+rm -Rf *.log
 ./DDL-scripts.sh admin@orcl admin@orcl
 err_code=$?
 log_script_output
@@ -43,6 +44,7 @@ if [[ $err_code -ne 0 ]]; then
 	exit 1
 fi
 cd /sql-package/DML
+rm -Rf *.log
 ./DML-scripts.sh admin@orcl admin@orcl
 err_code=$?
 log_script_output

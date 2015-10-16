@@ -179,11 +179,6 @@ function run_container () {
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
 		errorlog_volume="-v ${outter_log_dir}:$(dirname $DOCKER_INNER_ERROR_LOG):rw"
-		if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
-			mkdir -p $outter_log_dir
-			touch $VAR_OUTTER_ERROR_LOG
-			chmod go+rw $VAR_OUTTER_ERROR_LOG
-		fi
 	fi
 
 	if [[ ! -d $DUMP_DIRECTORY ]]; then
@@ -306,6 +301,16 @@ function restore_or_confirm_flahsback () {
 }
 
 show_install_info
+
+if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
+	outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
+	if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
+			mkdir -p $outter_log_dir
+			touch $VAR_OUTTER_ERROR_LOG
+			chmod go+rw $VAR_OUTTER_ERROR_LOG
+		fi
+fi
+
 if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe
 	OPTION_REMOVE=yes

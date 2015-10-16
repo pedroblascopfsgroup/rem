@@ -117,6 +117,17 @@ docCompleta.on('select', function() {
 	}
 });
 
+tipoProblema.on('select', function() {
+	if(tipoProblema.getValue() == cambioProcedimiento) {
+		procedimientoIniciar.allowBlank = false;
+		procedimientoIniciar.setDisabled(false);
+	}else{
+		procedimientoIniciar.allowBlank = true;
+		procedimientoIniciar.setDisabled(true);
+		procedimientoIniciar.setValue('');
+	}
+});
+
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 
 page.add(panelEdicion);

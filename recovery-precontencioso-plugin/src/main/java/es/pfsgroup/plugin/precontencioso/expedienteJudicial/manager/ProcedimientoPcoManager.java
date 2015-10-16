@@ -425,17 +425,14 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	 * @param idProcedimiento
 	 * @return
 	 */
-	public String dameTipoAsunto(Long idProcedimiento) {
+	public String dameTipoAsunto(Procedimiento procedimiento) {
 		String resultado = "";
 		try {		
-			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
-			if (procedimientoPco != null) {
-				String tipoAsunto = procedimientoPco.getProcedimiento().getAsunto().getTipoAsunto().getCodigo();
-				if (DDTiposAsunto.LITIGIO.equals(tipoAsunto)){
-					resultado = LITIGIO;
-				} else if (DDTiposAsunto.CONCURSAL.equals(tipoAsunto)){
-					resultado = CONCURSO;
-				}
+			String tipoAsunto = procedimiento.getAsunto().getTipoAsunto().getCodigo();
+			if (DDTiposAsunto.LITIGIO.equals(tipoAsunto)){
+				resultado = LITIGIO;
+			} else if (DDTiposAsunto.CONCURSAL.equals(tipoAsunto)){
+				resultado = CONCURSO;
 			}
 		} catch (Exception e) {}
 		return resultado;
@@ -532,7 +529,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			
 			//Creamos un burofax por cada contrato-persona (si tipo de asuto es Litigio)
 			List<BurofaxPCO> burofaxes = new ArrayList<BurofaxPCO>();
-			if (DDTiposAsunto.LITIGIO.equals(procedimiento.getAsunto().getTipoAsunto().getCodigo())) {
+			boolean esLitigio = DDTiposAsunto.LITIGIO.equals(procedimiento.getAsunto().getTipoAsunto().getCodigo());
+			if (esLitigio) {
 				burofaxes = obtenerNuevosBurofaxes(procedimientoPco, contratosPersonas);
 			}
 			
@@ -540,12 +538,14 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			procedimientoPco.setLiquidaciones(liquidaciones);
 			procedimientoPco.setBurofaxes(burofaxes);
 			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
-			
-			if (documentos.size()>0) {
-				gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
-			}
-			if (liquidaciones.size()>0) {
-				gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+
+			if (esLitigio) {
+				if (documentos.size()>0) {
+					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
+				}
+				if (liquidaciones.size()>0) {
+					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
+				}
 			}
 			
 		} catch (Exception e) {

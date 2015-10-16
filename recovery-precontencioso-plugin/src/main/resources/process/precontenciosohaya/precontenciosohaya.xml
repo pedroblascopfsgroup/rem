@@ -105,20 +105,6 @@
 		</event>
 	</state>
 
-	<state name="PCO_IniciarProcJudicial">
-		<transition to="Fin" name="avanzaBPM"/>
-		<event type="node-enter">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoEnterActionHandler</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoLeaveActionHandler</targetBean>
-			</action>
-		</event>
-	</state>
-
 	<decision name="PCO_RevisarSubsanacionDecision" expression="#{PCO_RevisarSubsanacionDecision}">
 		<transition to="PCO_RegistrarTomaDec" name="devolver"/>
 		<transition to="PCO_SubsanarIncidenciaExp" name="subsanar"/>
@@ -191,17 +177,6 @@
 	<state name="PCO_EnviarBurofax"></state>
 
 	<state name="PCO_AcuseReciboBurofax"></state>
-
-	<state name="PCO_DecTipoProcAutomatica">
-		<event type="node-enter">
-			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
-				<name>Timer inicio-precontencioso</name>
-				<duration>1 minute</duration>
-				<transicion>avanzaBPM</transicion>
-			</action>
-		</event>
-		<transition to="PCO_DecTipoProcAutomaticaDecision" name="avanzaBPM"/>
-	</state>
 
 	<decision name="PCO_DecTipoProcAutomaticaDecision" expression="#{PCO_DecTipoProcAutomaticaDecision}">
 		<transition to="PCO_AsignacionGestores" name="litigio"/>
@@ -280,6 +255,22 @@
 		</event>
 		<transition to="PCO_RevisarExpDigCONC" name="avanzaBPM"/>
 	</state>
+
+	<node name="PCO_DecTipoProcAutomatica">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="PCO_DecTipoProcAutomaticaDecision" name="avanzaBPM"/>
+	</node>
+
+	<node name="PCO_IniciarProcJudicial">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</node>
 
 
 	<end-state name="Fin"></end-state>

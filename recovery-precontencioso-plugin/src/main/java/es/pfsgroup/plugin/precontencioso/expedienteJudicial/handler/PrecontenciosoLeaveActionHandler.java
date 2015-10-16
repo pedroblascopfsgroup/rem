@@ -123,11 +123,6 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			executor.execute("plugin.precontencioso.inicializarPco", prc);
 			
 		} else if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(tex.getTareaProcedimiento().getCodigo())) {
-
-			//Si es CONCURSO invocar inicializacion
-			if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
-				executor.execute("plugin.precontencioso.inicializarPco", prc);
-			}
 			
 		}
 		

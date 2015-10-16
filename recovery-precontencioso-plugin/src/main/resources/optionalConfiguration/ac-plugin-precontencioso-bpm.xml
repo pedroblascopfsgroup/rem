@@ -11,10 +11,11 @@
 	default-autowire="byName">
 	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="31"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosohaya/precontenciosohaya.xml" p:version="2"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosohaya/precontenciosohaya.xml" p:version="4"/>
 	
 	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
 	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>
+	<bean id="precontenciosoDecisionActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoUserDecisionActionHandler"></bean>
  	
 	<bean id="jbpmUtilPrecontencioso" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.JBPMProcessPrecontenciosoManager" >
   	<property name="contextScripts">

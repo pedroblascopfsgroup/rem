@@ -15,8 +15,9 @@ do
 done
 for directory in `ls -d */`
 do
-    chmod 755 ${directory}
-    chmod u+x ${directory}/*.sh
+    chmod -f 775 ${directory}
+    chmod -f u+x ${directory}/*.sh
+    chmod -f g+x ${directory}/*.sh
 done
 rm *.zip
 cd $LOCAL_PATH

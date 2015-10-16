@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 
@@ -15,6 +16,8 @@ public class ListadoTerminosAcuerdoDto extends WebDto{
 	private Long id;
 	
 	private DDTipoAcuerdo tipoAcuerdo;
+	
+	private DDSubTipoAcuerdo  subTipoAcuerdo;
 	
 	private Float importe;
 	
@@ -66,6 +69,14 @@ public class ListadoTerminosAcuerdoDto extends WebDto{
 
 	public void setContratosTermino(List<EXTContrato> contratosTermino) {
 		this.contratosTermino = contratosTermino;
+	}
+
+	public DDSubTipoAcuerdo getSubTipoAcuerdo() {
+		return subTipoAcuerdo;
+	}
+
+	public void setSubTipoAcuerdo(DDSubTipoAcuerdo subTipoAcuerdo) {
+		this.subTipoAcuerdo = subTipoAcuerdo;
 	}
 	
 

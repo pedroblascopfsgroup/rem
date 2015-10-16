@@ -139,11 +139,11 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	// Guarda las actuaciones...
 	private void mergeActuacionesRealizadas(ActuacionesRealizadasPayload actuacionPayload) {
 		String guid = getActuacionRealizadaGuid(actuacionPayload);
-		ActuacionesRealizadasAcuerdo actuacion = mejAcuerdoManager.getActuacionesRealizadasAcuerdoByGuid(guid);
+		ActuacionesRealizadasAcuerdo actuacion = null;//mejAcuerdoManager.getActuacionesRealizadasAcuerdoByGuid(guid);
 		DtoActuacionesRealizadasAcuerdo dto = new DtoActuacionesRealizadasAcuerdo();
 		if (actuacion==null) {
 			String acuerdoGuid = getAcuerdoGuid(actuacionPayload.getAcuerdo());
-			EXTAcuerdo acuerdo = mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
+			EXTAcuerdo acuerdo = null;//mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
 			if (acuerdo==null) {
 				throw new IntegrationDataException(String.format("[INTEGRACION] Acuerdo con guid %s no existe, no se puede crear la actuación a explorar", acuerdoGuid));
 			}
@@ -181,12 +181,12 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	
 	private void mergeActuacionesAExplorar(ActuacionesAExplorarPayload actuacionPayload) {
 		String guid = getActuacionAExplorarGuid(actuacionPayload);
-		ActuacionesAExplorarAcuerdo actuacion = mejAcuerdoManager.getActuacionesAExplorarAcuerdoByGuid(guid);
+		ActuacionesAExplorarAcuerdo actuacion = null;//mejAcuerdoManager.getActuacionesAExplorarAcuerdoByGuid(guid);
 		
 		DtoActuacionesAExplorar dto = new DtoActuacionesAExplorar();
 		if (actuacion==null) {
 			String acuerdoGuid = getAcuerdoGuid(actuacionPayload.getAcuerdo());
-			EXTAcuerdo acuerdo = mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
+			EXTAcuerdo acuerdo = null;//mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
 			if (acuerdo==null) {
 				throw new IntegrationDataException(String.format("[INTEGRACION] Acuerdo con guid %s no existe, no se puede crear la actuación a explorar", acuerdoGuid));
 			}
@@ -207,10 +207,10 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 	private void actualizaTerminosAcuerdo(TerminoAcuerdoPayload terminoPayload) {
 		String valor;
 		String guid = getTerminoGuid(terminoPayload);
-		TerminoAcuerdo termino = mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
+		TerminoAcuerdo termino = null;//mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
 		if (termino==null) {
 			String acuerdoGuid = getAcuerdoGuid(terminoPayload.getAcuerdo());
-			EXTAcuerdo acuerdo = mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
+			EXTAcuerdo acuerdo = null;//mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
 			if (acuerdo==null) {
 				throw new IntegrationDataException(String.format("[INTEGRACION] Acuerdo con guid %s no existe, no se puede crear el término", acuerdoGuid));
 			}
@@ -262,7 +262,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		}
 		
 		mejAcuerdoManager.saveTerminoAcuerdo(termino);
-		termino = mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
+		termino = null;//mejAcuerdoManager.getTerminoAcuerdoByGuid(guid);
 		
 		mergeTerminosContrato(terminoPayload.getContratosRelacionados(), termino);
 		mergeTerminosBien(terminoPayload.getBienesRelacionados(), termino);
@@ -302,7 +302,7 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		String acuerdoGuid = getAcuerdoGuid(acuerdoPayload);
 		
 		// Recupera valores:
-		EXTAcuerdo acuerdo = mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
+		EXTAcuerdo acuerdo = null;//mejAcuerdoManager.getAcuerdoByGuid(acuerdoGuid);
 
 		DtoAcuerdo dtoAcuerdo = new DtoAcuerdo();
 		if (acuerdo==null) {
@@ -340,9 +340,9 @@ public class AcuerdoConsumer extends ConsumerAction<DataContainerPayload> {
 		dtoAcuerdo.setFechaEstado(acuerdoPayload.getFechaEstado());
 		
 		// Guarda el acuerdo.
-		Long idAcuerdo = mejAcuerdoManager.guardar(dtoAcuerdo);
+		Long idAcuerdo = null;//mejAcuerdoManager.guardar(dtoAcuerdo);
 		if (acuerdo==null) {
-			acuerdo = mejAcuerdoManager.getAcuerdoById(idAcuerdo);
+			acuerdo = null;//mejAcuerdoManager.getAcuerdoById(idAcuerdo);
 		}
 		
 		// datos adicionales

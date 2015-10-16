@@ -6,7 +6,6 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <fwk:page>
 	var limit=25;
-	
 	var j=0;
     var parametrosTab = new Array();
     var tabDatos=false;
@@ -215,6 +214,10 @@
 		,remoteSort : true
 	});
 	
+	 expStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
+	
 	//Hace la búsqueda inicial
 	//expStore.webflow();
 	
@@ -421,7 +424,7 @@
 				} else {
 					panelFiltros.collapse(true);
 		        	botonesTabla.show();
-					
+					panelFiltros.getTopToolbar().setDisabled(true); 
 					expStore.webflow(parametros);
 				} 
 				parametrosTab = new Array();            

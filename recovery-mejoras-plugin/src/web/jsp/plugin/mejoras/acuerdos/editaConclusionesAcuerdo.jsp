@@ -10,10 +10,10 @@
 	var labelStyle='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:120px'
 	var labelStyleTextField='font-weight:bolder;margin-bottom:1px;margin-top:1px;width:160px'	
 	var style='margin-bottom:1px;margin-top:1px';
-	var sinTipoAcuerdo = false;
-	<sec:authorize ifAllGranted="OCULTA_TIPO_ACUERDO">
-		sinTipoAcuerdo = true;
-	</sec:authorize>
+<!-- 	var sinTipoAcuerdo = false; -->
+<%-- 	<sec:authorize ifAllGranted="OCULTA_TIPO_ACUERDO"> --%>
+<!-- 		sinTipoAcuerdo = true; -->
+<%-- 	</sec:authorize> --%>
 
 	//TIPO ACUERDO
 
@@ -26,26 +26,6 @@
 	       ,data : dictTipoAcuerdo
 	});
 	
-	var tipoAcuerdoCombo = new Ext.form.ComboBox({
-				name:'tipoAcuerdoCombo'
-				<app:test id="editTipoAcuerdoCombo" addComa="true" />
-				,hiddenName:'tipoAcuerdoCombo'
-				,store:tipoAcuerdoStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,mode: 'local'
-				,emptyText:'----'
-				,style:'margin:0px'
-				,triggerAction: 'all'
-				,labelStyle:labelStyle
-				,readOnly:${readOnly}
-				,disabled:${esGestor && acuerdo.estaVigente}
-				,hidden: sinTipoAcuerdo
-				,fieldLabel : '<s:message code="acuerdo.conclusiones.tipoAcuerdoCombo" text="**Tipo Acuerdo" />'
-				<c:if test="${acuerdo!=null}">
-	      		,value:"${acuerdo.tipoAcuerdo.codigo}" 
-	      		</c:if>
-	});
 
 	//SOLICITANTE
 	var dictSolicitante = <app:dict value="${solicitantes}"/>;
@@ -87,26 +67,7 @@
 	       ,root: 'diccionario'
 	       ,data : dictEstado
 	});
-	
-	
-	//es supervisor: ${esSupervisor}
-	//es acuerdo null?: ${acuerdo==null}
-	//es gestor: ${esGestor}
 
-	var estado = <c:choose >
-					<c:when test="${esSupervisor && acuerdo==null}">
-						app.codigoAcuerdoVigente; //se est� dando de alta, y es un supervisor, se crea en estado vigente;
-					</c:when>
-					<c:when test="${esGestor && acuerdo==null}">
-						app.codigoAcuerdoEnConformacion; //se est� dando de alta, y es un gestor, se crea en conformaci�n;
-					</c:when>
-					<c:when test="${acuerdo!=null}">
-						"${acuerdo.estadoAcuerdo.codigo}"; //tomo el estado que est� cargado
-					</c:when>
-					<c:otherwise>
-						app.codigoAcuerdoEnConformacion;
-					</c:otherwise>
-				 </c:choose>
 	
 	var estadoCombo = new Ext.form.ComboBox({
 			name:'estadoCombo'
@@ -120,7 +81,7 @@
 			,triggerAction: 'all'
 			,labelStyle:labelStyle
 			,disabled:true
-			,value:estado
+			,value:app.codigoAcuerdoEnConformacion
 			,fieldLabel : '<s:message code="acuerdo.conclusiones.estadoCombo" text="**Estado" />'
 	});
 	
@@ -150,6 +111,22 @@
 	      ,value:'<s:message javaScriptEscape="true" text="${acuerdo.observaciones}"/>' 
 	    </c:if>	
 	});
+	
+		var importeCostas  = app.creaNumber('periodo',
+		'<s:message code="acuerdo.conclusiones.importe.costas" text="**Importe costas" />',
+		'',
+		{
+			labelStyle:labelStyle
+			,style:style
+			,allowDecimals: true
+			,allowNegative: false
+			,maxLength:5
+<%-- 			,disabled:${esGestor && acuerdo.estaVigente} --%>
+<%-- 			,readOnly:${readOnly} --%>
+			,width:160
+			,autoCreate : {tag: "input", type: "text",maxLength:"5", autocomplete: "off"}
+		}
+	);
 
 	//TIPO DE PAGO
 	var dictTipoPago = <app:dict value="${tiposPago}"/>;
@@ -159,26 +136,6 @@
 	       fields: ['codigo', 'descripcion']
 	       ,root: 'diccionario'
 	       ,data : dictTipoPago
-	});
-	
-	var tipoPagoCombo = new Ext.form.ComboBox({
-				name:'tipoPagoCombo'
-				<app:test id="editTipoPagoCombo" addComa="true" />
-				,hiddenName:'tipoPagoCombo'
-				,store:tipoPagoStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,mode: 'local'
-				,emptyText:'----'
-				,style:'margin:0px'
-				,triggerAction: 'all'
-				,labelStyle:labelStyle
-				,readOnly:${readOnly}
-				,disabled:${esGestor && acuerdo.estaVigente}
-				,fieldLabel : '<s:message code="acuerdo.conclusiones.tipoPagoCombo" text="**Tipo Pago" />'
-				<c:if test="${acuerdo!=null}">
-	      		,value:"${acuerdo.tipoPagoAcuerdo.codigo}" 
-	      		</c:if>
 	});
 
 
@@ -192,89 +149,17 @@
 	       ,data : dictPeriodicidad
 	});
 	
-	var periodicidadCombo = new Ext.form.ComboBox({
-				name:'periodicidadCombo'
-				<app:test id="editPeriodicidadCombo" addComa="true" />
-				,hiddenName:'periodicidadCombo'
-				,store:periodicidadStore
-				,displayField:'descripcion'
-				,valueField:'codigo'
-				,mode: 'local'
-				,style:'margin:0px'
-				,emptyText:'----'
-				,triggerAction: 'all'
-				,labelStyle:labelStyle
-				,readOnly:${readOnly}
-				,disabled:${esGestor && acuerdo.estaVigente}
-				,fieldLabel : '<s:message code="acuerdo.conclusiones.periodicidadCombo" text="**Periodicidad" />'
-				<c:if test="${acuerdo!=null}">
-	      		,value:"${acuerdo.periodicidadAcuerdo.codigo}" 
-	      		</c:if>
-	});
 
 	//UNIDAD
 	var dictUnidad ={diccionario:[{codigo:'1',descripcion:'Unidad 1'}]};
-	
+		
 
-	//IMPORTE PAGO
-	var importePago  = app.creaNumber('importePago',
-		'<s:message code="acuerdo.conclusiones.importePago" text="**Importe Pago" />',
-		'',
-		{
-			labelStyle:labelStyle
-			<app:test id="editImportePagoNumber" addComa="true" />
-			,style:style
-			,allowDecimals: true
-			,allowNegative: false
-			,maxLength:13
-			,disabled:${esGestor && acuerdo.estaVigente}
-			,readOnly:${readOnly}
-			,width:160
-			,autoCreate : {tag: "input", type: "text",maxLength:"13", autocomplete: "off"}
-		}
-	);
-
-	importePago.setValue('${acuerdo.importePago}');
-	
-	
-	//PERIODO
-	var periodo  = app.creaNumber('periodo',
-		'<s:message code="acuerdo.conclusiones.periodo" text="**Per�odo" />',
-		'',
-		{
-			labelStyle:labelStyle
-			<app:test id="editPeriodoNumber" addComa="true" />
-			,style:style
-			,allowDecimals: false
-			,allowNegative: false
-			,maxLength:3
-			,disabled:${esGestor && acuerdo.estaVigente}
-			,readOnly:${readOnly}
-			,width:160
-			,autoCreate : {tag: "input", type: "text",maxLength:"3", autocomplete: "off"}
-		}
-	);
-
-	periodo.setValue('${acuerdo.periodo}');
 	
 	var validarEnvio = function(){
 		<c:if test="${!(esGestor && acuerdo.estaVigente)}">
-		if (sinTipoAcuerdo || (tipoAcuerdoCombo.getValue()!= null && !(tipoAcuerdoCombo.getValue()===''))){
 			if (solicitanteCombo.getValue()!= null && !(solicitanteCombo.getValue()==='')){
-				if (periodicidadCombo.getValue() != null && !(periodicidadCombo.getValue()==='')){
-					if(periodo.getValue() != null && !(periodo.getValue()==='')){
-						if(importePago.getValue() != null && !(importePago.getValue()==='')){
-							return true;
-						}
-					}
-				}
-			}
-		}		
-		</c:if>
-		<c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-			if (fechaCierre.getValue()!=null && !(fechaCierre.getValue()==="")){
-				return true;
-			}
+					return true;
+			}	
 		</c:if>
 		return false;
 	}
@@ -292,20 +177,19 @@
 		      		page.webflow({
 		      			flow:'plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.guardarAcuerdo'
 		      			,params:{
-		      				   idAsunto:${idAsunto} 
-		      				   ,tipoAcuerdo:tipoAcuerdoCombo.getValue()
-		      				   ,solicitante:solicitanteCombo.getValue()
+				      			<c:if test="${idAsunto!=null}">
+				      				idAsunto:${idAsunto},
+				      			</c:if>
+				      			<c:if test="${idExpediente!=null}">
+				      				idExpediente:${idExpediente},
+				      			</c:if>
+<!-- 		      				   tipoAcuerdo:tipoAcuerdoCombo.getValue() -->
+		      				   solicitante:solicitanteCombo.getValue()
 		      				   ,estado:estadoCombo.getValue()
-		      				   ,tipoPago:app.resolverSiNulo(tipoPagoCombo.getValue())
-		      				   ,importePago:app.resolverSiNulo(importePago.getValue())
 		      				   ,observaciones:app.resolverSiNulo(observacionesConclusion.getValue())
-		      				   ,periodicidad:app.resolverSiNulo(periodicidadCombo.getValue())
-		      				   ,periodo:app.resolverSiNulo(periodo.getValue())
+								,importeCostas:app.resolverSiNulo(importeCostas.getValue())
 		      				   <c:if test="${acuerdo!=null}">
 		      				   ,idAcuerdo:${acuerdo.id}
-		      				   </c:if>
-		      				   <c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-		      				   ,fechaCierre:app.format.dateRenderer(fechaCierre.getValue())
 		      				   </c:if>
 		      				   ,fechaLimite:app.format.dateRenderer(fechaLimite.getValue())
 		      				}
@@ -315,11 +199,12 @@
 		      		});
 	      		}else{
 	      			<c:if test="${!(esGestor && acuerdo.estaVigente)}">
-	      				if (sinTipoAcuerdo) {
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>');
-						} else {
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatos" text="**Debe rellenar los datos"/>');
-						}
+	      				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>');
+<!-- 	      				if (sinTipoAcuerdo) { -->
+<%-- 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>'); --%>
+<!-- 						} else { -->
+<%-- 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatos" text="**Debe rellenar los datos"/>'); --%>
+<!-- 						} -->
 	      			</c:if>
 	      			<c:if test="${esGestor && acuerdo.estaVigente}">
 	      				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.conclusioes.faltaFechaCierre"/>');
@@ -337,16 +222,6 @@
 	      		page.fireEvent(app.event.CANCEL);
 	     	}
 	});
-
-	<c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-		var fechaCierre = new Ext.ux.form.XDateField({
-			fieldLabel:'<s:message code="acuerdos.fechaCierre" text="**Fecha Cierre" />'
-			,name:'fechaCierre'
-			,style:'margin:0px'
-			,labelStyle:labelStyleTextField
-		});
-		//app.format.dateRenderer(fechaCreacionDesde.getValue());
-	</c:if>
 
 
 	var bottomBar = [];
@@ -375,15 +250,8 @@
 		 		,layoutConfig:{columns:2}
 		 		,defaults:{border:false,xtype:'fieldset',autoHeight:true,width:350}
 		 		,items:[
-		 			{items:[tipoAcuerdoCombo,solicitanteCombo,estadoCombo,fechaLimite]}
+		 			{items:[solicitanteCombo,estadoCombo,fechaLimite,importeCostas]}
 				 	,{items:[
-						tipoPagoCombo
-						,importePago
-				 		,periodicidadCombo
-				 		,periodo
-				 		<c:if test="${(esGestor || esSupervisor) && acuerdo.estaVigente}">
-				 		,fechaCierre
-				 		</c:if>
 				 	]}
 					,{colspan:2,width:700,items:[tituloobservaciones,{items:observacionesConclusion,border:false,style:'margin-top:5px'}]}
 		 		]

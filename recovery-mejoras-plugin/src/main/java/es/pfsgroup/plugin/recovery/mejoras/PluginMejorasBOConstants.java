@@ -16,6 +16,8 @@ public class PluginMejorasBOConstants {
 	
 	public static final String MEJ_BO_GUARDAR_FICHA_ACEPTACION = "MEJAsuntosManager.guardarFichaAceptacion";
 
+	public static final String MEJ_BO_PUEDE_FINALIZAR_ASUNTO = "MEJAsuntosManager.puedeFinalizarAsunto";
+
 	public static final String MEJ_MGR_CLIENTES_TABS_FAST = "tabs.cliente.fast";
 	
 	public static final String GET_LIST_TIPO_CONCURSO = "plugin.recovery.mejoras.getListTipoConcurso";

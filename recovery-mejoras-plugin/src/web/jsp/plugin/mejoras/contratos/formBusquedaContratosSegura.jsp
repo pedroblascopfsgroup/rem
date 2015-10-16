@@ -484,6 +484,7 @@ var formBusquedaContratos=function(){
 			,beforeCollapse:function(){
 				contratosGrid2.setHeight(435);
 				contratosGrid2.expand(true);
+				panelFiltros.getTopToolbar().setDisabled(true);
 			}
 		}
 	});
@@ -590,6 +591,10 @@ var formBusquedaContratos=function(){
 
 	var pagingBar=fwk.ux.getPaging(contratosStore);
 	pagingBar.hide();
+	
+	contratosStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
 	
 
 	var cfg={

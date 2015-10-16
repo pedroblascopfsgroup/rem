@@ -676,9 +676,9 @@ public class MEJDecisionProcedimientoManager extends
                 	
                 	//HibernateUtils.flush();
                 	//p = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", dp.getProcedimiento().getId()));
-                	DDEstadoProcedimiento estadoCerrado = genericDao.get(DDEstadoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO));
-                	p.setEstadoProcedimiento(estadoCerrado);
-                	genericDao.save(MEJProcedimiento.class, p);
+                	//DDEstadoProcedimiento estadoCerrado = genericDao.get(DDEstadoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO));
+                	//p.setEstadoProcedimiento(estadoCerrado);
+                	//genericDao.save(MEJProcedimiento.class, p);
                 	//HibernateUtils.flush();
                 	
                     jbpmUtil.finalizarProcedimiento(p.getId());

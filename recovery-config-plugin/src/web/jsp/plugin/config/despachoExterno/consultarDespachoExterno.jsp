@@ -19,18 +19,22 @@
 		<%@ include file="tabGestoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
 
+	<pfslayout:includetab name="tabEsquemaTurnado">
+		<%@ include file="tabEsquemaTurnado.jsp"%>
+	</pfslayout:includetab>
+
 	<%--El tab supervisores solo lo mostramos en el caso que el despacho no sea de procuradores --%>
 	<c:if test="${despacho.tipoDespacho.codigo!=2 || despacho.tipoDespacho.codigo!=1}">
 		<pfslayout:includetab name="tabSupervisores">
 			<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
 		</pfslayout:includetab>
 		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores,tabSupervisores" />
+			tabs="tabCabecera,tabGestores,tabSupervisores,tabEsquemaTurnado" />
 	</c:if>
 	
 	<c:if test="${despacho.tipoDespacho.codigo==2}">
 		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores" />
+			tabs="tabCabecera,tabGestores,tabEsquemaTurnado" />
 	</c:if>
 	
 	<c:if test="${despacho.tipoDespacho.codigo==1}">
@@ -38,9 +42,8 @@
 			<%@ include file="tabProcuradoresDespachoExterno.jsp"%>
 		</pfslayout:includetab>	
 		<pfslayout:tabpanel name="tabsDespacho"
-			tabs="tabCabecera,tabGestores,tabSupervisores,tabProcuradores" />
+			tabs="tabCabecera,tabGestores,tabSupervisores,tabProcuradores,tabEsquemaTurnado" />
 	</c:if>	
-	
 	
 	page.add(tabsDespacho);
 </fwk:page>

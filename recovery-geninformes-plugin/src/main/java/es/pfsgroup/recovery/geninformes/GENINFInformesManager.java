@@ -937,7 +937,7 @@ public class GENINFInformesManager implements GENINFInformesApi {
 		WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
 		XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordMLPackage);				
 		wordMLPackage.getMainDocumentPart().getContent().addAll( 
-					XHTMLImporter.convert( "<HTML><BODY style='font-size:12px'>"+htmlText+"</BODY></HTML>", null) );
+					XHTMLImporter.convert( "<HTML><BODY>"+htmlText+"</BODY></HTML>", null) );
 		System.out.println(
 				XmlUtils.marshaltoString(wordMLPackage.getMainDocumentPart().getJaxbElement(), true, true));
 		wordMLPackage.save(archivo);

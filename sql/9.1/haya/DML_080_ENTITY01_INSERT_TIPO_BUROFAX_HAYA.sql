@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HR-1280
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: DML para crear un nuevo tipo de burofax REQ-PAGO-SAREB
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

@@ -85,11 +85,11 @@ BEGIN
       		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_SubsanarIncidenciaExp'')';
     	EXECUTE IMMEDIATE V_SQL;
     	
-    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = ''valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema'''']'', TFI_VALIDACION = ''valor != null && valor != '''''''' ? true : false'', TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = ''''  WHERE  TFI_NOMBRE = ''tipo_problema'' AND TAP_ID =  ' || 
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = ''valores[''''PCO_RegistrarTomaDec''''][''''tipo_problema'''']'', TFI_ERROR_VALIDACION = '''', TFI_VALIDACION = '''', TFI_BUSINESS_OPERATION = ''DDTipoProblemaDocPco''  WHERE  TFI_NOMBRE = ''tipo_problema'' AND TAP_ID =  ' || 
       		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_SubsanarIncidenciaExp'')';
     	EXECUTE IMMEDIATE V_SQL;
     	
-    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = '''', TFI_VALIDACION = ''valor != null && valor != '''''''' ? true : false'' WHERE TFI_NOMBRE = ''fecha_exp_sub'' AND TAP_ID =  ' || 
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = '''', TFI_VALIDACION = ''valor != null && valor != '''' ? true : false'' WHERE TFI_NOMBRE = ''fecha_exp_sub'' AND TAP_ID =  ' || 
       		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_SubsanarIncidenciaExp'')';
     	EXECUTE IMMEDIATE V_SQL;
     	

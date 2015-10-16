@@ -301,7 +301,8 @@ app.reloadFav=function(){
 app.creaLabel = function(label, value, config){
 	var config = config || {};
 	var cfg = {
-			fieldLabel : label || ''
+			autoHeight: true
+			,fieldLabel : label || ''
 			,value : value
 			,labelStyle : config.labelStyle || 'font-weight:bolder'
 			//esto reduce el margen entre las labels 4px que introduce .x-form-item
@@ -313,7 +314,9 @@ app.creaLabel = function(label, value, config){
 	
 	fwk.js.copyProperties(cfg, config, ['labelWidth','labelStyle']);
 
-	return new Ext.ux.form.StaticTextField(cfg);
+	var staticTextField =  new Ext.ux.form.StaticTextField(cfg);
+	//staticTextField.autoHeight = true;
+	return staticTextField;
 };
 
 

@@ -89,7 +89,7 @@ BEGIN
       		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_SubsanarIncidenciaExp'')';
     	EXECUTE IMMEDIATE V_SQL;
     	
-    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = '''' WHERE TFI_NOMBRE = ''fecha_exp_sub'', TFI_VALIDACION = ''valor != null && valor != '''''''' ? true : false'' AND TAP_ID =  ' || 
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS SET TFI_VALOR_INICIAL = '''', TFI_VALIDACION = ''valor != null && valor != '''' ? true : false'' WHERE TFI_NOMBRE = ''fecha_exp_sub'' AND TAP_ID =  ' || 
       		'(SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''PCO_SubsanarIncidenciaExp'')';
     	EXECUTE IMMEDIATE V_SQL;
     	

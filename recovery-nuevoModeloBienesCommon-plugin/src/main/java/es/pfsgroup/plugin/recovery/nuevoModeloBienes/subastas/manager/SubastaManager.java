@@ -1345,7 +1345,7 @@ public class SubastaManager implements SubastaApi {
 		public Procedimiento getProcedimientoBienByIdPadre(NMBBien nmbBien, Subasta subasta, String tipoProcedimiento) {
 			Procedimiento prc = null;
 			List<ProcedimientoBien> listProcedimientoBien = (List<ProcedimientoBien>) genericDao.getList(ProcedimientoBien.class, 
-					genericDao.createFilter(FilterType.EQUALS, "bien.id", nmbBien.getId()), 
+                                        genericDao.createFilter(FilterType.EQUALS, "bien.id", nmbBien.getId()), 
 					genericDao.createFilter(FilterType.EQUALS, "procedimiento.procedimientoPadre.id", subasta.getProcedimiento().getId()),
 					genericDao.createFilter(FilterType.EQUALS, "procedimiento.tipoProcedimiento.codigo", tipoProcedimiento));
 			

@@ -34,7 +34,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TEA_TERMINOS_ACUERDO... Comprobaciones previas');
 
 	-- Comprobamos si ya existe la columna
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''USD_ID'' and TABLE_NAME=''DD_EGT_ID'' and owner = '''||V_ESQUEMA||'''';
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_EGT_ID'' and TABLE_NAME=''TEA_TERMINOS_ACUERDO'' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO table_count;
 	
 	IF table_count = 1 THEN

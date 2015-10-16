@@ -61,24 +61,24 @@
 			header: '<s:message code="plugin.precontencioso.grid.burofax.resultado" text="**Resultado"/>'
 			,dataIndex: 'resultado', sortable: true,autoWidth:true
 		}, {
-			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoooo" text="**IdDireccion"/>'
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**IdDireccion"/>'
 			,dataIndex: 'idDireccion', sortable: false,autoWidth:true,hidden:true
 		}, {
-			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadooooo" text="**idCliente"/>'
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idCliente"/>'
 			,dataIndex: 'idCliente', sortable: true,autoWidth:true,hidden:true
 		}
 		, {
-			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoooooo" text="**idTipoBurofax"/>'
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idTipoBurofax"/>'
 			,dataIndex: 'idTipoBurofax', sortable: false,autoWidth:true,hidden:true
 		}
 		, {
-			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOO" text="**idBurofax"/>'
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idBurofax"/>'
 			,dataIndex: 'idBurofax', sortable: false,autoWidth:true,hidden:false,hidden:true
 		}, {
-			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOO" text="**idEnvio"/>'
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**idEnvio"/>'
 			,dataIndex: 'idEnvio', sortable: false,autoWidth:true,hidden:true
 		}, {
-			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoOOOoo" text="**id"/>'
+			header: '<s:message code="plugin.precontencioso.grid.burofax.resultadoo" text="**id"/>'
 			,dataIndex: 'id', sortable: true,autoWidth:true,hidden:true
 		}
 	];
@@ -181,6 +181,7 @@
 			text : '<s:message code="plugin.precontencioso.grid.burofax.descargar.burofax" text="**Descargar Burofax" />'
 			,iconCls : 'icon_download'
 			,cls: 'x-btn-text-icon'
+			,hidden:true
 	});		
 	
 	Ext.namespace('Ext.ux.plugins');
@@ -194,6 +195,7 @@
       		this.items = {};
       		this.idArray = new Array();
       		this.idProperty = config.idProperty || 'id';
+      		//this.idProperty = 'idEnvio';
       		
    		},
 
@@ -503,8 +505,6 @@
 	
 	
 	btnAddPersona.on('click', function(){
-	   
-			
 			var w = app.openWindow({
 				  flow : 'burofax/getAltaPersona'
 				  ,width:820

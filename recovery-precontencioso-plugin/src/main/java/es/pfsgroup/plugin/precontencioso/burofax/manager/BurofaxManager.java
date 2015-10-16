@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
+import java.io.File;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -465,9 +466,20 @@ public class BurofaxManager implements BurofaxApi {
 				}
 				String domicilio=envioBurofax.getDireccion().toString();
 				//Creamos un archivo docx a partir de texto html
+				/*
 				InputStream is=informesManager.createDocxFileFromHtmlText(
-						"<table width='60%'><tr><td width='40'>BANKIA S.A<br></br>PASEO DE LA CASTELLANA, 189<br></br>28046 Madrid</td><td width='20'></td>"
-						+ "<td width='40'>"+nombre.concat(" "+apellido1).concat(" "+apellido2)+"<br />"+domicilio+"</td></tr></table><br></br><table width='60%'><tr><td>"+envioBurofax.getContenidoBurofax()+"</td></tr></table>",
+						"<table width='60%' style='font-size:12px'>"
+						+ "<tr>"
+						+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
+						+ "<td width='20' style='border-style: hidden'></td>"
+						+ "<td width='40' style='border:1px solid black'>"+nombre.concat(" "+apellido1).concat(" "+apellido2)+"<br />"+domicilio+"</td>"
+						+ "</tr>"
+						+ "</table><br />"
+						+ "<table width='60%' style='font-size:12px'>"
+						+ "<tr>"
+						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
+						+ "</tr>"
+						+ "</table>",
 						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
 				
 
@@ -529,12 +541,15 @@ public class BurofaxManager implements BurofaxApi {
 					
 					FileItem archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
 					envioIntegracion.setArchivoBurofax(archivoBurofax);
+					
 			       
 				} catch (Throwable e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				*/
+				
+				envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
 				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);

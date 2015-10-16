@@ -35,25 +35,29 @@ OPTION_RANDOM_DUMP=no
 OPTION_RESTART=no
 OPTION_PITERDEBUG=no
 OPTION_FLASHBACK_MODE=no
+OPTION_SCRIPTS_MODE=no
 
-DOCKER_INNER_ERROR_LOG=/tmp/error.log
+DOCKER_INNER_ERROR_LOG=/tmp/scriptslog/error.log
 VAR_OUTTER_ERROR_LOG=""
+VAR_SCRIPTS_DONE=no
+VAR_STARTING_TAG_CHANGED=no
 
 function show_help () {
 	echo "Uso: "
 	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]"
 	echo "            [-errorlog=<fichero_logs>] [-piterdebug]"
-	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-help] [-oradata=<directorio datafiles>]"
-	echo " MODO 3: $0 -flashback"
+	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>]"
+	echo " MODO 3: $0 -flashback [-help]"
+	echo " MODO 4: $0 -scripts [-help] [-errorlog=<fichero_logs>] [-piterdebug] [-fromtag=<tag_de_partida>]"
 	echo " -------------------------------------------------------------------------------------------------------------------"
 	echo " OPCIONES GENERALES"
 	echo "    -help: Sólo imprime un mensaje de ayuda"
 	echo "    -restart: Indicar para reiniciar la BBDD"
-	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
 	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
-	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove"
+	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove o -impdp"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
+	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
 	echo "    -ignoredmp: Continua la ejecución si no encentra el DUMP"
 	echo "    -dmpdir=: Especifica dónde está el directorio de los DUMPS"
 	echo "                  por defecto $DUMP_DIRECTORY"
@@ -61,12 +65,19 @@ function show_help () {
 	echo "    -piterdebug: Habilita el modo debug al empaquetar con la Pitertul"
 	echo ""
 	echo " OPCIONES MODO 2. Importar un dump aleatorio."
-	echo "    -impdp=: Realiza un import dle dump que le digamos. Esta opción implica un -remove."
+	echo "    -impdp=: Realiza un import del dump que le digamos. Esta opción implica un -remove."
 	echo "                  Este modo ignora los siguientes parámetros si se indican: -ignoredmp, -dmpdir"
+	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
+	echo "                  Esta opción es redundante en este modo ya que -impdp siempre implica un remove"
 	echo ""
 	echo " OPCIONES MODO 3. Modo Flashback, punto de restauración"
 	echo "    -flashback: Pone la BBDD en modo flashback creando un punto de restauración. Se sale del modo"
 	echo "                  mediante Ctrl+C. Al salir se ofrecen dos opciones: restaurar o confirmar"
+	echo ""
+	echo " OPCIONES MODO 4. Ejecución de scripts"
+	echo "    -errorlog=: Fichero en el que queremos volcar la salida de los scripts DxL"
+	echo "    -piterdebug: Habilita el modo debug al empaquetar con la Pitertul"
+	echo "    -fromtag=: Ejecuta los scripts a partir del tag seleccionado"
 	echo ""
 }
 
@@ -90,6 +101,8 @@ if [[ "x$@" != "x" ]]; then
 			ORADATA_HOST_DIR=$(echo $op | cut -f2 -d=)
 		elif [[ "x$op" == x-errorlog=* ]]; then
 			VAR_OUTTER_ERROR_LOG=$(echo $op | cut -f2 -d=)
+			log_name=$(basename $VAR_OUTTER_ERROR_LOG)
+			DOCKER_INNER_ERROR_LOG=$(dirname $DOCKER_INNER_ERROR_LOG)/$log_name
 		elif [[ "x$op" == x-impdp=* ]]; then
 			param=$(echo $op | cut -f2 -d=)
 			DUMP_DIRECTORY=$(dirname $param)
@@ -104,6 +117,11 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_PITERDEBUG=yes
 		elif [[ "x$op" == "x-flashback" ]]; then
 			OPTION_FLASHBACK_MODE=yes
+		elif [[ "x$op" == "x-scripts" ]]; then
+			OPTION_SCRIPTS_MODE=yes
+		elif [[ "x$op" == x-fromtag=* ]]; then
+			STARTING_TAG=$(echo $op | cut -f2 -d=)
+			VAR_STARTING_TAG_CHANGED=yes
 		fi
 	done
 else
@@ -148,6 +166,9 @@ function package_sql () {
 
 
 		cd $current_dir
+		chmod -R go+w $SQL_PACKAGE_DIR/*
+		chmod +x $SQL_PACKAGE_DIR/DDL/*.sh
+		chmod +x $SQL_PACKAGE_DIR/DML/*.sh
 	fi
 }
 
@@ -156,9 +177,10 @@ function run_container () {
 	local errorlog_volume=""
 
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
-		errorlog_volume="-v ${VAR_OUTTER_ERROR_LOG}:${DOCKER_INNER_ERROR_LOG}:rw"
+		outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
+		errorlog_volume="-v ${outter_log_dir}:$(dirname $DOCKER_INNER_ERROR_LOG):rw"
 		if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
-			mkdir -p $(dirname $VAR_OUTTER_ERROR_LOG)
+			mkdir -p $outter_log_dir
 			touch $VAR_OUTTER_ERROR_LOG
 			chmod go+rw $VAR_OUTTER_ERROR_LOG
 		fi
@@ -179,9 +201,7 @@ function run_container () {
 	fi
 	if [[ -f $DUMP_PATH ]]; then
 		package_sql $STARTING_TAG $CLIENTE
-		chmod -R go+w $SQL_PACKAGE_DIR/*
-		chmod +x $SQL_PACKAGE_DIR/DDL/*.sh
-		chmod +x $SQL_PACKAGE_DIR/DML/*.sh
+		VAR_SCRIPTS_DONE=yes
 	fi
 	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imágen [$IMAGE_NAME]: "
 	docker run -d -p=22 -p 1521:1521 \
@@ -195,6 +215,7 @@ function run_container () {
 }
 
 function remove_container () {
+	echo "[INFO]: Se va a restaurar la BBDD. Esto implica un borrado de la BBDD y una re-generación"
 	echo -n "[INFO]: Borrando el contenedor: "
 	docker rm $CONTAINER_NAME
 }
@@ -231,14 +252,19 @@ function check_dump () {
 }
 
 function show_install_info () {
-	echo "[INFO]: Se va a restaurar la BBDD. Esto implica un borrado de la BBDD y una re-generación"
+	
 
 	if [[ "x$OPTION_RANDOM_DUMP" == "xyes" ]]; then
 		echo "[WARNING]: Importaremos un DUMP \"no oficial\" = $CURRENT_DUMP_NAME"
-		echo "[WARNING]: El no hay correspondencia entre el DUMP a importar y un TAG en Git"
+		echo "[WARNING]: Puede que no haya correspondencia entre el DUMP a importar y un TAG en Git"
 	else
 		echo "[INFO]: Dump de partida = $CURRENT_DUMP_NAME"
-		echo "[INFO]: Tag (Git) de partida = $STARTING_TAG"
+		echo -n "[INFO]: Tag (Git) de partida = $STARTING_TAG"
+		if [[ "x$VAR_STARTING_TAG_CHANGED" == "xyes" ]]; then
+			echo " (* no es la opción por defecto)"
+		else
+			echo ""
+		fi
 	fi
 	echo "[INFO]: Almacenamiento de los datafiles = $ORADATA_HOST_DIR"
 }
@@ -279,11 +305,10 @@ function restore_or_confirm_flahsback () {
 	echo "Pulsa Ctrl + C para salir"
 }
 
-
+show_install_info
 if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe
 	OPTION_REMOVE=yes
-	show_install_info
 	check_dump
 	echo "[INFO]: El contenedor está parado. Se va a generar desde cero a partir de la imágen."
 	echo "[INFO]: Si la imágen $IMAGE_NAME no existe en el repositorio Docker local puede que tarde un poco en descargarse."
@@ -303,17 +328,27 @@ else
 	fi
 
 	if [[ "x$OPTION_REMOVE" == "xyes" || "x$OPTION_RANDOM_DUMP" == "xyes" ]]; then
-		show_install_info
-		check_dump
-		if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
-			remove_container
-			run_container
-		fi
-		if [[ $? -eq 0 ]]; then
-			do_install
-			if [[ $? -ne 0 ]]; then
-				echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
-				exit 1
+		if [[ "x$OPTION_SCRIPTS_MODE" == "xno" && "x$VAR_STARTING_TAG_CHANGED" == "xno" ]]; then
+			show_install_info
+			check_dump
+			if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
+				remove_container
+				run_container
+			fi
+			if [[ $? -eq 0 ]]; then
+				do_install
+				if [[ $? -ne 0 ]]; then
+					echo "[ERROR]: No se ha podido generar $CONTAINER_NAME"
+					exit 1
+				fi
+			fi
+		else
+			echo "[WARNING] Se han indicado opciones imcompatibles"
+			if [[ "x$OPTION_SCRIPTS_MODE" == "xyes" ]]; then
+				echo "[WARNING] La opción -scripts es incompatible con "
+			fi
+			if [[ "x$VAR_STARTING_TAG_CHANGED" == "xyes" ]]; then
+				echo "[WARNING] La opción -fromtag es incompatible con -remove o -impdp"
 			fi
 		fi
 	fi
@@ -325,6 +360,13 @@ else
 		$(pwd)/flashback.sh $CONTAINER_NAME create
 		echo "Pulsa Ctrl + C para salir del modo Flhasback"
 		while true; do sleep 5; done
+	fi
+
+	if [[ "x$OPTION_SCRIPTS_MODE" == "xyes" && "x$VAR_SCRIPTS_DONE" == "xno"
+			&& "x$OPTION_RANDOM_DUMP" == "xno"  && "x$OPTION_REMOVE" == "xno" ]]; then
+		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
+		package_sql $STARTING_TAG $CLIENTE
+		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG
 	fi
 
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then

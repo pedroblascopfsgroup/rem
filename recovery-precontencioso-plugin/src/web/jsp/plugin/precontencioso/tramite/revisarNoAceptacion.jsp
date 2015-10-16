@@ -25,8 +25,15 @@ var bottomBar = [];
 
 var anteriorLetrado = items[2];
 var letradoAsignado = items[3];
+var asignacionCorrecta = items[4];
+
 anteriorLetrado.setDisabled(true);
 letradoAsignado.setDisabled(true);
+asignacionCorrecta.setDisabled(true);
+
+anteriorLetrado.hide();
+letradoAsignado.hide();
+asignacionCorrecta.hide();
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 

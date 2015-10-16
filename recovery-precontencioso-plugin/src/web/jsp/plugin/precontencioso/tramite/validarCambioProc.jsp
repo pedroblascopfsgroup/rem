@@ -23,11 +23,15 @@ var bottomBar = [];
 	bottomBar.push(btnExportarPDF);
 </c:if>
 
+var tipoProcedimientoLetrado = items[1];
 var tipoProcedimientoEntidad = items[2];
 var nuevaPreparacion = items[3];
 
+tipoProcedimientoLetrado.setDisabled(true);
 tipoProcedimientoEntidad.setDisabled(true);
 nuevaPreparacion.setDisabled(true);
+
+nuevaPreparacion.hide();
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 

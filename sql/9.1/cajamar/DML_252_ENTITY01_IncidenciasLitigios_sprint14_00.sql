@@ -57,6 +57,54 @@ BEGIN
 	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-904');
 	
+	--parte nueva Alberto
+	--------------------------
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-910');
+	V_TAREA:='H004_RegistrarResSuspSubasta';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">En esta pantalla deber&aacute; informa de la fecha en la que el juzgado notifica la resoluci&oacute;n a la solicitud de suspensi&oacute;n de la subasta as&iacute; como indicar si la subasta se ha suspendido o no.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interese que quede reflejado en este punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez finaliza esta tarea, se le abrirá tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</p></div>'' ' ||
+	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-910');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-906');
+	V_TAREA:='HC103_RealizarTransferencia';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_LABEL=''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea, deberá hacer una transferencia por el importe aprobado y se generará una notificación al letrado.</p><p style="margin-bottom: 10px">En el campo Fecha indicar la fecha en la que realiza la transferencia.</p><p style="margin-bottom: 10px">En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellena esta pantalla, se lanzará la tarea Confirmar transferencia realizada.</p></div>'' ' ||
+	  ' WHERE TFI_NOMBRE=''titulo'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-906');
+	
+	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-902');
+	V_TAREA:='H005_ConfirmarTestimonio';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ERROR_VALIDACION=''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboAdicional'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_VALIDACION=''valor != null && valor != ''''''''? true : false'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboAdicional'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ERROR_VALIDACION=''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboOcupantes'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_VALIDACION=''valor != null && valor != ''''''''? true : false'' ' ||
+	  ' WHERE TFI_NOMBRE=''comboOcupantes'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+      ' SET TAP_SCRIPT_VALIDACION_JBPM = ''(valores[''''H005_ConfirmarTestimonio''''][''''comboAdicional'''']==DDSiNo.SI && valores[''''H005_ConfirmarTestimonio''''][''''fechaLimite'''']==null) ? ''''Si requiere comunicaci&oacute;n adicional debe indicar la fecha l&iacute;mite de comunicaci&oacute;n'''' : null'' ' ||
+      ' WHERE TAP_CODIGO = ''H005_ConfirmarTestimonio'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-902');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-905');
+	V_TAREA:='H015_ConfirmarFormalizacion';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.DD_PTP_PLAZOS_TAREAS_PLAZAS SET ' ||
+	  ' DD_PTP_PLAZO_SCRIPT=''damePlazo(valores[''''H015_SuspensionLanzamiento''''][''''fechaParalizacion'''']) + 30*24*60*60*1000L'' ' ||
+	  ' WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-905');
+	
 	COMMIT;
  
 EXCEPTION

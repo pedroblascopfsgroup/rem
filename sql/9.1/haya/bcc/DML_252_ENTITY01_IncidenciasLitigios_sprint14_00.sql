@@ -98,6 +98,12 @@ BEGIN
       ' WHERE TAP_CODIGO = ''H005_ConfirmarTestimonio'' ';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-902');
 	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-905');
+	V_TAREA:='H015_ConfirmarFormalizacion';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.DD_PTP_PLAZOS_TAREAS_PLAZAS SET ' ||
+	  ' DD_PTP_PLAZO_SCRIPT=''damePlazo(valores[''''H015_SuspensionLanzamiento''''][''''fechaParalizacion'''']) + 30*24*60*60*1000L'' ' ||
+	  ' WHERE TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-905');
 	
 	COMMIT;
  

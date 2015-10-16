@@ -49,7 +49,8 @@
 				<constructor-arg ref="diccionarioCodigosProducer"/>
 				<property name="helper">
 					<bean class="es.pfsgroup.recovery.cajamar.integration.BPMTransformHelper">
-						<property name="tareaParaEnviar" value="HCJ002_ObtenerValidacionComite"/>
+						<property name="codigoProcedimiento" value="HCJ002|HCJ003" />
+						<property name="tareaParaEnviar" value="HCJ002_ObtenerValidacionComite|HCJ003_AutorizarPeticionPropuesta"/>
 					</bean>
 				</property>
 			</bean>
@@ -103,11 +104,11 @@
 		<constructor-arg>
 			<list>
 				<bean class="es.pfsgroup.recovery.integration.TypePayloadHeadersRegexRule">
-					<property name="tipo" value="DO-FINALIZAR-BPM|DO-PARALIZAR-BPM|DO-ACTIVAR-BPM" />
+					<property name="tipo" value="DO-FINALIZAR-BPM|DO-PARALIZAR-BPM" />
 				</bean>
 				<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 					<property name="tipo" value="BPM-FIN" />
-					<property name="codigoProcedimiento" value="HCJ001|HCJ002" />
+					<property name="codigoProcedimiento" value="HCJ001|HCJ002|HCJ003" />
 				</bean>
 				<bean class="es.pfsgroup.recovery.integration.DenyAllRule" />
 			</list>

@@ -59,7 +59,7 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
 	List<DDTipoFondo> esTitulizada(Long idAsunto);
 
 	/**
-         * Indica sobre el Asunto si el proceso de envio a cierre de deuda man/auto ha generado errores de validación
+         * Indica sobre el Asunto si el proceso de envio a cierre de deuda man/auto ha generado errores de validaciï¿½n
         * @param idAsunto
         * @return
         */        

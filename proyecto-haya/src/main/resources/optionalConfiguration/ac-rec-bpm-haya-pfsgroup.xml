@@ -9,7 +9,9 @@
     default-autowire="byName">
 
 	<!-- Beans,handlers,Managers ... --> 
- 	    
+ 	<bean id="aceptacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.aceptacion.AceptacionHayaEnterActionHandler"></bean>
+ 	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
+		    
 	<!-- BPM activos -->
 	<!-- Cambios Rober -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoHipotecario/haya_procedimientoHipotecario.xml" p:version="-1"/>	

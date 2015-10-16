@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteValoracionBienes" width="1414" height="868">
+<root-container name="hcj_tramiteValoracionBienes" width="1498" height="887">
   <node name="Inicio" x="284" y="22" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -16,11 +16,6 @@
       <bendpoint w1="193" h1="0" w2="0" h2="-52"/>
     </edge>
   </node>
-  <node name="join1" x="486" y="506" width="252" height="24">
-    <edge>
-      <label x="-71" y="-6"/>
-    </edge>
-  </node>
   <node name="H058_SolicitarAvaluo" x="67" y="187" width="166" height="36">
     <edge>
       <label x="0" y="-4"/>
@@ -30,6 +25,8 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-33" h1="-196" w2="-1230" h2="-675"/>
+      <bendpoint w1="1183" h1="-187" w2="-14" h2="-666"/>
     </edge>
   </node>
   <node name="H058_SolitarTasacionInterna" x="818" y="92" width="226" height="36">
@@ -67,6 +64,9 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-162" h1="-3" w2="-1359" h2="-164"/>
+      <bendpoint w1="-162" h1="355" w2="-1359" h2="194"/>
+      <bendpoint w1="425" h1="355" w2="-772" h2="194"/>
     </edge>
   </node>
   <node name="H058_ObtencionTasacionInterna" x="743" y="211" width="219" height="36">
@@ -192,9 +192,4 @@
     </edge>
   </node>
   <node name="Fin" x="1281" y="666" width="132" height="36"/>
-  <node name="node1" x="648" y="347" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
 </root-container>

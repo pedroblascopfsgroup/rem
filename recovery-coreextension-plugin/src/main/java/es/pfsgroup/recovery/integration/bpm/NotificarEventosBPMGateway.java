@@ -15,6 +15,8 @@ import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
 import es.pfsgroup.recovery.integration.TypePayload;
+import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 public interface NotificarEventosBPMGateway {
 
@@ -57,6 +59,11 @@ public interface NotificarEventosBPMGateway {
 			);
 
 	@Gateway
+	void prorrogaTarea(TareaExterna tareaExterna
+			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
+			, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad);
+	
+	@Gateway
 	void finBPM(Procedimiento procedimiento
 			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
@@ -70,7 +77,7 @@ public interface NotificarEventosBPMGateway {
 			);
 
 	@Gateway
-	void paralizarBPM(Procedimiento procedimiento
+	void paralizarBPM(ParalizarBPMMsg mensaje
 			, @Header(TypePayload.HEADER_MSG_TYPE) String tipo
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
 			);
@@ -128,5 +135,5 @@ public interface NotificarEventosBPMGateway {
 			, @Header(TypePayload.HEADER_MSG_TYPE) String type
     		, @Header(TypePayload.HEADER_MSG_ENTIDAD) String entidad
 			);
-	
+
 }

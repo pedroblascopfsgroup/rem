@@ -20,7 +20,7 @@ public class DiccionarioDeCodigos {
 		return diccionario;
 	}
 
-	protected String getCodigoProcedimientoFinal(String codigoProcedimiento) {
+	public String getCodigoProcedimientoFinal(String codigoProcedimiento) {
 		if (!diccionario.containsKey(CODIGOS_PROCEDIMIENTO) || Checks.esNulo(codigoProcedimiento)) {
 			return codigoProcedimiento;
 		}
@@ -28,7 +28,7 @@ public class DiccionarioDeCodigos {
 		return valor;
 	}
 
-	protected String getCodigoTareaFinal(String codigoTarea) {
+	public String getCodigoTareaFinal(String codigoTarea) {
 		if (!diccionario.containsKey(CODIGOS_TAREAS) || Checks.esNulo(codigoTarea)) {
 			return codigoTarea;
 		}
@@ -36,7 +36,7 @@ public class DiccionarioDeCodigos {
 		return valor;
 	}
 
-	protected String getCodigoDDFinal(String codigoDD, String codigo) {
+	public String getCodigoDDFinal(String codigoDD, String codigo) {
 		if (Checks.esNulo(codigoDD) || Checks.esNulo(codigo)) {
 			return codigo;
 		}

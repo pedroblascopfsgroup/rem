@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.integration.bpm;
 
+import java.util.Date;
+
 import es.capgemini.pfs.acuerdo.model.ActuacionesAExplorarAcuerdo;
 import es.capgemini.pfs.acuerdo.model.ActuacionesRealizadasAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -19,6 +21,7 @@ public interface IntegracionBpmService {
 	public static final String TIPO_CANCELACION_TAREA = "BPM-TAREA-CANCEL";
 	public static final String TIPO_PARALIZAR_TAREA = "BPM-TAREA-PARALIZAR";
 	public static final String TIPO_ACTIVAR_TAREA = "BPM-TAREA-ACTIVAR";
+	public static final String TIPO_PRORROGA_TAREA = "BPM-TAREA-PRORROGA";
 	public static final String TIPO_FIN_BPM = "BPM-FIN";
 	
 	public static final String TIPO_FINALIZAR_BPM = "DO-FINALIZAR-BPM";
@@ -122,9 +125,8 @@ public interface IntegracionBpmService {
 	 * Genera una transicion de Paralizar un BPM
 	 * 
 	 * @param tipoProcedimiento
-	 * @param procPadre
 	 */
-	void paralizarBPM(Procedimiento procedimiento);
+	void paralizarBPM(Procedimiento procedimiento, Date fechaActivacion);
 
 	/**
 	 * Genera una transicion de Activar un BPM
@@ -162,5 +164,6 @@ public interface IntegracionBpmService {
 	void enviarDatos(ActuacionesRealizadasAcuerdo actuacionRealizada);
 	void enviarDatos(ActuacionesAExplorarAcuerdo actuacionAExplorar);
 	void enviarDatos(TerminoAcuerdo terminoAcuerdo);
+
 
 }

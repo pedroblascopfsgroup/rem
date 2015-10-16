@@ -1,11 +1,10 @@
 package es.pfsgroup.plugin.recovery.mejoras.web.genericForm;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.Map;
 
-import javax.swing.text.NumberFormatter;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
@@ -30,9 +29,6 @@ import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 @Service
 public class MEJGenericFormManager extends
@@ -71,6 +67,15 @@ public class MEJGenericFormManager extends
 		return form;
 	}
 
+	@BusinessOperation(overrides = GET_GENERIC_FORM_READ_ONLY)
+	public GenericForm getReadOnly(Long id) {
+		GenericForm form = parent().getReadOnly(id);
+		if (form != null) {
+			form.setView(NEW_VIEW);
+		}
+		return form;
+	}
+	
 	@Override
 	public String managerName() {
 		return "genericFormManager";

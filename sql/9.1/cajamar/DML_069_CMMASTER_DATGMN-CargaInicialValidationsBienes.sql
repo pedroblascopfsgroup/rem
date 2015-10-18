@@ -13,6 +13,7 @@
 --## 0.1 Versión inicial
 --##########################################
 --*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
@@ -31,8 +32,8 @@ DECLARE
 --##########################################
 --*/
   -- Configuracion Esquemas
- V_ESQUEMA VARCHAR2(25 CHAR):= 'CM01'; -- Configuracion Esquema
- V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'CMMASTER'; -- Configuracion Esquema Master
+ V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+ V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
  seq_count NUMBER(3); -- Vble. para validar la existencia de las Secuencias.
  table_count NUMBER(3); -- Vble. para validar la existencia de las Tablas.
  v_column_count  NUMBER(3); -- Vble. para validar la existencia de las Columnas.
@@ -186,9 +187,12 @@ BEGIN
 COMMIT;
  
  V_ENTIDAD_ID:=0;
- select ID INTO V_ENTIDAD
- from CMMASTER.ENTIDAD
- where DESCRIPCION = 'CAJAMAR';
+
+ V_MSQL := 'SELECT ID FROM '||V_ESQUEMA_MASTER||'.ENTIDAD where DESCRIPCION = ''CAJAMAR''';
+
+ EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD;
+
+/* select ID INTO V_ENTIDAD  from CMMASTER.ENTIDAD  where DESCRIPCION = 'CAJAMAR'; */
  
 
  DBMS_OUTPUT.PUT_LINE('Creando BATCH_JOB_VALIDATION......');
@@ -212,6 +216,7 @@ COMMIT;
   ||V_TMP_JBV(6)||''')';
  EXECUTE IMMEDIATE V_MSQL;
  END LOOP; 
+
  V_TMP_JVI := NULL; 
  
 

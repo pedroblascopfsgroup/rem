@@ -15,12 +15,40 @@
 	var limit=25;	
 	
 	//PANEL FILTROS ********************************************************************
-	var panelFiltros = new Ext.Panel({
+
+	var estadosEsquemaData = {diccionario: [
+		{codigo:'A', descripcion:'VIGENTE'}
+		,{codigo:'B', descripcion:'FINZALIDO'}
+	]};
+    var cmbEstado = app.creaCombo({
+		data: estadosEsquemaData
+    	,name : 'tipoImporteLit'
+    	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipoimporte" text="**Tipo importe" />'
+		,width : 130
+    });
 	
+	<pfsforms:textfield
+		labelKey="plugin.config.esquematurnado.buscador.tabFiltros.nombreEsquema"
+		label="**Nombre esquema turnado"
+		name="txtNombreEsquema"
+		value=""
+		readOnly="false" />
+	<pfsforms:textfield
+		labelKey="plugin.config.esquematurnado.buscador.tabFiltros.autor"
+		label="**Autor"
+		name="txtAutor"
+		value=""
+		readOnly="false" />
+
+	<pfs:datefield name="dateFechaCreacionEsquema" labelKey="plugin.config.esquematurnado.buscador.tabFiltros.fechaAlta" label="**Fecha alta" width="70"/>;
+	<pfs:datefield name="dateFechaVigenteEsquema" labelKey="plugin.config.esquematurnado.buscador.tabFiltros.fechaVigente" label="**Fecha vigente" width="70"/>;
+	<pfs:datefield name="dateFechaFinalizadoEsquema" labelKey="plugin.config.esquematurnado.buscador.tabFiltros.fechaFinalizado" label="**Fecha finalizado" width="70"/>;
+
+
+	var panelFiltros = new Ext.Panel({
 		title:'<s:message code="plugin.config.esquematurnado.buscador.tabFiltros.titulo" text="**Buscador de esquemas de turnado" />'
-		,titleCollapse:true
 		,collapsible:true
-	       ,collapsed: true
+		,collapsed: false
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
@@ -29,11 +57,12 @@
 		,style:'padding-bottom:10px; padding-right:10px;'
 		//,tbar : [buttonsL,'->', buttonsR]
 		,items:[{
-					layout:'form'
-					,items: []
+				layout:'form'
+				,items: [cmbEstado,txtNombreEsquema,txtAutor]
 				},{
-					layout:'form'
-					,items: []
+				layout:'form'
+				,style: 'margin-left:20px;'
+				,items: [dateFechaCreacionEsquema,dateFechaVigenteEsquema,dateFechaFinalizadoEsquema]
 				}]
 		,listeners:{	
 			beforeExpand:function(){
@@ -63,7 +92,7 @@
 		});
 		w.on(app.event.CANCEL, function(){ w.close(); });
 	};
-	
+
 	var btnNuevo = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.nuevo" text="**Nuevo" />'
 			,iconCls : 'icon_edit'
@@ -71,7 +100,6 @@
 				ventanaEdicion(null);
 			}
 	});
-	
 	var btnBorrar = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.borrar" text="**Borrar" />'
 			,iconCls : 'icon_edit'
@@ -91,7 +119,6 @@
 					}, this);
 			}
 	});
-	
 	var btnCopiar = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.copiar" text="**Copiar" />'
 			,iconCls : 'icon_edit'
@@ -111,7 +138,6 @@
 					}, this);
 			}
 	});
-	
 	var btnActivar = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.activar" text="**Activar" />'
 			,iconCls : 'icon_edit'
@@ -131,6 +157,31 @@
 					}, this);
 			}
 	});
+
+// ................................................
+// Mover a ficha de letrado
+// ................................................
+
+	var btnEditarTurnadoLetrado = new Ext.Button({
+			text : '<s:message code="plugin.config.esquematurnado.letrado.boton.editar" text="**Editar letrado" />'
+			,iconCls : 'icon_edit'
+			,handler : function(){ 
+				var w = app.openWindow({
+					flow : 'turnadodespachos/ventanaEditarLetrado'
+					,width :  600
+					,closable: true
+					,title : '<s:message code="plugin.config.esquematurnado.letrado.ventana.titulo" text="**Turnado de letrado" />'
+					,params : {id:id}
+				});
+				w.on(app.event.DONE, function(){
+					w.close();
+					esquemasStore.webflow(getParametros());
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+			}
+	});
+// ................................................
+
 	
 	btnBorrar.setDisabled(true);
 	btnCopiar.setDisabled(true);
@@ -188,7 +239,7 @@
 		,monitorResize: true
 		//,clicksToEdit:0
 		//,selModel: sm
-		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar,btnActivar]
+		,bbar : [pagingBar,btnNuevo,btnEditarTurnadoLetrado,btnCopiar,btnBorrar,btnActivar]
 	});
 	
 	esquemasGrid.on('rowdblclick', function(grid, rowIndex, e) {

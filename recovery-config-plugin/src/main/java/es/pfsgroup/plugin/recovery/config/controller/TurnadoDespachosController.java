@@ -24,11 +24,13 @@ public class TurnadoDespachosController {
 	private static final String VIEW_ESQUEMA_TURNADO_EDITAR = "plugin/config/turnadodespachos/editarEsquema";
 	//private static final String VIEW_ESQUEMA_TURNADO_GUARDAR_JSON = "plugin/config/turnadodespachos/editarEsquema";
 	private static final String VIEW_LETRADO_ESQUEMA_TURNADO_GET = "plugin/config/turnadodespachos/esquemaTurnadoJSON";
+	private static final String VIEW_ESQUEMA_TURNADO_LETRADO = "plugin/config/turnadodespachos/editarEsquemaLetrado";
 	
 	private static final String VIEW_DEFAULT = "default";
 
 	private static final String KEY_DATA = "data";
 	private static final String KEY_ERRORS = "errors";
+
 	
 	@Autowired
 	private TurnadoDespachosManager turnadoDespachosManager;
@@ -36,6 +38,11 @@ public class TurnadoDespachosController {
 	@RequestMapping
 	public String ventanaBusquedaEsquemas(Model model) {
 		return VIEW_ESQUEMA_TURNADO_BUSCADOR;
+	}
+	
+	@RequestMapping
+	public String ventanaEditarLetrado(Model model) {
+		return VIEW_ESQUEMA_TURNADO_LETRADO;
 	}
 	
 	@RequestMapping

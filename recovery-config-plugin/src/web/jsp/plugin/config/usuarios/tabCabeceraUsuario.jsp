@@ -84,7 +84,7 @@
 		on_success="recargar" />
 	
 	<c:set var="items2" value="grupo,email,externo"/>
-	<c:if test="${usuario.usuarioExterno} ">
+	<c:if test="${usuario.usuarioExterno}">
 		<c:set var="items2" value="grupo,email,externo,tipoDespacho,despacho"/>
 	</c:if>
 	<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">

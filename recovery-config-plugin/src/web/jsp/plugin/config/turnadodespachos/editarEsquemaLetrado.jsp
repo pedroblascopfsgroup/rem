@@ -63,8 +63,6 @@
 		]
 		,doLayout:function() {
 				var margin = 40;
-				//var parentSize = app.contenido.getSize(true);
-				//this.setWidth(parentSize.width-margin);
 				this.setWidth(310-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
@@ -83,8 +81,6 @@
 		]
 		,doLayout:function() {
 				var margin = 40;
-				//var parentSize = app.contenido.getSize(true);
-				//this.setWidth(parentSize.width-margin);
 				this.setWidth(310-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
@@ -93,14 +89,11 @@
 
 	var topPanel = new Ext.Panel({
 		autoHeight:true
-		//,bodyStyle:'padding: 10px'
 		,layout:'table'
 		,border:false
 		,layoutConfig:{columns:2}
 		,viewConfig : {forceFit : true}
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		//,style:'padding-bottom:10px; padding-right:10px;'
-		//,tbar : [buttonsL,'->', buttonsR]
 		,items:[{layout:'form'
 					,items: [turnadoLitigiosFieldSet]}
 				,{layout:'form',
@@ -115,8 +108,6 @@
     var comboComunidades = app.creaDblSelect(comunidadesData 
     	,'<s:message code="plugin.config.esquematurnado.editar.comunidades" text="**Comunidades" />'
     	,config);
-    	
-    	debugger;
     	
     var arrayComunidadesLetrado = [ 
 	<c:forEach var="codigoComunidad" items="${listaComunidadesDespacho}" varStatus="status">
@@ -150,22 +141,17 @@
 		,items : [{items:[comboComunidades,comboProvincias]}]
 		,doLayout:function() {
 				var margin = 40;
-				//var parentSize = app.contenido.getSize(true);
-				//this.setWidth(parentSize.width-margin);
 				this.setWidth(600-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
 	});
 	var bottomPanel = new Ext.Panel({
 		autoHeight:true
-		//,bodyStyle:'padding: 10px'
 		,layout:'table'
 		,border:false
 		,layoutConfig:{columns:1}
 		,viewConfig : {forceFit : true}
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		//,style:'padding-bottom:10px; padding-right:10px;'
-		//,tbar : [buttonsL,'->', buttonsR]
 		,items:[{layout:'form'
 					,items: [ambitoActuacionFieldSet]}
 				]
@@ -181,11 +167,17 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
+			debugger;
 			Ext.Ajax.request({
 				url: page.resolveUrl('turnadodespachos/guardarEsquemaDespacho'),
-				//form: mainPanel, 
 				params: {
-					id:${despacho.id}										
+					id:${despacho.id},
+					turnadoCodigoImporteLitigios: cmbTipoImporteLit.getValue(),
+					turnadoCodigoImporteConcursal: cmbTipoImporteCon.getValue(),
+					turnadoCodigoCalidadConcursal: cmbTipoCalidadCon.getValue(),
+					turnadoCodigoCalidadLitigios: cmbTipoCalidadLit.getValue(),
+					listaComunidades: comboComunidades.getValue(),
+					listaProvincias: comboProvincias.getValue() 										
 				},
 				method: 'POST',
 				success: function ( result, request ) {
@@ -202,8 +194,6 @@
 		,layout:'table'
 		,layoutConfig:{columns:1}
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		//,style:'padding-bottom:10px; padding-right:10px;'
-		//,tbar : [buttonsL,'->', buttonsR]
 		,bbar: [btnGuardar,btnCancelar]
 		,items:[{layout:'form', items: [topPanel,bottomPanel]}
 		]

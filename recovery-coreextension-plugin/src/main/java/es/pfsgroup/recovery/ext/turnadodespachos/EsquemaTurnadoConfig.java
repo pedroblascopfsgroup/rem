@@ -146,7 +146,7 @@ public class EsquemaTurnadoConfig implements Serializable, Auditable, Dictionary
 			descripcion = getCodigo() + " (" + df2.format(getImporteDesde()) + " - " + df2.format(getImporteHasta()) + ")";
 		}
 		else {
-			descripcion = getCodigo() + " (" + df2.format(getPorcentaje()) + ")";
+			descripcion = getCodigo() + " (" + df2.format(getPorcentaje()) + "%)";
 		}
 
 		return descripcion;

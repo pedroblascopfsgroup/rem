@@ -48,7 +48,7 @@ public class TurnadoDespachosController {
 	private UtilDiccionarioManager utilDiccionarioManager;
 	
 	@Autowired
-	private ADMDespachoExternoManager despachoExternoManager; 
+	private ADMDespachoExternoManager despachoExternoManager;
 	
 	@RequestMapping
 	public String ventanaBusquedaEsquemas(Model model) {
@@ -126,10 +126,10 @@ public class TurnadoDespachosController {
 	}
 
 	@RequestMapping
-	public String editarEsquema(@RequestParam(required=false) Long idEsquema
+	public String editarEsquema(@RequestParam(required=false) Long id
 			, Model model) {
-		EsquemaTurnado esquema = (idEsquema!=null) 
-				? turnadoDespachosManager.get(idEsquema)
+		EsquemaTurnado esquema = (id!=null) 
+				? turnadoDespachosManager.get(id)
 				: new EsquemaTurnado();
 		model.addAttribute(KEY_DATA, esquema);
 		return VIEW_ESQUEMA_TURNADO_EDITAR;
@@ -175,12 +175,11 @@ public class TurnadoDespachosController {
 	}
 	
 	@RequestMapping
-	public String guardarEsquemaDespacho(@RequestParam(value="id", required=true) Long idDespacho,
+	public String guardarEsquemaDespacho(EsquemaTurnadoDespachoDto dto,
 			Model model) {
-		/*if (dto.validar()) {
-			turnadoDespachosManager.saveEsquemaDespacho(dto);
-		}*/
+		if (dto.validar()) {
+			despachoExternoManager.saveEsquemaDespacho(dto);
+		}
 		return VIEW_DEFAULT;
-	}
-	
+	}	
 }

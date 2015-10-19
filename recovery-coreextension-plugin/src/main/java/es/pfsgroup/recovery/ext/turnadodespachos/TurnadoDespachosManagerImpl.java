@@ -1,14 +1,15 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 
 @Service
@@ -16,21 +17,28 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
+    @Autowired
+    private UsuarioManager usuarioManager;
+
 	@Autowired
 	private EsquemaTurnadoDao esquemaTurnadoDao;
+	
+	@Autowired
+	private DespachoExternoDao despachoExternoDao;
 	
 	@Autowired
 	private GenericABMDao genericDao;
 	
 	@Override
-	public List<EsquemaTurnado> listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
-		return null;
+	public Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		Page page = esquemaTurnadoDao.buscarEsquemasTurnado(dto, usuarioLogado);
+		return page;
 	}
 
 	@Override
 	public EsquemaTurnado get(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return esquemaTurnadoDao.get(id);
 	}
 
 	@Override
@@ -71,18 +79,4 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void saveEsquemaDespacho(EsquemaTurnadoDespachoDto dto) {
-		
-		DespachoExterno despachoExterno = new DespachoExterno();
-		despachoExterno.setId(dto.getId());
-		despachoExterno.setTurnadoCodigoImporteLitigios(dto.getTurnadoCodigoImporteLitigios());
-		despachoExterno.setTurnadoCodigoCalidadLitigios(dto.getTurnadoCodigoCalidadLitigios());
-		despachoExterno.setTurnadoCodigoImporteConcursal(dto.getTurnadoCodigoImporteConcursal());
-		despachoExterno.setTurnadoCodigoCalidadConcursal(dto.getTurnadoCodigoCalidadConcursal());
-		
-		genericDao.save(DespachoExterno.class, despachoExterno);		
-	}
-
 }

@@ -8,6 +8,8 @@ public class EsquemaTurnadoDespachoDto {
 	private String turnadoCodigoImporteConcursal;
     private String turnadoCodigoCalidadConcursal;
     private String turnadoCodigoCalidadLitigios;
+    private String listaComunidades;
+    private String listaProvincias;
     
 	public Long getId() {
 		return id;
@@ -65,6 +67,30 @@ public class EsquemaTurnadoDespachoDto {
 	 */
 	public void setTurnadoCodigoCalidadLitigios(String turnadoCodigoCalidadLitigios) {
 		this.turnadoCodigoCalidadLitigios = turnadoCodigoCalidadLitigios;
+	}
+	/**
+	 * @return the listaComunidades
+	 */
+	public String getListaComunidades() {
+		return listaComunidades;
+	}
+	/**
+	 * @param listaComunidades the listaComunidades to set
+	 */
+	public void setListaComunidades(String listaComunidades) {
+		this.listaComunidades = listaComunidades;
+	}
+	/**
+	 * @return the listaProvincias
+	 */
+	public String getListaProvincias() {
+		return listaProvincias;
+	}
+	/**
+	 * @param listaProvincias the listaProvincias to set
+	 */
+	public void setListaProvincias(String listaProvincias) {
+		this.listaProvincias = listaProvincias;
 	}
 	/**
 	 * Valida el Dto para comprobar que está todo correcto.

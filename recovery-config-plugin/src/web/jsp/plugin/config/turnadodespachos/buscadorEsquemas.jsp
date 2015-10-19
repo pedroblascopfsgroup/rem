@@ -95,14 +95,14 @@
 
 	var btnNuevo = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.nuevo" text="**Nuevo" />'
-			,iconCls : 'icon_edit'
+			,iconCls : 'icon_mas'
 			,handler : function(){
 				ventanaEdicion(null);
 			}
 	});
 	var btnBorrar = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.borrar" text="**Borrar" />'
-			,iconCls : 'icon_edit'
+			,iconCls : 'icon_menos'
 			,handler : function(){ 
 				Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.borrar.confirm" text="**Se va a eliminar el esquema seleccionado. ¿Desea continuar?" />' 
 					,function(boton){
@@ -121,7 +121,7 @@
 	});
 	var btnCopiar = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.copiar" text="**Copiar" />'
-			,iconCls : 'icon_edit'
+			,iconCls : 'icon_copy'
 			,handler : function(){ 
 				Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.copiar.confirm" text="**La acción copiará el esquema seleccionado. ¿Desea continuar?" />' 
 					,function(boton){
@@ -140,7 +140,7 @@
 	});
 	var btnActivar = new Ext.Button({
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.activar" text="**Activar" />'
-			,iconCls : 'icon_edit'
+			,iconCls : 'icon_play'
 			,handler : function(){ 
 				Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.activar.confirm" text="**La acción activará el esquema seleccionado. ¿Desea continuar?" />' 
 					,function(boton){
@@ -192,8 +192,8 @@
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.estado_des" text="**Estado"/>', dataIndex: 'estado_des', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechaSolicitud" text="F.Alta"/>', dataIndex: 'fechaalta', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.usuario" text="**Usuario"/>', dataIndex: 'usuario', sortable: true}
-		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechainivig" text="F.Inicio Vigencia"/>', dataIndex: 'fechainivig', sortable: true}
-		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechafinvig" text="F.Fin Vigencia"/>', dataIndex: 'fechaalta', sortable: true}
+		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechainivig" text="**F.Inicio Vigencia"/>', dataIndex: 'fechainivig', sortable: true}
+		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechafinvig" text="**F.Fin Vigencia"/>', dataIndex: 'fechaalta', sortable: true}
 	]);
 	
 	var esquemasGrid = new Ext.grid.EditorGridPanel({
@@ -213,7 +213,7 @@
 		,viewConfig : {forceFit : true}
 		,monitorResize: true
 		//,clicksToEdit:0
-		//,selModel: sm
+		,selModel: new Ext.grid.RowSelectionModel()
 		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar,btnActivar]
 	});
 	

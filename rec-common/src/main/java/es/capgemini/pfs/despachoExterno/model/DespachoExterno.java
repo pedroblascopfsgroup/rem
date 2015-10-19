@@ -83,7 +83,6 @@ public class DespachoExterno implements Serializable, Auditable {
     @Column(name = "ETC_CON_CODIGO_CALIDAD")
     private String turnadoCodigoCalidadConcursal;
     
-    @Transient
     @Column(name = "ETC_LIT_CODIGO_IMPORTE")
     private String turnadoCodigoImporteLitigios;
     

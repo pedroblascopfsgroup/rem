@@ -309,7 +309,7 @@ DECLARE
 								    V_TIPO_SEX T_ARRAY_SEX := T_ARRAY_SEX(
 											T_TIPO_SEX('M','MUJER','MUJER'),
 											T_TIPO_SEX('V','VARÓN','VARÓN'),
-                                                                                        T_TIPO_SEX('E','EMPRESAS, SOCIEDADES, ETC')
+                                            T_TIPO_SEX('E','EMPRESAS, SOCIEDADES, ETC','EMPRESAS, SOCIEDADES, ETC')
                                    );
 								   
 		

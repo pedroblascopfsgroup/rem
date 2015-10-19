@@ -328,11 +328,18 @@ BEGIN
  --sacamos la el codigo entidad de la tabla ENTIDAD.
   V_ENTIDAD:=1;
  
- select ID INTO V_ENTIDAD
+/* select ID INTO V_ENTIDAD
  from CMMASTER.ENTIDAD
- where DESCRIPCION = 'CAJAMAR';
+ where DESCRIPCION = 'CAJAMAR';*/
  
-
+    V_MSQL := 'SELECT ID 
+               FROM '||V_ESQUEMA_MASTER||'.ENTIDAD
+               where DESCRIPCION = ''CAJAMAR''';  
+    
+    EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD  ;
+ 
+ 
+ 
  DBMS_OUTPUT.PUT_LINE('Creando BATCH_JOB_VALIDATION......');
  FOR I IN V_JBV.FIRST .. V_JBV.LAST
  LOOP

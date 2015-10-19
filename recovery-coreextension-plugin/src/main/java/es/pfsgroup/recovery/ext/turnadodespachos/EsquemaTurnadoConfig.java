@@ -1,6 +1,8 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -19,11 +21,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
 @Table(name = "ETC_ESQUEMA_TURNADO_CONFIG", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
-public class EsquemaTurnadoConfig implements Serializable, Auditable {
+public class EsquemaTurnadoConfig implements Serializable, Auditable, Dictionary {
 
 	public static final String TIPO_CONCURSAL_IMPORTE = "CI";
 	public static final String TIPO_CONCURSAL_CALIDAD = "CC";
@@ -127,6 +130,32 @@ public class EsquemaTurnadoConfig implements Serializable, Auditable {
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	@Override
+	public String getDescripcion() {
+		
+		DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
+		formatSymbols.setDecimalSeparator(',');
+		formatSymbols.setGroupingSeparator('.');
+		DecimalFormat df2 = new DecimalFormat("#,###,###,##0.##", formatSymbols);
+		
+		String descripcion = null;
+		
+		if(getTipo().equals(TIPO_LITIGIOS_IMPORTE) || getTipo().equals(TIPO_CONCURSAL_IMPORTE)) {
+			descripcion = getCodigo() + " (" + df2.format(getImporteDesde()) + " - " + df2.format(getImporteHasta()) + ")";
+		}
+		else {
+			descripcion = getCodigo() + " (" + df2.format(getPorcentaje()) + ")";
+		}
+
+		return descripcion;
+	}
+
+	@Override
+	public String getDescripcionLarga() {
+		
+		return getDescripcion();
 	}
 
 }

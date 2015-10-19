@@ -39,6 +39,13 @@ public interface TurnadoDespachosManager {
 	EsquemaTurnado save(EsquemaTurnadoDto dto);
 	
 	/**
+	 * Guarda los datos de turnado propios de un despacho
+	 * 
+	 * @param dto
+	 */
+	void saveEsquemaDespacho(EsquemaTurnadoDespachoDto dto);
+	
+	/**
 	 * Activa el esquema de turnado.
 	 * 
 	 * @param idEsquema Esquema que se necesita activar.

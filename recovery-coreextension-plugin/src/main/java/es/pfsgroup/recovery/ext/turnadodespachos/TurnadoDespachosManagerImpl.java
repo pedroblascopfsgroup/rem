@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+
 @Service
 public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 
@@ -15,6 +18,9 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 
 	@Autowired
 	private EsquemaTurnadoDao esquemaTurnadoDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Override
 	public List<EsquemaTurnado> listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
@@ -64,6 +70,19 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 	public void copy(Long id) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void saveEsquemaDespacho(EsquemaTurnadoDespachoDto dto) {
+		
+		DespachoExterno despachoExterno = new DespachoExterno();
+		despachoExterno.setId(dto.getId());
+		despachoExterno.setTurnadoCodigoImporteLitigios(dto.getTurnadoCodigoImporteLitigios());
+		despachoExterno.setTurnadoCodigoCalidadLitigios(dto.getTurnadoCodigoCalidadLitigios());
+		despachoExterno.setTurnadoCodigoImporteConcursal(dto.getTurnadoCodigoImporteConcursal());
+		despachoExterno.setTurnadoCodigoCalidadConcursal(dto.getTurnadoCodigoCalidadConcursal());
+		
+		genericDao.save(DespachoExterno.class, despachoExterno);		
 	}
 
 }

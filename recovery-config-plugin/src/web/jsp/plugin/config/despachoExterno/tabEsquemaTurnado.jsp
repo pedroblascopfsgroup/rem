@@ -109,23 +109,43 @@
 		,items:[{layout:'form',items:[comunidadesActuacion, provinciasActuacion]}
 		]
 	});
+	
+	var btnEditarTurnadoLetrado = new Ext.Button({
+			text : '<s:message code="plugin.config.esquematurnado.letrado.boton.editar" text="**Editar letrado" />'
+			,iconCls : 'icon_edit'
+			,handler : function(){ 
+				var w = app.openWindow({
+					flow : 'turnadodespachos/ventanaEditarLetrado'
+					,width :  600
+					,closable: true
+					,title : '<s:message code="plugin.config.esquematurnado.letrado.ventana.titulo" text="**Turnado de letrado" />'
+					,params : {id:${despacho.id}}
+				});
+				w.on(app.event.DONE, function(){
+					w.close();
+					esquemasStore.webflow(getParametros());
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+			}
+	});
 
 	var panelSuperior = new Ext.Panel({
-		layout:'table'
+		title:'<s:message code="plugin.config.esquematurnado.letrado.panel.titulo" text="**Datos turnado"/>'
+		,layout:'table'
 		,collapsible : false
 		,titleCollapse : false
 		,layoutConfig : {
 			columns:3
 		}
 		//,autoWidth:true
-		,style:'margin-right:20px;margin-left:10px'
-		,border:false
+		,style:'margin-right:20px;margin-left:10px;'
+		,border:true
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop'}
 		,items:[{width:330,items:[turnadoLitigiosPanel]}
 			  ,{width:330,items:[turnadoConcursosPanel]}
 			  ,{width:330,items:[ambitosActuacionPanel]}
 			  ]
+		, bbar : [btnEditarTurnadoLetrado]
 	});
-
-
+	
 </pfslayout:tabpage>

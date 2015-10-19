@@ -47,15 +47,18 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
 	--/**
     -- * Comprobar que existen las funciones y perfiles necesarios antes de hacer nada
-	-- * Eliminar permisos actuales sobre ver MENU > EXPEDIENTES 
+	---- * Eliminar permisos actuales sobre ver MENU > EXPEDIENTES 
     -- * y sobre ver MENU > EXPEDIENTES RECOBRO
 	-- **/   
 	IF CUENTA < 5 THEN
+
       DBMS_OUTPUT.PUT_LINE('[ERROR] No se ha podido realizar la operación de dar permisos para visualizar MENU > EXPEDIENTES');
       DBMS_OUTPUT.PUT_LINE('[ERROR] CAUSA: Revise la existencia de las funciones: ''MENU-LIST-EXP-ALL-USERS'',  ''MENU-LIST-EXP-RECOBRO-ALL-USERS'' y los codigos de perfiles: ''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'' ');
-    ELSE
-	  EXECUTE IMMEDIATE 
-        'DELETE fun_pef '||V_ESQUEMA||'.fp
+  
+  ELSE
+	
+    EXECUTE IMMEDIATE 
+        'DELETE '||V_ESQUEMA||'.fun_pef fp
             WHERE fp.fp_id IN
               (SELECT fp1.fp_id
               FROM '||V_ESQUEMA||'.fun_pef fp1
@@ -70,7 +73,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	  DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES eliminados.');
 
       EXECUTE IMMEDIATE 
-        'DELETE fun_pef '||V_ESQUEMA||'.fp
+        'DELETE '||V_ESQUEMA||'.fun_pef fp
             WHERE fp.fp_id IN
               (SELECT fp1.fp_id
               FROM '||V_ESQUEMA||'.fun_pef fp1
@@ -83,8 +86,6 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                 AND pef1.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')
               )';
       DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES RECOBRO eliminados.');
- 	END IF;
-
 
     --/**
     -- * Se crean los permisos para visualizar MENU > EXPEDIENTES
@@ -113,7 +114,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
             FROM pef_perfiles pef
             WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')';
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES habilitados.');
+    DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES, creados.');
+
+  END IF;
+
 
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[COMMIT]');

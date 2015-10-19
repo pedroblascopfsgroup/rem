@@ -21,6 +21,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
@@ -199,7 +200,9 @@ public class LiquidacionManager implements LiquidacionApi {
 	@BusinessOperation(PRECONTENCIOSO_BO_PRC_INCLUIR_LIQUIDACION_AL_PROCEDIMIENTO)
 	@Transactional(readOnly = false)
     public void incluirLiquidacionAlProcedimiento(InclusionLiquidacionProcedimientoDTO dto){
-		ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(dto.getIdProcedimiento());
+		//ProcedimientoPCO prcPCO = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(dto.getIdProcedimiento());
+		ProcedimientoPCO prcPCO = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", dto.getIdProcedimiento()));			
 		if(prcPCO != null && 
 				(DDEstadoPreparacionPCO.PRETURNADO.equals(prcPCO.getEstadoActual().getCodigo()) ||
 				DDEstadoPreparacionPCO.PREPARACION.equals(prcPCO.getEstadoActual().getCodigo()) ||

@@ -46,7 +46,7 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 		Procedimiento prc = getProcedimiento(executionContext);
 
 		if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(getNombreNodo(executionContext))) {
-			String valorDecision = pcoManager.dameTipoAsunto(prc);
+			String valorDecision = pcoManager.dameTipoAsuntoPorProc(prc);
 			executionContext.setVariable(PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica + "Decision",valorDecision);
 		} else if (PrecontenciosoBPMConstants.PCO_IniciarProcJudicial.equals(getNombreNodo(executionContext))) {
 			executor.execute("plugin.precontencioso.cambiarEstadoExpediete", prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
@@ -55,7 +55,7 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        		pco.getTipoProcPropuesto() : pco.getTipoProcIniciado());
 	        creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
 	        //Avanzamos la tarea
-	        executionContext.getToken().signal();
+	        //executionContext.getToken().signal();
 		}
 		
 		// Avanzamos BPM

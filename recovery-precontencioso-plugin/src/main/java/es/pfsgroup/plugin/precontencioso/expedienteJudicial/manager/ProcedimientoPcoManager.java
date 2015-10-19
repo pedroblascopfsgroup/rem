@@ -138,7 +138,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Override
 	@Transactional(readOnly = false)
 	public boolean comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
+
 		boolean finalizar = true;
 
 		for(DocumentoPCO doc : procedimientoPco.getDocumentos()){
@@ -160,7 +163,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Transactional(readOnly = false)
 	public boolean finalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
 
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
+		
 		boolean finalizar = true;
 		HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
 		if (!DDEstadoPreparacionPCO.PREPARADO.equals(historico.getEstadoPreparacion().getCodigo())) {				
@@ -207,7 +213,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Override
 	@Transactional(readOnly = false)
 	public void devolverPreparacionPorProcedimientoId(Long idProcedimiento) {
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
+
 
 		// Comprobacion que el estado actual del procedimiento sea preparado
 		if (procedimientoPco.getEstadoActual() != null && !DDEstadoPreparacionPCO.PREPARADO.equals(procedimientoPco.getEstadoActual().getCodigo())) {
@@ -274,7 +283,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 	@Override
 	public List<HistoricoEstadoProcedimientoDTO> getEstadosPorIdProcedimiento(Long idProcedimiento) {
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 
 		List<HistoricoEstadoProcedimientoDTO> historicoEstadosOut = null;
 
@@ -288,7 +299,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@BusinessOperation(ProcedimientoPcoApi.BO_PCO_EXPEDIENTE_BUSQUEDA_POR_PRC_ID)
 	@Override
 	public ProcedimientoPCODTO getPrecontenciosoPorProcedimientoId(Long idProcedimiento) {
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 
 		ProcedimientoPCODTO procedimientoDto = ProcedimientoPCOAssembler.entityToDto(procedimientoPco);
 
@@ -388,7 +401,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		
 		Date fechaCambio = new Date();
 		
-		ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
+
 		
 		if (!Checks.esNulo(procedimientoPco)) {
 			HistoricoEstadoProcedimientoPCO historico = procedimientoPco.getEstadoActualByHistorico();
@@ -408,7 +424,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	public String dameProcedimientoPropuesto(Long idProcedimiento) {
 		try {		
-			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+			//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+			ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 			if (procedimientoPco != null) {
 				return procedimientoPco.getTipoProcPropuesto().getCodigo();
 			} else {
@@ -420,12 +438,26 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 	}
 
+	public String dameTipoAsunto(Long idProc) {
+		String resultado = "";
+		try {
+			Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProc);
+			String tipoAsunto = procedimiento.getAsunto().getTipoAsunto().getCodigo();
+			if (DDTiposAsunto.LITIGIO.equals(tipoAsunto)){
+				resultado = LITIGIO;
+			} else if (DDTiposAsunto.CONCURSAL.equals(tipoAsunto)){
+				resultado = CONCURSO;
+			}
+		} catch (Exception e) {}
+		return resultado;		
+	}
+	
 	/**
 	 * Devuelve el tipo de asunto al que está asignado el procedimiento (litigio, concurso) para usarlo como transición del BPM
 	 * @param idProcedimiento
 	 * @return
 	 */
-	public String dameTipoAsunto(Procedimiento procedimiento) {
+	public String dameTipoAsuntoPorProc(Procedimiento procedimiento) {
 		String resultado = "";
 		try {		
 			String tipoAsunto = procedimiento.getAsunto().getTipoAsunto().getCodigo();
@@ -463,7 +495,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@BusinessOperation(BO_PCO_EXPEDIENTE_BY_PRC_ID)
 	@Override
 	public ProcedimientoPCO getPCOByProcedimientoId(Long idProcedimiento) {
-		return procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
+		return genericDao.get(ProcedimientoPCO.class, 
+				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 	}
 	
 	@Override
@@ -479,7 +512,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 
 		try {		
 			Long idProc = procedimiento.getId();
-			ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProc);
+			//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProc);
+			ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
+					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProc));			
 			if (Checks.esNulo(procedimientoPco)) {
 				procedimientoPco = new ProcedimientoPCO();
 				procedimientoPco.setPreturnado(false);

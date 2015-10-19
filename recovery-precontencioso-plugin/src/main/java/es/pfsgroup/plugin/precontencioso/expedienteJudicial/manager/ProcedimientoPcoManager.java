@@ -82,8 +82,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String LITIGIO = "litigio";
 	private static final String CONCURSO = "concurso";
 
-	private static final String LET_PCO = "LETR";
-	private static final String SUP_PCO = "SUP_PCO";
+	private static final String LETRADO = "GEXT";
+	private static final String SUPERVISOR = "SUP";
 	private static final String DIRLIT_PCO = "DULI";
 	private static final String PREDOC = "PREDOC";
 
@@ -136,26 +136,24 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
-	@Transactional(readOnly = false)
 	public boolean comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
-		//ProcedimientoPCO procedimientoPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(idProcedimiento);
 		ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
 				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProcedimiento));
 
-		boolean finalizar = true;
+		// comprobacion, todos los documentos se encuentren correctamente 
+		for(DocumentoPCO documento : procedimientoPco.getDocumentos()) {
+			DDEstadoDocumentoPCO estadoDocumento = documento.getEstadoDocumento();
 
-		for(DocumentoPCO doc : procedimientoPco.getDocumentos()){
-			if(DDEstadoDocumentoPCO.DISPONIBLE.equals(doc.getEstadoDocumento().getCodigo())) {
-				if(!doc.getAdjuntado()){
-					finalizar = false;
-					break;
-				}
-			} else {
-				finalizar = false;
-				break;
+			Boolean documentoCompletoAdjuntado = (DDEstadoDocumentoPCO.DISPONIBLE.equals(estadoDocumento.getCodigo()) && documento.getAdjuntado());
+			Boolean documentoDescartado = DDEstadoDocumentoPCO.DESCARTADO.equals(estadoDocumento.getCodigo());
+
+			// se considera como documentos correctos, aquellos documentos los cuales esten en estado disponible y adjuntado o aquellos documentos descartados
+			if (!(documentoCompletoAdjuntado || documentoDescartado)) {
+				return false;
 			}
 		}
-		return finalizar;
+
+		return true;
 	}
 
 	@BusinessOperation(BO_PCO_FINALIZAR_PREPARACION_EXPEDIENTE_JUDICIAL_POR_PRC_ID)
@@ -482,7 +480,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
 			Long idAsunto = proc.getAsunto().getId();
 			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
-			if (listaTiposGestores.contains(LET_PCO) && listaTiposGestores.contains(SUP_PCO) &&
+			if (listaTiposGestores.contains(LETRADO) && listaTiposGestores.contains(SUPERVISOR) &&
 					listaTiposGestores.contains(DIRLIT_PCO) && listaTiposGestores.contains(PREDOC)) {
 				resultado = true;
 			}

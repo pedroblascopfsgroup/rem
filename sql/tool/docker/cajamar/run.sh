@@ -26,8 +26,8 @@ SET_ENV_FILE=~/setEnvGlobal$CLIENTE.sh
 WORKSPACE_DIR=$(pwd)/.workspace
 
 # Estado de la BBDD
-CURRENT_DUMP_NAME=export_cajamar_13Ago2015.dmp
-STARTING_TAG=cj-dmp-13ago
+CURRENT_DUMP_NAME=export_cajamar_19Oct2015.dmp
+STARTING_TAG=cj-dmp-19oct
 
 
 OPTION_REMOVE=no

@@ -45,19 +45,19 @@ public class EsquemaTurnadoConfig implements Serializable, Auditable {
 	@JoinColumn(name = "ETU_ID")
 	private EsquemaTurnado esquema;
 
-	@Column(name = "ETU_TIPO")
+	@Column(name = "ETC_TIPO")
 	private String tipo;
 
-	@Column(name = "ETU_CLAVE")
-	private String clave;
+	@Column(name = "ETC_CODIGO")
+	private String codigo;
 
-	@Column(name = "ETU_IMPORTE_DESDE")
+	@Column(name = "ETC_IMPORTE_DESDE")
 	private Double importeDesde;
 
-	@Column(name = "ETU_IMPORTE_HASTA")
+	@Column(name = "ETC_IMPORTE_HASTA")
 	private Double importeHasta;
 
-	@Column(name = "ETU_PORCENTAJE")
+	@Column(name = "ETC_PORCENTAJE")
 	private Double porcentaje;
 	
     @Embedded
@@ -87,12 +87,12 @@ public class EsquemaTurnadoConfig implements Serializable, Auditable {
 		this.tipo = tipo;
 	}
 
-	public String getClave() {
-		return clave;
+	public String getCodigo() {
+		return codigo;
 	}
 
-	public void setClave(String clave) {
-		this.clave = clave;
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public Double getImporteDesde() {

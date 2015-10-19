@@ -23,7 +23,7 @@ var creaElemento = function(nombre,index,type,label,value,values){
 			break;
 		case 'date' :
 			value = value.replace(/(\d*)-(\d*)-(\d*)/,"$3/$2/$1");  //conversión de yyyy-MM-dd a dd/MM/yyyy
-			return new Ext.ux.form.XDateField({fieldLabel:label, name:name, value:value,style:'margin:0px', disabled:isDisable});
+			return new Ext.ux.form.XDateField({fieldLabel:label, name:name, value:value,style:'margin:0px', disabled:isDisable, minValue: fechaMinima});
 			break;
 		case 'combo' :
 			return app.creaCombo({name:name, fieldLabel:label, value:value, data:values, width:'170', disabled:isDisable});

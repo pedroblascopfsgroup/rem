@@ -23,6 +23,7 @@ SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
 DUMP_DIRECTORY=$(pwd)/DUMP
 ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
 SET_ENV_FILE=~/setEnvGlobal$CLIENTE.sh
+WORKSPACE_DIR=$(pwd)/.workspace
 
 # Estado de la BBDD
 CURRENT_DUMP_NAME=export_cajamar_13Ago2015.dmp
@@ -41,6 +42,7 @@ DOCKER_INNER_ERROR_LOG=/tmp/scriptslog/error.log
 VAR_OUTTER_ERROR_LOG=""
 VAR_SCRIPTS_DONE=no
 VAR_STARTING_TAG_CHANGED=no
+VAR_WORKSPACE_CHANGED=no
 
 function show_help () {
 	echo "Uso: "
@@ -55,6 +57,8 @@ function show_help () {
 	echo "    -restart: Indicar para reiniciar la BBDD"
 	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
 	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove o -impdp"
+	echo "    -workspace=: Cambia el workspace de la tool. Esta opción es útil si montamos una"
+	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
@@ -122,6 +126,9 @@ if [[ "x$@" != "x" ]]; then
 		elif [[ "x$op" == x-fromtag=* ]]; then
 			STARTING_TAG=$(echo $op | cut -f2 -d=)
 			VAR_STARTING_TAG_CHANGED=yes
+		elif [[ "x$op" == x-workspace=* ]]; then
+			WORKSPACE_DIR=$(echo $op | cut -f2 -d=)
+			VAR_WORKSPACE_CHANGED=yes
 		fi
 	done
 else
@@ -163,18 +170,26 @@ function package_sql () {
 				exit 1
 			fi
 		fi
-
+		ws_package_dir=$WORKSPACE_DIR/package
+		rm -Rf $ws_package_dir
+		cp -R $SQL_PACKAGE_DIR $ws_package_dir
+		chmod -R go+w $ws_package_dir/*
+		chmod +x $ws_package_dir/DDL/*.sh
+		chmod +x $ws_package_dir/DML/*.sh
 
 		cd $current_dir
-		chmod -R go+w $SQL_PACKAGE_DIR/*
-		chmod +x $SQL_PACKAGE_DIR/DDL/*.sh
-		chmod +x $SQL_PACKAGE_DIR/DML/*.sh
+		
 	fi
 }
 
 
 function run_container () {
 	local errorlog_volume=""
+
+	mkdir -p $WORKSPACE_DIR
+	rm -Rf $WORKSPACE_DIR/*
+	cp $(pwd)/*.sh $WORKSPACE_DIR && chmod ugo+rx $WORKSPACE_DIR/*.sh
+	cp -R $(pwd)/SQL-SCRIPTS $WORKSPACE_DIR && chmod ugo+r $WORKSPACE_DIR/SQL-SCRIPTS/*
 
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
@@ -201,9 +216,8 @@ function run_container () {
 	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imágen [$IMAGE_NAME]: "
 	docker run -d -p=22 -p 1521:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
-				-v $(pwd):/setup $errorlog_volume \
+				-v $WORKSPACE_DIR:/setup $errorlog_volume \
 				-v $DUMP_DIRECTORY:/DUMP \
-				-v $SQL_PACKAGE_DIR:/sql-package \
 				-v $ORADATA_HOST_DIR:/oradata \
 				-h $CONTAINER_NAME --name $CONTAINER_NAME $IMAGE_NAME
 
@@ -301,6 +315,10 @@ function restore_or_confirm_flahsback () {
 }
 
 show_install_info
+# Creamos el workspace
+if [[ "x$VAR_WORKSPACE_CHANGED" == "xyes" ]]; then
+	echo "[WARNING] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
+fi
 
 if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 	outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)

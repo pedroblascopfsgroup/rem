@@ -22,8 +22,8 @@ SET SERVEROUTPUT ON;
 
 DECLARE
 
- V_SCHEMA_MASTER VARCHAR(25) := 'CMMASTER';
- V_SCHEMA VARCHAR(25) := 'CM01'; 
+ V_SCHEMA_MASTER VARCHAR(25) := '#ESQUEMA_MASTER#';
+ V_SCHEMA VARCHAR(25) := '#ESQUEMA#'; 
  TABLA1 VARCHAR(30) :='DD_JVS_JOB_VAL_SEVERITY'; 
  TABLA2 VARCHAR(30) :='DD_JVI_JOB_VAL_INTERFAZ';  
  TABLA3 VARCHAR(30) :='BATCH_JOB_VALIDATION'; 
@@ -178,7 +178,7 @@ BEGIN
    EXECUTE IMMEDIATE ('grant insert, select, update on '||V_SCHEMA_MASTER||'.'||TABLA1||' to '||V_SCHEMA||''); 
    EXECUTE IMMEDIATE ('grant insert, select, update on '||V_SCHEMA_MASTER||'.'||TABLA2||' to '||V_SCHEMA||''); 
    EXECUTE IMMEDIATE ('grant insert, select, update on '||V_SCHEMA_MASTER||'.'||TABLA3||' to '||V_SCHEMA||'');      
-     
+/* */     
      
 EXCEPTION
 WHEN OTHERS THEN  

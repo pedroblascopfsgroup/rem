@@ -5,6 +5,7 @@ LOCAL_PATH=`pwd`
 rm /recovery/batch-server/shells/*.sh
 cp scripts/shells/* /recovery/batch-server/shells/
 chmod u+x /recovery/batch-server/shells/*.sh
+chmod g+x /recovery/batch-server/shells/*.sh
 cp etl/* /recovery/batch-server/programas/etl/
 cd /recovery/batch-server/programas/etl/
 for etl in `ls *.zip`
@@ -15,8 +16,9 @@ do
 done
 for directory in `ls -d */`
 do
-    chmod 755 ${directory}
-    chmod u+x ${directory}/*.sh
+    chmod -f 775 ${directory}
+    chmod -f u+x ${directory}/*.sh
+    chmod -f g+x ${directory}/*.sh
 done
 rm *.zip
 cd $LOCAL_PATH

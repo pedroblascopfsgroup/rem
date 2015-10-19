@@ -7,6 +7,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <pfslayout:tabpage titleKey="plugin.config.usuarios.consulta.cabecera.title"
 	title="**Datos generales" items="panel">
@@ -54,15 +55,13 @@
 		label="**Usuario externo" name="externo"
 		value="${uext}" readOnly="true" />
 		
-	<c:if test="${usuario.usuarioExterno}">
-		<pfsforms:textfield labelKey="plugin.config.usuarios.consulta.cabecera.control.tipoDespacho" label="**Tipo de despacho"
-			name="tipoDespacho" value="${despacho.tipoDespacho.descripcion}"
-			readOnly="true" />
-		<pfsforms:textfield labelKey="plugin.config.usuarios.consulta.cabecera.control.despacho"
-			label="**Despacho asociado" name="despacho"
-			value="${despacho.despacho}" readOnly="true" />
-	</c:if>
-	
+	<pfsforms:textfield labelKey="plugin.config.usuarios.consulta.cabecera.control.tipoDespacho" label="**Tipo de despacho"
+		name="tipoDespacho" value="${despacho!=null?despacho.tipoDespacho.descripcion:''}"
+		readOnly="true" />
+	<pfsforms:textfield labelKey="plugin.config.usuarios.consulta.cabecera.control.despacho"
+		label="**Despacho asociado" name="despacho"
+		value="${despacho!=null?despacho.despacho:''}" readOnly="true" />
+
 	<pfsforms:textfield labelKey="plugin.config.usuarios.field.usuarioGrupo"
 		label="**Usuario grupo" name="grupo"
 		value="${ugru}" readOnly="true" />
@@ -85,9 +84,13 @@
 		on_success="recargar" />
 	
 	<c:set var="items2" value="grupo,email,externo"/>
-	<c:if test="${usuario.usuarioExterno}">
+	<c:if test="${usuario.usuarioExterno} ">
 		<c:set var="items2" value="grupo,email,externo,tipoDespacho,despacho"/>
 	</c:if>
+	<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
+		<c:set var="items2" value="grupo,email,externo,tipoDespacho,despacho"/>
+	</sec:authorize>
+	
 	<pfs:panel titleKey="plugin.config.usuarios.consulta.cabecera.control.datos" name="panel"
 		columns="2" collapsible="" title="**Datos Despacho" bbar="btModificar">
 		<pfs:items items="username,nombre,apellido1,apellido2" />

@@ -82,8 +82,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String LITIGIO = "litigio";
 	private static final String CONCURSO = "concurso";
 
-	private static final String LET_PCO = "LETR";
-	private static final String SUP_PCO = "SUP_PCO";
+	private static final String LETRADO = "GEXT";
+	private static final String SUPERVISOR = "SUP";
 	private static final String DIRLIT_PCO = "DULI";
 	private static final String PREDOC = "PREDOC";
 
@@ -480,7 +480,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
 			Long idAsunto = proc.getAsunto().getId();
 			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
-			if (listaTiposGestores.contains(LET_PCO) && listaTiposGestores.contains(SUP_PCO) &&
+			if (listaTiposGestores.contains(LETRADO) && listaTiposGestores.contains(SUPERVISOR) &&
 					listaTiposGestores.contains(DIRLIT_PCO) && listaTiposGestores.contains(PREDOC)) {
 				resultado = true;
 			}

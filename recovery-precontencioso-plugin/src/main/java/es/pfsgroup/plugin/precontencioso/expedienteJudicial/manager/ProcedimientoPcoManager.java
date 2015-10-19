@@ -516,32 +516,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			ProcedimientoPCO procedimientoPco = genericDao.get(ProcedimientoPCO.class, 
 					genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProc));			
 			if (Checks.esNulo(procedimientoPco)) {
-				procedimientoPco = new ProcedimientoPCO();
-				procedimientoPco.setPreturnado(false);
-				procedimientoPco.setProcedimiento(procedimiento);
-				DDTipoPreparacionPCO tipoPrepDefecto = (DDTipoPreparacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
-					dameValorDiccionarioByCod(DDTipoPreparacionPCO.class, DDTipoPreparacionPCO.SENCILLO);
-				procedimientoPco.setTipoPreparacion(tipoPrepDefecto);
-				procedimientoPco.setTipoProcPropuesto(obtenerProcedimientoPropuesto(procedimiento));
-				procedimientoPco.setTipoProcIniciado(null);
-				procedimientoPco.setNumExpInterno("");
-				procedimientoPco.setNumExpExterno("");
-				procedimientoPco.setNombreExpJudicial(procedimiento.getCodigoProcedimientoEnJuzgado());
-				genericDao.save(ProcedimientoPCO.class, procedimientoPco);
-				List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc = new ArrayList<HistoricoEstadoProcedimientoPCO>();
-				HistoricoEstadoProcedimientoPCO estadoInicial = new HistoricoEstadoProcedimientoPCO();
-				DDEstadoPreparacionPCO estadoPreparacion = (DDEstadoPreparacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
-					dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.PREPARACION);;
-				estadoInicial.setEstadoPreparacion(estadoPreparacion);
-				estadoInicial.setFechaInicio(new Date());
-				estadoInicial.setFechaFin(null);
-				estadoInicial.setProcedimientoPCO(procedimientoPco);
-				genericDao.save(HistoricoEstadoProcedimientoPCO.class, estadoInicial);
-				estadosPreparacionProc.add(estadoInicial);
-				procedimientoPco.setEstadosPreparacionProc(estadosPreparacionProc);
-				genericDao.save(ProcedimientoPCO.class, procedimientoPco);
+				procedimientoPco = crearProcedimientoPco(procedimiento, DDEstadoPreparacionPCO.PREPARACION);
 			} else {
 				procedimiento = procedimientoPco.getProcedimiento();
+				cambiarEstadoExpediente(idProc, DDEstadoPreparacionPCO.PREPARACION);
 			}
 			List<Contrato> contratos = new ArrayList<Contrato>(procedimiento.getAsunto().getContratos());
 			Set<Persona> setPersonas = new HashSet<Persona>();
@@ -574,19 +552,60 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			procedimientoPco.setBurofaxes(burofaxes);
 			genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 
-			if (esLitigio) {
+			try {
 				if (documentos.size()>0) {
 					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_SolicitarDoc);
 				}
 				if (liquidaciones.size()>0) {
 					gestorTareasManager.crearTareaEspecial(idProc,PrecontenciosoBPMConstants.PCO_GenerarLiq);
 				}
+			} catch (Exception e) {
+				System.out.println("Error al intentar crear tarea especial: " + e.getMessage());
+				logger.error(e.getMessage());
 			}
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 	
+	}
+
+	@Override
+	@BusinessOperation(BO_PCO_CREAR_PROCEDIMIENTO_PCO)
+	@Transactional(readOnly = false)
+	public ProcedimientoPCO crearProcedimientoPco(Procedimiento procedimiento, String codigoEstadoInicial) {
+		ProcedimientoPCO procedimientoPco;
+		procedimientoPco = new ProcedimientoPCO();
+		procedimientoPco.setPreturnado(false);
+		procedimientoPco.setProcedimiento(procedimiento);
+		DDTipoPreparacionPCO tipoPrepDefecto = (DDTipoPreparacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+			dameValorDiccionarioByCod(DDTipoPreparacionPCO.class, DDTipoPreparacionPCO.SENCILLO);
+		procedimientoPco.setTipoPreparacion(tipoPrepDefecto);
+		procedimientoPco.setTipoProcPropuesto(obtenerProcedimientoPropuesto(procedimiento));
+		procedimientoPco.setTipoProcIniciado(null);
+		procedimientoPco.setNumExpInterno("");
+		procedimientoPco.setNumExpExterno("");
+		procedimientoPco.setNombreExpJudicial(procedimiento.getCodigoProcedimientoEnJuzgado());
+		genericDao.save(ProcedimientoPCO.class, procedimientoPco);
+		List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc = new ArrayList<HistoricoEstadoProcedimientoPCO>();
+		HistoricoEstadoProcedimientoPCO histEstadoInicial = new HistoricoEstadoProcedimientoPCO();
+		DDEstadoPreparacionPCO estadoInicial = null;
+		if (Checks.esNulo(codigoEstadoInicial)) {
+			estadoInicial = (DDEstadoPreparacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+					dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, DDEstadoPreparacionPCO.EN_ESTUDIO);
+		} else {
+			estadoInicial = (DDEstadoPreparacionPCO) proxyFactory.proxy(UtilDiccionarioApi.class).
+					dameValorDiccionarioByCod(DDEstadoPreparacionPCO.class, codigoEstadoInicial);
+		}
+		histEstadoInicial.setEstadoPreparacion(estadoInicial);
+		histEstadoInicial.setFechaInicio(new Date());
+		histEstadoInicial.setFechaFin(null);
+		histEstadoInicial.setProcedimientoPCO(procedimientoPco);
+		genericDao.save(HistoricoEstadoProcedimientoPCO.class, histEstadoInicial);
+		estadosPreparacionProc.add(histEstadoInicial);
+		procedimientoPco.setEstadosPreparacionProc(estadosPreparacionProc);
+		genericDao.save(ProcedimientoPCO.class, procedimientoPco);
+		return procedimientoPco;
 	}
 	
 	private List<DocumentoPCO> obtenerNuevosDocumentos(ProcedimientoPCO procedimientoPco, 

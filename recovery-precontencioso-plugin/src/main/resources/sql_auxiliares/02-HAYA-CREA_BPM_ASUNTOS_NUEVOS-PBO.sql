@@ -389,3 +389,7 @@ UPDATE tar_tareas_notificaciones
 
 
 COMMIT;
+
+-- Incluimos datos de PCO para tipo de asunto Litigio
+
+-- Estado inicial

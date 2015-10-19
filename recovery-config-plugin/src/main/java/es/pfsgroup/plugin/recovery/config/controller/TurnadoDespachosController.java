@@ -56,10 +56,10 @@ public class TurnadoDespachosController {
 	}
 
 	@RequestMapping
-	public String editarEsquema(@RequestParam(required=false) Long idEsquema
+	public String editarEsquema(@RequestParam(required=false) Long id
 			, Model model) {
-		EsquemaTurnado esquema = (idEsquema!=null) 
-				? turnadoDespachosManager.get(idEsquema)
+		EsquemaTurnado esquema = (id!=null) 
+				? turnadoDespachosManager.get(id)
 				: new EsquemaTurnado();
 		model.addAttribute(KEY_DATA, esquema);
 		return VIEW_ESQUEMA_TURNADO_EDITAR;

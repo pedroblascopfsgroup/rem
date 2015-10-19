@@ -1,6 +1,6 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
-import java.util.List;
+import es.capgemini.devon.pagination.Page;
 
 
 public interface TurnadoDespachosManager {
@@ -12,7 +12,7 @@ public interface TurnadoDespachosManager {
 	 * @param dto Valores con los filtros
 	 * @return
 	 */
-	List<EsquemaTurnado> listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto);
+	Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto);
 	
 	/**
 	 * Recupera un esquema de turnado por su ID

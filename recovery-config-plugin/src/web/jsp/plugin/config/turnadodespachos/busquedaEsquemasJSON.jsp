@@ -7,17 +7,24 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <fwk:json>
-    <json:property name="total" value="${page.totalCount}" />
-    <json:array name="esquemas" items="${page.results}" var="esquema">
+    <json:property name="total" value="${data.totalCount}" />
+    <json:array name="esquemas" items="${data.results}" var="esquema">
         <json:object>
         	<json:property name="id" value="${esquema.id}" />
 			<json:property name="descripcion" value="${esquema.descripcion}" />
 			<json:property name="estado_cod" value="${esquema.estado.codigo}"/>
 			<json:property name="estado_des" value="${esquema.estado.descripcion}"/>
-			<json:property name="usuario" value="${esquema.auditoria.usuariocrear}" />
-			<json:property name="fechaalta" value="${esquema.auditoria.fechacrear}" />
-			<json:property name="fechainivig" value="${esquema.fechaInicioVigencia}" />
-			<json:property name="fechafinvig" value="${esquema.fechaFinVigencia}" />
+			<json:property name="usuario" value="${esquema.auditoria.usuarioCrear}" />
+			<json:property name="fechaalta">
+            	<fwk:date value="${esquema.auditoria.fechaCrear}"/>
+			</json:property>
+			<json:property name="fechainivig">
+            	<fwk:date value="${esquema.fechaInicioVigencia}"/>
+			</json:property>
+			<json:property name="fechafinvig">
+            	<fwk:date value="${esquema.fechaFinVigencia}"/>
+			</json:property>
         </json:object>
     </json:array>
+
 </fwk:json>

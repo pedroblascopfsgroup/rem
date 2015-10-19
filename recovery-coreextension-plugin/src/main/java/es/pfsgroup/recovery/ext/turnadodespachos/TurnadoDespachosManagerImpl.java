@@ -1,30 +1,36 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
+
 @Service
 public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
+    @Autowired
+    private UsuarioManager usuarioManager;
+
 	@Autowired
 	private EsquemaTurnadoDao esquemaTurnadoDao;
 	
 	@Override
-	public List<EsquemaTurnado> listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
-		return null;
+	public Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		Page page = esquemaTurnadoDao.buscarEsquemasTurnado(dto, usuarioLogado);
+		return page;
 	}
 
 	@Override
 	public EsquemaTurnado get(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return esquemaTurnadoDao.get(id);
 	}
 
 	@Override

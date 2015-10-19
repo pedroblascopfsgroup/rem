@@ -11,6 +11,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.procedimiento.EXTProcedimientoManagerOverrider;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
@@ -37,7 +38,7 @@ public class DecisionProcedimientoController {
 	private DictionaryManager dictionaryManager;
 	
 	@Autowired
-	private ProcedimientoManager procedimientoManager;
+	private EXTProcedimientoManagerOverrider procedimientoManager;
 	
 	@RequestMapping
 	public String desparalizarProcedimiento(Long idProcedimiento){
@@ -136,10 +137,10 @@ public class DecisionProcedimientoController {
 		map.put("causaDecisionFinalizar", dictionaryManager.getList("DDCausaDecisionFinalizar"));
 		map.put("causaDecisionParalizar", dictionaryManager.getList("DDCausaDecisionParalizar"));				
 		map.put("estadoDecision", dictionaryManager.getList("DDEstadoDecision"));
-		map.put("tiposActuacion", procedimientoManager.getTiposActuacion());
-		map.put("tiposProcedimientos", procedimientoManager.getTiposProcedimiento());
+		map.put("tiposActuacion", prcManager.getTiposActuacion());
+		map.put("tiposProcedimientos", prcManager.getTiposProcedimiento());
 		map.put("tiposReclamacion", procedimientoManager.getTiposReclamacion());
-		map.put("personas", procedimientoManager.getPersonasAfectadas(idProcedimiento));
+		map.put("personas", prcManager.getPersonasAfectadas(idProcedimiento));
 		map.put("esGestor", procedimientoManager.esGestor(idProcedimiento));
 		map.put("esSupervisor", procedimientoManager.esSupervisor(idProcedimiento));
 		map.put("isConsulta", isConsulta);

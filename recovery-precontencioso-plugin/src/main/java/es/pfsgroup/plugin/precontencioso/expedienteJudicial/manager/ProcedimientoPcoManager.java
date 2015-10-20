@@ -33,8 +33,6 @@ import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.prorroga.model.Prorroga;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.zona.dao.NivelDao;
@@ -53,7 +51,6 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPCOAssembler;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPcoGridDTOAssembler;
@@ -72,7 +69,6 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.manager.LiquidacionManager;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.recovery.api.TareaNotificacionApi;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -236,48 +232,48 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		genericDao.save(HistoricoEstadoProcedimientoPCO.class, historicoNuevoRegistro);	
 		
 		//Cancelar tarea actual
-		cancelarTareaActual(procedimientoPco);
+//		cancelarTareaActual(procedimientoPco);
 		
-		Long idProc = procedimientoPco.getProcedimiento().getId();
+//		Long idProc = procedimientoPco.getProcedimiento().getId();
 		
 		//Crear tarea Preparar Expediente
-		proxyFactory.proxy(GestorTareasApi.class).crearTareaEspecial(idProc, PrecontenciosoBPMConstants.PCO_PrepararExpediente);		
+//		proxyFactory.proxy(GestorTareasApi.class).crearTareaEspecial(idProc, PrecontenciosoBPMConstants.PCO_PrepararExpediente);		
 	}
 
-	private void cancelarTareaActual(ProcedimientoPCO procedimientoPco) {
-
-		// Cancelamos tarea/s actual/es
-		List<TareaExterna> listaTareas = tareaExternaManager.getActivasByIdProcedimiento(procedimientoPco.getProcedimiento().getId());
-		
-		for (TareaExterna tareaExterna : listaTareas) {
-			cancelaTarea(tareaExterna);
-		}
-
-	}
-
-	private void cancelaTarea(TareaExterna tareaExterna) {
-
-		if (tareaExterna != null) {
-            tareaExterna.setCancelada(false);
-            tareaExterna.setDetenida(false);
-            tareaExternaManager.borrar(tareaExterna);
-            
-            TareaNotificacion tarNotif = proxyFactory.proxy(TareaNotificacionApi.class).get(tareaExterna.getTareaPadre().getId());
-            tarNotif.setTareaFinalizada(true);
-            proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarNotif);
-            
-            //Buscamos si tiene prorroga activa
-            Prorroga prorroga = tareaExterna.getTareaPadre().getProrrogaAsociada();
-            //Borramos (finalizamos) la prorroga si es que tiene
-            if (prorroga != null) {
-            	proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
-            }
-            if (logger.isDebugEnabled()) {
-                logger.debug("Cancelamos tarea: " + tareaExterna.getId());
-            }
-        }
-
-	}
+//	private void cancelarTareaActual(ProcedimientoPCO procedimientoPco) {
+//
+//		// Cancelamos tarea/s actual/es
+//		List<TareaExterna> listaTareas = tareaExternaManager.getActivasByIdProcedimiento(procedimientoPco.getProcedimiento().getId());
+//		
+//		for (TareaExterna tareaExterna : listaTareas) {
+//			cancelaTarea(tareaExterna);
+//		}
+//
+//	}
+//
+//	private void cancelaTarea(TareaExterna tareaExterna) {
+//
+//		if (tareaExterna != null) {
+//            tareaExterna.setCancelada(false);
+//            tareaExterna.setDetenida(false);
+//            tareaExternaManager.borrar(tareaExterna);
+//            
+//            TareaNotificacion tarNotif = proxyFactory.proxy(TareaNotificacionApi.class).get(tareaExterna.getTareaPadre().getId());
+//            tarNotif.setTareaFinalizada(true);
+//            proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarNotif);
+//            
+//            //Buscamos si tiene prorroga activa
+//            Prorroga prorroga = tareaExterna.getTareaPadre().getProrrogaAsociada();
+//            //Borramos (finalizamos) la prorroga si es que tiene
+//            if (prorroga != null) {
+//            	proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
+//            }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Cancelamos tarea: " + tareaExterna.getId());
+//            }
+//        }
+//
+//	}
 
 	@Override
 	public List<HistoricoEstadoProcedimientoDTO> getEstadosPorIdProcedimiento(Long idProcedimiento) {

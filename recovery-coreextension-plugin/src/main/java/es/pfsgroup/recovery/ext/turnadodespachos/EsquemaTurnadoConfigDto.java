@@ -3,6 +3,7 @@ package es.pfsgroup.recovery.ext.turnadodespachos;
 public class EsquemaTurnadoConfigDto {
 
 	private Long id;
+	private String tipo;
 	private String codigo;
 	private Double importeDesde;
 	private Double importeHasta;
@@ -13,6 +14,12 @@ public class EsquemaTurnadoConfigDto {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 	public String getCodigo() {
 		return codigo;

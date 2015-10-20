@@ -143,4 +143,11 @@ public class EsquemaTurnado implements Serializable, Auditable {
 		this.configuracion = configuracion;
 	}
 
+	public EsquemaTurnadoConfig getConfigById(Long id) {
+		if (configuracion==null) return null;
+		for (EsquemaTurnadoConfig config : configuracion) {
+			if (config.getId().equals(id)) return config;
+ 		}
+		return null;
+	}
 }

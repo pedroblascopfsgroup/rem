@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,6 +19,8 @@ import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
@@ -49,6 +52,10 @@ public class TurnadoDespachosController {
 	
 	@Autowired
 	private ADMDespachoExternoManager despachoExternoManager;
+	private static final String KEY_MODO_CONSULTA = "modConsulta";
+	
+    @Autowired
+    private UsuarioManager usuarioManager;
 	
 	@RequestMapping
 	public String ventanaBusquedaEsquemas(Model model) {
@@ -122,6 +129,9 @@ public class TurnadoDespachosController {
 		Page page = (Page)turnadoDespachosManager.listaEsquemasTurnado(dto);
 		model.addAttribute(KEY_DATA, page);
 
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.addAttribute("usuario", usuarioLogado);
+		
 		return VIEW_ESQUEMA_TURNADO_SEARCH;
 	}
 
@@ -131,6 +141,9 @@ public class TurnadoDespachosController {
 		EsquemaTurnado esquema = (id!=null) 
 				? turnadoDespachosManager.get(id)
 				: new EsquemaTurnado();
+				
+		boolean modoConsulta = turnadoDespachosManager.isModificable(esquema);
+		model.addAttribute(KEY_MODO_CONSULTA, modoConsulta);
 		model.addAttribute(KEY_DATA, esquema);
 		return VIEW_ESQUEMA_TURNADO_EDITAR;
 	}
@@ -144,7 +157,7 @@ public class TurnadoDespachosController {
 	}
 	
 	@RequestMapping
-	public String guardarEsquema(EsquemaTurnadoDto dto
+	public String guardarEsquema(@ModelAttribute EsquemaTurnadoDto dto
 			, Model model) {
 		if (dto.validar()) {
 			turnadoDespachosManager.save(dto);

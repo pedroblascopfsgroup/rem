@@ -1,14 +1,11 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 
-import org.springframework.binding.message.Message;
-import org.springframework.binding.message.MessageBuilder;
-
-import es.capgemini.devon.validation.ErrorMessageUtils;
-import es.capgemini.devon.validation.ValidationException;
+import org.springframework.util.AutoPopulatingList;
 
 public class EsquemaTurnadoDto {
 
@@ -19,7 +16,11 @@ public class EsquemaTurnadoDto {
 	private String descripcion;
 	private Double limiteStockConcursos;
 	private Double limiteStockLitigios;
-	private EsquemaTurnadoConfigDto[] lineasConfiguracion;
+	private List<EsquemaTurnadoConfigDto> lineasConfiguracion;
+	
+	public EsquemaTurnadoDto() {
+		lineasConfiguracion = new AutoPopulatingList(EsquemaTurnadoConfigDto.class);
+	}
 	
 	public Long getId() {
 		return id;
@@ -45,10 +46,10 @@ public class EsquemaTurnadoDto {
 	public void setLimiteStockLitigios(Double limiteStockLitigios) {
 		this.limiteStockLitigios = limiteStockLitigios;
 	}
-	public EsquemaTurnadoConfigDto[] getLineasConfiguracion() {
+	public List<EsquemaTurnadoConfigDto> getLineasConfiguracion() {
 		return lineasConfiguracion;
 	}
-	public void setLineasConfiguracion(EsquemaTurnadoConfigDto[] lineasConfiguracion) {
+	public void setLineasConfiguracion(List<EsquemaTurnadoConfigDto> lineasConfiguracion) {
 		this.lineasConfiguracion = lineasConfiguracion;
 	}
 	
@@ -60,5 +61,4 @@ public class EsquemaTurnadoDto {
 	public boolean validar() {
 		return true;
 	}
-	
 }

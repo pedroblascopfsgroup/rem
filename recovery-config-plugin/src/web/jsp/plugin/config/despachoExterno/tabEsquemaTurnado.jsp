@@ -21,6 +21,32 @@
 		labelKey="plugin.config.despachoExterno.turnado.concursos.tipoCalidad"
 		label="**Tipo calidad" name="turnadoConcursosTipoCalidad"
 		value="${despacho.turnadoCodigoCalidadConcursal}" readOnly="true" />
+		
+		
+	<c:if test="${not empty despacho.turnadoCodigoImporteLitigios or not empty despacho.turnadoCodigoImporteConcursal}">
+	page.webflow({
+		flow:'turnadodespachos/getEsquemaVigente'
+		,params: null
+		,success: function(data){
+			for(var i = 0; i < data.configuracion.length; i++) {
+				config = data.configuracion[i];
+				
+				if(config.tipo == 'LI' && config.codigo == turnadoLitigiosTipoImporte.value) {
+					turnadoLitigiosTipoImporte.value = config.descripcion;
+				}
+				else if(config.tipo == 'LC' && config.codigo == turnadoLitigiosTipoCalidad.value) {
+					turnadoLitigiosTipoCalidad.value = config.descripcion;
+				}
+				else if(config.tipo == 'CI' && config.codigo == turnadoConcursosTipoImporte.value) {
+					turnadoConcursosTipoImporte.value = config.descripcion;
+				}
+				else if(config.tipo == 'CC' && config.codigo == turnadoConcursosTipoCalidad.value) {
+					turnadoConcursosTipoCalidad.value = config.descripcion;
+				}
+			}
+    	}
+	});
+	</c:if>		
 
 	<c:set var="comunidades" value="" scope="page" />
 	<c:set var="provincias" value="" scope="page" />
@@ -46,16 +72,6 @@
 		labelKey="plugin.config.despachoExterno.turnado.ambitoactuacion.provincias"
 		label="**Provincias" name="provinciasActuacion" value="${provincias}"
 		readOnly="true" />
-
-	<c:if test="${not empty despacho.turnadoCodigoImporteLitigios or not empty despacho.turnadoCodigoImporteConcursal}">
-	page.webflow({
-		flow:'turnadodespachos/getEsquemaVigente'
-		,params: null
-		,success: function(data){
-			debugger;
-    	}
-	});
-	</c:if>
 
 	var turnadoConcursosPanel = new Ext.Panel({
 		layout:'table'
@@ -97,7 +113,7 @@
 		layout:'table'
 		,title : '<s:message
 		code="plugin.config.despachoExterno.turnado.ambitoActuacion.titulo"
-		text="**Ámbitos actuación" />'
+		text="**&Aacute;mbitos actuaci&oacute;n" />'
 		,collapsible : false
 		,titleCollapse : false
 		,layoutConfig : {
@@ -109,23 +125,47 @@
 		,items:[{layout:'form',items:[comunidadesActuacion, provinciasActuacion]}
 		]
 	});
+	
+	var btnEditarTurnadoLetrado = new Ext.Button({
+			text : '<s:message code="plugin.config.esquematurnado.letrado.boton.editar" text="**Editar letrado" />'
+			,iconCls : 'icon_edit'
+			,handler : function(){ 
+				var w = app.openWindow({
+					flow : 'turnadodespachos/ventanaEditarLetrado'
+					,width :  600
+					,closable: true
+					,title : '<s:message code="plugin.config.esquematurnado.letrado.ventana.titulo" text="**Turnado de letrado" />'
+					,params : {id:${despacho.id}}
+				});
+				w.on(app.event.DONE, function(){
+					w.close();
+					app.openTab('${despacho.despacho}'
+						,'plugin/config/despachoExterno/ADMconsultarDespachoExterno'
+						,{id:${despacho.id}}
+						,{id:'DespachoExterno${despacho.id}'}
+					)
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+			}
+	});
 
 	var panelSuperior = new Ext.Panel({
-		layout:'table'
+		title:'<s:message code="plugin.config.esquematurnado.letrado.panel.titulo" text="**Datos turnado"/>'
+		,layout:'table'
 		,collapsible : false
 		,titleCollapse : false
 		,layoutConfig : {
 			columns:3
 		}
 		//,autoWidth:true
-		,style:'margin-right:20px;margin-left:10px'
-		,border:false
+		,style:'margin-right:20px;margin-left:10px;'
+		,border:true
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop'}
 		,items:[{width:330,items:[turnadoLitigiosPanel]}
 			  ,{width:330,items:[turnadoConcursosPanel]}
 			  ,{width:330,items:[ambitosActuacionPanel]}
 			  ]
+		, bbar : [btnEditarTurnadoLetrado]
 	});
-
-
+	
 </pfslayout:tabpage>

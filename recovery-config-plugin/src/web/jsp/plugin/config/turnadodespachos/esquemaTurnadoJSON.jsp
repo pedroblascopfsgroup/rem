@@ -10,41 +10,20 @@
 <fwk:json>
 	<json:property name="id" value="${data.id}" />
 	<json:property name="descripcion" value="${data.descripcion}" />
-	<json:property name="estado">
-		<json:object>
-			<json:property name="id" value="${data.estado.id}" />
-			<json:property name="codigo" value="${data.estado.codigo}" />
-			<json:property name="descripcion" value="${data.estado.descripcion}" />
-		</json:object>
-	</json:property>
+	<json:object name="estadoEsquema">
+		<json:property name="id" value="${data.estado.id}" />
+		<json:property name="codigo" value="${data.estado.codigo}" />
+		<json:property name="descripcion" value="${data.estado.descripcion}" />
+	</json:object>
 	<json:property name="limiteStockAnualConcursos" value="${data.limiteStockAnualConcursos}" />
 	<json:property name="limiteStockAnualLitigios" value="${data.limiteStockAnualLitigios}" />
 	<json:property name="fechaInicioVigencia" value="${data.fechaInicioVigencia}" />
 	<json:property name="fechaFinVigencia" value="${data.fechaFinVigencia}" />
-	<json:property name="configuracionLI">
-		<json:array name="usuarios" items="${data.configuracion}" var="config">
-			<c:if test="${config.tipo==EsquemaTurnadoConfig.TIPO_LITIGIOS_IMPORTE}">
-				<json:object>
-					<json:property name="id" value="${config.id}" />
-					<json:property name="codigo" value="${config.codigo}" />
-					<json:property name="importeDesde" value="${config.importeDesde}" />
-					<json:property name="importeHasta" value="${config.importeHasta}" />
-					<json:property name="porcentaje" value="${config.porcentaje}" />
-				</json:object>
-			</c:if>
-		</json:array>
-	</json:property>
-	<json:property name="configuracionLC">
-		<json:array name="usuarios" items="${data.configuracion}" var="config">
-			<c:if test="${config.tipo==EsquemaTurnadoConfig.TIPO_LITIGIOS_CALIDAD}">
-				<json:object>
-					<json:property name="id" value="${config.id}" />
-					<json:property name="codigo" value="${config.codigo}" />
-					<json:property name="importeDesde" value="${config.importeDesde}" />
-					<json:property name="importeHasta" value="${config.importeHasta}" />
-					<json:property name="porcentaje" value="${config.porcentaje}" />
-				</json:object>
-			</c:if>
-		</json:array>
-	</json:property>
+	<json:array name="configuracion" items="${data.configuracion}" var="config">
+		<json:object>
+			<json:property name="tipo" value="${config.tipo}" />
+			<json:property name="codigo" value="${config.codigo}" />
+			<json:property name="descripcion" value="${config.descripcion}" />
+		</json:object>
+	</json:array>
 </fwk:json>

@@ -159,31 +159,6 @@
 			}
 	});
 
-// ................................................
-// Mover a ficha de letrado
-// ................................................
-
-	var btnEditarTurnadoLetrado = new Ext.Button({
-			text : '<s:message code="plugin.config.esquematurnado.letrado.boton.editar" text="**Editar letrado" />'
-			,iconCls : 'icon_edit'
-			,handler : function(){ 
-				var w = app.openWindow({
-					flow : 'turnadodespachos/ventanaEditarLetrado'
-					,width :  600
-					,closable: true
-					,title : '<s:message code="plugin.config.esquematurnado.letrado.ventana.titulo" text="**Turnado de letrado" />'
-					,params : {id:id}
-				});
-				w.on(app.event.DONE, function(){
-					w.close();
-					esquemasStore.webflow(getParametros());
-				});
-				w.on(app.event.CANCEL, function(){ w.close(); });
-			}
-	});
-// ................................................
-
-	
 	btnBorrar.setDisabled(true);
 	btnActivar.setDisabled(true);
 	
@@ -257,7 +232,7 @@
 		,monitorResize: true
 		//,clicksToEdit:0
 		,selModel: sm
-		,bbar : [pagingBar,btnNuevo,btnEditarTurnadoLetrado,btnCopiar,btnBorrar,btnActivar]
+		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar,btnActivar]
 	});
 	
 	esquemasGrid.on({

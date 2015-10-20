@@ -10,46 +10,45 @@
 
 <fwk:page>
 
-	var tipoImporteConData = {diccionario: [
-		{codigo:'A', descripcion:'A (desde 12 - 22)'}
-		,{codigo:'B', descripcion:'B (desde 12 - 22)'}
-		,{codigo:'C', descripcion:'C (desde 12 - 22)'}
-	]};
+	var tiposImporteLitData = <app:dict value="${tiposImporteLitigio}" />;
 
-	var tipoCalidadConData = {diccionario: [
-		{codigo:'A', descripcion:'A (desde 12 - 22)'}
-		,{codigo:'B', descripcion:'B (desde 12 - 22)'}
-		,{codigo:'C', descripcion:'C (desde 12 - 22)'}
-	]};
-
-
-    var cmbTipoImporteLit = app.creaCombo({
-		data: tipoImporteConData
-    	,name : 'tipoImporteLit'
+	var cmbTipoImporteLit = app.creaCombo({
+		data: tiposImporteLitData
+    	, name : 'turnadoCodigoImporteLitigios'
+    	, value: '${despacho.turnadoCodigoImporteLitigios}'
     	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipoimporte" text="**Tipo importe" />'
 		,width : 130
     });
+    
+    var tiposCalidadLitData = <app:dict value="${tiposCalidadLitigio}" />;
+    
     var cmbTipoCalidadLit = app.creaCombo({
-		data: tipoCalidadConData
-    	,name : 'tipoCalidadLit'
+		data: tiposCalidadLitData
+    	,name : 'turnadoCodigoCalidadLitigios'
+    	, value: '${despacho.turnadoCodigoCalidadLitigios}'
     	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipocalidad" text="**Tipo calidad" />'
 		,width : 130
     });
 
+	var tiposImporteConData = <app:dict value="${tiposImporteConcursal}" />;
 
     var cmbTipoImporteCon = app.creaCombo({
-		data: tipoImporteConData
-    	,name : 'tipoImporteCon'
+		data: tiposImporteConData
+    	,name : 'turnadoCodigoImporteConcursal'
+    	, value: '${despacho.turnadoCodigoImporteConcursal}'
     	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipoimporte" text="**Tipo importe" />'
 		,width : 130
     });
+    
+    var tiposCalidadConData = <app:dict value="${tiposCalidadConcursal}" />;
+    
     var cmbTipoCalidadCon = app.creaCombo({
-		data: tipoCalidadConData
-    	,name : 'tipoCalidadCon'
+		data: tiposCalidadConData
+    	,name : 'turnadoCodigoCalidadConcursal'
+    	, value: '${despacho.turnadoCodigoCalidadConcursal}'
     	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipocalidad" text="**Tipo calidad" />'
 		,width : 130
     });
-
 
 	var turnadoLitigiosFieldSet = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.config.esquematurnado.editar.panelLitigios.titulo" text="**Turnado Litigios" />'
@@ -64,8 +63,6 @@
 		]
 		,doLayout:function() {
 				var margin = 40;
-				//var parentSize = app.contenido.getSize(true);
-				//this.setWidth(parentSize.width-margin);
 				this.setWidth(310-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
@@ -84,8 +81,6 @@
 		]
 		,doLayout:function() {
 				var margin = 40;
-				//var parentSize = app.contenido.getSize(true);
-				//this.setWidth(parentSize.width-margin);
 				this.setWidth(310-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
@@ -94,14 +89,11 @@
 
 	var topPanel = new Ext.Panel({
 		autoHeight:true
-		//,bodyStyle:'padding: 10px'
 		,layout:'table'
 		,border:false
 		,layoutConfig:{columns:2}
 		,viewConfig : {forceFit : true}
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		//,style:'padding-bottom:10px; padding-right:10px;'
-		//,tbar : [buttonsL,'->', buttonsR]
 		,items:[{layout:'form'
 					,items: [turnadoLitigiosFieldSet]}
 				,{layout:'form',
@@ -110,23 +102,34 @@
 				]
 	});	
 
-
-	var comunidadesData = {diccionario: [
-		{'codigo':'12','descripcion':'C. Valenciana'}
-		,{'codigo':'11','descripcion':'C. Madrid'}
-	]};
-	var provinciasData = {diccionario: [
-		{'codigo':'12','descripcion':'C. Valenciana'}
-		,{'codigo':'11','descripcion':'C. Madrid'}
-	]};
-
 	var config = {width: 100, labelStyle:"width:100px;font-weight:bolder"};
+    
+    var comunidadesData = <app:dict value="${listaComunidadesAutonomas}" />;
     var comboComunidades = app.creaDblSelect(comunidadesData 
     	,'<s:message code="plugin.config.esquematurnado.editar.comunidades" text="**Comunidades" />'
     	,config);
+    	
+    var arrayComunidadesLetrado = [ 
+	<c:forEach var="codigoComunidad" items="${listaComunidadesDespacho}" varStatus="status">
+		<c:if test="${status.index>0}">,</c:if>'<c:out value="${codigoComunidad}" />'
+	</c:forEach>
+	];
+    
+	comboComunidades.setValue(arrayComunidadesLetrado);    	
+    
+	var provinciasData = <app:dict value="${listaProvincias}" />;
     var comboProvincias = app.creaDblSelect(provinciasData 
     	,'<s:message code="plugin.config.esquematurnado.editar.provincias" text="**Provincias" />'
     	,config);
+    	
+    var arrayProvinciasLetrado = [ 
+	<c:forEach var="codigoProvincia" items="${listaProvinciasDespacho}" varStatus="status">
+		<c:if test="${status.index>0}">,</c:if>'<c:out value="${codigoProvincia}" />'
+	</c:forEach>
+	];
+    
+	comboProvincias.setValue(arrayProvinciasLetrado);
+	
 	var ambitoActuacionFieldSet = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.config.esquematurnado.editar.panelAmbActuacion.titulo" text="**Ambito actuación" />'
 		,layout:'column'
@@ -138,55 +141,59 @@
 		,items : [{items:[comboComunidades,comboProvincias]}]
 		,doLayout:function() {
 				var margin = 40;
-				//var parentSize = app.contenido.getSize(true);
-				//this.setWidth(parentSize.width-margin);
 				this.setWidth(600-margin);
 				Ext.Panel.prototype.doLayout.call(this);
 		}
 	});
 	var bottomPanel = new Ext.Panel({
 		autoHeight:true
-		//,bodyStyle:'padding: 10px'
 		,layout:'table'
 		,border:false
 		,layoutConfig:{columns:1}
 		,viewConfig : {forceFit : true}
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		//,style:'padding-bottom:10px; padding-right:10px;'
-		//,tbar : [buttonsL,'->', buttonsR]
 		,items:[{layout:'form'
 					,items: [ambitoActuacionFieldSet]}
 				]
 	});	
-
-
 
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
 		,handler : function(){page.fireEvent(app.event.CANCEL);}
 	});
+	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			page.submit({
-				eventName : 'update'
-				,formPanel : panelEdicion
-				,success : function(){ page.fireEvent(app.event.DONE) }
-			});
+			debugger;
+			Ext.Ajax.request({
+				url: page.resolveUrl('turnadodespachos/guardarEsquemaDespacho'),
+				params: {
+					id:${despacho.id},
+					turnadoCodigoImporteLitigios: cmbTipoImporteLit.getValue(),
+					turnadoCodigoImporteConcursal: cmbTipoImporteCon.getValue(),
+					turnadoCodigoCalidadConcursal: cmbTipoCalidadCon.getValue(),
+					turnadoCodigoCalidadLitigios: cmbTipoCalidadLit.getValue(),
+					listaComunidades: comboComunidades.getValue(),
+					listaProvincias: comboProvincias.getValue() 										
+				},
+				method: 'POST',
+				success: function ( result, request ) {
+					page.fireEvent(app.event.DONE);
+				}
+			});			
 		}
 		<app:test id="btnGuardarABM" addComa="true"/>
 	});
 
-	var mainPanel = new Ext.Panel({
+	var mainPanel = new Ext.FormPanel({
 		autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
 		,layoutConfig:{columns:1}
 		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
-		//,style:'padding-bottom:10px; padding-right:10px;'
-		//,tbar : [buttonsL,'->', buttonsR]
 		,bbar: [btnGuardar,btnCancelar]
 		,items:[{layout:'form', items: [topPanel,bottomPanel]}
 		]
@@ -195,5 +202,3 @@
 	page.add(mainPanel);
 	
 </fwk:page>
-
-

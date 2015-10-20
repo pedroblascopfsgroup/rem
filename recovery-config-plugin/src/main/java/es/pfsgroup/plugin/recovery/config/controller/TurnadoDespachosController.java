@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.recovery.config.controller;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
+import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDespachoDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.TurnadoDespachosManager;
 
@@ -32,13 +43,17 @@ public class TurnadoDespachosController {
 	private static final String VIEW_DEFAULT = "default";
 
 	private static final String KEY_DATA = "data";
-	private static final String KEY_MODO_CONSULTA = "modConsulta";
-	private static final String KEY_ERRORS = "errors";
-
 	
 	@Autowired
 	private TurnadoDespachosManager turnadoDespachosManager;
-
+	
+	@Autowired
+	private UtilDiccionarioManager utilDiccionarioManager;
+	
+	@Autowired
+	private ADMDespachoExternoManager despachoExternoManager;
+	private static final String KEY_MODO_CONSULTA = "modConsulta";
+	
     @Autowired
     private UsuarioManager usuarioManager;
 	
@@ -48,7 +63,62 @@ public class TurnadoDespachosController {
 	}
 	
 	@RequestMapping
-	public String ventanaEditarLetrado(Model model) {
+	public String ventanaEditarLetrado(@RequestParam(value="id", required=true) Long idDespacho, 
+			Model model) {
+		
+		DespachoExterno despacho = despachoExternoManager.getDespachoExterno(idDespacho);
+		model.addAttribute("despacho", despacho);
+		
+		List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(idDespacho);
+		List<String> listaComunidadesDespacho = new LinkedList<String>();
+		List<String> listaProvinciasDespacho = new LinkedList<String>();
+		
+		for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+			
+			if(ambitoActuacion.getComunidad() != null) {
+				listaComunidadesDespacho.add(ambitoActuacion.getComunidad().getCodigo());
+			}
+			
+			if(ambitoActuacion.getProvincia() != null) {
+				listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
+			}
+		}
+		
+		model.addAttribute("listaComunidadesDespacho", listaComunidadesDespacho);
+		model.addAttribute("listaProvinciasDespacho", listaProvinciasDespacho);
+		
+		List<EsquemaTurnadoConfig> listTipoImporteLitigio = new LinkedList<EsquemaTurnadoConfig>();
+		List<EsquemaTurnadoConfig> listTipoCalidadLitigio = new LinkedList<EsquemaTurnadoConfig>();
+		List<EsquemaTurnadoConfig> listTipoImporteConcursal = new LinkedList<EsquemaTurnadoConfig>();
+		List<EsquemaTurnadoConfig> listTipoCalidadConcursal = new LinkedList<EsquemaTurnadoConfig>();
+		
+		EsquemaTurnado esquema = turnadoDespachosManager.getEsquemaVigente();
+		List<EsquemaTurnadoConfig> configs = esquema.getConfiguracion();
+		
+		for(EsquemaTurnadoConfig config : configs) {
+			
+			if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_IMPORTE)) {
+				listTipoImporteLitigio.add(config);
+			}
+			else if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_CALIDAD)) {
+				listTipoCalidadLitigio.add(config);
+			}
+			else if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_IMPORTE)) {
+				listTipoImporteConcursal.add(config);
+			}
+			else if(config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_CALIDAD)) {
+				listTipoCalidadConcursal.add(config);
+			}			
+		}
+		
+		model.addAttribute("tiposImporteLitigio", listTipoImporteLitigio);
+		model.addAttribute("tiposCalidadLitigio", listTipoCalidadLitigio);
+		model.addAttribute("tiposImporteConcursal", listTipoImporteConcursal);
+		model.addAttribute("tiposCalidadConcursal", listTipoCalidadConcursal);
+		
+		model.addAttribute("listaComunidadesAutonomas", utilDiccionarioManager.dameValoresDiccionario(DDComunidadAutonoma.class));
+		model.addAttribute("listaProvincias", utilDiccionarioManager.dameValoresDiccionario(DDProvincia.class));
+		
 		return VIEW_ESQUEMA_TURNADO_LETRADO;
 	}
 	
@@ -117,4 +187,12 @@ public class TurnadoDespachosController {
 		return VIEW_DEFAULT;
 	}
 	
+	@RequestMapping
+	public String guardarEsquemaDespacho(EsquemaTurnadoDespachoDto dto,
+			Model model) {
+		if (dto.validar()) {
+			despachoExternoManager.saveEsquemaDespacho(dto);
+		}
+		return VIEW_DEFAULT;
+	}	
 }

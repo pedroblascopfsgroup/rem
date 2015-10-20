@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -31,8 +31,11 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 	@Autowired
 	private EsquemaTurnadoDao esquemaTurnadoDao;
 
-    @Autowired
-    private GenericABMDao genericDao;
+	@Autowired
+	private DespachoExternoDao despachoExternoDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Override
 	public Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
@@ -183,5 +186,4 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 				esquema.getAuditoria().getUsuarioCrear()==usuarioLogado.getUsername());
 		return modoConsulta;
 	}
-
 }

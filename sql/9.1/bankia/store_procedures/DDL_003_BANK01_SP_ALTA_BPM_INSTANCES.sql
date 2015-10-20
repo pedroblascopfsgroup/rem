@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151002
+--## FECHA_CREACION=20151020
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
+--## VERSION_ARTEFACTO=0.2
 --## INCIDENCIA_LINK=BKREC-1114
 --## PRODUCTO=NO
 --## 
@@ -16,6 +16,7 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 create or replace PROCEDURE ALTA_BPM_INSTANCES AS
+
   --/* Consulta, procedimientos sin BPM */
   CURSOR CUR_PROCEDIMIENTOS IS
   WITH BPM_DEFINITIONS AS (
@@ -54,7 +55,10 @@ create or replace PROCEDURE ALTA_BPM_INSTANCES AS
 
   --/* Variables */
   V_DBID NUMBER(16);
+  
 BEGIN
+/* v0.2 */
+
   SELECT ENTIDAD_ID INTO V_DBID
   FROM #ESQUEMA_MASTER#.ENTIDADCONFIG
   WHERE DATAKEY = 'schema' AND UPPER(DATAVALUE) = '#ESQUEMA#';
@@ -202,8 +206,10 @@ BEGIN
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecuciÃ³n:'||TO_CHAR(SQLCODE));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------');
           DBMS_OUTPUT.put_line(SQLERRM);
-
           ROLLBACK;
           RAISE;
 
 END ALTA_BPM_INSTANCES;
+/
+
+EXIT;

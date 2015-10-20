@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151002
+--## FECHA_CREACION=20151020
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
+--## VERSION_ARTEFACTO=0.2
 --## INCIDENCIA_LINK=BKREC-1114
 --## PRODUCTO=NO
 --## 
@@ -16,7 +16,10 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 create or replace PROCEDURE CONVIVE_F2_CARTERIZACION AS
+
 BEGIN
+/* v0.2 */
+
 insert into #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select #ESQUEMA#.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
        (select usd_id from #ESQUEMA#.usd_usuarios_despachos usd inner join #ESQUEMA_MASTER#.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'BPO1ACCEN') usd_id,
@@ -670,9 +673,17 @@ from
  ) aux ;
 
 
+EXCEPTION
 
-
-
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
 
 COMMIT;
 END CONVIVE_F2_CARTERIZACION;
+/
+
+EXIT;

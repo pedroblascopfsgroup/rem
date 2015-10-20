@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151007
+--## FECHA_CREACION=20151020
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
+--## VERSION_ARTEFACTO=0.2
 --## INCIDENCIA_LINK=BKREC-1114
 --## PRODUCTO=NO
 --## 
@@ -22,6 +22,7 @@ create or replace PROCEDURE RERA_PRECAL_ARQUET_1 AS
   v_table   VARCHAR2(30);
 
 BEGIN
+/* v0.2 */
 
   /*TRUNCATE*/
   ql_stmt := 'TRUNCATE TABLE #ESQUEMA#.PER_PRECALCULO_ARQ';
@@ -314,5 +315,16 @@ EXCEPTION
     rollback;
     dbms_output.put_line('La tabla '''||v_table||''' no contiene datos.');
     raise_application_error(-20001,'La tabla '''||v_table||''' no contiene datos.');
+    
+  WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
 
 END RERA_PRECAL_ARQUET_1;
+/
+
+EXIT;
+

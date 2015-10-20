@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=David González
---## FECHA_CREACION=20151002
+--## FECHA_CREACION=20151020
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
+--## VERSION_ARTEFACTO=0.2
 --## INCIDENCIA_LINK=BKREC-1114
 --## PRODUCTO=NO
 --## 
@@ -25,7 +25,10 @@ create or replace PROCEDURE CNV_ALTA_USD_USUARIOS_DESP AS
     * VARIABLES
     */
     V_FECHA_RECH TIMESTAMP;
+    
 BEGIN
+/* v0.2 */
+
   /*
    * CONSTANTES
    */
@@ -75,4 +78,18 @@ BEGIN
     );
 
   COMMIT;
+  
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+  
+  
 END CNV_ALTA_USD_USUARIOS_DESP;
+/
+
+EXIT;

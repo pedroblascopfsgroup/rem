@@ -24,6 +24,8 @@
 			<json:property name="fechafinvig">
             	<fwk:date value="${esquema.fechaFinVigencia}"/>
 			</json:property>
+			<json:property name="borrable" value="${esquema.estado.codigo eq 'DEF' and usuario.username eq esquema.auditoria.usuarioCrear}"/>
+			<json:property name="activable" value="${esquema.estado.codigo eq 'DEF'}"/>
         </json:object>
     </json:array>
 

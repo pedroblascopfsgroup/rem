@@ -19,7 +19,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
 public class DDEstadoEsquemaTurnado implements Dictionary, Auditable {
 
+	public static final String ESTADO_DEFINICION = "DEF";
 	public static final String ESTADO_VIGENTE = "VIG";
+	public static final String ESTADO_TERMINADO = "TER";
 	
     private static final long serialVersionUID = 1L;
 

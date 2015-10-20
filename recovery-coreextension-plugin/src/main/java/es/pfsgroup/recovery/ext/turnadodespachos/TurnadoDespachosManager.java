@@ -37,6 +37,14 @@ public interface TurnadoDespachosManager {
 	 * @return
 	 */
 	EsquemaTurnado save(EsquemaTurnadoDto dto);
+
+	/**
+	 * Indica si es o no modificable
+	 * 
+	 * @param esquema
+	 * @return true modificable / false no modificable
+	 */
+	boolean isModificable(EsquemaTurnado esquema);
 	
 	/**
 	 * Activa el esquema de turnado.

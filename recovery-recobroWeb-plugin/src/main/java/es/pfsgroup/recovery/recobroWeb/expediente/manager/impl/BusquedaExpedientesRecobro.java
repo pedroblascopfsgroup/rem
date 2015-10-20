@@ -134,7 +134,7 @@ public class BusquedaExpedientesRecobro implements BusquedaExpedienteFiltroDinam
 //		filtro.append(" ) ");
 		
 		if (!Checks.esNulo(dto.getSupervisor())) {
-			filtro.append(" AND EXISTS (SELECT distinct 1 from GestorExpediente gae where cre.expediente.id = gae.expediente.id and gae.usuario.id = " + dto.getSupervisor() +") ");
+			filtro.append(" AND EXISTS (SELECT 1 from GestorExpediente gae where cre.expediente.id = gae.expediente.id and gae.usuario.id = " + dto.getSupervisor() +") ");
 		}
 		
 		

@@ -1052,7 +1052,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 						if(filtro.isValid(paramDinamico)){
 							
 							hql.append(" and exp.id in ( ");
-							hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+							hql.append(filtro.obtenerFiltro(paramDinamico));
 							hql.append(" ) ");
 							
 						}
@@ -1426,7 +1426,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 
         if (tipoPersona || segmentos) {
             hql.append(" and EXISTS (select 1 FROM ExpedientePersona pex, Persona p ");
-            hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 ");
+            hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 and pex.expediente.id = exp.id ");
 
             if (tipoPersona) {
                 hql.append(" and p.tipoPersona.codigo = :tipoPer ");

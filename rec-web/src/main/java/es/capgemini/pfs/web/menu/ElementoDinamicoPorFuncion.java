@@ -35,6 +35,9 @@ public class ElementoDinamicoPorFuncion extends DynamicElementAdapter {
     	tabs.add("expedientesAsuntos");
     	tabs.add("adjuntosContratos");
     	tabs.add("tabProcedimientos");
+    	tabs.add("adjuntosProcedimiento");
+    	tabs.add("historicoAsunto");
+    	tabs.add("tabTramiteSubastas");
     	return tabs;
     }
 

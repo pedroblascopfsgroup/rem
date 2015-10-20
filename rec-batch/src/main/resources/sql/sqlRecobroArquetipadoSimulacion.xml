@@ -207,8 +207,7 @@
     <entry key="recobro.simulacion.create2.tmp_arq_recobro.Oracle10gDialect">
         <![CDATA[
             BEGIN
-                OPERACION_DDL.DDL_MATERIALIZED_VIEW('REFRESH','TMP_ARQ_RECOBRO);
-                OPERACION_DDL.DDL_MATERIALIZED_VIEW('STATS','TMP_ARQ_RECOBRO);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARQ_RECOBRO');
             END;
         ]]>
     </entry>
@@ -297,22 +296,6 @@
         ]]>
     </entry>
 
-    <!--
-    <entry key="recobro.simulacion.drop2.tmp_arq_recobro.Oracle10gDialect">
-        <![CDATA[
-            DECLARE
-                table_count number(3);
-                --query_body varchar (30048);
-            BEGIN
-                select count(1) into table_count from all_mviews WHERE mview_name='TMP_ARQ_RECOBRO';
-                if table_count = 1 then
-                    --query_body := 'DROP MATERIALIZED VIEW TMP_ARQ_RECOBRO';  EXECUTE IMMEDIATE query_body;
-                    OPERACION_DDL.DDL_MATERIALIZED_VIEW ('DROP','TMP_ARQ_RECOBRO');
-                end if;
-            END;
-        ]]>
-    </entry>
-    -->
 
     <!-- PASO 4 - Insertar los nuevos clientes en CLI_CLIENTES -->
     <!--

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JOSEVI
+--## AUTOR=OSCAR
 --## FECHA_CREACION=20150930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.16-bk
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=BKREC-1131
 --## PRODUCTO=NO
 --## Finalidad: DML
 --##           
@@ -41,9 +41,9 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 -- * Modificacion de tap_tarea_procedimiento.tap_script_validacion para la tarea P409_CelebraciónSubasta para añadir validación entidad adjudicataria e importe
 -- * Antes: comprobarGestoriaAsignadaPrc() ? comprobarAdjuntoDecretoFirmeAdjudicacion() ? validacionesConfirmarTestimonioPRE() : '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe adjuntar el Decreto Firme de Adjudicaci&oacute;n.</div>' : '<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe asignar la Gestor&iacute;a encargada de tramitar la adjudicaci&oacute;n.</div>'  
 -- */
-execute immediate 'update tap_tarea_procedimiento set tap_script_validacion_jbpm = ''valores[''''P401_CelebracionSubasta''''][''''comboCelebrada''''] == ''''02'''' ? null : (comprobarImporteEntidadAdjudicacionBienes() ? (comprobarNumeroActivo() ? null : ''''Antes de dar la subasta por celebrada, deber&aacute; acceder a la ficha del bien y solicitar el n&uacute;mero de activo mediante el bot&oacute;n habilitado para tal efecto.'''') : ''''Debe rellenar en cada bien el importe adjudicaci&oacute;n y la entidad.'''')'' where tap_codigo = ''P401_CelebracionSubasta''';
+execute immediate 'update tap_tarea_procedimiento set usuariomodificar=''BKREC-1131'', fechamodificar=sysdate, tap_script_validacion_jbpm = ''valores[''''P401_CelebracionSubasta''''][''''comboCelebrada''''] == ''''02'''' ? null : (comprobarImporteEntidadAdjudicacionBienes() ? (comprobarNumeroActivo() ? null : ''''Antes de dar la subasta por celebrada, deber&aacute; acceder a la ficha del bien y solicitar el n&uacute;mero de activo mediante el bot&oacute;n habilitado para tal efecto.'''') : ''''Debe rellenar en cada bien el importe adjudicaci&oacute;n y la entidad.'''')'' where tap_codigo = ''P401_CelebracionSubasta''';
 
-execute immediate 'update tap_tarea_procedimiento set tap_script_validacion_jbpm = ''valores[''''P409_CelebracionSubasta''''][''''comboCelebrada''''] == ''''02'''' ? null : (comprobarImporteEntidadAdjudicacionBienes() ? (comprobarNumeroActivo() ? null : ''''Antes de dar la subasta por celebrada, deber&aacute; acceder a la ficha del bien y solicitar el n&uacute;mero de activo mediante el bot&oacute;n habilitado para tal efecto.'''') : ''''Debe rellenar en cada bien el importe adjudicaci&oacute;n y la entidad.'''')'' where tap_codigo = ''P409_CelebracionSubasta''';
+execute immediate 'update tap_tarea_procedimiento set usuariomodificar=''BKREC-1131'', fechamodificar=sysdate, tap_script_validacion_jbpm = ''valores[''''P409_CelebracionSubasta''''][''''comboCelebrada''''] == ''''02'''' ? null : (comprobarImporteEntidadAdjudicacionBienes() ? (comprobarNumeroActivo() ? null : ''''Antes de dar la subasta por celebrada, deber&aacute; acceder a la ficha del bien y solicitar el n&uacute;mero de activo mediante el bot&oacute;n habilitado para tal efecto.'''') : ''''Debe rellenar en cada bien el importe adjudicaci&oacute;n y la entidad.'''')'' where tap_codigo = ''P409_CelebracionSubasta''';
 
 COMMIT;
 

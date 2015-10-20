@@ -57,6 +57,7 @@ public class ExpedienteJudicialController {
 	private static final String JSON_TIPO_USUARIO = "plugin/precontencioso/busquedas/json/tipoUsuarioJSON";
 	private static final String JSON_ZONAS = "plugin/precontencioso/busquedas/json/listadoZonasJSON";
 	private static final String LISTA_PROCEDIMIENTOS_JSON = "plugin/precontencioso/acciones/json/tipoProcedimientoJSON";
+	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
@@ -306,6 +307,14 @@ public class ExpedienteJudicialController {
 		
 		model.put("data", tipoProcedimientoDao.busquedaProcedimientosAsignacionDeGestores());
 		return LISTA_PROCEDIMIENTOS_JSON;
+	}
+	
+	@RequestMapping
+	public String getEsTareaPrecontenciosoEspecial(@RequestParam(value = "idTarea", required = true) Long idTarea, ModelMap model) {
+		
+		model.put("okko", gestorTareasApi.getEsTareaPrecontenciosoEspecial(idTarea));
+		
+		return OK_KO_RESPUESTA_JSON;
 	}
 
 }

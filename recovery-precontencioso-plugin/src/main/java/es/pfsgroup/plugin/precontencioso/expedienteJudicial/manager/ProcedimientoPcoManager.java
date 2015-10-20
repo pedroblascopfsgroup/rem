@@ -79,7 +79,7 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String CONCURSO = "concurso";
 
 	private static final String LETRADO = "GEXT";
-	private static final String SUPERVISOR = "SUP";
+	private static final String SUPERVISOR = "SUP_PCO";
 	private static final String DIRLIT_PCO = "DULI";
 	private static final String PREDOC = "PREDOC";
 

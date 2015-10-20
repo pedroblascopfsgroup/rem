@@ -1141,8 +1141,29 @@
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		    
+		    		Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')
+						,method: 'POST'
+						,params:{
+									idTarea : rec.get('id')
+								}
+						,success: function (result, request){
+													
+							var isEspecial = Ext.util.JSON.decode(result.responseText);
+							
+							if(isEspecial.okko){
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'precontencioso');
+							}else{
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
+							}
+						
+						}
+						,error: function(){
+			
+						}       				
+					});
 		
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 			break;
 			
 			

@@ -13,6 +13,7 @@
 	//VARS ********************************************************************
 	
 	var limit=25;	
+	var currentRowId;
 	
 	//PANEL FILTROS ********************************************************************
 
@@ -109,10 +110,10 @@
 						if (boton=='yes') {
 			      			page.webflow({
 				      			flow:'turnadodespachos/borrarEsquema'
-				      			,params: {}
+				      			,params: {id:currentRowId}
 				      			,success: function(){
 			            		   page.fireEvent(app.event.DONE);
-			            		   esquemasStore.webflow(getParametros());
+			            		   esquemasStore.webflow();
 			            		}	
 				      		});
 						}
@@ -128,10 +129,10 @@
 						if (boton=='yes') {
 			      			page.webflow({
 				      			flow:'turnadodespachos/copiarEsquema'
-				      			,params: {}
+				      			,params: {id:currentRowId}
 				      			,success: function(){
 			            		   page.fireEvent(app.event.DONE);
-			            		   esquemasStore.webflow(getParametros());
+			            		   esquemasStore.webflow();
 			            		}	
 				      		});
 						}
@@ -147,10 +148,10 @@
 						if (boton=='yes') {
 			      			page.webflow({
 				      			flow:'turnadodespachos/activarEsquema'
-				      			,params: {}
+				      			,params: {id:currentRowId}
 				      			,success: function(){
 			            		   page.fireEvent(app.event.DONE);
-			            		   esquemasStore.webflow(getParametros());
+			            		   esquemasStore.webflow();
 			            		}	
 				      		});
 						}
@@ -259,13 +260,20 @@
 		,bbar : [pagingBar,btnNuevo,btnEditarTurnadoLetrado,btnCopiar,btnBorrar,btnActivar]
 	});
 	
-	esquemasGrid.on('rowdblclick', function(grid, rowIndex, e) {
-	   	var rec = grid.getStore().getAt(rowIndex);
-	   	var id=rec.get('id');
-	   	if (id!=null){
-			ventanaEdicion(id);
-	   	}
+	esquemasGrid.on({
+		rowdblclick: function(grid, rowIndex, e) {
+		   	var rec = grid.getStore().getAt(rowIndex);
+		   	currentRowId = rec.get('id');
+		   	if (currentRowId!=null){
+				ventanaEdicion(currentRowId);
+			}
+		}
+		,rowclick : function(grid, rowIndex, e) {
+			var rec = grid.getStore().getAt(rowIndex);
+			currentRowId = rec.get('id');
+       	}
 	});
+	
 	
 	//PANEL PRINCIPAL ********************************************************************
 	var mainPanel = new Ext.Panel({

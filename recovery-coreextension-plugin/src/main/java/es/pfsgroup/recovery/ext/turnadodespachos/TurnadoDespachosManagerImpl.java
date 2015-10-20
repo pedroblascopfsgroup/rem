@@ -142,16 +142,23 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long id) {
 		EsquemaTurnado esquema = get(id);
 		esquemaTurnadoDao.delete(esquema);
+		if (esquema.getConfiguracion()!=null) {
+			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
+				genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
+			}
+		}
 	}
 
 	@Override
+	@Transactional
 	public void copy(Long id) {
 		EsquemaTurnado esquema = get(id);
 		EsquemaTurnadoDto dto = new EsquemaTurnadoDto();
-		dto.setDescripcion(esquema.getDescripcion());
+		dto.setDescripcion("Copia de " + esquema.getDescripcion());
 		dto.setLimiteStockConcursos(esquema.getLimiteStockAnualConcursos());
 		dto.setLimiteStockLitigios(esquema.getLimiteStockAnualLitigios());
 		if (esquema.getConfiguracion()!=null) {
@@ -161,6 +168,8 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 				configDto.setCodigo(config.getCodigo());
 				configDto.setImporteDesde(config.getImporteDesde());
 				configDto.setImporteHasta(config.getImporteHasta());
+				configDto.setPorcentaje(config.getPorcentaje());
+				dto.getLineasConfiguracion().add(configDto);
 			}
 		}
 		this.save(dto);

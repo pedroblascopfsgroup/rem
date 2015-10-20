@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -52,6 +53,7 @@ public class GestorTareasManager implements GestorTareasApi {
 	private static final String TXT_ERR_PLAZO_3 = "], tipoTarea [";
 	private static final String TXT_ERR_PLAZO_4 = "].";
     private static final String BPM_ERROR_SCRIPT = "bpm.error.script";
+    private static final List<String> CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO = Arrays.asList("PCO_SolicitarDoc", "PCO_RegResultadoExped", "PCO_RecepcionExped", "PCO_RegResultadoDoc", "PCO_RegEnvioDoc", "PCO_RecepcionDoc", "PCO_AdjuntarDoc", "PCO_GenerarLiq", "PCO_ConfirmarLiq", "PCO_EnviarBurofax","PCO_AcuseReciboBurofax","PCO_RegResultadoDocG");
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -295,5 +297,15 @@ public class GestorTareasManager implements GestorTareasApi {
 		}
 		return estadoActual;
 
+	}
+
+	@Override
+	public boolean getEsTareaPrecontenciosoEspecial(Long tareaId) {
+
+		TareaExterna tareaExterna = genericDao.get(TareaExterna.class, genericDao.createFilter(FilterType.EQUALS, "tareaPadre.id", tareaId));
+		
+		boolean esEspecial = CODIGOS_TAREAS_ESPECIALES_PRECONTENCIOSO.contains(tareaExterna.getTareaProcedimiento().getCodigo()) ? true : false;
+
+		return esEspecial;
 	}
 }

@@ -24,7 +24,7 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_EXPEDIENTE_BY_PRC_ID = "plugin.precontencioso.getPCOByProcedimientoId";
 	public static final String BO_PCO_EXPEDIENTE_UPDATE = "plugin.precontencioso.update";
 	public static final String BO_PCO_INICIALIZAR = "plugin.precontencioso.inicializarPco";
-	
+	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
 	 * 
@@ -111,5 +111,8 @@ public interface ProcedimientoPcoApi {
 
 	@BusinessOperationDefinition(BO_PCO_INICIALIZAR)
 	void inicializarPrecontencioso(Procedimiento procedimiento);
+
+	@BusinessOperationDefinition(BO_PCO_CREAR_PROCEDIMIENTO_PCO)
+	ProcedimientoPCO crearProcedimientoPco(Procedimiento procedimiento, String codigoEstadoInicial);
     
 }

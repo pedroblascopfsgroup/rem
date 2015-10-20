@@ -204,7 +204,7 @@ public class LiquidacionManager implements LiquidacionApi {
 		ProcedimientoPCO prcPCO = genericDao.get(ProcedimientoPCO.class, 
 				genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", dto.getIdProcedimiento()));			
 		if(prcPCO != null && 
-				(DDEstadoPreparacionPCO.PRETURNADO.equals(prcPCO.getEstadoActual().getCodigo()) ||
+				(DDEstadoPreparacionPCO.EN_ESTUDIO.equals(prcPCO.getEstadoActual().getCodigo()) ||
 				DDEstadoPreparacionPCO.PREPARACION.equals(prcPCO.getEstadoActual().getCodigo()) ||
 				DDEstadoPreparacionPCO.SUBSANAR.equals(prcPCO.getEstadoActual().getCodigo())
 				)

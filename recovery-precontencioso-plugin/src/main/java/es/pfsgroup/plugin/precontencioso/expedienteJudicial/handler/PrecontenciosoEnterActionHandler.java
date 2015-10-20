@@ -80,6 +80,9 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 			//Si es CONCURSO invocar inicializacion
 			if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
+				if (prc.getProcessBPM() == null) {
+					prc.setProcessBPM(executionContext.getProcessInstance().getId());
+				}
 				executor.execute("plugin.precontencioso.inicializarPco", prc);
 			}
 			executor.execute("es.pfsgroup.plugin.precontencioso.expedienteJudicial.recalcularTareasPreparacionDocumental", prc.getId());

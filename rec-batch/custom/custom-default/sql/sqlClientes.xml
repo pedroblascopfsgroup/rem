@@ -265,7 +265,7 @@
 		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
 		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
 		, VARR AS (
-			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID, p.per_ultima_operacion
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --, p.per_ultima_operacion
 				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
 				inner join per_personas p on a1.per_id = p.per_id
 		)
@@ -274,12 +274,15 @@
 	           FROM VARR arr
 	             LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
 	             JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado           
-	           /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
+	           /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre 
+	           Esto de momento, solo aplica a los exp. de seguimiento
 	           WHERE (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))
+	           */
 	           /* Que tenga un arquetipo NUEVO gestionable */
 	           AND arq_cal.arq_gestion = 1
 	           /* Que tenga un NUEVO arquetipo que sea de recuperacion */
 	           AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo})
+	           /* De momento el nivel y salto solo para los de exp. de seguimiento
 	           AND
 	           (
 	             CASE WHEN arq_per.dd_tsn_id is null THEN 1
@@ -287,7 +290,7 @@
 	                ELSE CASE WHEN arq_cal.arq_nivel > arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoArriba.codigo}) THEN 1
 	                    ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1 
 	                        ELSE 0 END END END END
-	           ) = 1
+	           ) = 1*/
 	           /* Que la persona no esté atrapada en ningún expediente de seguimiento */
 	           AND NOT EXISTS (
 	             SELECT pex.per_id 
@@ -376,7 +379,7 @@
 		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
 		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
 		, VARR AS (
-			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID, p.per_ultima_operacion
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --, p.per_ultima_operacion
 				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
 				inner join per_personas p on a1.per_id = p.per_id
 		)
@@ -399,8 +402,8 @@
 		                SELECT NVL(pol.pol_fecha_vigencia, sysdate-1) from CMP_CICLO_MARCADO_POLITICA cmp
 		                    JOIN POL_POLITICA pol ON pol.cmp_id = cmp.cmp_id
 		                    JOIN ${master.schema}.DD_ESP_ESTADO_POLITICA esp ON pol.DD_ESP_ID = esp.DD_ESP_ID
-		                    where 1=1
-		                        AND cmp.per_id = arr.per_id
+		                    where 
+		                        cmp.per_id = arr.per_id
 		                        AND esp.dd_esp_codigo = ${ddEstadoPolitica.vigente.codigo}
 		            )            
 		            /* O, si hay un salto suficientemente grande de nivel de arquetipo como indica el arquetipo actual*/

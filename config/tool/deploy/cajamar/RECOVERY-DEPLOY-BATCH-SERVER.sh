@@ -2,6 +2,11 @@
 
 LOCAL_PATH=`pwd`
 
+
+unzip zip/batch*.zip
+rm -rf /recovery/batch-server/programas/batch/*
+cp -r batch/* /recovery/batch-server/programas/batch/
+cd $LOCAL_PATH
 rm /recovery/batch-server/shells/*.sh
 cp scripts/shells/* /recovery/batch-server/shells/
 chmod u+x /recovery/batch-server/shells/*.sh

@@ -150,6 +150,8 @@
     </entry>
 
     <entry key="gcl.pasajeGruposProduccion">
+      BEGIN
+        OPERACION_DDL.DDL_TABLE('STATS','TMP_GCL_GRUPOS_CLIENTES');
         INSERT INTO GCL_GRUPOS_CLIENTES (
            GCL_ID,
            DD_TGL_ID,
@@ -192,10 +194,13 @@
                         TMP_GCL_DATE_EXTRA2,
                         TMP_GCL_NUM_EXTRA1,
                         TMP_GCL_NUM_EXTRA2
-        from TMP_GCL_GRUPOS_CLIENTES
+        from TMP_GCL_GRUPOS_CLIENTES;
+      END;
     </entry>
 
     <entry key="gcl.pasajeRelacionesProduccion">
+      BEGIN
+        OPERACION_DDL.DLL_TABLE('STATS','TMP_PER_GCL');
         INSERT INTO PER_GCL (
             PER_GCL_ID,
             GCL_ID,
@@ -237,6 +242,7 @@
         FROM TMP_PER_GCL
           LEFT JOIN PER_PERSONAS PER ON TMP_PER_GCL_COD_CLI = PER.PER_COD_CLIENTE_ENTIDAD
           LEFT JOIN DD_TGE_TIPO_RELACION_GRUPO DD ON DD.DD_TGE_CODIGO = TMP_PER_GCL_TIPO_RELACION
-          LEFT JOIN GCL_GRUPOS_CLIENTES GCL ON GCL.GCL_CODIGO = TMP_PER_GCL_CODIGO_GRUPO
+          LEFT JOIN GCL_GRUPOS_CLIENTES GCL ON GCL.GCL_CODIGO = TMP_PER_GCL_CODIGO_GRUPO;
+       END;
     </entry>
 </properties>

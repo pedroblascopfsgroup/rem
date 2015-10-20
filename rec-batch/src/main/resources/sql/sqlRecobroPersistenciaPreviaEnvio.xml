@@ -1302,7 +1302,7 @@
                 -- Actualizamos estadisticas
                 OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CONTRATOS_CONS_BAJA');
                 OPERACION_DDL.DDL_TABLE('STATS','CRC_CICLO_RECOBRO_CNT');
-                OPERACION_DDL.DDL_TABLE('STATS','CRE_CICLO_RECOBRO_EXP');
+--lrc                OPERACION_DDL.DDL_TABLE('STATS','CRE_CICLO_RECOBRO_EXP');
             END;
         ]]>
     </entry>
@@ -1435,7 +1435,7 @@
                  , BATCH_DATOS_PER PER
              WHERE TMP.PER_ID = EXC.PER_ID(+) AND EXC.EXC_ID IS NULL
                AND TMP.PER_ID = PER.PER_ID
-               AND PER.PER_DEUDA_IRREGULAR > 0;
+               AND PER.PER_DEUDA_IRREGULAR > 0
         ]]>
     </entry>
 
@@ -2212,7 +2212,7 @@
             FROM TMP_CRE_NUEVOS TMP
               JOIN RCF_SCA_SUBCARTERA SCA ON TMP.RCF_SCA_ID = SCA.RCF_SCA_ID;
 
-          OPERACION_DDL.DDL_TABLE('STATS','CRE_CICLO_RECOBRO_EXP');
+--        OPERACION_DDL.DDL_TABLE('STATS','CRE_CICLO_RECOBRO_EXP');
 
           INSERT INTO TMP_CRC_NUEVOS
           SELECT DISTINCT CEX.CNT_ID
@@ -2263,7 +2263,7 @@
                , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
             FROM TMP_CRC_NUEVOS;
 
-          OPERACION_DDL.DDL_TABLE('STATS','CRC_CICLO_RECOBRO_CNT');
+--        OPERACION_DDL.DDL_TABLE('STATS','CRC_CICLO_RECOBRO_CNT');
 
           INSERT INTO TMP_CRP_NUEVOS
           SELECT DISTINCT PEX.PER_ID
@@ -2303,7 +2303,7 @@
                , 0 VERSION, '${usuario.crear}' USUARIOCREAR, SYSDATE FECHACREAR,0 BORRADO
             FROM TMP_CRP_NUEVOS;
 
-          OPERACION_DDL.DDL_TABLE('STATS','CRP_CICLO_RECOBRO_PER');
+--        OPERACION_DDL.DDL_TABLE('STATS','CRP_CICLO_RECOBRO_PER');
 
           COMMIT;
 
@@ -3594,6 +3594,22 @@
             FROM REC_FICHERO_CONTRATOS AGC
               JOIN CRC ON AGC.ID_ENVIO = CRC.CRC_ID_ENVIO
               JOIN ADC ON CRC.CNT_ID = ADC.CNT_ID;
+            COMMIT;
+
+--**Log
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','1-TMP_ARQ_RECOBRO', count(*) from TMP_ARQ_RECOBRO;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','2-BATCH_RCF_ENTRADA', count(*) from BATCH_RCF_ENTRADA;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','3-BATCH_DATOS_EXP', count(*) from BATCH_DATOS_EXP;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','4-BATCH_DATOS_CNT_EXP', count(*) from BATCH_DATOS_CNT_EXP;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','5-BATCH_DATOS_PER_EXP', count(*) from BATCH_DATOS_PER_EXP;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','6-BATCH_DATOS_EXP_MANUAL', count(*) from BATCH_DATOS_EXP_MANUAL;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','7-BATCH_DATOS_CNT_PER', count(*) from BATCH_DATOS_CNT_PER;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','8-BATCH_DATOS_CNT', count(*) from BATCH_DATOS_CNT;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','9-BATCH_DATOS_PER', count(*) from BATCH_DATOS_PER;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','10-BATCH_DATOS_CNT_INFO', count(*) from BATCH_DATOS_CNT_INFO;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','11-BATCH_DATOS_CLI', count(*) from BATCH_DATOS_CLI;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','12-BATCH_DATOS_EXCEPTUADOS', count(*) from BATCH_DATOS_EXCEPTUADOS;
+            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','13-BATCH_DATOS_GCL', count(*) from BATCH_DATOS_GCL;
             COMMIT;
         END;
     </entry>

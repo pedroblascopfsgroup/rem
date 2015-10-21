@@ -109,7 +109,7 @@ ULTIMO_TAR AS (
       INNER JOIN BANK01.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
       INNER JOIN BANK01.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID
 	    INNER JOIN BANK01.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TAP.DD_TPO_ID = TPO.DD_TPO_ID
-      INNER JOIN BANK01.AUX_THR_TRADUC_HITOS_RECNAL THR ON THR.TAP_CODIGO = TAP.TAP_CODIGO
+      LEFT JOIN BANK01.AUX_THR_TRADUC_HITOS_RECNAL THR ON THR.TAP_CODIGO = TAP.TAP_CODIGO
     WHERE TAR.TAR_FECHA_FIN IS NOT NULL
   )
   WHERE FILA=1
@@ -445,5 +445,63 @@ ON (RCV.ID_PROCEDI = SRC.asu_id_externo)
 WHEN MATCHED THEN 
 UPDATE SET 	 RCV.FECHA_DEMANDA = SRC.TEV_VALOR
 WHERE RCV.TIPO_PROCEDI = 'CONCURSO';
+
+COMMIT;
+
+-- COD9DZ, COD9DN
+MERGE INTO MINIREC.RCV_GEST_PDM_LITIGIO PDM
+USING ( select distinct 
+				aux.dz,
+				aux.dt,
+				aux.cnt_id
+		from (   
+		   select DISTINCT
+				lpad(dz.ofi_codigo_oficina,4,'0') dz,
+				lpad(dt.ofi_codigo_oficina,4,'0') dt,
+				cnt.cnt_id       
+		   from bank01.cnt_contratos cnt INNER JOIN
+		    MINIREC.RCV_GEST_PDM_LITIGIO pdm on cnt.cnt_id = pdm.id_cuenta_rcv left join  
+				bank01.ofi_oficinas ofi on ofi.ofi_id = cnt.ofi_id_admin left join
+				bank01.zon_zonificacion zonofi on zonofi.ofi_id = ofi.ofi_id left join
+				bank01.zon_zonificacion zondz on zondz.zon_id = zonofi.zon_pid left join
+				bank01.ofi_oficinas dz on dz.ofi_id = zondz.ofi_id left join
+				bank01.zon_zonificacion zondt on zondt.zon_id = zondz.zon_pid left join
+				bank01.ofi_oficinas dt on dt.ofi_id = zondt.ofi_id left join 
+				bank01.ofi_oficinas oficentro on oficentro.ofi_codigo = cnt.cnt_cod_centro
+        ) aux
+    ) SRC
+ON (PDM.ID_CUENTA_RCV = SRC.CNT_ID)
+WHEN MATCHED THEN
+UPDATE SET  
+			PDM.COD9ZO = SRC.DZ,
+			PDM.COD9DN = SRC.DT ;
+
+COMMIT;
+			
+-- CENTRO RECUPERACION
+MERGE INTO MINIREC.RCV_GEST_PDM_LITIGIO PDM
+USING ( with personas_ofi_gestora as (
+            select icc.per_id, icc.icc_value
+            from bank01.ext_icc_info_extra_cli icc inner join 
+                bank01.ext_dd_ifx_info_extra_cli ifx on ifx.dd_ifx_id = icc.dd_ifx_id and dd_ifx_codigo = 'COD_OFICINA_GESTORA'
+            )
+        select centro_recuperaciones, cnt_id
+        from (
+            select distinct 
+                    lpad(oficr.ofi_codigo_oficina,4,'0') centro_recuperaciones,
+                    cpe.cnt_id,
+                    ROW_NUMBER () OVER (PARTITION BY cpe.cnt_id ORDER BY cpe.cpe_orden) rn
+            from 
+              bank01.cpe_contratos_personas cpe  INNER JOIN
+              MINIREC.RCV_GEST_PDM_LITIGIO pdm on cpe.cnt_id = pdm.id_cuenta_rcv inner join
+              bank01.dd_tin_tipo_intervencion tin on tin.dd_tin_id = cpe.dd_tin_id and tin.DD_TIN_TITULAR = 1 left join 
+              personas_ofi_gestora on personas_ofi_gestora.per_id = cpe.per_id inner join
+              bank01.ofi_oficinas oficr on oficr.ofi_codigo_oficina = personas_ofi_gestora.icc_value
+          ) orden 
+          where rn = 1
+    ) SRC
+ON (PDM.ID_CUENTA_RCV = SRC.CNT_ID)
+WHEN MATCHED THEN
+UPDATE SET  PDM.CENTRO_RECUP = SRC.centro_recuperaciones;
 
 COMMIT;

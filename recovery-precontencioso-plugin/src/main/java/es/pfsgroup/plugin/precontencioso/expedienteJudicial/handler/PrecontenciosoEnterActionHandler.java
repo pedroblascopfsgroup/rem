@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -11,14 +10,9 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 

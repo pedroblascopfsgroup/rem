@@ -37,6 +37,11 @@
 				 return procedimientoPcoManager.existenGestoresCorrectos(idProcedimiento);
 			}
 			
+			def dameTipoTurnado = {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.dameTipoTurnado(idProcedimiento);
+			}
+			
 			]]></value>
   		</list>
   	</property>

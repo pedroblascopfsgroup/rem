@@ -16,7 +16,7 @@
 		data: tiposImporteLitData
     	, name : 'turnadoCodigoImporteLitigios'
     	, value: '${despacho.turnadoCodigoImporteLitigios}'
-    	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipoimporte" text="**Tipo importe" />'
+    	,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.ventana.label.tipoimporte" text="**Tipo importe" />'
 		,width : 130
     });
     
@@ -26,7 +26,7 @@
 		data: tiposCalidadLitData
     	,name : 'turnadoCodigoCalidadLitigios'
     	, value: '${despacho.turnadoCodigoCalidadLitigios}'
-    	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipocalidad" text="**Tipo calidad" />'
+    	,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.ventana.label.tipocalidad" text="**Tipo calidad" />'
 		,width : 130
     });
 
@@ -36,7 +36,7 @@
 		data: tiposImporteConData
     	,name : 'turnadoCodigoImporteConcursal'
     	, value: '${despacho.turnadoCodigoImporteConcursal}'
-    	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipoimporte" text="**Tipo importe" />'
+    	,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.ventana.label.tipoimporte" text="**Tipo importe" />'
 		,width : 130
     });
     
@@ -46,12 +46,12 @@
 		data: tiposCalidadConData
     	,name : 'turnadoCodigoCalidadConcursal'
     	, value: '${despacho.turnadoCodigoCalidadConcursal}'
-    	,fieldLabel : '<s:message code="plugin.config.esquematurnado.letrado.ventana.label.tipocalidad" text="**Tipo calidad" />'
+    	,fieldLabel : '<s:message code="plugin.config.despachoExterno.turnado.ventana.label.tipocalidad" text="**Tipo calidad" />'
 		,width : 130
     });
 
 	var turnadoLitigiosFieldSet = new Ext.form.FieldSet({
-		title : '<s:message code="plugin.config.esquematurnado.editar.panelLitigios.titulo" text="**Turnado Litigios" />'
+		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelLitigios.titulo" text="**Turnado Litigios" />'
 		,layout:'column'
 		,autoHeight:true
 		,border:true
@@ -69,7 +69,7 @@
 	});
 
 	var turnadoConcursosFieldSet = new Ext.form.FieldSet({
-		title : '<s:message code="plugin.config.esquematurnado.editar.panelConcursos.titulo" text="**Turnado Concursos" />'
+		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelConcursos.titulo" text="**Turnado Concursos" />'
 		,layout:'column'
 		,autoHeight:true
 		,border:true
@@ -106,7 +106,7 @@
     
     var comunidadesData = <app:dict value="${listaComunidadesAutonomas}" />;
     var comboComunidades = app.creaDblSelect(comunidadesData 
-    	,'<s:message code="plugin.config.esquematurnado.editar.comunidades" text="**Comunidades" />'
+    	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.comunidades" text="**Comunidades" />'
     	,config);
     	
     var arrayComunidadesLetrado = [ 
@@ -119,7 +119,7 @@
     
 	var provinciasData = <app:dict value="${listaProvincias}" />;
     var comboProvincias = app.creaDblSelect(provinciasData 
-    	,'<s:message code="plugin.config.esquematurnado.editar.provincias" text="**Provincias" />'
+    	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
     	,config);
     	
     var arrayProvinciasLetrado = [ 
@@ -131,7 +131,7 @@
 	comboProvincias.setValue(arrayProvinciasLetrado);
 	
 	var ambitoActuacionFieldSet = new Ext.form.FieldSet({
-		title : '<s:message code="plugin.config.esquematurnado.editar.panelAmbActuacion.titulo" text="**Ambito actuación" />'
+		title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.panelAmbActuacion.titulo" text="**Ambito actuación" />'
 		,layout:'column'
 		,autoHeight:true
 		,border:true

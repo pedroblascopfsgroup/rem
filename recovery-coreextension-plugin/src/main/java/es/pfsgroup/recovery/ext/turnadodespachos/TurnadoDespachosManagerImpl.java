@@ -133,9 +133,15 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 
 	@Override
 	@Transactional
-	public void turnar(Long idAsunto) throws AplicarTurnadoException {
-		// TODO Auto-generated method stub
-
+	public void turnar(Long idAsunto, String username, String codigoGestor) throws AplicarTurnadoException {
+		
+		try {
+			esquemaTurnadoDao.turnar(idAsunto, username, codigoGestor);
+		}
+		catch(Exception e) {
+			logger.error("Error en el método turnar: " + e.getMessage());
+			throw new AplicarTurnadoException(e.getMessage());
+		}
 	}
 
 	@Override
@@ -185,5 +191,9 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 				(esquema.getEstado().getCodigo().equals(DDEstadoEsquemaTurnado.ESTADO_TERMINADO) ||
 				esquema.getAuditoria().getUsuarioCrear()==usuarioLogado.getUsername());
 		return modoConsulta;
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }

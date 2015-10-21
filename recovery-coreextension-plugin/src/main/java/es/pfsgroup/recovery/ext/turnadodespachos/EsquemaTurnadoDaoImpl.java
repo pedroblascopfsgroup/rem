@@ -2,7 +2,8 @@ package es.pfsgroup.recovery.ext.turnadodespachos;
 
 import javax.annotation.Resource;
 
-import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +15,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Repository
@@ -76,4 +75,17 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 		return hqlSelect.append(hqlFrom).append(hqlWhere).toString();
 	}
 
+	@Override
+	public void turnar(Long idAsunto, String username, String codigoGestor) {
+		
+		Session session = this.getSessionFactory().getCurrentSession();
+		
+		Query query = session.createSQLQuery(
+				"CALL asignacion_asuntos_turnado(:idAsunto, :username, :codigoGestor)")
+				.setParameter("idAsunto", idAsunto)
+				.setParameter("username", username)
+				.setParameter("codigoGestor", codigoGestor);
+						
+		query.executeUpdate();
+	}
 }

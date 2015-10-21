@@ -60,7 +60,7 @@ public interface TurnadoDespachosManager {
 	 * 
 	 * @param idAsunto
 	 */
-	void turnar(Long idAsunto) throws AplicarTurnadoException;
+	void turnar(Long idAsunto, String username, String codigoGestor) throws AplicarTurnadoException;
 
 	/**
 	 * Elimina un esquema

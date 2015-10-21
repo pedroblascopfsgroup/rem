@@ -1,27 +1,26 @@
 <pfslayout:tabpage
-	titleKey="plugin.config.despachoExterno.turnado.title"
+	titleKey="plugin.config.despachoExterno.turnado.tabEsquema.title"
 	title="**Turnado de despacho" items="panelSuperior">
 
 	<pfsforms:textfield
-		labelKey="plugin.config.despachoExterno.turnado.litigios.tipoImporte"
+		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.litigios.tipoImporte"
 		label="**Tipo importe" name="turnadoLitigiosTipoImporte"
 		value="${despacho.turnadoCodigoImporteLitigios}" readOnly="true" />
 	
 	<pfsforms:textfield
-		labelKey="plugin.config.despachoExterno.turnado.litigios.tipoCalidad"
+		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.litigios.tipoCalidad"
 		label="**Tipo calidad" name="turnadoLitigiosTipoCalidad"
 		value="${despacho.turnadoCodigoCalidadLitigios}" readOnly="true" />
 	
 	<pfsforms:textfield
-		labelKey="plugin.config.despachoExterno.turnado.concursos.tipoImporte"
+		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.concursos.tipoImporte"
 		label="**Tipo importe" name="turnadoConcursosTipoImporte"
 		value="${despacho.turnadoCodigoImporteConcursal}" readOnly="true" />
 	
 	<pfsforms:textfield
-		labelKey="plugin.config.despachoExterno.turnado.concursos.tipoCalidad"
+		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.concursos.tipoCalidad"
 		label="**Tipo calidad" name="turnadoConcursosTipoCalidad"
-		value="${despacho.turnadoCodigoCalidadConcursal}" readOnly="true" />
-		
+		value="${despacho.turnadoCodigoCalidadConcursal}" readOnly="true" />		
 		
 	<c:if test="${not empty despacho.turnadoCodigoImporteLitigios or not empty despacho.turnadoCodigoImporteConcursal}">
 	page.webflow({
@@ -65,18 +64,18 @@
 	</c:forEach>
 	
 	<pfsforms:textfield
-		labelKey="plugin.config.despachoExterno.turnado.ambitoactuacion.comunidades"
+		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.ambitoactuacion.comunidades"
 		label="**Comunidades" name="comunidadesActuacion"
 		value="${comunidades}" readOnly="true" />
 	<pfsforms:textfield
-		labelKey="plugin.config.despachoExterno.turnado.ambitoactuacion.provincias"
+		labelKey="plugin.config.despachoExterno.turnado.tabEsquema.ambitoactuacion.provincias"
 		label="**Provincias" name="provinciasActuacion" value="${provincias}"
 		readOnly="true" />
 
 	var turnadoConcursosPanel = new Ext.Panel({
 		layout:'table'
 		,title : '<s:message
-		code="plugin.config.despachoExterno.turnado.concursos.titulo"
+		code="plugin.config.despachoExterno.turnado.tabEsquema.concursos.titulo"
 		text="**Turnado Concursos" />'
 		,collapsible : false
 		,titleCollapse : false
@@ -94,7 +93,7 @@
 	var turnadoLitigiosPanel = new Ext.Panel({
 		layout:'table'
 		,title : '<s:message
-		code="plugin.config.despachoExterno.turnado.litigios.titulo"
+		code="plugin.config.despachoExterno.turnado.tabEsquema.litigios.titulo"
 		text="**Turnado Litigios" />'
 		,collapsible : false
 		,titleCollapse : false
@@ -112,7 +111,7 @@
 	var ambitosActuacionPanel = new Ext.Panel({
 		layout:'table'
 		,title : '<s:message
-		code="plugin.config.despachoExterno.turnado.ambitoActuacion.titulo"
+		code="plugin.config.despachoExterno.turnado.tabEsquema.ambitoActuacion.titulo"
 		text="**&Aacute;mbitos actuaci&oacute;n" />'
 		,collapsible : false
 		,titleCollapse : false
@@ -127,14 +126,14 @@
 	});
 	
 	var btnEditarTurnadoLetrado = new Ext.Button({
-			text : '<s:message code="plugin.config.esquematurnado.letrado.boton.editar" text="**Editar letrado" />'
+			text : '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.boton.editar" text="**Editar turnado" />'
 			,iconCls : 'icon_edit'
 			,handler : function(){ 
 				var w = app.openWindow({
 					flow : 'turnadodespachos/ventanaEditarLetrado'
 					,width :  600
 					,closable: true
-					,title : '<s:message code="plugin.config.esquematurnado.letrado.ventana.titulo" text="**Turnado de letrado" />'
+					,title : '<s:message code="plugin.config.despachoExterno.turnado.ventana.titulo" text="**Edici&oacute;n de turnado" />'
 					,params : {id:${despacho.id}}
 				});
 				w.on(app.event.DONE, function(){
@@ -150,7 +149,7 @@
 	});
 
 	var panelSuperior = new Ext.Panel({
-		title:'<s:message code="plugin.config.esquematurnado.letrado.panel.titulo" text="**Datos turnado"/>'
+		title:'<s:message code="plugin.config.despachoExterno.turnado.ventana.panel.titulo" text="**Datos turnado"/>'
 		,layout:'table'
 		,collapsible : false
 		,titleCollapse : false

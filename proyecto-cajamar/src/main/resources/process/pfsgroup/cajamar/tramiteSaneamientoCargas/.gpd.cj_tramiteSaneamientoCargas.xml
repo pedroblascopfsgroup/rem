@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_tramiteSaneamientoCargas" width="1656" height="1324">
+  <node name="Inicio" x="288" y="27" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ008_RevisarEstadoCargas" x="240" y="110" width="240" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="31" y="4"/>
+      <bendpoint w1="-282" h1="0" w2="0" h2="-101"/>
+    </edge>
+  </node>
+  <node name="CJ008_RevisarEstadoCargasDecision" x="242" y="227" width="240" height="36">
+    <edge>
+      <label x="7" y="32"/>
+      <bendpoint w1="-172" h1="2" w2="0" h2="-128"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-13"/>
+      <bendpoint w1="17" h1="81" w2="-24" h2="-744"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="403" h1="-1" w2="-4" h2="-132"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegistrarPresentacionInscripcion" x="62" y="357" width="256" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-172" h1="-1" w2="-60" h2="145"/>
+      <bendpoint w1="-172" h1="-67" w2="-60" h2="79"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-31" h1="-180" w2="-201" h2="67"/>
+    </edge>
+  </node>
+  <node name="CJ008_PropuestaCancelacionCargas" x="623" y="283" width="275" height="36">
+    <edge>
+      <label x="6" y="-15"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="843" h1="14" w2="178" h2="-457"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="152" h1="-76" w2="552" h2="97"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegInsCancelacionCargasReg" x="71" y="473" width="245" height="36">
+    <edge>
+      <label x="-48" y="19"/>
+      <bendpoint w1="99" h1="-60" w2="102" h2="56"/>
+    </edge>
+    <edge>
+      <label x="5" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-34" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-17" y="-31"/>
+      <bendpoint w1="-204" h1="0" w2="-89" h2="262"/>
+      <bendpoint w1="-204" h1="-200" w2="-89" h2="62"/>
+    </edge>
+  </node>
+  <node name="CJ008_RevisarPropuestaCancelacionCargas" x="1062" y="537" width="277" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-90" h1="-78" w2="-89" h2="74"/>
+    </edge>
+  </node>
+  <node name="CJ008_LiquidarCargas" x="669" y="679" width="205" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegInsCancelacionCargasEconomicas" x="628" y="793" width="288" height="36">
+    <edge>
+      <label x="12" y="23"/>
+      <bendpoint w1="-219" h1="1" w2="-4" h2="-108"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="115" h1="-54" w2="116" h2="60"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="266" h1="1" w2="-107" h2="120"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegInsCancelacionCargasEconomicasDecision" x="418" y="901" width="341" height="36">
+    <edge>
+      <label x="-77" y="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="150" h1="-37" w2="-687" h2="110"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegistrarPresentacionInscripcionEco" x="720" y="1027" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="30" h1="-118" w2="117" h2="116"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="271" h1="-7" w2="-91" h2="348"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegInsCancelacionCargasRegEco" x="748" y="1140" width="274" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="70" h1="-70" w2="172" h2="41"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="205" h1="-5" w2="-55" h2="461"/>
+    </edge>
+  </node>
+  <node name="CJ008_SaneamientoDecision" x="295" y="1052" width="216" height="36">
+    <edge>
+      <label x="378" y="3"/>
+      <bendpoint w1="3" h1="229" w2="-1019" h2="527"/>
+      <bendpoint w1="796" h1="240" w2="-226" h2="538"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegInsCancelacionCargasRegDecision" x="72" y="603" width="300" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-215" h1="5" w2="-71" h2="397"/>
+    </edge>
+  </node>
+  <node name="CJ008_PropuestaCancelacionCargasDecision" x="625" y="373" width="290" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ008_ObtenerAprobPropuesta" x="1083" y="385" width="233" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ008_RegInsCancelacionCargasRegEcoDecision" x="730" y="1230" width="334" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-245" h1="-2" w2="249" h2="176"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="235" h1="-1" w2="-293" h2="475"/>
+    </edge>
+  </node>
+  <node name="Fin" x="12" y="211" width="132" height="36"/>
+  <node name="Fin2" x="1359" y="754" width="132" height="36"/>
+</root-container>

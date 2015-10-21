@@ -239,7 +239,15 @@ var anyadirFechaFaltante = function(response){
 	comboPlaza.on('afterrender', function(combo) {
 		combo.mode='remote';
 	});
-	comboPlaza.setDisabled(true);
+	if(codPlaza!=''){
+		comboPlaza.setDisabled(true);
+	}
+	
+	comboPlaza.on('select', function(){
+		comboJuzgado.setDisabled(false);	
+		recargarComboJuzgados();
+	});
+	
 	items[2 + offset] = comboPlaza;
 
 	// combo juzgado ------------------------------------------
@@ -267,6 +275,14 @@ var anyadirFechaFaltante = function(response){
 		,width: 300
 		,fieldLabel : items[3 + offset].fieldLabel
 	});
+	
+	var recargarComboJuzgados = function(){
+		comboJuzgado.store.removeAll();
+		comboJuzgado.clearValue();
+		if (comboPlaza.getValue()!=null && comboPlaza.getValue()!=''){
+			comboJuzgado.store.webflow({id:comboPlaza.getValue()});
+		}
+	}
 	
 	Ext.onReady(function() {
 		comboJuzgado.store.baseParams.id = codPlaza;

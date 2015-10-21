@@ -1,0 +1,306 @@
+--/*
+--##########################################
+--## AUTOR=GONZALO ESTELLES
+--## FECHA_CREACION=20150802
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1.3-hcj
+--## INCIDENCIA_LINK=VARIAS
+--## PRODUCTO=NO
+--##
+--## Finalidad: Resolución de varias incidencias de Litigios
+--## INSTRUCCIONES: Relanzable
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+    PAR_TABLENAME_TPROC VARCHAR2(50 CHAR) := 'DD_TPO_TIPO_PROCEDIMIENTO';   -- [PARAMETRO] TABLA para tipo de procedimiento. Por defecto DD_TPO_TIPO_PROCEDIMIENTO
+    PAR_TABLENAME_TARPR VARCHAR2(50 CHAR) := 'TAP_TAREA_PROCEDIMIENTO';     -- [PARAMETRO] TABLA para tareas del procedimiento. Por defecto TAP_TAREA_PROCEDIMIENTO
+    PAR_TABLENAME_TPLAZ VARCHAR2(50 CHAR) := 'DD_PTP_PLAZOS_TAREAS_PLAZAS'; -- [PARAMETRO] TABLA para plazos de tareas. Por defecto DD_PTP_PLAZOS_TAREAS_PLAZAS
+    
+    VAR_TABLENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
+    VAR_SEQUENCENAME VARCHAR2(50 CHAR); -- Nombre de la tabla a crear
+    VAR_CURR_ROWARRAY VARCHAR2(25 CHAR);                -- Variable con fila array actual - para excepciones
+    VAR_CURR_TABLE VARCHAR2(50 CHAR);                   -- Variable con tabla actual - para excepciones
+    
+    V_CODIGO_TAP VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Tap tareas
+    V_CODIGO_PLAZAS VARCHAR2(100 CHAR); -- Variable para nombre campo FK con codigo de Plazos
+
+    V_TAREA VARCHAR(50 CHAR);
+
+    --Insertando valores en TAP_TAREA_PROCEDIMIENTO
+    TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(2000);
+    TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
+    V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
+      T_TIPO_TAP(
+        /*DD_TPO_ID(FK)................:*/ 'H009',
+        /*TAP_CODIGO...................:*/ 'H009_BPMCreditosContingentes',
+        /*TAP_VIEW.....................:*/ null,
+        /*TAP_SCRIPT_VALIDACION........:*/ null,
+        /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
+        /*TAP_SCRIPT_DECISION..........:*/ null,
+        /*DD_TPO_ID_BPM(FK)............:*/ 'HC103',
+        /*TAP_SUPERVISOR,..............:*/ '0',
+        /*TAP_DESCRIPCION,.............:*/ 'Trámite Créditos contigentes',
+        /*VERSION......................:*/ '0',
+        /*USUARIOCREAR.................:*/ 'DD',
+        /*BORRADO......................:*/ '0',
+        /*TAP_ALERT_NO_RETORNO.........:*/ null,
+        /*TAP_ALERT_VUELTA_ATRAS.......:*/ null,
+        /*DD_FAP_ID(FK)................:*/ null,
+        /*TAP_AUTOPRORROGA.............:*/ '0',
+        /*DTYPE........................:*/ 'EXTTareaProcedimiento',
+        /*TAP_MAX_AUTOP................:*/ '3',
+        /*DD_TGE_ID(FK)................:*/ null,
+        /*DD_STA_ID(FK)................:*/ 'CJ-814',
+        /*TAP_EVITAR_REORG.............:*/ null,
+        /*DD_TSUP_ID(FK)...............:*/ null,
+        /*TAP_BUCLE_BPM................:*/ null        
+        ) 
+    ); 
+    V_TMP_TIPO_TAP T_TIPO_TAP;
+
+    --Insertando valores en DD_PTP_PLAZOS_TAREAS_PLAZAS
+    TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
+    TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
+    V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
+      T_TIPO_PLAZAS(null,null,'H009_BPMCreditosContingentes','300*24*60*60*1000L','0','0','DD')
+    ); 
+    V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
+
+    
+BEGIN	
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-764');
+	V_TAREA:='H025_resolucionFirme';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+		' TAP_SCRIPT_DECISION=NULL WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-764');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-757');
+	V_TAREA:='H023_confirmarOposicion';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H023_confirmarOposicion''''][''''comboOposicion'''']==DDSiNo.SI && (valores[''''H023_confirmarOposicion''''][''''comboVista'''']==null || valores[''''H023_confirmarOposicion''''][''''fechaOposicion'''']==null) ? ''''Es necesario indicar la fecha de oposici&oacute;n y si hay vista o no.'''' : (valores[''''H023_confirmarOposicion''''][''''comboVista'''']==DDSiNo.SI && valores[''''H023_confirmarOposicion''''][''''fechaVista'''']==null ? ''''Debe indicar la fecha de la vista'''' : null)'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-757');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-758');
+	V_TAREA:='H023_admisionOposicionYSenalamientoVista';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H023_admisionOposicionYSenalamientoVista''''][''''comboAdmision'''']==DDSiNo.SI && (valores[''''H023_admisionOposicionYSenalamientoVista''''][''''comboVista'''']==null || valores[''''H023_admisionOposicionYSenalamientoVista''''][''''fecha'''']==null) ? ''''Es necesario indicar la fecha de adminisi&oacute;n y si hay vista o no.'''' : (valores[''''H023_admisionOposicionYSenalamientoVista''''][''''comboVista'''']==DDSiNo.SI && valores[''''H023_admisionOposicionYSenalamientoVista''''][''''fechaVista'''']==null ? ''''Debe indicar la fecha de la vista'''' : null)'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-758');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-741');
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO' ||
+			' SET TAP_SCRIPT_VALIDACION = ''comprobarMinimoBienLote() ? (comprobarExisteDocumentoESRAS() ? (comprobarProvLocFinBien() ? null : ''''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Los bienes con lote deben tener informado el tipo de inmueble, provincia, localidad y n&uacute;mero de finca.</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento "Diligencia de se&ntilde;alamiento Edicto de subasta".</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Al menos un bien debe estar asignado a un lote</div>'''''' ' ||
+			' WHERE TAP_CODIGO = ''CJ004_SenyalamientoSubasta'' ';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-741');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-768');
+	V_TAREA:='H009_RevisarInsinuacionCreditos';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ERROR_VALIDACION=NULL ' ||
+	  ' ,TFI_VALIDACION=NULL ' ||
+	  ' WHERE TFI_NOMBRE=''numCreditos'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_VIEW = ''plugin/cajamar/tramiteFaseComun/revisarInsinuacionCreditos''' ||
+	' ,TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H009_RevisarInsinuacionCreditos''''][''''comboRectificacion'''']==DDSiNo.SI && valores[''''H009_RevisarInsinuacionCreditos''''][''''numCreditos'''']==null ? ''''Debe indicar el n&uacute;mero de cr&eacute;ditos rectificados.'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-768');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-770');
+	V_TAREA:='H009_PresentacionAdenda';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_SCRIPT_VALIDACION = NULL' ||
+	' ,TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H009_PresentacionAdenda''''][''''comboAdenda'''']==DDSiNo.SI && !comprobarExisteDocumentoRESADE() ? ''''Debe adjuntar el documento "Resoluci&oacute;n de la adenda"'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-770');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-760');
+	V_TAREA:='CJ001_RegistrarRespuestaComite';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_VIEW = ''plugin/cajamar/tramiteVentaDirecta/registrarRespuestaComite''' ||
+	' ,TAP_SCRIPT_VALIDACION_JBPM=''valores[''''CJ001_RegistrarRespuestaComite''''][''''comboResultado'''']==''''CON_OFE'''' && valores[''''CJ001_RegistrarRespuestaComite''''][''''importe'''']==null ? ''''Debe indicar el importe.'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-760');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-761');
+	V_TAREA:='CJ001_ContactarDeudor';
+	EXECUTE IMMEDIATE 'update '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET ' ||
+	  ' TFI_ERROR_VALIDACION=''tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio''' ||
+	  ' ,TFI_VALIDACION=''valor != null && valor != '''' ? true : false''' ||
+	  ' WHERE TFI_NOMBRE=''comboAdministrador'' AND TAP_ID IN (select tap_id from '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO='''||V_TAREA||''')';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-761');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-759');
+	V_TAREA:='CJ001_ResolucionFirme';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET ' ||
+	' TAP_SCRIPT_VALIDACION = NULL' ||
+	' ,TAP_SCRIPT_VALIDACION_JBPM=''valores[''''CJ001_AdmisionJuzgado''''][''''comboAdmision'''']==DDSiNo.SI && !comprobarExisteDocumentoAUTO() ? ''''Para completar esta tarea debe adjuntar el documento "Auto" al procedimiento.'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-759');
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-763');
+	V_TAREA:='H043_RevisarInsinuacionCreditos';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW = ''plugin/cajamar/tramiteReaperturaConcurso/revisarInsinuacionCreditos'',TAP_SCRIPT_VALIDACION_JBPM=''valores[''''H043_RevisarInsinuacionCreditos''''][''''comboRectificacion'''']==DDSiNo.SI && valores[''''H043_RevisarInsinuacionCreditos''''][''''numCreditos'''']==null ? ''''Debe indicar el n&uacute;mero de cr&eacute;ditos rectificados.'''' : null'' WHERE TAP_CODIGO='''||V_TAREA||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-763');
+	
+    DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-765');
+	V_TAREA:='CJ006_RevisarInsinuacionCreditos';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_VIEW = ''plugin/cajamar/tramiteDeclaracionIncumplimiento/revisarInsinuacionCreditos'' WHERE TAP_CODIGO = '''||V_TAREA||'''';
+
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TFI_TAREAS_FORM_ITEMS SET TFI_ERROR_VALIDACION=NULL, TFI_VALIDACION=NULL WHERE TFI_NOMBRE=''numCreditos'' AND TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TAREA||''')';
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-765');
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-766');
+	V_TAREA:='CJ006_ActualizarInsinuacionCreditos';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores['''''||V_TAREA||'''''][''''numCreditos''''] == null || valores['''''||V_TAREA||'''''][''''numCreditos''''] == '''''''' || valores['''''||V_TAREA||'''''][''''numCreditos''''] == ''''0'''' ? (cuentaCreditosInsinuados() != ''''0'''' ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditos'''' : null) : (new Long(cuentaCreditosInsinuados()) < new Long(valores['''''||V_TAREA||'''''][''''numCreditos'''']) ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditosInsinuados'''' : null)'' WHERE TAP_CODIGO = '''||V_TAREA||'''';
+
+	V_TAREA:='CJ006_RectificarInsinuacionCreditos';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores['''''||V_TAREA||'''''][''''numCreditos''''] == null || valores['''''||V_TAREA||'''''][''''numCreditos''''] == '''''''' || valores['''''||V_TAREA||'''''][''''numCreditos''''] == ''''0'''' ? (cuentaCreditosInsinuados() != ''''0'''' ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditos'''' : null) : (new Long(cuentaCreditosInsinuados()) < new Long(valores['''''||V_TAREA||'''''][''''numCreditos'''']) ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditosInsinuados'''' : null)'' WHERE TAP_CODIGO = '''||V_TAREA||'''';
+
+	V_TAREA:='CJ006_RevisarInsinuacionCreditos';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores['''''||V_TAREA||'''''][''''numCreditos''''] == null || valores['''''||V_TAREA||'''''][''''numCreditos''''] == '''''''' || valores['''''||V_TAREA||'''''][''''numCreditos''''] == ''''0'''' ? (cuentaCreditosInsinuados() != ''''0'''' ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditos'''' : null) : (new Long(cuentaCreditosInsinuados()) < new Long(valores['''''||V_TAREA||'''''][''''numCreditos'''']) ? ''''tareaExterna.procedimiento.tramiteFaseComun.numCreditosInsinuados'''' : null)'' WHERE TAP_CODIGO = '''||V_TAREA||'''';
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-766');
+
+	
+    /*
+    * LOOP ARRAY BLOCK-CODE: TAP_TAREA_PROCEDIMIENTO
+    *---------------------------------------------------------------------
+    */
+    VAR_CURR_TABLE := PAR_TABLENAME_TARPR;
+    V_CODIGO_TAP := 'TAP_CODIGO';
+    VAR_CURR_ROWARRAY := 0;
+    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || PAR_TABLENAME_TARPR || '........');
+    FOR I IN V_TIPO_TAP.FIRST .. V_TIPO_TAP.LAST
+      LOOP
+        V_TMP_TIPO_TAP := V_TIPO_TAP(I);
+
+        --EXISTENCIA DE REGISTROS: Mediante consulta a la tabla, se verifica si existen ya los registros a insertar mas adelante,
+        -- si ya existían los registros en la tabla, se informa de q existen y no se hace nada
+        -----------------------------------------------------------------------------------------------------------
+        DBMS_OUTPUT.PUT_LINE('[INFO] Array codigo '||V_CODIGO_TAP||' = '''||V_TMP_TIPO_TAP(2)||''' Descripcion = '''||V_TMP_TIPO_TAP(9)||'''---------------------------------'); 
+        DBMS_OUTPUT.PUT('[INFO] Verificando existencia de REGISTROS de la tabla '||VAR_CURR_TABLE||', con codigo '||V_CODIGO_TAP||' = '''||V_TMP_TIPO_TAP(2)||'''...'); 
+
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||VAR_CURR_TABLE||' WHERE '||V_CODIGO_TAP||' = '''|| V_TMP_TIPO_TAP(2) ||''' ';
+        --DBMS_OUTPUT.PUT_LINE(V_SQL);
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('OK - YA existe');
+            DBMS_OUTPUT.PUT_LINE('[INFO] NO se inserta el registro del array porque ya existe en '||VAR_CURR_TABLE);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('OK - NO existe');
+
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || PAR_TABLENAME_TARPR || ' (' ||
+                        'TAP_ID,DD_TPO_ID,TAP_CODIGO,TAP_VIEW,TAP_SCRIPT_VALIDACION,TAP_SCRIPT_VALIDACION_JBPM,TAP_SCRIPT_DECISION,DD_TPO_ID_BPM,' ||
+                        'TAP_SUPERVISOR,TAP_DESCRIPCION,VERSION,USUARIOCREAR,FECHACREAR,BORRADO,TAP_ALERT_NO_RETORNO,TAP_ALERT_VUELTA_ATRAS,DD_FAP_ID,' ||
+                        'TAP_AUTOPRORROGA,DTYPE,TAP_MAX_AUTOP,DD_TGE_ID,DD_STA_ID,TAP_EVITAR_REORG,DD_TSUP_ID,TAP_BUCLE_BPM) ' ||
+                        'SELECT ' ||
+                        'S_TAP_TAREA_PROCEDIMIENTO.NEXTVAL, ' ||
+                        '(SELECT DD_TPO_ID FROM ' || V_ESQUEMA || '.' || PAR_TABLENAME_TPROC || ' WHERE DD_TPO_CODIGO = ''' || REPLACE(TRIM(V_TMP_TIPO_TAP(1)),'''','''''')  || '''),' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(2)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(3)),'''','''''') || ''',' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(4)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(5)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(6)),'''','''''') || ''',' || 
+                        '(SELECT DD_TPO_ID FROM ' || V_ESQUEMA || '.' || PAR_TABLENAME_TPROC || ' WHERE DD_TPO_CODIGO = ''' || REPLACE(TRIM(V_TMP_TIPO_TAP(7)),'''','''''') || '''),' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(8)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(9)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(10)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(11)),'''','''''') || ''',' ||
+                        'sysdate,''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(12)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(13)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(14)),'''','''''') || ''',' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(15)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(16)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(17)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(18)),'''','''''') || ''',' ||
+                        '(SELECT DD_TGE_ID FROM ' || V_ESQUEMA || '.DD_TGE_TIPO_GESTION WHERE DD_TGE_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(19)) || '''),' || 
+                        '(SELECT DD_STA_ID FROM ' || V_ESQUEMA_MASTER || '.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO=''' || TRIM(V_TMP_TIPO_TAP(20)) || '''),' || 
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_TAP(21)),'''','''''') || ''',' 
+                             ||'(select dd_tge_id from ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor where dd_tge_codigo='''|| REPLACE(TRIM(V_TMP_TIPO_TAP(22)),'''','''''') || '''),''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_TAP(23)),'''','''''') 
+                        || ''' FROM DUAL';
+
+                VAR_CURR_ROWARRAY := I;
+                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                --DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_TIPO_TAP(2)||''','''||TRIM(V_TMP_TIPO_TAP(9))||'''');
+                EXECUTE IMMEDIATE V_MSQL;
+        END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
+
+
+    /*
+    * LOOP ARRAY BLOCK-CODE: DD_PTP_PLAZOS_TAREAS_PLAZAS
+    *---------------------------------------------------------------------
+    */
+    VAR_CURR_TABLE := PAR_TABLENAME_TPLAZ;
+    V_CODIGO_PLAZAS := 'TAP_CODIGO';
+    VAR_CURR_ROWARRAY := 0;
+    DBMS_OUTPUT.PUT('    [INSERT] '||V_ESQUEMA||'.' || PAR_TABLENAME_TPLAZ || '....');
+    FOR I IN V_TIPO_PLAZAS.FIRST .. V_TIPO_PLAZAS.LAST
+      LOOP
+        V_TMP_TIPO_PLAZAS := V_TIPO_PLAZAS(I);
+
+        --EXISTENCIA DE REGISTROS: Mediante consulta a la tabla, se verifica si existen ya los registros a insertar mas adelante,
+        -- si ya existían los registros en la tabla, se informa de q existen y no se hace nada
+        -----------------------------------------------------------------------------------------------------------
+        DBMS_OUTPUT.PUT_LINE('[INFO] Array codigo '||V_CODIGO_PLAZAS||' = '''||V_TMP_TIPO_PLAZAS(3)||''' Descripcion = '''||V_TMP_TIPO_PLAZAS(4)||'''---------------------------------'); 
+        DBMS_OUTPUT.PUT('[INFO] Verificando existencia de REGISTROS de la tabla '||VAR_CURR_TABLE||', con codigo '||V_CODIGO_PLAZAS||' = '''||V_TMP_TIPO_PLAZAS(3)||'''...'); 
+
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||VAR_CURR_TABLE||' WHERE TAP_ID = (SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''|| V_TMP_TIPO_PLAZAS(3) ||''') ';
+        --DBMS_OUTPUT.PUT_LINE(V_SQL);
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('OK - YA existe');
+            DBMS_OUTPUT.PUT_LINE('[INFO] NO se inserta el registro del array porque ya existe en '||VAR_CURR_TABLE);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('OK - NO existe');
+
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || PAR_TABLENAME_TPLAZ || 
+                        '(DD_PTP_ID,DD_JUZ_ID,DD_PLA_ID,TAP_ID,DD_PTP_PLAZO_SCRIPT,VERSION,BORRADO,USUARIOCREAR,FECHACREAR)' ||
+                        'SELECT ' ||
+                        'S_DD_PTP_PLAZOS_TAREAS_PLAZAS.NEXTVAL, ' ||
+                        '(SELECT DD_JUZ_ID FROM ' || V_ESQUEMA || '.DD_JUZ_JUZGADOS_PLAZA WHERE DD_JUZ_CODIGO = ''' || TRIM(V_TMP_TIPO_PLAZAS(1)) || '''), ' ||
+                        '(SELECT DD_PLA_ID FROM ' || V_ESQUEMA || '.DD_PLA_PLAZAS WHERE DD_PLA_CODIGO = ''' || TRIM(V_TMP_TIPO_PLAZAS(2)) || '''), ' ||
+                        '(SELECT TAP_ID FROM ' || V_ESQUEMA || '.' || PAR_TABLENAME_TARPR || ' WHERE TAP_CODIGO = ''' || TRIM(V_TMP_TIPO_PLAZAS(3)) || '''), ' ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(4)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(5)),'''','''''') || ''','   ||
+                        '''' || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(6)),'''','''''') || ''',''' 
+                             || REPLACE(TRIM(V_TMP_TIPO_PLAZAS(7)),'''','''''') || 
+                        ''', sysdate FROM DUAL'; 
+
+                VAR_CURR_ROWARRAY := I;
+                --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+                --DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_PLAZAS(3) ||''','''||TRIM(V_TMP_TIPO_PLAZAS(4))||'''');
+                EXECUTE IMMEDIATE V_MSQL;
+        END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('['||VAR_CURR_ROWARRAY||' filas-OK]');
+	
+COMMIT;
+ 
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

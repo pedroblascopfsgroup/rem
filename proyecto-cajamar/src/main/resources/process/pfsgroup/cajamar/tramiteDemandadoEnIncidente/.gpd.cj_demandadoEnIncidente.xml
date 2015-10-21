@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_demandadoEnIncidente" width="1618" height="1269">
+  <node name="Inicio" x="42" y="12" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H025_notificacionDemandaIncidental" x="421" y="14" width="293" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="4" y="-8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H025_registrarOposicion" x="257" y="263" width="204" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-57" y="99"/>
+      <bendpoint w1="13" h1="-162" w2="-195" h2="87"/>
+    </edge>
+  </node>
+  <node name="H025_admisionEscritoOposicion" x="245" y="406" width="227" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-184" h1="-115" w2="-185" h2="28"/>
+    </edge>
+    <edge>
+      <label x="12" y="-66"/>
+      <bendpoint w1="-269" h1="-1" w2="1" h2="142"/>
+    </edge>
+  </node>
+  <node name="H025_admisionEscritoOposicionDecision" x="224" y="521" width="270" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-1" y="-22"/>
+    </edge>
+  </node>
+  <node name="H025_registrarVista" x="37" y="634" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="4" y="36"/>
+      <bendpoint w1="-103" h1="-44" w2="-115" h2="147"/>
+      <bendpoint w1="-102" h1="-148" w2="-114" h2="43"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-144" h1="0" w2="-203" h2="-442"/>
+      <bendpoint w1="-144" h1="608" w2="-195" h2="8"/>
+    </edge>
+    <edge>
+      <label x="-42" y="-21"/>
+    </edge>
+  </node>
+  <node name="H025_registrarAllanamiento" x="690" y="259" width="208" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="31" y="57"/>
+      <bendpoint w1="-59" h1="-153" w2="168" h2="92"/>
+    </edge>
+  </node>
+  <node name="H025_resolucionFirme" x="493" y="763" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="165" h1="-1" w2="-334" h2="745"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-259" h1="-110" w2="-260" h2="19"/>
+    </edge>
+  </node>
+  <node name="H025_notificacionDemandaIncidentalDecision" x="420" y="156" width="296" height="36">
+    <edge>
+      <label x="-69" y="6"/>
+    </edge>
+    <edge>
+      <label x="-51" y="8"/>
+      <bendpoint w1="-42" h1="79" w2="166" h2="-28"/>
+    </edge>
+    <edge>
+      <label x="17" y="-31"/>
+      <bendpoint w1="-136" h1="66" w2="287" h2="25"/>
+    </edge>
+  </node>
+  <node name="H025_registrarResolucion" x="462" y="629" width="314" height="47">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="69" h1="25" w2="69" h2="25"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H025_registrarImporteCuotasAbonar" x="72" y="874" width="255" height="42">
+    <edge>
+      <label x="-159" y="18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-174" h1="4" w2="-170" h2="-353"/>
+      <bendpoint w1="-173" h1="354" w2="-169" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-157"/>
+      <bendpoint w1="-155" h1="53" w2="-119" h2="-302"/>
+      <bendpoint w1="-158" h1="342" w2="-122" h2="-13"/>
+    </edge>
+  </node>
+  <node name="H025_contabilizar" x="1063" y="1120" width="152" height="43">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-204" h1="83" w2="772" h2="-26"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-15" h1="23" w2="-15" h2="23"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-152" h1="-40" w2="168" h2="-40"/>
+    </edge>
+  </node>
+  <node name="H025_BPMTramiteCostas" x="806" y="928" width="197" height="36">
+    <edge>
+      <label x="-115" y="375"/>
+    </edge>
+  </node>
+  <node name="H025_ElaborarInformeCancelacion" x="46" y="1125" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-220" y="113"/>
+    </edge>
+    <edge>
+      <label x="-52" y="-10"/>
+    </edge>
+  </node>
+  <node name="H025_ElevarComite" x="413" y="1126" width="187" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-172" h1="-33" w2="169" h2="-32"/>
+    </edge>
+    <edge>
+      <label x="-45" y="-8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H025_RegistrarRespuestaComite" x="697" y="1123" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-176" h1="-25" w2="137" h2="-28"/>
+    </edge>
+  </node>
+  <node name="H025_ActualizarInsinuacionCreditos" x="991" y="982" width="295" height="36">
+    <edge>
+      <label x="-2" y="416"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H025_InsinuacionDecision" x="1409" y="981" width="208" height="36">
+    <edge>
+      <label x="172" y="429"/>
+    </edge>
+  </node>
+  <node name="fork1" x="562" y="837" width="122" height="24">
+    <edge>
+      <label x="-46" y="-9"/>
+      <bendpoint w1="198" h1="5" w2="-299" h2="-53"/>
+    </edge>
+    <edge>
+      <label x="-36" y="-13"/>
+    </edge>
+    <edge>
+      <label x="-39" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-47" y="-29"/>
+    </edge>
+  </node>
+  <node name="PerdidaGarantia" x="712" y="1020" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CancelaOperacion" x="562" y="968" width="132" height="36">
+    <edge>
+      <label x="12" y="-17"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="354" h1="-197" w2="-192" h2="789"/>
+    </edge>
+  </node>
+  <node name="CondenaCostas" x="413" y="947" width="126" height="36">
+    <edge>
+      <label x="-20" y="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="401" h1="-147" w2="-255" h2="757"/>
+    </edge>
+  </node>
+  <node name="Fin" x="22" y="263" width="132" height="36"/>
+  <node name="Fin2" x="1051" y="17" width="132" height="36"/>
+  <node name="Fin3" x="97" y="1232" width="132" height="36"/>
+</root-container>

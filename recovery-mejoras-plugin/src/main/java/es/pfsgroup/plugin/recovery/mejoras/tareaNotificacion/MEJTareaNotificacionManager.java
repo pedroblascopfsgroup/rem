@@ -84,7 +84,7 @@ public class MEJTareaNotificacionManager implements MEJTareaNoficacionApi{
 				if (tar.getMaximoAutoprorrogas()> tex.getNumeroAutoprorrogas()){
 					tex.setNumeroAutoprorrogas(tex.getNumeroAutoprorrogas()+1);
 				}else {
-					throw new BusinessOperationException("**Se han excedido el número máximo de autoprórrogas solicitadas");
+					throw new BusinessOperationException("**Se han excedido el nï¿½mero mï¿½ximo de autoprï¿½rrogas solicitadas");
 				}
 			}
 			

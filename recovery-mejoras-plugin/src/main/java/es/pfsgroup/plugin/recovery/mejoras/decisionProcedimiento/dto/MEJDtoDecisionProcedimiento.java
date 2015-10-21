@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -7,11 +9,14 @@ import javax.persistence.Column;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
+import com.ibatis.sqlmap.engine.type.SimpleDateFormatter;
+
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * 20/12/2012 Dto para decisiones de procedimiento
@@ -63,7 +68,7 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
         if (paralizar || finalizar) {
             if (causaDecision == null || "".equals(causaDecision)) {
                 messageContext.addMessage(new MessageBuilder().code("decisionProcedimiento.errores.causaNula").error().source("").defaultText(
-                        "**Debe seleccionar una causa para la decisión.").build());
+                        "**Debe seleccionar una causa para la decisiï¿½n.").build());
                 throw new ValidationException(ErrorMessageUtils.convertMessages(messageContext.getAllMessages()));
             }
         }
@@ -71,14 +76,14 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
         if (finalizar) {
             if (causaDecisionFinalizar == null || "".equals(causaDecisionFinalizar)) {
                 messageContext.addMessage(new MessageBuilder().code("decisionProcedimiento.errores.causaNula").error().source("").defaultText(
-                        "**Debe seleccionar una causa de finalización para la decisión.").build());
+                        "**Debe seleccionar una causa de finalizaciï¿½n para la decisiï¿½n.").build());
                 throw new ValidationException(ErrorMessageUtils.convertMessages(messageContext.getAllMessages()));
             }
         }
         if (paralizar) {
             if (causaDecisionParalizar == null || "".equals(causaDecisionParalizar)) {
                 messageContext.addMessage(new MessageBuilder().code("decisionProcedimiento.errores.causaNula").error().source("").defaultText(
-                        "**Debe seleccionar una causa de paralización para la decisión.").build());
+                        "**Debe seleccionar una causa de paralizaciï¿½n para la decisiï¿½n.").build());
                 throw new ValidationException(ErrorMessageUtils.convertMessages(messageContext.getAllMessages()));
             }
         }        
@@ -88,7 +93,7 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
         if (paralizar) {
             if (getFechaParalizacion() == null) {
                 messageContext.addMessage(new MessageBuilder().code("decisionProcedimiento.errores.fechaNula").error().source("").defaultText(
-                        "**Debe seleccionar una fecha de fin de paralización.").build());
+                        "**Debe seleccionar una fecha de fin de paralizaciï¿½n.").build());
                 throw new ValidationException(ErrorMessageUtils.convertMessages(messageContext.getAllMessages()));
             }
 
@@ -251,4 +256,14 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
 		this.comentarios = comentarios;
 	}
 
+	public void setFechaParalizacionStr(String fecha) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		if (!Checks.esNulo(fecha)) {
+			try {
+				this.setFechaParalizacion(sdf.parse(fecha));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

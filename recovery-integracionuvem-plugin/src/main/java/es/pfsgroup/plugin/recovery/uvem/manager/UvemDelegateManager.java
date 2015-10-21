@@ -503,6 +503,9 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			//campo cd_expediente_nuse del expediente, metemos el asu_id
 			System.out.println(" ***REQUERIDO*** IDEXSW"); // 	"NUMERICO_9" longitud="10"	 Identificador del expediente	
 			int identificadorExpediente = asunto.getId().intValue();
+			if(asunto.getId().compareTo(new Long(Integer.MAX_VALUE)) > 0){
+				identificadorExpediente = new Integer(asunto.getCodigoExterno()).intValue();
+			}
 			servicioGMP5JD20.setIdentificadorExpedienteEnSedasidexsw(identificadorExpediente);
 			System.out.println(" ***REQUERIDO*** NOCURA"); // 	longitud="40"	 Nombre del Procurador	
 			String nombreProcurador = null;

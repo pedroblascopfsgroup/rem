@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -31,13 +32,9 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Where;
-import org.hibernate.bytecode.javassist.FieldHandled;
-import org.hibernate.bytecode.javassist.FieldHandler;
 
-import bsh.This;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.APPConstants;
@@ -69,7 +66,7 @@ import es.pfsgroup.commons.utils.Checks;
 @Entity
 @Table(name = "CNT_CONTRATOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Contrato implements Serializable, Auditable, Comparable<Contrato>, Describible, FieldHandled {
+public class Contrato implements Serializable, Auditable, Comparable<Contrato>, Describible {
 
     /**
      * serialVersionUID.
@@ -77,9 +74,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     private static final long serialVersionUID = -8368485360179310334L;
 
 	private static Properties appProperties;
-	
-	@Transient
-	private FieldHandler fieldHandler;
     
     @Id
     @Column(name = "CNT_ID")
@@ -233,15 +227,226 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     @JoinColumn(name = "DD_CT6_ID")
     private DDCatalogo6 catalogo6;
 
-	@OneToOne(fetch = FetchType.LAZY, optional=true)
-	@JoinColumn(name = "CNT_ID", updatable= false)
-	@LazyToOne(LazyToOneOption.PROXY)
-	private ContratoFormulas formulas;
     
     //    CNT_FECHA_CONSTITUCION   DATE, campo no viene en la carga
 
     @Column(name = "CNT_FECHA_VENC")
     private Date fechaVencimiento;
+    
+  //BANKIA extras
+   
+    
+  	@Formula("(select tfo.dd_tfo_ces_rem from ext_iac_info_add_contrato iac,dd_tfo_tipo_fondo tfo where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = tfo.dd_tfo_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA7 + "'))")
+  	private String titulizado;
+  	
+  	@Formula("(select tfo.dd_tfo_descripcion from ext_iac_info_add_contrato iac,dd_tfo_tipo_fondo tfo where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = tfo.dd_tfo_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA7 + "'))")
+  	private String fondo;  	
+  	
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA1 + "'))")
+  	private String numextra1;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA2 + "'))")
+  	private String numextra2;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA3 + "'))")
+  	private String numextra3;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.DATE_EXTRA1 + "'))")
+  	private String dateextra1;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA1 + "'))")
+  	private String charextra1;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA2 + "'))")
+  	private String charextra2;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA3 + "'))")
+  	private String charextra3;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA4 + "'))")
+  	private String charextra4;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA5 + "'))")
+  	private String charextra5;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA6 + "'))")
+  	private String charextra6;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA7 + "'))")
+  	private String charextra7;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA8 + "'))")
+  	private String charextra8;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.FLAG_EXTRA1 + "'))")
+  	private String flagextra1;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.FLAG_EXTRA2 + "'))")
+  	private String flagextra2;
+
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.FLAG_EXTR3 + "'))")
+  	private String flagextra3;
+  	
+  	@Formula("(select mrf.dd_mrf_descripcion from ext_iac_info_add_contrato iac,${master.schema}.dd_mrf_marca_refinanciacion mrf where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = mrf.dd_mrf_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA9 + "'))")
+  	private String marcaOperacion;
+  	
+  	@Formula("(select mom.dd_mom_descripcion from ext_iac_info_add_contrato iac,${master.schema}.dd_mom_motivo_marca_r mom where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = mom.dd_mom_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.CHAR_EXTRA10 + "'))")
+  	private String motivoMarca;
+  	
+  	@Formula("(select idn.dd_idn_descripcion from ext_iac_info_add_contrato iac,${master.schema}.dd_idn_indicador_nomina idn where iac.cnt_id = cnt_id "
+  			+ "and iac.iac_value = idn.dd_idn_codigo and iac.dd_ifc_id = (select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.NUM_EXTRA4 + "'))")
+  	private String indicadorNominaPension;
+  	
+  	/**@Formula("select acn.acn_num_reinciden from acn_anteced_contratos acn where acn.cnt_id = cnt_id")
+  	private Integer contadorReincidencias;*/
+  	
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getTitulizado() {
+  		return titulizado;
+  	}
+  	
+  	/**@Basic(fetch=FetchType.LAZY)
+  	public Integer getContadorReincidencias() {
+  		if(contadorReincidencias == null)
+  			return 0;
+  		else
+  			return contadorReincidencias;
+  	}*/
+  	
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getFondo() {
+  		return fondo;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getNumextra1() {
+  		return numextra1;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getNumextra2() {
+  		return numextra2;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getNumextra3() {
+  		return numextra3;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getDateextra1() {
+  		return dateextra1;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra1() {
+  		return charextra1;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra2() {
+  		return charextra2;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra3() {
+  		return charextra3;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra4() {
+  		return charextra4;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra5() {
+  		return charextra5;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra6() {
+  		return charextra6;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra7() {
+  		return charextra7;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getCharextra8() {
+  		return charextra8;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getFlagextra1() {
+  		return flagextra1;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getFlagextra2() {
+  		return flagextra2;
+  	}
+
+  	@Basic(fetch=FetchType.LAZY)
+  	public String getFlagextra3() {
+  		return flagextra3;
+  	}
     
     //Nuevos campos 10.0
     
@@ -307,91 +512,10 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     @JoinColumn(name = "DD_MTR_ID")
     private DDMotivoRenumeracion motivoRenumeracion;
     
-    
-    
-	@OneToMany(mappedBy = "unidadGestionId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "UG_ID")
-	@Where(clause = "DD_EIN_ID = " + DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO)
-	private List<EXTGestorEntidad> gestoresContrato;
-
-    
-  	public String getTitulizado() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getTitulizado();
-  	}
-  	
-  	public String getFondo() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getFondo();
-  	}
-
-  	public String getNumextra1() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getNumExtra1();
-  	}
-
-  	public String getNumextra2() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getNumExtra2();
-  	}
-
-  	public String getNumextra3() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getNumExtra3();
-  	}
-
-  	public String getDateextra1() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getDateExtra1();
-  	}
-
-  	public String getCharextra1() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra1();
-  	}
-
-  	public String getCharextra2() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra2();
-  	}
-
-  	public String getCharextra3() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra3();
-  	}
-
-  	public String getCharextra4() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra4();
-  	}
-
-  	public String getCharextra5() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra5();
-  	}
-
-  	public String getCharextra6() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra6();
-  	}
-
-  	public String getCharextra7() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra7();
-  	}
-
-  	public String getCharextra8() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getCharExtra8();
-  	}
-
-  	public String getFlagextra1() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getFlagExtra1();
-  	}
-
-  	public String getFlagextra2() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getFlagExtra2();
-  	}
-
-  	public String getFlagextra3() {
-  		return this.getFormulas() == null ? null :this.getFormulas().getFlagExtra3();
-  	}
-    
-
-    
     /**
      * @return the titulos
      */
-    @SuppressWarnings("unchecked")
-	public List<Titulo> getTitulos() {
-    	if(fieldHandler!=null)
-	        return (List<Titulo>)fieldHandler.readObject(this, "titulos", titulos);
+    public List<Titulo> getTitulos() {
         return titulos;
     }
 
@@ -400,8 +524,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the titulos to set
      */
     public void setTitulos(List<Titulo> titulos) {
-    	if(fieldHandler!=null)
-	        fieldHandler.writeObject(this, "titulos", this.titulos, titulos);
         this.titulos = titulos;
     }
 
@@ -420,6 +542,14 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
         this.version = version;
     }
 
+//    private String rellenaConCeros(int longitud, String nbr) {
+//        String s = "";
+//        for (int i = 0; i < longitud - nbr.length(); i++) {
+//            s += "0";
+//        }
+//
+//        return s + nbr;
+//    }
 
     /**
      * Metodo para obtener el codigo del contrato.<br>
@@ -596,8 +726,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the tipoProductoEntidad
      */
     public DDTipoProductoEntidad getTipoProductoEntidad() {
-    	if(fieldHandler!=null)
-	        return (DDTipoProductoEntidad)fieldHandler.readObject(this, "tipoProductoEntidad", tipoProductoEntidad);
         return tipoProductoEntidad;
     }
 
@@ -606,8 +734,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the tipoProductoEntidad to set
      */
     public void setTipoProductoEntidad(DDTipoProductoEntidad tipoProductoEntidad) {
-    	if(fieldHandler!=null)
-	        fieldHandler.writeObject(this, "tipoProductoEntidad", this.tipoProductoEntidad, tipoProductoEntidad);
         this.tipoProductoEntidad = tipoProductoEntidad;
     }
 
@@ -615,8 +741,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the oficina
      */
     public Oficina getOficina() {
-    	if(fieldHandler!=null)
-	        return (Oficina)fieldHandler.readObject(this, "oficina", oficina);
         return oficina;
     }
 
@@ -625,8 +749,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the oficina to set
      */
     public void setOficina(Oficina oficina) {
-    	if(fieldHandler!=null)
-	        fieldHandler.writeObject(this, "oficina", this.oficina, oficina);       
         this.oficina = oficina;
     }
 
@@ -634,8 +756,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the zona
      */
     public DDZona getZona() {
-    	if(fieldHandler!=null)
-	        return (DDZona)fieldHandler.readObject(this, "zona", zona);
         return zona;
     }
 
@@ -644,8 +764,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the zona to set
      */
     public void setZona(DDZona zona) {
-    	if(fieldHandler!=null)
-    			fieldHandler.writeObject(this, "zona", this.zona, zona);
         this.zona = zona;
     }
 
@@ -653,8 +771,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the moneda
      */
     public DDMoneda getMoneda() {
-    	if(fieldHandler!=null)
-	        return (DDMoneda)fieldHandler.readObject(this, "moneda", moneda);        
         return moneda;
     }
 
@@ -663,8 +779,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the moneda to set
      */
     public void setMoneda(DDMoneda moneda) {
-    	if(fieldHandler!=null)
-    			fieldHandler.writeObject(this, "moneda", this.moneda, moneda);
         this.moneda = moneda;
     }
 
@@ -672,8 +786,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the tipoProducto
      */
     public DDTipoProducto getTipoProducto() {
-    	if(fieldHandler!=null)
-    			return (DDTipoProducto) fieldHandler.readObject(this, "tipoProducto", tipoProducto);
         return tipoProducto;
     }
 
@@ -682,18 +794,13 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the tipoProducto to set
      */
     public void setTipoProducto(DDTipoProducto tipoProducto) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "tipoProducto", this.tipoProducto, tipoProducto);
         this.tipoProducto = tipoProducto;
     }
 
     /**
      * @return the contratoPersona
      */
-    @SuppressWarnings("unchecked")
-	public List<ContratoPersona> getContratoPersona() {
-    	if(fieldHandler!=null)
-    			return (List<ContratoPersona>) fieldHandler.readObject(this, "contratoPersona", contratoPersona);
+    public List<ContratoPersona> getContratoPersona() {
         return contratoPersona;
     }
 
@@ -734,18 +841,13 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the contratoPersona to set
      */
     public void setContratoPersona(List<ContratoPersona> contratoPersona) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "contratoPersona", this.contratoPersona, contratoPersona);
         this.contratoPersona = contratoPersona;
     }
 
     /**
      * @return the movimientos
      */
-    @SuppressWarnings("unchecked")
-	public List<Movimiento> getMovimientos() {
-    	if(fieldHandler!=null)
-    		return (List<Movimiento>) fieldHandler.readObject(this, "movimientos", movimientos);
+    public List<Movimiento> getMovimientos() {
         return movimientos;
     }
 
@@ -754,8 +856,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the movimientos to set
      */
     public void setMovimientos(List<Movimiento> movimientos) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "movimientos", this.movimientos, movimientos);
         this.movimientos = movimientos;
     }
 
@@ -763,7 +863,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the fechaExtraccion
      */
     public Date getFechaExtraccion() {
-    	
         return fechaExtraccion;
     }
 
@@ -772,7 +871,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the fechaExtraccion to set
      */
     public void setFechaExtraccion(Date fechaExtraccion) {
-    	
         this.fechaExtraccion = fechaExtraccion;
     }
 
@@ -780,7 +878,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the codigoEntidad
      */
     public Integer getCodigoEntidad() {
-    	
         return codigoEntidad;
     }
 
@@ -789,7 +886,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the codigoEntidad to set
      */
     public void setCodigoEntidad(Integer codigoEntidad) {
-    	
         this.codigoEntidad = codigoEntidad;
     }
 
@@ -797,7 +893,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the codigoOficina
      */
     public Long getCodigoOficina() {
-    	
         return codigoOficina;
     }
 
@@ -806,7 +901,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the codigoOficina to set
      */
     public void setCodigoOficina(Long codigoOficina) {
-    	
         this.codigoOficina = codigoOficina;
     }
 
@@ -814,7 +908,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the codigoCentro
      */
     public Long getCodigoCentro() {
-    	
         return codigoCentro;
     }
 
@@ -823,7 +916,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the codigoCentro to set
      */
     public void setCodigoCentro(Long codigoCentro) {
-    	
         this.codigoCentro = codigoCentro;
     }
 
@@ -831,7 +923,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the nroContrato
      */
     public String getNroContrato() {
-    
         return nroContrato;
     }
 
@@ -916,8 +1007,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the estadoFinanciero
      */
     public DDEstadoFinanciero getEstadoFinanciero() {
-    	if(fieldHandler!=null)
-    		return (DDEstadoFinanciero) fieldHandler.readObject(this, "estadoFinanciero", estadoFinanciero);
         return estadoFinanciero;
     }
 
@@ -926,8 +1015,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the estadoFinanciero to set
      */
     public void setEstadoFinanciero(DDEstadoFinanciero estadoFinanciero) {
-    	if(fieldHandler!=null)
-    			fieldHandler.writeObject(this, "estadoFinanciero", this.estadoFinanciero, estadoFinanciero);
         this.estadoFinanciero = estadoFinanciero;
     }
 
@@ -950,8 +1037,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the estadoContrato
      */
     public DDEstadoContrato getEstadoContrato() {
-    	if(fieldHandler!=null)
-    			return (DDEstadoContrato) fieldHandler.readObject(this, "estadoContrato", estadoContrato);
         return estadoContrato;
     }
 
@@ -960,9 +1045,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the estadoContrato to set
      */
     public void setEstadoContrato(DDEstadoContrato estadoContrato) {
-    	if(fieldHandler!=null)
-    			fieldHandler.writeObject(this, "estadoContrato", this.estadoContrato, estadoContrato);
-    	this.estadoContrato = estadoContrato;
+        this.estadoContrato = estadoContrato;
     }
 
     /**
@@ -1029,8 +1112,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the auditoria
      */
     public Auditoria getAuditoria() {
-    	if(fieldHandler!=null)
-    		return (Auditoria) fieldHandler.readObject(this, "auditoria", auditoria);
         return auditoria;
     }
 
@@ -1039,8 +1120,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the auditoria to set
      */
     public void setAuditoria(Auditoria auditoria) {
-    	if(fieldHandler!=null)
-    			fieldHandler.writeObject(this, "auditoria", this.auditoria, auditoria);
         this.auditoria = auditoria;
     }
 
@@ -1057,8 +1136,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the antecendenteInterno
      */
     public AntecedenteInterno getAntecendenteInterno() {
-    	if(fieldHandler!=null)
-    		return (AntecedenteInterno) fieldHandler.readObject(this, "antecedenteIntero", antecendenteInterno);
         return antecendenteInterno;
     }
 
@@ -1067,8 +1144,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      *            the antecendenteInterno to set
      */
     public void setAntecendenteInterno(AntecedenteInterno antecendenteInterno) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "antecedenteInterno", this.antecendenteInterno, antecendenteInterno);
         this.antecendenteInterno = antecendenteInterno;
     }
 
@@ -1157,10 +1232,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     /**
     * @return the expedienteContratos
     */
-    @SuppressWarnings("unchecked")
-	public List<ExpedienteContrato> getExpedienteContratos() {
-    	if(fieldHandler!=null)
-    		return (List<ExpedienteContrato>) fieldHandler.readObject(this, "expedienteContratos", expedienteContratos);
+    public List<ExpedienteContrato> getExpedienteContratos() {
         return expedienteContratos;
     }
 
@@ -1201,8 +1273,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param expedienteContratos the expedienteContratos to set
      */
     public void setExpedienteContratos(List<ExpedienteContrato> expedienteContratos) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "expedienteContratos", this.expedienteContratos, expedienteContratos);
         this.expedienteContratos = expedienteContratos;
     }
 
@@ -1218,8 +1288,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the estadoFinancieroAnterior
      */
     public DDEstadoFinanciero getEstadoFinancieroAnterior() {
-    	if(fieldHandler!=null)
-    		return (DDEstadoFinanciero) fieldHandler.readObject(this, "estadoFinancieroAnterior", estadoFinancieroAnterior);
         return estadoFinancieroAnterior;
     }
 
@@ -1227,8 +1295,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param estadoFinancieroAnterior the estadoFinancieroAnterior to set
      */
     public void setEstadoFinancieroAnterior(DDEstadoFinanciero estadoFinancieroAnterior) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "estadoFinancieroAnterior", this.estadoFinancieroAnterior, this.estadoFinancieroAnterior);
         this.estadoFinancieroAnterior = estadoFinancieroAnterior;
     }
 
@@ -1249,10 +1315,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     /**
      * @return the adjuntos
      */
-    @SuppressWarnings("unchecked")
-	public Set<AdjuntoContrato> getAdjuntos() {
-    	if(fieldHandler!=null)
-    		return (Set<AdjuntoContrato>) fieldHandler.readObject(this, "adjuntos", adjuntos);
+    public Set<AdjuntoContrato> getAdjuntos() {
         return adjuntos;
     }
 
@@ -1260,20 +1323,15 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param adjuntos the adjuntos to set
      */
     public void setAdjuntos(Set<AdjuntoContrato> adjuntos) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "adjuntos", this.adjuntos, adjuntos);
         this.adjuntos = adjuntos;
     }
 
     /**
-     * Devuelve los adjuntos (que estan en un Set) como una lista
+     * Devuelve los adjuntos (que est�n en un Set) como una lista
      * para que pueda ser accedido aleatoreamente.
      * @return List AdjuntoContrato
      */
-    @SuppressWarnings("unchecked")
-	public List<AdjuntoContrato> getAdjuntosAsList() {
-    	if(fieldHandler!=null)
-    		return (List<AdjuntoContrato>) fieldHandler.readObject(this, "adjuntos", adjuntos);
+    public List<AdjuntoContrato> getAdjuntosAsList() {
         return new ArrayList<AdjuntoContrato>(adjuntos);
     }
 
@@ -1354,8 +1412,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the finalidadContrato
      */
     public DDFinalidadContrato getFinalidadContrato() {
-    	if(fieldHandler!=null)
-    		return (DDFinalidadContrato) fieldHandler.readObject(this, "finalidadContrato", finalidadContrato);
         return finalidadContrato;
     }
 
@@ -1363,8 +1419,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param finalidadContrato the finalidadContrato to set
      */
     public void setFinalidadContrato(DDFinalidadContrato finalidadContrato) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "finalidadContrato", this.finalidadContrato, finalidadContrato);
         this.finalidadContrato = finalidadContrato;
     }
 
@@ -1372,8 +1426,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the finalidadAcuerdo
      */
     public DDFinalidadOficial getFinalidadAcuerdo() {
-    	if(fieldHandler!=null)
-    		return (DDFinalidadOficial) fieldHandler.readObject(this, "finalidadAcuerdo", finalidadAcuerdo);
         return finalidadAcuerdo;
     }
 
@@ -1381,8 +1433,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param finalidadAcuerdo the finalidadAcuerdo to set
      */
     public void setFinalidadAcuerdo(DDFinalidadOficial finalidadAcuerdo) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "finalidadAcuerdo", this.finalidadAcuerdo, finalidadAcuerdo);
         this.finalidadAcuerdo = finalidadAcuerdo;
     }
 
@@ -1390,8 +1440,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the garantia1
      */
     public DDGarantiaContrato getGarantia1() {
-    	if(fieldHandler!=null)
-    		return (DDGarantiaContrato) fieldHandler.readObject(this, "garantia1", garantia1);
         return garantia1;
     }
 
@@ -1399,8 +1447,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param garantia1 the garantia1 to set
      */
     public void setGarantia1(DDGarantiaContrato garantia1) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "garantia1", this.garantia1, garantia1);
         this.garantia1 = garantia1;
     }
 
@@ -1408,8 +1454,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the garantia2
      */
     public DDGarantiaContable getGarantia2() {
-    	if(fieldHandler!=null)
-    		return (DDGarantiaContable) fieldHandler.readObject(this, "garantia2", garantia2);
         return garantia2;
     }
 
@@ -1417,8 +1461,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param garantia2 the garantia2 to set
      */
     public void setGarantia2(DDGarantiaContable garantia2) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "garantia2", this.garantia2, garantia1);
         this.garantia2 = garantia2;
     }
 
@@ -1426,8 +1468,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo1
      */
     public DDCatalogo1 getCatalogo1() {
-    	if(fieldHandler!=null)
-    		return (DDCatalogo1) fieldHandler.readObject(this, "catalogo1", catalogo1);
         return catalogo1;
     }
 
@@ -1435,8 +1475,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo1 the catalogo1 to set
      */
     public void setCatalogo1(DDCatalogo1 catalogo1) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "catalogo1", this.catalogo1, catalogo1);
         this.catalogo1 = catalogo1;
     }
 
@@ -1444,8 +1482,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo2
      */
     public DDCatalogo2 getCatalogo2() {
-    	if(fieldHandler!=null)
-    		return (DDCatalogo2) fieldHandler.readObject(this, "catalogo2", catalogo2);
         return catalogo2;
     }
 
@@ -1453,8 +1489,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo2 the catalogo2 to set
      */
     public void setCatalogo2(DDCatalogo2 catalogo2) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "catalogo2", this.catalogo2, catalogo2);
         this.catalogo2 = catalogo2;
     }
 
@@ -1462,8 +1496,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo3
      */
     public DDCatalogo3 getCatalogo3() {
-    	if(fieldHandler!=null)
-    		return (DDCatalogo3) fieldHandler.readObject(this, "catalogo3", catalogo3);
         return catalogo3;
     }
 
@@ -1471,8 +1503,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo3 the catalogo3 to set
      */
     public void setCatalogo3(DDCatalogo3 catalogo3) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "catalogo3", this.catalogo3, catalogo3);
         this.catalogo3 = catalogo3;
     }
 
@@ -1480,8 +1510,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo4
      */
     public DDCatalogo4 getCatalogo4() {
-    	if(fieldHandler!=null)
-    		return (DDCatalogo4) fieldHandler.readObject(this, "catalogo4", catalogo4);
         return catalogo4;
     }
 
@@ -1489,8 +1517,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo4 the catalogo4 to set
      */
     public void setCatalogo4(DDCatalogo4 catalogo4) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "catalogo4", this.catalogo4, catalogo4);
         this.catalogo4 = catalogo4;
     }
 
@@ -1498,8 +1524,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo5
      */
     public DDCatalogo5 getCatalogo5() {
-    	if(fieldHandler!=null)
-    		return (DDCatalogo5) fieldHandler.readObject(this, "catalogo5", catalogo5);
         return catalogo5;
     }
 
@@ -1507,8 +1531,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo5 the catalogo5 to set
      */
     public void setCatalogo5(DDCatalogo5 catalogo5) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "catalogo5", this.catalogo5, catalogo5);
         this.catalogo5 = catalogo5;
     }
 
@@ -1516,8 +1538,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the catalogo6
      */
     public DDCatalogo6 getCatalogo6() {
-    	if(fieldHandler!=null)
-    		return (DDCatalogo6) fieldHandler.readObject(this, "catalogo6", catalogo6);
         return catalogo6;
     }
 
@@ -1525,8 +1545,6 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @param catalogo6 the catalogo6 to set
      */
     public void setCatalogo6(DDCatalogo6 catalogo6) {
-    	if(fieldHandler!=null)
-    		fieldHandler.writeObject(this, "catalogo6", this.catalogo6, catalogo6);
         this.catalogo6 = catalogo6;
     }
 
@@ -1545,15 +1563,117 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
     }
     
     
+    //==ExtContrato===//
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_CODIGO_OFICINA_ORIGEN + "'))")
+	private String nuevoCodigoOficina;
 
-	public String getContratoOrigen() {
-		return this.getFormulas() == null ? null :this.getFormulas().getContratoOrigen();
-	}
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_CODIGO_ENTIDAD_ORIGEN + "'))")
+	private String entidadOrigen;
+
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_CODIGO_CONTRATO_ORIGEN + "'))")
+	private String contratoOrigen;
+
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_CODIGO_TIPO_PRODUCTO_ORIGEN + "'))")
+	private String tipoProductoOrigen;
+
+	@OneToMany(mappedBy = "unidadGestionId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "UG_ID")
+	@Where(clause = "DD_EIN_ID = " + DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO)
+	private List<EXTGestorEntidad> gestoresContrato;
+
+
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_CODIGO_PRINCIPAL + "'))")
+	private String contratoPrincipal;
 	
-	public String getNuevoCodigoOficina() {
-		return this.getFormulas() == null ? null :this.getFormulas().getNuevoCodigoOficina();
-	}
+	@Formula("(select stl.dd_stl_descripcion " 
+			+ " from dd_stl_situacion_litigio stl "
+			+ " where stl.dd_stl_codigo = (select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ " and iac.dd_ifc_id = ("
+			+ " select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_ESTADO_LITIGIO + "')))")
+	private String estadoLitigio;
 	
+	@Formula("(select frl.dd_frl_descripcion "
+			+ " from dd_frl_fase_recup_litigio frl "
+			+ " where frl.dd_frl_codigo = (select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_FASE_RECUPERACION + "')))")
+	private String faseRecuperacion;
+	
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_GASTOS_LITIGIO + "'))")
+	private String gastos;
+	
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_PROVISION_PROCURADOR + "'))")
+	private String provisionProcurador;
+	
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_INTERESES_DEMORA + "'))")
+	private String interesesDemora;
+	
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_MINUTA_LETRADO + "'))")
+	private String minutaLetrado;
+	
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_ENTREGAS_LITIGIO + "'))")
+	private String entregas;
+	
+	
+	@Formula("(select ece.dd_ece_descripcion " 
+			+ " from DD_ECE_ESTADO_CONTRATO_ENTIDAD ece "
+			+ " where ece.dd_ece_codigo = (select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ " and iac.dd_ifc_id = ("
+			+ " select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_ESTADO_CONTRATO_ENTIDAD + "')))")
+	private String estadoContratoEntidad;
+	
+	/*
+	 * @Formula("(" + " select to_char(a.ENTIDAD, '0000') || ' ' ||" +
+	 * "         to_char(b.SUCURSAL, '0000') || ' ' ||" +
+	 * "       to_char(c.CUENTA, '0000000000')" + " from" +
+	 * "	  ( select iac_value as ENTIDAD" +
+	 * "		from ext_iac_info_add_contrato iac, ext_dd_ifc_info_contrato ifc" +
+	 * "		where iac.dd_ifc_id = ifc.dd_ifc_id" +
+	 * "		and ifc.dd_ifc_codigo = 'CODEXTRA1'" + "		and iac.cnt_id = cnt_id" +
+	 * "	  ) a," + "	  ( select iac_value as SUCURSAL" +
+	 * "		from ext_iac_info_add_contrato iac, ext_dd_ifc_info_contrato ifc" +
+	 * "		where iac.dd_ifc_id = ifc.dd_ifc_id" +
+	 * "		and ifc.dd_ifc_codigo = 'CODEXTRA2'" + "		and iac.cnt_id = cnt_id" +
+	 * "	  ) b," + "	  ( select iac_value as CUENTA" +
+	 * "		from ext_iac_info_add_contrato iac, ext_dd_ifc_info_contrato ifc" +
+	 * "		where iac.dd_ifc_id = ifc.dd_ifc_id" +
+	 * "		and ifc.dd_ifc_codigo = 'CODEXTRA3'" + "		and iac.cnt_id = cnt_id" +
+	 * "	  ) c" + ")") private String codigoContratoSQL;
+	 */
+
 //	@Override
 	public String getCodigoContrato() {
 		if (codigoContrato == null) {
@@ -1571,18 +1691,18 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 			//Si tiene el formato creado es que est� usando el modelo V10 
 			// en el que el contrato est� todo persistido en el mismo campo 
 			if (formato != null || formatoSubstringStart !=null || formatoSubstringEnd !=null) {			
-				String contrato = (getContratoOrigen() == null) ? nroContrato : getContratoOrigen();
+				String contrato = (contratoOrigen == null) ? nroContrato : contratoOrigen;
 				return getCodigoFormat(contrato, formato, formatoSubstringStart, formatoSubstringEnd);
 			}
 			
-			if (getEntidadOrigen()==null
-					||  getNuevoCodigoOficina() ==null
-					|| getContratoOrigen()==null) {
+			if (entidadOrigen==null
+					|| nuevoCodigoOficina==null
+					|| contratoOrigen==null) {
 				return this.getCodigoContratoENTITY();
 			} else {
-				String codEntidad = rellenaConCeros(4, getEntidadOrigen());
-				String codOficina = rellenaConCeros(4, getNuevoCodigoOficina());
-				String contrato = rellenaConCeros(10, getContratoOrigen());
+				String codEntidad = rellenaConCeros(4, entidadOrigen);
+				String codOficina = rellenaConCeros(4, nuevoCodigoOficina);
+				String contrato = rellenaConCeros(10, contratoOrigen);
 				codigoContrato = codEntidad + " " + codOficina + " " + contrato;
 			}
 		}
@@ -1599,7 +1719,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public String getEntidadOrigen() {
-		return this.getFormulas() == null ? null :this.getFormulas().getEntidadOrigen();
+		return entidadOrigen;
 	}
 
 //	@Override
@@ -1618,6 +1738,7 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 
 //	@Override
 //	public ExpedienteContrato getExpedienteContratoActivo() {
+//		// TODO Auto-generated method stub
 //		return super.getExpedienteContratoActivo();
 //	}
 
@@ -1650,20 +1771,14 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public String getTipoProductoOrigen() {
-		return this.getFormulas() == null ? null :this.getFormulas().getTipoProductoOrigen();
+		return tipoProductoOrigen;
 	}
 
 	public void setGestoresContrato(List<EXTGestorEntidad> gestoresContrato) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "gestoresContrato", this.gestoresContrato, gestoresContrato);
 		this.gestoresContrato = gestoresContrato;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<EXTGestorEntidad> getGestoresContrato() {
-		if(fieldHandler!=null)
-			return (List<EXTGestorEntidad>) fieldHandler.readObject(this, "gestoresContrato", gestoresContrato);
-		
 		return gestoresContrato;
 	}
 
@@ -1671,43 +1786,43 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	/**
 	 * @param contratoPrincipal the contratoPrincipal to set
 	 */
-//	public void setContratoPrincipal(String contratoPrincipal) {
-//		this.contratoPrincipal = contratoPrincipal;
-//	}
+	public void setContratoPrincipal(String contratoPrincipal) {
+		this.contratoPrincipal = contratoPrincipal;
+	}
 
 	/**
 	 * @return the contratoPrincipal
 	 */
 	public String getContratoPrincipal() {
-		return this.getFormulas() == null ? null :this.getFormulas().getContratoPrincipal();
+		return contratoPrincipal;
 	}
 
 	/**
 	 * @param faseRecuperacion the faseRecuperacion to set
 	 */
-//	public void setFaseRecuperacion(String faseRecuperacion) {
-//		this.faseRecuperacion = faseRecuperacion;
-//	}
+	public void setFaseRecuperacion(String faseRecuperacion) {
+		this.faseRecuperacion = faseRecuperacion;
+	}
 
 	/**
 	 * @return the faseRecuperacion
 	 */
 	public String getFaseRecuperacion() {
-		return this.getFormulas() == null ? null :this.getFormulas().getFaseRecuperacion();
+		return faseRecuperacion;
 	}
 
 	/**
 	 * @param estadoLitigio the estadoLitigio to set
 	 */
-//	public void setEstadoLitigio(String estadoLitigio) {
-//		this.estadoLitigio = estadoLitigio;
-//	}
+	public void setEstadoLitigio(String estadoLitigio) {
+		this.estadoLitigio = estadoLitigio;
+	}
 
 	/**
 	 * @return the estadoLitigio
 	 */
 	public String getEstadoLitigio() {
-		return this.getFormulas() == null ? null :this.getFormulas().getEstadoLitigio();
+		return estadoLitigio;
 	}
 
 
@@ -1715,71 +1830,71 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	/**
 	 * @param gastos the gastos to set
 	 */
-//	public void setGastos(String gastos) {
-//		this.gastos = gastos;
-//	}
+	public void setGastos(String gastos) {
+		this.gastos = gastos;
+	}
 
 	/**
 	 * @return the gastos
 	 */
 	public String getGastos() {
-		return this.getFormulas() == null ? null :this.getFormulas().getGastos();
+		return gastos;
 	}
 
 	/**
 	 * @param provisionProcurador the provisionProcurador to set
 	 */
-//	public void setProvisionProcurador(String provisionProcurador) {
-//		this.provisionProcurador = provisionProcurador;
-//	}
+	public void setProvisionProcurador(String provisionProcurador) {
+		this.provisionProcurador = provisionProcurador;
+	}
 
 	/**
 	 * @return the provisionProcurador
 	 */
 	public String getProvisionProcurador() {
-		return this.getFormulas() == null ? null :this.getFormulas().getProvisionProcurador();
+		return provisionProcurador;
 	}
 
 	/**
 	 * @param interesesDemora the interesesDemora to set
 	 */
-//	public void setInteresesDemora(String interesesDemora) {
-//		this.interesesDemora = interesesDemora;
-//	}
+	public void setInteresesDemora(String interesesDemora) {
+		this.interesesDemora = interesesDemora;
+	}
 
 	/**
 	 * @return the interesesDemora
 	 */
 	public String getInteresesDemora() {
-		return this.getFormulas() == null ? null :this.getFormulas().getInteresesDemora();
+		return interesesDemora;
 	}
 
 	/**
 	 * @param minutaLetrado the minutaLetrado to set
 	 */
-//	public void setMinutaLetrado(String minutaLetrado) {
-//		this.minutaLetrado = minutaLetrado;
-//	}
+	public void setMinutaLetrado(String minutaLetrado) {
+		this.minutaLetrado = minutaLetrado;
+	}
 
 	/**
 	 * @return the minutaLetrado
 	 */
 	public String getMinutaLetrado() {
-		return this.getFormulas() == null ? null :this.getFormulas().getMinutaLetrado();
+		return minutaLetrado;
 	}
 
 	/**
 	 * @param entregas the entregas to set
 	 */
-//	public void setEntregas(String entregas) {
-//		this.entregas = entregas;
-//	}
+	public void setEntregas(String entregas) {
+		this.entregas = entregas;
+	}
 
 	/**
 	 * @return the entregas
 	 */
 	public String getEntregas() {
-		return this.getFormulas() == null ? null :this.getFormulas().getEntregas();
+		return entregas;
 	}
 	
     /**
@@ -1827,10 +1942,39 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * PBO: Introducido para soporte de Lindorff
      */
     //FIXME Mover esto al plugin de Lindorff
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_CREDITOR + "'))")
+    private String creditor;
 
 	public String getCreditor() {
-		return this.getFormulas() == null ? null :this.getFormulas().getCreditor();
+		return creditor;
 	}
+
+	public void setCreditor(String creditor) {
+		this.creditor = creditor;
+	}
+	
+	@Formula("(SELECT DD_PRO.DD_PRO_DESCRIPCION FROM DD_PRO_PROPIETARIOS DD_PRO WHERE DD_PRO.DD_PRO_CODIGO = ("
+			+"select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_COD_ENTIDAD_PROPIETARIA + "')))")
+    private String codEntidadPropietaria;
+	
+	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_NUMERO_ESPEC + "'))")
+    private String condicionesEspeciales;
+
+	@Formula("(SELECT DD_SEC.DD_SEC_DESCRIPCION FROM DD_SEC_SEGMENTO_CARTERA DD_SEC WHERE DD_SEC.DD_SEC_CODIGO = ("
+			+"select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+			+ "  and iac.dd_ifc_id = ("
+			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+			+ APPConstants.CNT_IAC_NUM_EXTRA2 + "')))")
+    private String segmentoCartera;
 
 
 	/**
@@ -1843,6 +1987,33 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 			codigoContratoParaguas=contratoParaguas.toString();
 		}
 		return codigoContratoParaguas;
+		// comento esto porque es un poco rallada, de momento muestro simplemente el contratoparaguas
+//		if (contratoParaguas==null) {
+//			return null;
+//		}
+			
+//		String codEntProp = rellenaConCeros(5, codEntidadPropietaria==null ? "" : codEntidadPropietaria);
+//		String codConPar = rellenaConCeros(22, contratoParaguas.toString());
+//		String numEspec = rellenaConCeros(15, condicionesEspeciales==null ? "" : condicionesEspeciales);
+//		
+//		String codigo = codEntProp + codConPar + numEspec;
+//		
+//		String formato = null;
+//		String formatoSubstringStart=null;
+//		String formatoSubstringEnd=null;
+//		if (appProperties != null) {
+//			formato = appProperties.getProperty(APPConstants.CNT_PROP_FORMATO_CONTRATO);
+//			formatoSubstringStart = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_INI);
+//			formatoSubstringEnd = appProperties.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_FIN);
+//		}
+//		
+//		//Si tiene el formato creado es que est� usando el modelo V10 
+//		// en el que el contrato est� todo persistido en el mismo campo 
+//		if (formato != null || formatoSubstringStart !=null || formatoSubstringEnd !=null) {			
+//			return codigo;
+//		} else {
+//			return getCodigoFormat(codigo, formato, formatoSubstringStart, formatoSubstringEnd);
+//		}
 	}
 	
 
@@ -1855,14 +2026,10 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public DDAplicativoOrigen getAplicativoOrigen() {
-		if(fieldHandler!=null)
-			return (DDAplicativoOrigen) fieldHandler.readObject(this, "aplicativoOrigen", aplicativoOrigen);
 		return aplicativoOrigen;
 	}
 
 	public void setAplicativoOrigen(DDAplicativoOrigen aplicativoOrigen) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "aplicativoOrigen", this.aplicativoOrigen, aplicativoOrigen);
 		this.aplicativoOrigen = aplicativoOrigen;
 	}
 
@@ -1899,26 +2066,18 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public DDSistemaAmortizContrato getSistemaAmortizacion() {
-		if(fieldHandler!=null)
-			return (DDSistemaAmortizContrato) fieldHandler.readObject(this, "sistemaAmortizacion", sistemaAmortizacion);
 		return sistemaAmortizacion;
 	}
 
 	public void setSistemaAmortizacion(DDSistemaAmortizContrato sistemaAmortizacion) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "sistemaAmortizacion", this.sistemaAmortizacion, sistemaAmortizacion);
 		this.sistemaAmortizacion = sistemaAmortizacion;
 	}
 
 	public DDTipoInteres getInteresFijoVariable() {
-		if(fieldHandler!=null)
-			return (DDTipoInteres) fieldHandler.readObject(this, "interesFijoVariable", interesFijoVariable);
 		return interesFijoVariable;
 	}
 
 	public void setInteresFijoVariable(DDTipoInteres interesFijoVariable) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "interesFijoVariable", this.interesFijoVariable, interesFijoVariable);
 		this.interesFijoVariable = interesFijoVariable;
 	}
 
@@ -1939,63 +2098,48 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public String getCodEntidadPropietaria() {
-		return this.getFormulas() == null ? null :this.getFormulas().getCodEntidadPropietaria();
+		return codEntidadPropietaria;
 	}
 
 
 	public String getCondicionesEspeciales() {
-		return this.getFormulas() == null ? null :this.getFormulas().getCondicionesEspeciales();
+		return condicionesEspeciales;
 	}
 	
 	public String getSegmentoCartera() {
-		return this.getFormulas() == null ? null :this.getFormulas().getSegmentoCartera();
+		return segmentoCartera;
 	}
 
 	public Oficina getOficinaContable() {
-		if(fieldHandler!=null)
-			return (Oficina) fieldHandler.readObject(this, "oficinaContable", oficinaContable);
 		return oficinaContable;
 	}
 
 	public void setOficinaContable(Oficina oficinaContable) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "oficinaContable", this.oficinaContable, oficinaContable);
 		this.oficinaContable = oficinaContable;
 	}
 
 	public Oficina getOficinaAdministrativa() {
-		if(fieldHandler!=null)
-			return (Oficina) fieldHandler.readObject(this, "oficinaAdministrativa", oficinaAdministrativa);
 		return oficinaAdministrativa;
 	}
 
 	public void setOficinaAdministrativa(Oficina oficinaAdministrativa) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "oficinaAdministrativa", oficinaAdministrativa, oficinaAdministrativa);
 		this.oficinaAdministrativa = oficinaAdministrativa;
 	}
 
 	public DDGestionEspecial getGestionEspecial() {
-		if(fieldHandler!=null)
-			return (DDGestionEspecial) fieldHandler.readObject(this, "gestionEspecial", gestionEspecial);
 		return gestionEspecial;
 	}
 
 	public void setGestionEspecial(DDGestionEspecial gestionEspecial) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "gestionEspecial", this.gestionEspecial, gestionEspecial);
 		this.gestionEspecial = gestionEspecial;
 	}
 
 	public DDCondicionesRemuneracion getRemuneracionEspecial() {
-		if(fieldHandler!=null)
-			return (DDCondicionesRemuneracion) fieldHandler.readObject(this, "RemuneracionEspecial", RemuneracionEspecial);
 		return RemuneracionEspecial;
 	}
 
-	public void setRemuneracionEspecial(DDCondicionesRemuneracion remuneracionEspecial) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "RemuneracionEspecial", this.RemuneracionEspecial, remuneracionEspecial);
+	public void setRemuneracionEspecial(
+			DDCondicionesRemuneracion remuneracionEspecial) {
 		RemuneracionEspecial = remuneracionEspecial;
 	}
 
@@ -2029,24 +2173,20 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 	}
 
 	public DDMotivoRenumeracion getMotivoRenumeracion() {
-		if(fieldHandler!=null)
-			return (DDMotivoRenumeracion) fieldHandler.readObject(this, "motivoRenumeracion", motivoRenumeracion);
 		return motivoRenumeracion;
 	}
 
 	public void setMotivoRenumeracion(DDMotivoRenumeracion motivoRenumeracion) {
-		if(fieldHandler!=null)
-			fieldHandler.writeObject(this, "motivoRenumeracion", this.motivoRenumeracion, motivoRenumeracion);
 		this.motivoRenumeracion = motivoRenumeracion;
 	}
 
 	public String getEstadoContratoEntidad() {
-		return this.getFormulas() == null ? null :this.getFormulas().getEstadoContratoEntidad();
+		return estadoContratoEntidad;
 	}
 
-//	public void setEstadoContratoEntidad(String estadoContratoEntidad) {
-//		this.estadoContratoEntidad = estadoContratoEntidad;
-//	}
+	public void setEstadoContratoEntidad(String estadoContratoEntidad) {
+		this.estadoContratoEntidad = estadoContratoEntidad;
+	}
 	public List<Bien> getBienes() {
 		return bienes;
 	}
@@ -2055,33 +2195,21 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 		this.bienes = bienes;
 	}
 
+	@Basic(fetch=FetchType.LAZY)
 	public String getMarcaOperacion() {
-		return this.getFormulas() == null ? null :this.getFormulas().getMarcaOperacion();
+		return marcaOperacion;
 	}
 	
+	@Basic(fetch=FetchType.LAZY)
 	public String getMotivoMarca() {
-		return this.getFormulas() == null ? null :this.getFormulas().getMotivoMarca();
+		return motivoMarca;
 	}
 	
+	@Basic(fetch=FetchType.LAZY)
 	public String getIndicadorNominaPension() {
-		return this.getFormulas() == null ? null :this.getFormulas().getIndicadorNominaPension();
+		return indicadorNominaPension;
 	}
 
-	@Override
-	public void setFieldHandler(FieldHandler handler) {
-		this.fieldHandler = handler;
-
-	}
-
-	@Override
-	public FieldHandler getFieldHandler() {
-		return this.fieldHandler;
-	}
 	
-	public ContratoFormulas getFormulas() {
-		if(fieldHandler!=null)
-	        return (ContratoFormulas)fieldHandler.readObject(this, "formulas", formulas);
-		return formulas;
-	}	
 	
 }

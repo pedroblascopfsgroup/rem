@@ -11,16 +11,13 @@
 	default-autowire="byName">
 	
 	<!-- Tareas tipo decision -->
-	<bean id="precontenciosoProjectContextDefault" 
-		class="es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl" abstract="true">
-		<property name="codigoFaseComun">
-			<value>H009</value>
-		</property>
+	<bean id="precontenciosoProjectContextHAYA" parent="precontenciosoProjectContextDefault">
 		<property name="recovery">
-			<value>BANKIA</value>
+			<value>HAYA</value>
 		</property>
 	</bean>  
 	
 		<!-- Implementaciones por defecto-->
-	<bean id="precontenciosoProjectContext" parent="precontenciosoProjectContextDefault"/>
+	<alias name="precontenciosoProjectContextHAYA" alias="precontenciosoProjectContext"/>
+
 </beans>	

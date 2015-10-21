@@ -13,6 +13,8 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 
@@ -29,6 +31,9 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 
 	@Autowired
 	private Executor executor;
+	
+	@Autowired
+	PrecontenciosoProjectContext precontenciosoContext;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -72,12 +77,14 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-			//Si es CONCURSO invocar inicializacion
-			if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
-				if (prc.getProcessBPM() == null) {
-					prc.setProcessBPM(executionContext.getProcessInstance().getId());
+			if(!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())){
+				//Si es CONCURSO invocar inicializacion
+				if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {
+					if (prc.getProcessBPM() == null) {
+						prc.setProcessBPM(executionContext.getProcessInstance().getId());
+					}
+					executor.execute("plugin.precontencioso.inicializarPco", prc);
 				}
-				executor.execute("plugin.precontencioso.inicializarPco", prc);
 			}
 			executor.execute("es.pfsgroup.plugin.precontencioso.expedienteJudicial.recalcularTareasPreparacionDocumental", prc.getId());
 			

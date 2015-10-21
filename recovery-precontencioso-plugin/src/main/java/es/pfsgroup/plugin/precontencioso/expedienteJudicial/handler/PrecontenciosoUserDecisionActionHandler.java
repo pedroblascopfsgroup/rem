@@ -9,6 +9,8 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.dao.SubtipoTareaDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.ProcedimientoPcoManager;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
@@ -29,6 +31,9 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	
 	@Autowired
 	Executor executor;
+	
+	@Autowired
+	PrecontenciosoProjectContext precontenciosoContext;
 
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
@@ -50,12 +55,14 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
 	        //Avanzamos la tarea
 	        //executionContext.getToken().signal();
-		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext))) {
+		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) 
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
 			// TODO para bankia
 			executor.execute("plugin.precontencioso.inicializarPco", prc);
 			pcoManager.obtenerNuevoLetrado(prc);
 		
-		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))) {
+		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
 			pcoManager.obtenerNuevoLetrado(prc);		
 		}
 		// Avanzamos BPM

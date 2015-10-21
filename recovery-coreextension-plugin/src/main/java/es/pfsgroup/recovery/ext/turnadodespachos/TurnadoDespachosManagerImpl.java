@@ -73,22 +73,24 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 		logger.debug("Guarda el esquema...");
 		esquemaTurnadoDao.saveOrUpdate(esquema);
 		
-		logger.debug("Elimina las configuraciones no existenes en el nuevo esquema...");
-		Set<Long> idsExistentes = new HashSet<Long>();
-		for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
-			if (dtoConfig.getId()==null) {
-				continue;
+		if (esquema.getConfiguracion()!=null && esquema.getConfiguracion().size()>0) {
+			logger.debug("Elimina las configuraciones no existenes en el nuevo esquema...");
+			Set<Long> idsExistentes = new HashSet<Long>();
+			for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
+				if (dtoConfig.getId()==null) {
+					continue;
+				}
+				idsExistentes.add(dtoConfig.getId());
 			}
-			idsExistentes.add(dtoConfig.getId());
-		}
-		for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
-			if (idsExistentes.contains(config.getId())) {
-				continue;
+			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
+				if (idsExistentes.contains(config.getId())) {
+					continue;
+				}
+				genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
 			}
-			genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
+			HibernateUtils.flush();
 		}
-		HibernateUtils.flush();
-		
+
 		logger.debug("Se insertan las configuraciones de esquema actuales...");
 		for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
 			if (dtoConfig.getId()!=null) {

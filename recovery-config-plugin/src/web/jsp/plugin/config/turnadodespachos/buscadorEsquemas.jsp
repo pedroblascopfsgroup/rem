@@ -221,7 +221,6 @@
 											// Activa el esquema
 											page.webflow({
 												flow:'turnadodespachos/activarEsquema'
-												
 												,params: {id:currentRowId,limpiarDatos:limpiarDatosLetrados}
 													,success: function(){
 													page.fireEvent(app.event.DONE);
@@ -236,6 +235,40 @@
 				});
 			}
 	});
+	
+	var arrayAcciones = new Array();
+	arrayAcciones[arrayAcciones.length] = {
+		text:'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.descargar" text="**Descargar configuración de letrados" />'
+		,iconCls : 'icon_cambio_gestor'
+		,handler:function(){
+			var flow='/pfs/turnadodespachos/descargarConfiguracionDespachos';
+		    var params = "";
+		    	
+		    app.openBrowserWindow(flow,params);
+		    page.fireEvent(app.event.DONE);           	
+		}
+	};
+	
+	arrayAcciones[arrayAcciones.length] = {
+		text:'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar" text="**Cargar configuración de letrados" />'
+		,iconCls : 'icon_cambio_gestor'
+		,handler:function(){
+           	page.webflow({
+      			flow:'turnadodespachos/cargarConfiguracionLetrados'
+      			,params: ''
+      			,success: function(){
+           		   page.fireEvent(app.event.DONE);
+           		   esquemasStore.webflow();
+           		}	
+      		});
+		}
+	};
+	
+	var menuAcciones = 
+		{
+			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.acciones" text="**Acciones" />'
+			,menu : arrayAcciones
+		};
 
 	btnBorrar.setDisabled(true);
 	btnActivar.setDisabled(true);
@@ -310,7 +343,7 @@
 		,monitorResize: true
 		//,clicksToEdit:0
 		,selModel: sm
-		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar,btnActivar]
+		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar,btnActivar, menuAcciones]
 	});
 	
 	esquemasGrid.on({

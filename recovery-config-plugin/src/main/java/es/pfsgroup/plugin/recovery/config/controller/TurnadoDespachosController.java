@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,12 +26,14 @@ import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoMana
 import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
+import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDespachoDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.TurnadoDespachosManager;
+//import es.pfsgroup.recovery.recobroCommon.esquema.model.RecobroDDEstadoComponente;
 
 @Controller
 public class TurnadoDespachosController {
@@ -62,8 +65,10 @@ public class TurnadoDespachosController {
     @Autowired
     private UsuarioManager usuarioManager;
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String ventanaBusquedaEsquemas(Model model) {
+	public String ventanaBusquedaEsquemas(ModelMap map) {
+		map.put("estadosEsquema", utilDiccionarioManager.dameValoresDiccionario(DDEstadoEsquemaTurnado.class));
 		return VIEW_ESQUEMA_TURNADO_BUSCADOR;
 	}
 	

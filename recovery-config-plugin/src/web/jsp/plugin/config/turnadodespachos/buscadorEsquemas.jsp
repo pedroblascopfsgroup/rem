@@ -7,6 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ page import="es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto" %>
 
 <fwk:page>
 
@@ -16,17 +17,41 @@
 	var currentRowId;
 	
 	//PANEL FILTROS ********************************************************************
-
-	var estadosEsquemaData = {diccionario: [
-		{codigo:'A', descripcion:'VIGENTE'}
-		,{codigo:'B', descripcion:'FINZALIDO'}
-	]};
+	
+	
+	var estadosEsquemaData = <app:dict value="${estadosEsquema}"/>;
+	var estadosEsquemaDataStore = new Ext.data.JsonStore({
+	       fields: ['codigo', 'descripcion']
+	       ,data : estadosEsquemaData
+	       ,root: 'diccionario'
+	});
+	
     var cmbEstado = app.creaCombo({
-		data: estadosEsquemaData
+    	store : estadosEsquemaDataStore
     	,name : 'tipoImporteLit'
     	,fieldLabel : '<s:message code="plugin.config.esquematurnado.buscador.tabFiltros.estado" text="**Estado" />'
 		,width : 130
     });
+    
+    
+    	//Creamos el boton buscar
+	var btnBuscar=new Ext.Button({
+		text:'<s:message code="app.buscar" text="**Buscar" />'
+		,iconCls:'icon_busquedas'
+		,handler:function(){
+			b=getParametrosDto();
+			esquemasStore.webflow(b);
+			page.fireEvent(app.event.DONE);
+		}
+	});
+	var btnClean=new Ext.Button({
+	
+		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
+		,iconCls:'icon_limpiar'
+		,handler:function(){
+			resetFiltros();
+		}
+	});
 	
 	<pfsforms:textfield
 		labelKey="plugin.config.esquematurnado.buscador.tabFiltros.nombreEsquema"
@@ -74,8 +99,31 @@
 				//esquemasGrid.expand(true);			
 			}
 		}
+		,tbar : [btnBuscar,btnClean]
 	});
-	
+	//------------------------------------------------------------------------------------------
+	resetFiltros = function(){
+		
+		//if(tabFiltros){
+		//alert("entro a resetear");
+			cmbEstado.reset();
+			txtNombreEsquema.reset();
+			txtAutor.reset();
+			dateFechaCreacionEsquema.reset();
+			dateFechaVigenteEsquema.reset();
+			dateFechaFinalizadoEsquema.reset();
+		//}
+	}
+	var getParametrosDto=function(){
+		    var b={};
+			b.tipoEstado = cmbEstado.getValue();
+			b.nombreEsquemaTurnado=txtNombreEsquema.getValue();
+			b.autor=txtAutor.getValue();
+			b.fechaAlta=dateFechaCreacionEsquema.getValue();
+			b.fechaVigente=dateFechaVigenteEsquema.getValue();
+			b.fechaFinalizado=dateFechaFinalizadoEsquema.getValue();
+			return b;
+	}
 	
 	//PANEL GRID RESULTADOS ********************************************************************
 	

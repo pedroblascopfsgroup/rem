@@ -247,6 +247,7 @@
 		,width:435
 		,height:125
 		,hideLabel:true
+		,readOnly: true
 		,name:'descripcionTipoAyudaActuacion'
 		,maxLength: 1024
 		,value : '<s:message text="${expediente.aaa.descripcionTipoAyudaActuacion}" javaScriptEscape="true" />'
@@ -273,6 +274,7 @@
 		,height:125
 		,hideLabel:true
 		,maxLength: 1024
+		,readOnly: true
 		,name:'comentariosSituacion'
 		,value : '<s:message text="${expediente.aaa.comentariosSituacion}" javaScriptEscape="true" />'
 		 <app:test id="campoComentario" addComa="true"/> 

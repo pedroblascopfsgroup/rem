@@ -513,6 +513,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				procedimientoPco = crearProcedimientoPco(procedimiento, DDEstadoPreparacionPCO.PREPARACION);
 			} else {
 				procedimiento = procedimientoPco.getProcedimiento();
+				TipoProcedimiento procPropuesto = obtenerProcedimientoPropuesto(procedimiento);
+				if (procPropuesto != null) {
+					procedimientoPco.setTipoProcPropuesto(procPropuesto);
+				}
+				genericDao.save(ProcedimientoPCO.class, procedimientoPco);
 				cambiarEstadoExpediente(idProc, DDEstadoPreparacionPCO.PREPARACION);
 			}
 			List<Contrato> contratos = new ArrayList<Contrato>(procedimiento.getAsunto().getContratos());

@@ -264,7 +264,7 @@
 		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
 		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
 		, VARR AS (
-			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID, --p.per_ultima_operacion
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --,p.per_ultima_operacion
 				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
 				inner join per_personas p on a1.per_id = p.per_id
 		)
@@ -398,7 +398,7 @@
 		            /* Si tiene fecha de vigencia que se cumpla/* Si tiene fecha de vigencia que se cumpla, o si tiene plazo de disparo que salte  */
 	                /* MISMO ARQUETIPO AYER Y HOY */
 	                /* SYSDATE - FECHA INICIO VIGENCIA > PLAZO DE DISPARO DE MI ARQUETIPO */
-	                /* Si no hay plazo de disparo salta al día siguiente*/ */
+	                /* Si no hay plazo de disparo salta al día siguiente*/
 		            (
                   	NVL(arq_cal.arq_plazo_disparo,0) < (
                       SELECT sysdate - NVL(pol.pol_fecha_vigencia , sysdate - NVL(arq_cal.arq_plazo_disparo+1,1))
@@ -408,6 +408,7 @@
 		                    where 1=1
 		                        AND cmp.per_id = arr.per_id
 		                        AND esp.dd_esp_codigo = ${ddEstadoPolitica.vigente.codigo}
+		                        AND (arq_cal.arq_id = arq_per.arq_id) 
 		               )
 		            )            
 		            /* O, si hay un salto suficientemente grande de nivel de arquetipo como indica el arquetipo actual*/

@@ -7,7 +7,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-
 	var decisionId='${decisionProcedimiento.id}';
 	arrayProcedimientos=[];
 	var procedimientoPadre='${idProcedimiento}';
@@ -259,6 +258,9 @@
 		}
 		//agrego el valor combo de causas que no se porque motivo viaja mal en la request
 		
+		param["fechaParalizacionStr"] = fechaHasta.getValue();
+		param["comentarios"] = comentarios.getValue();
+		param["strEstadoDecision"] = estadoDecision.getValue();
 		//param["causaDecision"]=comboCausas.getValue();
 		param["causaDecisionFinalizar"]=comboCausasFinalizar.getValue();
 		param["causaDecisionParalizar"]=comboCausasParalizar.getValue();
@@ -468,7 +470,7 @@
 			if(!saldoARecuperar.validate())
 				errores+="<br><s:message code="decisionProcedimiento.validacion.saldoARecuperar" text="**Validar saldo a recuperar"/>";			
 			if(!recuperacion.validate())
-				errores+="<br><s:message code="decisionProcedimiento.validacion.recuperacion" text="**Validar recuperación"/>";
+				errores+="<br><s:message code="decisionProcedimiento.validacion.recuperacion" text="**Validar recuperaciï¿½n"/>";
 			if(!meses.validate())
 				errores+="<br><s:message code="decisionProcedimiento.validacion.plazo" text="**Validar plazo"/>";
 				
@@ -521,11 +523,12 @@
 		
 			
 		if(validarDatos(saldoRec, permiteSinDemandados)){
+			var idx;
 			var arrayDemandados=demandados.split(',');
-			for(i=0;i < arrayDemandados.length;i++){
+			for(idx=0;idx < arrayDemandados.length;idx++){
 				var rec;
-				var demandado=arrayDemandados[i];
-				if(i==0){
+				var demandado=arrayDemandados[idx];
+				if(idx==0){
 					rec={
 						procedimientoPadre:procedimientoPadre
 						,tipoActuacion:tipoActu
@@ -549,7 +552,7 @@
 	
 	var compruebaUnicoBien = function(funcion) {
 		//Comprueba en caso de no haber introducido demandados que el procedimiento tenga marcado el flag unicoBien, 
-		// si es así, se le permitirá agregar la decisión sin demandados.
+		// si es asï¿½, se le permitirï¿½ agregar la decisiï¿½n sin demandados.
 		
 		var demandados=comboPersonas.getValue();
 		if(demandados=='') {
@@ -563,7 +566,7 @@
 			
 			if (unicoBien) {
 				//Si el tipo de procedimiento tiene marcado el flag unico bien, se le permite que no tenga demandados
-				Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="decisionProcedimiento.validacion.sinDemandados" text="**No se ha añadido ningún demandado ¿Desea continuar?" />', function(btn){
+				Ext.Msg.confirm('<s:message code="app.confirmar" text="**Confirmar" />', '<s:message code="decisionProcedimiento.validacion.sinDemandados" text="**No se ha aï¿½adido ningï¿½n demandado ï¿½Desea continuar?" />', function(btn){
     				if (btn == 'yes'){
     					if (funcion == 'addProcedimiento') {
     						addProcedimiento(true);
@@ -741,10 +744,12 @@
 			if (isCheck){
 				comboCausasParalizar.setVisible(false);
 				comboCausasFinalizar.setVisible(true);
+				comboCausasFinalizar.allowBlank = false;
 			}
 			else{
 				comboCausasParalizar.setVisible(true);
 				comboCausasFinalizar.setVisible(false);
+				comboCausasFinalizar.allowBlank = true;
 			}			
 			
 	}); 
@@ -779,7 +784,6 @@
 			checkbox.setValue(isCheck);
 
 			if (isCheck){
-				fechaHasta.setDisabled(false);
 				if (comprobarPermitidoAceptar){
 					btnAceptarPropuesta.disable();
 					btnProponer.enable();
@@ -797,10 +801,16 @@
 			if (isCheck){
 				comboCausasParalizar.setVisible(true);
 				comboCausasFinalizar.setVisible(false);
+				comboCausasParalizar.allowBlank = false;
+				fechaHasta.setDisabled(false);
+				fechaHasta.allowBlank = false;
 			}
 			else{
 				comboCausasParalizar.setVisible(false);
 				comboCausasFinalizar.setVisible(true);
+				comboCausasParalizar.allowBlank = true;
+				fechaHasta.setDisabled(true);
+				fechaHasta.allowBlank = true;
 			}			
 			
 	}); 
@@ -883,11 +893,11 @@
 		,iconCls : 'icon_ok'
 		,handler : function(){
 			errores = "";
-			if (validarDatosFormulario()){			
-				if(activarComprobacionSubasta && mensaje){
+			if (validarDatosFormulario()){	
+				if(activarComprobacionSubasta && mensaje && !chkFinalizarOrigen.getValue()){
 					Ext.Msg.show({
-					   title:'Confirmación',
-					   msg: '¿Está seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarán activas.',
+					   title:'Confirmaciï¿½n',
+					   msg: 'ï¿½Estï¿½ seguro de no querer finalizar la subasta en curso? En caso de continuar ambas subastas se encontrarï¿½n activas.',
 					   buttons: Ext.Msg.YESNO,
 					   animEl: 'elId',
 					   width:450,
@@ -897,45 +907,73 @@
 				}
 				else{
 					var params = transform();
-						params["idProcedimiento"]='${idProcedimiento}';
-						page.submit({
-							eventName : 'aceptarPropuesta'
-							,formPanel : panelEdicion
-							,success :    function(){ page.fireEvent(app.event.DONE); }
-							,params:params
-				  });
+					params["idProcedimiento"]='${idProcedimiento}';
+					params["idDecision"]='${id}';
+					page.webflow({
+						flow: 'decisionprocedimiento/aceptarPropuesta'
+						,params: params
+						,success : function(){ 
+							page.fireEvent(app.event.DONE); 
+						}
+					});
 				}
-			}	
+			}
+			else{
+				btnAceptarPropuesta.enable();
+			}
 		}
 	});
 	
+	btnAceptarPropuesta.on('click',function(){
+		btnAceptarPropuesta.disable();
+	})
+	
+	
 	function processResult(opt){
 	   if(opt == 'no'){
+	   		btnAceptarPropuesta.enable();
 	      //page.fireEvent(app.event.CANCEL);
 	   }
 	   if(opt == 'yes'){
-	      var params = transform();
-				params["idProcedimiento"]='${idProcedimiento}';
-				page.submit({
-					eventName : 'aceptarPropuesta'
-					,formPanel : panelEdicion
-					,success :    function(){ page.fireEvent(app.event.DONE); }
-					,params:params
-		  });
+			var params = transform();
+			params["idProcedimiento"]='${idProcedimiento}';
+			params["idDecision"]='${id}';
+			page.webflow({
+				flow: 'decisionprocedimiento/aceptarPropuesta'
+				,params: params
+				,success : function(){ 
+					page.fireEvent(app.event.DONE); 
+				}
+			});
 	   }
 	}
 	
 	var validarDatosFormulario = function(){
 	
 		var saldoRec=saldoARecuperar.getValue();
-		if (chkFinalizarOrigen.getValue() || chkParalizarOrigen.getValue()){
-			return true;
+		if (chkFinalizarOrigen.getValue()){
+			if(comboCausasFinalizar.getValue()){
+				return true;
+			}else{
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisión." />');
+			}
+		} else if(chkParalizarOrigen.getValue()){
+			if(comboCausasParalizar.getValue()){
+				if(fechaHasta.getValue()){
+					return true;
+				}else{
+					Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.fechaNula" text="**Debe seleccionar una fecha de fin de paralización." />');
+				}
+			}else{
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisión." />');
+			}
 		} else if(procedimientoStore.getCount() >= 1){
 			return true;
 		} else {
+			btnAceptarPropuesta.enable();
 			return false;
 		}
-	
+		return false;
 	}
 
 	
@@ -956,33 +994,42 @@
 		text : '<s:message code="decisionProcedimiento.proponer" text="**Proponer" />'
 		,iconCls:'icon_elevar'
 		,handler : function(){
-			var params = transform();
-			page.submit({
-	            eventName : 'update'
-	            ,formPanel : panelEdicion
-	            ,success : 
-	               function(){ 
-	        			page.fireEvent(app.event.DONE);          
-	               }
-	            ,params: params
-	         });
-	    }
-		
+			if (validarDatosFormulario()){
+				var params = transform();
+				params["idProcedimiento"]='${idProcedimiento}';
+				params["idDecision"]='${id}';
+				page.webflow({
+					flow: 'decisionprocedimiento/crearPropuesta'
+					,params: params
+					,success : function(){ 
+						page.fireEvent(app.event.DONE); 
+					}
+				});
+			}
+			else{
+				btnProponer.enable();
+			}
+		}
 	});
+	
+	btnProponer.on('click',function(){
+		btnProponer.disable();
+	})
+	
+	
 	var btnRechazar=new Ext.Button({
 		text:'<s:message code="decisionProcedimiento.rechazar" text="**Rechazar" />'
 		,iconCls:'icon_rechazar_decision'
 		,handler : function(){
-			page.submit({
-	            eventName : 'rechazar'
-	            ,formPanel : panelEdicion
-	            ,success: 
-	               function(){ 
-	        			page.fireEvent(app.event.DONE);          
-	               }
-	            ,params: {id:decisionId}
-	        });
-		}
+
+			page.webflow({
+				flow: 'decisionprocedimiento/rechazarPropuesta'
+				,params: {id:decisionId}
+				,success : function(){ 
+					page.fireEvent(app.event.DONE); 
+				}
+			});
+	     }
 	});
 
 	var panelSuperior={
@@ -1049,13 +1096,13 @@
 						}
 						, --%>
 						new Ext.form.Label({
-							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar" text="**La decisión está aceptada/cancelada y no se puede editar" />'
+							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar" text="**La decisiï¿½n estï¿½ aceptada/cancelada y no se puede editar" />'
 							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
 							,hidden: faltaPermisos || !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' == '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
 							})
 						,
 						new Ext.form.Label({
-							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar.propuesto" text="**La decisión está propuesta y no se puede editar" />'
+							text:'<s:message code="decisionProcedimiento.msg.actuaciones.noeditar.propuesto" text="**La decisiï¿½n estï¿½ propuesta y no se puede editar" />'
 							,style:'margin:10px;font-size:13pt;font-family:Arial; color:#FF0000'
 							,hidden: faltaPermisos || !modoConsulta || '${decisionProcedimiento.estadoDecision.codigo}' != '<fwk:const value="es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision.ESTADO_PROPUESTO" />'
 							})

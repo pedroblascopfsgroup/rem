@@ -1,6 +1,7 @@
 #!/bin/bash
 
 PLUGIN=procedimientos-bpmHaya-plugin
+CARPETA_PLUGIN=cajamar
 
 if [ -z $1 ]; then
 	echo "Tienes que indicar el entorno de desarrollo en el que quieres desplegar"
@@ -37,20 +38,29 @@ if [ -d src/web/jsp/plugin/$PLUGIN ];then
 else
 	echo "No hay JSP's a copiar"
 fi
+if [ -d src/web/jsp/plugin/$CARPETA_PLUGIN ];then
+        rm -Rf /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin/$CARPETA_PLUGIN
+        cp -Rf src/web/jsp/plugin/* /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin
+        chmod -R 777 /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/jsp/plugin/$CARPETA_PLUGIN
+        echo "Se han copiado las JSP's"
+else
+        echo "No hay JSP's a copiar"
+fi
 
-if [ -d src/web/flows/plugin/$PLUGIN ];then
-	rm -Rf /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/flows/plugin/$PLUGIN
+
+if [ -d src/web/flows/plugin/$CARPETA_PLUGIN ];then
+	rm -Rf /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/flows/plugin/$CARPETA_PLUGIN
 	cp -Rf src/web/flows/plugin/* /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/flows/plugin
-	chmod -R 777 /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/flows/plugin/$PLUGIN
+	chmod -R 777 /var/tomcat/$ENTORNO/webapps/pfs/WEB-INF/flows/plugin/$CARPETA_PLUGIN
 	echo "Se han copiado los flows"
 else
 	echo "No hay flows que copiar"
 fi
 
-if [ -d src/web/js/plugin/$PLUGIN ];then
-	rm -Rf /var/tomcat/$ENTORNO/webapps/pfs/js/plugin/$PLUGIN
+if [ -d src/web/js/plugin/$CARPETA_PLUGIN ];then
+	rm -Rf /var/tomcat/$ENTORNO/webapps/pfs/js/plugin/$CARPETA_PLUGIN
 	cp -Rf src/web/js/plugin/* /var/tomcat/$ENTORNO/webapps/pfs/js/plugin
-	chmod -R 777 /var/tomcat/$ENTORNO/webapps/pfs/js/plugin/$PLUGIN
+	chmod -R 777 /var/tomcat/$ENTORNO/webapps/pfs/js/plugin/$CARPETA_PLUGIN
 	echo "Se han copiado las librerias JavaScript"
 else
 	echo "No hay librerias JavaScript que copiar"

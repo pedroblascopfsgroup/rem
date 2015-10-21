@@ -146,7 +146,7 @@ fi
 
 #Invocar PASO2
 export PASO2=reg2.sql
-cat "$BASEDIR/${PASO2}" > $BASEDIR/${nombreSinExt}-${PASO2}
+sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO2}" > $BASEDIR/${nombreSinExt}-${PASO2}
 if [[ $VERBOSE == 1 ]]; then
     echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_REGISTRO/$PW @$BASEDIR/${nombreSinExt}-${PASO2} $NOMBRE_SCRIPT $FECHA_CREACION $ESQUEMA_EJECUCION > /dev/null"
 fi
@@ -193,7 +193,7 @@ fi
 
 #Inserción inicial de datos en tabla de registro
 export PASO3=reg3.sql
-cat "$BASEDIR/${PASO3}" > $BASEDIR/${nombreSinExt}-${PASO3}
+sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO3}" > $BASEDIR/${nombreSinExt}-${PASO3}
 if [[ $PACKAGE == 0 ]]; then
     echo "#####    Inserción inicial de datos en tabla de registro"  >> $BASEDIR/$nombreLog
 fi
@@ -208,6 +208,7 @@ else
 fi
 
 #Ejecución del script en sí mismo
+dos2unix -q "$BASEDIR/${NOMBRE_SCRIPT}"
 sed $CADENAS_SUSTITUCION "$BASEDIR/${NOMBRE_SCRIPT}" > $BASEDIR/${nombreSinExt}-reg3.1.sql
 if [[ $VERBOSE == 1 ]]; then
     echo "$ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-reg3.1.sql >> $BASEDIR/$nombreLog"
@@ -223,7 +224,7 @@ else
 fi
 
 export PASO4=reg4.sql
-cat "$BASEDIR/${PASO4}" > $BASEDIR/${nombreSinExt}-${PASO4}
+sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO4}" > $BASEDIR/${nombreSinExt}-${PASO4}
 if [[ $PACKAGE == 0 ]]; then
     #Si ERROR, guardar respuesta y ejecución fallida
     if [ $RESULTADO != 0 ] ; then

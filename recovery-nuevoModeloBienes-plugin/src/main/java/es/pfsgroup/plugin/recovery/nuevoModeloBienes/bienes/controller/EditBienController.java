@@ -182,6 +182,21 @@ public class EditBienController {
 		map.put("idContrato", idContrato);
 		return "plugin/nuevoModeloBienes/bienes/NMBrelacionBienContrato";
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String editarRelacionBienContratoMultiple(
+			@RequestParam(value = "codTipoContratoBien", required = false) String codTipoContratoBien,
+			ModelMap map) {
+		
+		List<NMBDDTipoBienContrato> tipoContratoBien = (List<NMBDDTipoBienContrato>) executor
+				.execute("dictionaryManager.getList", "NMBDDTipoBienContrato");
+		map.put("DDContratoBien", tipoContratoBien);
+		map.put("codTipoContratoBien", codTipoContratoBien);
+
+		return "plugin/nuevoModeloBienes/bienes/NMEditarRelacionBienContratoMultiple";
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -968,7 +983,8 @@ public class EditBienController {
 	public String generarInformePropCancelacionCargas(
 			@RequestParam(value = "id", required = true) Long idBien,
 			ModelMap model) {
-		String plantilla = "reportPropuestaCancelacionCargas.jrxml";
+		
+		String plantilla = nmbProjectContext.getPlantillaReportPropuestaCancelacionCargas();
 
 		// Obtener datos para rellenar el informe
 		NMBBien bien = (NMBBien) proxyFactory.proxy(BienApi.class).get(idBien);

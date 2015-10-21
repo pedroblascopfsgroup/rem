@@ -111,7 +111,7 @@ public class MEJFinalizarAsuntoManager implements MEJFinalizarAsuntoApi {
 						dtoDecisionProcedimiento);
 
 				// Cambiamos el estado del procedimiento a cerrado
-				proc.setEstadoProcedimiento(ep);
+				//proc.setEstadoProcedimiento(ep);
 				genericDao.save(Procedimiento.class, proc);
 			} catch (Exception e) {
 				e.printStackTrace();

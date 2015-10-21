@@ -591,7 +591,8 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         	
         	// Multigestor
         	//hb.appendWhere(" tar.asunto.id in (SELECT gaa.asunto.id FROM EXTGestorAdicionalAsunto gaa where gaa.gestor.usuario.id = " + dto.getUsuarioLogado().getId() + " )");
-        	String multigestor = filtroGestorGrupo(extGrupoUsuariosDao.getIdsUsuariosGrupoUsuario(dto.getUsuarioLogado()));
+        	List<Long> idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(dto.getUsuarioLogado());
+        	String multigestor = filtroGestorGrupo(idGrpsUsuario);
         	if(!Checks.esNulo(multigestor)){
         		 hb.appendWhere(multigestor + ")");
         	}

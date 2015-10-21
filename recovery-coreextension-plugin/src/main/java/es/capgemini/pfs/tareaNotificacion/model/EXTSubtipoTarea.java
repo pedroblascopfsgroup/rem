@@ -62,6 +62,9 @@ public class EXTSubtipoTarea extends SubtipoTarea {
     public static final String CODIGO_PROPUESTA_DECISION_SUPERVISOR_CONFECCION_EXPTE = "608";
     public static final String CODIGO_ACEPTACION_DECISION_PROCEDIMIENTO_GESTOR_CONFECCION_EXPTE = "609";
     public static final String CODIGO_ACEPTACION_DECISION_PROCEDIMIENTO_GESTOR_2_CONFECCION_EXPTE = "610";    
+    
+    ///NOTIFICACIONES DE ACUERDOS
+    public static final String CODIGO_NOTIFICACION_ACUERDOS = "NOTIF_ACU";
 
     public static final String CODIGO_ACEPTACION_DECISION_PROCEDIMIENTO_GESTOR = "9999999999";
     
@@ -69,6 +72,12 @@ public class EXTSubtipoTarea extends SubtipoTarea {
     public static final String CODIGO_ACUERDO_CERRADO_POR_GESTOR = "52";
     public static final String CODIGO_ACUERDO_CERRADO_POR_SUPERVISOR = "56";
     
+    // PRECONTENCIOSO
+    public static final String CODIGO_PRECONTENCIOSO_SUPERVISOR = "PCO_SUP";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTORIA = "PCO_GEST";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_GESTOR = "PCO_PREDOC";
+    public static final String CODIGO_PRECONTENCIOSO_TAREA_LETRADO = "PCO_LET";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     @JoinColumn(name = "DD_TGE_ID")

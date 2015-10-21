@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteDeposito" width="1226" height="877">
+  <node name="Inicio" x="384" y="36" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H034_SolicitarNombramiento" x="354" y="120" width="197" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="1" y="-4"/>
+    </edge>
+    <edge>
+      <label x="-1" y="8"/>
+    </edge>
+  </node>
+  <node name="H034_NombramientoDepositario" x="343" y="207" width="217" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="2" y="-6"/>
+    </edge>
+    <edge>
+      <label x="-4" y="6"/>
+    </edge>
+    <edge>
+      <label x="-9" y="-28"/>
+      <bendpoint w1="-188" h1="-49" w2="-187" h2="38"/>
+    </edge>
+  </node>
+  <node name="H034_AceptacionCargoDepositario" x="339" y="291" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="4" y="-4"/>
+    </edge>
+    <edge>
+      <label x="3" y="0"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-30"/>
+      <bendpoint w1="-182" h1="-51" w2="-180" h2="33"/>
+    </edge>
+  </node>
+  <node name="H034_SolicitarRemocion" x="340" y="382" width="229" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="4" y="-4"/>
+    </edge>
+    <edge>
+      <label x="15" y="-1"/>
+    </edge>
+    <edge>
+      <label x="-4" y="-33"/>
+      <bendpoint w1="-186" h1="-52" w2="-185" h2="39"/>
+    </edge>
+  </node>
+  <node name="H034_AcuerdoEntrega" x="376" y="498" width="157" height="36">
+    <edge>
+      <label x="-27" y="-15"/>
+    </edge>
+    <edge>
+      <label x="-1" y="-7"/>
+    </edge>
+    <edge>
+      <label x="12" y="1"/>
+    </edge>
+    <edge>
+      <label x="-24" y="-34"/>
+      <bendpoint w1="-171" h1="-61" w2="-171" h2="55"/>
+    </edge>
+  </node>
+  <node name="H034_AcuerdoDecision" x="822" y="505" width="196" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="854" y="200" width="132" height="36"/>
+</root-container>

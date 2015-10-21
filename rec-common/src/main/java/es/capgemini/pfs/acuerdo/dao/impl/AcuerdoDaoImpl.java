@@ -91,7 +91,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
      */
     @SuppressWarnings("unchecked")
     public boolean hayAcuerdosVigentes(Long idAsunto, Long idAcuerdo) {
-        String hql = "from Acuerdo ac where ac.asunto.id = ? and ac.estadoAcuerdo.codigo = " + DDEstadoAcuerdo.ACUERDO_VIGENTE;
+        String hql = "from Acuerdo ac where ac.asunto.id = ? and ac.estadoAcuerdo.codigo = " + DDEstadoAcuerdo.ACUERDO_ACEPTADO;
         List<Acuerdo> acuerdos;
         if (idAcuerdo != null) {
             hql += " and ac.id != ? ";

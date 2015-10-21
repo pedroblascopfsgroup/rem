@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.jbpm.graph.exe.ExecutionContext;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;

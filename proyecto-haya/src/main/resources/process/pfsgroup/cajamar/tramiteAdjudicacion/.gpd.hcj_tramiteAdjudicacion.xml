@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="hcj_tramiteAdjudicacion" width="1867" height="1665">
+  <node name="Inicio" x="-360" y="46" width="132" height="36">
+    <edge>
+      <label x="-47" y="-12"/>
+    </edge>
+  </node>
+  <node name="H005_SolicitudDecretoAdjudicacion" x="-121" y="44" width="242" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="91" h1="53" w2="83" h2="-66"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="1323" h1="-37" w2="-149" h2="-293"/>
+    </edge>
+  </node>
+  <node name="H005_SolicitudTestimonioDecretoAdjudicacion" x="273" y="741" width="299" height="36">
+    <edge>
+      <label x="7" y="-7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="280" h1="-37" w2="-770" h2="404"/>
+    </edge>
+    <edge>
+      <label x="-23" y="-15"/>
+    </edge>
+  </node>
+  <node name="H005_notificacionDecretoAdjudicacionAEntidad" x="214" y="60" width="307" height="36">
+    <edge>
+      <label x="-20" y="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="813" h1="-35" w2="-292" h2="-275"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_notificacionDecretoAdjudicacionAlContrario" x="289" y="542" width="340" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_ConfirmarTestimonio" x="251" y="869" width="389" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="459" h1="-2" w2="-55" h2="535"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="134" h1="-64" w2="157" h2="64"/>
+    </edge>
+    <edge>
+      <label x="1" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_RegistrarPresentacionEnRegistro" x="410" y="1376" width="270" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="663" h1="5" w2="43" h2="1043"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_RegistrarInscripcionDelTitulo" x="416" y="1528" width="252" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="691" h1="-2" w2="68" h2="1138"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-91" h1="-41" w2="-94" h2="61"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_BPMTramiteSubsanacionEmbargo1" x="638" y="104" width="360" height="36">
+    <edge>
+      <label x="-106" y="-12"/>
+      <bendpoint w1="-1" h1="-43" w2="-558" h2="-7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="330" h1="-11" w2="-262" h2="-205"/>
+    </edge>
+  </node>
+  <node name="H005_BPMTramiteNotificacion" x="-19" y="690" width="211" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-35" y="-13"/>
+    </edge>
+  </node>
+  <node name="H005_notificacionDecretoAdjudicacionAlContrarioDecision" x="224" y="626" width="399" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="321" y="1020" width="252" height="24">
+    <edge>
+      <label x="-43" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-20" y="-13"/>
+    </edge>
+  </node>
+  <node name="H005_BPMTramiteDePosesion" x="108" y="1145" width="246" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-378" h1="15" w2="87" h2="604"/>
+    </edge>
+    <edge>
+      <label x="-78" y="15"/>
+      <bendpoint w1="-385" h1="56" w2="80" h2="645"/>
+    </edge>
+  </node>
+  <node name="H005_RegistrarInscripcionDelTituloDecision" x="398" y="1628" width="304" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-677" h1="-27" w2="68" h2="781"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_BPMTramiteSubsanacionEmbargo2" x="-120" y="869" width="285" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-58" y="-2"/>
+    </edge>
+  </node>
+  <node name="H005_BPMTramiteSubsanacionEmbargo3" x="-52" y="1450" width="297" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_ConfirmarContabilidad" x="53" y="477" width="212" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-174" h1="33" w2="133" h2="22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_DeclaracionIVAIGIC" x="-191" y="165" width="230" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-210" h1="10" w2="-102" h2="-312"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-236" h1="35" w2="-128" h2="-287"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork4" x="341" y="207" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-87" y="-124"/>
+      <bendpoint w1="97" h1="165" w2="105" h2="-176"/>
+    </edge>
+    <edge>
+      <label x="11" y="-11"/>
+    </edge>
+  </node>
+  <node name="conIVAoIGIC" x="94" y="165" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-318" h1="-67" w2="-24" h2="-393"/>
+      <bendpoint w1="-460" h1="31" w2="-166" h2="-295"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="cargasPrevias" x="52" y="238" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="requiereComAdicional" x="677" y="262" width="159" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_notificacionDecretoAdjudicacionAEntidadDecision" x="336" y="147" width="187" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="adjudicadoAEntidad" x="249" y="266" width="175" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_RevisionComAdicional" x="745" y="384" width="251" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_BPMTramiteSaneamientoCargas" x="-258" y="294" width="269" height="36">
+    <edge>
+      <label x="16" y="3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-103" y="-3"/>
+    </edge>
+  </node>
+  <node name="H005_RevisarInfoContable" x="35" y="401" width="251" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_NotifComAdicional" x="1044" y="384" width="222" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-147" h1="-35" w2="138" h2="-35"/>
+    </edge>
+  </node>
+  <node name="H005_BPMProvisionFondos" x="435" y="1148" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-680" h1="127" w2="75" h2="455"/>
+    </edge>
+  </node>
+  <node name="H005_BPMCertfLibertadArrendamiento" x="935" y="1194" width="257" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_ConfirmarTestimonioDecision" x="335" y="952" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-237" h1="35" w2="-231" h2="-27"/>
+    </edge>
+  </node>
+  <node name="conOcupantes" x="790" y="1111" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="requiereComAdicional2" x="747" y="986" width="132" height="36">
+    <edge>
+      <label x="-7" y="-10"/>
+      <bendpoint w1="-26" h1="-77" w2="-69" h2="522"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1368" y="517" width="137" height="36"/>
+  <node name="Fin2" x="-261" y="820" width="132" height="36"/>
+  <node name="Fin3" x="353" y="355" width="132" height="38"/>
+</root-container>

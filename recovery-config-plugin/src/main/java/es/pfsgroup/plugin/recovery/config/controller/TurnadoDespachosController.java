@@ -1,7 +1,12 @@
 package es.pfsgroup.plugin.recovery.config.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.ResponseWrapper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.view.JSPView;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
@@ -182,8 +188,11 @@ public class TurnadoDespachosController {
 	}
 
 	@RequestMapping
-	public String activarEsquema(Long id, Model model) {
+	public String activarEsquema(Long id, boolean limpiarDatos, Model model) {
 		try {
+			if (limpiarDatos) {
+				turnadoDespachosManager.limpiarTurnadoTodosLosDespachos(id);
+			}
 			turnadoDespachosManager.activarEsquema(id);
 		} catch (Exception ex) {
 			logger.warn("Error al activar el esquema de turnado", ex);
@@ -198,5 +207,22 @@ public class TurnadoDespachosController {
 			despachoExternoManager.saveEsquemaDespacho(dto);
 		}
 		return VIEW_DEFAULT;
-	}	
+	}
+	
+	@RequestMapping
+	public String checkActivarEsquema(Long id
+			, Model model
+			, HttpServletResponse response) {
+		boolean resultado = turnadoDespachosManager.checkActivarEsquema(id);
+		response.setContentType("application/json");
+		PrintWriter out;
+		try {
+			out = response.getWriter();
+			out.println(String.format("{resultado:%s}", resultado));
+		} catch (IOException e) {
+			logger.error("No puedo recuperar objeto response de la petición HTTP", e);
+		}
+		return null;
+	}
+	
 }

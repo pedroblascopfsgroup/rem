@@ -154,7 +154,6 @@ public class EsquemaTurnadoConfig implements Serializable, Auditable, Dictionary
 
 	@Override
 	public String getDescripcionLarga() {
-		
 		return getDescripcion();
 	}
 

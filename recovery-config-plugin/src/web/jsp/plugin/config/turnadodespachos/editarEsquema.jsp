@@ -25,6 +25,7 @@
 		,'<c:out value="${data.descripcion}"/>'
 		, {
 		allowBlank: false
+		,readOnly: modoConsulta 
 		}
 	);
 	
@@ -36,6 +37,7 @@
 			,minValue: 0
 			,maxValue: 100
 			,decimalPrecision: 2
+			,readOnly: modoConsulta
 		});
 	txLitLimitStockAnual.maxValue = 100;
 
@@ -47,6 +49,7 @@
 			,minValue: 0
 			,maxValue: 100
 			,decimalPrecision: 2
+			,readOnly: modoConsulta
 		});
 	txConLimitStockAnual.maxValue = 100;
 
@@ -247,11 +250,11 @@
 					});
 					
 					if (!valid) {
-						alert("<s:message code="plugin.config.esquematurnado.editar.grid.error.codigoExistente" text="**Este codigo ya existe, no se creará la línea."/>");
+						Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.editar.grid.error.codigoExistente" text="**Este codigo ya existe, no se creará la línea."/>');
 						return false;
 					}
 					if (totalPercent>100) {
-						alert("<s:message code="plugin.config.esquematurnado.editar.grid.error.percentSuperado" text="**Las diferentes opciones no pueden superar el 100%"/>");
+						Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.editar.grid.error.percentSuperado" text="**Las diferentes opciones no pueden superar el 100%"/>');
 						return false;
 					}
 					return valid;
@@ -284,8 +287,8 @@
 		,stripeRows: true
 		//,autoHeight:true
 		,enableHdMenu:false 
-		,plugins: [importeConcursalGridRE]
-		,rowEditor: importeConcursalGridRE
+		,plugins: (modoConsulta) ? null : [importeConcursalGridRE]
+		,rowEditor: (modoConsulta) ? null : importeConcursalGridRE
 		,height: 150
 		,resizable:false
 		,collapsible : false
@@ -311,8 +314,8 @@
 		,stripeRows: true
 		//,autoHeight:true
 		,enableHdMenu:false 
-		,plugins: [calidadConcursalGridRE]
-		,rowEditor: calidadConcursalGridRE
+		,plugins: (modoConsulta) ? null : [calidadConcursalGridRE]
+		,rowEditor: (modoConsulta) ? null : calidadConcursalGridRE
 		,height: 150
 		,resizable:false
 		,collapsible : false
@@ -376,8 +379,8 @@
 		,stripeRows: true
 		//,autoHeight:true
 		,enableHdMenu:false 
-		,plugins: [importeLitigiosGridRE]
-		,rowEditor: importeLitigiosGridRE
+		,plugins: (modoConsulta) ? null : [importeLitigiosGridRE]
+		,rowEditor: (modoConsulta) ? null : importeLitigiosGridRE
 		,height: 150
 		,resizable:false
 		,collapsible : false
@@ -403,8 +406,8 @@
 		,stripeRows: true
 		//,autoHeight:true
 		,enableHdMenu:false 
-		,plugins: [calidadLitigiosGridRE]
-		,rowEditor: calidadLitigiosGridRE
+		,plugins: (modoConsulta) ? null : [calidadLitigiosGridRE]
+		,rowEditor: (modoConsulta) ? null : calidadLitigiosGridRE
 		,height: 150
 		,resizable:false
 		,collapsible : false
@@ -506,6 +509,11 @@
 			storeImpLit.data.getCount()==0 ||
 			storeCalLit.data.getCount()==0) {
 			return '<s:message code="plugin.config.esquematurnado.editar.validacion1" text="**Todos los campos son obligatorios y debe completar todas las tablas del esquema."/>';
+		}
+		
+		if (txLitLimitStockAnual.getValue()<0 || txLitLimitStockAnual.getValue()>100 ||
+			txConLimitStockAnual.getValue()<0 || txConLimitStockAnual.getValue()>100) {
+			return '<s:message code="plugin.config.esquematurnado.editar.validacion4" text="**El límite de stock debe ser un valor comprendido entre 0 y 100%"/>';
 		}
 		
 		// Comprobar que los tipos de calidad concurso suman 100.0

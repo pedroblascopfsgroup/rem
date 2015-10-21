@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +17,7 @@ import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Service
@@ -67,28 +70,24 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 		esquema.setLimiteStockAnualConcursos(dto.getLimiteStockConcursos());
 		esquema.setLimiteStockAnualLitigios(dto.getLimiteStockLitigios());
 
+		logger.debug("Guarda el esquema...");
 		esquemaTurnadoDao.saveOrUpdate(esquema);
 		
-		logger.debug("Elimina configuración actual enviada para edición...");
-		Set<Long> idsActualesConfig = new HashSet<Long>();
+		logger.debug("Elimina las configuraciones no existenes en el nuevo esquema...");
+		Set<Long> idsExistentes = new HashSet<Long>();
 		for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
-			if (dtoConfig.getId()!=null) {
-				idsActualesConfig.add(dtoConfig.getId());
+			if (dtoConfig.getId()==null) {
+				continue;
 			}
+			idsExistentes.add(dtoConfig.getId());
 		}
-		
-		logger.debug("Se detectan la configuraciones de esquema que se han de eliminar...");
-		List<EsquemaTurnadoConfig> configList = esquema.getConfiguracion();
-		if (configList!=null) {
-			for (int i=configList.size()-1;i>=0;i--) {
-				EsquemaTurnadoConfig config = configList.get(i);
-				if (idsActualesConfig.contains(config.getId())) {
-					continue;
-				}
-				esquema.getConfiguracion().remove(config);
-				genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
+		for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
+			if (idsExistentes.contains(config.getId())) {
+				continue;
 			}
+			genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
 		}
+		HibernateUtils.flush();
 		
 		logger.debug("Se insertan las configuraciones de esquema actuales...");
 		for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
@@ -120,15 +119,35 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 		}
 		
 		esquema = esquemaTurnadoDao.get(esquema.getId());
+		
 		return esquema;
 	}
 
 
 	@Override
 	@Transactional
-	public void activarEsquema(Long idEsquema) throws ActivarEsquemaDeTurnadoException {
-		// TODO Auto-generated method stub
-
+	public void activarEsquema(Long idEsquema) {
+		EsquemaTurnado esquema = this.get(idEsquema);
+		EsquemaTurnado esquemaVigente = null;
+		
+		DDEstadoEsquemaTurnado estadoTerminado = (DDEstadoEsquemaTurnado)dictApi
+				.dameValorDiccionarioByCod(DDEstadoEsquemaTurnado.class, DDEstadoEsquemaTurnado.ESTADO_TERMINADO);
+		DDEstadoEsquemaTurnado estadoVigente = (DDEstadoEsquemaTurnado)dictApi
+				.dameValorDiccionarioByCod(DDEstadoEsquemaTurnado.class, DDEstadoEsquemaTurnado.ESTADO_VIGENTE);
+		
+		Date fechaVigencia = new Date();
+		try {
+			esquemaVigente = this.getEsquemaVigente();
+			esquemaVigente.setFechaFinVigencia(fechaVigencia);
+			esquemaVigente.setEstado(estadoTerminado);
+			esquemaTurnadoDao.save(esquemaVigente);
+		} catch (IllegalArgumentException iae) {
+			logger.info(String.format("No existe esquema vigente previo, se va a activar el primer esquema!", esquema.getDescripcion()));
+		} finally {
+			esquema.setFechaInicioVigencia(fechaVigencia);
+			esquema.setEstado(estadoVigente);
+			esquemaTurnadoDao.save(esquema);
+		}
 	}
 
 	@Override
@@ -192,8 +211,54 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 				esquema.getAuditoria().getUsuarioCrear()==usuarioLogado.getUsername());
 		return modoConsulta;
 	}
-	
-	public static void main(String[] args) {
+
+	@Override
+	public boolean checkActivarEsquema(Long id) {
+		EsquemaTurnado esquema = this.get(id);
+		EsquemaTurnado esquemaVigente = null;
+		try {
+			esquemaVigente = this.getEsquemaVigente();
+		} catch (IllegalArgumentException iae) {
+			logger.info(String.format("No existe esquema previo, activando esquema [%s]", esquema.getDescripcion()));
+			return true;
+		}
 		
+		// No se puede activar un esquema sin configuración
+		if (esquema.getConfiguracion()==null) {
+			logger.warn(String.format("No se puede activar el esquema [%d][%s] porque no tiene configuración", id, esquema.getDescripcion()));
+			return false;
+		}
+
+		List<String> codigosCI = new ArrayList<String>();
+		List<String> codigosCC = new ArrayList<String>();
+		List<String> codigosLI = new ArrayList<String>();
+		List<String> codigosLC = new ArrayList<String>();
+
+		// Recupera las configuraciones que desaparecen en el nuevo esquema.
+		for (EsquemaTurnadoConfig config : esquemaVigente.getConfiguracion()) {
+			if (esquema.contains(config)) {
+				continue;
+			}
+			if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_IMPORTE)) {
+				codigosCI.add(config.getCodigo());
+			} else if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_CALIDAD)) {
+				codigosCC.add(config.getCodigo());
+			} else if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_IMPORTE)) {
+				codigosLI.add(config.getCodigo());
+			} else if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_CALIDAD)) {
+				codigosLC.add(config.getCodigo());
+			}
+		}
+		
+		int total = esquemaTurnadoDao.cuentaLetradosAsignados(codigosCI, codigosCC, codigosLI, codigosLC);
+		
+		return (total==0);
 	}
+
+	@Override
+	@Transactional
+	public void limpiarTurnadoTodosLosDespachos(Long id) {
+		esquemaTurnadoDao.limpiarTurnadoTodosLosDespachos();
+	}
+	
 }

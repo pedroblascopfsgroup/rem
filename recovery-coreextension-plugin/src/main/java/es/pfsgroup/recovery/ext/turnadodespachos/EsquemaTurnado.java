@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -62,6 +63,7 @@ public class EsquemaTurnado implements Serializable, Auditable {
 	
     @OneToMany(mappedBy = "esquema", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ETU_ID")
+    @OrderBy("codigo ASC")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<EsquemaTurnadoConfig> configuracion;
 	
@@ -143,6 +145,12 @@ public class EsquemaTurnado implements Serializable, Auditable {
 		this.configuracion = configuracion;
 	}
 
+	/**
+	 * Recupera una configuración por el Id. Null en caso de no encontrarla.
+	 * 
+	 * @param id id de configuración
+	 * @return Configuración con el id, null en caso de no encontrarla
+	 */
 	public EsquemaTurnadoConfig getConfigById(Long id) {
 		if (configuracion==null) return null;
 		for (EsquemaTurnadoConfig config : configuracion) {
@@ -150,4 +158,27 @@ public class EsquemaTurnado implements Serializable, Auditable {
  		}
 		return null;
 	}
+	
+	/**
+	 * Comprueba si este esquema contiene la configuración que se le pasa.
+	 * 
+	 * @param esquemaTurnadoConfig
+	 * @return
+	 */
+	public boolean contains(EsquemaTurnadoConfig esquemaTurnadoConfig) {
+		if (this.configuracion==null || esquemaTurnadoConfig==null) return false;
+		for (EsquemaTurnadoConfig config : configuracion) {
+			if (config.getTipo()!=null 
+					&& esquemaTurnadoConfig.getTipo()!=null
+					&& config.getCodigo() != null
+					&& esquemaTurnadoConfig.getCodigo() != null
+					&& config.getTipo().equals(esquemaTurnadoConfig.getTipo()) 
+					&& config.getCodigo().equals(esquemaTurnadoConfig.getCodigo())
+				) {
+				return true;
+			}
+		}
+		return false;
+	} 
+	
 }

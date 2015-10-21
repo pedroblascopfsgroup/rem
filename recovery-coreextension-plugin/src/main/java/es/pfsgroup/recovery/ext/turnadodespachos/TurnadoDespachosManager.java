@@ -53,7 +53,7 @@ public interface TurnadoDespachosManager {
 	 * 
 	 * @throws ActivarEsquemaDeTurnadoException
 	 */
-	void activarEsquema(Long idEsquema) throws ActivarEsquemaDeTurnadoException;
+	void activarEsquema(Long idEsquema);
 	
 	/**
 	 * Asignar un letrado a un asunto.
@@ -74,5 +74,20 @@ public interface TurnadoDespachosManager {
 	 * @param id
 	 */
 	void copy(Long id);
+
+	/**
+	 * Comprueba si un esquema se puede o no activar.
+	 * 
+	 * @param id Id del esquema
+	 * @return True si se puede activar el esquema/false en caso contrario
+	 */
+	boolean checkActivarEsquema(Long id);
+
+	/**
+	 * Limpia el turnado de todos los despachos activos.
+	 * 
+	 * @param id
+	 */
+	void limpiarTurnadoTodosLosDespachos(Long id);
 	
 }

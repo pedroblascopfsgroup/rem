@@ -92,11 +92,11 @@
 				}]
 		,listeners:{	
 			beforeExpand:function(){
-				//esquemasGrid.setHeight(125);
+				esquemasGrid.setHeight(125);
 			}
 			,beforeCollapse:function(){
-				//esquemasGrid.setHeight(435);
-				//esquemasGrid.expand(true);			
+				esquemasGrid.setHeight(435);
+				esquemasGrid.expand(true);			
 			}
 		}
 		,tbar : [btnBuscar,btnClean]
@@ -137,7 +137,7 @@
 		});
 		w.on(app.event.DONE, function(){
 			w.close();
-			esquemasStore.webflow(getParametros());
+			esquemasStore.webflow(getParametrosDto());
 		});
 		w.on(app.event.CANCEL, function(){ w.close(); });
 	};
@@ -161,7 +161,7 @@
 				      			,params: {id:currentRowId}
 				      			,success: function(){
 			            		   page.fireEvent(app.event.DONE);
-			            		   esquemasStore.webflow();
+			            		   esquemasStore.webflow(getParametrosDto());
 			            		}	
 				      		});
 						}
@@ -180,7 +180,7 @@
 				      			,params: {id:currentRowId}
 				      			,success: function(){
 			            		   page.fireEvent(app.event.DONE);
-			            		   esquemasStore.webflow();
+			            		   esquemasStore.webflow(getParametrosDto());
 			            		}	
 				      		});
 						}
@@ -191,19 +191,49 @@
 			text : '<s:message code="app.activar" text="**Activar" />'
 			,iconCls : 'icon_play'
 			,handler : function(){ 
+
 				Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.activar.confirm" text="**La acción activará el esquema seleccionado. ¿Desea continuar?" />' 
 					,function(boton){
 						if (boton=='yes') {
-			      			page.webflow({
-				      			flow:'turnadodespachos/activarEsquema'
-				      			,params: {id:currentRowId}
-				      			,success: function(){
-			            		   page.fireEvent(app.event.DONE);
-			            		   esquemasStore.webflow();
-			            		}	
-				      		});
+
+							Ext.Ajax.request({
+								url: page.resolveUrl('turnadodespachos/checkActivarEsquema')
+								,params: {id:currentRowId}
+								,method: 'POST'
+								,success: function (result, request){
+
+									var r = Ext.util.JSON.decode(result.responseText);
+
+									if (!r.resultado) {
+										Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.buscador.grid.boton.activar.problem" text="**No se puede dar por terminado el esquema vigente porque existen letrados que contienen Tipos que no existen en el nuevo esquema." />');
+										return;
+									}
+
+									// Reiniciar letrados
+									Ext.Msg.confirm(fwk.constant.confirmar, '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.activar.reiniciarDatos" text="**¿Desea reiniciar los datos de todos los letrados con esta operación?" />' 
+										,function(boton){
+
+											var limpiarDatosLetrados = false;
+											if (boton=='yes') {
+												limpiarDatosLetrados = true;
+											}
+
+											// Activa el esquema
+											page.webflow({
+												flow:'turnadodespachos/activarEsquema'
+												
+												,params: {id:currentRowId,limpiarDatos:limpiarDatosLetrados}
+													,success: function(){
+													page.fireEvent(app.event.DONE);
+													esquemasStore.webflow(getParametrosDto());
+												}	
+											});
+
+										}, this);
+								}
+							}, this);
 						}
-					}, this);
+				});
 			}
 	});
 
@@ -243,7 +273,7 @@
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechaSolicitud" text="F.Alta"/>', dataIndex: 'fechaalta', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.usuario" text="**Usuario"/>', dataIndex: 'usuario', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechainivig" text="**F.Inicio Vigencia"/>', dataIndex: 'fechainivig', sortable: true}
-		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechafinvig" text="**F.Fin Vigencia"/>', dataIndex: 'fechaalta', sortable: true}
+		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechafinvig" text="**F.Fin Vigencia"/>', dataIndex: 'fechafinvig', sortable: true}
 	]);
 	
 	var sm = new Ext.grid.RowSelectionModel({
@@ -306,7 +336,6 @@
 	    ,border: false
 	   });
 	   
-	
 	
 	esquemasStore.webflow({});
 	page.add(mainPanel);

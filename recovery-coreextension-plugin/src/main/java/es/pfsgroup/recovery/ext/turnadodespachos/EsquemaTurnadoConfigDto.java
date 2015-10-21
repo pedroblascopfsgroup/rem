@@ -9,6 +9,12 @@ public class EsquemaTurnadoConfigDto {
 	private Double importeHasta;
 	private Double porcentaje;
 	
+	public EsquemaTurnadoConfigDto() {
+		importeDesde=0D;
+		importeHasta=0D;
+		porcentaje=0D;
+	}
+	
 	public Long getId() {
 		return id;
 	}

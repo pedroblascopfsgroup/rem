@@ -4,11 +4,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.Column;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,14 +25,20 @@ import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Assertions;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Repository
 public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Long> implements EsquemaTurnadoDao {
+
+	private static final String FORMATO_FECHA_BD = "dd/MM/yyyy 00:00:00";
+
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@Resource
 	private PaginationManager paginationManager;
@@ -72,107 +87,73 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 		StringBuffer hqlFrom = new StringBuffer();
 		StringBuffer hqlWhere = new StringBuffer();
 
-		// Consulta inicial b?sica
+		// Consulta inicial básica
 		hqlSelect.append("select esq ");
 
 		hqlFrom.append("from EsquemaTurnado esq");
-		
+
 		hqlWhere.append(" where esq.auditoria.borrado = false ");
-		if(dto.getTipoEstado() != "" && dto.getTipoEstado() != null){
-			hqlWhere.append(" and esq.estado.codigo = '".concat(dto.getTipoEstado()).concat("'"));
+
+		if(!Checks.esNulo(dto.getTipoEstado())){
+			hqlWhere.append(" and esq.estado.codigo = '").append(dto.getTipoEstado()).append("'");
 		}
-		if(dto.getNombreEsquemaTurnado() != "" && dto.getNombreEsquemaTurnado() != null){
-			hqlWhere.append(" and esq.descripcion like '%".concat(dto.getNombreEsquemaTurnado()).concat("%'"));
+		if(!Checks.esNulo(dto.getNombreEsquemaTurnado())) {
+			hqlWhere.append(" and esq.descripcion like '%").append(dto.getNombreEsquemaTurnado()).append("%'");
 		}
-		if(dto.getAutor() != "" && dto.getAutor() != null){
-			hqlWhere.append(" and esq.auditoria.usuarioCrear like '%".concat(dto.getAutor()).concat("%'"));
+		if(!Checks.esNulo(dto.getAutor())){
+			hqlWhere.append(" and esq.auditoria.usuarioCrear like '%").append(dto.getAutor()).append("%'");
 		}
-		if(dto.getFechaVigente() != "" && dto.getFechaVigente() != null){
+		if(!Checks.esNulo(dto.getFechaVigente())){
 			try {
 				Date fechaEnDate = dto.convertirFechaToDate(dto.getFechaVigente());
-				/*Calendar c = Calendar.getInstance();
-				c.setTime(fechaEnDate);
-				c.add(Calendar.DATE, 1);
-				Date diaSiguiente = c.getTime();
-				SimpleDateFormat dateFormatInit = new SimpleDateFormat("dd/MM/yyyy 00:00:00");
-				String formatInit = dateFormatInit.format(fechaEnDate); //2014/08/06 15:59:48
-				String formatFin = dateFormatInit.format(diaSiguiente); //2014/08/06 15:59:48*/
-				
 				String consultaMontad = montaWhere(fechaEnDate, "esq.fechaInicioVigencia");
-				//hqlWhere.append(" and esq.fechaInicioVigencia >= to_date('").append(formatInit).append("', 'DD/MM/YYYY HH24:MI:SS') and esq.fechaInicioVigencia < to_date('").append(formatFin).append("', 'DD/MM/YYYY HH24:MI:SS')");
 				hqlWhere.append(consultaMontad);
-				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn("Error al convertir fecha para where en Esquema de turnado Dao", e);
 			}
 		}
-		if(dto.getFechaFinalizado() != "" && dto.getFechaFinalizado() != null ){
+		if(!Checks.esNulo(dto.getFechaFinalizado())){
 			try {
 				Date fechaEnDate = dto.convertirFechaToDate(dto.getFechaFinalizado());
-				/*Calendar c = Calendar.getInstance();
-				c.setTime(fechaEnDate);
-				c.add(Calendar.DATE, 1);
-				Date diaSiguiente = c.getTime();
-				SimpleDateFormat dateFormatInit = new SimpleDateFormat("dd/MM/yyyy 00:00:00");
-				String formatInit = dateFormatInit.format(fechaEnDate); //2014/08/06 15:59:48
-				String formatFin = dateFormatInit.format(diaSiguiente); //2014/08/06 15:59:48
-				hqlWhere.append(" and esq.fechaFinVigencia >= to_date('").append(formatInit).append("', 'DD/MM/YYYY HH24:MI:SS') and esq.fechaFinVigencia < to_date('").append(formatFin).append("', 'DD/MM/YYYY HH24:MI:SS')");*/
 				String consultaMontad = montaWhere(fechaEnDate, "esq.fechaFinVigencia");
 				hqlWhere.append(consultaMontad);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn("Error al convertir fecha para where en Esquema de turnado Dao", e);
 			}
 		}
-		if(dto.getFechaAlta() != "" && dto.getFechaAlta() != null){
+		if(!Checks.esNulo(dto.getFechaAlta())){
 			try {
 				Date fechaEnDate = dto.convertirFechaToDate(dto.getFechaAlta());
-				/*Calendar c = Calendar.getInstance();
-				c.setTime(fechaEnDate);
-				c.add(Calendar.DATE, 1);
-				Date diaSiguiente = c.getTime();
-				SimpleDateFormat dateFormatInit = new SimpleDateFormat("dd/MM/yyyy 00:00:00");
-				String formatInit = dateFormatInit.format(fechaEnDate); //2014/08/06 15:59:48
-				String formatFin = dateFormatInit.format(diaSiguiente); //2014/08/06 15:59:48
-				hqlWhere.append(" and esq.auditoria.fechaCrear >= to_date('").append(formatInit).append("', 'DD/MM/YYYY HH24:MI:SS') and esq.auditoria.fechaCrear < to_date('").append(formatFin).append("', 'DD/MM/YYYY HH24:MI:SS')");*/
 				String consultaMontad = montaWhere(fechaEnDate, "esq.auditoria.fechaCrear");
 				hqlWhere.append(consultaMontad);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn("Error al convertir fecha para where en Esquema de turnado Dao", e);
 			}
 		}
-		//String consulta = hqlSelect.append(hqlFrom).append(hqlWhere).toString();
 		return hqlSelect.append(hqlFrom).append(hqlWhere).toString();
 	}
-	
-	private String convertirFecha(Date fecha) throws ParseException{
-		SimpleDateFormat dateFormatInit = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		String formatInit = dateFormatInit.format(fecha); 
-		//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-		//String fechaBuena = df.format(fecha);
-		return formatInit;
-	}
-	
+
 	private String montaWhere(Date fechaEnDate, String cadena){
 			Calendar c = Calendar.getInstance();
 			c.setTime(fechaEnDate);
 			c.add(Calendar.DATE, 1);
 			Date diaSiguiente = c.getTime();
-			SimpleDateFormat dateFormatInit = new SimpleDateFormat("dd/MM/yyyy 00:00:00");
+			SimpleDateFormat dateFormatInit = new SimpleDateFormat(FORMATO_FECHA_BD);
 			String formatInit = dateFormatInit.format(fechaEnDate); //2014/08/06 15:59:48
 			String formatFin = dateFormatInit.format(diaSiguiente); //2014/08/06 15:59:48
 			
-			String montado= " and ".concat(cadena).concat(">= to_date('").concat(formatInit).concat("', 'DD/MM/YYYY HH24:MI:SS') and ").concat(cadena).concat("< to_date('").concat(formatFin).concat("', 'DD/MM/YYYY HH24:MI:SS')");
+			String montado = String.format("and %s >= to_date('%s', 'DD/MM/YYYY HH24:MI:SS') and %s < to_date('%s', 'DD/MM/YYYY HH24:MI:SS')"
+					, cadena
+					, formatInit
+					, cadena
+					, formatFin);
+
 			return montado;
 	}
 
 	@Override
 	public void turnar(Long idAsunto, String username, String codigoGestor) {
-		
 		Session session = this.getSessionFactory().getCurrentSession();
-		
 		Query query = session.createSQLQuery(
 				"CALL asignacion_asuntos_turnado(:idAsunto, :username, :codigoGestor)")
 				.setParameter("idAsunto", idAsunto)
@@ -182,4 +163,51 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 		query.executeUpdate();
 	}
 
+	@Override
+	public int cuentaLetradosAsignados(List<String> codigosCI
+			,List<String> codigosCC
+			,List<String> codigosLI
+			,List<String> codigosLC
+			) {
+		
+		// No se ha encontrado ninguno
+		if (codigosCI.size()==0 
+				&& codigosCC.size()==0
+				&& codigosLI.size()==0
+				&& codigosLC.size()==0
+			) {
+			return 0;
+		}
+		
+		Disjunction disjunction = Restrictions.disjunction();
+		if (codigosCI.size()>0) {
+			disjunction.add(Expression.in("desp.turnadoCodigoImporteConcursal", codigosCI));
+		}
+		if (codigosCC.size()>0) {
+			disjunction.add(Expression.in("desp.turnadoCodigoCalidadConcursal", codigosCC));
+		}
+		if (codigosLI.size()>0) {
+			disjunction.add(Expression.in("desp.turnadoCodigoImporteLitigios", codigosLI));
+		}
+		if (codigosLC.size()>0) {
+			disjunction.add(Expression.in("desp.turnadoCodigoCalidadLitigios", codigosLC));
+		}
+		
+		Session session = this.getSessionFactory().getCurrentSession();
+		Criteria criteria = session.createCriteria(DespachoExterno.class, "desp");
+		criteria.add(Expression.eq("desp.auditoria.borrado", false));
+		criteria.add(disjunction);
+		
+		int result = (Integer)criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return result;
+	}
+
+	@Override
+	public void limpiarTurnadoTodosLosDespachos() {
+		String updateQuery= "update DespachoExterno set turnadoCodigoImporteConcursal=null,turnadoCodigoCalidadConcursal=null,"
+				+ "turnadoCodigoImporteLitigios=null,turnadoCodigoCalidadLitigios=null where auditoria.borrado=false";
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(updateQuery);
+		int recordupdated=query.executeUpdate();
+	}
+	
 }

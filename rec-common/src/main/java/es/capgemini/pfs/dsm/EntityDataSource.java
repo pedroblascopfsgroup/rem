@@ -88,15 +88,18 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 		// Sobreescribimos el método para añadirle la gestión de los usuarios
 		// transaccionales
 		Connection cnx = super.getConnection();
+		TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
 
 		String transactionalUsers = appProperties
 				.getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
 
 		if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
 				.equals(transactionalUsers)) {
-			cambiaCurrentSchema(cnx);
+			cambiaCurrentSchema(cnwrap);
+			return cnwrap;
+		} else {
+			return cnx;
 		}
-		return cnx;
 	}
 
 	@Override
@@ -105,13 +108,14 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 		// Sobreescribimos el método para añadirle la gestión de los usuarios
 		// transaccionales
 		Connection cnx = super.getConnection(username, password);
+		TransactionalUsersConnectionWrapper cnwrap = new TransactionalUsersConnectionWrapper(cnx);
 
 		String transactionalUsers = appProperties
 				.getProperty(DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_KEY);
 
 		if (DevonPropertiesConstants.DatabaseConfig.USE_TRANSACTIONAL_USERS_VALUE_YES
 				.equals(transactionalUsers)) {
-			cambiaCurrentSchema(cnx);
+			cambiaCurrentSchema(cnwrap);
 		}
 		return cnx;
 	}
@@ -126,8 +130,8 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 	 * @throws RecoveryDSMConfigurationException
 	 *             Si falta por configurar cualquier cosa en devon.properties
 	 */
-	private void cambiaCurrentSchema(Connection cnx) throws SQLException {
-		Long dbId = DbIdContextHolder.getDbId();
+	private void cambiaCurrentSchema(TransactionalUsersConnectionWrapper cnx) throws SQLException {
+		Long dbId = (Long) determineCurrentLookupKey();
 		if (!DataSourceManager.NO_DATASOURCE_ID.equals(dbId)) {
 			Statement st = cnx.createStatement();
 			if (DataSourceManager.MASTER_DATASOURCE_ID.equals(dbId)) {
@@ -136,6 +140,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 						.getProperty(DevonPropertiesConstants.DatabaseConfig.MASTER_SCHEMA_KEY);
 				String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
 						+ masterSchema;
+				cnx.setCurrentSchema(masterSchema);
 				log.debug(sql);
 				st.execute(sql);
 
@@ -148,6 +153,7 @@ public class EntityDataSource extends AbstractRoutingDataSource {
 							mapping);
 					String sql = "ALTER SESSION SET CURRENT_SCHEMA = "
 							+ entitySchema;
+					cnx.setCurrentSchema(entitySchema);
 					log.debug(sql);
 					st.execute(sql);
 				} catch (RecoveryDSMConfigurationException ce) {

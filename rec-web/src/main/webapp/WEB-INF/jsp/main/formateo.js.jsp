@@ -76,6 +76,12 @@ app.format.percentRenderer = function(pnumber){
 	return String.format("{0} %",result);
 };
 
+app.format.percentRendererComa = function(pnumber){
+	var result = app.format.formatNumber(pnumber,2);
+	result = result.replace(".",",");
+	return String.format("{0} %",result);
+};
+
 app.format.sqrMtsRenderer = function(pnumber){
 	if(pnumber!=null && pnumber!="") {
 		var result = app.format.formatNumber(pnumber,2);

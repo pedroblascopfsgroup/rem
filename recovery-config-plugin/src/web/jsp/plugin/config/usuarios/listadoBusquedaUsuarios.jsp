@@ -6,6 +6,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
 	
@@ -31,15 +32,24 @@
 			dd="${despachos}" height="120" />
 			
 	filtroDespacho.setDisabled(true);
+	
+	<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
+	filtroDespacho.setDisabled(false);			
+	</sec:authorize>
 			
 	filtroExterno.on('select',function(){
 		if (filtroExterno.getValue() == '01'){
 			filtroDespacho.setDisabled(false);
 		}else{
 			filtroDespacho.setDisabled(true);
+			<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
+			filtroDespacho.setDisabled(false);			
+			</sec:authorize>
 		}
 	});	
-			
+	
+	
+		
 	<pfs:dblselect name="filtroPerfil"
 			labelKey="plugin.config.usuarios.busqueda.control.filtroPerfil" label="**Perfil"
 			dd="${perfiles}" width="160" height="100"/>

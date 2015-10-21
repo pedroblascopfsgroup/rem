@@ -14,13 +14,13 @@
 		label="**Posicion" value="${correctoFacturacion.rankingPosicion}" obligatory="true"/>
 	
 	<pfs:numberfield name="objetivoInicio" labelKey="plugin.recobroConfig.modeloFacturacion.corrector.inicio" 
-		label="**Tramo inicio" value="${correctoFacturacion.objetivoInicio}" obligatory="true"/>
+		label="**Tramo inicio" value="${correctoFacturacion.objetivoInicio}" obligatory="true" allowDecimals="true"/>
 	
 	<pfs:numberfield name="objetivoFin" labelKey="plugin.recobroConfig.modeloFacturacion.corrector.fin"
-		label="**Tramo fin" value="${correctoFacturacion.objetivoFin}" obligatory="true"/>
+		label="**Tramo fin" value="${correctoFacturacion.objetivoFin}" obligatory="true" allowDecimals="true"/>
 		
 	<pfs:numberfield name="coeficiente" labelKey="plugin.recobroConfig.modeloFacturacion.corrector.coeficiente" 
-		label="**Coeficiente" value="${correctoFacturacion.coeficiente}" obligatory="true" allowNegative="true"/>
+		label="**Coeficiente" value="${correctoFacturacion.coeficiente}" obligatory="true" allowNegative="true" allowDecimals="true"/>
 	
 	objetivoInicio.setMaxValue(100);
 	objetivoFin.setMaxValue(100);

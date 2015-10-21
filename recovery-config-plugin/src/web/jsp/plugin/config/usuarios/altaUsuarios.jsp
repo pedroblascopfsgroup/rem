@@ -7,6 +7,7 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
 
@@ -82,6 +83,10 @@
 		}else{
 			tipoDespacho.setDisabled(true);
 			despachoExterno.setDisabled(true);
+			<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
+			tipoDespacho.setDisabled(false);
+			despachoExterno.setDisabled(false);
+			</sec:authorize>
 		}
 			
 	usuarioExterno.on('check',function(){
@@ -91,6 +96,10 @@
 		}else{
 			tipoDespacho.setDisabled(true);
 			despachoExterno.setDisabled(true);
+			<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
+			tipoDespacho.setDisabled(false);
+			despachoExterno.setDisabled(false);
+			</sec:authorize>
 		}
 	});
 	

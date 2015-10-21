@@ -59,6 +59,11 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
 	        //Avanzamos la tarea
 	        //executionContext.getToken().signal();
+		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) || 
+				PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))) {
+			
+				pcoManager.obtenerNuevoLetrado(prc);
+			
 		}
 		
 		// Avanzamos BPM

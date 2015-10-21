@@ -8,14 +8,6 @@
 	</start-state>
 
 
-	<node name="PCO_PreTurnado">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>precontenciosoDecisionActionHandler</targetBean>
-		</action>	
-		<transition to="PCO_PreTurnadoDecision" name="avanzaBPM"/>
-	</node>
-
 	<decision name="PCO_PreTurnadoDecision" expression="#{PCO_PreTurnadoManualDecision}">
 		<transition to="PCO_RegistrarAceptacion" name="preturnado"/>
 		<transition to="PCO_PrepararExpediente" name="posturnado"/>
@@ -88,14 +80,6 @@
 		<transition to="PCO_PostTurnado" name="posturnado"/>
 		<transition to="PCO_EnviarExpedienteLetrado" name="preturnado"/>
 	</decision>
-
-	<node name="PCO_PostTurnado">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>precontenciosoDecisionActionHandler</targetBean>
-		</action>	
-		<transition to="PCO_RegistrarAceptacionPost" name="avanzaBPM"/>
-	</node>
 
 	<state name="PCO_RegistrarAceptacionPost">
 		<transition to="PCO_RegistrarAceptacionPostDecision" name="avanzaBPM"/>
@@ -264,6 +248,22 @@
 	<state name="PCO_EnviarBurofax"></state>
 
 	<state name="PCO_AcuseReciboBurofax"></state>
+
+	<node name="PCO_PreTurnado">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="PCO_PreTurnadoDecision" name="avanzaBPM"></transition>
+	</node>
+
+	<node name="PCO_PostTurnado">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>precontenciosoDecisionActionHandler</targetBean>
+		</action>	
+		<transition to="PCO_RegistrarAceptacionPost" name="avanzaBPM"></transition>
+	</node>
 
 
 	<end-state name="Fin"></end-state>

@@ -277,6 +277,24 @@
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-sidhi-batch</artifactId>
 				<version>${plugins.sidhibatch.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>es.pfsgroup</groupId>
+						<artifactId>recovery-domain</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>capgemini</groupId>
+						<artifactId>devon-batch</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework.batch</groupId>
+						<artifactId>org.springframework.batch.core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>es.pfs</groupId>
+						<artifactId>pfs-rec-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>es.pfs</groupId>

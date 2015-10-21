@@ -40,6 +40,7 @@ import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.StringUtils;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
@@ -174,8 +175,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         StringBuilder hql = new StringBuilder();
         Boolean requiereRiesgoSaldo = false;
 
-        hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
-        //hql.append("select exp FROM Expediente exp ");
+        //BKREC-943
+        //hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
+        hql.append("select exp FROM Expediente exp ");
 
         if (dtoExpediente.getIdComite() != null) {
             hql.append(" left join exp.decisionComite dco left join dco.sesion sesion ");
@@ -188,8 +190,11 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             requiereRiesgoSaldo = true;
         }
 
-        hql.append(" where exp.auditoria.borrado = 0 ");
+        hql.append(" where  ");
 
+        //BKREC-943
+        hql.append(" EXISTS (select 1 from Expediente exp1 where exp1.id = exp.id and exp1.auditoria.borrado = 0) ");
+        
         if (requiereRiesgoSaldo) {
             hql.append(" and expc.expediente.id = exp.id and expc.auditoria.borrado = 0");
             hql.append(" and expc.contrato.id = c.id ");
@@ -240,9 +245,11 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 
         //Numero de contrato
         if (!StringUtils.emtpyString(dtoExpediente.getNroContrato())) {
-            hql.append(" and exp.id IN ");
-            hql
-                    .append("(select ec.expediente.id from ExpedienteContrato ec where ec.auditoria.borrado = false and lower(ec.contrato.nroContrato) like '%'|| :nroCnt ||'%') ");
+            hql.append(" and EXISTS ");
+            hql.append("(select 1 from ExpedienteContrato ec ");
+            hql.append(" where ec.auditoria.borrado = false ");
+            hql.append(" and ec.expediente.id = exp.id ");
+            hql.append(" and ec.contrato.nroContrato like '%'|| :nroCnt ||'%') ");
             params.put("nroCnt", dtoExpediente.getNroContrato().toLowerCase());
         }
 
@@ -294,8 +301,9 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         Boolean segmentos = !StringUtils.emtpyString(dtoExpediente.getSegmentos());
 
         if (tipoPersona || segmentos) {
-            hql.append(" and exp.id IN (select pex.expediente.id FROM ExpedientePersona pex, Persona p ");
+            hql.append(" and EXISTS (select 1 FROM ExpedientePersona pex, Persona p ");
             hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 ");
+            hql.append(" and pex.expediente.id = exp.id ");
 
             if (tipoPersona) {
                 hql.append(" and p.tipoPersona.codigo = :tipoPer ");
@@ -1005,7 +1013,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         return hql;
     }
 
-	@Override
+    	@Override
 	public Page buscarExpedientesPaginadoDinamico(
 			DtoBuscarExpedientes dtoExpediente,Usuario usuarioLogueado,String paramsDinamicos) {
 		HashMap<String, Object> paramsMap = new HashMap<String, Object>();
@@ -1230,7 +1238,283 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         hql.append(")");
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
 	}
+        
+	@Override
+	public Page buscarExpedientesRecobroPaginadoDinamico(DtoBuscarExpedientes dtoExpediente,Usuario usuarioLogueado,String paramsDinamicos) {
+	
+        HashMap<String, Object> paramsMap = new HashMap<String, Object>();
 
+        StringBuilder hql = new StringBuilder();
+        Boolean requiereRiesgoSaldo = false;
+
+        //hql.append("select e from Expediente e where e.id IN (select exp.id FROM Expediente exp ");
+        hql.append("select exp FROM Expediente exp ");
+
+        if (dtoExpediente.getIdComite() != null) {
+            hql.append(" left join exp.decisionComite dco left join dco.sesion sesion ");
+        }
+
+        if (!StringUtils.emtpyString(dtoExpediente.getMaxSaldoVencido()) || !StringUtils.emtpyString(dtoExpediente.getMaxRiesgoTotal())
+                || !StringUtils.emtpyString(dtoExpediente.getMinSaldoVencido()) || !StringUtils.emtpyString(dtoExpediente.getMinRiesgoTotal())) {
+
+            hql.append(", ExpedienteContrato expc, Contrato c, Movimiento m ");
+            requiereRiesgoSaldo = true;
+        }
+
+        hql.append(" where exp.auditoria.borrado = 0 ");
+
+        /***
+		 * La lista de los parámetros dinánmicos debe venir de la siguiente manera
+		 * 
+		 * _param_origen:plugin1;plugin1param1:valor1;plugin1param2:valor2;%param%origen:plugin2;plugin2param1:valor1;plugin2param2:valor2;
+		 * 
+		 * */
+		
+		if(paramsDinamicos != null && filtrosBusquedaDinamica != null){
+			String[] paramsVector = paramsDinamicos.split("_param_");
+			if(paramsVector != null && paramsVector.length>0){
+				for(String paramDinamico:paramsVector){
+					for(BusquedaExpedienteFiltroDinamico filtro:filtrosBusquedaDinamica){
+						if(filtro.isValid(paramDinamico)){
+							
+                                                    //BKREC-943
+                                                    //Desvincular filtros de pestañas Recobro, Incidencia, Acuerdo,
+                                                    //de la busqueda principal con expedientes,
+                                                    //si no se busca por ningún parámetro que requiera Expediente
+                                                    if (isBusquedaExpedientes(dtoExpediente)) {
+                                                        hql.append(" and EXISTS ( ");
+                                                        hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                                        
+                                                        if (filtro.getOrigenFiltros().equals("recobro")){
+                                                            hql.append(" and exp.id = cre.expediente.id ");
+                                                        }                                                        
+                                                        if (filtro.getOrigenFiltros().equals("incidencia")){
+                                                            hql.append(" and exp.id = ine.expediente.id ");
+                                                        }
+                                                        if (filtro.getOrigenFiltros().equals("acuerdo")){
+                                                            hql.append(" and exp.id = acu.expediente.id ");
+                                                        }
+                                                        
+                                                        hql.append(" ) ");
+                                                    }else{
+                                                        hql = new StringBuilder();
+                                                        hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+                                                        //Sin vinculación, solo se hace la subconsulta a otras Entidades
+                                                    }
+							
+						}
+					}
+				}
+			}
+		}
+		
+		
+        if (requiereRiesgoSaldo) {
+            hql.append(" and expc.expediente.id = exp.id and expc.auditoria.borrado = 0");
+            hql.append(" and expc.contrato.id = c.id ");
+            hql.append(" and m.contrato.id = c.id and m.fechaExtraccion = c.fechaExtraccion ");
+        }
+
+        //Código
+        if (dtoExpediente.getCodigo() != null) {
+            hql.append(" and exp.id = :expId ");
+            paramsMap.put("expId", dtoExpediente.getCodigo());
+        }
+
+        //Descripcion
+        if (!StringUtils.emtpyString(dtoExpediente.getDescripcion())) {
+            hql.append(" and LOWER(exp.descripcionExpediente) LIKE '%'|| :descExpediente ||'%' ");
+            paramsMap.put("descExpediente", dtoExpediente.getDescripcion().toLowerCase().replaceAll("'", "''"));
+        }
+
+        // Si no se esta buscando expedientes por comite uso esta busqueda de estado
+        if (dtoExpediente.getIdComite() == null && !StringUtils.emtpyString(dtoExpediente.getIdEstado())) {
+            hql.append(" and exp.estadoExpediente.codigo = :estExpCod");
+            paramsMap.put("estExpCod", dtoExpediente.getIdEstado());
+        }
+
+        // ***************************************************************************************** //
+        // ** Estas opciones me parece que son para la sesion de comite, para mostrar expedientes ** //
+        // ***************************************************************************************** //
+        //Si busca por comite
+        if (dtoExpediente.getIdComite() != null && dtoExpediente.getIdSesion() == null) {
+            hql.append(" and (( exp.comite.id = :comiteId and exp.estadoExpediente.codigo = :estExpCong )");
+            paramsMap.put("comiteId", new Long(dtoExpediente.getIdComite()));
+            paramsMap.put("estExpCong", DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO);
+
+            Comite comite = comiteDao.get(dtoExpediente.getIdComite());
+            hql.append(" or sesion.id = :ultimaSesionId)");
+            paramsMap.put("ultimaSesionId", new Long(comite.getUltimaSesion().getId()));
+        }
+        // busco por sesion
+        if (dtoExpediente.getIdComite() != null && dtoExpediente.getIdSesion() != null) {
+            hql.append(" and exp.comite.id = :comiteId and exp.estadoExpediente.codigo = :estExpDC ");
+            paramsMap.put("comiteId", new Long(dtoExpediente.getIdComite()));
+            paramsMap.put("estExpDC", DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
+
+            hql.append(" and sesion.id = :sesionId");
+            paramsMap.put("sesionId", new Long(dtoExpediente.getIdSesion()));
+        }
+        // ***************************************************************************************** //
+
+        //Numero de contrato
+        if (!StringUtils.emtpyString(dtoExpediente.getNroContrato())) {
+            hql.append(" and EXISTS ");
+            hql.append("(select 1 from ExpedienteContrato ec where ec.auditoria.borrado = false and ec.expediente.id = exp.id and ec.contrato.nroContrato like '%'|| :nroCnt ||'%') ");
+            paramsMap.put("nroCnt", dtoExpediente.getNroContrato().toLowerCase());
+        }
+
+        // *** Este comité se utiliza para la búsqueda desde la página de búsquedas de expedientes *** //
+        if (dtoExpediente.getComiteBusqueda() != null) {
+            hql.append(" and exp.comite.id = :comiteBusquedaId ");
+            paramsMap.put("comiteBusquedaId", dtoExpediente.getComiteBusqueda());
+        }
+
+        //Tipo de Gestión
+        if (!StringUtils.emtpyString(dtoExpediente.getCodigoGestion())) {
+            hql.append(" and exp.arquetipo.itinerario.dDtipoItinerario.codigo = :codigoGestion ");
+            paramsMap.put("codigoGestion", dtoExpediente.getCodigoGestion());
+        }
+
+        //VISIBILIDAD
+        //BKREC-943
+        //Verificar si esto se quita por vinculación de esto con todos los filtros y con EXP
+        int cantZonas = dtoExpediente.getCodigoZonas().size();
+        if (cantZonas > 0) {
+            hql.append(" and ( ");
+            for (String codigoZ : dtoExpediente.getCodigoZonas()) {
+                hql.append(" SUBSTR(exp.oficina.zona.codigo, 1, 2) = '" + codigoZ + "' OR");
+            }
+            hql.deleteCharAt(hql.length() - 1);
+            hql.deleteCharAt(hql.length() - 1);
+            
+            hql.append(" or EXISTS ( ");
+            	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
+	        hql.append(" ) ");
+            
+	        hql.append(" ) ");
+        }
+        else{
+        	 //GESTORES EXPEDIENTE
+	        hql.append(" and EXISTS ( ");
+	        	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
+	        hql.append(" ) ");
+        }
+
+        //Centros
+        if (!StringUtils.emtpyString(dtoExpediente.getCodigoEntidad())) {
+            hql.append("  and exp.oficina.zona.nivel.id >= :nivelId ");
+            paramsMap.put("nivelId", new Long(dtoExpediente.getCodigoEntidad()));
+        }
+
+        //Situacion
+        if (!StringUtils.emtpyString(dtoExpediente.getCodigoSituacion())) {
+            StringTokenizer tokensSituaciones = new StringTokenizer(dtoExpediente.getCodigoSituacion(), ",");
+            hql.append(" and exp.estadoItinerario.codigo IN (");
+            while (tokensSituaciones.hasMoreTokens()) {
+                hql.append("'" + tokensSituaciones.nextElement() + "'");
+                if (tokensSituaciones.hasMoreTokens()) {
+                    hql.append(",");
+                }
+            }
+            hql.append(" ) ");
+        }
+        
+        //Tipo de persona y segmentos
+        Boolean tipoPersona = !StringUtils.emtpyString(dtoExpediente.getTipoPersona());
+        Boolean segmentos = !StringUtils.emtpyString(dtoExpediente.getSegmentos());
+
+        if (tipoPersona || segmentos) {
+            hql.append(" and EXISTS (select 1 FROM ExpedientePersona pex, Persona p ");
+            hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 and pex.expediente.id = exp.id ");
+
+            if (tipoPersona) {
+                hql.append(" and p.tipoPersona.codigo = :tipoPer ");
+                paramsMap.put("tipoPer", dtoExpediente.getTipoPersona());
+            }
+
+            if (segmentos) {
+            	StringBuilder hqlSegmento = new StringBuilder();
+				StringTokenizer tokensSegmentos = new StringTokenizer(dtoExpediente.getSegmentos(), ",");
+				while (tokensSegmentos.hasMoreTokens()) {
+					hqlSegmento.append("'" + tokensSegmentos.nextElement() + "'");
+					if (tokensSegmentos.hasMoreTokens()) {
+						hqlSegmento.append(",");
+					}
+				}
+            	
+                hql.append(" and p.segmento.codigo IN (" + hqlSegmento + ") ");
+            }
+            hql.append(" ) ");
+
+        }
+
+        // ********* RIESGO Y SALDO TOTAL  ************** //
+        //BKREC-943
+        //Ver si se puede quitar el agrupador por exp.id
+        if (requiereRiesgoSaldo) {
+            hql.append(" group by exp.id ");
+            if (dtoExpediente.getMaxSaldoVencido() == null || dtoExpediente.getMaxSaldoVencido().length() < 1) {
+                dtoExpediente.setMaxSaldoVencido("" + Integer.MAX_VALUE);
+            }
+            if (dtoExpediente.getMinSaldoVencido() == null || dtoExpediente.getMinSaldoVencido().length() < 1) {
+                dtoExpediente.setMinSaldoVencido("" + Integer.MIN_VALUE);
+            }
+            if (dtoExpediente.getMaxRiesgoTotal() == null || dtoExpediente.getMaxRiesgoTotal().length() < 1) {
+                dtoExpediente.setMaxRiesgoTotal("" + Integer.MAX_VALUE);
+            }
+            if (dtoExpediente.getMinRiesgoTotal() == null || dtoExpediente.getMinRiesgoTotal().length() < 1) {
+                dtoExpediente.setMinRiesgoTotal("" + Integer.MIN_VALUE);
+            }
+
+            hql.append(" having sum(case when m.riesgo > 0 then m.deudaIrregular else 0 end ) between :minSaldoVencido and :maxSaldoVencido ");
+            paramsMap.put("minSaldoVencido", new Double(dtoExpediente.getMinSaldoVencido()));
+            paramsMap.put("maxSaldoVencido", new Double(dtoExpediente.getMaxSaldoVencido()));
+
+            hql.append(" and sum(m.riesgo) between :minRiesgoTotal and :maxRiesgoTotal ");
+            paramsMap.put("minRiesgoTotal", new Double(dtoExpediente.getMinRiesgoTotal()));
+            paramsMap.put("maxRiesgoTotal", new Double(dtoExpediente.getMaxRiesgoTotal()));
+        }
+        
+        // ********* PARA USUARIOS EXTERNOS LIMITAMOS LA VISIBILIDAD A AQUELLOS USUARIOS 
+        // ********* QUE SON GESTORES DE RECOBRO , SOLO VERÁN LOS EXPEDIENTES QUE ACTUALMENTE PERTENCEN A SU AGENCIA
+        if (usuarioLogueado.getUsuarioExterno() ){
+        	 //GESTORES DE RECOBRO EXPEDIENTE
+	        hql.append(" and EXISTS ( ");
+	        	hql.append(generaFiltroExpedientesGestorRecobro(usuarioLogueado));
+	        hql.append(" ) ");
+        }
+
+        //hql.append(")");
+        return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
+	}
+
+        /**
+         * Indica si la búsqueda incluye necesariamente la tabla de Expedientes
+         * o es una búsqueda solo vinculada a las otras entidades: Acuerdo, Incidencias, Recobro
+         * @param dtoExp 
+         */
+        private Boolean isBusquedaExpedientes (DtoBuscarExpedientes dtoExp){
+            return 
+                (!Checks.esNulo(dtoExp.getCodigo()) ||
+                 !StringUtils.emtpyString(dtoExp.getDescripcion()) ||
+                 !StringUtils.emtpyString(dtoExp.getIdEstado()) ||
+                 !StringUtils.emtpyString(dtoExp.getNroContrato()) ||
+                 !Checks.esNulo(dtoExp.getComiteBusqueda()) ||
+                 !StringUtils.emtpyString(dtoExp.getCodigoGestion()) ||
+                 !StringUtils.emtpyString(dtoExp.getCodigoEntidad()) ||
+                 !StringUtils.emtpyString(dtoExp.getCodigoSituacion()) ||
+                 !StringUtils.emtpyString(dtoExp.getTipoPersona()) ||
+                 !StringUtils.emtpyString(dtoExp.getSegmentos()) ||
+                 !Checks.esNulo(dtoExp.getIdComite()) ||
+                 !Checks.esNulo(dtoExp.getIdSesion()) ||
+                 !StringUtils.emtpyString(dtoExp.getMaxSaldoVencido()) ||
+                 !StringUtils.emtpyString(dtoExp.getMaxRiesgoTotal()) ||
+                 !StringUtils.emtpyString(dtoExp.getMinSaldoVencido()) ||
+                 !StringUtils.emtpyString(dtoExp.getMinRiesgoTotal())
+                ) && dtoExp.isBusqueda();
+        }
+        
 	/**
 	 * Devuelve los expedientes de los que es gestor de recobro actual el usuario logado
 	 * Analizar la posibilidad de cambiarlo para que devuelva los expedientes que se encuentran en 
@@ -1241,7 +1525,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 	 */
 	 private String generaFiltroExpedientesGestorRecobro(Usuario usuarioLogueado) {
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select exp.id from Expediente exp , GestorExpediente ge ");
+		hql.append(" select 1 from GestorExpediente ge ");
 		hql.append(" where exp.id = ge.expediente.id and ge.tipoGestor.codigo = '").append(EXTDDTipoGestor.CODIGO_TIPO_GESTOR_AGENCIA_RECOBRO).append("' ");
 		hql.append(" and ge.usuario.id in (");
 		hql.append(obtenerListaUsuariosDelGrupo(usuarioLogueado.getId()));
@@ -1275,6 +1559,16 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 		private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
 			StringBuffer hql = new StringBuffer();
 			hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
+			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
+			hql.append(" and ge.gestor.id in (");
+			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
+			hql.append(")");
+			return hql.toString();
+		}
+                
+		private String generaFiltroExpedientesPorGestorRecobro(Usuario usuLogado){
+			StringBuffer hql = new StringBuffer();
+			hql.append(" select 1 from  EXTGestorEntidad ge ");
 			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
 			hql.append(" and ge.gestor.id in (");
 			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));

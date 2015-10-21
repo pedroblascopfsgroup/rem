@@ -537,6 +537,15 @@ public class AdjudicacionLeaveActionHandler extends PROGenericLeaveActionHandler
 							String valor = tev.getValor();
 							Boolean valorBooleano = valor != null && valor.equalsIgnoreCase(DDSiNo.SI);
 							executor.execute(AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_POSESION_FUERZA_PUBLICA, prc.getId(), valorBooleano);
+						} else if ("comboEntregaVoluntaria".equals(tev.getNombre())) {
+							/*
+							 * Al completarse la tarea, el campo 'entrega voluntaria posesion' 
+							 * insertado por el usuario se
+							 * guardará en cada una de las cargas afectas
+							 */
+							String valor = tev.getValor();
+							Boolean valorBooleano = valor != null && valor.equalsIgnoreCase(DDSiNo.SI);
+							executor.execute(AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_POSESION_ENTREGA_VOLUNTARIA, prc.getId(), valorBooleano);
 						}
 
 					} catch (Exception e) {

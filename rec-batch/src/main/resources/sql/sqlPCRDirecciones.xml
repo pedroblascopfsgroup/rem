@@ -3,7 +3,7 @@
   <entry key="pcr.borrardirecciones.direcciones">
     <![CDATA[ DELETE FROM DIR_DIRECCIONES]]>
   </entry>
-  
+
   <entry key="insertDirecciones.MySQLDialect">
     <![CDATA[
         insert into dir_direcciones (
@@ -34,30 +34,30 @@
                           where  dir_cod_direccion = TMP_DIR_COD_DIRECCION)
     ]]>
   </entry>
-  <entry key="insertDirecciones.Oracle9iDialect">
+  <entry key="insertDirecciones.Oracle10gDialect">
     <![CDATA[
-  		insert into dir_direcciones (
-		  DIR_ID, DD_LOC_ID, DD_PRV_ID, DD_TVI_ID, DIR_COD_DIRECCION, DIR_FECHA_EXTRACCION, DIR_DOMICILIO, DIR_DOM_N,
-		  DIR_DOM_PORTAL, DIR_DOM_PISO, DIR_DOM_ESC, DIR_DOM_PUERTA, DIR_CODIGO_POSTAL,
-		  DIR_PROVINCIA, DIR_POBLACION, DIR_MUNICIPIO, DIR_INE_PROV, DIR_INE_POB, DIR_INE_MUN,
-		  DIR_INE_VIA, DIR_NORMALIZADA, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR,
-		  USUARIOBORRAR, FECHABORRAR, BORRADO
-		)select
-		   S_DIR_DIRECCIONES.nextVal, c.* from (
-		   select distinct (select dd_loc_id from ${master.schema}.dd_loc_localidad where dd_loc_codigo = TO_CHAR(TMP_DIR_INE_POB)),
-		  (select dd_prv_id from ${master.schema}.dd_prv_provincia where dd_prv_codigo = TO_CHAR(TMP_DIR_INE_PROV)),
-		  (select dd_tvi_id from ${master.schema}.dd_tvi_tipo_via where dd_tvi_codigo = TO_CHAR(TMP_DIR_INE_VIA)),
-		  TMP_DIR_COD_DIRECCION, TMP_DIR_FECHA_EXTRACCION, TMP_DIR_DOMICILIO, TMP_DIR_DOM_N, TMP_DIR_DOM_PORTAL,  TMP_DIR_DOM_PISO,
-		  TMP_DIR_DOM_ESC, TMP_DIR_DOM_PUERTA, TMP_DIR_CODIGO_POSTAL,
-		  TMP_DIR_PROVINCIA,
-		  TMP_DIR_POBLACION,
-		  TMP_DIR_MUNICIPIO, TMP_DIR_INE_PROV, TMP_DIR_INE_POB, TMP_DIR_INE_MUN, TMP_DIR_INE_VIA,0, 
-		  '${PasajeAProducciónUser}', FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO
-		from tmp_direcciones
-		where
+        insert into dir_direcciones (
+          DIR_ID, DD_LOC_ID, DD_PRV_ID, DD_TVI_ID, DIR_COD_DIRECCION, DIR_FECHA_EXTRACCION, DIR_DOMICILIO, DIR_DOM_N,
+          DIR_DOM_PORTAL, DIR_DOM_PISO, DIR_DOM_ESC, DIR_DOM_PUERTA, DIR_CODIGO_POSTAL,
+          DIR_PROVINCIA, DIR_POBLACION, DIR_MUNICIPIO, DIR_INE_PROV, DIR_INE_POB, DIR_INE_MUN,
+          DIR_INE_VIA, DIR_NORMALIZADA, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR,
+          USUARIOBORRAR, FECHABORRAR, BORRADO
+        )select
+           S_DIR_DIRECCIONES.nextVal, c.* from (
+           select distinct (select dd_loc_id from ${master.schema}.dd_loc_localidad where dd_loc_codigo = TO_CHAR(TMP_DIR_INE_POB)),
+          (select dd_prv_id from ${master.schema}.dd_prv_provincia where dd_prv_codigo = TO_CHAR(TMP_DIR_INE_PROV)),
+          (select dd_tvi_id from ${master.schema}.dd_tvi_tipo_via where dd_tvi_codigo = TO_CHAR(TMP_DIR_INE_VIA)),
+          TMP_DIR_COD_DIRECCION, TMP_DIR_FECHA_EXTRACCION, TMP_DIR_DOMICILIO, TMP_DIR_DOM_N, TMP_DIR_DOM_PORTAL,  TMP_DIR_DOM_PISO,
+          TMP_DIR_DOM_ESC, TMP_DIR_DOM_PUERTA, TMP_DIR_CODIGO_POSTAL,
+          TMP_DIR_PROVINCIA,
+          TMP_DIR_POBLACION,
+          TMP_DIR_MUNICIPIO, TMP_DIR_INE_PROV, TMP_DIR_INE_POB, TMP_DIR_INE_MUN, TMP_DIR_INE_VIA,0,
+          '${PasajeAProducciónUser}', FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO
+        from tmp_direcciones
+        where
                 not exists (select *
-		                  from dir_direcciones
-		                  where  dir_cod_direccion = TMP_DIR_COD_DIRECCION)
+                          from dir_direcciones
+                          where  dir_cod_direccion = TMP_DIR_COD_DIRECCION)
                                 )c
     ]]>
   </entry>
@@ -92,34 +92,33 @@
                                 1,0)
             where dir_direcciones.dir_cod_direccion = tmp_direcciones.tmp_dir_cod_direccion
             and dir_direcciones.borrado = 0
-    ]]>     
+    ]]>
   </entry>
-  <entry key="updateDirecciones.Oracle9iDialect">
-  	<![CDATA[
-  		UPDATE dir_direcciones
-    SET (dir_direcciones.FECHAMODIFICAR, dir_direcciones.BORRADO, DD_LOC_ID, DD_PRV_ID, DD_TVI_ID, DIR_DOMICILIO,
-    DIR_DOM_N, DIR_DOM_PORTAL, DIR_DOM_PISO, DIR_DOM_ESC, DIR_DOM_PUERTA, DIR_CODIGO_POSTAL, DIR_PROVINCIA, 
-    DIR_POBLACION, DIR_MUNICIPIO, DIR_INE_PROV, DIR_INE_POB, DIR_INE_MUN, DIR_INE_VIA, DIR_NORMALIZADA)
-    =
-    (select distinct sysdate, 
-        tmp_direcciones.BORRADO, 
-        (select dd_loc_id from ${master.schema}.dd_loc_localidad where dd_loc_codigo = TO_CHAR(TMP_DIR_INE_POB)),
-        (select dd_prv_id from ${master.schema}.dd_prv_provincia where dd_prv_codigo = TO_CHAR(TMP_DIR_INE_PROV)),
-        (select dd_tvi_id from ${master.schema}.dd_tvi_tipo_via where dd_tvi_codigo = TO_CHAR(TMP_DIR_TIPOVIA)),
-        TMP_DIR_DOMICILIO, TMP_DIR_DOM_N, TMP_DIR_DOM_PORTAL, TMP_DIR_DOM_PISO, TMP_DIR_DOM_ESC, TMP_DIR_DOM_PUERTA, 
-        TMP_DIR_CODIGO_POSTAL, 
-        TMP_DIR_PROVINCIA,
-        TMP_DIR_POBLACION,
-        TMP_DIR_MUNICIPIO, TMP_DIR_INE_PROV, TMP_DIR_INE_POB, TMP_DIR_INE_MUN, TMP_DIR_INE_VIA,0
-    from tmp_direcciones
-    where dir_direcciones.dir_cod_direccion = tmp_direcciones.tmp_dir_cod_direccion
-    and dir_direcciones.borrado = 0)
-    WHERE dir_direcciones.dir_cod_direccion IN (SELECT distinct tmp_dir_cod_direccion FROM tmp_direcciones)
-    and DIR_DIRECCIONES.DIR_FECHA_EXTRACCION != (select tmp_dir_fecha_extraccion from tmp_direcciones where rownum = 1)
-	]]>		
+  <entry key="updateDirecciones.Oracle10gDialect">
+    <![CDATA[
+        UPDATE dir_direcciones
+           SET (dir_direcciones.FECHAMODIFICAR, dir_direcciones.BORRADO, DD_LOC_ID, DD_PRV_ID, DD_TVI_ID, DIR_DOMICILIO,
+                DIR_DOM_N, DIR_DOM_PORTAL, DIR_DOM_PISO, DIR_DOM_ESC, DIR_DOM_PUERTA, DIR_CODIGO_POSTAL, DIR_PROVINCIA,
+                DIR_POBLACION, DIR_MUNICIPIO, DIR_INE_PROV, DIR_INE_POB, DIR_INE_MUN, DIR_INE_VIA, DIR_NORMALIZADA)
+            =  (select distinct sysdate,
+                tmp_direcciones.BORRADO,
+                (select dd_loc_id from ${master.schema}.dd_loc_localidad where dd_loc_codigo = TO_CHAR(TMP_DIR_INE_POB)),
+                (select dd_prv_id from ${master.schema}.dd_prv_provincia where dd_prv_codigo = TO_CHAR(TMP_DIR_INE_PROV)),
+                (select dd_tvi_id from ${master.schema}.dd_tvi_tipo_via  where dd_tvi_codigo = TO_CHAR(TMP_DIR_TIPOVIA)),
+                TMP_DIR_DOMICILIO, TMP_DIR_DOM_N, TMP_DIR_DOM_PORTAL, TMP_DIR_DOM_PISO, TMP_DIR_DOM_ESC, TMP_DIR_DOM_PUERTA,
+                TMP_DIR_CODIGO_POSTAL,
+                TMP_DIR_PROVINCIA,
+                TMP_DIR_POBLACION,
+                TMP_DIR_MUNICIPIO, TMP_DIR_INE_PROV, TMP_DIR_INE_POB, TMP_DIR_INE_MUN, TMP_DIR_INE_VIA,0
+                from tmp_direcciones
+                where dir_direcciones.dir_cod_direccion = tmp_direcciones.tmp_dir_cod_direccion
+                and dir_direcciones.borrado = 0)
+        WHERE dir_direcciones.dir_cod_direccion IN (SELECT distinct tmp_dir_cod_direccion FROM tmp_direcciones)
+          AND DIR_DIRECCIONES.DIR_FECHA_EXTRACCION != (select tmp_dir_fecha_extraccion from tmp_direcciones where rownum = 1)
+    ]]>
   </entry>
   <entry key="pcr.borrardirecciones.relaciones">
-    <![CDATA[ TRUNCATE TABLE DIR_PER]]>
+    <![CDATA[ /*TRUNCATE TABLE DIR_PER*/ BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','DIR_PER'); END;]]>
   </entry>
   <entry key="insertRelacionDireccionPersona.MySQLDialect">
     <![CDATA[
@@ -127,27 +126,31 @@
         select per.per_id, dir.dir_id, '${PasajeAProducciónUser}', now() from tmp_direcciones tmp, DIR_DIRECCIONES dir, PER_PERSONAS per
         where tmp.TMP_DIR_COD_DIRECCION = dir.DIR_COD_DIRECCION
         and tmp.TMP_DIR_COD_CLIENTE_ENTIDAD = per.PER_COD_CLIENTE_ENTIDAD
-    ]]>     
+    ]]>
   </entry>
-  <entry key="insertRelacionDireccionPersona.Oracle9iDialect">
+  <entry key="insertRelacionDireccionPersona.Oracle10gDialect">
     <![CDATA[
         insert into DIR_PER (PER_ID, DIR_ID, USUARIOCREAR, FECHACREAR )
         select per.per_id, dir.dir_id, '${PasajeAProducciónUser}', sysdate from tmp_direcciones tmp, DIR_DIRECCIONES dir, PER_PERSONAS per
         where tmp.TMP_DIR_COD_DIRECCION = dir.DIR_COD_DIRECCION
         and tmp.TMP_DIR_COD_CLIENTE_ENTIDAD = per.PER_COD_CLIENTE_ENTIDAD
-    ]]>     
+    ]]>
   </entry>
   <entry key="pcr.analize.direcciones">
       <![CDATA[
-        ANALYZE TABLE dir_direcciones ${sql.analyze}
+        Begin
+         OPERACION_DDL.DDL_TABLE('STATS','DIR_DIRECCIONES');
+        End;
          ]]>
   </entry>
   <entry key="pcr.analize.direccionPersona">
       <![CDATA[
-        ANALYZE TABLE DIR_PER ${sql.analyze}
+        Begin
+         OPERACION_DDL.DDL_TABLE('STATS','DIR_PER');
+        End;
          ]]>
   </entry>
-  
+
   <entry key="dir-01.entityValidator">
     <![CDATA[select (''||td.TMP_DIR_COD_ENTIDAD) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE from tmp_direcciones td where tmp_dir_cod_entidad <> ? ]]>
   </entry>
@@ -155,7 +158,7 @@
     <![CDATA[select (''||td.TMP_DIR_FECHA_EXTRACCION) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE
             from TMP_DIRECCIONES td where TMP_DIR_FECHA_EXTRACCION <> str_to_date(?,'%Y%m%d') ]]>
   </entry>
-  <entry key="dir-02.loadDateValidator.Oracle9iDialect">
+  <entry key="dir-02.loadDateValidator.Oracle10gDialect">
     <![CDATA[select (''||td.TMP_DIR_FECHA_EXTRACCION) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE
             from TMP_DIRECCIONES td where TMP_DIR_FECHA_EXTRACCION <> to_date(?,'yyyyMMdd') ]]>
   </entry>
@@ -167,9 +170,9 @@
         and not exists (select * from tmp_per_personas where tmp_per_cod_cliente_entidad = tmp_dir_cod_cliente_entidad)
     ]]>
   </entry>
-  
+
   <!-- NOTA: Se han eliminado las siguientes validaciones para direcciones. Confirmado con cliente 12/06/2009
-  
+
   <entry key="dir-04.validarVia">
     <![CDATA[
         select (''||td.tmp_dir_tipovia) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE
@@ -177,14 +180,14 @@
         where not exists (select * from ${master.schema}.dd_tvi_tipo_via where dd_tvi_codigo = tmp_dir_tipovia)
     ]]>
   </entry>
-  
+
   <entry key="dir-05.validarProvincia">
     <![CDATA[
         select (''||td.TMP_DIR_INE_PROV) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE
         from tmp_direcciones td
         where not exists (select * from ${master.schema}.dd_prv_provincia where dd_prv_codigo = TMP_DIR_INE_PROV)
     ]]>
-  </entry>          
+  </entry>
 
   <entry key="dir-06.validarLocalidad">
     <![CDATA[
@@ -192,7 +195,7 @@
         from tmp_direcciones td
         where not exists (select * from ${master.schema}.dd_loc_localidad where dd_loc_codigo = TMP_DIR_INE_POB)
     ]]>
-  </entry>  
-  
+  </entry>
+
   -->
 </properties>

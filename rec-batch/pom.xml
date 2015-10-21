@@ -232,6 +232,10 @@
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>org.springframework.batch</groupId>
+					<artifactId>org.springframework.batch.core</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>*</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>

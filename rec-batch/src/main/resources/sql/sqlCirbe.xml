@@ -1,83 +1,83 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <entry key="cirbe.pasajeProduccion">
-	    <![CDATA[
-	      INSERT INTO CIR_CIRBE 
-	      (
-	      	CIR_ID,
-			DD_CRC_ID,
-			DD_TMC_ID,
-			DD_TSC_ID,
-			DD_TVC_ID,
-			DD_COC_ID,
-			DD_TGC_ID,
-			DD_CIC_ID,
-			CIRBE_ANTERIOR,
-			CIR_DISPONIBLE,
-			CIR_DISPUESTO,
-			CIR_CANT_PART_SOLID,
-			CIR_FECHA_EXTRACCION,
-			CIR_FICHERO_CARGA,
-			PER_ID,
-			CIR_FECHA_ACTUALIZAC,
-			VERSION,
-		  	USUARIOCREAR,
-		  	FECHACREAR,
-		  	BORRADO
-	      )
-	      SELECT 
-	      	S_CIR_CIRBE.nextVal,
-	      	(select DD_CRC_ID from ${master.schema}.DD_CRC_CLASE_RIESGO_CIRBE where DD_CRC_CODIGO = tc.TMP_CIR_CLASE_RSGO_CIRBE),
-	      	(select DD_TMC_ID from ${master.schema}.DD_TMC_TIPO_MONEDA_CIRBE where DD_TMC_CODIGO = tc.TMP_CIR_COD_DIVISA_CIRBE),
-	      	(select DD_TSC_ID from ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE where DD_TSC_CODIGO = tc.TMP_CIR_COD_SITIRREG_CIRBE),
-	      	(select DD_TVC_ID from ${master.schema}.DD_TVC_TIPO_VENC_CIRBE where DD_TVC_CODIGO = tc.TMP_CIR_COD_VTO_CIRBE),
-	      	(select DD_COC_ID from ${master.schema}.DD_COC_COD_OPERAC_CIRBE where DD_COC_CODIGO = tc.TMP_CIR_COD_PD_CIRBE),
-	      	(select DD_TGC_ID from ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE where DD_TGC_CODIGO = tc.TMP_CIR_COD_GTIA_CIRBE),
-	      	(select DD_CIC_ID from ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE where DD_CIC_CODIGO = tc.TMP_CIR_COD_ISO_PAIS_AG),
-	      	null, --Es el cirbe anterior hay que ver el tema de las referencias
-	      	tc.TMP_CIR_IMP_DISP_CIRBE_RC*1000.0,  --Los importes dispuesto y disponible llegan en miles de euros
-	      	tc.TMP_CIR_IMP_DSPTO_CIRBE_RC*1000.0,
-	      	tc.TMP_CIR_NUM_PA,
-	      	TMP_CIR_FECHA_FIN_MES,
-	      	TMP_CIR_FICHERO_CARGA,
-	      	(select PER_ID from PER_PERSONAS where PER_COD_CLIENTE_ENTIDAD = to_number(tc.TMP_CIR_ID_INTERNO_PE)),
-	      	tc.TMP_CIR_FECHA_ACTLZN,
-	      	0,
-	      	'${cirbePasajeProduccion}',
-	      	systimestamp,
-	      	0
-	      FROM TMP_CIR_CIRBE tc
-          WHERE not exists (
-                 select c.CIR_ID 
-		             from CIR_CIRBE c
-		             JOIN ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE tsc ON tsc.DD_TSC_ID = c.DD_TSC_ID
-		             JOIN PER_PERSONAS per ON per.PER_ID = c.PER_ID
-		             JOIN ${master.schema}.DD_COC_COD_OPERAC_CIRBE coc ON coc.DD_COC_ID = c.DD_COC_ID
-		             JOIN ${master.schema}.DD_TVC_TIPO_VENC_CIRBE tvc ON tvc.DD_TVC_ID = c.DD_TVC_ID
-		             JOIN ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE TGC ON TGC.DD_TGC_ID = c.DD_TGC_ID
-		          where 1=1
-	                 and tc.TMP_CIR_COD_SITIRREG_CIRBE = tsc.DD_TSC_CODIGO
-	                 and to_number(tc.TMP_CIR_ID_INTERNO_PE) = per.PER_COD_CLIENTE_ENTIDAD
-	                 and tc.TMP_CIR_COD_PD_CIRBE = coc.DD_COC_CODIGO
-	                 and tc.TMP_CIR_COD_VTO_CIRBE = tvc.DD_TVC_CODIGO
-	                 and tc.TMP_CIR_COD_GTIA_CIRBE = TGC.DD_TGC_CODIGO
-	                 and tc.TMP_CIR_FECHA_FIN_MES = c.CIR_FECHA_EXTRACCION
+        <![CDATA[
+          INSERT INTO CIR_CIRBE
+          (
+            CIR_ID,
+            DD_CRC_ID,
+            DD_TMC_ID,
+            DD_TSC_ID,
+            DD_TVC_ID,
+            DD_COC_ID,
+            DD_TGC_ID,
+            DD_CIC_ID,
+            CIRBE_ANTERIOR,
+            CIR_DISPONIBLE,
+            CIR_DISPUESTO,
+            CIR_CANT_PART_SOLID,
+            CIR_FECHA_EXTRACCION,
+            CIR_FICHERO_CARGA,
+            PER_ID,
+            CIR_FECHA_ACTUALIZAC,
+            VERSION,
+            USUARIOCREAR,
+            FECHACREAR,
+            BORRADO
           )
-	     
-	    ]]>
+          SELECT
+            S_CIR_CIRBE.nextVal,
+            (select DD_CRC_ID from ${master.schema}.DD_CRC_CLASE_RIESGO_CIRBE where DD_CRC_CODIGO = tc.TMP_CIR_CLASE_RSGO_CIRBE),
+            (select DD_TMC_ID from ${master.schema}.DD_TMC_TIPO_MONEDA_CIRBE where DD_TMC_CODIGO = tc.TMP_CIR_COD_DIVISA_CIRBE),
+            (select DD_TSC_ID from ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE where DD_TSC_CODIGO = tc.TMP_CIR_COD_SITIRREG_CIRBE),
+            (select DD_TVC_ID from ${master.schema}.DD_TVC_TIPO_VENC_CIRBE where DD_TVC_CODIGO = tc.TMP_CIR_COD_VTO_CIRBE),
+            (select DD_COC_ID from ${master.schema}.DD_COC_COD_OPERAC_CIRBE where DD_COC_CODIGO = tc.TMP_CIR_COD_PD_CIRBE),
+            (select DD_TGC_ID from ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE where DD_TGC_CODIGO = tc.TMP_CIR_COD_GTIA_CIRBE),
+            (select DD_CIC_ID from ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE where DD_CIC_CODIGO = tc.TMP_CIR_COD_ISO_PAIS_AG),
+            null, --Es el cirbe anterior hay que ver el tema de las referencias
+            tc.TMP_CIR_IMP_DISP_CIRBE_RC*1000.0,  --Los importes dispuesto y disponible llegan en miles de euros
+            tc.TMP_CIR_IMP_DSPTO_CIRBE_RC*1000.0,
+            tc.TMP_CIR_NUM_PA,
+            TMP_CIR_FECHA_FIN_MES,
+            TMP_CIR_FICHERO_CARGA,
+            (select PER_ID from PER_PERSONAS where PER_COD_CLIENTE_ENTIDAD = to_number(tc.TMP_CIR_ID_INTERNO_PE)),
+            tc.TMP_CIR_FECHA_ACTLZN,
+            0,
+            '${cirbePasajeProduccion}',
+            systimestamp,
+            0
+          FROM TMP_CIR_CIRBE tc
+          WHERE not exists (
+                 select c.CIR_ID
+                     from CIR_CIRBE c
+                     JOIN ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE tsc ON tsc.DD_TSC_ID = c.DD_TSC_ID
+                     JOIN PER_PERSONAS per ON per.PER_ID = c.PER_ID
+                     JOIN ${master.schema}.DD_COC_COD_OPERAC_CIRBE coc ON coc.DD_COC_ID = c.DD_COC_ID
+                     JOIN ${master.schema}.DD_TVC_TIPO_VENC_CIRBE tvc ON tvc.DD_TVC_ID = c.DD_TVC_ID
+                     JOIN ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE TGC ON TGC.DD_TGC_ID = c.DD_TGC_ID
+                  where 1=1
+                     and tc.TMP_CIR_COD_SITIRREG_CIRBE = tsc.DD_TSC_CODIGO
+                     and to_number(tc.TMP_CIR_ID_INTERNO_PE) = per.PER_COD_CLIENTE_ENTIDAD
+                     and tc.TMP_CIR_COD_PD_CIRBE = coc.DD_COC_CODIGO
+                     and tc.TMP_CIR_COD_VTO_CIRBE = tvc.DD_TVC_CODIGO
+                     and tc.TMP_CIR_COD_GTIA_CIRBE = TGC.DD_TGC_CODIGO
+                     and tc.TMP_CIR_FECHA_FIN_MES = c.CIR_FECHA_EXTRACCION
+          )
+
+        ]]>
     </entry>
-    
+
     <entry key="cirbe.updateFechaExtraccion">
-    	<![CDATA[
-    		UPDATE CIR_CIRBE SET FRC_ID = ? WHERE FRC_ID IS NULL
-    	]]>
+        <![CDATA[
+            UPDATE CIR_CIRBE SET FRC_ID = ? WHERE FRC_ID IS NULL
+        ]]>
     </entry>
-    
+
     <entry key="cir-01.entityValidator">
-   		 <![CDATA[
-   		  SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_NRBE_EN AS ENTITY_CODE      
+         <![CDATA[
+          SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_NRBE_EN AS ENTITY_CODE
           FROM TMP_CIR_CIRBE WHERE TMP_CIR_COD_NRBE_EN <> ?
-   		  ]]>
+          ]]>
     </entry>
     <entry key="cir-02.loadDateValidator">
       <![CDATA[
@@ -86,136 +86,136 @@
          from TMP_CIR_CIRBE where TMP_CIR_FECHA_FIN_MES <> to_date(?,'YYYYMMDD')
          ]]>
     </entry>
-	<entry key="cir-03.clientValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_NRBE_EN AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM PER_PERSONAS WHERE PER_COD_CLIENTE_ENTIDAD = TMP_CIR_ID_INTERNO_PE) 
-   		  ]]>
+    <entry key="cir-03.clientValidator">
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_NRBE_EN AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM PER_PERSONAS WHERE PER_COD_CLIENTE_ENTIDAD = TMP_CIR_ID_INTERNO_PE)
+          ]]>
     </entry>
-	<entry key="cir-04.tipoOperacionValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_PD_CIRBE AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_COC_COD_OPERAC_CIRBE coc WHERE coc.DD_COC_CODIGO = TMP_CIR_COD_PD_CIRBE) 
-   		  ]]>
+    <entry key="cir-04.tipoOperacionValidator">
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_PD_CIRBE AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_COC_COD_OPERAC_CIRBE coc WHERE coc.DD_COC_CODIGO = TMP_CIR_COD_PD_CIRBE)
+          ]]>
     </entry>
-	<entry key="cir-05.plazoVencimientoValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_VTO_CIRBE AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TVC_TIPO_VENC_CIRBE coc WHERE coc.DD_TVC_CODIGO = TMP_CIR_COD_VTO_CIRBE) 
-   		  ]]>
+    <entry key="cir-05.plazoVencimientoValidator">
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_VTO_CIRBE AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TVC_TIPO_VENC_CIRBE coc WHERE coc.DD_TVC_CODIGO = TMP_CIR_COD_VTO_CIRBE)
+          ]]>
     </entry>
-   	<entry key="cir-06.tipoGarantiaValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_GTIA_CIRBE AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE coc WHERE coc.DD_TGC_CODIGO = TMP_CIR_COD_GTIA_CIRBE) 
-   		  ]]>
+    <entry key="cir-06.tipoGarantiaValidator">
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_GTIA_CIRBE AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE coc WHERE coc.DD_TGC_CODIGO = TMP_CIR_COD_GTIA_CIRBE)
+          ]]>
     </entry>
-   	<entry key="cir-07.tipoSituacionValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_SITIRREG_CIRBE AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE coc WHERE coc.DD_TSC_CODIGO = TMP_CIR_COD_SITIRREG_CIRBE) 
-   		  ]]>
-    </entry>    
-   	<entry key="cir-08.codigoDivisaValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_DIVISA_CIRBE AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TMC_TIPO_MONEDA_CIRBE coc WHERE coc.DD_TMC_CODIGO = TMP_CIR_COD_DIVISA_CIRBE) 
-   		  ]]>
+    <entry key="cir-07.tipoSituacionValidator">
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_SITIRREG_CIRBE AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE coc WHERE coc.DD_TSC_CODIGO = TMP_CIR_COD_SITIRREG_CIRBE)
+          ]]>
+    </entry>
+    <entry key="cir-08.codigoDivisaValidator">
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_DIVISA_CIRBE AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TMC_TIPO_MONEDA_CIRBE coc WHERE coc.DD_TMC_CODIGO = TMP_CIR_COD_DIVISA_CIRBE)
+          ]]>
     </entry>
     <entry key="cir-09.claseRiesgoValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_CLASE_RSGO_CIRBE AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_CRC_CLASE_RIESGO_CIRBE coc WHERE coc.DD_CRC_CODIGO = TMP_CIR_CLASE_RSGO_CIRBE) 
-   		  ]]>
-    </entry>  
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_CLASE_RSGO_CIRBE AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_CRC_CLASE_RIESGO_CIRBE coc WHERE coc.DD_CRC_CODIGO = TMP_CIR_CLASE_RSGO_CIRBE)
+          ]]>
+    </entry>
     <entry key="cir-10.codISOPaisValidator">
-   		 <![CDATA[
-			SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_ISO_PAIS_AG AS ENTITY_CODE
-			FROM TMP_CIR_CIRBE 
-			WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE coc WHERE coc.DD_CIC_CODIGO = TMP_CIR_COD_ISO_PAIS_AG) 
-   		  ]]>
-    </entry>  
+         <![CDATA[
+            SELECT TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, TMP_CIR_COD_ISO_PAIS_AG AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE
+            WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_CIC_CODIGO_ISO_CIRBE coc WHERE coc.DD_CIC_CODIGO = TMP_CIR_COD_ISO_PAIS_AG)
+          ]]>
+    </entry>
     <entry key="cir-11.duplicidadRegFicheroValidator">
-   		 <![CDATA[
-			SELECT tcc.TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, tcc.TMP_CIR_COD_NRBE_EN AS ENTITY_CODE 
-			FROM TMP_CIR_CIRBE tcc  
-			WHERE EXISTS (
-				select * 
-				from TMP_CIR_CIRBE tcc2 
-				where tcc.TMP_CIR_ID_INTERNO_PE = tcc2.TMP_CIR_ID_INTERNO_PE
-				and tcc.TMP_CIR_COD_PD_CIRBE = tcc2.TMP_CIR_COD_PD_CIRBE
-				and tcc.TMP_CIR_COD_VTO_CIRBE = tcc2.TMP_CIR_COD_VTO_CIRBE
-				and tcc.TMP_CIR_COD_GTIA_CIRBE = tcc2.TMP_CIR_COD_GTIA_CIRBE
-				and tcc.TMP_CIR_COD_SITIRREG_CIRBE = tcc2.TMP_CIR_COD_SITIRREG_CIRBE
-				and tcc.TMP_CIR_CLASE_RSGO_CIRBE = tcc2.TMP_CIR_CLASE_RSGO_CIRBE
-				and tcc.TMP_CIR_COD_DIVISA_CIRBE = tcc2.TMP_CIR_COD_DIVISA_CIRBE
-				and tcc.TMP_CIR_ID <> tcc2.TMP_CIR_ID
-			) 
-   		  ]]>
+         <![CDATA[
+            SELECT tcc.TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, tcc.TMP_CIR_COD_NRBE_EN AS ENTITY_CODE
+            FROM TMP_CIR_CIRBE tcc
+            WHERE EXISTS (
+                select *
+                from TMP_CIR_CIRBE tcc2
+                where tcc.TMP_CIR_ID_INTERNO_PE = tcc2.TMP_CIR_ID_INTERNO_PE
+                and tcc.TMP_CIR_COD_PD_CIRBE = tcc2.TMP_CIR_COD_PD_CIRBE
+                and tcc.TMP_CIR_COD_VTO_CIRBE = tcc2.TMP_CIR_COD_VTO_CIRBE
+                and tcc.TMP_CIR_COD_GTIA_CIRBE = tcc2.TMP_CIR_COD_GTIA_CIRBE
+                and tcc.TMP_CIR_COD_SITIRREG_CIRBE = tcc2.TMP_CIR_COD_SITIRREG_CIRBE
+                and tcc.TMP_CIR_CLASE_RSGO_CIRBE = tcc2.TMP_CIR_CLASE_RSGO_CIRBE
+                and tcc.TMP_CIR_COD_DIVISA_CIRBE = tcc2.TMP_CIR_COD_DIVISA_CIRBE
+                and tcc.TMP_CIR_ID <> tcc2.TMP_CIR_ID
+            )
+          ]]>
     </entry>
     <entry key="cir-13.duplicidadRegEntreCargas">
-   		 <![CDATA[
-		  SELECT tc.TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, tc.TMP_CIR_FECHA_FIN_MES AS ENTITY_CODE 
-	      FROM TMP_CIR_CIRBE tc
+         <![CDATA[
+          SELECT tc.TMP_CIR_ID_INTERNO_PE AS ERROR_FIELD, tc.TMP_CIR_FECHA_FIN_MES AS ENTITY_CODE
+          FROM TMP_CIR_CIRBE tc
           WHERE exists (
-                  select c.CIR_ID 
-		             from CIR_CIRBE c
-		             JOIN ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE tsc ON tsc.DD_TSC_ID = c.DD_TSC_ID
-		             JOIN PER_PERSONAS per ON per.PER_ID = c.PER_ID
-		             JOIN ${master.schema}.DD_COC_COD_OPERAC_CIRBE coc ON coc.DD_COC_ID = c.DD_COC_ID
-		             JOIN ${master.schema}.DD_TVC_TIPO_VENC_CIRBE tvc ON tvc.DD_TVC_ID = c.DD_TVC_ID
-		             JOIN ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE TGC ON TGC.DD_TGC_ID = c.DD_TGC_ID
-		          where 1=1
-	                 and tc.TMP_CIR_COD_SITIRREG_CIRBE = tsc.DD_TSC_CODIGO
-	                 and to_number(tc.TMP_CIR_ID_INTERNO_PE) = per.PER_COD_CLIENTE_ENTIDAD
-	                 and tc.TMP_CIR_COD_PD_CIRBE = coc.DD_COC_CODIGO
-	                 and tc.TMP_CIR_COD_VTO_CIRBE = tvc.DD_TVC_CODIGO
-	                 and tc.TMP_CIR_COD_GTIA_CIRBE = TGC.DD_TGC_CODIGO
-	                 and tc.TMP_CIR_FECHA_FIN_MES = c.CIR_FECHA_EXTRACCION
+                  select c.CIR_ID
+                     from CIR_CIRBE c
+                     JOIN ${master.schema}.DD_TSC_TIPO_SITUAC_CIRBE tsc ON tsc.DD_TSC_ID = c.DD_TSC_ID
+                     JOIN PER_PERSONAS per ON per.PER_ID = c.PER_ID
+                     JOIN ${master.schema}.DD_COC_COD_OPERAC_CIRBE coc ON coc.DD_COC_ID = c.DD_COC_ID
+                     JOIN ${master.schema}.DD_TVC_TIPO_VENC_CIRBE tvc ON tvc.DD_TVC_ID = c.DD_TVC_ID
+                     JOIN ${master.schema}.DD_TGC_TIPO_GARANTIA_CIRBE TGC ON TGC.DD_TGC_ID = c.DD_TGC_ID
+                  where 1=1
+                     and tc.TMP_CIR_COD_SITIRREG_CIRBE = tsc.DD_TSC_CODIGO
+                     and to_number(tc.TMP_CIR_ID_INTERNO_PE) = per.PER_COD_CLIENTE_ENTIDAD
+                     and tc.TMP_CIR_COD_PD_CIRBE = coc.DD_COC_CODIGO
+                     and tc.TMP_CIR_COD_VTO_CIRBE = tvc.DD_TVC_CODIGO
+                     and tc.TMP_CIR_COD_GTIA_CIRBE = TGC.DD_TGC_CODIGO
+                     and tc.TMP_CIR_FECHA_FIN_MES = c.CIR_FECHA_EXTRACCION
           )
-   		  ]]>
+          ]]>
     </entry>
     <entry key="cirbe.cirbeAnterior">
-   		 <![CDATA[
+         <![CDATA[
 
-				UPDATE CIR_CIRBE c 
-				SET CIRBE_ANTERIOR = (
-				    select ca.CIR_ID 
-				    FROM CIR_CIRBE ca
-				    WHERE c.PER_ID = ca.PER_ID
-				    AND c.DD_COC_ID = ca.DD_COC_ID
-				    AND c.DD_TVC_ID = ca.DD_TVC_ID
-				    AND c.DD_TGC_ID = ca.DD_TGC_ID
-				    AND c.DD_TSC_ID = ca.DD_TSC_ID
-				    AND ca.FRC_ID = (
-				        select max(CF.FRC_ID)
-				        from CIR_CIRBE CF 
-				        WHERE cf.PER_ID = ca.PER_ID
-				        AND cf.DD_COC_ID = ca.DD_COC_ID
-				        AND cf.DD_TVC_ID = ca.DD_TVC_ID
-				        AND cf.DD_TGC_ID = ca.DD_TGC_ID
-				        AND cf.DD_TSC_ID = ca.DD_TSC_ID
-				    )
-				)
-				WHERE c.FRC_ID is null;
+                UPDATE CIR_CIRBE c
+                SET CIRBE_ANTERIOR = (
+                    select ca.CIR_ID
+                    FROM CIR_CIRBE ca
+                    WHERE c.PER_ID = ca.PER_ID
+                    AND c.DD_COC_ID = ca.DD_COC_ID
+                    AND c.DD_TVC_ID = ca.DD_TVC_ID
+                    AND c.DD_TGC_ID = ca.DD_TGC_ID
+                    AND c.DD_TSC_ID = ca.DD_TSC_ID
+                    AND ca.FRC_ID = (
+                        select max(CF.FRC_ID)
+                        from CIR_CIRBE CF
+                        WHERE cf.PER_ID = ca.PER_ID
+                        AND cf.DD_COC_ID = ca.DD_COC_ID
+                        AND cf.DD_TVC_ID = ca.DD_TVC_ID
+                        AND cf.DD_TGC_ID = ca.DD_TGC_ID
+                        AND cf.DD_TSC_ID = ca.DD_TSC_ID
+                    )
+                )
+                WHERE c.FRC_ID is null;
 
-   		  ]]>
+          ]]>
     </entry>
     <entry key="cir-14.lastLoadDateValidator">
-    	 <![CDATA[
-    	 SELECT FRC_FECHA_EXTRACCION AS ERROR_FIELD,
+         <![CDATA[
+         SELECT FRC_FECHA_EXTRACCION AS ERROR_FIELD,
          'CIRBE' AS ENTITY_CODE
-         from FRC_FICHEROS_CARGADOS 
+         from FRC_FICHEROS_CARGADOS
          where FRC_FECHA_EXTRACCION > to_date(?,'YYYYMMDD')
          and DD_TFI_ID = (select DD_TFI_ID from ${master.schema}.DD_TFI_TIPO_FICHERO where DD_TFI_CODIGO='CIRBE')
-         
-    	  ]]>
+
+          ]]>
     </entry>
 </properties>

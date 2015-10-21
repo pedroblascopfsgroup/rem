@@ -415,6 +415,7 @@
 	var filtrosCDD = new Ext.Panel({
 		layout:'table'
 		,title : ''
+		,width: 410
 		,collapsible : false
 		,titleCollapse : false
 		,layoutConfig : {
@@ -461,7 +462,7 @@
 	    }, zonasRecord)
 	       
 	});    
-	var comboZonas = app.creaDblSelect(zonas, '<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />',{store:optionsZonasStore, funcionReset:recargarComboZonas});
+	var comboZonas = app.creaDblSelect(zonas, '<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />',{store:optionsZonasStore, funcionReset:recargarComboZonas, width:200, height: 140});
 	/*Fin jerarquia*/
 	
 	var recargarComboZonas = function(){
@@ -727,12 +728,12 @@
 				,{items:[filtroContrato]}
 				,{items:[fechaCreacionHasta]}
 				,{items:[filtroNumeroAutosPanel]}
+				,{items:[comboGestion]}
+				,{colspan:2,items:[comboTipoProcedimientos]}
+				,{items:[comboPropiedades]}
 				,{items:[comboJerarquia]}
 				,{items:[filtrosCDD]}
 				,{items:[comboZonas]}
-				,{colspan:2,items:[comboTipoProcedimientos]}
-				,{items:[comboGestion]}
-				,{items:[comboPropiedades]}
 		]
 		,listeners:{	
 			getParametros: function(anadirParametros, hayError) {

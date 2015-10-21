@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.config.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
@@ -21,6 +23,8 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
@@ -39,6 +43,7 @@ public class TurnadoDespachosController {
 	//private static final String VIEW_ESQUEMA_TURNADO_GUARDAR_JSON = "plugin/config/turnadodespachos/editarEsquema";
 	private static final String VIEW_LETRADO_ESQUEMA_TURNADO_GET = "plugin/config/turnadodespachos/esquemaTurnadoJSON";
 	private static final String VIEW_ESQUEMA_TURNADO_LETRADO = "plugin/config/turnadodespachos/editarEsquemaLetrado";
+	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
 	private static final String VIEW_DEFAULT = "default";
 
@@ -194,5 +199,57 @@ public class TurnadoDespachosController {
 			despachoExternoManager.saveEsquemaDespacho(dto);
 		}
 		return VIEW_DEFAULT;
-	}	
+	}
+	
+	@RequestMapping
+	public String descargarConfiguracionDespachos(Model model) 
+	{
+		List<String> cabeceras=new ArrayList<String>();
+		cabeceras.add("IDENTIFICACIÓN DEL DESPACHO");
+		cabeceras.add("NOMBRE");
+		cabeceras.add("TIPO IMPORTE - LITIGIOS");
+		cabeceras.add("TIPO IMPORTE - CONCURSOS");
+		cabeceras.add("TIPO CALIDAD - LITIGIOS");
+		cabeceras.add("TIPO CALIDAD - CONCURSAL");
+		
+		List<List<String>> valores = new ArrayList<List<String>>();
+		List<String> fila = null;
+		
+		String templatePar = ";Automatic;Text";
+		String templateImpar = ";Grey;Text";
+		String template = templatePar;
+		
+		List<DespachoExterno> despachosExternos = despachoExternoManager.buscaDespachosExternos();
+		for(DespachoExterno despachoExterno : despachosExternos) {
+			
+			if(template == templateImpar) {
+				template = templatePar;
+			}
+			else {
+				template = templateImpar;
+			}
+		
+			fila = new ArrayList<String>();
+			
+			fila.add(despachoExterno.getId() + template);
+			fila.add(despachoExterno.getDescripcion() + template);
+			fila.add((despachoExterno.getTurnadoCodigoImporteLitigios() == null ? "" : despachoExterno.getTurnadoCodigoImporteLitigios()) + template);
+			fila.add((despachoExterno.getTurnadoCodigoImporteConcursal() == null ? "" : despachoExterno.getTurnadoCodigoImporteConcursal()) + template);
+			fila.add((despachoExterno.getTurnadoCodigoCalidadLitigios() == null ? "" : despachoExterno.getTurnadoCodigoCalidadLitigios()) + template);
+			fila.add((despachoExterno.getTurnadoCodigoCalidadConcursal() == null ? "" : despachoExterno.getTurnadoCodigoCalidadConcursal()) + template);
+			
+			valores.add(fila);
+		}
+				
+		HojaExcelInformeSubasta hojaExcel = new HojaExcelInformeSubasta();
+		hojaExcel.crearNuevoExcel("configuracion_despachos.xls", cabeceras, valores);
+		
+		FileItem excelFileItem = new FileItem(hojaExcel.getFile());
+        excelFileItem.setFileName("configuracion_despachos.xls");
+        excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
+        excelFileItem.setLength(hojaExcel.getFile().length());
+	    
+        model.addAttribute("fileItem",excelFileItem);
+		return JSP_DOWNLOAD_FILE;
+	}
 }

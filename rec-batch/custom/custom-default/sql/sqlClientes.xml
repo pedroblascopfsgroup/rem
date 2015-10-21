@@ -242,7 +242,6 @@
           )
     ]]>
   </entry>
-   
   
    <entry key="clientes.creacionClientes.01.truncateTmpPER.Oracle9iDialect">
     <![CDATA[
@@ -265,7 +264,7 @@
 		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
 		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
 		, VARR AS (
-			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID, p.per_ultima_operacion
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --,p.per_ultima_operacion
 				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
 				inner join per_personas p on a1.per_id = p.per_id
 		)
@@ -273,13 +272,16 @@
   			SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
 	           FROM VARR arr
 	             LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
-	             JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado           
-	           /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
-	           WHERE (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))
-	           /* Que tenga un arquetipo NUEVO gestionable */
-	           AND arq_cal.arq_gestion = 1
-	           /* Que tenga un NUEVO arquetipo que sea de recuperacion */
+	             JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado
+	           WHERE           
+		           /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre*/
+		           /* Esto de momento, solo aplica a los exp. de seguimiento*/ 
+		           /*(arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))*/
+		           /* Que tenga un arquetipo NUEVO gestionable */
+	           arq_cal.arq_gestion = 1
+	    	       /* Que tenga un NUEVO arquetipo que sea de recuperacion */
 	           AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo})
+	        	   /* De momento el nivel y salto solo para los de exp. de seguimiento
 	           AND
 	           (
 	             CASE WHEN arq_per.dd_tsn_id is null THEN 1
@@ -288,6 +290,7 @@
 	                    ELSE CASE WHEN arq_cal.arq_nivel < arq_per.arq_nivel AND arq_per.dd_tsn_id = (SELECT dd_tsn_id FROM ${master.schema}.DD_TSN_TIPO_SALTO_NIVEL WHERE dd_tsn_codigo = ${ddTipoSaltoNivel.saltoAbajo.codigo}) THEN 1 
 	                        ELSE 0 END END END END
 	           ) = 1
+	           */
 	           /* Que la persona no esté atrapada en ningún expediente de seguimiento */
 	           AND NOT EXISTS (
 	             SELECT pex.per_id 
@@ -376,7 +379,7 @@
 		, ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
 		, ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
 		, VARR AS (
-			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID, p.per_ultima_operacion
+			SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --, p.per_ultima_operacion
 				FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
 				inner join per_personas p on a1.per_id = p.per_id
 		)
@@ -386,24 +389,31 @@
 		            LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
 		            JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado 
 		          WHERE 
-		          /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
-		          (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo))
 		          /* Que tenga un arquetipo NUEVO gestionable */
-		          AND arq_cal.arq_gestion = 1
+		          arq_cal.arq_gestion = 1
 		          /* Que tenga un NUEVO arquetipo que sea de seguimiento */
 		          AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo}))
 		          AND
 		          (
-		            /* Si tiene fecha de vigencia que se cumpla */
-		            sysdate < (
-		                SELECT NVL(pol.pol_fecha_vigencia, sysdate-1) from CMP_CICLO_MARCADO_POLITICA cmp
+		            /* Si tiene fecha de vigencia que se cumpla/* Si tiene fecha de vigencia que se cumpla, o si tiene plazo de disparo que salte  */
+	                /* MISMO ARQUETIPO AYER Y HOY */
+	                /* SYSDATE - FECHA INICIO VIGENCIA > PLAZO DE DISPARO DE MI ARQUETIPO */
+	                /* Si no hay plazo de disparo salta al día siguiente*/
+		            (
+                  	NVL(arq_cal.arq_plazo_disparo,0) < (
+                      SELECT sysdate - NVL(pol.pol_fecha_vigencia , sysdate - NVL(arq_cal.arq_plazo_disparo+1,1))
+                      	 FROM CMP_CICLO_MARCADO_POLITICA cmp
 		                    JOIN POL_POLITICA pol ON pol.cmp_id = cmp.cmp_id
 		                    JOIN ${master.schema}.DD_ESP_ESTADO_POLITICA esp ON pol.DD_ESP_ID = esp.DD_ESP_ID
 		                    where 1=1
 		                        AND cmp.per_id = arr.per_id
 		                        AND esp.dd_esp_codigo = ${ddEstadoPolitica.vigente.codigo}
+		                        AND (arq_cal.arq_id = arq_per.arq_id) 
+		               )
 		            )            
 		            /* O, si hay un salto suficientemente grande de nivel de arquetipo como indica el arquetipo actual*/
+	                /* MI ARQUETIPO DE HOY ES DISTINTO AL DE AYER */
+	                /* CUAL ERA MI TIPO DE SALTO EN ARQUETIPO AYER Y QUE NIVEL TENGO EN ARQUETIPO ACTUAL RESPECTO AL ANTERIOR */
 		            OR 
 		            (
 		              CASE WHEN arq_per.dd_tsn_id is null THEN 1
@@ -413,7 +423,10 @@
 		                         ELSE 0 END END END END
 		            ) = 1
 		          )
-		          /* Que la persona no esté atrapada en ningún expediente */
+		          /*  SE HA MODIFICADO POR LA FECHA POLITICA VIGENTE */
+	              /* Que tenga un arquetipo ACTUAL con fecha de disparo que cuadre */
+			      /* AND (arq_per.arq_plazo_disparo is null OR arr.per_ultima_operacion is null OR (sysdate-arr.per_ultima_operacion > arq_per.arq_plazo_disparo)) */
+			      /* Que la persona no esté atrapada en ningún expediente */
 		          AND NOT EXISTS (
 		            SELECT pex.per_id 
 		                FROM pex_personas_expediente pex
@@ -672,7 +685,7 @@
     (      
       SELECT cli.CLI_ID, cli.per_id, cli.arq_id arq_cliente, arr.arq_id arq_persona, arq.arq_gestion            
       FROM CLI_CLIENTES cli             
-        inner join HAYAMASTER.DD_ECL_ESTADO_CLIENTE ecl on cli.DD_ECL_ID = ecl.DD_ECL_ID AND ecl.DD_ECL_CODIGO = 1
+        inner join ${master.schema}.DD_ECL_ESTADO_CLIENTE ecl on cli.DD_ECL_ID = ecl.DD_ECL_ID AND ecl.DD_ECL_CODIGO = 1
         inner join arr on cli.per_id = arr.per_id          
         inner join arq_arquetipos arq on arr.arq_id = arq.arq_id            
       WHERE cli.BORRADO = 0                
@@ -732,14 +745,14 @@
 		    ON arq.iti_id = iti.iti_id
 		  INNER JOIN est_estados est
 		    ON iti.iti_id = est.iti_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
 		    ON est.dd_est_id         = dd_est.dd_est_id
 		    AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
 		      (SELECT DD_EST_ORDEN
-		      FROM HAYAMASTER.DD_EST_ESTADOS_ITINERARIOS
+		      FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
 		      WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
 		      )
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		  GROUP BY ARQ.ARQ_ID
@@ -748,10 +761,10 @@
 		  FROM cli_clientes cli
 		  INNER JOIN fechasEstados vFechas
 		    ON cli.arq_id = vFechas.arq_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
 		    ON cli.dd_est_id  = dd_est.dd_est_id
 		    AND dd_est.dd_est_codigo = 'CAR'
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
 		  WHERE CLI.BORRADO                               = 0
@@ -761,8 +774,8 @@
 		  UPDATE
 		  SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
 		    (SELECT dd_est.dd_est_id
-		    FROM HAYAMASTER.dd_est_estados_itinerarios dd_est
-		    INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+		    FROM ${master.schema}.dd_est_estados_itinerarios dd_est
+		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		    WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
@@ -785,14 +798,14 @@
 		    ON arq.iti_id = iti.iti_id
 		  INNER JOIN est_estados est
 		    ON iti.iti_id = est.iti_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est
 		    ON est.dd_est_id         = dd_est.dd_est_id
 		    AND DD_EST.DD_EST_ORDEN <= --Sumamos todos los plazos que estén por debajo de Carencia si los hubiera
 		      (SELECT DD_EST_ORDEN
-		      FROM HAYAMASTER.DD_EST_ESTADOS_ITINERARIOS
+		      FROM ${master.schema}.DD_EST_ESTADOS_ITINERARIOS
 		      WHERE DD_EST_CODIGO = ${ddEstadoItinerario.carencia.codigo}
 		      )
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Solo los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		  GROUP BY ARQ.ARQ_ID
@@ -801,10 +814,10 @@
 		  FROM cli_clientes cli
 		  INNER JOIN fechasEstados vFechas
 		    ON cli.arq_id = vFechas.arq_id
-		  INNER JOIN HAYAMASTER.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
+		  INNER JOIN ${master.schema}.dd_est_estados_itinerarios dd_est --Los itinerarios de Carencia
 		    ON cli.dd_est_id  = dd_est.dd_est_id
 		    AND dd_est.dd_est_codigo = 'GV'
-		  INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
+		  INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN --Los de la entidad cliente
 		    ON DD_EST.DD_EIN_ID                             = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO                               = ${ddEntidadInformacion.Cliente.codigo}
 		  WHERE CLI.BORRADO                               = 0
@@ -814,8 +827,8 @@
 		  UPDATE
 		  SET CLI.DD_EST_ID = --Cambiamos el estado a GestiónVencidos de la entidad cliente
 		    (SELECT dd_est.dd_est_id
-		    FROM HAYAMASTER.dd_est_estados_itinerarios dd_est
-		    INNER JOIN HAYAMASTER.DD_EIN_ENTIDAD_INFORMACION DD_EIN
+		    FROM ${master.schema}.dd_est_estados_itinerarios dd_est
+		    INNER JOIN ${master.schema}.DD_EIN_ENTIDAD_INFORMACION DD_EIN
 		    ON DD_EST.DD_EIN_ID = DD_EIN.DD_EIN_ID
 		    AND DD_EIN_CODIGO   = ${ddEntidadInformacion.Cliente.codigo}
 		    WHERE dd_est_codigo = ${ddEstadoItinerario.gestionVencidos.codigo}
@@ -849,7 +862,7 @@
         INNER JOIN ccl_contratos_cliente ccl ON tmp.cli_id  = ccl.cli_id  AND tmp.es_arq_gestion = 1 and ccl.borrado = 0
         inner join arq_arquetipos arq on tmp.arq_cliente = arq.arq_id and arq.borrado=0
         inner join iti_itinerarios iti on arq.iti_id = iti.iti_id and iti.borrado=0
-        inner join HAYAMASTER.dd_tit_tipo_itinerarios dd_tit on iti.dd_tit_id = dd_tit.dd_tit_id and dd_tit.borrado=0      
+        inner join ${master.schema}.dd_tit_tipo_itinerarios dd_tit on iti.dd_tit_id = dd_tit.dd_tit_id and dd_tit.borrado=0      
       )
 (SELECT C.CNT_ID, v.CLI_ID, v.arq_persona, v.dd_tit_codigo, v.es_pase,     
 CASE 
@@ -877,7 +890,7 @@ FROM cnt_contratos c,
   dd_tpe_tipo_prod_entidad t,      
   mov_movimientos movAct,      
   mov_movimientos movAnt,      
-  HAYAMASTER.dd_esc_estado_cnt e,      
+  ${master.schema}.dd_esc_estado_cnt e,      
   VTMP_CNT V    
 WHERE c.dd_tpe_id = t.dd_tpe_id    
   --AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)          
@@ -1053,7 +1066,7 @@ AND V.CNT_ID = C.CNT_ID
           /* Que el contrato no esté en algún procedimiento en curso */
           AND NOT EXISTS (
               SELECT DISTINCT cex.cnt_id 
-              FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, HAYAMASTER.DD_EPR_ESTADO_PROCEDIMIENTO epr
+              FROM CEX_CONTRATOS_EXPEDIENTE cex, PRC_CEX pce, PRC_PROCEDIMIENTOS prc, ${master.schema}.DD_EPR_ESTADO_PROCEDIMIENTO epr
               WHERE cex.cnt_id = cnt.cnt_id
               and cex.cex_id = pce.cex_id
               and pce.prc_id = prc.prc_id
@@ -1070,7 +1083,7 @@ AND V.CNT_ID = C.CNT_ID
           /* Que el contrato no esté en algún expediente en curso */
           AND NOT EXISTS (
               SELECT DISTINCT cex.cnt_id 
-              FROM cex_contratos_expediente cex, HAYAMASTER.dd_eex_estado_expediente eex, exp_expedientes exp 
+              FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp 
               WHERE cnt.cnt_id = cnt.cnt_id 
               and exp.exp_id = cex.exp_id 
               and cex.borrado = 0 
@@ -1133,7 +1146,7 @@ AND V.CNT_ID = C.CNT_ID
           FECHABORRAR  =SYSDATE,        
           DD_ECL_ID    =        
             (SELECT DD_ECL_ID        
-            FROM HAYAMASTER.DD_ECL_ESTADO_CLIENTE        
+            FROM ${master.schema}.DD_ECL_ESTADO_CLIENTE        
             WHERE DD_ECL_CODIGO = ${ddEstadoCliente.cancelado.codigo})      
       WHERE EXISTS        
         (SELECT CLI_ID FROM TMP_CLI_A_CANCELAR TMP WHERE CLI.CLI_ID = TMP.CLI_ID)

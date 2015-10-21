@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.ext.turnadodespachos;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -8,7 +7,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,9 +20,8 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarSubastas;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+
 @Repository
 public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Long> implements EsquemaTurnadoDao {
 
@@ -147,7 +146,8 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 		//String consulta = hqlSelect.append(hqlFrom).append(hqlWhere).toString();
 		return hqlSelect.append(hqlFrom).append(hqlWhere).toString();
 	}
-	public String convertirFecha(Date fecha) throws ParseException{
+	
+	private String convertirFecha(Date fecha) throws ParseException{
 		SimpleDateFormat dateFormatInit = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		String formatInit = dateFormatInit.format(fecha); 
 		//DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
@@ -155,7 +155,7 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 		return formatInit;
 	}
 	
-	public String montaWhere(Date fechaEnDate, String cadena){
+	private String montaWhere(Date fechaEnDate, String cadena){
 			Calendar c = Calendar.getInstance();
 			c.setTime(fechaEnDate);
 			c.add(Calendar.DATE, 1);
@@ -165,6 +165,21 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 			String formatFin = dateFormatInit.format(diaSiguiente); //2014/08/06 15:59:48
 			
 			String montado= " and ".concat(cadena).concat(">= to_date('").concat(formatInit).concat("', 'DD/MM/YYYY HH24:MI:SS') and ").concat(cadena).concat("< to_date('").concat(formatFin).concat("', 'DD/MM/YYYY HH24:MI:SS')");
-			return montado;	
+			return montado;
 	}
+
+	@Override
+	public void turnar(Long idAsunto, String username, String codigoGestor) {
+		
+		Session session = this.getSessionFactory().getCurrentSession();
+		
+		Query query = session.createSQLQuery(
+				"CALL asignacion_asuntos_turnado(:idAsunto, :username, :codigoGestor)")
+				.setParameter("idAsunto", idAsunto)
+				.setParameter("username", username)
+				.setParameter("codigoGestor", codigoGestor);
+						
+		query.executeUpdate();
+	}
+
 }

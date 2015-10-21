@@ -37,6 +37,14 @@ public interface TurnadoDespachosManager {
 	 * @return
 	 */
 	EsquemaTurnado save(EsquemaTurnadoDto dto);
+
+	/**
+	 * Indica si es o no modificable
+	 * 
+	 * @param esquema
+	 * @return true modificable / false no modificable
+	 */
+	boolean isModificable(EsquemaTurnado esquema);
 	
 	/**
 	 * Activa el esquema de turnado.
@@ -52,7 +60,7 @@ public interface TurnadoDespachosManager {
 	 * 
 	 * @param idAsunto
 	 */
-	void turnar(Long idAsunto) throws AplicarTurnadoException;
+	void turnar(Long idAsunto, String username, String codigoGestor) throws AplicarTurnadoException;
 
 	/**
 	 * Elimina un esquema

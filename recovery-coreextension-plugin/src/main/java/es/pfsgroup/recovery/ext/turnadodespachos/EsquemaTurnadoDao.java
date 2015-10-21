@@ -21,5 +21,11 @@ public interface EsquemaTurnadoDao extends AbstractDao<EsquemaTurnado, Long> {
 	 * @return
 	 */
 	Page buscarEsquemasTurnado(EsquemaTurnadoBusquedaDto dto, Usuario usuLogado);
-
+	
+	/**
+	 * Asigna un despacho al asunto pasado como parámetro teniendo en cuenta la configuración del esquema de turnado vigente
+	 * 
+	 * @param idAsunto
+	 */
+	void turnar(Long idAsunto, String username, String codigoGestor);
 }

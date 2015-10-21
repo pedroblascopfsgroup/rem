@@ -3,7 +3,7 @@
 <process-definition xmlns="" name="hcj_tramiteSubasta">
 
 	<start-state name="Inicio">
-		<transition to="H002_SolicitudSubasta" name="iniciarProceso"></transition>
+		<transition to="H002_ComprobarProcedeSubastaSuspendida" name="iniciarProceso"></transition>
 	</start-state>
 
 
@@ -25,7 +25,7 @@
 			</action>
 		</event>	
 		<transition to="H002_SenyalamientoSubasta" name="avanzaBPM"></transition>
-		<transition to="Fin2" name="Fin"></transition>
+		<transition to="Fin5" name="Fin"></transition>
 		<transition to="H002_SolicitudSubasta" name="activarAlerta"></transition>
 	</state>
 
@@ -218,6 +218,7 @@
 			</action>
 		</event>	
 		<transition to="Fin5" name="hcj_tramiteSubasta"></transition>
+		<transition to="Fin5" name="Fin"></transition>
 	</state>
 
 	<node name="H002_CelebracionDecision">
@@ -364,7 +365,7 @@
 	</decision>
 
 	<decision name="B" expression="#{DecisionRama_2}">
-		<transition to="H002_CelebracionDecision" name="si"></transition>
+		<transition to="H002_BPMTramiteSubasta" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
 
@@ -387,15 +388,6 @@
 		<transition to="H002_BPMTramiteSolSolvenciaPatrimonial" name="si"></transition>
 		<transition to="Fin5" name="no"></transition>
 	</decision>
-
-	<node name="H002_SuspenderDecision">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler
-			</targetBean>
-		</action>
-		<transition to="Fin3" name="Fin"></transition>	
-	</node>
 
 	<state name="H002_BPMTramiteSolSolvenciaPatrimonial">
 		<event type="node-enter">
@@ -469,7 +461,7 @@
 	</state>
 
 	<decision name="H002_RegistrarResSuspSubastaDecision" expression="#{H002_RegistrarResSuspSubastaDecision}">
-		<transition to="H002_SuspenderDecision" name="Aceptado"></transition>
+		<transition to="H002_BPMTramiteSubasta" name="Aceptado"></transition>
 		<transition to="H002_DictarInstruccionesDeneSuspension" name="Denegado"></transition>
 	</decision>
 
@@ -669,6 +661,14 @@
 		<transition to="Fin3" name="Fin"></transition>
 	</state>
 
+	<node name="H002_ComprobarProcedeSubastaSuspendida">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>subastaComprobarProcedeSubastaSuspendidaHandler</targetBean>
+		</action>
+		<transition to="Fin5" name="Fin"></transition>
+		<transition to="H002_SolicitudSubasta" name="avanzaBPM"></transition>
+	</node>
 
 	<end-state name="Fin">
 		<event type="node-enter">

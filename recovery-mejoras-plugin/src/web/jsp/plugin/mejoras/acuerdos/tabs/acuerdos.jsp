@@ -478,8 +478,8 @@
          ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
 
          ,bbar : [
-         	btnAltaAcuerdo,
           	<sec:authorize ifAllGranted="PROPONER-ACUERDO">
+          		btnAltaAcuerdo,
 	        	btnProponerAcuerdo,	
 	        </sec:authorize>
         	btnIncumplirAcuerdo,

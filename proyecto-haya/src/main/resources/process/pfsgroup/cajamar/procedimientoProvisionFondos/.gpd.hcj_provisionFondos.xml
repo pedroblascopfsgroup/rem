@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_provisionFondos" width="1254" height="720">
+<root-container name="hcj_provisionFondos" width="1239" height="721">
   <node name="Inicio" x="316" y="19" width="132" height="36">
     <edge>
       <label x="-28" y="-23"/>
@@ -140,10 +140,11 @@
   </node>
   <node name="HC103_ConfirmarSolicitudDecision" x="369" y="673" width="265" height="36">
     <edge>
-      <label x="27" y="11"/>
+      <label x="-71" y="9"/>
     </edge>
     <edge>
-      <label x="-71" y="9"/>
+      <label x="27" y="11"/>
+      <bendpoint w1="-485" h1="0" w2="-72" h2="435"/>
     </edge>
   </node>
   <node name="HC103_ConfirmarTransferencia" x="839" y="678" width="249" height="36">

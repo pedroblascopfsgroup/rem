@@ -21,7 +21,7 @@ import es.pfsgroup.recovery.integration.ConsumerAction;
 import es.pfsgroup.recovery.integration.DataContainerPayload;
 import es.pfsgroup.recovery.integration.IntegrationDataException;
 import es.pfsgroup.recovery.integration.Rule;
-import es.pfsgroup.recovery.integration.bpm.ProcedimientoPayload;
+import es.pfsgroup.recovery.integration.bpm.payload.ProcedimientoPayload;
 
 /**
  * Transiciona un BPM según la transición desde el token que llega. 
@@ -66,7 +66,9 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 	private String getGuidTareaATransicionar(ProcedimientoPayload procedimiento) {
 		String tarGUID =  procedimiento.getTareaOrigenDelBPM();
 		if (Checks.esNulo(tarGUID)) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] El mensaje no contiene la Info. extra '%s', indica el guid de la tarea sobre la que se va a generar la transición.", ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN));
+			String logMsg = String.format("[INTEGRACION] El mensaje no contiene la Info. extra '%s', indica el guid de la tarea sobre la que se va a generar la transición.", ProcedimientoPayload.JBPM_TAR_GUID_ORIGEN);
+			logger.error(logMsg);
+			throw new IntegrationDataException(logMsg);
 		}
 		return tarGUID; 
 	}
@@ -80,18 +82,25 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 	protected void doTransicion(ProcedimientoPayload procedimiento, TareaExterna tex) {
 		String transicionPropuesta = (!Checks.esNulo(forzarTransicion)) ? forzarTransicion : getTransicionPropuesta(procedimiento);
 		if (Checks.esNulo(transicionPropuesta)) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] TEX [%d] La tansición no se ha enviado, no se puede transicionar", tex.getId()));
+			String logMsg = String.format("[INTEGRACION] TEX [%d] La tansición no se ha enviado, no se puede transicionar", tex.getId());
+			logger.error(logMsg);
+			throw new IntegrationDataException(logMsg);
 		}
 		logger.debug(String.format("[INTEGRACION] TEX [%d] transición candidata: %s", tex.getId(), transicionPropuesta));
 		Long tokenId = tex.getTokenIdBpm();
 		if (Checks.esNulo(tokenId)) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] TEX [%d] La tarea asignada no tiene token BPM, no se puede transicionar", tex.getId()));
+			String logMsg = String.format("[INTEGRACION] TEX [%d] La tarea asignada no tiene token BPM, no se puede transicionar", tex.getId());
+			logger.error(logMsg);
+			throw new IntegrationDataException(logMsg);
 		}
 		if (!jbpmUtil.hasTransitionToken(tokenId, transicionPropuesta)) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] TEX [%d] La transicion %s no existe para esta tarea, Token %d no se puede transicionar", tex.getId(), transicionPropuesta, tokenId));
+			String logMsg = String.format("[INTEGRACION] TEX [%d] La transicion %s no existe para esta tarea, Token %d no se puede transicionar", tex.getId(), transicionPropuesta, tokenId);
+			logger.error(logMsg);
+			throw new IntegrationDataException(logMsg);
 		}
 		logger.info(String.format("[INTEGRACION] TEX [%d] transicionando a través de %s", tex.getId(), transicionPropuesta));
 		saveFormValues(procedimiento.getData(), tex);
+
 		jbpmUtil.signalToken(tex.getTokenIdBpm(), transicionPropuesta);
 	}
 	
@@ -104,7 +113,9 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 		// OJO! El procediento padre del nuevo BPM será el procedimiento desde el que se genera (no el padre de este!).
 		EXTTareaNotificacion tarNotif = extTareaNotificacionManager.getTareaNoficiacionByGuid(tarGUID);
 		if (tarNotif==null || tarNotif.getTareaExterna()==null) {
-			throw new IntegrationDataException(String.format("[INTEGRACION] TAR [%s] La tarea externa a transicionar no existe.", tarGUID));
+			String logMsg = String.format("[INTEGRACION] TAR [%s] La tarea externa a transicionar no existe.", tarGUID);
+			logger.error(logMsg);
+			throw new IntegrationDataException(logMsg);
 		}
 		doTransicion(procedimiento, tarNotif.getTareaExterna());
 		logger.debug(String.format("[INTEGRACION] TAR [%s] Transición completada!", tarGUID));
@@ -131,7 +142,6 @@ public class TransicionarTareaBPM extends ConsumerAction<DataContainerPayload> {
 			tevValor.setTareaExterna(tarea);
 			tevValor.setNombre(item.getNombre());
 			tevValor.setValor(valor);
-			//suplantarUsuario(tareaExtenaPayload.getUsuario(), tevValor);
 
 			// listaValores.add(valor);
 			tareaExternaValorDao.saveOrUpdate(tevValor);

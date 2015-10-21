@@ -13,11 +13,10 @@
 	<bean id="bccCesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateBccLeaveActionHandler" />
 	<bean id="bccPosesionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PosesionBccLeaveActionHandler" />
 	<bean id="endElevacionCajamarActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.PROEndElevacionCajamarActionHandler" />
-	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
-	<bean id="subastaBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccLeaveActionHandler" />
 	<bean id="subastaTercerosBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaTercerosBccLeaveActionHandler" />
 	<bean id="subastaV4HayaEjecucionNotarialEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialEnterActionHandler"></bean>
  	<bean id="subastaV4HayaEjecucionNotarialLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4HayaEjecucionNotarialLeaveActionHandler"></bean>
+ 	<bean id="subastaComprobarProcedeSubastaSuspendidaHandler" class="es.pfsgroup.procedimientos.subasta.SubastaComprobarProcedeSubastaSuspendidaHandler"></bean>
  	 	    
 	<!-- BPM activos -->
 	<!-- Nacho -->
@@ -59,7 +58,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificadoLibertadArrendamiento/hcj_certificadoLibertadArrendamiento.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSolicitudSolvenciaPatrimonial/hcj_solicitudSolvenciaPatrimonial.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/hcj_tramiteDePosesion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMandamientoCancelacionCargas/hcj_mandamientoCancelacionCargas.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
@@ -114,20 +113,6 @@
 					return true;
 				}
 				
-				def bienConCesionRemate = {
-	  				def entidad = '';
-	                def nMBProcedimientoManager = ctx.getBean("nmbProcedimientoManager");
-	                def listadoBienes = nMBProcedimientoManager.getBienesDeUnProcedimiento(idProcedimiento); 
-	  				for (bien in listadoBienes) {
-	  					if (bien.getAdjudicacion() != null 
-	  						&& bien.getAdjudicacion().getCesionRemate() != null
-	  						&& bien.getAdjudicacion().getCesionRemate()) {
-	  						return true;
-	  					}
-	  				}
-	  				return false;
-	  			}
-				
 				def vieneDeTCesionRemateTAdjudicacion = {
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005' || 
@@ -138,11 +123,6 @@
 	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionHayaProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.existenCargasPreviasActivas(idProcedimiento);
 	            }
-
-				def comprobarExisteDocumentoPRVFND = {
-					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PRVFND");
-				}
 
 				def comprobarExisteDocumentoHCSDM = {
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
@@ -194,51 +174,15 @@
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "AAEEE");
 	            }
 	            
-	            def comprobarExisteDocumentoLIBARR = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LIBARR");
-	            }
-
 	            def comprobarExisteDocumentoASP = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "ASP");
-	            }
-	            
-	            def comprobarExisteDocumentoCAS = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
-	            }
-	            
-	            def comprobarExisteDocumentoCRSOLADJ = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRSOLADJ");
-	            }
-
-	            def comprobarExisteDocumentoCRRESTRA = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRRESTRA");
-	            }
-
-	            def comprobarExisteDocumentoCRACCES = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRACCES");
-	            }
-
-	            def comprobarExisteDocumentoSCBCCR = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCCR");
-	            }
-	            
-	            def comprobarExisteDocumentoSCBCPC = {
-	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
-	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCPC");
 	            }
 	            
 	            def comprobarExisteDocumentoPCCSC = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PCCSC");
 	            }
-	            
 	            
 	            def comprobarExisteDocumentoDSPJ = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
@@ -394,7 +338,28 @@
 				def comprobarCargasBienesProcedimiento = {
 	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 	                return adjudicacionProcedimientoManager.comprobarCargasBienesProcedimiento(idProcedimiento);
-				}	            
+				}
+				
+				def dameFechaFinTareaProcedimientoPadre = {
+	            	def fechaFin = null;
+	            	def procedimientoPadre = procedimientoManager.getProcedimiento(idProcedimiento).getProcedimientoPadre();
+	            	def tareaExternaManager = ctx.getBean("tareaExternaManager");
+	            	def tareas = tareaExternaManager.obtenerTareasPorProcedimiento(procedimientoPadre.getId());
+	            	
+	            	if (tareas != null) {
+            			for (tarea in tareas) {
+            				if(tarea != null) {
+	                			def codigo = tarea.getTareaProcedimiento().getCodigo();
+	                			if(codigo == it) {
+	                				fechaFin = new java.text.SimpleDateFormat('yyyy-MM-dd').format(tarea.getTareaPadre().getFechaFin());
+	                				break;
+	                			}
+	                		}
+                		}
+                	}
+                	
+                	return
+                }
 
   			 ]]>
   			</value>

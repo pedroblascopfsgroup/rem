@@ -78,17 +78,10 @@
 
 	<decision name="H064_resultadoSolicitudConsignacionDecision" expression="#{H064_resultadoSolicitudConsignacionDecision}">
 		<transition to="H064_confirmarRealizacionConsignacion"
-			name="ACEPTADA">
+			name="aceptado">
 		</transition>
-		<transition to="H064_ConsignacionDecision" name="DENEGADA"></transition>
+		<transition to="Fin" name="denegado"></transition>
 	</decision>
-
-	<node name="H064_ConsignacionDecision">
-		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>genericUserDecisionActionHandler</targetBean>
-		</action>
-		<transition to="Fin" name="Fin"></transition>
-	</node>
 
 
 	<end-state name="Fin">

@@ -24,9 +24,9 @@
  	<bean id="estamosADosMesesHandler" class="es.pfsgroup.procedimientos.moratoria.EstamosADosMesesHandler"></bean>
  	<bean id="subastaSolicitarNumActivoHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarNumActivoHandler"></bean>
  	<bean id="subastaSolicitarTasacionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaSolicitarTasacionHandler"></bean> 	
- 	<bean id="asignacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaEnterActionHandler"></bean>
-	<bean id="subastaConcursalHayaInitNodeActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalHayaInitNodeActionHandler"></bean>
-	<bean id="aceptacionHayaEnterActionHandler" class="es.pfsgroup.procedimientos.aceptacion.AceptacionHayaEnterActionHandler"></bean>
+ 	<bean id="subastaConcursalHayaInitNodeActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaConcursalHayaInitNodeActionHandler"></bean>
+	<bean id="subastaBccEnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccEnterActionHandler" />
+	<bean id="subastaBccLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaBccLeaveActionHandler" />
 	
 	<!-- BPM activos -->
 	
@@ -778,7 +778,104 @@
 					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "INSUFI");
 				}
-
+				
+				def comprobarExisteDocumentoCRRESTRA = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRRESTRA");
+	            }
+	            
+	            def comprobarExisteDocumentoCRACCES = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRACCES");
+	            }
+	            
+	            def comprobarExisteDocumentoCRSOLADJ = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CRSOLADJ");
+	            }
+	            
+				def comprobarExisteDocumentoSCBCPC = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCPC");
+	            }
+	            
+	            def comprobarExisteDocumentoSCBCCR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "SCBCCR");
+	            }
+	            
+				def comprobarExisteDocumentoCAS = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "CAS");
+	            }
+	            
+	            def bienConCesionRemate = {
+	  				def entidad = '';
+	                def nMBProcedimientoManager = ctx.getBean("nmbProcedimientoManager");
+	                def listadoBienes = nMBProcedimientoManager.getBienesDeUnProcedimiento(idProcedimiento); 
+	  				for (bien in listadoBienes) {
+	  					if (bien.getAdjudicacion() != null 
+	  						&& bien.getAdjudicacion().getCesionRemate() != null
+	  						&& bien.getAdjudicacion().getCesionRemate()) {
+	  						return true;
+	  					}
+	  				}
+	  				return false;
+	  			}
+				
+            	def comprobarExisteDocumentoPRVFND = {
+					def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "PRVFND");
+				}
+	            
+            	def comprobarExisteDocumentoLIBARR = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, "LIBARR");
+	            }
+	            
+	            def comprobarExisteDocumento = {
+	                def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+	                return adjudicacionProcedimientoManager.comprobarAdjunto(idProcedimiento, it);
+	            }
+	            
+	            def dameNumDocumentosTipo = {
+	            	
+	            	def numDocumentos = 0;
+	            	def adjuntos = procedimientoManager.getProcedimiento(idProcedimiento).getAdjuntos();
+					for (adjunto in adjuntos) {
+						if (!es.pfsgroup.commons.utils.Checks.esNulo(adjunto.getProcedimiento()) && adjunto.getProcedimiento().getId() == idProcedimiento) {
+								
+							def tipoAdjunto = adjunto.getTipoFichero();
+							if (tipoAdjunto == null) {
+								continue;
+							}
+							if (it.equals(tipoAdjunto.getCodigo())) {
+								numDocumentos++;
+							}
+						}
+					}
+					
+					return numDocumentos.toString();
+	            }
+	            
+	            def dameNumNotificadosNoEdictoNoExcluidos = {
+	            	def demandadosNotificados = 0;
+	            	def notificacionDemandadosManager = ctx.getBean("MSVNotificacionDemandadosManager");
+	            	
+	            	def listaMSVInfoResumen = notificacionDemandadosManager.getResumenNotificaciones(idProcedimiento);
+		
+					if (listaMSVInfoResumen != null && listaMSVInfoResumen.size() > 0) {
+						for (msvInfoResumen in listaMSVInfoResumen) {
+							if (!((msvInfoResumen.getExcluido() != null && msvInfoResumen.getExcluido())
+								|| ("POSITIVO".equals(msvInfoResumen.getResultadoReqEdicto())))) {
+						
+								demandadosNotificados++;
+							}
+						}
+					}
+			
+	            	return demandadosNotificados.toString();
+	            }            	
   			 ]]>
   			</value>
   		</list>

@@ -28,6 +28,8 @@ public class GenericForm implements Serializable {
 
     private String view = "generico/genericForm";
 
+    private boolean readOnly = false;
+    
     public void setView(String view) {
         if (!StringUtils.isBlank(view)) this.view = view;
     }
@@ -131,5 +133,13 @@ public class GenericForm implements Serializable {
     public String getErrorValidacion() {
         return errorValidacion;
     }
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
 }

@@ -13,6 +13,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-procedimientos-bpm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-procedimientos-bpmHaya</artifactId>
 		</dependency>
 		<dependency>

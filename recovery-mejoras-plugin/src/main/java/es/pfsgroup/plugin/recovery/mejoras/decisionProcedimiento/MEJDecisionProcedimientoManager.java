@@ -682,6 +682,8 @@ public class MEJDecisionProcedimientoManager extends
                 	//HibernateUtils.flush();
                 	
                     jbpmUtil.finalizarProcedimiento(p.getId());
+                    p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
+            				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
 
                 	// Integración con mensajería
                     integracionBpmService.finalizarBPM(p);
@@ -705,7 +707,7 @@ public class MEJDecisionProcedimientoManager extends
 				genericDao.save(MEJProcedimiento.class, p);
 
 				// Paralizamos el BPM
-				integracionBpmService.paralizarBPM(p);
+				integracionBpmService.paralizarBPM(p, dp.getFechaParalizacion());
 			}
 		}
 		

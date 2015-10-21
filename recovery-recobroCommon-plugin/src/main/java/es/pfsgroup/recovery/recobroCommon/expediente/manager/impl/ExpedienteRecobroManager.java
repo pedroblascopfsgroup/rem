@@ -1,9 +1,9 @@
 package es.pfsgroup.recovery.recobroCommon.expediente.manager.impl;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -150,6 +150,8 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1826,21 +1828,22 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 					Date fechaAlta = cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes().getFechaAlta();
 					Long plazoGestion = cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes().getPlazoMaxGestion();
 					if (!Checks.esNulo(fechaAlta) && !Checks.esNulo(plazoGestion)) {
+						
 						Calendar calendar = new GregorianCalendar();
 						calendar.setTime(fechaAlta);
 						calendar.add(Calendar.DAY_OF_YEAR, Integer.parseInt(plazoGestion.toString()));								
-						dto.setFechaMaxEnAgencia(calendar.getTime());
+						dto.setFechaMaxEnAgencia(Timestamp.valueOf(df.format(calendar.getTime())));
 					}
 					
 					Long plazoSinGestion = cicloRecobroExpediente.getSubcartera().getItinerarioMetasVolantes().getPlazoSinGestion();
 					if (!Checks.esNulo(fechaAlta) && !Checks.esNulo(plazoSinGestion)) {
 						Calendar calendar = new GregorianCalendar();
 						calendar.setTime(fechaAlta);
-						calendar.add(Calendar.DAY_OF_YEAR, Integer.parseInt(plazoSinGestion.toString()));								
-						dto.setFechaMaxCobroParcial(calendar.getTime());
+						calendar.add(Calendar.DAY_OF_YEAR, Integer.parseInt(plazoSinGestion.toString()));
+						dto.setFechaMaxCobroParcial(Timestamp.valueOf(df.format(calendar.getTime())));
+						
 					}
-				}
-				
+				}				
 			}
 		}
 		

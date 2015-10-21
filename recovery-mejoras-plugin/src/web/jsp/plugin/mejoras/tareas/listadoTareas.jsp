@@ -217,6 +217,7 @@
 				conversionOperadores();
 				tareasStore.webflow(getParametrosBusqueda());
 				tareasGrid.setTitle('${titulo}');
+				panelFiltros.getTopToolbar().setDisabled(true);
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="tareas.filtros.errores.fechasvenc" text="** La fecha desde debe ser menor a la fecha Hasta"/>')
 			}
@@ -1482,6 +1483,11 @@
 	Ext.onReady(function(){
 		tareasStore.fireEvent('beforeload');
 	});
+	
+	tareasStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
+	
 	
 	panelFiltros.collapse(true);
 		

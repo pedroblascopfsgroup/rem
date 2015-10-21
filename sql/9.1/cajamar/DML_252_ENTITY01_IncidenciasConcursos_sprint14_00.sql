@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Gonzalo E
---## FECHA_CREACION=20150802
+--## FECHA_CREACION=20151021
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.7-hy
 --## INCIDENCIA_LINK=VARIAS
@@ -48,6 +48,14 @@ BEGIN
 	V_TAREA:='CJ004_CelebracionSubasta';
 	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION = ''comprobarExisteDocumento(''''ACS'''') ? null  :  ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Es necesario adjuntar el documento Acta de subasta</div>'''''', TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''CJ004_CelebracionSubasta''''][''''comboCelebrada''''] == DDSiNo.NO ? (valores[''''CJ004_CelebracionSubasta''''][''''comboDecisionSuspension''''] == null ? ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">El campo Decisi&oacute;n suspensi&oacute;n es obligatorio</div>'''' : null) : (validarBienesDocCelebracionSubasta() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe rellenar en cada bien los datos de adjudicaci&oacute;n o de cesi&oacute;n remate</div>'''')'' WHERE TAP_CODIGO = '''||V_TAREA ||'''';
 	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-897');
+	
+	-------Parte alberto
+	-------Es para el sprint 15, al ser modificaciones breves, no se crea nuevo script.
+	-------Se cambia la fecha de este para que la petertool lo reconozca
+	DBMS_OUTPUT.PUT_LINE('[INICIO] LINK CMREC-928');
+	V_TAREA:='CJ004_AdjuntarInformeOficina';
+	EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''valores[''''CJ004_AdjuntarInformeOficina''''][''''comboEdificacion''''] == DDSiNo.SI && valores[''''CJ004_AdjuntarInformeOficina''''][''''comboFinalizada''''] == DDSiNo.SI && valores[''''CJ004_AdjuntarInformeOficina''''][''''comboDocumentacion''''] == DDSiNo.SI ? (comprobarExisteDocumentoCERFIO() ? (comprobarExisteDocumentoLICPRIO() ? null : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar la Licencia primera ocupaci&oacute;n.</div>'''') : ''''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe adjuntar el Certificado final de obra.</div>'''') : null'' WHERE TAP_CODIGO = '''||V_TAREA ||'''';
+	DBMS_OUTPUT.PUT_LINE('[FIN] LINK CMREC-928');
 		
 	COMMIT;
  

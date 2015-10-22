@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ListadoPreProyectadoController {
 
-	static final String BUSQUEDA_PREPROYECTADO = "plugin/expediente/listadoPreProyectado/busqueda/preProyectado";
+	static final String LISTADO_PREPROYECTADO = "plugin/expediente/listadoPreProyectado/listadoPreProyectado";
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String abrirBusqueda(ModelMap model) {
+	public String abrirListado(ModelMap model) {
 
 //		model.put("id", id);
-		return BUSQUEDA_PREPROYECTADO;
+		return LISTADO_PREPROYECTADO;
 	}
 
 }

@@ -33,9 +33,8 @@ DECLARE
 BEGIN	
 	
     -- Modificar bpm del TPO
-    V_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';
-    V_MSQL := 'UPDATE ' || V_ESQUEMA||'.' || V_TABLENAME ||  q'[ SET DD_TPO_XML_JBPM='precontenciosobankia' WHERE DD_TPO_CODIGO='PCO' ]';
-    DBMS_OUTPUT.PUT_LINE('ACTUALIZANDO : ' || V_ESQUEMA||'.' || V_TABLENAME || ' A DD_TPO_XML_JBPM=''precontenciosobankia''');
+    V_MSQL := 'UPDATE ' || V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO' ||  q'[ SET DD_TPO_XML_JBPM='precontenciosobankia' WHERE DD_TPO_CODIGO='PCO' ]';
+    DBMS_OUTPUT.PUT_LINE('ACTUALIZANDO : ' || V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO' || ' A DD_TPO_XML_JBPM=''precontenciosobankia''');
     DBMS_OUTPUT.PUT_LINE(V_MSQL);
     EXECUTE IMMEDIATE V_MSQL;
 	

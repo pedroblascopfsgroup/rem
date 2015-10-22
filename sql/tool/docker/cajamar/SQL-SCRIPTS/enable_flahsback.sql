@@ -27,5 +27,7 @@ startup mount exclusive;
 
 alter database archivelog;
 
+alter database open;
+
 
 exit

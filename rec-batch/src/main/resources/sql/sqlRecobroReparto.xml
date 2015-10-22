@@ -4,25 +4,33 @@
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR -->
     <entry key="recobro.borrado.tmp_rec_exp_reparto_car.Oracle10gDialect">
         <![CDATA[
+        BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_CAR');
+        END;
         ]]>
     </entry>
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR_VRE -->
     <entry key="recobro.borrado.tmp_rec_exp_reparto_car_vre.Oracle10gDialect">
         <![CDATA[
+        BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_CAR_VRE');
+        END;
         ]]>
     </entry>
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_SUB -->
     <entry key="recobro.borrado.tmp_rec_exp_reparto_sub.Oracle10gDialect">
         <![CDATA[
+        BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_SUB');
+        END;
         ]]>
     </entry>
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_AGENCIAS -->
     <entry key="recobro.borrado.tmp_rec_exp_reparto_agencias.Oracle10gDialect">
         <![CDATA[
+        BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_AGENCIAS');
+        END;
         ]]>
     </entry>
 

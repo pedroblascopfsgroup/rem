@@ -154,14 +154,17 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 
 	@Override
 	@Transactional
-	public void turnar(Long idAsunto, String username, String codigoGestor) throws AplicarTurnadoException {
-		
+	public void turnar(Long idAsunto, String username, String codigoGestor) throws IllegalArgumentException, AplicarTurnadoException {
 		try {
+			this.getEsquemaVigente();
 			esquemaTurnadoDao.turnar(idAsunto, username, codigoGestor);
-		}
-		catch(Exception e) {
-			logger.error("Error en el método turnar: " + e.getMessage());
-			throw new AplicarTurnadoException(e.getMessage());
+		} catch(IllegalArgumentException iae) {
+			logger.error(iae);
+			throw iae;
+		} catch(Exception e) {
+			String msg = "No se ha podido realizar el turnado.";
+			logger.error(msg);
+			throw new AplicarTurnadoException(msg, e);
 		}
 	}
 

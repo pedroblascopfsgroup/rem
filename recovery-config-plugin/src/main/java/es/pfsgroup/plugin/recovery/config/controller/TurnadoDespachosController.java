@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.ResponseWrapper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.view.JSPView;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;

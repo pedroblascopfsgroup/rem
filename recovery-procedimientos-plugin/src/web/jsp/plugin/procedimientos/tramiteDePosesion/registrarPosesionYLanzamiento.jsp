@@ -54,9 +54,10 @@ var offset=0;
 </c:if>
 var cb_ocupado = items[1 + offset];
 var dt_fecha = items[2 + offset];
-var cb_ffpp = items[3 + offset];
-var cb_lanzamiento = items[4 + offset];
-var dt_fechaSolLanz = items[5 + offset];
+var dt_fecha = items[3 + offset];
+var cb_ffpp = items[4 + offset];
+var cb_lanzamiento = items[5 + offset];
+var dt_fechaSolLanz = items[6 + offset];
 
 cb_ocupado.on('select', function(){
 	//Borramos todos los combos dependientes ante cualquier cambio

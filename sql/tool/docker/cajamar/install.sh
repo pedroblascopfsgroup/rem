@@ -11,7 +11,7 @@ DOCKER_INNER_ERROR_LOG=$7
 if [[ "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" 
 		|| "x$CUSTOM_NLS_LANG" == "x" || "x$OPTION_RANDOM_DUMP" == "x" || "x$OPTION_REMOVE" == "x"
 		|| "x$DOCKER_INNER_ERROR_LOG" == "x" ]]; then
-	echo "ERROR: No se puede continuar con la instalación de la BBDD"
+	echo "ERROR: No se puede continuar con la instalación de la BD"
 	echo "ERROR: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME CUSTOM_NLS_LANG OPTION_RANDOM_DUMP OPTION_REMOVE DOCKER_INNER_ERROR_LOG"
 	exit 1
 fi
@@ -29,7 +29,7 @@ fi
 
 # INSIDE DOCKER
 
-echo "<Docker [$CONTAINER_NAME]>: Instalador de la BBDD de Cajamar"
+echo "<Docker [$CONTAINER_NAME]>: Instalador de la BD de Cajamar"
 
 cd $(pwd)/$(dirname $0)
 
@@ -49,11 +49,11 @@ do
 	if [[ "x$(echo '' | $ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/showdbstatus.sql | grep OPEN)" != "x" ]]; then
 		break
 	fi
-  	echo "<Docker [$CONTAINER_NAME]>: Esperando a que la BBDD esté levantada, esto puede tardar unos segundos"
+  	echo "<Docker [$CONTAINER_NAME]>: Esperando a que la BD esté levantada, esto puede tardar unos segundos"
   	sleep 5
 done
 
-echo "<Docker [$CONTAINER_NAME]>: BBDD disponible: OK"
+echo "<Docker [$CONTAINER_NAME]>: BD disponible: OK"
 
 if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
 	echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."

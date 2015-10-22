@@ -3,9 +3,9 @@
 #
 # Formas de ejecutar la utilidad
 #
-# No re-generar la BBDD
+# No re-generar la BD
 # ./run.sh | ./run.sh -help: Mostramos mensaje de ayuda y salimos
-# ./run.sh -restart: Reiniciar la BBDD
+# ./run.sh -restart: Reiniciar la BD
 #
 # Regenerar en MODO 1: línea base
 # ./run.sh -remove [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]
@@ -25,7 +25,7 @@ ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
 SET_ENV_FILE=~/setEnvGlobal$CLIENTE.sh
 WORKSPACE_DIR=$(pwd)/.workspace
 
-# Estado de la BBDD
+# Estado de la BD
 CURRENT_DUMP_NAME=export_cajamar_19Oct2015.dmp
 STARTING_TAG=cj-dmp-19oct
 
@@ -56,7 +56,7 @@ function show_help () {
 	echo " -------------------------------------------------------------------------------------------------------------------"
 	echo " OPCIONES GENERALES"
 	echo "    -help: Sólo imprime un mensaje de ayuda"
-	echo "    -restart: Indicar para reiniciar la BBDD"
+	echo "    -restart: Indicar para reiniciar la BD"
 	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
 	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove o -impdp"
 	echo "    -workspace=: Cambia el workspace de la tool. Esta opción es útil si montamos una"
@@ -78,7 +78,7 @@ function show_help () {
 	echo "                  Esta opción es redundante en este modo ya que -impdp siempre implica un remove"
 	echo ""
 	echo " OPCIONES MODO 3. Modo Flashback, punto de restauración."
-	echo "    -flashback: Pone la BBDD en modo flashback creando un punto de restauración. Se sale del modo"
+	echo "    -flashback: Pone la BD en modo flashback creando un punto de restauración. Se sale del modo"
 	echo "                  mediante Ctrl+C. Al salir se ofrecen dos opciones: restaurar o confirmar"
 	echo ""
 	echo " OPCIONES MODO 4. Ejecución de scripts"
@@ -239,7 +239,7 @@ function run_container () {
 }
 
 function remove_container () {
-	echo "[INFO]: Se va a restaurar la BBDD. Esto implica un borrado de la BBDD y una re-generación"
+	echo "[INFO]: Se va a restaurar la BD. Esto implica un borrado de la BD y una re-generación"
 	echo -n "[INFO]: Borrando el contenedor: "
 	docker rm $CONTAINER_NAME
 }
@@ -307,19 +307,19 @@ function restore_or_confirm_flahsback () {
 	read IN
 	case $IN in
 		1 )
-			echo "Al realizar esta operación los cambios realizados en BBDD serán permanentes"
+			echo "Al realizar esta operación los cambios realizados en BD serán permanentes"
 			echo -n "¿Estás seguro? [s/N] "; read IN 
 			if [[ "x$IN" == "xs" || "x$IN" == "xs" ]]; then
-				echo "[INFO] Confirmando estado de la BBDD"
+				echo "[INFO] Confirmando estado de la BD"
 				$(pwd)/flashback.sh $CONTAINER_NAME confirm
 				exit $?
 			fi
 			;;
 		2)
-			echo "Al realizar esta operación se revertirán los cambios realizados en la BBDD Volviendo"
+			echo "Al realizar esta operación se revertirán los cambios realizados en la BD Volviendo"
 			echo -n "¿Estás seguro? [s/N] "; read IN 
 			if [[ "x$IN" == "xs" || "x$IN" == "xs" ]]; then
-				echo "[INFO] Restaurando el estado de la BBDD"
+				echo "[INFO] Restaurando el estado de la BD"
 				$(pwd)/flashback.sh $CONTAINER_NAME restore
 				exit $?
 			fi

@@ -7,7 +7,7 @@ DOCKER_INNER_ERROR_LOG=$2
 PACKAGE_DIR=/setup/package
 
 if [[ "x$CONTAINER_NAME" == "x" || "x$DOCKER_INNER_ERROR_LOG" == "x" ]]; then
-	echo "ERROR: No se puede continuar con la ejecución de scripts de la BBDD"
+	echo "ERROR: No se puede continuar con la ejecución de scripts de la BD"
 	echo "ERROR: Uso: $0 CONTAINER_NAME DOCKER_INNER_ERROR_LOG"
 	exit 1
 fi

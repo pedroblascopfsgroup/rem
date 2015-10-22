@@ -1052,7 +1052,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 						if(filtro.isValid(paramDinamico)){
 							
 							hql.append(" and exp.id in ( ");
-							hql.append(filtro.obtenerFiltroRecobro(paramDinamico));
+							hql.append(filtro.obtenerFiltro(paramDinamico));
 							hql.append(" ) ");
 							
 						}
@@ -1379,27 +1379,27 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         //VISIBILIDAD
         //BKREC-943
         //Verificar si esto se quita por vinculación de esto con todos los filtros y con EXP
-//        int cantZonas = dtoExpediente.getCodigoZonas().size();
-//        if (cantZonas > 0) {
-//            hql.append(" and ( ");
-//            for (String codigoZ : dtoExpediente.getCodigoZonas()) {
-//                hql.append(" exp.oficina.zona.codigo like '" + codigoZ + "%' OR");
-//            }
-//            hql.deleteCharAt(hql.length() - 1);
-//            hql.deleteCharAt(hql.length() - 1);
-//            
-//            hql.append(" or EXISTS ( ");
-//            	hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
-//	        hql.append(" ) ");
-//            
-//	        hql.append(" ) ");
-//        }
-//        else{
-//        	 //GESTORES EXPEDIENTE
-//	        hql.append(" and EXISTS ( ");
-//	        	hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
-//	        hql.append(" ) ");
-//        }
+        int cantZonas = dtoExpediente.getCodigoZonas().size();
+        if (cantZonas > 0) {
+            hql.append(" and ( ");
+            for (String codigoZ : dtoExpediente.getCodigoZonas()) {
+                hql.append(" SUBSTR(exp.oficina.zona.codigo, 1, 2) = '" + codigoZ + "' OR");
+            }
+            hql.deleteCharAt(hql.length() - 1);
+            hql.deleteCharAt(hql.length() - 1);
+            
+            hql.append(" or EXISTS ( ");
+            	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
+	        hql.append(" ) ");
+            
+	        hql.append(" ) ");
+        }
+        else{
+        	 //GESTORES EXPEDIENTE
+	        hql.append(" and EXISTS ( ");
+	        	hql.append(generaFiltroExpedientesPorGestorRecobro(usuarioLogueado));
+	        hql.append(" ) ");
+        }
 
         //Centros
         if (!StringUtils.emtpyString(dtoExpediente.getCodigoEntidad())) {
@@ -1426,7 +1426,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 
         if (tipoPersona || segmentos) {
             hql.append(" and EXISTS (select 1 FROM ExpedientePersona pex, Persona p ");
-            hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 ");
+            hql.append(" where pex.auditoria.borrado = false and pex.persona.id = p.id and pex.pase = 1 and pex.expediente.id = exp.id ");
 
             if (tipoPersona) {
                 hql.append(" and p.tipoPersona.codigo = :tipoPer ");
@@ -1557,6 +1557,16 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
 		 * 
 		 * */
 		private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
+			StringBuffer hql = new StringBuffer();
+			hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
+			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
+			hql.append(" and ge.gestor.id in (");
+			hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
+			hql.append(")");
+			return hql.toString();
+		}
+                
+		private String generaFiltroExpedientesPorGestorRecobro(Usuario usuLogado){
 			StringBuffer hql = new StringBuffer();
 			hql.append(" select 1 from  EXTGestorEntidad ge ");
 			hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");

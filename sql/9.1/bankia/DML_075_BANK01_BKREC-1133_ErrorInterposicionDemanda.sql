@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20151008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.16-bk
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=BKREC-1133
 --## PRODUCTO=NO
 --## Finalidad: DML
 --##           

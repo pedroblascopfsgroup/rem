@@ -18,13 +18,15 @@
 	var idAdjudicacion = app.creaLabel('<s:message code="bienesAdjudicacion.idAdjudicacion" text="**idAdjudicacion"/>','${NMBbien.adjudicacion.idAdjudicacion}', {labelStyle:labelStyle});
 	var bien = app.creaLabel('<s:message code="bienesAdjudicacion.idBien" text="**idBien"/>','${NMBbien.id}', {labelStyle:labelStyle});
 		
+	var fechaMinima = new Date(1900,0,1);
 	// fechas 
 	var fechaDecretoNoFirme =new Ext.ux.form.XDateField({
 			fieldLabel:'<s:message code="bienesAdjudicacion.fechaDecretoNoFirme" text="**fechaDecretoNoFirme" />'
 			,labelStyle: labelStyle
 			,name:'bien.fechaDecretoNoFirme'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaDecretoNoFirme}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'	
+			,minValue: fechaMinima		
 		});
 	
 	var fechaDecretoFirme =new Ext.ux.form.XDateField({
@@ -32,7 +34,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaDecretoFirme'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaDecretoFirme}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'	
+			,minValue: fechaMinima		
 		});	
 	
 	var fechaEntregaGestor =new Ext.ux.form.XDateField({
@@ -40,7 +43,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaEntregaGestor'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaEntregaGestor}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'	
+			,minValue: fechaMinima		
 		});
 	
 	var fechaPresentacionHacienda =new Ext.ux.form.XDateField({
@@ -48,7 +52,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaPresentacionHacienda'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaPresentacionHacienda}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'	
+			,minValue: fechaMinima		
 		});
 	
 	var fechaSegundaPresentacion =new Ext.ux.form.XDateField({
@@ -56,7 +61,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaSegundaPresentacion'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaSegundaPresentacion}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'	
+			,minValue: fechaMinima		
 		});
 		
 	var txtImporteAdjudicacion = app.creaMoneda("importeAdjudicacion", 
@@ -76,7 +82,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaRecepcionTitulo'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaRecepcionTitulo}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 			
 	var fechaInscripcionTitulo =new Ext.ux.form.XDateField({
@@ -84,7 +91,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaInscripcionTitulo'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaInscripcionTitulo}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaEnvioAdicion =new Ext.ux.form.XDateField({
@@ -92,7 +100,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaEnvioAdicion'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaEnvioAdicion}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaPresentacionRegistro =new Ext.ux.form.XDateField({
@@ -100,7 +109,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaPresentacionRegistro'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaPresentacionRegistro}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaSolicitudPosesion =new Ext.ux.form.XDateField({
@@ -108,7 +118,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaSolicitudPosesion'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaSolicitudPosesion}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaSenalamientoPosesion =new Ext.ux.form.XDateField({
@@ -116,7 +127,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaSenalamientoPosesion'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaSenalamientoPosesion}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaRealizacionPosesion =new Ext.ux.form.XDateField({
@@ -124,7 +136,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaRealizacionPosesion'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaRealizacionPosesion}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaSolicitudLanzamiento =new Ext.ux.form.XDateField({
@@ -132,7 +145,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaSolicitudLanzamiento'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaSolicitudLanzamiento}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaSenalamientoLanzamiento =new Ext.ux.form.XDateField({
@@ -140,7 +154,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaSenalamientoLanzamiento'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaSenalamientoLanzamiento}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaRealizacionLanzamiento =new Ext.ux.form.XDateField({
@@ -148,7 +163,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaRealizacionLanzamiento'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaRealizacionLanzamiento}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaSolicitudMoratoria =new Ext.ux.form.XDateField({
@@ -156,7 +172,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaSolicitudMoratoria'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaSolicitudMoratoria}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaResolucionMoratoria =new Ext.ux.form.XDateField({
@@ -164,7 +181,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaResolucionMoratoria'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaResolucionMoratoria}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaContratoArrendamiento =new Ext.ux.form.XDateField({
@@ -172,7 +190,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaContratoArrendamiento'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaContratoArrendamiento}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaCambioCerradura =new Ext.ux.form.XDateField({
@@ -180,7 +199,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaCambioCerradura'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaCambioCerradura}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaEnvioLLaves =new Ext.ux.form.XDateField({
@@ -188,7 +208,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaEnvioLLaves'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaEnvioLLaves}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaRecepcionDepositario =new Ext.ux.form.XDateField({
@@ -196,7 +217,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaRecepcionDepositario'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaRecepcionDepositario}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var fechaEnvioDepositario =new Ext.ux.form.XDateField({
@@ -204,7 +226,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaEnvioDepositario'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaEnvioDepositario}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 			
 	var fechaRecepcionDepositarioFinal =new Ext.ux.form.XDateField({
@@ -212,7 +235,8 @@
 			,labelStyle: labelStyle
 			,name:'bien.fechaRecepcionDepositarioFinal'
 			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaRecepcionDepositarioFinal}"/>'
-			,style:'margin:0px'		
+			,style:'margin:0px'
+			,minValue: fechaMinima			
 		});
 	
 	var diccionarioRecord = Ext.data.Record.create([
@@ -595,6 +619,23 @@
 		return 0;
 	} 
 	
+	//Valida que las fechas introducidas sean mayores a 01/01/1900. Si no tienen valor no pasa nada.
+	var validarCamposFecha = function() {
+		if(fechaDecretoNoFirme.getValue() < fechaMinima || fechaDecretoFirme.getValue() < fechaMinima || fechaEntregaGestor.getValue() < fechaMinima 
+			|| fechaPresentacionHacienda.getValue() < fechaMinima || fechaSegundaPresentacion.getValue() < fechaMinima || fechaSegundaPresentacion.getValue() < fechaMinima
+			|| fechaRecepcionTitulo.getValue() < fechaMinima || fechaInscripcionTitulo.getValue() < fechaMinima || fechaEnvioAdicion.getValue() < fechaMinima
+			|| fechaPresentacionRegistro.getValue() < fechaMinima || fechaSolicitudPosesion.getValue() < fechaMinima || fechaSenalamientoPosesion.getValue() < fechaMinima
+			|| fechaRealizacionPosesion.getValue() < fechaMinima || fechaSolicitudLanzamiento.getValue() < fechaMinima || fechaSenalamientoLanzamiento.getValue() < fechaMinima
+			|| fechaRealizacionLanzamiento.getValue() < fechaMinima || fechaSolicitudMoratoria.getValue() < fechaMinima || fechaResolucionMoratoria.getValue() < fechaMinima 
+			|| fechaContratoArrendamiento.getValue() < fechaMinima || fechaCambioCerradura.getValue() < fechaMinima || fechaEnvioLLaves.getValue() < fechaMinima
+			|| fechaRecepcionDepositario.getValue() < fechaMinima || fechaEnvioDepositario.getValue() < fechaMinima || fechaRecepcionDepositarioFinal.getValue() < fechaMinima) {
+			
+				return 1;
+		}
+		
+		return 0;
+	}
+	
 	
 	<sec:authorize ifAllGranted="SOLVENCIA_EDITAR">
 		var btnEditar = new Ext.Button({
@@ -606,7 +647,8 @@
 		    ,handler:function(){
 		    	var p = getParametros();
 		    	var res = validarCampos();
-		    	if(res == 0){
+		    	var res2 = validarCamposFecha();
+		    	if(res == 0 && res2 == 0){
 		    		Ext.Ajax.request({
 						url : page.resolveUrl('editbien/saveAdjudicacion'), 
 						params : p ,
@@ -632,6 +674,8 @@
 			           buttons: Ext.MessageBox.OK
 			       });
 				}
+				else if(res2 == 1){
+					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erróneo" code="fwk.ui.errorList.fieldLabel.error"/>');				}
 	        }
 		});
 	</sec:authorize>

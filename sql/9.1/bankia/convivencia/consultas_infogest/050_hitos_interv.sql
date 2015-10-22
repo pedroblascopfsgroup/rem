@@ -1,0 +1,47 @@
+DELETE FROM MINIREC.RCV_GEST_HITOS_INTERV_PDM;
+COMMIT;
+
+INSERT INTO MINIREC.RCV_GEST_HITOS_INTERV_PDM
+SELECT GUI.ID_PROCEDI                as ID_PROCEDI
+     , GUI.ID_PROCEDI_RCV                     as ID_PROCEDI_RCV
+     , GUI.ID_PERSONA_RCV                     as ID_PERSONA_RCV
+     , GUI.NUMERO_PERSONA                     as NUMERO_PERSONA
+     , TRD.COD_HITO_NAL                       as HITO
+     , NULL                                   as ID_TAR_RCV
+     , NULL                                   as TAREA_RCV
+     , CASE WHEN MIN(TRUNC(TAR.TAR_FECHA_INI)) 
+              IN (to_date('09/04/15','DD/MM/YYYY'),to_date('07/03/15','DD/MM/YYYY'))
+              THEN NULL
+              ELSE MIN(TRUNC(TAR.TAR_FECHA_INI)) 
+       END                                    as FECHA_INICIO
+     , MAX(TAR.TAR_FECHA_FIN)                      as FECHA_FIN
+     , MAX(TAR.TAR_FECHA_VENC)                     as FECHA_LIMITE
+     , CASE WHEN MIN(TAR.TAR_TAREA_FINALIZADA) = 0
+             AND MIN(TAR.BORRADO) = 0
+             THEN 'S'
+             ELSE 'N'
+       END as ACTIVO
+  FROM MINIREC.RCV_GEST_PERSONA_PDM   GUI
+     , BANK01.PRC_PER                 PRP
+     , BANK01.TAR_TAREAS_NOTIFICACIONES   TAR
+     , BANK01.TEX_TAREA_EXTERNA           TEX
+     , BANK01.TAP_TAREA_PROCEDIMIENTO     TAP
+     , BANK01.AUX_THR_TRADUC_HITOS_RECNAL TRD
+     , BANK01.PRC_PROCEDIMIENTOS PRC
+ WHERE SUBSTR(TRD.COD_HITO_NAL,1,1) = 'A'
+  AND TAP.TAP_CODIGO = TRD.TAP_CODIGO
+   AND GUI.ID_PERSONA_RCV = PRP.PER_ID
+   AND GUI.ID_PROCEDI_RCV = PRP.PRC_ID
+   AND PRP.PRC_ID = PRC.PRC_ID
+   AND PRC.PRC_ID = TAR.PRC_ID
+   AND TAR.TAR_ID = TEX.TAR_ID
+   AND TEX.TAP_ID = TAP.TAP_ID
+   AND PRC.DD_TPO_ID = TAP.DD_TPO_ID
+GROUP BY GUI.ID_PROCEDI
+     , GUI.ID_PROCEDI_RCV  
+     , GUI.ID_PERSONA_RCV 
+     , GUI.NUMERO_PERSONA 
+     , TRD.COD_HITO_NAL;
+	 
+COMMIT;
+

@@ -54,20 +54,24 @@ do
 done
 
 echo "<Docker [$CONTAINER_NAME]>: BBDD disponible: OK"
-DUMP_FILE_PATH=$INNER_DUMP_DIRECTORY/$CURRENT_DUMP_NAME
 
+if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
+	echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."
+	rm -Rf /oradata/*
+	mkdir -p /oradata/flash
+	mkdir -p /oradata/redo
+	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/alter-system-user.sql &>/dev/null
+	echo "<Docker [$CONTAINER_NAME]>: creando tablespaces y directorios..."
+	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/script.sql
+	chmod go+rw /oradata/*
+	echo "<Docker [$CONTAINER_NAME]>: preparando el modo flashback..."
+	export ORACLE_SID=orcl
+	$ORACLE_HOME/bin/sqlplus / as sysdba @/setup/SQL-SCRIPTS/enable_flahsback.sql
+fi
+
+
+DUMP_FILE_PATH=$INNER_DUMP_DIRECTORY/$CURRENT_DUMP_NAME
 if [[ -f $DUMP_FILE_PATH  ]]; then
-	if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
-		echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."
-		rm -Rf /oradata/*
-		mkdir -p /oradata/flash
-		mkdir -p /oradata/redo
-		$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/alter-system-user.sql &>/dev/null
-		echo "<Docker [$CONTAINER_NAME]>: creando tablespaces y directorios..."
-		$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/script.sql
-		chmod go+rw /oradata/*
-	fi
-	
 	echo "<Docker [$CONTAINER_NAME]>: Importando dump de la bbdd.."
 	$ORACLE_HOME/bin/impdp system/admin@localhost:1521/orcl DIRECTORY=scripts dumpfile=$CURRENT_DUMP_NAME logfile=SYSTMP:$CURRENT_DUMP_NAME.import.log schemas=CM01,CMMASTER remap_tablespace=BANK01:DRECOVERYONL8M,TEMPORAL:TEMP
 

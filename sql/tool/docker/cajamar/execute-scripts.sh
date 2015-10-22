@@ -24,12 +24,14 @@ mkdir -p $(dirname $DOCKER_INNER_ERROR_LOG)
 echo "STARTING: $(date)" > $DOCKER_INNER_ERROR_LOG
 
 function log_script_output () {
-	for log in $(ls -ltr *.log | awk '{print $9}'); do 
-		echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
-		echo "$log" &>> $DOCKER_INNER_ERROR_LOG
-		echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
-		cat $log &>> $DOCKER_INNER_ERROR_LOG
-	done
+	if [[ $(ls *.log 2>/dev/null) ]]; then
+		for log in $(ls -ltr *.log | awk '{print $9}'); do 
+			echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
+			echo "$log" &>> $DOCKER_INNER_ERROR_LOG
+			echo "===============================" &>> $DOCKER_INNER_ERROR_LOG
+			cat $log &>> $DOCKER_INNER_ERROR_LOG
+		done
+	fi
 }
 
 if [[ -d $PACKAGE_DIR ]]; then

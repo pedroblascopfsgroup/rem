@@ -219,7 +219,9 @@
 		title:'<s:message code="procedimiento.listadoDecisiones.titulo" text="**DecisionProcedimiento" />'
 		,height : 400
 		,style:'padding-right:10px'
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
 		,bbar:buttonBar
+		</sec:authorize>
 	});
  
 	decisionProcedimientoGrid.on('rowclick', function(grid, rowIndex, e){

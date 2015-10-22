@@ -3,9 +3,9 @@
 #
 # Formas de ejecutar la utilidad
 #
-# No re-generar la BBDD
+# No re-generar la BD
 # ./run.sh | ./run.sh -help: Mostramos mensaje de ayuda y salimos
-# ./run.sh -restart: Reiniciar la BBDD
+# ./run.sh -restart: Reiniciar la BD
 #
 # Regenerar en MODO 1: línea base
 # ./run.sh -remove [-oradata=<directorio datafiles>] [-ignoredmp] [-dmpdir=<directorio dumps>]
@@ -23,10 +23,11 @@ SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
 DUMP_DIRECTORY=$(pwd)/DUMP
 ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
 SET_ENV_FILE=~/setEnvGlobal$CLIENTE.sh
+WORKSPACE_DIR=$(pwd)/.workspace
 
-# Estado de la BBDD
-CURRENT_DUMP_NAME=export_cajamar_13Ago2015.dmp
-STARTING_TAG=cj-dmp-13ago
+# Estado de la BD
+CURRENT_DUMP_NAME=export_cajamar_19Oct2015.dmp
+STARTING_TAG=cj-dmp-19oct
 
 
 OPTION_REMOVE=no
@@ -36,11 +37,14 @@ OPTION_RESTART=no
 OPTION_PITERDEBUG=no
 OPTION_FLASHBACK_MODE=no
 OPTION_SCRIPTS_MODE=no
+OPTION_STATISTICS=no
 
 DOCKER_INNER_ERROR_LOG=/tmp/scriptslog/error.log
 VAR_OUTTER_ERROR_LOG=""
 VAR_SCRIPTS_DONE=no
 VAR_STARTING_TAG_CHANGED=no
+VAR_WORKSPACE_CHANGED=no
+VAR_DB_EXISTS=no
 
 function show_help () {
 	echo "Uso: "
@@ -52,9 +56,12 @@ function show_help () {
 	echo " -------------------------------------------------------------------------------------------------------------------"
 	echo " OPCIONES GENERALES"
 	echo "    -help: Sólo imprime un mensaje de ayuda"
-	echo "    -restart: Indicar para reiniciar la BBDD"
+	echo "    -restart: Indicar para reiniciar la BD"
 	echo "    -oradata=: Especifica el diretorio del host en dóde se almacenarán los DATAFILES"
 	echo "                  por defecto $ORADATA_HOST_DIR. Sólo sirve si hacemos un -remove o -impdp"
+	echo "    -workspace=: Cambia el workspace de la tool. Esta opción es útil si montamos una"
+	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
+	echo "     -statistics: Actualiza las estadísticas en la BD"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
@@ -70,8 +77,8 @@ function show_help () {
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
 	echo "                  Esta opción es redundante en este modo ya que -impdp siempre implica un remove"
 	echo ""
-	echo " OPCIONES MODO 3. Modo Flashback, punto de restauración"
-	echo "    -flashback: Pone la BBDD en modo flashback creando un punto de restauración. Se sale del modo"
+	echo " OPCIONES MODO 3. Modo Flashback, punto de restauración."
+	echo "    -flashback: Pone la BD en modo flashback creando un punto de restauración. Se sale del modo"
 	echo "                  mediante Ctrl+C. Al salir se ofrecen dos opciones: restaurar o confirmar"
 	echo ""
 	echo " OPCIONES MODO 4. Ejecución de scripts"
@@ -122,6 +129,11 @@ if [[ "x$@" != "x" ]]; then
 		elif [[ "x$op" == x-fromtag=* ]]; then
 			STARTING_TAG=$(echo $op | cut -f2 -d=)
 			VAR_STARTING_TAG_CHANGED=yes
+		elif [[ "x$op" == x-workspace=* ]]; then
+			WORKSPACE_DIR=$(echo $op | cut -f2 -d=)
+			VAR_WORKSPACE_CHANGED=yes
+		elif [[ "x$op" == "x-statistics" ]]; then
+			OPTION_STATISTICS=yes
 		fi
 	done
 else
@@ -163,27 +175,32 @@ function package_sql () {
 				exit 1
 			fi
 		fi
-
+		ws_package_dir=$WORKSPACE_DIR/package
+		rm -Rf $ws_package_dir
+		cp -R $SQL_PACKAGE_DIR $ws_package_dir
+		chmod -R go+w $ws_package_dir/*
+		chmod +x $ws_package_dir/DDL/*.sh
+		chmod +x $ws_package_dir/DML/*.sh
 
 		cd $current_dir
-		chmod -R go+w $SQL_PACKAGE_DIR/*
-		chmod +x $SQL_PACKAGE_DIR/DDL/*.sh
-		chmod +x $SQL_PACKAGE_DIR/DML/*.sh
+		
 	fi
 }
 
 
 function run_container () {
+	show_install_info
+
 	local errorlog_volume=""
+
+	mkdir -p $WORKSPACE_DIR
+	rm -Rf $WORKSPACE_DIR/*
+	cp $(pwd)/*.sh $WORKSPACE_DIR && chmod ugo+rx $WORKSPACE_DIR/*.sh
+	cp -R $(pwd)/SQL-SCRIPTS $WORKSPACE_DIR && chmod ugo+r $WORKSPACE_DIR/SQL-SCRIPTS/*
 
 	if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
 		outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
 		errorlog_volume="-v ${outter_log_dir}:$(dirname $DOCKER_INNER_ERROR_LOG):rw"
-		if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
-			mkdir -p $outter_log_dir
-			touch $VAR_OUTTER_ERROR_LOG
-			chmod go+rw $VAR_OUTTER_ERROR_LOG
-		fi
 	fi
 
 	if [[ ! -d $DUMP_DIRECTORY ]]; then
@@ -199,6 +216,14 @@ function run_container () {
 		mkdir -p $ORADATA_HOST_DIR
 		chmod go+w $ORADATA_HOST_DIR
 	fi
+	touch $ORADATA_HOST_DIR/test
+	if [[ $? -eq 0 ]]; then
+		rm $ORADATA_HOST_DIR/test
+	else
+		echo "[ERROR] $ORADATA_HOST_DIR : Permisos insuficientes."
+		echo "[ERROR]     Prueba con chmod go+w $ORADATA_HOST_DIR"
+		exit 1
+	fi
 	if [[ -f $DUMP_PATH ]]; then
 		package_sql $STARTING_TAG $CLIENTE
 		VAR_SCRIPTS_DONE=yes
@@ -206,16 +231,15 @@ function run_container () {
 	echo -n "[INFO]: $CONTAINER_NAME: Generando el contenedor a partir de la imágen [$IMAGE_NAME]: "
 	docker run -d -p=22 -p 1521:1521 \
 				-v /etc/localtime:/etc/localtime:ro \
-				-v $(pwd):/setup $errorlog_volume \
+				-v $WORKSPACE_DIR:/setup $errorlog_volume \
 				-v $DUMP_DIRECTORY:/DUMP \
-				-v $SQL_PACKAGE_DIR:/sql-package \
 				-v $ORADATA_HOST_DIR:/oradata \
 				-h $CONTAINER_NAME --name $CONTAINER_NAME $IMAGE_NAME
 
 }
 
 function remove_container () {
-	echo "[INFO]: Se va a restaurar la BBDD. Esto implica un borrado de la BBDD y una re-generación"
+	echo "[INFO]: Se va a restaurar la BD. Esto implica un borrado de la BD y una re-generación"
 	echo -n "[INFO]: Borrando el contenedor: "
 	docker rm $CONTAINER_NAME
 }
@@ -283,19 +307,19 @@ function restore_or_confirm_flahsback () {
 	read IN
 	case $IN in
 		1 )
-			echo "Al realizar esta operación los cambios realizados en BBDD serán permanentes"
+			echo "Al realizar esta operación los cambios realizados en BD serán permanentes"
 			echo -n "¿Estás seguro? [s/N] "; read IN 
 			if [[ "x$IN" == "xs" || "x$IN" == "xs" ]]; then
-				echo "[INFO] Confirmando estado de la BBDD"
+				echo "[INFO] Confirmando estado de la BD"
 				$(pwd)/flashback.sh $CONTAINER_NAME confirm
 				exit $?
 			fi
 			;;
 		2)
-			echo "Al realizar esta operación se revertirán los cambios realizados en la BBDD Volviendo"
+			echo "Al realizar esta operación se revertirán los cambios realizados en la BD Volviendo"
 			echo -n "¿Estás seguro? [s/N] "; read IN 
 			if [[ "x$IN" == "xs" || "x$IN" == "xs" ]]; then
-				echo "[INFO] Restaurando el estado de la BBDD"
+				echo "[INFO] Restaurando el estado de la BD"
 				$(pwd)/flashback.sh $CONTAINER_NAME restore
 				exit $?
 			fi
@@ -305,7 +329,20 @@ function restore_or_confirm_flahsback () {
 	echo "Pulsa Ctrl + C para salir"
 }
 
-show_install_info
+# Creamos el workspace
+if [[ "x$VAR_WORKSPACE_CHANGED" == "xyes" ]]; then
+	echo "[WARNING] Se va a usar el siguiente directorio como WORKSPACE: $WORKSPACE_DIR"
+fi
+
+if [[ "x$VAR_OUTTER_ERROR_LOG" != "x" ]]; then
+	outter_log_dir=$(dirname $VAR_OUTTER_ERROR_LOG)
+	if [[ ! -f VAR_OUTTER_ERROR_LOG ]]; then
+			mkdir -p $outter_log_dir
+			touch $VAR_OUTTER_ERROR_LOG
+			chmod go+rw $VAR_OUTTER_ERROR_LOG
+		fi
+fi
+
 if [[ "x$DOCKER_PS" == "x" ]]; then
 	# Si el contenedor no existe
 	OPTION_REMOVE=yes
@@ -320,7 +357,9 @@ if [[ "x$DOCKER_PS" == "x" ]]; then
 			exit 1
 		fi
 	fi
+	VAR_DB_EXISTS=yes
 else
+	VAR_DB_EXISTS=yes
 	# Si el contenedor ya existe
 	if [[ "x$OPTION_RESTART" == "xyes" ]]; then
 		echo "[INFO]: (Re)iniciando entorno $CONTAINER_NAME"
@@ -329,7 +368,6 @@ else
 
 	if [[ "x$OPTION_REMOVE" == "xyes" || "x$OPTION_RANDOM_DUMP" == "xyes" ]]; then
 		if [[ "x$OPTION_SCRIPTS_MODE" == "xno" && "x$VAR_STARTING_TAG_CHANGED" == "xno" ]]; then
-			show_install_info
 			check_dump
 			if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
 				remove_container
@@ -353,15 +391,6 @@ else
 		fi
 	fi
 
-	if [[ "x$OPTION_FLASHBACK_MODE" == "xyes" ]]; then
-		trap restore_or_confirm_flahsback SIGINT
-		echo "[INFO] Entrando en modo flashback"
-		echo "[INFO] Creando un punto de restauración de la BBDD"
-		$(pwd)/flashback.sh $CONTAINER_NAME create
-		echo "Pulsa Ctrl + C para salir del modo Flhasback"
-		while true; do sleep 5; done
-	fi
-
 	if [[ "x$OPTION_SCRIPTS_MODE" == "xyes" && "x$VAR_SCRIPTS_DONE" == "xno"
 			&& "x$OPTION_RANDOM_DUMP" == "xno"  && "x$OPTION_REMOVE" == "xno" ]]; then
 		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
@@ -373,3 +402,28 @@ else
 		start
 	fi
 fi
+
+if [[ "x$VAR_DB_EXISTS" == "xyes" ]]; then
+	if [[ "x$OPTION_STATISTICS" == "xyes" ]]; then
+		echo "[INFO] Actualizando las estadísticas de la BD"
+		$(pwd)/statistics.sh $CONTAINER_NAME
+		if [[ $? -ne 0 ]]; then
+			exit $?
+		fi
+	fi
+	if [[ "x$OPTION_FLASHBACK_MODE" == "xyes" ]]; then
+		trap restore_or_confirm_flahsback SIGINT
+		echo "[INFO] Entrando en modo flashback"
+		echo "[INFO] Creando un punto de restauración de la BD"
+		$(pwd)/flashback.sh $CONTAINER_NAME create
+		echo "Pulsa Ctrl + C para salir del modo Flhasback"
+		while true; do sleep 5; done
+	fi
+else
+	[ "x$OPTION_STATISTICS" == "xyes" ] && \
+		echo "[WARNING] No actualizamos las estadístics porque no existe la BD ($CONTAINER_NAME)"
+
+	[ "x$OPTION_FLASHBACK_MODE" == "xyes" ] && \
+		echo "[WARNING] No habilitamos el modo flashback porque no existe la BD ($CONTAINER_NAME)"
+fi
+	

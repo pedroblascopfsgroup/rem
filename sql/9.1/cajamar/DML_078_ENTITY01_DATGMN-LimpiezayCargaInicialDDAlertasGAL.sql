@@ -47,16 +47,28 @@ BEGIN
 
                      
     DBMS_OUTPUT.PUT_LINE('Obtenemos el id de GAL sin especificar');
-    SELECT GAL_ID INTO V_GAL_ID 
+    V_MSQL := 'SELECT GAL_ID 
+               FROM '||V_ESQUEMA||'.GAL_GRUPO_ALERTA
+               WHERE GAL_DESCRIPCION like ''%NO ESPECIFICADO%''';  
+    
+    EXECUTE IMMEDIATE V_MSQL INTO V_GAL_ID  ;
+    
+/*    SELECT GAL_ID INTO V_GAL_ID 
     FROM GAL_GRUPO_ALERTA
-    WHERE GAL_DESCRIPCION like '%NO ESPECIFICADO%';  
+    WHERE GAL_DESCRIPCION like '%NO ESPECIFICADO%';  */
     
     
     DBMS_OUTPUT.PUT_LINE('Obtenemos el id de GRC sin especificar');
-    SELECT GRC_ID INTO V_GRC_ID 
-    FROM GRC_GRUPO_CARGA
-    WHERE GRC_DESCRIPCION like '%NO ESPECIFICADO%'; 
-
+    V_MSQL := 'SELECT GRC_ID  
+               FROM '||V_ESQUEMA||'.GRC_GRUPO_CARGA
+               WHERE GRC_DESCRIPCION like ''%NO ESPECIFICADO%'''; 
+    
+    EXECUTE IMMEDIATE V_MSQL INTO V_GRC_ID;
+      
+/*   SELECT GRC_ID INTO V_GRC_ID 
+               FROM GRC_GRUPO_CARGA
+               WHERE GRC_DESCRIPCION like '%NO ESPECIFICADO%' */               
+               
    /*****************************************************/
    /*** PENDIENTE CORRESPONDENCIA GAL_ID y GRC_ID  ******/
    /*****************************************************/   
@@ -66,6 +78,7 @@ BEGIN
       V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAL_TIPO_ALERTA SET ' ||
                  ' GAL_ID ='||  V_GAL_ID || ',
                    GRC_ID ='||  V_GRC_ID ;
+      
       EXECUTE IMMEDIATE V_MSQL;
    
    

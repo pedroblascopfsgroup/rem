@@ -34,8 +34,8 @@ DECLARE
 --##########################################
 --*/
   -- Configuracion Esquemas
- V_ESQUEMA VARCHAR2(25 CHAR):= 'CM01'; -- Configuracion Esquema
- V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'CMMASTER'; -- Configuracion Esquema Master
+ V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+ V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
  seq_count NUMBER(3); -- Vble. para validar la existencia de las Secuencias.
  table_count NUMBER(3); -- Vble. para validar la existencia de las Tablas.
  v_column_count  NUMBER(3); -- Vble. para validar la existencia de las Columnas.

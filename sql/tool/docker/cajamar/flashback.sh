@@ -3,7 +3,7 @@ CONTAINER_NAME=$1
 FLASHBACK_OPTION=$2
 
 if [[ "x$CONTAINER_NAME" == "x" || "x$FLASHBACK_OPTION" == "x"  ]]; then
-	echo "ERROR: No se puede continuar con la instalación de la BBDD"
+	echo "ERROR: No se puede realizar la operación sobre la BD"
 	echo "ERROR: Uso: $0 CONTAINER_NAME FLASHBACK_OPTION"
 	exit 1
 fi

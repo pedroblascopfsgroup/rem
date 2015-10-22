@@ -11,7 +11,7 @@ DOCKER_INNER_ERROR_LOG=$7
 if [[ "x$CURRENT_DUMP_NAME" == "x" || "x$STARTING_TAG" == "x" || "x$CONTAINER_NAME" == "x" 
 		|| "x$CUSTOM_NLS_LANG" == "x" || "x$OPTION_RANDOM_DUMP" == "x" || "x$OPTION_REMOVE" == "x"
 		|| "x$DOCKER_INNER_ERROR_LOG" == "x" ]]; then
-	echo "ERROR: No se puede continuar con la instalación de la BBDD"
+	echo "ERROR: No se puede continuar con la instalación de la BD"
 	echo "ERROR: Uso: $0 CURRENT_DUMP_NAME STARTING_TAG CONTAINER_NAME CUSTOM_NLS_LANG OPTION_RANDOM_DUMP OPTION_REMOVE DOCKER_INNER_ERROR_LOG"
 	exit 1
 fi
@@ -29,7 +29,7 @@ fi
 
 # INSIDE DOCKER
 
-echo "<Docker [$CONTAINER_NAME]>: Instalador de la BBDD de Cajamar"
+echo "<Docker [$CONTAINER_NAME]>: Instalador de la BD de Cajamar"
 
 cd $(pwd)/$(dirname $0)
 
@@ -49,25 +49,29 @@ do
 	if [[ "x$(echo '' | $ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/showdbstatus.sql | grep OPEN)" != "x" ]]; then
 		break
 	fi
-  	echo "<Docker [$CONTAINER_NAME]>: Esperando a que la BBDD esté levantada, esto puede tardar unos segundos"
+  	echo "<Docker [$CONTAINER_NAME]>: Esperando a que la BD esté levantada, esto puede tardar unos segundos"
   	sleep 5
 done
 
-echo "<Docker [$CONTAINER_NAME]>: BBDD disponible: OK"
-DUMP_FILE_PATH=$INNER_DUMP_DIRECTORY/$CURRENT_DUMP_NAME
+echo "<Docker [$CONTAINER_NAME]>: BD disponible: OK"
 
+if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
+	echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."
+	rm -Rf /oradata/*
+	mkdir -p /oradata/flash
+	mkdir -p /oradata/redo
+	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/alter-system-user.sql &>/dev/null
+	echo "<Docker [$CONTAINER_NAME]>: creando tablespaces y directorios..."
+	$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/script.sql
+	chmod go+rw /oradata/*
+	echo "<Docker [$CONTAINER_NAME]>: preparando el modo flashback..."
+	export ORACLE_SID=orcl
+	$ORACLE_HOME/bin/sqlplus / as sysdba @/setup/SQL-SCRIPTS/enable_flahsback.sql
+fi
+
+
+DUMP_FILE_PATH=$INNER_DUMP_DIRECTORY/$CURRENT_DUMP_NAME
 if [[ -f $DUMP_FILE_PATH  ]]; then
-	if [[ "x$OPTION_REMOVE" == "xyes" ]]; then
-		echo "<Docker [$CONTAINER_NAME]>: Limpiando el contenido de /oradata..."
-		rm -Rf /oradata/*
-		mkdir -p /oradata/flash
-		mkdir -p /oradata/redo
-		$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/alter-system-user.sql &>/dev/null
-		echo "<Docker [$CONTAINER_NAME]>: creando tablespaces y directorios..."
-		$ORACLE_HOME/bin/sqlplus system/admin@localhost:1521/orcl @/setup/SQL-SCRIPTS/script.sql
-		chmod go+rw /oradata/*
-	fi
-	
 	echo "<Docker [$CONTAINER_NAME]>: Importando dump de la bbdd.."
 	$ORACLE_HOME/bin/impdp system/admin@localhost:1521/orcl DIRECTORY=scripts dumpfile=$CURRENT_DUMP_NAME logfile=SYSTMP:$CURRENT_DUMP_NAME.import.log schemas=CM01,CMMASTER remap_tablespace=BANK01:DRECOVERYONL8M,TEMPORAL:TEMP
 

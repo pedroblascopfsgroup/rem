@@ -49,7 +49,7 @@
         
     <bean p:entity="menu" 
     	p:name="busquedas/preProyectado" p:order="150" 
-    	p:fileName="/WEB-INF/jsp/main/menus/busquedas/preProyectado.jsp" 
+    	p:fileName="/WEB-INF/jsp/plugin/expediente/listadoPreProyectado/busqueda/preProyectado.jsp" 
     	class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
 	
 </beans>	

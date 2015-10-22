@@ -321,25 +321,13 @@
 				}
 				
 				def dameFechaFinTareaProcedimientoPadre = {
-	            	def fechaFin = null;
-	            	def procedimientoPadre = procedimientoManager.getProcedimiento(idProcedimiento).getProcedimientoPadre();
 	            	def tareaExternaManager = ctx.getBean("tareaExternaManager");
-	            	def tareas = tareaExternaManager.obtenerTareasPorProcedimiento(procedimientoPadre.getId());
-	            	
-	            	if (tareas != null) {
-            			for (tarea in tareas) {
-            				if(tarea != null) {
-	                			def codigo = tarea.getTareaProcedimiento().getCodigo();
-	                			if(codigo == it) {
-	                				fechaFin = new java.text.SimpleDateFormat('yyyy-MM-dd').format(tarea.getTareaPadre().getFechaFin());
-	                				break;
-	                			}
-	                		}
-                		}
-                	}
-                	
-                	return
-                }
+					def fecha = tareaExternaManager.dameFechaFinTareaProcedimientoPadre(idProcedimiento, it);
+					if(fecha != null) {
+						return new java.text.SimpleDateFormat('yyyy-MM-dd').format(fecha);
+					}
+					return
+				}
 
   			 ]]>
   			</value>

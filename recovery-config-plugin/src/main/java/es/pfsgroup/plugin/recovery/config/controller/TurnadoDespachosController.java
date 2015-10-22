@@ -2,25 +2,34 @@ package es.pfsgroup.plugin.recovery.config.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.binding.message.MessageContext;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.view.JSPView;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
@@ -38,7 +47,6 @@ import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDespachoDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.TurnadoDespachosManager;
-//import es.pfsgroup.recovery.recobroCommon.esquema.model.RecobroDDEstadoComponente;
 
 @Controller
 public class TurnadoDespachosController {
@@ -56,6 +64,12 @@ public class TurnadoDespachosController {
 	private static final String VIEW_DEFAULT = "default";
 
 	private static final String KEY_DATA = "data";
+	
+	@Resource
+	private Properties appProperties;
+	
+	@Autowired
+	private MessageSource messageSource;
 	
 	@Autowired
 	private TurnadoDespachosManager turnadoDespachosManager;
@@ -173,10 +187,10 @@ public class TurnadoDespachosController {
 	
 	@RequestMapping
 	public String guardarEsquema(@ModelAttribute EsquemaTurnadoDto dto
+			, Locale locale
 			, Model model) {
-		if (dto.validar()) {
-			turnadoDespachosManager.save(dto);
-		}
+		dto.validar(messageSource,locale);	
+		turnadoDespachosManager.save(dto);
 		return VIEW_DEFAULT;
 	}
 

@@ -8,7 +8,7 @@
 <%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
 <%@ taglib prefix="pfslayout" tagdir="/WEB-INF/tags/pfs/layout"%>
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
 	
 	<pfslayout:includetab name="tabCabecera">
@@ -36,6 +36,7 @@
 		<pfslayout:tabpanel name="tabsDespacho"
 			tabs="tabCabecera,tabGestores,tabEsquemaTurnado" />
 	</c:if>
+	
 	
 	<c:if test="${despacho.tipoDespacho.codigo==1}">
 		<pfslayout:includetab name="tabProcuradores">

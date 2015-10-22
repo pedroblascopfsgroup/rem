@@ -125,6 +125,7 @@
 		]
 	});
 	
+	<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
 	var btnEditarTurnadoLetrado = new Ext.Button({
 			text : '<s:message code="plugin.config.despachoExterno.turnado.tabEsquema.boton.editar" text="**Editar turnado" />'
 			,iconCls : 'icon_edit'
@@ -147,6 +148,7 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });
 			}
 	});
+	</sec:authorize>
 
 	var panelSuperior = new Ext.Panel({
 		title:'<s:message code="plugin.config.despachoExterno.turnado.ventana.panel.titulo" text="**Datos turnado"/>'
@@ -164,7 +166,9 @@
 			  ,{width:330,items:[turnadoConcursosPanel]}
 			  ,{width:330,items:[ambitosActuacionPanel]}
 			  ]
+<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
 		, bbar : [btnEditarTurnadoLetrado]
+</sec:authorize>
 	});
 	
 </pfslayout:tabpage>

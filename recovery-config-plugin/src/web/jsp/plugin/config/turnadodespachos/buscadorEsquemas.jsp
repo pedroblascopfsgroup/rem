@@ -168,6 +168,8 @@
 					}, this);
 			}
 	});
+	btnBorrar.setDisabled(true);
+
 	var btnCopiar = new Ext.Button({
 			text : '<s:message code="app.copiar" text="**Copiar" />'
 			,iconCls : 'icon_copy'
@@ -187,6 +189,8 @@
 					}, this);
 			}
 	});
+
+	<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_ACTIVAR">
 	var btnActivar = new Ext.Button({
 			text : '<s:message code="app.activar" text="**Activar" />'
 			,iconCls : 'icon_play'
@@ -235,7 +239,10 @@
 				});
 			}
 	});
+	btnActivar.setDisabled(true);
+	</sec:authorize>
 	
+	<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
 	var arrayAcciones = new Array();
 	arrayAcciones[arrayAcciones.length] = {
 		text:'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.descargar" text="**Descargar configuración de letrados" />'
@@ -263,15 +270,12 @@
       		});
 		}
 	};
-	
 	var menuAcciones = 
 		{
 			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.acciones" text="**Acciones" />'
 			,menu : arrayAcciones
 		};
-
-	btnBorrar.setDisabled(true);
-	btnActivar.setDisabled(true);
+	</sec:authorize>
 	
 	var esquema = Ext.data.Record.create([
 		 {name:'id'}
@@ -320,7 +324,9 @@
             	var borrable = r.data.borrable;
             	var activable = r.data.activable;
 				btnBorrar.setDisabled(!borrable);
+				<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_ACTIVAR">				
 				btnActivar.setDisabled(!activable);
+				</sec:authorize>
             }
          }
 	});
@@ -343,7 +349,9 @@
 		,monitorResize: true
 		//,clicksToEdit:0
 		,selModel: sm
-		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar,btnActivar, menuAcciones]
+		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar
+			<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_ACTIVAR">,btnActivar</sec:authorize>
+			<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">,menuAcciones</sec:authorize>]
 	});
 	
 	esquemasGrid.on({

@@ -4,7 +4,7 @@
      	var mascara = new Ext.LoadMask(app.contenido.el.dom, {msg:'Abriendo búsqueda de expedientes...'});
         mascara.show();
         
-        app.openTab("<s:message code="expedientes" text="**Expedientes"/>", 
+        app.openTab("<s:message code="expedientesRecobro" text="**Expedientes recobro"/>", 
 	        "expedientes/listadoExpedientesRecobro",
 	        {},
 	        {id:'busqueda_expedientes',iconCls:'icon_busquedas'}

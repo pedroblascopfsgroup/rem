@@ -18,7 +18,7 @@ procurador: PROCU
 id juzgado: 27562
 Concursal: 02
 **/
-
+whenever sqlerror continue;
 alter table bank01.lin_asuntos_nuevos add dd_tas_codigo varchar2(10);
 
 /*
@@ -34,8 +34,8 @@ Concursal: 02
 SELECT 'INSERT INTO LIN_ASUNTOS_NUEVOS
   (N_CASO,CREADO,FECHA_ALTA,N_REFERENCIA,DESPACHO,LETRADO,GRUPO,TIPO_PROC,PROCURADOR,PLAZA,JUZGADO,PRINCIPAL,ID,VERSION,N_LOTE,LIN_ID,PRM_ID,DD_TAS_CODIGO)
  VALUES (''' || 
- cnt.CNT_CONTRATO || ''',''N'',SYSDATE,''' || rownum || ''',''11015'',NULL,''DLETR'',''' || (SELECT DD_TPO_ID FROM bank01.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO='PCO') || 
-      ''',''PROCU'',''16626'',NULL,''' || ROWNUM || '000000'',''' || ROWNUM || ''', ''0'',NULL,NULL,NULL,''01'');' 
+ cnt.CNT_CONTRATO || ''',''N'',SYSDATE,''' || rownum || ''',''11015'',''GESTOR'',null,''' || (SELECT DD_TPO_ID FROM bank01.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO='PCO') || 
+      ''',''PROCURADOR'',''16626'',NULL,''' || ROWNUM || '000000'',''' || ROWNUM || ''', ''0'',NULL,NULL,NULL,''01'');' 
  FROM CNT_CONTRATOS cnt
                           /*JOIN cex_contratos_expediente cex
                           ON cex.cnt_id = cnt.cnt_id
@@ -49,7 +49,7 @@ SELECT 'INSERT INTO LIN_ASUNTOS_NUEVOS
                                     SELECT eas6.dd_eas_id
                                       FROM dd_eas_estado_asuntos eas6
                                      WHERE eas6.dd_eas_codigo IN ('05', '06'))
-                                      and*/ cnt.CNT_ID NOT IN (SELECT CNT_ID FROM PRC_CEX PC INNER JOIN cex_contratos_expediente CEX ON CEX.CEX_ID = PC.CEX_ID) AND ROWNUM <= 50;
+                                      and*/ cnt.CNT_ID NOT IN (SELECT CNT_ID FROM PRC_CEX PC INNER JOIN cex_contratos_expediente CEX ON CEX.CEX_ID = PC.CEX_ID) AND ROWNUM <= 1;
 
 
 /*

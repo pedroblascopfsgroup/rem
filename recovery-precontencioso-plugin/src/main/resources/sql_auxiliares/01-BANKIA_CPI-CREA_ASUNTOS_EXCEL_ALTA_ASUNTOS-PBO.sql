@@ -302,7 +302,6 @@ INSERT INTO bank01.prc_per
 
 DROP TABLE tmp_ugaspfs_bpm_input_con1;
 
-
 /*
 CREATE TABLE tmp_ugaspfs_bpm_input_con1 AS
 SELECT prc_id,
@@ -315,7 +314,8 @@ FROM dd_tpo_tipo_procedimiento tpo
     JOIN tap_tarea_procedimiento tap ON dest.name_ = tap.tap_codigo
 WHERE tap.borrado=0 AND tpo.borrado=0
 AND tpo.dd_tpo_id=(SELECT tipo_proc FROM lin_asuntos_nuevos WHERE n_caso=apc.n_caso AND creado='N')) AS tap_id
-FROM lin_asuntos_para_crear apc; */
+FROM lin_asuntos_para_crear apc;
+*/
 
 -- Trampeo para que se genere directamente la tarea de Asignación de Gestores de PCO-Litigio
 CREATE TABLE tmp_ugaspfs_bpm_input_con1 AS
@@ -331,7 +331,6 @@ FROM lin_asuntos_para_crear apc;
 
 -- GESTOR
 
-/*
 INSERT INTO gaa_gestor_adicional_asunto
             (gaa_id, asu_id, usd_id, dd_tge_id, VERSION, usuariocrear,
              fechacrear, borrado)
@@ -390,6 +389,7 @@ INSERT INTO gaa_gestor_adicional_asunto
 
 -- SUPERVISOR
 
+/*
 INSERT INTO gaa_gestor_adicional_asunto
             (gaa_id, asu_id, usd_id, dd_tge_id, VERSION, usuariocrear,
              fechacrear, borrado)
@@ -415,7 +415,7 @@ INSERT INTO gaa_gestor_adicional_asunto
                                     FROM gaa_gestor_adicional_asunto
                                    WHERE dd_tge_id = 3)) a);
 
-
+*/
 
 -- procurador
 
@@ -456,7 +456,6 @@ INSERT INTO gaa_gestor_adicional_asunto
                                    WHERE dd_tge_id = 4)) a);
 
 
-*/
 
 --SUPERVISOR PCO
 /***************************************************/

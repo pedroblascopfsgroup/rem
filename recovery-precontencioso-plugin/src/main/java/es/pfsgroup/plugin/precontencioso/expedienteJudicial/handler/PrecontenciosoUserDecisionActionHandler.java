@@ -1,27 +1,20 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
 import org.jbpm.graph.exe.ExecutionContext;
-import org.jbpm.graph.exe.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
-import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.dao.SubtipoTareaDao;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
-import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
-import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.manager.ProcedimientoPcoManager;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
-import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
 
 public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandler {
 
@@ -38,6 +31,9 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	
 	@Autowired
 	Executor executor;
+	
+	@Autowired
+	PrecontenciosoProjectContext precontenciosoContext;
 
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
@@ -59,13 +55,16 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 	        creaProcedimientoHijo(executionContext, tipoProcedimientoHijo, prc, null, null);
 	        //Avanzamos la tarea
 	        //executionContext.getToken().signal();
-		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) || 
-				PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))) {
-			
-				pcoManager.obtenerNuevoLetrado(prc);
-			
-		}
+		} else if (PrecontenciosoBPMConstants.PCO_PreTurnado.equals(getNombreNodo(executionContext)) 
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			// TODO para bankia
+			executor.execute("plugin.precontencioso.inicializarPco", prc);
+			pcoManager.obtenerNuevoLetrado(prc);
 		
+		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))
+				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			pcoManager.obtenerNuevoLetrado(prc);		
+		}
 		// Avanzamos BPM
 		executionContext.getToken().signal();
 	}

@@ -320,7 +320,7 @@ FROM lin_asuntos_para_crear apc; */
 -- Trampeo para que se genere directamente la tarea de Asignación de Gestores de PCO-Litigio
 CREATE TABLE tmp_ugaspfs_bpm_input_con1 AS
 SELECT prc_id,
-(select tap_id from bank01.tap_tarea_procedimiento tap where tap.tap_codigo='PCO_AsignacionGestores') AS tap_id
+(select tap_id from bank01.tap_tarea_procedimiento tap where tap.tap_codigo='PCO_RegistrarAceptacion') AS tap_id
 FROM lin_asuntos_para_crear apc;
 
 

@@ -4,5 +4,5 @@
 text : '<s:message code="main.toolbar.buscar.preproyectado" text="**Proyectado/Preproyectado" />' 
 		,iconCls : 'icon_expedientes'
 		,handler : function(){
-				app.openTab("<s:message code="preProyectados" text="**Proyectado/Preproyectado"/>", "listadopreproyectado/abrirBusqueda",{},{id:'busqueda_preproyectados',iconCls:'icon_busquedas'});
+				app.openTab("<s:message code="preProyectados" text="**Proyectado/Preproyectado"/>", "listadopreproyectado/abrirListado",{},{id:'busqueda_preproyectados',iconCls:'icon_busquedas'});
 		}

@@ -18,6 +18,8 @@
 		</property>
 		<property name="recovery">
 			<value>BANKIA</value>
+		<property name="generarArchivoBurofax">
+			<value>true</value>
 		</property>
 	</bean>  
 	

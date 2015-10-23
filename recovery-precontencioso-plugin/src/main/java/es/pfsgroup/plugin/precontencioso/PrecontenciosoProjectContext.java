@@ -16,5 +16,11 @@ public interface PrecontenciosoProjectContext {
 	public String getCodigoFaseComun();
 
 	public String getRecovery();	
+	
+	/**
+	 * Devuelve la configuracion para saber si hay que generar el archivo del burofax o no
+	 * @return
+	 */
+	public boolean isGenerarArchivoBurofax();
 
 }

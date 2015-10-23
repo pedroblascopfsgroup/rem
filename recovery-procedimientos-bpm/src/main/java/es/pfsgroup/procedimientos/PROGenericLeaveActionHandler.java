@@ -11,10 +11,12 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.configuracionEmails.api.ConfiguracionEmailsApi;
 import es.pfsgroup.procedimientos.recoveryapi.JBPMProcessApi;
 import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
+import es.pfsgroup.recovery.integration.bpm.payload.TareaNotificacionPayload;
 
 public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 
@@ -22,7 +24,7 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 	private String city;
 
 	@Autowired
-	IntegracionBpmService bpmIntegrationService;
+	private IntegracionBpmService bpmIntegrationService;
 	
 	private ConfiguracionEmailsApi configuracionEmails;
 	
@@ -142,6 +144,7 @@ public class PROGenericLeaveActionHandler extends PROGenericActionHandler {
 		// La seteamos por si acaso avanza sin haber despertado el BPM
 		tareaExterna.setDetenida(false);
 		proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
+		// Integración con mensajerÃ­a
 		bpmIntegrationService.notificaFinTarea(tareaExterna, transicion);
 		
 		logger.debug("\tCaducamos la tarea: " + getNombreNodo(executionContext));

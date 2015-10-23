@@ -57,12 +57,15 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	
 	private String codigoMonitorio;
 	private String codigoOrdinario;
+
 	private String codigoRegistrarSolicitudMoratoria;
 	private String fechaSolicitudRegistrarSolicitudMoratoria;
 	private String codigoRegistrarResolucionMoratoria;
 	private String fechaFinMoratoriaRegistrarResolucion;
 	private String resultadoMoratoria;
 	
+	private String plantillaReportPropuestaCancelacionCargas;
+
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
@@ -417,5 +420,14 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public void setResultadoMoratoria(String resultadoMoratoria) {
 		this.resultadoMoratoria = resultadoMoratoria;
 	}
+
+	public String getPlantillaReportPropuestaCancelacionCargas() {
+		return plantillaReportPropuestaCancelacionCargas;
+	}
+
+	public void setPlantillaReportPropuestaCancelacionCargas(String plantillaReportPropuestaCancelacionCargas) {
+		this.plantillaReportPropuestaCancelacionCargas = plantillaReportPropuestaCancelacionCargas;
+	}
+	
 	
 }

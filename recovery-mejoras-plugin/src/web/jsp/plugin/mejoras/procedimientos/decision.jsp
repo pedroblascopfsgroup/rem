@@ -7,7 +7,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-
 	var decisionId='${decisionProcedimiento.id}';
 	arrayProcedimientos=[];
 	var procedimientoPadre='${idProcedimiento}';

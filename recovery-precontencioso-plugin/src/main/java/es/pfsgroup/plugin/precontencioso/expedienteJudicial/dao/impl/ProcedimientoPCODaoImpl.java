@@ -29,6 +29,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 
 	@Override
 	public ProcedimientoPCO getProcedimientoPcoPorIdProcedimiento(Long idProcedimiento) {
+
 		Criteria query = getSession().createCriteria(ProcedimientoPCO.class);
 
 		query.createCriteria("procedimiento", "procedimiento");

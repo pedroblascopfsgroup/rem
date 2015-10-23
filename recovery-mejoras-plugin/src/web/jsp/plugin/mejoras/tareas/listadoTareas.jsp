@@ -217,6 +217,7 @@
 				conversionOperadores();
 				tareasStore.webflow(getParametrosBusqueda());
 				tareasGrid.setTitle('${titulo}');
+				panelFiltros.getTopToolbar().setDisabled(true);
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="tareas.filtros.errores.fechasvenc" text="** La fecha desde debe ser menor a la fecha Hasta"/>')
 			}
@@ -1140,8 +1141,29 @@
 			case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTORIA:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_GESTOR:
 		    case app.subtipoTarea.CODIGO_PRECONTENCIOSO_TAREA_LETRADO:
+		    
+		    		Ext.Ajax.request({
+						url: page.resolveUrl('expedientejudicial/getEsTareaPrecontenciosoEspecial')
+						,method: 'POST'
+						,params:{
+									idTarea : rec.get('id')
+								}
+						,success: function (result, request){
+													
+							var isEspecial = Ext.util.JSON.decode(result.responseText);
+							
+							if(isEspecial.okko){
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'precontencioso');
+							}else{
+								app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
+							}
+						
+						}
+						,error: function(){
+			
+						}       				
+					});
 		
-				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'), 'tareas');
 			break;
 			
 			
@@ -1482,6 +1504,11 @@
 	Ext.onReady(function(){
 		tareasStore.fireEvent('beforeload');
 	});
+	
+	tareasStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
+	
 	
 	panelFiltros.collapse(true);
 		

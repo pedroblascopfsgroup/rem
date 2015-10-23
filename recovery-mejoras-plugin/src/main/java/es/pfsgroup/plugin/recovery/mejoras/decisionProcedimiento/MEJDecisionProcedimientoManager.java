@@ -705,7 +705,7 @@ public class MEJDecisionProcedimientoManager extends
 				genericDao.save(MEJProcedimiento.class, p);
 
 				// Paralizamos el BPM
-				integracionBpmService.paralizarBPM(p);
+				integracionBpmService.paralizarBPM(p, dp.getFechaParalizacion());
 			}
 		}
 		

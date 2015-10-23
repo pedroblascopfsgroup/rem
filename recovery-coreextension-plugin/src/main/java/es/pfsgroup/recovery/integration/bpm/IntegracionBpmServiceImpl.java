@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.integration.bpm;
 
+import java.util.Date;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -23,6 +24,7 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.model.MEJRecurso;
+import es.pfsgroup.recovery.integration.bpm.message.ParalizarBPMMsg;
 
 @Service
 public class IntegracionBpmServiceImpl implements IntegracionBpmService {
@@ -220,22 +222,23 @@ public class IntegracionBpmServiceImpl implements IntegracionBpmService {
 	}
 
 	@Override
-	public void paralizarBPM(final Procedimiento procedimiento) {
+	public void paralizarBPM(Procedimiento procedimiento, Date fechaActivacion) {
     	if (!isActive() || notificacionGateway==null) {
 			return;
 		}
     	logger.info("[INTEGRACION] Preparando para envío paralizarBPM...");
+    	final ParalizarBPMMsg mensaje = new ParalizarBPMMsg(procedimiento, fechaActivacion);
     	if (isTransactional()) {
 	    	TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 	    		@Override
 	    		public void beforeCommit(boolean readOnly) {
 	    			super.beforeCommit(readOnly);
-	    			notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
+	    			notificacionGateway.paralizarBPM(mensaje, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
 	    			logger.info("[INTEGRACION] Enviado paralizarBPM!!!");
 	    		}
 			});
     	} else {
-    		notificacionGateway.finalizarBPM(procedimiento, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
+    		notificacionGateway.paralizarBPM(mensaje, TIPO_PARALIZAR_BPM, DbIdContextHolder.getDbSchema());
 			logger.info("[INTEGRACION] Enviado paralizarBPM!!!");
     	}
     	

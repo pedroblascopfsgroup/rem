@@ -315,7 +315,6 @@ app.creaLabel = function(label, value, config){
 	fwk.js.copyProperties(cfg, config, ['labelWidth','labelStyle']);
 
 	var staticTextField =  new Ext.ux.form.StaticTextField(cfg);
-	//staticTextField.autoHeight = true;
 	return staticTextField;
 };
 

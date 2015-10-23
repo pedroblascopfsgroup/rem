@@ -680,14 +680,9 @@ public class MEJDecisionProcedimientoManager extends
                 // FINALIZADO:Parar definitivamente el procedimiento origen
                 try {
                 	
-                	//HibernateUtils.flush();
-                	//p = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", dp.getProcedimiento().getId()));
-                	//DDEstadoProcedimiento estadoCerrado = genericDao.get(DDEstadoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO));
-                	//p.setEstadoProcedimiento(estadoCerrado);
-                	//genericDao.save(MEJProcedimiento.class, p);
-                	//HibernateUtils.flush();
-                	
                     jbpmUtil.finalizarProcedimiento(p.getId());
+                    p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
+            				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
 
                 	// Integración con mensajería
                     integracionBpmService.finalizarBPM(p);

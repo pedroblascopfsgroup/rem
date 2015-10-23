@@ -7,7 +7,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-
 	var decisionId='${decisionProcedimiento.id}';
 	arrayProcedimientos=[];
 	var procedimientoPadre='${idProcedimiento}';
@@ -956,17 +955,17 @@
 			if(comboCausasFinalizar.getValue()){
 				return true;
 			}else{
-				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisión." />');
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisiï¿½n." />');
 			}
 		} else if(chkParalizarOrigen.getValue()){
 			if(comboCausasParalizar.getValue()){
 				if(fechaHasta.getValue()){
 					return true;
 				}else{
-					Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.fechaNula" text="**Debe seleccionar una fecha de fin de paralización." />');
+					Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.fechaNula" text="**Debe seleccionar una fecha de fin de paralizaciï¿½n." />');
 				}
 			}else{
-				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisión." />');
+				Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.causaNula" text="**Debe seleccionar una causa para la decisiï¿½n." />');
 			}
 		} else if(procedimientoStore.getCount() >= 1){
 			return true;
@@ -1122,23 +1121,18 @@
 	};
 	var bbar = []
 	
-		if(!modoConsulta)
-	{
-		bbar.push(btnAceptarPropuesta);
-		if(esSupervisor){
-			
-			
-			
-			if((!esGestor &&	!${decisionProcedimiento.id==null}) || (esGestor && esSupervisor))
-				bbar.push(btnRechazar);
-		}
-		else {
-			if (decisionId == ''){
-				bbar.push(btnProponer);
-				btnProponer.disable();
-				comprobarPermitidoAceptar = true;
+		if(!modoConsulta){		
+			bbar.push(btnAceptarPropuesta);
+			if(esSupervisor){					
+				if (!decisionId == '')
+					bbar.push(btnRechazar);
+			}else {
+				if (decisionId == ''){
+					bbar.push(btnProponer);
+					btnProponer.disable();
+					comprobarPermitidoAceptar = true;
+				}
 			}
-		}
 	}
 	
 	bbar.push(btnCancelar);

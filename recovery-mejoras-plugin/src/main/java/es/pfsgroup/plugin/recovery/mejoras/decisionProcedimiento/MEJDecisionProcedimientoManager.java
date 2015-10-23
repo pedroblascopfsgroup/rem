@@ -547,7 +547,6 @@ public class MEJDecisionProcedimientoManager extends
 	@Override
 	public void aceptarPropuesta(
 			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
-	    //TODO Simplificar este m�todo, demasiado complejo
 		boolean esGestor = !proxyFactory.proxy(ProcedimientoApi.class)
 				.esSupervisor(dtoDecisionProcedimiento.getIdProcedimiento());
 		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
@@ -559,6 +558,13 @@ public class MEJDecisionProcedimientoManager extends
 						"S�lo el supervisor puede finalizar o paralizar el origen");
 			}
 		}
+		this.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
+	}
+
+	@Transactional(readOnly = false)
+	public void aceptarPropuestaSinControl(
+			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
+	    //TODO Simplificar este m�todo, demasiado complejo
 
 		DecisionProcedimiento decisionPropuesta = null;
         if (dtoDecisionProcedimiento.getDecisionProcedimiento().getId() != null) {

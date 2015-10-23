@@ -16,6 +16,9 @@
 		<property name="codigoFaseComun">
 			<value>H009</value>
 		</property>
+		<property name="generarArchivoBurofax">
+			<value>true</value>
+		</property>
 	</bean>  
 	
 		<!-- Implementaciones por defecto-->

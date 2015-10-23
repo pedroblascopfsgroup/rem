@@ -89,5 +89,4 @@ public interface TurnadoDespachosManager {
 	 * @param id
 	 */
 	void limpiarTurnadoTodosLosDespachos(Long id);
-	
 }

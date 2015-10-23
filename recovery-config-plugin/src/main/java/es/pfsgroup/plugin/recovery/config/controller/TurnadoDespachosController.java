@@ -3,33 +3,37 @@ package es.pfsgroup.plugin.recovery.config.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.message.Message;
+import org.springframework.binding.message.Severity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.devon.view.JSPView;
+import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.devon.validation.ErrorMessage;
+import es.capgemini.devon.validation.ErrorMessageUtils;
+import es.capgemini.devon.validation.ValidationException;
+import es.capgemini.devon.web.fileupload.FileUpload;
 import es.capgemini.pfs.despachoExterno.model.DespachoAmbitoActuacion;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
@@ -41,6 +45,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcelInformeSubasta;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaDespachoValidacionDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
@@ -56,20 +61,23 @@ public class TurnadoDespachosController {
 	private static final String VIEW_ESQUEMA_TURNADO_BUSCADOR = "plugin/config/turnadodespachos/buscadorEsquemas";
 	private static final String VIEW_ESQUEMA_TURNADO_SEARCH = "plugin/config/turnadodespachos/busquedaEsquemasJSON";
 	private static final String VIEW_ESQUEMA_TURNADO_EDITAR = "plugin/config/turnadodespachos/editarEsquema";
-	//private static final String VIEW_ESQUEMA_TURNADO_GUARDAR_JSON = "plugin/config/turnadodespachos/editarEsquema";
 	private static final String VIEW_LETRADO_ESQUEMA_TURNADO_GET = "plugin/config/turnadodespachos/esquemaTurnadoJSON";
 	private static final String VIEW_ESQUEMA_TURNADO_LETRADO = "plugin/config/turnadodespachos/editarEsquemaLetrado";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
+	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	
 	private static final String VIEW_DEFAULT = "default";
 
 	private static final String KEY_DATA = "data";
 	
+	private static final String CODIGO_ERROR_TIPO_FICHERO = "plugin.config.esquematurnado.carga.validacion.errorTipoFichero";
+		
 	@Resource
 	private Properties appProperties;
 	
 	@Autowired
 	private MessageSource messageSource;
+	
 	
 	@Autowired
 	private TurnadoDespachosManager turnadoDespachosManager;
@@ -83,7 +91,10 @@ public class TurnadoDespachosController {
 	
     @Autowired
     private UsuarioManager usuarioManager;
-	
+    
+    @Autowired
+    private FileUpload fileUpload;
+    
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String ventanaBusquedaEsquemas(ModelMap map) {
@@ -245,7 +256,8 @@ public class TurnadoDespachosController {
 		return null;
 	}
 	
-	public String descargarConfiguracionDespachos(Model model) 
+	@RequestMapping
+    public String descargarConfiguracionDespachos(Model model) 
 	{
 		List<String> cabeceras=new ArrayList<String>();
 		cabeceras.add("IDENTIFICACIÓN DEL DESPACHO");
@@ -253,7 +265,7 @@ public class TurnadoDespachosController {
 		cabeceras.add("TIPO IMPORTE - LITIGIOS");
 		cabeceras.add("TIPO IMPORTE - CONCURSOS");
 		cabeceras.add("TIPO CALIDAD - LITIGIOS");
-		cabeceras.add("TIPO CALIDAD - CONCURSAL");
+		cabeceras.add("TIPO CALIDAD - CONCURSOS");
 		
 		List<List<String>> valores = new ArrayList<List<String>>();
 		List<String> fila = null;
@@ -295,5 +307,73 @@ public class TurnadoDespachosController {
         model.addAttribute("fileItem",excelFileItem);
 		return JSP_DOWNLOAD_FILE;
 	}
-
+	
+	@RequestMapping
+    public String cargarConfiguracionDespachos(Model model,
+			HttpServletRequest request) 
+	{
+		String resultado = "";
+		try {
+			WebFileItem uploadForm = fileUpload.fileUpload(request);
+			
+			if (uploadForm != null) {
+	
+				FileItem fileItem = uploadForm.getFileItem();
+				
+				// Se comprueba el tipo de fichero
+				if (!fileItem.getContentType().equals("application/vnd.ms-excel")){
+					List<Message> mensajes = new ArrayList<Message>();
+					mensajes.add(new Message(this, messageSource.getMessage(CODIGO_ERROR_TIPO_FICHERO, new Object[] {}, MessageUtils.DEFAULT_LOCALE), Severity.ERROR));
+					throw new ValidationException(ErrorMessageUtils.convertMessages(mensajes));					
+				}
+				else {
+				
+					// Se obtiene la Excel y se crea un DTO para que lo valide y obtenga los registros
+					HojaExcel exc = new HojaExcel();
+					exc.setFile(fileItem.getFile());
+					exc.setRuta(fileItem.getFile().getAbsolutePath());
+					
+					EsquemaTurnado esquemaVigente = turnadoDespachosManager.getEsquemaVigente();
+					
+					EsquemaDespachoValidacionDto dto = new EsquemaDespachoValidacionDto();
+					dto.setEsquema(esquemaVigente);
+					dto.validarFichero(exc);
+				
+					// Se guardan los registros
+					for(EsquemaTurnadoDespachoDto esquemaTurnadoDespachoDto : dto.getListaRegistros()) {
+						
+						List<DespachoAmbitoActuacion> listaAmbitoActuacion = despachoExternoManager.getAmbitoGeograficoDespacho(esquemaTurnadoDespachoDto.getId());
+						List<String> listaComunidadesDespacho = new LinkedList<String>();
+						List<String> listaProvinciasDespacho = new LinkedList<String>();
+						
+						for(DespachoAmbitoActuacion ambitoActuacion : listaAmbitoActuacion) {
+							
+							if(ambitoActuacion.getComunidad() != null) {
+								listaComunidadesDespacho.add(ambitoActuacion.getComunidad().getCodigo());
+							}
+							
+							if(ambitoActuacion.getProvincia() != null) {
+								listaProvinciasDespacho.add(ambitoActuacion.getProvincia().getCodigo());
+							}
+						}
+						esquemaTurnadoDespachoDto.setListaComunidades(StringUtils.join(listaComunidadesDespacho.toArray(), ","));
+						esquemaTurnadoDespachoDto.setListaProvincias(StringUtils.join(listaProvinciasDespacho.toArray(), ","));							
+						
+						despachoExternoManager.saveEsquemaDespacho(esquemaTurnadoDespachoDto);
+					}
+					
+					resultado = "ok";
+				}
+			}		
+		}
+		catch(ValidationException ve) {			
+			for(ErrorMessage message : ve.getMessages()) {
+				resultado += message.getText() + " ";
+			}
+		}
+      		
+		model.addAttribute("okko", resultado);
+		
+		return OK_KO_RESPUESTA_JSON;
+	}		
 }

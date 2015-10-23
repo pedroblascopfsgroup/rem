@@ -248,7 +248,7 @@
 		text:'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.descargar" text="**Descargar configuración de letrados" />'
 		,iconCls : 'icon_cambio_gestor'
 		,handler:function(){
-			var flow='/pfs/turnadodespachos/descargarConfiguracionDespachos';
+			var flow='/${appProperties.appName}/turnadodespachos/descargarConfiguracionDespachos';
 		    var params = "";
 		    	
 		    app.openBrowserWindow(flow,params);
@@ -260,22 +260,91 @@
 		text:'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar" text="**Cargar configuración de letrados" />'
 		,iconCls : 'icon_cambio_gestor'
 		,handler:function(){
-           	page.webflow({
-      			flow:'turnadodespachos/cargarConfiguracionLetrados'
-      			,params: ''
-      			,success: function(){
-           		   page.fireEvent(app.event.DONE);
-           		   esquemasStore.webflow();
-           		}	
-      		});
-		}
+			var upload = new Ext.FormPanel({
+				fileUpload: true
+			    ,height: 55
+			    ,autoWidth: true
+			    ,bodyStyle: 'padding: 10px 10px 0 10px;'
+			    ,defaults: {
+			    	allowBlank: false
+			        ,msgTarget: 'side'
+					,height:45
+				}
+			    ,items: [{
+					xtype: 'fileuploadfield'
+					,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
+					,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
+					,name: 'file'
+					,path:'root'
+					,buttonText: ''
+					,buttonCfg: {
+					    iconCls: 'icon_mas'
+					}
+				    ,bodyStyle: 'width:50px;'
+			   	}
+			    ,{
+			    	xtype: 'hidden', name:'id', value:0
+			    }]
+			    ,buttons: [{
+					text: 'Subir',
+           			handler: function(){
+           				var params = "";            	
+                		if(upload.getForm().isValid()){
+	                		upload.getForm().submit({
+	                    		url:'/${appProperties.appName}/turnadodespachos/cargarConfiguracionDespachos.htm'
+	                    		,waitMsg: '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.procesando" text="**Procesando la información..." />'
+	                    		,params:params
+	                    		,success: function(upload, o){
+	                    			debugger;
+	                    			
+	                    			var resultado = Ext.decode(o.response.responseText);
+								
+									if (resultado.okko != "ok") {
+	                    				Ext.Msg.alert('<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion" text="*** Carga de configuración de letrados" />',
+	                    				'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion.error" text="** Se ha producido algun error al procesar el fichero de configuración" /><br/><br/>' + resultado.okko);
+	                    			} 
+	                    			else {
+	                    				Ext.Msg.alert('<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion" text="*** Carga de configuración de letrados" />',
+	                    				'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion.ok" text="*** Se ha procesado correctamente la información." />');
+	                    			}
+	                    			win.close();
+	                    		}
+                			});
+               			}
+          			}
+      			},
+			    {
+			    	text: 'Cancelar',
+				    handler: function(){
+				    	win.close();
+					}
+				}]
+			});
+	
+			var win =new Ext.Window({
+			         width:400
+					,minWidth:400
+			        ,height:125
+					,minHeight:125
+			        ,layout:'fit'
+			        ,border:false
+			        ,closable:true
+			        ,title:'<s:message code="adjuntos.nuevo" text="**Agregar fichero" />'
+					,iconCls:'icon-upload'
+					,items:[upload]
+					,modal : true
+			});
+			win.show();
+	}};
+	
+	var menuAcciones = {
+		text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.acciones" text="**Acciones" />'
+		,menu : arrayAcciones
 	};
-	var menuAcciones = 
-		{
-			text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.acciones" text="**Acciones" />'
-			,menu : arrayAcciones
-		};
 	</sec:authorize>
+
+	btnBorrar.setDisabled(true);
+	btnActivar.setDisabled(true);
 	
 	var esquema = Ext.data.Record.create([
 		 {name:'id'}

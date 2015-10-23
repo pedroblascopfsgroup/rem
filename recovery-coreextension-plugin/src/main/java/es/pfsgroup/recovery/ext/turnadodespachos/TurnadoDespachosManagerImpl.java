@@ -265,5 +265,4 @@ public class TurnadoDespachosManagerImpl implements TurnadoDespachosManager {
 	public void limpiarTurnadoTodosLosDespachos(Long id) {
 		esquemaTurnadoDao.limpiarTurnadoTodosLosDespachos();
 	}
-	
 }

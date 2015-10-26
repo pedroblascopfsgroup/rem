@@ -79,7 +79,7 @@ public class MEJAsuntosManager {
 	 * 
 	 * @param id
 	 *            del objeto AdjuntoExpediente
-	 * @return el objeto AdjuntoExpediente cuyo id coincide con el par�metro que
+	 * @return el objeto AdjuntoExpediente cuyo id coincide con el parámetro que
 	 *         se le pasa
 	 * 
 	 */
@@ -94,8 +94,8 @@ public class MEJAsuntosManager {
 	 * 
 	 * @param id
 	 *            del objeto AdjuntoContrato
-	 * @return el objeto AdjuntoContrato cuyo id coincide con el par�metro que
-	 *         se le pasa como par�metro
+	 * @return el objeto AdjuntoContrato cuyo id coincide con el parámetro que
+	 *         se le pasa como parámetro
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GET_ADJUNTO_CONTRATO)
 	public AdjuntoContrato getAdjuntoContratoById(Long id) {
@@ -147,7 +147,7 @@ public class MEJAsuntosManager {
 	/**
 	 * 
 	 * @param dto
-	 *            de edici�n de adjuntos guarda lo la descripci�n en el adjunto
+	 *            de edición de adjuntos guarda lo la descripción en el adjunto
 	 *            del expediente
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GUARDA_ADJUNTO_CONTRATO)
@@ -167,7 +167,7 @@ public class MEJAsuntosManager {
 	/**
 	 * 
 	 * @param dto
-	 *            de edici�n de adjuntos guarda lo la descripci�n en el adjunto
+	 *            de edición de adjuntos guarda lo la descripción en el adjunto
 	 *            de la persona
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GUARDA_ADJUNTO_PERSONA)
@@ -187,7 +187,7 @@ public class MEJAsuntosManager {
 	/**
 	 * 
 	 * @param dto
-	 *            de edici�n de adjuntos de expedientes guarda lo la descripci�n
+	 *            de edición de adjuntos de expedientes guarda lo la descripción
 	 *            en el adjunto del expediente
 	 */
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_GUARDA_ADJUNTO_EXPEDIENTE)
@@ -304,7 +304,7 @@ public class MEJAsuntosManager {
 								SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR);
 				tarea.setSubtipoTarea(subtipoTarea);
 				tarea.setDescripcionTarea(tarea.getDescripcionTarea().replace(
-						"Aceptaci�n", "Devoluci�n"));
+						"Aceptación", "Devolución"));
 				executor.execute(
 						ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE,
 						tarea);
@@ -316,7 +316,7 @@ public class MEJAsuntosManager {
 								SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR);
 				tarea.setSubtipoTarea(subtipoTarea);
 				tarea.setDescripcionTarea(tarea.getDescripcionTarea().replace(
-						"Devoluci�n", "Aceptaci�n"));
+						"Devolución", "Aceptación"));
 				executor.execute(
 						ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE,
 						tarea);

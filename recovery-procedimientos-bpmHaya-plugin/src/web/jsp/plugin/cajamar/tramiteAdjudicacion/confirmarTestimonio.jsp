@@ -52,26 +52,8 @@ var offset=0;
 <c:if test="${form.errorValidacion!=null}">
 	offset=1;
 </c:if>
-var comboSubsanacion = items[2 + offset];
-var comboAdicional = items[3 + offset];
-var fechaLimite = items[4 + offset];
-var comboOcupantes = items[5 + offset];
-comboSubsanacion.on('select', function(){
-	//Borramos todos los combos dependientes ante cualquier cambio
-	comboAdicional.setValue('');
-	fechaLimite.setValue('');
-	comboOcupantes.setValue('');
-	if(comboSubsanacion.getValue() == '01') {//si
-		comboAdicional.setDisabled(true);
-		fechaLimite.setDisabled(true);
-		comboOcupantes.setDisabled(true);
-	}
-	else if(comboSubsanacion.getValue() == '02') {//no
-		comboAdicional.setDisabled(false);
-		fechaLimite.setDisabled(false);
-		comboOcupantes.setDisabled(false);
-	}
-});
+var comboAdicional = items[4 + offset];
+var fechaLimite = items[5 + offset];
 
 comboAdicional.on('select', function(){
 	//Borramos todos los combos dependientes ante cualquier cambio

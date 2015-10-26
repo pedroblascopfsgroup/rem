@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteSubasta" width="2901" height="2001">
-  <node name="Inicio" x="-121" y="134" width="132" height="36">
+<root-container name="hcj_tramiteSubasta" width="2897" height="2001">
+  <node name="Inicio" x="-174" y="186" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -539,13 +539,4 @@
   <node name="Fin3" x="1939" y="183" width="132" height="36"/>
   <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
   <node name="Fin5" x="-500" y="879" width="132" height="36"/>
-  <node name="H002_ComprobarProcedeSubastaSuspendida" x="-223" y="242" width="336" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-481" h1="1" w2="-490" h2="-1276"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
 </root-container>

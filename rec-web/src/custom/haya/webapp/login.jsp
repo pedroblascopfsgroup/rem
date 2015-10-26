@@ -1,53 +1,65 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<%@ page import="org.springframework.security.ui.AbstractProcessingFilter"%>
-<%@ page import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter"%>
+<%@ page
+	import="org.springframework.security.ui.AbstractProcessingFilter"%>
+<%@ page
+	import="org.springframework.security.ui.webapp.AuthenticationProcessingFilter"%>
 <%@ page import="org.springframework.security.AuthenticationException"%>
 
 <html>
 <head>
 
-	<link rel="shortcut icon" href="img/favicon.ico">
- 	<link rel="stylesheet" type="text/css" href="js/fwk/ext3.4/resources/css/ext-all.css?devon_version=${appProperties.jsVersion}" />
-	<link rel="stylesheet" type="text/css" href="css/fwk/<c:out value="${theme}" />/<c:out value="${theme}" />.css?devon_version=${appProperties.jsVersion}" />
-    <c:if test="${appProperties.jsDebug}">
-		<script type="text/javascript" src="js/fwk/ext3.4/adapter/ext/ext-base.js?devon_version=${appProperties.jsVersion}"></script>
-	    <script type="text/javascript" src="js/fwk/ext3.4/ext-all-debug.js?devon_version=${appProperties.jsVersion}"></script>
-	    <script type="text/javascript" src="js/fwk/ext3.4/debug-min.js?devon_version=${appProperties.jsVersion}"></script>
-    </c:if>
-	<c:if test="${!appProperties.jsDebug}">
-	    <script type="text/javascript" src="js/fwk/ext3.4/adapter/ext/ext-base.js?devon_version=${appProperties.jsVersion}"></script>
-	    <script type="text/javascript" src="js/fwk/ext3.4/ext-all.js?devon_version=${appProperties.jsVersion}"></script>
-	</c:if>
-	
-	<script type="text/javascript" src="js/fwk/ext.ux/StaticTextField.js?devon_version=${appProperties.jsVersion}"></script>
-    <script type="text/javascript" src="js/fwk/ext3.4/locale/ext-lang-es.js?devon_version=${appProperties.jsVersion}"></script>
+<link rel="shortcut icon" href="img/favicon.ico">
+<link rel="stylesheet" type="text/css"
+	href="js/fwk/ext3.4/resources/css/ext-all.css?devon_version=${appProperties.jsVersion}" />
+<link rel="stylesheet" type="text/css"
+	href="css/fwk/<c:out value="${theme}" />/<c:out value="${theme}" />.css?devon_version=${appProperties.jsVersion}" />
+<c:if test="${appProperties.jsDebug}">
+	<script type="text/javascript"
+		src="js/fwk/ext3.4/adapter/ext/ext-base.js?devon_version=${appProperties.jsVersion}"></script>
+	<script type="text/javascript"
+		src="js/fwk/ext3.4/ext-all-debug.js?devon_version=${appProperties.jsVersion}"></script>
+	<script type="text/javascript"
+		src="js/fwk/ext3.4/debug-min.js?devon_version=${appProperties.jsVersion}"></script>
+</c:if>
+<c:if test="${!appProperties.jsDebug}">
+	<script type="text/javascript"
+		src="js/fwk/ext3.4/adapter/ext/ext-base.js?devon_version=${appProperties.jsVersion}"></script>
+	<script type="text/javascript"
+		src="js/fwk/ext3.4/ext-all.js?devon_version=${appProperties.jsVersion}"></script>
+</c:if>
+
+<script type="text/javascript"
+	src="js/fwk/ext.ux/StaticTextField.js?devon_version=${appProperties.jsVersion}"></script>
+<script type="text/javascript"
+	src="js/fwk/ext3.4/locale/ext-lang-es.js?devon_version=${appProperties.jsVersion}"></script>
 
 <style>
-	body {
-		background: white url("img/loginBackground.jpg");
-        margin : 0px;
-        padding : 0px;
-        font-family : arial;
+body {
+	background: white url("img/loginBackground.jpg");
+	margin: 0px;
+	padding: 0px;
+	font-family: arial;
+}
 
-	}
-    h1 {
-        background : white;
-        border-bottom : 1px solid #ccc;
-        padding : 5px;
-color : #666;
-    }
+h1 {
+	background: white;
+	border-bottom: 1px solid #ccc;
+	padding: 5px;
+	color: #666;
+}
 </style>
 </head>
 <body>
-<h1>
-<img width="100px" src="img/pfs-logo.png" style="margin-right:30px;">
-<img width="280px" src="img/recovery-logo.png">
-<span style="float:right;margin-top:60px;margin-right:2px;">Version 9.1 (${version})</span>
-</h1>
+	<h1>
+		<img width="100px" src="img/pfs-logo.png" style="margin-right: 30px;">
+		<img width="280px" src="img/recovery-logo.png"> <span
+			style="float: right; margin-top: 60px; margin-right: 2px;">Version
+			9.1 (${version})</span>
+	</h1>
 
-<script>
+	<script>
 
 var cambiarDatosWindow;
 var loginWindow;
@@ -57,15 +69,11 @@ var usuario;
 
 
 var olvidoPass = function(){
-   	webflow({
-           flow:'public/recuperarPassword.htm'
-   	    ,params: {username:usuario.getValue()} 
-           ,success: function(data, config) {
-               Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />',data.respuesta.respuesta);
-       }});
+	loginWindow.hide();
+	var mensaje = '<s:message code="login.contacte.administrador" text="**Contacte con el administrador de su sistema" />';
+	Ext.Msg.alert('Error',mensaje,function(){
+		loginWindow.show();});	
 }
-
-
 
 var crearWindow = function(usuario) {
     var datosUsuarioPanel = createDatosUsuarioPanel(usuario);
@@ -198,8 +206,8 @@ else{
 
 
 		var labelOlvidoPass = new Ext.form.Label({
-			html : '<s:message code="login.olvido_password" text="**Se te olvido?" /> <a href="#" onmousedown="olvidoPass();">Pulse aquí</a>'
-			,style:'padding:0px;margin-top:0px;margin-bottom:0px;margin-left:150px;'			         
+			html : '<s:message code="login.olvido_password" text="**Se te olvido?" /> <a href="#" onmousedown="olvidoPass();">Pulse aqu&iacute</a>'
+			,style:'padding:0px;margin-top:0px;margin-bottom:0px;margin-left:110px;'			         
 		}); 
 
 	

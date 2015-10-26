@@ -25,6 +25,7 @@
 				<entry key="SANEAMIENTO" value="H008"/>
 				<entry key="POSESION" value="H015"/>
 				<entry key="GESTION-LLAVES" value="H040"/>
+				<entry key="MORATORIA" value="H011"/>
 			</map>
 		</property>
 		<property name="tareasCierreDeuda"> 
@@ -85,10 +86,34 @@
 				<value>H024</value>
 		</property>
 		
+		<property name="codigoRegistrarSolicitudMoratoria">
+				<value>H011_RegistrarSolicitudMoratoria</value>
+		</property>
+		
+		<property name="fechaSolicitudRegistrarSolicitudMoratoria">
+				<value>fechaSolicitud</value>
+		</property>
+		
+		<property name="codigoRegistrarResolucionMoratoria">
+				<value>H011_RegistrarResolucion</value>
+		</property>
+		
+		<property name="fechaFinMoratoriaRegistrarResolucion">
+				<value>fechaFinMoratoria</value>
+		</property>
+		
+		<property name="resultadoMoratoria">
+				<value>comboFavDesf</value>
+		</property>
+		
+		
 		<property name="codigosTareasSenyalamiento">
 			<list>
 				<value>H002_SenyalamientoSubasta</value>
 			</list>
+		</property>
+		<property name = "plantillaReportPropuestaCancelacionCargas">
+			<value>reportPropuestaCancelacionCargasHaya.jrxml</value>
 		</property>
 	</bean>
 
@@ -138,6 +163,12 @@
 						<value>816</value>
 						<value>817</value>
 						<value>818</value>
+						<value>826</value>
+						<value>827</value>
+						<value>828</value>
+						<value>829</value>
+						<value>849</value>
+						<value>850</value>
 						<value>1001</value>
 						<value>1011</value>
 						<value>1021</value>
@@ -182,6 +213,17 @@
 				<value>H015</value>
 				<value>H040</value>
 			</list>
+		</property>
+		<property name="tiposGestorGestoria">
+			<set>
+				<value>GGADJ</value>
+				<value>GGSAN</value>
+			</set>
+		</property>
+		<property name="tiposGestorProcurador">
+			<set>
+				<value>PROC</value>
+			</set>
 		</property>
 	</bean>
 	

@@ -8,11 +8,18 @@
 var createDatosGeneralesTab=function(){
 	
 	//Combo Estado Gestión
+	var estadosGestion = <app:dict value="${estadosGestion}" blankElement="true" blankElementValue="" blankElementText="---" />;
+	var optionsEstadoGestionStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : estadosGestion
+	});
+	
 	var comboEstadoGestion = new Ext.form.ComboBox({
-<%-- 		store: '' --%>
-<%-- 		,displayField:'descripcion' --%>
-<%-- 		,valueField:'codigo' --%>
-		mode:'local'
+		store: optionsEstadoGestionStore
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode:'local'
 		,style:'margin:0px'
 		,width:170
 		,triggerAction:'all'
@@ -20,11 +27,19 @@ var createDatosGeneralesTab=function(){
 	});
 	
 	//Combo Tipo persona
+	var tipoPersonas = <app:dict value="${tipoPersonas}" blankElement="false" />;
+	
+	var optionsTipoPersonaStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : tipoPersonas
+	});
+	
 	var comboTipoPersona = new Ext.form.ComboBox({
-	<%-- 		store: '' --%>
-	<%-- 		,displayField:'descripcion' --%>
-	<%-- 		,valueField:'codigo' --%>
-		mode:'local'
+		store: optionsTipoPersonaStore
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode:'local'
 		,style:'margin:0px'
 		,triggerAction:'all'
 		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.tipoPersona" text="**Tipo Persona"/>'
@@ -37,11 +52,22 @@ var createDatosGeneralesTab=function(){
 	var mmDeudaIrregular = app.creaMinMaxMoneda('<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.deudaIrregular" text="**Deuda Irregular" />', 'deuda',{width : 80, labelWidth:105});
 	
 	//Combo Agrupar por
+<%-- 	var agruparPor = <app:dict value="${agruparPor}" blankElement="false" />; --%>
+	
+ 	var optionsAgruparPorStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+ 	       ,data : [
+ 	       			{"codigo":"EXP", "descripcion":"Expediente"}
+ 	       			,{"codigo":"CTO", "descripcion":"Contrato"}
+ 	       	
+ 	       ]
+ 	}); 
+	
 	var comboAgruparPor = new Ext.form.ComboBox({
-	<%-- 		store: '' --%>
-	<%-- 		,displayField:'descripcion' --%>
-	<%-- 		,valueField:'codigo' --%>
-		mode:'local'
+ 		store: optionsAgruparPorStore 
+		,displayField:'descripcion' 
+		,valueField:'codigo' 
+		,mode:'local'
 		,style:'margin:0px'
 		,triggerAction:'all'
 		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'

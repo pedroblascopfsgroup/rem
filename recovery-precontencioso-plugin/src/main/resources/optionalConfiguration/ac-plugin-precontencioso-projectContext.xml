@@ -18,6 +18,7 @@
 		</property>
 		<property name="recovery">
 			<value>BANKIA</value>
+		</property>
 		<property name="generarArchivoBurofax">
 			<value>true</value>
 		</property>

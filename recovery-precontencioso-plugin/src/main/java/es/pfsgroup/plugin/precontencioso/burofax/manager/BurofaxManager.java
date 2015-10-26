@@ -36,6 +36,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dao.BurofaxDao;
 import es.pfsgroup.plugin.precontencioso.burofax.model.BurofaxEnvioIntegracionPCO;
@@ -71,6 +72,9 @@ public class BurofaxManager implements BurofaxApi {
 	
 	@Autowired
 	private GENINFInformesManager informesManager;
+	
+	@Autowired
+	PrecontenciosoProjectContext precontenciosoContext;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -452,104 +456,14 @@ public class BurofaxManager implements BurofaxApi {
 				envioIntegracion.setFechaAcuse(new Date());
 				envioIntegracion.setCertificado(certificado);
 				
-				String nombre="";
-				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getNombre())){
-					nombre=envioBurofax.getBurofax().getDemandado().getNombre();
-				}
-				String apellido1="";
-				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido1())){
-					apellido1=envioBurofax.getBurofax().getDemandado().getApellido1();
-				}
-				String apellido2="";
-				if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido2())){
-					apellido1=envioBurofax.getBurofax().getDemandado().getApellido2();
-				}
-				String domicilio=envioBurofax.getDireccion().toString();
-				//Creamos un archivo docx a partir de texto html
-				/*
-				InputStream is=informesManager.createDocxFileFromHtmlText(
-						"<table width='60%' style='font-size:12px'>"
-						+ "<tr>"
-						+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
-						+ "<td width='20' style='border-style: hidden'></td>"
-						+ "<td width='40' style='border:1px solid black'>"+nombre.concat(" "+apellido1).concat(" "+apellido2)+"<br />"+domicilio+"</td>"
-						+ "</tr>"
-						+ "</table><br />"
-						+ "<table width='60%' style='font-size:12px'>"
-						+ "<tr>"
-						+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
-						+ "</tr>"
-						+ "</table>",
-						envioBurofax.getBurofax().getDemandado().getApellidoNombre());
-				
-
-				String nombreFichero=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
-				
-				try {
-					HashMap<String, String> mapaVariables=new HashMap<String, String>();
-					
-					if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getAplicativoOrigen())){
-						mapaVariables.put("origenContrato",envioBurofax.getBurofax().getContrato().getAplicativoOrigen().getDescripcion());
-					}
-					else{
-						mapaVariables.put("origenContrato","[ERROR - No existe valor]");
-					}
-					if(!Checks.esNulo(envioBurofax.getBurofax().getContrato().getNroContratoFormat())){
-						mapaVariables.put("numeroContrato", envioBurofax.getBurofax().getContrato().getNroContratoFormat());
-					}
-					else{
-						mapaVariables.put("numeroContrato","[ERROR - No existe valor]");
-					}
-					if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento())){
-						SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
-						mapaVariables.put("fechaPosicionVencida",fechaFormat.format(envioBurofax.getBurofax().getContrato().getFirstMovimiento().getFechaPosVencida()));
-					}
-					else{
-						mapaVariables.put("fechaPosicionVencida","[ERROR - No existe valor]");
-					}
-					if(!Checks.esNulo(envioBurofax.getBurofax().getTipoIntervencion())){
-						mapaVariables.put("tipoIntervencion",envioBurofax.getBurofax().getTipoIntervencion().getDescripcion());
-					}
-					else{
-						mapaVariables.put("tipoIntervencion","[ERROR - No existe valor]");
-					}
-					if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getEntidadOrigen())){
-						mapaVariables.put("entidadOrigen",envioBurofax.getBurofax().getContrato().getEntidadOrigen());
-					}
-					else{
-						mapaVariables.put("entidadOrigen","[ERROR - No existe valor]");
-					}
-					
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "contrato.id", envioBurofax.getBurofax().getContrato().getId());
-					LiquidacionPCO liquidacion = genericDao.get(LiquidacionPCO.class, filtro);
-					
-					if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getFechaConfirmacion())){
-						SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
-						mapaVariables.put("fechaLiquidacion",fechaFormat.format(liquidacion.getFechaConfirmacion()));
-					}
-					else{
-						mapaVariables.put("fechaLiquidacion","[ERROR - No existe valor]");
-					}
-					
-					if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getTotal())){
-						mapaVariables.put("totalLiq",NumberFormat.getCurrencyInstance(new Locale("es","ES")).format(liquidacion.getTotal()));
-					}
-					else{
-						mapaVariables.put("totalLiq","[ERROR - No existe valor]");
-					}
-					
-					
-					FileItem archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
+				if(precontenciosoContext.isGenerarArchivoBurofax()){
+					FileItem archivoBurofax=generarDocumentoBurofax(envioBurofax);
 					envioIntegracion.setArchivoBurofax(archivoBurofax);
-					
-			       
-				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-				*/
+				else{
+					envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
+				}
 				
-				envioIntegracion.setArchivoBurofax(new FileItem(File.createTempFile("TMP", ".log")));
 				envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
@@ -559,6 +473,108 @@ public class BurofaxManager implements BurofaxApi {
 			logger.error(e);
 		}
 		
+	}
+	
+	
+	private FileItem generarDocumentoBurofax(EnvioBurofaxPCO envioBurofax){
+		
+		FileItem archivoBurofax=null;
+		
+		try{
+		
+			String nombre="";
+			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getNombre())){
+				nombre=envioBurofax.getBurofax().getDemandado().getNombre();
+			}
+			String apellido1="";
+			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido1())){
+				apellido1=envioBurofax.getBurofax().getDemandado().getApellido1();
+			}
+			String apellido2="";
+			if(!Checks.esNulo(envioBurofax.getBurofax().getDemandado().getApellido2())){
+				apellido1=envioBurofax.getBurofax().getDemandado().getApellido2();
+			}
+			String domicilio=envioBurofax.getDireccion().toString();
+			
+			InputStream is=informesManager.createDocxFileFromHtmlText(
+					"<table width='60%' style='font-size:12px'>"
+					+ "<tr>"
+					+ "<td width='40' style='border:1px solid black'>BANKIA S.A<br />PASEO DE LA CASTELLANA, 189<br />28046 Madrid</td>"
+					+ "<td width='20' style='border-style: hidden'></td>"
+					+ "<td width='40' style='border:1px solid black'>"+nombre.concat(" "+apellido1).concat(" "+apellido2)+"<br />"+domicilio+"</td>"
+					+ "</tr>"
+					+ "</table><br />"
+					+ "<table width='60%' style='font-size:12px'>"
+					+ "<tr>"
+					+ "<td style='border:1px solid black'>"+envioBurofax.getContenidoBurofax()+"</td>"
+					+ "</tr>"
+					+ "</table>",
+					envioBurofax.getBurofax().getDemandado().getApellidoNombre());
+			
+	
+			String nombreFichero=envioBurofax.getBurofax().getDemandado().getApellidoNombre();
+		
+		
+			HashMap<String, String> mapaVariables=new HashMap<String, String>();
+			
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getAplicativoOrigen())){
+				mapaVariables.put("origenContrato",envioBurofax.getBurofax().getContrato().getAplicativoOrigen().getDescripcion());
+			}
+			else{
+				mapaVariables.put("origenContrato","[ERROR - No existe valor]");
+			}
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato().getNroContratoFormat())){
+				mapaVariables.put("numeroContrato", envioBurofax.getBurofax().getContrato().getNroContratoFormat());
+			}
+			else{
+				mapaVariables.put("numeroContrato","[ERROR - No existe valor]");
+			}
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getFirstMovimiento())){
+				SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
+				mapaVariables.put("fechaPosicionVencida",fechaFormat.format(envioBurofax.getBurofax().getContrato().getFirstMovimiento().getFechaPosVencida()));
+			}
+			else{
+				mapaVariables.put("fechaPosicionVencida","[ERROR - No existe valor]");
+			}
+			if(!Checks.esNulo(envioBurofax.getBurofax().getTipoIntervencion())){
+				mapaVariables.put("tipoIntervencion",envioBurofax.getBurofax().getTipoIntervencion().getDescripcion());
+			}
+			else{
+				mapaVariables.put("tipoIntervencion","[ERROR - No existe valor]");
+			}
+			if(!Checks.esNulo(envioBurofax.getBurofax().getContrato()) && !Checks.esNulo(envioBurofax.getBurofax().getContrato().getEntidadOrigen())){
+				mapaVariables.put("entidadOrigen",envioBurofax.getBurofax().getContrato().getEntidadOrigen());
+			}
+			else{
+				mapaVariables.put("entidadOrigen","[ERROR - No existe valor]");
+			}
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "contrato.id", envioBurofax.getBurofax().getContrato().getId());
+			LiquidacionPCO liquidacion = genericDao.get(LiquidacionPCO.class, filtro);
+			
+			if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getFechaConfirmacion())){
+				SimpleDateFormat fechaFormat = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY,MessageUtils.DEFAULT_LOCALE);
+				mapaVariables.put("fechaLiquidacion",fechaFormat.format(liquidacion.getFechaConfirmacion()));
+			}
+			else{
+				mapaVariables.put("fechaLiquidacion","[ERROR - No existe valor]");
+			}
+			
+			if(!Checks.esNulo(liquidacion) && !Checks.esNulo(liquidacion.getTotal())){
+				mapaVariables.put("totalLiq",NumberFormat.getCurrencyInstance(new Locale("es","ES")).format(liquidacion.getTotal()));
+			}
+			else{
+				mapaVariables.put("totalLiq","[ERROR - No existe valor]");
+			}
+			
+			
+			archivoBurofax=informesManager.generarEscritoConVariables(mapaVariables,nombreFichero,is);
+	       
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return archivoBurofax;
 	}
 	
 	

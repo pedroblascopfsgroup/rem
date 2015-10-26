@@ -19,29 +19,63 @@ var createExpedienteTab = function(){
 		});
 		
 	//Combo jerarquia
-	var comboJerarquia = new Ext.form.ComboBox({
-	<%-- 		store: '' --%>
-	<%-- 		,displayField:'descripcion' --%>
-	<%-- 		,valueField:'codigo' --%>
-		mode:'local'
-		,style:'margin:0px'
-		,width:250
-		,triggerAction:'all'
-		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.jerarquia" text="**Jerarquía"/>'
-	});
 	
-	var centros = <app:dict value="${centro}" />;
+ 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />; 
+	
+	var comboJerarquia = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name: 'jerarquia',fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.jerarquia" text="**Jerarquía"/>' })
+	
+	
+	
 	var fases = <app:dict value="${fase}" />;
 	
 	//Doble sel centro
-	var dobleSelCentro = app.creaDblSelect(centros
+	
+	
+	var centro = <app:dict value="${centro}" />;
+	
+	var centrosRecord  = Ext.data.Record.create([
+		{name:'codigo'}
+	   ,{name:'descripcion'}
+		
+	]);
+	
+	var optionsCentrosStore = page.getStore({
+	       flow: 'clientes/buscarZonas'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'zonas'
+	    }, centrosRecord)
+	       
+	});    
+	
+	
+	var dobleSelCentro = app.creaDblSelect(centro
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
-                              ,{<app:test id="dobleSelCentro" />});
-                              
+                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentros, width:300});	
+           	
+    var recargarComboCentros = function(){
+		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
+			optionsCentrosStore.webflow({id:comboJerarquia.getValue()});
+		}else{
+			optionsCentrosStore.webflow({id:0});
+			dobleSelCentro.setValue('');
+			optionsCentrosStore.removeAll();
+		}
+	}
+	
+	var limpiarYRecargar = function(){
+		app.resetCampos([dobleSelCentro]);
+		recargarComboCentros();
+	}
+	comboJerarquia.on('select',limpiarYRecargar);
+	
+	recargarComboCentros();
+           	                              
 	//Doble sel fase
 	var dobleSelFase = app.creaDblSelect(fases
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.fase" text="**Fase" />'
-                              ,{<app:test id="dobleSelFase" />});
+						,{
+               				width:200
+           					});	
 	
 	//filtro Expediente
 	var filtrosTabExpediente = new Ext.Panel({

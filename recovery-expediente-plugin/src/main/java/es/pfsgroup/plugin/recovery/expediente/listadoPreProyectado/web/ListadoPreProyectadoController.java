@@ -8,9 +8,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
+import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.termino.model.DDEstadoGestionTermino;
 import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
+import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 
@@ -38,6 +41,16 @@ public class ListadoPreProyectadoController {
 		
 		ArrayList<DDTipoAcuerdo> ddTipoAcuerdo = (ArrayList<DDTipoAcuerdo>) utilDiccionario.dameValoresDiccionario(DDTipoAcuerdo.class);
 		model.put("propuesta", ddTipoAcuerdo);
+		
+		//Diccionarios pestanya Expediente y contrato
+		ArrayList<Nivel> nivel = (ArrayList<Nivel>) utilDiccionario.dameValoresDiccionario(Nivel.class);
+		model.put("niveles", nivel);
+		
+		ArrayList<DDZona> ddZona = (ArrayList<DDZona>) utilDiccionario.dameValoresDiccionario(DDZona.class);
+		model.put("centro", ddZona);
+		
+		ArrayList<DDEstadoItinerario> ddEstadoItinerario = (ArrayList<DDEstadoItinerario>) utilDiccionario.dameValoresDiccionario(DDEstadoItinerario.class);
+		model.put("fase", ddEstadoItinerario);
 		
 		return LISTADO_PREPROYECTADO;
 	}

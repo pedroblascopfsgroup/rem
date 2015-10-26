@@ -84,7 +84,9 @@ var createDatosGeneralesTab=function(){
     //Doble sel propuesta
 	var dobleSelPropuesta = app.creaDblSelect(propuestas
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.propuesta" text="**Propuesta" />'
-                              ,{<app:test id="dobleSelPropuesta" />});
+                              ,{
+               						width:250
+           						});	
                               
      //filtro Datos Generales
 	var filtrosTabDatosGenerales = new Ext.Panel({

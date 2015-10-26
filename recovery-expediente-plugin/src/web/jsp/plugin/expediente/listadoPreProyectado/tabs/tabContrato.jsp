@@ -52,23 +52,50 @@ var createContratoTab=function(){
 	}); 
 	
 	//Combo jerarquia
-	var comboJerarquiaContrato = new Ext.form.ComboBox({
-	<%-- 		store: '' --%>
-	<%-- 		,displayField:'descripcion' --%>
-	<%-- 		,valueField:'codigo' --%>
-		mode:'local'
-		,style:'margin:0px'
-		,width:250
-		,triggerAction:'all'
-		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.jerarquia" text="**Jerarquía"/>'
-	});
 	
-	var centros = <app:dict value="${centro}" />;
+	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />; 
+	
+	var comboJerarquiaContrato = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name: 'jerarquia',fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.jerarquia" text="**Jerarquía"/>' })
+	
+	var centro = <app:dict value="${centro}" />;
 	
 	//Doble sel centro
-	var dobleSelCentroContrato = app.creaDblSelect(centros
+	
+	 var centrosRecord  = Ext.data.Record.create([
+		{name:'codigo'}
+	   ,{name:'descripcion'}
+		
+	]);
+	
+	var optionsCentrosStore = page.getStore({
+	       flow: 'clientes/buscarZonas'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'zonas'
+	    }, centrosRecord)
+	       
+	}); 
+	
+	var dobleSelCentroContrato = app.creaDblSelect(centro
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.centros" text="**Centro" />'
-                              ,{<app:test id="dobleSelCentro" />});
+                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentros, width:300});	
+    
+    var recargarComboCentros = function(){
+		if (comboJerarquiaContrato.getValue()!=null && comboJerarquiaContrato.getValue()!=''){
+			optionsCentrosStore.webflow({id:comboJerarquiaContrato.getValue()});
+		}else{
+			optionsCentrosStore.webflow({id:0});
+			dobleSelCentroContrato.setValue('');
+			optionsCentrosStore.removeAll();
+		}
+	}
+    
+    var limpiarYRecargar = function(){
+		app.resetCampos([dobleSelCentroContrato]);
+		recargarComboCentros();
+	}
+	comboJerarquiaContrato.on('select',limpiarYRecargar);
+	
+	recargarComboCentros();
 	
 	//Filtro Contrato
 

@@ -11,6 +11,8 @@ public interface EXTProcedimientoApi {
 	public static final String BO_PRC_MGR_BUSCAR_PRC_CON_CONTRATO = "es.pfsgroup.recovery.ext.api.procedimiento.buscaProcedimientoConContrato";
 	public static final String BO_PRC_MGR_IS_PERSONA_EN_PROCEDIMIENTO = "es.pfsgroup.recovery.ext.api.procedimiento.isPersonaEnProcedimiento";
 	public static final String BO_PRC_MGR_GET_INSTANCE_OF = "es.pfsgroup.recovery.ext.api.procedimiento.getInstanceOf";
+	public static final String MEJ_BO_PRC_ES_GESTOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esGestorCex";
+	public static final String MEJ_BO_PRC_ES_SUPERVISOR_CEX = "es.pfsgroup.recovery.mejoras.api.procedimiento.esSupervisorCex";
 
 	/**
 	 * Busca procedimientos que contengan un determinado contrato
@@ -32,4 +34,11 @@ public interface EXTProcedimientoApi {
 
 	@BusinessOperationDefinition(BO_PRC_MGR_GET_INSTANCE_OF)
 	public MEJProcedimiento getInstanceOf(Procedimiento procedimiento);
+	
+	@BusinessOperationDefinition(MEJ_BO_PRC_ES_GESTOR_CEX)
+    public Boolean esGestorCEX(Long idProcedimiento,String codUg);
+    
+    @BusinessOperationDefinition(MEJ_BO_PRC_ES_SUPERVISOR_CEX)
+    public Boolean esSupervisorCEX(Long idProcedimiento,String codUg);
+
 }

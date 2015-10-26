@@ -13,7 +13,7 @@
 	<!-- Tareas tipo decision -->
 	<bean id="precontenciosoProjectContextHAYA" parent="precontenciosoProjectContextDefault">
 		<property name="recovery">
-			<value>HAYA</value>
+			<value>BANKIA</value>
 		</property>
 		<property name="generarArchivoBurofax">
 			<value>true</value>

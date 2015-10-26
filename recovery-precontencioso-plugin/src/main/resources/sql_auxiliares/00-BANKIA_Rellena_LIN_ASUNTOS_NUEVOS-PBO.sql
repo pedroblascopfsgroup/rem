@@ -49,7 +49,7 @@ SELECT 'INSERT INTO LIN_ASUNTOS_NUEVOS
                                     SELECT eas6.dd_eas_id
                                       FROM dd_eas_estado_asuntos eas6
                                      WHERE eas6.dd_eas_codigo IN ('05', '06'))
-                                      and*/ cnt.CNT_ID NOT IN (SELECT CNT_ID FROM PRC_CEX PC INNER JOIN cex_contratos_expediente CEX ON CEX.CEX_ID = PC.CEX_ID) AND ROWNUM <= 1;
+                                      and*/ cnt.CNT_ID NOT IN (SELECT CNT_ID FROM PRC_CEX PC INNER JOIN cex_contratos_expediente CEX ON CEX.CEX_ID = PC.CEX_ID) AND ROWNUM <= 30;
 
 
 /*

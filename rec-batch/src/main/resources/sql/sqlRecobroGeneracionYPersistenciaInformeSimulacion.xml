@@ -4,7 +4,7 @@
     <entry key="recobro.simulacion.borrado.batch_rcf_entrada_final.Oracle10gDialect">
         <![CDATA[
             BEGIN
-                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA');
             END;
         ]]>
     </entry>
@@ -102,7 +102,7 @@
 
               COMMIT;
 
-              OPERACION_DDL.DDL_TABLE('STATS','BATCH_RCF_ENTRADA);
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_RCF_ENTRADA');
 
             End;
         ]]>

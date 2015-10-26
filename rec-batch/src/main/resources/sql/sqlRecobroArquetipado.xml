@@ -31,7 +31,6 @@
     <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
     <!-- entry key="recobro.borrado.tmp_rec_cnt_libres.Oracle10gDialect">
         <![CDATA[
-            --TRUNCATE TABLE TMP_REC_CNT_LIBRES
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES'); END;
         ]]>
     </entry -->
@@ -94,17 +93,7 @@
             WHERE NOT CNT.CNT_ID IN (SELECT CNT_ID FROM BATCH_DATOS_CNT_EXP)
         ]]>
     </entry>
-
-    <entry key="recobro.idxcreate.tmp_rec_cnt_libres.Oracle10gDialect">
-        <![CDATA[
-            BEGIN
-                OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_REC_CNT_LIBRES_1'); --rebuild
-                OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_REC_CNT_LIBRES_2'); --rebuild
-                OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_CNT_LIBRES');
-            END;
-        ]]>
-    </entry>
-    -->
+-->
 
     <!-- PASO 3 - Recarga de la tabla tmp_rec_data_rule_engine -->
     <!--  TODO Si finalmente no necesitamos este paso, quitarlo.
@@ -215,9 +204,14 @@
     <entry key="recobro.create2.tmp_arq_recobro.Oracle10gDialect">
         <![CDATA[
             BEGIN
-              OPERACION_DDL.DDL_MATERIALIZED_VIEW('REFRESH','TMP_ARQ_RECOBRO);
-              OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_ARQ_RECOBRO_1');
-              OPERACION_DDL.DDL_MATERIALIZED_VIEW('STATS','TMP_ARQ_RECOBRO);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARQ_RECOBRO');
+
+		        INSERT /*+append*/ INTO TMP_ARQ_RECOBRO
+		        SELECT DISTINCT RCF_CAR_ID ARQ_ID, RCF_ESC_PRIORIDAD ARQ_PRIORIDAD, RCF_CAR_NOMBRE ARQ_NOMBRE
+		        FROM BATCH_RCF_ENTRADA
+		        WHERE RCF_DD_EES_CODIGO = 'LBR';
+
+                OPERACION_DDL.DDL_TABLE('STATS','TMP_ARQ_RECOBRO');
             END;
         ]]>
     </entry>
@@ -309,22 +303,13 @@
         ]]>
     </entry>
 
-    <!--
     <entry key="recobro.drop2.tmp_arq_recobro.Oracle10gDialect">
         <![CDATA[
-            DECLARE
-                table_count number(3);
-                query_body varchar (30048);
             BEGIN
-                select count(1) into table_count from all_mviews WHERE mview_name='TMP_ARQ_RECOBRO';
-                if table_count = 1 then
-                    --query_body := 'DROP MATERIALIZED VIEW TMP_ARQ_RECOBRO';  EXECUTE IMMEDIATE query_body;
-                    OPERACION_DDL.DDL_MATERIALIZED_VIEW ('DROP','TMP_ARQ_RECOBRO');
-                end if;
+                OPERACION_DDL.DDL_TABLE ('TRUNCATE','TMP_ARQ_RECOBRO');
             END;
         ]]>
     </entry>
-    -->
 
     <!-- PASO 4 - Insertar los nuevos clientes en CLI_CLIENTES -->
     <!--

@@ -9,7 +9,7 @@
     <entry key="recobro.simulacion.borrado.batch_datos_exp.Oracle10gDialect">
         <![CDATA[
             BEGIN
-                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_EXP);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_EXP');
             END;
         ]]>
     </entry>
@@ -17,7 +17,7 @@
         <![CDATA[
            Begin
               --De momento la queremos vacia.
-              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_EXP);
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_EXP');
            End;
         ]]>
     </entry>
@@ -25,7 +25,7 @@
     <entry key="recobro.simulacion.borrado.batch_datos_cnt_exp.Oracle10gDialect">
         <![CDATA[
             BEGIN
-                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_CNT_EXP);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_CNT_EXP');
             END;
         ]]>
     </entry>
@@ -33,7 +33,7 @@
         <![CDATA[
             Begin
               --De momento la queremos vacia.
-              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_CNT_EXP);
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_CNT_EXP');
             End;
         ]]>
     </entry>
@@ -42,7 +42,7 @@
     <entry key="recobro.simulacion.borrado.batch_datos_per_exp.Oracle10gDialect">
         <![CDATA[
             BEGIN
-                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_PER_EXP);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_PER_EXP');
             END;
         ]]>
     </entry>
@@ -50,7 +50,7 @@
         <![CDATA[
             Begin
               --De momento la queremos vacia.
-              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_PER_EXP);
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_PER_EXP');
             End;
         ]]>
     </entry>
@@ -59,7 +59,7 @@
     <entry key="recobro.simulacion.borrado.batch_datos_exp_manual.Oracle10gDialect">
         <![CDATA[
             BEGIN
-                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_EXP_MANUAL);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_EXP_MANUAL');
             END;
         ]]>
     </entry>
@@ -67,7 +67,7 @@
         <![CDATA[
             Begin
               --De momento la queremos vacia.
-              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_EXP_MANUAL);
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_EXP_MANUAL');
             End;
         ]]>
     </entry>
@@ -76,7 +76,7 @@
     <entry key="recobro.simulacion.borrado.batch_rcf_entrada.Oracle10gDialect">
         <![CDATA[
             BEGIN
-                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA);
+                OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA');
             END;
         ]]>
     </entry>
@@ -180,10 +180,10 @@
                                                        WHERE ESQ1.BORRADO = 0
                                                          AND EES1.BORRADO = 0
                                                          AND EES1.RCF_DD_EES_CODIGO = 'PTS')
-                                               WHERE ROWNUM = 1);
+                                                        WHERE ROWNUM = 1);
                 COMMIT;
 
-              OPERACION_DDL.DDL_TABLE('STATS','BATCH_RCF_ENTRADA);
+              OPERACION_DDL.DDL_TABLE('STATS','BATCH_RCF_ENTRADA');
 
             End;
         ]]>

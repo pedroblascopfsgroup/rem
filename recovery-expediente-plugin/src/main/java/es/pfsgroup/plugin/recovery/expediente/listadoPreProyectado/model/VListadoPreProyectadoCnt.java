@@ -1,13 +1,12 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -16,8 +15,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name="V_LIS_PREPROYECT_CNT", schema="${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-@Inheritance(strategy= InheritanceType.SINGLE_TABLE)
-public class VListadoPreProyectadoCnt {
+public class VListadoPreProyectadoCnt implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2459420509381031776L;
 
 	@Id
 	@Column(name="CNT_ID")
@@ -44,20 +46,26 @@ public class VListadoPreProyectadoCnt {
 	@Column(name="FECHA_PASE_A_MORA_CNT")
 	private Date fechaPaseAMoraCnt;
 	
+	@Column(name="PROPUESTA")
+	private String propuesta;
+	
+	@Column(name="ESTADO_GESTION")
+	private String estadoGestion;	
+	
 	@Column(name="FECHA_PREV_REGU_CNT")
 	private Date fechaPrevReguCnt;
 	
-	@Column(name="ESTADO_GESTION_ID")
-	private Long estadoGestionId;
+	@Column(name="ESTADO_GESTION_COD")
+	private String estadoGestionCod;
 	
-	@Column(name="TIPO_PERSONA_ID")
-	private Long tipoPersonaId;
+	@Column(name="TIPO_PERSONA_COD")
+	private String tipoPersonaCod;
 	
-	@Column(name="TRAMO_ID")
-	private Long tramoId;
+	@Column(name="TRAMO_COD")
+	private String tramoCod;
 	
-	@Column(name="TIPO_PROPUESTA_ID")
-	private Long tipoPropuestaId;
+	@Column(name="TIPO_PROPUESTA_COD")
+	private String tipoPropuestaCod;
 	
 	@Column(name="N_PROPUESTAS")
 	private Long nPropuestas;
@@ -65,8 +73,8 @@ public class VListadoPreProyectadoCnt {
 	@Column(name="ZON_EXP")
 	private String zonExp;
 	
-	@Column(name="FASE_ID")
-	private Long faseId;
+	@Column(name="FASE_COD")
+	private String faseCod;
 	
 	@Column(name="ZON_COD_CONTRATO")
 	private String zonCodContrato;
@@ -135,6 +143,22 @@ public class VListadoPreProyectadoCnt {
 		this.fechaPaseAMoraCnt = fechaPaseAMoraCnt;
 	}
 
+	public String getPropuesta() {
+		return propuesta;
+	}
+
+	public void setPropuesta(String propuesta) {
+		this.propuesta = propuesta;
+	}
+
+	public String getEstadoGestion() {
+		return estadoGestion;
+	}
+
+	public void setEstadoGestion(String estadoGestion) {
+		this.estadoGestion = estadoGestion;
+	}
+
 	public Date getFechaPrevReguCnt() {
 		return fechaPrevReguCnt;
 	}
@@ -143,36 +167,36 @@ public class VListadoPreProyectadoCnt {
 		this.fechaPrevReguCnt = fechaPrevReguCnt;
 	}
 
-	public Long getEstadoGestionId() {
-		return estadoGestionId;
+	public String getEstadoGestionCod() {
+		return estadoGestionCod;
 	}
 
-	public void setEstadoGestionId(Long estadoGestionId) {
-		this.estadoGestionId = estadoGestionId;
+	public void setEstadoGestionCod(String estadoGestionCod) {
+		this.estadoGestionCod = estadoGestionCod;
 	}
 
-	public Long getTipoPersonaId() {
-		return tipoPersonaId;
+	public String getTipoPersonaCod() {
+		return tipoPersonaCod;
 	}
 
-	public void setTipoPersonaId(Long tipoPersonaId) {
-		this.tipoPersonaId = tipoPersonaId;
+	public void setTipoPersonaCod(String tipoPersonaCod) {
+		this.tipoPersonaCod = tipoPersonaCod;
 	}
 
-	public Long getTramoId() {
-		return tramoId;
+	public String getTramoCod() {
+		return tramoCod;
 	}
 
-	public void setTramoId(Long tramoId) {
-		this.tramoId = tramoId;
+	public void setTramoCod(String tramoCod) {
+		this.tramoCod = tramoCod;
 	}
 
-	public Long getTipoPropuestaId() {
-		return tipoPropuestaId;
+	public String getTipoPropuestaCod() {
+		return tipoPropuestaCod;
 	}
 
-	public void setTipoPropuestaId(Long tipoPropuestaId) {
-		this.tipoPropuestaId = tipoPropuestaId;
+	public void setTipoPropuestaCod(String tipoPropuestaCod) {
+		this.tipoPropuestaCod = tipoPropuestaCod;
 	}
 
 	public Long getnPropuestas() {
@@ -191,12 +215,12 @@ public class VListadoPreProyectadoCnt {
 		this.zonExp = zonExp;
 	}
 
-	public Long getFaseId() {
-		return faseId;
+	public String getFaseCod() {
+		return faseCod;
 	}
 
-	public void setFaseId(Long faseId) {
-		this.faseId = faseId;
+	public void setFaseCod(String faseCod) {
+		this.faseCod = faseCod;
 	}
 
 	public String getZonCodContrato() {
@@ -205,6 +229,5 @@ public class VListadoPreProyectadoCnt {
 
 	public void setZonCodContrato(String zonCodContrato) {
 		this.zonCodContrato = zonCodContrato;
-	}	
-	
+	}
 }

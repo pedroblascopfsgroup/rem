@@ -1,13 +1,12 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -16,8 +15,12 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name="V_LIS_PREPROYECT_EXP" ,schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-@Inheritance(strategy= InheritanceType.SINGLE_TABLE)
-public class VListadoPreProyectadoExp {
+public class VListadoPreProyectadoExp implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6947618963807794347L;
 
 	@Id
 	@Column(name="CNT_ID")

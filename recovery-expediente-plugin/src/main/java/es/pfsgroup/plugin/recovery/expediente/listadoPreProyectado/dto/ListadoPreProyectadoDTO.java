@@ -1,6 +1,11 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto;
 
-import java.util.Date;
+import java.util.List;
+
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
+import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
+import es.capgemini.pfs.zona.model.DDZona;
 
 public class ListadoPreProyectadoDTO {
 	
@@ -15,274 +20,148 @@ public class ListadoPreProyectadoDTO {
 	private Long minDeudaIrregular;
 	private Long maxDeudaIrregular;
 	private String codAgruparPor;
-	private String codTramo;
-	private String codPropuesta;
+	private List<String> tramos;
+	private List<String> propuestas;
 	
 	//Pestanya Expediente
 	private String codExpediente;
-	private String codJerarquiaExp;
-	private String codigoZona;
-	private String codEstadoItinerario;
+	private List<String> zonasExp;
+	private List<String> itinerarios;
 	
 	//Pestanya Contrato
 	private String codContrato;
-	private Date fechaPrevRegularizacion;
-	private Date fechaPrevRegularizacionHasta;
-	private String codJerarquiaCto;
-	private String codigoZonaCto;
+	private String fechaPrevRegularizacion;
+	private String fechaPrevRegularizacionHasta;
+	private List<String> zonasCto;
 	
-	/**
-	 * @return codEstadoGestion
-	 */
 	public String getCodEstadoGestion() {
 		return codEstadoGestion;
 	}
 	
-	/**
-	 * @param codEstadoGestion
-	 */
 	public void setCodEstadoGestion(String codEstadoGestion) {
 		this.codEstadoGestion = codEstadoGestion;
 	}
 	
-	/**
-	 * @return codTipoPersona
-	 */
 	public String getCodTipoPersona() {
 		return codTipoPersona;
 	}
 	
-	/**
-	 * @param codTipoPersona
-	 */
 	public void setCodTipoPersona(String codTipoPersona) {
 		this.codTipoPersona = codTipoPersona;
 	}
 	
-	/**
-	 * @return minRiesgoTotal
-	 */
 	public Long getMinRiesgoTotal() {
 		return minRiesgoTotal;
 	}
 	
-	/**
-	 * @param minRiesgoTotal
-	 */
 	public void setMinRiesgoTotal(Long minRiesgoTotal) {
 		this.minRiesgoTotal = minRiesgoTotal;
 	}
 	
-	/**
-	 * @return maxRiesgoTotal
-	 */
 	public Long getMaxRiesgoTotal() {
 		return maxRiesgoTotal;
 	}
 	
-	/**
-	 * @param maxRiesgoTotal
-	 */
 	public void setMaxRiesgoTotal(Long maxRiesgoTotal) {
 		this.maxRiesgoTotal = maxRiesgoTotal;
 	}
 	
-	/**
-	 * @return minDeudaIrregular
-	 */
 	public Long getMinDeudaIrregular() {
 		return minDeudaIrregular;
 	}
 	
-	/**
-	 * @param minDeudaIrregular
-	 */
 	public void setMinDeudaIrregular(Long minDeudaIrregular) {
 		this.minDeudaIrregular = minDeudaIrregular;
 	}
 	
-	/**
-	 * @return maxDeudaIrregular
-	 */
 	public Long getMaxDeudaIrregular() {
 		return maxDeudaIrregular;
 	}
 	
-	/**
-	 * @param maxDeudaIrregular
-	 */
 	public void setMaxDeudaIrregular(Long maxDeudaIrregular) {
 		this.maxDeudaIrregular = maxDeudaIrregular;
 	}
 	
-	/**
-	 * @return codAgruparPor
-	 */
 	public String getCodAgruparPor() {
 		return codAgruparPor;
 	}
 	
-	/**
-	 * @param codAgruparPor
-	 */
 	public void setCodAgruparPor(String codAgruparPor) {
 		this.codAgruparPor = codAgruparPor;
 	}
 	
-	/**
-	 * @return codTramo
-	 */
-	public String getCodTramo() {
-		return codTramo;
+	public List<String> getTramos() {
+		return tramos;
 	}
 	
-	/**
-	 * @param codTramo
-	 */
-	public void setCodTramo(String codTramo) {
-		this.codTramo = codTramo;
+	public void setTramos(List<String> tramos) {
+		this.tramos = tramos;
 	}
 	
-	/**
-	 * @return codPropuesta
-	 */
-	public String getCodPropuesta() {
-		return codPropuesta;
+	public List<String> getPropuestas() {
+		return propuestas;
 	}
 	
-	/**
-	 * @param codPropuesta
-	 */
-	public void setCodPropuesta(String codPropuesta) {
-		this.codPropuesta = codPropuesta;
+	public void setPropuestas(List<String> propuestas) {
+		this.propuestas = propuestas;
 	}
 	
-	/**
-	 * @return codExpediente
-	 */
 	public String getCodExpediente() {
 		return codExpediente;
 	}
 	
-	/**
-	 * @param codExpediente
-	 */
 	public void setCodExpediente(String codExpediente) {
 		this.codExpediente = codExpediente;
 	}
 	
-	/**
-	 * @return codJerarquiaExp
-	 */
-	public String getCodJerarquiaExp() {
-		return codJerarquiaExp;
+	public List<String> getZonasExp() {
+		return zonasExp;
 	}
 	
-	/**
-	 * @param codJerarquiaExp
-	 */
-	public void setCodJerarquiaExp(String codJerarquiaExp) {
-		this.codJerarquiaExp = codJerarquiaExp;
+	public void setZonasExp(List<String> zonasExp) {
+		this.zonasExp = zonasExp;
 	}
 	
-	/**
-	 * @return codigoZona
-	 */
-	public String getcodZonaExp() {
-		return codigoZona;
+	public List<String> getItinerarios() {
+		return itinerarios;
 	}
 	
-	/**
-	 * @param codigoZona
-	 */
-	public void setcodZonaExp(String codigoZona) {
-		this.codigoZona = codigoZona;
+	public void setItinerarios(List<String> itinerarios) {
+		this.itinerarios = itinerarios;
 	}
 	
-	/**
-	 * @return ddEstadoItinerarioExp
-	 */
-	public String getDdEstadoItinerarioExp() {
-		return codEstadoItinerario;
-	}
-	
-	/**
-	 * @param ddEstadoItinerarioExp
-	 */
-	public void setDdEstadoItinerarioExp(String codEstadoItinerario) {
-		this.codEstadoItinerario = codEstadoItinerario;
-	}
-	
-	/**
-	 * @return codContrato
-	 */
 	public String getCodContrato() {
 		return codContrato;
 	}
 	
-	/**
-	 * @param codContrato
-	 */
 	public void setCodContrato(String codContrato) {
 		this.codContrato = codContrato;
 	}
 	
-	/**
-	 * @return fechaPrevRegularizacion
-	 */
-	public Date getFechaPrevRegularizacion() {
+	public String getFechaPrevRegularizacion() {
 		return fechaPrevRegularizacion;
 	}
 	
-	/**
-	 * @param fechaPrevRegularizacion
-	 */
-	public void setFechaPrevRegularizacion(Date fechaPrevRegularizacion) {
+	public void setFechaPrevRegularizacion(String fechaPrevRegularizacion) {
 		this.fechaPrevRegularizacion = fechaPrevRegularizacion;
 	}
 	
-	/**
-	 * @return fechaPrevRegularizacionHasta
-	 */
-	public Date getFechaPrevRegularizacionHasta() {
+	public String getFechaPrevRegularizacionHasta() {
 		return fechaPrevRegularizacionHasta;
 	}
-
-	/**
-	 * @param fechaPrevRegularizacionHasta
-	 */
-	public void setFechaPrevRegularizacionHasta(
-			Date fechaPrevRegularizacionHasta) {
+	
+	public void setFechaPrevRegularizacionHasta(String fechaPrevRegularizacionHasta) {
 		this.fechaPrevRegularizacionHasta = fechaPrevRegularizacionHasta;
 	}
 	
-	/**
-	 * @return codJerarquiaCto
-	 */
-	public String getCodJerarquiaCto() {
-		return codJerarquiaCto;
+	public List<String> getZonasCto() {
+		return zonasCto;
 	}
 	
-	/**
-	 * @param codJerarquiaCto
-	 */
-	public void setCodJerarquiaCto(String codJerarquiaCto) {
-		this.codJerarquiaCto = codJerarquiaCto;
+	public void setZonasCto(List<String> zonasCto) {
+		this.zonasCto = zonasCto;
 	}
 	
-	/**
-	 * @return ddZonaCto
-	 */
-	public String getDdZonaCto() {
-		return codigoZonaCto;
-	}
-	
-	/**
-	 * @param ddZonaCto
-	 */
-	public void setDdZonaCto(String codigoZonaCto) {
-		this.codigoZonaCto = codigoZonaCto;
-	}
-	
+		
 	
 }

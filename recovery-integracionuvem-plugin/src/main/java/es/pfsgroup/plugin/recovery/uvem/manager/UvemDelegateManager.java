@@ -509,9 +509,6 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				}
 			}else{
 				identificadorBien = bien.getId().intValue();
-				if(bien.getId().compareTo(new Long(Integer.MAX_VALUE)) > 0){
-					identificadorBien = new Long(bien.getDatosRegistralesActivo().getNumFinca()).intValue();
-				}
 			}
 			//int identificadorBien = bien.getCodigoInterno() != null ? Integer.parseInt(bien.getCodigoInterno()) : bien.getId().intValue() ;
 			

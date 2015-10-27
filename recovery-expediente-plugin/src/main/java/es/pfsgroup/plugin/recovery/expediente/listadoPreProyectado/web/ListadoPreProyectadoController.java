@@ -15,6 +15,7 @@ import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 
 @Controller
 public class ListadoPreProyectadoController {
@@ -39,6 +40,13 @@ public class ListadoPreProyectadoController {
 		model.put("tramo", ddTramosDiasVencidos);
 		
 		ArrayList<DDTipoAcuerdo> ddTipoAcuerdo = (ArrayList<DDTipoAcuerdo>) utilDiccionario.dameValoresDiccionario(DDTipoAcuerdo.class);
+		
+		//Al no existir el valor sin propuesta se añade manualmente
+		DDTipoAcuerdo tipoAcuertoSinPropuesta = new DDTipoAcuerdo();
+		tipoAcuertoSinPropuesta.setCodigo(DDTipoAcuerdo.SIN_PROPUESTA);
+		tipoAcuertoSinPropuesta.setDescripcion("Sin Propuesta");
+		ddTipoAcuerdo.add(0, tipoAcuertoSinPropuesta);
+
 		model.put("propuesta", ddTipoAcuerdo);
 		
 		//Diccionarios pestanya Expediente y contrato
@@ -58,6 +66,17 @@ public class ListadoPreProyectadoController {
 		model.put("fase", ddEstadoItinerario);
 		
 		return LISTADO_PREPROYECTADO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getCicloRecExp(ListadoPreProyectadoDTO dto, ModelMap model) { 
+		
+		
+		model.put("listadopreproyectadocontroller",null);
+		
+		return null;
+		
 	}
 
 }

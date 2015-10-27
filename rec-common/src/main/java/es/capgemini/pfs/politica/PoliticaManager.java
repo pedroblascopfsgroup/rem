@@ -492,7 +492,11 @@ public class PoliticaManager {
                     .execute(ConfiguracionBusinessOperation.BO_ZONA_MGR_EXISTE_PERFIL_ZONA, zonaBusqueda.getId(), idPerfil);
             if (existe) return zonaBusqueda;
 
-            zonaBusqueda = zonaBusqueda.getZonaPadre();
+            if (!Checks.esNulo(zonaBusqueda.getZonaPadre()) && zonaBusqueda == zonaBusqueda.getZonaPadre()) {
+            	zonaBusqueda = null;
+            } else {
+            	zonaBusqueda = zonaBusqueda.getZonaPadre();
+            }
         }
 
         throw new GenericRollbackException("No se encuentra correspondencia para zona-perfil: " + zonaExpediente.getId() + "-" + perfilOrigen.getId());

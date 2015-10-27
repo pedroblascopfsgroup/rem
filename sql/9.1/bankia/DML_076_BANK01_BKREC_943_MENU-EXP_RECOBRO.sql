@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.16-bk
 --## INCIDENCIA_LINK=BKREC-943
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## Finalidad: DML
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -121,12 +121,37 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               WHERE fun1.fun_descripcion = ''MENU-LIST-EXP-RECOBRO-ALL-USERS''
               ) AS fun_id ,
               pef.pef_id ,
-              S_FUN_PEF.nextval AS FP_ID ,
+              '||V_ESQUEMA||'.S_FUN_PEF.nextval AS FP_ID ,
               ''0''               AS VERSION ,
               ''BKREC-943''       AS USUARIOCREAR ,
               sysdate           AS FECHACREAR
-            FROM pef_perfiles pef
+            FROM '||V_ESQUEMA||'.pef_perfiles pef
             WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')';
+            
+            
+             EXECUTE IMMEDIATE 
+        'INSERT
+            INTO '||V_ESQUEMA||'.fun_pef
+              (
+                fun_id,
+                pef_id,
+                fp_id,
+                version,
+                usuariocrear,
+                fechacrear
+              )
+            SELECT
+              (SELECT fun1.fun_id
+              FROM '||V_ESQUEMA_M||'.fun_funciones fun1
+              WHERE fun1.fun_descripcion = ''MENU-LIST-EXP-RECOBRO-ALL-USERS''
+              ) AS fun_id ,
+              pef.pef_id ,
+              '||V_ESQUEMA||'.S_FUN_PEF.nextval AS FP_ID ,
+              ''0''               AS VERSION ,
+              ''BKREC-943''       AS USUARIOCREAR ,
+              sysdate           AS FECHACREAR
+            FROM '||V_ESQUEMA||'.pef_perfiles pef
+            WHERE pef.pef_codigo IN (''FPFSRLECTUR'',''FPFSRSOPORT'',''FPFSRUSUREC'',''GREC'',''SREC'')';
 
     DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES RECOBRO, creados.');
   

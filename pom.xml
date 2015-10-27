@@ -315,6 +315,11 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>es.pfgroup.monioring</groupId>
+				<artifactId>batch-monitor</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-editor-plugin</artifactId>
 				<version>${editor.version}</version>
@@ -471,6 +476,8 @@
 		<module>recovery-bi-plugin</module>
 		<module>pfs-commons-java</module>
 		<module>rec-encrypt</module>
+		<module>batch-monitor</module>
+		<module>batch-shell</module>
 		<module>rec-common</module>
 		<module>recovery-domain</module>
 		<!--module>recovery-api-plugin</module-->

@@ -121,11 +121,11 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               WHERE fun1.fun_descripcion = ''MENU-LIST-EXP-RECOBRO-ALL-USERS''
               ) AS fun_id ,
               pef.pef_id ,
-              S_FUN_PEF.nextval AS FP_ID ,
+              '||V_ESQUEMA||'.S_FUN_PEF.nextval AS FP_ID ,
               ''0''               AS VERSION ,
               ''BKREC-943''       AS USUARIOCREAR ,
               sysdate           AS FECHACREAR
-            FROM pef_perfiles pef
+            FROM '||V_ESQUEMA||'.pef_perfiles pef
             WHERE pef.pef_codigo IN (''FPFSRADMIN'',''FPFSRINT'',''FPFSREXT'')';
 
     DBMS_OUTPUT.PUT_LINE('[INFO] Permisos sobre MENU > EXPEDIENTES RECOBRO, creados.');

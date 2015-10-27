@@ -17,7 +17,6 @@
                 v_codigo_extincion VARCHAR2(5 CHAR);
                 v_codigo_liberado VARCHAR2(5 CHAR);
                 v_codigo_pendiente_liberar VARCHAR2(5 CHAR);
-                nuFilas number;
             begin
                 SELECT ESQ.RCF_ESQ_ID INTO v_id_esquema_liberado_actual
                 FROM RCF_ESQ_ESQUEMA ESQ
@@ -44,10 +43,7 @@
                     ';
                     execute immediate v_sql using v_codigo_extincion, v_codigo_pendiente_liberar, v_codigo_liberado;
 
-                    --**Log
-                    nuFilas:=SQL%ROWCOUNT;
-                    INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','UPDATE RCF_ESQ_ESQUEMA 1', to_char(nuFilas) from dual;
-
+                   
                     COMMIT;
                     v_sql:='
                         UPDATE RCF_ESQ_ESQUEMA ESQ SET ESQ.RCF_DD_EES_ID = (SELECT EES1.RCF_DD_EES_ID
@@ -58,10 +54,6 @@
                         WHERE EES2.RCF_DD_EES_CODIGO = :v_codigo_pendiente_liberar) AND ESQ.BORRADO = 0
                     ';
                     execute immediate v_sql using v_codigo_liberado, v_id_esquema_liberado_actual, v_codigo_pendiente_liberar;
-
-                    --**Log
-                    nuFilas:=SQL%ROWCOUNT;
-                    INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','UPDATE RCF_ESQ_ESQUEMA 2', to_char(nuFilas) from dual;
 
                     COMMIT;
                 END IF;
@@ -78,8 +70,7 @@
     </entry>
     <entry key="recobro.creacion.batch_rcf_entrada.Oracle10gDialect">
         <![CDATA[
-            Declare
-               nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_RCF_ENTRADA
                  SELECT ESQ.RCF_ESQ_ID AS RCF_ESQ_ID,
@@ -168,10 +159,6 @@
                      LEFT JOIN RCF_MOR_MODELO_RANKING MOR ON SCA.RCF_MOR_ID = MOR.RCF_MOR_ID
                     WHERE EES.RCF_DD_EES_CODIGO IN (${ddEstadoEsquemas.Inactivo.codigo}, ${ddEstadoEsquemas.Liberado.codigo}); 
 
-                    --**Log
-                    nuFilas:=SQL%ROWCOUNT;
-                    INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_RCF_ENTRADA', to_char(nuFilas) from dual;
-
               COMMIT;
 
               OPERACION_DDL.DDL_TABLE('STATS','BATCH_RCF_ENTRADA');
@@ -183,7 +170,6 @@
         <![CDATA[
             DECLARE
                 query_body varchar (30048);
-                nuFilas number;
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','DATA_RULE_ENGINE_CNT_NIV');
 
@@ -223,10 +209,6 @@
 
                 EXECUTE IMMEDIATE query_body;
 
-                --**Log
-                nuFilas:=SQL%ROWCOUNT;
-                INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT DATA_RULE_ENGINE_CNT_NIV', to_char(nuFilas) from dual;
-
                 COMMIT;
                 OPERACION_DDL.DDL_TABLE('STATS','DATA_RULE_ENGINE_CNT_NIV');
             END;
@@ -237,7 +219,6 @@
         <![CDATA[
             DECLARE
                 query_body varchar (30048);
-                nuFilas number;
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','DATA_RULE_ENGINE_PER_NIV');
 
@@ -276,10 +257,6 @@
                     join niv_nivel nivN9 on zonPN9.niv_id=nivN9.niv_id';
                 EXECUTE IMMEDIATE query_body;
 
-                --**Log
-                nuFilas:=SQL%ROWCOUNT;
-                INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT DATA_RULE_ENGINE_PER_NIV', to_char(nuFilas) from dual;
-
                 COMMIT;
                 OPERACION_DDL.DDL_TABLE('STATS','DATA_RULE_ENGINE_PER_NIV');
             END;
@@ -306,8 +283,7 @@
 
     <entry key="recobro.creacion.batch_datos_cnt_per.Oracle10gDialect">
         <![CDATA[
-            Declare
-               nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_CNT_PER
               (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
@@ -317,10 +293,6 @@
                 JOIN bank01.dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id
                 -- Se incluyen todos  los obligados de cada contrato
                WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 and dd_tin_avalista <> 1) ; 
-
-              --**Log
-              nuFilas:=SQL%ROWCOUNT;
-              INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_CNT_PER', to_char(nuFilas) from dual;
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_PER');
@@ -338,8 +310,7 @@
 
     <entry key="recobro.creacion.batch_datos_cnt.Oracle10gDialect">
         <![CDATA[
-            Declare
-               nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_CNT
               (cnt_id, ofi_id, cnt_riesgo)
@@ -351,10 +322,7 @@
                   JOIN mov_movimientos mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
                WHERE cnt.borrado = 0 AND esc.dd_esc_codigo = '0'; 
 
-              --**Log
-              nuFilas:=SQL%ROWCOUNT;
-              INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_CNT', to_char(nuFilas) from dual;
-
+              
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT');
             End;
@@ -371,8 +339,7 @@
 
     <entry key="recobro.creacion.batch_datos_per.Oracle10gDialect">
         <![CDATA[
-            Declare
-               nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_PER
               (per_id, per_nombre, per_apellido1, per_apellido2
@@ -387,10 +354,7 @@
                 FROM per_personas
                WHERE borrado = 0;
 
-              --**Log
-              nuFilas:=SQL%ROWCOUNT;
-              INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_PER', to_char(nuFilas) from dual;
-
+              
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_PER');
             End;
@@ -407,8 +371,7 @@
 
     <entry key="recobro.creacion.batch_datos_cnt_exp.Oracle10gDialect">
         <![CDATA[
-            Declare
-               nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_CNT_EXP
                 SELECT cex.exp_id, cex.cnt_id
@@ -420,10 +383,7 @@
                    AND EEX.DD_EEX_CODIGO = '1'
                    AND EXP.BORRADO = 0;
  
-              --**Log
-              nuFilas:=SQL%ROWCOUNT;
-              INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_CNT_EXP', to_char(nuFilas) from dual;
-
+             
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_EXP');
             End;
@@ -440,8 +400,7 @@
 
     <entry key="recobro.creacion.batch_datos_exp.Oracle10gDialect">
         <![CDATA[
-            Declare
-               nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_EXP
               (exp_id, arq_id, exp_borrado, dd_tpe_codigo, dd_eex_codigo
@@ -464,10 +423,7 @@
                  AND eex.dd_eex_codigo = '1'
                  AND exp.exp_manual = 0;
 
-              --**Log
-              nuFilas:=SQL%ROWCOUNT;
-              INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_EXP', to_char(nuFilas) from dual;
-
+             
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXP');
             End;
@@ -484,8 +440,7 @@
 
     <entry key="recobro.creacion.batch_datos_cnt_info.Oracle10gDialect">
         <![CDATA[
-             Declare
-               nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_CNT_INFO
               (cnt_id, codigo_propietario, tipo_producto, numero_contrato)
@@ -497,10 +452,6 @@
                 JOIN cnt_contratos cnt ON bdcnt.cnt_id = cnt.cnt_id
                 JOIN dd_pro_propietarios pro ON cnt.dd_pro_id = pro.dd_pro_id
                 JOIN dd_tpe_tipo_prod_entidad tpe ON cnt.dd_tpe_id = tpe.dd_tpe_id;
-
-              --**Log
-              nuFilas:=SQL%ROWCOUNT;
-              INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_CNT_INFO', to_char(nuFilas) from dual;
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_INFO');
@@ -518,8 +469,7 @@
 
     <entry key="recobro.creacion.batch_datos_per_exp.Oracle10gDialect">
         <![CDATA[
-            Declare
-              nuFilas number;
+
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_PER_EXP
                 SELECT pex.exp_id, pex.per_id
@@ -529,10 +479,6 @@
                   JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
                  WHERE pex.borrado = 0
                    AND EEX.DD_EEX_CODIGO = '1' AND EXP.BORRADO = 0; 
-
-              --**Log
-              nuFilas:=SQL%ROWCOUNT;
-              INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_PER_EXP', to_char(nuFilas) from dual;
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_PER_EXP');
@@ -550,8 +496,7 @@
 
     <entry key="recobro.creacion.batch_datos_cli.Oracle10gDialect">
         <![CDATA[
-        Declare
-           nuFilas number;
+
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_CLI
          (cli_id, per_id)
@@ -561,10 +506,7 @@
           WHERE cli.borrado = 0
             AND ecl.dd_ecl_codigo <> '2';
 
-         --**Log
-         nuFilas:=SQL%ROWCOUNT;
-         INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_CLI', to_char(nuFilas) from dual;
-
+        
          COMMIT;
          OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CLI');
         End;
@@ -583,8 +525,7 @@ commit;
 
     <entry key="recobro.creacion.batch_datos_exceptuados.Oracle10gDialect">
         <![CDATA[
-        Declare
-           nuFilas number;
+
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_EXCEPTUADOS
          (per_id, cnt_id, dd_mob_id, dd_mob_codigo, dd_mob_borrado, exc_id)
@@ -612,10 +553,6 @@ commit;
           LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
          WHERE exc.borrado = 0 AND TRUNC (exc_fecha_hasta) > TRUNC (SYSDATE); 
 
-         --**Log
-         nuFilas:=SQL%ROWCOUNT;
-         INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_EXCEPTUADOS', to_char(nuFilas) from dual;
-
          COMMIT;
          OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXCEPTUADOS');
         End;
@@ -632,8 +569,8 @@ commit;
 
     <entry key="recobro.creacion.batch_datos_exp_manual.Oracle10gDialect">
         <![CDATA[
-        Declare
-           nuFilas number;
+
+
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_EXP_MANUAL
          (exp_id, arq_id, exp_borrado, dd_tpe_codigo,dd_eex_codigo, rcf_esq_id
@@ -655,10 +592,7 @@ commit;
              WHERE exp.borrado = 0
                AND eex.dd_eex_codigo = '1'
                AND exp.exp_manual = 1; 
-         --**Log
-         nuFilas:=SQL%ROWCOUNT;
-         INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_EXP_MANUAL', to_char(nuFilas) from dual;
-
+       
          COMMIT;
          OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXP_MANUAL');
         End;
@@ -675,8 +609,7 @@ commit;
 
     <entry key="recobro.creacion.batch_datos_gcl.Oracle10gDialect">
         <![CDATA[
-        Declare
-           nuFilas number;
+
          Begin
            INSERT /*+append*/ INTO BATCH_DATOS_GCL
            (gcl_id, per_id)
@@ -687,10 +620,7 @@ commit;
             WHERE pgcl.borrado = 0
               AND gcl.borrado = 0;
 
-           --**Log
-           nuFilas:=SQL%ROWCOUNT;
-           INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroPreparacionRecobro','INSERT BATCH_DATOS_GLC', to_char(nuFilas) from dual;
-
+         
            COMMIT;
            OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_GCL');
          End;

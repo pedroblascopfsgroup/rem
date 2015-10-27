@@ -15,12 +15,9 @@
     <!-- PASO 2 - Obtenemos los expedientes marcados para rearquetipar por sus propios BPMs -->
     <entry key="recobro.insert.tmp_rec_exp_marcado_ra.Oracle10gDialect">
         <![CDATA[
-           DECLARE
-             nuFilas number;
-           BEGIN
-            --**Log
-            INSERT INTO BATCH_LOG Select sysdate,'GMRC0201','sqlRecobroRevisionExpedientesActivos','BATCH_DATOS_EXP', count(*) from TMP_ARQ_RECOBRO;
 
+           BEGIN
+          
             INSERT INTO TMP_REC_EXP_MARCADO_RA
             SELECT DISTINCT EXP.EXP_ID, EXP.RCF_AGE_ID, EXP.ARQ_ID
             FROM BATCH_DATOS_EXP EXP
@@ -28,10 +25,7 @@
                 AND EXP.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
               AND EXP.EXP_MARCADO_BPM = 1;
             OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_MARCADO_RA');
-
-            --**Log
-            nuFilas:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroRevisionExpedientesActivos','TMP_REC_EXP_MARCADO_RA',  to_char(nuFilas) from dual;
+     
             COMMIT;
            END;
         ]]>
@@ -40,13 +34,8 @@
     <!-- PASO 3 - Juntamos de forma desnormalizada los expedientes con sus personas, contratos, arquetipos y agencia actual -->
     <entry key="recobro.insert.tmp_rec_exp_desnormalizado.Oracle10gDialect">
         <![CDATA[
-           DECLARE
-             nuFilas number;
+     
            BEGIN
-            --**Log
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroRevisionExpedientesActivos','BATCH_DATOS_CNT_PER', count(*) from BATCH_DATOS_CNT_PER;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroRevisionExpedientesActivos','BATCH_DATOS_PER_EXP', count(*) from BATCH_DATOS_PER_EXP;
-            COMMIT;
 
             INSERT INTO TMP_REC_EXP_DESNORMALIZADO
             SELECT DISTINCT EXPDS.EXP_ID, PEX.PER_ID, CPE.CNT_ID, EXPDS.ARQ_ID, REC.RCF_AGE_ID, REC.RCF_SCA_ID
@@ -61,9 +50,6 @@
 
             OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_DESNORMALIZADO');
 
-            --**Log
-            nuFilas:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroRevisionExpedientesActivos','TMP_REC_EXP_DESNORMALIZADO',  to_char(nuFilas) from dual;
            END;
         ]]>
     </entry>

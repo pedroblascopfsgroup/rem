@@ -15,11 +15,14 @@ import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 
 @Controller
 public class ListadoPreProyectadoController {
 
 	static final String LISTADO_PREPROYECTADO = "plugin/expediente/listadoPreProyectado/listadoPreProyectado";
+	static final String LISTADO_PREPROYECTADO_EXP_JSON = "plugin/expediente/listadoPreProyectado/listadoPreProyectadoExpJSON";
+	static final String LISTADO_PREPROYECTADO_CNT_JSON = "plugin/expediente/listadoPreProyectado/listadoPreProyectadoCntJSON";
 	
 	@Autowired
 	UtilDiccionarioApi utilDiccionario;
@@ -59,5 +62,14 @@ public class ListadoPreProyectadoController {
 		
 		return LISTADO_PREPROYECTADO;
 	}
+	
+	@RequestMapping
+	public String getListPreproyectadoExp(ListadoPreProyectadoDTO dto) {
+		return LISTADO_PREPROYECTADO_EXP_JSON;
+	}
 
+	@RequestMapping
+	public String getListPreproyectadoCnt(ListadoPreProyectadoDTO dto) {
+		return LISTADO_PREPROYECTADO_CNT_JSON;
+	}
 }

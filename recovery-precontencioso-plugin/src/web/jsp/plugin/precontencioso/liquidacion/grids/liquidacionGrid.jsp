@@ -45,6 +45,23 @@ var abrirPantallaSolicitar = function() {
 	});
 }
 
+var abrirPantallaPlantillasLiquidacion = function() {
+	var w = app.openWindow({
+		flow: 'liquidacion/abrirPlantillasLiquidacion',
+		autoWidth: true,
+		closable: true,
+		title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.solicitarliq" text="**Solicitar liquidación" />'
+	});
+
+	w.on(app.event.DONE, function() {
+		w.close();
+	});
+
+	w.on(app.event.CANCEL, function() {
+		w.close();
+	});
+}
+
 var btnEditarValores = new Ext.Button({
 	text: '<s:message code="plugin.precontencioso.grid.liquidacion.button.editar" text="**Editar valores" />',
 	iconCls: 'icon_edit',
@@ -107,10 +124,7 @@ var btnGenerar = new Ext.Button({
 	iconCls: 'icon_pdf',
 	cls: 'x-btn-text-icon',
 	handler: function() {
-			var flow='/pfs/liquidacion/generar';
-			var params={idLiquidacion:idLiquidacionSeleccionada()};
-			app.openBrowserWindow(flow,params);
-			page.fireEvent(app.event.DONE);
+			abrirPantallaPlantillasLiquidacion();
 	}		
 });
 

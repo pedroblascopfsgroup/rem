@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarLiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDTipoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
@@ -34,8 +35,10 @@ public class LiquidacionController {
 
 	private static final String DEFAULT = "default";
 	private static final String JSON_LIQUIDACIONES = "plugin/precontencioso/liquidacion/json/liquidacionesJSON";
+	private static final String JSON_PLANTILLAS = "plugin/precontencioso/liquidacion/json/plantillasJSON";
 	private static final String JSON_OCULTAR_BOTON_SOLICITAR = "plugin/precontencioso/liquidacion/json/ocultarBtnSolicitarJSON";
 	private static final String JSP_EDITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/editarLiquidacion";
+	private static final String JSP_PLANTILLAS_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/seleccionarPlantillaLiquidacion";
 	private static final String JSP_SOLICITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/solicitarLiquidacion";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
@@ -221,5 +224,21 @@ public class LiquidacionController {
 
 		return JSP_DOWNLOAD_FILE;
 	}
+	
+	@RequestMapping
+	public String getPlantillasLiquidacion(ModelMap model) {
+		if (generarLiquidacionApi == null) {
+			logger.error("liquidacioncontroller.generar: No existe una implementacion para generar liquidaciones");
+			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
+		}
+		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+		model.put("plantillas", plantillas);		
+		return JSON_PLANTILLAS;
+	}
 
+	@RequestMapping
+	public String abrirPlantillasLiquidacion(ModelMap model) {
+		return JSP_PLANTILLAS_LIQUIDACION;
+	}
+	
 }

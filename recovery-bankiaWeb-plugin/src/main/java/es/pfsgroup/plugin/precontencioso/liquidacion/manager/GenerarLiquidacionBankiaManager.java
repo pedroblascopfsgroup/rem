@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.GenerarLiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
+import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDTipoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.geninformes.api.GENINFInformesApi;
 
 @Service
@@ -34,6 +37,9 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 
 	@Override
 	public FileItem generarDocumento(Long idLiquidacion) {
@@ -144,5 +150,11 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 		}
 
 		return resultado;
+	}
+	
+	@Override
+	public List<DDTipoLiquidacionPCO> getPlantillasLiquidacion(){
+		List<DDTipoLiquidacionPCO> plantillas = diccionarioApi.dameValoresDiccionario(DDTipoLiquidacionPCO.class);
+		return plantillas;
 	}
 }

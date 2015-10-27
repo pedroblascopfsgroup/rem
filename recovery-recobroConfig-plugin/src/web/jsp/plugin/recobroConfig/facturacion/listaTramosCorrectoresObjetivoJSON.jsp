@@ -7,7 +7,7 @@
 	<json:array name="correctores" items="${tramosCorrectores}" var="tramosCorrectores">
 		<json:object>
 			<json:property name="id" value="${tramosCorrectores.id}"/>
-			<json:property name="posicion" value="${tramosCorrectores.objetivoInicio}º - ${tramosCorrectores.objetivoFin}º"  />
+			<json:property name="posicion" value="${tramosCorrectores.objetivoInicio}% - ${tramosCorrectores.objetivoFin}%"  />
 			<json:property name="coeficiente" value="${tramosCorrectores.coeficiente}%"/>
 		</json:object>
 	</json:array>

@@ -25,37 +25,17 @@
     <!-- PASO 2 - OBTENCION EXPEDIENTES ACTIVOS DE RECOBRO -->
     <entry key="recobro.insert.tmp_rec_exp_activos.Oracle10gDialect">
         <![CDATA[
-            DECLARE
-             nuFilas number;
+           
             BEGIN
-            --**Log
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','1-TMP_ARQ_RECOBRO', count(*) from TMP_ARQ_RECOBRO;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','2-BATCH_RCF_ENTRADA', count(*) from BATCH_RCF_ENTRADA;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','3-BATCH_DATOS_EXP', count(*) from BATCH_DATOS_EXP;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','4-BATCH_DATOS_CNT_EXP', count(*) from BATCH_DATOS_CNT_EXP;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','5-BATCH_DATOS_PER_EXP', count(*) from BATCH_DATOS_PER_EXP;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','6-BATCH_DATOS_EXP_MANUAL', count(*) from BATCH_DATOS_EXP_MANUAL;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','7-BATCH_DATOS_CNT_PER', count(*) from BATCH_DATOS_CNT_PER;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','8-BATCH_DATOS_CNT', count(*) from BATCH_DATOS_CNT;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','9-BATCH_DATOS_PER', count(*) from BATCH_DATOS_PER;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','10-BATCH_DATOS_CNT_INFO', count(*) from BATCH_DATOS_CNT_INFO;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','11-BATCH_DATOS_CLI', count(*) from BATCH_DATOS_CLI;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','12-BATCH_DATOS_EXCEPTUADOS', count(*) from BATCH_DATOS_EXCEPTUADOS;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','13-BATCH_DATOS_GCL', count(*) from BATCH_DATOS_GCL;
-            COMMIT;
-
-            INSERT INTO TMP_REC_EXP_ACTIVOS
-            SELECT DISTINCT EXPE.EXP_ID, EXPE.ARQ_ID, EXPE.RCF_ESQ_ID, EXPE.RCF_AGE_ID
-            FROM BATCH_DATOS_EXP EXPE
-            WHERE EXPE.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
-            AND EXPE.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
-            AND EXPE.EXP_BORRADO = ${borrado.no.id}
-            AND (EXPE.EXP_MANUAL IS NULL OR EXPE.EXP_MANUAL = ${manual.no.id});
-
-            --**Log
-            nuFilas:=SQL%ROWCOUNT;
-            INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','TMP_REC_EXP_ACTIVOS', to_char(nuFilas) from dual;
-
+           
+				INSERT INTO TMP_REC_EXP_ACTIVOS
+				SELECT DISTINCT EXPE.EXP_ID, EXPE.ARQ_ID, EXPE.RCF_ESQ_ID, EXPE.RCF_AGE_ID
+				FROM BATCH_DATOS_EXP EXPE
+				WHERE EXPE.DD_EEX_CODIGO = ${ddEstadoExpedientes.Activo.codigo}
+				AND EXPE.DD_TPE_CODIGO = ${ddTipoExpediente.Recobro.codigo}
+				AND EXPE.EXP_BORRADO = ${borrado.no.id}
+				AND (EXPE.EXP_MANUAL IS NULL OR EXPE.EXP_MANUAL = ${manual.no.id});
+            
             OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_ACTIVOS'); --estimate
             END;
         ]]>
@@ -70,7 +50,6 @@
                 v_result NUMBER;
                 v_sql VARCHAR2(2000 CHAR);
                 v_codigo_extincion VARCHAR2(5 CHAR);
-                nuFilas number;
             begin
                 SELECT CASE WHEN (TRUNC(ESQ.RCF_ESQ_FECHA_LIB) + ESQ.RCF_ESQ_PLAZO <= TRUNC(SYSDATE)) THEN 1 ELSE 0 END INTO v_result
                 FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}
@@ -86,10 +65,6 @@
                     WHERE ESQ.RCF_DD_EES_CODIGO = :v_codigo_extincion
                 ';
                 execute immediate v_sql using v_codigo_extincion;
-
-                --**Log
-                nuFilas:=SQL%ROWCOUNT;
-                INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','TMP_REC_EXP_EXTINCION', to_char(nuFilas) from dual;
 
                 commit;
                 OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_EXTINCION'); --estimate
@@ -109,7 +84,6 @@
             declare
                 v_result NUMBER;
                 v_sql VARCHAR2(2000 CHAR);
-                nuFilas number;
             begin
                 SELECT CASE WHEN (ESQ.RCF_DD_MTR_CODIGO = ${ddModeloTransicion.Ruptura.codigo}) THEN 1 ELSE 0 END INTO v_result
                 FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}
@@ -123,9 +97,6 @@
                 ';
                 execute immediate v_sql;
 
-                --**Log
-                nuFilas:=SQL%ROWCOUNT;
-                INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','TMP_REC_EXP_EXTINCION_RU', to_char(nuFilas) from dual;
 
                 COMMIT;
                 OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_EXTINCION_RU'); --estimate
@@ -145,7 +116,6 @@
             declare
                 v_result NUMBER;
                 v_sql VARCHAR2(2000 CHAR);
-                nuFilas number;
             begin
                 SELECT CASE WHEN (ESQ.RCF_DD_MTR_CODIGO = ${ddModeloTransicion.Rearquetipado.codigo}) THEN 1 ELSE 0 END INTO v_result
                 FROM BATCH_RCF_ENTRADA ESQ WHERE ESQ.RCF_DD_EES_CODIGO = ${ddEstadoEsquemas.Liberado.codigo}
@@ -158,10 +128,6 @@
                     FROM TMP_REC_EXP_EXTINCION EXP_EXT
                 ';
                 execute immediate v_sql;
-
-                --**Log
-                nuFilas:=SQL%ROWCOUNT;
-                INSERT INTO BATCH_LOG Select systimestamp,'GMRC0201','sqlRecobroMarcadoExpedientes','TMP_REC_EXP_EXTINCION_RA', to_char(nuFilas) from dual;
 
                 COMMIT;
                 OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_EXTINCION_RA'); --estimate

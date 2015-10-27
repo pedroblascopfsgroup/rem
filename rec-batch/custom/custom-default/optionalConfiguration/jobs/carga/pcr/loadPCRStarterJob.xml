@@ -31,8 +31,10 @@
                      <property name="dataSource" ref="entityDataSource" />
                      <property name="afterScript">
                         <value>
+                              BEGIN
                                 UPDATE tmp_cnt_contratos SET tmp_cnt_fichero_carga = '${inFile}';
-                                ANALYZE TABLE tmp_cnt_contratos ${sql.analyze};
+                                OPERACION_DDL.DDL_TABLE('STATS','tmp_cnt_contratos');
+                              END;
                         </value>
                      </property>                      
 				     <!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->
@@ -95,8 +97,10 @@ TMP_CNT_INF_EXTRA7, TMP_CNT_INF_EXTRA8, TMP_CNT_INF_EXTRA9, TMP_CNT_INF_EXTRA10,
                      <property name="dataSource" ref="entityDataSource" />
                      <property name="afterScript">
                         <value>
+                           BEGIN
                             UPDATE tmp_per_personas SET tmp_per_fichero_carga = '${inFile}';
-                            ANALYZE TABLE tmp_per_personas ${sql.analyze};
+                            OPERACION_DDL.DDL_TABLE('STATS','tmp_per_personas');
+                           END;
                         </value>
                      </property>
                  			<!-- Parámetros Fijos del DataLoader que vienen en los JobParameters -->
@@ -180,8 +184,10 @@ TMP_CNT_INF_EXTRA7, TMP_CNT_INF_EXTRA8, TMP_CNT_INF_EXTRA9, TMP_CNT_INF_EXTRA10,
                      <property name="dataSource" ref="entityDataSource" />
                      <property name="afterScript">
                         <value>
+                          BEGIN
                             UPDATE tmp_cnt_per SET tmp_cnt_per_fichero_carga= '${inFile}';
-                            ANALYZE TABLE tmp_cnt_per ${sql.analyze};
+                            OPERACION_DDL.DDL_TABLE('STATS','tmp_cnt_per');
+                           END;
                         </value>
                      </property>
                      <property name="bindings" value="fileSystemResource=csvFileRelacion${batch.loaderParams}" />

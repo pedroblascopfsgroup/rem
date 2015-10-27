@@ -307,9 +307,16 @@
 			<value>H068</value>
 		</property>
 	</bean>  
+	
+	<bean id="precontenciosoProjectContextHAYA" parent="precontenciosoProjectContextDefault">
+		<property name="recovery">
+			<value>HAYA</value>
+		</property>
+	</bean>
 
 	<alias name="nmbCommonProjectContextHAYA" alias="nmbCommonProjectContext"/>
 	<alias name="procedimientosProjectContextHaya" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextHAYA" alias="coreProjectContext"/>
+	<alias name="precontenciosoProjectContextHAYA" alias="precontenciosoProjectContext"/>
 	<bean id="hayaProjectContext" parent="hayaProjectContextDefault"/>
 </beans>	

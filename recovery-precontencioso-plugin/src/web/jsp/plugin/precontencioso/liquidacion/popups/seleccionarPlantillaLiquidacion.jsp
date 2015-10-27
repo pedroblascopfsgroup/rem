@@ -9,7 +9,15 @@
 
 
 	<%-- Combo Tipo Gestor --%>
-
+	
+	var idLiquidacionSeleccionada = '${idLiquidacionSeleccionada}';
+	var ocultarCombo = '${ocultarCombo}';
+	
+	var labelInformativa = new Ext.form.Label({
+		text: 'Se va a generar un pdf de la liquidacion seleccionada'
+		,style:'font-weight:bolder; font-size:11; margin:10px 10px 10px 10px;'
+	});
+	
 	var plantillasRecord = Ext.data.Record.create([
 		{name: 'id'},
 		{name : 'codigo'},
@@ -28,10 +36,11 @@
 		displayField: 'descripcion',
 		valueField: 'id',
 		mode: 'remote',
+		allowBlank: false,
 		forceSelection: true,
-		emptyText: 'Seleccionar',
 		triggerAction: 'all',
 		disabled: false,
+		hidden: ocultarCombo,
 		fieldLabel: '<s:message code="plugin.precontencioso.liquidaciones.generar.plantillas" text="**Plantillas" />'
 	});
 	
@@ -42,17 +51,29 @@
 	<%-- Buttons --%>
 
 	var btnGuardar = new Ext.Button({
-		text: '<s:message code="app.guardar" text="**Guardar" />',
-		iconCls: 'icon_edit',
-		cls: 'x-btn-text-icon',
+		text: '<s:message code="app.aceptar" text="**Aceptar" />',
+		iconCls : 'icon_ok',
 		style: 'padding-top:0px',
 		handler: function() {
-			var flow='/pfs/liquidacion/generar';
-			var params={idLiquidacion:idLiquidacionSeleccionada()};
-			app.openBrowserWindow(flow,params);
-			page.fireEvent(app.event.DONE);
+			if (validarForm() == '') {
+				var flow='/pfs/liquidacion/generar';
+				var params={idLiquidacion:idLiquidacionSeleccionada};
+				app.openBrowserWindow(flow,params);
+				page.fireEvent(app.event.DONE);
+			}else{
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />', validarForm());
+			}
 		}
 	});
+	
+	var validarForm = function() {
+		debugger;
+		var mensaje = '';
+		if (comboPlantillas.getValue() == '' && !ocultarCombo) {
+			mensaje = 'Debe rellenar los campos obligatorios';
+		}
+		return mensaje;
+	}
 
 	var btnCancelar = new Ext.Button({
 		text: '<s:message code="app.cancelar" text="**Cancelar" />',
@@ -71,7 +92,7 @@
 		bodyStyle: 'padding:10px; cellspacing:20px',
 		defaults: {xtype: 'fieldset', cellCls: 'vtop', border: false},
 		bbar: [btnGuardar, btnCancelar],
-		items: [comboPlantillas]
+		items: [comboPlantillas, labelInformativa]
 	});
 
 	page.add(panelEdicion);

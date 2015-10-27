@@ -48,9 +48,10 @@ var abrirPantallaSolicitar = function() {
 var abrirPantallaPlantillasLiquidacion = function() {
 	var w = app.openWindow({
 		flow: 'liquidacion/abrirPlantillasLiquidacion',
+		params: {idLiquidacion:idLiquidacionSeleccionada()},
 		autoWidth: true,
 		closable: true,
-		title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo.solicitarliq" text="**Solicitar liquidación" />'
+		title: '<s:message code="plugin.precontencioso.liquidaciones.generar.seleccionar.plantillas" text="**Seleccionar plantilla a generar" />'
 	});
 
 	w.on(app.event.DONE, function() {

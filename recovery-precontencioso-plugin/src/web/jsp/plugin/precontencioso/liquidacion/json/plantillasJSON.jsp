@@ -4,7 +4,7 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <fwk:json>
-   <json:array name="plantillas" items="${data}" var="d">
+   <json:array name="plantillas" items="${plantillas}" var="d">
        <json:object>
          	<json:property name="id" value="${d.id}"/>
             <json:property name="codigo" value="${d.codigo}"/>

@@ -232,12 +232,18 @@ public class LiquidacionController {
 			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
 		}
 		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
-		model.put("plantillas", plantillas);		
+		model.put("plantillas", plantillas);
 		return JSON_PLANTILLAS;
 	}
 
 	@RequestMapping
-	public String abrirPlantillasLiquidacion(ModelMap model) {
+	public String abrirPlantillasLiquidacion(@RequestParam(value = "idLiquidacion", required = true) Long id, ModelMap model) {
+		List<DDTipoLiquidacionPCO> plantillas = null;
+		if (generarLiquidacionApi != null) {
+			plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+		}
+		model.put("ocultarCombo", Checks.estaVacio(plantillas));
+		model.put("idLiquidacionSeleccionada", id);
 		return JSP_PLANTILLAS_LIQUIDACION;
 	}
 	

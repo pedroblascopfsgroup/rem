@@ -9,20 +9,326 @@
 
 	//TAB DATOS GENERALES
 	
-	<%@ include file="tabs/tabDatosGenerales.jsp" %> 
-	var datosGenerales = createDatosGeneralesTab();
+<%-- 	<%@ include file="tabs/tabDatosGenerales.jsp" %>  -->
+<!-- 	var datosGenerales = createDatosGeneralesTab(); --%>
+	
+	//Combo Estado Gestión
+	var estadosGestion = <app:dict value="${estadosGestion}" blankElement="true" blankElementValue="" blankElementText="---" />;
+	var optionsEstadoGestionStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : estadosGestion
+	});
+	
+	var comboEstadoGestion = new Ext.form.ComboBox({
+		store: optionsEstadoGestionStore
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode:'local'
+		,style:'margin:0px'
+		,width:170
+		,triggerAction:'all'
+		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestión"/>'
+	});
+	
+	//Combo Tipo persona
+	var tipoPersonas = <app:dict value="${tipoPersonas}" blankElement="false" />;
+	
+	var optionsTipoPersonaStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : tipoPersonas
+	});
+	
+	var comboTipoPersona = new Ext.form.ComboBox({
+		store: optionsTipoPersonaStore
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,mode:'local'
+		,style:'margin:0px'
+		,triggerAction:'all'
+		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.tipoPersona" text="**Tipo Persona"/>'
+	});
+	
+	// Field riesgo total
+	var mmRiesgoTotal = app.creaMinMaxMoneda('<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.riesgoTotal" text="**Riesgo Total" />', 'riesgo',{width : 80, labelWidth:105});
+	
+	// Field deuda irregular
+	var mmDeudaIrregular = app.creaMinMaxMoneda('<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.deudaIrregular" text="**Deuda Irregular" />', 'deuda',{width : 80, labelWidth:105});
+	
+	//Combo Agrupar por
+<%-- 	var agruparPor = <app:dict value="${agruparPor}" blankElement="false" />; --%>
+	
+ 	var optionsAgruparPorStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+ 	       ,data : [
+ 	       			{"codigo":"EXP", "descripcion":"Expediente"}
+ 	       			,{"codigo":"CTO", "descripcion":"Contrato"}
+ 	       	
+ 	       ]
+ 	}); 
+	
+	var comboAgruparPor = new Ext.form.ComboBox({
+ 		store: optionsAgruparPorStore 
+		,displayField:'descripcion' 
+		,valueField:'codigo' 
+		,mode:'local'
+		,style:'margin:0px'
+		,triggerAction:'all'
+		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'
+	});
+	
+	var tramos = <app:dict value="${tramo}" />;
+	var propuestas = <app:dict value="${propuesta}" />;
+	
+	//Doble sel tramo
+	var dobleSelTramo = app.creaDblSelect(tramos
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.tramo" text="**Tramo" />'
+                              ,{<app:test id="dobleSelTramo" />});
+                              
+    //Doble sel propuesta
+	var dobleSelPropuesta = app.creaDblSelect(propuestas
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.propuesta" text="**Propuesta" />'
+                              ,{
+               						width:250
+           						});	
+	
 	
 	// TAB EXPEDIENTE
-	<%@ include file="tabs/tabExpediente.jsp" %>
-	var expediente = createExpedienteTab();
+<%-- 	<%@ include file="tabs/tabExpediente.jsp" %> -->
+<!-- 	var expediente = createExpedienteTab(); --%>
+
+// codigo expediente
+	var txtCodExpediente = new Ext.form.NumberField({
+		fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.codExpediente" text="**Codigo Expediente" />'
+		,enableKeyEvents: true
+		,allowDecimals: false
+		,allowNegative: false
+		,style : 'margin:0px'
+		,autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"}
+		//,vtype:'numeric'
+		
+		});
+		
+	//Combo jerarquia
+	
+ 	var nivelesExp = <app:dict value="${nivelesExp}" blankElement="true" blankElementValue="" blankElementText="---" />; 
+	
+	var comboJerarquia = app.creaCombo({triggerAction: 'all', data:nivelesExp, value:nivelesExp.diccionario[0].codigo, name: 'nivelesExp',fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.jerarquia" text="**Jerarquía"/>' })
+	
+	
+	
+	var fases = <app:dict value="${fase}" />;
+	
+	//Doble sel centro
+	
+	
+	var centro = <app:dict value="${centro}" />;
+	
+	var centrosRecordExp  = Ext.data.Record.create([
+		{name:'codigo'}
+	   ,{name:'descripcion'}
+		
+	]);
+	
+	var optionsCentrosStore = page.getStore({
+	       flow: 'clientes/buscarZonas'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'zonas'
+	    }, centrosRecordExp)
+	       
+	});    
+	
+	
+	var dobleSelCentro = app.creaDblSelect(centro
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
+                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:300});	
+           	
+    var recargarComboCentrosExp = function(){
+    debugger;
+		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
+			optionsCentrosStore.webflow({id:comboJerarquia.getValue()});
+		}else{
+			optionsCentrosStore.webflow({id:0});
+			dobleSelCentro.setValue('');
+			optionsCentrosStore.removeAll();
+		}
+	}
+	
+	var limpiarYRecargar = function(){
+	debugger;
+		app.resetCampos([dobleSelCentro]);
+		recargarComboCentrosExp();
+	}
+	comboJerarquia.on('select',limpiarYRecargar);
+	
+	recargarComboCentrosExp();
+           	                              
+	//Doble sel fase
+	var dobleSelFase = app.creaDblSelect(fases
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.fase" text="**Fase" />'
+						,{
+               				width:200
+           					});	
 	
 	//TAB CONTRATO
-	<%@ include file="tabs/tabContrato.jsp" %>
-	var contrato = createContratoTab();
+<%-- 	<%@ include file="tabs/tabContrato.jsp" %> -->
+<!-- 	var contrato = createContratoTab(); --%>
+	
+	// codigo contrato
+	var txtCodContrato = new Ext.form.NumberField({
+		fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.codContrato" text="**Codigo Contrato" />'
+		,enableKeyEvents: true
+		,allowDecimals: false
+		,allowNegative: false
+		,style : 'margin:0px'
+		,autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"}
+		//,vtype:'numeric'
+		
+		});
+		
+	// Field fecha prevista regularizacion
+	<pfsforms:datefield name="filtroFechaDesde"
+		labelKey="plugin.mejoras.listadoPreProyectado.contrato.fechaPrevista" 
+		label="**Fecha prevista refularizacion" width="140"/>
+		
+	filtroFechaDesde.id='filtroFechaDesdeRecobroListaCarteras';		
+	
+ 	var filtroFechaHasta = new Ext.ux.form.XDateField({ 
+ 		name : 'filtroFechaAltaHasta' 
+ 		,hideLabel:true 
+ 		,width:100 
+ 	}); 
+	
+	var panelFechasPrevistaRegul = new Ext.Panel({
+		layout:'table'
+		,title : ''
+		,id : 'panelFechasPrevistaRegul'
+		,collapsible : false
+		,titleCollapse : false
+		,layoutConfig : {
+			columns:2
+		}
+		,style:'margin-right:0px;margin-left:0px'
+		,border:false
+		,autoWidth:true
+		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop'}
+		,items:[
+			
+			{layout:'form', items:[filtroFechaDesde]}
+			,{layout:'form',items:[filtroFechaHasta]}
+		]
+	}); 
+	
+	//Combo jerarquia
+	
+	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />; 
+	
+	var comboJerarquiaContrato = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name: 'jerarquia',fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.jerarquia" text="**Jerarquía"/>' })
+	
+	var centros = <app:dict value="${centros}" />;
+	
+	//Doble sel centro
+	
+	 var centrosRecord  = Ext.data.Record.create([
+		{name:'codigo'}
+	   ,{name:'descripcion'}
+		
+	]);
+	
+	var optionsCentrosContratoStore = page.getStore({
+	       flow: 'clientes/buscarZonas'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'zonas'
+	    }, centrosRecord)
+	       
+	}); 
+	
+	var dobleSelCentroContrato = app.creaDblSelect(centros
+                              ,'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.centros" text="**Centro" />'
+                              ,{store:optionsCentrosContratoStore, funcionReset:recargarComboCentros, width:300});	
+    
+    var recargarComboCentros = function(){
+		if (comboJerarquiaContrato.getValue()!=null && comboJerarquiaContrato.getValue()!=''){
+			optionsCentrosContratoStore.webflow({id:comboJerarquiaContrato.getValue()});
+		}else{
+			optionsCentrosContratoStore.webflow({id:0});
+			dobleSelCentroContrato.setValue('');
+			optionsCentrosContratoStore.removeAll();
+		}
+	}
+    
+    var limpiarYRecargar = function(){
+		app.resetCampos([dobleSelCentroContrato]);
+		recargarComboCentros();
+	}
+	comboJerarquiaContrato.on('select',limpiarYRecargar);
+	
+	recargarComboCentros();
+	
+	
+	 //filtro Datos Generales
+	var filtrosTabDatosGenerales = new Ext.Panel({
+		title:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales" text="**Datos del expediente" />'
+		,autoHeight:true
+		,bodyStyle:'padding: 10px'
+		,layout:'table'
+		,layoutConfig:{columns:2}
+		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+		,items:[{
+					layout:'form'
+					,items: [comboEstadoGestion,comboTipoPersona,mmRiesgoTotal.panel,mmDeudaIrregular.panel,comboAgruparPor]	
+		
+				},
+				{
+					layout:'form'
+					,items: [dobleSelTramo,dobleSelPropuesta]
+				}]
+		
+	});
+	
+	//filtro Expediente
+	var filtrosTabExpediente = new Ext.Panel({
+		title:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente" text="**Expediente" />'
+		,autoHeight:true
+		,bodyStyle:'padding: 10px'
+		,layout:'table'
+		,layoutConfig:{columns:2}
+		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+		,items:[{
+					layout:'form'
+					,items:[txtCodExpediente,comboJerarquia,dobleSelCentro]
+				},{
+					layout:'form'
+					,items:[dobleSelFase]
+				}
+				]
+	});
+	
+	//Filtro Contrato
+
+	var filtrosTabContrato = new Ext.Panel({
+		title:'<s:message code="plugin.mejoras.listadoPreProyectado.contrato" text="**Contrato" />'
+		,autoWidth:true
+		,autoHeight:true
+		,bodyStyle:'padding: 10px'
+		,layout:'table'
+		,layoutConfig:{columns:2}
+		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+		,items:[{
+					layout:'form'
+					,items:[txtCodContrato, panelFechasPrevistaRegul]
+					,autoWidth:true
+				}
+				,{
+					layout:'form'
+					,items:[comboJerarquiaContrato,dobleSelCentroContrato]
+				}]
+	});
 	
 	//filtro pestañas
 	var filtroTabPanel= new Ext.TabPanel({
-		items:[datosGenerales,expediente,contrato]
+		items:[filtrosTabDatosGenerales,filtrosTabExpediente,filtrosTabContrato]
 		,layoutOnTabChange:true
 		,autoScroll:true
 		,autoHeight:true
@@ -31,9 +337,25 @@
 		,activeItem:0
 	});
 	
+	var validarEmptyForm = function(){
+		if(mmRiesgoTotal.min.value != ''){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	var buscarFunc = function(){
+		if(validarEmptyForm()){
+		
+		}
+	};
+	
 	
 	var btnBuscar = new Ext.Button({
-			text:'Buscar'
+			handler: buscarFunc
+			,text:'Buscar'
 			,iconCls:'icon_busquedas'		
 	});
 		
@@ -42,10 +364,11 @@
         ,iconCls:'icon_exportar_csv'
     });
     
-    var btnReset = app.crearBotonResetCampos({
-		text:'Limpiar'
-		,iconCls:'magifier_zoom_out'
-	});
+    var btnReset = app.crearBotonResetCampos({ 
+ 		text:'Limpiar' 
+ 		,iconCls:'magifier_zoom_out'
+ 	}); 
+
 	
 	//Agrego los filtros al panel
 	var panelFiltros = new Ext.FormPanel({

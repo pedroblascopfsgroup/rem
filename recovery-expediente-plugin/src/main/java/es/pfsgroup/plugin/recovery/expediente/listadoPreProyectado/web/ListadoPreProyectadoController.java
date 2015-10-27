@@ -15,7 +15,6 @@ import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
 
 @Controller
 public class ListadoPreProyectadoController {
@@ -46,8 +45,14 @@ public class ListadoPreProyectadoController {
 		ArrayList<Nivel> nivel = (ArrayList<Nivel>) utilDiccionario.dameValoresDiccionario(Nivel.class);
 		model.put("niveles", nivel);
 		
+		ArrayList<Nivel> jerarquias = (ArrayList<Nivel>) utilDiccionario.dameValoresDiccionario(Nivel.class);
+		model.put("nivelesExp", jerarquias);
+		
 		ArrayList<DDZona> ddZona = (ArrayList<DDZona>) utilDiccionario.dameValoresDiccionario(DDZona.class);
 		model.put("centro", ddZona);
+		
+		ArrayList<DDZona> ddZonaContrato = (ArrayList<DDZona>) utilDiccionario.dameValoresDiccionario(DDZona.class);
+		model.put("centros", ddZonaContrato);
 		
 		ArrayList<DDEstadoItinerario> ddEstadoItinerario = (ArrayList<DDEstadoItinerario>) utilDiccionario.dameValoresDiccionario(DDEstadoItinerario.class);
 		model.put("fase", ddEstadoItinerario);

@@ -10,6 +10,7 @@ DIR_DESTINO=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/in/aprovisionamiento/tr
 DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
 
 
+
 	ftp -vn $SERVER <<END_OF_SESSION
         user $USER $PASSW
         lcd $DIR_LOCAL

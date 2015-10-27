@@ -24,6 +24,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.dto.DireccionAltaDto;
@@ -695,5 +696,33 @@ public class BurofaxManager implements BurofaxApi {
 		return burofaxEnvio;
 	}
 		
-	
+	private String replaceVariablesGeneracionBurofax(Long idPcoBurofax, String textoBuro){
+		
+		BurofaxPCO burofax=(BurofaxPCO) genericDao.get(BurofaxPCO.class,genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(idPcoBurofax)));
+		
+		String conCuentaAnterior = "";
+		String tipoIntervencion = "";
+		String aNombreDe = "";
+		String listaBienes = "";
+		
+		if(burofax.getContrato().getNroContrato()!=null){
+			conCuentaAnterior = "ANTERIORMENTE IDENTIFICADO CON EL NUM. ${NUM_CUENTA_ANTERIOR }";
+		}
+		
+		if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR_REGISTRAL)){
+			tipoIntervencion="TITULAR REGISTRAL";
+		}else if(burofax.getTipoIntervencion().getCodigo().equals(DDTipoIntervencion.CODIGO_TITULAR)){
+			tipoIntervencion="TITULAR";
+		}else{
+			tipoIntervencion="FIADOR";
+		}
+		
+		textoBuro.replace("#CON_CUENTA_ANTERIOR#", conCuentaAnterior);
+		textoBuro.replace("#TIPO_INTERVENCIO#", tipoIntervencion);
+		textoBuro.replace("#A_NOMBRE_DE#", aNombreDe);
+		textoBuro.replace("#LISTA_BIENES#", listaBienes);
+				
+		
+		return "";
+	}
 }

@@ -5,8 +5,7 @@ SERVER=10.64.132.59
 USER=ftpsocpart
 PASSW=tempo.99
 PORT=2153
-HOY=$(date +"%Y%m%d") 
-DIR_LOCAL=/mnt/fs_servicios/recovecb/transferencia/aprov_convivencia/entrada/
+DIR_LOCAL=/mnt/fs_servicios/recovecb/transferencia/aprov_convivencia/entrada 
 DIR_DESTINO=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/out/aprovisionamiento/troncal/ 
 DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
 
@@ -36,8 +35,6 @@ DIR_BASE_ETL=/aplicaciones/recovecb/programas/etl
 
 
                  > $DIR_LOCAL/rechazos.txt
-                 cp $DIR_LOCAL/rechazos.dat $DIR_LOCAL/rechazos$HOY.dat
-                 rm -f $DIR_LOCAL/backup/COBROS*
 
                  ftp -vn $SERVER <<END_OF_SESSION
                        user $USER $PASSW

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.web;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,12 +16,20 @@ import es.capgemini.pfs.vencidos.model.DDTramosDiasVencidos;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.api.ListadoPreProyectadoApi;
 import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.dto.ListadoPreProyectadoDTO;
+import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoCnt;
+import es.pfsgroup.plugin.recovery.expediente.listadoPreProyectado.model.VListadoPreProyectadoExp;
 
 @Controller
 public class ListadoPreProyectadoController {
 
 	static final String LISTADO_PREPROYECTADO = "plugin/expediente/listadoPreProyectado/listadoPreProyectado";
+	static final String LISTADO_PREPROYECTADO_EXP_JSON = "plugin/expediente/listadoPreProyectado/listadoPreProyectadoExpJSON";
+	static final String LISTADO_PREPROYECTADO_CNT_JSON = "plugin/expediente/listadoPreProyectado/listadoPreProyectadoCntJSON";
+	
+	@Autowired
+	ListadoPreProyectadoApi listadoPreProyectado;
 	
 	@Autowired
 	UtilDiccionarioApi utilDiccionario;
@@ -70,13 +79,23 @@ public class ListadoPreProyectadoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getCicloRecExp(ListadoPreProyectadoDTO dto, ModelMap model) { 
-		
-		
-		model.put("listadopreproyectadocontroller",null);
-		
-		return null;
-		
+	public String getListPreproyectadoExp(ListadoPreProyectadoDTO dto, ModelMap map) {
+		List<VListadoPreProyectadoExp> listadoExp = listadoPreProyectado.getListPreproyectadoExp(dto);
+		map.put("listadoPreProyectadoExp", listadoExp);
+		return LISTADO_PREPROYECTADO_EXP_JSON;
 	}
+
+	@RequestMapping
+	public String getListPreproyectadoCnt(ListadoPreProyectadoDTO dto, ModelMap map) {
+		List<VListadoPreProyectadoCnt> listadoCnt = listadoPreProyectado.getListPreproyectadoCnt(dto);
+		map.put("listadoPreProyectadoCnt", listadoCnt);
+		return LISTADO_PREPROYECTADO_CNT_JSON;
+	}
+
+	public String getCicloRecExp(ListadoPreProyectadoDTO dto, ModelMap model) { 
+		model.put("listadopreproyectadocontroller",null);
+		return null;
+	}
+
 
 }

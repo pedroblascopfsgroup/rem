@@ -9,9 +9,6 @@
 
 	//TAB DATOS GENERALES
 	
-<%-- 	<%@ include file="tabs/tabDatosGenerales.jsp" %>  -->
-<!-- 	var datosGenerales = createDatosGeneralesTab(); --%>
-	
 	//Combo Estado Gestión
 	var estadosGestion = <app:dict value="${estadosGestion}" blankElement="true" blankElementValue="" blankElementText="---" />;
 	var optionsEstadoGestionStore = new Ext.data.JsonStore({
@@ -57,8 +54,6 @@
 	var mmDeudaIrregular = app.creaMinMaxMoneda('<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.deudaIrregular" text="**Deuda Irregular" />', 'deuda',{width : 80, labelWidth:105});
 	
 	//Combo Agrupar por
-<%-- 	var agruparPor = <app:dict value="${agruparPor}" blankElement="false" />; --%>
-	
  	var optionsAgruparPorStore = new Ext.data.JsonStore({
 		fields: ['codigo', 'descripcion']
  	       ,data : [
@@ -91,12 +86,10 @@
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.propuesta" text="**Propuesta" />'
                               ,{
                						width:250
-           						});	
+           						},{<app:test id="dobleSelPropuesta" />} );	
 	
 	
 	// TAB EXPEDIENTE
-<%-- 	<%@ include file="tabs/tabExpediente.jsp" %> -->
-<!-- 	var expediente = createExpedienteTab(); --%>
 
 // codigo expediente
 	var txtCodExpediente = new Ext.form.NumberField({
@@ -142,10 +135,9 @@
 	
 	var dobleSelCentro = app.creaDblSelect(centro
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
-                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:300});	
+                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:300},{<app:test id="dobleSelCentro" />});	
            	
     var recargarComboCentrosExp = function(){
-    debugger;
 		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
 			optionsCentrosStore.webflow({id:comboJerarquia.getValue()});
 		}else{
@@ -156,7 +148,6 @@
 	}
 	
 	var limpiarYRecargar = function(){
-	debugger;
 		app.resetCampos([dobleSelCentro]);
 		recargarComboCentrosExp();
 	}
@@ -169,11 +160,9 @@
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.fase" text="**Fase" />'
 						,{
                				width:200
-           					});	
+           					},{<app:test id="dobleSelFase" />});	
 	
 	//TAB CONTRATO
-<%-- 	<%@ include file="tabs/tabContrato.jsp" %> -->
-<!-- 	var contrato = createContratoTab(); --%>
 	
 	// codigo contrato
 	var txtCodContrato = new Ext.form.NumberField({
@@ -246,7 +235,7 @@
 	
 	var dobleSelCentroContrato = app.creaDblSelect(centros
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.centros" text="**Centro" />'
-                              ,{store:optionsCentrosContratoStore, funcionReset:recargarComboCentros, width:300});	
+                              ,{store:optionsCentrosContratoStore, funcionReset:recargarComboCentros, width:300},{<app:test id="dobleSelCentroContrato" />});	
     
     var recargarComboCentros = function(){
 		if (comboJerarquiaContrato.getValue()!=null && comboJerarquiaContrato.getValue()!=''){
@@ -337,18 +326,149 @@
 		,activeItem:0
 	});
 	
-	var validarEmptyForm = function(){
-		if(mmRiesgoTotal.min.value != ''){
-			return true;
-		}else{
+	//Boton limpiar
+	var btnReset = app.crearBotonResetCampos([ 
+ 			comboEstadoGestion,
+ 			comboTipoPersona,
+ 			mmRiesgoTotal.min,
+ 			mmRiesgoTotal.max,
+ 			mmDeudaIrregular.min,
+ 			mmDeudaIrregular.max,
+ 			comboAgruparPor,
+ 			dobleSelTramo,
+ 			dobleSelPropuesta,
+ 			txtCodExpediente,
+ 			comboJerarquia,
+ 			dobleSelCentro,
+ 			dobleSelFase,
+ 			txtCodContrato,
+ 			filtroFechaDesde,
+ 			filtroFechaHasta,
+ 			comboJerarquiaContrato,
+ 			dobleSelCentroContrato
+ 	]);
+ 	
+ 	var validaMinMax = function(){
+		if (!app.validaValoresDblText(mmRiesgoTotal)){
 			return false;
 		}
+		if (!app.validaValoresDblText(mmDeudaIrregular)){
+			return false;
+		}
+		return true;
+	}
+ 	<%--Descomentar cuando este  el manager 
+ 	var PreProyectado= Ext.data.Record.create([]);  -
+ 	
+ 	var preProStore = page.getStore({
+		eventName : 'listado'
+		,limit:limit
+		,flow:'listadopreproyectadocontroller/getExpCto'
+		,reader: new Ext.data.JsonReader({
+	    	root : 'listadoPreproyectado'
+	    	,totalProperty : 'total'
+	    }, PreProyectado)
+		,remoteSort : true
+	});--%>
+ 	
+ 	
+	var validarEmptyForm = function(){
+	debugger;
+		if(comboEstadoGestion.getValue() != ''){
+			return true;
+		}
 		
+		if(comboTipoPersona.getValue() != ''){
+			return true;
+		}
+		
+		if(!mmRiesgoTotal.min.getValue() === ''){
+			return true;
+		}
+		
+ 		if(!mmRiesgoTotal.max.getValue() === ''){
+			return true; 			
+ 		}
+		if(!mmDeudaIrregular.min.getValue() === ''){
+			return true;		
+		}
+		if(!mmDeudaIrregular.max.getValue() === ''){
+			return true;		
+		}
+		if(comboAgruparPor.getValue() != ''){
+			return true;		
+		}
+		if(dobleSelTramo.getValue() != ''){
+			return true;		
+		}
+		if(dobleSelPropuesta.getValue() != ''){
+			return true;		
+		}
+		if(txtCodExpediente.getValue() != ''){
+			return true;		
+		}
+		if(comboJerarquia.getValue() != ''){
+			return true;		
+		}
+<!--  		if(dobleSelCentro.getValue() != ''){  -->
+<!--  			return true;		  -->
+<!-- 		}  -->
+<!-- 		if(dobleSelFase.getValue() != ''){ -->
+<!-- 			return true;		 -->
+<!-- 		}  -->
+		if(txtCodContrato.getValue() != ''){
+			return true;		
+		}
+		if(filtroFechaDesde.getValue() != ''){
+			return true;		
+		}
+		if(filtroFechaHasta.getValue() != ''){
+			return true;		
+		}
+		if(comboJerarquiaContrato.getValue() != ''){
+			return true;		
+		}
+<!-- 		if(dobleSelCentroContrato.getValue() != ''){ -->
+<!-- 			return true;		 -->
+<!-- 		} -->
+		
+		return false;
 	}
 	
+	var getParametros = function(){
+		return{
+			codEstadoGestion:comboEstadoGestion.getValue()
+			,codTipoPersona:comboTipoPersona.getValue()
+			,minRiesgoTotal:mmRiesgoTotal.min.getValue()
+			,maxRiesgoTotal:mmRiesgoTotal.max.getValue()
+			,minDeudaIrregular:mmDeudaIrregular.min.getValue()
+			,maxDeudaIrregular:mmDeudaIrregular.max.getValue()
+			,codAgruparPor:comboAgruparPor.getValue()
+			,codTramo:dobleSelTramo.getValue()
+			,codPropuesta:dobleSelPropuesta.getValue()
+			,codExpediente:txtCodExpediente.getValue()
+			,codJerarquiaExp:comboJerarquia.getValue()
+			,codigoZona:dobleSelCentro.getValue()
+			,codEstadoItinerario:dobleSelFase.getValue()
+			,codContrato:txtCodContrato.getValue()
+			,fechaPrevRegularizacion:filtroFechaDesde.getValue()
+			,fechaPrevRegularizacionHasta:filtroFechaHasta.getValue()
+			,codJerarquiaCto:comboJerarquiaContrato.getValue()
+			,codigoZonaCto:dobleSelCentroContrato.getValue()
+		};
+	};
+	
 	var buscarFunc = function(){
+	debugger;
 		if(validarEmptyForm()){
-		
+			if(validaMinMax()){
+				panelFiltros.collapse(true);
+				//preProStore.webflow(getParametros());
+			}else{
+				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
+			}
+		}else{
+			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>')
 		}
 	};
 	
@@ -364,10 +484,7 @@
         ,iconCls:'icon_exportar_csv'
     });
     
-    var btnReset = app.crearBotonResetCampos({ 
- 		text:'Limpiar' 
- 		,iconCls:'magifier_zoom_out'
- 	}); 
+    
 
 	
 	//Agrego los filtros al panel

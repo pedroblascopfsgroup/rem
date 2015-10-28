@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 /**
- * Fachada con las operaciones m√°s comunes para conectar por JDBC a Oracle.
+ * Fachada con las operaciones m·s comunes para conectar por JDBC a Oracle.
  * 
  * @author bruno
  * 
@@ -40,6 +40,9 @@ public class OracleJdbcFacade implements JDBCConnectionFacace{
      * @throws SQLException
      */
     public ResultSet connectAndExecute(final String query) throws SQLException {
+
+        query.replaceAll("${master.schema}", appProperties.getProperty("master.schema"));        
+        
         final Connection conn = DriverManager.getConnection(url, appProperties);
         connections.add(conn);
         final PreparedStatement preStatement = conn.prepareStatement(query);

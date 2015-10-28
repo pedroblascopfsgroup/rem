@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=David González
---## FECHA_CREACION=20151020
+--## AUTOR=Rubén Rovira
+--## FECHA_CREACION=20151027
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.2
---## INCIDENCIA_LINK=BKREC-1114
+--## INCIDENCIA_LINK=BKREC-58
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -13,9 +13,11 @@
 --##        0.1 Versión inicial
 --##########################################
 --*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
-create or replace PROCEDURE CNV_MTO_DESPACHOS AS
+
+create or replace PROCEDURE CNV_MTO_DESPACHOS AUTHID CURRENT_USER AS
 /*
 
     CONSTANTES
@@ -27,12 +29,7 @@ create or replace PROCEDURE CNV_MTO_DESPACHOS AS
     VARIABLES
     */
     V_FECHA_RECH TIMESTAMP;
-    
-    
-BEGIN
-/* v0.2 */
-    
-    
+    BEGIN
     /*
     CONSTANTES
     */
@@ -86,24 +83,13 @@ OR TIPO_DESPACHO IS NULL;
     , ZON_ID
     , VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
     VALUES (
-    #ESQUEMA#.S_DES_DESPACHO_EXTERNO.NEXTVAL, CNV.CD_DESPACHO, CNV.NOMBRE_DESPACHO, CNV.DD_TDE_ID, CNV.DOMICILIO, CNV.LOCALIDAD, CNV.CODIGO_POSTAL
+    S_DES_DESPACHO_EXTERNO.NEXTVAL, CNV.CD_DESPACHO, CNV.NOMBRE_DESPACHO, CNV.DD_TDE_ID, CNV.DOMICILIO, CNV.LOCALIDAD, CNV.CODIGO_POSTAL
     , CNV.PERSONA_CONTACTO, CNV.TELEFONO_CONTACTO_1, CNV.TELEFONO_CONTACTO_2
     , (SELECT ZON_ID FROM #ESQUEMA#.ZON_ZONIFICACION WHERE ZON_NUM_CENTRO = '00000000100')
     , 0, C_USUCNV, SYSDATE, 0
     );
 
 COMMIT;
-
-EXCEPTION
-
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
-        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
-        DBMS_OUTPUT.put_line(SQLERRM);
-        ROLLBACK;
-        RAISE;
-
-
 END CNV_MTO_DESPACHOS;
 /
 

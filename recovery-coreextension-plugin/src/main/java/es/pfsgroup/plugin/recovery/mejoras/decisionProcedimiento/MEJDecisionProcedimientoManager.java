@@ -24,11 +24,13 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.asunto.model.ProcedimientoFAKE;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
@@ -48,6 +50,7 @@ import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.procedimientoDerivado.dto.DtoProcedimientoDerivado;
 import es.capgemini.pfs.procedimientoDerivado.model.ProcedimientoDerivado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.TareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
@@ -68,6 +71,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoProcedimientoDerivado;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.nuevosmanagers.MEJTipoActuacionManager;
@@ -116,16 +120,24 @@ public class MEJDecisionProcedimientoManager extends
 	
 	@Autowired
 	private IntegracionBpmService integracionBpmService;
+
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
     
-    
+	@Autowired
+	private TareaNotificacionManager tareaNotifManager;
+
+	@Autowired
+	private ProcedimientoManager prcManager;
+
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
 	@Transactional(readOnly = false)
 	@Override
 	public void rechazarPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
 		try {
 			DecisionProcedimiento dp = dtoDecisionProcedimiento.getDecisionProcedimiento();
-			DecisionProcedimiento dp2 = HibernateUtils.merge(dp);
-			dtoDecisionProcedimiento.setDecisionProcedimiento(dp2);
+			//DecisionProcedimiento dp2 = HibernateUtils.merge(dp);
+			dtoDecisionProcedimiento.setDecisionProcedimiento(dp);
 			 // Setear Decision como rechazada
 	        DecisionProcedimiento decisionProcedimiento = dtoDecisionProcedimiento.getDecisionProcedimiento();
 
@@ -149,15 +161,17 @@ public class MEJDecisionProcedimientoManager extends
 	            genericDao.save(Procedimiento.class, prc);
 	        }
 
-	        DDEstadoDecision estadoDecision = (DDEstadoDecision) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-	                DDEstadoDecision.class, DDEstadoDecision.ESTADO_RECHAZADO);
+	        DDEstadoDecision estadoDecision = (DDEstadoDecision) diccionarioApi
+	        		.dameValorDiccionarioByCod(DDEstadoDecision.class, DDEstadoDecision.ESTADO_RECHAZADO);
 	        decisionProcedimiento.setEstadoDecision(estadoDecision);
 	        // enviar notificacion
 	        //decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
 	        genericDao.save(DecisionProcedimiento.class, decisionProcedimiento);
 	        notificarGestor(decisionProcedimiento, false);
+	        
 	        // borrar la tarea
 	        finalizarTarea(decisionProcedimiento.getProcessBPM());
+	        
 		} catch (Exception e) {
 			throw new BusinessOperationException(e);
 		}
@@ -325,8 +339,7 @@ public class MEJDecisionProcedimientoManager extends
     private ProcedimientoDerivado crearProcedimientoDerivado(DtoProcedimientoDerivado dtoProc, DecisionProcedimiento decisionProcedimiento) {
         MEJProcedimiento procHijo = new MEJProcedimiento();
 
-		Procedimiento procPadre= genericDao.get(Procedimiento.class, genericDao
-				.createFilter(FilterType.EQUALS, "id", dtoProc.getProcedimientoPadre()));
+		Procedimiento procPadre = prcManager.getProcedimiento(dtoProc.getProcedimientoPadre());
 		
 		Filter filtroProcOr = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoOrigen", procPadre.getTipoProcedimiento().getCodigo());
 		Filter filtroProcDest = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoDestino", dtoProc.getTipoProcedimiento());
@@ -371,12 +384,12 @@ public class MEJDecisionProcedimientoManager extends
         
         
         // seteo el procedimiento como 'derivado'
-        DDEstadoProcedimiento estadoProcedimiento = (DDEstadoProcedimiento) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO);
+        DDEstadoProcedimiento estadoProcedimiento = (DDEstadoProcedimiento) diccionarioApi
+        		.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO);
         procHijo.setEstadoProcedimiento(estadoProcedimiento);
 
-        DDTipoActuacion tipoActuacion = (DDTipoActuacion) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoActuacion.class,
-                dtoProc.getTipoActuacion());
+        DDTipoActuacion tipoActuacion = (DDTipoActuacion) diccionarioApi
+        		.dameValorDiccionarioByCod(DDTipoActuacion.class, dtoProc.getTipoActuacion());
         procHijo.setTipoActuacion(tipoActuacion);
 
         TipoProcedimiento tipoProcedimiento= genericDao.get(TipoProcedimiento.class, genericDao
@@ -384,8 +397,8 @@ public class MEJDecisionProcedimientoManager extends
         
         procHijo.setTipoProcedimiento(tipoProcedimiento);
 
-        DDTipoReclamacion tipoReclamacion = (DDTipoReclamacion) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                DDTipoReclamacion.class, dtoProc.getTipoReclamacion());
+        DDTipoReclamacion tipoReclamacion = (DDTipoReclamacion) diccionarioApi
+        		.dameValorDiccionarioByCod(DDTipoReclamacion.class, dtoProc.getTipoReclamacion());
         procHijo.setTipoReclamacion(tipoReclamacion);
 
         // Agrego las personas al procedimiento
@@ -436,40 +449,37 @@ public class MEJDecisionProcedimientoManager extends
      * @return DecisionProcedimiento
      * @throws Exception e
      */
-    public DecisionProcedimiento createOrUpdate(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) throws Exception {
+    public DecisionProcedimiento createOrUpdate(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento, Procedimiento procedimiento) throws Exception {
 
-        DecisionProcedimiento decisionProcedimiento = null;
-        if (dtoDecisionProcedimiento.getDecisionProcedimiento().getId() != null) {
-             decisionProcedimiento = genericDao.get(DecisionProcedimiento.class, genericDao
-    				.createFilter(FilterType.EQUALS, "id", dtoDecisionProcedimiento.getDecisionProcedimiento().getId()));
-        } else {
-            decisionProcedimiento = dtoDecisionProcedimiento.getDecisionProcedimiento();
+        DecisionProcedimiento decisionProcedimiento = dtoDecisionProcedimiento.getDecisionProcedimiento();
+        if (dtoDecisionProcedimiento.getDecisionProcedimiento().getId() == null) {
+             decisionProcedimiento = new DecisionProcedimiento();
+             decisionProcedimiento.setProcedimiento(procedimiento);
         }
-        DDEstadoDecision estadoDecision = (DDEstadoDecision) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                DDEstadoDecision.class, dtoDecisionProcedimiento.getStrEstadoDecision());
 
+        DDEstadoDecision estadoDecision = (DDEstadoDecision)diccionarioApi.dameValorDiccionarioByCod(DDEstadoDecision.class, dtoDecisionProcedimiento.getStrEstadoDecision());
         decisionProcedimiento.setEstadoDecision(estadoDecision);
-        
-        DDCausaDecisionFinalizar causaDecisionFinalizar = (DDCausaDecisionFinalizar) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDCausaDecisionFinalizar.class,dtoDecisionProcedimiento.getCausaDecisionFinalizar());        
+
+        DDCausaDecisionFinalizar causaDecisionFinalizar = (DDCausaDecisionFinalizar) diccionarioApi
+        		.dameValorDiccionarioByCod(DDCausaDecisionFinalizar.class,dtoDecisionProcedimiento.getCausaDecisionFinalizar());
         decisionProcedimiento.setCausaDecisionFinalizar(causaDecisionFinalizar);
-        DDCausaDecisionParalizar causaDecisionParalizar = (DDCausaDecisionParalizar) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDCausaDecisionParalizar.class,dtoDecisionProcedimiento.getCausaDecisionParalizar());        
+        DDCausaDecisionParalizar causaDecisionParalizar = (DDCausaDecisionParalizar) diccionarioApi
+        		.dameValorDiccionarioByCod(DDCausaDecisionParalizar.class,dtoDecisionProcedimiento.getCausaDecisionParalizar());
         decisionProcedimiento.setCausaDecisionParalizar(causaDecisionParalizar);
-        /*
-        DDCausaDecision causaDecision = (DDCausaDecision) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDCausaDecision.class,
-                dtoDecisionProcedimiento.getCausaDecision());
-        decisionProcedimiento.setCausaDecision(causaDecision);
-        */
         
         decisionProcedimiento.setFinalizada(dtoDecisionProcedimiento.getFinalizar());
         decisionProcedimiento.setParalizada(dtoDecisionProcedimiento.getParalizar());
+
         // DOV 20/12/2011 setear comentarios y fecha hasta
         // debido a que no se actualizaban dichos valores cuando el super acepta propuesta
         decisionProcedimiento.setComentarios(dtoDecisionProcedimiento.getComentarios());
         decisionProcedimiento.setFechaParalizacion(dtoDecisionProcedimiento.getFechaParalizacion());
         
+        
         if (decisionProcedimiento.getProcedimientosDerivados() == null) {
             decisionProcedimiento.setProcedimientosDerivados(new ArrayList<ProcedimientoDerivado>());
         }
+
         int counter = 0;
         for (DtoProcedimientoDerivado procDerivado : dtoDecisionProcedimiento.getProcedimientosDerivados()) {
             if (procDerivado.getProcedimientoPadre() == null) {
@@ -503,7 +513,8 @@ public class MEJDecisionProcedimientoManager extends
 
         }
 
-        genericDao.save(DecisionProcedimiento.class, decisionProcedimiento);
+        decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
+        decisionProcedimiento = decisionProcedimientoDao.get(decisionProcedimiento.getId());
         return decisionProcedimiento;
     }
     
@@ -544,11 +555,13 @@ public class MEJDecisionProcedimientoManager extends
         jbpmUtil.signalProcess(idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
     }
 
-	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_ACEPTAR_PROPUESTA)
+	//@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_ACEPTAR_PROPUESTA)
 	@Transactional(readOnly = false)
 	@Override
 	public void aceptarPropuesta(
 			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
+		
+		logger.info("Control de usuario para aceptar decisión...");
 		boolean esGestor = !proxyFactory.proxy(ProcedimientoApi.class)
 				.esSupervisor(dtoDecisionProcedimiento.getIdProcedimiento());
 		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
@@ -557,7 +570,7 @@ public class MEJDecisionProcedimientoManager extends
 			if (dtoDecisionProcedimiento.getFinalizar()
 					|| dtoDecisionProcedimiento.getParalizar()) {
 				throw new BusinessOperationException(
-						"S�lo el supervisor puede finalizar o paralizar el origen");
+						"Sólo el supervisor puede finalizar o paralizar el origen");
 			}
 		}
 		this.aceptarPropuestaSinControl(dtoDecisionProcedimiento);
@@ -566,25 +579,26 @@ public class MEJDecisionProcedimientoManager extends
 	@Transactional(readOnly = false)
 	public void aceptarPropuestaSinControl(
 			MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
-	    //TODO Simplificar este m�todo, demasiado complejo
+		
+		logger.info("Aceptando decisión...");
 
-		DecisionProcedimiento decisionPropuesta = null;
-        if (dtoDecisionProcedimiento.getDecisionProcedimiento().getId() != null) {
-        	decisionPropuesta = genericDao.get(DecisionProcedimiento.class, genericDao
-    				.createFilter(FilterType.EQUALS, "id", dtoDecisionProcedimiento.getDecisionProcedimiento().getId()));
-        } 
-        boolean estabaPropuesto = decisionPropuesta!=null && decisionPropuesta.getEstadoDecision() != null && decisionPropuesta.getEstadoDecision().getCodigo().equals(DDEstadoDecision.ESTADO_PROPUESTO);
-		DecisionProcedimiento decision = null;
-			try{
-	    decision = createOrUpdate(dtoDecisionProcedimiento);
-	    
+		Procedimiento procedimiento = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
+		DecisionProcedimiento decision = dtoDecisionProcedimiento.getDecisionProcedimiento();
+		
+		boolean estabaPropuesto = decision !=null 
+				&& decision.getEstadoDecision() != null 
+				&& decision.getEstadoDecision().getCodigo().equals(DDEstadoDecision.ESTADO_PROPUESTO);
+
+		try{
+			decision = createOrUpdate(dtoDecisionProcedimiento, procedimiento);
 		}catch(Exception exc){
 			throw new BusinessOperationException(exc);
 		}
-			
+
+		
 		//JZ
 		Boolean isDerivable = false;
-        List<ProcedimientoDerivado> derivarA = decision.getProcedimientosDerivados();
+		List<ProcedimientoDerivado> derivarA = decision.getProcedimientosDerivados();
 		if (derivarA != null && derivarA.size() > 0) {
 			for (ProcedimientoDerivado derivacion : derivarA) {
 				if (derivacion.getProcedimiento().getTipoProcedimiento().getIsDerivable()) {
@@ -594,174 +608,164 @@ public class MEJDecisionProcedimientoManager extends
 		} else {
 			isDerivable = true;
 		}        
+
+		if (!isDerivable && dtoDecisionProcedimiento.getFinalizar()){
+			throw new BusinessOperationException(
+		 			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decision o se finaliza origen.");
+		}
+
+		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		List<TareaNotificacion> vTareas = tareaNotifManager.getListByProcedimientoSubtipo(procedimiento.getId(), tomasDeDecision);
         
-        if (!isDerivable && dtoDecisionProcedimiento.getFinalizar()){
-        	throw new BusinessOperationException(
-         			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decision o se finaliza origen.");
-        }
-        		
-        DecisionProcedimiento dp = decision;
-        TareaNotificacion tarea = dp.getTareaAsociada();
-        
-        List<TareaNotificacion> vTareas = (List<TareaNotificacion>) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO,
-                dp.getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
-
-
-        if (vTareas != null && vTareas.size() > 0) {
-            Iterator<TareaNotificacion> it = vTareas.iterator();
-            while (it.hasNext()) {
-                TareaNotificacion tar = it.next();
-                
-                if(tar.getSubtipoTarea().getCodigoSubtarea().compareTo(SubtipoTarea.CODIGO_TOMA_DECISION_BPM) == 0 && dtoDecisionProcedimiento.getParalizar()){
-                 	throw new BusinessOperationException(
-                 			"No esta permitido crear una decisión de tipo paralización cuando hay una tarea de tipo (Toma de decisión de continuidad) pendiente de completar por el usuario.");
-                 }
-                
-                if (it.hasNext() && !isDerivable ){
-                	throw new BusinessOperationException(
-                 			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decision o se finaliza origen.");
-                }
-            }
-        }
-
-        // Flag para saber si el estado estaba propuesto, y enviar una
-        // notificacion al gestor con el resultado
-        
-        
-        MEJProcedimiento p = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", dp.getProcedimiento().getId()));
-        
-        // VALIDACIONES
-        // No existen los procedimientos con los c�digos pasados como
-        // par�metros.
-        // El procedimiento origen no est� activo.
-        if (p.getEstadoProcedimiento() != null
-                && (p.getEstadoProcedimiento().getCodigo() == DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO || p.getEstadoProcedimiento()
-                        .getCodigo() == DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)) { throw new UserException(
-                "El procedimiento de origen no est� activo"); }
-
-        for (ProcedimientoDerivado prd : dp.getProcedimientosDerivados()) {
-    		Procedimiento prc= genericDao.get(Procedimiento.class, genericDao
-    				.createFilter(FilterType.EQUALS, "id", prd.getProcedimiento().getId()));
-        	
-            // Validar estado del procedimiento
-            if (!prc.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO)) { throw new UserException(
-                    "El procedimiento " + prc.getId() + " no est� en estado derivado"); }
-
-            // Registrar los saldos vencido y no vencido originales del �ltimo
-            // movimiento de los contratos
-            Movimiento mv = null;
-            BigDecimal saldoOriginalNoVencido = new BigDecimal("0.0");
-            BigDecimal saldoOriginalVencido = new BigDecimal("0.0");
-            for (ExpedienteContrato ec : prc.getExpedienteContratos()) {
-                mv = ec.getContrato().getLastMovimiento();
-                if (mv != null) {
-                    saldoOriginalNoVencido = saldoOriginalNoVencido.add(new BigDecimal(mv.getPosVivaNoVencida().floatValue()));
-                    saldoOriginalVencido = saldoOriginalVencido.add(new BigDecimal(mv.getPosVivaVencida().floatValue()));
-                }
-            }
-            prc.setSaldoOriginalNoVencido(saldoOriginalNoVencido);
-            prc.setSaldoOriginalVencido(saldoOriginalVencido);
-
-            // Lanzar los JBPM para cada procedimiento
-            String nombreJBPM = prc.getTipoProcedimiento().getXmlJbpm();
-            Map<String, Object> param = new HashMap<String, Object>();
-            param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, prc.getId());
-            Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
-            //
-            prc.setProcessBPM(idBPM);
-            genericDao.update(Procedimiento.class, prc);
-        }
-
-        // Lanzar el/los proceso/s correspondiente/s (incluidos en la
-        // derivaci�n)
-
-        // Verificar si se da por finalizado el procedimiento origen
-        //if (dp.getCausaDecision() != null) {
-        if (dp.getCausaDecisionFinalizar() != null) {
-            if (dp.getFinalizada()) {
-                // FINALIZADO:Parar definitivamente el procedimiento origen
-                try {
-                	
-                    jbpmUtil.finalizarProcedimiento(p.getId());
-                    p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
-            				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
-
-                	// Integración con mensajería
-                    integracionBpmService.finalizarBPM(p);
-
-                    cancelarSubastaActiva(p);
-
-                } catch (Exception e) {
-                    logger.error("Error al finalizar el procedimiento " + p.getId(), e);
-                }
-            }
-        }
-		if (dp.getCausaDecisionParalizar() != null) {
-			Long idProcessBPM = p.getProcessBPM();
-			if (dp.getParalizada()) {
-				// PARALIZADO: Paralizar* durante el periodo especificado en la
-				// decisi�n el procedimiento origen.
-				jbpmUtil.aplazarProcesosBPM(idProcessBPM, dp.getFechaParalizacion());
-
-				p.setEstaParalizado(true);
-				p.setFechaUltimaParalizacion(new Date());
-				genericDao.save(MEJProcedimiento.class, p);
-
-				// Paralizamos el BPM
-				integracionBpmService.paralizarBPM(p, dp.getFechaParalizacion());
+		if (vTareas != null && vTareas.size() > 0) {
+			Iterator<TareaNotificacion> it = vTareas.iterator();
+			while (it.hasNext()) {
+				TareaNotificacion tar = it.next();
+				if(tar.getSubtipoTarea().getCodigoSubtarea().compareTo(SubtipoTarea.CODIGO_TOMA_DECISION_BPM) == 0 && dtoDecisionProcedimiento.getParalizar()){
+				 	throw new BusinessOperationException(
+				 			"No esta permitido crear una decisión de tipo paralización cuando hay una tarea de tipo (Toma de decisión de continuidad) pendiente de completar por el usuario.");
+				 }
+				if (it.hasNext() && !isDerivable ){
+					throw new BusinessOperationException(
+				 			"No es posible derivar a un Tramite de notificación o verbal desde monitorio, si se viene de una tarea de toma de decision o se finaliza origen.");
+				}
 			}
 		}
+
+		// VALIDACIONES
+		// No existen los procedimientos con los c�digos pasados como par�metros.
+		// El procedimiento origen no est� activo.
+		if (procedimiento.getEstadoProcedimiento() != null
+			&& (procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO) || 
+					procedimiento.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO))){ 
+			throw new UserException("El procedimiento de origen no está activo");
+		}
+
+		for (ProcedimientoDerivado prd : decision.getProcedimientosDerivados()) {
+			Procedimiento prc= genericDao.get(Procedimiento.class, genericDao
+					.createFilter(FilterType.EQUALS, "id", prd.getProcedimiento().getId()));
+			
+			// Validar estado del procedimiento
+			if (!prc.getEstadoProcedimiento().getCodigo().equals(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_DERIVADO)) { throw new UserException(
+				"El procedimiento " + prc.getId() + " no est� en estado derivado"); }
+			
+			// Registrar los saldos vencido y no vencido originales del �ltimo
+			// movimiento de los contratos
+			Movimiento mv = null;
+			BigDecimal saldoOriginalNoVencido = new BigDecimal(0);
+			BigDecimal saldoOriginalVencido = new BigDecimal(0);
+			for (ExpedienteContrato ec : prc.getExpedienteContratos()) {
+				mv = ec.getContrato().getLastMovimiento();
+				if (mv != null) {
+					saldoOriginalNoVencido = saldoOriginalNoVencido.add(new BigDecimal(mv.getPosVivaNoVencida().floatValue()));
+					saldoOriginalVencido = saldoOriginalVencido.add(new BigDecimal(mv.getPosVivaVencida().floatValue()));
+				}
+			}
+			prc.setSaldoOriginalNoVencido(saldoOriginalNoVencido);
+			prc.setSaldoOriginalVencido(saldoOriginalVencido);
+			
+			// Lanzar los JBPM para cada procedimiento
+			String nombreJBPM = prc.getTipoProcedimiento().getXmlJbpm();
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, prc.getId());
+			Long idBPM = jbpmUtil.crearNewProcess(nombreJBPM, param);
+			//
+			prc.setProcessBPM(idBPM);
+			genericDao.update(Procedimiento.class, prc);
+		}
+
+		// Lanzar el/los proceso/s correspondiente/s (incluidos en la derivaci�n)
 		
+		// Verificar si se da por finalizado el procedimiento origen
+		if (decision.getCausaDecisionFinalizar() != null) {
+			if (decision.getFinalizada()) {
+				// FINALIZADO:Parar definitivamente el procedimiento origen
+				try {
+
+					ProcedimientoFAKE procedimiento2 = genericDao.get(ProcedimientoFAKE.class, genericDao.createFilter(FilterType.EQUALS,  "id", procedimiento.getId()));
+					DDEstadoProcedimiento estadoFin = (DDEstadoProcedimiento)diccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoProcedimiento.class, DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO); 
+			 		procedimiento2.setEstadoProcedimiento(estadoFin);
+					genericDao.save(ProcedimientoFAKE.class, procedimiento2);
+					procedimiento = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS,  "id", procedimiento.getId()));
+					
+    				jbpmUtil.finalizarProcedimiento(procedimiento.getId());
+
+    				cancelarSubastaActiva(procedimiento);
+
+    				procedimiento = HibernateUtils.merge(procedimiento);
+    				HibernateUtils.flush();
+
+                } catch (Exception e) {
+                    logger.error(String.format("Error al finalizar el procedimiento %d", procedimiento.getId()), e);
+                }
+            }
+        }
+		if (decision.getCausaDecisionParalizar() != null) {
+			Long idProcessBPM = procedimiento.getProcessBPM();
+			if (decision.getParalizada()) {
+				// PARALIZADO: Paralizar* durante el periodo especificado en la
+				// decisión el procedimiento origen.
+				jbpmUtil.aplazarProcesosBPM(idProcessBPM, decision.getFechaParalizacion());
+				MEJProcedimiento mejProcedimiento = MEJProcedimiento.instanceOf(procedimiento); 
+				mejProcedimiento.setEstaParalizado(true);
+				mejProcedimiento.setFechaUltimaParalizacion(new Date());
+				genericDao.save(MEJProcedimiento.class, mejProcedimiento);
+
+			}
+		}
+
         // Setear Decision como aceptada
-        DDEstadoDecision estadoDecision = (DDEstadoDecision) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                DDEstadoDecision.class, DDEstadoDecision.ESTADO_ACEPTADO);
-
-        dp.setEstadoDecision(estadoDecision);
-
-        genericDao.update(DecisionProcedimiento.class, dp);
+		DDEstadoDecision estadoDecision = (DDEstadoDecision)diccionarioApi
+    			.dameValorDiccionarioByCod(DDEstadoDecision.class, DDEstadoDecision.ESTADO_ACEPTADO); 
+		decision.setEstadoDecision(estadoDecision);
+        genericDao.update(DecisionProcedimiento.class, decision);
+        //HibernateUtils.merge(decision);
 
         // Si tiene una tarea asignada a la decisi�n la finalizamos
+        TareaNotificacion tarea = decision.getTareaAsociada();
         if (tarea != null) {
             executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_NOTIFICACION_TAREA_BY_ID, tarea.getId());
         }
 
-        // borrar la tarea
-        if (dp.getProcessBPM() != null) {
-            finalizarTarea(dp.getProcessBPM());
-        }
+		// borrar la tarea
+		if (decision.getProcessBPM() != null) {
+			finalizarTarea(decision.getProcessBPM());
+		}
 
-        //Actualizamos el estado del asunto
-        executor.execute(ExternaBusinessOperation.BO_ASU_MGR_ACTUALIZA_ESTADO_ASUNTO, p.getAsunto().getId());
-		
-		finalizaTareaTomaDecision(dtoDecisionProcedimiento.getIdProcedimiento());
-		
-		
+		// Finaliza las tareas
+		finalizaTareaTomaDecision(procedimiento);
+
+		//Actualizamos el estado del asunto
+		executor.execute(ExternaBusinessOperation.BO_ASU_MGR_ACTUALIZA_ESTADO_ASUNTO, procedimiento.getAsunto().getId());
+
 		//FINALIZAMOS TODAS LAS TAREAS DEL PROCEDIMIENTO
-		if(dp.getFinalizada()){
-			for(TareaNotificacion t:p.getTareas()){
+		if (decision.getFinalizada()) {
+			for (TareaNotificacion t : procedimiento.getTareas()){
 				if (!t.getAuditoria().isBorrado()) {
 					if(t.getTareaFinalizada() == null || (t.getTareaFinalizada()!=null && !t.getTareaFinalizada())){
 						t.setTareaFinalizada(true);
 						genericDao.update(TareaNotificacion.class, t);
-						HibernateUtils.merge(t);
+						//HibernateUtils.merge(t);
 					}
 				}
 			}
 		}
 
-	    // Enviar al gestor una notificación con el resultado de aceptación. 
+		// Enviar al gestor una notificación con el resultado de aceptación. 
 		// Se genera despu�s de finalizar todas las tareas del procedimiento porque sin� se finaliza yno se muestra en las notificaciones 
 		if (estabaPropuesto) {
-	         notificarGestor(dp, true);
-	    }
+			notificarGestor(decision, true);
+		}
 		
+		logger.info("Finaliza aceptación de decisión!!!");
 		//Se comenta la notificaci�n al propio supervisor de la aceptaci�n de la propuesta ya que �l mismo la ha aceptado y es redundante
 		//Object[] param = new Object[] { getNombreProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento()) };
 		//generaNotificacion(dtoDecisionProcedimiento.getIdProcedimiento(), messageService.getMessage("decisionProcedimiento.resultado.aceptado", param));
 	}
 
 	@Transactional(readOnly = false)
-	private void cancelarSubastaActiva(MEJProcedimiento p) {
+	private void cancelarSubastaActiva(Procedimiento p) {
 		Set<String> codigosSubasta = new HashSet<String>();
 		codigosSubasta.add("P401");
 		codigosSubasta.add("P409");
@@ -807,19 +811,17 @@ public class MEJDecisionProcedimientoManager extends
 		}
 	}
 
-	private void finalizaTareaTomaDecision(Long prcId) {
+	private void finalizaTareaTomaDecision(Procedimiento prc) {
 		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
-		
-		List<TareaNotificacion> vTareas = proxyFactory.proxy(
-				TareaNotificacionApi.class).getListByProcedimientoSubtipo(
-				prcId, tomasDeDecision);
+
+		List<TareaNotificacion> vTareas = tareaNotifManager.getListByProcedimientoSubtipo(prc.getId(), tomasDeDecision);
 
 		if (!Checks.estaVacio(vTareas)) {
 			for (TareaNotificacion tn : vTareas) {
 				if (!tn.getAuditoria().isBorrado()) {
 					tn.setTareaFinalizada(true);
 					genericDao.update(TareaNotificacion.class, tn);
-					HibernateUtils.merge(tn);
+					//HibernateUtils.merge(tn);
 				}
 			}
 		}
@@ -878,15 +880,17 @@ public class MEJDecisionProcedimientoManager extends
 	@Override
     public void crearPropuesta(MEJDtoDecisionProcedimiento dtoDecisionProcedimiento) {
 
+        Procedimiento procedimiento = prcManager.getProcedimiento(dtoDecisionProcedimiento.getIdProcedimiento());
+		
         // seteo en estado propuesto la decision
-        DDEstadoDecision estadoDecision = (DDEstadoDecision) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                DDEstadoDecision.class, DDEstadoDecision.ESTADO_PROPUESTO);
+        DDEstadoDecision estadoDecision = (DDEstadoDecision) diccionarioApi
+        		.dameValorDiccionarioByCod(DDEstadoDecision.class, DDEstadoDecision.ESTADO_PROPUESTO);
 
         dtoDecisionProcedimiento.getDecisionProcedimiento().setEstadoDecision(estadoDecision);
 
-        DecisionProcedimiento decisionProcedimiento;
+        DecisionProcedimiento decisionProcedimiento = null;
         try{
-        	decisionProcedimiento = createOrUpdate(dtoDecisionProcedimiento);
+        	decisionProcedimiento = createOrUpdate(dtoDecisionProcedimiento, procedimiento);
 
         }catch(Exception exc){
         	throw new BusinessOperationException(exc);
@@ -910,11 +914,11 @@ public class MEJDecisionProcedimientoManager extends
 		}
 
         // enviar mensaje al supervisor
-        notificarSupervisorConEspera(dtoDecisionProcedimiento.getDecisionProcedimiento());
+        notificarSupervisorConEspera(decisionProcedimiento);
 
         //Comprobamos si existe alguna tarea de decisi�n para este procedimiento y se la asociamos a la decisi�n
-        List<TareaNotificacion> vTareas = (List<TareaNotificacion>) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO,
-                dtoDecisionProcedimiento.getDecisionProcedimiento().getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
+		Set<String> tomasDeDecision = coreProjectContext.getCategoriasSubTareas().get(CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION);
+		List<TareaNotificacion> vTareas = tareaNotifManager.getListByProcedimientoSubtipo(procedimiento.getId(), tomasDeDecision);
 
         //Si tiene alguna tarea, borramos la primera de ellas
         if (vTareas != null && vTareas.size() > 0) {

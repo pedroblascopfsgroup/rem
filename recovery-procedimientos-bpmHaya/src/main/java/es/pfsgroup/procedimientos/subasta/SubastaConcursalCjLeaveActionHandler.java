@@ -207,7 +207,7 @@ public class SubastaConcursalCjLeaveActionHandler extends
 	private void cambiaEstadoSubasta(Subasta sub, String estado) {
 		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo())
 				&& (DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta()
-						.getCodigo()) != 0 || DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta()
+						.getCodigo()) != 0 && DDEstadoSubasta.SUS.compareTo(sub.getEstadoSubasta()
 								.getCodigo()) != 0)) {
 			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class,
 					genericDao

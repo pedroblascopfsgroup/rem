@@ -23,7 +23,6 @@ var bottomBar = [];
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			debugger;
 			if(tipoProblema.getValue() == cambioProcedimiento) {
 				if(procedimientoPropuesto.getValue() == procedimientoIniciar.getValue()) {
 					Ext.Msg.alert('sTATUS', 'Si tipo de problema es Cambio de procedimiento, no pueden coincidir procedimiento propuesto por la entidad y procedimiento a iniciar.');

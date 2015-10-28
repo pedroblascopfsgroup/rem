@@ -55,8 +55,7 @@ h1 {
 	<h1>
 		<img width="100px" src="img/pfs-logo.png" style="margin-right: 30px;">
 		<img width="280px" src="img/recovery-logo.png"> <span
-			style="float: right; margin-top: 60px; margin-right: 2px;">Version
-			9.1 (${version})</span>
+			style="float: right; margin-top: 60px; margin-right: 2px;">Version 9.1 (${version})</span>
 	</h1>
 
 	<script>

@@ -322,8 +322,10 @@
 	<sec:authorize ifAllGranted="BOTON_MARCAR_EMBARGOS_MULTIPLE">
 		buttonBar.push(btnEditarMultiple);
 	</sec:authorize>
+	<sec:authorize ifNotGranted="SOLO_CONSULTA">
 	buttonBar.push(btnAgregarBien);
 	buttonBar.push(btnExcluirBien);
+	</sec:authorize>
 	buttonBar.push(btnEditar);
 	buttonBar.push(btnVerificarBien);
 	/*buttonBar.push(btnDictarInstruccionesNotarial);*/

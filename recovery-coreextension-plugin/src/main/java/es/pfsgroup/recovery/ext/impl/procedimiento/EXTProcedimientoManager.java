@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.ext.impl.procedimiento;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -11,15 +12,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.bien.model.ProcedimientoBien;
+import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.persona.dao.EXTPersonaDao;
+import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTUsuarioRelacionadoInfo;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.procedimiento.dao.EXTProcedimientoDao;
+import es.pfsgroup.recovery.integration.Guid;
 
 @Component
 public class EXTProcedimientoManager implements EXTProcedimientoApi {
@@ -33,7 +43,12 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private ProcedimientoDao procedimientoDao;
 
+	@Autowired
+	private EXTPersonaDao personaDao;
+	
 	/**
 	 * Busca procedimientos que contengan un determinado contrato
 	 * 
@@ -149,4 +164,153 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		return null;
 	}
     
+	public MEJProcedimiento getProcedimientoByGuid(String guid) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		MEJProcedimiento procedimiento = genericDao.get(MEJProcedimiento.class, filtro);
+		return procedimiento;
+	}
+
+	public MEJProcedimiento prepareGuid(Procedimiento procedimiento) {
+		MEJProcedimiento mejProc = MEJProcedimiento.instanceOf(procedimiento);
+		boolean modificados = false;
+		if (Checks.esNulo(mejProc.getGuid())) {
+			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
+			mejProc.setGuid(Guid.getNewInstance().toString());
+			modificados = true;
+		}
+		
+		// Prepara la relación con los bienes.
+		if (mejProc.getBienes()!=null) {
+			for (ProcedimientoBien prcBien : mejProc.getBienes()) {
+				if (!Checks.esNulo(prcBien.getGuid())) {
+					continue;
+				}
+				prcBien.setGuid(Guid.getNewInstance().toString());
+				modificados = true;
+			}
+		}
+
+		// En caso de haber cambiado algo se guarda el estado
+		if (modificados) {
+			extProcedimientoDao.saveOrUpdate(mejProc);
+		}
+		return mejProc;
+	}
+	
+	
+	public Procedimiento guardaProcedimiento(EXTProcedimientoDto procDto) {
+		MEJProcedimiento procedimiento =  null;
+
+		MEJConfiguracionDerivacionProcedimiento configuracion  = null;
+		if (procDto.getProcedimientoPadre()!=null) {
+			Filter filtroProcOr = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoOrigen", procDto.getProcedimientoPadre().getTipoProcedimiento().getCodigo());
+			Filter filtroProcDest = genericDao.createFilter(FilterType.EQUALS, "tipoProcedimientoDestino", procDto.getTipoProcedimiento().getCodigo());
+			configuracion = genericDao.get(MEJConfiguracionDerivacionProcedimiento.class, filtroProcOr, filtroProcDest);
+		}
+		
+		if (procDto.getIdProcedimiento()==null) {
+			procedimiento = new MEJProcedimiento();
+			
+			procedimiento.setAsunto(procDto.getAsunto());
+			procedimiento.setProcedimientoPadre(procDto.getProcedimientoPadre());
+			procedimiento.setTipoProcedimiento(procDto.getTipoProcedimiento());
+			procedimiento.setDecidido(procDto.getDecidido());
+
+			String guid = (!Checks.esNulo(procDto.getGuid())) ? procDto.getGuid() : Guid.getNewInstance().toString();
+			procedimiento.setGuid(guid);
+			
+			if (Checks.esNulo(configuracion)){			
+				procedimiento.setTipoActuacion(procDto.getTipoProcedimiento().getTipoActuacion());
+			} else {
+				if (configuracion.getTipoActuacion()){
+					procedimiento.setTipoActuacion(procDto.getTipoProcedimiento().getTipoActuacion());
+				}
+			}
+
+		} else {
+			Procedimiento tmpProcedimiento = procedimientoDao.get(procDto.getIdProcedimiento());
+			if (tmpProcedimiento==null) {
+				throw new RuntimeException(String.format("Procedimiento no encontrado para actualizar: %d", procDto.getIdProcedimiento()));
+			}
+			procedimiento = MEJProcedimiento.instanceOf(tmpProcedimiento);
+			
+		}
+		
+		procedimiento.setExpedienteContratos(procDto.getExpedienteContratos());
+		// procedimiento.setContrato(procPadre.getContrato());
+		
+		procedimiento.setFechaRecopilacion(procDto.getFechaRecopilacion());
+		List<Persona> personas = new ArrayList<Persona>();
+		for (Persona per : procDto.getPersonas()) {
+			Persona p = personaDao.get(per.getId());
+			personas.add(p);
+		}
+		procedimiento.setPersonasAfectadas(personas);
+		procedimiento.setEstadoProcedimiento(procDto.getEstadoProcedimiento());
+		
+		if (Checks.esNulo(configuracion)){
+			procedimiento.setJuzgado(procDto.getJuzgado());
+			procedimiento.setCodigoProcedimientoEnJuzgado(procDto.getCodigoProcedimientoEnJuzgado());
+			procedimiento.setObservacionesRecopilacion(procDto.getObservacionesRecopilacion());
+			procedimiento.setPlazoRecuperacion(procDto.getPlazoRecuperacion());
+			procedimiento.setPorcentajeRecuperacion(procDto.getPorcentajeRecuperacion());
+			procedimiento.setSaldoOriginalNoVencido(procDto.getSaldoOriginalNoVencido());
+			procedimiento.setSaldoOriginalVencido(procDto.getSaldoOriginalVencido());
+			procedimiento.setSaldoRecuperacion(procDto.getSaldoRecuperacion());
+			procedimiento.setTipoReclamacion(procDto.getTipoReclamacion());
+		} else {
+			
+			if (configuracion.getJuzgado()){
+				procedimiento.setJuzgado(procDto.getJuzgado());
+			}
+			if (configuracion.getCodigoProcedimientoEnJuzgado()){
+				procedimiento.setCodigoProcedimientoEnJuzgado(procDto.getCodigoProcedimientoEnJuzgado());
+			}
+			if (configuracion.getObservacionesRecopilacion()){
+				procedimiento.setObservacionesRecopilacion(procDto.getObservacionesRecopilacion());
+			}
+			if (configuracion.getPlazoRecuperacion()){
+				procedimiento.setPlazoRecuperacion(procDto.getPlazoRecuperacion());
+			} 
+			if (configuracion.getPorcentajeRecuperacion() ){
+				procedimiento.setPorcentajeRecuperacion(procDto.getPorcentajeRecuperacion());
+			}
+			if (configuracion.getSaldoOriginalNoVencido()){
+				procedimiento.setSaldoOriginalNoVencido(procDto.getSaldoOriginalNoVencido());
+			}
+			if (configuracion.getSaldoOriginalVencido()){
+				procedimiento.setSaldoOriginalVencido(procDto.getSaldoOriginalVencido());
+			}
+			if (configuracion.getSaldoRecuperacion() ){
+				procedimiento.setSaldoRecuperacion(procDto.getSaldoRecuperacion());
+			}
+			if (configuracion.getTipoReclamacion()){
+				procedimiento.setTipoReclamacion(procDto.getTipoReclamacion());
+			}
+		}
+		
+		if (!Checks.estaVacio(procDto.getBienes())) {
+            // Agrego los bienes al procedimiento
+            List<ProcedimientoBien> procedimientosBien = new ArrayList<ProcedimientoBien>();
+            
+            // Si es automático no se comprueba el flag unicoBien, se copian todos.
+//	        if ((tipoProcedimiento.getIsUnicoBien() && procPadre.getBienes().size()==1) ||
+//	        		(!tipoProcedimiento.getIsUnicoBien())) {
+		        for (ProcedimientoBien procBien : procDto.getBienes()) {
+		        	
+		        	ProcedimientoBien procBienCopiado = new ProcedimientoBien();
+		        	procBienCopiado.setBien(procBien.getBien());
+		        	procBienCopiado.setSolvenciaGarantia(procBien.getSolvenciaGarantia());
+		        	procBienCopiado.setProcedimiento(procedimiento);
+		        	genericDao.save(ProcedimientoBien.class, procBienCopiado);
+		        	procedimientosBien.add(procBienCopiado);
+		        }
+//	        }
+	        procedimiento.setBienes(procedimientosBien);
+        }
+		
+		executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procedimiento);
+		return procedimiento;// procedimientoManager.getProcedimiento(idProcedimiento);
+	}
+	
 }

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_tramiteCostas" width="1043" height="752">
+  <node name="Inicio" x="50" y="46" width="132" height="36">
+    <edge>
+      <label x="-29" y="-21"/>
+    </edge>
+  </node>
+  <node name="CJ007_SolicitudTasacion" x="267" y="49" width="207" height="36">
+    <edge>
+      <label x="-101" y="10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-37" y="-309"/>
+      <bendpoint w1="650" h1="0" w2="297" h2="-666"/>
+      <bendpoint w1="649" h1="662" w2="296" h2="-4"/>
+    </edge>
+  </node>
+  <node name="CJ007_TasacionCostas" x="305" y="148" width="167" height="36">
+    <edge>
+      <label x="3" y="6"/>
+    </edge>
+    <edge>
+      <label x="-77" y="-11"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-270"/>
+      <bendpoint w1="637" h1="-2" w2="285" h2="-569"/>
+      <bendpoint w1="638" h1="563" w2="286" h2="-4"/>
+    </edge>
+    <edge>
+      <label x="-69" y="-9"/>
+      <bendpoint w1="-166" h1="-52" w2="-165" h2="47"/>
+    </edge>
+  </node>
+  <node name="CJ007_ConfirmarNotificacion" x="278" y="247" width="205" height="36">
+    <edge>
+      <label x="5" y="1"/>
+    </edge>
+    <edge>
+      <label x="-77" y="-13"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-223"/>
+      <bendpoint w1="636" h1="-1" w2="285" h2="-473"/>
+      <bendpoint w1="637" h1="471" w2="286" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-66" y="-30"/>
+      <bendpoint w1="-164" h1="-51" w2="-163" h2="44"/>
+    </edge>
+  </node>
+  <node name="CJ007_ConfirmarNotificacionDecision" x="282" y="328" width="242" height="36">
+    <edge>
+      <label x="6" y="-33"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ007_JBPMTramiteNotificacion" x="582" y="367" width="218" height="36">
+    <edge>
+      <label x="6" y="6"/>
+    </edge>
+  </node>
+  <node name="CJ007_Impugnacion" x="285" y="426" width="173" height="36">
+    <edge>
+      <label x="-72" y="3"/>
+    </edge>
+    <edge>
+      <label x="38" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-23" y="-137"/>
+      <bendpoint w1="631" h1="0" w2="279" h2="-289"/>
+      <bendpoint w1="630" h1="287" w2="278" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="-29" y="-44"/>
+      <bendpoint w1="-198" h1="-98" w2="-199" h2="85"/>
+    </edge>
+  </node>
+  <node name="CJ007_ImpugnacionDecision" x="311" y="484" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="22" y="-18"/>
+      <bendpoint w1="39" h1="40" w2="-303" h2="40"/>
+    </edge>
+  </node>
+  <node name="CJ007_AutoAprobacionCostas" x="634" y="484" width="239" height="36">
+    <edge>
+      <label x="-73" y="5"/>
+    </edge>
+    <edge>
+      <label x="15" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-59" y="14"/>
+      <bendpoint w1="219" h1="71" w2="249" h2="-160"/>
+    </edge>
+    <edge>
+      <label x="22" y="-17"/>
+    </edge>
+  </node>
+  <node name="CJ007_RegistrarCelebracionVista" x="43" y="505" width="221" height="36">
+    <edge>
+      <label x="-72" y="9"/>
+    </edge>
+    <edge>
+      <label x="21" y="-18"/>
+      <bendpoint w1="12" h1="191" w2="-558" h2="-19"/>
+    </edge>
+    <edge>
+      <label x="6" y="-20"/>
+      <bendpoint w1="0" h1="-81" w2="-176" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="158" h1="61" w2="-442" h2="82"/>
+    </edge>
+  </node>
+  <node name="CJ007_AutoDecision" x="621" y="626" width="173" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ007_AutoFirme" x="613" y="558" width="264" height="36">
+    <edge>
+      <label x="-8" y="7"/>
+    </edge>
+    <edge>
+      <label x="-67" y="-9"/>
+    </edge>
+    <edge>
+      <label x="-4" y="9"/>
+      <bendpoint w1="-192" h1="-22" w2="-191" h2="39"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="91" h1="56" w2="113" h2="-101"/>
+    </edge>
+  </node>
+  <node name="Fin" x="657" y="715" width="132" height="36"/>
+</root-container>

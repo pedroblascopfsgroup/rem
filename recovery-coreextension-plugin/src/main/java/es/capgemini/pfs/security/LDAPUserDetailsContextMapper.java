@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dsm.DataSourceManager;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
-
+ 
 @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = true)
 public class LDAPUserDetailsContextMapper implements UserDetailsContextMapper {
 

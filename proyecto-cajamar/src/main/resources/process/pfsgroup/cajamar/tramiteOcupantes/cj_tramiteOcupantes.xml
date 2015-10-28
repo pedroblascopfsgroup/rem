@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2"
+	name="cj_tramiteOcupantes">
+
+	<start-state name="inicio">
+		<transition to="CJ048_TrasladoDocuDeteccionOcupantes"></transition>
+	</start-state>
+
+
+	<state name="CJ048_TrasladoDocuDeteccionOcupantes">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_TrasladoDocuDeteccionOcupantesDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_TrasladoDocuDeteccionOcupantes" name="activarAlerta"></transition>
+	</state>
+	
+	<decision name="CJ048_TrasladoDocuDeteccionOcupantesDecision" expression="#{CJ048_TrasladoDocuDeteccionOcupantesDecision}">
+		<transition to="CJ048_SolicitudRequerimientoDocOcupantes" name="sinDocumentacion"></transition>
+		<transition to="CJ048_ObtenerAprobacionAlquiler" name="conDocumentacion"></transition>
+	</decision>
+	
+	<state name="CJ048_SolicitudRequerimientoDocOcupantes">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_RegistrarRecepcionDoc" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_SolicitudRequerimientoDocOcupantes" name="activarAlerta"></transition>
+		<transition to="CJ048_TrasladoDocuDeteccionOcupantes" name="vueltaAtras"></transition>
+	</state>
+	
+	<state name="CJ048_RegistrarRecepcionDoc">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_ObtenerAprobacionAlquiler" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_RegistrarRecepcionDoc" name="activarAlerta"></transition>
+		<transition to="CJ048_SolicitudRequerimientoDocOcupantes" name="vueltaAtras"></transition>
+	</state>
+	
+	<state name="CJ048_ObtenerAprobacionAlquiler">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_ObtenerAprobacionAlquiler" name="activarAlerta"></transition>
+		<transition to="CJ048_ObtenerAprobacionAlquilerDecision" name="avanzaBPM"></transition>
+	</state>	
+	
+	<decision name="CJ048_ObtenerAprobacionAlquilerDecision" expression="#{CJ048_ObtenerAprobacionAlquilerDecision}">
+		<transition to="CJ048_PresentarEscritoAlegaciones" name="siHayAleg"></transition>
+		<transition to="CJ048_RegistrarResolucion" name="noHayAlegNoHayVista"></transition>
+		<transition to="CJ048_RegistrarCelebracionVista" name="noHayAlegSiHayVista"></transition>
+	</decision>
+	
+	<state name="CJ048_PresentarEscritoAlegaciones">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_ConfirmarVista" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_PresentarEscritoAlegaciones" name="activarAlerta"></transition>		
+		<transition to="CJ048_ObtenerAprobacionAlquiler" name="vueltaAtras"></transition>
+	</state>
+	
+	<state name="CJ048_ConfirmarVista">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_ConfirmarVistaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_ConfirmarVista" name="activarAlerta"></transition>
+		<transition to="CJ048_PresentarEscritoAlegaciones" name="vueltaAtras"></transition>		
+	</state>
+	
+	<decision name="CJ048_ConfirmarVistaDecision" expression="#{CJ048_ConfirmarVistaDecision}">
+		<transition to="CJ048_RegistrarCelebracionVista" name="hayVista"></transition>
+		<transition to="CJ048_RegistrarResolucion" name="noHayVista"></transition>
+	</decision>
+	
+	<state name="CJ048_RegistrarCelebracionVista">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_RegistrarResolucion" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_RegistrarCelebracionVista" name="activarAlerta"></transition>
+	</state>
+	
+	<state name="CJ048_RegistrarResolucion">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_ResolucionFirme" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_RegistrarResolucion" name="activarAlerta"></transition>
+	</state>	
+	
+	
+	<state name="CJ048_ResolucionFirme">		
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>ocupantesLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="CJ048_ResolucionFirmeDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ048_ResolucionFirme" name="activarAlerta"></transition>				
+		<transition to="CJ048_RegistrarResolucion" name="vueltaAtras"></transition>
+	</state>
+	
+	<decision name="CJ048_ResolucionFirmeDecision" expression="#{CJ048_ResolucionFirmeDecision}">
+		<transition to="FinPosesion" name="favorable"></transition>
+		<transition to="CJ048_ResolucionDecision" name="desfavorableNTP"></transition>
+		<transition to="FinPosesion" name="desfavorable"></transition>
+	</decision>
+	
+	<node name="CJ048_ResolucionDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>genericUserDecisionActionHandler
+			</targetBean>
+		</action>	
+		<transition to="Fin"></transition>
+	</node>
+	
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	<end-state name="FinPosesion">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>ocupantesEndActionHandler</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+	
+</process-definition>

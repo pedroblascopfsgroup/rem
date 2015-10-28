@@ -64,8 +64,7 @@
 
 	//date chooser 
 	var fecha = new Ext.ux.form.XDateField({
-		fieldLabel:'<s:message code="generartarea.fecha" text="**Fecha" />'
-		,minValue : new Date()
+		fieldLabel:'<s:message code="generartarea.fecha" text="**Fecha" />'		
 		,labelWidth:80
 		,name : 'fechaFinalizacion'
 		,labelStyle:labelStyle2

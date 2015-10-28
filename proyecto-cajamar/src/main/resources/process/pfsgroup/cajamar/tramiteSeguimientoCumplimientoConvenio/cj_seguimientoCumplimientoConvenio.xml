@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="cj_seguimientoCumplimientoConvenio">
+
+	<start-state name="Inicio">
+		<transition to="H041_registrarConvenio"></transition>
+	</start-state>
+
+	<state name="H041_registrarConvenio">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="fork1" name="avanzaBPM"></transition>
+		<transition to="H041_registrarConvenio" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="H041_registrarCumplimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="fork2" name="avanzaBPM"></transition>
+		<transition to="H041_registrarCumplimiento" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="H041_registrarCumplimientoDecision" expression="#{H041_registrarCumplimientoDecision}">
+		<transition to="H041_validarFinSeguimiento" name="cumpleTerminar"></transition>
+		<transition to="H041_NotificarDeudor" name="incumple"></transition>
+		<transition to="H041_EsperaSiguientePago" name="cumpleSeguir"></transition>
+		<transition to="H041_BPMDeclaracionIncumplimiento" name="incumple3meses"></transition>
+	</decision>
+
+	<state name="H041_validarFinSeguimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H041_validarFinSeguimientoDecision" name="avanzaBPM"></transition>
+		<transition to="H041_validarFinSeguimiento" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="H041_validarFinSeguimientoDecision"  expression="#{H041_validarFinSeguimientoDecision}">
+		<transition to="Fin" name="si"></transition>
+		<transition to="H041_registrarCumplimiento" name="no"></transition>
+	</decision>
+
+	<state name="H041_espera">
+		<event type="node-enter">
+			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
+				<name>Timer Seguimiento Convenio - Informe semestral</name>
+				<duration>6 months</duration>
+				<transicion>avanzaBPM</transicion>
+			</action>
+		</event>
+		<transition to="H041_ObtenerInformeSemestral" name="avanzaBPM"></transition>
+	</state>
+
+	<fork name="fork1">
+		<transition to="H041_registrarCumplimiento" name="salida1"></transition>
+		<transition to="H041_RegistroPrestamoConvenio" name="salida2"></transition>
+	</fork>
+
+	<state name="H041_RegistroPrestamoConvenio">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H041_RegistroPrestamoConvenio" name="activarAlerta"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+
+	<fork name="fork2">
+		<transition to="H041_registrarCumplimientoDecision" name="decidir"></transition>
+		<transition to="H041_espera" name="esperar"></transition>
+	</fork>
+
+	<state name="H041_NotificarDeudor">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H041_NotificarDeudor" name="activarAlerta"></transition>
+		<transition to="H041_ConfirmarResultadoNotificacion" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="H041_ConfirmarResultadoNotificacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H041_ConfirmarResultadoNotificacion" name="activarAlerta"></transition>
+		<transition to="H041_ConfirmarResultadoNotificacionDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="H041_ConfirmarResultadoNotificacionDecision" expression="#{H041_ConfirmarResultadoNotificacionDecision}">
+		<transition to="H041_registrarCumplimiento" name="continuar"></transition>
+		<transition to="H041_BPMDeclaracionIncumplimiento" name="noContinuar"></transition>
+	</decision>
+
+	<state name="H041_BPMDeclaracionIncumplimiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="H041_BPMFaseLiquidacion" name="cj_declaracionIncumplimiento"></transition>
+	</state>
+
+	<state name="H041_BPMFaseLiquidacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>			
+		<transition to="Fin" name="cj_faseLiquidacion"></transition>
+	</state>
+
+	<state name="H041_ObtenerInformeSemestral">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="H041_ObtenerInformeSemestral" name="activarAlerta"></transition>
+		<transition to="H041_ObtenerInformeSemestralDecision" name="avanzaBPM"></transition>		
+	</state>
+
+	<decision name="H041_ObtenerInformeSemestralDecision" expression="#{H041_ObtenerInformeSemestralDecision}">
+		<transition to="Fin" name="fin"></transition>
+		<transition to="H041_espera" name="espera"></transition>
+	</decision>
+
+	<node name="H041_EsperaSiguientePago">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>siguientePagoHandler
+			</targetBean>
+		</action>
+		<transition to="H041_registrarCumplimiento" name="avanzaBPM"></transition>
+	</node>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

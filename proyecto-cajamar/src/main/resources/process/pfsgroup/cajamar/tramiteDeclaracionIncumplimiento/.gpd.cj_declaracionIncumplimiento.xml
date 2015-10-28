@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_declaracionIncumplimiento" width="1108" height="965">
+  <node name="Inicio" x="318" y="37" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ006_PresentarDeclaracionIncumplimiento" x="236" y="146" width="295" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-360" h1="-4" w2="-355" h2="-612"/>
+      <bendpoint w1="-361" h1="790" w2="-367" h2="8"/>
+    </edge>
+  </node>
+  <node name="CJ006_AutoReaperturaConcurso" x="255" y="286" width="255" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-297" h1="-129" w2="-298" h2="11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-330" h1="1" w2="-326" h2="-467"/>
+      <bendpoint w1="-324" h1="638" w2="-331" h2="-4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ006_ActualizarInsinuacionCreditos" x="241" y="413" width="282" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-252" h1="-118" w2="-252" h2="9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-297" h1="1" w2="-293" h2="-340"/>
+      <bendpoint w1="-300" h1="508" w2="-307" h2="-7"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ006_RevisarInsinuacionCreditos" x="265" y="558" width="236" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-264" h1="2" w2="-259" h2="-194"/>
+      <bendpoint w1="-267" h1="359" w2="-273" h2="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-245" h1="-133" w2="-244" h2="12"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ006_RevisarInsinuacionCreditosDecision" x="239" y="670" width="288" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ006_RectificarInsinuacionCreditos" x="232" y="802" width="304" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-231" h1="-4" w2="-231" h2="-130"/>
+      <bendpoint w1="-231" h1="108" w2="-231" h2="-18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-247" h1="-227" w2="-246" h2="17"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ006_BPMFaseLiquidacion" x="634" y="667" width="288" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="318" y="928" width="132" height="36"/>
+</root-container>

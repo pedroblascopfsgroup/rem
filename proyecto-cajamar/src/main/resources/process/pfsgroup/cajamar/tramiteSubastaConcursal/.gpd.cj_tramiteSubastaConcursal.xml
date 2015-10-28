@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="cj_tramiteSubastaConcursal" width="2573" height="1705">
+  <node name="Inicio" x="-121" y="134" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_SenyalamientoSubasta" x="-164" y="268" width="239" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-179" h1="3" w2="-601" h2="417"/>
+      <bendpoint w1="-176" h1="-412" w2="-598" h2="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_PrepararInformeSubasta" x="1330" y="207" width="226" height="36">
+    <edge>
+      <label x="-38" y="-25"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_ValidarInformeDeSubasta" x="1268" y="376" width="372" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-204" h1="0" w2="-193" h2="169"/>
+      <bendpoint w1="-182" h1="-162" w2="-171" h2="7"/>
+    </edge>
+  </node>
+  <node name="fork1" x="255" y="406" width="252" height="24">
+    <edge>
+      <label x="-95" y="-29"/>
+    </edge>
+    <edge>
+      <label x="-78" y="6"/>
+    </edge>
+  </node>
+  <node name="CJ004_ValidarInformeDeSubastaDecision" x="1250" y="497" width="415" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="549" h1="-14" w2="1" h2="300"/>
+    </edge>
+    <edge>
+      <label x="-2" y="125"/>
+      <bendpoint w1="-288" h1="2" w2="-274" h2="292"/>
+      <bendpoint w1="-280" h1="-293" w2="-266" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="-82" y="-11"/>
+    </edge>
+  </node>
+  <node name="CJ004_EnviarInstruccionesProcurador" x="1355" y="666" width="306" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-32" y="34"/>
+      <bendpoint w1="178" h1="1" w2="232" h2="291"/>
+      <bendpoint w1="180" h1="-291" w2="234" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="-28" y="-8"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="22" h1="214" w2="183" h2="-209"/>
+    </edge>
+  </node>
+  <node name="CJ004_CelebracionSubasta" x="-36" y="552" width="221" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-492" h1="50" w2="202" h2="-191"/>
+    </edge>
+  </node>
+  <node name="CJ004_CelebracionDecision" x="-258" y="981" width="195" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_SolicitarMandamientoPago" x="549" y="1211" width="347" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_ConfirmarRecepcionMandamientoDePago" x="553" y="1345" width="333" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-84" h1="-66" w2="-121" h2="69"/>
+    </edge>
+    <edge>
+      <label x="-81" y="-22"/>
+      <bendpoint w1="523" h1="-11" w2="-105" h2="245"/>
+    </edge>
+  </node>
+  <node name="forkCelebracion" x="143" y="956" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="76" y="-58"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-22" y="-64"/>
+    </edge>
+  </node>
+  <node name="B" x="-170" y="906" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="D" x="-143" y="1213" width="132" height="36">
+    <edge>
+      <label x="15" y="-26"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="C" x="-399" y="1219" width="132" height="36">
+    <edge>
+      <label x="-10" y="-11"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="F" x="407" y="1089" width="132" height="36">
+    <edge>
+      <label x="-9" y="-6"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="G" x="288" y="1225" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-459" h1="-112" w2="329" h2="234"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_RevisarDocumentacion" x="705" y="399" width="209" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-595" h1="-317" w2="-163" h2="228"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="IO" x="653" y="78" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="TA" x="890" y="119" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-295" h1="-119" w2="284" h2="146"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="IF" x="1072" y="95" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="13" y="1"/>
+    </edge>
+  </node>
+  <node name="IS" x="1224" y="147" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_AdjuntarInformeOficina" x="275" y="51" width="301" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-133" h1="-48" w2="-85" h2="149"/>
+    </edge>
+  </node>
+  <node name="fork3" x="706" y="243" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_AdjuntarTasaciones" x="834" y="-55" width="277" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-163" h1="-85" w2="432" h2="6"/>
+    </edge>
+  </node>
+  <node name="CJ004_AdjuntarInformeFiscal" x="1266" y="-50" width="208" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="629" h1="-7" w2="-6" h2="-240"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_CalcularDeudaActualizada" x="225" y="1358" width="221" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_ActualizarDeudaJuzgado" x="226" y="1483" width="230" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-216" h1="0" w2="168" h2="-38"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="107" h1="-63" w2="113" h2="62"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ004_TareaExterna" x="-302" y="1364" width="216" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="117" w2="-151" h2="-40"/>
+    </edge>
+  </node>
+  <node name="Fin" x="-109" y="1521" width="132" height="36"/>
+  <node name="Fin2" x="311" y="-146" width="132" height="36"/>
+  <node name="Fin3" x="1939" y="183" width="132" height="36"/>
+  <node name="Fin4" x="1281" y="1089" width="132" height="36"/>
+  <node name="Fin5" x="-500" y="879" width="132" height="36"/>
+</root-container>

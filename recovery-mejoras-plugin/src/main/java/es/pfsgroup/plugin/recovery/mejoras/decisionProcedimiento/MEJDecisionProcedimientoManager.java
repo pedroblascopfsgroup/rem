@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,6 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
-import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
@@ -33,11 +33,9 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.decisionProcedimiento.dao.DecisionProcedimientoDao;
-import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecision;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionParalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision;
@@ -76,6 +74,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoProce
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJConfiguracionDerivacionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 
 @Component
@@ -112,6 +111,9 @@ public class MEJDecisionProcedimientoManager extends
 	
 	@Autowired
 	private CoreProjectContext coreProjectContext;
+	
+	@Autowired
+	private IntegracionBpmService integracionBpmService;
     
     
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_DEC_PRC_MGR_RECHAZAR_PROPUESTA)
@@ -571,7 +573,7 @@ public class MEJDecisionProcedimientoManager extends
 		}catch(Exception exc){
 			throw new BusinessOperationException(exc);
 		}
-		
+			
 		//JZ
 		Boolean isDerivable = false;
         List<ProcedimientoDerivado> derivarA = decision.getProcedimientosDerivados();
@@ -594,7 +596,7 @@ public class MEJDecisionProcedimientoManager extends
         TareaNotificacion tarea = dp.getTareaAsociada();
         
         List<TareaNotificacion> vTareas = (List<TareaNotificacion>) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_LIST_BY_PROC_SUBTIPO,
-                dtoDecisionProcedimiento.getDecisionProcedimiento().getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
+                dp.getProcedimiento().getId(), SubtipoTarea.CODIGO_TOMA_DECISION_BPM);
 
 
         if (vTareas != null && vTareas.size() > 0) {
@@ -671,12 +673,23 @@ public class MEJDecisionProcedimientoManager extends
             if (dp.getFinalizada()) {
                 // FINALIZADO:Parar definitivamente el procedimiento origen
                 try {
+                	
+                	//HibernateUtils.flush();
+                	//p = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", dp.getProcedimiento().getId()));
+                	//DDEstadoProcedimiento estadoCerrado = genericDao.get(DDEstadoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO));
+                	//p.setEstadoProcedimiento(estadoCerrado);
+                	//genericDao.save(MEJProcedimiento.class, p);
+                	//HibernateUtils.flush();
+                	
                     jbpmUtil.finalizarProcedimiento(p.getId());
                     p.setEstadoProcedimiento(genericDao.get(DDEstadoProcedimiento.class, genericDao
             				.createFilter(FilterType.EQUALS, "codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO)));
-                    
+
+                	// Integración con mensajería
+                    integracionBpmService.finalizarBPM(p);
+
                     cancelarSubastaActiva(p);
-                    
+
                 } catch (Exception e) {
                     logger.error("Error al finalizar el procedimiento " + p.getId(), e);
                 }
@@ -693,6 +706,8 @@ public class MEJDecisionProcedimientoManager extends
 				p.setFechaUltimaParalizacion(new Date());
 				genericDao.save(MEJProcedimiento.class, p);
 
+				// Paralizamos el BPM
+				integracionBpmService.paralizarBPM(p, dp.getFechaParalizacion());
 			}
 		}
 		
@@ -744,12 +759,22 @@ public class MEJDecisionProcedimientoManager extends
 		//generaNotificacion(dtoDecisionProcedimiento.getIdProcedimiento(), messageService.getMessage("decisionProcedimiento.resultado.aceptado", param));
 	}
 
+	@Transactional(readOnly = false)
 	private void cancelarSubastaActiva(MEJProcedimiento p) {
-		if("P401".equals(p.getTipoProcedimiento().getCodigo()) || "P409".equals(p.getTipoProcedimiento().getCodigo())){
+		Set<String> codigosSubasta = new HashSet<String>();
+		codigosSubasta.add("P401");
+		codigosSubasta.add("P409");
+		codigosSubasta.add("H002");
+		codigosSubasta.add("H003");
+		codigosSubasta.add("H004");
+		if(codigosSubasta.contains(p.getTipoProcedimiento().getCodigo())){
 			Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(p.getId());
 			if(!Checks.esNulo(sub)){
 				sub.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.CAN)));
 				genericDao.save(Subasta.class, sub);
+				
+				// Mensaje de integración para notificar fin de BPM.
+				integracionBpmService.enviarDatos(sub);
 			}
 		}
 	}

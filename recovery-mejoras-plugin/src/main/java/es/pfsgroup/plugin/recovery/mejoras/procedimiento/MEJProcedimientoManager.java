@@ -212,42 +212,6 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 		return tabManager.getDynamicElements("tabs.procedimiento.fast", null);
 	}
 
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_ES_GESTOR_CEX)
-	public Boolean esGestorCEX(Long idProcedimiento, String codUg) {
-		if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equalsIgnoreCase(codUg)) {
-			Long idAsunto = procedimientoDao.get(idProcedimiento).getAsunto().getId();
-			EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
-
-			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-			if (asunto.getGestorCEXP() != null && asunto.getGestorCEXP().getUsuario() != null)
-				return asunto.getGestorCEXP().getUsuario().getId().equals(usuario.getId());
-			else
-				return false;
-
-		} else
-			return false;
-
-	}
-
-	@Override
-	@BusinessOperation(MEJ_BO_PRC_ES_SUPERVISOR_CEX)
-	public Boolean esSupervisorCEX(Long idProcedimiento, String codUg) {
-		if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equalsIgnoreCase(codUg)) {
-			Long idAsunto = procedimientoDao.get(idProcedimiento).getAsunto().getId();
-			EXTAsunto asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
-
-			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-			if (asunto.getSupervisorCEXP() != null && asunto.getSupervisorCEXP().getUsuario() != null)
-				return asunto.getSupervisorCEXP().getUsuario().getId().equals(usuario.getId());
-			else
-				return false;
-
-		} else
-			return false;
-
-	}
-
 	public GenericABMDao getGenericDao() {
 		return genericDao;
 	}

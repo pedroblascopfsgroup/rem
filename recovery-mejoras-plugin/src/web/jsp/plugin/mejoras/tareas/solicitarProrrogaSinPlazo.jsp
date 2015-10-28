@@ -172,6 +172,20 @@
 		
 	}
 	
+	var errorMessage = function(value){
+		var fwk = value.fwk;
+		var fwkException = fwk.fwkExceptions[0];
+		
+		var message = '<s:message code="fwk.constant.fwkGenericoError"/>';
+		var charPosition = fwkException.indexOf(":");
+		if(charPosition != -1 && (charPosition < fwkException.length -1)){
+			message = fwkException.substring(charPosition + 1);			
+		}
+		
+		Ext.Msg.minWidth = 200; 	
+		Ext.Msg.alert('<s:message code="plugin.mejoras.autoprorroga.error"/>',message);							
+	}
+	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
@@ -200,6 +214,7 @@
 							eventName : 'update'
 							,formPanel : panelEdicion
 							,success : function(){ page.fireEvent(app.event.DONE) }
+							,error: errorMessage
 						});
 				}else{
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="errores.todosLosDatosObligatorios"/>')
@@ -207,7 +222,7 @@
 			}
 		}
 	});
-	
+
 	if ('${autoprorroga}'=='true'){
 			var plazo = '${plazoAutop.plazo}';
 			var vencDate = new Date(fechaVencimiento.substring(6),(fechaVencimiento.substring(3,5))-1,fechaVencimiento.substring(0,2));	

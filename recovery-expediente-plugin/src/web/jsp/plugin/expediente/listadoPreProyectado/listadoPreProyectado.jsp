@@ -248,7 +248,6 @@
 			optionsCentrosContratoStore.webflow({id:comboJerarquiaContrato.getValue()});
 		}else{
 			optionsCentrosContratoStore.webflow({id:0});
-<!-- 			dobleSelCentroContrato.setValue(''); -->
 			optionsCentrosContratoStore.removeAll();
 		}
 	}
@@ -363,6 +362,7 @@
  			filtroFechaHasta,
  			comboJerarquiaContrato,
  			dobleSelCentroContrato
+ 			
  	]);
  	
  	var validaMinMax = function(){
@@ -414,10 +414,6 @@
 			return true;		
 		}
 		if(!mmDeudaIrregular.max.getValue() === ''){
-			return true;		
-		}
-		
-		if(comboAgruparPor.getValue() != ''){
 			return true;		
 		}
 		
@@ -550,6 +546,16 @@
 		}
 	};
 	
+	var exportarExcel = function(){
+		if(validarEmptyForm()){
+			if(validaMinMax()){
+				var params=getParametros();
+		        var flow='/pfs/listadopreproyectado/generarInformeListadoPreProyectado';
+		        app.openBrowserWindow(flow,params);
+			}
+		}
+	};
+	
 	
 	var btnBuscar = new Ext.Button({
 			handler: buscarFunc
@@ -560,6 +566,7 @@
 	 var btnExportarXls=new Ext.Button({
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a XLS" />'
         ,iconCls:'icon_exportar_csv'
+        ,handler: exportarExcel
     });
     
     

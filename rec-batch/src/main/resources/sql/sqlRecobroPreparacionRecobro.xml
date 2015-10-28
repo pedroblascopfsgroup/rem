@@ -70,7 +70,6 @@
     </entry>
     <entry key="recobro.creacion.batch_rcf_entrada.Oracle10gDialect">
         <![CDATA[
-
             Begin
               INSERT /*+append*/ INTO BATCH_RCF_ENTRADA
                  SELECT ESQ.RCF_ESQ_ID AS RCF_ESQ_ID,
@@ -283,7 +282,6 @@
 
     <entry key="recobro.creacion.batch_datos_cnt_per.Oracle10gDialect">
         <![CDATA[
-
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_CNT_PER
               (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
@@ -310,7 +308,6 @@
 
     <entry key="recobro.creacion.batch_datos_cnt.Oracle10gDialect">
         <![CDATA[
-
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_CNT
               (cnt_id, ofi_id, cnt_riesgo)
@@ -400,7 +397,6 @@
 
     <entry key="recobro.creacion.batch_datos_exp.Oracle10gDialect">
         <![CDATA[
-
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_EXP
               (exp_id, arq_id, exp_borrado, dd_tpe_codigo, dd_eex_codigo
@@ -423,7 +419,6 @@
                  AND eex.dd_eex_codigo = '1'
                  AND exp.exp_manual = 0;
 
-             
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXP');
             End;
@@ -469,7 +464,6 @@
 
     <entry key="recobro.creacion.batch_datos_per_exp.Oracle10gDialect">
         <![CDATA[
-
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_PER_EXP
                 SELECT pex.exp_id, pex.per_id
@@ -496,7 +490,6 @@
 
     <entry key="recobro.creacion.batch_datos_cli.Oracle10gDialect">
         <![CDATA[
-
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_CLI
          (cli_id, per_id)
@@ -506,7 +499,6 @@
           WHERE cli.borrado = 0
             AND ecl.dd_ecl_codigo <> '2';
 
-        
          COMMIT;
          OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CLI');
         End;
@@ -516,16 +508,13 @@
     <entry key="recobro.borrado.batch_datos_exceptuados.Oracle10gDialect">
         <![CDATA[
             BEGIN
---lrc                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXCEPTUADOS');
-delete from BATCH_DATOS_EXCEPTUADOS;
-commit;
+              OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXCEPTUADOS');
             END;
         ]]>
     </entry>
 
     <entry key="recobro.creacion.batch_datos_exceptuados.Oracle10gDialect">
         <![CDATA[
-
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_EXCEPTUADOS
          (per_id, cnt_id, dd_mob_id, dd_mob_codigo, dd_mob_borrado, exc_id)
@@ -569,8 +558,6 @@ commit;
 
     <entry key="recobro.creacion.batch_datos_exp_manual.Oracle10gDialect">
         <![CDATA[
-
-
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_EXP_MANUAL
          (exp_id, arq_id, exp_borrado, dd_tpe_codigo,dd_eex_codigo, rcf_esq_id
@@ -609,7 +596,6 @@ commit;
 
     <entry key="recobro.creacion.batch_datos_gcl.Oracle10gDialect">
         <![CDATA[
-
          Begin
            INSERT /*+append*/ INTO BATCH_DATOS_GCL
            (gcl_id, per_id)
@@ -619,7 +605,6 @@ commit;
              JOIN batch_datos_per per ON pgcl.per_id = per.per_id
             WHERE pgcl.borrado = 0
               AND gcl.borrado = 0;
-
          
            COMMIT;
            OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_GCL');

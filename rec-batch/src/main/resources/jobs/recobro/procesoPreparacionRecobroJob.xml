@@ -166,11 +166,6 @@
 								<entry key="message" value="recobro.creacion.batch_datos_gcl" />
 								<entry key="severidad" value="error"/>
 							</map>			
-							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.indices.vistas.${entity.dialect}" /></entry>
-								<entry key="message" value="recobro.creacion.indices.vistas" />
-								<entry key="severidad" value="error"/>
-							</map>																																					
  						</list>
 					</property>
 				</bean>

@@ -482,18 +482,17 @@
 			}
 			
 			if(dobleSelCentro.getValue() == 'undefined' || !dobleSelCentro.getValue()){
-				txtCodExpediente.setValue('');
+				dobleSelCentro.setValue('');
 			}
 			
 			if(dobleSelFase.getValue() == 'undefined' || !dobleSelFase.getValue()){
 				dobleSelFase.setValue('');
 			}
 		}
-		
 		if(tabExpediente){
-			param.codExpediente=txtCodExpediente.getValue()
-			param.zonasExp=dobleSelCentro.getValue()
-			param.itinerarios=dobleSelFase.getValue()
+			param.codExpediente=txtCodExpediente.getValue();
+			param.zonasExp=dobleSelCentro.getValue();
+			param.itinerarios=dobleSelFase.getValue();
 		}
 		
 		return param;
@@ -531,20 +530,19 @@
 	
 	
 	var getParametros = function(){
-		
 		getParametrosExpediente();
 		getParametrosContrato();
 		
 		
-		param.codEstadoGestion=comboEstadoGestion.getValue()
-		param.codTipoPersona=comboTipoPersona.getValue()
-		param.minRiesgoTotal=mmRiesgoTotal.min.getValue()
-		param.maxRiesgoTotal=mmRiesgoTotal.max.getValue()
-		param.minDeudaIrregular=mmDeudaIrregular.min.getValue()
-		param.maxDeudaIrregular=mmDeudaIrregular.max.getValue()
-		param.codAgruparPor=comboAgruparPor.getValue()
-		param.tramos=dobleSelTramo.getValue()
-		param.propuestas=dobleSelPropuesta.getValue()
+		param.codEstadoGestion=comboEstadoGestion.getValue();
+		param.codTipoPersona=comboTipoPersona.getValue();
+		param.minRiesgoTotal=mmRiesgoTotal.min.getValue();
+		param.maxRiesgoTotal=mmRiesgoTotal.max.getValue();
+		param.minDeudaIrregular=mmDeudaIrregular.min.getValue();
+		param.maxDeudaIrregular=mmDeudaIrregular.max.getValue();
+		param.codAgruparPor=comboAgruparPor.getValue();
+		param.tramos=dobleSelTramo.getValue();
+		param.propuestas=dobleSelPropuesta.getValue();
 			
 		return param;
 	};
@@ -570,7 +568,11 @@
 				var params=getParametros();
 		        var flow='/pfs/listadopreproyectado/generarInformeListadoPreProyectado';
 		        app.openBrowserWindow(flow,params);
+			}else{
+				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
 			}
+		}else{
+			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>')
 		}
 	};
 	

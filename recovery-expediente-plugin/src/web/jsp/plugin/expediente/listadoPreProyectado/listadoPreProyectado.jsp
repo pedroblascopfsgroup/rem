@@ -7,6 +7,9 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 <fwk:page>
 
+	var tabExpediente= false;
+	var tabContrato = false;
+
 	//TAB DATOS GENERALES
 	
 	//Combo Estado Gestión
@@ -70,8 +73,10 @@
 		,mode:'local'
 		,style:'margin:0px'
 		,triggerAction:'all'
+		,value:optionsAgruparPorStore.getAt(0).get('codigo')
 		,fieldLabel:'<s:message code="plugin.mejoras.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'
 	});
+	
 	
 	var tramos = <app:dict value="${tramo}" />;
 	var propuestas = <app:dict value="${propuesta}" />;
@@ -135,14 +140,13 @@
 	
 	var dobleSelCentro = app.creaDblSelect(centro
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.expediente.centros" text="**Centro" />'
-                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:300},{<app:test id="dobleSelCentro" />});	
-           	
-    var recargarComboCentrosExp = function(){
-		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
+                              ,{store:optionsCentrosStore, funcionReset:recargarComboCentrosExp, width:175});	
+	
+	var recargarComboCentrosExp = function(){
+		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!='' && comboJerarquia.getValue()!='---'){
 			optionsCentrosStore.webflow({id:comboJerarquia.getValue()});
 		}else{
 			optionsCentrosStore.webflow({id:0});
-			dobleSelCentro.setValue('');
 			optionsCentrosStore.removeAll();
 		}
 	}
@@ -150,7 +154,9 @@
 	var limpiarYRecargar = function(){
 		app.resetCampos([dobleSelCentro]);
 		recargarComboCentrosExp();
+	
 	}
+	
 	comboJerarquia.on('select',limpiarYRecargar);
 	
 	recargarComboCentrosExp();
@@ -235,14 +241,14 @@
 	
 	var dobleSelCentroContrato = app.creaDblSelect(centros
                               ,'<s:message code="plugin.mejoras.listadoPreProyectado.contrato.centros" text="**Centro" />'
-                              ,{store:optionsCentrosContratoStore, funcionReset:recargarComboCentros, width:300},{<app:test id="dobleSelCentroContrato" />});	
+                              ,{store:optionsCentrosContratoStore, funcionReset:recargarComboCentros, width:175},{<app:test id="dobleSelCentroContrato" />});	
     
     var recargarComboCentros = function(){
-		if (comboJerarquiaContrato.getValue()!=null && comboJerarquiaContrato.getValue()!=''){
+		if (comboJerarquiaContrato.getValue()!=null && comboJerarquiaContrato.getValue()!='' && comboJerarquiaContrato.getValue()!='---'){
 			optionsCentrosContratoStore.webflow({id:comboJerarquiaContrato.getValue()});
 		}else{
 			optionsCentrosContratoStore.webflow({id:0});
-			dobleSelCentroContrato.setValue('');
+<!-- 			dobleSelCentroContrato.setValue(''); -->
 			optionsCentrosContratoStore.removeAll();
 		}
 	}
@@ -251,6 +257,7 @@
 		app.resetCampos([dobleSelCentroContrato]);
 		recargarComboCentros();
 	}
+	
 	comboJerarquiaContrato.on('select',limpiarYRecargar);
 	
 	recargarComboCentros();
@@ -276,6 +283,8 @@
 		
 	});
 	
+	
+	
 	//filtro Expediente
 	var filtrosTabExpediente = new Ext.Panel({
 		title:'<s:message code="plugin.mejoras.listadoPreProyectado.expediente" text="**Expediente" />'
@@ -292,6 +301,10 @@
 					,items:[dobleSelFase]
 				}
 				]
+	});
+	
+	filtrosTabExpediente.on('activate',function(){
+		tabExpediente=true;
 	});
 	
 	//Filtro Contrato
@@ -313,6 +326,10 @@
 					layout:'form'
 					,items:[comboJerarquiaContrato,dobleSelCentroContrato]
 				}]
+	});
+	
+	filtrosTabContrato.on('activate',function(){
+		tabContrato=true;
 	});
 	
 	//filtro pestañas
@@ -357,23 +374,27 @@
 		}
 		return true;
 	}
- 	<%--Descomentar cuando este  el manager 
- 	var PreProyectado= Ext.data.Record.create([]);  -
- 	
- 	var preProStore = page.getStore({
-		eventName : 'listado'
+	
+	var limit = 25;
+	
+	var paramsBusquedaInicial={
+		 start:0
 		,limit:limit
-		,flow:'listadopreproyectadocontroller/getExpCto'
-		,reader: new Ext.data.JsonReader({
-	    	root : 'listadoPreproyectado'
-	    	,totalProperty : 'total'
-	    }, PreProyectado)
-		,remoteSort : true
-	});--%>
- 	
+	};
+
+	 var preProStore = page.getStore({
+	 
+		id:'preProStore'
+		,remoteSort:true
+		,event:'listado'
+		,storeId : 'preProStore'
+		,limit: limit
+		,baseParams:paramsBusquedaInicial
+		,flow:'listadopreproyectado/getListPreproyectadoExp'
+ 		,reader : new Ext.data.JsonReader({root:'listado',totalProperty : 'total'})
+	});
  	
 	var validarEmptyForm = function(){
-	debugger;
 		if(comboEstadoGestion.getValue() != ''){
 			return true;
 		}
@@ -395,75 +416,132 @@
 		if(!mmDeudaIrregular.max.getValue() === ''){
 			return true;		
 		}
+		
 		if(comboAgruparPor.getValue() != ''){
 			return true;		
 		}
+		
 		if(dobleSelTramo.getValue() != ''){
 			return true;		
 		}
 		if(dobleSelPropuesta.getValue() != ''){
 			return true;		
 		}
-		if(txtCodExpediente.getValue() != ''){
-			return true;		
+		if(tabExpediente){
+			if(txtCodExpediente.getValue() != ''){
+				return true;		
+			}
+			
+			if(dobleSelCentro.getValue() != ''){  
+				return true;
+			}
+					  
+			if(dobleSelFase.getValue() != ''){ 
+				return true;
+			}
 		}
-		if(comboJerarquia.getValue() != ''){
-			return true;		
+		
+		if(tabContrato){		 
+			if(txtCodContrato.getValue() != ''){
+				return true;		
+			}
+			if(filtroFechaDesde.getValue() != ''){
+				return true;		
+			}
+			if(filtroFechaHasta.getValue() != ''){
+				return true;		
+			}
+			if(dobleSelCentroContrato.getValue() != ''){
+	 			return true;		 
+			} 
 		}
-<!--  		if(dobleSelCentro.getValue() != ''){  -->
-<!--  			return true;		  -->
-<!-- 		}  -->
-<!-- 		if(dobleSelFase.getValue() != ''){ -->
-<!-- 			return true;		 -->
-<!-- 		}  -->
-		if(txtCodContrato.getValue() != ''){
-			return true;		
-		}
-		if(filtroFechaDesde.getValue() != ''){
-			return true;		
-		}
-		if(filtroFechaHasta.getValue() != ''){
-			return true;		
-		}
-		if(comboJerarquiaContrato.getValue() != ''){
-			return true;		
-		}
-<!-- 		if(dobleSelCentroContrato.getValue() != ''){ -->
-<!-- 			return true;		 -->
-<!-- 		} -->
+		
+		
 		
 		return false;
 	}
+	var param = new Object();
+	var getParametrosExpediente = function(){
+		if(tabExpediente){
+			if(txtCodExpediente.getValue() == 'undefined' || !txtCodExpediente.getValue()){
+				txtCodExpediente.setValue('');
+			}
+			
+			if(dobleSelCentro.getValue() == 'undefined' || !dobleSelCentro.getValue()){
+				txtCodExpediente.setValue('');
+			}
+			
+			if(dobleSelFase.getValue() == 'undefined' || !dobleSelFase.getValue()){
+				dobleSelFase.setValue('');
+			}
+		}
+		
+		if(tabExpediente){
+			param.codExpediente=txtCodExpediente.getValue()
+			param.zonasExp=dobleSelCentro.getValue()
+			param.itinerarios=dobleSelFase.getValue()
+		}
+		
+		return param;
+	}
+	
+	var getParametrosContrato = function(){
+		if(tabContrato){
+			if(txtCodContrato.getValue() == 'undefined' || !txtCodContrato.getValue()){
+				txtCodContrato.setValue('');
+			}
+			
+			if(filtroFechaDesde.getValue() == 'undefined' || !filtroFechaDesde.getValue()){
+				filtroFechaDesde.setValue('');
+			}
+			
+			if(filtroFechaHasta.getValue() == 'undefined' || !filtroFechaHasta.getValue()){
+				filtroFechaHasta.setValue('');
+			}
+			
+			if(dobleSelCentroContrato.getValue() == 'undefined' || !dobleSelCentroContrato.getValue()){
+				dobleSelCentroContrato.setValue('');
+			}
+		}
+		
+		if(tabContrato){
+			param.codContrato=txtCodContrato.getValue()
+			param.fechaPrevRegularizacion=filtroFechaDesde.getValue()
+			param.fechaPrevRegularizacionHasta=filtroFechaHasta.getValue()
+			param.zonasCto=dobleSelCentroContrato.getValue()
+		}
+		
+		return param;
+	}
+	
+	
 	
 	var getParametros = function(){
-		return{
-			codEstadoGestion:comboEstadoGestion.getValue()
-			,codTipoPersona:comboTipoPersona.getValue()
-			,minRiesgoTotal:mmRiesgoTotal.min.getValue()
-			,maxRiesgoTotal:mmRiesgoTotal.max.getValue()
-			,minDeudaIrregular:mmDeudaIrregular.min.getValue()
-			,maxDeudaIrregular:mmDeudaIrregular.max.getValue()
-			,codAgruparPor:comboAgruparPor.getValue()
-			,codTramo:dobleSelTramo.getValue()
-			,codPropuesta:dobleSelPropuesta.getValue()
-			,codExpediente:txtCodExpediente.getValue()
-			,codJerarquiaExp:comboJerarquia.getValue()
-			,codigoZona:dobleSelCentro.getValue()
-			,codEstadoItinerario:dobleSelFase.getValue()
-			,codContrato:txtCodContrato.getValue()
-			,fechaPrevRegularizacion:filtroFechaDesde.getValue()
-			,fechaPrevRegularizacionHasta:filtroFechaHasta.getValue()
-			,codJerarquiaCto:comboJerarquiaContrato.getValue()
-			,codigoZonaCto:dobleSelCentroContrato.getValue()
-		};
+		
+		getParametrosExpediente();
+		getParametrosContrato();
+		
+		
+		param.codEstadoGestion=comboEstadoGestion.getValue()
+		param.codTipoPersona=comboTipoPersona.getValue()
+		param.minRiesgoTotal=mmRiesgoTotal.min.getValue()
+		param.maxRiesgoTotal=mmRiesgoTotal.max.getValue()
+		param.minDeudaIrregular=mmDeudaIrregular.min.getValue()
+		param.maxDeudaIrregular=mmDeudaIrregular.max.getValue()
+		param.codAgruparPor=comboAgruparPor.getValue()
+		param.tramos=dobleSelTramo.getValue()
+		param.propuestas=dobleSelPropuesta.getValue()
+			
+		return param;
 	};
 	
+	
 	var buscarFunc = function(){
-	debugger;
 		if(validarEmptyForm()){
 			if(validaMinMax()){
+			
 				panelFiltros.collapse(true);
-				//preProStore.webflow(getParametros());
+				preProStore.webflow(getParametros());
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
 			}

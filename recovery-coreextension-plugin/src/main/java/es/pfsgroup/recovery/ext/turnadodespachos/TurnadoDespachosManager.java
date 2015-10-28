@@ -59,7 +59,7 @@ public interface TurnadoDespachosManager {
 	 * Asignar un letrado a un asunto.
 	 * 
 	 * @param idAsunto
-	 */vi 
+	 */ 
 	void turnar(Long idAsunto, String username, String codigoGestor) throws IllegalArgumentException, AplicarTurnadoException;
 
 	/**

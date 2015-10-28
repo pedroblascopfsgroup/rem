@@ -140,9 +140,9 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 			throw new BusinessOperationException(e);
 		}
 
-		FileItem resultado;
+		FileItem resultado = new FileItem();
 		try {
-			resultado = proxyFactory.proxy(GENINFInformesApi.class).generarEscritoConVariables(mapaVariables, "plantillaLiquidacion.docx", is);
+//			resultado = proxyFactory.proxy(GENINFInformesApi.class).generarEscritoConVariables(mapaVariables, "plantillaLiquidacion.docx", is);
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
